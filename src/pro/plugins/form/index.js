@@ -7,6 +7,48 @@ import { addFilter } from '@wordpress/hooks';
 
 const { Notice } = window.otterComponents;
 
+const fileTypeSuggestions = [
+	'image/*',
+	'audio/*',
+	'video/*',
+	'.jpg, .jpeg',
+	'.png',
+	'.gif',
+	'.pdf',
+	'.doc',
+	'.docx',
+	'.xls',
+	'.xlsx',
+	'.ppt',
+	'.pptx',
+	'.odt',
+	'.ods',
+	'.odp',
+	'.odg',
+	'.odc',
+	'.odf',
+	'.odb',
+	'.csv',
+	'.txt',
+	'.zip',
+	'.rar',
+	'.7z',
+	'.gz',
+	'.psd',
+	'.bmp',
+	'.tif',
+	'.tiff',
+	'.svg',
+	'.mp4',
+	'.m4v',
+	'.mov',
+	'.wmv',
+	'.avi',
+	'.mpg',
+	'.mp3',
+	'.mkv'
+];
+
 const FormFileInspector = ( Template, {
 	attributes,
 	setAttributes
@@ -27,6 +69,14 @@ const FormFileInspector = ( Template, {
 	return (
 		<Fragment>
 			<TextControl
+				label={ __( 'Label', 'otter-blocks' ) }
+				value={ attributes.label }
+				onChange={ label => setAttributes({ label }) }
+			/>
+
+			<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
+
+			<TextControl
 				label={ __( 'Max File Size in MB', 'otter-blocks' ) }
 				type="number"
 				value={ parseInt( attributes.maxFileSize ) }
@@ -39,47 +89,7 @@ const FormFileInspector = ( Template, {
 				value={ attributes.allowedFileTypes }
 				onChange={ allowedFileTypes => setAttributes({ allowedFileTypes }) }
 				help={ __( 'Add the allowed files types that can be loaded. E.g.: .png, .mp4, .jpg, .zip, .pdf. Attention: The host provider might not allow to saving of all type of files.', 'otter-blocks' ) }
-				suggestions={ [
-					'image/*',
-					'audio/*',
-					'video/*',
-					'.jpg, .jpeg',
-					'.png',
-					'.gif',
-					'.pdf',
-					'.doc',
-					'.docx',
-					'.xls',
-					'.xlsx',
-					'.ppt',
-					'.pptx',
-					'.odt',
-					'.ods',
-					'.odp',
-					'.odg',
-					'.odc',
-					'.odf',
-					'.odb',
-					'.csv',
-					'.txt',
-					'.zip',
-					'.rar',
-					'.7z',
-					'.gz',
-					'.psd',
-					'.bmp',
-					'.tif',
-					'.tiff',
-					'.svg',
-					'.mp4',
-					'.m4v',
-					'.mov',
-					'.wmv',
-					'.avi',
-					'.mpg',
-					'.mp3',
-					'.mkv'
-				]}
+				suggestions={ fileTypeSuggestions }
 			/>
 
 			<TextControl

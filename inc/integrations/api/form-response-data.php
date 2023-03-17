@@ -300,107 +300,38 @@ class Form_Data_Response {
 	 * @since 2.2.3
 	 */
 	public static function get_error_code_message( $error_code ) {
-		$messages = array();
-		switch ( $error_code ) {
-			case self::ERROR_MISSING_DATA:
-				$messages[] = ( __( 'Essential data is missing: invalid Form id or protection.', 'otter-blocks' ) );
-				break;
+		$error_messages = array(
+			self::ERROR_MISSING_DATA                       => __( 'Essential data is missing: invalid Form id or protection.', 'otter-blocks' ),
+			self::ERROR_MISSING_CAPTCHA                    => __( 'Captcha token is missing.', 'otter-blocks' ),
+			self::ERROR_MISSING_EMAIL                      => __( 'Missing email field in form.', 'otter-blocks' ),
+			self::ERROR_MISSING_NONCE                      => __( 'Missing CSRF protection in form.', 'otter-blocks' ),
+			self::ERROR_FORM_ID_INVALID                    => __( 'Form ID is invalid.', 'otter-blocks' ),
+			self::ERROR_EMAIL_NOT_SEND                     => __( 'Email could not be send. Might be an error with the service.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_INVALID_KEY               => __( 'Invalid service authentication credentials.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_NOT_REGISTERED            => __( 'The 3rd-party service is not registered.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_SUBSCRIBE_ERROR           => __( 'Error received from service when subscribing the user.', 'otter-blocks' ),
+			self::ERROR_MISSING_PROVIDER                   => __( 'Provider settings are missing.', 'otter-blocks' ),
+			self::ERROR_MISSING_API_KEY                    => __( 'API Key is missing from settings.', 'otter-blocks' ),
+			self::ERROR_MISSING_MAIL_LIST_ID               => __( 'API Key is missing.', 'otter-blocks' ),
+			self::ERROR_INVALID_CAPTCHA_TOKEN              => __( 'The reCaptcha token is invalid.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT    => __( 'The API key format is invalid.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED => __( 'The user with this email was already registered.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_INVALID_EMAIL             => __( 'The email address is invalid.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_DUPLICATED_EMAIL          => __( 'The email was already registered.', 'otter-blocks' ),
+			self::ERROR_BOT_DETECTED                       => __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ),
+			self::ERROR_FILES_METADATA_FORMAT              => __( 'The files metadata is invalid.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD                        => __( 'The files could not be uploaded.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_CREDENTIAL_ERROR          => __( 'The Otter From Block service credentials are invalid.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD_TYPE_WP                => __( 'The file type is not allowed by host provider.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD_TYPE                   => __( 'The file type is not allowed.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER       => __( 'The number of files is too big.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD_MAX_SIZE               => __( 'The file size exceed the limit.', 'otter-blocks' ),
+		);
 
-			case self::ERROR_MISSING_CAPTCHA:
-				$messages[] = ( __( 'Captcha token is missing.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_MISSING_EMAIL:
-				$messages[] = ( __( 'Missing email field in form.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_MISSING_NONCE:
-				$messages[] = ( __( 'Missing CSRF protection in form.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_FORM_ID_INVALID:
-				$messages[] = ( __( 'Form ID is invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_EMAIL_NOT_SEND:
-				$messages[] = ( __( 'Email could not be send. Might be an error with the service.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_INVALID_KEY:
-				$messages[] = ( __( 'Invalid service authentication credentials.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_NOT_REGISTERED:
-				$messages[] = ( __( 'The 3rd-party service is not registered.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_SUBSCRIBE_ERROR:
-				$messages[] = ( __( 'Error received from service when subscribing the user.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_MISSING_PROVIDER:
-				$messages[] = ( __( 'Provider settings are missing.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_MISSING_API_KEY:
-				$messages[] = ( __( 'API Key is missing from settings.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_MISSING_MAIL_LIST_ID:
-				$messages[] = ( __( 'API Key is missing.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_INVALID_CAPTCHA_TOKEN:
-				$messages[] = ( __( 'The reCaptcha token is invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT:
-				$messages[] = ( __( 'The API key format is invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED:
-				$messages[] = ( __( 'The user with this email was already registered.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_INVALID_EMAIL:
-				$messages[] = ( __( 'The email address is invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_DUPLICATED_EMAIL:
-				$messages[] = ( __( 'The email was already registered.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_BOT_DETECTED:
-				$messages[] = ( __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_FILES_METADATA_FORMAT:
-				$messages[] = ( __( 'The files metadata is invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_FILE_UPLOAD:
-				$messages[] = ( __( 'The files could not be uploaded.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_CREDENTIAL_ERROR:
-				$messages[] = ( __( 'The Otter From Block service credentials are invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_FILE_UPLOAD_TYPE_WP:
-				$messages[] = ( __( 'The file type is not allowed by host provider.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_FILE_UPLOAD_TYPE:
-				$messages[] = ( __( 'The file type is not allowed.', 'otter-blocks' ) );
-				break;
-			case self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER:
-				$messages[] = ( __( 'The number of files is too big.', 'otter-blocks' ) );
-				break;
-			case self::ERROR_FILE_UPLOAD_MAX_SIZE:
-				$messages[] = ( __( 'The file size exceed the limit.', 'otter-blocks' ) );
-				break;
+		if ( ! isset( $error_messages[ $error_code ] ) ) {
+			return 'Expected error whatever message';
 		}
 
-		return implode( ' ', $messages );
+		return $error_messages[ $error_code ];
 	}
 }

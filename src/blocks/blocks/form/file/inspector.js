@@ -28,6 +28,15 @@ const ProPreview = ({ attributes }) => {
 	return (
 		<Fragment>
 			<Disabled>
+
+				<TextControl
+					label={ __( 'Label', 'otter-blocks' ) }
+					value={ attributes.label }
+					onChange={ () => {} }
+				/>
+
+				<HideFieldLabelToggle attributes={ attributes } setAttributes={ () => {} } />
+
 				<TextControl
 					label={ __( 'Max File Size in MB', 'otter-blocks' ) }
 					type="number"
@@ -122,14 +131,6 @@ const Inspector = ({
 						}
 					}}
 				/>
-
-				<TextControl
-					label={ __( 'Label', 'otter-blocks' ) }
-					value={ attributes.label }
-					onChange={ label => setAttributes({ label }) }
-				/>
-
-				<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
 
 				{
 					( ! window.themeisleGutenberg.hasPro ) ? <ProPreview attributes={ attributes } /> : (
