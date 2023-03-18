@@ -56,6 +56,7 @@ import { makeBox } from '../../plugins/copy-paste/utils';
 import { _px } from '../../helpers/helper-functions.js';
 import { SortableInputField } from './sortable-input-fields';
 import AutoDisableSyncAttr from '../../components/auto-disable-sync-attr/index';
+import { RichTextEditor } from '../../components/';
 
 const compare = x => {
 	return x?.[1] && x[0] !== x[1];
@@ -330,7 +331,6 @@ const Inspector = ({
 								hasValue={ () => undefined !== formOptions.autoresponderSubject && undefined !== formOptions.autoresponderBody }
 								label={ __( 'Autoresponder', 'otter-blocks' ) }
 								onDeselect={ () => setFormOption({ autoresponderSubject: undefined, autoresponderBody: undefined }) }
-								isShownByDefault
 							>
 								<TextControl
 									label={ __( 'Autoresponder Subject', 'otter-blocks' ) }
@@ -340,12 +340,12 @@ const Inspector = ({
 									help={ __( 'Enter the subject of the autoresponder email.', 'otter-blocks' ) }
 								/>
 
-								<TextareaControl
+								<RichTextEditor
 									label={ __( 'Autoresponder Body', 'otter-blocks' ) }
-									placeholder={ __( 'Thank you for subscribing!', 'otter-blocks' ) }
 									value={ formOptions.autoresponderBody }
 									onChange={ autoresponderBody => setFormOption({ autoresponderBody }) }
 									help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
+									allowRawHTML
 								/>
 							</ToolsPanelItem>
 

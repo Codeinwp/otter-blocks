@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { useInspectorSlot } from './inspector-slot-fill/index.js';
+import { useInspectorSlot } from './inspector-slot-fill';
 import Notice from './notice/index.js';
 import SelectProducts from './select-products-control/index.js';
 
@@ -32,6 +32,7 @@ export { default as LinkControlToolbar } from './link-control/index.js';
 export { default as Notice } from './notice/index.js';
 export { default as PanelTab } from './panel-tab/index.js';
 export { default as ResponsiveControl } from './responsive-control/index.js';
+export { default as RichTextEditor } from './rich-text-editor/index.js';
 export { default as SelectProducts } from './select-products-control/index.js';
 export { default as SizingControl } from './sizing-control/index.js';
 export {

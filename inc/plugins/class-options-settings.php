@@ -484,18 +484,18 @@ class Options_Settings {
 	 * Get allowed HTML for mail body.
 	 *
 	 * @static
-	 * @access  public
+	 * @access public
 	 * @return array
 	 */
 	public static function get_allowed_mail_html() {
-		$post_allowed_html = wp_kses_allowed_html( 'post' );
+		$allowed_html = wp_kses_allowed_html( 'post' );
 
 		$not_allowed_tags = array( 'input', 'label', 'form', 'select', 'textarea', 'button', 'fieldset', 'legend', 'datalist', 'output', 'option', 'optgroup', 'video', 'audio' );
 		foreach ( $not_allowed_tags as $tag ) {
-			unset( $post_allowed_html[ $tag ] );
+			unset( $allowed_html[ $tag ] );
 		}
 
-		return $post_allowed_html;
+		return $allowed_html;
 	}
 
 	/**
