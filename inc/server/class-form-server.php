@@ -332,41 +332,6 @@ class Form_Server {
 	}
 
 	/**
-	 * Send autoresponder email to the subscriber.
-	 *
-	 * @param Form_Data_Request $form_data Data from request body.
-	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
-	 * @since 2.0.3
-	 */
-	public function send_autoresponder( $form_data ) {
-		$res = new Form_Data_Response();
-
-		$to = $this->get_email_from_form_input( $form_data );
-		if ( empty( $to ) ) {
-			$res->set_code( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
-			return $res->build_response();
-		}
-
-		$headers[] = 'Content-Type: text/html';
-		$headers[] = 'From: ' . ( $form_data->get_form_options()->has_from_name() ? sanitize_text_field( $form_data->get_form_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
-
-		$autoresponder = $form_data->get_form_options()->get_autoresponder();
-		$body          = $this->replace_magic_tags( $autoresponder['body'], $form_data->get_form_inputs() );
-
-		// phpcs:ignore
-		$res->set_success( wp_mail( $to, $autoresponder['subject'], $body, $headers ) );
-		if ( $res->is_success() ) {
-			$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
-		} else {
-			$res->set_code( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
-		}
-
-		$form_options = $form_data->get_form_options();
-		$res->add_values( $form_options->get_submit_data() );
-		return $res->build_response();
-	}
-
-	/**
 	 * Make additional changes before using the main handler function for submitting.
 	 *
 	 * @param Form_Data_Request $form_data The form request data.
@@ -403,11 +368,6 @@ class Form_Server {
 		) {
 			$this->send_default_email( $form_data );
 		}
-
-		// Send an autoresponder email to the subscriber.
-		if ( $form_data->get_form_options()->has_autoresponder() ) {
-			$this->send_autoresponder( $form_data );
-		}
 	}
 
 	/**
@@ -433,36 +393,6 @@ class Form_Server {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Replace magic tags with the values from the form inputs.
-	 *
-	 * @param string $content The content to replace the magic tags.
-	 * @param array  $form_inputs The form inputs.
-	 *
-	 * @return string
-	 */
-	public function replace_magic_tags( $content, $form_inputs ) {
-		$magic_tags = array_map(
-			function( $field ) {
-				return array(
-					$field['id'] => $field['value'],
-				);
-			},
-			array_filter(
-				$form_inputs,
-				function( $field ) {
-					return isset( $field['id'] );
-				}
-			)
-		);
-
-		foreach ( $magic_tags as $key => $value ) {
-			$content = str_replace( '%' . $key . '%', $value, $content );
-		}
-
-		return $content;
 	}
 
 	/**
@@ -798,10 +728,11 @@ class Form_Server {
 	 * Get the first email from the input's form.
 	 *
 	 * @param Form_Data_Request $data The form data.
+	 *
 	 * @return mixed|string
 	 * @since 2.0.3
 	 */
-	private function get_email_from_form_input( Form_Data_Request $data ) {
+	public function get_email_from_form_input( Form_Data_Request $data ) {
 		$inputs = $data->get_payload_field( 'formInputsData' );
 		if ( is_array( $inputs ) ) {
 			foreach ( $data->get_payload_field( 'formInputsData' ) as $input_field ) {
