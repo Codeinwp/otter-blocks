@@ -49,11 +49,20 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import { FormContext } from './edit.js';
-import { ColorDropdownControl, InspectorHeader, InspectorExtensions, ResponsiveControl, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../components/index.js';
+import {
+	ColorDropdownControl,
+	InspectorHeader,
+	InspectorExtensions,
+	ResponsiveControl,
+	SyncColorPanel,
+	SyncControlDropdown,
+	ToogleGroupControl,
+	Notice
+} from '../../components/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 import { makeBox } from '../../plugins/copy-paste/utils';
-import { _px } from '../../helpers/helper-functions.js';
+import { _px, setUtm } from '../../helpers/helper-functions.js';
 import { SortableInputField } from './sortable-input-fields';
 import AutoDisableSyncAttr from '../../components/auto-disable-sync-attr/index';
 
@@ -207,6 +216,44 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 				onDeselect={ () => setAttributes({ hasCaptcha: false }) }
 				isShownByDefault={ false }
 			/>
+
+			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
+				<ToolsPanelItem
+					hasValue={ () => undefined !== formOptions.autoresponderSubject && undefined !== formOptions.autoresponderBody }
+					label={ __( 'Autoresponder (Pro)', 'otter-blocks' ) }
+					onDeselect={ () => setFormOption({ autoresponderSubject: undefined, autoresponderBody: undefined }) }
+				>
+					<TextControl
+						label={ __( 'Autoresponder Subject', 'otter-blocks' ) }
+						placeholder={ __( 'Confirmation of your subscription', 'otter-blocks' ) }
+						value={ undefined }
+						onChange={ () => {} }
+						help={ __( 'Enter the subject of the autoresponder email.', 'otter-blocks' ) }
+						disabled
+						className="o-disabled"
+					/>
+
+					<TextareaControl
+						label={ __( 'Autoresponder Body', 'otter-blocks' ) }
+						placeholder={ __( 'Thank you for subscribing!', 'otter-blocks' )}
+						rows={2}
+						value={ undefined }
+						onChange={ () => {} }
+						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
+						disabled
+						className="o-disabled"
+					/>
+
+					<div>
+						<Notice
+							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'popup-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+							variant="upsell"
+						/>
+						<p className="description">{ __( 'Automatically send follow-up emails to your users with the Autoresponder feature.', 'otter-blocks' ) }</p>
+					</div>
+
+				</ToolsPanelItem>
+			) }
 		</Fragment>
 	);
 };
