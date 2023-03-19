@@ -106,7 +106,7 @@ class Form_Settings_Data {
 	private $bcc = '';
 
 	/**
-	 * The autoresponder recipients.
+	 * The autoresponder data.
 	 *
 	 * @var array
 	 */
@@ -627,7 +627,7 @@ class Form_Settings_Data {
 	}
 
 	/**
-	 * Set the email bcc.
+	 * Set the autoresponder.
 	 *
 	 * @param array $autoresponder The email bcc.
 	 * @return Form_Settings_Data

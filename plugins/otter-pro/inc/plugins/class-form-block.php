@@ -38,7 +38,6 @@ class Form_Block {
 	 *
 	 * @param Form_Data_Request $form_data Data from request body.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response|void
-	 * @since 2.0.3
 	 */
 	public function send_autoresponder( $form_data ) {
 		if ( ! $form_data->get_form_options()->has_autoresponder() ) {
@@ -81,22 +80,10 @@ class Form_Block {
 	 * @return string
 	 */
 	public function replace_magic_tags( $content, $form_inputs ) {
-		$magic_tags = array_map(
-			function( $field ) {
-				return array(
-					$field['id'] => $field['value'],
-				);
-			},
-			array_filter(
-				$form_inputs,
-				function( $field ) {
-					return isset( $field['id'] );
-				}
-			)
-		);
-
-		foreach ( $magic_tags as $key => $value ) {
-			$content = str_replace( '%' . $key . '%', $value, $content );
+		foreach ( $form_inputs as $field ) {
+			if ( isset( $field['id'] ) ) {
+				$content = str_replace( '%' . $field['id'] . '%', $field['value'], $content );
+			}
 		}
 
 		return $content;
@@ -107,7 +94,6 @@ class Form_Block {
 	 * Defines and returns the instance of the static class.
 	 *
 	 * @static
-	 * @since 1.7.1
 	 * @access public
 	 * @return Form_Block
 	 */
@@ -127,7 +113,6 @@ class Form_Block {
 	 * object therefore, we don't want the object to be cloned.
 	 *
 	 * @access public
-	 * @since 1.7.1
 	 * @return void
 	 */
 	public function __clone() {
@@ -139,7 +124,6 @@ class Form_Block {
 	 * Disable unserializing of the class
 	 *
 	 * @access public
-	 * @since 1.7.1
 	 * @return void
 	 */
 	public function __wakeup() {
