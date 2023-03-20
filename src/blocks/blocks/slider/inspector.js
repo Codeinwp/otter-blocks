@@ -280,7 +280,7 @@ const Inspector = ({
 								isShownByDefault: false
 							},
 							{
-								value: attributes.borderColor,
+								value: attributes.borderColor ?? ( attributes.borderWidth ? '#000000' : undefined ),
 								onChange: borderColor => setAttributes({ borderColor }),
 								label: __( 'Border', 'otter-blocks' ),
 								isShownByDefault: false

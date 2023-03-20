@@ -18,8 +18,7 @@ import {
 } from '@wordpress/element';
 
 import {
-	select,
-	useSelect
+	select
 } from '@wordpress/data';
 
 /**
