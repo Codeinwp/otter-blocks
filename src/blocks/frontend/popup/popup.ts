@@ -131,7 +131,7 @@ class PopupBlock {
 			return false;
 		}
 
-		const buttons = document.querySelectorAll( `a[href='#${ anchor }'], a#${ anchor }` );
+		const buttons = document.querySelectorAll( `a[href='#${ anchor }'], #${ anchor }` );
 
 		buttons.forEach( ( button ) => {
 			button.addEventListener( 'click', ( e ) => {
@@ -208,7 +208,7 @@ class PopupBlock {
 			return false;
 		}
 
-		const buttons = document.querySelectorAll( `a[href='#${ anchorclose }'], a#${ anchorclose }` );
+		const buttons = document.querySelectorAll( `a[href='#${ anchorclose }'], #${ anchorclose }` );
 
 		buttons.forEach( ( button ) => {
 			button.addEventListener( 'click', ( e ) => {
