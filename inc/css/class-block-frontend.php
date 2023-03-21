@@ -651,13 +651,30 @@ class Block_Frontend extends Base_CSS {
 		$posts = apply_filters( 'themeisle_gutenberg_blocks_enqueue_assets', array() );
 
 		$content_to_process = '';
+		$found_ids          = array();
 
 		add_filter(
 			'the_content',
-			function ( $content ) use ( &$content_to_process ) {
+			function ( $content ) use ( &$content_to_process, &$found_ids ) {
 				// Check if $content contains an Otter Block.
 				if ( strpos( $content, 'wp:themeisle-blocks' ) !== false ) {
-					$content_to_process .= $content;
+
+					// Extract all ids for Otter blocks.
+					preg_match_all( '/id="wp-block-themeisle-blocks-([a-z0-9-]+)"/', $content, $matches );
+
+					$add_to_content = false;
+
+					// Add to content if there is any id that has not been processed.
+					foreach ( $matches[1] as $id ) {
+						if ( ! in_array( $id, $found_ids, true ) ) {
+							$found_ids[]    = $id;
+							$add_to_content = true;
+						}
+					}
+
+					if ( $add_to_content ) {
+						$content_to_process .= $content;
+					}
 				}
 				return $content;
 			},
