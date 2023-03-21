@@ -26,7 +26,8 @@ import { SharingIconsAttrs } from '../../blocks/sharing-icons/types';
 import { BoxType } from '../../helpers/blocks';
 
 export const adaptors = {
-	...coreAdaptors,
+
+	// ...coreAdaptors, // TODO: research if we still need this since Core has it now. Look on how we can integrate it with the new system.
 	'themeisle-blocks/advanced-columns': {
 		copy( attrs: SectionAttrs ): Storage<SectionAttrs> {
 			return {
