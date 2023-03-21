@@ -650,6 +650,43 @@ class Block_Frontend extends Base_CSS {
 	public function enqueue_assets() {
 		$posts = apply_filters( 'themeisle_gutenberg_blocks_enqueue_assets', array() );
 
+		$content_to_process = '';
+
+		add_filter(
+			'the_content',
+			function ( $content ) use ( &$content_to_process ) {
+				// Check if $content contains an Otter Block.
+				if ( strpos( $content, 'wp:themeisle-blocks' ) !== false ) {
+					$content_to_process .= $content;
+				}
+				return $content;
+			},
+			0
+		);
+
+		add_action(
+			'wp_footer',
+			function () use ( &$content_to_process ) {
+				$blocks = parse_blocks( $content_to_process );
+
+				if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+					return '';
+				}
+
+				$animations = boolval( preg_match( '/\banimated\b/', $content_to_process ) );
+
+				$css = $this->cycle_through_blocks( $blocks, $animations );
+
+				// Add the CSS to the footer.
+				$style  = "\n" . '<style type="text/css" media="all" id="otter-neve-layout-solution">' . "\n";
+				$style .= $css;
+				$style .= "\n" . '</style>' . "\n";
+
+				echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			},
+			PHP_INT_MAX
+		);
+
 		if ( 0 < count( $posts ) ) {
 			foreach ( $posts as $post ) {
 				$class = Registration::instance();
