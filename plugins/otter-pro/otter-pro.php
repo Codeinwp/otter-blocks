@@ -113,3 +113,15 @@ add_action(
 		}
 	}
 );
+
+add_filter(
+	'themeisle_sdk_compatibilities/' . OTTER_PRO_BASEFILE,
+	function ( $compatibilities ) {
+		$compatibilities['OtterBlocks'] = array(
+			'basefile'  => defined( 'OTTER_BLOCKS_BASEFILE' ) ? OTTER_BLOCKS_BASEFILE : '',
+			'required'  => '2.2.3',
+			'tested_up' => '2.2.3',
+		);
+		return $compatibilities;
+	}
+);

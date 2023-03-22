@@ -41,6 +41,18 @@ class Main {
 			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
 		}
+
+		add_filter(
+			'themeisle_sdk_compatibilities/' . OTTER_BLOCKS_BASEFILE,
+			function ( $compatibilities ) {
+				$compatibilities['OtterBlocksPRO'] = array(
+					'basefile'  => defined( 'OTTER_PRO_BASEFILE' ) ? OTTER_PRO_BASEFILE : '',
+					'required'  => '2.2.3',
+					'tested_up' => '2.2.3',
+				);
+				return $compatibilities;
+			}
+		);
 	}
 
 	/**
