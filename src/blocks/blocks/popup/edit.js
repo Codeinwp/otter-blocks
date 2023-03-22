@@ -8,16 +8,20 @@ import {
 
 import classnames from 'classnames';
 
+import { get } from 'lodash';
+
+import { merge } from 'lodash';
+
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
-import { merge } from 'lodash';
 
 import {
 	InnerBlocks,
-	useBlockProps
+	useBlockProps,
+	__experimentalBlockVariationPicker as VariationPicker
 } from '@wordpress/block-editor';
 
 import { Button } from '@wordpress/components';
@@ -28,6 +32,10 @@ import {
 	useState
 } from '@wordpress/element';
 
+import {
+	createBlocksFromInnerBlocksTemplate
+} from '@wordpress/blocks';
+
 /**
  * Internal dependencies
  */
@@ -36,6 +44,7 @@ import Inspector from './inspector.js';
 import { blockInit, useCSSNode } from '../../helpers/block-utility';
 import { boxValues, _cssBlock } from '../../helpers/helper-functions';
 import { useDarkBackground } from '../../helpers/utility-hooks.js';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 const { attributes: defaultAttributes } = metadata;
 const makeBox = x => ({ top: x, bottom: x, left: x, right: x });
@@ -49,7 +58,8 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	clientId,
-	className
+	className,
+	name
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -57,6 +67,34 @@ const Edit = ({
 	}, []);
 
 	const [ isEditing, setEditing ] = useState( false );
+
+	const {
+		replaceInnerBlocks,
+		selectBlock
+	} = useDispatch( 'core/block-editor' );
+
+	const hasInnerBlocks = useSelect(
+		select =>
+			0 < select( 'core/block-editor' ).getBlocks( clientId ).length,
+		[ clientId ]
+	);
+
+	const { blockType, defaultVariation, variations } = useSelect(
+		select => {
+			const {
+				getBlockVariations,
+				getBlockType,
+				getDefaultBlockVariation
+			} = select( 'core/blocks' );
+
+			return {
+				blockType: getBlockType( name ),
+				defaultVariation: getDefaultBlockVariation( name, 'block' ),
+				variations: getBlockVariations( name, 'block' )
+			};
+		},
+		[ name ]
+	);
 
 	const height = 'custom' === attributes.heightMode ? {
 		'--height': attributes.height,
@@ -144,39 +182,66 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
-				<Button
-					variant={ 'primary' }
-					isPrimary
-					icon={ external }
-					onClick={ () => setEditing( true ) }
-				>
-					{ __( 'Edit Popup', 'otter-blocks' ) }
-				</Button>
+				{
+					hasInnerBlocks ? (
+						<Fragment>
+							<Button
+								variant={ 'primary' }
+								isPrimary
+								icon={ external }
+								onClick={ () => setEditing( true ) }
+							>
+								{ __( 'Edit Popup', 'otter-blocks' ) }
+							</Button>
 
-				{ isEditing && (
-					<div className='otter-popup__modal_wrap'>
-						<div
-							role="presentation"
-							className="otter-popup__modal_wrap_overlay"
-							onClick={ () => setEditing( false ) }
-						/>
-
-						<div className="otter-popup__modal_content">
-							{ attributes.showClose && (
-								<div className="otter-popup__modal_header">
-									<Button
-										icon={ closeSmall }
+							{ isEditing && (
+								<div className='otter-popup__modal_wrap'>
+									<div
+										role="presentation"
+										className="otter-popup__modal_wrap_overlay"
 										onClick={ () => setEditing( false ) }
 									/>
+
+									<div className="otter-popup__modal_content">
+										{ attributes.showClose && (
+											<div className="otter-popup__modal_header">
+												<Button
+													icon={ closeSmall }
+													onClick={ () => setEditing( false ) }
+												/>
+											</div>
+										) }
+
+										<div className="otter-popup__modal_body">
+											<InnerBlocks />
+										</div>
+									</div>
 								</div>
 							) }
+						</Fragment>
+					) : (
+						<VariationPicker
+							icon={ get( blockType, [ 'icon', 'src' ]) }
+							label={ get( blockType, [ 'title' ]) }
+							variations={ variations }
+							onSelect={ ( nextVariation = defaultVariation ) => {
+								if ( nextVariation ) {
+									setAttributes( nextVariation.attributes );
+									replaceInnerBlocks(
+										clientId,
+										createBlocksFromInnerBlocksTemplate(
+											nextVariation.innerBlocks
+										),
+										true
+									);
+								}
+								selectBlock( clientId );
+							} }
+							allowSkip
+						/>
+					)
+				}
 
-							<div className="otter-popup__modal_body">
-								<InnerBlocks />
-							</div>
-						</div>
-					</div>
-				) }
 			</div>
 		</Fragment>
 	);

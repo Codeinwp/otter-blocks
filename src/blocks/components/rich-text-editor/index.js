@@ -47,7 +47,7 @@ const RichTextEditor = ({
 			onChange( allowRawHTML ? decodeHTMLEntities( editor.getContent() ) : editor.getContent() );
 		});
 
-		return () => wp.oldEditor.remove( editorRef.current.id );
+		return () => editorRef?.current?.id !== undefined ? wp.oldEditor.remove( editorRef.current.id ) : undefined;
 	}, []);
 
 	const id = `inspector-textarea-control-${ instanceId }`;

@@ -199,21 +199,19 @@ const Edit = ({
 					</div>
 
 					<div className="o-flip-back">
-						<div className="o-flip-content">
-							<InnerBlocks
-								renderAppender={ isSelected ? InnerBlocks.DefaultBlockAppender : undefined }
-								template={[
-									[ 'core/heading', {
-										placeholder: __( 'Back title', 'otter-blocks' ),
-										level: 3
-									}],
-									[ 'core/paragraph', { placeholder: __( 'This is is just a placeholder to help you visualise how the content is displayed in the flip box. Feel free to edit this with your actual content.', 'otter-blocks' ) }],
-									[ 'core/buttons', {
-										layout: { type: 'flex', justifyContent: 'center' }
-									}, [[ 'core/button', { className: 'is-style-fill', placeholder: __( 'Button text', 'otter-blocks' ) }]]]
-								]}
-							/>
-						</div>
+						<InnerBlocks
+							renderAppender={ isSelected ? InnerBlocks.DefaultBlockAppender : undefined }
+							template={[
+								[ 'core/heading', {
+									placeholder: __( 'Back title', 'otter-blocks' ),
+									level: 3
+								}],
+								[ 'core/paragraph', { placeholder: __( 'This is is just a placeholder to help you visualise how the content is displayed in the flip box. Feel free to edit this with your actual content.', 'otter-blocks' ) }],
+								[ 'core/buttons', {
+									layout: { type: 'flex', justifyContent: 'center' }
+								}, [[ 'core/button', { className: 'is-style-fill', placeholder: __( 'Button text', 'otter-blocks' ) }]]]
+							]}
+						/>
 					</div>
 				</div>
 
