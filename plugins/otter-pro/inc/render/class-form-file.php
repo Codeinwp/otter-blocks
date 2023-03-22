@@ -4,7 +4,7 @@
  *
  * @package ThemeIsle\OtterPro\Render
  */
- 
+
 namespace ThemeIsle\OtterPro\Render;
 
 use ThemeIsle\GutenbergBlocks\Pro;
