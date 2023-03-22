@@ -8,6 +8,7 @@
 namespace ThemeIsle\OtterPro\Render;
 
 use ThemeIsle\GutenbergBlocks\Pro;
+use ThemeIsle\OtterPro\Plugins\License;
 
 /**
  * Form_File_Block
@@ -25,7 +26,7 @@ class Form_File_Block {
 	 */
 	public function render( $attributes ) {
 
-		if ( ! Pro::is_pro_installed() || ! Pro::is_pro_active() ) {
+		if ( ! License::has_active_license() ) {
 			return '';
 		}
 

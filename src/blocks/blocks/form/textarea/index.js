@@ -7,6 +7,8 @@ import { registerBlockType } from '@wordpress/blocks';
 
 import { createBlock } from '@wordpress/blocks';
 
+import { omit } from 'lodash';
+
 /**
  * Internal dependencies
  */

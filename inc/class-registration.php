@@ -720,7 +720,6 @@ class Registration {
 			'form-nonce',
 			'form-textarea',
 			'form-multiple-choice',
-			'form-file',
 			'google-map',
 			'icon-list',
 			'icon-list-item',

@@ -2,10 +2,10 @@
 /**
  * Css handling logic for blocks.
  *
- * @package ThemeIsle\GutenbergBlocks\CSS\Blocks
+ * @package ThemeIsle\OtterPro\CSS\Blocks
  */
 
-namespace ThemeIsle\GutenbergBlocks\CSS\Blocks;
+namespace ThemeIsle\OtterPro\CSS\Blocks;
 
 use ThemeIsle\GutenbergBlocks\Base_CSS;
 
@@ -23,7 +23,7 @@ class Form_File_CSS extends Base_CSS {
 	public $block_prefix = 'form-file';
 
 	/**
-	 * Generate Form Multiple Choice CSS
+	 * Generate Form Field CSS
 	 *
 	 * @param mixed $block Block data.
 	 * @return string

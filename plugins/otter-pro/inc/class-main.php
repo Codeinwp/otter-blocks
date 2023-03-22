@@ -102,6 +102,7 @@ class Main {
 			'product-title',
 			'product-upsells',
 			'review-comparison',
+			'form-file',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
@@ -153,6 +154,7 @@ class Main {
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_Item_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Review_Comparison_CSS',
+			'\ThemeIsle\OtterPro\CSS\Blocks\Form_File_CSS',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
