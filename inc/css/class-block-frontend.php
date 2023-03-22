@@ -275,7 +275,8 @@ class Block_Frontend extends Base_CSS {
 				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
-				}
+				},
+				'the_content' === current_filter() ? PHP_INT_MAX : 10
 			);
 
 			return;
@@ -290,7 +291,8 @@ class Block_Frontend extends Base_CSS {
 				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
-				}
+				},
+				'the_content' === current_filter() ? PHP_INT_MAX : 10
 			);
 
 			return;
@@ -321,10 +323,16 @@ class Block_Frontend extends Base_CSS {
 				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
-				}
+				},
+				'the_content' === current_filter() ? PHP_INT_MAX : 10
 			);
 
 			$this->total_inline_size += (int) $file_size;
+			return;
+		}
+
+		if ( 'the_content' === current_filter() ) {
+			wp_enqueue_style( 'otter-' . $file_name, $file_url, array(), OTTER_BLOCKS_VERSION );
 			return;
 		}
 
@@ -649,60 +657,6 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function enqueue_assets() {
 		$posts = apply_filters( 'themeisle_gutenberg_blocks_enqueue_assets', array() );
-
-		$content_to_process = '';
-		$found_ids          = array();
-
-		add_filter(
-			'the_content',
-			function ( $content ) use ( &$content_to_process, &$found_ids ) {
-				// Check if $content contains an Otter Block.
-				if ( strpos( $content, 'wp:themeisle-blocks' ) !== false ) {
-
-					// Extract all ids for Otter blocks.
-					preg_match_all( '/id="wp-block-themeisle-blocks-([a-z0-9-]+)"/', $content, $matches );
-
-					$add_to_content = false;
-
-					// Add to content if there is any id that has not been processed.
-					foreach ( $matches[1] as $id ) {
-						if ( ! in_array( $id, $found_ids, true ) ) {
-							$found_ids[]    = $id;
-							$add_to_content = true;
-						}
-					}
-
-					if ( $add_to_content ) {
-						$content_to_process .= $content;
-					}
-				}
-				return $content;
-			},
-			0
-		);
-
-		add_action(
-			'wp_footer',
-			function () use ( &$content_to_process ) {
-				$blocks = parse_blocks( $content_to_process );
-
-				if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-					return '';
-				}
-
-				$animations = boolval( preg_match( '/\banimated\b/', $content_to_process ) );
-
-				$css = $this->cycle_through_blocks( $blocks, $animations );
-
-				// Add the CSS to the footer.
-				$style  = "\n" . '<style type="text/css" media="all" id="otter-neve-layout-solution">' . "\n";
-				$style .= $css;
-				$style .= "\n" . '</style>' . "\n";
-
-				echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			},
-			PHP_INT_MAX
-		);
 
 		if ( 0 < count( $posts ) ) {
 			foreach ( $posts as $post ) {
