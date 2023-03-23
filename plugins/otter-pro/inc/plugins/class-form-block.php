@@ -13,6 +13,7 @@ use ThemeIsle\GutenbergBlocks\Server\Form_Server;
 
 use WP_Error;
 use WP_HTTP_Response;
+use WP_Post;
 use WP_REST_Response;
 
 /**
@@ -31,6 +32,81 @@ class Form_Block {
 	 */
 	public function init() {
 		add_action( 'otter_form_after_submit', array( $this, 'send_autoresponder' ) );
+		add_action( 'admin_menu', array( $this, 'register_submenu_emails' ) );
+		add_action( 'init', array( $this, 'create_form_responses_type' ) );
+		add_action( 'add_meta_boxes', array( $this, 'create_form_responses_meta_box' ) );
+	}
+
+	/**
+	 * Register submenu page for emails storage.
+	 *
+	 * @return void
+	 */
+	public function register_submenu_emails() {
+		add_submenu_page(
+			'otter',
+			__( 'Settings', 'otter-blocks' ),
+			__( 'Settings', 'otter-blocks' ),
+			'manage_options',
+			'otter',
+			'',
+			0
+		);
+	}
+
+	/**
+	 * Create custom post type for form responses.
+	 *
+	 * @return void
+	 */
+	public function create_form_responses_type() {
+		register_post_type(
+			'otter_form_responses',
+			array(
+				'labels'          => array(
+					'name'          => esc_html_x( 'Form Responses', '', 'otter-blocks' ),
+					'singular_name' => esc_html_x( 'Form Response', '', 'otter-blocks' ),
+					'search_items'  => esc_html__( 'Search Form Responses', 'otter-blocks' ),
+					'all_items'     => esc_html__( 'Form Responses', 'otter-blocks' ),
+					'view_item'     => esc_html__( 'View Response', 'otter-blocks' ),
+					'update_item'   => esc_html__( 'Update Response', 'otter-blocks' ),
+				),
+				'description'     => __( 'Holds the data from the form submissions', 'otter-blocks' ),
+				'capabilities'    => array(
+					'create_posts' => 'do_not_allow',
+				),
+				'show_ui'         => true,
+				'show_in_menu'    => 'otter',
+				'show_in_rest'    => true,
+				'supports'        => array( 'custom-fields' ),
+			)
+		);
+	}
+
+	/**
+	 * Create meta box for form responses.
+	 *
+	 * @return void
+	 */
+	public function create_form_responses_meta_box() {
+		add_meta_box(
+			'otter_form_responses',
+			__( 'Form Response', 'otter-blocks' ),
+			array( $this, 'render_form_responses_meta_box' ),
+			'otter_form_responses',
+			'normal',
+			'high'
+		);
+	}
+
+	/**
+	 * Render meta box for form responses.
+	 *
+	 * @param WP_Post $post The post object.
+	 * @return void
+	 */
+	public function render_form_responses_meta_box( $post ) {
+
 	}
 
 	/**
