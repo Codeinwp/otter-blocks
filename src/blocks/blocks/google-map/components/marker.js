@@ -21,8 +21,7 @@ import { useRef } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import MarkerEditor from './marker-editor.js';
-
+import { RichTextEditor } from '../../../components';
 const Marker = ({
 	marker,
 	isOpen,
@@ -141,7 +140,7 @@ const Marker = ({
 					onChange={ e => changeMarkerProp( marker.id, 'title', e ) }
 				/>
 
-				<MarkerEditor
+				<RichTextEditor
 					label={ __( 'Description', 'otter-blocks' ) }
 					type="text"
 					value={ marker.description }
