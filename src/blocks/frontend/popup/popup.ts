@@ -13,7 +13,7 @@ class PopupBlock {
 		const { dismiss, anchor } = element.dataset;
 
 		if ( this.isItemDismissed() && dismiss && ! anchor && ! Boolean( window.themeisleGutenberg?.isPreview ) ) {
-			return ;
+			return;
 		}
 
 		this.canLock = Boolean( this.element.dataset.lockScrolling );
@@ -32,11 +32,7 @@ class PopupBlock {
 	isDisabled() {
 		const { disableOn } = this.element.dataset;
 
-		if ( 'mobile' === disableOn && window.matchMedia( '(max-width: 600px)' ).matches ) {
-			return true;
-		}
-
-		return false;
+		return 'mobile' === disableOn && window.matchMedia( '(max-width: 600px)' ).matches;
 	}
 
 	openModal() {
@@ -44,7 +40,6 @@ class PopupBlock {
 		this.happened = true;
 
 		this.lockScrolling();
-
 	}
 
 	closeModal() {
@@ -136,11 +131,16 @@ class PopupBlock {
 			return false;
 		}
 
-		const buttons = document.querySelectorAll( `a[href='#${ anchor }']` );
+		const buttons = document.querySelectorAll( `a[href='#${ anchor }'], #${ anchor }` );
 
 		buttons.forEach( ( button ) => {
 			button.addEventListener( 'click', ( e ) => {
-				e.preventDefault();
+
+				// do not prevent default if href is a URL
+				if ( ( e.target as HTMLAnchorElement )?.href === `#${ anchor }` ) {
+					e.preventDefault();
+				}
+
 				this.openModal();
 			});
 		});
@@ -208,11 +208,16 @@ class PopupBlock {
 			return false;
 		}
 
-		const buttons = document.querySelectorAll( `a[href='#${ anchorclose }']` );
+		const buttons = document.querySelectorAll( `a[href='#${ anchorclose }'], #${ anchorclose }` );
 
 		buttons.forEach( ( button ) => {
 			button.addEventListener( 'click', ( e ) => {
-				e.preventDefault();
+
+				// do not prevent default if href is a URL
+				if ( ( e.target as HTMLAnchorElement )?.href === `#${ anchorclose }` ) {
+					e.preventDefault();
+				}
+
 				this.closeModal();
 			});
 		});
