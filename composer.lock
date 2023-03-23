@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7fce04b8252778f3e28dbe4bfc0564b2",
+    "content-hash": "5ad9b7b02f2c660f3f9a58f7751b83a1",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -170,16 +170,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v10.4.0",
+            "version": "v10.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "87def896d9a2e2914871408277d67432cb112f71"
+                "reference": "2c641079093167c2e448d82bd0bd02160e20fec1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/87def896d9a2e2914871408277d67432cb112f71",
-                "reference": "87def896d9a2e2914871408277d67432cb112f71",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/2c641079093167c2e448d82bd0bd02160e20fec1",
+                "reference": "2c641079093167c2e448d82bd0bd02160e20fec1",
                 "shasum": ""
             },
             "require": {
@@ -225,9 +225,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v10.4.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v10.10.0"
             },
-            "time": "2023-01-19T19:18:38+00:00"
+            "time": "2023-03-17T01:59:34+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
@@ -2027,16 +2027,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.6.2",
+            "version": "3.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "5e4e71592f69da17871dba6e80dd51bce74a351a"
+                "reference": "ed8e00df0a83aa96acf703f8c2979ff33341f879"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/5e4e71592f69da17871dba6e80dd51bce74a351a",
-                "reference": "5e4e71592f69da17871dba6e80dd51bce74a351a",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/ed8e00df0a83aa96acf703f8c2979ff33341f879",
+                "reference": "ed8e00df0a83aa96acf703f8c2979ff33341f879",
                 "shasum": ""
             },
             "require": {
@@ -2072,14 +2072,15 @@
             "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
             "keywords": [
                 "phpcs",
-                "standards"
+                "standards",
+                "static analysis"
             ],
             "support": {
                 "issues": "https://github.com/squizlabs/PHP_CodeSniffer/issues",
                 "source": "https://github.com/squizlabs/PHP_CodeSniffer",
                 "wiki": "https://github.com/squizlabs/PHP_CodeSniffer/wiki"
             },
-            "time": "2021-12-12T21:44:58+00:00"
+            "time": "2023-02-22T23:07:41+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
