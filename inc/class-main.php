@@ -47,7 +47,7 @@ class Main {
 			function ( $compatibilities ) {
 				$compatibilities['OtterBlocksPRO'] = array(
 					'basefile'  => defined( 'OTTER_PRO_BASEFILE' ) ? OTTER_PRO_BASEFILE : '',
-					'required'  => '2.2',
+					'required'  => '2.0',
 					'tested_up' => '2.2',
 				);
 				return $compatibilities;
