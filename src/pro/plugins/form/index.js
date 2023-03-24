@@ -4,10 +4,12 @@
 import { __ } from '@wordpress/i18n';
 import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
+	Button,
+	Modal,
 	TextControl
 } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
-import { Fragment } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -15,9 +17,42 @@ import { Fragment } from '@wordpress/element';
 import { Notice } from '../../../blocks/components';
 import { RichTextEditor } from '../../../blocks/components';
 
+const AutoresponderBody = ({ autoresponderBody, setFormOption }) => {
+	const [ isOpen, setOpen ] = useState( false );
+	const onChange = value => {
+		setFormOption({ autoresponderBody: value });
+	};
+
+	return (
+		<>
+			{ isOpen && (
+				<Modal
+					title={ __( 'Autoresponder Body' ) }
+					onRequestClose={() => setOpen( false )}
+					shouldCloseOnClickOutside={ false }
+				>
+					<RichTextEditor
+						value={ autoresponderBody }
+						onChange={ onChange }
+						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
+						allowRawHTML
+					/>
+				</Modal>
+			) }
+			<br/>
+			<Button
+				variant="secondary"
+				onClick={() => setOpen( true )}
+			>
+				{ __( 'Add Autoresponder Body', 'otter-blocks' ) }
+			</Button>
+		</>
+	);
+};
+
 const FormOptions = ( Options, formOptions, setFormOption ) => {
 	return (
-		<Fragment>
+		<>
 			{ Options }
 
 			<ToolsPanelItem
@@ -26,7 +61,7 @@ const FormOptions = ( Options, formOptions, setFormOption ) => {
 				onDeselect={ () => setFormOption({ autoresponderSubject: undefined, autoresponderBody: undefined }) }
 			>
 				{ Boolean( window.otterPro.isActive ) ? (
-					<Fragment>
+					<>
 						<TextControl
 							label={ __( 'Autoresponder Subject', 'otter-blocks' ) }
 							placeholder={ __( 'Confirmation of your subscription', 'otter-blocks' ) }
@@ -35,14 +70,11 @@ const FormOptions = ( Options, formOptions, setFormOption ) => {
 							help={ __( 'Enter the subject of the autoresponder email.', 'otter-blocks' ) }
 						/>
 
-						<RichTextEditor
-							label={ __( 'Autoresponder Body', 'otter-blocks' ) }
-							value={ formOptions.autoresponderBody }
-							onChange={ autoresponderBody => setFormOption({ autoresponderBody }) }
-							help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
-							allowRawHTML
+						<AutoresponderBody
+							autoresponderBody={ formOptions.autoresponderBody }
+							setFormOption={ setFormOption }
 						/>
-					</Fragment>
+					</>
 				) : (
 					<div>
 						<Notice
@@ -52,7 +84,7 @@ const FormOptions = ( Options, formOptions, setFormOption ) => {
 					</div>
 				) }
 			</ToolsPanelItem>
-		</Fragment>
+		</>
 	);
 };
 
