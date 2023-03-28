@@ -219,9 +219,9 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 
 			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
 				<ToolsPanelItem
-					hasValue={ () => undefined !== formOptions.autoresponderSubject && undefined !== formOptions.autoresponderBody }
+					hasValue={ () => false }
 					label={ __( 'Autoresponder (Pro)', 'otter-blocks' ) }
-					onDeselect={ () => setFormOption({ autoresponderSubject: undefined, autoresponderBody: undefined }) }
+					onDeselect={ () => {} }
 				>
 					<TextControl
 						label={ __( 'Autoresponder Subject', 'otter-blocks' ) }
@@ -246,7 +246,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 
 					<div>
 						<Notice
-							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'popup-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
 							variant="upsell"
 						/>
 						<p className="description">{ __( 'Automatically send follow-up emails to your users with the Autoresponder feature.', 'otter-blocks' ) }</p>

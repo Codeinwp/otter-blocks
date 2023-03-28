@@ -57,6 +57,18 @@ const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
 
+const formOptionsMap = {
+	email: 'emailTo',
+	redirectLink: 'redirectLink',
+	emailSubject: 'subject',
+	submitMessage: 'submitMessage',
+	errorMessage: 'errorMessage',
+	fromName: 'fromName',
+	cc: 'cc',
+	bcc: 'bcc',
+	autoresponder: 'autoresponder'
+};
+
 /**
  * Form component
  * @param {import('./type').FormProps} props
@@ -117,8 +129,7 @@ const Edit = ({
 		apiKey: undefined,
 		cc: undefined,
 		bcc: undefined,
-		autoresponderSubject: undefined,
-		autoresponderBody: undefined
+		autoresponder: undefined
 	});
 
 	const {
@@ -254,8 +265,7 @@ const Edit = ({
 			listId: wpOptions?.integration?.listId,
 			action: wpOptions?.integration?.action,
 			hasCaptcha: wpOptions?.hasCaptcha,
-			autoresponderSubject: wpOptions?.autoresponder?.subject,
-			autoresponderBody: wpOptions?.autoresponder?.body
+			autoresponder: wpOptions?.autoresponder
 		});
 	};
 
@@ -308,47 +318,28 @@ const Edit = ({
 			let hasUpdated = false;
 
 			emails?.forEach( ({ form }, index ) => {
-				if ( form === attributes.optionName ) {
-					hasUpdated = (
-						emails[index].email !== formOptions.emailTo ||
-						emails[index].redirectLink !== formOptions.redirectLink ||
-						emails[index].emailSubject !== formOptions.subject ||
-						emails[index].submitMessage !== formOptions.submitMessage ||
-						emails[index].errorMessage !== formOptions.errorMessage ||
-						emails[index].fromName !== formOptions.fromName ||
-						emails[index].cc !== formOptions.cc ||
-						emails[index].bcc !== formOptions.bcc ||
-						emails[index].autoresponder.subject !== formOptions.autoresponderSubject ||
-						emails[index].autoresponder.body !== formOptions.autoresponderBody
-					);
-
-					// Update the values
-					emails[index].email = formOptions.emailTo;
-					emails[index].redirectLink = formOptions.redirectLink;
-					emails[index].emailSubject = formOptions.subject;
-					emails[index].submitMessage = formOptions.submitMessage;
-					emails[index].errorMessage = formOptions.errorMessage;
-					emails[index].fromName = formOptions.fromName;
-					emails[index].cc = formOptions.cc;
-					emails[index].bcc = formOptions.bcc;
-					emails[index].autoresponder = { subject: formOptions.autoresponderSubject, body: formOptions.autoresponderBody };
-					isMissing = false;
+				if ( form !== attributes.optionName ) {
+					return;
 				}
+
+				hasUpdated = Object.keys( formOptionsMap ).reduce( ( acc, key ) => {
+					return acc || ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]);
+				}, false );
+
+				// Update the values
+				Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
+
+				isMissing = false;
 			});
 
 			if ( isMissing ) {
-				emails.push({
-					form: attributes.optionName,
-					email: formOptions.emailTo,
-					fromName: formOptions.fromName,
-					redirectLink: formOptions.redirectLink,
-					emailSubject: formOptions.subject,
-					submitMessage: formOptions.submitMessage,
-					errorMessage: formOptions.errorMessage,
-					cc: formOptions.cc,
-					bcc: formOptions.bcc,
-					autoresponder: formOptions.autoresponder
+				const data = { form: attributes.optionName };
+
+				Object.keys( formOptionsMap ).forEach( key => {
+					data[key] = formOptions[formOptionsMap[key]];
 				});
+
+				emails.push( data );
 			}
 
 			if ( isMissing || hasUpdated ) {

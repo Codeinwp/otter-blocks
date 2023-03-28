@@ -17,10 +17,10 @@ import { useState } from '@wordpress/element';
 import { Notice } from '../../../blocks/components';
 import { RichTextEditor } from '../../../blocks/components';
 
-const AutoresponderBody = ({ autoresponderBody, setFormOption }) => {
+const AutoresponderBody = ({ formOptions, setFormOption }) => {
 	const [ isOpen, setOpen ] = useState( false );
-	const onChange = value => {
-		setFormOption({ autoresponderBody: value });
+	const onChange = body => {
+		setFormOption({ autoresponder: { ...formOptions.autoresponder, body }});
 	};
 
 	return (
@@ -32,7 +32,7 @@ const AutoresponderBody = ({ autoresponderBody, setFormOption }) => {
 					shouldCloseOnClickOutside={ false }
 				>
 					<RichTextEditor
-						value={ autoresponderBody }
+						value={ formOptions.autoresponder?.body }
 						onChange={ onChange }
 						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
 						allowRawHTML
@@ -56,22 +56,22 @@ const FormOptions = ( Options, formOptions, setFormOption ) => {
 			{ Options }
 
 			<ToolsPanelItem
-				hasValue={ () => undefined !== formOptions.autoresponderSubject && undefined !== formOptions.autoresponderBody }
+				hasValue={ () => undefined !== formOptions.autoresponder?.subject || undefined !== formOptions.autoresponder?.body }
 				label={ __( 'Autoresponder', 'otter-blocks' ) }
-				onDeselect={ () => setFormOption({ autoresponderSubject: undefined, autoresponderBody: undefined }) }
+				onDeselect={ () => setFormOption({ autoresponder: undefined }) }
 			>
 				{ Boolean( window.otterPro.isActive ) ? (
 					<>
 						<TextControl
 							label={ __( 'Autoresponder Subject', 'otter-blocks' ) }
 							placeholder={ __( 'Confirmation of your subscription', 'otter-blocks' ) }
-							value={ formOptions.autoresponderSubject }
-							onChange={ autoresponderSubject => setFormOption({ autoresponderSubject }) }
+							value={ formOptions.autoresponder?.subject }
+							onChange={ subject => setFormOption({ autoresponder: { ...formOptions.autoresponder, subject }}) }
 							help={ __( 'Enter the subject of the autoresponder email.', 'otter-blocks' ) }
 						/>
 
 						<AutoresponderBody
-							autoresponderBody={ formOptions.autoresponderBody }
+							formOptions={ formOptions }
 							setFormOption={ setFormOption }
 						/>
 					</>
