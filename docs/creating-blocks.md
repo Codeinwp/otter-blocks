@@ -38,3 +38,40 @@ To add content you will usually have those files:
 Pro feature need to be separated from the free version if it is possible. This is to make sure that the free version is not bloated with unnecessary code. The pro version will be loaded only if the user has the pro version of the plugin.
 
 Pro block are added in `./src/blocks/pro/`. The folder structure is the same as the free version.
+
+Some blocks are hybrid, free to use but with limited functionality (e.g.: Sticky, Popup). The pro features are added via JS WP hooks (in a style similar to the one from PHP). Learn more about them [here](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-hooks/).
+
+You need to be careful with using `useSelect` or `useDispatch` hooks inside a function that is a part of the filter. As mentioned in [Handbook](./handbook.md), use `console.count` to check how many times the function is called. Sometime we had unpleasant surprise when we found out that the function is called multiple times: [#799](https://github.com/Codeinwp/otter-blocks/issues/799).
+
+## Testing/Quality
+
+A good block has the following qualities:
+- It works as expected.
+- It does not break the editor.
+- It does not create performance issues.
+- Works well with other blocks if it is the case.
+
+To assert the quality of the block, have in sight those things:
+- It works with the minimum supported version of WordPress. (Sometimes, the supported version will be raised just to enable some new approach for an easy implementation of a feature, make sure to talk with the manager about this to be sure, otherwise you will probably re-implement the block if you find it to late).
+- It looks OK with other themes. We target Neve and WP default theme, but you should check with other popular themes since they may add some extra CSS property that might break the layout.
+- It works on environments that it is supposed to work: Full Side Editing Editor, Site Editor, Widgets Editor, Custom Neve Layouts, etc.
+
+Users want simple things from the block:
+- It should be easy to use.
+- It should be easy to understand.
+- It should to the job that is supposed to do (this will be very subjective if the indent of the block is not crystal clear).
+- It should not break their work. (Suppose you are a writer, you work 3 hours on a post and you add a block that breaks the layout the content is not saved, you will be very angry -- your are suppose to ease/add value to their work.).
+
+## Future Proof Block
+
+A future proof block is a block that will not break if the user updates the plugin. This is important because we want to make sure that the user will not lose the content if he updates the plugin. The same goes in reverse, if the user rolls back to an older version of the plugin, the block should not break.
+
+The pain point of this is the definition of the attributes, if you have an attributes that is initially a string and later you need an array, you will need to migrate the data. But it will create a problem if the user rolls back to an older version of the plugin since the old version might delete the new format of the data.
+
+For this to happen, you need to discuss with the manager about the attributes and how they will be used. If you are not sure, you can always ask for help. Sometime not even the team or manager can not be sure about it.
+
+The following question can help you to decide if the block is future proof: If tomorrow I will add more on this attribute, that will be the least painful data structure to work with it?
+
+Example: Suppose you have a simple boolean attribute called `save`. If true, the data will be saved on the database. But you think that data can be saved on multiple location: on disk, on cloud, etc. So instead of boolean, you can make it to a string that can have the following values: `database`, `disk`, `cloud`. You can also think that the data can be saved on multiple location at the same time. So you can make it to an array of strings. But this all can be done with a special string like `database,disk,cloud` or `database-disk-cloud`. You can propose those to the manager and team to decide which one is the best. But make sure that the decision is also best for you since you will be the one that will implement it and fix it if something goes wrong (some folks call this _ownership_).
+
+In a nutshell, the block is nice to be (backward compatible)[https://en.wikipedia.org/wiki/Backward_compatibility] with as many version possible since its creation.
