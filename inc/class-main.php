@@ -42,17 +42,6 @@ class Main {
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
 		}
 
-		add_filter(
-			'themeisle_sdk_compatibilities/' . OTTER_BLOCKS_BASEFILE,
-			function ( $compatibilities ) {
-				$compatibilities['OtterBlocksPRO'] = array(
-					'basefile'  => defined( 'OTTER_PRO_BASEFILE' ) ? OTTER_PRO_BASEFILE : '',
-					'required'  => '2.0',
-					'tested_up' => OTTER_PRO_VERSION,
-				);
-				return $compatibilities;
-			}
-		);
 	}
 
 	/**
