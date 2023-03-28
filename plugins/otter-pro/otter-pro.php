@@ -120,7 +120,7 @@ add_filter(
 		$compatibilities['OtterBlocks'] = array(
 			'basefile'  => defined( 'OTTER_BLOCKS_BASEFILE' ) ? OTTER_BLOCKS_BASEFILE : '',
 			'required'  => '2.0',
-			'tested_up' => '2.2',
+			'tested_up' => OTTER_BLOCKS_VERSION,
 		);
 		return $compatibilities;
 	}
