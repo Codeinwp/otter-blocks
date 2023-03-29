@@ -248,7 +248,7 @@ class Form_Server {
 				do_action( 'otter_form_after_submit', $form_data );
 			} else {
 				$res->set_code( Form_Data_Response::ERROR_BOT_DETECTED );
-			}       
+			}
 		} catch ( Exception $e ) {
 			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
@@ -728,10 +728,11 @@ class Form_Server {
 	 * Get the first email from the input's form.
 	 *
 	 * @param Form_Data_Request $data The form data.
+	 *
 	 * @return mixed|string
 	 * @since 2.0.3
 	 */
-	private function get_email_from_form_input( Form_Data_Request $data ) {
+	public function get_email_from_form_input( Form_Data_Request $data ) {
 		$inputs = $data->get_payload_field( 'formInputsData' );
 		if ( is_array( $inputs ) ) {
 			foreach ( $data->get_payload_field( 'formInputsData' ) as $input_field ) {

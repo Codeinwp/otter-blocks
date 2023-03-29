@@ -79,6 +79,18 @@ export const unescapeHTML = value => {
 };
 
 /**
+ * Decode HTML entities.
+ * @param value
+ * @returns {string}
+ */
+export const decodeHTMLEntities = value => {
+	const textArea = document.createElement( 'textarea' );
+	textArea.innerHTML = value;
+
+	return textArea.value;
+};
+
+/**
  * Format the date.
  *
  * @param {Date} date
