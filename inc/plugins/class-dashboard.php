@@ -47,7 +47,7 @@ class Dashboard {
 			$otter_icon
 		);
 
-		add_action( 'admin_print_scripts-' . $page_hook_suffix, array( $this, 'enqueue_options_assets' ) );
+		add_action( "admin_print_scripts-{$page_hook_suffix}", array( $this, 'enqueue_options_assets' ) );
 	}
 
 	/**

@@ -21,14 +21,6 @@ class Form_Submissions_List_Table extends WP_List_Table {
 	private $post_type = 'otter_form_record';
 
 	/**
-	 * Test.
-	 *
-	 * @var array[] $example_data Example data for the table.
-	 */
-	public $example_data = array();
-
-
-	/**
 	 * Get columns.
 	 */
 	public function get_columns() {
@@ -50,7 +42,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 	public function prepare_items() {
 		$status = ( isset( $_REQUEST['status'] ) ) ? $_REQUEST['status'] : 'all';
 
-		if ( ! in_array( $status, array( 'all', 'unread', 'read' ), true ) ) {
+		if ( ! in_array( $status, array( 'all', 'unread', 'read', 'trash' ), true ) ) {
 			$status = 'all';
 		}
 
@@ -69,13 +61,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			'offset'         => $start,
 			'post_type'      => $this->post_type,
 			'posts_per_page' => $per_page,
-			'meta_query' => array(
-				array(
-					'key'     => 'otter_form_record_meta',
-					'value'   => substr( serialize( array( 'read' => $status === 'read' ) ), 5, -1 ),
-					'compare' => 'LIKE',
-				),
-			),
+			'post_status'    => $status === 'all' ? array( 'read', 'unread' ) : $status
 		);
 
 		$this->items = $this->get_form_records( $args );
@@ -83,6 +69,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			array(
 				'post_type'      => $this->post_type,
 				'posts_per_page' => -1,
+				'post_status'    => $status === 'all' ? array( 'read', 'unread' ) : $status,
 			)
 		);
 
@@ -118,59 +105,100 @@ class Form_Submissions_List_Table extends WP_List_Table {
 	 */
 	public function column_default( $item, $column_name ) {
 		$column_value = $item[ $column_name ];
+		$status       = get_post_status( $item['ID'] );
 
 		switch ( $column_name ) {
+			case 'email':
+				$del_nonce = esc_html( '_wpnonce=' . wp_create_nonce( 'trash-otter-form-record_' . $item['ID'] ) );
+
+				$actions = array();
+
+				if ( $status !== 'trash' ) {
+					$actions['view'] = sprintf(
+							'<a href="%s">%s</a>',
+							get_edit_post_link( $item['ID'] ),
+							__( 'View' )
+					);
+
+					$actions['trash'] = sprintf(
+						'<a href="?&action=%s&post_id=%s&%s">%s</a>',
+						'trash_otter_form_record',
+						$item['ID'],
+						$del_nonce,
+						__( 'Trash', 'otter-blocks' )
+					);
+				} else {
+					$actions['untrash'] = sprintf(
+						'<a href="?&action=%s&post_id=%s&%s">%s</a>',
+						'untrash_otter_form_record',
+						$item['ID'],
+						$del_nonce,
+						__( 'Restore', 'otter-blocks' )
+					);
+
+					$actions['delete'] = sprintf(
+						'<a href="?&action=%s&post_id=%s&%s">%s</a>',
+						'delete_otter_form_record',
+						$item['ID'],
+						$del_nonce,
+						__( 'Delete Permanently', 'otter-blocks' )
+					);
+				}
+
+				if ( $status === 'unread' ) {
+					$actions['read'] = sprintf(
+						'<a href="?&action=%s&post_id=%s&%s">%s</a>',
+						'read_otter_form_record',
+						$item['ID'],
+						$del_nonce,
+						__( 'Mark as Read', 'otter-blocks' )
+					);
+				} else {
+					$actions['unread'] = sprintf(
+						'<a href="?&action=%s&post_id=%s&%s">%s</a>',
+						'unread_otter_form_record',
+						$item['ID'],
+						$del_nonce,
+						__( 'Mark as Unread', 'otter-blocks' )
+					);
+				}
+
+				$column_value = $this->format_based_on_status( sprintf( '<a href="mailto:%1$s">%1$s</a>', $item['email'] ), $status ) . $this->row_actions( $actions );
+				break;
 			case 'form':
-				$column_value = sprintf(
-					'<a href="%s">%s</a>',
-					$item['postUrl'],
-					$item['form']
+				$column_value = $this->format_based_on_status(
+					sprintf(
+						'<a href="%1$s">%2$s</a>',
+						esc_url( $item['postUrl'] ),
+						$item['form']
+					),
+					$status
 				);
 				break;
 			case 'postUrl':
 				$title = url_to_postid( $item['postUrl'] ) ? get_the_title( url_to_postid( $item['postUrl'] ) ) : $item['postUrl'];
-				$column_value = sprintf(
-					'<a href="%s">%s</a>',
-					$item['postUrl'],
-					$title
+				$column_value = $this->format_based_on_status(
+					sprintf(
+						'<a href="%s">%s</a>',
+						esc_url( $item['postUrl'] ),
+						$title
+					),
+					$status
 				);
 				break;
 			case 'date':
-				$column_value = wp_date( get_option('date_format') . ' ' . get_option( 'time_format' ), $item['date'] );
+				$column_value = $this->format_based_on_status(
+					wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $item['date'] ),
+					$status
+				);
 				break;
 			case 'ID':
+				$column_value = $this->format_based_on_status( $item['ID'], $status );
 				break;
 		}
 
-		return ( ! $item['read'] ? '<strong>' : '' ) . $column_value . ( ! $item['read'] ? '</strong>' : '' );
+		return $column_value;
 	}
-
-	/**
-	 * Column email.
-	 *
-	 * @param array $item Item.
-	 *
-	 * @return string
-	 */
-	public function column_email( $item ) {
-		$actions = array(
-			'delete' => sprintf( '<a href="?page=%s&action=%s&otter_form_record=%s">%s</a>', $_REQUEST['page'], 'delete', $item['ID'], __( 'Delete', 'otter-blocks' ) ),
-			'view'   => sprintf(
-				'<a href="%s">%s</a>',
-				get_edit_post_link( $item['ID'] ),
-				__( 'View' )
-			),
-		);
-
-		return sprintf(
-			'%1$s<a href="mailto:%2$s">%2$s</a>%3$s %4$s',
-			! $item['read'] ? '<strong>' : '',
-			$item['email'],
-			! $item['read'] ? '</strong>' : '',
-			$this->row_actions( $actions )
-		);
-	}
-
 
 	/**
 	 * Get bulk actions.
@@ -238,7 +266,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 		$status_links = array(
 			'all' => array(
 				'url'     => $url,
-				'label'   => __( 'All', 'otter-blocks' ) . ' <span class="count">(' . $this->get_number_of_form_records() . ')</span>',
+				'label'   => __( 'All', 'otter-blocks' ) . ' <span class="count">(' . $this->get_number_of_form_records( array( 'unread', 'read' ) ) . ')</span>',
 				'current' => empty( $current_status ),
 			),
 			'unread' => array(
@@ -250,10 +278,27 @@ class Form_Submissions_List_Table extends WP_List_Table {
 				'url'     => add_query_arg( 'status', 'read', $url ),
 				'label'   => __( 'Read', 'otter-blocks' ) . ' <span class="count">(' . $this->get_number_of_form_records( 'read' ) . ')</span>',
 				'current' => 'read' === $current_status,
-			),
+			)
 		);
 
+		$trashed_records = $this->get_number_of_form_records( 'trash' );
+		if ( $trashed_records ) {
+			$status_links['trash'] = array(
+				'url'     => add_query_arg( 'status', 'trash', $url ),
+				'label'   => __( 'Trash', 'otter-blocks' ) . ' <span class="count">(' . $trashed_records . ')</span>',
+				'current' => 'trash' === $current_status,
+			);
+		}
+
 		return $this->get_views_links( $status_links );
+	}
+
+	private function format_based_on_status( $content, $status ) {
+		if ( 'unread' === $status ) {
+			return '<strong>' . $content . '</strong>';
+		}
+
+		return $content;
 	}
 
 	/**
@@ -264,24 +309,14 @@ class Form_Submissions_List_Table extends WP_List_Table {
 	 * @return int
 	 */
 	protected function get_number_of_form_records( $status = 'all' ) {
-		$args       = array();
-		$read_value = substr( serialize( array( 'read' => $status === 'read' ) ), 5, -1 );
-
-		if ( 'all' !== $status ) {
-			$args = array(
-				'meta_query' => array(
-					array(
-						'key'     => 'otter_form_record_meta',
-						'value'   => $read_value,
-						'compare' => 'LIKE',
-					),
-				),
-				'post_type'      => $this->post_type,
-				'posts_per_page' => -1,
-			);
-		}
+		$args = array(
+			'post_type'      => $this->post_type,
+			'posts_per_page' => -1,
+			'post_status'    => $status,
+		);
 
 		$records = $this->get_form_records( $args );
+
 		return count( $records );
 	}
 
@@ -293,7 +328,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 	private function get_form_records( $args = array() ) {
 		if ( empty( $args ) ) {
 			$args = array(
-				'post_type' => 'otter_form_record',
+				'post_type'      => $this->post_type,
 				'posts_per_page' => -1,
 			);
 		}
