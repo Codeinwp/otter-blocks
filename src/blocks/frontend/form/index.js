@@ -25,6 +25,7 @@ const extractFormFields = form => {
 	[ ...inputs, ...textarea ]?.forEach( input => {
 		const label = input.querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML;
 		const valueElem = input.querySelector( '.otter-form-input, .otter-form-textarea-input' );
+		const { id } = input;
 
 		// TODO: use checkbox in the future versions
 		const checked = input.querySelector( '.otter-form-input[type="checkbox"]' )?.checked;
@@ -35,10 +36,11 @@ const extractFormFields = form => {
 
 		if ( label && valueElem?.value ) {
 			formFieldsData.push({
-				label: label,
 				value: valueElem?.value,
 				type: valueElem?.type,
-				checked: checked
+				label,
+				checked,
+				id
 			});
 		}
 	});

@@ -1,8 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
-
 import { BaseControl } from '@wordpress/components';
 
 import { useInstanceId } from '@wordpress/compose';
@@ -12,11 +10,19 @@ import {
 	useRef
 } from '@wordpress/element';
 
-const MarkerEditor = ({
+/**
+ * Internal dependencies
+ */
+import { decodeHTMLEntities } from '../../helpers/helper-functions';
+
+const RichTextEditor = ({
+	label,
 	value,
-	onChange
+	onChange,
+	help = '',
+	allowRawHTML = false
 }) => {
-	const instanceId = useInstanceId( MarkerEditor );
+	const instanceId = useInstanceId( RichTextEditor );
 
 	useEffect( () => {
 		const settings = {
@@ -25,13 +31,21 @@ const MarkerEditor = ({
 			toolbar1: 'formatselect,bold,italic,bullist,numlist,alignleft,aligncenter,alignright,link,unlink,spellchecker,wp_add_media'
 		};
 
+		// Disable forced p tags if raw HTML is allowed.
+		if ( allowRawHTML ) {
+			settings.force_p_newlines = false; // eslint-disable-line camelcase
+			settings.forced_root_block = ''; // eslint-disable-line camelcase
+		}
+
 		wp.oldEditor.initialize( editorRef.current.id, {
 			tinymce: { ...settings }
 		});
 
 		const editor = window.tinymce.get( editorRef.current.id );
 
-		editor.on( 'change', () => onChange( editor.getContent() ) );
+		editor.on( 'change', () => {
+			onChange( allowRawHTML ? decodeHTMLEntities( editor.getContent() ) : editor.getContent() );
+		});
 
 		return () => editorRef?.current?.id !== undefined ? wp.oldEditor.remove( editorRef.current.id ) : undefined;
 	}, []);
@@ -45,7 +59,8 @@ const MarkerEditor = ({
 	return (
 		<BaseControl
 			id={ id }
-			label={ __( 'Description', 'otter-blocks' ) }
+			label={ label }
+			help={ help }
 		>
 			<textarea
 				id={ id }
@@ -59,4 +74,4 @@ const MarkerEditor = ({
 	);
 };
 
-export default MarkerEditor;
+export default RichTextEditor;
