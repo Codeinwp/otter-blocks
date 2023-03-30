@@ -81,32 +81,26 @@ class Form_Block_Emails_Storing {
 				'description'  => __( 'Holds the data from the form submissions', 'otter-blocks' ),
 				'show_ui'      => false,
 				'show_in_rest' => true,
-				'supports'     => array( 'title' ),
-				'capabilities' => array(
-					'create_posts'           => false,
-					'edit_published_posts'   => false,
-					'delete_published_posts' => false,
-				),
-				'map_meta_cap' => true,
+				'supports'     => array(),
 			)
 		);
 
 		register_post_status( 'read', array(
-			'label'                     => _x( 'Read', 'post' ),
+			'label'                     => _x( 'Read', 'post', 'otter-blocks' ),
 			'public'                    => true,
 			'exclude_from_search'       => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Read (%s)', 'Unread (%s)' ),
+			'label_count'               => _n_noop( 'Read (%s)', 'Unread (%s)', 'otter-blocks' ),
 		) );
 
 		register_post_status( 'unread', array(
-			'label'                     => _x( 'Unread', 'post' ),
+			'label'                     => _x( 'Unread', 'post', 'otter-blocks' ),
 			'public'                    => true,
 			'exclude_from_search'       => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Unread (%s)', 'Unread (%s)' ),
+			'label_count'               => _n_noop( 'Unread (%s)', 'Unread (%s)', 'otter-blocks' ),
 		) );
 	}
 
@@ -136,10 +130,9 @@ class Form_Block_Emails_Storing {
 		}
 
 		$meta = array(
-			'email'   => $email,
-			'form'    => substr( $form_data->get_payload_field( 'formId' ), -8 ),
-			'postUrl' => $form_data->get_payload_field( 'postUrl' ),
-			'date'    => get_the_date( 'U', $post_id ),
+			'email'    => $email,
+			'form'     => $form_data->get_payload_field( 'formId' ),
+			'post_url' => $form_data->get_payload_field( 'postUrl' ),
 		);
 
 		$form_inputs = $form_data->get_form_inputs();
@@ -262,24 +255,22 @@ class Form_Block_Emails_Storing {
 	 * Render form submissions page.
 	 */
 	public function render_form_submissions_page() {
+		$records = new Form_Submissions_List_Table();
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
 			<hr class="wp-header-end">
 			<?php
-			$records = new Form_Submissions_List_Table();
 			$records->prepare_items();
 			?>
-			<form method="get">
+			<form id="posts-filter" method="get">
 				<input type="hidden" name="page" value="otter-form-submissions" />
 				<?php
 				$records->search_box( '', 'otter-form-record' );
+				$records->views();
+				$records->display();
 				?>
 			</form>
-			<?php
-			$records->views();
-			$records->display();
-			?>
 		</div>
 		<?php
 	}
