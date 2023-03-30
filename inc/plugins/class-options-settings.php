@@ -294,6 +294,12 @@ class Options_Settings {
 							if ( isset( $item['bcc'] ) ) {
 								$item['bcc'] = sanitize_text_field( $item['bcc'] );
 							}
+							if ( isset( $item['autoresponder']['body'] ) ) {
+								$item['autoresponder']['body'] = wp_kses( $item['autoresponder']['body'], $this::get_allowed_mail_html() );
+							}
+							if ( isset( $item['autoresponder']['subject'] ) ) {
+								$item['autoresponder']['subject'] = sanitize_text_field( $item['autoresponder']['subject'] );
+							}
 							if ( isset( $item['submitMessage'] ) ) {
 								$item['submitMessage'] = sanitize_text_field( $item['submitMessage'] );
 							}
@@ -352,6 +358,17 @@ class Options_Settings {
 								),
 								'bcc'           => array(
 									'type' => 'string',
+								),
+								'autoresponder' => array(
+									'type'       => 'object',
+									'properties' => array(
+										'subject' => array(
+											'type' => 'string',
+										),
+										'body'    => array(
+											'type' => 'string',
+										),
+									),
 								),
 								'integration'   => array(
 									'type'       => 'object',
@@ -461,6 +478,24 @@ class Options_Settings {
 		$post_type_object->template = array(
 			array( 'themeisle-blocks/advanced-columns', $attributes ),
 		);
+	}
+
+	/**
+	 * Get allowed HTML for mail body.
+	 *
+	 * @static
+	 * @access public
+	 * @return array
+	 */
+	public static function get_allowed_mail_html() {
+		$allowed_html = wp_kses_allowed_html( 'post' );
+
+		$not_allowed_tags = array( 'input', 'label', 'form', 'select', 'textarea', 'button', 'fieldset', 'legend', 'datalist', 'output', 'option', 'optgroup', 'video', 'audio' );
+		foreach ( $not_allowed_tags as $tag ) {
+			unset( $allowed_html[ $tag ] );
+		}
+
+		return $allowed_html;
 	}
 
 	/**

@@ -15,7 +15,7 @@ $base-index: 99999 !default;
 	--width-tablet: var(--width);
 	--width-mobile: var(--width-tablet);
 
-	--height: fit-content;
+	--height: auto;
 	--height-tablet: var(--height);
 	--height-mobile: var(--height-tablet);
 
@@ -99,6 +99,11 @@ $base-index: 99999 !default;
 		max-height: 75vh;
 		overflow: auto;
 		height: 100%;
+		min-height: 70px; // For Safari.
+
+		@media (max-width: 600px) {
+			padding-top: 20px;
+		}
 
 		&::-webkit-scrollbar {
 			display: none;
@@ -115,6 +120,10 @@ $base-index: 99999 !default;
 		display: flex;
 		justify-content: flex-end;
 		padding-bottom: 20px;
+
+		@media (max-width: 600px) {
+			padding-bottom: 0px;
+		}
 
 		button {
 			background-color: transparent !important;
@@ -170,6 +179,10 @@ $base-index: 99999 !default;
 		}
 	}
 
+	&> .block-editor-block-variation-picker .block-editor-block-variation-picker__variations .components-button {
+		box-shadow: unset;
+		margin-bottom: 0px;
+	}
 }
 
 .o-lock-body {

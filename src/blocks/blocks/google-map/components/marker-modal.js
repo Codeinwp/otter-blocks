@@ -22,7 +22,7 @@ import {
 /**
  * Internal dependencies
  */
-import MarkerEditor from './marker-editor.js';
+import { RichTextEditor } from '../../../components';
 
 const MarkerModal = ({
 	marker,
@@ -122,7 +122,7 @@ const MarkerModal = ({
 				onChange={ setTitle }
 			/>
 
-			<MarkerEditor
+			<RichTextEditor
 				label={ __( 'Description', 'otter-blocks' ) }
 				type="text"
 				value={ description }

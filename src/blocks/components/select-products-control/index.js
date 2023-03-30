@@ -4,8 +4,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { isEmpty } from 'lodash';
-
 import {
 	Placeholder,
 	SelectControl,
@@ -28,12 +26,12 @@ const SelectProducts = ({
 
 		const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
 
-		const error = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', { per_page: -1 });
+		const error = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', { per_page: 0 });
 
 		if ( error ) {
 			status = 'error';
 		} else {
-			results = 'error' === status ? [] : ( select( COLLECTIONS_STORE_KEY ).getCollection?.( '/wc/store', 'products', { per_page: -1 }) ?? [])?.map( result => ({
+			results = 'error' === status ? [] : ( select( COLLECTIONS_STORE_KEY ).getCollection?.( '/wc/store', 'products', { per_page: 0 }) ?? [])?.map( result => ({
 				value: result.id,
 				label: decodeEntities( result.name )
 			}) );
@@ -51,7 +49,7 @@ const SelectProducts = ({
 		return {
 			results,
 			status,
-			isLoading: select( COLLECTIONS_STORE_KEY ).isResolving( 'getCollection', [ '/wc/store', 'products', { per_page: -1 }])
+			isLoading: select( COLLECTIONS_STORE_KEY ).isResolving( 'getCollection', [ '/wc/store', 'products', { per_page: 0 }])
 		};
 	}, []);
 
