@@ -47,7 +47,7 @@ To add a new condition outside Otter context (e.g.: making a custom plugin for e
 
 Dynamic Content is a feature that allows you to change the content of the block using conditions. It works similar to Dynamic Block Conditions, but instead of hiding the block, it changes the content of the block.
 
-In a page, you can active this by inserting the trigger `%` and then select what content do you want to add.
+In a page, you can active this by inserting the trigger `%` and then select what content you want to add.
 
 The workflow is similar with Block Conditions, but instead of checking if the block has an established attribute, we look for a _magic tag_ like `<o-dynamic`. The idea is: in the page we put a marker (or _magic tag_) indicating the place we want to add the content, when a user request the page, we replace the marker with the wanted content.
 

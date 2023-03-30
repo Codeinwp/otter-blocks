@@ -1,12 +1,23 @@
 # Gutenberg Blocks
+ 
+Otter Blocks
+- [Environment installation](environment.md)	
+- [Handbook](handbook.md)
+- [Project Structure](project-structure.md)
+- [Creating a new block](creating-blocks.md)
+- [Form Workflow](form-block-workflow.md)
+- [Dynamic Conditions and Content](dynamic-conditions-and-content.md)
+- [Sticky Block](sticky-blocks.md)
+- [Copy/Paste Block Style](copy-paste.md)
+- [WooCommerce Extensions](woocommerce-extensions.md)
+- [Live Search](live-search.md)
+- [Testing Cheatsheet](testing-cheatsheet.md)
+- [Unit Testing & E2E](uniit-and-e2e-testing.md)
+
+Other
 
 - [Creating Blocks for Gutenberg](blocks/index.md)
-
-- [Testing Cheatsheet](testing-cheatsheet.md)
-
-- [Copy/Paste Block Style](copy-paste.md)
-
-- [Blocks](blocks.md)
+- [Blocks Basics](blocks.md)
 	- [Registration](blocks.md#registration)
 	- [Server-side Rendering](blocks.md#server-side-rendering)
 	- [Custom CSS & Google Fonts](blocks.md#custom-css--google-fonts)
