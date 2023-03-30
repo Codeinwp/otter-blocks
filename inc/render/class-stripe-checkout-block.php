@@ -49,6 +49,14 @@ class Stripe_Checkout_Block {
 
 		$product = $stripe->create_request( 'product', $attributes['product'] );
 
+		if ( is_wp_error( $product ) ) {
+			return sprintf(
+				'<div %1$s><div class="o-stripe-checkout">%2$s</div></div>',
+				get_block_wrapper_attributes(),
+				__( 'An error occurred! Could not retrieve product information!', 'otter-blocks' )
+			);
+		}
+
 		$details_markup = '';
 
 		if ( 0 < count( $product['images'] ) ) {
@@ -56,6 +64,14 @@ class Stripe_Checkout_Block {
 		}
 
 		$price = $stripe->create_request( 'price', $attributes['price'] );
+
+		if ( is_wp_error( $price ) ) {
+			return sprintf(
+				'<div %1$s><div class="o-stripe-checkout">%2$s</div></div>',
+				get_block_wrapper_attributes(),
+				__( 'An error occurred! Could not retrieve the price of the product!', 'otter-blocks' )
+			);
+		}
 
 		$currency = Review_Block::get_currency( $price['currency'] );
 		$amount   = number_format( $price['unit_amount'] / 100, 2, '.', ' ' );
@@ -72,7 +88,7 @@ class Stripe_Checkout_Block {
 				'stripe_session_id' => '{CHECKOUT_SESSION_ID}',
 				'product_id'        => $attributes['product'],
 			),
-			get_permalink() 
+			get_permalink()
 		);
 
 		$session = $stripe->create_request(
