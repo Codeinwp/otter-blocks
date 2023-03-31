@@ -7,7 +7,6 @@
 
 namespace ThemeIsle\OtterPro\Render;
 
-use ThemeIsle\GutenbergBlocks\Pro;
 use ThemeIsle\OtterPro\Plugins\License;
 
 /**
