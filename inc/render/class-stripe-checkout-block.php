@@ -106,7 +106,11 @@ class Stripe_Checkout_Block {
 			)
 		);
 
-		$button_markup = '<a href="' . esc_url( $session->url ) . '">' . __( 'Checkout', 'otter-blocks' ) . '</a>';
+		if ( is_wp_error( $session ) ) {
+			$button_markup = '<a>' . __( 'The product can not be purchased anymore.', 'otter-blocks' ) . '</a>';
+		} else {
+			$button_markup = '<a href="' . esc_url( $session->url ) . '">' . __( 'Checkout', 'otter-blocks' ) . '</a>';
+		}
 
 		return sprintf(
 			'<div %1$s><div class="o-stripe-checkout">%2$s</div>%3$s</div>',
