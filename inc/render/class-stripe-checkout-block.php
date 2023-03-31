@@ -53,7 +53,7 @@ class Stripe_Checkout_Block {
 			return sprintf(
 				'<div %1$s><div class="o-stripe-checkout">%2$s</div></div>',
 				get_block_wrapper_attributes(),
-				__( 'An error occurred! Could not retrieve product information!', 'otter-blocks' )
+				__( 'An error occurred! Could not retrieve product information!', 'otter-blocks' ) . $this->format_error( $product )
 			);
 		}
 
@@ -69,7 +69,7 @@ class Stripe_Checkout_Block {
 			return sprintf(
 				'<div %1$s><div class="o-stripe-checkout">%2$s</div></div>',
 				get_block_wrapper_attributes(),
-				__( 'An error occurred! Could not retrieve the price of the product!', 'otter-blocks' )
+				__( 'An error occurred! Could not retrieve the price of the product!', 'otter-blocks' ) . $this->format_error( $price )
 			);
 		}
 
@@ -107,7 +107,7 @@ class Stripe_Checkout_Block {
 		);
 
 		if ( is_wp_error( $session ) ) {
-			$button_markup = '<a>' . __( 'The product can not be purchased anymore.', 'otter-blocks' ) . '</a>';
+			$button_markup = '<a>' . __( 'The product can not be purchased anymore.', 'otter-blocks' ) . $this->format_error( $session ) . '</a>';
 		} else {
 			$button_markup = '<a href="' . esc_url( $session->url ) . '">' . __( 'Checkout', 'otter-blocks' ) . '</a>';
 		}
@@ -118,5 +118,17 @@ class Stripe_Checkout_Block {
 			$details_markup,
 			$button_markup
 		);
+	}
+
+	/**
+	 * Format the error message.
+	 *
+	 * @param \WP_Error $error The error.
+	 * @return string
+	 */
+	private function format_error( $error ) {
+		return defined( 'WP_DEBUG' ) && WP_DEBUG ? (
+			'<span><strong>' . __( 'Error message: ', 'otter-blocks' ) . '</strong> ' . $error->get_error_message() . '</span>'
+		) : '';
 	}
 }
