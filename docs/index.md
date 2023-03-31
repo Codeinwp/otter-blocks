@@ -12,6 +12,7 @@ Otter Blocks
 - [WooCommerce Extensions](woocommerce-extensions.md)
 - [Live Search](live-search.md)
 - [Testing Cheatsheet](testing-cheatsheet.md)
+- [Testing Checklist](testing-checklist.md)
 - [Unit Testing & E2E](uniit-and-e2e-testing.md)
 
 Other
