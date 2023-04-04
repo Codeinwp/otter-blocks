@@ -122,7 +122,30 @@ class Form_Email {
 		$content            = '';
 		$attachment_links   = '';
 
-		foreach ( $email_form_content as $input ) {
+		$fields = array();
+
+		foreach ( $email_form_content as $index => $input ) {
+			// If the current position from 'metadata' is different from the previous one, then we have a new field.
+			if (
+				0 === $index ||
+				(
+					isset( $input['metadata']['position'] ) &&
+					isset( $email_form_content[ $index - 1 ]['metadata']['position'] ) &&
+					$email_form_content[ $index - 1 ]['metadata']['position'] !== $input['metadata']['position']
+				)
+			) {
+				$fields[] = array(
+					'label' => $input['label'],
+					'value' => $input['value'],
+				);
+			} else {
+				// Otherwise is the same as the previous one, then we have the same field.
+				// Add the value to the last field from the $fields array.
+				$fields[ count( $fields ) - 1 ]['value'] .= ', ' . $input['value'];
+			}
+		}
+
+		foreach ( $fields as $input ) {
 			$content .= sprintf( '<tr><td><strong>%s:</strong> %s</td></tr>', $input['label'], $input['value'] );
 		}
 

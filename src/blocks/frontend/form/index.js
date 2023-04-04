@@ -31,17 +31,25 @@ const getFormFieldInputs = ( form ) => {
  * Get the fields with their value from the form.
  *
  * @param {HTMLDivElement} form The form.
- * @returns
+ * @returns {Promise<{formFieldsData: import('./types').FormFieldData[]}>}
  */
 const extractFormFields = async( form ) => {
 
+	/** @type {(formFieldsData: Array.<import('./types').FormFieldData>) => Array.<import('./types').FormFieldData>} */
+	const orderFieldsByPosition = ( formFieldsData ) => {
+		return formFieldsData.sort( ( a, b ) => {
+			if ( a.metadata?.position && b.metadata?.position ) {
+				return a.metadata.position - b.metadata.position;
+			}
+
+			return 0;
+		});
+	};
+
 	return new Promise( resolve => {
 
-		/** @type {Array.<HTMLDivElement>} */
-		const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href }];
-
-		/** @type {Array.<HTMLDivElement>} */
-		const innerForms = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form' ) ];
+		/** @type {Array.<import('./types').FormFieldData>} */
+		const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href, metadata: { position: 0 }}];
 
 		/**
 		 * Remove the field from the inner forms.
@@ -87,20 +95,21 @@ const extractFormFields = async( form ) => {
 									name: files[i].name,
 									size: files[i].size,
 									data: reader.result,
-									fieldOptionName: fileInput?.dataset?.fieldOptionName
+									fieldOptionName: fileInput?.dataset?.fieldOptionName,
+									position: index + 1
 								}
 							});
 							currentLoaded++;
 
 							if ( currentLoaded === fieldsToLoad ) {
-								resolve({ formFieldsData });
+								resolve({ formFieldsData: orderFieldsByPosition( formFieldsData ) });
 							}
 						};
 
 						reader.readAsDataURL( files[i]);
 					}
 				} else if ( select ) {
-					value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => l ).join( ', ' );
+					value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => Boolean( l ) ).join( ', ' );
 					fieldType = 'multiple-choice';
 				} else {
 					const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
@@ -114,7 +123,10 @@ const extractFormFields = async( form ) => {
 				formFieldsData.push({
 					label: label,
 					value: value,
-					type: valueElem?.type
+					type: fieldType,
+					metadata: {
+						position: index + 1
+					}
 				});
 			}
 		});
