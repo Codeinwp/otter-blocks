@@ -1,5 +1,3 @@
-// @ts-check
-
 /**
  * WordPress dependencies
  */
@@ -21,11 +19,11 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
-import { Fragment, useContext } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../../../blocks/blocks/form/common';
 import { Notice } from '../../../blocks/components';
 import { setUtm } from '../../../blocks/helpers/helper-functions';
-import { FormContext } from '../../../blocks/blocks/form/edit';
+import { dispatch } from '@wordpress/data';
 
 
 const ProPreview = ({ attributes }) => {
@@ -115,9 +113,11 @@ const Inspector = ({
 	clientId
 }) => {
 
-	const {
-		selectForm
-	} = useContext( FormContext );
+	// FormContext is not available here. This is a workaround.
+	const selectForm = () => {
+		const formParentId = Array.from( document.querySelectorAll( `.wp-block-themeisle-blocks-form:has(#block-${clientId})` ) )?.pop()?.dataset?.block;
+		dispatch( 'core/block-editor' ).selectBlock( formParentId );
+	};
 
 	return (
 		<InspectorControls>
