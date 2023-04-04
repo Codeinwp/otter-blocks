@@ -42,7 +42,7 @@ const Inspector = ({
 				<SelectControl
 					label={ __( 'Field Type', 'otter-blocks' ) }
 					value={ 'textarea' }
-					options={ fieldTypesOptions }
+					options={ fieldTypesOptions() }
 					onChange={ type => {
 						if ( 'textarea' === type ) {
 							return;

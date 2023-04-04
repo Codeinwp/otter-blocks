@@ -29,7 +29,7 @@ export type FormInputCommonProps = {
 	helpText: string
 }
 
-export const fieldTypesOptions = [
+export const fieldTypesOptions = () => ([
 	{
 		label: __( 'Checkbox', 'otter-blocks' ),
 		value: 'checkbox'
@@ -70,7 +70,7 @@ export const fieldTypesOptions = [
 		label: __( 'Url', 'otter-blocks' ),
 		value: 'url'
 	}
-];
+]);
 
 export const switchFormFieldTo = ( type?: string, clientId ?:string, attributes?: any ) => {
 

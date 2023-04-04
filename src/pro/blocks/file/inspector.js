@@ -135,7 +135,7 @@ const Inspector = ({
 				<SelectControl
 					label={ __( 'Field Type', 'otter-blocks' ) }
 					value={ attributes.type }
-					options={ fieldTypesOptions }
+					options={ fieldTypesOptions() }
 					onChange={ type => {
 						if ( 'file' !== type ) {
 							switchFormFieldTo( type, clientId, attributes );
