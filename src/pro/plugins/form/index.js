@@ -12,7 +12,8 @@ const fileTypeSuggestions = [
 	'image/*',
 	'audio/*',
 	'video/*',
-	'.jpg, .jpeg',
+	'image/jpeg',
+	'.jpeg',
 	'.png',
 	'.gif',
 	'.pdf',
@@ -50,6 +51,14 @@ const fileTypeSuggestions = [
 	'.mkv'
 ];
 
+const replaceJPGWithJPEG = fileType => {
+	if ( 'image/jpg' === fileType || '.jpg' === fileType ) {
+		return 'image/jpeg';
+	}
+
+	return fileType;
+};
+
 const FormFileInspector = ( Template, {
 	attributes,
 	setAttributes
@@ -81,15 +90,15 @@ const FormFileInspector = ( Template, {
 				label={ __( 'Max File Size in MB', 'otter-blocks' ) }
 				type="number"
 				value={ parseInt( attributes.maxFileSize ) }
-				onChange={ maxFileSize => setAttributes({ maxFileSize: maxFileSize?.toString() }) }
+				onChange={ maxFileSize => setAttributes({ maxFileSize: maxFileSize?.toString(), hasChanged: true }) }
 				help={ __( 'You may need to contact your hosting provider to increase file sizes.', 'otter-blocks' ) }
 			/>
 
 			<FormTokenField
 				label={ __( 'Allowed File Types', 'otter-blocks' ) }
 				value={ attributes.allowedFileTypes }
-				onChange={ allowedFileTypes => setAttributes({ allowedFileTypes }) }
-				help={ __( 'Add the allowed files types that can be loaded. E.g.: .png, .mp4, .jpg, .zip, .pdf. Attention: The host provider might not allow to saving of all type of files.', 'otter-blocks' ) }
+				onChange={ allowedFileTypes => setAttributes({ allowedFileTypes: allowedFileTypes.map( replaceJPGWithJPEG ), hasChanged: true }) }
+				help={ __( 'Add the allowed files types that can be loaded. E.g.: .png, .mp4, .jpeg, .zip, .pdf. Attention: The host provider might not allow to saving of all type of files.', 'otter-blocks' ) }
 				suggestions={ fileTypeSuggestions }
 			/>
 
@@ -109,7 +118,7 @@ const FormFileInspector = ( Template, {
 			<ToggleControl
 				label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
 				checked={ attributes.multipleFiles }
-				onChange={ multipleFiles => setAttributes({ multipleFiles }) }
+				onChange={ multipleFiles => setAttributes({ multipleFiles, hasChanged: true }) }
 			/>
 
 			{
@@ -117,8 +126,8 @@ const FormFileInspector = ( Template, {
 					<TextControl
 						label={ __( 'Maximum number of files', 'otter-blocks' ) }
 						type="number"
-						value={ parseInt( attributes.maxFilesNumber ) ?? 10 }
-						onChange={ maxFilesNumber => setAttributes({ maxFilesNumber: maxFilesNumber?.toString() }) }
+						value={ attributes.maxFilesNumber  ?? 10 }
+						onChange={ maxFilesNumber => setAttributes({ maxFilesNumber: maxFilesNumber?.toString(), hasChanged: true }) }
 					/>
 				)
 			}
@@ -127,7 +136,7 @@ const FormFileInspector = ( Template, {
 				label={ __( 'Save to Media Library', 'otter-blocks' ) }
 				help={ __( 'If enabled, the files will be saved to Media Library instead of adding them as attachments to email.', 'otter-blocks' ) }
 				checked={ 'media-library' === attributes.saveFiles }
-				onChange={ value => setAttributes({ saveFiles: value ? 'media-library' : undefined }) }
+				onChange={ value => setAttributes({ saveFiles: value ? 'media-library' : undefined, hasChanged: true }) }
 			/>
 		</Fragment>
 	);

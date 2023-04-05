@@ -79,7 +79,7 @@ const ProPreview = ({ attributes }) => {
 						<TextControl
 							label={ __( 'Maximum number of files', 'otter-blocks' ) }
 							type="number"
-							value={ attributes.maxFilesNumber }
+							value={ attributes.maxFilesNumber ?? 10 }
 							onChange={ () => {} }
 						/>
 					)

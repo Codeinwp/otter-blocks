@@ -86,36 +86,43 @@ class Form_Pro_Features {
 
 			if ( ! $form_data->has_error() ) {
 				foreach ( $inputs as $input ) {
+
+					$field_option_name = null;
+
+					if ( isset( $input['metadata']['fieldOptionName'] ) ) {
+						$field_option_name = $input['metadata']['fieldOptionName'];
+					}
+
 					if (
 						\ThemeIsle\GutenbergBlocks\Integration\Form_Utils::is_file_field( $input ) &&
-						isset( $input['metadata']['fieldOptionName'] ) &&
-						$form_data->has_field_option( $input['metadata']['fieldOptionName'] )
+						isset( $field_option_name )
 					) {
 
-						$field_option = $form_data->get_field_option( $input['metadata']['fieldOptionName'] );
-						$file_data    = $input['metadata']['data'];
+						$field_option = $form_data->get_field_option( $field_option_name );
+
+						if ( is_null( $field_option ) ) {
+							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_MISSING_FILE_FIELD_OPTION );
+							break;
+						}
+
+						$file_data = $input['metadata']['data'];
 
 						// Check the mime type from the data encoding.
-						$p1        = strpos( $file_data, 'data:' );
-						$p2        = strpos( $file_data, ';base64' );
+						$p1 = strpos( $file_data, 'data:' );
+						$p2 = strpos( $file_data, ';base64' );
+
 						$mime_type = substr( $file_data, $p1 + 5, $p2 - $p1 - 5 );
+						$mime_type = sanitize_mime_type( $mime_type );
 
 						$form_files_ext = $field_option->get_option( 'allowedFileTypes' );
 
 						if ( ! empty( $form_files_ext ) ) {
 							$has_valid_extension = false;
-							foreach ( $form_files_ext as $ext ) {
 
-								// Clean up the extension. '.png, .jpg, image/*' => ['png', 'jpg', 'image/'].
-								$ext = trim( $ext );
-								$ext = str_replace( '.', '', $ext );
-								$ext = str_replace( '*', '', $ext );
-								$ext = strtolower( $ext );
+							$mime_match = wp_match_mime_types( $form_files_ext, $mime_type );
 
-								if ( strpos( $mime_type, $ext ) !== false ) {
-									$has_valid_extension = true;
-									break;
-								}
+							if ( 0 < count( $mime_match ) ) {
+								$has_valid_extension = true;
 							}
 
 							if ( ! $has_valid_extension ) {
@@ -125,7 +132,7 @@ class Form_Pro_Features {
 						}
 
 						$allowed_mime_types = get_allowed_mime_types();
-						if ( ! in_array( $mime_type, $allowed_mime_types, true ) ) {
+						if ( 0 === count( wp_match_mime_types( $allowed_mime_types, $mime_type ) ) ) {
 							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP );
 							break;
 						}
@@ -156,9 +163,9 @@ class Form_Pro_Features {
 					$file = \ThemeIsle\GutenbergBlocks\Integration\Form_Utils::save_file_from_field( $field );
 
 					if ( $file['success'] ) {
-						$field_option = $form_data->get_field_option( $input['metadata']['fieldOptionName'] );
+						$field_option = $form_data->get_field_option( $field['metadata']['fieldOptionName'] );
 						$saved_file   = $field_option->get_option( 'saveFiles' );
-						if ( isset( $saved_file ) && ! empty( $saved_file ) ) {
+						if ( ! empty( $saved_file ) ) {
 							$file['file_location_slug'] = $field_option->get_option( 'saveFiles' );
 						}
 						$saved_files[] = $file;

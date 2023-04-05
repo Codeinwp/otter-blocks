@@ -55,7 +55,6 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const blockProps = useBlockProps();
-
 	const [ getOption, updateOption, status ] = useSettings();
 
 	useEffect( () => {
@@ -71,29 +70,21 @@ const Edit = ({
 				return;
 			}
 
-			const isChanged = (
-				-1 !== fieldIndex && (
-					fieldOptions[fieldIndex]?.options?.allowedFileTypes?.length !== attributes.allowedFileTypes?.length ||
-					fieldOptions[fieldIndex]?.options?.maxFileSize !== attributes.maxFileSize ||
-					fieldOptions[fieldIndex]?.options?.saveFiles !== attributes.saveFiles ||
-					fieldOptions[fieldIndex]?.options?.maxFilesNumber !== attributes.maxFilesNumber
-				) ||
-				-1 === fieldIndex
-			);
+			const isChanged = attributes.hasChanged || -1 === fieldIndex;
 
 			if ( isChanged ) {
 				if ( -1 !== fieldIndex ) {
 					fieldOptions[fieldIndex].options.allowedFileTypes = attributes.allowedFileTypes;
 					fieldOptions[fieldIndex].options.maxFileSize = attributes.maxFileSize;
 					fieldOptions[fieldIndex].options.saveFiles = attributes.saveFiles;
-					fieldOptions[fieldIndex].options.maxFilesNumber = attributes.maxFilesNumber;
+					fieldOptions[fieldIndex].options.maxFilesNumber = Boolean( attributes.multipleFiles ) ? ( attributes.maxFileSize ?? 10 ) : undefined;
 				} else {
 					fieldOptions.push({
 						fieldOptionName: attributes.fieldOptionName,
 						fieldOptionType: 'file',
 						options: {
 							allowedFileTypes: attributes.allowedFileTypes,
-							maxFileSize: attributes.maxFileSize,
+							maxFileSize: Boolean( attributes.multipleFiles ) ? ( attributes.maxFileSize ?? 10 ) : undefined,
 							saveFiles: attributes.saveFiles,
 							maxFilesNumber: attributes.maxFilesNumber
 						}
@@ -101,9 +92,10 @@ const Edit = ({
 				}
 
 				updateOption( 'themeisle_blocks_form_fields_option', fieldOptions, __( 'Field settings saved.', 'otter-blocks' ), 'field-option' );
+				setAttributes({ hasChanged: false });
 			}
 		}
-	}, [ attributes.fieldOptionName, attributes.allowedFileTypes, attributes.maxFileSize, attributes.saveFiles, status ]);
+	}, [ attributes.fieldOptionName, attributes.allowedFileTypes, attributes.maxFileSize, attributes.saveFiles, attributes.hasChanged, status ]);
 
 	return (
 		<Fragment>

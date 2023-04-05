@@ -1,8 +1,7 @@
-import {
-	BlockProps,
-	InspectorProps
-} from '../../../helpers/blocks';
-import { FormInputCommonProps } from '../common';
+
+import { FormInputCommonProps } from '../../../blocks/blocks/form/common';
+import { BlockProps, InspectorProps } from '../../../blocks/helpers/blocks';
+
 
 type Attributes = FormInputCommonProps & {
 	type: string
@@ -13,6 +12,7 @@ type Attributes = FormInputCommonProps & {
 	fieldOptionName: string
 	maxFilesNumber: number
 	saveFiles: string
+	hasChanged: boolean
 }
 
 export type FormFileProps = BlockProps<Attributes>

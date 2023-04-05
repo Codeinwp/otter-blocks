@@ -28,6 +28,7 @@ class Form_Data_Response {
 	const ERROR_FILE_UPLOAD_TYPE_WP          = '13';
 	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER = '14';
 	const ERROR_FILE_UPLOAD_MAX_SIZE         = '15';
+	const ERROR_MISSING_FILE_FIELD_OPTION    = '16';
 
 	// Request validation errors.
 	const ERROR_MISSING_DATA          = '101';
@@ -305,6 +306,7 @@ class Form_Data_Response {
 			self::ERROR_MISSING_CAPTCHA                    => __( 'Captcha token is missing.', 'otter-blocks' ),
 			self::ERROR_MISSING_EMAIL                      => __( 'Missing email field in form.', 'otter-blocks' ),
 			self::ERROR_MISSING_NONCE                      => __( 'Missing CSRF protection in form.', 'otter-blocks' ),
+			self::ERROR_MISSING_FILE_FIELD_OPTION          => __( 'The File Field is not registered. Please check the field in Editor.', 'otter-blocks' ),
 			self::ERROR_FORM_ID_INVALID                    => __( 'Form ID is invalid.', 'otter-blocks' ),
 			self::ERROR_EMAIL_NOT_SEND                     => __( 'Email could not be send. Might be an error with the service.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_KEY               => __( 'Invalid service authentication credentials.', 'otter-blocks' ),
