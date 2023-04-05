@@ -38,7 +38,7 @@ class Main {
 		add_action( 'init', array( $this, 'after_update_migration' ) );
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
-			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
+			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ), PHP_INT_MAX ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
 		}
 	}
@@ -368,9 +368,22 @@ class Main {
 	 * @access public
 	 */
 	public function allow_meme_types( $mimes ) {
-		$mimes['json']   = 'application/json';
-		$mimes['lottie'] = 'application/zip';
-		$mimes['svg']    = 'image/svg+xml';
+		if ( ! isset( $mimes['json'] ) ) {
+			$mimes['json'] = 'application/json';
+		}
+
+		if ( ! isset( $mimes['lottie'] ) ) {
+			$mimes['lottie'] = 'application/zip';
+		}
+
+		if ( ! isset( $mimes['svg'] ) ) {
+			$mimes['svg'] = 'image/svg+xml';
+		}
+
+		if ( ! isset( $mimes['svgz'] ) ) {
+			$mimes['svgz'] = 'image/svg+xml';
+		}
+
 		return $mimes;
 	}
 
