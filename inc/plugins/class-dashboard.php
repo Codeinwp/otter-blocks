@@ -8,6 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Pro;
+use function Sodium\add;
 
 /**
  * Class Dashboard
@@ -27,6 +28,8 @@ class Dashboard {
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
+		add_action( 'admin_notices', array( $this, 'maybe_add_otter_banner' ), 30 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_form_records_style' ) );
 	}
 
 	/**
@@ -48,6 +51,27 @@ class Dashboard {
 		);
 
 		add_action( "admin_print_scripts-{$page_hook_suffix}", array( $this, 'enqueue_options_assets' ) );
+
+		remove_menu_page( 'edit.php?post_type=otter_form_record' );
+		add_submenu_page(
+			'otter',
+			__( 'Settings', 'otter-blocks' ),
+			__( 'Settings', 'otter-blocks' ),
+			'manage_options',
+			'otter',
+			'',
+			0
+		);
+
+		add_submenu_page(
+			'otter',
+			__( 'Form Submissions', 'otter-blocks' ),
+			__( 'Form Submissions', 'otter-blocks' ),
+			'manage_options',
+			'edit.php?post_type=otter_form_record',
+			'',
+			100
+		);
 	}
 
 	/**
@@ -130,6 +154,13 @@ class Dashboard {
 		exit;
 	}
 
+	public function maybe_add_otter_banner() {
+		$screen = get_current_screen();
+		if ( 'edit-otter_form_record' === $screen->id ) {
+			$this->the_otter_banner();
+		}
+	}
+
 	/**
 	 * Whether to show the feedback notice or not.
 	 *
@@ -139,6 +170,30 @@ class Dashboard {
 		$installed = get_option( 'otter_blocks_install' );
 
 		return ! empty( $installed ) && $installed < strtotime( '-5 days' );
+	}
+
+	/**
+	 * The top Otter banner.
+	 *
+	 * @return void
+	 */
+	private function the_otter_banner() {
+		?>
+		<style>
+			#screen-options-link-wrap {
+				display: none;
+			}
+		</style>
+		<div class="otter-banner" style="display: flex; background: #fff; padding: 10px 35px; margin-left: -20px">
+			<div class="otter-banner__image">
+				<img src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ); ?>" alt="<?php esc_attr_e( 'Otter Blocks', 'otter-blocks' ); ?>" style="width: 90px">
+			</div>
+			<div class="otter-banner__content" style="display: flex; justify-content: space-between; flex-wrap: wrap; align-content: center; width: 100%; margin-left: 10px">
+				<h1 class="otter-banner__title"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
+				<span class="otter-banner__version" style="align-self: center"><?php echo esc_html( 'v' . OTTER_BLOCKS_VERSION ); ?></span>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**

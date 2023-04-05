@@ -26,7 +26,6 @@ class Form_Block_Emails_Storing {
 	 */
 	public function init() {
 		add_action( 'init', array( $this, 'create_form_records_type' ) );
-		add_action( 'admin_menu', array( $this, 'register_submenu_emails' ), 100 );
 		add_action( 'otter_form_after_submit', array( $this, 'store_form_record' ) );
 		add_action( 'load-edit.php', array( $this, 'add_form_records_list_table' ), 100 );
 
@@ -49,35 +48,6 @@ class Form_Block_Emails_Storing {
 		if ( 'edit-otter_form_record' === $screen->id ) {
 			add_action( 'admin_notices', array( $this, 'render_form_submissions_page' ), 100 );
 		}
-	}
-
-	/**
-	 * Register submenu page for emails storage.
-	 *
-	 * @return void
-	 */
-	public function register_submenu_emails() {
-		remove_menu_page( 'edit.php?post_type=otter_form_record' );
-
-		add_submenu_page(
-			'otter',
-			__( 'Settings', 'otter-blocks' ),
-			__( 'Settings', 'otter-blocks' ),
-			'manage_options',
-			'otter',
-			'',
-			0
-		);
-
-		add_submenu_page(
-			'otter',
-			__( 'Form Submissions', 'otter-blocks' ),
-			__( 'Form Submissions', 'otter-blocks' ),
-			'manage_options',
-			'edit.php?post_type=otter_form_record',
-			'',
-			100
-		);
 	}
 
 	/**
@@ -334,8 +304,6 @@ class Form_Block_Emails_Storing {
 		$records = new Form_Submissions_List_Table();
 		?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
-			<hr class="wp-header-end">
 			<?php
 			$records->prepare_items();
 			?>
