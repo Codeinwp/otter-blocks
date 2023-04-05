@@ -1,11 +1,15 @@
 <?php
 /**
- * Form Response List Table for the otter_form_response custom post type.
+ * Form Submissions List Table for the otter_form_record custom post type.
  *
  * @package ThemeIsle\OtterPro\Plugins
  */
 
 namespace ThemeIsle\OtterPro\Plugins\Form;
+
+if ( ! class_exists( 'WP_List_Table' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
 
 use WP_List_Table;
 
@@ -13,13 +17,6 @@ use WP_List_Table;
  * Class Form_Submissions_List_Table.
  */
 class Form_Submissions_List_Table extends WP_List_Table {
-	/**
-	 * The custom post type of the form records.
-	 *
-	 * @var string
-	 */
-	private $post_type = 'otter_form_record';
-
 	/**
 	 * Form_Submissions_List_Table constructor.
 	 */
@@ -41,7 +38,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 	public function prepare_items() {
 		$status = ( isset( $_REQUEST['status'] ) ) ? $_REQUEST['status'] : 'all';
 
-		if ( ! in_array( $status, array( 'all', 'unread', 'read', 'trash' ), true ) ) {
+		if ( ! in_array( $status, array( 'all', 'unread', 'read', 'trash', 'draft' ), true ) ) {
 			$status = 'all';
 		}
 
@@ -58,7 +55,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			'orderby'        => $orderby,
 			'order'          => $order,
 			'offset'         => $start,
-			'post_type'      => $this->post_type,
+			'post_type'      => $this->_args['singular'],
 			'posts_per_page' => $per_page,
 			'post_status'    => $status === 'all' ? array( 'read', 'unread' ) : $status
 		);
@@ -67,7 +64,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 		$total_items = $this->get_form_records(
 			array(
 				's'              => $search,
-				'post_type'      => $this->post_type,
+				'post_type'      => $this->_args['singular'],
 				'posts_per_page' => -1,
 				'post_status'    => $status === 'all' ? array( 'read', 'unread' ) : $status,
 			)
@@ -80,8 +77,6 @@ class Form_Submissions_List_Table extends WP_List_Table {
 				'per_page'    => $per_page,
 			)
 		);
-
-		$this->process_bulk_action();
 	}
 
 	/**
@@ -104,6 +99,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			echo '<input type="hidden" name="order" value="' . esc_attr( $_REQUEST['order'] ) . '" />';
 		}
 		?>
+		<input type="hidden" name="post_type" value="<?php echo esc_attr( $this->_args['singular'] ); ?>" />
 		<p class="search-box">
 			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php esc_html( $text ); ?>:</label>
 			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" class="wp-filter-search" name="s" value="<?php _admin_search_query(); ?>" placeholder="<?php esc_attr_e( 'Search...', 'otter-blocks' ); ?>" />
@@ -162,6 +158,15 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			);
 		}
 
+		$drafted_records = $this->get_number_of_form_records( 'draft' );
+		if ( $drafted_records ) {
+			$status_links['draft'] = array(
+				'url'     => add_query_arg( 'status', 'draft', $url ),
+				'label'   => __( 'Draft', 'otter-blocks' ) . ' <span class="count">(' . $drafted_records . ')</span>',
+				'current' => 'draft' === $current_status,
+			);
+		}
+
 		return $this->get_views_links( $status_links );
 	}
 
@@ -179,57 +184,64 @@ class Form_Submissions_List_Table extends WP_List_Table {
 		);
 	}
 
+	/**
+	 * Column email.
+	 *
+	 * @param $item
+	 *
+	 * @return string
+	 */
 	protected function column_email( $item ) {
-		$del_nonce = esc_html( '_wpnonce=' . wp_create_nonce( 'trash-otter-form-record_' . $item['ID'] ) );
 		$status    = get_post_status( $item['ID'] );
 		$actions   = array();
 
 		if ( 'trash' !== $status ) {
-			$actions['view'] = sprintf(
+
+			$actions['inline view'] = sprintf(
 				'<a href="%s">%s</a>',
 				get_edit_post_link( $item['ID'] ),
 				__( 'View', 'otter-blocks' )
 			);
 
 			$actions['trash'] = sprintf(
-				'<a href="?action=%s&post_id=%s&%s">%s</a>',
-				'trash_otter_form_record',
+				'<a href="?action=%s&otter_form_record=%s&_wpnonce=%s">%s</a>',
+				'trash',
 				$item['ID'],
-				$del_nonce,
+				wp_create_nonce( 'trash-' . $this->_args['singular'] . '_' . $item['ID'] ),
 				__( 'Trash', 'otter-blocks' )
 			);
 		} else {
 			$actions['untrash'] = sprintf(
-				'<a href="?action=%s&post_id=%s&%s">%s</a>',
-				'untrash_otter_form_record',
+				'<a href="?action=%s&otter_form_record=%s&_wpnonce=%s">%s</a>',
+				'untrash',
 				$item['ID'],
-				$del_nonce,
+				wp_create_nonce( 'untrash-' . $this->_args['singular'] . '_' . $item['ID'] ),
 				__( 'Restore', 'otter-blocks' )
 			);
 
 			$actions['delete'] = sprintf(
-				'<a href="?action=%s&post_id=%s&%s">%s</a>',
-				'delete_otter_form_record',
+				'<a href="?action=%s&otter_form_record=%s&_wpnonce=%s">%s</a>',
+				'delete',
 				$item['ID'],
-				$del_nonce,
+				wp_create_nonce( 'delete-' . $this->_args['singular'] . '_' . $item['ID'] ),
 				__( 'Delete Permanently', 'otter-blocks' )
 			);
 		}
 
 		if ( 'unread' === $status ) {
 			$actions['read'] = sprintf(
-				'<a href="?action=%s&post_id=%s&%s">%s</a>',
-				'read_otter_form_record',
+				'<a href="?action=%s&otter_form_record=%s&_wpnonce=%s">%s</a>',
+				'read',
 				$item['ID'],
-				$del_nonce,
+				wp_create_nonce( 'read-' . $this->_args['singular'] . '_' . $item['ID'] ),
 				__( 'Mark as Read', 'otter-blocks' )
 			);
 		} else {
 			$actions['unread'] = sprintf(
-				'<a href="?action=%s&post_id=%s&%s">%s</a>',
-				'unread_otter_form_record',
+				'<a href="?action=%s&otter_form_record=%s&_wpnonce=%s">%s</a>',
+				'unread',
 				$item['ID'],
-				$del_nonce,
+				wp_create_nonce( 'unread-' . $this->_args['singular'] . '_' . $item['ID'] ),
 				__( 'Mark as Unread', 'otter-blocks' )
 			);
 		}
@@ -237,6 +249,13 @@ class Form_Submissions_List_Table extends WP_List_Table {
 		return $this->format_based_on_status( sprintf( '<a href="mailto:%1$s">%1$s</a>', $item['email'] ), $status ) . $this->row_actions( $actions );
 	}
 
+	/**
+	 * Column form.
+	 *
+	 * @param $item
+	 *
+	 * @return string
+	 */
 	protected function column_form( $item ) {
 		$status = get_post_status( $item['ID'] );
 
@@ -250,6 +269,13 @@ class Form_Submissions_List_Table extends WP_List_Table {
 		);
 	}
 
+	/**
+	 * Column post.
+	 *
+	 * @param $item
+	 *
+	 * @return string
+	 */
 	protected function column_post_url( $item ) {
 		$status = get_post_status( $item['ID'] );
 
@@ -271,12 +297,26 @@ class Form_Submissions_List_Table extends WP_List_Table {
 		);
 	}
 
+	/**
+	 * Column ID.
+	 *
+	 * @param $item
+	 *
+	 * @return string
+	 */
 	protected function column_id( $item ) {
 		$status = get_post_status( $item['ID'] );
 
 		return $this->format_based_on_status( substr( $item['ID'], -8 ), $status );
 	}
 
+	/**
+	 * Column date.
+	 *
+	 * @param $item
+	 *
+	 * @return string
+	 */
 	protected function column_date( $item ) {
 		$status = get_post_status( $item['ID'] );
 
@@ -326,57 +366,120 @@ class Form_Submissions_List_Table extends WP_List_Table {
 		return $bulk_actions;
 	}
 
-	public function process_bulk_action() {
-		$action = $this->current_action();
+	/**
+	 * Add filters.
+	 *
+	 * @param string $which Top or bottom.
+	 *
+	 * @return void
+	 */
+	protected function extra_tablenav( $which ) {
+		static $has_items;
 
-		if ( ! $action ) {
+		if ( ! isset( $has_items ) ) {
+			$has_items = $this->has_items();
+		}
+
+		echo '<div class="alignleft actions">';
+
+		if ( 'top' === $which ) {
+			ob_start();
+
+			$this->form_dropdown();
+			$this->post_dropdown();
+
+			$this->months_dropdown( 'otter_form_record' );
+
+			$output = ob_get_clean();
+			if ( ! empty( $output ) && $this->has_items() ) {
+				echo $output;
+				submit_button( __( 'Filter' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
+			}
+		}
+
+		echo '</div>';
+	}
+
+	/**
+	 * Get forms dropdown.
+	 *
+	 * @return void
+	 */
+	private function form_dropdown() {
+		$forms = $this->get_filter( 'form' );
+
+		if ( empty( $forms ) ) {
 			return;
 		}
 
-		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
+		$form = isset( $_GET['form'] ) ? sanitize_text_field( wp_unslash( $_GET['form'] ) ) : '';
 
-		if ( ! wp_verify_nonce( $nonce, 'bulk-' . $this->_args['plural'] ) ) {
-			wp_die( __( 'Security check failed', 'otter-blocks' ) );
-		}
+		?>
+		<label for="filter-by-form"></label>
+		<select name="form" id="filter-by-form">
+			<option value=""><?php esc_html_e( 'All Forms', 'otter-blocks' ); ?></option>
+			<?php foreach ( $forms as $form_id => $form_name ) : ?>
+				<option value="<?php echo esc_attr( $form_id ); ?>" <?php selected( $form, $form_id ); ?>><?php echo esc_html( $form_name ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<?php
+	}
 
-		$ids = isset( $_REQUEST['otter_form_record'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_REQUEST['otter_form_record'] ) ) : array();
+	/**
+	 * Get posts dropdown.
+	 *
+	 * @return void
+	 */
+	private function post_dropdown() {
+		$posts = $this->get_filter( 'post' );
 
-		if ( ! $ids ) {
+		if ( empty( $posts ) ) {
 			return;
 		}
 
-		switch ( $action ) {
-			case 'trash':
-				foreach ( $ids as $id ) {
-					wp_trash_post( $id );
-				}
-				break;
-			case 'delete':
-				foreach ( $ids as $id ) {
-					wp_delete_post( $id );
-				}
-				break;
-			case 'untrash':
-			case 'read':
-				foreach ( $ids as $id ) {
-					wp_update_post( array(
-						'ID'          => $id,
-						'post_status' => 'read',
-					) );
-				}
-				break;
-			case 'unread':
-				foreach ( $ids as $id ) {
-					wp_update_post( array(
-						'ID'          => $id,
-						'post_status' => 'unread',
-					) );
-				}
-				break;
+		$post = isset( $_GET['post'] ) ? sanitize_text_field( wp_unslash( $_GET['post'] ) ) : '';
+
+		?>
+		<label for="filter-by-post"></label>
+		<select name="post" id="filter-by-post">
+			<option value=""><?php esc_html_e( 'All Posts', 'otter-blocks' ); ?></option>
+			<?php foreach ( $posts as $post_id => $post_title ) : ?>
+				<option value="<?php echo esc_attr( $post_id ); ?>" <?php selected( $post, $post_id ); ?>><?php echo esc_html( $post_title ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<?php
+	}
+
+	/**
+	 * Get filter options.
+	 *
+	 * @param string $filter Filter.
+	 *
+	 * @return array
+	 */
+	private function get_filter( $filter ) {
+		$form_records = $this->get_form_records();
+
+		$options = array();
+
+		foreach ( $form_records as $record ) {
+			switch ( $filter ) {
+				case 'form':
+					$options[ $record['form'] ] = substr( $record['form'], -8 );
+					break;
+				case 'post':
+					if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
+						$post_id = wpcom_vip_url_to_postid( $record['post_url'] );
+					} else {
+						$post_id = url_to_postid( $record['post_url'] ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
+					}
+
+					$options[ $record['post_url'] ] = get_the_title( $post_id );
+					break;
+			}
 		}
 
-		// todo: not ok.
-		wp_redirect( remove_query_arg( array( 'action', 'action2', 'otter_form_record', '_wpnonce', '_wp_http_referer' ), wp_get_referer() ) );
+		return $options;
 	}
 
 	/**
@@ -404,7 +507,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 	 */
 	private function get_number_of_form_records( $status = 'all' ) {
 		$args = array(
-			'post_type'      => $this->post_type,
+			'post_type'      => $this->_args['singular'],
 			'posts_per_page' => -1,
 			'post_status'    => $status,
 		);
@@ -423,8 +526,9 @@ class Form_Submissions_List_Table extends WP_List_Table {
 	private function get_form_records( $args = array() ) {
 		if ( empty( $args ) ) {
 			$args = array(
-				'post_type'      => $this->post_type,
+				'post_type'      => $this->_args['singular'],
 				'posts_per_page' => -1,
+				'post_status'    => array( 'read', 'unread', 'trash' ),
 			);
 		}
 

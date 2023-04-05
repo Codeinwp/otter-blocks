@@ -26,13 +26,29 @@ class Form_Block_Emails_Storing {
 	 */
 	public function init() {
 		add_action( 'init', array( $this, 'create_form_records_type' ) );
-		add_action( 'admin_menu', array( $this, 'register_submenu_emails' ) );
+		add_action( 'admin_menu', array( $this, 'register_submenu_emails' ), 100 );
 		add_action( 'otter_form_after_submit', array( $this, 'store_form_record' ) );
-		add_action( 'admin_action_trash_otter_form_record', array( $this, 'trash_otter_form_record' ) );
-		add_action( 'admin_action_delete_otter_form_record', array( $this, 'delete_otter_form_record' ) );
-		add_action( 'admin_action_untrash_otter_form_record', array( $this, 'read_otter_form_record' ) );
-		add_action( 'admin_action_read_otter_form_record', array( $this, 'read_otter_form_record' ) );
-		add_action( 'admin_action_unread_otter_form_record', array( $this, 'unread_otter_form_record' ) );
+		add_action( 'load-edit.php', array( $this, 'add_form_records_list_table' ), 100 );
+
+		// Form record actions.
+		add_action( 'admin_action_trash', array( $this, 'trash_otter_form_record' ) );
+		add_action( 'admin_action_delete', array( $this, 'delete_otter_form_record' ) );
+		add_action( 'admin_action_untrash', array( $this, 'untrash_otter_form_record' ) );
+		add_action( 'admin_action_read', array( $this, 'read_otter_form_record' ) );
+		add_action( 'admin_action_unread', array( $this, 'unread_otter_form_record' ) );
+
+	}
+
+	/**
+	 * Add our custom list table to the otter_form_record page.
+	 *
+	 * @return void
+	 */
+	public function add_form_records_list_table() {
+		$screen = get_current_screen();
+		if ( 'edit-otter_form_record' === $screen->id ) {
+			add_action( 'admin_notices', array( $this, 'render_form_submissions_page' ), 100 );
+		}
 	}
 
 	/**
@@ -41,6 +57,8 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function register_submenu_emails() {
+		remove_menu_page( 'edit.php?post_type=otter_form_record' );
+
 		add_submenu_page(
 			'otter',
 			__( 'Settings', 'otter-blocks' ),
@@ -56,8 +74,9 @@ class Form_Block_Emails_Storing {
 			__( 'Form Submissions', 'otter-blocks' ),
 			__( 'Form Submissions', 'otter-blocks' ),
 			'manage_options',
-			'otter-form-submissions',
-			array( $this, 'render_form_submissions_page' )
+			'edit.php?post_type=otter_form_record',
+			'',
+			100
 		);
 	}
 
@@ -70,7 +89,7 @@ class Form_Block_Emails_Storing {
 		register_post_type(
 			'otter_form_record',
 			array(
-				'labels'       => array(
+				'labels'          => array(
 					'name'          => esc_html_x( 'Form Submissions', '', 'otter-blocks' ),
 					'singular_name' => esc_html_x( 'Form Submission', '', 'otter-blocks' ),
 					'search_items'  => esc_html__( 'Search Form Submissions', 'otter-blocks' ),
@@ -78,10 +97,21 @@ class Form_Block_Emails_Storing {
 					'view_item'     => esc_html__( 'View Submission', 'otter-blocks' ),
 					'update_item'   => esc_html__( 'Update Submission', 'otter-blocks' ),
 				),
-				'description'  => __( 'Holds the data from the form submissions', 'otter-blocks' ),
-				'show_ui'      => false,
-				'show_in_rest' => true,
-				'supports'     => array(),
+				'description'     => __( 'Holds the data from the form submissions', 'otter-blocks' ),
+				'public'          => false,
+				'show_ui'         => true,
+				'show_in_rest'    => true,
+				'capability_type'     => 'otter_form_record',
+				'capabilities'        => array(
+					'edit_post'          => 'edit_otter_form_record',
+					'edit_posts'         => 'edit_otter_form_records',
+					'edit_others_posts'  => 'edit_others_otter_form_records',
+					'read_post'          => 'read_otter_form_record',
+					'read_private_posts' => 'read_private_otter_form_records',
+					'delete_post'        => 'delete_otter_form_record',
+					'publish_posts'      => 'do_not_allow',
+				),
+				'supports'        => array( 'title' ),
 			)
 		);
 
@@ -91,7 +121,7 @@ class Form_Block_Emails_Storing {
 			'exclude_from_search'       => false,
 			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Read (%s)', 'Unread (%s)', 'otter-blocks' ),
+			'label_count'               => _n_noop( 'Read (%s)', 'Read (%s)', 'otter-blocks' ),
 		) );
 
 		register_post_status( 'unread', array(
@@ -153,26 +183,45 @@ class Form_Block_Emails_Storing {
 		add_post_meta( $post_id, 'otter_form_record_meta', $meta );
 	}
 
-	public function check_post() {
-		$nonce   = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
-		$post_id = isset( $_REQUEST['post_id'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['post_id'] ) ) : '';
+	/**
+	 * Check request nonce and post ID.
+	 * Returns an array of post IDs that are passed in a request.
+	 *
+	 * @return array $post_id The post IDs.
+	 */
+	public function check_posts( $action ) {
+		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
 
-		if ( ! $post_id ) {
+		$request_record    = wp_unslash( $_REQUEST['otter_form_record'] );
+		$is_bulk_action    = is_array( $request_record );
+		$otter_form_record = $is_bulk_action ? $request_record : array( $request_record );
+
+		$ids = isset( $_REQUEST['otter_form_record'] ) ? array_map( 'sanitize_text_field', $otter_form_record ) : array();
+
+		if ( empty( $ids ) ) {
 			wp_die( __( 'Post ID is required', 'otter-blocks' ) );
 		}
 
-		if ( ! wp_verify_nonce( $nonce, 'trash-otter-form-record_' . $post_id ) ) {
+		if ( ! $is_bulk_action ) {
+			if ( ! wp_verify_nonce( $nonce, $action . '-otter_form_record_' . $ids[0] ) ) {
+				wp_die( __( 'Security check failed', 'otter-blocks' ) );
+			}
+		} elseif ( ! wp_verify_nonce( $nonce, 'bulk-otter_form_records' ) ) {
 			wp_die( __( 'Security check failed', 'otter-blocks' ) );
 		}
 
-		$post = get_post( $post_id );
-		if ( ! $post ) {
-			wp_die( __( 'Invalid post ID', 'otter-blocks' ) );
+		foreach( $ids as $id ) {
+			$post = get_post( $id );
+			if ( ! $post ) {
+				wp_die( __( 'Invalid post ID', 'otter-blocks' ) );
+			}
+
+			if ( 'otter_form_record' !== $post->post_type ) {
+				wp_die( __( 'Invalid post type', 'otter-blocks' ) );
+			}
 		}
 
-		if ( 'otter_form_record' !== $post->post_type ) {
-			wp_die( __( 'Invalid post type', 'otter-blocks' ) );
-		}
+		return $ids;
 	}
 
 	/**
@@ -181,16 +230,17 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function trash_otter_form_record() {
-		$this->check_post();
+		$ids = $this->check_posts( 'trash' );
 
-		$post_id = sanitize_text_field( wp_unslash( $_REQUEST['post_id'] ) );
-		$removed = wp_trash_post( $post_id );
+		foreach ( $ids as $id ) {
+			$removed = wp_trash_post( $id );
 
-		if ( ! $removed ) {
-			wp_die( __( 'Failed to move post to trash', 'otter-blocks' ) );
+			if ( ! $removed ) {
+				wp_die( __( 'Failed to move post to trash', 'otter-blocks' ) );
+			}
 		}
 
-		wp_redirect( remove_query_arg( array( 'action', 'otter_form_record', '_wpnonce' ), wp_get_referer() ) );
+		wp_safe_redirect( remove_query_arg( array( 'action', 'otter_form_record', '_wpnonce' ), wp_get_referer() ) );
 		exit;
 	}
 
@@ -200,16 +250,17 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function delete_otter_form_record() {
-		$this->check_post();
+		$ids = $this->check_posts( 'delete' );
 
-		$post_id = sanitize_text_field( wp_unslash( $_REQUEST['post_id'] ) );
-		$removed = wp_delete_post( $post_id );
+		foreach ( $ids as $id ) {
+			$removed = wp_delete_post( $id );
 
-		if ( ! $removed ) {
-			wp_die( __( 'Failed to delete post', 'otter-blocks' ) );
+			if ( ! $removed ) {
+				wp_die( __( 'Failed to delete post', 'otter-blocks' ) );
+			}
 		}
 
-		wp_redirect( remove_query_arg( array( 'action', 'otter_form_record', '_wpnonce' ), wp_get_referer() ) );
+		wp_safe_redirect( remove_query_arg( array( 'action', 'otter_form_record', '_wpnonce' ), wp_get_referer() ) );
 		exit;
 	}
 
@@ -219,17 +270,19 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function read_otter_form_record() {
-		$this->check_post();
-		$post_id = sanitize_text_field( wp_unslash( $_REQUEST['post_id'] ) );
+		$ids = $this->check_posts( 'read' );
 
-		wp_update_post(
-			array(
-				'ID'          => $post_id,
-				'post_status' => 'read',
-			)
-		);
+		foreach ( $ids as $id ) {
+			wp_update_post(
+				array(
+					'ID'          => $id,
+					'post_status' => 'read',
+				)
+			);
+		}
 
-		wp_redirect( remove_query_arg( array( 'action', 'otter_form_record', '_wpnonce' ), wp_get_referer() ) );
+		wp_safe_redirect( remove_query_arg( array( 'action', 'otter_form_record', '_wpnonce' ), wp_get_referer() ) );
+		exit;
 	}
 
 	/**
@@ -238,17 +291,40 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function unread_otter_form_record() {
-		$this->check_post();
-		$post_id = sanitize_text_field( wp_unslash( $_REQUEST['post_id'] ) );
+		$ids = $this->check_posts( 'unread' );
 
-		wp_update_post(
-			array(
-				'ID'          => $post_id,
-				'post_status' => 'unread',
-			)
-		);
+		foreach ( $ids as $id ) {
+			wp_update_post(
+				array(
+					'ID'          => $id,
+					'post_status' => 'unread',
+				)
+			);
+		}
 
-		wp_redirect( remove_query_arg( array( 'action', 'otter_form_record', '_wpnonce' ), wp_get_referer() ) );
+		wp_safe_redirect( remove_query_arg( array( 'action', 'otter_form_record', '_wpnonce' ), wp_get_referer() ) );
+		exit;
+	}
+
+	/**
+	 * Untrash form record.
+	 *
+	 * @return void
+	 */
+	public function untrash_otter_form_record() {
+		$ids = $this->check_posts( 'untrash' );
+
+		foreach ( $ids as $id ) {
+			wp_update_post(
+				array(
+					'ID'          => $id,
+					'post_status' => 'read',
+				)
+			);
+		}
+
+		wp_safe_redirect( remove_query_arg( array( 'action', 'otter_form_record', '_wpnonce' ), wp_get_referer() ) );
+		exit;
 	}
 
 	/**
@@ -264,7 +340,6 @@ class Form_Block_Emails_Storing {
 			$records->prepare_items();
 			?>
 			<form id="posts-filter" method="get">
-				<input type="hidden" name="page" value="otter-form-submissions" />
 				<?php
 				$records->search_box( '', 'otter-form-record' );
 				$records->views();
@@ -273,6 +348,7 @@ class Form_Block_Emails_Storing {
 			</form>
 		</div>
 		<?php
+		exit;
 	}
 
 	/**
