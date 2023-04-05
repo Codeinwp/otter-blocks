@@ -388,6 +388,7 @@
 		}
 
 		select {
+			width: var(--input-width);
 			border-color: var(--input-color);
 			padding: var(--padding);
 
