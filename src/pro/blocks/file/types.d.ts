@@ -12,7 +12,6 @@ type Attributes = FormInputCommonProps & {
 	fieldOptionName: string
 	maxFilesNumber: number
 	saveFiles: string
-	hasChanged: boolean
 }
 
 export type FormFileProps = BlockProps<Attributes>

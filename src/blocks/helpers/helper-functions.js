@@ -643,3 +643,34 @@ export function isAppleOS( _window = null ) {
 export const isEmptyBox = ( box ) => {
 	return ! ( box?.top !== undefined && box?.right !== undefined && box?.bottom !== undefined && box?.left !== undefined );
 };
+
+/**
+ * Get the saved state for the given key from global scope (window).
+ *
+ * @param {string} key
+ * @param {any} defaultValue
+ * @returns
+ */
+export const pullSavedState = ( key, defaultValue ) => {
+	if ( key === undefined ) {
+		return defaultValue;
+	}
+
+	return window.oSavedStates?.[ key ] ?? defaultValue;
+};
+
+/**
+ * Save a value in global scope (window) for the given key.
+ *
+ * @param {string} key
+ * @param {any} value
+ * @returns
+ */
+export const setSavedState = ( key, value ) => {
+	if ( key === undefined ) {
+		return;
+	}
+
+	window.oSavedStates = window.oSavedStates ?? {};
+	window.oSavedStates[ key ] = value;
+};

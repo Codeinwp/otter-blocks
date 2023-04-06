@@ -56,10 +56,6 @@
 		},
 		"maxFilesNumber": {
 			"type": "string"
-		},
-		"hasChanged": {
-			"type": "boolean",
-			"default": false
 		}
 	},
 	"supports": {

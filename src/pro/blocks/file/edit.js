@@ -12,7 +12,8 @@ import {
 
 import {
 	Fragment,
-	useEffect
+	useEffect,
+	useState
 } from '@wordpress/element';
 
 /**
@@ -21,7 +22,7 @@ import {
 import metadata from './block.json';
 import Inspector from './inspector.js';
 import { blockInit } from '../../../blocks/helpers/block-utility';
-import { _cssBlock } from '../../../blocks/helpers/helper-functions';
+import { _cssBlock, pullSavedState, setSavedState } from '../../../blocks/helpers/helper-functions';
 import useSettings from '../../../blocks/helpers/use-settings';
 import { select } from '@wordpress/data';
 
@@ -70,7 +71,7 @@ const Edit = ({
 				return;
 			}
 
-			const isChanged = attributes.hasChanged || -1 === fieldIndex;
+			const isChanged = pullSavedState( attributes.id, false ) || -1 === fieldIndex;
 
 			if ( isChanged ) {
 				if ( -1 !== fieldIndex ) {
@@ -92,10 +93,11 @@ const Edit = ({
 				}
 
 				updateOption( 'themeisle_blocks_form_fields_option', fieldOptions, __( 'Field settings saved.', 'otter-blocks' ), 'field-option' );
-				setAttributes({ hasChanged: false });
+
+				setSavedState( attributes.id, false );
 			}
 		}
-	}, [ attributes.fieldOptionName, attributes.allowedFileTypes, attributes.maxFileSize, attributes.saveFiles, attributes.hasChanged, status ]);
+	}, [ attributes.fieldOptionName, attributes.allowedFileTypes, attributes.maxFileSize, attributes.saveFiles, attributes.multipleFiles, status ]);
 
 	return (
 		<Fragment>
