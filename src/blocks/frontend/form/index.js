@@ -52,7 +52,7 @@ const extractFormFields = async( form ) => {
 		const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href, metadata: { position: 0 }}];
 
 		/**
-		 * Remove the field from the inner forms.
+		 * All input fields that belong to the current form. Fields from inner forms are removed.
 		 *
 		 * @type {Array.<HTMLDivElement>}
 		 */
@@ -322,7 +322,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 					const msg = res?.submitMessage ? res.submitMessage :  'Success';
 					displayMsg.setMsg( msg ).show();
 
-					cleanInputs( form );
+					form?.querySelector( 'form' )?.reset();
 
 					setTimeout( () => {
 						if ( 0 < res?.redirectLink?.length ) {
@@ -371,22 +371,6 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 				btn.removeChild( spinner );
 			});
 	}
-};
-
-/**
- * Reset all the input fields.
- * @param {HTMLDivElement} form
- */
-const cleanInputs = ( form ) => {
-	const inputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input' );
-	const textarea = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea' );
-
-	[ ...inputs, ...textarea ]?.forEach( input => {
-		const valueElem = input.querySelector( '.otter-form-input, .otter-form-textarea-input' );
-		if ( valueElem?.value ) {
-			valueElem.value = null;
-		}
-	});
 };
 
 /**
