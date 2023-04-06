@@ -215,7 +215,17 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 				onSelect={ () => setAttributes({ hasCaptcha: true }) }
 				onDeselect={ () => setAttributes({ hasCaptcha: false }) }
 				isShownByDefault={ false }
-			/>
+			>
+				<Notice
+					notice={
+						<div>
+							{ __( 'Captcha is activated. You can modify the API Keys in Integration tab from Setting > Otter.', 'otter-blocks' ) }
+							<ExternalLink href={ ( window?.location.origin ?? '' ) + '/wp-admin/options-general.php?page=otter' }>{ __( 'Go to Dashboard.', 'otter-blocks' ) }</ExternalLink>
+						</div>
+					}
+					variant="help"
+				/>
+			</ToolsPanelItem>
 
 			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
 				<ToolsPanelItem
