@@ -18,11 +18,10 @@
 
 	.otter-form__container > .block-editor-inner-blocks > .block-editor-block-list__layout {
 		display: flex;
-		flex-direction: column;
-		gap: var(--inputs-gap);
+		flex-wrap: wrap;
 
-		&> div {
-			width: 100%;
+		&> * {
+			padding-left: var(--inputs-gap);
 		}
 	}
 }
