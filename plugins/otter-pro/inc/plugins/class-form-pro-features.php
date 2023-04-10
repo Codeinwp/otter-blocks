@@ -117,15 +117,11 @@ class Form_Pro_Features {
 						$form_files_ext = $field_option->get_option( 'allowedFileTypes' );
 
 						if ( ! empty( $form_files_ext ) ) {
-							$has_valid_extension = false;
+							$form_files_ext = str_replace( '.', '', $form_files_ext );
 
 							$mime_match = wp_match_mime_types( $form_files_ext, $mime_type );
 
-							if ( 0 < count( $mime_match ) ) {
-								$has_valid_extension = true;
-							}
-
-							if ( ! $has_valid_extension ) {
+							if ( 0 == count( $mime_match ) ) {
 								$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE );
 								break;
 							}
@@ -136,7 +132,6 @@ class Form_Pro_Features {
 							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP );
 							break;
 						}
-
 
 						// Check the file size.
 						if ( $field_option->has_option( 'maxFileSize' ) ) {
