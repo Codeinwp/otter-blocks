@@ -1,5 +1,5 @@
 .wp-block-themeisle-blocks-form {
-	
+
 	--border-radius: 4px;
 	--border-color: inherit;
 	--border-width: 1px;
@@ -179,7 +179,7 @@
 
 			&.right > div {
 				align-items: flex-end;
-				
+
 				.o-form-server-response {
 					padding-right: 0px;
 				}
@@ -188,7 +188,7 @@
 			&.o-right-tablet > div {
 				@media ( max-width: 1024px ) {
 					align-items: flex-end;
-					
+
 					.o-form-server-response {
 						padding-right: 0px;
 					}
@@ -198,7 +198,7 @@
 			&.o-right-mobile > div {
 				@media ( max-width:640px ) {
 					align-items: flex-end;
-					
+
 					.o-form-server-response {
 						padding-right: 0px;
 					}
@@ -207,7 +207,7 @@
 
 			&.left > div {
 				align-items: flex-start;
-				
+
 				.o-form-server-response {
 					padding-left: 0px;
 				}
@@ -216,7 +216,7 @@
 			&.o-left-tablet > div {
 				@media ( max-width: 1024px ) {
 					align-items: flex-start;
-					
+
 					.o-form-server-response {
 						padding-left: 0px;
 					}
@@ -226,7 +226,7 @@
 			&.o-left-mobile > div {
 				@media ( max-width:640px ) {
 					align-items: flex-start;
-					
+
 					.o-form-server-response {
 						padding-left: 0px;
 					}
@@ -241,7 +241,7 @@
 				@media ( max-width: 1024px ) {
 					align-items: center;
 				}
-			} 
+			}
 
 			&.o-full-mobile > div, &.o-center-mobile > div  {
 				@media ( max-width:640px ) {
@@ -269,7 +269,7 @@
 			}
 		}
 
-		.otter-form-input, .otter-form-textarea-input {
+		.otter-form-input, .otter-form-textarea-input, select {
 			color: var(--input-color);
 			width: var(--input-width);
 			padding: var(--padding);
