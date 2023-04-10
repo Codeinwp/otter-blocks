@@ -515,7 +515,7 @@ class Registration {
 						'privacy'            => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
 						'too-many-files'     => __( 'Too many files loaded. Maximum is: ', 'otter-blocks' ),
 						'big-file'           => __( 'File size is to big. The limit is: ', 'otter-blocks' ),
-						'invalid-file'       => __( 'Invalid file type. The allowed types are: ', 'otter-blocks' ),
+						'invalid-file'       => __( 'Invalid files type. The submitted files could not be processed.', 'otter-blocks' ),
 					),
 				)
 			);

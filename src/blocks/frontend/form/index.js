@@ -338,9 +338,10 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 					// TODO: Write pattern to display a more useful error message.
 					if ( '110' === res.code ) {
 						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
+					} else if ( '12' === res.code || '13' === res.code ) {
+						displayMsg.pullMsg( 'invalid-file', 'error' ).show();
 					} else if ( 0 < res?.displayError?.length ) {
 						errorMsgSlug = res?.displayError;
-
 						displayMsg.setMsg( errorMsgSlug, 'error' ).show();
 					} else {
 						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
