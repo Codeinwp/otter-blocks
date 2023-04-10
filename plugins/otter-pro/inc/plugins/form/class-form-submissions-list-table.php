@@ -42,6 +42,12 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			$status = 'all';
 		}
 
+		if ( $status === 'all' ) {
+			$status = array( 'read', 'unread', 'publish' );
+		} elseif ( $status === 'read' ) {
+			$status = array( 'read', 'publish' );
+		}
+
 		$search    = ( isset( $_REQUEST['s'] ) ) ? $_REQUEST['s'] : '';
 		$orderby   = ( isset( $_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : '';
 		$order     = ( isset( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : '';
@@ -57,16 +63,17 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			'offset'         => $start,
 			'post_type'      => $this->_args['singular'],
 			'posts_per_page' => $per_page,
-			'post_status'    => $status === 'all' ? array( 'read', 'unread' ) : $status
+			'post_status'    => $status
 		);
 
 		$this->items = $this->get_form_records( $args );
+
 		$total_items = $this->get_form_records(
 			array(
 				's'              => $search,
 				'post_type'      => $this->_args['singular'],
 				'posts_per_page' => -1,
-				'post_status'    => $status === 'all' ? array( 'read', 'unread' ) : $status,
+				'post_status'    => $status,
 			)
 		);
 
@@ -134,7 +141,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 		$status_links = array(
 			'all' => array(
 				'url'     => $url,
-				'label'   => __( 'All', 'otter-blocks' ) . ' <span class="count">(' . $this->get_number_of_form_records( array( 'unread', 'read' ) ) . ')</span>',
+				'label'   => __( 'All', 'otter-blocks' ) . ' <span class="count">(' . $this->get_number_of_form_records( array( 'unread', 'read', 'publish' ) ) . ')</span>',
 				'current' => empty( $current_status ),
 			),
 			'unread' => array(
@@ -144,7 +151,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			),
 			'read' => array(
 				'url'     => add_query_arg( 'status', 'read', $url ),
-				'label'   => __( 'Read', 'otter-blocks' ) . ' <span class="count">(' . $this->get_number_of_form_records( 'read' ) . ')</span>',
+				'label'   => __( 'Read', 'otter-blocks' ) . ' <span class="count">(' . $this->get_number_of_form_records( array( 'read', 'publish' ) ) . ')</span>',
 				'current' => 'read' === $current_status,
 			)
 		);
@@ -246,7 +253,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			);
 		}
 
-		return $this->format_based_on_status( sprintf( '<a href="mailto:%1$s">%1$s</a>', $item['email'] ), $status ) . $this->row_actions( $actions );
+		return $this->format_based_on_status( sprintf( '<a href="%1$s">%2$s</a>', get_edit_post_link( $item['ID'] ), $item['email'] ), $status ) . $this->row_actions( $actions );
 	}
 
 	/**
@@ -528,7 +535,7 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			$args = array(
 				'post_type'      => $this->_args['singular'],
 				'posts_per_page' => -1,
-				'post_status'    => array( 'read', 'unread', 'trash' ),
+				'post_status'    => array( 'read', 'unread', 'trash', 'publish' ),
 			);
 		}
 
@@ -536,8 +543,13 @@ class Form_Submissions_List_Table extends WP_List_Table {
 
 		return array_map(
 			function( $record ) {
-				$meta       = get_post_meta( $record->ID, 'otter_form_record_meta', true );
-				$meta['ID'] = $record->ID;
+				$meta = get_post_meta( $record->ID, 'otter_form_record_meta', true );
+
+				$meta['email']    = $meta['email']['value'];
+				$meta['form']     = $meta['form']['value'];
+				$meta['post_url'] = $meta['post_url']['value'];
+				$meta['ID']       = $record->ID;
+
 				return $meta;
 			},
 			$records

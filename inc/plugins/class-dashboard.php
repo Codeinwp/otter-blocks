@@ -29,7 +29,6 @@ class Dashboard {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_add_otter_banner' ), 30 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'add_form_records_style' ) );
 	}
 
 	/**
@@ -184,7 +183,7 @@ class Dashboard {
 				display: none;
 			}
 		</style>
-		<div class="otter-banner" style="display: flex; background: #fff; padding: 10px 35px; margin-left: -20px">
+		<div class="otter-banner" style="display: flex; background: #fff; padding: 10px 20px; margin-left: -20px">
 			<div class="otter-banner__image">
 				<img src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ); ?>" alt="<?php esc_attr_e( 'Otter Blocks', 'otter-blocks' ); ?>" style="width: 90px">
 			</div>
