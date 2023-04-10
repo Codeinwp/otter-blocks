@@ -220,7 +220,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 					notice={
 						<div>
 							{ __( 'Captcha is activated. You can modify the API Keys in Integration tab from Setting > Otter.', 'otter-blocks' ) }
-							<ExternalLink href={ ( window?.location.origin ?? '' ) + '/wp-admin/options-general.php?page=otter' }>{ __( 'Go to Dashboard.', 'otter-blocks' ) }</ExternalLink>
+							<ExternalLink href={ ( window?.themeisleGutenberg?.optionsPath ) }>{ __( 'Go to Dashboard.', 'otter-blocks' ) }</ExternalLink>
 						</div>
 					}
 					variant="help"
