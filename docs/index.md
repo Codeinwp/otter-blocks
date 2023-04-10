@@ -14,6 +14,7 @@ Otter Blocks
 - [Testing Cheatsheet](testing-cheatsheet.md)
 - [Testing Checklist](testing-checklist.md)
 - [Unit Testing & E2E](uniit-and-e2e-testing.md)
+- [Pull Request Best Practices](pull-request-best-practices.md)
 
 Other
 
