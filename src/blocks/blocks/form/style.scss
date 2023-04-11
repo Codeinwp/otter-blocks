@@ -272,13 +272,16 @@
 		.otter-form-input, .otter-form-textarea-input, select {
 			color: var(--input-color);
 			width: var(--input-width);
-			padding: var(--padding);
-			border-radius: var(--border-radius);
-			border-width: var(--border-width);
-			border-color: var(--border-color);
-			border-style: solid;
 			font-size: var(--input-font-size);
-			background: var(--input-bg-color);
+
+			&:not(input[type="file"]) {
+				padding: var(--padding);
+				border-radius: var(--border-radius);
+				border-width: var(--border-width);
+				border-color: var(--border-color);
+				border-style: solid;
+				background: var(--input-bg-color);
+			}
 
 			@media (max-width: 1024px) {
 				padding: var(--padding-tablet);
