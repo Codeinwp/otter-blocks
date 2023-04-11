@@ -4,11 +4,13 @@
 	$block: &;
 	border: none;
 
-	&.has-dark-active-title-bg &-item.is-open &-item__title {
+	&.has-dark-title-bg > * > * > &-item > &-item__title,
+	&.has-dark-active-title-bg > * > * > &-item.is-open > &-item__title {
 		--title-color: #FFF;
 	}
 
-	&.has-light-active-title-bg &-item.is-open &-item__title {
+	&.has-light-title-bg > * > * > &-item > &-item__title,
+	&.has-light-active-title-bg > * > * > &-item.is-open > &-item__title {
 		--title-color: #000;
 	}
 
