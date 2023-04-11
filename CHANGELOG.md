@@ -1,3 +1,15 @@
+##### [Version 2.2.4](https://github.com/Codeinwp/otter-blocks/compare/v2.2.3...v2.2.4) (2023-03-30)
+
+- Add Preview for Dynamic Data in the Popover Control
+- Add New Patterns & Templates
+- Add New Closing/Opening Anchor Actions in Popup
+- Add Autoresponder Option to Form Block
+- WordPress 6.2 Compatibility Testing & Fixes
+- Fix CSS Class Not Being Removed If Custom CSS Is Empty
+- Fix Custom CSS Not Reflected on Front-end When Used with FSE
+- Fix Block Styles Not Loading with Custom Layouts
+- Fix WooCommerce Blocks Not Working with the Latest Version of Woo
+
 ##### [Version 2.2.3](https://github.com/Codeinwp/otter-blocks/compare/v2.2.2...v2.2.3) (2023-03-06)
 
 - Button Group Block Enhancements

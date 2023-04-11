@@ -275,7 +275,8 @@ class Block_Frontend extends Base_CSS {
 				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
-				}
+				},
+				'the_content' === current_filter() ? PHP_INT_MAX : 10
 			);
 
 			return;
@@ -290,7 +291,8 @@ class Block_Frontend extends Base_CSS {
 				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
-				}
+				},
+				'the_content' === current_filter() ? PHP_INT_MAX : 10
 			);
 
 			return;
@@ -321,10 +323,16 @@ class Block_Frontend extends Base_CSS {
 				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
-				}
+				},
+				'the_content' === current_filter() ? PHP_INT_MAX : 10
 			);
 
 			$this->total_inline_size += (int) $file_size;
+			return;
+		}
+
+		if ( 'the_content' === current_filter() ) {
+			wp_enqueue_style( 'otter-' . $file_name, $file_url, array(), OTTER_BLOCKS_VERSION );
 			return;
 		}
 

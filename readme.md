@@ -2,7 +2,7 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.9  
-**Tested up to:** 6.1  
+**Tested up to:** 6.2  
 **Requires PHP:** 5.4  
 **Stable tag:** trunk  
 **License:** GPLv3  
@@ -228,6 +228,21 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 ## Changelog ##
+
+##### [Version 2.2.4](https://github.com/Codeinwp/otter-blocks/compare/v2.2.3...v2.2.4) (2023-03-30)
+
+- Add Preview for Dynamic Data in the Popover Control
+- Add New Patterns & Templates
+- Add New Closing/Opening Anchor Actions in Popup
+- Add Autoresponder Option to Form Block
+- WordPress 6.2 Compatibility Testing & Fixes
+- Fix CSS Class Not Being Removed If Custom CSS Is Empty
+- Fix Custom CSS Not Reflected on Front-end When Used with FSE
+- Fix Block Styles Not Loading with Custom Layouts
+- Fix WooCommerce Blocks Not Working with the Latest Version of Woo
+
+
+
 
 ##### [Version 2.2.3](https://github.com/Codeinwp/otter-blocks/compare/v2.2.2...v2.2.3) (2023-03-06)
 

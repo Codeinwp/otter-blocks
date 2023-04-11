@@ -38,8 +38,9 @@ class Main {
 		add_action( 'init', array( $this, 'after_update_migration' ) );
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
-			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
+			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ), PHP_INT_MAX ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
+			add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_svg_attachment_metadata' ), PHP_INT_MAX, 3 );
 		}
 	}
 
@@ -368,9 +369,22 @@ class Main {
 	 * @access public
 	 */
 	public function allow_meme_types( $mimes ) {
-		$mimes['json']   = 'application/json';
-		$mimes['lottie'] = 'application/zip';
-		$mimes['svg']    = 'image/svg+xml';
+		if ( ! isset( $mimes['json'] ) ) {
+			$mimes['json'] = 'application/json';
+		}
+
+		if ( ! isset( $mimes['lottie'] ) ) {
+			$mimes['lottie'] = 'application/zip';
+		}
+
+		if ( ! isset( $mimes['svg'] ) ) {
+			$mimes['svg'] = 'image/svg+xml';
+		}
+
+		if ( ! isset( $mimes['svgz'] ) ) {
+			$mimes['svgz'] = 'image/svg+xml';
+		}
+
 		return $mimes;
 	}
 
@@ -401,6 +415,37 @@ class Main {
 			$data['ext']  = 'svg';
 		}
 		return $data;
+	}
+
+	/**
+	 * Generate SVG attachment metadata if no other plugins does it.
+	 *
+	 * @param array   $metadata The metadata for and attachment.
+	 * @param numeric $attachment_id The attachment ID.
+	 * @return array
+	 */
+	public function generate_svg_attachment_metadata( $metadata, $attachment_id ) {
+
+		if ( 'image/svg+xml' !== get_post_mime_type( $attachment_id ) ) {
+			return $metadata;
+		}
+
+		if ( isset( $metadata['width'], $metadata['height'] ) ) {
+			return $metadata;
+		}
+
+		$svg_path = get_attached_file( $attachment_id );
+		$filename = basename( $svg_path );
+
+		$svg        = simplexml_load_file( $svg_path );
+		$attributes = $svg->attributes();
+
+		// Update metadata with SVG dimensions.
+		$metadata['width']  = intval( (string) $attributes->width );
+		$metadata['height'] = intval( (string) $attributes->height );
+		$metadata['file']   = $filename;
+
+		return $metadata;
 	}
 
 
