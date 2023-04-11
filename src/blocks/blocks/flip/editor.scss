@@ -13,6 +13,24 @@
 
 	border: none;
 
+	/* wrote this for specificity because neve
+	overwrote the paragraph color */
+	&.has-dark-front-bg .o-flip-front p {
+		color: #fff;
+	}
+
+	&.has-light-front-bg .o-flip-front p {
+		color: #000;
+	}
+
+	&.has-dark-back-bg .o-flip-back p {
+		color: #fff;
+	}
+
+	&.has-light-back-bg .o-flip-back p {
+		color: #000;
+	}
+
 	.o-switcher {
 		margin-top: 30px;
 		width: 100%;
@@ -26,7 +44,7 @@
 	}
 
 	@media ( max-width: 960px ) {
-		
+
 		height: var( --height-tablet );
 
 		&.is-selected {
@@ -41,9 +59,9 @@
 			padding: var(--padding-tablet);
 		}
 	}
-	
+
 	@media ( max-width: 600px ) {
-		
+
 		height: var( --height-mobile );
 
 		&.is-selected {

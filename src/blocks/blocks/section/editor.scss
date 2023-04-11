@@ -13,8 +13,12 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	display: flex;
 	transition: 0.3s;
 
-	&.has-dark-bg {
+	&.has-dark-bg, &.has-dark-bg p {
 		color: #fff;
+	}
+
+	&.has-light-bg, &.has-light-bg p {
+		color: #000;
 	}
 
 	> .innerblocks-wrap {
@@ -41,8 +45,12 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 					max-width: unset;
 				}
 
-				&.has-dark-bg {
+				&.has-dark-bg, &.has-dark-bg p {
 					color: #fff;
+				}
+
+				&.has-light-bg, &.has-light-bg p {
+					color: #000;
 				}
 			}
 		}
@@ -71,7 +79,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		> * {
 			position: relative;
 		}
-	
+
 		a:not( .wp-block-button__link ):not( .social-icon ) {
 			color: var( --link-color );
 		}

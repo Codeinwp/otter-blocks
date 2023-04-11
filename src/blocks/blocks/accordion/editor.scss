@@ -4,6 +4,24 @@
 	$block: &;
 	border: none;
 
+	&.has-dark-active-title-bg &-item.is-open &-item__title {
+		--title-color: #FFF;
+	}
+
+	&.has-light-active-title-bg &-item.is-open &-item__title {
+		--title-color: #000;
+	}
+
+	/* wrote this for specificity because neve
+	overwrote the paragraph color */
+	&.has-dark-content-bg &-item__content p {
+		color: #FFF;
+	}
+
+	&.has-light-content-bg &-item__content p {
+		color: #000;
+	}
+
 	&-item {
 		border: none;
 		margin: var(--gap) 0;

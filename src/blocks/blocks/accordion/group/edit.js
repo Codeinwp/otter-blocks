@@ -140,9 +140,9 @@ const Edit = ({
 		}
 	}, [ attributes.fontFamily ]);
 
-	useDarkBackground( getValue( 'titleBackground' ), attributes, setAttributes, 'has-dark-title-bg' );
-	useDarkBackground( getValue( 'activeTitleBackground' ), attributes, setAttributes, 'has-dark-active-title-bg' );
-	useDarkBackground( getValue( 'contentBackground' ), attributes, setAttributes, 'has-dark-content-bg' );
+	useDarkBackground( getValue( 'titleBackground' ), attributes, setAttributes, 'has-dark-title-bg', 'has-light-title-bg' );
+	useDarkBackground( getValue( 'activeTitleBackground' ), attributes, setAttributes, 'has-dark-active-title-bg', 'has-light-active-title-bg' );
+	useDarkBackground( getValue( 'contentBackground' ), attributes, setAttributes, 'has-dark-content-bg', 'has-light-content-bg' );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

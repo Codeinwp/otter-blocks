@@ -19,12 +19,24 @@
 		--title-color: #FFF;
 	}
 
-	&.has-dark-active-title-bg {
+	&.has-light-title-bg {
+		--title-color: #000;
+	}
+
+	&.has-dark-active-title-bg &-item[open] {
 		--title-color: #FFF;
+	}
+
+	&.has-light-active-title-bg &-item[open] {
+		--title-color: #000;
 	}
 
 	&.has-dark-content-bg {
 		color: #FFF;
+	}
+
+	&.has-light-content-bg {
+		color: #000;
 	}
 
 	&-item {

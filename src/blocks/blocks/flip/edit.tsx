@@ -60,8 +60,8 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	useDarkBackground( 'color' === attributes.frontBackgroundType && attributes.frontBackgroundColor, attributes, setAttributes, 'has-dark-front-bg' );
-	useDarkBackground( 'color' === attributes.backBackgroundType && attributes.backBackgroundColor, attributes, setAttributes, 'has-dark-back-bg' );
+	useDarkBackground( 'color' === attributes.frontBackgroundType && attributes.frontBackgroundColor, attributes, setAttributes, 'has-dark-front-bg', 'has-light-front-bg' );
+	useDarkBackground( 'color' === attributes.backBackgroundType && attributes.backBackgroundColor, attributes, setAttributes, 'has-dark-back-bg', 'has-light-back-bg' );
 
 	const [ currentSide, setSide ] = useState( 'front' );
 

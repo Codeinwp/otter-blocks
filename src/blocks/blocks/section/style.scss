@@ -86,6 +86,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		&.has-dark-bg {
 			color: #fff;
 		}
+
+		&.has-light-bg {
+			color: #000;
+		}
 	}
 
 	&.has-default-gap {
@@ -132,6 +136,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 	&.has-dark-bg {
 		color: #fff;
+	}
+
+	&.has-light-bg {
+		color: #000;
 	}
 }
 
