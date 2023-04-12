@@ -136,11 +136,12 @@ const FormFileInspector = ( Template, {
 					<TextControl
 						label={ __( 'Maximum number of files', 'otter-blocks' ) }
 						type="number"
-						value={ isNaN( parseInt( attributes.maxFilesNumber ) ) ? attributes.maxFilesNumber : 10 }
+						value={ ! isNaN( parseInt( attributes.maxFilesNumber ) ) ? ( attributes.maxFilesNumber ) : undefined }
 						onChange={ maxFilesNumber => {
 							setSavedState( attributes.id, true );
 							setAttributes({ maxFilesNumber: maxFilesNumber ? maxFilesNumber?.toString() : undefined });
 						} }
+						help={ __( 'By default, only 10 files are allowed to load.', 'otter-blocks' )}
 					/>
 				)
 			}

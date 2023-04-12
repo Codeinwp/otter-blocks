@@ -118,6 +118,7 @@ class Form_Pro_Features {
 
 						if ( ! empty( $form_files_ext ) ) {
 							$form_files_ext = str_replace( '.', '', $form_files_ext );
+							$form_files_ext = str_replace( '/*', '', $form_files_ext );
 
 							$mime_match = wp_match_mime_types( $form_files_ext, $mime_type );
 

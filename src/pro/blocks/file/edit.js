@@ -66,7 +66,6 @@ const Edit = ({
 	useEffect( () => {
 		const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
 		const fieldIndex = fieldOptions?.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
-		console.log( fieldOptions[fieldIndex]);
 
 		if ( Boolean( window.themeisleGutenberg?.hasPro ) && attributes.fieldOptionName && 'loaded' === status ) {
 
