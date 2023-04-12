@@ -24,13 +24,18 @@ Examples of good pull requests:
 - [Otter#1598](https://github.com/Codeinwp/otter-blocks/pull/1598) :: Feature
 - [Otter#1529](https://github.com/Codeinwp/otter-blocks/pull/1529) :: Bug fix
 - [Otter#1457](https://github.com/Codeinwp/otter-blocks/pull/1457) :: Feature
+- [Neve#3940](https://github.com/Codeinwp/neve/pull/3940) :: Bug Fix
+- [Neve#3939](https://github.com/Codeinwp/neve/pull/3939) :: Feature
+- [Neve#3923](https://github.com/Codeinwp/neve/pull/3923) :: Bug Fix
+- [Neve#3945](https://github.com/Codeinwp/neve/pull/3945) :: Bug Fix
+
 
 What do you notice? Let's break it down:
 - Summary: a short description of what the pull request does - implemented feature, fixed bug, etc. You can mention what are the changes (using a new function, adding a new filter, etc).
-- Screenshots: a screenshot of the feature or bug fix. If you are fixing a bug, you can add a screenshot of the bug and a screenshot of the fix. In case of a feature, you can add a screenshot or a video on how it works.
+- Screenshots: a screenshot of the feature or bug fix if it is not well understand from the context. If you are fixing a bug, you can add a screenshot of the bug and a screenshot of the fix. In case of a feature, you can add a screenshot or a video on how it works.
 - Testing instructions: a list of steps that the tester needs to do in order to test the feature or the bug fix.
- - If your PR require a specific setup: 3rd party plugin, theme, API key, etc, -- **mention it in the testing instructions**.
- - If you have a complex workflow to test the feature (like creating Stripe products in Stripe dashboard to test Stripe Checkout Button Block), you can add a video or a gif. You can use [Loom](https://www.loom.com/) or OBS to record your screen. A good video can be worth a thousand words and will result in a faster review and good feedback from QA team.
+- If your PR require a specific setup: 3rd party plugin, theme, API key, etc, -- **mention it in the testing instructions**.
+- If you have a complex workflow to test the feature (like creating Stripe products in Stripe dashboard to test Stripe Checkout Button Block), you can add a video or a gif. You can use [Loom](https://www.loom.com/) or OBS to record your screen. A good video can be worth a thousand words and will result in a faster review and good feedback from QA team.
 - Issue link: Every PR has to be linked to an issue (Do not forgot to use Github linking from Sidebar under Development section).
 
 A good rule of thumb is: "Every coworker who is going to see the pull request should be able to understand what it does and how to test it".
