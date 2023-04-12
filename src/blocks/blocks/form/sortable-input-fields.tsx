@@ -39,7 +39,8 @@ const fieldNames: Record<string, string> = {
 	'select': __( 'Select Field', 'otter-blocks' ),
 	'checkbox': __( 'Checkbox Field', 'otter-blocks' ),
 	'radio': __( 'Radio Field', 'otter-blocks' ),
-	'file': __( 'File Field', 'otter-blocks' )
+	'file': __( 'File Field', 'otter-blocks' ),
+	'url': __( 'URL Field', 'otter-blocks' )
 };
 
 const extractFieldName = ( input: FormInputProps ) => {

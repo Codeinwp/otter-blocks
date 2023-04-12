@@ -448,22 +448,17 @@ domReady( () => {
 					let isValidationSuccessful = true;
 					const { files } = event.target;
 
-					if ( files.length > maxFilesNumber ) {
-
+					if ( maxFilesNumber && files.length > maxFilesNumber ) {
 						input.setCustomValidity( window.themeisleGutenbergForm?.messages?.['too-many-files'] + maxFilesNumber );
 						isValidationSuccessful = false;
-					} else {
-						input.setCustomValidity( '' );
 					}
 
-					if ( isValidationSuccessful ) {
+					if ( isValidationSuccessful && maxFileSize ) {
 						for ( const file of files ) {
 							if ( file.size > maxFileSize * 1024 * 1024 ) {
 								input.setCustomValidity( window.themeisleGutenbergForm?.messages?.['big-file'] + ' ' + maxFileSize + 'MB.' );
 								isValidationSuccessful = false;
 								break;
-							} else {
-								input.setCustomValidity( '' );
 							}
 						}
 					}
@@ -471,6 +466,8 @@ domReady( () => {
 					if ( ! isValidationSuccessful ) {
 						input.reportValidity();
 						input.value = '';
+					} else {
+						input.setCustomValidity( '' );
 					}
 				});
 			}

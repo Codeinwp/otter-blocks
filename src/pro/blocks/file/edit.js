@@ -41,6 +41,11 @@ const Edit = ({
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
+		if ( attributes.id === undefined ) {
+
+			// Set the default value for newly created blocks.
+			setAttributes({ saveFiles: 'media-library' });
+		}
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
@@ -59,6 +64,9 @@ const Edit = ({
 	const [ getOption, updateOption, status ] = useSettings();
 
 	useEffect( () => {
+		const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
+		const fieldIndex = fieldOptions?.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
+		console.log( fieldOptions[fieldIndex]);
 
 		if ( Boolean( window.themeisleGutenberg?.hasPro ) && attributes.fieldOptionName && 'loaded' === status ) {
 
@@ -75,19 +83,19 @@ const Edit = ({
 
 			if ( isChanged ) {
 				if ( -1 !== fieldIndex ) {
-					fieldOptions[fieldIndex].options.allowedFileTypes = attributes.allowedFileTypes;
-					fieldOptions[fieldIndex].options.maxFileSize = attributes.maxFileSize;
-					fieldOptions[fieldIndex].options.saveFiles = attributes.saveFiles;
-					fieldOptions[fieldIndex].options.maxFilesNumber = Boolean( attributes.multipleFiles ) ? ( attributes.maxFileSize ?? 10 ) : undefined;
+					fieldOptions[fieldIndex].options.allowedFileTypes = attributes.allowedFileTypes ? attributes.allowedFileTypes : undefined;
+					fieldOptions[fieldIndex].options.maxFileSize = attributes.maxFileSize ? attributes.maxFileSize : undefined;
+					fieldOptions[fieldIndex].options.saveFiles = attributes.saveFiles ? attributes.saveFiles : undefined;
+					fieldOptions[fieldIndex].options.maxFilesNumber = attributes.multipleFiles ? ( attributes.maxFilesNumber ?? 10 ) : undefined;
 				} else {
 					fieldOptions.push({
 						fieldOptionName: attributes.fieldOptionName,
 						fieldOptionType: 'file',
 						options: {
-							allowedFileTypes: attributes.allowedFileTypes,
+							allowedFileTypes: attributes.allowedFileTypes ? attributes.allowedFileTypes : undefined,
 							maxFileSize: Boolean( attributes.multipleFiles ) ? ( attributes.maxFileSize ?? 10 ) : undefined,
-							saveFiles: attributes.saveFiles,
-							maxFilesNumber: attributes.maxFilesNumber
+							saveFiles: attributes.saveFiles ? attributes.saveFiles : undefined,
+							maxFilesNumber: attributes.multipleFiles ? ( attributes.maxFilesNumber ?? 10 ) : undefined
 						}
 					});
 				}

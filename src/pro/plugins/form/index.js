@@ -90,10 +90,10 @@ const FormFileInspector = ( Template, {
 			<TextControl
 				label={ __( 'Max File Size in MB', 'otter-blocks' ) }
 				type="number"
-				value={ parseInt( attributes.maxFileSize ) }
+				value={ ! isNaN( parseInt( attributes.maxFileSize ) ) ? attributes.maxFileSize : undefined }
 				onChange={ maxFileSize => {
 					setSavedState( attributes.id, true );
-					setAttributes({ maxFileSize: maxFileSize?.toString() });
+					setAttributes({ maxFileSize: maxFileSize ? maxFileSize?.toString() : undefined });
 				} }
 				help={ __( 'You may need to contact your hosting provider to increase file sizes.', 'otter-blocks' ) }
 			/>
@@ -103,7 +103,7 @@ const FormFileInspector = ( Template, {
 				value={ attributes.allowedFileTypes }
 				onChange={ allowedFileTypes => {
 					setSavedState( attributes.id, true );
-					setAttributes({ allowedFileTypes: allowedFileTypes.map( replaceJPGWithJPEG ) });
+					setAttributes({ allowedFileTypes: allowedFileTypes ? allowedFileTypes.map( replaceJPGWithJPEG ) : undefined });
 				} }
 				help={ __( 'Add the allowed files types that can be loaded. E.g.: .png, .mp4, .jpeg, .zip, .pdf. Attention: The host provider might not allow to saving of all type of files.', 'otter-blocks' ) }
 				suggestions={ fileTypeSuggestions }
@@ -124,10 +124,10 @@ const FormFileInspector = ( Template, {
 
 			<ToggleControl
 				label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
-				checked={ attributes.multipleFiles }
+				checked={ Boolean( attributes.multipleFiles ) }
 				onChange={ multipleFiles => {
 					setSavedState( attributes.id, true );
-					setAttributes({ multipleFiles, hasChanged: true });
+					setAttributes({ multipleFiles: multipleFiles ? multipleFiles : undefined });
 				} }
 			/>
 
@@ -136,10 +136,10 @@ const FormFileInspector = ( Template, {
 					<TextControl
 						label={ __( 'Maximum number of files', 'otter-blocks' ) }
 						type="number"
-						value={ attributes.maxFilesNumber  ?? 10 }
+						value={ isNaN( parseInt( attributes.maxFilesNumber ) ) ? attributes.maxFilesNumber : 10 }
 						onChange={ maxFilesNumber => {
 							setSavedState( attributes.id, true );
-							setAttributes({ maxFilesNumber: maxFilesNumber?.toString(), hasChanged: true });
+							setAttributes({ maxFilesNumber: maxFilesNumber ? maxFilesNumber?.toString() : undefined });
 						} }
 					/>
 				)
@@ -151,7 +151,7 @@ const FormFileInspector = ( Template, {
 				checked={ 'media-library' === attributes.saveFiles }
 				onChange={ value => {
 					setSavedState( attributes.id, true );
-					setAttributes({ saveFiles: value ? 'media-library' : undefined, hasChanged: true });
+					setAttributes({ saveFiles: value ? 'media-library' : undefined });
 				} }
 			/>
 		</Fragment>
