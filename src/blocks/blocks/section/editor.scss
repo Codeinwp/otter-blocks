@@ -14,11 +14,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	transition: 0.3s;
 
 	&.has-dark-bg, &.has-dark-bg p {
-		color: #fff;
+		color: var( --text-color, #fff );
 	}
 
 	&.has-light-bg, &.has-light-bg p {
-		color: #000;
+		color: var( --text-color, #000 );
 	}
 
 	> .innerblocks-wrap {
@@ -46,11 +46,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 				}
 
 				&.has-dark-bg, &.has-dark-bg p {
-					color: #fff;
+					color: var( --text-color, #fff );
 				}
 
 				&.has-light-bg, &.has-light-bg p {
-					color: #000;
+					color: var( --text-color, #000 );
 				}
 			}
 		}

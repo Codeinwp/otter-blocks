@@ -6,22 +6,20 @@
 
 	&.has-dark-title-bg > * > * > &-item > &-item__title,
 	&.has-dark-active-title-bg > * > * > &-item.is-open > &-item__title {
-		--title-color: #FFF;
+		color: var( --title-color, #FFF );
 	}
 
 	&.has-light-title-bg > * > * > &-item > &-item__title,
 	&.has-light-active-title-bg > * > * > &-item.is-open > &-item__title {
-		--title-color: #000;
+		color: var( --title-color, #000 );
 	}
 
-	/* wrote this for specificity because neve
-	overwrote the paragraph color */
-	&.has-dark-content-bg &-item__content p {
-		color: #FFF;
+	&.has-dark-content-bg &-item__content, &.has-dark-content-bg &-item__content p {
+		color: var( --text-color, #FFF );
 	}
 
-	&.has-light-content-bg &-item__content p {
-		color: #000;
+	&.has-light-content-bg &-item__content, &.has-dark-content-bg &-item__content p {
+		color: var( --text-color, #000 );
 	}
 
 	&-item {

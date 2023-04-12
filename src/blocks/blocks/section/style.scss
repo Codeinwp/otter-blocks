@@ -84,11 +84,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		}
 
 		&.has-dark-bg {
-			color: #fff;
+			color: var( --text-color, #fff );
 		}
 
 		&.has-light-bg {
-			color: #000;
+			color: var( --text-color, #000 );
 		}
 	}
 
@@ -135,11 +135,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	}
 
 	&.has-dark-bg {
-		color: #fff;
+		color: var( --text-color, #fff );
 	}
 
 	&.has-light-bg {
-		color: #000;
+		color: var( --text-color, #000 );
 	}
 }
 
