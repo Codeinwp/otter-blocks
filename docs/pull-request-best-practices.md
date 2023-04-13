@@ -44,3 +44,4 @@ And also remember:
 - Not everyone is aware of the context of the pull request. Make it clear.
 - Do not assume that the tester always knows how to test the feature or the bug fix. The person might be a new person unfamiliar with the project, or might be a person who is not familiar with the feature you are working on.
 - If you can not find your words to describe a complex feature, you can make a video to show it and shortly explain some parts of it.
+- Github has a lot of feature for formatting a pull request. Also, try to use as much as possible embedded images and videos. If they are embedded, they will be visible on all the apps that integrate with Github (like Visual Studio Code, JetBrains IDE suite), also it can reduce the number of opened tabs in the browser.
