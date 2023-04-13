@@ -371,7 +371,14 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_content( $data ) {
-		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', get_the_content( $data['context'] ) ) );
+		$content = get_the_content( $data['context'] );
+
+		// Remove internal calling of dynamic content to prevent creating an infinite loop (also known as 'Inception bug').
+		if ( strpos( $content, 'data-type="postContent"' ) ) {
+			$content = preg_replace( '/<o-dynamic.*?data-type="postContent".*?>.*?<\/o-dynamic>/', '', $content );
+		}
+
+		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', $content ) );
 		return wp_kses_post( $content );
 	}
 
