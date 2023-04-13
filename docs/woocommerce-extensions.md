@@ -4,7 +4,6 @@ In WordPress, WooCommerce is the most popular plugin for e-commerce. In a simple
 
 The available WooCommerce extensions are:
 - Add to cart Block
-- Woo Comparison Block
 - Product Review with Woo Sync
 - Live Search (show product information in search results)
 - Small Showcase Blocks (title, price, rating, stock, etc.)
@@ -16,10 +15,8 @@ Woo Commerce own plugin offer a lot of features for Gutenberg, and is mostly red
 | Feature | Location |
 | :-- | :-- |
 | Frontend Render Add to Cart | `./plugins/otter-pro/inc/render/class-add-to-cart-button-block.php` |
-| Frontend Render Woo Comparison | `./plugins/otter-pro/inc/render/class-woo-comparison-block.php` |
 | Frontend Render Small Blocks | `./plugins/otter-pro/inc/render/woocommerce` |
 | Editor Add to Cart | `./src/pro/blocks/add-to-cart-button` |
-| Editor Woo Comparison | `./src/pro/blocks/woo-comparison` |
 | Editor Small Blocks | `./src/pro/woocommerce` |
 
 For Live Search, learn more [here](live-search.md).

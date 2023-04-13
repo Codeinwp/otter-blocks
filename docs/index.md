@@ -6,6 +6,8 @@ Otter Blocks
 - [Otter Family Plugins](otter-family-plugins.md)
 - [Project Structure](project-structure.md)
 - [Creating a new block](creating-blocks.md)
+- [Dynamic CSS with PHP](dynamic-css-with-php.md)
+- [Adding Patterns](adding-patterns.md)
 - [Form Workflow](form-block-workflow.md)
 - [Dynamic Conditions and Content](dynamic-conditions-and-content.md)
 - [Sticky Block](sticky-blocks.md)
