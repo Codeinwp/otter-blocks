@@ -63,17 +63,21 @@ class Form_Submissions_List_Table extends WP_List_Table {
 			'offset'         => $start,
 			'post_type'      => $this->_args['singular'],
 			'posts_per_page' => $per_page,
-			'post_status'    => $status
+			'post_status'    => $status,
 		);
 
-		$this->items = $this->get_form_records( $args );
+		$args = array_merge( $args, $this->get_filter_args() );
 
+		$this->items = $this->get_form_records( $args );
 		$total_items = $this->get_form_records(
-			array(
-				's'              => $search,
-				'post_type'      => $this->_args['singular'],
-				'posts_per_page' => -1,
-				'post_status'    => $status,
+			array_merge(
+				array(
+					's'              => $search,
+					'post_type'      => $this->_args['singular'],
+					'posts_per_page' => -1,
+					'post_status'    => $status,
+				),
+				$this->get_filter_args()
 			)
 		);
 
@@ -394,17 +398,66 @@ class Form_Submissions_List_Table extends WP_List_Table {
 
 			$this->form_dropdown();
 			$this->post_dropdown();
-
 			$this->months_dropdown( 'otter_form_record' );
 
+			?>
+			<input type="hidden" name="post_type" value="<?php echo esc_attr( $this->_args['singular'] ); ?>" />
+			<?php
+
 			$output = ob_get_clean();
-			if ( ! empty( $output ) && $this->has_items() ) {
+			if ( ! empty( $output ) ) {
 				echo $output;
 				submit_button( __( 'Filter' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
 			}
 		}
 
 		echo '</div>';
+	}
+
+	/**
+	 * Get meta query args from filter values.
+	 *
+	 * @return array
+	 */
+	private function get_filter_args() {
+		$extra_args = array();
+		$meta_query = array();
+
+		if ( ! $this->current_action() && isset( $_REQUEST['filter_action'] ) && 'Filter' === $_REQUEST['filter_action'] ) {
+			$form = ( ! empty( $_REQUEST['form'] ) ) ? $_REQUEST['form'] : '';
+			$post = ( ! empty( $_REQUEST['post'] ) ) ? $_REQUEST['post'] : '';
+			$date = ( ! empty( $_REQUEST['m'] && '0' !== $_REQUEST['m'] ) ) ? $_REQUEST['m'] : '';
+
+			if ( ! empty( $form ) ) {
+				$meta_query[] = array(
+					'key'     => 'otter_form_record_meta',
+					'value'   => serialize( $form ),
+					'compare' => 'LIKE',
+				);
+			}
+
+			if ( ! empty( $post ) ) {
+				$meta_query['relation'] = 'AND';
+
+				$meta_query[] = array(
+					'key'     => 'otter_form_record_meta',
+					'value'   => serialize( $post ),
+					'compare' => 'LIKE',
+				);
+			}
+
+			$extra_args['meta_query'] = $meta_query;
+			if ( ! empty( $date ) ) {
+				$extra_args['date_query'] = array(
+					array(
+						'year'  => substr( $date, 0, 4 ),
+						'month' => substr( $date, 4, 2 )
+					),
+				);
+			}
+		}
+
+		return $extra_args;
 	}
 
 	/**

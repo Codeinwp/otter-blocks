@@ -42,6 +42,7 @@ class Form_Block_Emails_Storing {
 		add_action( 'admin_action_untrash', array( $this, 'untrash_otter_form_record' ) );
 		add_action( 'admin_action_read', array( $this, 'read_otter_form_record' ) );
 		add_action( 'admin_action_unread', array( $this, 'unread_otter_form_record' ) );
+		add_action( 'admin_action_edit', array( $this, 'mark_read_on_edit' ) );
 	}
 
 	/**
@@ -243,6 +244,10 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function form_record_save_meta_box( $post_id, $post ) {
+		if ( empty( $_POST ) || ! isset( $_POST['action'] ) || 'editpost' !== $_POST['action'] ) {
+			return;
+		}
+
 		if ( 'otter_form_record' !== $post->post_type ) {
 			return;
 		}
@@ -251,16 +256,12 @@ class Form_Block_Emails_Storing {
 			return;
 		}
 
-		if ( ! isset( $_POST['_wpnonce'] ) ) {
-			wp_die( esc_html__( 'Nonce not set.', 'otter-blocks' ) );
-		}
-
-		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'update-post_' . $post->ID ) ) {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'update-post_' . $post->ID ) ) {
 			wp_die( esc_html__( 'Nonce not verified.', 'otter-blocks' ) );
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			wp_die( esc_html__( 'User cannot edit post.', 'otter-blocks' ) );
+			wp_die( esc_html__( 'User cannot edit this post.', 'otter-blocks' ) );
 		}
 
 		$meta = get_post_meta( $post_id, 'otter_form_record_meta', true );
@@ -272,7 +273,7 @@ class Form_Block_Emails_Storing {
 
 			$id = substr( $key, -8 );
 
-			if ( isset( $meta['inputs'][ $id ] ) &&  $meta['inputs'][ $id ]['value'] !== $value ) {
+			if ( isset( $meta['inputs'][ $id ] ) && $meta['inputs'][ $id ]['value'] !== $value ) {
 				$meta['inputs'][ $id ]['value'] = $value;
 			}
 		}
@@ -292,19 +293,19 @@ class Form_Block_Emails_Storing {
 		<table class="otter_form_record_meta" style="border-spacing: 10px; width: 100%">
 			<tbody style="display: table; width: 100%">
 				<?php
-				foreach ( $meta['inputs'] as $key => $field ) {
+				foreach ( $meta['inputs'] as $id => $field ) {
 					?>
 					<tr>
-						<td><label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $field['label'] ); ?></label></td>
+						<td><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $field['label'] ); ?></label></td>
 						<?php
 						if ( $field['type'] === 'textarea' ) {
 							?>
-							<td><textarea id="<?php echo esc_attr( $key ); ?>" class="otter_form_record_meta__value" rows="5" cols="40"><?php echo esc_html( $field['value'] ); ?></textarea></td>
+							<td><textarea name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>" id="<?php echo esc_attr( $id ); ?>" class="otter_form_record_meta__value" rows="5" cols="40"><?php echo esc_html( $field['value'] ); ?></textarea></td>
 							<?php
 							continue;
 						}
 						?>
-						<td><input name="<?php echo esc_attr( 'otter_meta_' . $key ); ?>" id="<?php echo esc_attr( $key ); ?>" type="<?php echo isset( $field['type'] ) ? esc_attr( $field['type'] ) : ''; ?>" class="otter_form_record_meta__value" value="<?php echo esc_html( $field['value'] ); ?>" size="40"/></td>
+						<td><input name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>" id="<?php echo esc_attr( $id ); ?>" type="<?php echo isset( $field['type'] ) ? esc_attr( $field['type'] ) : ''; ?>" class="otter_form_record_meta__value" value="<?php echo esc_html( $field['value'] ); ?>" size="40"/></td>
 					</tr>
 					<?php
 				}
@@ -380,6 +381,27 @@ class Form_Block_Emails_Storing {
 			}
 		</style>
 		<?php
+	}
+
+	/**
+	 * Mark form record as read when it is edited.
+	 *
+	 * @return void
+	 */
+	public function mark_read_on_edit() {
+		if ( ! isset( $_REQUEST['post'] ) ) {
+			return;
+		}
+
+		$post = $_REQUEST['post'];
+		if ( ! get_post( $post ) || 'otter_form_record' !== get_post_type( $post ) ) {
+			return;
+		}
+
+		$status = get_post_status( $post );
+		if ( 'unread' === $status ) {
+			wp_update_post( array( 'ID' => $post, 'post_status' => 'read' ) );
+		}
 	}
 
 	/**
