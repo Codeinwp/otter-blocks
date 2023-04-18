@@ -37,13 +37,7 @@
 	.otter-form__container {
 		display: flex;
 		flex-wrap: wrap;
-		
-		margin-left: calc(var(--inputs-gap) * -1);
-		width: calc(100% + var(--inputs-gap));
-
-		&> *:not(.block-editor-inner-blocks) {
-			padding-left: var(--inputs-gap);
-		}
+		column-gap: var(--inputs-gap);
 
 		p {
 			margin-bottom: 10px;
@@ -292,6 +286,8 @@
 		}
 
 		@media (min-width: 640px) {
+			flex-grow: 1;
+
 			&:is(.is-style-o-c-three-quarters, .is-style-o-c-two-thirds, .is-style-o-c-half, .is-style-o-c-one-third, .is-style-o-c-one-quarter) {
 				box-sizing: border-box;
 				margin-left: 0px;
@@ -299,23 +295,28 @@
 			}
 	
 			&.is-style-o-c-three-quarters {
-				flex-basis: 75%;
+				flex-basis: calc( 75% - var( --inputs-gap ) );
+				max-width: 75%;
 			}
 	
 			&.is-style-o-c-two-thirds {
-				flex-basis: 66.66666666666666%;
+				flex-basis: calc( 66.66666666666666% - var( --inputs-gap ) );
+				max-width: 66.66666666666666%;
 			}
 	
 			&.is-style-o-c-half {
-				flex-basis: 50%;
+				flex-basis: calc( 50% - var( --inputs-gap ) );
+				max-width: 50%;
 			}
 		
 			&.is-style-o-c-one-third {
-				flex-basis: 33.33333333333333%;
+				flex-basis: calc( 33.33333333333333% - var( --inputs-gap ) );
+				max-width: 33.33333333333333%;
 			}
 		
 			&.is-style-o-c-one-quarter {
-				flex-basis: 25%;
+				flex-basis: calc( 25% - var( --inputs-gap ) );
+				max-width: 25%;
 			}
 		}
 	}
