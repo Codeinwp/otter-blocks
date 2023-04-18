@@ -30,7 +30,7 @@ domReady( () => {
 	};
 
 	const addFAQSchema = accordion => {
-		if ( ! accordion.dataset.hasSchema ) {
+		if ( ! accordion.dataset.hasSchema || 'false' === accordion.dataset.hasSchema ) {
 			return;
 		}
 
