@@ -18,17 +18,18 @@ use WP_REST_Response;
  */
 class Form_Data_Response {
 
-	// TODO: Integrate the new error code system.
 	const SUCCESS_EMAIL_SEND      = '0';
 	const SUCCESS_USER_SUBSCRIBED = '1';
 
-	const ERROR_RUNTIME_ERROR                = '10';
-	const ERROR_FILE_UPLOAD                  = '11';
-	const ERROR_FILE_UPLOAD_TYPE             = '12';
-	const ERROR_FILE_UPLOAD_TYPE_WP          = '13';
-	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER = '14';
-	const ERROR_FILE_UPLOAD_MAX_SIZE         = '15';
-	const ERROR_MISSING_FILE_FIELD_OPTION    = '16';
+	const ERROR_RUNTIME_ERROR                     = '10';
+	const ERROR_FILE_UPLOAD                       = '11';
+	const ERROR_FILE_UPLOAD_TYPE                  = '12';
+	const ERROR_FILE_UPLOAD_TYPE_WP               = '13';
+	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER      = '14';
+	const ERROR_FILE_UPLOAD_MAX_SIZE              = '15';
+	const ERROR_MISSING_FILE_FIELD_OPTION         = '16';
+	const ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD = '17';
+	const ERROR_AUTORESPONDER_COULD_NOT_SEND      = '18';
 
 	// Request validation errors.
 	const ERROR_MISSING_DATA          = '101';
@@ -328,6 +329,8 @@ class Form_Data_Response {
 			self::ERROR_FILE_UPLOAD_TYPE                   => __( 'The file type is not allowed.', 'otter-blocks' ),
 			self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER       => __( 'The number of files is too big.', 'otter-blocks' ),
 			self::ERROR_FILE_UPLOAD_MAX_SIZE               => __( 'The file size exceed the limit.', 'otter-blocks' ),
+			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the form.', 'otter-blocks' ),
+			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
 		);
 
 		if ( ! isset( $error_messages[ $error_code ] ) ) {

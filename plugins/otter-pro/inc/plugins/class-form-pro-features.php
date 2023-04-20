@@ -26,6 +26,7 @@ class Form_Pro_Features {
 			add_filter( 'otter_form_data_preparation', array( $this, 'save_files_to_uploads' ) );
 			add_filter( 'otter_form_data_preparation', array( $this, 'load_files_to_media_library' ) );
 			add_action( 'otter_form_after_submit', array( $this, 'clean_files_from_uploads' ) );
+			add_action( 'otter_form_after_submit', array( $this, 'send_autoresponder' ), 99 );
 		}
 	}
 
@@ -34,7 +35,7 @@ class Form_Pro_Features {
 	 *
 	 * @param Form_Data_Request $form_data The form data.
 	 * @return Form_Data_Request
-	 * @since 2.2.3
+	 * @since 2.2.5
 	 */
 	public function save_files_to_uploads( $form_data ) {
 		if (
@@ -192,7 +193,7 @@ class Form_Pro_Features {
 	 * Delete the files uploaded from the File field via attachments.
 	 *
 	 * @param Form_Data_Request $form_data The files to delete.
-	 * @since 2.2.3
+	 * @since 2.2.5
 	 */
 	public function clean_files_from_uploads( $form_data ) {
 
@@ -200,7 +201,8 @@ class Form_Pro_Features {
 			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
-			$form_data->has_error() ) {
+			$form_data->has_error()
+		) {
 			return $form_data;
 		}
 
@@ -224,7 +226,7 @@ class Form_Pro_Features {
 	 *
 	 * @param Form_Data_Request $form_data The files to load.
 	 * @return Form_Data_Request
-	 * @since 2.2.3
+	 * @since 2.2.5
 	 */
 	public function load_files_to_media_library( $form_data ) {
 		if (
@@ -271,6 +273,69 @@ class Form_Pro_Features {
 		} finally {
 			return $form_data;
 		}
+	}
+
+	/**
+	 * Send autoresponder email to the subscriber.
+	 *
+	 * @param Form_Data_Request $form_data The files to load.
+	 * @return Form_Data_Request
+	 * @since 2.2.5
+	 */
+	public function send_autoresponder( $form_data ) {
+
+		if (
+			! isset( $form_data ) ||
+			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
+			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
+			$form_data->has_error() ||
+			! $form_data->get_form_options()->has_autoresponder()
+		) {
+			return $form_data;
+		}
+
+		try {
+
+			$to = \ThemeIsle\GutenbergBlocks\Server\Form_Server::instance()->get_email_from_form_input( $form_data );
+			if ( empty( $to ) ) {
+				$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD );
+				return $form_data;
+			}
+
+			$headers[] = 'Content-Type: text/html';
+			$headers[] = 'From: ' . ( $form_data->get_form_options()->has_from_name() ? sanitize_text_field( $form_data->get_form_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
+
+			$autoresponder = $form_data->get_form_options()->get_autoresponder();
+			$body          = $this->replace_magic_tags( $autoresponder['body'], $form_data->get_form_inputs() );
+
+			// phpcs:ignore
+			if ( ! wp_mail( $to, $autoresponder['subject'], $body, $headers ) ) {
+				$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_AUTORESPONDER_COULD_NOT_SEND );
+			}
+		} catch ( \Exception $e ) {
+			$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
+		} finally {
+			return $form_data;
+		}
+	}
+
+	/**
+	 * Replace magic tags with the values from the form inputs.
+	 *
+	 * @param string $content The content to replace the magic tags.
+	 * @param array  $form_inputs The form inputs.
+	 * @since 2.2.5
+	 *
+	 * @return string
+	 */
+	public function replace_magic_tags( $content, $form_inputs ) {
+		foreach ( $form_inputs as $field ) {
+			if ( isset( $field['id'] ) ) {
+				$content = str_replace( '%' . $field['id'] . '%', $field['value'], $content );
+			}
+		}
+
+		return $content;
 	}
 
 

@@ -135,13 +135,13 @@ class Form_Server {
 		 * Register utility filters for email content building.
 		 */
 		add_filter( 'otter_form_email_build_body', array( $this, 'build_email_content' ) );
-		add_filter( 'otter_form_email_build_body_error', array( $this, 'build_email_error_content' ), 1, 2 );
+		add_filter( 'otter_form_email_build_body_error', array( $this, 'build_email_error_content' ), 1 );
 
 		/**
 		 * Register utility actions that triggers after the main submit action. Actions that clean the data, generated files or auxiliary actions.
 		 */
 		add_action( 'otter_form_after_submit', array( $this, 'after_submit' ) );
-		add_action( 'otter_form_after_submit', array( $this, 'send_error_email_to_admin' ) );
+		add_action( 'otter_form_after_submit', array( $this, 'send_error_email_to_admin' ), 999 );
 	}
 
 	/**
@@ -224,6 +224,7 @@ class Form_Server {
 	 *
 	 * @param WP_REST_Request $request Form request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @throws \Exception Error.
 	 * @since 2.0.3
 	 */
 	public function frontend( $request ) {
@@ -280,7 +281,8 @@ class Form_Server {
 		} catch ( Exception $e ) {
 			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
-			$this->send_error_email( $e->getMessage(), $form_data );
+			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
+			$this->send_error_email( $form_data );
 		} finally {
 			return $res->build_response();
 		}
@@ -359,7 +361,7 @@ class Form_Server {
 			}
 		} catch ( Exception  $e ) {
 			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
-			$this->send_error_email( $e->getMessage(), $form_data );
+			$this->send_error_email( $form_data );
 		} finally {
 			return $form_data;
 		}
@@ -372,9 +374,9 @@ class Form_Server {
 	 * @since 2.2.3
 	 */
 	public function send_error_email_to_admin( $form_data ) {
-		if ( ! isset( $form_data ) || $form_data->has_error() ) {
+		if ( ! isset( $form_data ) || ( ! $form_data instanceof Form_Data_Request ) || $form_data->has_error() || $form_data->has_warning() ) {
 
-			if ( ! isset( $form_data ) ) {
+			if ( ! isset( $form_data ) || ( ! $form_data instanceof Form_Data_Request ) ) {
 				$form_data = new Form_Data_Request( array() );
 				$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( __( 'Some hook is corrupting the Form processing pipeline.', 'otter-blocks' ) ) );
 			}
@@ -383,12 +385,20 @@ class Form_Server {
 				case Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR:
 				case Form_Data_Response::ERROR_MISSING_EMAIL:
 				case Form_Data_Response::ERROR_RUNTIME_ERROR:
-					$error_details   = $form_data->get_error_details();
-					$error_details[] = Form_Data_Response::get_error_code_message( $form_data->get_error_code() );
-
-					$message = implode( ', ', $error_details );
-					$this->send_error_email( $message, $form_data );
+					$this->send_error_email( $form_data );
 					break;
+			}
+
+			if (
+				$form_data->has_warning() &&
+				$form_data->has_warning_codes(
+					array(
+						Form_Data_Response::ERROR_AUTORESPONDER_COULD_NOT_SEND,
+						Form_Data_Response::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD,
+					)
+				)
+			) {
+				$this->send_error_email( $form_data );
 			}
 		}
 	}
@@ -474,20 +484,19 @@ class Form_Server {
 	/**
 	 * Send an email about error, like: the integration api key is no longer valid.
 	 *
-	 * @param string            $error The error message.
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return void
 	 * @since 2.0.3
 	 */
-	public static function send_error_email( $error, $form_data ) {
+	public static function send_error_email( $form_data ) {
 
 		if ( ! isset( $form_data ) ) {
 			$form_data = new Form_Data_Request( array() );
 		}
 
 		$email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
-		$email_message = Form_Email::instance()->build_error_email( $error, $form_data );
-		$email_body    = apply_filters( 'otter_form_email_build_body_error', $error, $email_message );
+		$email_message = Form_Email::instance()->build_error_email( $form_data );
+		$email_body    = apply_filters( 'otter_form_email_build_body_error', $email_message );
 		// Sent the form date to the admin site as a default behaviour.
 		$to      = sanitize_email( get_site_option( 'admin_email' ) );
 		$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
@@ -670,7 +679,7 @@ class Form_Server {
 			}
 		} catch ( Exception $e ) {
 			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
-			$this->send_error_email( $e->getMessage(), $form_data );
+			$this->send_error_email( $form_data );
 		} finally {
 			return $form_data;
 		}
@@ -792,12 +801,11 @@ class Form_Server {
 	/**
 	 * Filter for the content of the email for errors.
 	 *
-	 * @param string $error The error message.
 	 * @param string $content The content.
 	 * @return string
 	 * @sincee 2.0.3
 	 */
-	public function build_email_error_content( $error, $content ) {
+	public function build_email_error_content( $content ) {
 		return $content;
 	}
 

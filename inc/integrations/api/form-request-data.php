@@ -89,6 +89,14 @@ class Form_Data_Request {
 	protected $error_details = array();
 
 	/**
+	 * A list of warning codes.
+	 *
+	 * @var array $warning_codes Warning codes.
+	 * @since 2.2.5
+	 */
+	protected $warning_codes = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @access  public
@@ -504,5 +512,52 @@ class Form_Data_Request {
 	 */
 	public function has_field_option( $field_option_name ) {
 		return isset( $this->form_fields_options[ $field_option_name ] );
+	}
+
+	/**
+	 * Add a warning code.
+	 *
+	 * @param string $code The code.
+	 * @param string $details The details.
+	 * @return void
+	 */
+	public function add_warning( $code, $details = null ) {
+		$this->warning_codes[] = array(
+			'code'    => $code,
+			'details' => $details,
+		);
+	}
+
+	/**
+	 * Get the warning codes.
+	 *
+	 * @return array
+	 */
+	public function get_warning_codes() {
+		return $this->warning_codes;
+	}
+
+	/**
+	 * Check if we have warning codes.
+	 *
+	 * @return bool
+	 */
+	public function has_warning() {
+		return count( $this->warning_codes ) > 0;
+	}
+
+	/**
+	 * Check if we have ONE of the given warning codes.
+	 *
+	 * @param array $codes The codes.
+	 * @return bool
+	 */
+	public function has_warning_codes( $codes ) {
+		foreach ( $this->warning_codes as $warning_code ) {
+			if ( in_array( $warning_code['code'], $codes ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -179,12 +179,11 @@ class Form_Email {
 	/**
 	 * Build the error email.
 	 *
-	 * @param string            $error The error message.
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return string
 	 * @since 2.0.3
 	 */
-	public function build_error_email( $error, $form_data ) {
+	public function build_error_email( $form_data ) {
 		return '
 		<!doctype html>
 		<html xmlns="http://www.w3.org/1999/xhtml">
@@ -198,7 +197,7 @@ class Form_Email {
 			'</title>
 		</head>
 		<body>'
-			. apply_filters( 'otter_form_email_render_body_error', $error ) .
+			. apply_filters( 'otter_form_email_render_body_error', $form_data ) .
 		"<div>
 			<h3> <?php esc_html_e( 'Submitted form content', 'otter-blocks' ); ?> </h3>
 			<div style=\"padding: 10px; border: 1px dashed black;\">"
@@ -212,20 +211,44 @@ class Form_Email {
 	/**
 	 * Build the body for error messages.
 	 *
-	 * @param string $error The error message.
+	 * @param Form_Data_Request $form_data The error message.
 	 * @since 2.0.3
 	 */
-	public function build_error_body( $error ) {
+	public function build_error_body( $form_data ) {
+		$error_message = __( 'No error found.', 'otter-blocks' );
+
+		$title = __( 'Status Report ', 'otter-blocks' );
+
+		if ( $form_data->has_error() ) {
+			$error_message = '(' . $form_data->get_error_code() . ')' . Form_Data_Response::get_error_code_message( $form_data->get_error_code() );
+		}
+
+		$warnings = '<p>' . __( 'No warning found.', 'otter-blocks' ) . '</p>';
+
+		if ( $form_data->has_warning() ) {
+			$warnings = '<ul>';
+			foreach ( $form_data->get_warning_codes() as $warning ) {
+				$warnings .= '<li>';
+				$warnings .= '(' . esc_html( $warning['code'] ) . ') ';
+				$warnings .= esc_html( Form_Data_Response::get_error_code_message( $warning['code'] ) . ( ! empty( $warning['details'] ) ? '(' . $warning['details'] . ')' : '' ) );
+				$warnings .= '</li>';
+			}
+			$warnings .= '</ul>';
+		}
+
 		return sprintf(
 			'
 		<h3>%s</h3>
 		<div style="padding: 10px;">
-			<span style="color: red;">%s</span>%s<br/>
+			<span style="color: red;font-weight: bold">%s</span>%s<br/>
+			<span style="font-weight: bold">%s</span>%s<br/>
 			<p>%s</p>
 		</div>',
-			esc_html( __( 'An error has occurred when a user submitted the form.', 'otter-blocks' ) ),
+			esc_html( $title ),
 			esc_html( __( 'Error: ', 'otter-blocks' ) ),
-			esc_html( $error ),
+			esc_html( $error_message ),
+			esc_html( __( 'Warnings: ', 'otter-blocks' ) ),
+			$warnings,
 			esc_html( __( 'Please check your Form credential from the email provider.', 'otter-blocks' ) )
 		);
 	}
