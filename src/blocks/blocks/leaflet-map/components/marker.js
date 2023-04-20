@@ -18,8 +18,8 @@ import {
 /**
  * Internal dependencies
  */
-import MarkerEditor from './marker-editor.js';
-import { getLocation } from './../utility.js';
+import { RichTextEditor } from '../../../components/';
+import { getLocation } from '../utility';
 import { ActionType } from '../edit.js';
 
 const Marker = ({
@@ -161,7 +161,7 @@ const Marker = ({
 							} }
 						/>
 
-						<MarkerEditor
+						<RichTextEditor
 							label={ __( 'Description', 'otter-blocks' ) }
 							type="text"
 							value={ marker.description }

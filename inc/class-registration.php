@@ -89,7 +89,8 @@ class Registration {
 					wp_enqueue_style( 'font-awesome-5' );
 					wp_enqueue_style( 'font-awesome-4-shims' );
 				}
-			}
+			},
+			11
 		);
 	}
 

@@ -2,6 +2,8 @@
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
+import { select } from '@wordpress/data';
 
 import {
 	isEqual,
@@ -15,12 +17,15 @@ import {
 	ExternalLink,
 	SelectControl,
 	TextControl,
-	PanelBody
+	PanelBody,
+	Spinner
 } from '@wordpress/components';
 
-import { Fragment } from '@wordpress/element';
+import { Fragment, useEffect, useState } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
+
+import classnames from 'classnames';
 
 import moment from 'moment';
 
@@ -31,7 +36,7 @@ import options from './options.js';
 
 import Notice from './../../../components/notice/index.js';
 
-import { setUtm } from '../../../helpers/helper-functions.js';
+import { getQueryStringFromObject, setUtm } from '../../../helpers/helper-functions.js';
 
 let hasSettingsPanel = [
 	'postExcerpt',
@@ -61,6 +66,30 @@ const Fields = ({
 	changeType,
 	onRemove
 }) => {
+	const [ preview, setPreview ] = useState();
+	const [ isLoading, setLoading ] = useState( false );
+
+	useEffect( () => {
+		const context = select( 'core/editor' ).getCurrentPostId();
+		const { type } = attributes;
+
+		if ( !! attributes.type && 'none' !== attributes.type ) {
+			setLoading( true );
+			apiFetch({ path: 'otter/v1/dynamic/preview/?' + getQueryStringFromObject({ context, type }) })
+				.then( data => {
+					setPreview( data );
+				})
+				.catch( () => {
+					setPreview( undefined );
+				})
+				.finally( () => {
+					setLoading( false );
+				});
+		} else {
+			setPreview( undefined );
+		}
+	}, [ attributes.type ]);
+
 	hasSettingsPanel = applyFilters( 'otter.dynamicContent.text.hasSettingsPanel', hasSettingsPanel );
 
 	const dynamicOptions = applyFilters( 'otter.dynamicContent.text.options', options );
@@ -103,6 +132,18 @@ const Fields = ({
 
 					{ 'postContent' === attributes.type && <p>{ __( 'Post Content can cause an infinite loop when used inside Post Content itself.', 'otter-blocks' ) }</p> }
 				</BaseControl>
+
+				{ ( preview !== undefined || isLoading ) && (
+					<div className="o-dynamic-modal__preview">
+						<div className={ classnames( 'o-dynamic-modal__preview__content', { 'is-loading': isLoading })}>
+							{ isLoading ?
+								<Spinner /> :
+								preview || __( 'No preview available.', 'otter-blocks' )
+							}
+						</div>
+						<div className="o-dynamic-modal__preview__description">{ __( 'Dynamic Value preview', 'otter-blocks' ) }</div>
+					</div>
+				)}
 
 				{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 					<Notice

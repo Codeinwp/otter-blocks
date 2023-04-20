@@ -48,7 +48,7 @@ class Main {
 	/**
 	 * Autoload classes.
 	 *
-	 * @param string $classnames Block Classnames.
+	 * @param array $classnames Block Classnames.
 	 *
 	 * @since   2.0.1
 	 * @access  public
@@ -58,6 +58,7 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\Block_Conditions',
 			'\ThemeIsle\OtterPro\Plugins\Dynamic_Content',
 			'\ThemeIsle\OtterPro\Plugins\Fonts_Module',
+			'\ThemeIsle\OtterPro\Plugins\Form_Block',
 			'\ThemeIsle\OtterPro\Plugins\License',
 			'\ThemeIsle\OtterPro\Plugins\Live_Search',
 			'\ThemeIsle\OtterPro\Plugins\Options_Settings',

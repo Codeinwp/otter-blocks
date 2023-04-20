@@ -2,7 +2,7 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/)  
 **Tags:** gutenberg, block, blocks, export, import, exporter, importer, block exporter, block export, block import, block importer  
 **Requires at least:** 5.9      
-**Tested up to:** 6.1  
+**Tested up to:** 6.2  
 **Requires PHP:** 5.4    
 **Stable tag:** trunk  
 **License:** GPLv3    

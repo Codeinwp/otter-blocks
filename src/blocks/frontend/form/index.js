@@ -69,6 +69,7 @@ const extractFormFields = async( form ) => {
 
 			let value = undefined;
 			let fieldType = undefined;
+			const { id } = input;
 
 			const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"]), .otter-form-textarea-input' );
 			if ( null !== valueElem ) {
@@ -91,6 +92,7 @@ const extractFormFields = async( form ) => {
 								label: label,
 								value: `${files[i].name} (${ ( files[i].size / ( 1024 * 1024 ) ).toFixed( 4 ) } MB)`,
 								type: fileInput.type,
+								id: id,
 								metadata: {
 									name: files[i].name,
 									size: files[i].size,
@@ -124,6 +126,7 @@ const extractFormFields = async( form ) => {
 					label: label,
 					value: value,
 					type: fieldType,
+					id: id,
 					metadata: {
 						position: index + 1
 					}

@@ -224,7 +224,6 @@ class Form_Server {
 	 *
 	 * @param WP_REST_Request $request Form request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
-	 * @throws \Exception If form data is corrupted.
 	 * @since 2.0.3
 	 */
 	public function frontend( $request ) {
@@ -312,7 +311,6 @@ class Form_Server {
 
 			// Check if we need to send it to another user email.
 			if ( $form_data->payload_has_field( 'formOption' ) ) {
-				// TODO: Refactor this code.
 				$option_name = $form_data->get_payload_field( 'formOption' );
 				$form_emails = get_option( 'themeisle_blocks_form_emails' );
 
@@ -801,6 +799,26 @@ class Form_Server {
 	 */
 	public function build_email_error_content( $error, $content ) {
 		return $content;
+	}
+
+	/**
+	 * Get the first email from the input's form.
+	 *
+	 * @param Form_Data_Request $data The form data.
+	 *
+	 * @return mixed|string
+	 * @since 2.0.3
+	 */
+	public function get_email_from_form_input( Form_Data_Request $data ) {
+		$inputs = $data->get_payload_field( 'formInputsData' );
+		if ( is_array( $inputs ) ) {
+			foreach ( $data->get_payload_field( 'formInputsData' ) as $input_field ) {
+				if ( 'email' == $input_field['type'] ) {
+					return $input_field['value'];
+				}
+			}
+		}
+		return '';
 	}
 
 	/**
