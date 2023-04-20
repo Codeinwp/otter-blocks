@@ -65,6 +65,7 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
+			'\ThemeIsle\OtterPro\Plugins\Form_Pro_Features',
 			'\ThemeIsle\OtterPro\Server\Dashboard_Server',
 			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
 			'\ThemeIsle\OtterPro\Server\Live_Search_Server',
@@ -101,6 +102,7 @@ class Main {
 			'product-title',
 			'product-upsells',
 			'review-comparison',
+			'form-file',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
@@ -131,6 +133,7 @@ class Main {
 			'product-title'             => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Title_Block',
 			'product-upsells'           => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Upsells_Block',
 			'review-comparison'         => '\ThemeIsle\OtterPro\Render\Review_Comparison_Block',
+			'form-file'                 => '\ThemeIsle\OtterPro\Render\Form_File_Block',
 		);
 
 		$dynamic_blocks = array_merge( $dynamic_blocks, $blocks );
@@ -151,6 +154,7 @@ class Main {
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_Item_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Review_Comparison_CSS',
+			'\ThemeIsle\OtterPro\CSS\Blocks\Form_File_CSS',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
@@ -177,7 +181,7 @@ class Main {
 			$asset_file['version'],
 			true
 		);
-	
+
 		wp_set_script_translations( 'otter-pro', 'otter-pro' );
 
 		wp_localize_script(

@@ -1,5 +1,5 @@
 .wp-block-themeisle-blocks-form {
-	
+
 	--border-radius: 4px;
 	--border-color: inherit;
 	--border-width: 1px;
@@ -179,7 +179,7 @@
 
 			&.right > div {
 				align-items: flex-end;
-				
+
 				.o-form-server-response {
 					padding-right: 0px;
 				}
@@ -188,7 +188,7 @@
 			&.o-right-tablet > div {
 				@media ( max-width: 1024px ) {
 					align-items: flex-end;
-					
+
 					.o-form-server-response {
 						padding-right: 0px;
 					}
@@ -198,7 +198,7 @@
 			&.o-right-mobile > div {
 				@media ( max-width:640px ) {
 					align-items: flex-end;
-					
+
 					.o-form-server-response {
 						padding-right: 0px;
 					}
@@ -207,7 +207,7 @@
 
 			&.left > div {
 				align-items: flex-start;
-				
+
 				.o-form-server-response {
 					padding-left: 0px;
 				}
@@ -216,7 +216,7 @@
 			&.o-left-tablet > div {
 				@media ( max-width: 1024px ) {
 					align-items: flex-start;
-					
+
 					.o-form-server-response {
 						padding-left: 0px;
 					}
@@ -226,7 +226,7 @@
 			&.o-left-mobile > div {
 				@media ( max-width:640px ) {
 					align-items: flex-start;
-					
+
 					.o-form-server-response {
 						padding-left: 0px;
 					}
@@ -241,7 +241,7 @@
 				@media ( max-width: 1024px ) {
 					align-items: center;
 				}
-			} 
+			}
 
 			&.o-full-mobile > div, &.o-center-mobile > div  {
 				@media ( max-width:640px ) {
@@ -252,7 +252,7 @@
 	}
 
 
-	.wp-block-themeisle-blocks-form-input, .wp-block-themeisle-blocks-form-textarea, .wp-block-themeisle-blocks-form-multiple-choice {
+	.wp-block-themeisle-blocks-form-input, .wp-block-themeisle-blocks-form-textarea, .wp-block-themeisle-blocks-form-multiple-choice, .wp-block-themeisle-blocks-form-file {
 		display: flex;
 		flex-direction: column;
 		width: 100%;
@@ -269,16 +269,19 @@
 			}
 		}
 
-		.otter-form-input, .otter-form-textarea-input {
+		.otter-form-input, .otter-form-textarea-input, select {
 			color: var(--input-color);
 			width: var(--input-width);
-			padding: var(--padding);
-			border-radius: var(--border-radius);
-			border-width: var(--border-width);
-			border-color: var(--border-color);
-			border-style: solid;
 			font-size: var(--input-font-size);
-			background: var(--input-bg-color);
+
+			&:not(input[type="file"]) {
+				padding: var(--padding);
+				border-radius: var(--border-radius);
+				border-width: var(--border-width);
+				border-color: var(--border-color);
+				border-style: solid;
+				background: var(--input-bg-color);
+			}
 
 			@media (max-width: 1024px) {
 				padding: var(--padding-tablet);
@@ -290,7 +293,7 @@
 		}
 
 		.o-form-choice-label {
-			font-size: var(--label-font-size);
+			font-size: var(--input-font-size);
 		}
 
 		.o-form-help {
@@ -388,6 +391,7 @@
 		}
 
 		select {
+			width: var(--input-width);
 			border-color: var(--input-color);
 			padding: var(--padding);
 
@@ -399,6 +403,10 @@
 				padding: var(--padding-mobile);
 			}
 		}
+	}
+
+	.wp-block-themeisle-blocks-form-file input[type="file"] {
+		border: 0px;
 	}
 }
 

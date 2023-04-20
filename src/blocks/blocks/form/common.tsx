@@ -6,8 +6,18 @@ import { __ } from '@wordpress/i18n';
 import { dispatch } from '@wordpress/data';
 
 import { changeActiveStyle, getActiveStyle, getChoice } from '../../helpers/helper-functions';
-import { FormInputProps } from './input/types';
 import { BlockProps } from '../../helpers/blocks';
+
+export type FieldOption = {
+	fieldOptionName: string
+	fieldOptionType: string
+	options: {
+		maxFileSize?: number | string
+		allowedFileTypes?: string[]
+		saveFiles?: string
+		maxFilesNumber?: number
+	}
+}
 
 export type FormInputCommonProps = {
 	id: string
@@ -18,6 +28,49 @@ export type FormInputCommonProps = {
 	labelColor: string
 	helpText: string
 }
+
+export const fieldTypesOptions = () => ([
+	{
+		label: __( 'Checkbox', 'otter-blocks' ),
+		value: 'checkbox'
+	},
+	{
+		label: __( 'Date', 'otter-blocks' ),
+		value: 'date'
+	},
+	{
+		label: __( 'Email', 'otter-blocks' ),
+		value: 'email'
+	},
+	{
+		label: ( Boolean( window.otterPro?.isActive ) && ! Boolean( window.otterPro?.isExpired ) ) ? __( 'File', 'otter-blocks' ) : __( 'File (Pro)', 'otter-blocks' ),
+		value: 'file'
+	},
+	{
+		label: __( 'Number', 'otter-blocks' ),
+		value: 'number'
+	},
+	{
+		label: __( 'Radio', 'otter-blocks' ),
+		value: 'radio'
+	},
+	{
+		label: __( 'Select', 'otter-blocks' ),
+		value: 'select'
+	},
+	{
+		label: __( 'Text', 'otter-blocks' ),
+		value: 'text'
+	},
+	{
+		label: __( 'Textarea', 'otter-blocks' ),
+		value: 'textarea'
+	},
+	{
+		label: __( 'Url', 'otter-blocks' ),
+		value: 'url'
+	}
+]);
 
 export const switchFormFieldTo = ( type?: string, clientId ?:string, attributes?: any ) => {
 
@@ -30,6 +83,7 @@ export const switchFormFieldTo = ( type?: string, clientId ?:string, attributes?
 	const blockName = getChoice([
 		[ 'textarea' === type, 'form-textarea' ],
 		[ 'select' === type || 'checkbox' === type || 'radio' === type, 'form-multiple-choice' ],
+		[ 'file' === type, 'form-file' ],
 		[ 'form-input' ]
 	]);
 
@@ -66,12 +120,12 @@ export const HideFieldLabelToggle = ( props: Partial<BlockProps<FormInputCommonP
 	);
 };
 
-export const hasFormFieldName = ( name?: string ) => ( name?.startsWith( 'themeisle-blocks/form-input' ) || name?.startsWith( 'themeisle-blocks/form-textarea' ) || name?.startsWith( 'themeisle-blocks/form-multiple-choice' ) );
+export const hasFormFieldName = ( name?: string ) => ( name?.startsWith( 'themeisle-blocks/form-input' ) || name?.startsWith( 'themeisle-blocks/form-textarea' ) || name?.startsWith( 'themeisle-blocks/form-multiple-choice' ) || name?.startsWith( 'themeisle-blocks/form-file' ) );
 
 export const getFormFieldsFromInnerBlock = ( block: any ) : ( any | undefined )[] => {
 	return block?.innerBlocks?.map( ( child: any ) => {
 		if ( hasFormFieldName( child?.name ) ) {
-			return child as string;
+			return child;
 		}
 
 		if ( 'themeisle-blocks/form' === child?.name ) {
@@ -90,7 +144,7 @@ export const selectAllFieldsFromForm = ( children: any[]) : ({ parentClientId: s
 	return ( children?.map( ( child: any ) => {
 
 		if ( hasFormFieldName( child?.name ) ) {
-			return { parentClientId: child?.clientId, inputField: child.clientId };
+			return { parentClientId: child?.clientId, inputField: child };
 		}
 
 		if ( 'themeisle-blocks/form' === child?.name ) {

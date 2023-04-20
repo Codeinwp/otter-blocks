@@ -10,3 +10,4 @@ import './sticky/index.js';
 import './wc-integration/index.js';
 import './countdown/index';
 import './live-search/index.js';
+import './form/index.js';

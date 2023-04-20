@@ -35,12 +35,31 @@ const fieldNames: Record<string, string> = {
 	'email': __( 'Email Field', 'otter-blocks' ),
 	'date': __( 'Date Field', 'otter-blocks' ),
 	'number': __( 'Number Field', 'otter-blocks' ),
-	'textarea': __( 'Textarea Field', 'otter-blocks' )
+	'textarea': __( 'Textarea Field', 'otter-blocks' ),
+	'select': __( 'Select Field', 'otter-blocks' ),
+	'checkbox': __( 'Checkbox Field', 'otter-blocks' ),
+	'radio': __( 'Radio Field', 'otter-blocks' ),
+	'file': __( 'File Field', 'otter-blocks' ),
+	'url': __( 'URL Field', 'otter-blocks' )
+};
+
+const extractFieldName = ( input: FormInputProps ) => {
+	const tag = input?.name?.replace( 'themeisle-blocks/', '' );
+
+	if ( 'form-input' === tag || 'form-multiple-choice' === tag ) {
+		return input.attributes.type ?? 'text';
+	}
+
+	if ( 'form-file' === tag ) {
+		return 'file';
+	}
+
+	return 'textarea';
 };
 
 export const SortableInputField = SortableElement( ({ item, actions } : SortableTabProps ) => {
 	const { inputField } = item;
-	const fieldName = 'themeisle-blocks/form-input' === inputField.name ? ( inputField.attributes.type ?? 'text' ) : 'textarea';
+	const fieldName = extractFieldName( inputField );
 
 	return (
 		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">

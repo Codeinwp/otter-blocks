@@ -60,7 +60,7 @@ const Field = ({ fieldType, label, setAttributes, position, attributes }) => {
 
 const SelectField = ({ attributes }) => {
 	return (
-		<select name={attributes.mappedName} id={attributes?.id}>
+		<select name={attributes.mappedName} id={attributes?.id} multiple={attributes.multipleSelection}>
 			{
 				( attributes?.options ?? '' )?.split( '\n' )?.map( ( label, index ) => {
 					const value = label?.toLowerCase().replace( / /g, '_' );

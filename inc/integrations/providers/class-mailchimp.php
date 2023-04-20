@@ -110,44 +110,47 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	/**
 	 * Add a new subscriber to Mailchimp.
 	 *
-	 * @param string $email The client email.
-	 * @return Form_Data_Response
+	 * @param Form_Data_Request $form_data The wrapper around request data.
+	 * @return Form_Data_Request
 	 * @since 2.0.3
 	 */
-	public function subscribe( $email ) {
-		$res         = new Form_Data_Response();
+	public function subscribe( $form_data ) {
+
+		$email       = $form_data->get_email_from_form_input();
 		$user_status = $this->get_new_user_status_mailchimp( $this->list_id );
 
-		$url       = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/members/' . md5( strtolower( $email ) );
-		$form_data = array(
+		$url = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/members/' . md5( strtolower( $email ) );
+
+		$payload = array(
 			'email_address' => $email,
 			'status'        => $user_status,
 		);
-		$args      = array(
+
+		$args = array(
 			'method'  => 'PUT',
 			'headers' => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
-			'body'    => wp_json_encode( $form_data ),
+			'body'    => wp_json_encode( $payload ),
 		);
 
 		$response = wp_remote_post( $url, $args );
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' )->set_is_credential_error( $this->is_credential_error( $body['status'] ) );
 
 			if ( ! empty( $body['detail'] ) && str_contains( $body['detail'], 'fake' ) ) {
-				$res->set_code( Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL );
+				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL );
 			} else {
-				$res->set_code( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
-			}       
-		} else {
-			$res->mark_as_success();
-			$res->set_code( Form_Data_Response::SUCCESS_USER_SUBSCRIBED );
+				if ( $this->is_credential_error( $body['status'] ) ) {
+					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR );
+				} else {
+					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR, array( $body['detail'] ) );
+				}
+			}
 		}
 
-		return $res;
+		return $form_data;
 	}
 
 	/**
