@@ -37,7 +37,7 @@
 	.otter-form__container {
 		display: flex;
 		flex-wrap: wrap;
-		column-gap: var(--inputs-gap);
+		gap: var(--inputs-gap);
 
 		p {
 			margin-bottom: 10px;
@@ -254,7 +254,6 @@
 		width: 100%;
 		gap: var(--input-gap);
 		margin: 0px;
-		margin-bottom: var(--inputs-gap);
 
 		.otter-form-input-label, .otter-form-textarea-label {
 			width: 100%;
