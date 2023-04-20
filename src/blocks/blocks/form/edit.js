@@ -280,28 +280,33 @@ const Edit = ({
 
 
 		if ( attributes.optionName ) {
-			api.loadPromise.then( () => {
-				setLoading({ formOptions: 'loading', formIntegration: 'loading' });
-				( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
-					controller = null;
-					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
-					if ( formData ) {
-						parseDataFormOptions( formData );
-						setSavedFormOptions( formData );
-					}
-					setLoading({
-						formIntegration: 'done',
-						formOptions: 'done'
+			try {
+				api.loadPromise.then( () => {
+					setLoading({ formOptions: 'loading', formIntegration: 'loading' });
+					( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
+						controller = null;
+						const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
+						if ( formData ) {
+							parseDataFormOptions( formData );
+							setSavedFormOptions( formData );
+						}
+						setLoading({
+							formIntegration: 'done',
+							formOptions: 'done'
+						});
+						clearTimeout( t );
+					}).catch( () => {
+						setLoading({
+							formIntegration: 'done',
+							formOptions: 'done'
+						});
+						clearTimeout( t );
 					});
-					clearTimeout( t );
-				}).catch( () => {
-					setLoading({
-						formIntegration: 'done',
-						formOptions: 'done'
-					});
-					clearTimeout( t );
 				});
-			});
+			} catch ( e ) {
+				console.error( e );
+				setLoading({ formOptions: 'error' });
+			}
 		}
 
 		return () => {
@@ -312,64 +317,69 @@ const Edit = ({
 
 	const saveFormEmailOptions = () => {
 		setLoading({ formOptions: 'saving' });
-		( new api.models.Settings() ).fetch().done( res => {
-			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-			let isMissing = true;
-			let hasUpdated = false;
+		try {
+			( new api.models.Settings() ).fetch().done( res => {
+				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
+				let isMissing = true;
+				let hasUpdated = false;
 
-			emails?.forEach( ({ form }, index ) => {
-				if ( form !== attributes.optionName ) {
-					return;
+				emails?.forEach( ({ form }, index ) => {
+					if ( form !== attributes.optionName ) {
+						return;
+					}
+
+					hasUpdated = Object.keys( formOptionsMap ).reduce( ( acc, key ) => {
+						return acc || ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]);
+					}, false );
+
+					// Update the values
+					Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
+
+					isMissing = false;
+				});
+
+				if ( isMissing ) {
+					const data = { form: attributes.optionName };
+
+					Object.keys( formOptionsMap ).forEach( key => {
+						data[key] = formOptions[formOptionsMap[key]];
+					});
+
+					emails.push( data );
 				}
 
-				hasUpdated = Object.keys( formOptionsMap ).reduce( ( acc, key ) => {
-					return acc || ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]);
-				}, false );
+				if ( isMissing || hasUpdated ) {
+					const model = new api.models.Settings({
+						// eslint-disable-next-line camelcase
+						themeisle_blocks_form_emails: emails
+					});
 
-				// Update the values
-				Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
-
-				isMissing = false;
-			});
-
-			if ( isMissing ) {
-				const data = { form: attributes.optionName };
-
-				Object.keys( formOptionsMap ).forEach( key => {
-					data[key] = formOptions[formOptionsMap[key]];
-				});
-
-				emails.push( data );
-			}
-
-			if ( isMissing || hasUpdated ) {
-				const model = new api.models.Settings({
-					// eslint-disable-next-line camelcase
-					themeisle_blocks_form_emails: emails
-				});
-
-				model.save().then( response => {
-					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
-					if ( formOptions ) {
-						parseDataFormOptions( formOptions );
-						setSavedFormOptions( formOptions );
-						setLoading({ formOptions: 'done' });
-						createNotice(
-							'info',
-							__( 'Form options have been saved.', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
-					} else {
-						setLoading({ formOptions: 'error' });
-					}
-				});
-			} else {
-				setLoading({ formOptions: 'done' });
-			}
-		}).catch( () => setLoading({ formOptions: 'error' }) );
+					model.save().then( response => {
+						const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
+						if ( formOptions ) {
+							parseDataFormOptions( formOptions );
+							setSavedFormOptions( formOptions );
+							setLoading({ formOptions: 'done' });
+							createNotice(
+								'info',
+								__( 'Form options have been saved.', 'otter-blocks' ),
+								{
+									isDismissible: true,
+									type: 'snackbar'
+								}
+							);
+						} else {
+							setLoading({ formOptions: 'error' });
+						}
+					});
+				} else {
+					setLoading({ formOptions: 'done' });
+				}
+			}).catch( () => setLoading({ formOptions: 'error' }) );
+		} catch ( e ) {
+			console.error( e );
+			setLoading({ formOptions: 'error' });
+		}
 	};
 
 	/**
