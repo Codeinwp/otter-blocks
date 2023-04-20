@@ -59,36 +59,73 @@ const AutoresponderBody = ({ formOptions, setFormOption }) => {
 const FormOptions = ( Options, formOptions, setFormOption ) => {
 	return (
 		<>
-			{ Options }
+			{Options}
 
 			<ToolsPanelItem
-				hasValue={ () => undefined !== formOptions.autoresponder?.subject || undefined !== formOptions.autoresponder?.body }
-				label={ __( 'Autoresponder', 'otter-blocks' ) }
-				onDeselect={ () => setFormOption({ autoresponder: undefined }) }
+				hasValue={() =>
+					undefined !== formOptions.autoresponder?.subject ||
+					undefined !== formOptions.autoresponder?.body
+				}
+				label={__( 'Autoresponder', 'otter-blocks' )}
+				onDeselect={() => setFormOption({ autoresponder: undefined })}
 			>
-				{ Boolean( window.otterPro.isActive ) ? (
+				{Boolean( window.otterPro.isActive ) ? (
 					<>
 						<TextControl
-							label={ __( 'Autoresponder Subject', 'otter-blocks' ) }
-							placeholder={ __( 'Confirmation of your subscription', 'otter-blocks' ) }
-							value={ formOptions.autoresponder?.subject }
-							onChange={ subject => setFormOption({ autoresponder: { ...formOptions.autoresponder, subject }}) }
-							help={ __( 'Enter the subject of the autoresponder email.', 'otter-blocks' ) }
+							label={__( 'Autoresponder Subject', 'otter-blocks' )}
+							placeholder={__(
+								'Confirmation of your subscription',
+								'otter-blocks'
+							)}
+							value={formOptions.autoresponder?.subject}
+							onChange={( subject ) =>
+								setFormOption({
+									autoresponder: {
+										...formOptions.autoresponder,
+										subject
+									}
+								})
+							}
+							help={__(
+								'Enter the subject of the autoresponder email.',
+								'otter-blocks'
+							)}
 						/>
 
 						<AutoresponderBody
-							formOptions={ formOptions }
-							setFormOption={ setFormOption }
+							formOptions={formOptions}
+							setFormOption={setFormOption}
+						/>
+
+						<Notice
+							notice={
+								<div style={{ marginBottom: '10px' }}>
+									{__(
+										'Make sure to have at least one Email field.',
+										'otter-blocks'
+									)}
+								</div>
+							}
+							instructions={__(
+								'Add new Email field or convert an existing field.',
+								'otter-blocks'
+							)}
 						/>
 					</>
 				) : (
 					<div>
 						<Notice
-							notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Form Block.', 'otter-blocks' ) }
+							notice={__(
+								'You need to activate Otter Pro.',
+								'otter-blocks'
+							)}
+							instructions={__(
+								'You need to activate your Otter Pro license to use Pro features of Form Block.',
+								'otter-blocks'
+							)}
 						/>
 					</div>
-				) }
+				)}
 			</ToolsPanelItem>
 		</>
 	);
