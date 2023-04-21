@@ -1,3 +1,7 @@
+##### [Version 2.2.5](https://github.com/Codeinwp/otter-blocks/compare/v2.2.4...v2.2.5) (2023-04-21)
+
+- Fixes a bug with the new WP release causing blocks to crash during transformation
+
 ##### [Version 2.2.4](https://github.com/Codeinwp/otter-blocks/compare/v2.2.3...v2.2.4) (2023-03-30)
 
 - Add Preview for Dynamic Data in the Popover Control
