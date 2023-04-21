@@ -194,10 +194,9 @@ const Edit = ({
 	const { canSaveData } = useSelect( select => {
 		const isSavingPost = select( 'core/editor' )?.isSavingPost();
 		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
-		const widgetSaving = select( 'core/edit-widgets' )?.isSavingWidgetAreas();
 
 		return {
-			canSaveData: ( ! isAutosaving && isSavingPost ) || widgetSaving
+			canSaveData: ! isAutosaving && isSavingPost
 		};
 	});
 
