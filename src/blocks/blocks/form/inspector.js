@@ -405,7 +405,8 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>,
 								formOptions,
-								setFormOption
+								setFormOption,
+								useContext( FormContext )
 							) }
 						</ToolsPanel>
 

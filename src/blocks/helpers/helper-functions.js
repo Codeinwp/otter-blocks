@@ -686,3 +686,25 @@ export const setSavedState = ( key, value ) => {
 	window.oSavedStates = window.oSavedStates ?? {};
 	window.oSavedStates[ key ] = value;
 };
+
+/**
+ * Find the blocks that match the given condition.
+ *
+ * @param {import('./blocks').OtterBlock<unknown>[]} innerBlocks The inner blocks.
+ * @param {(block: import('./blocks').OtterBlock<unknown>) => boolean} condition The condition.
+ * @returns {import('./blocks').OtterBlock<unknown>[]} The blocks that match the condition.
+ */
+export const findInnerBlocks = ( innerBlocks, condition ) => {
+	if ( innerBlocks === undefined || condition === undefined ) {
+		return [];
+	}
+
+	let found = [];
+	for ( const block of innerBlocks ) {
+		if ( condition( block ) ) {
+			found.push( block );
+		}
+		found = found.concat( findInnerBlocks( block?.innerBlocks, condition ) );
+	}
+	return found;
+};

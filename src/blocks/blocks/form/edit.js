@@ -52,7 +52,9 @@ import {
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
-import { renderBoxOrNumWithUnit, _cssBlock, _px } from '../../helpers/helper-functions';
+import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
+import { Notice } from '@wordpress/components';
+
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
@@ -114,6 +116,8 @@ const Edit = ({
 		return attributes?.[field];
 	};
 
+
+	/** @type {[import('./type').FormOptions, React.Dispatch<React.SetStateAction<import('./type').FormOptions>>]} */
 	const [ formOptions, setFormOptions ] = useState({
 		provider: undefined,
 		redirectLink: undefined,
@@ -145,6 +149,7 @@ const Edit = ({
 	};
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
+	const [ showAutoResponderNotice, setShowAutoResponderNotice ] = useState( false );
 
 	const [ listIDOptions, setListIDOptions ] = useState([{ label: __( 'None', 'otter-blocks' ), value: '' }]);
 
@@ -236,7 +241,16 @@ const Edit = ({
 				}
 			}
 		}
-	}, [ children ]);
+
+		if ( formOptions.autoresponder ) {
+			const emailFields = findInnerBlocks( children, block => {
+				return 'email' === block?.attributes?.type && 'themeisle-blocks/form-input' === block?.name;
+			});
+
+			setShowAutoResponderNotice( 0 === emailFields?.length );
+		}
+
+	}, [ children, formOptions.autoresponder ]);
 
 	/**
 	 * Get the data from the WP Options for the current form.
@@ -849,7 +863,8 @@ const Edit = ({
 					children,
 					inputFieldActions,
 					hasInnerBlocks,
-					selectForm: () => selectBlock( clientId )
+					selectForm: () => selectBlock( clientId ),
+					showAutoResponderNotice
 				}}
 			>
 				<Inspector
@@ -878,8 +893,8 @@ const Edit = ({
 										])
 									}
 								</style>
-								<InnerBlocks
-								/>
+
+								<InnerBlocks/>
 
 								{
 									attributes.hasCaptcha && 'done' !== loadingState?.captcha && (
@@ -961,6 +976,7 @@ const Edit = ({
 											}
 										</Fragment>
 									) }
+
 								</div>
 							</form>
 						) : (

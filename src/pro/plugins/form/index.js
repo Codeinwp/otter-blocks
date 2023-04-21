@@ -8,7 +8,8 @@ import {
 	Modal,
 	TextControl,
 	FormTokenField,
-	ToggleControl
+	ToggleControl,
+	Notice
 } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { useState, Fragment } from '@wordpress/element';
@@ -16,7 +17,7 @@ import { useState, Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { Notice } from '../../../blocks/components';
+import { Notice as OtterNotice } from '../../../blocks/components';
 import { RichTextEditor } from '../../../blocks/components';
 import { HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
@@ -56,7 +57,7 @@ const AutoresponderBody = ({ formOptions, setFormOption }) => {
 	);
 };
 
-const FormOptions = ( Options, formOptions, setFormOption ) => {
+const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 	return (
 		<>
 			{Options}
@@ -97,24 +98,20 @@ const FormOptions = ( Options, formOptions, setFormOption ) => {
 							setFormOption={setFormOption}
 						/>
 
-						<Notice
-							notice={
-								<div style={{ marginBottom: '10px' }}>
-									{__(
-										'Make sure to have at least one Email field.',
-										'otter-blocks'
-									)}
-								</div>
-							}
-							instructions={__(
-								'Add new Email field or convert an existing field.',
-								'otter-blocks'
-							)}
-						/>
+						{
+							config?.showAutoResponderNotice && (
+								<Notice isDismissible={false} status={'info'}>
+									{
+										__( 'In order for Autoresponder to work, you need to have at least one Email field in Form.', 'otter-blocks' )
+									}
+								</Notice>
+							)
+						}
+
 					</>
 				) : (
 					<div>
-						<Notice
+						<OtterNotice
 							notice={__(
 								'You need to activate Otter Pro.',
 								'otter-blocks'
@@ -195,7 +192,7 @@ const FormFileInspector = ( Template, {
 		return (
 			<Fragment>
 				{ Template }
-				<Notice
+				<OtterNotice
 					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
 					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
 				/>
