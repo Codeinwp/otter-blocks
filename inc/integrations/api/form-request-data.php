@@ -560,4 +560,13 @@ class Form_Data_Request {
 		}
 		return false;
 	}
+
+	/**
+	 * Get the form option id.
+	 *
+	 * @return mixed|string|null
+	 */
+	public function get_form_option_id() {
+		return $this->get_payload_field( 'formOption' );
+	}
 }

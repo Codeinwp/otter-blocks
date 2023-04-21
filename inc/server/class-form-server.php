@@ -60,6 +60,10 @@ class Form_Server {
 	 */
 	const ANTI_SPAM_TIMEOUT = 5000; // 5 seconds
 
+	/**
+	 * Autoresponder Email Error Expiration Time
+	 */
+	const AUTO_RESPONDER_ERROR_EXPIRATION_TIME = 7 * 24 * 60; // 1 week
 
 	/**
 	 * Initialize the class
@@ -381,15 +385,18 @@ class Form_Server {
 				$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( __( 'Some hook is corrupting the Form processing pipeline.', 'otter-blocks' ) ) );
 			}
 
+			$send_email = false;
+
 			switch ( $form_data->get_error_code() ) {
 				case Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR:
 				case Form_Data_Response::ERROR_MISSING_EMAIL:
 				case Form_Data_Response::ERROR_RUNTIME_ERROR:
-					$this->send_error_email( $form_data );
+					$send_email = true;
 					break;
 			}
 
 			if (
+				! $send_email &&
 				$form_data->has_warning() &&
 				$form_data->has_warning_codes(
 					array(
@@ -398,6 +405,15 @@ class Form_Server {
 					)
 				)
 			) {
+				$key = $form_data->get_form_option_id() . '_autoresponder_error';
+
+				if ( ! get_transient( $key ) ) {
+					$send_email = true;
+					set_transient( $key, true, self::AUTO_RESPONDER_ERROR_EXPIRATION_TIME );
+				}
+			}
+
+			if ( $send_email ) {
 				$this->send_error_email( $form_data );
 			}
 		}
