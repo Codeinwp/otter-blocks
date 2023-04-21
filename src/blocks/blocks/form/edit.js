@@ -178,14 +178,15 @@ const Edit = ({
 		[ name ]
 	);
 
-	const { children, hasEmailField, hasProtection } = useSelect( select => {
+	const [ hasEmailField, setHasEmailField ] = useState( false );
+
+	const { children, hasProtection } = useSelect( select => {
 		const {
 			getBlock
 		} = select( 'core/block-editor' );
 		const children = getBlock( clientId ).innerBlocks;
 		return {
 			children,
-			hasEmailField: children?.some( b => ( 'email' === b?.attributes?.type ) ),
 			hasProtection: 0 < children?.filter( ({ name }) => 'themeisle-blocks/form-nonce' === name )?.length
 		};
 	});
@@ -242,15 +243,26 @@ const Edit = ({
 			}
 		}
 
-		if ( formOptions.autoresponder ) {
-			const emailFields = findInnerBlocks( children, block => {
-				return 'email' === block?.attributes?.type && 'themeisle-blocks/form-input' === block?.name;
-			});
+		if ( formOptions.autoresponder || formOptions.action ) {
+			const emailFields = findInnerBlocks(
+				children,
+				block => {
+					return 'email' === block?.attributes?.type && 'themeisle-blocks/form-input' === block?.name;
+				},
+				block => {
+
+					// Do not find email field inside inner Form blocks.
+					return 'themeisle-blocks/form' !== block?.name;
+				}
+			);
+
+
+			setHasEmailField( 0 < emailFields?.length );
 
 			setShowAutoResponderNotice( 0 === emailFields?.length );
 		}
 
-	}, [ children, formOptions.autoresponder ]);
+	}, [ children, formOptions.autoresponder, formOptions.action ]);
 
 	/**
 	 * Get the data from the WP Options for the current form.
@@ -291,7 +303,6 @@ const Edit = ({
 		const t = setTimeout( () => {
 			setLoading({ formOptions: 'done', formIntegration: 'done' });
 		}, 3000 );
-
 
 		if ( attributes.optionName ) {
 			try {
@@ -367,6 +378,8 @@ const Edit = ({
 						// eslint-disable-next-line camelcase
 						themeisle_blocks_form_emails: emails
 					});
+
+					console.log( emails );
 
 					model.save().then( response => {
 						const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );

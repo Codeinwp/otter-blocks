@@ -692,9 +692,10 @@ export const setSavedState = ( key, value ) => {
  *
  * @param {import('./blocks').OtterBlock<unknown>[]} innerBlocks The inner blocks.
  * @param {(block: import('./blocks').OtterBlock<unknown>) => boolean} condition The condition.
+ * @param {(block: import('./blocks').OtterBlock<unknown>) => boolean} nestingCondition The condition that allow to go deeper in the tree.
  * @returns {import('./blocks').OtterBlock<unknown>[]} The blocks that match the condition.
  */
-export const findInnerBlocks = ( innerBlocks, condition ) => {
+export const findInnerBlocks = ( innerBlocks, condition, nestingCondition = x => x ) => {
 	if ( innerBlocks === undefined || condition === undefined ) {
 		return [];
 	}
@@ -704,7 +705,10 @@ export const findInnerBlocks = ( innerBlocks, condition ) => {
 		if ( condition( block ) ) {
 			found.push( block );
 		}
-		found = found.concat( findInnerBlocks( block?.innerBlocks, condition ) );
+
+		if ( nestingCondition( block ) ) {
+			found = found.concat( findInnerBlocks( block?.innerBlocks, condition ) );
+		}
 	}
 	return found;
 };
