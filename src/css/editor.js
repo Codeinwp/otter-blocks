@@ -117,7 +117,7 @@ const CSSEditor = ({
 
 		if ( ( 'selector {\n}\n' ).replace( /\s+/g, '' ) === customCSS?.replace( /\s+/g, '' ) ) {
 			setAttributes({
-				customCSS: null,
+				customCSS: undefined,
 				className
 			});
 		} else if ( customCSS ) {
