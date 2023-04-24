@@ -29,6 +29,7 @@ class Dynamic_Content {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link_button' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
+		add_filter( 'otter_blocks_dynamic_content_exception', array( $this, 'mark_exceptions' ) );
 	}
 
 	/**
@@ -371,13 +372,14 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_content( $data ) {
-		$content = get_the_content( $data['context'] );
+		$data = $this->mark_exceptions( $data );
+		$key  = $this->get_exception_key( $data );
 
-		// Remove internal calling of dynamic content to prevent creating an infinite loop (also known as 'Inception bug').
-		if ( strpos( $content, 'data-type="postContent"' ) ) {
-			$content = preg_replace( '/<o-dynamic.*?data-type="postContent".*?>.*?<\/o-dynamic>/', '', $content );
+		if ( isset( $data[ $key ] ) ) {
+			return '';
 		}
 
+		$content = get_the_content( $data['context'] );
 		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', $content ) );
 		return wp_kses_post( $content );
 	}
@@ -394,7 +396,12 @@ class Dynamic_Content {
 		$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
 
 		if ( empty( $excerpt ) ) {
-			$excerpt = wp_trim_excerpt( '', $post );
+			$data = $this->mark_exceptions( $data );
+			$key  = $this->get_exception_key( $data, $post->ID );
+
+			if ( ! isset( $data[ $key ] ) ) {
+				$excerpt = wp_trim_excerpt( '', $post );
+			}
 		}
 
 		if ( isset( $data['length'] ) && ! empty( $data['length'] ) ) {
@@ -654,6 +661,53 @@ class Dynamic_Content {
 		}
 
 		return apply_filters( 'otter_blocks_evaluate_dynamic_content_link', '', $data );
+	}
+
+	/**
+	 * Mark the exceptions for Dynamic request.
+	 *
+	 * @param array $data Dynamic request.
+	 * @return array Dynamic request with marked exceptions.
+	 */
+	public function mark_exceptions( $data ) {
+		if ( 'postExcerpt' === $data['type'] || 'postContent' === $data['type'] ) {
+			if (
+				'valid' === apply_filters( 'product_neve_license_status', false ) &&
+				class_exists( '\Neve_Pro\Modules\Custom_Layouts\Module' )
+			) {
+				$post = get_post( $data['context'] );
+				if ( isset( $post ) && 'neve_custom_layouts' === $post->post_type ) {
+					$key = $this->get_exception_key( $data, $post->ID );
+					if ( $key ) {
+						$data[ $key ] = true;
+					}
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get the exception key for Dynamic request.
+	 *
+	 * @param array   $data Dynamic request.
+	 * @param numeric $post_id Post ID.
+	 * @return string|null
+	 */
+	public function get_exception_key($data, $post_id = null ) {
+		if ( ! isset( $data ) ) {
+			return null;
+		}
+
+		if ( null == $post_id ) {
+			$post = get_post( $data['context'] );
+			if ( isset( $post ) ) {
+				$post_id = $post->ID;
+			}
+		}
+
+		return 'exception_dynamic_content_' . $data['type'] . '_' . $post_id;
 	}
 
 	/**
