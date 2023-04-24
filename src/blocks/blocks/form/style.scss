@@ -43,6 +43,10 @@
 			margin-bottom: 10px;
 		}
 
+		&> div {
+			width: 100%;
+		}
+
 		.wp-block-button {
 			display: flex;
 			align-items: baseline;
