@@ -20,6 +20,11 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--inputs-gap);
+
+		&> div {
+			width: 100%;
+			margin: 0px;
+		}
 	}
 }
 
