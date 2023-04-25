@@ -29,7 +29,6 @@ class Dynamic_Content {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link_button' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
-		add_filter( 'otter_blocks_dynamic_content_exception', array( $this, 'mark_exceptions' ) );
 	}
 
 	/**
@@ -666,6 +665,9 @@ class Dynamic_Content {
 	/**
 	 * Mark the exceptions for Dynamic request.
 	 *
+	 * Features that are using complex functions like `get_content` (directly or indirectly) might not behave correctly in every situation.
+	 * Based on the context, we decide if it is safe to use those functions..
+	 *
 	 * @param array $data Dynamic request.
 	 * @return array Dynamic request with marked exceptions.
 	 */
@@ -685,6 +687,24 @@ class Dynamic_Content {
 			}
 		}
 
+		if ( has_filter( 'otter_blocks_dynamic_content_exception' ) ) {
+
+			/**
+			 * Gather exceptions for Dynamic request from other plugins via hooks. Before merging the changes, we make sure that critical data is present.
+			 */
+			$data_exceptions = apply_filters( 'otter_blocks_dynamic_content_exception', $data );
+			if (
+				isset( $data_exceptions ) &&
+				is_array( $data_exceptions )
+			) {
+				$merged = array_merge( $data, $data_exceptions );
+
+				if ( isset( $merged['type'] ) && isset( $merged['context'] ) ) {
+					$data = $merged;
+				}
+			}
+		}
+
 		return $data;
 	}
 
@@ -695,7 +715,7 @@ class Dynamic_Content {
 	 * @param numeric $post_id Post ID.
 	 * @return string|null
 	 */
-	public function get_exception_key($data, $post_id = null ) {
+	public function get_exception_key( $data, $post_id = null ) {
 		if ( ! isset( $data ) ) {
 			return null;
 		}
