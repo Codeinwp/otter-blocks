@@ -15,6 +15,7 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
+import { FieldInputWidth } from '../common';
 
 /**
  *
@@ -79,6 +80,8 @@ const Inspector = ({
 					value={ attributes.label }
 					onChange={ label => setAttributes({ label }) }
 				/>
+
+				<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
 
 				<TextControl
 					label={ __( 'Placeholder', 'otter-blocks' ) }
