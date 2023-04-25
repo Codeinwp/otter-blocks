@@ -279,6 +279,7 @@
 			border-style: solid;
 			font-size: var(--input-font-size);
 			background: var(--input-bg-color);
+			box-sizing: border-box;
 		}
 
 		.o-form-help {
