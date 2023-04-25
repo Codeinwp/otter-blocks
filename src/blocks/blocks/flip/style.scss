@@ -26,19 +26,19 @@
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
 
 	&.has-dark-front-bg .o-flip-front {
-		color: #fff;
+		color: var( --nv-text-dark-bg , #fff );
 	}
 
 	&.has-light-front-bg .o-flip-front {
-		color: #000;
+		color: var( --nv-text-color , #000 );
 	}
 
 	&.has-dark-back-bg .o-flip-back {
-		color: #fff;
+		color: var( --nv-text-dark-bg , #fff );
 	}
 
 	&.has-light-back-bg .o-flip-back {
-		color: #000;
+		color: var( --nv-text-color , #000 );
 	}
 
 	// &[class^="block-editor"] {

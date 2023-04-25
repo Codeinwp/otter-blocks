@@ -1,7 +1,6 @@
 @import 'style';
 
 .wp-block-themeisle-blocks-flip {
-
 	--height-tablet: var(--height);
 	--height-mobile: var(--height-tablet);
 
@@ -13,22 +12,9 @@
 
 	border: none;
 
-	/* wrote this for specificity because neve
-	overwrote the paragraph color */
-	&.has-dark-front-bg .o-flip-front p {
-		color: #fff;
-	}
-
-	&.has-light-front-bg .o-flip-front p {
-		color: #000;
-	}
-
-	&.has-dark-back-bg .o-flip-back p {
-		color: #fff;
-	}
-
-	&.has-light-back-bg .o-flip-back p {
-		color: #000;
+	/* Add this to override Neve styles */
+	&[class*="has-dark-"] p, &[class*="has-light-"] p {
+		color: unset;
 	}
 
 	.o-switcher {

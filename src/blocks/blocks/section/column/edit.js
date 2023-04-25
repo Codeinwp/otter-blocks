@@ -322,12 +322,12 @@ const Edit = ({
 		<Fragment>
 			<style>
 				{
-					`#block-${ clientId } > * ` + _cssBlock([
+					`#block-${ clientId }` + _cssBlock([
 						[ '--text-color', attributes.color ]
 					])
 				}
 				{
-					`#block-${ clientId }:hover > * ` + _cssBlock([
+					`#block-${ clientId }:hover` + _cssBlock([
 						[ '--text-color', attributes.colorHover ]
 					])
 				}

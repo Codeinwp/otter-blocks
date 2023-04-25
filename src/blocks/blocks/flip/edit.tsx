@@ -122,11 +122,11 @@ const Edit = ({
 				transform: ${ 'back' === currentSide ? 'var( --flip-anim )' : 'unset' };
 			}`,
 			`.o-flip-front .o-flip-content h3 {
-				color: ${ attributes.titleColor };
+				${ attributes.titleColor && `color: ${ attributes.titleColor }` };
 				${ attributes.titleFontSize && `font-size: ${ _px( attributes.titleFontSize ) }` }
 			}`,
 			`.o-flip-front .o-flip-content p {
-				color: ${ attributes.descriptionColor };
+				${ attributes.descriptionColor && `color: ${ attributes.descriptionColor }` };
 				${ attributes.descriptionFontSize && `font-size: ${ _px( attributes.descriptionFontSize ) }` }
 			}`
 		]);

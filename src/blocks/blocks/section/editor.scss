@@ -13,12 +13,17 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	display: flex;
 	transition: 0.3s;
 
-	&.has-dark-bg, &.has-dark-bg p {
-		color: var( --text-color, #fff );
+	/* Add this to override Neve styles */
+	&[class*="has-dark-"] p, &[class*="has-light-"] p {
+		color: unset;
 	}
 
-	&.has-light-bg, &.has-light-bg p {
-		color: var( --text-color, #000 );
+	&.has-dark-bg {
+		color: var( --text-color, var( --nv-text-dark-bg , #fff ) );
+	}
+
+	&.has-light-bg {
+		color: var( --text-color, var( --nv-text-color , #000 ) );
 	}
 
 	> .innerblocks-wrap {
@@ -45,12 +50,12 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 					max-width: unset;
 				}
 
-				&.has-dark-bg, &.has-dark-bg p {
-					color: var( --text-color, #fff );
+				&.has-dark-bg {
+					color: var( --text-color, var( --nv-text-dark-bg , #fff ) );
 				}
 
-				&.has-light-bg, &.has-light-bg p {
-					color: var( --text-color, #000 );
+				&.has-light-bg {
+					color: var( --text-color, var( --nv-text-color , #000 ) );
 				}
 			}
 		}
