@@ -6,6 +6,8 @@ import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
+	Button,
+	Modal,
 	PanelBody,
 	Placeholder,
 	SelectControl,
@@ -16,7 +18,8 @@ import {
 /**
  * Internal dependencies
  */
-import { ButtonToggleControl } from '../../components/index.js';
+import { ButtonToggleControl, RichTextEditor } from '../../components/index.js';
+import { useState } from '@wordpress/element';
 
 const Inspector = ({
 	attributes,
@@ -28,6 +31,9 @@ const Inspector = ({
 	isLoadingPrices,
 	pricesList
 }) => {
+
+	const [ isOpen, setOpen ] = useState( false );
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -95,19 +101,34 @@ const Inspector = ({
 					onChange={ setView }
 				/>
 
-				<TextareaControl
-					label={ __( 'Success Message', 'otter-blocks' ) }
-					value={ attributes.successMessage }
-					placeholder={ __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' ) }
-					onChange={ successMessage => setAttributes({ successMessage }) }
-				/>
+				{ isOpen && (
+					<Modal
+						title={ __( 'Stripe Messages' ) }
+						onRequestClose={() => setOpen( false )}
+						shouldCloseOnClickOutside={ false }
+					>
+						<RichTextEditor
+							label={ __( 'Success Message', 'otter-blocks' ) }
+							value={ attributes.successMessage ?? __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' ) }
+							onChange={ successMessage => setAttributes({ successMessage }) }
+							allowRawHTML
+						/>
 
-				<TextareaControl
-					label={ __( 'Cancel Message', 'otter-blocks' ) }
-					value={ attributes.cancelMessage }
-					placeholder={ __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' ) }
-					onChange={ cancelMessage => setAttributes({ cancelMessage }) }
-				/>
+						<RichTextEditor
+							label={ __( 'Cancel Message', 'otter-blocks' ) }
+							value={ attributes.cancelMessage ?? __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' ) }
+							onChange={ cancelMessage => setAttributes({ cancelMessage }) }
+							allowRawHTML
+						/>
+					</Modal>
+				) }
+
+				<Button
+					variant="secondary"
+					onClick={() => setOpen( true )}
+				>
+					{ __( 'Open Editor', 'otter-blocks' ) }
+				</Button>
 			</PanelBody>
 		</InspectorControls>
 	);
