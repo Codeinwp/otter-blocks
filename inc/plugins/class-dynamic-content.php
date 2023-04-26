@@ -685,6 +685,16 @@ class Dynamic_Content {
 					}
 				}
 			}
+
+			if ( 'postContent' === $data['type'] ) {
+				$content = get_the_content( $data['context'] );
+				if ( strpos( $content, 'data-type="postContent"' ) ) {
+					$key = $this->get_exception_key( $data, $post->ID );
+					if ( $key ) {
+						$data[ $key ] = true;
+					}
+				}
+			}
 		}
 
 		if ( has_filter( 'otter_blocks_dynamic_content_exception' ) ) {
