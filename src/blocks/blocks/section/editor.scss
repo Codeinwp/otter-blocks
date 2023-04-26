@@ -42,6 +42,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 				margin: inherit;
 				flex: 1;
 
+				/* Add this to override Neve styles */
+				&[class*="has-dark-"] p, &[class*="has-light-"] p {
+					color: unset;
+				}
+
 				> .block-editor-inner-blocks {
 					flex: 1;
 				}
