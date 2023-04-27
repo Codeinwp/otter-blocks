@@ -380,8 +380,6 @@ const Edit = ({
 						themeisle_blocks_form_emails: emails
 					});
 
-					console.log( emails );
-
 					model.save().then( response => {
 						const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
 						if ( formOptions ) {
