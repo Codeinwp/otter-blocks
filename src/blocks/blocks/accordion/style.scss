@@ -15,16 +15,22 @@
 	--padding-tablet: var( --padding );
 	--padding-mobile: var( --padding-tablet );
 
-	&.has-dark-title-bg {
-		--title-color: #FFF;
+	&.has-dark-title-bg > &-item > &-item__title,
+	&.has-dark-active-title-bg > &-item[open] > &-item__title {
+		color: var( --title-color, var( --nv-text-dark-bg , #fff ) );
 	}
 
-	&.has-dark-active-title-bg {
-		--title-color: #FFF;
+	&.has-light-title-bg > &-item > &-item__title,
+	&.has-light-active-title-bg > &-item[open] > &-item__title {
+		color: var( --title-color, var( --nv-text-color , #000 ) );
 	}
 
-	&.has-dark-content-bg {
-		color: #FFF;
+	&.has-dark-content-bg &-item__content {
+		color: var( --text-color, var( --nv-text-dark-bg , #fff ) );
+	}
+
+	&.has-light-content-bg &-item__content {
+		color: var( --text-color, var( --nv-text-color , #000 ) );
 	}
 
 	&-item {
