@@ -35,10 +35,7 @@ import {
 } from '../../helpers/block-utility.js';
 
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-
-const px = value => value ? `${ value }px` : value;
-
-const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+import { _px } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -310,7 +307,7 @@ const Edit = ({
 	 */
 	useEffect( () => {
 		if ( attributes.latitude && attributes.longitude && map ) {
-			map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom || 15 );
+			map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom ?? 15 );
 		}
 	}, [ attributes.latitude, attributes.longitude, attributes.zoom, map ]);
 
@@ -415,7 +412,7 @@ const Edit = ({
 					ref={ mapRef }
 					style={ {
 						width: '100%',
-						height: responsiveGetAttributes([ mightBeUnit( attributes.height || 400 ), attributes.heightTablet, attributes.heightMobile ])
+						height: responsiveGetAttributes([ _px( attributes.height ?? 400 ), attributes.heightTablet, attributes.heightMobile ])
 					} }>
 				</div>
 			</div>
