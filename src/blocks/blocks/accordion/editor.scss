@@ -4,6 +4,29 @@
 	$block: &;
 	border: none;
 
+	/* Add this to override Neve styles */
+	&[class*="has-dark-"] p, &[class*="has-light-"] p {
+		color: unset;
+	}
+
+	&.has-dark-title-bg > * > * > &-item > &-item__title,
+	&.has-dark-active-title-bg > * > * > &-item.is-open > &-item__title {
+		color: var( --title-color, var( --nv-text-dark-bg , #fff ) );
+	}
+
+	&.has-light-title-bg > * > * > &-item > &-item__title,
+	&.has-light-active-title-bg > * > * > &-item.is-open > &-item__title {
+		color: var( --title-color, var( --nv-text-color , #000 ) );
+	}
+
+	&.has-dark-content-bg &-item__content {
+		color: var( --text-color, var( --nv-text-dark-bg , #fff ) );
+	}
+
+	&.has-light-content-bg &-item__content {
+		color: var( --text-color, var( --nv-text-color , #000 ) );
+	}
+
 	&-item {
 		border: none;
 		margin: var(--gap) 0;

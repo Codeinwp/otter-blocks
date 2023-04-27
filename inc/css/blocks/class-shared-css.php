@@ -20,7 +20,7 @@ class Shared_CSS {
 	public static function section_shared() {
 		$css = array(
 			array(
-				'property' => '--content-color',
+				'property' => '--text-color',
 				'value'    => 'color',
 			),
 			array(
@@ -154,7 +154,7 @@ class Shared_CSS {
 			),
 			array(
 				'property'  => 'color',
-				'default'   => 'var( --content-color )',
+				'default'   => 'var( --text-color )',
 				'condition' => function( $attrs ) {
 					return isset( $attrs['color'] );
 				},
