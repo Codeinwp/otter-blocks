@@ -233,7 +233,7 @@ class Form_Server {
 	 */
 	public function frontend( $request ) {
 		$res       = new Form_Data_Response();
-		$form_data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
+		$form_data = new Form_Data_Request( $request );
 
 		try {
 
@@ -837,7 +837,7 @@ class Form_Server {
 		$inputs = $data->get_payload_field( 'formInputsData' );
 		if ( is_array( $inputs ) ) {
 			foreach ( $data->get_payload_field( 'formInputsData' ) as $input_field ) {
-				if ( 'email' == $input_field['type'] ) {
+				if ( isset( $input_field['type'] ) && 'email' == $input_field['type'] ) {
 					return $input_field['value'];
 				}
 			}

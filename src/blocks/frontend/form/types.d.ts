@@ -16,7 +16,24 @@ export interface FormFieldData {
 		name: string
 		size: number
 		data: string
+		file: File
 		fieldOptionName: string
 		position: number
+	}
+}
+
+export interface FormDataStructure {
+	handler: string
+	payload: {
+		formInputsData: FormFieldData[]
+		emailSubject?: string
+		formOption?: string
+		formId?: string
+		nonceValue?: string
+		antiSpamTime?: number
+		antiSpamHoneyPot?: boolean
+		postUrl: string
+		action?: string
+		consent?: boolean
 	}
 }

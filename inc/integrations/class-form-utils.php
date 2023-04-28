@@ -73,12 +73,12 @@ class Form_Utils {
 	/**
 	 * Save file from field metadata.
 	 *
-	 * @param array  $field Field data.
-	 * @param number $max_size Max file size.
+	 * @param array $field Field data.
+	 * @param array $files Files array.
 	 * @return array
-	 * @since 2.2.3
+	 * @since 2.3
 	 */
-	public static function save_file_from_field( $field, $max_size = null ) {
+	public static function save_file_from_field( $field, $files ) {
 		$result = array(
 			'success'   => false,
 			'file_name' => '',
@@ -88,20 +88,25 @@ class Form_Utils {
 		);
 
 		try {
-			$file_name = self::generate_file_name( $field['metadata']['name'] );
-			$file_data = $field['metadata']['data'];
+			$file_name     = self::generate_file_name( $field['metadata']['name'] );
+			$file_data_key = $field['metadata']['data'];
 
-			$base64_start = strpos( $file_data, ';base64,' );
-			$file_data    = substr( $file_data, $base64_start + 8 );
-			$file_data    = base64_decode( $file_data );
+			if ( ! isset( $file_data_key ) || ! isset( $files[ $file_data_key ] ) ) {
+				return $result;
+			}
+
+			$file_data = $files[ $file_data_key ];
 
 			// Save file to uploads folder.
-			$upload = wp_upload_bits( $file_name, null, $file_data );
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+
+			$upload = wp_handle_sideload( $file_data, array( 'test_form' => false ) );
 
 			// Check if file was saved.
 			if ( ! $upload['error'] ) {
 				$result['success']   = true;
 				$result['file_name'] = $file_name;
+				$result['file_url']  = $upload['url'];
 				$result['file_type'] = $upload['type'];
 				$result['file_path'] = $upload['file'];
 			} else {

@@ -58,14 +58,8 @@ const extractFormFields = async( form ) => {
 		 */
 		const allInputs = getFormFieldInputs( form );
 
-		const fieldsToLoad = allInputs?.map( ( input, index ) => {
-			const fileInput = input.querySelector( 'input[type="file"]' );
-			return ( fileInput?.files?.length ) ?? 0;
-		}).reduce( ( a, b ) => a + b, 0 );
-		let currentLoaded = 0;
-
 		allInputs?.forEach( ( input, index ) => {
-			const label = `(Field ${index + 1}) ${input.querySelector( '.otter-form-input-label, .otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML}`;
+			const label = `(Field ${index + 1}) ${input.querySelector( '.otter-form-input-label:not(:has(.otter-form-input-label__label)), .otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML}`;
 
 			let value = undefined;
 			let fieldType = undefined;
@@ -85,30 +79,19 @@ const extractFormFields = async( form ) => {
 					const files = fileInput?.files;
 
 					for ( let i = 0; i < files.length; i++ ) {
-						const reader = new FileReader();
-
-						reader.onload = function() {
-							formFieldsData.push({
-								label: label,
-								value: `${files[i].name} (${ ( files[i].size / ( 1024 * 1024 ) ).toFixed( 4 ) } MB)`,
-								type: fileInput.type,
-								id: id,
-								metadata: {
-									name: files[i].name,
-									size: files[i].size,
-									data: reader.result,
-									fieldOptionName: fileInput?.dataset?.fieldOptionName,
-									position: index + 1
-								}
-							});
-							currentLoaded++;
-
-							if ( currentLoaded === fieldsToLoad ) {
-								resolve({ formFieldsData: orderFieldsByPosition( formFieldsData ) });
+						formFieldsData.push({
+							label: label,
+							value: `${files[i].name} (${ ( files[i].size / ( 1024 * 1024 ) ).toFixed( 4 ) } MB)`,
+							type: fileInput.type,
+							id: id,
+							metadata: {
+								name: files[i].name,
+								size: files[i].size,
+								file: files[i],
+								fieldOptionName: fileInput?.dataset?.fieldOptionName,
+								position: index + 1
 							}
-						};
-
-						reader.readAsDataURL( files[i]);
+						});
 					}
 				} else if ( select ) {
 					value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => Boolean( l ) ).join( ', ' );
@@ -134,9 +117,7 @@ const extractFormFields = async( form ) => {
 			}
 		});
 
-		if ( 0 === fieldsToLoad ) {
-			resolve({ formFieldsData });
-		}
+		resolve({ formFieldsData });
 	});
 
 };
@@ -214,6 +195,37 @@ function validateInputs( form ) {
 
 	return result;
 }
+
+/**
+ * Make a FormData object from the form fields data.
+ * Strip binary data into separate keys.
+ *
+ * @param {import('./types').FormDataStructure} data
+ */
+const createFormData = ( data ) => {
+	var formData = new FormData();
+
+	const hash = str =>  Array.from( str ).reduce( ( hash, char ) => 0 | ( 31 * hash + char.charCodeAt( 0 ) ), 0 );
+
+	var filesPairs = [];
+
+	data?.payload?.formInputsData?.forEach( ( field, index ) => {
+		if ( 'file' === field.type ) {
+			let key = hash( field.metadata.position + '_' + field.metadata.file.name );
+			filesPairs.push([ key, field.metadata.file ]);
+			data.payload.formInputsData[index].metadata.file = undefined;
+			data.payload.formInputsData[index].metadata.data = key;
+		}
+	});
+
+	formData.append( 'form_data',  JSON.stringify( data ) );
+	filesPairs.forEach( pair => formData.append( pair[0], pair[1]) );
+
+	console.log({ formData, filesPairs, data: JSON.stringify( data ) });
+
+	return formData;
+};
+
 
 /**
  * Send the date from the form to the server
@@ -300,18 +312,18 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 
 		const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/frontend';
 
+		const formData = createFormData({
+			handler: 'submit',
+			payload
+		});
+
 		fetch( formURlEndpoint, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json, */*;q=0.1',
 				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce
 			},
 			credentials: 'include',
-			body: JSON.stringify({
-				handler: 'submit',
-				payload
-			})
+			body: formData
 		})
 			.then( r => r.json() )
 			.then( ( response ) => {
@@ -376,6 +388,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 			});
 	}
 };
+
 
 /**
  * Render a checkbox for consent

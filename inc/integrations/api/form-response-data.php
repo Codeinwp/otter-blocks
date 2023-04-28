@@ -43,6 +43,7 @@ class Form_Data_Response {
 	const ERROR_MISSING_MAIL_LIST_ID  = '109';
 	const ERROR_BOT_DETECTED          = '110';
 	const ERROR_FILES_METADATA_FORMAT = '111';
+	const ERROR_FILE_MISSING_BINARY   = '112';
 
 
 
@@ -331,6 +332,7 @@ class Form_Data_Response {
 			self::ERROR_FILE_UPLOAD_MAX_SIZE               => __( 'The file size exceed the limit.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the form.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
+			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
 		);
 
 		if ( ! isset( $error_messages[ $error_code ] ) ) {

@@ -33,6 +33,14 @@ class Form_Data_Request {
 	protected $form_options = null;
 
 	/**
+	 * Request.
+	 *
+	 * @var \WP_REST_Request
+	 * @since 2.3
+	 */
+	protected $request = null;
+
+	/**
 	 * Form fields options.
 	 *
 	 * @var array
@@ -100,11 +108,17 @@ class Form_Data_Request {
 	 * Constructor.
 	 *
 	 * @access  public
-	 * @param array $request_data Request Data.
+	 * @param \WP_REST_Request $request Request Data.
 	 * @since 2.0.3
 	 */
-	public function __construct( $request_data ) {
-		$this->request_data = $this->sanitize_request_data( $request_data );
+	public function __construct( $request ) {
+
+		$this->request = $request;
+		$form_data     = $request->get_param( 'form_data' );
+
+		$form_data = json_decode( $form_data, true );
+
+		$this->request_data = $this->sanitize_request_data( $form_data );
 		$this->form_options = new Form_Settings_Data( array() );
 	}
 
@@ -568,5 +582,14 @@ class Form_Data_Request {
 	 */
 	public function get_form_option_id() {
 		return $this->get_payload_field( 'formOption' );
+	}
+
+	/**
+	 * The API Request.
+	 *
+	 * @return \WP_REST_Request|null
+	 */
+	public function get_request() {
+		return $this->request;
 	}
 }

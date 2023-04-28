@@ -53,6 +53,7 @@ class Form_Pro_Features {
 
 		try {
 			$counts_files = array();
+			$files        = $form_data->get_request()->get_file_params();
 
 			foreach ( $inputs as $input ) {
 				if (
@@ -106,14 +107,22 @@ class Form_Pro_Features {
 							break;
 						}
 
-						$file_data = $input['metadata']['data'];
+						$file_data_key = $input['metadata']['data'];
 
-						// Check the mime type from the data encoding.
-						$p1 = strpos( $file_data, 'data:' );
-						$p2 = strpos( $file_data, ';base64' );
+						if ( ! isset( $file_data_key ) || ! isset( $files[ $file_data_key ] ) ) {
+							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_MISSING_BINARY );
+							break;
+						}
 
-						$mime_type = substr( $file_data, $p1 + 5, $p2 - $p1 - 5 );
-						$mime_type = sanitize_mime_type( $mime_type );
+						$file_data = $files[ $file_data_key ];
+
+						// Get the extension from file using WordPress functions.
+						$extension = wp_check_filetype( $file_data['name'] );
+
+						if ( ! $extension['ext'] ) {
+							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP );
+							break;
+						}
 
 						$form_files_ext = $field_option->get_option( 'allowedFileTypes' );
 
@@ -121,7 +130,7 @@ class Form_Pro_Features {
 							$form_files_ext = str_replace( '.', '', $form_files_ext );
 							$form_files_ext = str_replace( '/*', '', $form_files_ext );
 
-							$mime_match = wp_match_mime_types( $form_files_ext, $mime_type );
+							$mime_match = wp_match_mime_types( $form_files_ext, $extension['type'] );
 
 							if ( 0 == count( $mime_match ) ) {
 								$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE );
@@ -129,22 +138,14 @@ class Form_Pro_Features {
 							}
 						}
 
-						$allowed_mime_types = get_allowed_mime_types();
-						if ( 0 === count( wp_match_mime_types( $allowed_mime_types, $mime_type ) ) ) {
-							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP );
-							break;
-						}
-
 						// Check the file size.
 						if ( $field_option->has_option( 'maxFileSize' ) ) {
 							$max_file_size = $field_option->get_option( 'maxFileSize' );
 							$max_file_size = $max_file_size * 1024 * 1024;
 
-							$base64_start = strpos( $file_data, ';base64,' );
-							$file_data    = substr( $file_data, $base64_start + 8 );
-							$file_data    = base64_decode( $file_data );
-
-							if ( false === $file_data || $max_file_size < strlen( $file_data ) ) {
+							// Get $file_data file size.
+							$file_size = filesize( $file_data['tmp_name'] );
+							if ( false === $file_size || $max_file_size < strlen( $file_size ) ) {
 								$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_MAX_SIZE );
 								break;
 							}
@@ -157,7 +158,7 @@ class Form_Pro_Features {
 
 			if ( ! $form_data->has_error() ) {
 				foreach ( $approved_fields as $field ) {
-					$file = \ThemeIsle\GutenbergBlocks\Integration\Form_Utils::save_file_from_field( $field );
+					$file = \ThemeIsle\GutenbergBlocks\Integration\Form_Utils::save_file_from_field( $field, $files );
 
 					if ( $file['success'] ) {
 						$field_option = $form_data->get_field_option( $field['metadata']['fieldOptionName'] );
