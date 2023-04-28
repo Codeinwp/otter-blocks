@@ -103,7 +103,7 @@ class Form_Utils {
 			$upload = wp_handle_sideload( $file_data, array( 'test_form' => false ) );
 
 			// Check if file was saved.
-			if ( ! $upload['error'] ) {
+			if ( ! isset( $upload['error'] ) || ! $upload['error'] ) {
 				$result['success']   = true;
 				$result['file_name'] = $file_name;
 				$result['file_url']  = $upload['url'];

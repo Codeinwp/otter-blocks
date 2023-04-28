@@ -80,9 +80,14 @@ class Form_Field_Option_Data {
 	 * Get the option of the field option.
 	 *
 	 * @param string $option_name The name of the option.
-	 * @return mixed
+	 * @return mixed|null
 	 */
 	public function get_option( $option_name ) {
+
+		if ( ! $this->has_option( $option_name ) ) {
+			return null;
+		}
+
 		return $this->options[ $option_name ];
 	}
 

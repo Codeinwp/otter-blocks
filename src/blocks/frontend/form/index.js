@@ -35,91 +35,77 @@ const getFormFieldInputs = ( form ) => {
  */
 const extractFormFields = async( form ) => {
 
-	/** @type {(formFieldsData: Array.<import('./types').FormFieldData>) => Array.<import('./types').FormFieldData>} */
-	const orderFieldsByPosition = ( formFieldsData ) => {
-		return formFieldsData.sort( ( a, b ) => {
-			if ( a.metadata?.position && b.metadata?.position ) {
-				return a.metadata.position - b.metadata.position;
-			}
 
-			return 0;
-		});
-	};
+	/** @type {Array.<import('./types').FormFieldData>} */
+	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href, metadata: { position: 0 }}];
 
-	return new Promise( resolve => {
+	/**
+	 * All input fields that belong to the current form. Fields from inner forms are removed.
+	 *
+	 * @type {Array.<HTMLDivElement>}
+	 */
+	const allInputs = getFormFieldInputs( form );
 
-		/** @type {Array.<import('./types').FormFieldData>} */
-		const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href, metadata: { position: 0 }}];
+	allInputs?.forEach( ( input, index ) => {
+		const label = `(Field ${index + 1}) ${input.querySelector( '.otter-form-input-label:not(:has(.otter-form-input-label__label)), .otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML}`;
 
-		/**
-		 * All input fields that belong to the current form. Fields from inner forms are removed.
-		 *
-		 * @type {Array.<HTMLDivElement>}
-		 */
-		const allInputs = getFormFieldInputs( form );
+		let value = undefined;
+		let fieldType = undefined;
+		const { id } = input;
 
-		allInputs?.forEach( ( input, index ) => {
-			const label = `(Field ${index + 1}) ${input.querySelector( '.otter-form-input-label:not(:has(.otter-form-input-label__label)), .otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML}`;
+		const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"]), .otter-form-textarea-input' );
+		if ( null !== valueElem ) {
+			value = valueElem?.value;
+			fieldType = valueElem?.type;
+		} else {
+			const select = input.querySelector( 'select' );
 
-			let value = undefined;
-			let fieldType = undefined;
-			const { id } = input;
+			/** @type{HTMLInputElement} */
+			const fileInput = input.querySelector( 'input[type="file"]' );
 
-			const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"]), .otter-form-textarea-input' );
-			if ( null !== valueElem ) {
-				value = valueElem?.value;
-				fieldType = valueElem?.type;
-			} else {
-				const select = input.querySelector( 'select' );
+			if ( fileInput ) {
+				const files = fileInput?.files;
 
-				/** @type{HTMLInputElement} */
-				const fileInput = input.querySelector( 'input[type="file"]' );
-
-				if ( fileInput ) {
-					const files = fileInput?.files;
-
-					for ( let i = 0; i < files.length; i++ ) {
-						formFieldsData.push({
-							label: label,
-							value: `${files[i].name} (${ ( files[i].size / ( 1024 * 1024 ) ).toFixed( 4 ) } MB)`,
-							type: fileInput.type,
-							id: id,
-							metadata: {
-								name: files[i].name,
-								size: files[i].size,
-								file: files[i],
-								fieldOptionName: fileInput?.dataset?.fieldOptionName,
-								position: index + 1
-							}
-						});
-					}
-				} else if ( select ) {
-					value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => Boolean( l ) ).join( ', ' );
-					fieldType = 'multiple-choice';
-				} else {
-					const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
-					const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
-					value = [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' );
-					fieldType = 'multiple-choice';
+				for ( let i = 0; i < files.length; i++ ) {
+					formFieldsData.push({
+						label: label,
+						value: `${files[i].name} (${ ( files[i].size / ( 1024 * 1024 ) ).toFixed( 4 ) } MB)`,
+						type: fileInput.type,
+						id: id,
+						metadata: {
+							name: files[i].name,
+							size: files[i].size,
+							file: files[i],
+							fieldOptionName: fileInput?.dataset?.fieldOptionName,
+							position: index + 1
+						}
+					});
 				}
+			} else if ( select ) {
+				value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => Boolean( l ) ).join( ', ' );
+				fieldType = 'multiple-choice';
+			} else {
+				const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
+				const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
+				value = [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' );
+				fieldType = 'multiple-choice';
 			}
+		}
 
-			if ( label && value ) {
-				formFieldsData.push({
-					label: label,
-					value: value,
-					type: fieldType,
-					id: id,
-					metadata: {
-						position: index + 1
-					}
-				});
-			}
-		});
-
-		resolve({ formFieldsData });
+		if ( label && value ) {
+			formFieldsData.push({
+				label: label,
+				value: value,
+				type: fieldType,
+				id: id,
+				metadata: {
+					position: index + 1
+				}
+			});
+		}
 	});
 
+	return { formFieldsData };
 };
 
 /**
@@ -204,14 +190,11 @@ function validateInputs( form ) {
  */
 const createFormData = ( data ) => {
 	var formData = new FormData();
-
-	const hash = str =>  Array.from( str ).reduce( ( hash, char ) => 0 | ( 31 * hash + char.charCodeAt( 0 ) ), 0 );
-
 	var filesPairs = [];
 
 	data?.payload?.formInputsData?.forEach( ( field, index ) => {
 		if ( 'file' === field.type ) {
-			let key = hash( field.metadata.position + '_' + field.metadata.file.name );
+			let key = 'file__' + field.metadata.position + '_' + index;
 			filesPairs.push([ key, field.metadata.file ]);
 			data.payload.formInputsData[index].metadata.file = undefined;
 			data.payload.formInputsData[index].metadata.data = key;
@@ -221,7 +204,7 @@ const createFormData = ( data ) => {
 	formData.append( 'form_data',  JSON.stringify( data ) );
 	filesPairs.forEach( pair => formData.append( pair[0], pair[1]) );
 
-	console.log({ formData, filesPairs, data: JSON.stringify( data ) });
+	console.log({ formData, filesPairs, data });
 
 	return formData;
 };
