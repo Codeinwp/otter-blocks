@@ -19,7 +19,7 @@ import { useState, Fragment } from '@wordpress/element';
  */
 import { Notice as OtterNotice } from '../../../blocks/components';
 import { RichTextEditor } from '../../../blocks/components';
-import { HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
+import { FieldInputWidth, HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
 
 // +-------------- Autoresponder --------------+
@@ -209,6 +209,8 @@ const FormFileInspector = ( Template, {
 			/>
 
 			<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
+
+			<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
 
 			<TextControl
 				label={ __( 'Max File Size in MB', 'otter-blocks' ) }

@@ -329,9 +329,9 @@ export const hex2rgba = ( color, alpha = 100 ) => {
  * Check if color is a dark.
  *
  * @param color
- * @returns {boolean}
+ * @returns {string|boolean}
  */
-export const isColorDark = color => {
+export const lightnessFromColor = color => {
 	if ( ! color ) {
 		return false;
 	}
@@ -358,7 +358,7 @@ export const isColorDark = color => {
 	const brightness = ( 0.299 * r ) + ( 0.587 * g ) + ( 0.114 * b );
 
 	// Compare the brightness to a threshold
-	return 128 > brightness;
+	return 128 > brightness ? 'dark' : 'light';
 };
 
 /**

@@ -51,7 +51,7 @@ export type OtterNodeCSSOptions = {
 	selector: string
 }
 
-export type OtterSetNodeCSS = ( css: string[], media: string[]) => void;
+export type OtterSetNodeCSS = ( css: string[], media?: string[]) => void;
 
 export type OtterNodeCSSReturn = [
 	string,

@@ -15,7 +15,7 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
-import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
+import { FieldInputWidth, fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
 import { useContext } from '@wordpress/element';
 import { FormContext } from '../edit';
 
@@ -68,6 +68,8 @@ const Inspector = ({
 				/>
 
 				<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
+
+				<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
 
 				<TextControl
 					label={ __( 'Placeholder', 'otter-blocks' ) }

@@ -36,7 +36,7 @@
 
 	.otter-form__container {
 		display: flex;
-		flex-direction: column;
+		flex-wrap: wrap;
 		gap: var(--inputs-gap);
 
 		&> div {
@@ -45,6 +45,11 @@
 
 		p {
 			margin-bottom: 10px;
+		}
+
+		&> div {
+			width: 100%;
+			margin: 0px;
 		}
 
 		.wp-block-button {
@@ -294,6 +299,8 @@
 
 		.o-form-choice-label {
 			font-size: var(--input-font-size);
+			background: var(--input-bg-color);
+			box-sizing: border-box;
 		}
 
 		.o-form-help {
@@ -307,6 +314,76 @@
 		&.is-style-hidden-label {
 			.otter-form-input-label, .otter-form-textarea-label {
 				display: none;
+			}
+		}
+
+		@media (min-width: 640px) {
+			flex-grow: 1;
+
+			&:is(.is-style-o-c-three-quarters, .is-style-o-c-two-thirds, .is-style-o-c-half, .is-style-o-c-one-third, .is-style-o-c-one-quarter) {
+				box-sizing: border-box;
+				margin-left: 0px;
+				margin-right: 0px;
+			}
+	
+			&.is-style-o-c-three-quarters {
+				flex-basis: calc( 75% - var( --inputs-gap ) );
+				max-width: 75%;
+			}
+	
+			&.is-style-o-c-two-thirds {
+				flex-basis: calc( 66.66666666666666% - var( --inputs-gap ) );
+				max-width: 66.66666666666666%;
+			}
+	
+			&.is-style-o-c-half {
+				flex-basis: calc( 50% - var( --inputs-gap ) );
+				max-width: 50%;
+			}
+		
+			&.is-style-o-c-one-third {
+				flex-basis: calc( 33.33333333333333% - var( --inputs-gap ) );
+				max-width: 33.33333333333333%;
+			}
+		
+			&.is-style-o-c-one-quarter {
+				flex-basis: calc( 25% - var( --inputs-gap ) );
+				max-width: 25%;
+			}
+		}
+
+		@media (min-width: 640px) {
+			flex-grow: 1;
+
+			&:is(.is-style-o-c-three-quarters, .is-style-o-c-two-thirds, .is-style-o-c-half, .is-style-o-c-one-third, .is-style-o-c-one-quarter) {
+				box-sizing: border-box;
+				margin-left: 0px;
+				margin-right: 0px;
+			}
+	
+			&.is-style-o-c-three-quarters {
+				flex-basis: calc( 75% - var( --inputs-gap ) );
+				max-width: 75%;
+			}
+	
+			&.is-style-o-c-two-thirds {
+				flex-basis: calc( 66.66666666666666% - var( --inputs-gap ) );
+				max-width: 66.66666666666666%;
+			}
+	
+			&.is-style-o-c-half {
+				flex-basis: calc( 50% - var( --inputs-gap ) );
+				max-width: 50%;
+			}
+		
+			&.is-style-o-c-one-third {
+				flex-basis: calc( 33.33333333333333% - var( --inputs-gap ) );
+				max-width: 33.33333333333333%;
+			}
+		
+			&.is-style-o-c-one-quarter {
+				flex-basis: calc( 25% - var( --inputs-gap ) );
+				max-width: 25%;
 			}
 		}
 	}

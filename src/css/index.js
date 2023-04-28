@@ -42,8 +42,7 @@ const addAttribute = ( settings ) => {
 				default: false
 			},
 			customCSS: {
-				type: 'string',
-				default: null
+				type: 'string'
 			}
 		});
 	}
@@ -87,7 +86,7 @@ const BlockCSSWrapper = ( el, props ) => {
 					onDeselect={ () => {
 						props.setAttributes({
 							hasCustomCSS: false,
-							customCSS: null
+							customCSS: undefined
 						});
 
 						onDeselect();
