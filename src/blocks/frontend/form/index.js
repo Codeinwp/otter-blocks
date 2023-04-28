@@ -204,8 +204,6 @@ const createFormData = ( data ) => {
 	formData.append( 'form_data',  JSON.stringify( data ) );
 	filesPairs.forEach( pair => formData.append( pair[0], pair[1]) );
 
-	console.log({ formData, filesPairs, data });
-
 	return formData;
 };
 
