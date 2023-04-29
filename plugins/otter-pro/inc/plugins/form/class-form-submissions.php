@@ -9,12 +9,24 @@ namespace ThemeIsle\OtterPro\Plugins\Form;
 
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
+use ThemeIsle\OtterPro\Plugins\License;
 use WP_Post;
+use WP_Query;
 
 /**
  * Class Form_Block
  */
 class Form_Block_Emails_Storing {
+	/**
+	 * Form record post type.
+	 */
+	private const FORM_RECORD_TYPE = 'otter_form_record';
+
+	/**
+	 * Form record meta key.
+	 */
+	private const FORM_RECORD_META_KEY  = 'otter_form_record_meta';
+
 	/**
 	 * The main instance var.
 	 *
@@ -22,49 +34,119 @@ class Form_Block_Emails_Storing {
 	 */
 	public static $instance = null;
 
-	private $form_record_type = 'otter_form_record';
-
 	/**
 	 * Initialize the class
 	 */
 	public function init() {
-		add_action( 'init', array( $this, 'create_form_records_type' ) );
-		add_action( 'admin_init', array( $this, 'control_form_records_cap' ), 10, 0 );
-		add_action( 'otter_form_after_submit', array( $this, 'store_form_record' ) );
-		add_action( 'load-edit.php', array( $this, 'add_form_records_list_table' ), 100 );
-		add_action( 'add_meta_boxes', array( $this, 'add_form_record_meta_box' ) );
-		add_action( 'admin_menu', array( $this, 'remove_publish_box' ) );
-		add_action( 'save_post', array( $this, 'form_record_save_meta_box' ), 10, 2 );
+		if ( ! License::has_active_license() ) {
+			return;
+		}
 
-		// Form record actions.
-		add_action( 'admin_action_trash', array( $this, 'trash_otter_form_record' ) );
-		add_action( 'admin_action_delete', array( $this, 'delete_otter_form_record' ) );
-		add_action( 'admin_action_untrash', array( $this, 'untrash_otter_form_record' ) );
-		add_action( 'admin_action_read', array( $this, 'read_otter_form_record' ) );
-		add_action( 'admin_action_unread', array( $this, 'unread_otter_form_record' ) );
+		add_action( 'init', array( $this, 'create_form_records_type' ) );
+		add_action( 'admin_init', array( $this, 'set_form_records_cap' ), 10, 0 );
+		add_action( 'otter_form_after_submit', array( $this, 'store_form_record' ) );
+		add_action( 'admin_head', array( $this, 'add_style' ) );
+
+		// Customize the wp_list_table.
+		add_filter( 'manage_' . self::FORM_RECORD_TYPE . '_posts_columns', array( $this, 'form_record_columns' ) );
+		add_filter( 'manage_edit-' . self::FORM_RECORD_TYPE . '_sortable_columns', array( $this, 'form_record_sortable_columns' ) );
+		add_filter( 'manage_' . self::FORM_RECORD_TYPE . '_posts_custom_column', array( $this, 'form_record_column_values' ), 10, 2 );
+		add_filter( 'bulk_actions-edit-' . self::FORM_RECORD_TYPE, array( $this, 'form_record_bulk_actions' ) );
+		add_filter( 'handle_bulk_actions-edit-' . self::FORM_RECORD_TYPE, array( $this, 'handle_form_record_bulk_actions' ), 0, 3 );
+
+		add_filter( 'post_row_actions', array( $this, 'form_record_row_actions' ), 10, 2 );
+		add_action( 'restrict_manage_posts', array( $this, 'form_record_add_filters' ) );
+		add_filter( 'parse_query', array( $this, 'form_record_filter_query' ) );
+		add_action( 'transition_post_status', array( $this, 'transition_draft_to_read' ), 10, 3 );
+
+		// Implement row actions behaviour.
+		add_action( 'admin_action_row-read', array( $this, 'read_otter_form_record' ) );
+		add_action( 'admin_action_row-unread', array( $this, 'unread_otter_form_record' ) );
 		add_action( 'admin_action_edit', array( $this, 'mark_read_on_edit' ) );
+
+		// Manage meta boxes.
+		add_action( 'add_meta_boxes', array( $this, 'add_form_record_meta_box' ) );
+		add_action( 'admin_menu', array( $this, 'handle_admin_menu' ) );
+		add_action( 'save_post', array( $this, 'form_record_save_meta_box' ), 10, 2 );
 	}
 
 	/**
-	 * Render form submissions page.
+	 * Create custom post type for form records.
+	 *
+	 * @return void
 	 */
-	public function render_form_submissions_page() {
-		$records = new Form_Submissions_List_Table();
-		?>
-		<div class="wrap">
-			<?php
-			$records->prepare_items();
-			?>
-			<form id="posts-filter" method="get">
-				<?php
-				$records->search_box( '', 'otter-form-record' );
-				$records->views();
-				$records->display();
-				?>
-			</form>
-		</div>
-		<?php
-		exit;
+	public function create_form_records_type() {
+		register_post_type(
+			self::FORM_RECORD_TYPE,
+			array(
+				'labels'          => array(
+					'name'               => esc_html_x( 'Form Submissions', '', 'otter-blocks' ),
+					'singular_name'      => esc_html_x( 'Form Submission', '', 'otter-blocks' ),
+					'search_items'       => esc_html__( 'Search Submissions', 'otter-blocks' ),
+					'all_items'          => esc_html__( 'Form Submissions', 'otter-blocks' ),
+					'view_item'          => esc_html__( 'View Submission', 'otter-blocks' ),
+					'update_item'        => esc_html__( 'Update Submission', 'otter-blocks' ),
+					'not_found'          => esc_html__( 'No submissions found' ),
+					'not_found_in_trash' => esc_html__( 'No submissions found in the Trash' ),
+				),
+				'capability_type' => self::FORM_RECORD_TYPE,
+				'capabilities' => array(
+					'create_posts' => 'create_otter_form_records',
+				),
+				'description'     => __( 'Holds the data from the form submissions', 'otter-blocks' ),
+				'public'          => false,
+				'show_ui'         => true,
+				'show_in_rest'    => true,
+				'supports'        => array( 'title' ),
+			)
+		);
+
+		register_post_status( 'read', array(
+			'label'                     => _x( 'Read', 'post', 'otter-blocks' ),
+			'public'                    => true,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop( 'Read <span class="count">(%s)</span>', 'Read <span class="count">(%s)</span>', 'otter-blocks' ),
+		) );
+
+		register_post_status( 'unread', array(
+			'label'                     => _x( 'Unread', 'post', 'otter-blocks' ),
+			'public'                    => true,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop( 'Unread <span class="count">(%s)</span>', 'Unread <span class="count">(%s)</span>', 'otter-blocks' ),
+		) );
+	}
+
+	/**
+	 * Set custom capabilities for otter_form_record.
+	 *
+	 * @return void
+	 */
+	public function set_form_records_cap() {
+		global $wp_roles;
+		foreach ( $wp_roles->roles as $key => $current_role ) {
+			$role = get_role( $key );
+			if ( $role === null ) {
+				continue;
+			}
+
+			if ( ! method_exists( $role, 'add_cap' ) ) {
+				continue;
+			}
+
+			$role->add_cap( 'edit_' . self::FORM_RECORD_TYPE );
+			$role->add_cap( 'read_' . self::FORM_RECORD_TYPE );
+			$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE );
+			$role->add_cap( 'edit_' . self::FORM_RECORD_TYPE . 's' );
+			$role->add_cap( 'read_' . self::FORM_RECORD_TYPE . 's' );
+			$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE . 's');
+
+			$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE );
+			$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE . 's' );
+		}
 	}
 
 	/**
@@ -82,7 +164,7 @@ class Form_Block_Emails_Storing {
 
 		$post_id = wp_insert_post(
 			array(
-				'post_type'   => 'otter_form_record',
+				'post_type'   => self::FORM_RECORD_TYPE,
 				'post_title'  => $email,
 				'post_status' => 'unread',
 			)
@@ -121,86 +203,292 @@ class Form_Block_Emails_Storing {
 			);
 		}
 
-		add_post_meta( $post_id, 'otter_form_record_meta', $meta );
+		add_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
 	}
 
 	/**
-	 * Create custom post type for form records.
+	 * Hide the default headline.
 	 *
 	 * @return void
 	 */
-	public function create_form_records_type() {
-		register_post_type(
-			'otter_form_record',
-			array(
-				'labels'          => array(
-					'name'          => esc_html_x( 'Form Submissions', '', 'otter-blocks' ),
-					'singular_name' => esc_html_x( 'Form Submission', '', 'otter-blocks' ),
-					'search_items'  => esc_html__( 'Search Form Submissions', 'otter-blocks' ),
-					'all_items'     => esc_html__( 'Form Submissions', 'otter-blocks' ),
-					'view_item'     => esc_html__( 'View Submission', 'otter-blocks' ),
-					'update_item'   => esc_html__( 'Update Submission', 'otter-blocks' ),
-				),
-				'capability_type' => 'otter_form_record',
-				'description'     => __( 'Holds the data from the form submissions', 'otter-blocks' ),
-				'public'          => false,
-				'show_ui'         => true,
-				'show_in_rest'    => true,
-				'supports'        => array( 'title' ),
-			)
-		);
-
-		register_post_status( 'read', array(
-			'label'                     => _x( 'Read', 'post', 'otter-blocks' ),
-			'public'                    => true,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => true,
-			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Read (%s)', 'Read (%s)', 'otter-blocks' ),
-		) );
-
-		register_post_status( 'unread', array(
-			'label'                     => _x( 'Unread', 'post', 'otter-blocks' ),
-			'public'                    => true,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => true,
-			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Unread (%s)', 'Unread (%s)', 'otter-blocks' ),
-		) );
-	}
-
-	/**
-	 * Add custom capabilities for otter_form_record.
-	 *
-	 * @return void
-	 */
-	public function control_form_records_cap() {
-		global $wp_roles;
-		foreach ( $wp_roles->roles as $key => $current_role ) {
-			$role = get_role( $key );
-			if ( $role === null ) {
-				continue;
+	public function add_style() {
+		$screen = get_current_screen();
+		if ( $screen->id === 'edit-' . self::FORM_RECORD_TYPE ) {
+			?>
+			<style>
+			.wrap h1.wp-heading-inline {
+				display: none;
 			}
-
-			if ( ! method_exists( $role, 'add_cap' ) ) {
-				continue;
-			}
-
-			$role->add_cap( 'edit_otter_form_records' );
-			$role->add_cap( 'publish_otter_form_records' );
-			$role->add_cap( 'read_otter_form_records' );
+			</style>
+			<?php
 		}
 	}
 
 	/**
-	 * Add our custom list table to the otter_form_record page.
+	 * Set the table columns.
+	 *
+	 * @return array
+	 */
+	public function form_record_columns() {
+		return array(
+			'cb'              => '<input type="checkbox" />',
+			'email'           => __( 'Email', 'otter-blocks' ),
+			'form'            => __( 'Form ID', 'otter-blocks' ),
+			'post_url'        => __( 'Post', 'otter-blocks' ),
+			'ID'              => __( 'ID', 'otter-blocks' ),
+			'submission_date' => __( 'Submission Date', 'otter-blocks' ),
+		);
+	}
+
+	/**
+	 * Set the table sortable columns.
+	 *
+	 * @return array
+	 */
+	public function form_record_sortable_columns() {
+		return array(
+			'email'           => __( 'Email', 'otter-blocks' ),
+			'ID'              => __( 'ID', 'otter-blocks' ),
+			'submission_date' => __( 'Submission Date', 'otter-blocks' ),
+		);
+	}
+
+	/**
+	 * Set form records bulk actions.
+	 *
+	 * @return array
+	 */
+	public function form_record_bulk_actions() {
+		$status       = isset( $_GET['post_status'] ) ? sanitize_text_field( wp_unslash( $_GET['post_status'] ) ) : 'all';
+		$bulk_actions = array();
+
+		if ( $status !== 'trash' ) {
+			$bulk_actions['trash'] = 'Move to Trash';
+
+			if ( $status !== 'read' ) {
+				$bulk_actions['read'] = 'Mark as Read';
+			}
+
+			if ( $status !== 'unread' ) {
+				$bulk_actions['unread'] = 'Mark as Unread';
+			}
+		} else {
+			$bulk_actions['untrash'] = 'Restore';
+			$bulk_actions['delete']  = 'Delete Permanently';
+		}
+
+		return $bulk_actions;
+	}
+
+	/**
+	 * Manage form records row actions.
+	 *
+	 * @param array $actions The current row actions.
+	 * @param WP_Post $post The current post object.
+	 *
+	 * @return array
+	 */
+	public function form_record_row_actions( $actions, $post ) {
+		if ( $post->post_type !== 'otter_form_record' ) {
+			return $actions;
+		}
+
+		unset( $actions['inline hide-if-no-js'] );
+		unset( $actions['edit'] );
+
+		$status = $post->post_status;
+		if ( 'trash' !== $status ) {
+			$actions['view'] = sprintf(
+				'<a href="%s">%s</a>',
+				get_edit_post_link( $post->ID ),
+				__( 'View', 'otter-blocks' )
+			);
+		}
+
+		if ( 'unread' === $status ) {
+			$actions['read'] = sprintf(
+				'<a href="?action=%s&' . self::FORM_RECORD_TYPE . '=%s&_wpnonce=%s">%s</a>',
+				'row-read',
+				$post->ID,
+				wp_create_nonce( 'read-' . self::FORM_RECORD_TYPE . '_' . $post->ID ),
+				__( 'Mark as Read', 'otter-blocks' )
+			);
+		} else if ( 'trash' !== $status ) {
+			$actions['unread'] = sprintf(
+				'<a href="?action=%s&' . self::FORM_RECORD_TYPE . '=%s&_wpnonce=%s">%s</a>',
+				'row-unread',
+				$post->ID,
+				wp_create_nonce( 'unread-' . self::FORM_RECORD_TYPE . '_' . $post->ID ),
+				__( 'Mark as Unread', 'otter-blocks' )
+			);
+		}
+
+		return $actions;
+	}
+
+	/**
+	 * Handle form record bulk actions.
+	 *
+	 * @param string $redirect The redirect URL.
+	 * @param string $doaction The action being taken.
+	 * @param array $object_ids The object IDs.
+	 *
+	 * @return string
+	 */
+	public function handle_form_record_bulk_actions( $redirect, $doaction, $object_ids ) {
+		switch( $doaction ) {
+			case 'read':
+				foreach ( $object_ids as $object_id ) {
+					wp_update_post(
+						array(
+							'ID'          => $object_id,
+							'post_status' => 'read',
+						)
+					);
+				}
+				break;
+			case 'unread':
+				foreach ( $object_ids as $object_id ) {
+					wp_update_post(
+						array(
+							'ID'          => $object_id,
+							'post_status' => 'unread',
+						)
+					);
+				}
+				break;
+		}
+
+		return $redirect;
+	}
+
+	/**
+	 * Mark form record as read when they're restored from trash.
+	 *
+	 * @param string $new_status The new status.
+	 * @param string $old_status The old status.
+	 * @param WP_Post $post The post object.
+	 */
+	public function transition_draft_to_read( $new_status, $old_status, $post ) {
+		if ( $post->post_type !== self::FORM_RECORD_TYPE || $old_status !== 'trash' || $new_status !== 'draft' ) {
+			return;
+		}
+
+		wp_update_post( array( 'ID'=> $post->ID, 'post_status' => 'read' ) );
+	}
+
+	/**
+	 * Add form record filters.
 	 *
 	 * @return void
 	 */
-	public function add_form_records_list_table() {
-		$screen = get_current_screen();
-		if ( 'edit-otter_form_record' === $screen->id ) {
-			add_action( 'admin_notices', array( $this, 'render_form_submissions_page' ), 100 );
+	public function form_record_add_filters() {
+		if ( ! get_current_screen() || get_current_screen()->id !== 'edit-' . self::FORM_RECORD_TYPE ) {
+			return;
+		}
+
+		$this->form_dropdown();
+		$this->post_dropdown();
+	}
+
+	/**
+	 * Parse form record filters.
+	 *
+	 * @param WP_Query $query Query.
+	 * @return void
+	 */
+	public function form_record_filter_query( $query ) {
+		global $pagenow;
+		if ( ! is_admin() || ! isset( $_GET['post_type'] ) || $_GET['post_type'] != self::FORM_RECORD_TYPE ) {
+			return;
+		}
+
+		if ( ! isset( $query->query['post_type'] ) || $query->query['post_type'] != self::FORM_RECORD_TYPE ) {
+			return;
+		}
+
+		if ( $pagenow != 'edit.php' || ! isset( $_GET['filter_action'] ) ) {
+			return;
+		}
+
+		$form = ( ! empty( $_REQUEST['form'] ) ) ? $_REQUEST['form'] : '';
+		$post = ( ! empty( $_REQUEST['post'] ) ) ? $_REQUEST['post'] : '';
+
+		if ( ! empty( $form ) ) {
+			$query->query_vars['meta_query'][] = array(
+				'key'     => self::FORM_RECORD_META_KEY,
+				'value'   => serialize( $form ),
+				'compare' => 'LIKE',
+			);
+		}
+
+		if ( ! empty( $post ) ) {
+			$query->query_vars['meta_query'][] = array(
+				'key'     => self::FORM_RECORD_META_KEY,
+				'value'   => serialize( $post ),
+				'compare' => 'LIKE',
+			);
+		}
+	}
+
+	/**
+	 * Manage form record columns.
+	 *
+	 * @param string $column The column name.
+	 * @param int $post_id The post ID.
+	 *
+	 * @return void
+	 */
+	public function form_record_column_values( $column, $post_id ) {
+		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
+		switch ( $column ) {
+			case 'email':
+				echo $this->format_based_on_status(
+					sprintf(
+						'<a href="%1$s">%2$s</a>',
+						get_edit_post_link( $post_id ),
+						$meta['email']['value']
+					),
+					get_post_status( $post_id )
+				);
+				break;
+			case 'form':
+				echo $this->format_based_on_status(
+					sprintf(
+						'<a href="%1$s">%2$s</a>',
+						esc_url( $meta['post_url']['value'] . '#' . $meta['form']['value'] ),
+						substr( $meta['form']['value'], -8 )
+					),
+					get_post_status( $post_id )
+				);
+				break;
+			case 'post_url':
+				if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
+					$source_post = wpcom_vip_url_to_postid( $meta['post_url']['value'] );
+				} else {
+					$source_post = url_to_postid( $meta['post_url']['value'] ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
+				}
+
+				$title = $source_post ? get_the_title( $source_post ) : $meta['post_url']['value'];
+
+				echo $this->format_based_on_status(
+					sprintf(
+						'<a href="%1$s">%2$s</a>',
+						esc_url( $meta['post_url']['value'] ),
+						$title
+					),
+					get_post_status( $post_id )
+				);
+				break;
+			case 'ID':
+				echo $this->format_based_on_status( substr( $post_id, -8 ), get_post_status( $post_id ) );
+				break;
+			case 'submission_date':
+				echo $this->format_based_on_status(
+					get_the_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $post_id ),
+					get_post_status( $post_id )
+				);
+				break;
 		}
 	}
 
@@ -209,8 +497,24 @@ class Form_Block_Emails_Storing {
 	 *
 	 * @return void
 	 */
-	public function remove_publish_box() {
-		remove_meta_box( 'submitdiv', 'otter_form_record', 'side' );
+	public function handle_admin_menu() {
+		remove_meta_box( 'submitdiv', self::FORM_RECORD_TYPE, 'side' );
+
+		global $submenu;
+		unset( $submenu['edit.php?post_type=' . self::FORM_RECORD_TYPE] );
+
+		remove_menu_page( 'edit.php?post_type=' . self::FORM_RECORD_TYPE );
+		remove_submenu_page( 'otter', 'otter-form-submissions-free' );
+
+		add_submenu_page(
+			'otter',
+			__( 'Form Submissions', 'otter-blocks' ),
+			__( 'Form Submissions', 'otter-blocks' ),
+			'manage_options',
+			'edit.php?post_type=' . self::FORM_RECORD_TYPE,
+			'',
+			10
+		);
 	}
 
 	/**
@@ -222,15 +526,16 @@ class Form_Block_Emails_Storing {
 		add_meta_box(
 			'field_values_meta_box',
 			esc_html__( 'Submission Data', 'otter-blocks' ),
-			array( $this, 'meta_box_markup' ),
-			'otter_form_record'
+			array( $this, 'fields_meta_box_markup' ),
+			self::FORM_RECORD_TYPE
 		);
 
+		// this will replace the default publish box, that's why it's using its id.
 		add_meta_box(
-			'update_form_record_meta_box',
+			'submitpost',
 			esc_html__( 'Update', 'otter-blocks' ),
 			array( $this, 'update_meta_box_markup' ),
-			'otter_form_record',
+			self::FORM_RECORD_TYPE,
 			'side'
 		);
 	}
@@ -248,7 +553,7 @@ class Form_Block_Emails_Storing {
 			return;
 		}
 
-		if ( 'otter_form_record' !== $post->post_type ) {
+		if ( self::FORM_RECORD_TYPE !== $post->post_type ) {
 			return;
 		}
 
@@ -264,7 +569,7 @@ class Form_Block_Emails_Storing {
 			wp_die( esc_html__( 'User cannot edit this post.', 'otter-blocks' ) );
 		}
 
-		$meta = get_post_meta( $post_id, 'otter_form_record_meta', true );
+		$meta = get_post_meta( $post_id, self::FORM_RECORD_TYPE . '_meta', true );
 
 		foreach( $_POST as $key => $value ) {
 			if ( ! str_starts_with( $key, 'otter_meta_' ) ) {
@@ -278,7 +583,7 @@ class Form_Block_Emails_Storing {
 			}
 		}
 
-		update_post_meta( $post_id, 'otter_form_record_meta', $meta );
+		update_post_meta( $post_id, self::FORM_RECORD_TYPE . '_meta', $meta );
 	}
 
 	/**
@@ -287,8 +592,8 @@ class Form_Block_Emails_Storing {
 	 * @param WP_Post $post The post object.
 	 * @return void
 	 */
-	public function meta_box_markup( $post ) {
-		$meta = get_post_meta( $post->ID, 'otter_form_record_meta', true );
+	public function fields_meta_box_markup( $post ) {
+		$meta = get_post_meta( $post->ID, self::FORM_RECORD_TYPE . '_meta', true );
 		?>
 		<table class="otter_form_record_meta" style="border-spacing: 10px; width: 100%">
 			<tbody style="display: table; width: 100%">
@@ -322,7 +627,7 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function update_meta_box_markup( $post ) {
-		$meta = get_post_meta( $post->ID, 'otter_form_record_meta', true );
+		$meta = get_post_meta( $post->ID, self::FORM_RECORD_TYPE . '_meta', true );
 		?>
 		<div class="submitbox">
 			<div class="metadata">
@@ -346,10 +651,10 @@ class Form_Block_Emails_Storing {
 				<div id="delete-action">
 					<?php
 					echo sprintf(
-						'<a href="?action=%s&otter_form_record=%s&_wpnonce=%s" class="submitdelete">%s</a>',
+						'<a href="?action=%s&' . self::FORM_RECORD_TYPE . '=%s&_wpnonce=%s" class="submitdelete">%s</a>',
 						'trash',
 						$post->ID,
-						wp_create_nonce( 'trash-otter_form_record_' . $post->ID ),
+						wp_create_nonce( 'trash-' . self::FORM_RECORD_TYPE . '_' . $post->ID ),
 						__( 'Move to Trash', 'otter-blocks' )
 					);
 					?>
@@ -367,16 +672,16 @@ class Form_Block_Emails_Storing {
 			</div>
 		</div>
 		<style>
-			#update_form_record_meta_box .inside {
+			#submitpost .inside {
 				padding: 0;
 			}
-			#update_form_record_meta_box .metadata {
+			#submitpost .metadata {
 				padding: 10px;
 				display: flex;
 				flex-direction: column;
 				row-gap: 20px;
 			}
-			#update_form_record_meta_box .dashicons {
+			#submitpost .dashicons {
 				color: #8c8f94;
 			}
 		</style>
@@ -394,7 +699,7 @@ class Form_Block_Emails_Storing {
 		}
 
 		$post = $_REQUEST['post'];
-		if ( ! get_post( $post ) || 'otter_form_record' !== get_post_type( $post ) ) {
+		if ( ! get_post( $post ) || self::FORM_RECORD_TYPE !== get_post_type( $post ) ) {
 			return;
 		}
 
@@ -406,83 +711,32 @@ class Form_Block_Emails_Storing {
 
 	/**
 	 * Check request nonce and post ID.
-	 * Returns an array of post IDs that are passed in a request.
 	 *
-	 * @return array $post_id The post IDs.
+	 * @return string $action The action name.
 	 */
 	public function check_posts( $action ) {
 		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
 
-		$request_record    = wp_unslash( $_REQUEST['otter_form_record'] );
-		$is_bulk_action    = is_array( $request_record );
-		$otter_form_record = $is_bulk_action ? $request_record : array( $request_record );
-
-		$ids = isset( $_REQUEST['otter_form_record'] ) ? array_map( 'sanitize_text_field', $otter_form_record ) : array();
-
-		if ( empty( $ids ) ) {
+		if ( ! isset( $_REQUEST[self::FORM_RECORD_TYPE] ) ) {
 			wp_die( __( 'Post ID is required', 'otter-blocks' ) );
 		}
 
-		if ( ! $is_bulk_action ) {
-			if ( ! wp_verify_nonce( $nonce, $action . '-otter_form_record_' . $ids[0] ) ) {
-				wp_die( __( 'Security check failed', 'otter-blocks' ) );
-			}
-		} elseif ( ! wp_verify_nonce( $nonce, 'bulk-otter_form_records' ) ) {
+		$id = sanitize_text_field( $_REQUEST[self::FORM_RECORD_TYPE] );
+
+		if ( ! wp_verify_nonce( $nonce, $action . '-' . self::FORM_RECORD_TYPE . '_' . $id) ) {
 			wp_die( __( 'Security check failed', 'otter-blocks' ) );
 		}
 
-		foreach( $ids as $id ) {
-			$post = get_post( $id );
-			if ( ! $post ) {
-				wp_die( __( 'Invalid post ID', 'otter-blocks' ) );
-			}
-
-			if ( 'otter_form_record' !== $post->post_type ) {
-				wp_die( __( 'Invalid post type', 'otter-blocks' ) );
-			}
+		$post = get_post( $id );
+		if ( ! $post ) {
+			wp_die( __( 'Invalid post ID', 'otter-blocks' ) );
 		}
 
-		return $ids;
-	}
-
-	/**
-	 * Trash form record.
-	 *
-	 * @return void
-	 */
-	public function trash_otter_form_record() {
-		$ids = $this->check_posts( 'trash' );
-
-		foreach ( $ids as $id ) {
-			$removed = wp_trash_post( $id );
-
-			if ( ! $removed ) {
-				wp_die( __( 'Failed to move post to trash', 'otter-blocks' ) );
-			}
+		if ( self::FORM_RECORD_TYPE !== $post->post_type ) {
+			wp_die( __( 'Invalid post type', 'otter-blocks' ) );
 		}
 
-		wp_safe_redirect( remove_query_arg( array( 'action', $this->form_record_type, '_wpnonce' ), admin_url( "edit.php?post_type=$this->form_record_type" ) ) );
-		exit;
-	}
-
-	/**
-	 * Delete form record.
-	 *
-	 * @return void
-	 */
-	public function delete_otter_form_record() {
-		$ids = $this->check_posts( 'delete' );
-
-		foreach ( $ids as $id ) {
-			$removed = wp_delete_post( $id );
-
-			if ( ! $removed ) {
-				wp_die( __( 'Failed to delete post', 'otter-blocks' ) );
-			}
-		}
-
-		wp_safe_redirect( remove_query_arg( array( 'action', $this->form_record_type, '_wpnonce' ), admin_url( "edit.php?post_type=$this->form_record_type" ) ) );
-		exit;
+		return $id;
 	}
 
 	/**
@@ -491,18 +745,10 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function read_otter_form_record() {
-		$ids = $this->check_posts( 'read' );
+		$id = $this->check_posts( 'read' );
+		wp_update_post( array( 'ID' => $id, 'post_status' => 'read' ) );
 
-		foreach ( $ids as $id ) {
-			wp_update_post(
-				array(
-					'ID'          => $id,
-					'post_status' => 'read',
-				)
-			);
-		}
-
-		wp_safe_redirect( remove_query_arg( array( 'action', $this->form_record_type, '_wpnonce' ), admin_url( "edit.php?post_type=$this->form_record_type" ) ) );
+		wp_safe_redirect( remove_query_arg( array( 'action', self::FORM_RECORD_TYPE, '_wpnonce' ), admin_url( 'edit.php?post_type=' . self::FORM_RECORD_TYPE ) ) );
 		exit;
 	}
 
@@ -512,49 +758,120 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function unread_otter_form_record() {
-		$ids = $this->check_posts( 'unread' );
+		$id = $this->check_posts( 'unread' );
+		wp_update_post( array( 'ID' => $id, 'post_status' => 'unread' ) );
 
-		foreach ( $ids as $id ) {
-			wp_update_post(
-				array(
-					'ID'          => $id,
-					'post_status' => 'unread',
-				)
-			);
-		}
-
-		wp_safe_redirect( remove_query_arg( array( 'action', $this->form_record_type, '_wpnonce' ), admin_url( "edit.php?post_type=$this->form_record_type" ) ) );
+		wp_safe_redirect( remove_query_arg( array( 'action', self::FORM_RECORD_TYPE, '_wpnonce' ), admin_url( 'edit.php?post_type=' . self::FORM_RECORD_TYPE ) ) );
 		exit;
 	}
 
 	/**
-	 * Untrash form record.
+	 * Get filter options.
 	 *
-	 * @return void
+	 * @param string $filter Filter.
+	 *
+	 * @return array
 	 */
-	public function untrash_otter_form_record() {
-		$ids = $this->check_posts( 'untrash' );
+	private function get_filter( $filter ) {
+		/**
+		 * Get all form records. Here we want to avoid using WP_Query to not
+		 * trigger the 'form_record_filter_query'. This is why the $wpdb.
+		 */
+		global $wpdb;
+		$form_records = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT ID FROM $wpdb->posts WHERE post_type = '%s' AND post_status IN ('read', 'unread', 'trash', 'publish')",
+				self::FORM_RECORD_TYPE
+			)
+		);
 
-		foreach ( $ids as $id ) {
-			wp_update_post(
-				array(
-					'ID'          => $id,
-					'post_status' => 'read',
-				)
-			);
+		$options = array();
+		foreach ( $form_records as $record ) {
+			$meta = get_post_meta( $record->ID, self::FORM_RECORD_META_KEY, true );
+
+			switch ( $filter ) {
+				case 'form':
+					$options[ $meta['form']['value'] ] = substr( $meta['form']['value'], -8 );
+					break;
+				case 'post':
+					if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
+						$post_id = wpcom_vip_url_to_postid( $meta['post_url']['value'] );
+					} else {
+						$post_id = url_to_postid( $meta['post_url']['value'] ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
+					}
+
+					$options[ $meta['post_url']['value'] ] = $post_id ? get_the_title( $post_id ) : $meta['post_url']['value'];
+					break;
+			}
 		}
 
-		wp_safe_redirect( remove_query_arg( array( 'action', $this->form_record_type, '_wpnonce' ), admin_url( "edit.php?post_type=$this->form_record_type" ) ) );
-		exit;
+		return $options;
 	}
 
 	/**
-	 * Update form record.
+	 * Get forms dropdown.
 	 *
 	 * @return void
 	 */
-	public function update_otter_form_record() {
-		wp_safe_redirect( remove_query_arg( array( 'action', $this->form_record_type, '_wpnonce' ), wp_get_referer() ) );
+	private function form_dropdown() {
+		$forms = $this->get_filter( 'form' );
+
+		if ( empty( $forms ) ) {
+			return;
+		}
+
+		$form = isset( $_GET['form'] ) ? sanitize_text_field( wp_unslash( $_GET['form'] ) ) : '';
+
+		?>
+		<label for="filter-by-form"></label>
+		<select name="form" id="filter-by-form">
+			<option value=""><?php esc_html_e( 'All Forms', 'otter-blocks' ); ?></option>
+			<?php foreach ( $forms as $form_id => $form_name ) : ?>
+				<option value="<?php echo esc_attr( $form_id ); ?>" <?php selected( $form, $form_id ); ?>><?php echo esc_html( $form_name ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<?php
+	}
+
+	/**
+	 * Get posts dropdown.
+	 *
+	 * @return void
+	 */
+	private function post_dropdown() {
+		$posts = $this->get_filter( 'post' );
+
+		if ( empty( $posts ) ) {
+			return;
+		}
+
+		$post = isset( $_GET['post'] ) ? sanitize_text_field( wp_unslash( $_GET['post'] ) ) : '';
+
+		?>
+		<label for="filter-by-post"></label>
+		<select name="post" id="filter-by-post">
+			<option value=""><?php esc_html_e( 'All Posts', 'otter-blocks' ); ?></option>
+			<?php foreach ( $posts as $post_id => $post_title ) : ?>
+				<option value="<?php echo esc_attr( $post_id ); ?>" <?php selected( $post, $post_id ); ?>><?php echo esc_html( $post_title ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<?php
+	}
+
+	/**
+	 * Make unread rows bold.
+	 *
+	 * @param $content
+	 * @param $status
+	 *
+	 * @return mixed|string
+	 */
+	private function format_based_on_status( $content, $status ) {
+		if ( 'unread' === $status ) {
+			return '<strong>' . $content . '</strong>';
+		}
+
+		return $content;
 	}
 
 	/**
