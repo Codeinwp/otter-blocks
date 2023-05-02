@@ -109,8 +109,8 @@ class Form_Block_Emails_Storing {
 				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
+				/* translators: %s the number of posts */
 				'label_count'               => _n_noop(
-					/* translators: %s the number of posts */
 					'Read <span class="count">(%s)</span>',
 					'Read <span class="count">(%s)</span>',
 					'otter-blocks'
@@ -126,8 +126,8 @@ class Form_Block_Emails_Storing {
 				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => true,
 				'show_in_admin_status_list' => true,
+				/* translators: %s the number of posts */
 				'label_count'               => _n_noop(
-					/* translators: %s the number of posts */
 					'Unread <span class="count">(%s)</span>',
 					'Unread <span class="count">(%s)</span>',
 					'otter-blocks'
@@ -282,11 +282,11 @@ class Form_Block_Emails_Storing {
 		if ( 'trash' !== $status ) {
 			$bulk_actions['trash'] = 'Move to Trash';
 
-			if ( 'read' !== $status ) {
+			if ( 'unread' === $status ) {
 				$bulk_actions['read'] = 'Mark as Read';
 			}
 
-			if ( 'unread' !== $status ) {
+			if ( 'read' === $status ) {
 				$bulk_actions['unread'] = 'Mark as Unread';
 			}
 		} else {
@@ -353,6 +353,8 @@ class Form_Block_Emails_Storing {
 	 * @return string
 	 */
 	public function handle_form_record_bulk_actions( $redirect, $doaction, $object_ids ) {
+		$redirect = remove_query_arg( 'post_status', $redirect );
+
 		switch ( $doaction ) {
 			case 'read':
 				foreach ( $object_ids as $object_id ) {
@@ -363,6 +365,8 @@ class Form_Block_Emails_Storing {
 						)
 					);
 				}
+
+				$redirect = add_query_arg( 'post_status', 'read', $redirect );
 				break;
 			case 'unread':
 				foreach ( $object_ids as $object_id ) {
@@ -373,6 +377,8 @@ class Form_Block_Emails_Storing {
 						)
 					);
 				}
+
+				$redirect = add_query_arg( 'post_status', 'unread', $redirect );
 				break;
 		}
 
@@ -394,7 +400,7 @@ class Form_Block_Emails_Storing {
 		wp_update_post(
 			array(
 				'ID'          => $post->ID,
-				'post_status' => 'read'
+				'post_status' => 'read',
 			)
 		);
 	}
@@ -411,34 +417,42 @@ class Form_Block_Emails_Storing {
 
 		$this->form_dropdown();
 		$this->post_dropdown();
+
+		wp_nonce_field( 'filter', 'filters_nonce' );
 	}
 
 	/**
 	 * Parse form record filters.
 	 *
 	 * @param WP_Query $query Query.
+	 *
+	 * @return WP_Query
 	 */
 	public function form_record_filter_query( $query ) {
+		if ( empty( $_GET['filters_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_GET['filters_nonce'] ), 'filter' ) ) {
+			return $query;
+		}
+
 		if ( ! is_admin() || ! isset( $_GET['post_type'] ) || self::FORM_RECORD_TYPE !== $_GET['post_type'] ) {
-			return;
+			return $query;
 		}
 
 		if ( ! isset( $query->query['post_type'] ) || self::FORM_RECORD_TYPE !== $query->query['post_type'] ) {
-			return;
+			return $query;
 		}
 
 		global $pagenow;
 		if ( 'edit.php' !== $pagenow || ! isset( $_GET['filter_action'] ) ) {
-			return;
+			return $query;
 		}
 
-		$form = ( ! empty( $_REQUEST['form'] ) ) ? sanitize_text_field( $_REQUEST['form'] ) : '';
-		$post = ( ! empty( $_REQUEST['post'] ) ) ? sanitize_url( $_REQUEST['post'] ) : '';
+		$form = ( ! empty( $_REQUEST['form'] ) ) ? sanitize_text_field( wp_unslash( $_REQUEST['form'] ) ) : '';
+		$post = ( ! empty( $_REQUEST['post'] ) ) ? esc_url_raw( wp_unslash( $_REQUEST['post'] ) ) : '';
 
 		if ( ! empty( $form ) ) {
 			$query->query_vars['meta_query'][] = array(
 				'key'     => self::FORM_RECORD_META_KEY,
-				'value'   => serialize( $form ),
+				'value'   => $form,
 				'compare' => 'LIKE',
 			);
 		}
@@ -446,10 +460,12 @@ class Form_Block_Emails_Storing {
 		if ( ! empty( $post ) ) {
 			$query->query_vars['meta_query'][] = array(
 				'key'     => self::FORM_RECORD_META_KEY,
-				'value'   => serialize( $post ),
+				'value'   => $post,
 				'compare' => 'LIKE',
 			);
 		}
+
+		return $query;
 	}
 
 	/**
@@ -462,19 +478,20 @@ class Form_Block_Emails_Storing {
 	 */
 	public function form_record_column_values( $column, $post_id ) {
 		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
+
 		switch ( $column ) {
 			case 'email':
-				echo $this->format_based_on_status(
+				$this->format_based_on_status(
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
 						esc_url( get_edit_post_link( $post_id ) ),
-						esc_html( $meta['email']['value'] )
+						esc_html( get_the_title( $post_id ) )
 					),
 					get_post_status( $post_id )
 				);
 				break;
 			case 'form':
-				echo $this->format_based_on_status(
+				$this->format_based_on_status(
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
 						esc_url( $meta['post_url']['value'] . '#' . $meta['form']['value'] ),
@@ -492,7 +509,7 @@ class Form_Block_Emails_Storing {
 
 				$title = $source_post ? get_the_title( $source_post ) : $meta['post_url']['value'];
 
-				echo $this->format_based_on_status(
+				$this->format_based_on_status(
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
 						esc_url( $meta['post_url']['value'] ),
@@ -502,10 +519,10 @@ class Form_Block_Emails_Storing {
 				);
 				break;
 			case 'ID':
-				echo $this->format_based_on_status( substr( $post_id, -8 ), get_post_status( $post_id ) );
+				$this->format_based_on_status( substr( $post_id, -8 ), get_post_status( $post_id ) );
 				break;
 			case 'submission_date':
-				echo $this->format_based_on_status(
+				$this->format_based_on_status(
 					esc_html( get_the_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $post_id ) ),
 					get_post_status( $post_id )
 				);
@@ -570,7 +587,7 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function form_record_save_meta_box( $post_id, $post ) {
-		if ( empty( $_POST ) || ! isset( $_POST['action'] ) || 'editpost' !== $_POST['action'] ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
 
@@ -578,11 +595,11 @@ class Form_Block_Emails_Storing {
 			return;
 		}
 
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		if ( empty( $_POST['action'] ) || 'editpost' !== $_POST['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 			return;
 		}
 
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_REQUEST['_wpnonce'] ), 'update-post_' . $post->ID ) ) {
+		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['_wpnonce'] ) ), 'update-post_' . $post->ID ) ) {
 			wp_die( esc_html__( 'Nonce not verified.', 'otter-blocks' ) );
 		}
 
@@ -675,11 +692,11 @@ class Form_Block_Emails_Storing {
 				<div id="delete-action">
 					<?php
 					echo sprintf(
-						'<a href="?action=%s&' . self::FORM_RECORD_TYPE . '=%s&_wpnonce=%s" class="submitdelete">%s</a>',
+						'<a href="?action=%s&' . esc_attr( self::FORM_RECORD_TYPE ) . '=%s&_wpnonce=%s" class="submitdelete">%s</a>',
 						'trash',
-						$post->ID,
-						wp_create_nonce( 'trash-' . self::FORM_RECORD_TYPE . '_' . $post->ID ),
-						__( 'Move to Trash', 'otter-blocks' )
+						esc_attr( $post->ID ),
+						esc_attr( wp_create_nonce( 'trash-' . self::FORM_RECORD_TYPE . '_' . $post->ID ) ),
+						esc_html__( 'Move to Trash', 'otter-blocks' )
 					);
 					?>
 				</div>
@@ -688,7 +705,7 @@ class Form_Block_Emails_Storing {
 					<?php
 					echo sprintf(
 						'<input type="submit" class="button button-primary button-large" value="%s"/>',
-						__( 'Update', 'otter-blocks' )
+						esc_html__( 'Update', 'otter-blocks' )
 					);
 					?>
 				</div>
@@ -722,7 +739,7 @@ class Form_Block_Emails_Storing {
 			return;
 		}
 
-		$post = sanitize_text_field( $_REQUEST['post'] ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$post = sanitize_text_field( wp_unslash( $_REQUEST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 		if ( ! get_post( $post ) || self::FORM_RECORD_TYPE !== get_post_type( $post ) ) {
 			return;
 		}
@@ -732,7 +749,7 @@ class Form_Block_Emails_Storing {
 			wp_update_post(
 				array(
 					'ID'          => $post,
-					'post_status' => 'read'
+					'post_status' => 'read',
 				)
 			);
 		}
@@ -746,19 +763,17 @@ class Form_Block_Emails_Storing {
 	 * @return string The post ID.
 	 */
 	public function check_posts( $action ) {
-		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
-
-		if ( ! isset( $_REQUEST[self::FORM_RECORD_TYPE] ) ) {
-			wp_die( esc_html__( 'Post ID is required', 'otter-blocks' ) );
-		}
-
-		$id = sanitize_text_field( $_REQUEST[ self::FORM_RECORD_TYPE ] );
-
-		if ( ! wp_verify_nonce( $nonce, $action . '-' . self::FORM_RECORD_TYPE . '_' . $id ) ) {
+		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ), $action . '-' . self::FORM_RECORD_TYPE . '_' . $id ) ) {
 			wp_die( esc_html__( 'Security check failed', 'otter-blocks' ) );
 		}
 
+		if ( ! isset( $_REQUEST[ self::FORM_RECORD_TYPE ] ) ) {
+			wp_die( esc_html__( 'Post ID is required', 'otter-blocks' ) );
+		}
+
+		$id   = sanitize_text_field( wp_unslash( $_REQUEST[ self::FORM_RECORD_TYPE ] ) );
 		$post = get_post( $id );
+
 		if ( ! $post ) {
 			wp_die( esc_html__( 'Invalid post ID', 'otter-blocks' ) );
 		}
@@ -780,7 +795,7 @@ class Form_Block_Emails_Storing {
 		wp_update_post(
 			array(
 				'ID'          => $id,
-				'post_status' => 'read'
+				'post_status' => 'read',
 			)
 		);
 
@@ -798,7 +813,7 @@ class Form_Block_Emails_Storing {
 		wp_update_post(
 			array(
 				'ID'          => $id,
-				'post_status' => 'unread'
+				'post_status' => 'unread',
 			)
 		);
 
@@ -914,15 +929,14 @@ class Form_Block_Emails_Storing {
 	 *
 	 * @param string $content Content.
 	 * @param string $status The post status.
-	 *
-	 * @return mixed|string
 	 */
 	private function format_based_on_status( $content, $status ) {
 		if ( 'unread' === $status ) {
-			return '<strong>' . $content . '</strong>';
+			echo '<strong>' . wp_kses_post( $content ) . '</strong>';
+			return;
 		}
 
-		return $content;
+		echo wp_kses_post( $content );
 	}
 
 	/**
