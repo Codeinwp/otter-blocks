@@ -65,7 +65,7 @@ class Dashboard {
 			__( 'Form Submissions', 'otter-blocks' ),
 			__( 'Form Submissions', 'otter-blocks' ),
 			'manage_options',
-			'otter-form-submissions-free',
+			'form-submissions-free',
 			array( $this, 'form_submissions_callback' ),
 			10
 		);
@@ -85,7 +85,6 @@ class Dashboard {
 	 * The content of the form submissions upsell page.
 	 */
 	public function form_submissions_callback() {
-		$this->the_otter_banner();
 		?>
 		<style>
 			div.error {
@@ -209,7 +208,7 @@ class Dashboard {
 	 */
 	public function maybe_add_otter_banner() {
 		$screen = get_current_screen();
-		if ( 'edit-otter_form_record' === $screen->id ) {
+		if ( 'edit-otter_form_record' === $screen->id || 'otter-blocks_page_form-submissions-free' === $screen->id ) {
 			$this->the_otter_banner();
 		}
 	}
