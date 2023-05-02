@@ -163,8 +163,14 @@ class Dynamic_Content_Server {
 		$fallback = $request->get_param( 'fallback' );
 		$path     = OTTER_BLOCKS_PATH . '/assets/images/placeholder.jpg';
 
-		if ( ! empty( $fallback ) && @getimagesize( $fallback ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-			$path = $fallback;
+		if ( ! empty( $fallback ) ) {
+
+			$fallback           = sanitize_text_field( $fallback );
+			$feedback_full_path = realpath( $fallback );
+
+			if ( false !== $feedback_full_path && @getimagesize( $fallback ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				$path = $feedback_full_path;
+			}
 		}
 
 		$default = $path;
@@ -191,7 +197,7 @@ class Dynamic_Content_Server {
 
 		if ( 'logo' === $type ) {
 			$custom_logo_id = get_theme_mod( 'custom_logo' );
- 
+
 			if ( $custom_logo_id ) {
 				$path = wp_get_original_image_path( $custom_logo_id );
 			}

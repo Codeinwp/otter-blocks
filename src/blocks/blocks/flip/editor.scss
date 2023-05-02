@@ -1,7 +1,6 @@
 @import 'style';
 
 .wp-block-themeisle-blocks-flip {
-
 	--height-tablet: var(--height);
 	--height-mobile: var(--height-tablet);
 
@@ -12,6 +11,11 @@
 	--padding-mobile: var(--padding-tablet);
 
 	border: none;
+
+	/* Add this to override Neve styles */
+	&[class*="has-dark-"] p, &[class*="has-light-"] p {
+		color: unset;
+	}
 
 	.o-switcher {
 		margin-top: 30px;
@@ -26,7 +30,7 @@
 	}
 
 	@media ( max-width: 960px ) {
-		
+
 		height: var( --height-tablet );
 
 		&.is-selected {
@@ -41,9 +45,9 @@
 			padding: var(--padding-tablet);
 		}
 	}
-	
+
 	@media ( max-width: 600px ) {
-		
+
 		height: var( --height-mobile );
 
 		&.is-selected {

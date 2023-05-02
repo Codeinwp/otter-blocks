@@ -13,8 +13,17 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	display: flex;
 	transition: 0.3s;
 
+	/* Add this to override Neve styles */
+	&[class*="has-dark-"] p, &[class*="has-light-"] p {
+		color: unset;
+	}
+
 	&.has-dark-bg {
-		color: #fff;
+		color: var( --text-color, var( --nv-text-dark-bg , #fff ) );
+	}
+
+	&.has-light-bg {
+		color: var( --text-color, var( --nv-text-color , #000 ) );
 	}
 
 	> .innerblocks-wrap {
@@ -33,6 +42,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 				margin: inherit;
 				flex: 1;
 
+				/* Add this to override Neve styles */
+				&[class*="has-dark-"] p, &[class*="has-light-"] p {
+					color: unset;
+				}
+
 				> .block-editor-inner-blocks {
 					flex: 1;
 				}
@@ -42,7 +56,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 				}
 
 				&.has-dark-bg {
-					color: #fff;
+					color: var( --text-color, var( --nv-text-dark-bg , #fff ) );
+				}
+
+				&.has-light-bg {
+					color: var( --text-color, var( --nv-text-color , #000 ) );
 				}
 			}
 		}
@@ -71,7 +89,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		> * {
 			position: relative;
 		}
-	
+
 		a:not( .wp-block-button__link ):not( .social-icon ) {
 			color: var( --link-color );
 		}

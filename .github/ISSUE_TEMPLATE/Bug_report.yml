@@ -50,9 +50,7 @@ body:
       attributes:
           label: Is the issue you are reporting a regression 
           description: |
-            i.e, a previously working feature/functionality is now broken? 
-            By specifying whether or not your issue is a regression, it will help the development team to more effectively diagnose and resolve the problem.
-          
+            Choose "Yes" if the bug appeared after updating the product, meaning it worked before but not now. Choose "No" if the bug isn't caused by an update. Marking a bug as regression helps us fix issues from new changes faster.
           multiple: false
           options:
               - 'No'
