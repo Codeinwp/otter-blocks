@@ -687,6 +687,8 @@ class Dynamic_Content {
 			}
 
 			if ( 'postContent' === $data['type'] ) {
+
+				// To do not trigger postContent action if the given content contains the postContent dynamic tag, because it will cause an infinite loop.
 				$content = get_the_content( $data['context'] );
 				if ( strpos( $content, 'data-type="postContent"' ) ) {
 					$key = $this->get_exception_key( $data, $post->ID );
