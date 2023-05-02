@@ -81,6 +81,9 @@ class Dashboard {
 		echo '<div id="otter"></div>';
 	}
 
+	/**
+	 * The content of the form submissions upsell page.
+	 */
 	public function form_submissions_callback() {
 		$this->the_otter_banner();
 		?>
@@ -123,7 +126,7 @@ class Dashboard {
 				<img src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/form-submissions-upsell.svg' ); ?>" alt="Otter Form Submissions Upsell" />
 				<h2><?php esc_html_e( 'Collect Your Form Submissions', 'otter-blocks' ); ?></h2>
 				<p><?php esc_html_e( 'Store, manage and analyze your form submissions with ease – all in one place. With Otter powerful features, managing submissions has never been simpler.', 'otter-blocks' ); ?></p>
-				<a href="<?php echo esc_url( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions', 'admin' ) ) ?>" class="button button-primary" target="_blank"><?php esc_html_e( 'Explore Otter PRO', 'otter-blocks' ); ?></a>
+				<a href="<?php echo esc_url( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions', 'admin' ) ); ?>" class="button button-primary" target="_blank"><?php esc_html_e( 'Explore Otter PRO', 'otter-blocks' ); ?></a>
 			</div>
 		</div>
 		<?php
@@ -199,6 +202,11 @@ class Dashboard {
 		exit;
 	}
 
+	/**
+	 * Add the Otter banner on the 'edit-otter_form_record' page.
+	 *
+	 * @return void
+	 */
 	public function maybe_add_otter_banner() {
 		$screen = get_current_screen();
 		if ( 'edit-otter_form_record' === $screen->id ) {

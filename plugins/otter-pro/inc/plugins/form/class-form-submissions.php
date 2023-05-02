@@ -20,12 +20,12 @@ class Form_Block_Emails_Storing {
 	/**
 	 * Form record post type.
 	 */
-	private const FORM_RECORD_TYPE = 'otter_form_record';
+	const FORM_RECORD_TYPE = 'otter_form_record';
 
 	/**
 	 * Form record meta key.
 	 */
-	private const FORM_RECORD_META_KEY  = 'otter_form_record_meta';
+	const FORM_RECORD_META_KEY = 'otter_form_record_meta';
 
 	/**
 	 * The main instance var.
@@ -86,11 +86,11 @@ class Form_Block_Emails_Storing {
 					'all_items'          => esc_html__( 'Form Submissions', 'otter-blocks' ),
 					'view_item'          => esc_html__( 'View Submission', 'otter-blocks' ),
 					'update_item'        => esc_html__( 'Update Submission', 'otter-blocks' ),
-					'not_found'          => esc_html__( 'No submissions found' ),
-					'not_found_in_trash' => esc_html__( 'No submissions found in the Trash' ),
+					'not_found'          => esc_html__( 'No submissions found', 'otter-blocks' ),
+					'not_found_in_trash' => esc_html__( 'No submissions found in the Trash', 'otter-blocks' ),
 				),
 				'capability_type' => self::FORM_RECORD_TYPE,
-				'capabilities' => array(
+				'capabilities'    => array(
 					'create_posts' => 'create_otter_form_records',
 				),
 				'description'     => __( 'Holds the data from the form submissions', 'otter-blocks' ),
@@ -101,23 +101,39 @@ class Form_Block_Emails_Storing {
 			)
 		);
 
-		register_post_status( 'read', array(
-			'label'                     => _x( 'Read', 'post', 'otter-blocks' ),
-			'public'                    => true,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => true,
-			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Read <span class="count">(%s)</span>', 'Read <span class="count">(%s)</span>', 'otter-blocks' ),
-		) );
+		register_post_status(
+			'read',
+			array(
+				'label'                     => _x( 'Read', 'otter-form-record', 'otter-blocks' ),
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				'label_count'               => _n_noop(
+					/* translators: %s the number of posts */
+					'Read <span class="count">(%s)</span>',
+					'Read <span class="count">(%s)</span>',
+					'otter-blocks'
+				),
+			)
+		);
 
-		register_post_status( 'unread', array(
-			'label'                     => _x( 'Unread', 'post', 'otter-blocks' ),
-			'public'                    => true,
-			'exclude_from_search'       => false,
-			'show_in_admin_all_list'    => true,
-			'show_in_admin_status_list' => true,
-			'label_count'               => _n_noop( 'Unread <span class="count">(%s)</span>', 'Unread <span class="count">(%s)</span>', 'otter-blocks' ),
-		) );
+		register_post_status(
+			'unread',
+			array(
+				'label'                     => _x( 'Unread', 'otter-form-record', 'otter-blocks' ),
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				'label_count'               => _n_noop(
+					/* translators: %s the number of posts */
+					'Unread <span class="count">(%s)</span>',
+					'Unread <span class="count">(%s)</span>',
+					'otter-blocks'
+				),
+			)
+		);
 	}
 
 	/**
@@ -129,7 +145,7 @@ class Form_Block_Emails_Storing {
 		global $wp_roles;
 		foreach ( $wp_roles->roles as $key => $current_role ) {
 			$role = get_role( $key );
-			if ( $role === null ) {
+			if ( null === $role ) {
 				continue;
 			}
 
@@ -142,7 +158,7 @@ class Form_Block_Emails_Storing {
 			$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE );
 			$role->add_cap( 'edit_' . self::FORM_RECORD_TYPE . 's' );
 			$role->add_cap( 'read_' . self::FORM_RECORD_TYPE . 's' );
-			$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE . 's');
+			$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE . 's' );
 
 			$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE );
 			$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE . 's' );
@@ -196,6 +212,7 @@ class Form_Block_Emails_Storing {
 			}
 
 			$id = substr( $input['id'], -8 );
+
 			$meta['inputs'][ $id ] = array(
 				'label' => $input['label'],
 				'value' => $input['value'],
@@ -213,7 +230,7 @@ class Form_Block_Emails_Storing {
 	 */
 	public function add_style() {
 		$screen = get_current_screen();
-		if ( $screen->id === 'edit-' . self::FORM_RECORD_TYPE ) {
+		if ( 'edit-' . self::FORM_RECORD_TYPE === $screen->id ) {
 			?>
 			<style>
 			.wrap h1.wp-heading-inline {
@@ -259,17 +276,17 @@ class Form_Block_Emails_Storing {
 	 * @return array
 	 */
 	public function form_record_bulk_actions() {
-		$status       = isset( $_GET['post_status'] ) ? sanitize_text_field( wp_unslash( $_GET['post_status'] ) ) : 'all';
+		$status       = isset( $_GET['post_status'] ) ? sanitize_text_field( wp_unslash( $_GET['post_status'] ) ) : 'all'; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 		$bulk_actions = array();
 
-		if ( $status !== 'trash' ) {
+		if ( 'trash' !== $status ) {
 			$bulk_actions['trash'] = 'Move to Trash';
 
-			if ( $status !== 'read' ) {
+			if ( 'read' !== $status ) {
 				$bulk_actions['read'] = 'Mark as Read';
 			}
 
-			if ( $status !== 'unread' ) {
+			if ( 'unread' !== $status ) {
 				$bulk_actions['unread'] = 'Mark as Unread';
 			}
 		} else {
@@ -283,13 +300,13 @@ class Form_Block_Emails_Storing {
 	/**
 	 * Manage form records row actions.
 	 *
-	 * @param array $actions The current row actions.
+	 * @param array   $actions The current row actions.
 	 * @param WP_Post $post The current post object.
 	 *
 	 * @return array
 	 */
 	public function form_record_row_actions( $actions, $post ) {
-		if ( $post->post_type !== 'otter_form_record' ) {
+		if ( 'otter_form_record' !== $post->post_type ) {
 			return $actions;
 		}
 
@@ -313,7 +330,7 @@ class Form_Block_Emails_Storing {
 				wp_create_nonce( 'read-' . self::FORM_RECORD_TYPE . '_' . $post->ID ),
 				__( 'Mark as Read', 'otter-blocks' )
 			);
-		} else if ( 'trash' !== $status ) {
+		} elseif ( 'trash' !== $status ) {
 			$actions['unread'] = sprintf(
 				'<a href="?action=%s&' . self::FORM_RECORD_TYPE . '=%s&_wpnonce=%s">%s</a>',
 				'row-unread',
@@ -331,12 +348,12 @@ class Form_Block_Emails_Storing {
 	 *
 	 * @param string $redirect The redirect URL.
 	 * @param string $doaction The action being taken.
-	 * @param array $object_ids The object IDs.
+	 * @param array  $object_ids The object IDs.
 	 *
 	 * @return string
 	 */
 	public function handle_form_record_bulk_actions( $redirect, $doaction, $object_ids ) {
-		switch( $doaction ) {
+		switch ( $doaction ) {
 			case 'read':
 				foreach ( $object_ids as $object_id ) {
 					wp_update_post(
@@ -365,16 +382,21 @@ class Form_Block_Emails_Storing {
 	/**
 	 * Mark form record as read when they're restored from trash.
 	 *
-	 * @param string $new_status The new status.
-	 * @param string $old_status The old status.
+	 * @param string  $new_status The new status.
+	 * @param string  $old_status The old status.
 	 * @param WP_Post $post The post object.
 	 */
 	public function transition_draft_to_read( $new_status, $old_status, $post ) {
-		if ( $post->post_type !== self::FORM_RECORD_TYPE || $old_status !== 'trash' || $new_status !== 'draft' ) {
+		if ( self::FORM_RECORD_TYPE !== $post->post_type || 'trash' !== $old_status || 'draft' !== $new_status ) {
 			return;
 		}
 
-		wp_update_post( array( 'ID'=> $post->ID, 'post_status' => 'read' ) );
+		wp_update_post(
+			array(
+				'ID'          => $post->ID,
+				'post_status' => 'read'
+			)
+		);
 	}
 
 	/**
@@ -395,24 +417,23 @@ class Form_Block_Emails_Storing {
 	 * Parse form record filters.
 	 *
 	 * @param WP_Query $query Query.
-	 * @return void
 	 */
 	public function form_record_filter_query( $query ) {
+		if ( ! is_admin() || ! isset( $_GET['post_type'] ) || self::FORM_RECORD_TYPE !== $_GET['post_type'] ) {
+			return;
+		}
+
+		if ( ! isset( $query->query['post_type'] ) || self::FORM_RECORD_TYPE !== $query->query['post_type'] ) {
+			return;
+		}
+
 		global $pagenow;
-		if ( ! is_admin() || ! isset( $_GET['post_type'] ) || $_GET['post_type'] != self::FORM_RECORD_TYPE ) {
+		if ( 'edit.php' !== $pagenow || ! isset( $_GET['filter_action'] ) ) {
 			return;
 		}
 
-		if ( ! isset( $query->query['post_type'] ) || $query->query['post_type'] != self::FORM_RECORD_TYPE ) {
-			return;
-		}
-
-		if ( $pagenow != 'edit.php' || ! isset( $_GET['filter_action'] ) ) {
-			return;
-		}
-
-		$form = ( ! empty( $_REQUEST['form'] ) ) ? $_REQUEST['form'] : '';
-		$post = ( ! empty( $_REQUEST['post'] ) ) ? $_REQUEST['post'] : '';
+		$form = ( ! empty( $_REQUEST['form'] ) ) ? sanitize_text_field( $_REQUEST['form'] ) : '';
+		$post = ( ! empty( $_REQUEST['post'] ) ) ? sanitize_url( $_REQUEST['post'] ) : '';
 
 		if ( ! empty( $form ) ) {
 			$query->query_vars['meta_query'][] = array(
@@ -435,7 +456,7 @@ class Form_Block_Emails_Storing {
 	 * Manage form record columns.
 	 *
 	 * @param string $column The column name.
-	 * @param int $post_id The post ID.
+	 * @param int    $post_id The post ID.
 	 *
 	 * @return void
 	 */
@@ -446,8 +467,8 @@ class Form_Block_Emails_Storing {
 				echo $this->format_based_on_status(
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
-						get_edit_post_link( $post_id ),
-						$meta['email']['value']
+						esc_url( get_edit_post_link( $post_id ) ),
+						esc_html( $meta['email']['value'] )
 					),
 					get_post_status( $post_id )
 				);
@@ -457,7 +478,7 @@ class Form_Block_Emails_Storing {
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
 						esc_url( $meta['post_url']['value'] . '#' . $meta['form']['value'] ),
-						substr( $meta['form']['value'], -8 )
+						esc_html( substr( $meta['form']['value'], -8 ) )
 					),
 					get_post_status( $post_id )
 				);
@@ -475,7 +496,7 @@ class Form_Block_Emails_Storing {
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
 						esc_url( $meta['post_url']['value'] ),
-						$title
+						esc_html( $title )
 					),
 					get_post_status( $post_id )
 				);
@@ -485,7 +506,7 @@ class Form_Block_Emails_Storing {
 				break;
 			case 'submission_date':
 				echo $this->format_based_on_status(
-					get_the_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $post_id ),
+					esc_html( get_the_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $post_id ) ),
 					get_post_status( $post_id )
 				);
 				break;
@@ -501,7 +522,7 @@ class Form_Block_Emails_Storing {
 		remove_meta_box( 'submitdiv', self::FORM_RECORD_TYPE, 'side' );
 
 		global $submenu;
-		unset( $submenu['edit.php?post_type=' . self::FORM_RECORD_TYPE] );
+		unset( $submenu[ 'edit.php?post_type=' . self::FORM_RECORD_TYPE ] );
 
 		remove_menu_page( 'edit.php?post_type=' . self::FORM_RECORD_TYPE );
 		remove_submenu_page( 'otter', 'otter-form-submissions-free' );
@@ -543,8 +564,8 @@ class Form_Block_Emails_Storing {
 	/**
 	 * Save data from form record meta box.
 	 *
-	 * @param $post_id
-	 * @param $post
+	 * @param int     $post_id The post ID.
+	 * @param WP_Post $post The post object.
 	 *
 	 * @return void
 	 */
@@ -561,7 +582,7 @@ class Form_Block_Emails_Storing {
 			return;
 		}
 
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'update-post_' . $post->ID ) ) {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_REQUEST['_wpnonce'] ), 'update-post_' . $post->ID ) ) {
 			wp_die( esc_html__( 'Nonce not verified.', 'otter-blocks' ) );
 		}
 
@@ -569,9 +590,9 @@ class Form_Block_Emails_Storing {
 			wp_die( esc_html__( 'User cannot edit this post.', 'otter-blocks' ) );
 		}
 
-		$meta = get_post_meta( $post_id, self::FORM_RECORD_TYPE . '_meta', true );
+		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
 
-		foreach( $_POST as $key => $value ) {
+		foreach ( $_POST as $key => $value ) {
 			if ( ! str_starts_with( $key, 'otter_meta_' ) ) {
 				continue;
 			}
@@ -583,7 +604,7 @@ class Form_Block_Emails_Storing {
 			}
 		}
 
-		update_post_meta( $post_id, self::FORM_RECORD_TYPE . '_meta', $meta );
+		update_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
 	}
 
 	/**
@@ -593,7 +614,10 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function fields_meta_box_markup( $post ) {
-		$meta = get_post_meta( $post->ID, self::FORM_RECORD_TYPE . '_meta', true );
+		$meta = get_post_meta( $post->ID, self::FORM_RECORD_META_KEY, true );
+		if ( empty( $meta ) ) {
+			return;
+		}
 		?>
 		<table class="otter_form_record_meta" style="border-spacing: 10px; width: 100%">
 			<tbody style="display: table; width: 100%">
@@ -603,7 +627,7 @@ class Form_Block_Emails_Storing {
 					<tr>
 						<td><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $field['label'] ); ?></label></td>
 						<?php
-						if ( $field['type'] === 'textarea' ) {
+						if ( 'textarea' === $field['type'] ) {
 							?>
 							<td><textarea name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>" id="<?php echo esc_attr( $id ); ?>" class="otter_form_record_meta__value" rows="5" cols="40"><?php echo esc_html( $field['value'] ); ?></textarea></td>
 							<?php
@@ -627,19 +651,19 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function update_meta_box_markup( $post ) {
-		$meta = get_post_meta( $post->ID, self::FORM_RECORD_TYPE . '_meta', true );
+		$meta = get_post_meta( $post->ID, self::FORM_RECORD_META_KEY, true );
 		?>
 		<div class="submitbox">
 			<div class="metadata">
 				<div>
 					<span class="dashicons dashicons-feedback"></span>
 					<?php echo esc_html( $meta['form']['label'] ); ?>:
-					<a href="<?php echo esc_url( $meta['post_url']['value'] . "#" . $meta['form']['value'] ); ?>"><?php echo esc_html( substr( $meta['form']['value'], -8 ) ); ?></a>
+					<a href="<?php echo esc_url( $meta['post_url']['value'] . '#' . $meta['form']['value'] ); ?>"><?php echo esc_html( substr( $meta['form']['value'], -8 ) ); ?></a>
 				</div>
 				<div>
 					<span class="dashicons dashicons-admin-page"></span>
 					<?php echo esc_html__( 'Post', 'otter-blocks' ); ?>:
-					<a href="<?php echo esc_url( $meta['post_url']['value'] ); ?>"><?php echo esc_html__('View', 'otter-blocks' ); ?></a>
+					<a href="<?php echo esc_url( $meta['post_url']['value'] ); ?>"><?php echo esc_html__( 'View', 'otter-blocks' ); ?></a>
 				</div>
 				<div>
 					<span class="dashicons dashicons-calendar"></span>
@@ -694,46 +718,53 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function mark_read_on_edit() {
-		if ( ! isset( $_REQUEST['post'] ) ) {
+		if ( ! isset( $_REQUEST['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 			return;
 		}
 
-		$post = $_REQUEST['post'];
+		$post = sanitize_text_field( $_REQUEST['post'] ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 		if ( ! get_post( $post ) || self::FORM_RECORD_TYPE !== get_post_type( $post ) ) {
 			return;
 		}
 
 		$status = get_post_status( $post );
 		if ( 'unread' === $status ) {
-			wp_update_post( array( 'ID' => $post, 'post_status' => 'read' ) );
+			wp_update_post(
+				array(
+					'ID'          => $post,
+					'post_status' => 'read'
+				)
+			);
 		}
 	}
 
 	/**
 	 * Check request nonce and post ID.
 	 *
-	 * @return string $action The action name.
+	 * @param string $action The action name.
+	 *
+	 * @return string The post ID.
 	 */
 	public function check_posts( $action ) {
 		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
 
 		if ( ! isset( $_REQUEST[self::FORM_RECORD_TYPE] ) ) {
-			wp_die( __( 'Post ID is required', 'otter-blocks' ) );
+			wp_die( esc_html__( 'Post ID is required', 'otter-blocks' ) );
 		}
 
-		$id = sanitize_text_field( $_REQUEST[self::FORM_RECORD_TYPE] );
+		$id = sanitize_text_field( $_REQUEST[ self::FORM_RECORD_TYPE ] );
 
-		if ( ! wp_verify_nonce( $nonce, $action . '-' . self::FORM_RECORD_TYPE . '_' . $id) ) {
-			wp_die( __( 'Security check failed', 'otter-blocks' ) );
+		if ( ! wp_verify_nonce( $nonce, $action . '-' . self::FORM_RECORD_TYPE . '_' . $id ) ) {
+			wp_die( esc_html__( 'Security check failed', 'otter-blocks' ) );
 		}
 
 		$post = get_post( $id );
 		if ( ! $post ) {
-			wp_die( __( 'Invalid post ID', 'otter-blocks' ) );
+			wp_die( esc_html__( 'Invalid post ID', 'otter-blocks' ) );
 		}
 
 		if ( self::FORM_RECORD_TYPE !== $post->post_type ) {
-			wp_die( __( 'Invalid post type', 'otter-blocks' ) );
+			wp_die( esc_html__( 'Invalid post type', 'otter-blocks' ) );
 		}
 
 		return $id;
@@ -746,7 +777,12 @@ class Form_Block_Emails_Storing {
 	 */
 	public function read_otter_form_record() {
 		$id = $this->check_posts( 'read' );
-		wp_update_post( array( 'ID' => $id, 'post_status' => 'read' ) );
+		wp_update_post(
+			array(
+				'ID'          => $id,
+				'post_status' => 'read'
+			)
+		);
 
 		wp_safe_redirect( remove_query_arg( array( 'action', self::FORM_RECORD_TYPE, '_wpnonce' ), admin_url( 'edit.php?post_type=' . self::FORM_RECORD_TYPE ) ) );
 		exit;
@@ -759,7 +795,12 @@ class Form_Block_Emails_Storing {
 	 */
 	public function unread_otter_form_record() {
 		$id = $this->check_posts( 'unread' );
-		wp_update_post( array( 'ID' => $id, 'post_status' => 'unread' ) );
+		wp_update_post(
+			array(
+				'ID'          => $id,
+				'post_status' => 'unread'
+			)
+		);
 
 		wp_safe_redirect( remove_query_arg( array( 'action', self::FORM_RECORD_TYPE, '_wpnonce' ), admin_url( 'edit.php?post_type=' . self::FORM_RECORD_TYPE ) ) );
 		exit;
@@ -777,13 +818,21 @@ class Form_Block_Emails_Storing {
 		 * Get all form records. Here we want to avoid using WP_Query to not
 		 * trigger the 'form_record_filter_query'. This is why the $wpdb.
 		 */
-		global $wpdb;
-		$form_records = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT ID FROM $wpdb->posts WHERE post_type = '%s' AND post_status IN ('read', 'unread', 'trash', 'publish')",
-				self::FORM_RECORD_TYPE
-			)
-		);
+		$cache_key    = 'otter_form_records';
+		$form_records = wp_cache_get( $cache_key );
+
+		if ( ! $form_records ) {
+			global $wpdb;
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$form_records = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT ID FROM $wpdb->posts WHERE post_type = %s AND post_status IN ('read', 'unread', 'trash', 'publish')",
+					self::FORM_RECORD_TYPE
+				)
+			);
+
+			wp_cache_set( $cache_key, $form_records );
+		}
 
 		$options = array();
 		foreach ( $form_records as $record ) {
@@ -820,6 +869,7 @@ class Form_Block_Emails_Storing {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 		$form = isset( $_GET['form'] ) ? sanitize_text_field( wp_unslash( $_GET['form'] ) ) : '';
 
 		?>
@@ -845,6 +895,7 @@ class Form_Block_Emails_Storing {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 		$post = isset( $_GET['post'] ) ? sanitize_text_field( wp_unslash( $_GET['post'] ) ) : '';
 
 		?>
@@ -861,8 +912,8 @@ class Form_Block_Emails_Storing {
 	/**
 	 * Make unread rows bold.
 	 *
-	 * @param $content
-	 * @param $status
+	 * @param string $content Content.
+	 * @param string $status The post status.
 	 *
 	 * @return mixed|string
 	 */
