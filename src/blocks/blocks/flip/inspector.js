@@ -60,14 +60,13 @@ import {
 	removeBoxDefaultValues,
 	stringToBox,
 	_i,
-	_px
+	_px,
+	numberToBox
 } from '../../helpers/helper-functions.js';
 
 import { alignBottom, alignTop, alignCenter as oAlignCenter } from '../../helpers/icons.js';
 
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-
-const wrapNumberInBox = ( x ) => isNumber( x ) ? stringToBox( _px( x ) ) : x;
 
 const defaultFontSizes = [
 	{
@@ -470,7 +469,7 @@ const Inspector = ({
 								label={ __( 'Description', 'otter-blocks' ) }
 							>
 								<FontSizePicker
-									value={ wrapNumberInBox( attributes.descriptionFontSize ) }
+									value={ numberToBox( attributes.descriptionFontSize ) }
 									onChange={ descriptionFontSize => setAttributes({ descriptionFontSize }) }
 									fontSizes={[ ...defaultFontSizes, { name: '28', size: '28px', slug: '28' }]}
 									allowReset
@@ -570,7 +569,7 @@ const Inspector = ({
 								label={ __( 'Border Width', 'otter-blocks' ) }
 								values={
 									mergeBoxDefaultValues(
-										wrapNumberInBox( attributes.borderWidth ),
+										numberToBox( attributes.borderWidth ),
 										stringToBox( '3px' )
 									)
 								}
@@ -587,7 +586,7 @@ const Inspector = ({
 								label={ __( 'Border Radius', 'otter-blocks' ) }
 								values={
 									mergeBoxDefaultValues(
-										wrapNumberInBox( attributes.borderRadius ),
+										numberToBox( attributes.borderRadius ),
 										stringToBox( '10px' )
 									)
 								}

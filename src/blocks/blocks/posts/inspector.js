@@ -47,7 +47,8 @@ import LayoutBuilder from './components/design-layout-builder.js';
 import {
 	convertToTitleCase,
 	changeActiveStyle,
-	getActiveStyle
+	getActiveStyle,
+	numberToBox
 } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
@@ -90,21 +91,6 @@ const defaultFontSizes = [
 		slug: 'xl'
 	}
 ];
-
-const px = value => value ? `${ value }px` : value;
-
-const mightBeNumber = value => {
-	if ( isNumber( value ) ) {
-		return {
-			top: px( value ),
-			right: px( value ),
-			bottom: px( value ),
-			left: px( value )
-		};
-	}
-
-	return value;
-};
 
 /**
  *
@@ -441,7 +427,7 @@ const Inspector = ({
 					>
 						<BoxControl
 							label={ __( 'Border Radius', 'otter-blocks' ) }
-							values={ mightBeNumber( attributes.borderRadius ) }
+							values={ numberToBox( attributes.borderRadius ) }
 							onChange={ borderRadius => setAttributes({ borderRadius }) }
 							id="o-border-raduis-box"
 						/>

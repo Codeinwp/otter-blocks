@@ -214,7 +214,7 @@ export const _px = value => _unit( value, 'px' );
 /**
  * Format the value into a `em` unit.
  *
- * @param {string} value The value.
+ * @param {any} value The value.
  * @returns {string|undefined}
  */
 export const _em = value => _unit( value, 'em' );
@@ -222,7 +222,7 @@ export const _em = value => _unit( value, 'em' );
 /**
  * Format the value into a `%` unit.
  *
- * @param {string} value The value.
+ * @param {any} value The value.
  * @returns {string|undefined}
  */
 export const _percent = value => _unit( value, '%' );
@@ -621,6 +621,15 @@ export const renderBoxOrNumWithUnit = ( box, unit ) => {
 	}
 	return boxToCSS( box );
 };
+
+/**
+ * If the given value is a number, transform it into a Box Value with the given unit. Otherwise, return the value.
+ *
+ * @param {number | any} n The number to convert.
+ * @param {string?} unit The unit to add.
+ * @returns {import('./blocks').BoxType | any} The box value or given value.
+ */
+export const numberToBox = ( n, unit = 'px' ) => isNumber( x ) ? stringToBox( _unit( x, unit ) ) : x;
 
 /**
  * Return true if platform is MacOS.

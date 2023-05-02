@@ -108,10 +108,6 @@ const Edit = ({
 
 	const iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
 
-	const changeContent = value => {
-		setAttributes({ content: value });
-	};
-
 	const inlineStyles = {
 		'--content-color': attributes.contentColor ?? parentAttributes.defaultContentColor,
 		'--icon-color': attributes.iconColor ?? parentAttributes.defaultIconColor
@@ -158,7 +154,7 @@ const Edit = ({
 						{ 'wp-block-themeisle-blocks-icon-list-item-content-custom': attributes.contentColor }
 					) }
 					value={ attributes.content }
-					onChange={ changeContent }
+					onChange={ ( content ) => setAttributes({ content }) }
 					onSplit={ ( value ) => {
 						if ( ! value ) {
 							return createBlock( name );
