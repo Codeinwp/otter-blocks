@@ -74,7 +74,7 @@
 		"@types/jest": "^29.4.0",
 		"@types/wordpress__block-editor": "^7.0.0",
 		"@types/wordpress__components": "^23.0.1",
-		"@typescript-eslint/parser": "^5.52.0",
+		"@typescript-eslint/parser": "^5.59.2",
 		"@wordpress/block-editor": "^10.3.0",
 		"@wordpress/components": "^23.7.0",
 		"@wordpress/compose": "^6.7.0",
