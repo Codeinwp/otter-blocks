@@ -8,8 +8,6 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { isNumber } from 'lodash';
-
 import { useState } from '@wordpress/element';
 
 import {
@@ -34,6 +32,7 @@ import {
 import { getLocation } from './utility';
 import MarkerWrapper from './components/marker-wrapper.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import { _px } from '../../helpers/helper-functions.js';
 
 /**
  *
