@@ -330,7 +330,7 @@ class Form_Data_Response {
 			self::ERROR_FILE_UPLOAD_TYPE                   => __( 'The file type is not allowed.', 'otter-blocks' ),
 			self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER       => __( 'The number of files is too big.', 'otter-blocks' ),
 			self::ERROR_FILE_UPLOAD_MAX_SIZE               => __( 'The file size exceed the limit.', 'otter-blocks' ),
-			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the form.', 'otter-blocks' ),
+			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the Form Block with Autoresponder activated.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
 			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
 		);

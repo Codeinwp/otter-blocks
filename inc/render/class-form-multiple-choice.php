@@ -43,6 +43,10 @@ class Form_Multiple_Choice_Block {
 			$output .= '<div class="o-form-choices">';
 
 			foreach ( $options_array as $field_label ) {
+				if ( empty( $field_label ) ) {
+					continue;
+				}
+
 				$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
 				$field_id    = 'field-' . $field_value;
 
@@ -95,6 +99,11 @@ class Form_Multiple_Choice_Block {
 		$output .= '<select id="' . $id . '" ' . ( $is_multiple ? ' multiple ' : '' ) . ( $is_required ? ' required ' : '' ) . '>';
 
 		foreach ( $options_array as $field_label ) {
+
+			if ( empty( $field_label ) ) {
+				continue;
+			}
+
 			$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
 			$output     .= '<option value="' . $field_value . '">' . $field_label . '</option>';
 		}

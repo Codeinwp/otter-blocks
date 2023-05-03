@@ -62,7 +62,7 @@ const SelectField = ({ attributes }) => {
 	return (
 		<select name={attributes.mappedName} id={attributes?.id} multiple={attributes.multipleSelection}>
 			{
-				( attributes?.options ?? '' )?.split( '\n' )?.map( ( label, index ) => {
+				( attributes?.options ?? '' )?.split( '\n' )?.filter( x => x )?.map( ( label, index ) => {
 					const value = label?.toLowerCase().replace( / /g, '_' );
 
 					return <option

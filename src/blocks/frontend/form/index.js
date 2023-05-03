@@ -47,7 +47,10 @@ const extractFormFields = async( form ) => {
 	const allInputs = getFormFieldInputs( form );
 
 	allInputs?.forEach( ( input, index ) => {
-		const label = `(Field ${index + 1}) ${input.querySelector( '.otter-form-input-label:not(:has(.otter-form-input-label__label)), .otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML}`;
+		const labelContainer = input.querySelector( '.otter-form-input-label' );
+		const labelElem = labelContainer.querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' );
+
+		const label = `(Field ${index + 1}) ${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
 
 		let value = undefined;
 		let fieldType = undefined;
