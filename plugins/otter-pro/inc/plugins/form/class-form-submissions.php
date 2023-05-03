@@ -142,27 +142,24 @@ class Form_Block_Emails_Storing {
 	 * @return void
 	 */
 	public function set_form_records_cap() {
-		global $wp_roles;
-		foreach ( $wp_roles->roles as $key => $current_role ) {
-			$role = get_role( $key );
-			if ( null === $role ) {
-				continue;
-			}
+		$role = get_role( 'administrator' );
 
-			if ( ! method_exists( $role, 'add_cap' ) ) {
-				continue;
-			}
-
-			$role->add_cap( 'edit_' . self::FORM_RECORD_TYPE );
-			$role->add_cap( 'read_' . self::FORM_RECORD_TYPE );
-			$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE );
-			$role->add_cap( 'edit_' . self::FORM_RECORD_TYPE . 's' );
-			$role->add_cap( 'read_' . self::FORM_RECORD_TYPE . 's' );
-			$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE . 's' );
-
-			$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE );
-			$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE . 's' );
+		if ( null === $role ) {
+			return;
 		}
+
+		if ( ! method_exists( $role, 'add_cap' ) ) {
+			return;
+		}
+
+		$role->add_cap( 'edit_' . self::FORM_RECORD_TYPE );
+		$role->add_cap( 'read_' . self::FORM_RECORD_TYPE );
+		$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE );
+		$role->add_cap( 'edit_' . self::FORM_RECORD_TYPE . 's' );
+		$role->add_cap( 'read_' . self::FORM_RECORD_TYPE . 's' );
+		$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE . 's' );
+		$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE );
+		$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE . 's' );
 	}
 
 	/**
@@ -280,18 +277,18 @@ class Form_Block_Emails_Storing {
 		$bulk_actions = array();
 
 		if ( 'trash' !== $status ) {
-			$bulk_actions['trash'] = 'Move to Trash';
+			$bulk_actions['trash'] = __( 'Move to Trash', 'otter-blocks' );
 
 			if ( 'unread' === $status ) {
-				$bulk_actions['read'] = 'Mark as Read';
+				$bulk_actions['read'] = __( 'Mark as Read', 'otter-blocks' );
 			}
 
 			if ( 'read' === $status ) {
-				$bulk_actions['unread'] = 'Mark as Unread';
+				$bulk_actions['unread'] = __( 'Mark as Unread', 'otter-blocks' );
 			}
 		} else {
-			$bulk_actions['untrash'] = 'Restore';
-			$bulk_actions['delete']  = 'Delete Permanently';
+			$bulk_actions['untrash'] = __( 'Restore', 'otter-blocks' );
+			$bulk_actions['delete']  = __( 'Delete Permanently', 'otter-blocks' );
 		}
 
 		return $bulk_actions;
@@ -417,8 +414,6 @@ class Form_Block_Emails_Storing {
 
 		$this->form_dropdown();
 		$this->post_dropdown();
-
-		wp_nonce_field( 'filter', 'filters_nonce' );
 	}
 
 	/**
@@ -542,7 +537,7 @@ class Form_Block_Emails_Storing {
 		unset( $submenu[ 'edit.php?post_type=' . self::FORM_RECORD_TYPE ] );
 
 		remove_menu_page( 'edit.php?post_type=' . self::FORM_RECORD_TYPE );
-		remove_submenu_page( 'otter', 'otter-form-submissions-free' );
+		remove_submenu_page( 'otter', 'form-submissions-free' );
 
 		add_submenu_page(
 			'otter',
@@ -922,6 +917,7 @@ class Form_Block_Emails_Storing {
 			<?php endforeach; ?>
 		</select>
 		<?php
+		wp_nonce_field( 'filter', 'filters_nonce' );
 	}
 
 	/**
