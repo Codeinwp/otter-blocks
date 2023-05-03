@@ -1,8 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { isNumber } from 'lodash';
-
 import {
 	RichText,
 	useBlockProps
@@ -12,10 +10,7 @@ import {
  * Internal dependencies
  */
 import { SliderControlsBullets } from './components/slider-controls.js';
-
-const px = value => value ? `${ value }px` : value;
-
-const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+import { _px } from '../../helpers/helper-functions.js';
 
 const Save = ({
 	attributes
@@ -29,7 +24,7 @@ const Save = ({
 		'data-gap': attributes.gap,
 		'data-peek': attributes.peek,
 		'data-autoplay': autoplay,
-		'data-height': mightBeUnit( attributes.height ),
+		'data-height': _px( attributes.height ),
 		'data-hide-arrows': attributes.hideArrows,
 		...( attributes.transition && {
 			'data-transition': attributes.transition

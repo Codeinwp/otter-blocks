@@ -12,7 +12,6 @@ import { __ } from '@wordpress/i18n';
 import {
 	times,
 	isEmpty,
-	isNumber,
 	pickBy,
 	merge
 } from 'lodash';
@@ -58,10 +57,6 @@ import { _cssBlock } from '../../../helpers/helper-functions';
 import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
-
-const px = value => value ? `${ value }px` : value;
-
-const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 /**
  *
@@ -239,7 +234,7 @@ const Edit = ({
 		paddingLeft: getValue( 'padding' ) && getValue( 'padding' ).left,
 		marginTop: getValue( 'margin' ) && getValue( 'margin' ).top,
 		marginBottom: getValue( 'margin' ) && getValue( 'margin' ).bottom,
-		minHeight: 'custom' === attributes.columnsHeight ? mightBeUnit( attributes.columnsHeightCustom ) : attributes.columnsHeight
+		minHeight: 'custom' === attributes.columnsHeight ? _px( attributes.columnsHeightCustom ) : attributes.columnsHeight
 	};
 
 
@@ -251,7 +246,7 @@ const Edit = ({
 			paddingLeft: getValue( 'paddingTablet' )?.left,
 			marginTop: getValue( 'marginTablet' )?.top,
 			marginBottom: getValue( 'marginTablet' )?.bottom,
-			minHeight: 'custom' === attributes.columnsHeight ? mightBeUnit( attributes.columnsHeightCustomTablet ) : attributes.columnsHeight
+			minHeight: 'custom' === attributes.columnsHeight ? _px( attributes.columnsHeightCustomTablet ) : attributes.columnsHeight
 		}, ( value ) => value );
 		stylesheet = merge( stylesheet, tabletStyle );
 	}
@@ -264,7 +259,7 @@ const Edit = ({
 			paddingLeft: getValue( 'paddingMobile' )?.left,
 			marginTop: getValue( 'marginMobile' )?.top,
 			marginBottom: getValue( 'marginMobile' )?.bottom,
-			minHeight: 'custom' === attributes.columnsHeight ? mightBeUnit( attributes.columnsHeightCustomMobile ) : attributes.columnsHeight
+			minHeight: 'custom' === attributes.columnsHeight ? _px( attributes.columnsHeightCustomMobile ) : attributes.columnsHeight
 		}, ( value ) => value );
 		stylesheet = merge( stylesheet, mobileStyle );
 	}
@@ -362,16 +357,16 @@ const Edit = ({
 
 	if ( attributes.columnsWidth ) {
 		innerStyle = {
-			maxWidth: mightBeUnit( getValue( 'columnsWidth' ) )
+			maxWidth: _px( getValue( 'columnsWidth' ) )
 		};
 	}
 
 	if ( ( isTablet || isMobile ) && getValue( 'columnsWidthTablet' ) ) {
-		innerStyle.maxWidth = mightBeUnit( getValue( 'columnsWidthTablet' ) );
+		innerStyle.maxWidth = _px( getValue( 'columnsWidthTablet' ) );
 	}
 
 	if ( isMobile && getValue( 'columnsWidthMobile' ) ) {
-		innerStyle.maxWidth = mightBeUnit( getValue( 'columnsWidthMobile' ) );
+		innerStyle.maxWidth = _px( getValue( 'columnsWidthMobile' ) );
 	}
 
 	const classes = classnames(

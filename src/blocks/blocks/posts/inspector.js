@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { isNumber } from 'lodash';
-
 import {
 	__experimentalBoxControl as BoxControl,
 	__experimentalUnitControl as UnitContol,
@@ -166,10 +164,6 @@ const Inspector = ({
 		setAttributes({ categories });
 	};
 
-	const changeColumns = value => {
-		setAttributes({ columns: value });
-	};
-
 	const changeStyle = value => {
 		const classes = changeActiveStyle( attributes?.className, styles, value );
 		setAttributes({ className: classes });
@@ -236,7 +230,7 @@ const Inspector = ({
 							<RangeControl
 								label={ __( 'Columns', 'otter-blocks' ) }
 								value={ attributes.columns }
-								onChange={ changeColumns }
+								onChange={ columns => setAttributes({ columns }) }
 								min={ 1 }
 								max={ 5 }
 							/>
