@@ -26,6 +26,7 @@ import {
  * @see https://github.com/WordPress/gutenberg/blob/trunk/packages/editor/src/components/editor-snackbars/index.js
  * @author  Hardeep Asrani <hardeepasrani@gmail.com>
  * @version 1.1
+ * @returns {[(optionName: string) => any, (option: string, value: any, success?: string) => void, 'loading' | 'loaded' | 'error' | 'saving']} [ getOption, updateOption, status ]
  *
  */
 const useSettings = () => {
@@ -52,10 +53,23 @@ const useSettings = () => {
 		getSettings();
 	}, []);
 
+	/**
+	 * Get the value of the given option.
+	 *
+	 * @param {string} option Option name.
+	 * @returns {any} Option value.
+	 */
 	const getOption = option => {
 		return settings?.[option];
 	};
 
+	/**
+	 * Set the value of the given option. Also set the message to be displayed on success Notice.
+	 *
+	 * @param {string} option Option name.
+	 * @param {any} value Option value.
+	 * @param {string?} success Success message for Notice.
+	 */
 	const updateOption = ( option, value, success = __( 'Settings saved.', 'otter-blocks' ) ) => {
 		setStatus( 'saving' );
 

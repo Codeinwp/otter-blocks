@@ -11,9 +11,12 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
 
 import {
+	Button,
+	ExternalLink,
 	Placeholder,
 	SelectControl,
-	Spinner
+	Spinner,
+	TextControl
 } from '@wordpress/components';
 
 import {
@@ -31,6 +34,7 @@ import { store } from '@wordpress/icons';
  */
 import { StripeCheckoutProps } from './types';
 import Inspector from './inspector';
+import useSettings from '../../helpers/use-settings';
 
 type Product = {
 	id: string,
@@ -52,7 +56,27 @@ const Edit = ({
 	attributes,
 	setAttributes
 }: StripeCheckoutProps ) => {
+
+	const [ getOption, updateOption, status ] = useSettings();
+	const hasValidApiKey = () => Boolean( getOption( 'themeisle_stripe_api_key' ) );
+	const [ canRetrieveProducts, setCanRetrieveProducts ] = useState( false );
+
+	useEffect( () => {
+		setCanRetrieveProducts( 'loaded' === status && hasValidApiKey() );
+	}, [ status ]);
+
 	const { products, productsList, hasProductsRequestFailed, productsError, isLoadingProducts } = useSelect( select => {
+
+		if ( ! canRetrieveProducts  ) {
+			return {
+				products: [],
+				productsList: [],
+				hasProductsRequestFailed: false,
+				productsError: null,
+				isLoadingProducts: false
+			};
+		}
+
 		const {
 			getStripeProducts,
 			getResolutionError,
@@ -77,9 +101,20 @@ const Edit = ({
 			productsError: getResolutionError( 'getStripeProducts' ),
 			isLoadingProducts: isResolving( 'getStripeProducts' )
 		};
-	}, []);
+	}, [ canRetrieveProducts ]);
 
 	const { prices, pricesList, hasPricesRequestFailed, pricesError, isLoadingPrices } = useSelect( select => {
+
+		if ( ! canRetrieveProducts ) {
+			return {
+				prices: [],
+				pricesList: [],
+				hasPricesRequestFailed: false,
+				pricesError: null,
+				isLoadingPrices: false
+			};
+		}
+
 		const {
 			getStripeProductPrices,
 			getResolutionError,
@@ -104,7 +139,7 @@ const Edit = ({
 			pricesError: getResolutionError( 'getStripeProductPrices', [ attributes.product ]),
 			isLoadingPrices: isResolving( 'getStripeProductPrices', [ attributes.product ])
 		};
-	}, [ attributes.product ]);
+	}, [ attributes.product, canRetrieveProducts ]);
 
 	const [ view, setView ] = useState<string>( 'default' );
 	const [ meta, setMeta ] = useState<any>({});
@@ -128,11 +163,19 @@ const Edit = ({
 		});
 	}, [ products, prices, attributes.price ]);
 
-	const showPlaceholder = ( isLoadingProducts || isLoadingPrices || hasProductsRequestFailed || hasPricesRequestFailed || undefined === attributes.product || undefined === attributes.price );
+	const showPlaceholder = ( isLoadingProducts || isLoadingPrices || hasProductsRequestFailed || hasPricesRequestFailed || undefined === attributes.product || undefined === attributes.price || 'loaded' !== status || ! hasValidApiKey() );
 
 	const blockProps = useBlockProps({
 		className: classnames({ 'is-placeholder': showPlaceholder })
 	});
+
+	const [ apiKey, setAPIKey ] = useState( '' );
+	const [ apiKeySaved, setAPIKeySaved ] = useState( false );
+	const saveApiKey = () => {
+		updateOption( 'themeisle_stripe_api_key', apiKey, __( 'Stripe API Key saved!', 'otter-blocks' ) );
+		setAPIKey( '' );
+		setAPIKeySaved( true );
+	};
 
 	if ( showPlaceholder ) {
 		return (
@@ -140,39 +183,122 @@ const Edit = ({
 				<Placeholder
 					icon={ store }
 					label={ __( 'Stripe Checkout', 'otter-blocks' ) }
-					instructions={ ( hasProductsRequestFailed && productsError?.message ) || ( hasPricesRequestFailed && pricesError?.message ) }
+					instructions={ ! apiKeySaved ? ( ( hasProductsRequestFailed && productsError?.message ) || ( hasPricesRequestFailed && pricesError?.message ) || ( hasPricesRequestFailed && pricesError?.message ) ) : '' }
 				>
-					{ ! isLoadingProducts && (
-						<SelectControl
-							label={ __( 'Select a product to display.', 'otter-blocks' ) }
-							value={ attributes.product }
-							options={ [
-								{
-									label: __( 'Select a product', 'otter-blocks' ),
-									value: 'none'
-								},
-								...productsList
-							] }
-							onChange={ ( product: string ) => setAttributes({ product: 'none' !== product ? product : undefined }) }
-						/>
-					) }
+					{
+						( 'loading' === status || 'saving' === status ) && (
+							<Fragment>
+								<Spinner />
+								{ __( 'Checking the API Key...', 'otter-blocks' ) }
+								<br /><br />
+							</Fragment>
+						)
+					}
 
-					{ ( ! isLoadingPrices && attributes.product ) && (
-						<SelectControl
-							label={ __( 'Select the price you want to display.', 'otter-blocks' ) }
-							value={ attributes.price }
-							options={ [
-								{
-									label: __( 'Select a price', 'otter-blocks' ),
-									value: 'none'
-								},
-								...pricesList
-							] }
-							onChange={ ( price: string ) => setAttributes({ price: 'none' !== price ? price : undefined }) }
-						/>
-					) }
+					{
+						( ( 'loaded' === status && false === hasValidApiKey() ) || ( hasProductsRequestFailed && productsError?.message?.includes( 'Invalid API Key' ) ) ) && ! apiKeySaved ? (
+							<div style={{ display: 'flex', flexDirection: 'column' }}>
 
-					{ ( isLoadingProducts || isLoadingPrices ) && <Placeholder><Spinner /></Placeholder> }
+								<span style={{ marginBottom: '10px' }}>
+									{
+										apiKeySaved ? (
+											<Fragment>
+												{__( 'The saved API Key is not valid. Please try again.', 'otter-blocks' )}
+											</Fragment>
+										) : (
+											<Fragment>
+												{__( 'A valid Stripe API key is required, please enter one below.', 'otter-blocks' )}
+											</Fragment>
+										)
+									}
+									{}
+								</span>
+
+								<TextControl
+									label={ __( 'Stripe API Key', 'otter-blocks' ) }
+									type="text"
+									placeholder={ __( 'Type here the Stripe API Key', 'otter-blocks' ) }
+									value={ apiKey }
+									className="components-placeholder__input"
+									onChange={ setAPIKey }
+								/>
+
+								<div>
+									<Button
+										isPrimary
+										type="submit"
+										onClick={ saveApiKey }
+									>
+										{ __( 'Save', 'otter-blocks' ) }
+									</Button>
+								</div>
+
+								<br />
+
+								<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'You can also set it from Dashboard', 'otter-blocks' ) }</ExternalLink>
+							</div>
+						) : (
+							<Fragment>
+								{
+									apiKeySaved && (
+										<Fragment>
+											{
+												<span style={{ marginBottom: '10px' }}>
+													{__( 'Save your work and refresh the page so that the new API Key to take action.', 'otter-blocks' )}
+												</span>
+											}
+										</Fragment>
+									)
+								}
+							</Fragment>
+						)
+					}
+
+					{
+						'error' === status && (
+							<Fragment>
+								{__( 'An error occurred during API Key checking.', 'otter-blocks' )}
+							</Fragment>
+						)
+					}
+
+					{
+						( 'loaded' === status && hasValidApiKey() && false === hasProductsRequestFailed ) && (
+							<Fragment>
+								{ ! isLoadingProducts && (
+									<SelectControl
+										label={ __( 'Select a product to display.', 'otter-blocks' ) }
+										value={ attributes.product }
+										options={ [
+											{
+												label: __( 'Select a product', 'otter-blocks' ),
+												value: 'none'
+											},
+											...productsList
+										] }
+										onChange={ ( product: string ) => setAttributes({ product: 'none' !== product ? product : undefined }) }
+									/>
+								) }
+
+								{ ( ! isLoadingPrices && attributes.product ) && (
+									<SelectControl
+										label={ __( 'Select the price you want to display.', 'otter-blocks' ) }
+										value={ attributes.price }
+										options={ [
+											{
+												label: __( 'Select a price', 'otter-blocks' ),
+												value: 'none'
+											},
+											...pricesList
+										] }
+										onChange={ ( price: string ) => setAttributes({ price: 'none' !== price ? price : undefined }) }
+									/>
+								) }
+
+								{ ( isLoadingProducts || isLoadingPrices ) && <Placeholder><Spinner /></Placeholder> }
+							</Fragment>
+						)
+					}
 				</Placeholder>
 			</div>
 		);
@@ -189,6 +315,10 @@ const Edit = ({
 				productsList={ productsList }
 				isLoadingPrices={ isLoadingPrices }
 				pricesList={ pricesList }
+				apiKey={ apiKey }
+				setAPIKey={ setAPIKey }
+				saveApiKey={ saveApiKey }
+				status={ status }
 			/>
 
 			<div { ...blockProps }>
