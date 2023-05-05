@@ -12,6 +12,7 @@ import {
 	select,
 	subscribe
 } from '@wordpress/data';
+import { pullReusableBlockContentById } from '../../helpers/block-utility';
 
 let isSavingCSS = false;
 
@@ -80,7 +81,10 @@ const checkReviewBlock = blocks => {
 			return true;
 		}
 
-		if ( 0 < block?.innerBlocks?.length ) {
+		if ( block.attributes?.ref && 'core/block' === block?.name ) {
+			const blocks = pullReusableBlockContentById( block.attributes.ref );
+			return checkReviewBlock( blocks );
+		} else if ( 0 < block?.innerBlocks?.length ) {
 			return checkReviewBlock( block.innerBlocks );
 		}
 	});
