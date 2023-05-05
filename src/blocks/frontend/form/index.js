@@ -48,7 +48,7 @@ const extractFormFields = async( form ) => {
 
 	allInputs?.forEach( ( input, index ) => {
 		const labelContainer = input.querySelector( '.otter-form-input-label' );
-		const labelElem = labelContainer.querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' );
+		const labelElem = ( labelContainer ?? input ).querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' );
 
 		const label = `(Field ${index + 1}) ${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
 
