@@ -2,21 +2,20 @@
 /**
  * Form Block Responses Storing.
  *
- * @package ThemeIsle\OtterPro\Plugins\Form
+ * @package ThemeIsle\OtterPro\Plugins
  */
 
-namespace ThemeIsle\OtterPro\Plugins\Form;
+namespace ThemeIsle\OtterPro\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
-use ThemeIsle\OtterPro\Plugins\License;
 use WP_Post;
 use WP_Query;
 
 /**
  * Class Form_Block
  */
-class Form_Block_Emails_Storing {
+class Form_Emails_Storing {
 	/**
 	 * Form record post type.
 	 */
@@ -30,7 +29,7 @@ class Form_Block_Emails_Storing {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Block
+	 * @var Form_Emails_Storing
 	 */
 	public static $instance = null;
 
@@ -758,6 +757,9 @@ class Form_Block_Emails_Storing {
 	 * @return string The post ID.
 	 */
 	public function check_posts( $action ) {
+		$id   = ! empty( $_REQUEST[ self::FORM_RECORD_TYPE ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ self::FORM_RECORD_TYPE ] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$post = get_post( $id );
+
 		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ), $action . '-' . self::FORM_RECORD_TYPE . '_' . $id ) ) {
 			wp_die( esc_html__( 'Security check failed', 'otter-blocks' ) );
 		}
@@ -765,9 +767,6 @@ class Form_Block_Emails_Storing {
 		if ( ! isset( $_REQUEST[ self::FORM_RECORD_TYPE ] ) ) {
 			wp_die( esc_html__( 'Post ID is required', 'otter-blocks' ) );
 		}
-
-		$id   = sanitize_text_field( wp_unslash( $_REQUEST[ self::FORM_RECORD_TYPE ] ) );
-		$post = get_post( $id );
 
 		if ( ! $post ) {
 			wp_die( esc_html__( 'Invalid post ID', 'otter-blocks' ) );
@@ -941,7 +940,7 @@ class Form_Block_Emails_Storing {
 	 *
 	 * @static
 	 * @access public
-	 * @return Form_Block_Emails_Storing
+	 * @return Form_Emails_Storing
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {

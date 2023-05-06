@@ -94,7 +94,7 @@ class Dashboard {
 			.otter-form-submissions-upsell-content {
 				text-align: center;
 				padding: 40px 20px;
-				width: 520px;
+				max-width: 520px;
 				margin: 0 auto;
 			}
 
@@ -122,8 +122,8 @@ class Dashboard {
 		</style>
 		<div id="otter-form-submissions-upsell">
 			<div class="otter-form-submissions-upsell-content">
-				<img src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/form-submissions-upsell.svg' ); ?>" alt="Otter Form Submissions Upsell" />
-				<h2><?php esc_html_e( 'Collect Your Form Submissions', 'otter-blocks' ); ?></h2>
+				<img style="max-width: 100%" src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/form-submissions-upsell.svg' ); ?>" alt="Otter Form Submissions Upsell" />
+				<h2 style="line-height: 1"><?php esc_html_e( 'Collect Your Form Submissions', 'otter-blocks' ); ?></h2>
 				<p><?php esc_html_e( 'Store, manage and analyze your form submissions with ease – all in one place. With Otter powerful features, managing submissions has never been simpler.', 'otter-blocks' ); ?></p>
 				<a href="<?php echo esc_url( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions', 'admin' ) ); ?>" class="button button-primary" target="_blank"><?php esc_html_e( 'Explore Otter PRO', 'otter-blocks' ); ?></a>
 			</div>

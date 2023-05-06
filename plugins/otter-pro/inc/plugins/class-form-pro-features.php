@@ -1,28 +1,27 @@
 <?php
 /**
- * Form Block Autoresponder Functionality.
+ * Form Block Pro Functionalities.
  *
- * @package ThemeIsle\OtterPro\Plugins\Form
+ * @package ThemeIsle\OtterPro\Plugins
  */
 
-namespace ThemeIsle\OtterPro\Plugins\Form;
+namespace ThemeIsle\OtterPro\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
-
 use WP_Error;
 use WP_HTTP_Response;
 use WP_REST_Response;
 
 /**
- * Class Form_Block
+ * Class Form_Pro_Features
  */
-class Form_Block_Autoresponder {
+class Form_Pro_Features {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Block
+	 * @var Form_Pro_Features
 	 */
 	public static $instance = null;
 
@@ -53,7 +52,9 @@ class Form_Block_Autoresponder {
 		}
 
 		$headers[] = 'Content-Type: text/html';
-		$headers[] = 'From: ' . ( $form_data->get_form_options()->has_from_name() ? sanitize_text_field( $form_data->get_form_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
+		$headers[] = 'From: ' . ( $form_data->get_form_options()->has_from_name() ?
+				sanitize_text_field( $form_data->get_form_options()->get_from_name() ) :
+				get_bloginfo( 'name', 'display' ) );
 
 		$autoresponder = $form_data->get_form_options()->get_autoresponder();
 		$body          = $this->replace_magic_tags( $autoresponder['body'], $form_data->get_form_inputs() );
@@ -95,7 +96,7 @@ class Form_Block_Autoresponder {
 	 *
 	 * @static
 	 * @access public
-	 * @return Form_Block_Autoresponder
+	 * @return Form_Pro_Features
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
