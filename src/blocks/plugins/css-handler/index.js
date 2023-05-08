@@ -75,16 +75,15 @@ const saveWidgets = debounce( async() => {
 
 const reusableBlocks = {};
 
+const changedReusableBlocksReview = {};
+
 const checkReviewBlock = blocks => {
 	return blocks.some( block => {
 		if ( 'themeisle-blocks/review' === block.name ) {
 			return true;
 		}
 
-		if ( block.attributes?.ref && 'core/block' === block?.name ) {
-			const blocks = pullReusableBlockContentById( block.attributes.ref );
-			return checkReviewBlock( blocks );
-		} else if ( 0 < block?.innerBlocks?.length ) {
+		if ( 0 < block?.innerBlocks?.length ) {
 			return checkReviewBlock( block.innerBlocks );
 		}
 	});
@@ -128,16 +127,25 @@ subscribe( () => {
 
 		const meta = getEditedPostAttribute( 'meta' ) || {};
 
-		if ( undefined !== meta._themeisle_gutenberg_block_has_review ) {
+		const post = select( 'core/editor' ).getCurrentPost();
+
+		if ( ( post && post.id && 'wp_block' === post?.type ) || undefined !== meta._themeisle_gutenberg_block_has_review ) {
 			const blocks = getBlocks();
 			const hasReview = checkReviewBlock( blocks );
 
-			if ( meta._themeisle_gutenberg_block_has_review !== hasReview ) {
-				editPost({
-					meta: {
-						'_themeisle_gutenberg_block_has_review': hasReview
-					}
-				});
+			if ( undefined !== meta._themeisle_gutenberg_block_has_review ) {
+				if ( meta._themeisle_gutenberg_block_has_review !== hasReview ) {
+					editPost({
+						meta: {
+							'_themeisle_gutenberg_block_has_review': hasReview
+						}
+					});
+				}
+			} else {
+				if ( post && post.id && 'wp_block' === post?.type && changedReusableBlocksReview?.[post.id] !== hasReview ) {
+					apiFetch({ path: `otter/v1/block_review_medata?id=${ post.id }&value=${ hasReview }`, method: 'POST' });
+					changedReusableBlocksReview[post.id] = hasReview;
+				}
 			}
 		}
 
