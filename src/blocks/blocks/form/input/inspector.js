@@ -71,11 +71,15 @@ const Inspector = ({
 
 				<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
 
-				<TextControl
-					label={ __( 'Placeholder', 'otter-blocks' ) }
-					value={ attributes.placeholder }
-					onChange={ placeholder => setAttributes({ placeholder }) }
-				/>
+				{
+					( 'date' !== attributes.type || undefined === attributes.type ) && (
+						<TextControl
+							label={ __( 'Placeholder', 'otter-blocks' ) }
+							value={ attributes.placeholder }
+							onChange={ placeholder => setAttributes({ placeholder }) }
+						/>
+					)
+				}
 
 				<TextControl
 					label={ __( 'Help Text', 'otter-blocks' ) }
