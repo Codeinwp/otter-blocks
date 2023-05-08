@@ -53,7 +53,7 @@ import {
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
 import { columnsIcon as icon } from '../../../helpers/icons.js';
-import { _cssBlock } from '../../../helpers/helper-functions';
+import { _cssBlock, _px } from '../../../helpers/helper-functions';
 import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
