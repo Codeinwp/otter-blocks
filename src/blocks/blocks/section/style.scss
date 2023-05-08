@@ -84,7 +84,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		}
 
 		&.has-dark-bg {
-			color: #fff;
+			color: var( --text-color, var( --nv-text-dark-bg , #fff ) );
+		}
+
+		&.has-light-bg {
+			color: var( --text-color, var( --nv-text-color , #000 ) );
 		}
 	}
 
@@ -131,7 +135,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	}
 
 	&.has-dark-bg {
-		color: #fff;
+		color: var( --text-color, var( --nv-text-dark-bg , #fff ) );
+	}
+
+	&.has-light-bg {
+		color: var( --text-color, var( --nv-text-color , #000 ) );
 	}
 }
 

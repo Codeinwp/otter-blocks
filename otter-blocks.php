@@ -49,6 +49,18 @@ add_filter(
 	}
 );
 
+add_filter(
+	'themeisle_sdk_compatibilities/' . basename( OTTER_BLOCKS_PATH ),
+	function ( $compatibilities ) {
+		$compatibilities['OtterBlocksPRO'] = array(
+			'basefile'  => defined( 'OTTER_PRO_BASEFILE' ) ? OTTER_PRO_BASEFILE : '',
+			'required'  => '2.0',
+			'tested_up' => OTTER_BLOCKS_VERSION,
+		);
+		return $compatibilities;
+	}
+);
+
 add_action(
 	'plugin_action_links_' . plugin_basename( __FILE__ ),
 	function( $links ) {
