@@ -6,7 +6,7 @@
 
 Best practices are a set of guidelines that help you write code that is easy to read, understand, and maintain. They are a set of rules that you should follow when writing code. They are not rules that you must follow, but they are recommended.
 
-We follow the [WordPress Coding Standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/).
+We follow the [WordPress Coding Standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/). For PHP, you can inspire from https://github.com/piotrplenik/clean-code-php
 
 But this is not enough...
 

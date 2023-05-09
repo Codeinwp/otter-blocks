@@ -19,6 +19,7 @@ Otter Blocks
 - [Unit Testing & E2E](uniit-and-e2e-testing.md)
 - [Pull Request Best Practices](pull-request-best-practices.md)
 - [Coding Best Practices](coding-best-practices.md)
+- [Knowledge Stash](knowledge-stash.md)
 
 Other
 
