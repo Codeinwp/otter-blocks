@@ -35,6 +35,7 @@ import { store } from '@wordpress/icons';
 import { StripeCheckoutProps } from './types';
 import Inspector from './inspector';
 import useSettings from '../../helpers/use-settings';
+import { dispatch } from '@wordpress/data';
 
 type Product = {
 	id: string,
@@ -101,7 +102,7 @@ const Edit = ({
 			productsError: getResolutionError( 'getStripeProducts' ),
 			isLoadingProducts: isResolving( 'getStripeProducts' )
 		};
-	}, [ canRetrieveProducts ]);
+	}, [ canRetrieveProducts, status ]);
 
 	const { prices, pricesList, hasPricesRequestFailed, pricesError, isLoadingPrices } = useSelect( select => {
 
@@ -170,11 +171,12 @@ const Edit = ({
 	});
 
 	const [ apiKey, setAPIKey ] = useState( '' );
-	const [ apiKeySaved, setAPIKeySaved ] = useState( false );
+
 	const saveApiKey = () => {
-		updateOption( 'themeisle_stripe_api_key', apiKey, __( 'Stripe API Key saved!', 'otter-blocks' ) );
-		setAPIKey( '' );
-		setAPIKeySaved( true );
+		updateOption( 'themeisle_stripe_api_key', apiKey, __( 'Stripe API Key saved!', 'otter-blocks' ), async() => {
+			dispatch( 'themeisle-gutenberg/data' ).invalidateResolutionForStoreSelector( 'getStripeProducts' );
+			dispatch( 'themeisle-gutenberg/data' ).invalidateResolutionForStoreSelector( 'getStripeProductPrices' );
+		});
 	};
 
 	if ( showPlaceholder ) {
@@ -183,7 +185,7 @@ const Edit = ({
 				<Placeholder
 					icon={ store }
 					label={ __( 'Stripe Checkout', 'otter-blocks' ) }
-					instructions={ ! apiKeySaved ? ( ( hasProductsRequestFailed && productsError?.message ) || ( hasPricesRequestFailed && pricesError?.message ) || ( hasPricesRequestFailed && pricesError?.message ) ) : '' }
+					instructions={ ( hasProductsRequestFailed && productsError?.message ) || ( hasPricesRequestFailed && pricesError?.message ) || ( hasPricesRequestFailed && pricesError?.message ) }
 				>
 					{
 						( 'loading' === status || 'saving' === status ) && (
@@ -196,23 +198,8 @@ const Edit = ({
 					}
 
 					{
-						( ( 'loaded' === status && false === hasValidApiKey() ) || ( hasProductsRequestFailed && productsError?.message?.includes( 'Invalid API Key' ) ) ) && ! apiKeySaved ? (
+						( ( 'loaded' === status && false === hasValidApiKey() ) || ( hasProductsRequestFailed && productsError?.message?.includes( 'Invalid API Key' ) ) ) && (
 							<div style={{ display: 'flex', flexDirection: 'column' }}>
-
-								<span style={{ marginBottom: '10px' }}>
-									{
-										apiKeySaved ? (
-											<Fragment>
-												{__( 'The saved API Key is not valid. Please try again.', 'otter-blocks' )}
-											</Fragment>
-										) : (
-											<Fragment>
-												{__( 'A valid Stripe API key is required, please enter one below.', 'otter-blocks' )}
-											</Fragment>
-										)
-									}
-									{}
-								</span>
 
 								<TextControl
 									label={ __( 'Stripe API Key', 'otter-blocks' ) }
@@ -237,20 +224,6 @@ const Edit = ({
 
 								<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'You can also set it from Dashboard', 'otter-blocks' ) }</ExternalLink>
 							</div>
-						) : (
-							<Fragment>
-								{
-									apiKeySaved && (
-										<Fragment>
-											{
-												<span style={{ marginBottom: '10px' }}>
-													{__( 'Save your work and refresh the page so that the new API Key to take action.', 'otter-blocks' )}
-												</span>
-											}
-										</Fragment>
-									)
-								}
-							</Fragment>
 						)
 					}
 
