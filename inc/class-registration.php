@@ -368,9 +368,22 @@ class Registration {
 		$content = '';
 
 		if ( 'widgets' === $post ) {
-			$widgets = get_option( 'widget_block', array() );
+			global $wp_registered_widgets;
+			$valid_widgets = array();
+			$widget_data   = get_option( 'widget_block' );
 
-			foreach ( $widgets as $widget ) {
+			// Loop through all widgets, and add any that are active.
+			foreach ( $wp_registered_widgets as $widget_name => $widget ) {
+				// Get the active sidebar the widget is located in.
+				$sidebar = is_active_widget( $widget['callback'], $widget['id'], false, false );
+				
+				if ( $sidebar && 'wp_inactive_widgets' !== $sidebar ) {
+					$key             = $widget['params'][0]['number'];
+					$valid_widgets[] = (object) $widget_data[ $key ];
+				}
+			}
+		
+			foreach ( $valid_widgets as $widget ) {
 				if ( is_array( $widget ) && isset( $widget['content'] ) ) {
 					$content .= $widget['content'];
 				}
