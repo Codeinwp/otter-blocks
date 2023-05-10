@@ -475,14 +475,19 @@ class Form_Emails_Storing {
 
 		switch ( $column ) {
 			case 'email':
-				$this->format_based_on_status(
-					sprintf(
-						'<a href="%1$s">%2$s</a>',
-						esc_url( get_edit_post_link( $post_id ) ),
-						esc_html( get_the_title( $post_id ) )
-					),
-					get_post_status( $post_id )
-				);
+				if ( get_post_status( $post_id ) !== 'trash' ) {
+					$this->format_based_on_status(
+						sprintf(
+							'<a href="%1$s">%2$s</a>',
+							esc_url( get_edit_post_link( $post_id ) ),
+							esc_html( get_the_title( $post_id ) )
+						),
+						get_post_status( $post_id )
+					);
+					break;
+				}
+
+				echo esc_html( get_the_title( $post_id ) );
 				break;
 			case 'form':
 				$this->format_based_on_status(
@@ -686,10 +691,10 @@ class Form_Emails_Storing {
 				<div id="delete-action">
 					<?php
 					echo sprintf(
-						'<a href="?action=%s&' . esc_attr( self::FORM_RECORD_TYPE ) . '=%s&_wpnonce=%s" class="submitdelete">%s</a>',
+						'<a href="?action=%s&post=%s&_wpnonce=%s" class="submitdelete">%s</a>',
 						'trash',
 						esc_attr( $post->ID ),
-						esc_attr( wp_create_nonce( 'trash-' . self::FORM_RECORD_TYPE . '_' . $post->ID ) ),
+						esc_attr( wp_create_nonce( 'trash-post_' . $post->ID ) ),
 						esc_html__( 'Move to Trash', 'otter-blocks' )
 					);
 					?>

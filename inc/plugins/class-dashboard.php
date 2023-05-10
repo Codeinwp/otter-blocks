@@ -87,7 +87,7 @@ class Dashboard {
 	public function form_submissions_callback() {
 		?>
 		<style>
-			div.error {
+			div.error, div.notice {
 				display: none;
 			}
 
