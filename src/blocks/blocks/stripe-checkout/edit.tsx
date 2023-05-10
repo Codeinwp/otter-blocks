@@ -173,11 +173,11 @@ const Edit = ({
 	const [ apiKey, setAPIKey ] = useState( '' );
 
 	const saveApiKey = () => {
-		setAPIKey( '' );
 		updateOption( 'themeisle_stripe_api_key', apiKey, __( 'Stripe API Key saved!', 'otter-blocks' ), async() => {
 			dispatch( 'themeisle-gutenberg/data' ).invalidateResolutionForStoreSelector( 'getStripeProducts' );
 			dispatch( 'themeisle-gutenberg/data' ).invalidateResolutionForStoreSelector( 'getStripeProductPrices' );
 		});
+		setAPIKey( '' );
 	};
 
 	if ( showPlaceholder ) {
