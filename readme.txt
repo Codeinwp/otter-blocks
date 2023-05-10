@@ -229,6 +229,18 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+##### [Version 2.2.7](https://github.com/Codeinwp/otter-blocks/compare/v2.2.6...v2.2.7) (2023-05-08)
+
+- Add Width Option to Form Block
+- Improve Stripe Block Error Handling
+- Fix the Issue with SVG Logos Not Being Able to Get Picked Logo
+- Fix Background Color Detection
+- Fix Shape Divider Covering Section Block
+- Fix Accordion Block Schema Not Being Removed
+
+
+
+
 ##### [Version 2.2.6](https://github.com/Codeinwp/otter-blocks/compare/v2.2.5...v2.2.6) (2023-04-26)
 
 - Hardening Dynamic Content security
