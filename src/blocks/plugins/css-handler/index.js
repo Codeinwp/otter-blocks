@@ -75,20 +75,6 @@ const saveWidgets = debounce( async() => {
 
 const reusableBlocks = {};
 
-const changedReusableBlocksReview = {};
-
-const checkReviewBlock = blocks => {
-	return blocks.some( block => {
-		if ( 'themeisle-blocks/review' === block.name ) {
-			return true;
-		}
-
-		if ( 0 < block?.innerBlocks?.length ) {
-			return checkReviewBlock( block.innerBlocks );
-		}
-	});
-};
-
 subscribe( () => {
 	if ( select( 'core/edit-widgets' ) ) {
 		const {
@@ -110,7 +96,6 @@ subscribe( () => {
 	if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
 		const {
 			isCurrentPostPublished,
-			getEditedPostAttribute,
 			isSavingPost,
 			isPublishingPost,
 			isAutosavingPost,
@@ -120,34 +105,6 @@ subscribe( () => {
 		const { __experimentalReusableBlocks } = select( 'core/block-editor' ).getSettings();
 
 		const { isSavingEntityRecord } = select( 'core' );
-
-		const { getBlocks } = select( 'core/block-editor' );
-
-		const { editPost } = dispatch( 'core/editor' );
-
-		const meta = getEditedPostAttribute( 'meta' ) || {};
-
-		const post = select( 'core/editor' ).getCurrentPost();
-
-		if ( ( post && post.id && 'wp_block' === post?.type ) || undefined !== meta._themeisle_gutenberg_block_has_review ) {
-			const blocks = getBlocks();
-			const hasReview = checkReviewBlock( blocks );
-
-			if ( undefined !== meta._themeisle_gutenberg_block_has_review ) {
-				if ( meta._themeisle_gutenberg_block_has_review !== hasReview ) {
-					editPost({
-						meta: {
-							'_themeisle_gutenberg_block_has_review': hasReview
-						}
-					});
-				}
-			} else {
-				if ( post && post.id && 'wp_block' === post?.type && changedReusableBlocksReview?.[post.id] !== hasReview ) {
-					apiFetch({ path: `otter/v1/block_review_medata?id=${ post.id }&value=${ hasReview }`, method: 'POST' });
-					changedReusableBlocksReview[post.id] = hasReview;
-				}
-			}
-		}
 
 		let isSavingReusableBlock;
 

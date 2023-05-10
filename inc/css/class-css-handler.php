@@ -103,20 +103,6 @@ class CSS_Handler extends Base_CSS {
 				),
 			)
 		);
-
-		register_rest_route(
-			$namespace,
-			'/block_review_medata',
-			array(
-				array(
-					'methods'             => \WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'save_review_metadata' ),
-					'permission_callback' => function () {
-						return current_user_can( 'publish_posts' );
-					},
-				),
-			)
-		);
 	}
 
 	/**
@@ -135,6 +121,8 @@ class CSS_Handler extends Base_CSS {
 
 		$post_id = $request->get_param( 'id' );
 		self::generate_css_file( $post_id );
+
+		self::mark_review_block_metadata( $post_id );
 
 		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'otter-blocks' ) ) );
 	}
@@ -221,42 +209,10 @@ class CSS_Handler extends Base_CSS {
 
 		self::save_css_file( $post_id, $css );
 
+		self::mark_review_block_metadata( $post_id );
+
 		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'otter-blocks' ) ) );
 	}
-
-	/**
-	 * Function to save review metadata.
-	 *
-	 * @param \WP_REST_Request $request Rest request.
-	 *
-	 * @return mixed
-	 * @since   2.3.0
-	 * @access  public
-	 */
-	public function save_review_metadata( \WP_REST_Request $request ) {
-		if ( ! current_user_can( 'edit_posts' ) ) {
-			return false;
-		}
-
-		$post_id = $request->get_param( 'id' );
-		$value   = $request->get_param( 'value' );
-
-		if ( empty( $value ) ) {
-			delete_post_meta( $post_id, '_themeisle_gutenberg_review' );
-		} else {
-			$value = 'true' === $value;
-		}
-
-		$result = update_post_meta( $post_id, '_themeisle_gutenberg_review', $value );
-
-		return rest_ensure_response(
-			array(
-				'message' => __( 'Review metadata updated.', 'otter-blocks' ),
-				'result'  => $result,
-			) 
-		);
-	}
-
 
 	/**
 	 * Function to save CSS into WordPress Filesystem.
@@ -488,6 +444,28 @@ class CSS_Handler extends Base_CSS {
 		$css = $compressor->run( $css );
 
 		return $css;
+	}
+
+	/**
+	 * Mark in post meta if the post has a review block.
+	 * 
+	 * @param int $post_id Post ID.
+	 * @since 2.4.0
+	 * @access public
+	 */
+	public static function mark_review_block_metadata( $post_id ) {
+		if ( empty( $post_id ) ) {
+			return;
+		}
+
+		$content = get_the_content( '', false, $post_id );
+
+		if ( empty( $content ) ) {
+			return;
+		}
+
+		$has_review = false !== strpos( $content, '<!-- wp:themeisle-blocks/review' );
+		update_post_meta( $post_id, '_themeisle_gutenberg_block_has_review', $has_review );
 	}
 
 	/**
