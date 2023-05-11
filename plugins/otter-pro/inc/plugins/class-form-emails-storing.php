@@ -278,12 +278,12 @@ class Form_Emails_Storing {
 		if ( 'trash' !== $status ) {
 			$bulk_actions['trash'] = __( 'Move to Trash', 'otter-blocks' );
 
-			if ( 'unread' === $status ) {
-				$bulk_actions['read'] = __( 'Mark as Read', 'otter-blocks' );
+			if ( 'unread' !== $status ) {
+				$bulk_actions['unread'] = __( 'Mark as Unread', 'otter-blocks' );
 			}
 
-			if ( 'read' === $status ) {
-				$bulk_actions['unread'] = __( 'Mark as Unread', 'otter-blocks' );
+			if ( 'read' !== $status ) {
+				$bulk_actions['read'] = __( 'Mark as Read', 'otter-blocks' );
 			}
 		} else {
 			$bulk_actions['untrash'] = __( 'Restore', 'otter-blocks' );
@@ -635,22 +635,22 @@ class Form_Emails_Storing {
 			return;
 		}
 		?>
-		<table class="otter_form_record_meta" style="border-spacing: 10px; width: 100%">
-			<tbody style="display: table; width: 100%">
+		<table class="otter_form_record_meta form-table" style="border-spacing: 10px; width: 100%">
+			<tbody>
 				<?php
 				foreach ( $meta['inputs'] as $id => $field ) {
 					?>
 					<tr>
-						<td><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $field['label'] ); ?></label></td>
+						<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $field['label'] ); ?></label></th>
 						<?php
 						if ( 'textarea' === $field['type'] ) {
 							?>
-							<td><textarea name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>" id="<?php echo esc_attr( $id ); ?>" class="otter_form_record_meta__value" rows="5" cols="40"><?php echo esc_html( $field['value'] ); ?></textarea></td>
+							<td><textarea style="width: 100%" name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>" id="<?php echo esc_attr( $id ); ?>" class="otter_form_record_meta__value" rows="5"><?php echo esc_html( $field['value'] ); ?></textarea></td>
 							<?php
 							continue;
 						}
 						?>
-						<td><input name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>" id="<?php echo esc_attr( $id ); ?>" type="<?php echo isset( $field['type'] ) ? esc_attr( $field['type'] ) : ''; ?>" class="otter_form_record_meta__value" value="<?php echo esc_html( $field['value'] ); ?>" size="40"/></td>
+						<td><input style="width: 100%" name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>" id="<?php echo esc_attr( $id ); ?>" type="<?php echo isset( $field['type'] ) ? esc_attr( $field['type'] ) : ''; ?>" class="otter_form_record_meta__value" value="<?php echo esc_html( $field['value'] ); ?>"/></td>
 					</tr>
 					<?php
 				}
