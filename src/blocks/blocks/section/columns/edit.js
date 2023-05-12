@@ -420,12 +420,12 @@ const Edit = ({
 			<style>
 				{
 					`#block-${ clientId } ` + _cssBlock([
-						[ 'color', attributes.color ]
+						[ '--text-color', attributes.color ]
 					])
 				}
 				{
 					`#block-${ clientId }:hover ` + _cssBlock([
-						[ 'color', attributes.colorHover ]
+						[ '--text-color', attributes.colorHover ]
 					])
 				}
 			</style>
