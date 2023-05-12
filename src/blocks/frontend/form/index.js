@@ -34,11 +34,11 @@ const extractFormFields = form => {
 			elemsWithError.push( valueElem );
 		}
 
-		if ( label && valueElem?.value ) {
+		if ( valueElem?.value ) {
 			formFieldsData.push({
 				value: valueElem?.value,
 				type: valueElem?.type,
-				label,
+				label: label || '(No label)',
 				checked,
 				id
 			});
