@@ -70,6 +70,36 @@ class Sharing_Icons_Block {
 				'icon'  => 'reddit-alien',
 				'url'   => 'https://www.reddit.com/submit?url=' . esc_url( $current_url ),
 			),
+
+			'whatsapp'  => array(
+				'label' => esc_html__( 'WhatsApp', 'otter-blocks' ),
+				'icon'  => 'whatsapp',
+				'url'   => 'https://api.whatsapp.com/send?text=' . esc_url( $current_url ),
+			),
+
+			'email'     => array(
+				'label' => esc_html__( 'Email', 'otter-blocks' ),
+				'icon'  => 'envelope',
+				'url'   => 'mailto:?subject=' . esc_attr( $title ) . '&body=' . esc_url( $current_url ),
+			),
+
+			'telegram'  => array(
+				'label' => esc_html__( 'Telegram', 'otter-blocks' ),
+				'icon'  => 'telegram-plane',
+				'url'   => 'https://telegram.me/share/url?url=' . esc_url( $current_url ) . '&text=' . esc_attr( $title ),
+			),
+
+			'mastodon'  => array(
+				'label' => esc_html__( 'Mastodon', 'otter-blocks' ),
+				'icon'  => 'mastodon',
+				'url'   => 'https://mastodonshare.com/?text=' . esc_url( $current_url ),
+			),
+
+			'comments'  => array(
+				'label' => esc_html__( 'Comments', 'otter-blocks' ),
+				'icon'  => 'comments',
+				'url'   => get_comments_link(),
+			),
 		);
 
 		return $social_attributes;

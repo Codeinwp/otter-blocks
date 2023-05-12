@@ -58,7 +58,7 @@ const Inspector = ({
 				initialOpen={ false }
 				colorSettings={
 					Object.keys( socialList ).reduce( ( acc, icon ) => {
-						if ( ! ( attributes[icon].active ?? attributes[icon]) ) {
+						if ( ! ( attributes?.[icon]?.active ?? attributes?.[icon]) ) {
 							return acc;
 						}
 
@@ -78,21 +78,21 @@ const Inspector = ({
 								isShownByDefault: false,
 
 								/* translators: %s Social Website */
-								label: sprintf( __( ' %s Text Color', 'otter-blocks' ), socialList[icon].label )
+								label: sprintf( __( ' %s Text Color', 'otter-blocks' ), socialList[icon]?.label )
 							}
 						];
 					}, [])
 				}
 			>
 				{ Object.keys( socialList ).map( ( icon ) => {
-					if ( ! ( attributes[icon].active ?? attributes[icon]) ) {
+					if ( ! ( attributes?.[icon]?.active ?? attributes?.[icon]) ) {
 						return null;
 					}
 
 					return (
 						<ContrastChecker
-							backgroundColor={ attributes[icon].backgroundColor }
-							textColor={ attributes[icon].textColor }
+							backgroundColor={ attributes?.[icon]?.backgroundColor }
+							textColor={ attributes?.[icon]?.textColor }
 							key={ icon }
 						/>
 					);

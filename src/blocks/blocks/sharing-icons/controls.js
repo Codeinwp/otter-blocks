@@ -31,7 +31,7 @@ const Controls = ({
 }) => {
 	const toggleIcons = ( item ) => {
 		const newValue = { ...attributes[ item ] };
-		newValue.active = ! newValue.active;
+		newValue.active = ! newValue?.active;
 
 		setAttributes({ [ item ]: { ...newValue }});
 	};
@@ -40,7 +40,7 @@ const Controls = ({
 		<BlockControls>
 			<ToolbarGroup>
 				{ Object.keys( socialList ).map( ( item ) => {
-					const prop = attributes[ item ].active ?? attributes[ item ];
+					const prop = attributes[ item ]?.active ?? attributes?.[ item ];
 
 					return (
 						<Tooltip

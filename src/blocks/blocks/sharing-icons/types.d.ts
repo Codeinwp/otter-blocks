@@ -8,6 +8,11 @@ type Attributes = {
 	pinterest: object | boolean
 	tumblr: object | boolean
 	reddit: object | boolean
+	whatsapp: object | boolean
+	email: object | boolean
+	mastodon: object | boolean
+	comments: object | boolean
+	telegram: object | boolean
 	gap: number
 	borderRadius: number
 	textDeco: string

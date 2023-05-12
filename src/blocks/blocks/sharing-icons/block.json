@@ -47,6 +47,36 @@
 				"active": false
 			}
 		},
+		"whatsapp": {
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": false
+			}
+		},
+		"telegram": {
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": false
+			}
+		},
+		"email": {
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": false
+			}
+		},
+		"mastodon": {
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": false
+			}
+		},
+		"comments": {
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": false
+			}
+		},
 		"gap" : {
 			"type": "number"
 		},
