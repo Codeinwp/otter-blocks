@@ -37,6 +37,10 @@ $base-index: 99999 !default;
 		display: block;
 	}
 
+	&.is-selected {
+		z-index: 10;
+	}
+
 	.otter-popup__modal_wrap_overlay {
 		background-color: var(--overlay-color);
 		opacity: var(--overlay-opacity);
