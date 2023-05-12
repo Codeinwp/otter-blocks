@@ -469,7 +469,7 @@ const Inspector = ({
 								label={ __( 'Description', 'otter-blocks' ) }
 							>
 								<FontSizePicker
-									value={ numberToBox( attributes.descriptionFontSize ) }
+									value={ _px( attributes.descriptionFontSize ) }
 									onChange={ descriptionFontSize => setAttributes({ descriptionFontSize }) }
 									fontSizes={[ ...defaultFontSizes, { name: '28', size: '28px', slug: '28' }]}
 									allowReset

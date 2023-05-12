@@ -629,7 +629,7 @@ export const renderBoxOrNumWithUnit = ( box, unit ) => {
  * @param {string?} unit The unit to add.
  * @returns {import('./blocks').BoxType | any} The box value or given value.
  */
-export const numberToBox = ( n, unit = 'px' ) => isNumber( x ) ? stringToBox( _unit( x, unit ) ) : x;
+export const numberToBox = ( x, unit = 'px' ) => isNumber( x ) ? stringToBox( _unit( x, unit ) ) : x;
 
 /**
  * Return true if platform is MacOS.
