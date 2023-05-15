@@ -48,6 +48,23 @@ type Attributes = {
 	isSynced: string[]
 }
 
+export type FormOptions = {
+	form?: string
+	hasCaptcha?: boolean
+	email?: string
+	fromName?: string
+	redirectLink?: string
+	emailSubject?: string
+	submitMessage?: string
+	errorMessage?: string
+	cc?: string
+	bcc?: string
+	autoresponder?: {
+		subject?: string
+		body?: string
+	}
+}
+
 export type FormAttrs = Partial<Attributes>
 export type FormProps = BlockProps<Attributes>
 export interface FormInspectorProps extends InspectorProps<Attributes> {}

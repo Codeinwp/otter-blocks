@@ -8,44 +8,107 @@ import { domReady } from '../../helpers/frontend-helper-functions.js';
 let startTimeAntiBot = null;
 
 /**
+ * Get the form fields.
+ * @param {HTMLDivElement} form The form.
+ * @returns {HTMLDivElement[]} The form fields.
+ */
+const getFormFieldInputs = ( form ) => {
+
+	/** @type {Array.<HTMLDivElement>} */
+	const innerForms = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form' ) ];
+
+	/**
+	 * Remove the field from the inner forms.
+	 *
+	 * @type {Array.<HTMLDivElement>}
+	 */
+	return [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file' ) ].filter( input => {
+		return ! innerForms?.some( innerForm => innerForm?.contains( input ) );
+	});
+};
+
+/**
  * Get the fields with their value from the form.
  *
  * @param {HTMLDivElement} form The form.
- * @returns
+ * @returns {Promise<{formFieldsData: import('./types').FormFieldData[]}>}
  */
-const extractFormFields = form => {
+const extractFormFields = async( form ) => {
 
-	/** @type {Array.<HTMLDivElement>} */
-	const elemsWithError = [];
-	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href }];
 
-	const inputs = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-input' );
-	const textarea = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-textarea' );
+	/** @type {Array.<import('./types').FormFieldData>} */
+	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href, metadata: { position: 0 }}];
 
-	[ ...inputs, ...textarea ]?.forEach( input => {
-		const label = input.querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML;
-		const valueElem = input.querySelector( '.otter-form-input, .otter-form-textarea-input' );
+	/**
+	 * All input fields that belong to the current form. Fields from inner forms are removed.
+	 *
+	 * @type {Array.<HTMLDivElement>}
+	 */
+	const allInputs = getFormFieldInputs( form );
+
+	allInputs?.forEach( ( input, index ) => {
+		const labelContainer = input.querySelector( '.otter-form-input-label' );
+		const labelElem = ( labelContainer ?? input ).querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' );
+
+		const label = `(Field ${index + 1}) ${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
+
+		let value = undefined;
+		let fieldType = undefined;
 		const { id } = input;
 
-		// TODO: use checkbox in the future versions
-		const checked = input.querySelector( '.otter-form-input[type="checkbox"]' )?.checked;
+		const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"]), .otter-form-textarea-input' );
+		if ( null !== valueElem ) {
+			value = valueElem?.value;
+			fieldType = valueElem?.type;
+		} else {
+			const select = input.querySelector( 'select' );
 
-		if ( valueElem?.hasAttribute( 'required' ) && ! valueElem?.checkValidity() ) {
-			elemsWithError.push( valueElem );
+			/** @type{HTMLInputElement} */
+			const fileInput = input.querySelector( 'input[type="file"]' );
+
+			if ( fileInput ) {
+				const files = fileInput?.files;
+
+				for ( let i = 0; i < files.length; i++ ) {
+					formFieldsData.push({
+						label: label,
+						value: `${files[i].name} (${ ( files[i].size / ( 1024 * 1024 ) ).toFixed( 4 ) } MB)`,
+						type: fileInput.type,
+						id: id,
+						metadata: {
+							name: files[i].name,
+							size: files[i].size,
+							file: files[i],
+							fieldOptionName: fileInput?.dataset?.fieldOptionName,
+							position: index + 1
+						}
+					});
+				}
+			} else if ( select ) {
+				value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => Boolean( l ) ).join( ', ' );
+				fieldType = 'multiple-choice';
+			} else {
+				const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
+				const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
+				value = [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' );
+				fieldType = 'multiple-choice';
+			}
 		}
 
-		if ( label && valueElem?.value ) {
+		if ( label && value ) {
 			formFieldsData.push({
-				value: valueElem?.value,
-				type: valueElem?.type,
-				label,
-				checked,
-				id
+				label: label,
+				value: value,
+				type: fieldType,
+				id: id,
+				metadata: {
+					position: index + 1
+				}
 			});
 		}
 	});
 
-	return { formFieldsData, elemsWithError };
+	return { formFieldsData };
 };
 
 /**
@@ -59,18 +122,108 @@ function extractNonceValue( form ) {
 }
 
 /**
+ * Validate the inputs from the form.
+ *
+ * @param {HTMLDivElement} form The form.
+ * @returns
+ */
+function validateInputs( form ) {
+	let result = true;
+
+	const inputFields = getFormFieldInputs( form );
+
+	for ( const field of inputFields ) {
+		if ( field.classList.contains( 'wp-block-themeisle-blocks-form-input' ) ) {
+			const input = field.querySelector( 'input' );
+			if ( ! input?.checkValidity() ) {
+				input?.reportValidity();
+				result = false;
+				break;
+			}
+		} else if ( field.classList.contains( 'wp-block-themeisle-blocks-form-textarea' ) ) {
+			const input = field.querySelector( 'textarea' );
+			if ( ! input?.checkValidity() ) {
+				input?.reportValidity();
+				result = false;
+				break;
+			}
+		} else if ( field.classList.contains( 'wp-block-themeisle-blocks-form-multiple-choice' ) ) {
+			const select = field.querySelector( 'select' );
+			if ( select?.hasAttribute( 'required' ) && ! select?.checkValidity() ) {
+				select?.reportValidity();
+				result = false;
+				break;
+			}
+
+
+			// Check if it is required and at least one is checked.
+			const radios = field.querySelectorAll( '.o-form-multiple-choice-field input[type="radio"]' );
+			if ( radios?.length && radios[0]?.hasAttribute( 'required' ) && ! [ ...radios ].some( radio => radio.checked ) ) {
+
+				// radios[0]?.setCustomValidity( 'Please select one option.' );
+				radios[0]?.reportValidity();
+				result = false;
+				break;
+			}
+
+			const checkboxes = field.querySelectorAll( '.o-form-multiple-choice-field input[type="checkbox"]' );
+			if ( checkboxes?.length && checkboxes[0]?.hasAttribute( 'required' ) && ! [ ...checkboxes ].some( checkbox => checkbox.checked ) ) {
+				checkboxes[0]?.reportValidity();
+				result = false;
+				break;
+			}
+		} else if ( field.classList.contains( 'wp-block-themeisle-blocks-form-file' ) ) {
+			const input = field.querySelector( 'input' );
+			if ( ! input?.checkValidity() ) {
+				input?.reportValidity();
+				result = false;
+				break;
+			}
+		}
+	}
+
+	return result;
+}
+
+/**
+ * Make a FormData object from the form fields data.
+ * Strip binary data into separate keys.
+ *
+ * @param {import('./types').FormDataStructure} data
+ */
+const createFormData = ( data ) => {
+	var formData = new FormData();
+	var filesPairs = [];
+
+	data?.payload?.formInputsData?.forEach( ( field, index ) => {
+		if ( 'file' === field.type ) {
+			let key = 'file__' + field.metadata.position + '_' + index;
+			filesPairs.push([ key, field.metadata.file ]);
+			data.payload.formInputsData[index].metadata.file = undefined;
+			data.payload.formInputsData[index].metadata.data = key;
+		}
+	});
+
+	formData.append( 'form_data',  JSON.stringify( data ) );
+	filesPairs.forEach( pair => formData.append( pair[0], pair[1]) );
+
+	return formData;
+};
+
+
+/**
  * Send the date from the form to the server
  *
  * @param {HTMLDivElement}    form The element that contains all the inputs
  * @param {HTMLButtonElement}  btn  The submit button
  * @param {DisplayFormMessage} displayMsg The display message utility
  */
-const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
+const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	const id = form?.id;
 	const payload = {};
 
 	// Get the data from the form fields.
-	const { formFieldsData, elemsWithError } = extractFormFields( form );
+	const { formFieldsData } = await extractFormFields( form );
 	const formIsEmpty = 2 > formFieldsData?.length;
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
@@ -87,12 +240,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 		return;
 	}
 
-	/**
-	 * Validate the form inputs data.
-	 */
-	elemsWithError.forEach( input => {
-		input?.reportValidity();
-	});
+	const isValidationSuccessful = validateInputs( form );
 
 	if ( hasCaptcha && ! hasValidToken ) {
 		const msg = ! window.hasOwnProperty( 'grecaptcha' ) ?
@@ -104,7 +252,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 		).show();
 	}
 
-	if ( 0 < elemsWithError.length || ( hasCaptcha && ! hasValidToken ) ) {
+	if ( ! isValidationSuccessful || ( hasCaptcha && ! hasValidToken ) ) {
 		btn.disabled = false;
 		btn.removeChild( spinner );
 	} else {
@@ -148,18 +296,18 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 
 		const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/frontend';
 
+		const formData = createFormData({
+			handler: 'submit',
+			payload
+		});
+
 		fetch( formURlEndpoint, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json, */*;q=0.1',
 				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce
 			},
 			credentials: 'include',
-			body: JSON.stringify({
-				handler: 'submit',
-				payload
-			})
+			body: formData
 		})
 			.then( r => r.json() )
 			.then( ( response ) => {
@@ -173,7 +321,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 					const msg = res?.submitMessage ? res.submitMessage :  'Success';
 					displayMsg.setMsg( msg ).show();
 
-					cleanInputs( form );
+					form?.querySelector( 'form' )?.reset();
 
 					setTimeout( () => {
 						if ( 0 < res?.redirectLink?.length ) {
@@ -189,9 +337,10 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 					// TODO: Write pattern to display a more useful error message.
 					if ( '110' === res.code ) {
 						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
+					} else if ( '12' === res.code || '13' === res.code ) {
+						displayMsg.pullMsg( 'invalid-file', 'error' ).show();
 					} else if ( 0 < res?.displayError?.length ) {
 						errorMsgSlug = res?.displayError;
-
 						displayMsg.setMsg( errorMsgSlug, 'error' ).show();
 					} else {
 						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
@@ -224,21 +373,6 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 	}
 };
 
-/**
- * Reset all the input fields.
- * @param {HTMLDivElement} form
- */
-const cleanInputs = ( form ) => {
-	const inputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input' );
-	const textarea = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea' );
-
-	[ ...inputs, ...textarea ]?.forEach( input => {
-		const valueElem = input.querySelector( '.otter-form-input, .otter-form-textarea-input' );
-		if ( valueElem?.value ) {
-			valueElem.value = null;
-		}
-	});
-};
 
 /**
  * Render a checkbox for consent
@@ -282,7 +416,7 @@ domReady( () => {
 		const sendBtn = form.querySelector( 'button' );
 		const displayMsg = new DisplayFormMessage( form );
 
-		if ( form.querySelector( 'button[type="submit"]' ) ) {
+		if ( form.querySelector( ':scope > form > button[type="submit"]' ) ) {
 			form?.addEventListener( 'submit', ( event ) => {
 				event.preventDefault();
 				if ( ! sendBtn.disabled ) {
@@ -301,5 +435,42 @@ domReady( () => {
 				}
 			}, false );
 		}
+	});
+
+	forms.forEach( ( form ) => {
+		const fields = getFormFieldInputs( form );
+
+		fields.forEach( ( field ) => {
+			const input = field.querySelector( 'input' );
+			if ( 'file' === input?.type ) {
+				const { maxFilesNumber, maxFileSize } = input.dataset;
+				input.addEventListener( 'change', ( event ) => {
+					let isValidationSuccessful = true;
+					const { files } = event.target;
+
+					if ( maxFilesNumber && files.length > maxFilesNumber ) {
+						input.setCustomValidity( window.themeisleGutenbergForm?.messages?.['too-many-files'] + maxFilesNumber );
+						isValidationSuccessful = false;
+					}
+
+					if ( isValidationSuccessful && maxFileSize ) {
+						for ( const file of files ) {
+							if ( file.size > maxFileSize * 1024 * 1024 ) {
+								input.setCustomValidity( window.themeisleGutenbergForm?.messages?.['big-file'] + ' ' + maxFileSize + 'MB.' );
+								isValidationSuccessful = false;
+								break;
+							}
+						}
+					}
+
+					if ( ! isValidationSuccessful ) {
+						input.reportValidity();
+						input.value = '';
+					} else {
+						input.setCustomValidity( '' );
+					}
+				});
+			}
+		});
 	});
 });

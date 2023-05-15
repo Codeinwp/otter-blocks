@@ -12,16 +12,26 @@ import {
 	Button,
 	PanelBody,
 	SelectControl,
+	TextareaControl,
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
-import { FieldInputWidth, fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
+
+import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
+import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
 import { useContext } from '@wordpress/element';
-import { FormContext } from '../edit';
+import { FormContext } from '../edit.js';
+
+const styles = [
+	{
+		label: __( 'Inline List', 'otter-blocks' ),
+		value: 'inline-list'
+	}
+];
 
 /**
  *
- * @param {import('./types').FormInputProps} props
+ * @param {import('./types').FormMultipleChoiceInputInspectorProps} props
  * @returns {JSX.Element}
  */
 const Inspector = ({
@@ -52,12 +62,11 @@ const Inspector = ({
 					value={ attributes.type }
 					options={ fieldTypesOptions() }
 					onChange={ type => {
-						if ( 'textarea' === type || 'radio' === type || 'checkbox' === type || 'select' === type || 'file' === type ) {
-							switchFormFieldTo( type, clientId, attributes );
+						if ( 'radio' === type || 'checkbox' === type || 'select' === type ) {
+							setAttributes({ type });
 							return;
 						}
-
-						setAttributes({ type });
+						switchFormFieldTo( type, clientId, attributes );
 					}}
 				/>
 
@@ -69,23 +78,41 @@ const Inspector = ({
 
 				<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
 
-				<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
-
-				{
-					( 'date' !== attributes.type || undefined === attributes.type ) && (
-						<TextControl
-							label={ __( 'Placeholder', 'otter-blocks' ) }
-							value={ attributes.placeholder }
-							onChange={ placeholder => setAttributes({ placeholder }) }
-						/>
-					)
-				}
+				<TextareaControl
+					label={ __( 'Options', 'otter-blocks' ) }
+					help={ __( 'Enter each option in a different line.', 'otter-blocks' ) }
+					value={ attributes.options }
+					onChange={ ( options ) => setAttributes({ options }) }
+				/>
 
 				<TextControl
 					label={ __( 'Help Text', 'otter-blocks' ) }
 					value={ attributes.helpText }
 					onChange={ helpText => setAttributes({ helpText }) }
 				/>
+
+				{
+					'select' !== attributes?.type && (
+						<ToggleControl
+							label={ __( 'Inline list', 'otter-blocks' ) }
+							checked={ Boolean( getActiveStyle( styles, attributes.className ) ) }
+							onChange={ value => {
+								const classes = changeActiveStyle( attributes.className, styles, value ? 'inline-list' : undefined );
+								setAttributes({ className: classes });
+							} }
+						/>
+					)
+				}
+
+				{
+					'select' === attributes?.type && (
+						<ToggleControl
+							label={ __( 'Multiple selection', 'otter-blocks' ) }
+							checked={ attributes.multipleSelection }
+							onChange={ multipleSelection => setAttributes({ multipleSelection }) }
+						/>
+					)
+				}
 
 				<ToggleControl
 					label={ __( 'Required', 'otter-blocks' ) }

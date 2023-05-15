@@ -462,7 +462,7 @@ export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Deskto
  * Get Active Style Name.
  *
  * @param { Object } styles    Block styles.
- * @param { Array }  className Classes of the block.
+ * @param { string | undefined }  className Classes of the block.
  *
  * @returns { string }
  */
@@ -489,9 +489,9 @@ export const getActiveStyle = ( styles, className ) => {
 /**
  * Replaces the active style in the block's className.
  *
- * @param { string } className Class name.
+ * @param { string | undefined } className Class name.
  * @param { Object } styles    Block styles.
- * @param { Object } newStyle  The replacing style.
+ * @param { string | undefined } newStyle  The replacing style.
  *
  * @return { string } The updated className.
  */
@@ -663,4 +663,61 @@ export function isAppleOS( _window = null ) {
  */
 export const isEmptyBox = ( box ) => {
 	return ! ( box?.top !== undefined && box?.right !== undefined && box?.bottom !== undefined && box?.left !== undefined );
+};
+
+/**
+ * Get the saved state for the given key from global scope (window).
+ *
+ * @param {string} key
+ * @param {any} defaultValue
+ * @returns
+ */
+export const pullSavedState = ( key, defaultValue ) => {
+	if ( key === undefined ) {
+		return defaultValue;
+	}
+
+	return window.oSavedStates?.[ key ] ?? defaultValue;
+};
+
+/**
+ * Save a value in global scope (window) for the given key.
+ *
+ * @param {string} key
+ * @param {any} value
+ * @returns
+ */
+export const setSavedState = ( key, value ) => {
+	if ( key === undefined ) {
+		return;
+	}
+
+	window.oSavedStates = window.oSavedStates ?? {};
+	window.oSavedStates[ key ] = value;
+};
+
+/**
+ * Find the blocks that match the given condition.
+ *
+ * @param {import('./blocks').OtterBlock<unknown>[]} innerBlocks The inner blocks.
+ * @param {(block: import('./blocks').OtterBlock<unknown>) => boolean} condition The condition.
+ * @param {(block: import('./blocks').OtterBlock<unknown>) => boolean} nestingCondition The condition that allow to go deeper in the tree.
+ * @returns {import('./blocks').OtterBlock<unknown>[]} The blocks that match the condition.
+ */
+export const findInnerBlocks = ( innerBlocks, condition, nestingCondition = x => x ) => {
+	if ( innerBlocks === undefined || condition === undefined ) {
+		return [];
+	}
+
+	let found = [];
+	for ( const block of innerBlocks ) {
+		if ( condition( block ) ) {
+			found.push( block );
+		}
+
+		if ( nestingCondition( block ) ) {
+			found = found.concat( findInnerBlocks( block?.innerBlocks, condition ) );
+		}
+	}
+	return found;
 };

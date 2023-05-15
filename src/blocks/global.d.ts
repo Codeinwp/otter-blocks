@@ -100,6 +100,9 @@ declare global {
 				noResults: string
 				noTitle: string
 			}
+		},
+		oSavedStates?: {
+			[key: string]: any
 		}
 	}
 }

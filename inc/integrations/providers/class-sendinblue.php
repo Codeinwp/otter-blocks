@@ -99,27 +99,34 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	/**
 	 * Add a new subscriber to Mailchimp
 	 *
-	 * @param string $email The client email.
+	 * @param Form_Data_Request $form_data The client email.
 	 *
-	 * @return Form_Data_Response
+	 * @return Form_Data_Request
 	 */
-	public function subscribe( $email ) {
-		$res       = new Form_Data_Response();
-		$url       = 'https://api.sendinblue.com/v3/contacts';
-		$form_data = array(
+	public function subscribe( $form_data ) {
+
+		if ( $form_data->has_error() ) {
+			return $form_data;
+		}
+
+		$email = $form_data->get_email_from_form_input();
+
+		$url = 'https://api.sendinblue.com/v3/contacts';
+
+		$payload = array(
 			'email'            => $email,
 			'listIds'          => array( (int) $this->list_id ),
 			'emailBlacklisted' => false,
 			'smsBlacklisted'   => false,
 		);
-		$args      = array(
+		$args    = array(
 			'method'  => 'POST',
 			'headers' => array(
 				'Accept'       => 'application/json',
 				'Content-Type' => 'application/json',
 				'api-key'      => $this->api_key,
 			),
-			'body'    => wp_json_encode( $form_data ),
+			'body'    => wp_json_encode( $payload ),
 		);
 
 		$response = wp_remote_post( $url, $args );
@@ -127,23 +134,18 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
 		if ( is_wp_error( $response ) || 400 === wp_remote_retrieve_response_code( $response ) || ( ( isset( $body['code'] ) && 'unauthorized' === $body['code'] ) ) ) {
 
-			$res->set_error( ! empty( $body['message'] ) && 'null' !== $body['message'] ? $body['message'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'sendinblue' );
-
-			if ( isset( $body['code'] ) ) {
-				$res->set_is_credential_error( $this->is_credential_error( $body['code'] ) );
+			if ( isset( $body['code'] ) && $this->is_credential_error( $body['code'] ) ) {
+				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR );
 			}
 
 			if ( ! empty( $body['message'] ) && str_contains( $body['message'], 'already' ) ) {
-				$res->set_code( Form_Data_Response::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED );
+				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED );
 			} else {
-				$res->set_code( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
+				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
 			}
-		} else {
-			$res->mark_as_success();
-			$res->set_code( Form_Data_Response::SUCCESS_USER_SUBSCRIBED );
 		}
 
-		return $res;
+		return $form_data;
 	}
 
 	/**
