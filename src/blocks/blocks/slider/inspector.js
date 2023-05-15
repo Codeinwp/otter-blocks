@@ -21,8 +21,6 @@ import {
 	__experimentalUnitControl as UnitContol
 } from '@wordpress/components';
 
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useState
@@ -40,10 +38,8 @@ import {
 } from '../../components/index.js';
 
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-
-const px = value => value ? `${ value }px` : value;
-
-const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+import { _px } from '../../helpers/helper-functions.js';
+import { getMaxPerView } from './edit.js';
 
 /**
  *
@@ -53,9 +49,8 @@ const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 const Inspector = ({
 	attributes,
 	setAttributes,
-	slider,
-	changePerView,
-	onSelectImages
+	onSelectImages,
+	changePerView
 }) => {
 	const [ tab, setTab ] = useState( 'settings' );
 
@@ -63,21 +58,6 @@ const Inspector = ({
 		responsiveSetAttributes,
 		responsiveGetAttributes
 	} = useResponsiveAttributes( setAttributes );
-
-	const changeGap = value => {
-		setAttributes({ gap: Number( value ) });
-		slider.update({ gap: Number( value ) });
-	};
-
-	const changePeek = value => {
-		setAttributes({ peek: Number( value ) });
-		slider.update({ peek: Number( value ) });
-	};
-
-	const changeTransition = value => {
-		setAttributes({ transition: 'ease' !== value ? value : undefined });
-		slider.update({ animationTimingFunc: value });
-	};
 
 	return (
 		<InspectorControls>
@@ -109,7 +89,7 @@ const Inspector = ({
 									value={ attributes.perView }
 									onChange={ changePerView }
 									min={ 1 }
-									max={ max([ Math.round( attributes.images.length / 2 ), 1 ]) }
+									max={ getMaxPerView( attributes?.images?.length ) }
 								/>
 
 								{ 1 < attributes.perView && (
@@ -118,7 +98,7 @@ const Inspector = ({
 											label={ __( 'Gap', 'otter-blocks' ) }
 											help={ __( 'A size of the space between slides.', 'otter-blocks' ) }
 											value={ attributes.gap }
-											onChange={ changeGap }
+											onChange={ value => setAttributes({ gap: Number( value ) }) }
 											min={ 0 }
 											max={ 100 }
 										/>
@@ -127,7 +107,7 @@ const Inspector = ({
 											label={ __( 'Peek', 'otter-blocks' ) }
 											help={ __( 'The value of the future slides which have to be visible in the current slide.', 'otter-blocks' ) }
 											value={ attributes.peek }
-											onChange={ changePeek }
+											onChange={ value => setAttributes({ peek: Number( value ) }) }
 											min={ 0 }
 											max={ 100 }
 										/>
@@ -204,7 +184,7 @@ const Inspector = ({
 									label={ __( 'Height', 'otter-blocks' ) }
 								>
 									<UnitContol
-										value={ responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ]) }
+										value={ responsiveGetAttributes([ _px( attributes.height ), attributes.heightTablet, attributes.heightMobile ]) }
 										onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
 									/>
 
@@ -245,7 +225,7 @@ const Inspector = ({
 											value: 'cubic-bezier(0.680, -0.550, 0.265, 1.550)'
 										}
 									]}
-									onChange={ changeTransition }
+									onChange={ value => setAttributes({ transition: 'ease' !== value ? value : undefined })  }
 								/>
 							</Fragment>
 						) }

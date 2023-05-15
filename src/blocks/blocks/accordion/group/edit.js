@@ -18,7 +18,7 @@ import { __ } from '@wordpress/i18n';
 import metadata from './block.json';
 import Inspector from './inspector.js';
 import BlockAppender from '../../../components/block-appender-button';
-import { boxValues, hex2rgba } from '../../../helpers/helper-functions';
+import { _px, boxValues, hex2rgba } from '../../../helpers/helper-functions';
 import {
 	blockInit,
 	getDefaultValueByField,
@@ -38,8 +38,6 @@ const PREFIX_TO_FAMILY = {
 	fal: 'Font Awesome 5 Free',
 	fab: 'Font Awesome 5 Brands'
 };
-
-const px = value => value ? `${ value }px` : value;
 
 /**
  * Accordion Group component
@@ -83,19 +81,19 @@ const Edit = ({
 		'--padding': boxValues( attributes.padding, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
 		'--padding-tablet': boxValues( attributes.paddingTablet, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
 		'--padding-mobile': boxValues( attributes.paddingMobile, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
-		'--gap': px( attributes.gap )
+		'--gap': _px( attributes.gap )
 	};
 
 	const [ fontCSSNodeName, setFontNodeCSS ] = useCSSNode();
 	useEffect( () => {
 		setFontNodeCSS([
 			`> * > * > .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__title > * {
-				${ attributes.fontSize ? ( 'font-size:' + attributes.fontSize + 'px' ) : '' };
+				${ attributes.fontSize ? ( 'font-size:' + _px( attributes.fontSize ) ) : '' };
 				${ attributes.fontFamily ? ( 'font-family:' + attributes.fontFamily ) : '' };
 				${ attributes.fontVariant ? ( 'font-variant:' + attributes.fontVariant ) : '' };
 				${ attributes.fontStyle ? ( 'font-style:' + attributes.fontStyle ) : '' };
 				${ attributes.textTransform ? ( 'text-transform:' + attributes.textTransform ) : '' };
-				${ attributes.letterSpacing ? ( 'letter-spacing:' + attributes.letterSpacing + 'px' ) : '' };
+				${ attributes.letterSpacing ? ( 'letter-spacing:' + _px( attributes.letterSpacing ) ) : '' };
 			}`
 		]);
 	}, [ attributes.fontSize, attributes.fontFamily, attributes.fontVariant, attributes.fontStyle, attributes.textTransform, attributes.letterSpacing ]);

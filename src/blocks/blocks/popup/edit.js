@@ -42,12 +42,11 @@ import {
 import metadata from './block.json';
 import Inspector from './inspector.js';
 import { blockInit, useCSSNode } from '../../helpers/block-utility';
-import { boxValues, _cssBlock } from '../../helpers/helper-functions';
+import { boxValues, _cssBlock, stringToBox } from '../../helpers/helper-functions';
 import { useDarkBackground } from '../../helpers/utility-hooks.js';
 import { useDispatch, useSelect } from '@wordpress/data';
 
 const { attributes: defaultAttributes } = metadata;
-const makeBox = x => ({ top: x, bottom: x, left: x, right: x });
 
 /**
  * Popup component
@@ -119,9 +118,9 @@ const Edit = ({
 		'--width-tablet': attributes.widthTablet,
 		'--width-mobile': attributes.widthMobile,
 
-		'--padding': attributes.padding ?  boxValues( merge( makeBox( '20px' ), attributes.padding ) ) : undefined,
-		'--padding-tablet': attributes.paddingTablet ?  boxValues( merge( makeBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet ) ) : undefined,
-		'--padding-mobile': attributes.paddingMobile ?  boxValues( merge( makeBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : undefined,
+		'--padding': attributes.padding ?  boxValues( merge( stringToBox( '20px' ), attributes.padding ) ) : undefined,
+		'--padding-tablet': attributes.paddingTablet ?  boxValues( merge( stringToBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet ) ) : undefined,
+		'--padding-mobile': attributes.paddingMobile ?  boxValues( merge( stringToBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : undefined,
 		'--box-shadow': attributes.boxShadow.active && `${ attributes.boxShadow.horizontal }px ${ attributes.boxShadow.vertical }px ${ attributes.boxShadow.blur }px ${ attributes.boxShadow.spread }px ${ hexToRgba( attributes.boxShadow.color || '#FFFFFF', attributes.boxShadow.colorOpacity ) }`,
 
 		...height
