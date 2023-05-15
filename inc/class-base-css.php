@@ -207,18 +207,20 @@ class Base_CSS {
 	 * @access  public
 	 */
 	public function get_blocks_css( $post_id ) {
-		if ( function_exists( 'has_blocks' ) ) {
-			$content = get_post_field( 'post_content', $post_id );
-			$blocks  = parse_blocks( $content );
-
-			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-				return;
-			}
-
-			$animations = boolval( preg_match( '/\banimated\b/', $content ) );
-
-			return $this->cycle_through_static_blocks( $blocks, $animations );
+		if ( ! function_exists( 'has_blocks' ) ) {
+			return;
 		}
+
+		$content = get_post_field( 'post_content', $post_id );
+		$blocks  = parse_blocks( $content );
+
+		if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+			return;
+		}
+
+		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+		return $this->cycle_through_static_blocks( $blocks, $animations );
 	}
 
 	/**
@@ -229,26 +231,28 @@ class Base_CSS {
 	 * @access  public
 	 */
 	public function get_widgets_css() {
-		if ( function_exists( 'has_blocks' ) ) {
-			$content = '';
-			$widgets = get_option( 'widget_block', array() );
-
-			foreach ( $widgets as $widget ) {
-				if ( is_array( $widget ) && isset( $widget['content'] ) ) {
-					$content .= $widget['content'];
-				}
-			}
-
-			$blocks = parse_blocks( $content );
-
-			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-				return;
-			}
-
-			$animations = boolval( preg_match( '/\banimated\b/', $content ) );
-
-			return $this->cycle_through_static_blocks( $blocks, $animations );
+		if ( ! function_exists( 'has_blocks' ) ) {
+			return;
 		}
+
+		$content = '';
+		$widgets = get_option( 'widget_block', array() );
+
+		foreach ( $widgets as $widget ) {
+			if ( is_array( $widget ) && isset( $widget['content'] ) ) {
+				$content .= $widget['content'];
+			}
+		}
+
+		$blocks = parse_blocks( $content );
+
+		if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+			return;
+		}
+
+		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+		return $this->cycle_through_static_blocks( $blocks, $animations );
 	}
 
 	/**
@@ -293,7 +297,7 @@ class Base_CSS {
 			foreach ( self::$blocks_classes as $classname ) {
 				$path = new $classname();
 
-				if ( method_exists( $path, 'render_css' ) ) {
+				if ( method_exists( $path, 'render_css' ) && isset( $path->block_prefix ) ) {
 					if ( ( isset( $path->library_prefix ) ? $path->library_prefix : $this->library_prefix ) . '/' . $path->block_prefix === $block['blockName'] ) {
 						$style .= $path->render_css( $block );
 					}

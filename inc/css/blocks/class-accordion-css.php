@@ -273,7 +273,7 @@ class Accordion_CSS extends Base_CSS {
 					array(
 						'property'  => 'font-weight',
 						'value'     => 'icon',
-						'format'    => function( $value ) use ( $fa_icons ) {
+						'format'    => function( $value ) {
 							return 'fas' !== $value['prefix'] ? 400 : 900;
 						},
 						'condition' => function( $attrs ) {
@@ -311,7 +311,7 @@ class Accordion_CSS extends Base_CSS {
 					array(
 						'property'  => 'font-weight',
 						'value'     => 'openItemIcon',
-						'format'    => function( $value ) use ( $fa_icons ) {
+						'format'    => function( $value ) {
 							return 'fas' !== $value['prefix'] ? 400 : 900;
 						},
 						'condition' => function( $attrs ) {

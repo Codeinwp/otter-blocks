@@ -164,7 +164,7 @@ class Patterns {
 	 *
 	 * @static
 	 *
-	 * @return  GutenbergBlocks
+	 * @return  Patterns
 	 * @since   2.0.3
 	 * @access  public
 	 */

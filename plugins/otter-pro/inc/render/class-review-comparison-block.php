@@ -275,7 +275,7 @@ class Review_Comparison_Block {
 	/**
 	 * Get ratings stars
 	 *
-	 * @param array $ratings Ratings.
+	 * @param int $ratings Ratings.
 	 *
 	 * @return string
 	 */

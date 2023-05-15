@@ -3,7 +3,6 @@ declare global {
 		themeisleGutenberg?: {
 			hasNeve: boolean
 			version: string
-			isCompatible: boolean
 			hasPro: boolean
 			upgradeLink: string
 			patternsLink: string

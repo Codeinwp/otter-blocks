@@ -22,14 +22,14 @@ class Posts_ACF_Server {
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Posts_ACF_Server
+	 * @var string
 	 */
 	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
 	 *
-	 * @var Posts_ACF_Server
+	 * @var string
 	 */
 	public $version = 'v1';
 

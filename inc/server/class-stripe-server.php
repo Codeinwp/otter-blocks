@@ -24,21 +24,21 @@ class Stripe_Server {
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Stripe_Server
+	 * @var string
 	 */
 	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
 	 *
-	 * @var Stripe_Server
+	 * @var string
 	 */
 	public $version = 'v1';
 
 	/**
 	 * Stripe Object.
 	 *
-	 * @var Stripe_Server
+	 * @var Stripe_API
 	 */
 	public $stripe = '';
 

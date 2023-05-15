@@ -22,14 +22,14 @@ class Filter_Blocks_Server {
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Filter_Blocks_Server
+	 * @var string
 	 */
 	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
 	 *
-	 * @var Filter_Blocks_Server
+	 * @var string
 	 */
 	public $version = 'v1';
 

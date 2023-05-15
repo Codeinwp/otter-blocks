@@ -137,7 +137,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' )->set_is_credential_error( $this->is_credential_error( $body['status'] ) );
 
-			if ( ! empty( $body['detail'] ) && str_contains( $body['detail'], 'fake' ) ) {
+			if ( ! empty( $body['detail'] ) && ( strpos( $body['detail'], 'fake' ) !== false ) ) {
 				$res->set_code( Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL );
 			} else {
 				$res->set_code( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
@@ -204,7 +204,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	public static function validate_api_key( $api_key ) {
-		if ( ! isset( $api_key ) || '' === $api_key ) {
+		if ( '' === $api_key ) {
 			return array(
 				'valid'  => false,
 				'reason' => __( 'API Key is missing!', 'otter-blocks' ),

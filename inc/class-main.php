@@ -40,7 +40,7 @@ class Main {
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
 			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ), PHP_INT_MAX ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
-			add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_svg_attachment_metadata' ), PHP_INT_MAX, 3 );
+			add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_svg_attachment_metadata' ), PHP_INT_MAX, 2 );
 		}
 
 	}
@@ -92,43 +92,6 @@ class Main {
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
 			\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();
 		}
-	}
-
-	/**
-	 * Get if the version of plugin in latest.
-	 *
-	 * @since   1.2.0
-	 * @access  public
-	 */
-	public static function is_compatible() {
-		if ( ! function_exists( 'plugins_api' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		}
-
-		if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
-			return true;
-		}
-
-		$current = OTTER_BLOCKS_VERSION;
-
-		$args = array(
-			'slug'   => 'otter-blocks',
-			'fields' => array(
-				'version' => true,
-			),
-		);
-
-		$call_api = plugins_api( 'plugin_information', $args );
-
-		if ( is_wp_error( $call_api ) ) {
-			return true;
-		} else {
-			if ( ! empty( $call_api->version ) ) {
-				$latest = $call_api->version;
-			}
-		}
-
-		return version_compare( $current, $latest, '>=' );
 	}
 
 	/**
@@ -453,7 +416,6 @@ class Main {
 	/**
 	 * After Update Migration
 	 *
-	 * @return bool
 	 * @since  2.0.9
 	 * @access public
 	 */
@@ -473,7 +435,7 @@ class Main {
 	 *
 	 * @static
 	 *
-	 * @return  GutenbergBlocks
+	 * @return  Main
 	 * @since   1.0.0
 	 * @access  public
 	 */

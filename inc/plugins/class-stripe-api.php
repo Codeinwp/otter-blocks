@@ -24,7 +24,7 @@ class Stripe_API {
 	/**
 	 * Stripe Object.
 	 *
-	 * @var Stripe_API
+	 * @var StripeClient
 	 */
 	public $stripe = '';
 
@@ -157,7 +157,7 @@ class Stripe_API {
 			$response = $this->build_error_response( $e );
 		} catch ( \Stripe\Exception\InvalidArgumentException $e ) {
 			$response = $this->build_error_response( $e );
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$response = $this->build_error_response( $e );
 		}
 
@@ -237,7 +237,7 @@ class Stripe_API {
 
 		array_push( $data, $object );
 
-		if ( ! $user_id ) {
+		if ( defined( 'COOKIEPATH' ) && defined( 'COOKIE_DOMAIN' ) && ! $user_id ) {
 			setcookie( 'o_stripe_data', wp_json_encode( $data ), strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, false ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
 			return;
 		}

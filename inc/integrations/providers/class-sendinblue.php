@@ -133,7 +133,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 				$res->set_is_credential_error( $this->is_credential_error( $body['code'] ) );
 			}
 
-			if ( ! empty( $body['message'] ) && str_contains( $body['message'], 'already' ) ) {
+			if ( ! empty( $body['message'] ) && ( strpos( $body['message'], 'already' ) !== false ) ) {
 				$res->set_code( Form_Data_Response::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED );
 			} else {
 				$res->set_code( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
@@ -186,7 +186,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	public static function validate_api_key( $api_key ) {
-		if ( ! isset( $api_key ) || '' === $api_key ) {
+		if ( '' === $api_key ) {
 			return array(
 				'valid'  => false,
 				'reason' => __( 'API Key is missing!', 'otter-blocks' ),

@@ -22,14 +22,14 @@ class Dashboard_Server {
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Dashboard_Server
+	 * @var string
 	 */
 	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
 	 *
-	 * @var Dashboard_Server
+	 * @var string
 	 */
 	public $version = 'v1';
 

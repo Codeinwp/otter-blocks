@@ -432,7 +432,6 @@ class Options_Settings {
 	/**
 	 * Register post meta.
 	 *
-	 * @return mixed
 	 * @since  1.7.0
 	 * @access public
 	 * @link   https://developer.wordpress.org/reference/functions/register_meta/

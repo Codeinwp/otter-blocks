@@ -400,8 +400,7 @@ class CSS_Utility {
 	 * @return string
 	 */
 	public static function render_box( $box ) {
-
-		if ( ! isset( $box ) || ! is_array( $box ) || count( $box ) === 0 ) {
+		if ( ! is_array( $box ) || count( $box ) === 0 ) {
 			return '';
 		}
 

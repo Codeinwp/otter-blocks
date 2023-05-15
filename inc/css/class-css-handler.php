@@ -138,7 +138,7 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * Get CSS url for post.
 	 *
-	 * @param int/string $type Post ID or Widget.
+	 * @param int|string $type Post ID or Widget.
 	 *
 	 * @return string File url.
 	 */
@@ -164,7 +164,7 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * Check if we have a CSS file for this post.
 	 *
-	 * @param int/string $type Post ID or Widget.
+	 * @param int|string $type Post ID or Widget.
 	 *
 	 * @return bool
 	 */
@@ -217,7 +217,6 @@ class CSS_Handler extends Base_CSS {
 	 * @param int    $post_id Post id.
 	 * @param string $css CSS string.
 	 *
-	 * @return bool
 	 * @since   1.3.0
 	 * @access  public
 	 */
@@ -273,8 +272,6 @@ class CSS_Handler extends Base_CSS {
 				update_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', $file_name );
 			}
 		}
-
-		return true;
 	}
 
 	/**
@@ -282,7 +279,6 @@ class CSS_Handler extends Base_CSS {
 	 *
 	 * @param int $post_id Post id.
 	 *
-	 * @return bool
 	 * @since   1.3.0
 	 * @access  public
 	 */
@@ -317,14 +313,11 @@ class CSS_Handler extends Base_CSS {
 		}
 
 		$wp_filesystem->delete( $file_path, true );
-
-		return true;
 	}
 
 	/**
 	 * Function to save/resave widget styles.
 	 *
-	 * @return  bool
 	 * @since   1.7.0
 	 * @access  public
 	 */
@@ -391,8 +384,6 @@ class CSS_Handler extends Base_CSS {
 				update_option( 'themeisle_blocks_widgets_css_file', $file_name );
 			}
 		}
-
-		return true;
 	}
 
 	/**

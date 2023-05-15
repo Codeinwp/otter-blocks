@@ -24,14 +24,14 @@ class Dynamic_Content_Server {
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Dynamic_Content_Server
+	 * @var string
 	 */
 	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
 	 *
-	 * @var Dynamic_Content_Server
+	 * @var string
 	 */
 	public $version = 'v1';
 
@@ -153,7 +153,7 @@ class Dynamic_Content_Server {
 	 *
 	 * Get dynamic image from WordPress.
 	 *
-	 * @param mixed $request Request arguments.
+	 * @param \WP_REST_Request $request Request arguments.
 	 *
 	 * @return mixed|\WP_REST_Response
 	 */

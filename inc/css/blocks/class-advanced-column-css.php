@@ -1027,7 +1027,7 @@ class Advanced_Column_CSS extends Base_CSS {
 	 * A port of array.some for PHP.
 	 *
 	 * @param array    $array Haystack.
-	 * @param callback $fn Callback function.
+	 * @param callable $fn Callback function.
 	 * @return boolean
 	 * @since   2.0.0
 	 * @access  public

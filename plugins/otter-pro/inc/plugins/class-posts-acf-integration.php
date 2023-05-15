@@ -57,7 +57,7 @@ class Posts_ACF_Integration {
 
 		if ( ( ! isset( $custom_meta_field['display'] ) || true === $custom_meta_field['display'] ) && isset( $custom_meta_field['field'] ) && function_exists( 'get_field_object' ) ) {
 			$field = get_field_object( $custom_meta_field['field'], $id );
-			if ( isset( $field ) ) {
+			if ( false !== $field ) {
 				$data .= '<div class="o-posts-custom-field">';
 				if ( isset( $field['prepend'] ) ) {
 					$data .= esc_html( $field['prepend'] );

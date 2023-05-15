@@ -551,7 +551,7 @@ class Dynamic_Content {
 			$result[ $key ]     = $val;
 		}
 
-		return empty( $result ) ? false : $result;
+		return $result;
 	}
 
 	/**

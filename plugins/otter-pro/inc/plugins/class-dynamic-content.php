@@ -410,7 +410,7 @@ class Dynamic_Content {
 	 * Evaluate dynamic media content
 	 *
 	 * @param string $path Current image path.
-	 * @param array  $request Request data.
+	 * @param \WP_REST_Request  $request Request data.
 	 *
 	 * @since 2.0.9
 	 * @return string

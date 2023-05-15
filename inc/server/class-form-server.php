@@ -39,7 +39,7 @@ class Form_Server {
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Form_Server
+	 * @var string
 	 * @since 2.0.0
 	 */
 	public $namespace = 'otter/';
@@ -47,7 +47,7 @@ class Form_Server {
 	/**
 	 * Rest route version.
 	 *
-	 * @var Form_Server
+	 * @var string
 	 * @since 2.0.0
 	 */
 	public $version = 'v1';
@@ -639,7 +639,6 @@ class Form_Server {
 	 * @access public
 	 * @param Form_Data_Request $form_data Data from the request.
 	 *
-	 * @return string
 	 * @since 2.0.0
 	 */
 	public function check_form_conditions( $form_data ) {

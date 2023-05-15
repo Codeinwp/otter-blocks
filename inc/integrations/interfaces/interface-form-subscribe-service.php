@@ -17,7 +17,7 @@ interface FormSubscribeServiceInterface {
 	/**
 	 * Add the email to a contact list.
 	 *
-	 * @param strring $email The email.
+	 * @param string $email The email.
 	 * @return mixed
 	 * @since 2.0.3
 	 */

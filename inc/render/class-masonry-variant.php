@@ -22,14 +22,14 @@ class Masonry_Variant {
 	 * Initialize the class
 	 */
 	public function init() {
-		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 3 );
+		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 2 );
 	}
 
 	/**
 	 * Block render function for server-side.
 	 *
-	 * @param array $block_content Blocks content.
-	 * @param array $block Blocks data.
+	 * @param string $block_content Blocks content.
+	 * @param array  $block Blocks data.
 	 * @return mixed|string
 	 */
 	public function render_blocks( $block_content, $block ) {

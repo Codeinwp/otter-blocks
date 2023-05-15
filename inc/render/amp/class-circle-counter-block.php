@@ -22,7 +22,7 @@ class Circle_Counter_Block {
 	 * Initialize the class
 	 */
 	public function init() {
-		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 3 );
+		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 2 );
 	}
 
 	/**

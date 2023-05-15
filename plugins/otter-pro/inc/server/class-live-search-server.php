@@ -28,7 +28,7 @@ class Live_Search_Server {
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Live_Search_Server
+	 * @var string
 	 * @since 2.0.0
 	 */
 	public $namespace = 'otter/';
@@ -36,7 +36,7 @@ class Live_Search_Server {
 	/**
 	 * Rest route version.
 	 *
-	 * @var Live_Search_Server
+	 * @var string
 	 * @since 2.0.0
 	 */
 	public $version = 'v1';
@@ -71,7 +71,6 @@ class Live_Search_Server {
 	 * Parse the custom query vars.
 	 *
 	 * @param WP_Query $query WP Query object.
-	 * @return WP_Query
 	 */
 	public function parse_query( $query ) {
 		if ( get_query_var( 'o_post_type' ) ) {

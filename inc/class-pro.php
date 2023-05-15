@@ -412,7 +412,7 @@ class Pro {
 	 *
 	 * @static
 	 *
-	 * @return  GutenbergBlocks
+	 * @return  Pro
 	 * @since   2.0.3
 	 * @access  public
 	 */
