@@ -4,7 +4,6 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	isNumber,
 	isObject,
 	isUndefined,
 	pickBy
@@ -42,6 +41,7 @@ import {
 import Layout from './components/layout/index.js';
 import {
 	_align,
+	_px,
 	boxValues,
 	getCustomPostTypeSlugs,
 	hex2rgba
@@ -54,18 +54,6 @@ import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 
 const { attributes: defaultAttributes } = metadata;
-
-const px = value => value ? `${ value }px` : value;
-
-const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
-
-const mightBeBoxed = value => {
-	if ( isObject( value ) ) {
-		return boxValues( value );
-	}
-
-	return mightBeUnit( value );
-};
 
 /**
  * Posts component
@@ -141,9 +129,9 @@ const Edit = ({
 	const boxShadow = getValue( 'boxShadow' );
 
 	const inlineStyles = {
-		'--img-border-radius': mightBeBoxed( attributes.borderRadius ),
+		'--img-border-radius': isObject( attributes.borderRadius ) ? boxValues( attributes.borderRadius ) : _px( attributes.borderRadius ),
 		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hex2rgba( imageBoxShadow.color, imageBoxShadow.colorOpacity ) }`,
-		'--border-width': mightBeUnit( attributes.borderWidth ),
+		'--border-width': _px( attributes.borderWidth ),
 		'--border-radius': boxValues( attributes.cardBorderRadius ),
 		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hex2rgba( boxShadow.color, boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
@@ -152,15 +140,15 @@ const Edit = ({
 		'--background-color': attributes.backgroundColor,
 		'--border-color': attributes.borderColor,
 		'--content-gap': attributes.contentGap,
-		'--img-width': responsiveGetAttributes([ mightBeUnit( attributes.imageWidth ), attributes.imageWidthTablet, attributes.imageWidthMobile ]),
+		'--img-width': responsiveGetAttributes([ _px( attributes.imageWidth ), attributes.imageWidthTablet, attributes.imageWidthMobile ]),
 		'--img-width-tablet': attributes.imageWidthTablet,
 		'--img-width-mobile': attributes.imageWidthMobile,
-		'--title-text-size': responsiveGetAttributes([ mightBeUnit( attributes.customTitleFontSize ), mightBeUnit( attributes.customTitleFontSizeTablet ), mightBeUnit( attributes.customTitleFontSizeTablet ) ]),
-		'--title-text-size-tablet': mightBeUnit( attributes.customTitleFontSizeTablet ),
-		'--title-text-size-mobile': mightBeUnit( attributes.customTitleFontSizeMobile ),
-		'--description-text-size': responsiveGetAttributes([ mightBeUnit( attributes.customDescriptionFontSize ), mightBeUnit( attributes.customDescriptionFontSizeTablet ), mightBeUnit( attributes.customDescriptionFontSizeMobile ) ]),
-		'--description-text-size-tablet': mightBeUnit( attributes.customDescriptionFontSizeTablet ),
-		'--description-text-size-mobile': mightBeUnit( attributes.customDescriptionFontSizeMobile ),
+		'--title-text-size': responsiveGetAttributes([ _px( attributes.customTitleFontSize ), _px( attributes.customTitleFontSizeTablet ), _px( attributes.customTitleFontSizeTablet ) ]),
+		'--title-text-size-tablet': _px( attributes.customTitleFontSizeTablet ),
+		'--title-text-size-mobile': _px( attributes.customTitleFontSizeMobile ),
+		'--description-text-size': responsiveGetAttributes([ _px( attributes.customDescriptionFontSize ), _px( attributes.customDescriptionFontSizeTablet ), _px( attributes.customDescriptionFontSizeMobile ) ]),
+		'--description-text-size-tablet': _px( attributes.customDescriptionFontSizeTablet ),
+		'--description-text-size-mobile': _px( attributes.customDescriptionFontSizeMobile ),
 		'--meta-text-size': responsiveGetAttributes([ attributes.customMetaFontSize, attributes.customMetaFontSizeTablet, attributes.customMetaFontSizeMobile ]),
 		'--meta-text-size-tablet': attributes.customMetaFontSizeTablet,
 		'--meta-text-size-mobile': attributes.customMetaFontSizeMobile,
