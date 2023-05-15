@@ -514,6 +514,9 @@ class Registration {
 						'already-registered' => __( 'The email was already registered!', 'otter-blocks' ),
 						'try-again'          => __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' ),
 						'privacy'            => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
+						'too-many-files'     => __( 'Too many files loaded. Maximum is: ', 'otter-blocks' ),
+						'big-file'           => __( 'File size is to big. The limit is: ', 'otter-blocks' ),
+						'invalid-file'       => __( 'Invalid files type. The submitted files could not be processed.', 'otter-blocks' ),
 					),
 				)
 			);
@@ -687,15 +690,16 @@ class Registration {
 	 */
 	public function register_blocks() {
 		$dynamic_blocks = array(
-			'about-author'    => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'form-nonce'      => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'google-map'      => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'leaflet-map'     => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'plugin-cards'    => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'posts-grid'      => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-			'review'          => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-			'sharing-icons'   => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
-			'stripe-checkout' => '\ThemeIsle\GutenbergBlocks\Render\Stripe_Checkout_Block',
+			'about-author'         => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'form-nonce'           => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'google-map'           => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'leaflet-map'          => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'plugin-cards'         => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'posts-grid'           => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+			'review'               => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+			'sharing-icons'        => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+			'stripe-checkout'      => '\ThemeIsle\GutenbergBlocks\Render\Stripe_Checkout_Block',
+			'form-multiple-choice' => '\ThemeIsle\GutenbergBlocks\Render\Form_Multiple_Choice_Block',
 		);
 
 		$dynamic_blocks = apply_filters( 'otter_blocks_register_dynamic_blocks', $dynamic_blocks );
@@ -717,6 +721,7 @@ class Registration {
 			'form-input',
 			'form-nonce',
 			'form-textarea',
+			'form-multiple-choice',
 			'google-map',
 			'icon-list',
 			'icon-list-item',

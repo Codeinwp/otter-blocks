@@ -15,7 +15,9 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
-import { FieldInputWidth } from '../common';
+import { FieldInputWidth, fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
+import { useContext } from '@wordpress/element';
+import { FormContext } from '../edit';
 
 /**
  *
@@ -25,9 +27,13 @@ import { FieldInputWidth } from '../common';
 const Inspector = ({
 	attributes,
 	setAttributes,
-	selectParent,
-	switchToTextarea
+	clientId
 }) => {
+
+	const {
+		selectForm
+	} = useContext( FormContext );
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -36,7 +42,7 @@ const Inspector = ({
 				<Button
 					isSecondary
 					variant="secondary"
-					onClick={ () => selectParent?.() }
+					onClick={ () => selectForm?.() }
 				>
 					{ __( 'Back to the Form', 'otter-blocks' ) }
 				</Button>
@@ -44,33 +50,13 @@ const Inspector = ({
 				<SelectControl
 					label={ __( 'Field Type', 'otter-blocks' ) }
 					value={ attributes.type }
-					options={ [
-						{
-							label: __( 'Text', 'otter-blocks' ),
-							value: 'text'
-						},
-						{
-							label: __( 'Email', 'otter-blocks' ),
-							value: 'email'
-						},
-						{
-							label: __( 'Date', 'otter-blocks' ),
-							value: 'date'
-						},
-						{
-							label: __( 'Number', 'otter-blocks' ),
-							value: 'number'
-						},
-						{
-							label: __( 'Textarea', 'otter-blocks' ),
-							value: 'textarea'
-						}
-					] }
+					options={ fieldTypesOptions() }
 					onChange={ type => {
-						if ( 'textarea' === type ) {
-							switchToTextarea?.();
+						if ( 'textarea' === type || 'radio' === type || 'checkbox' === type || 'select' === type || 'file' === type ) {
+							switchFormFieldTo( type, clientId, attributes );
 							return;
 						}
+
 						setAttributes({ type });
 					}}
 				/>
@@ -81,13 +67,19 @@ const Inspector = ({
 					onChange={ label => setAttributes({ label }) }
 				/>
 
+				<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
+
 				<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
 
-				<TextControl
-					label={ __( 'Placeholder', 'otter-blocks' ) }
-					value={ attributes.placeholder }
-					onChange={ placeholder => setAttributes({ placeholder }) }
-				/>
+				{
+					( 'date' !== attributes.type || undefined === attributes.type ) && (
+						<TextControl
+							label={ __( 'Placeholder', 'otter-blocks' ) }
+							value={ attributes.placeholder }
+							onChange={ placeholder => setAttributes({ placeholder }) }
+						/>
+					)
+				}
 
 				<TextControl
 					label={ __( 'Help Text', 'otter-blocks' ) }

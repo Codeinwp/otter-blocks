@@ -103,6 +103,7 @@ class Main {
 			'product-title',
 			'product-upsells',
 			'review-comparison',
+			'form-file',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
@@ -133,6 +134,7 @@ class Main {
 			'product-title'             => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Title_Block',
 			'product-upsells'           => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Upsells_Block',
 			'review-comparison'         => '\ThemeIsle\OtterPro\Render\Review_Comparison_Block',
+			'form-file'                 => '\ThemeIsle\OtterPro\Render\Form_File_Block',
 		);
 
 		$dynamic_blocks = array_merge( $dynamic_blocks, $blocks );
@@ -153,6 +155,7 @@ class Main {
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_Item_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Review_Comparison_CSS',
+			'\ThemeIsle\OtterPro\CSS\Blocks\Form_File_CSS',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );

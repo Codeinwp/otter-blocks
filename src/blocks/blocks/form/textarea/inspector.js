@@ -12,14 +12,20 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
-import { FieldInputWidth } from '../common';
+import { FieldInputWidth, fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
+import { FormContext } from '../edit';
+import { useContext } from '@wordpress/element';
 
 const Inspector = ({
 	attributes,
 	setAttributes,
-	selectParent,
-	switchToInput
+	clientId
 }) => {
+
+	const {
+		selectForm
+	} = useContext( FormContext );
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -28,7 +34,7 @@ const Inspector = ({
 				<Button
 					isSecondary
 					variant="secondary"
-					onClick={ () => selectParent?.() }
+					onClick={ () => selectForm?.() }
 				>
 					{ __( 'Back to the Form', 'otter-blocks' ) }
 				</Button>
@@ -36,33 +42,12 @@ const Inspector = ({
 				<SelectControl
 					label={ __( 'Field Type', 'otter-blocks' ) }
 					value={ 'textarea' }
-					options={ [
-						{
-							label: __( 'Text', 'otter-blocks' ),
-							value: 'text'
-						},
-						{
-							label: __( 'Email', 'otter-blocks' ),
-							value: 'email'
-						},
-						{
-							label: __( 'Date', 'otter-blocks' ),
-							value: 'date'
-						},
-						{
-							label: __( 'Number', 'otter-blocks' ),
-							value: 'number'
-						},
-						{
-							label: __( 'Textarea', 'otter-blocks' ),
-							value: 'textarea'
-						}
-					] }
+					options={ fieldTypesOptions() }
 					onChange={ type => {
 						if ( 'textarea' === type ) {
 							return;
 						}
-						switchToInput( type );
+						switchFormFieldTo( type, clientId, attributes );
 					}}
 				/>
 
@@ -71,6 +56,8 @@ const Inspector = ({
 					value={ attributes.label }
 					onChange={ label => setAttributes({ label }) }
 				/>
+
+				<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
 
 				<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
 

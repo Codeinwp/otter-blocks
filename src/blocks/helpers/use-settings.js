@@ -56,7 +56,7 @@ const useSettings = () => {
 		return settings?.[option];
 	};
 
-	const updateOption = ( option, value, success = __( 'Settings saved.', 'otter-blocks' ) ) => {
+	const updateOption = ( option, value, success = __( 'Settings saved.', 'otter-blocks' ), noticeId = undefined ) => {
 		setStatus( 'saving' );
 
 		const save = new api.models.Settings({ [option]: value }).save();
@@ -70,7 +70,8 @@ const useSettings = () => {
 					success,
 					{
 						isDismissible: true,
-						type: 'snackbar'
+						type: 'snackbar',
+						id: noticeId
 					}
 				);
 			}
@@ -83,7 +84,8 @@ const useSettings = () => {
 					__( 'An unknown error occurred.', 'otter-blocks' ),
 					{
 						isDismissible: true,
-						type: 'snackbar'
+						type: 'snackbar',
+						id: noticeId
 					}
 				);
 			}
@@ -99,7 +101,8 @@ const useSettings = () => {
 				response.responseJSON.message ? response.responseJSON.message : __( 'An unknown error occurred.', 'otter-blocks' ),
 				{
 					isDismissible: true,
-					type: 'snackbar'
+					type: 'snackbar',
+					id: noticeId
 				}
 			);
 		});

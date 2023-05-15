@@ -18,11 +18,6 @@ const Inspector = ({
 	setAttributes,
 	selectParent
 }) => {
-	const onTitleChange = ( value ) => {
-		setAttributes({
-			title: '' === value ? undefined : value
-		});
-	};
 
 	return (
 		<InspectorControls>
@@ -40,7 +35,7 @@ const Inspector = ({
 					type="text"
 					label={ __( 'Title', 'otter-blocks' ) }
 					placeholder={ __( 'Insert a title', 'otter-blocks' ) }
-					onChange={ onTitleChange }
+					onChange={ ( value ) => setAttributes({ title: '' === value ? undefined : value })}
 					value={ attributes.title }
 				/>
 			</PanelBody>
