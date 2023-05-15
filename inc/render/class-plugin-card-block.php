@@ -161,7 +161,7 @@ class Plugin_Card_Block {
 	 * @return mixed|string
 	 */
 	protected function get_ratings( $rating ) {
-		$rating      = round( ( int ) $rating / 10, 0 ) / 2;
+		$rating      = round( (int) $rating / 10, 0 ) / 2;
 		$full_stars  = floor( $rating );
 		$half_stars  = ceil( $rating - $full_stars );
 		$empty_stars = 5 - $full_stars - $half_stars;
