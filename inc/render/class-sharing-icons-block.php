@@ -37,67 +37,67 @@ class Sharing_Icons_Block {
 		$social_attributes = array(
 			'facebook'  => array(
 				'label' => esc_html__( 'Facebook', 'otter-blocks' ),
-				'icon'  => 'facebook-f',
+				'icon'  => 'fab fa-facebook-f',
 				'url'   => 'https://www.facebook.com/sharer/sharer.php?u=' . esc_url( $current_url ) . '&title=' . esc_attr( $title ),
 			),
 
 			'twitter'   => array(
 				'label' => esc_html__( 'Twitter', 'otter-blocks' ),
-				'icon'  => 'twitter',
+				'icon'  => 'fab fa-twitter',
 				'url'   => 'http://twitter.com/share?url=' . esc_url( $current_url ) . '&text=' . esc_attr( $title ),
 			),
 
 			'linkedin'  => array(
 				'label' => esc_html__( 'Linkedin', 'otter-blocks' ),
-				'icon'  => 'linkedin-in',
+				'icon'  => 'fab fa-linkedin-in',
 				'url'   => 'https://www.linkedin.com/shareArticle?mini=true&url=' . esc_url( $current_url ) . '&title=' . esc_attr( $title ),
 			),
 
 			'pinterest' => array(
 				'label' => esc_html__( 'Pinterest', 'otter-blocks' ),
-				'icon'  => 'pinterest-p',
+				'icon'  => 'fab fa-pinterest-p',
 				'url'   => 'https://pinterest.com/pin/create/button/?url=' . esc_url( $current_url ) . '&description=' . esc_attr( $title ),
 			),
 
 			'tumblr'    => array(
 				'label' => esc_html__( 'Tumblr', 'otter-blocks' ),
-				'icon'  => 'tumblr',
+				'icon'  => 'fab fa-tumblr',
 				'url'   => 'https://tumblr.com/share/link?url=' . esc_url( $current_url ) . '&name=' . esc_attr( $title ),
 			),
 
 			'reddit'    => array(
 				'label' => esc_html__( 'Reddit', 'otter-blocks' ),
-				'icon'  => 'reddit-alien',
+				'icon'  => 'fab fa-reddit-alien',
 				'url'   => 'https://www.reddit.com/submit?url=' . esc_url( $current_url ),
 			),
 
 			'whatsapp'  => array(
 				'label' => esc_html__( 'WhatsApp', 'otter-blocks' ),
-				'icon'  => 'whatsapp',
+				'icon'  => 'fab fa-whatsapp',
 				'url'   => 'https://api.whatsapp.com/send?text=' . esc_url( $current_url ),
 			),
 
 			'email'     => array(
 				'label' => esc_html__( 'Email', 'otter-blocks' ),
-				'icon'  => 'envelope',
+				'icon'  => 'fa fa-envelope',
 				'url'   => 'mailto:?subject=' . esc_attr( $title ) . '&body=' . esc_url( $current_url ),
 			),
 
 			'telegram'  => array(
 				'label' => esc_html__( 'Telegram', 'otter-blocks' ),
-				'icon'  => 'telegram-plane',
+				'icon'  => 'fab fa-telegram-plane',
 				'url'   => 'https://telegram.me/share/url?url=' . esc_url( $current_url ) . '&text=' . esc_attr( $title ),
 			),
 
 			'mastodon'  => array(
 				'label' => esc_html__( 'Mastodon', 'otter-blocks' ),
-				'icon'  => 'mastodon',
+				'icon'  => 'fab fa-mastodon',
 				'url'   => 'https://mastodonshare.com/?text=' . esc_url( $current_url ),
 			),
 
 			'comments'  => array(
 				'label' => esc_html__( 'Comments', 'otter-blocks' ),
-				'icon'  => 'comments',
+				'icon'  => 'fa fa-comments-o',
 				'url'   => get_comments_link(),
 			),
 		);
@@ -140,7 +140,7 @@ class Sharing_Icons_Block {
 		foreach ( $social_attributes as $key => $icon ) {
 			if ( 'className' !== $key && $this->is_active( $attributes[ $key ] ) ) {
 				$html .= '<a class="social-icon is-' . esc_html( $key ) . '" href="' . esc_url( $icon['url'] ) . '" target="_blank">';
-				$html .= '<i class="fab fa-' . esc_html( $icon['icon'] ) . '"></i><span class="v-line"></span>';
+				$html .= '<i class="' . esc_html( $icon['icon'] ) . '"></i><span class="v-line"></span>';
 				if ( strpos( $wrapper_attributes, 'is-style-icons' ) === false ) {
 					$html .= esc_html( $icon['label'] );
 				}
