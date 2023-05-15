@@ -197,6 +197,10 @@ const Edit = ({
 							{
 								label: __( 'Tags', 'otter-blocks' ),
 								value: 'tags'
+							},
+							{
+								label: __( 'Taxonomies', 'otter-blocks' ),
+								value: 'taxonomies'
 							}
 						] }
 						onChange={ termType => changeAttributes({ termType }) }

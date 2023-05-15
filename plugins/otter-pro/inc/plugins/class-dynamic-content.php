@@ -174,6 +174,21 @@ class Dynamic_Content {
 
 		if ( isset( $data['termType'] ) && 'tags' === $data['termType'] ) {
 			$terms = get_the_tag_list( '', $separator, '', $data['context'] );
+		} elseif ( isset( $data['termType'] ) && 'taxonomies' === $data['termType'] ) {
+			$taxonomies = get_post_taxonomies( $data['context'] );
+			$taxonomies = array_diff( $taxonomies, array( 'category', 'post_tag' ) );
+			
+			$result = array();
+
+			foreach ( $taxonomies as $taxonomy ) {
+				$term = get_the_term_list( $data['context'], $taxonomy, '', $separator, '' );
+
+				if ( ! empty( $term ) ) {
+					$result[] = $term;
+				}
+			}
+
+			$terms = implode( $separator, $result );
 		} else {
 			$terms = get_the_category_list( $separator, '', $data['context'] );
 		}
