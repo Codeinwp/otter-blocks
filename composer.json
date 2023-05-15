@@ -27,7 +27,7 @@
 	"scripts": {
 		"lint": "phpcs",
 		"format": "phpcbf",
-		"phpstan": "phpstan analyse --memory-limit 1024M"
+		"phpstan": "phpstan analyse"
 	},
 	"prefer-stable": true,
 	"config": {
