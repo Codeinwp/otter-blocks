@@ -368,28 +368,7 @@ class Registration {
 		$content = '';
 
 		if ( 'widgets' === $post ) {
-			global $wp_registered_widgets;
-			$valid_widgets = array();
-			$widget_data   = get_option( 'widget_block' );
-
-			// Loop through all widgets, and add any that are active.
-			foreach ( $wp_registered_widgets as $widget_name => $widget ) {
-				// Get the active sidebar the widget is located in.
-				$sidebar = is_active_widget( $widget['callback'], $widget['id'], false, false );
-				
-				if ( $sidebar && 'wp_inactive_widgets' !== $sidebar ) {
-					$key             = $widget['params'][0]['number'];
-					$valid_widgets[] = (object) $widget_data[ $key ];
-				}
-			}
-		
-			foreach ( $valid_widgets as $widget ) {
-				if ( isset( $widget->content ) ) {
-					$content .= $widget->content;
-				}
-			}
-
-			$post = $content;
+			$post = self::get_active_widgets_content();
 		} elseif ( 'block-templates' === $post ) {
 			global $_wp_current_template_content;
 
@@ -976,6 +955,37 @@ class Registration {
 	 */
 	public static function sticky_style() {
 		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
+	}
+
+	/**
+	 * Get the content of all active widgets.
+	 *
+	 * @return string
+	 */
+	public static function get_active_widgets_content() {
+		global $wp_registered_widgets;
+		$content       = '';
+		$valid_widgets = array();
+		$widget_data   = get_option( 'widget_block', array() );
+
+		// Loop through all widgets, and add any that are active.
+		foreach ( $wp_registered_widgets as $widget_name => $widget ) {
+			// Get the active sidebar the widget is located in.
+			$sidebar = is_active_widget( $widget['callback'], $widget['id'] );
+
+			if ( $sidebar && 'wp_inactive_widgets' !== $sidebar ) {
+				$key             = $widget['params'][0]['number'];
+				$valid_widgets[] = (object) $widget_data[ $key ];
+			}
+		}
+
+		foreach ( $valid_widgets as $widget ) {
+			if ( isset( $widget->content ) ) {
+				$content .= $widget->content;
+			}
+		}
+
+		return $content;
 	}
 
 	/**
