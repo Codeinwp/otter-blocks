@@ -458,14 +458,23 @@ class CSS_Handler extends Base_CSS {
 			return;
 		}
 
-		$content = get_the_content( '', false, $post_id );
+		$content     = get_the_content( '', false, $post_id );
+		$saved_value = boolval( get_post_meta( $post_id, '_themeisle_gutenberg_block_has_review', true ) );
 
 		if ( empty( $content ) ) {
+
+			if ( true === $saved_value ) {
+				delete_post_meta( $post_id, '_themeisle_gutenberg_block_has_review' );
+			}
+
 			return;
 		}
 
 		$has_review = false !== strpos( $content, '<!-- wp:themeisle-blocks/review' );
-		update_post_meta( $post_id, '_themeisle_gutenberg_block_has_review', $has_review );
+
+		if ( $has_review !== $saved_value ) {
+			update_post_meta( $post_id, '_themeisle_gutenberg_block_has_review', $has_review );
+		}
 	}
 
 	/**
