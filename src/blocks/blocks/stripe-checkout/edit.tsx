@@ -13,6 +13,7 @@ import { useBlockProps } from '@wordpress/block-editor';
 import {
 	Button,
 	ExternalLink,
+	Notice,
 	Placeholder,
 	SelectControl,
 	Spinner,
@@ -186,7 +187,6 @@ const Edit = ({
 				<Placeholder
 					icon={ store }
 					label={ __( 'Stripe Checkout', 'otter-blocks' ) }
-					instructions={ ( hasProductsRequestFailed && productsError?.message ) || ( hasPricesRequestFailed && pricesError?.message ) || ( hasPricesRequestFailed && pricesError?.message ) }
 				>
 					{
 						( 'loading' === status || 'saving' === status ) && (
@@ -195,6 +195,20 @@ const Edit = ({
 								{ __( 'Checking the API Key...', 'otter-blocks' ) }
 								<br /><br />
 							</Fragment>
+						)
+					}
+
+					{
+						( ( hasProductsRequestFailed || hasPricesRequestFailed ) && ! ( 'loading' === status || 'saving' === status ) ) && (
+							<div style={{ width: '100%', marginLeft: '-15px', marginBottom: '10px' }}>
+								<Notice
+									status='error'
+								>
+									{
+										( hasProductsRequestFailed && productsError?.message ) || ( hasPricesRequestFailed && pricesError?.message )
+									}
+								</Notice>
+							</div>
 						)
 					}
 

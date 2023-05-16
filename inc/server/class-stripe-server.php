@@ -36,13 +36,6 @@ class Stripe_Server {
 	public $version = 'v1';
 
 	/**
-	 * Stripe Object.
-	 *
-	 * @var Stripe_Server
-	 */
-	public $stripe = '';
-
-	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -105,8 +98,7 @@ class Stripe_Server {
 	 * @access  public
 	 */
 	public function get_products( \WP_REST_Request $request ) {
-		$this->stripe = new Stripe_API();
-		return $this->stripe->create_request(
+		return ( new Stripe_API() )->create_request(
 			'products',
 			array(
 				'active' => true,
@@ -124,8 +116,7 @@ class Stripe_Server {
 	 * @access  public
 	 */
 	public function get_price( \WP_REST_Request $request ) {
-		$this->stripe = new Stripe_API();
-		return $this->stripe->create_request(
+		return ( new Stripe_API() )->create_request(
 			'prices',
 			array(
 				'active'  => true,
