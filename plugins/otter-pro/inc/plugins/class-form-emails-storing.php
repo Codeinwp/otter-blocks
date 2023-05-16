@@ -170,14 +170,10 @@ class Form_Emails_Storing {
 	public function store_form_record( $form_data ) {
 		$email = Form_Server::instance()->get_email_from_form_input( $form_data );
 
-		if ( ! $email ) {
-			return;
-		}
-
 		$post_id = wp_insert_post(
 			array(
 				'post_type'   => self::FORM_RECORD_TYPE,
-				'post_title'  => $email,
+				'post_title'  => ! empty( $email ) ? $email : __( 'New submission', 'otter-blocks' ),
 				'post_status' => 'unread',
 			)
 		);
@@ -198,6 +194,10 @@ class Form_Emails_Storing {
 			'post_url' => array(
 				'label' => 'Post URL',
 				'value' => $form_data->get_payload_field( 'postUrl' ),
+			),
+			'post_id' => array(
+				'label' => 'Post ID',
+				'value' => $form_data->get_payload_field( 'postId' ),
 			),
 		);
 
@@ -500,18 +500,27 @@ class Form_Emails_Storing {
 				);
 				break;
 			case 'post_url':
-				if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
-					$source_post = wpcom_vip_url_to_postid( $meta['post_url']['value'] );
+				// If the post ID is set, use that to get the title and URL for better accuracy.
+				if ( ! empty( $meta['post_id'] ) ) {
+					$source_post = $meta['post_id']['value'] !== '0' ? $meta['post_id']['value'] : get_option( 'page_for_posts' );
+					$title       = get_the_title( $source_post );
+					$url         = get_permalink( $source_post );
 				} else {
-					$source_post = url_to_postid( $meta['post_url']['value'] ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
-				}
+					if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
+						$source_post = wpcom_vip_url_to_postid( $meta['post_url']['value'] );
+					} else {
+						$source_post = url_to_postid( $meta['post_url']['value'] ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
+					}
 
-				$title = $source_post ? get_the_title( $source_post ) : $meta['post_url']['value'];
+					$source_post = $source_post !== 0 ? $source_post : get_option( 'page_for_posts' );
+					$title       = $source_post ? get_the_title( $source_post ) : $meta['post_url']['value'];
+					$url         = $meta['post_url']['value'];
+				}
 
 				$this->format_based_on_status(
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
-						esc_url( $meta['post_url']['value'] ),
+						esc_url( $url ),
 						esc_html( $title )
 					),
 					get_post_status( $post_id )

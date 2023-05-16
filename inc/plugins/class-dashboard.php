@@ -235,14 +235,34 @@ class Dashboard {
 			#screen-options-link-wrap {
 				display: none;
 			}
+
+			.otter-banner {
+				display: flex;
+				background: #fff;
+				padding: 10px 20px;
+				margin-left: -20px
+			}
+
+			.otter-banner__content {
+				display: flex;
+				justify-content: space-between;
+				flex-wrap: wrap;
+				align-content: center;
+				width: 100%;
+				margin-left: 10px
+			}
+
+			.otter-banner__version {
+				align-self: center;
+			}
 		</style>
-		<div class="otter-banner" style="display: flex; background: #fff; padding: 10px 20px; margin-left: -20px">
+		<div class="otter-banner">
 			<div class="otter-banner__image">
 				<img src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ); ?>" alt="<?php esc_attr_e( 'Otter Blocks', 'otter-blocks' ); ?>" style="width: 90px">
 			</div>
-			<div class="otter-banner__content" style="display: flex; justify-content: space-between; flex-wrap: wrap; align-content: center; width: 100%; margin-left: 10px">
+			<div class="otter-banner__content">
 				<h1 class="otter-banner__title"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
-				<span class="otter-banner__version" style="align-self: center"><?php echo esc_html( 'v' . OTTER_BLOCKS_VERSION ); ?></span>
+				<span class="otter-banner__version"><?php echo esc_html( 'v' . OTTER_BLOCKS_VERSION ); ?></span>
 			</div>
 		</div>
 		<?php
