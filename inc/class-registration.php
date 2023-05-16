@@ -384,8 +384,8 @@ class Registration {
 			}
 		
 			foreach ( $valid_widgets as $widget ) {
-				if ( is_array( $widget ) && isset( $widget['content'] ) ) {
-					$content .= $widget['content'];
+				if ( isset( $widget->content ) ) {
+					$content .= $widget->content;
 				}
 			}
 
