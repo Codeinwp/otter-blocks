@@ -47,7 +47,8 @@ export const format = {
 		termSeparator: 'data-term-separator',
 		metaKey: 'data-meta-key',
 		parameter: 'data-parameter',
-		format: 'data-format'
+		format: 'data-format',
+		taxonomy: 'data-taxonomy'
 	},
 	edit
 };

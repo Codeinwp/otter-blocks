@@ -174,21 +174,11 @@ class Dynamic_Content {
 
 		if ( isset( $data['termType'] ) && 'tags' === $data['termType'] ) {
 			$terms = get_the_tag_list( '', $separator, '', $data['context'] );
-		} elseif ( isset( $data['termType'] ) && 'taxonomies' === $data['termType'] ) {
-			$taxonomies = get_post_taxonomies( $data['context'] );
-			$taxonomies = array_diff( $taxonomies, array( 'category', 'post_tag' ) );
-			
-			$result = array();
-
-			foreach ( $taxonomies as $taxonomy ) {
-				$term = get_the_term_list( $data['context'], $taxonomy, '', $separator, '' );
-
-				if ( ! empty( $term ) ) {
-					$result[] = $term;
-				}
+		} elseif ( isset( $data['termType'] ) && 'custom' === $data['termType'] && isset( $data['taxonomy'] ) ) {
+			$taxonomy_terms = get_the_term_list( $data['context'], $data['taxonomy'], '', $separator, '' );
+			if ( ! empty( $taxonomy_terms ) && ! is_wp_error( $taxonomy_terms ) ) {
+				$terms = $taxonomy_terms;
 			}
-
-			$terms = implode( $separator, $result );
 		} else {
 			$terms = get_the_category_list( $separator, '', $data['context'] );
 		}
