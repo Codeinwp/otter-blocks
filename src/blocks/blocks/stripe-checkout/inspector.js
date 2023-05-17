@@ -12,6 +12,7 @@ import {
 	Placeholder,
 	SelectControl,
 	Spinner,
+	TextControl,
 	TextareaControl
 } from '@wordpress/components';
 
@@ -29,7 +30,11 @@ const Inspector = ({
 	isLoadingProducts,
 	productsList,
 	isLoadingPrices,
-	pricesList
+	pricesList,
+	apiKey,
+	setAPIKey,
+	saveApiKey,
+	status
 }) => {
 
 	const [ isOpen, setOpen ] = useState( false );
@@ -128,6 +133,31 @@ const Inspector = ({
 					onClick={() => setOpen( true )}
 				>
 					{ __( 'Open Editor', 'otter-blocks' ) }
+				</Button>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Global Settings', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<TextControl
+					label={ __( 'Change Stripe API Key', 'otter-blocks' ) }
+					type="text"
+					placeholder={ __( 'Type a new Stripe API Key', 'otter-blocks' ) }
+					value={ apiKey }
+					className="components-placeholder__input"
+					autoComplete='off'
+					onChange={ setAPIKey }
+					help={ __( 'Changing the API key effects all Stripe Checkout blocks. You will have to refresh the page after changing your API keys.', 'otter-blocks' ) }
+				/>
+
+				<Button
+					isSecondary
+					type="submit"
+					onClick={ saveApiKey }
+					isBusy={ 'loading' === status }
+				>
+					{ __( 'Save API Key', 'otter-blocks' ) }
 				</Button>
 			</PanelBody>
 		</InspectorControls>
