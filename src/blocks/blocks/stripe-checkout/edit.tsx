@@ -60,24 +60,16 @@ const Edit = ({
 }: StripeCheckoutProps ) => {
 
 	const [ getOption, updateOption, status ] = useSettings();
-	const hasValidApiKey = () => Boolean( getOption( 'themeisle_stripe_api_key' ) );
 	const [ canRetrieveProducts, setCanRetrieveProducts ] = useState( false );
 
 	useEffect( () => {
-		setCanRetrieveProducts( 'loaded' === status && hasValidApiKey() );
-	}, [ status ]);
+		if ( 'loaded' === status ) {
+			const apiKey = getOption( 'themeisle_stripe_api_key' );
+			setCanRetrieveProducts( 'loaded' === status && 0 < apiKey?.length );
+		}
+	}, [ status, getOption ]);
 
 	const { products, productsList, hasProductsRequestFailed, productsError, isLoadingProducts } = useSelect( select => {
-
-		if ( ! canRetrieveProducts  ) {
-			return {
-				products: [],
-				productsList: [],
-				hasProductsRequestFailed: false,
-				productsError: null,
-				isLoadingProducts: false
-			};
-		}
 
 		const {
 			getStripeProducts,
@@ -111,7 +103,7 @@ const Edit = ({
 			return {
 				prices: [],
 				pricesList: [],
-				hasPricesRequestFailed: false,
+				hasPricesRequestFailed: true,
 				pricesError: null,
 				isLoadingPrices: false
 			};
@@ -165,7 +157,7 @@ const Edit = ({
 		});
 	}, [ products, prices, attributes.price ]);
 
-	const showPlaceholder = ( isLoadingProducts || isLoadingPrices || hasProductsRequestFailed || hasPricesRequestFailed || undefined === attributes.product || undefined === attributes.price || 'loaded' !== status || ! hasValidApiKey() );
+	const showPlaceholder = ( isLoadingProducts || isLoadingPrices || hasProductsRequestFailed || hasPricesRequestFailed || undefined === attributes.product || undefined === attributes.price || 'loaded' !== status || ! canRetrieveProducts );
 
 	const blockProps = useBlockProps({
 		className: classnames({ 'is-placeholder': showPlaceholder })
@@ -173,12 +165,16 @@ const Edit = ({
 
 	const [ apiKey, setAPIKey ] = useState( '' );
 
+	const reset = () => {
+		dispatch( 'themeisle-gutenberg/data' ).invalidateResolutionForStoreSelector( 'getStripeProducts' );
+		dispatch( 'themeisle-gutenberg/data' ).invalidateResolutionForStoreSelector( 'getStripeProductPrices' );
+		setCanRetrieveProducts( 0 < apiKey?.length );
+		setAPIKey( '' );
+	};
+
 	const saveApiKey = () => {
-		updateOption( 'themeisle_stripe_api_key', apiKey, __( 'Stripe API Key saved!', 'otter-blocks' ), async() => {
-			dispatch( 'themeisle-gutenberg/data' ).invalidateResolutionForStoreSelector( 'getStripeProducts' );
-			dispatch( 'themeisle-gutenberg/data' ).invalidateResolutionForStoreSelector( 'getStripeProductPrices' );
-			setAPIKey( '' );
-		});
+		setCanRetrieveProducts( false );
+		updateOption( 'themeisle_stripe_api_key', apiKey?.replace?.( /\s/g, '' ), __( 'Stripe API Key saved!', 'otter-blocks' ), reset );
 	};
 
 	if ( showPlaceholder ) {
@@ -190,19 +186,24 @@ const Edit = ({
 				>
 					{
 						( 'loading' === status || 'saving' === status ) && (
-							<Fragment>
+							<div style={{ width: '100%' }}>
 								<Spinner />
 								{ __( 'Checking the API Key...', 'otter-blocks' ) }
 								<br /><br />
-							</Fragment>
+							</div>
 						)
 					}
 
 					{
-						( ( hasProductsRequestFailed || hasPricesRequestFailed ) && ! ( 'loading' === status || 'saving' === status ) ) && (
+						(
+							( hasProductsRequestFailed || hasPricesRequestFailed ) &&
+							( 'loaded' === status ) &&
+							( productsError?.message?.length || pricesError?.message?.length  )
+						) && (
 							<div style={{ width: '100%', marginLeft: '-15px', marginBottom: '10px' }}>
 								<Notice
 									status='error'
+									isDismissible={ false }
 								>
 									{
 										( hasProductsRequestFailed && productsError?.message ) || ( hasPricesRequestFailed && pricesError?.message )
@@ -213,7 +214,7 @@ const Edit = ({
 					}
 
 					{
-						( ( 'loaded' === status && false === hasValidApiKey() ) || ( hasProductsRequestFailed && productsError?.message?.includes( 'Invalid API Key' ) ) ) && (
+						( ( 'loaded' === status ) && ( ( hasProductsRequestFailed && productsError?.message?.includes( 'Invalid API Key' ) ) || ! canRetrieveProducts ) ) && (
 							<div style={{ display: 'flex', flexDirection: 'column' }}>
 
 								<TextControl
@@ -223,6 +224,7 @@ const Edit = ({
 									value={ apiKey }
 									className="components-placeholder__input"
 									onChange={ setAPIKey }
+									autoComplete='off'
 								/>
 
 								<div>
@@ -251,7 +253,7 @@ const Edit = ({
 					}
 
 					{
-						( 'loaded' === status && hasValidApiKey() && false === hasProductsRequestFailed ) && (
+						( 'loaded' === status && false === hasProductsRequestFailed && canRetrieveProducts ) && (
 							<Fragment>
 								{ ! isLoadingProducts && (
 									<SelectControl
