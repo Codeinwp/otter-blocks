@@ -12,6 +12,7 @@ import {
 	select,
 	subscribe
 } from '@wordpress/data';
+import { pullReusableBlockContentById } from '../../helpers/block-utility';
 
 let isSavingCSS = false;
 
@@ -74,18 +75,6 @@ const saveWidgets = debounce( async() => {
 
 const reusableBlocks = {};
 
-const checkReviewBlock = blocks => {
-	return blocks.some( block => {
-		if ( 'themeisle-blocks/review' === block.name ) {
-			return true;
-		}
-
-		if ( 0 < block?.innerBlocks?.length ) {
-			return checkReviewBlock( block.innerBlocks );
-		}
-	});
-};
-
 subscribe( () => {
 	if ( select( 'core/edit-widgets' ) ) {
 		const {
@@ -107,7 +96,6 @@ subscribe( () => {
 	if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
 		const {
 			isCurrentPostPublished,
-			getEditedPostAttribute,
 			isSavingPost,
 			isPublishingPost,
 			isAutosavingPost,
@@ -117,25 +105,6 @@ subscribe( () => {
 		const { __experimentalReusableBlocks } = select( 'core/block-editor' ).getSettings();
 
 		const { isSavingEntityRecord } = select( 'core' );
-
-		const { getBlocks } = select( 'core/block-editor' );
-
-		const { editPost } = dispatch( 'core/editor' );
-
-		const meta = getEditedPostAttribute( 'meta' ) || {};
-
-		if ( undefined !== meta._themeisle_gutenberg_block_has_review ) {
-			const blocks = getBlocks();
-			const hasReview = checkReviewBlock( blocks );
-
-			if ( meta._themeisle_gutenberg_block_has_review !== hasReview ) {
-				editPost({
-					meta: {
-						'_themeisle_gutenberg_block_has_review': hasReview
-					}
-				});
-			}
-		}
 
 		let isSavingReusableBlock;
 

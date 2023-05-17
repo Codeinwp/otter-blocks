@@ -122,6 +122,8 @@ class CSS_Handler extends Base_CSS {
 		$post_id = $request->get_param( 'id' );
 		self::generate_css_file( $post_id );
 
+		self::mark_review_block_metadata( $post_id );
+
 		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'otter-blocks' ) ) );
 	}
 
@@ -207,9 +209,10 @@ class CSS_Handler extends Base_CSS {
 
 		self::save_css_file( $post_id, $css );
 
+		self::mark_review_block_metadata( $post_id );
+
 		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'otter-blocks' ) ) );
 	}
-
 
 	/**
 	 * Function to save CSS into WordPress Filesystem.
@@ -441,6 +444,37 @@ class CSS_Handler extends Base_CSS {
 		$css = $compressor->run( $css );
 
 		return $css;
+	}
+
+	/**
+	 * Mark in post meta if the post has a review block.
+	 * 
+	 * @param int $post_id Post ID.
+	 * @since 2.4.0
+	 * @access public
+	 */
+	public static function mark_review_block_metadata( $post_id ) {
+		if ( empty( $post_id ) ) {
+			return;
+		}
+
+		$content     = get_the_content( '', false, $post_id );
+		$saved_value = boolval( get_post_meta( $post_id, '_themeisle_gutenberg_block_has_review', true ) );
+
+		if ( empty( $content ) ) {
+
+			if ( true === $saved_value ) {
+				delete_post_meta( $post_id, '_themeisle_gutenberg_block_has_review' );
+			}
+
+			return;
+		}
+
+		$has_review = false !== strpos( $content, '<!-- wp:themeisle-blocks/review' );
+
+		if ( $has_review !== $saved_value ) {
+			update_post_meta( $post_id, '_themeisle_gutenberg_block_has_review', $has_review );
+		}
 	}
 
 	/**

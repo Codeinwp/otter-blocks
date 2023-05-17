@@ -21,7 +21,6 @@ import {
 
 import {
 	Fragment,
-	useEffect,
 	useRef
 } from '@wordpress/element';
 
