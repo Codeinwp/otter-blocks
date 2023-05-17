@@ -64,17 +64,17 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifact
-          path: ./artifact/tests/
+          path: ./artifacts/tests/
           retention-days: 1
       
       - name: Print the results
         run: |
-          echo "::set-output name=TYPING_AVG::$(jq '.summary.type.average' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_SD::$(jq '.summary.type.standardDeviation' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_MD::$(jq '.summary.type.median' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_QR60::$(jq '.summary.type.quantileRank60' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_ABOVE_60::$(jq -c '.summary.type.above60' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_QR80::$(jq '.summary.type.quantileRank80' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+          echo "::set-output name=TYPING_AVG::$(jq '.summary.type.average' ./artifacts/performance.spec.performance-results.json)"
+          echo "::set-output name=TYPING_SD::$(jq '.summary.type.standardDeviation' ./artifacts/performance.spec.performance-results.json)"
+          echo "::set-output name=TYPING_MD::$(jq '.summary.type.median' ./artifacts/performance.spec.performance-results.json)"
+          echo "::set-output name=TYPING_QR60::$(jq '.summary.type.quantileRank60' ./artifacts/performance.spec.performance-results.json)"
+          echo "::set-output name=TYPING_ABOVE_60::$(jq -c '.summary.type.above60' ./artifacts/performance.spec.performance-results.json)"
+          echo "::set-output name=TYPING_QR80::$(jq '.summary.type.quantileRank80' ./artifacts/performance.spec.performance-results.json)"
         id: summary  
 
       - name: Comment
