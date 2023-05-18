@@ -23,6 +23,7 @@ new QueryQA().select('blocks').run()
 
 ### Checklist before the final review
 
+- [ ] Included E2E or unit tests for the changes in this PR.
 - [ ] Visual elements are not affected by independent changes.
 - [ ] It is at least compatible with the [minimum WordPress version](https://wordpress.org/plugins/otter-blocks/).
 - [ ] It loads additional script in frontend only if it is required.
