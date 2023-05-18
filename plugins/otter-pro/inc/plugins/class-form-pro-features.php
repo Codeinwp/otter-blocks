@@ -173,7 +173,7 @@ class Form_Pro_Features {
 						if ( ! empty( $saved_file ) ) {
 							$file['file_location_slug'] = $field_option->get_option( 'saveFiles' );
 						}
-						$saved_files[] = $file;
+						$saved_files[ $field['metadata']['data'] ] = $file;
 					} else {
 						$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD, array( $file['error'] ) );
 						break;

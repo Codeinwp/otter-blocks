@@ -202,6 +202,9 @@ class Form_Emails_Storing {
 		);
 
 		$form_inputs = $form_data->get_form_inputs();
+		$files_data  = $form_data->get_uploaded_files_path();
+		$files       = $form_data->get_request()->get_file_params();
+
 		foreach ( $form_inputs as $input ) {
 			if ( ! isset( $input['id'] ) ) {
 				continue;
@@ -209,12 +212,34 @@ class Form_Emails_Storing {
 
 			$id = substr( $input['id'], -8 );
 
+			if ( 'file' === $input['type'] ) {
+				$file_data_key = $input['metadata']['data'];
+
+				$file_data = $files_data[ $file_data_key ];
+
+				$meta['files'][ $file_data_key ] = array(
+					'name'           => $input['metadata']['name'],
+					'data'           => $file_data['file_url'],
+					'mime_type'      => $file_data['file_type'],
+					'saved_in_media' => isset( $file_data['file_location_slug'] ) && 'media-library' === $file_data['file_location_slug'],
+				);
+//              ????
+//				$content = file_get_contents( $meta['files'][ $file_data_key ]['value']['tmp_name'] );
+//				$base64  = base64_encode( $content );
+//
+//				$meta['inputs'][ $file_data_key ]['data'] = $base64;
+
+				continue;
+			}
+
 			$meta['inputs'][ $id ] = array(
 				'label' => $input['label'],
 				'value' => $input['value'],
 				'type'  => $input['type'],
 			);
 		}
+
+		var_dump($meta);
 
 		add_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
 	}
@@ -646,27 +671,69 @@ class Form_Emails_Storing {
 		?>
 		<table class="otter_form_record_meta form-table" style="border-spacing: 10px; width: 100%">
 			<tbody>
-				<?php
-				foreach ( $meta['inputs'] as $id => $field ) {
-					?>
+				<?php foreach ( $meta['inputs'] as $id => $field ) { ?>
 					<tr>
 						<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $field['label'] ); ?></label></th>
-						<?php
-						if ( 'textarea' === $field['type'] ) {
-							?>
-							<td><textarea style="width: 100%" name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>" id="<?php echo esc_attr( $id ); ?>" class="otter_form_record_meta__value" rows="5"><?php echo esc_html( $field['value'] ); ?></textarea></td>
-							<?php
-							continue;
-						}
-						?>
-						<td><input style="width: 100%" name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>" id="<?php echo esc_attr( $id ); ?>" type="<?php echo isset( $field['type'] ) ? esc_attr( $field['type'] ) : ''; ?>" class="otter_form_record_meta__value" value="<?php echo esc_html( $field['value'] ); ?>"/></td>
+						<td><?php $this->render_field( $field, $id ); ?></td>
 					</tr>
-					<?php
+				<?php }
+
+				if ( ! empty( $meta['files'] ) ) {
+					foreach ( $meta['files'] as $file ) {
+						?>
+						<tr><td>
+							<a href="<?php echo esc_url( $file['data'] ); ?>" target="_blank"><?php echo esc_html( $file['name'] ); ?></a>
+						</td></tr>
+						<?php
+					}
 				}
 				?>
 			</tbody>
 		</table>
 		<?php
+	}
+
+	public function render_field( $field, $id ) {
+		switch ( $field['type'] ) {
+			case 'textarea':
+				?>
+				<textarea
+					style="width: 100%; max-width: 350px;"
+					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
+					id="<?php echo esc_attr( $id ); ?>"
+					class="otter_form_record_meta__value"
+					rows="5"
+				>
+					<?php echo esc_html( $field['value'] ); ?>
+				</textarea>
+				<?php
+				break;
+			case 'multiple-choice':
+				?>
+				<input
+					style="width: 100%; max-width: 350px;"
+					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
+					id="<?php echo esc_attr( $id ); ?>"
+					type="text"
+					class="otter_form_record_meta__value"
+					value="<?php echo esc_html( $field['value'] ); ?>"
+				/>
+				<?php
+				break;
+			case 'file':
+				break;
+			default:
+				?>
+				<input
+					style="width: 100%; max-width: 350px;"
+					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
+					id="<?php echo esc_attr( $id ); ?>"
+					type="<?php echo isset( $field['type'] ) ? esc_attr( $field['type'] ) : ''; ?>"
+					class="otter_form_record_meta__value"
+					value="<?php echo esc_html( $field['value'] ); ?>"
+				/>
+				<?php
+		}
 	}
 
 	/**
