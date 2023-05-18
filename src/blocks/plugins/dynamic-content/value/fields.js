@@ -70,12 +70,12 @@ const Fields = ({
 	const [ isLoading, setLoading ] = useState( false );
 
 	useEffect( () => {
-		const context = select( 'core/editor' ).getCurrentPostId();
+		const context = select( 'core/editor' )?.getCurrentPostId();
 		const { type, taxonomy, termType } = attributes;
 
 		if ( !! attributes.type && 'none' !== attributes.type ) {
 			setLoading( true );
-			apiFetch({ path: 'otter/v1/dynamic/preview/?' + getQueryStringFromObject({ context, type, taxonomy, termType }) })
+			apiFetch({ path: 'otter/v1/dynamic/preview/?' + getQueryStringFromObject({ context, type }) })
 				.then( data => {
 					setPreview( data );
 				})

@@ -230,19 +230,12 @@ class Base_CSS {
 	 */
 	public function get_widgets_css() {
 		if ( function_exists( 'has_blocks' ) ) {
-			$content = '';
-			$widgets = get_option( 'widget_block', array() );
-
-			foreach ( $widgets as $widget ) {
-				if ( is_array( $widget ) && isset( $widget['content'] ) ) {
-					$content .= $widget['content'];
-				}
-			}
+			$content = Registration::get_active_widgets_content();
 
 			$blocks = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-				return;
+				return '';
 			}
 
 			$animations = boolval( preg_match( '/\banimated\b/', $content ) );
