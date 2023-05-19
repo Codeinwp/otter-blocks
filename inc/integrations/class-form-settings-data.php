@@ -238,7 +238,7 @@ class Form_Settings_Data {
 						$integration->set_submissions_save_location( $form['submissionsSaveLocation'] );
 					}
 				} elseif ( Pro::is_pro_active() ) {
-					$integration->set_submissions_save_location( 'database' );
+					$integration->set_submissions_save_location( 'database-email' );
 				}
 				$integration->set_meta( $form );
 			}
