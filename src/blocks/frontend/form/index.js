@@ -6,6 +6,7 @@ import DisplayFormMessage from './message.js';
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 let startTimeAntiBot = null;
+let METADATA_VERSION = 1;
 
 /**
  * Get the form fields.
@@ -76,6 +77,7 @@ const extractFormFields = async( form ) => {
 						type: fileInput.type,
 						id: id,
 						metadata: {
+							version: METADATA_VERSION,
 							name: files[i].name,
 							size: files[i].size,
 							file: files[i],
@@ -102,6 +104,7 @@ const extractFormFields = async( form ) => {
 				type: fieldType,
 				id: id,
 				metadata: {
+					version: METADATA_VERSION,
 					position: index + 1
 				}
 			});

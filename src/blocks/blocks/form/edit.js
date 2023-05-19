@@ -68,7 +68,8 @@ const formOptionsMap = {
 	fromName: 'fromName',
 	cc: 'cc',
 	bcc: 'bcc',
-	autoresponder: 'autoresponder'
+	autoresponder: 'autoresponder',
+	submissionsSaveLocation: 'submissionsSaveLocation'
 };
 
 /**
@@ -133,7 +134,8 @@ const Edit = ({
 		apiKey: undefined,
 		cc: undefined,
 		bcc: undefined,
-		autoresponder: undefined
+		autoresponder: undefined,
+		submissionSaveLocation: undefined
 	});
 
 	const {
@@ -292,7 +294,8 @@ const Edit = ({
 			listId: wpOptions?.integration?.listId,
 			action: wpOptions?.integration?.action,
 			hasCaptcha: wpOptions?.hasCaptcha,
-			autoresponder: wpOptions?.autoresponder
+			autoresponder: wpOptions?.autoresponder,
+			autoresponderSubject: wpOptions?.autoresponderSubject
 		});
 	};
 

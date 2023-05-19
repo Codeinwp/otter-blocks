@@ -165,9 +165,24 @@ class Form_Emails_Storing {
 	 * Store form record in custom post type.
 	 *
 	 * @param Form_Data_Request $form_data The form data object.
-	 * @return void
+	 * @return Form_Data_Request
 	 */
 	public function store_form_record( $form_data ) {
+		if (
+			! isset( $form_data ) ||
+			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
+			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
+			$form_data->has_error()
+		) {
+			return $form_data;
+		}
+
+		$form_options = $form_data->get_form_options();
+
+		if ( ! isset( $form_options ) || ! str_starts_with( $form_options->get_submissions_save_location(), 'database' ) ) {
+			return $form_data;
+		}
+
 		$email = Form_Server::instance()->get_email_from_form_input( $form_data );
 
 		$post_id = wp_insert_post(
@@ -179,7 +194,7 @@ class Form_Emails_Storing {
 		);
 
 		if ( ! $post_id ) {
-			return;
+			return $form_data;
 		}
 
 		$meta = array(

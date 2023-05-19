@@ -9,7 +9,7 @@ import {
 	TextControl,
 	FormTokenField,
 	ToggleControl,
-	Notice
+	Notice, SelectControl
 } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { useState, Fragment } from '@wordpress/element';
@@ -57,10 +57,52 @@ const AutoresponderBody = ({ formOptions, setFormOption }) => {
 	);
 };
 
+const helpMessages = {
+	'database': __( 'Save form submissions to the database. You can see the submissions in Otter Blocks > Form Submissions on Dashboard Panel', 'otter-blocks' ),
+	'email': __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-blocks' ),
+	'database-email': __( 'Save the submissions to the database and notify also via email.', 'otter-blocks' )
+};
+
+
 const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 	return (
 		<>
 			{Options}
+
+			<ToolsPanelItem
+				hasValue={ () => undefined !== formOptions.submissionsSaveLocation }
+				label={ __( 'Submissions', 'otter-blocks' ) }
+				onDeselect={ () => setFormOption({ submissionsSaveLocation: undefined }) }
+				isShownByDefault={ true }
+			>
+				{Boolean( window.otterPro.isActive ) ? (
+					<SelectControl
+						label={ __( 'Save Location', 'otter-blocks' ) }
+						value={ formOptions.submissionsSaveLocation }
+						onChange={ submissionsSaveLocation => setFormOption({ submissionsSaveLocation }) }
+						options={
+							[
+								{ label: __( 'Database', 'otter-blocks' ), value: 'database' },
+								{ label: __( 'Email Only', 'otter-blocks' ), value: 'email' },
+								{ label: __( 'Databse and Email', 'otter-blocks' ), value: 'database-email' }
+							]
+						}
+						help={ helpMessages?.[formOptions?.submissionsSaveLocation] ?? helpMessages.database }
+					/> ) : (
+					<div>
+						<OtterNotice
+							notice={__(
+								'You need to activate Otter Pro.',
+								'otter-blocks'
+							)}
+							instructions={__(
+								'You need to activate your Otter Pro license to use Pro features of Form Block.',
+								'otter-blocks'
+							)}
+						/>
+					</div>
+				)}
+			</ToolsPanelItem>
 
 			<ToolsPanelItem
 				hasValue={() =>

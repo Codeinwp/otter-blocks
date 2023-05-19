@@ -228,42 +228,73 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 				/>
 			</ToolsPanelItem>
 
+
 			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
-				<ToolsPanelItem
-					hasValue={ () => false }
-					label={ __( 'Autoresponder (Pro)', 'otter-blocks' ) }
-					onDeselect={ () => {} }
-				>
-					<TextControl
-						label={ __( 'Autoresponder Subject', 'otter-blocks' ) }
-						placeholder={ __( 'Confirmation of your subscription', 'otter-blocks' ) }
-						value={ undefined }
-						onChange={ () => {} }
-						help={ __( 'Enter the subject of the autoresponder email.', 'otter-blocks' ) }
-						disabled
-						className="o-disabled"
-					/>
-
-					<TextareaControl
-						label={ __( 'Autoresponder Body', 'otter-blocks' ) }
-						placeholder={ __( 'Thank you for subscribing!', 'otter-blocks' )}
-						rows={2}
-						value={ undefined }
-						onChange={ () => {} }
-						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
-						disabled
-						className="o-disabled"
-					/>
-
-					<div>
-						<Notice
-							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
-							variant="upsell"
+				<Fragment>
+					<ToolsPanelItem
+						hasValue={ () => undefined !== formOptions.submissionsSaveLocation }
+						label={ __( 'Submissions', 'otter-blocks' ) }
+						onDeselect={ () => setFormOption({ submissionsSaveLocation: undefined }) }
+						isShownByDefault={ true }
+					>
+						<SelectControl
+							label={ __( 'Save Location', 'otter-blocks' ) }
+							value={ 'email' }
+							onChange={ () => {} }
+							options={
+								[
+									{ label: __( 'Database (Pro)', 'otter-blocks' ), value: 'database' },
+									{ label: __( 'Email Only', 'otter-blocks' ), value: 'email' },
+									{ label: __( 'Databse and Email (Pro)', 'otter-blocks' ), value: 'database-email' }
+								]
+							}
+							help={ __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-blocks' ) }
 						/>
-						<p className="description">{ __( 'Automatically send follow-up emails to your users with the Autoresponder feature.', 'otter-blocks' ) }</p>
-					</div>
 
-				</ToolsPanelItem>
+						<div>
+							<Notice
+								notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+								variant="upsell"
+							/>
+							<p className="description">{ __( 'Enhance your email process with our new feature. Store submissions in a database for easy access.', 'otter-blocks' ) }</p>
+						</div>
+					</ToolsPanelItem>
+					<ToolsPanelItem
+						hasValue={ () => false }
+						label={ __( 'Autoresponder (Pro)', 'otter-blocks' ) }
+						onDeselect={ () => {} }
+					>
+						<TextControl
+							label={ __( 'Autoresponder Subject', 'otter-blocks' ) }
+							placeholder={ __( 'Confirmation of your subscription', 'otter-blocks' ) }
+							value={ undefined }
+							onChange={ () => {} }
+							help={ __( 'Enter the subject of the autoresponder email.', 'otter-blocks' ) }
+							disabled
+							className="o-disabled"
+						/>
+
+						<TextareaControl
+							label={ __( 'Autoresponder Body', 'otter-blocks' ) }
+							placeholder={ __( 'Thank you for subscribing!', 'otter-blocks' )}
+							rows={2}
+							value={ undefined }
+							onChange={ () => {} }
+							help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
+							disabled
+							className="o-disabled"
+						/>
+
+						<div>
+							<Notice
+								notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+								variant="upsell"
+							/>
+							<p className="description">{ __( 'Automatically send follow-up emails to your users with the Autoresponder feature.', 'otter-blocks' ) }</p>
+						</div>
+
+					</ToolsPanelItem>
+				</Fragment>
 			) }
 		</Fragment>
 	);

@@ -306,7 +306,12 @@ class Form_Server {
 		}
 
 		try {
-			$form_options  = $form_data->get_form_options();
+			$form_options = $form_data->get_form_options();
+
+			if ( Pro::is_pro_active() && ! str_ends_with( $form_options->get_submissions_save_location(), 'email' ) ) {
+				return $form_data;
+			}
+
 			$email_subject = isset( $form_options ) && $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 
 			$email_message = Form_Email::instance()->build_email( $form_data );

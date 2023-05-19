@@ -216,10 +216,17 @@ class Form_Pro_Features {
 		}
 
 		try {
-			if ( $form_data->has_uploaded_files() ) {
+			$form_options = $form_data->get_form_options();
+			$can_delete   = true;
+
+			if ( isset( $form_options ) ) {
+				$can_delete = 'email' === $form_options->get_submissions_save_location();
+			}
+
+			if ( $can_delete && $form_data->has_uploaded_files() ) {
 				foreach ( $form_data->get_uploaded_files_path() as $file ) {
-					if ( empty( $file['file_location_slug'] ) ) {
-						// wp_delete_file( $file['file_path'] );
+					if ( ! empty( $file['file_path'] ) ) {
+						wp_delete_file( $file['file_path'] );
 					}
 				}
 			}

@@ -63,6 +63,7 @@ export type FormOptions = {
 		subject?: string
 		body?: string
 	}
+	submissionSaveLocation?: string
 }
 
 export type FormAttrs = Partial<Attributes>
