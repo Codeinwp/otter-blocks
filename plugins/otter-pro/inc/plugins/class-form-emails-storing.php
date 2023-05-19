@@ -195,15 +195,16 @@ class Form_Emails_Storing {
 				'label' => 'Post URL',
 				'value' => $form_data->get_payload_field( 'postUrl' ),
 			),
-			'post_id' => array(
+			'post_id'  => array(
 				'label' => 'Post ID',
 				'value' => $form_data->get_payload_field( 'postId' ),
 			),
 		);
 
-		$form_inputs = $form_data->get_form_inputs();
-		$files_data  = $form_data->get_uploaded_files_path();
-		$files       = $form_data->get_request()->get_file_params();
+		$form_inputs    = $form_data->get_form_inputs();
+		$uploaded_files = $form_data->get_uploaded_files_path();
+		$media_files    = $form_data->get_files_loaded_to_media_library();
+		$files          = $form_data->get_request()->get_file_params();
 
 		foreach ( $form_inputs as $input ) {
 			if ( ! isset( $input['id'] ) ) {
@@ -213,33 +214,47 @@ class Form_Emails_Storing {
 			$id = substr( $input['id'], -8 );
 
 			if ( 'file' === $input['type'] ) {
+
+				$id .= $input['metadata']['name'] . '_' . $input['metadata']['size'];
+
+				$meta['inputs'][ $id ] = array(
+					'label'    => $input['label'],
+					'value'    => $input['value'],
+					'type'     => $input['type'],
+					'metadata' => $input['metadata'],
+				);
+
 				$file_data_key = $input['metadata']['data'];
 
-				$file_data = $files_data[ $file_data_key ];
-
-				$meta['files'][ $file_data_key ] = array(
-					'name'           => $input['metadata']['name'],
-					'data'           => $file_data['file_url'],
-					'mime_type'      => $file_data['file_type'],
-					'saved_in_media' => isset( $file_data['file_location_slug'] ) && 'media-library' === $file_data['file_location_slug'],
+				if ( isset( $media_files[ $file_data_key ] ) ) {
+					$meta['inputs'][ $id ] = array_merge(
+						$meta['inputs'][ $id ],
+						array(
+							'path'           => $media_files[ $file_data_key ]['file_path'],
+							'mime_type'      => $media_files[ $file_data_key ]['file_type'],
+							'attachment_id'  => $media_files[ $file_data_key ]['file_id'],
+							'saved_in_media' => true,
+						)
+					);
+				} elseif ( isset( $uploaded_files[ $file_data_key ] ) ) {
+					$meta['inputs'][ $id ] = array_merge(
+						$meta['inputs'][ $id ],
+						array(
+							'path'           => $uploaded_files[ $file_data_key ]['file_path'],
+							'mime_type'      => $uploaded_files[ $file_data_key ]['file_type'],
+							'saved_in_media' => false,
+						)
+					);
+				}
+			} else {
+				$meta['inputs'][ $id ] = array(
+					'label'    => $input['label'],
+					'value'    => $input['value'],
+					'type'     => $input['type'],
+					'metadata' => $input['metadata'],
 				);
-//              ????
-//				$content = file_get_contents( $meta['files'][ $file_data_key ]['value']['tmp_name'] );
-//				$base64  = base64_encode( $content );
-//
-//				$meta['inputs'][ $file_data_key ]['data'] = $base64;
-
-				continue;
 			}
-
-			$meta['inputs'][ $id ] = array(
-				'label' => $input['label'],
-				'value' => $input['value'],
-				'type'  => $input['type'],
-			);
 		}
-
-		var_dump($meta);
 
 		add_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
 	}
@@ -664,7 +679,9 @@ class Form_Emails_Storing {
 	 * @return void
 	 */
 	public function fields_meta_box_markup( $post ) {
-		$meta = get_post_meta( $post->ID, self::FORM_RECORD_META_KEY, true );
+		$meta                  = get_post_meta( $post->ID, self::FORM_RECORD_META_KEY, true );
+		$previous_field_option = '';
+
 		if ( empty( $meta ) ) {
 			return;
 		}
@@ -673,19 +690,23 @@ class Form_Emails_Storing {
 			<tbody>
 				<?php foreach ( $meta['inputs'] as $id => $field ) { ?>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $field['label'] ); ?></label></th>
+						<th scope="row">
+							<label for="<?php echo esc_attr( $id ); ?>">
+								<?php
+								if ( isset( $field['metadata']['fieldOptionName'] ) ) {
+									if ( $previous_field_option !== $field['metadata']['fieldOptionName'] ) {
+										echo esc_html( $field['label'] );
+										$previous_field_option = $field['metadata']['fieldOptionName'];
+									}
+								} else {
+									echo esc_html( $field['label'] );
+								}
+								?>
+							</label>
+						</th>
 						<td><?php $this->render_field( $field, $id ); ?></td>
 					</tr>
-				<?php }
-
-				if ( ! empty( $meta['files'] ) ) {
-					foreach ( $meta['files'] as $file ) {
-						?>
-						<tr><td>
-							<a href="<?php echo esc_url( $file['data'] ); ?>" target="_blank"><?php echo esc_html( $file['name'] ); ?></a>
-						</td></tr>
-						<?php
-					}
+					<?php
 				}
 				?>
 			</tbody>
@@ -693,6 +714,13 @@ class Form_Emails_Storing {
 		<?php
 	}
 
+	/**
+	 * Render form record meta box.
+	 *
+	 * @param array $field The field data.
+	 * @param int   $id The field id.
+	 * @return void
+	 */
 	public function render_field( $field, $id ) {
 		switch ( $field['type'] ) {
 			case 'textarea':
@@ -721,6 +749,30 @@ class Form_Emails_Storing {
 				<?php
 				break;
 			case 'file':
+				if ( isset( $field['path'] ) && isset( $field['metadata']['name'] ) ) {
+					$url = esc_url( $field['path'] );
+					if ( isset( $field['saved_in_media'] ) && $field['saved_in_media'] ) {
+						$url = wp_get_attachment_url( $field['attachment_id'] );
+					} elseif ( ! str_starts_with( $field['path'], 'http' ) ) {
+						// If the file is not saved with a server link (external or media library). We need to get the file path relative to the uploads directory so that it can be displayed by the browser.S
+						$url = substr( $url, strpos( $url, '/wp-content' ) );
+					}
+					?>
+
+					<a href="<?php echo ( $url ); ?>" target="_blank">
+						<?php
+						if ( isset( $field['mime_type'] ) && str_starts_with( $field['mime_type'], 'image' ) ) {
+
+							?>
+								<img alt="" src="<?php echo ( $url ); ?>" style="display: block; height: 100px;" />
+								<?php
+						} else {
+							echo esc_html( $field['metadata']['name'] );
+						}
+						?>
+					</a>
+					<?php
+				}
 				break;
 			default:
 				?>

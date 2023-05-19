@@ -171,8 +171,9 @@ class Form_Pro_Features {
 						$field_option = $form_data->get_field_option( $field['metadata']['fieldOptionName'] );
 						$saved_file   = $field_option->get_option( 'saveFiles' );
 						if ( ! empty( $saved_file ) ) {
-							$file['file_location_slug'] = $field_option->get_option( 'saveFiles' );
+							$file['file_location_slug'] = $saved_file;
 						}
+						$file['key']                               = $field['metadata']['data'];
 						$saved_files[ $field['metadata']['data'] ] = $file;
 					} else {
 						$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD, array( $file['error'] ) );
@@ -218,7 +219,7 @@ class Form_Pro_Features {
 			if ( $form_data->has_uploaded_files() ) {
 				foreach ( $form_data->get_uploaded_files_path() as $file ) {
 					if ( empty( $file['file_location_slug'] ) ) {
-						wp_delete_file( $file['file_path'] );
+						// wp_delete_file( $file['file_path'] );
 					}
 				}
 			}
@@ -264,7 +265,7 @@ class Form_Pro_Features {
 
 					$attachment_id = wp_insert_attachment( $attachment, $file['file_path'] );
 
-					$media_files[] = array(
+					$media_files[ $file['key'] ] = array(
 						'file_path' => $file['file_path'],
 						'file_name' => $file['file_name'],
 						'file_type' => $file['file_type'],
