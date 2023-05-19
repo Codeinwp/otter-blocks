@@ -146,8 +146,17 @@ const Edit = ({
 		moveBlockToPosition
 	} = useDispatch( 'core/block-editor' );
 
+	const {
+		unlockPostSaving
+	} = useDispatch( 'core/editor' );
+
 	const setFormOption = option => {
 		setFormOptions( options => ({ ...options, ...option }) );
+	};
+
+	const setFormOptionAndSaveUnlock = option => {
+		setFormOption( option );
+		unlockPostSaving?.();
 	};
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
@@ -869,7 +878,7 @@ const Edit = ({
 					setListIDOptions,
 					saveFormEmailOptions,
 					formOptions,
-					setFormOption,
+					setFormOption: setFormOptionAndSaveUnlock,
 					saveIntegration,
 					sendTestEmail,
 					loadingState,
