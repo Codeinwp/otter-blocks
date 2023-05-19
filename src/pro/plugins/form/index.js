@@ -84,7 +84,7 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 							[
 								{ label: __( 'Database', 'otter-blocks' ), value: 'database' },
 								{ label: __( 'Email Only', 'otter-blocks' ), value: 'email' },
-								{ label: __( 'Databse and Email', 'otter-blocks' ), value: 'database-email' }
+								{ label: __( 'Database and Email', 'otter-blocks' ), value: 'database-email' }
 							]
 						}
 						help={ helpMessages?.[formOptions?.submissionsSaveLocation] ?? helpMessages.database }

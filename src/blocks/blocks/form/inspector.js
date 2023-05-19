@@ -245,7 +245,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 								[
 									{ label: __( 'Database (Pro)', 'otter-blocks' ), value: 'database' },
 									{ label: __( 'Email Only', 'otter-blocks' ), value: 'email' },
-									{ label: __( 'Databse and Email (Pro)', 'otter-blocks' ), value: 'database-email' }
+									{ label: __( 'Database and Email (Pro)', 'otter-blocks' ), value: 'database-email' }
 								]
 							}
 							help={ __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-blocks' ) }
