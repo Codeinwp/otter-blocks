@@ -557,7 +557,7 @@ class Form_Emails_Storing {
 			case 'post_url':
 				// If the post ID is set, use that to get the title and URL for better accuracy.
 				if ( ! empty( $meta['post_id'] ) ) {
-					$source_post = $meta['post_id']['value'] !== '0' ? $meta['post_id']['value'] : get_option( 'page_for_posts' );
+					$source_post = '0' !== $meta['post_id']['value'] ? $meta['post_id']['value'] : get_option( 'page_for_posts' );
 					$title       = get_the_title( $source_post );
 					$url         = get_permalink( $source_post );
 				} else {
@@ -567,7 +567,7 @@ class Form_Emails_Storing {
 						$source_post = url_to_postid( $meta['post_url']['value'] ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
 					}
 
-					$source_post = $source_post !== 0 ? $source_post : get_option( 'page_for_posts' );
+					$source_post = 0 !== $source_post ? $source_post : get_option( 'page_for_posts' );
 					$title       = $source_post ? get_the_title( $source_post ) : $meta['post_url']['value'];
 					$url         = $meta['post_url']['value'];
 				}
@@ -769,17 +769,17 @@ class Form_Emails_Storing {
 					if ( isset( $field['saved_in_media'] ) && $field['saved_in_media'] ) {
 						$url = wp_get_attachment_url( $field['attachment_id'] );
 					} elseif ( ! str_starts_with( $field['path'], 'http' ) ) {
-						// If the file is not saved with a server link (external or media library). We need to get the file path relative to the uploads directory so that it can be displayed by the browser.S
+						// If the file is not saved with a server link (external or media library). We need to get the file path relative to the uploads directory so that it can be displayed by the browser.
 						$url = substr( $url, strpos( $url, '/wp-content' ) );
 					}
 					?>
 
-					<a href="<?php echo ( $url ); ?>" target="_blank">
+					<a href="<?php echo esc_url_raw( $url ); ?>" target="_blank">
 						<?php
 						if ( isset( $field['mime_type'] ) && str_starts_with( $field['mime_type'], 'image' ) ) {
 
 							?>
-								<img alt="" src="<?php echo ( $url ); ?>" style="display: block; height: 100px;" />
+								<img alt="" src="<?php echo esc_url_raw( $url ); ?>" style="display: block; height: 100px;" />
 								<?php
 						} else {
 							echo esc_html( $field['metadata']['name'] );
