@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+use ThemeIsle\GutenbergBlocks\Pro;
+
 /**
  * Form settings
  *
@@ -230,7 +232,11 @@ class Form_Settings_Data {
 					$integration->extract_integration_data( $form['integration'] );
 				}
 				if ( isset( $form['submissionsSaveLocation'] ) ) {
-					$integration->set_submissions_save_location( $form['submissionsSaveLocation'] );
+					if ( '' === $form['submissionsSaveLocation'] && Pro::is_pro_active() ) {
+						$integration->set_submissions_save_location( 'database' );
+					} else {
+						$integration->set_submissions_save_location( $form['submissionsSaveLocation'] );
+					}
 				}
 				$integration->set_meta( $form );
 			}
