@@ -303,7 +303,7 @@ const Edit = ({
 			hasCaptcha: wpOptions?.hasCaptcha,
 			autoresponder: wpOptions?.autoresponder,
 			autoresponderSubject: wpOptions?.autoresponderSubject,
-			submissionsSaveLocation: wpOptions?.submissionsSaveLocation,
+			submissionsSaveLocation: wpOptions?.submissionsSaveLocation
 		});
 	};
 
@@ -372,7 +372,7 @@ const Edit = ({
 					hasUpdated = Object.keys( formOptionsMap ).some( key => ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]) );
 
 					// Update the values
-					if( hasUpdated ) {
+					if ( hasUpdated ) {
 						Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
 					}
 
@@ -434,7 +434,6 @@ const Edit = ({
 			let hasUpdated = false;
 
 
-
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
 					if ( ! emails[index]?.integration ) {
@@ -466,7 +465,6 @@ const Edit = ({
 					}
 				});
 			}
-
 
 
 			if ( isMissing || hasUpdated ) {
