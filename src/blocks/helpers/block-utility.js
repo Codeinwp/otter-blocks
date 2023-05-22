@@ -16,6 +16,10 @@ import {
 	select
 } from '@wordpress/data';
 
+import {
+	parse
+} from '@wordpress/blocks';
+
 /**
  * Internal dependencies.
  */
@@ -443,3 +447,25 @@ export const buildGetSyncValue = ( name, attributes, defaultAttributes ) => {
 		return attributes?.[field];
 	};
 };
+
+/**
+ * Get the reusable block content by id.
+ *
+ * @param {string} id The id of the reusable block.
+ * @returns {BlockInstance[]|*[]} The reusable block content.
+ */
+export function pullReusableBlockContentById( id ) {
+	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block' );
+
+	if ( ! reusableBlocks ) {
+		return [];
+	}
+
+	const reusableBlock = reusableBlocks.find( block => block.id === id );
+
+	if ( ! reusableBlock || undefined === reusableBlock.content ) {
+		return [];
+	}
+
+	return parse( reusableBlock.content.raw ?? reusableBlock.content );
+}

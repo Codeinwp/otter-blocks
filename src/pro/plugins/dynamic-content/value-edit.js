@@ -197,10 +197,26 @@ const Edit = ({
 							{
 								label: __( 'Tags', 'otter-blocks' ),
 								value: 'tags'
+							},
+							{
+								label: __( 'Custom', 'otter-blocks' ),
+								value: 'custom'
 							}
 						] }
 						onChange={ termType => changeAttributes({ termType }) }
 					/>
+
+					{
+						'custom' === attributes.termType && (
+							<TextControl
+								label={ __( 'Taxonomy', 'otter-blocks' ) }
+								type="text"
+								placeholder={ __( 'Enter taxonomy slug', 'otter-blocks' ) }
+								value={ attributes.taxonomy }
+								onChange={ taxonomy => changeAttributes({ taxonomy }) }
+							/>
+						)
+					}
 
 					<TextControl
 						label={ __( 'Separator', 'otter-blocks' ) }
