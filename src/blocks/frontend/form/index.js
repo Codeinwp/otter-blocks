@@ -6,6 +6,7 @@ import DisplayFormMessage from './message.js';
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 let startTimeAntiBot = null;
+let METADATA_VERSION = 1;
 
 /**
  * Get the form fields.
@@ -76,6 +77,7 @@ const extractFormFields = async( form ) => {
 						type: fileInput.type,
 						id: id,
 						metadata: {
+							version: METADATA_VERSION,
 							name: files[i].name,
 							size: files[i].size,
 							file: files[i],
@@ -95,13 +97,14 @@ const extractFormFields = async( form ) => {
 			}
 		}
 
-		if ( label && value ) {
+		if ( value ) {
 			formFieldsData.push({
-				label: label,
+				label: label || '(No label)',
 				value: value,
 				type: fieldType,
 				id: id,
 				metadata: {
+					version: METADATA_VERSION,
 					position: index + 1
 				}
 			});
@@ -210,6 +213,24 @@ const createFormData = ( data ) => {
 	return formData;
 };
 
+/**
+ * Try to get the current post id from body class.
+ * @returns {number}
+ */
+const getCurrentPostId = () => {
+	const body = document.querySelector( 'body' );
+	const classes = body?.classList?.value?.split( ' ' );
+	const postClass = classes?.find( c => c.includes( 'postid-' ) || c.includes( 'page-id-' ) );
+
+	if ( postClass ) {
+		const postId = postClass.split( '-' ).pop();
+		if ( postId ) {
+			return parseInt( postId );
+		}
+	}
+
+	return 0;
+};
 
 /**
  * Send the date from the form to the server
@@ -283,8 +304,12 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 		payload.antiSpamTime = Date.now() - ( startTimeAntiBot ?? Date.now() );
 		payload.antiSpamHoneyPot = Boolean( form.querySelector( ':scope > .otter-form__container > .protection .o-anti-bot' )?.checked ?? false );
 
+		/*
+		* the URL is no longer relevant if permalink structure is changed, that's why
+		* we try to also send the id taken from the body class.
+		*/
 		payload.postUrl = window.location.href;
-
+		payload.postId = getCurrentPostId();
 
 		/**
 		 * Get the consent

@@ -68,7 +68,8 @@ const formOptionsMap = {
 	fromName: 'fromName',
 	cc: 'cc',
 	bcc: 'bcc',
-	autoresponder: 'autoresponder'
+	autoresponder: 'autoresponder',
+	submissionsSaveLocation: 'submissionsSaveLocation'
 };
 
 /**
@@ -97,10 +98,7 @@ const Edit = ({
 		serviceTesting: 'init'
 	});
 
-	const [ optionsHaveChanged, setOptionsHaveChanged ] = useState( false );
-
 	const setLoading = l => {
-		setOptionsHaveChanged( true );
 		setLoadingState( loading => ({ ...loading, ...l }) );
 	};
 
@@ -133,7 +131,8 @@ const Edit = ({
 		apiKey: undefined,
 		cc: undefined,
 		bcc: undefined,
-		autoresponder: undefined
+		autoresponder: undefined,
+		submissionsSaveLocation: undefined
 	});
 
 	const {
@@ -144,8 +143,17 @@ const Edit = ({
 		moveBlockToPosition
 	} = useDispatch( 'core/block-editor' );
 
+	const {
+		unlockPostSaving
+	} = useDispatch( 'core/editor' );
+
 	const setFormOption = option => {
 		setFormOptions( options => ({ ...options, ...option }) );
+	};
+
+	const setFormOptionAndSaveUnlock = option => {
+		setFormOption( option );
+		unlockPostSaving?.();
 	};
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
@@ -193,21 +201,22 @@ const Edit = ({
 
 	const { canSaveData } = useSelect( select => {
 		const isSavingPost = select( 'core/editor' )?.isSavingPost();
+		const isPublishingPost = select( 'core/editor' )?.isPublishingPost();
 		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
 		const widgetSaving = select( 'core/edit-widgets' )?.isSavingWidgetAreas();
 
 		return {
-			canSaveData: ( ! isAutosaving && isSavingPost ) || widgetSaving
+			canSaveData: ( ! isAutosaving && ( isSavingPost || isPublishingPost ) ) || widgetSaving
 		};
 	});
 
 	const hasEssentialData = attributes.optionName && hasProtection;
 
 	useEffect( () => {
-		if ( canSaveData && optionsHaveChanged ) {
+		if ( canSaveData ) {
 			saveFormEmailOptions();
 		}
-	}, [ canSaveData, optionsHaveChanged ]);
+	}, [ canSaveData ]);
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -292,11 +301,13 @@ const Edit = ({
 			listId: wpOptions?.integration?.listId,
 			action: wpOptions?.integration?.action,
 			hasCaptcha: wpOptions?.hasCaptcha,
-			autoresponder: wpOptions?.autoresponder
+			autoresponder: wpOptions?.autoresponder,
+			autoresponderSubject: wpOptions?.autoresponderSubject,
+			submissionsSaveLocation: wpOptions?.submissionsSaveLocation
 		});
 	};
 
-	/**
+	/**`
 	 * Load data from the server.
 	 */
 	useEffect( () => {
@@ -358,8 +369,12 @@ const Edit = ({
 						return acc || ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]);
 					}, false );
 
+					hasUpdated = Object.keys( formOptionsMap ).some( key => ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]) );
+
 					// Update the values
-					Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
+					if ( hasUpdated ) {
+						Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
+					}
 
 					isMissing = false;
 				});
@@ -418,6 +433,7 @@ const Edit = ({
 			let isMissing = true;
 			let hasUpdated = false;
 
+
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
 					if ( ! emails[index]?.integration ) {
@@ -449,6 +465,7 @@ const Edit = ({
 					}
 				});
 			}
+
 
 			if ( isMissing || hasUpdated ) {
 				const model = new api.models.Settings({
@@ -866,7 +883,7 @@ const Edit = ({
 					setListIDOptions,
 					saveFormEmailOptions,
 					formOptions,
-					setFormOption,
+					setFormOption: setFormOptionAndSaveUnlock,
 					saveIntegration,
 					sendTestEmail,
 					loadingState,

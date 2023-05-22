@@ -1,14 +1,21 @@
 <?php
 /**
- * Live Search variant.
+ * Form Block Pro Functionalities.
  *
  * @package ThemeIsle\OtterPro\Plugins
  */
 
 namespace ThemeIsle\OtterPro\Plugins;
 
+use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
+use ThemeIsle\GutenbergBlocks\Server\Form_Server;
+use WP_Error;
+use WP_HTTP_Response;
+use WP_REST_Response;
+
 /**
- * Class Live_Search
+ * Class Form_Pro_Features
  */
 class Form_Pro_Features {
 	/**
@@ -164,9 +171,10 @@ class Form_Pro_Features {
 						$field_option = $form_data->get_field_option( $field['metadata']['fieldOptionName'] );
 						$saved_file   = $field_option->get_option( 'saveFiles' );
 						if ( ! empty( $saved_file ) ) {
-							$file['file_location_slug'] = $field_option->get_option( 'saveFiles' );
+							$file['file_location_slug'] = $saved_file;
 						}
-						$saved_files[] = $file;
+						$file['key']                               = $field['metadata']['data'];
+						$saved_files[ $field['metadata']['data'] ] = $file;
 					} else {
 						$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD, array( $file['error'] ) );
 						break;
@@ -208,9 +216,16 @@ class Form_Pro_Features {
 		}
 
 		try {
-			if ( $form_data->has_uploaded_files() ) {
+			$form_options = $form_data->get_form_options();
+			$can_delete   = true;
+
+			if ( isset( $form_options ) ) {
+				$can_delete = 'email' === $form_options->get_submissions_save_location();
+			}
+
+			if ( $can_delete && $form_data->has_uploaded_files() ) {
 				foreach ( $form_data->get_uploaded_files_path() as $file ) {
-					if ( empty( $file['file_location_slug'] ) ) {
+					if ( ! empty( $file['file_path'] ) ) {
 						wp_delete_file( $file['file_path'] );
 					}
 				}
@@ -257,7 +272,7 @@ class Form_Pro_Features {
 
 					$attachment_id = wp_insert_attachment( $attachment, $file['file_path'] );
 
-					$media_files[] = array(
+					$media_files[ $file['key'] ] = array(
 						'file_path' => $file['file_path'],
 						'file_name' => $file['file_name'],
 						'file_type' => $file['file_type'],

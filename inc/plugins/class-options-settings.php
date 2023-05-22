@@ -318,6 +318,10 @@ class Options_Settings {
 							if ( isset( $item['integration']['action'] ) ) {
 								$item['integration']['action'] = sanitize_text_field( $item['integration']['action'] );
 							}
+							if ( isset( $item['submissionsSaveLocation'] ) ) {
+								$item['submissionsSaveLocation'] = sanitize_text_field( $item['submissionsSaveLocation'] );
+							}
+
 							return $item;
 						},
 						$array
@@ -329,37 +333,37 @@ class Options_Settings {
 						'items' => array(
 							'type'       => 'object',
 							'properties' => array(
-								'form'          => array(
+								'form'                    => array(
 									'type' => 'string',
 								),
-								'hasCaptcha'    => array(
+								'hasCaptcha'              => array(
 									'type' => array( 'boolean', 'number', 'string' ),
 								),
-								'email'         => array(
+								'email'                   => array(
 									'type' => 'string',
 								),
-								'fromName'      => array(
+								'fromName'                => array(
 									'type' => 'string',
 								),
-								'redirectLink'  => array(
+								'redirectLink'            => array(
 									'type' => 'string',
 								),
-								'emailSubject'  => array(
+								'emailSubject'            => array(
 									'type' => 'string',
 								),
-								'submitMessage' => array(
+								'submitMessage'           => array(
 									'type' => 'string',
 								),
-								'errorMessage'  => array(
+								'errorMessage'            => array(
 									'type' => 'string',
 								),
-								'cc'            => array(
+								'cc'                      => array(
 									'type' => 'string',
 								),
-								'bcc'           => array(
+								'bcc'                     => array(
 									'type' => 'string',
 								),
-								'autoresponder' => array(
+								'autoresponder'           => array(
 									'type'       => 'object',
 									'properties' => array(
 										'subject' => array(
@@ -370,7 +374,7 @@ class Options_Settings {
 										),
 									),
 								),
-								'integration'   => array(
+								'integration'             => array(
 									'type'       => 'object',
 									'properties' => array(
 										'provider' => array(
@@ -386,6 +390,9 @@ class Options_Settings {
 											'type' => 'string',
 										),
 									),
+								),
+								'submissionsSaveLocation' => array(
+									'type' => 'string',
 								),
 							),
 						),
