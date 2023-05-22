@@ -746,9 +746,7 @@ class Form_Emails_Storing {
 					id="<?php echo esc_attr( $id ); ?>"
 					class="otter_form_record_meta__value"
 					rows="5"
-				>
-					<?php echo esc_html( $field['value'] ); ?>
-				</textarea>
+				><?php echo esc_textarea( $field['value'] ); ?></textarea>
 				<?php
 				break;
 			case 'multiple-choice':
