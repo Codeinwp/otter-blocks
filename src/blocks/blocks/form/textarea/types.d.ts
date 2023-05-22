@@ -1,14 +1,8 @@
 import { BlockProps } from '../../../helpers/blocks';
+import { FormInputCommonProps } from '../common';
 
-type Attributes = {
-	id: string
-	label: string
-	placeholder: string
-	isRequired: boolean
-	mappedName: string
-	labelColor: string
+type Attributes = FormInputCommonProps & {
 	inputWidth: number
-	helpText: string
 }
 
 export type FormTextareaProps = BlockProps<Attributes>

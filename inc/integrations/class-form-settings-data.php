@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+use ThemeIsle\GutenbergBlocks\Pro;
+
 /**
  * Form settings
  *
@@ -111,6 +113,13 @@ class Form_Settings_Data {
 	 * @var array
 	 */
 	private $autoresponder = array();
+
+	/**
+	 * The location where the submissions are saved.
+	 *
+	 * @var string
+	 */
+	private $submissions_save_location = '';
 
 	/**
 	 * The default constructor.
@@ -221,6 +230,15 @@ class Form_Settings_Data {
 				}
 				if ( isset( $form['integration'] ) ) {
 					$integration->extract_integration_data( $form['integration'] );
+				}
+				if ( isset( $form['submissionsSaveLocation'] ) ) {
+					if ( '' === $form['submissionsSaveLocation'] && Pro::is_pro_active() ) {
+						$integration->set_submissions_save_location( 'database' );
+					} else {
+						$integration->set_submissions_save_location( $form['submissionsSaveLocation'] );
+					}
+				} elseif ( Pro::is_pro_active() ) {
+					$integration->set_submissions_save_location( 'database-email' );
 				}
 				$integration->set_meta( $form );
 			}
@@ -637,4 +655,24 @@ class Form_Settings_Data {
 		return $this;
 	}
 
+	/**
+	 *
+	 * Get the submissions save location.
+	 *
+	 * @return string
+	 */
+	public function get_submissions_save_location() {
+		return $this->submissions_save_location;
+	}
+
+	/**
+	 * Set the submissions save location.
+	 *
+	 * @param string $submissions_save_location The submissions save location.
+	 * @return $this
+	 */
+	public function set_submissions_save_location( $submissions_save_location ) {
+		$this->submissions_save_location = $submissions_save_location;
+		return $this;
+	}
 }

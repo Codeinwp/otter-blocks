@@ -174,7 +174,7 @@ const Edit = ({
 
 	const saveApiKey = () => {
 		setCanRetrieveProducts( false );
-		updateOption( 'themeisle_stripe_api_key', apiKey?.replace?.( /\s/g, '' ), __( 'Stripe API Key saved!', 'otter-blocks' ), reset );
+		updateOption( 'themeisle_stripe_api_key', apiKey?.replace?.( /\s/g, '' ), __( 'Stripe API Key saved!', 'otter-blocks' ), 'stripe-api-key', reset );
 	};
 
 	if ( showPlaceholder ) {

@@ -26,7 +26,7 @@ import {
  * @see https://github.com/WordPress/gutenberg/blob/trunk/packages/editor/src/components/editor-snackbars/index.js
  * @author  Hardeep Asrani <hardeepasrani@gmail.com>
  * @version 1.1
- * @returns {[(optionName: string) => any, (option: string, value: any, success?: string, onSuccess: Function) => void, 'loading' | 'loaded' | 'error' | 'saving']} [ getOption, updateOption, status ]
+ * @returns {[(optionName: string) => any, (option: string, value: any, success?: string, noticeId?: string, onSuccess: Function) => void, 'loading' | 'loaded' | 'error' | 'saving']} [ getOption, updateOption, status ]
  *
  */
 const useSettings = () => {
@@ -69,9 +69,10 @@ const useSettings = () => {
 	 * @param {string} option Option name.
 	 * @param {any} value Option value.
 	 * @param {string?} success Success message for Notice.
+	 * @param {string?} noticeId Notice ID.
 	 * @param {function?} onSuccess Callback function to be executed on success.
 	 */
-	const updateOption = ( option, value, success = __( 'Settings saved.', 'otter-blocks' ), onSuccess = () => {}) => {
+	const updateOption = ( option, value, success = __( 'Settings saved.', 'otter-blocks' ), noticeId = undefined, onSuccess = () => {}) => {
 		setStatus( 'saving' );
 
 		const save = new api.models.Settings({ [option]: value }).save();
@@ -85,7 +86,8 @@ const useSettings = () => {
 					success,
 					{
 						isDismissible: true,
-						type: 'snackbar'
+						type: 'snackbar',
+						id: noticeId
 					}
 				);
 			}
@@ -98,7 +100,8 @@ const useSettings = () => {
 					__( 'An unknown error occurred.', 'otter-blocks' ),
 					{
 						isDismissible: true,
-						type: 'snackbar'
+						type: 'snackbar',
+						id: noticeId
 					}
 				);
 			}
@@ -114,7 +117,8 @@ const useSettings = () => {
 				response.responseJSON.message ? response.responseJSON.message : __( 'An unknown error occurred.', 'otter-blocks' ),
 				{
 					isDismissible: true,
-					type: 'snackbar'
+					type: 'snackbar',
+					id: noticeId
 				}
 			);
 		});
