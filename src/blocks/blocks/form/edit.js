@@ -52,7 +52,9 @@ import {
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
-import { renderBoxOrNumWithUnit, _cssBlock, _px } from '../../helpers/helper-functions';
+import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
+import { Notice } from '@wordpress/components';
+
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
@@ -66,7 +68,8 @@ const formOptionsMap = {
 	fromName: 'fromName',
 	cc: 'cc',
 	bcc: 'bcc',
-	autoresponder: 'autoresponder'
+	autoresponder: 'autoresponder',
+	submissionsSaveLocation: 'submissionsSaveLocation'
 };
 
 /**
@@ -95,10 +98,7 @@ const Edit = ({
 		serviceTesting: 'init'
 	});
 
-	const [ optionsHaveChanged, setOptionsHaveChanged ] = useState( false );
-
 	const setLoading = l => {
-		setOptionsHaveChanged( true );
 		setLoadingState( loading => ({ ...loading, ...l }) );
 	};
 
@@ -114,6 +114,8 @@ const Edit = ({
 		return attributes?.[field];
 	};
 
+
+	/** @type {[import('./type').FormOptions, React.Dispatch<React.SetStateAction<import('./type').FormOptions>>]} */
 	const [ formOptions, setFormOptions ] = useState({
 		provider: undefined,
 		redirectLink: undefined,
@@ -129,7 +131,8 @@ const Edit = ({
 		apiKey: undefined,
 		cc: undefined,
 		bcc: undefined,
-		autoresponder: undefined
+		autoresponder: undefined,
+		submissionsSaveLocation: undefined
 	});
 
 	const {
@@ -140,11 +143,21 @@ const Edit = ({
 		moveBlockToPosition
 	} = useDispatch( 'core/block-editor' );
 
+	const {
+		unlockPostSaving
+	} = useDispatch( 'core/editor' );
+
 	const setFormOption = option => {
 		setFormOptions( options => ({ ...options, ...option }) );
 	};
 
+	const setFormOptionAndSaveUnlock = option => {
+		setFormOption( option );
+		unlockPostSaving?.();
+	};
+
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
+	const [ showAutoResponderNotice, setShowAutoResponderNotice ] = useState( false );
 
 	const [ listIDOptions, setListIDOptions ] = useState([{ label: __( 'None', 'otter-blocks' ), value: '' }]);
 
@@ -173,34 +186,37 @@ const Edit = ({
 		[ name ]
 	);
 
-	const { children, hasEmailField, hasProtection } = useSelect( select => {
+	const [ hasEmailField, setHasEmailField ] = useState( false );
+
+	const { children, hasProtection } = useSelect( select => {
 		const {
 			getBlock
 		} = select( 'core/block-editor' );
 		const children = getBlock( clientId ).innerBlocks;
 		return {
 			children,
-			hasEmailField: children?.some( b => ( 'email' === b?.attributes?.type ) ),
 			hasProtection: 0 < children?.filter( ({ name }) => 'themeisle-blocks/form-nonce' === name )?.length
 		};
 	});
 
 	const { canSaveData } = useSelect( select => {
 		const isSavingPost = select( 'core/editor' )?.isSavingPost();
+		const isPublishingPost = select( 'core/editor' )?.isPublishingPost();
 		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
+		const widgetSaving = select( 'core/edit-widgets' )?.isSavingWidgetAreas();
 
 		return {
-			canSaveData: ! isAutosaving && isSavingPost
+			canSaveData: ( ! isAutosaving && ( isSavingPost || isPublishingPost ) ) || widgetSaving
 		};
 	});
 
 	const hasEssentialData = attributes.optionName && hasProtection;
 
 	useEffect( () => {
-		if ( canSaveData && optionsHaveChanged ) {
+		if ( canSaveData ) {
 			saveFormEmailOptions();
 		}
-	}, [ canSaveData, optionsHaveChanged ]);
+	}, [ canSaveData ]);
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -236,7 +252,27 @@ const Edit = ({
 				}
 			}
 		}
-	}, [ children ]);
+
+		if ( formOptions.autoresponder || formOptions.action ) {
+			const emailFields = findInnerBlocks(
+				children,
+				block => {
+					return 'email' === block?.attributes?.type && 'themeisle-blocks/form-input' === block?.name;
+				},
+				block => {
+
+					// Do not find email field inside inner Form blocks.
+					return 'themeisle-blocks/form' !== block?.name;
+				}
+			);
+
+
+			setHasEmailField( 0 < emailFields?.length );
+
+			setShowAutoResponderNotice( 0 === emailFields?.length );
+		}
+
+	}, [ children, formOptions.autoresponder, formOptions.action ]);
 
 	/**
 	 * Get the data from the WP Options for the current form.
@@ -265,11 +301,13 @@ const Edit = ({
 			listId: wpOptions?.integration?.listId,
 			action: wpOptions?.integration?.action,
 			hasCaptcha: wpOptions?.hasCaptcha,
-			autoresponder: wpOptions?.autoresponder
+			autoresponder: wpOptions?.autoresponder,
+			autoresponderSubject: wpOptions?.autoresponderSubject,
+			submissionsSaveLocation: wpOptions?.submissionsSaveLocation
 		});
 	};
 
-	/**
+	/**`
 	 * Load data from the server.
 	 */
 	useEffect( () => {
@@ -278,30 +316,34 @@ const Edit = ({
 			setLoading({ formOptions: 'done', formIntegration: 'done' });
 		}, 3000 );
 
-
 		if ( attributes.optionName ) {
-			api.loadPromise.then( () => {
-				setLoading({ formOptions: 'loading', formIntegration: 'loading' });
-				( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
-					controller = null;
-					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
-					if ( formData ) {
-						parseDataFormOptions( formData );
-						setSavedFormOptions( formData );
-					}
-					setLoading({
-						formIntegration: 'done',
-						formOptions: 'done'
+			try {
+				api.loadPromise.then( () => {
+					setLoading({ formOptions: 'loading', formIntegration: 'loading' });
+					( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
+						controller = null;
+						const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
+						if ( formData ) {
+							parseDataFormOptions( formData );
+							setSavedFormOptions( formData );
+						}
+						setLoading({
+							formIntegration: 'done',
+							formOptions: 'done'
+						});
+						clearTimeout( t );
+					}).catch( () => {
+						setLoading({
+							formIntegration: 'done',
+							formOptions: 'done'
+						});
+						clearTimeout( t );
 					});
-					clearTimeout( t );
-				}).catch( () => {
-					setLoading({
-						formIntegration: 'done',
-						formOptions: 'done'
-					});
-					clearTimeout( t );
 				});
-			});
+			} catch ( e ) {
+				console.error( e );
+				setLoading({ formOptions: 'error' });
+			}
 		}
 
 		return () => {
@@ -312,64 +354,73 @@ const Edit = ({
 
 	const saveFormEmailOptions = () => {
 		setLoading({ formOptions: 'saving' });
-		( new api.models.Settings() ).fetch().done( res => {
-			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-			let isMissing = true;
-			let hasUpdated = false;
+		try {
+			( new api.models.Settings() ).fetch().done( res => {
+				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
+				let isMissing = true;
+				let hasUpdated = false;
 
-			emails?.forEach( ({ form }, index ) => {
-				if ( form !== attributes.optionName ) {
-					return;
+				emails?.forEach( ({ form }, index ) => {
+					if ( form !== attributes.optionName ) {
+						return;
+					}
+
+					hasUpdated = Object.keys( formOptionsMap ).reduce( ( acc, key ) => {
+						return acc || ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]);
+					}, false );
+
+					hasUpdated = Object.keys( formOptionsMap ).some( key => ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]) );
+
+					// Update the values
+					if ( hasUpdated ) {
+						Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
+					}
+
+					isMissing = false;
+				});
+
+				if ( isMissing ) {
+					const data = { form: attributes.optionName };
+
+					Object.keys( formOptionsMap ).forEach( key => {
+						data[key] = formOptions[formOptionsMap[key]];
+					});
+
+					emails.push( data );
 				}
 
-				hasUpdated = Object.keys( formOptionsMap ).reduce( ( acc, key ) => {
-					return acc || ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]);
-				}, false );
+				if ( isMissing || hasUpdated ) {
+					const model = new api.models.Settings({
+						// eslint-disable-next-line camelcase
+						themeisle_blocks_form_emails: emails
+					});
 
-				// Update the values
-				Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
-
-				isMissing = false;
-			});
-
-			if ( isMissing ) {
-				const data = { form: attributes.optionName };
-
-				Object.keys( formOptionsMap ).forEach( key => {
-					data[key] = formOptions[formOptionsMap[key]];
-				});
-
-				emails.push( data );
-			}
-
-			if ( isMissing || hasUpdated ) {
-				const model = new api.models.Settings({
-					// eslint-disable-next-line camelcase
-					themeisle_blocks_form_emails: emails
-				});
-
-				model.save().then( response => {
-					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
-					if ( formOptions ) {
-						parseDataFormOptions( formOptions );
-						setSavedFormOptions( formOptions );
-						setLoading({ formOptions: 'done' });
-						createNotice(
-							'info',
-							__( 'Form options have been saved.', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
-					} else {
-						setLoading({ formOptions: 'error' });
-					}
-				});
-			} else {
-				setLoading({ formOptions: 'done' });
-			}
-		}).catch( () => setLoading({ formOptions: 'error' }) );
+					model.save().then( response => {
+						const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
+						if ( formOptions ) {
+							parseDataFormOptions( formOptions );
+							setSavedFormOptions( formOptions );
+							setLoading({ formOptions: 'done' });
+							createNotice(
+								'info',
+								__( 'Form options have been saved.', 'otter-blocks' ),
+								{
+									isDismissible: true,
+									type: 'snackbar'
+								}
+							);
+						} else {
+							setLoading({ formOptions: 'error' });
+						}
+					});
+				} else {
+					setLoading({ formOptions: 'done' });
+				}
+			}).catch( () => setLoading({ formOptions: 'error' }) );
+		} catch ( e ) {
+			console.error( e );
+			setLoading({ formOptions: 'error' });
+		}
 	};
 
 	/**
@@ -381,6 +432,7 @@ const Edit = ({
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
 			let hasUpdated = false;
+
 
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
@@ -413,6 +465,7 @@ const Edit = ({
 					}
 				});
 			}
+
 
 			if ( isMissing || hasUpdated ) {
 				const model = new api.models.Settings({
@@ -801,8 +854,7 @@ const Edit = ({
 	const inputFieldActions = {
 		select: ( blockId ) => {
 			if ( 0 < children?.length ) {
-				const block = children.find( block => block.clientId === blockId );
-				selectBlock( block.clientId );
+				selectBlock( blockId );
 			}
 		},
 		move: ( blockId, position ) => {
@@ -813,8 +865,7 @@ const Edit = ({
 		},
 		delete: ( blockId ) => {
 			if ( 0 < children?.length ) {
-				const block = children.find( block => block.clientId === blockId );
-				removeBlock( block.clientId, false );
+				removeBlock( blockId, false );
 			}
 		},
 		add: ( blockName ) => {
@@ -832,7 +883,7 @@ const Edit = ({
 					setListIDOptions,
 					saveFormEmailOptions,
 					formOptions,
-					setFormOption,
+					setFormOption: setFormOptionAndSaveUnlock,
 					saveIntegration,
 					sendTestEmail,
 					loadingState,
@@ -840,7 +891,9 @@ const Edit = ({
 					hasEmailField,
 					children,
 					inputFieldActions,
-					hasInnerBlocks
+					hasInnerBlocks,
+					selectForm: () => selectBlock( clientId ),
+					showAutoResponderNotice
 				}}
 			>
 				<Inspector
@@ -869,8 +922,8 @@ const Edit = ({
 										])
 									}
 								</style>
-								<InnerBlocks
-								/>
+
+								<InnerBlocks/>
 
 								{
 									attributes.hasCaptcha && 'done' !== loadingState?.captcha && (
@@ -952,6 +1005,7 @@ const Edit = ({
 											}
 										</Fragment>
 									) }
+
 								</div>
 							</form>
 						) : (
