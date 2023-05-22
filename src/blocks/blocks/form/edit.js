@@ -98,10 +98,7 @@ const Edit = ({
 		serviceTesting: 'init'
 	});
 
-	const [ optionsHaveChanged, setOptionsHaveChanged ] = useState( false );
-
 	const setLoading = l => {
-		setOptionsHaveChanged( true );
 		setLoadingState( loading => ({ ...loading, ...l }) );
 	};
 
@@ -135,7 +132,7 @@ const Edit = ({
 		cc: undefined,
 		bcc: undefined,
 		autoresponder: undefined,
-		submissionSaveLocation: undefined
+		submissionsSaveLocation: undefined
 	});
 
 	const {
@@ -204,21 +201,22 @@ const Edit = ({
 
 	const { canSaveData } = useSelect( select => {
 		const isSavingPost = select( 'core/editor' )?.isSavingPost();
+		const isPublishingPost = select( 'core/editor' )?.isPublishingPost();
 		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
 		const widgetSaving = select( 'core/edit-widgets' )?.isSavingWidgetAreas();
 
 		return {
-			canSaveData: ( ! isAutosaving && isSavingPost ) || widgetSaving
+			canSaveData: ( ! isAutosaving && ( isSavingPost || isPublishingPost ) ) || widgetSaving
 		};
 	});
 
 	const hasEssentialData = attributes.optionName && hasProtection;
 
 	useEffect( () => {
-		if ( canSaveData && optionsHaveChanged ) {
+		if ( canSaveData ) {
 			saveFormEmailOptions();
 		}
-	}, [ canSaveData, optionsHaveChanged ]);
+	}, [ canSaveData ]);
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -370,8 +368,12 @@ const Edit = ({
 						return acc || ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]);
 					}, false );
 
+					hasUpdated = Object.keys( formOptionsMap ).some( key => ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]) );
+
 					// Update the values
-					Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
+					if( hasUpdated ) {
+						Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
+					}
 
 					isMissing = false;
 				});
@@ -430,6 +432,8 @@ const Edit = ({
 			let isMissing = true;
 			let hasUpdated = false;
 
+
+
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
 					if ( ! emails[index]?.integration ) {
@@ -461,6 +465,8 @@ const Edit = ({
 					}
 				});
 			}
+
+
 
 			if ( isMissing || hasUpdated ) {
 				const model = new api.models.Settings({
