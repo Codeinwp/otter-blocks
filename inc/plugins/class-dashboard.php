@@ -261,7 +261,7 @@ class Dashboard {
 				<img src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ); ?>" alt="<?php esc_attr_e( 'Otter Blocks', 'otter-blocks' ); ?>" style="width: 90px">
 			</div>
 			<div class="otter-banner__content">
-				<h1 class="otter-banner__title"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
+				<h1 class="otter-banner__title" style="line-height: normal;"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
 				<span class="otter-banner__version"><?php echo esc_html( 'v' . OTTER_BLOCKS_VERSION ); ?></span>
 			</div>
 		</div>
