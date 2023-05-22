@@ -302,11 +302,12 @@ const Edit = ({
 			action: wpOptions?.integration?.action,
 			hasCaptcha: wpOptions?.hasCaptcha,
 			autoresponder: wpOptions?.autoresponder,
-			autoresponderSubject: wpOptions?.autoresponderSubject
+			autoresponderSubject: wpOptions?.autoresponderSubject,
+			submissionsSaveLocation: wpOptions?.submissionsSaveLocation,
 		});
 	};
 
-	/**
+	/**`
 	 * Load data from the server.
 	 */
 	useEffect( () => {
