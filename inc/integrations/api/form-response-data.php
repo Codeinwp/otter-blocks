@@ -18,23 +18,34 @@ use WP_REST_Response;
  */
 class Form_Data_Response {
 
-	// TODO: Integrate the new error code system.
 	const SUCCESS_EMAIL_SEND      = '0';
 	const SUCCESS_USER_SUBSCRIBED = '1';
 
-	const ERROR_RUNTIME_ERROR = '10';
+	const ERROR_RUNTIME_ERROR                     = '10';
+	const ERROR_FILE_UPLOAD                       = '11';
+	const ERROR_FILE_UPLOAD_TYPE                  = '12';
+	const ERROR_FILE_UPLOAD_TYPE_WP               = '13';
+	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER      = '14';
+	const ERROR_FILE_UPLOAD_MAX_SIZE              = '15';
+	const ERROR_MISSING_FILE_FIELD_OPTION         = '16';
+	const ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD = '17';
+	const ERROR_AUTORESPONDER_COULD_NOT_SEND      = '18';
 
 	// Request validation errors.
-	const ERROR_MISSING_DATA         = '101';
-	const ERROR_MISSING_CAPTCHA      = '102';
-	const ERROR_MISSING_NONCE        = '103';
-	const ERROR_MISSING_EMAIL        = '104';
-	const ERROR_FORM_ID_INVALID      = '105';
-	const ERROR_EMAIL_NOT_SEND       = '106';
-	const ERROR_MISSING_PROVIDER     = '107';
-	const ERROR_MISSING_API_KEY      = '108';
-	const ERROR_MISSING_MAIL_LIST_ID = '109';
-	const ERROR_BOT_DETECTED         = '110';
+	const ERROR_MISSING_DATA          = '101';
+	const ERROR_MISSING_CAPTCHA       = '102';
+	const ERROR_MISSING_NONCE         = '103';
+	const ERROR_MISSING_EMAIL         = '104';
+	const ERROR_FORM_ID_INVALID       = '105';
+	const ERROR_EMAIL_NOT_SEND        = '106';
+	const ERROR_MISSING_PROVIDER      = '107';
+	const ERROR_MISSING_API_KEY       = '108';
+	const ERROR_MISSING_MAIL_LIST_ID  = '109';
+	const ERROR_BOT_DETECTED          = '110';
+	const ERROR_FILES_METADATA_FORMAT = '111';
+	const ERROR_FILE_MISSING_BINARY   = '112';
+
+
 
 	// Errors from external services.
 	const ERROR_PROVIDER_NOT_REGISTERED            = '201';
@@ -45,6 +56,7 @@ class Form_Data_Response {
 	const ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED = '206';
 	const ERROR_PROVIDER_INVALID_EMAIL             = '207';
 	const ERROR_PROVIDER_DUPLICATED_EMAIL          = '208';
+	const ERROR_PROVIDER_CREDENTIAL_ERROR          = '209';
 
 
 	/**
@@ -280,77 +292,53 @@ class Form_Data_Response {
 	 * @since 2.1.7
 	 */
 	public function process_error_code() {
-		switch ( $this->response['code'] ) {
-			case self::ERROR_MISSING_DATA:
-				$this->add_reason( __( 'Essential data is missing: invalid Form id or protection.', 'otter-blocks' ) );
-				break;
+		$this->add_reason( self::get_error_code_message( $this->response['code'] ) );
+	}
 
-			case self::ERROR_MISSING_CAPTCHA:
-				$this->add_reason( __( 'Captcha token is missing.', 'otter-blocks' ) );
-				break;
+	/**
+	 * Get the error message based on the error code.
+	 *
+	 * @param int $error_code The error code.
+	 * @return string
+	 * @since 2.2.3
+	 */
+	public static function get_error_code_message( $error_code ) {
+		$error_messages = array(
+			self::ERROR_MISSING_DATA                       => __( 'Essential data is missing: invalid Form id or protection.', 'otter-blocks' ),
+			self::ERROR_MISSING_CAPTCHA                    => __( 'Captcha token is missing.', 'otter-blocks' ),
+			self::ERROR_MISSING_EMAIL                      => __( 'Missing email field in form.', 'otter-blocks' ),
+			self::ERROR_MISSING_NONCE                      => __( 'Missing CSRF protection in form.', 'otter-blocks' ),
+			self::ERROR_MISSING_FILE_FIELD_OPTION          => __( 'The File Field is not registered. Please check the field in Editor.', 'otter-blocks' ),
+			self::ERROR_FORM_ID_INVALID                    => __( 'Form ID is invalid.', 'otter-blocks' ),
+			self::ERROR_EMAIL_NOT_SEND                     => __( 'Email could not be send. Might be an error with the service.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_INVALID_KEY               => __( 'Invalid service authentication credentials.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_NOT_REGISTERED            => __( 'The 3rd-party service is not registered.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_SUBSCRIBE_ERROR           => __( 'Error received from service when subscribing the user.', 'otter-blocks' ),
+			self::ERROR_MISSING_PROVIDER                   => __( 'Provider settings are missing.', 'otter-blocks' ),
+			self::ERROR_MISSING_API_KEY                    => __( 'API Key is missing from settings.', 'otter-blocks' ),
+			self::ERROR_MISSING_MAIL_LIST_ID               => __( 'API Key is missing.', 'otter-blocks' ),
+			self::ERROR_INVALID_CAPTCHA_TOKEN              => __( 'The reCaptcha token is invalid.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT    => __( 'The API key format is invalid.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED => __( 'The user with this email was already registered.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_INVALID_EMAIL             => __( 'The email address is invalid.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_DUPLICATED_EMAIL          => __( 'The email was already registered.', 'otter-blocks' ),
+			self::ERROR_BOT_DETECTED                       => __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ),
+			self::ERROR_FILES_METADATA_FORMAT              => __( 'The files metadata is invalid.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD                        => __( 'The files could not be uploaded.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_CREDENTIAL_ERROR          => __( 'The Otter From Block service credentials are invalid.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD_TYPE_WP                => __( 'The file type is not allowed by host provider.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD_TYPE                   => __( 'The file type is not allowed.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER       => __( 'The number of files is too big.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD_MAX_SIZE               => __( 'The file size exceed the limit.', 'otter-blocks' ),
+			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the Form Block with Autoresponder activated.', 'otter-blocks' ),
+			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
+			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
+		);
 
-			case self::ERROR_MISSING_EMAIL:
-				$this->add_reason( __( 'Missing email field in form.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_MISSING_NONCE:
-				$this->add_reason( __( 'Missing CSRF protection in form.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_FORM_ID_INVALID:
-				$this->add_reason( __( 'Form ID is invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_EMAIL_NOT_SEND:
-				$this->add_reason( __( 'Email could not be send. Might be an error with the service.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_INVALID_KEY:
-				$this->add_reason( __( 'Invalid service authentication credentials.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_NOT_REGISTERED:
-				$this->add_reason( __( 'The 3rd-party service is not registered.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_SUBSCRIBE_ERROR:
-				$this->add_reason( __( 'Error received from service when subscribing the user.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_MISSING_PROVIDER:
-				$this->add_reason( __( 'Provider settings are missing.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_MISSING_API_KEY:
-				$this->add_reason( __( 'API Key is missing from settings.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_MISSING_MAIL_LIST_ID:
-				$this->add_reason( __( 'API Key is missing.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_INVALID_CAPTCHA_TOKEN:
-				$this->add_reason( __( 'The reCaptcha token is invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT:
-				$this->add_reason( __( 'The API key format is invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED:
-				$this->add_reason( __( 'The email was already registered.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_INVALID_EMAIL:
-				$this->add_reason( __( 'The email address is invalid.', 'otter-blocks' ) );
-				break;
-
-			case self::ERROR_PROVIDER_DUPLICATED_EMAIL:
-				$this->add_reason( __( 'The email was already registered.', 'otter-blocks' ) );
-				break;
-			case self::ERROR_BOT_DETECTED:
-				$this->add_reason( __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ) );
-				break;  
+		if ( ! isset( $error_messages[ $error_code ] ) ) {
+			return 'Expected error whatever message';
 		}
+
+		return $error_messages[ $error_code ];
 	}
 }

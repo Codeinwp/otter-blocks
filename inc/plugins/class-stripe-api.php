@@ -57,7 +57,7 @@ class Stripe_API {
 
 	/**
 	 * Check if API keys are set
-	 * 
+	 *
 	 * @return bool
 	 * @access public
 	 */
@@ -86,7 +86,7 @@ class Stripe_API {
 	 * Build Error Message
 	 *
 	 * @param object $error Error Object.
-	 * 
+	 *
 	 * @return \WP_Error
 	 * @access  public
 	 */
@@ -107,12 +107,16 @@ class Stripe_API {
 	 *
 	 * @param string $path Request path.
 	 * @param array  $args Request arguments.
-	 * 
+	 *
 	 * @return mixed
 	 * @access public
 	 */
 	public function create_request( $path, $args = array() ) {
 		$response = array();
+
+		if ( ! self::has_keys() ) {
+			return $response;
+		}
 
 		try {
 			switch ( $path ) {
@@ -169,7 +173,7 @@ class Stripe_API {
 	 *
 	 * @param string $session_id Stripe Session ID.
 	 * @param string $price_id Price ID.
-	 * 
+	 *
 	 * @return false|string
 	 * @access  public
 	 */
@@ -198,7 +202,7 @@ class Stripe_API {
 	 * Set Customer ID for curent user.
 	 *
 	 * @param string $session_id Stripe Session ID.
-	 * 
+	 *
 	 * @access  public
 	 */
 	public function save_customer_data( $session_id ) {
@@ -247,7 +251,7 @@ class Stripe_API {
 
 	/**
 	 * Get Customer ID for curent user.
-	 * 
+	 *
 	 * @return  array
 	 * @access  public
 	 */
@@ -277,7 +281,7 @@ class Stripe_API {
 	 * Check if user owns a product.
 	 *
 	 * @param string $product Product ID.
-	 * 
+	 *
 	 * @return  bool
 	 * @access  public
 	 */
@@ -318,7 +322,7 @@ class Stripe_API {
 				break;
 			}
 		}
-		
+
 		return $bool;
 	}
 }

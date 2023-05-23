@@ -3,7 +3,7 @@
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.9  
 **Tested up to:** 6.2  
-**Requires PHP:** 5.4  
+**Requires PHP:** 5.6  
 **Stable tag:** trunk  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  

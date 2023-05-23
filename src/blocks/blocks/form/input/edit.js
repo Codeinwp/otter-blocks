@@ -10,15 +10,8 @@ import {
 
 import {
 	Fragment,
-	useEffect,
-	useRef
+	useEffect
 } from '@wordpress/element';
-
-import { useDispatch, useSelect } from '@wordpress/data';
-
-import { omit } from 'lodash';
-
-import { createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -26,7 +19,7 @@ import { createBlock } from '@wordpress/blocks';
 import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
-
+import { _cssBlock } from '../../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -47,69 +40,23 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
-	const labelRef = useRef( null );
-	const inputRef = useRef( null );
-	const helpRef = useRef( null );
-
-	const {
-		parentClientId
-	} = useSelect( select => {
-		const {
-			getBlock,
-			getBlockRootClientId
-		} = select( 'core/block-editor' );
-
-		if ( ! clientId ) {
-			return {
-				parentClientId: ''
-			};
-		}
-
-		const parentClientId = getBlockRootClientId( clientId );
-
-		return {
-			parentClientId: parentClientId ?? ''
-		};
-	}, [ clientId ]);
-
-	const { selectBlock, replaceBlock } = useDispatch( 'core/block-editor' );
-
-	const switchToTextarea = () => {
-		const block = createBlock( 'themeisle-blocks/form-textarea', { ...omit( attributes, [ 'type' ]) });
-		replaceBlock( clientId, block );
-	};
-
-
-	useEffect( () => {
-		const per = x => x ? x + '%' : null;
-
-		/**
-		 * TODO: Refactor this based on #748
-		 */
-
-		if ( inputRef.current ) {
-			inputRef.current?.style?.setProperty( '--input-width', per( attributes.inputWidth ) );
-		}
-		if ( labelRef.current ) {
-			labelRef.current?.style?.setProperty( '--label-color', attributes.labelColor || null );
-		}
-		if ( helpRef.current ) {
-			helpRef.current?.style?.setProperty( '--label-color', attributes.labelColor || null );
-		}
-	}, [ inputRef.current, labelRef.current, helpRef.current, attributes.labelColor, attributes.inputWidth ]);
-
 	return (
 		<Fragment>
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				selectParent={ () => selectBlock( parentClientId ) }
-				switchToTextarea={ switchToTextarea }
+				clientId={ clientId }
 			/>
 
 			<div { ...blockProps }>
+				<style>
+					{
+						`#block-${clientId}` + _cssBlock([
+							[ '--label-color', attributes.labelColor ]
+						])
+					}
+				</style>
 				<label
-					ref={ labelRef }
 					htmlFor={ attributes.id }
 					className="otter-form-input-label"
 				>
@@ -127,7 +74,6 @@ const Edit = ({
 				</label>
 
 				<input
-					ref={ inputRef }
 					type={ attributes.type }
 					placeholder={ attributes.placeholder }
 					name={ attributes.id }
@@ -140,7 +86,6 @@ const Edit = ({
 					attributes.helpText && (
 						<span
 							className="o-form-help"
-							ref={ helpRef }
 						>
 							{ attributes.helpText }
 						</span>

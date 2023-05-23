@@ -71,9 +71,9 @@ const Fields = ({
 
 	useEffect( () => {
 		const context = select( 'core/editor' )?.getCurrentPostId();
-		const { type } = attributes;
+		const { type, taxonomy, termType } = attributes;
 
-		if ( !! attributes.type && 'none' !== attributes.type && !! context ) {
+		if ( !! attributes.type && 'none' !== attributes.type ) {
 			setLoading( true );
 			apiFetch({ path: 'otter/v1/dynamic/preview/?' + getQueryStringFromObject({ context, type }) })
 				.then( data => {
