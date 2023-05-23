@@ -56,6 +56,10 @@ jobs:
         run: |
           npm run wp-env start
 
+      - name: Playwright Blocks 
+        run: |
+          npm run test:e2e:playwright    
+
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - name: Performance check
         run: |
@@ -65,10 +69,6 @@ jobs:
         run: |
           npm run test:e2e:blockId
           
-      - name: Playwright Blocks 
-        run: |
-          npm run test:e2e:playwright    
-
       - name: Upload video files
         if: always()
         uses: actions/upload-artifact@v2
