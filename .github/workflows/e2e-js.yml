@@ -56,6 +56,11 @@ jobs:
         run: |
           npm run wp-env start
 
+      - name: Install Playwright
+        run: |
+          npm install -g playwright-cli
+          npx playwright install    
+
       - name: Playwright Blocks 
         run: |
           npm run test:e2e:playwright    
@@ -68,7 +73,7 @@ jobs:
       - name: Block ID reliability
         run: |
           npm run test:e2e:blockId
-          
+
       - name: Upload video files
         if: always()
         uses: actions/upload-artifact@v2
