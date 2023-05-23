@@ -57,7 +57,17 @@ jobs:
           npm run wp-env start
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
-      - run: npm run test:e2e
+      - name: Performance check
+        run: |
+          npm run test:e2e:performance
+
+      - name: Block ID reliability
+        run: |
+          npm run test:e2e:blockId
+          
+      - name: Playwright Blocks 
+        run: |
+          npm run test:e2e:playwright    
 
       - name: Upload video files
         if: always()
