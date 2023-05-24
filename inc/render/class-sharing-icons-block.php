@@ -96,9 +96,10 @@ class Sharing_Icons_Block {
 			),
 
 			'comments'  => array(
-				'label' => esc_html__( 'Comments', 'otter-blocks' ),
-				'icon'  => 'fa fa-comments-o',
-				'url'   => get_comments_link(),
+				'label'   => esc_html__( 'Comments', 'otter-blocks' ),
+				'icon'    => 'fa fa-comments-o',
+				'url'     => get_comments_number( get_the_ID() ) ? '#comments' : '#respond',
+				'new_tab' => false,
 			),
 		);
 
@@ -139,7 +140,9 @@ class Sharing_Icons_Block {
 		$html = '<div ' . $wrapper_attributes . '><div class="social-icons-wrap">';
 		foreach ( $social_attributes as $key => $icon ) {
 			if ( 'className' !== $key && $this->is_active( $attributes[ $key ] ) ) {
-				$html .= '<a class="social-icon is-' . esc_html( $key ) . '" href="' . esc_url( $icon['url'] ) . '" target="_blank">';
+				$new_tab = isset( $icon['new_tab'] ) && false === $icon['new_tab'] ? '' : ' target="_blank"';
+
+				$html .= '<a class="social-icon is-' . esc_html( $key ) . '" href="' . esc_url( $icon['url'] ) . '"' . $new_tab . '>';
 				$html .= '<i class="' . esc_html( $icon['icon'] ) . '"></i><span class="v-line"></span>';
 				if ( strpos( $wrapper_attributes, 'is-style-icons' ) === false ) {
 					$html .= esc_html( $icon['label'] );
