@@ -25,8 +25,6 @@ test.describe( 'Form Block', () => {
 	test( 'click on the first variation and check if it has content', async({ editor, page }) => {
 		await editor.insertBlock({ name: 'themeisle-blocks/form' });
 
-		await page.waitForTimeout( 100 );
-
 		const blocks = await editor.getBlocks();
 
 		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
@@ -36,8 +34,6 @@ test.describe( 'Form Block', () => {
 		const { clientId } = formBlock;
 
 		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
-
-		await page.waitForTimeout( 100 );
 
 		// Check if the blocks has innerBlocks
 
@@ -49,13 +45,15 @@ test.describe( 'Form Block', () => {
 	});
 
 	test( 'add a value to CC field and save', async({ editor, page }) => {
+		const ccValue = 'otter@test-form.com';
+
+		/*
+		 * Create a form block and insert the CC value using the Inspector Controls.
+		 */
+
 		await editor.insertBlock({ name: 'themeisle-blocks/form' });
 
-		await page.waitForTimeout( 100 );
-
-		const blocks = await editor.getBlocks();
-
-		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
+		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
 
 		expect( formBlock ).toBeTruthy();
 
@@ -63,12 +61,8 @@ test.describe( 'Form Block', () => {
 
 		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
 
-		await page.waitForTimeout( 100 );
-
 		// Open the options panel
 		await page.getByRole( 'button', { name: 'Form Options options' }).click();
-
-		await page.waitForTimeout( 100 );
 
 		// activate the option
 		await page.getByRole( 'menuitemcheckbox', { name: 'Show CC' }).click();
@@ -78,21 +72,77 @@ test.describe( 'Form Block', () => {
 
 		const cc = page.getByPlaceholder( 'Send copies to' );
 
-		await cc.fill( 'otter@test-form.com' );
+		await cc.fill( ccValue );
 
-		expect( await cc.inputValue() ).toBe( 'otter@test-form.com' );
+		expect( await cc.inputValue() ).toBe( ccValue );
 
-		// Publish and check for confirmation test.
 		await editor.publishPost();
 
 		await page.waitForTimeout( 1000 );
 
+		// Check if the notice is visible
 		const msg = page.getByRole( 'button', { name: 'Dismiss this notice' }).filter({
 			hasText: 'Form options have been saved.'
 		});
 
 		expect( await msg.isVisible() ).toBeTruthy();
 
-		// TODO: Check for if the values is also saved in database.
+		/*
+		 * Check if the value is saved in the database.
+		 */
+
+		formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+
+		expect( formBlock ).toBeTruthy();
+		expect( formBlock.attributes.optionName ).toBeTruthy();
+
+		const databaseEmails = await page.evaluate( async() => {
+			// eslint-disable-next-line camelcase
+			const { themeisle_blocks_form_emails } = await ( new wp.api.models.Settings() ).fetch();
+
+			// eslint-disable-next-line camelcase
+			return themeisle_blocks_form_emails;
+		});
+
+		expect( databaseEmails ).toBeTruthy();
+		expect( databaseEmails.length ).toBeGreaterThan( 0 );
+
+		const savedEmail = databaseEmails.find( email => email?.form === formBlock.attributes.optionName );
+
+		expect( savedEmail ).toBeTruthy();
+		expect( savedEmail?.cc ).toBe( ccValue );
+	});
+
+	test( 'check if the form is rendered in frontend', async({ page, editor }) => {
+		await editor.insertBlock({ name: 'themeisle-blocks/form' });
+
+		const blocks = await editor.getBlocks();
+
+		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
+
+		expect( formBlock ).toBeTruthy();
+
+		const { clientId, attributes } = formBlock;
+		const otterId = attributes?.id;
+
+		expect( otterId ).toBeTruthy();
+
+		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+
+		const postId = await editor.publishPost();
+
+		await page.goto( `/?p=${postId}` );
+
+		const form = await page.$( `#${otterId}` );
+
+		expect( form ).toBeTruthy();
+
+		const submitArea = page.locator( 'div' ).filter({ hasText: /^Submit$/ });
+
+		expect( await submitArea.isVisible() ).toBeTruthy();
+
+		const submitBtn = submitArea.getByRole( 'button', { name: 'Submit' });
+
+		expect( await submitBtn.isVisible() ).toBeTruthy();
 	});
 });
