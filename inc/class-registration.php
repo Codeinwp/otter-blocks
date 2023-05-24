@@ -979,8 +979,11 @@ class Registration {
 			$sidebar = is_active_widget( $widget['callback'], $widget['id'] );
 
 			if ( $sidebar && 'wp_inactive_widgets' !== $sidebar ) {
-				$key             = $widget['params'][0]['number'];
-				$valid_widgets[] = (object) $widget_data[ $key ];
+				$key = $widget['params'][0]['number'];
+
+				if ( isset( $widget_data[ $key ] ) ) {
+					$valid_widgets[] = (object) $widget_data[ $key ];
+				}
 			}
 		}
 
