@@ -37,6 +37,10 @@ $base-index: 99999 !default;
 		display: block;
 	}
 
+	&.is-selected {
+		z-index: 10;
+	}
+
 	.otter-popup__modal_wrap_overlay {
 		background-color: var(--overlay-color);
 		opacity: var(--overlay-opacity);
@@ -112,6 +116,10 @@ $base-index: 99999 !default;
 
 	}
 
+	.otter-popup__modal_header + .otter-popup__modal_body {
+		margin-top: -40px;
+	}
+
 	.otter-popup__modal_body > * {
 		max-width: 100%;
 	}
@@ -134,6 +142,7 @@ $base-index: 99999 !default;
 			padding: 0 !important;
 			border: none;
 			cursor: pointer;
+			z-index: 2;
 
 			&:hover {
 				opacity: .75;

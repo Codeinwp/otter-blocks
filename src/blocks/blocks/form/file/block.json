@@ -1,0 +1,64 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/form-file",
+	"title": "File Field",
+	"category": "themeisle-blocks",
+	"description": "Display a contact form for your clients.",
+	"keywords": [ "input", "file", "field" ],
+	"ancestor": [ "themeisle-blocks/form" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"type": {
+			"type": "string",
+			"default": "file"
+		},
+		"label": {
+			"type": "string"
+		},
+		"placeholder": {
+			"type": "string"
+		},
+		"isRequired": {
+			"type": "boolean"
+		},
+		"mappedName": {
+			"type": "string"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "number"
+		},
+		"helpText": {
+			"type": "string"
+		},
+		"maxFileSize": {
+			"type": "string"
+		},
+		"allowedFileTypes": {
+			"type": "array",
+			"default": [ "image/*", "audio/*", "video/*" ]
+		},
+		"saveFiles": {
+			"type": "string",
+			"default": "media-library"
+		},
+		"multipleFiles": {
+			"type": "boolean"
+		},
+		"fieldOptionName": {
+			"type": "string"
+		},
+		"maxFilesNumber": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	}
+}

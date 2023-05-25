@@ -28,16 +28,16 @@ const Inspector = ({
 			return;
 		}
 
-		const parentClientId = select( 'core/block-editor' ).getBlockParents( clientId ).at( -1 );
-		const parentBlock = select( 'core/block-editor' ).getBlock( parentClientId );
+		const parentClientId = select( 'core/block-editor' )?.getBlockParents( clientId ).at( -1 );
+		const parentBlock = select( 'core/block-editor' )?.getBlock( parentClientId );
 
-		if ( parentBlock.attributes.alwaysOpen ) {
+		if ( parentBlock?.attributes.alwaysOpen ) {
 			return;
 		}
 
-		parentBlock.innerBlocks.forEach( sibling => {
+		parentBlock?.innerBlocks?.forEach( sibling => {
 			if ( sibling.clientId !== clientId ) {
-				dispatch( 'core/editor' ).updateBlockAttributes( sibling.clientId, { initialOpen: false });
+				dispatch( 'core/editor' )?.updateBlockAttributes( sibling.clientId, { initialOpen: false });
 			}
 		});
 	};

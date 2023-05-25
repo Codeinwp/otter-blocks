@@ -4,7 +4,6 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	isNumber,
 	max
 } from 'lodash';
 
@@ -35,6 +34,7 @@ import {
 	copyScriptAssetToIframe,
 	getEditorIframe
 } from '../../helpers/block-utility.js';
+import { _px } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -44,9 +44,13 @@ const options = {
 	threshold: [ 0.0 ]
 };
 
-const px = value => value ? `${ value }px` : value;
-
-const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+/**
+ * Get the maximum number of allowed slides per view.
+ *
+ * @param {Number} imagesLength The number of images in the slider.
+ * @returns {Number} The maximum number of slides per view.
+ */
+export const getMaxPerView = ( imagesLength ) => max([ Math.round( ( imagesLength ?? 0 ) / 2 ), 1 ]);
 
 /**
  * Slider component
@@ -85,7 +89,7 @@ const Edit = ({
 
 	useEffect( () => {
 
-		const container = document.querySelector( `#${ attributes.id }` ) ?? document.querySelector( 'iframe[name^="editor-canvas"]' )?.contentDocument?.querySelector( `#${ attributes.id }` );
+		const container = document.querySelector( `#${ attributes.id }` ) ?? getEditorIframe()?.contentDocument?.querySelector( `#${ attributes.id }` );
 
 		if ( container ) {
 			initObserver.current = new IntersectionObserver( ( entries ) => {
@@ -113,19 +117,15 @@ const Edit = ({
 		if ( attributes.images.length ) {
 			setSelectedImage( null );
 
-			if ( null !== sliderRef.current ) {
-				sliderRef.current.destroy();
-
-				if ( attributes.id ) {
-					initSlider();
-				}
+			if ( null !== sliderRef.current && attributes.id ) {
+				initSlider();
 			}
 		}
 	}, [ isSelected, attributes.id, sliderRef.current, attributes.images, attributes.width ]);
 
 	useEffect( () => {
 		if ( attributes.images.length && attributes.perView > attributes.images.length ) {
-			changePerView( max([ Math.round( attributes.images.length / 2 ), 1 ]) );
+			changePerView( getMaxPerView( attributes?.images?.length ) );
 		}
 	}, [ attributes.images ]);
 
@@ -134,35 +134,43 @@ const Edit = ({
 	const [ selectedImage, setSelectedImage ] = useState( null );
 
 	const initSlider = () => {
+
+		// Clean up old references.
+		if ( null !== sliderRef.current ) {
+			sliderRef.current?.destroy?.();
+		}
+
 		const iframe = getEditorIframe();
-		const container = document.querySelector( `#${ attributes.id }` ) ?? iframe?.contentDocument?.querySelector( `#${ attributes.id }` );
+		const container = document?.querySelector( `#${ attributes.id }` ) ?? iframe?.contentDocument?.querySelector( `#${ attributes.id }` );
+
+		const config = {
+			type: 'carousel',
+			keyboard: false,
+			perView: attributes.perView,
+			gap: attributes.gap,
+			peek: attributes.peek,
+			autoplay: false,
+			animationTimingFunc: attributes.transition || 'ease',
+			direction: window.themeisleGutenberg.isRTL ? 'rtl' : 'ltr',
+			breakpoints: {
+				800: {
+					perView: 1,
+					peek: 0,
+					gap: 0
+				}
+			}
+		};
 
 		/**
 		 * Init the Slider inside the iframe.
 		 */
-		const initFrame = () => {
-			if ( iframe?.contentWindow?.Glide ) {
-				sliderRef.current = new iframe.contentWindow.Glide( container, {
-					type: 'carousel',
-					keyboard: false,
-					perView: attributes.perView,
-					gap: attributes.gap,
-					peek: attributes.peek,
-					autoplay: false,
-					animationTimingFunc: attributes.transition || 'ease',
-					direction: window.themeisleGutenberg.isRTL ? 'rtl' : 'ltr',
-					breakpoints: {
-						800: {
-							perView: 1,
-							peek: 0,
-							gap: 0
-						}
-					}
-				}).mount();
-			}
-		};
-
 		if ( Boolean( iframe ) ) {
+			const initFrame = () => {
+				if ( iframe?.contentWindow?.Glide ) {
+					sliderRef.current = new iframe.contentWindow.Glide( container, config ).mount();
+				}
+			};
+
 			if ( ! Boolean( iframe.contentDocument?.querySelector( '#glidejs-js' ) ) ) {
 
 				// Load the JS file into the iframe.
@@ -171,23 +179,7 @@ const Edit = ({
 				initFrame();
 			}
 		} else {
-			sliderRef.current = new window.Glide( container, {
-				type: 'carousel',
-				keyboard: false,
-				perView: attributes.perView,
-				gap: attributes.gap,
-				peek: attributes.peek,
-				autoplay: false,
-				animationTimingFunc: attributes.transition || 'ease',
-				direction: window.themeisleGutenberg.isRTL ? 'rtl' : 'ltr',
-				breakpoints: {
-					800: {
-						perView: 1,
-						peek: 0,
-						gap: 0
-					}
-				}
-			}).mount();
+			sliderRef.current = new window.Glide( container, config ).mount();
 		}
 	};
 
@@ -201,28 +193,27 @@ const Edit = ({
 			}) )
 		});
 
-		if ( null !== sliderRef.current ) {
-			sliderRef.current.destroy?.();
-		}
-
 		initSlider();
 	};
 
 	const changePerView = value => {
-		setAttributes({ perView: Number( value ) });
-		sliderRef?.current?.update?.({ perView: Number( value ) });
-		if ( 1 === value ) {
-			setAttributes({
-				gap: 0,
-				peek: 0
-			});
+		setAttributes({
+			perView: Number( value ),
+			gap: 1 === value ? 0 : attributes.gap,
+			peek: 1 === value ? 0 : attributes.peek
+		});
+	};
 
-			sliderRef?.current?.update?.({
-				gap: 0,
-				peek: 0
+	useEffect( () => {
+		if ( Boolean( sliderRef?.current?.update ) ) {
+			sliderRef.current.update({
+				perView: attributes.perView ?? 1,
+				gap: attributes.gap ?? 0,
+				peek: attributes.peek ?? 0,
+				animationTimingFunc: attributes.transition ?? 'ease'
 			});
 		}
-	};
+	}, [ sliderRef.current, attributes.gap, attributes.peek, attributes.transition, attributes.perView ]);
 
 	const inlineStyles = {
 		'--arrows-color': attributes.arrowsColor,
@@ -257,9 +248,8 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				slider={ sliderRef.current }
-				changePerView={ changePerView }
 				onSelectImages={ onSelectImages }
+				changePerView={ changePerView }
 			/>
 
 			<div { ...blockProps }>
@@ -272,7 +262,7 @@ const Edit = ({
 						<div
 							className="glide__slides"
 							style={ {
-								height: responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ])
+								height: responsiveGetAttributes([ _px( attributes.height ), attributes.heightTablet, attributes.heightMobile ])
 							} }
 						>
 							{ attributes.images.map( ( image, index ) => (

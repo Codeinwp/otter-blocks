@@ -21,10 +21,7 @@ import {
  * Internal dependencies
  */
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
-
-const px = value => value ? `${ value }px` : value;
-
-const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+import { _px } from '../../../helpers/helper-functions.js';
 
 const Map = ({
 	attributes,
@@ -51,7 +48,7 @@ const Map = ({
 					{ 'is-selecting-marker': isSelectingMarker }
 				) }
 				style={ {
-					height: responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ])
+					height: responsiveGetAttributes([ _px( attributes.height ), attributes.heightTablet, attributes.heightMobile ])
 				} }
 			>
 			</div>

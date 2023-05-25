@@ -318,6 +318,10 @@ class Options_Settings {
 							if ( isset( $item['integration']['action'] ) ) {
 								$item['integration']['action'] = sanitize_text_field( $item['integration']['action'] );
 							}
+							if ( isset( $item['submissionsSaveLocation'] ) ) {
+								$item['submissionsSaveLocation'] = sanitize_text_field( $item['submissionsSaveLocation'] );
+							}
+
 							return $item;
 						},
 						$array
@@ -329,37 +333,37 @@ class Options_Settings {
 						'items' => array(
 							'type'       => 'object',
 							'properties' => array(
-								'form'          => array(
+								'form'                    => array(
 									'type' => 'string',
 								),
-								'hasCaptcha'    => array(
+								'hasCaptcha'              => array(
 									'type' => array( 'boolean', 'number', 'string' ),
 								),
-								'email'         => array(
+								'email'                   => array(
 									'type' => 'string',
 								),
-								'fromName'      => array(
+								'fromName'                => array(
 									'type' => 'string',
 								),
-								'redirectLink'  => array(
+								'redirectLink'            => array(
 									'type' => 'string',
 								),
-								'emailSubject'  => array(
+								'emailSubject'            => array(
 									'type' => 'string',
 								),
-								'submitMessage' => array(
+								'submitMessage'           => array(
 									'type' => 'string',
 								),
-								'errorMessage'  => array(
+								'errorMessage'            => array(
 									'type' => 'string',
 								),
-								'cc'            => array(
+								'cc'                      => array(
 									'type' => 'string',
 								),
-								'bcc'           => array(
+								'bcc'                     => array(
 									'type' => 'string',
 								),
-								'autoresponder' => array(
+								'autoresponder'           => array(
 									'type'       => 'object',
 									'properties' => array(
 										'subject' => array(
@@ -370,7 +374,7 @@ class Options_Settings {
 										),
 									),
 								),
-								'integration'   => array(
+								'integration'             => array(
 									'type'       => 'object',
 									'properties' => array(
 										'provider' => array(
@@ -386,6 +390,86 @@ class Options_Settings {
 											'type' => 'string',
 										),
 									),
+								),
+								'submissionsSaveLocation' => array(
+									'type' => 'string',
+								),
+							),
+						),
+					),
+				),
+				'default'           => array(),
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_form_fields_option',
+			array(
+				'type'              => 'array',
+				'description'       => __( 'Form Fields used in the Form block.', 'otter-blocks' ),
+				'sanitize_callback' => function ( $array ) {
+					return array_map(
+						function ( $item ) {
+							if ( isset( $item['fieldOptionName'] ) ) {
+								$item['fieldOptionName'] = sanitize_text_field( $item['fieldOptionName'] );
+							}
+							if ( isset( $item['fieldOptionType'] ) ) {
+								$item['fieldOptionType'] = sanitize_text_field( $item['fieldOptionType'] );
+							}
+
+							if ( isset( $item['options']['maxFileSize'] ) ) {
+								$item['options']['maxFileSize'] = sanitize_text_field( $item['options']['maxFileSize'] );
+							}
+							if ( isset( $item['options']['allowedFileTypes'] ) && is_array( $item['options']['allowedFileTypes'] ) ) {
+								foreach ( $item['options']['allowedFileTypes'] as $key => $value ) {
+									$item['options']['allowedFileTypes'][ $key ] = sanitize_text_field( $value );
+								}
+							}
+							if ( isset( $item['options']['saveFiles'] ) ) {
+								$item['options']['saveFiles'] = sanitize_text_field( $item['options']['saveFiles'] );
+							}
+							if ( isset( $item['options']['maxFilesNumber'] ) && ! is_int( $item['options']['maxFilesNumber'] ) ) {
+								$item['options']['maxFilesNumber'] = sanitize_text_field( $item['options']['maxFilesNumber'] );
+							}
+
+							return $item;
+						},
+						$array
+					);
+				},
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'  => 'array',
+						'items' => array(
+							'type'       => 'object',
+							'properties' => array(
+								'fieldOptionName' => array(
+									'type' => 'string',
+								),
+								'fieldOptionType' => array(
+									'type' => 'string',
+								),
+								'options'         => array(
+									'type'       => 'object',
+									'properties' => array(
+										'maxFileSize'      => array(
+											'type' => array( 'string', 'number' ),
+										),
+										'allowedFileTypes' => array(
+											'type'  => 'array',
+											'items' => array(
+												'type' => 'string',
+											),
+										),
+										'saveFiles'        => array(
+											'type' => 'string',
+										),
+										'maxFilesNumber'   => array(
+											'type' => array( 'string', 'number' ),
+										),
+									),
+									'default'    => array(),
 								),
 							),
 						),

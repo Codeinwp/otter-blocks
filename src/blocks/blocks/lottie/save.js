@@ -9,12 +9,12 @@ const Save = ({
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		...( attributes.file.url.endsWith( '.lottie' ) ? { 'data-src': attributes.file ? attributes.file.url : '' } : { src: attributes.file ? attributes.file.url : '' }),
+		...( attributes.file?.url.endsWith( '.lottie' ) ? { 'data-src': attributes.file ? attributes.file.url : '' } : { src: attributes.file ? attributes.file?.url : '' }),
 		width: attributes.width
 	});
 
 	let LottieElement = createElement( 'lottie-player' );
-	if ( attributes.file.url.endsWith( '.lottie' ) ) {
+	if ( attributes.file?.url.endsWith( '.lottie' ) ) {
 		LottieElement = createElement( 'dotlottie-player' );
 	}
 

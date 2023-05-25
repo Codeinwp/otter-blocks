@@ -124,7 +124,7 @@ const WelcomeGuide = () => {
 					content: (
 						<Fragment>
 							<h1 className="o-welcome-guide__heading">{ __( 'Create unique pages with the Section Block', 'otter-blocks' ) }</h1>
-							<p className="o-welcome-guide__text">{ __( 'Section Block alllows you to create responsive sections with up to 6 columns that have advanced customization options.', 'otter-blocks' ) }</p>
+							<p className="o-welcome-guide__text">{ __( 'Section Block allows you to create responsive sections with up to 6 columns that have advanced customization options.', 'otter-blocks' ) }</p>
 						</Fragment>
 					)
 				},
@@ -141,17 +141,22 @@ const WelcomeGuide = () => {
 					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-pro.png' } />,
 					content: (
 						<Fragment>
-							<h1 className="o-welcome-guide__heading">{ __( 'Make Your Website Shine With Otter Pro', 'otter-blocks' ) }</h1>
 							{ Boolean( window.themeisleGutenberg.hasPro ) ? (
-								<p className="o-welcome-guide__text">
-									{ __( 'With Otter PRO, you have access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
-									<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation" target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
-								</p>
+								<Fragment>
+									<h1 className="o-welcome-guide__heading">{ __( 'You are all setup to use Otter Pro', 'otter-blocks' ) }</h1>
+									<p className="o-welcome-guide__text">
+										{ __( 'With Otter PRO, you have access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
+										<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation" target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
+									</p>
+								</Fragment>
 							) : (
-								<p className="o-welcome-guide__text">
-									{ __( 'Upgrade to Otter PRO and get access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
-									<ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'welcomeguide' ) } target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
-								</p>
+								<Fragment>
+									<h1 className="o-welcome-guide__heading">{ __( 'Make Your Website Shine With Otter Pro', 'otter-blocks' ) }</h1>
+									<p className="o-welcome-guide__text">
+										{ __( 'Upgrade to Otter PRO and get access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
+										<ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'welcomeguide' ) } target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
+									</p>
+								</Fragment>
 							) }
 						</Fragment>
 					)

@@ -54,24 +54,12 @@ const Inspector = ({
 	heightMode,
 	setHeightMode
 }) => {
-	const onTitleChange = value => {
-		setAttributes({ title: value });
-	};
-
 	const onPercentageChange = value => {
 		if ( value === undefined ) {
 			return ;
 		}
 		value = clamp( value, 0, 100 );
 		setAttributes({ percentage: value });
-	};
-
-	const onBorderRadiusChange = value => {
-		setAttributes({ borderRadius: value });
-	};
-
-	const selectTitleStyle = value => {
-		setAttributes({ titleStyle: value });
 	};
 
 	const selectPercentagePosition = value => {
@@ -101,7 +89,7 @@ const Inspector = ({
 				<TextControl
 					label={ __( 'Title', 'otter-blocks' ) }
 					value={ attributes.title }
-					onChange={ onTitleChange }
+					onChange={ title => setAttributes({ title }) }
 				/>
 
 				<RangeControl
@@ -171,7 +159,7 @@ const Inspector = ({
 							{ label: __( 'Highlight', 'otter-blocks' ), value: 'highlight' },
 							{ label: __( 'Outer', 'otter-blocks' ), value: 'outer' }
 						] }
-						onChange={ selectTitleStyle }
+						onChange={ titleStyle => setAttributes({ titleStyle }) }
 					/>
 				) }
 
@@ -202,7 +190,7 @@ const Inspector = ({
 					label={ __( 'Border Radius', 'otter-blocks' ) }
 					help={ __( 'Round the corners of the progress bar.', 'otter-blocks' ) }
 					value={ attributes.borderRadius }
-					onChange={ onBorderRadiusChange }
+					onChange={ borderRadius => setAttributes({ borderRadius }) }
 					step={ 0.1 }
 					initialPosition={ 5 }
 					min={ 0 }

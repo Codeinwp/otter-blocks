@@ -7,6 +7,8 @@ import { registerBlockType } from '@wordpress/blocks';
 
 import { createBlock } from '@wordpress/blocks';
 
+import { omit } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -44,6 +46,26 @@ registerBlockType( name, {
 
 					return createBlock( 'themeisle-blocks/form-input', {
 						...attributes
+					});
+				}
+			},
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-multiple-choice' ],
+				transform: ( attributes ) => {
+
+					return createBlock( 'themeisle-blocks/form-multiple-choice', {
+						...attributes
+					});
+				}
+			},
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-file' ],
+				transform: ( attributes ) => {
+					const attrs = omit( attributes, [ 'type' ]);
+					return createBlock( 'themeisle-blocks/form-file', {
+						...attrs
 					});
 				}
 			}

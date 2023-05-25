@@ -19,6 +19,7 @@ import {
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
+import { _px } from '../../helpers/helper-functions';
 
 /**
  *
@@ -134,7 +135,7 @@ const Inspector = ({
 						isUnitSelectTabbable
 						isResetValueOnUnitChange
 						__unstableInputWidth="50%"
-						value={ Number.isInteger( attributes.width ) ? `${attributes.width}px` : attributes.width }
+						value={ _px( attributes.width ) }
 						units={ [
 							{
 								value: '%',

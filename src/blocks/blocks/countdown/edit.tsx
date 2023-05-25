@@ -37,6 +37,8 @@ import {
 } from '../../helpers/block-utility';
 import Inspector from './inspector.js';
 import {
+	_percent,
+	_px,
 	boxValues,
 	getTimezone
 } from '../../helpers/helper-functions.js';
@@ -45,8 +47,6 @@ import { fromInterval, toTimer } from './common';
 import { CountdownProps } from './types';
 
 const { attributes: defaultAttributes } = metadata;
-
-const optionalUnit = ( value: unknown, unit = 'px' ) => isNumber( value ) ? `${ value }${unit}` : value;
 
 const Edit = ({
 	attributes,
@@ -71,8 +71,8 @@ const Edit = ({
 		) {
 
 			const borderRadiusBox = pickBy( 'linked' === attributes?.borderRadiusType ?
-				{ left: optionalUnit( attributes.borderRadius, '%' ), right: optionalUnit( attributes.borderRadius, '%' ), bottom: optionalUnit( attributes.borderRadius, '%' ), top: optionalUnit( attributes.borderRadius, '%' ) } :
-				{ left: optionalUnit( attributes.borderRadiusBottomLeft, '%' ), right: optionalUnit( attributes.borderRadiusTopRight, '%' ), bottom: optionalUnit( attributes.borderRadiusBottomRight, '%' ), top: optionalUnit( attributes.borderRadiusTopLeft, '%' ) }, x => x );
+				{ left: _percent( attributes.borderRadius ), right: _percent( attributes.borderRadius ), bottom: _percent( attributes.borderRadius ), top: _percent( attributes.borderRadius ) } :
+				{ left: _percent( attributes.borderRadiusBottomLeft ), right: _percent( attributes.borderRadiusTopRight ), bottom: _percent( attributes.borderRadiusBottomRight ), top: _percent( attributes.borderRadiusTopLeft ) }, x => x );
 
 			if ( ! isEmpty( borderRadiusBox ) ) {
 				setAttributes({ borderRadiusBox, borderRadius: undefined, borderRadiusBottomLeft: undefined, borderRadiusTopRight: undefined, borderRadiusBottomRight: undefined, borderRadiusTopLeft: undefined, borderRadiusType: undefined });
@@ -119,21 +119,21 @@ const Edit = ({
 		'--container-width': attributes.containerWidth,
 		'--container-width-tablet': attributes.containerWidthTablet,
 		'--container-width-mobile': attributes.containerWidthMobile,
-		'--height': optionalUnit( attributes.height ),
-		'--height-tablet': optionalUnit( attributes.heightTablet ),
-		'--height-mobile': optionalUnit( attributes.heightMobile ),
-		'--border-width': optionalUnit( attributes.borderWidth ),
-		'--border-width-tablet': optionalUnit( attributes.borderWidthTablet ),
-		'--border-width-mobile': optionalUnit( attributes.borderWidthMobile ),
-		'--gap': optionalUnit( attributes.gap ),
-		'--gap-tablet': optionalUnit( attributes.gapTablet ),
-		'--gap-mobile': optionalUnit( attributes.gapMobile ),
-		'--value-font-size': optionalUnit( attributes.valueFontSize ),
-		'--value-font-size-tablet': optionalUnit( attributes.valueFontSizeTablet ),
-		'--value-font-size-mobile': optionalUnit( attributes.valueFontSizeMobile ),
-		'--label-font-size': optionalUnit( attributes.labelFontSize ),
-		'--label-font-size-tablet': optionalUnit( attributes.labelFontSizeTablet ),
-		'--label-font-size-mobile': optionalUnit( attributes.labelFontSizeMobile ),
+		'--height': _px( attributes.height ),
+		'--height-tablet': _px( attributes.heightTablet ),
+		'--height-mobile': _px( attributes.heightMobile ),
+		'--border-width': _px( attributes.borderWidth ),
+		'--border-width-tablet': _px( attributes.borderWidthTablet ),
+		'--border-width-mobile': _px( attributes.borderWidthMobile ),
+		'--gap': _px( attributes.gap ),
+		'--gap-tablet': _px( attributes.gapTablet ),
+		'--gap-mobile': _px( attributes.gapMobile ),
+		'--value-font-size': _px( attributes.valueFontSize ),
+		'--value-font-size-tablet': _px( attributes.valueFontSizeTablet ),
+		'--value-font-size-mobile': _px( attributes.valueFontSizeMobile ),
+		'--label-font-size': _px( attributes.labelFontSize ),
+		'--label-font-size-tablet': _px( attributes.labelFontSizeTablet ),
+		'--label-font-size-mobile': _px( attributes.labelFontSizeMobile ),
 		'--alignment': attributes.alignment,
 		'--padding': boxValues( attributes.padding ),
 		'--padding-tablet': boxValues( attributes.paddingTablet ),

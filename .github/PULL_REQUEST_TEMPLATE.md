@@ -30,4 +30,5 @@ new QueryQA().select('blocks').run()
 - [ ] In case of deprecation, old blocks are safely migrated.
 - [ ] It is usable in Widgets and FSE.
 - [ ] Copy/Paste is working if the attributes are modified.
+- [ ] PR is following [the best practices]()
 

@@ -8,8 +8,6 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { isNumber } from 'lodash';
-
 import { useState } from '@wordpress/element';
 
 import {
@@ -34,10 +32,7 @@ import {
 import { getLocation } from './utility';
 import MarkerWrapper from './components/marker-wrapper.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-
-const px = value => value ? `${ value }px` : value;
-
-const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+import { _px } from '../../helpers/helper-functions.js';
 
 /**
  *
@@ -84,26 +79,6 @@ const Inspector = ({
 		}
 	};
 
-	const changeLatitude = value => {
-		setAttributes({ latitude: value.toString() });
-	};
-
-	const changeLongitude = value => {
-		setAttributes({ longitude: value.toString() });
-	};
-
-	const changeZoom = value => {
-		setAttributes({ zoom: value });
-	};
-
-	const toggleDraggable = () => {
-		setAttributes({ draggable: ! attributes.draggable });
-	};
-
-	const toggleZoomControl = () => {
-		setAttributes({ zoomControl: ! attributes.zoomControl });
-	};
-
 	const searchOnPress = ( event, key ) => {
 		if ( event.key === key ) {
 			search();
@@ -133,7 +108,7 @@ const Inspector = ({
 					type="text"
 					placeholder={ __( 'Enter latitude…', 'otter-blocks' ) }
 					value={ attributes.latitude }
-					onChange={ changeLatitude }
+					onChange={ value => setAttributes({ latitude: value.toString() }) }
 				/>
 
 				<TextControl
@@ -141,7 +116,7 @@ const Inspector = ({
 					type="text"
 					placeholder={ __( 'Enter longitude', 'otter-blocks' ) }
 					value={ attributes.longitude }
-					onChange={ changeLongitude }
+					onChange={ value => setAttributes({ longitude: value.toString() }) }
 				/>
 			</PanelBody>
 
@@ -152,7 +127,7 @@ const Inspector = ({
 				<RangeControl
 					label={ __( 'Map Zoom Level', 'otter-blocks' ) }
 					value={ attributes.zoom }
-					onChange={ changeZoom }
+					onChange={ zoom => setAttributes({ zoom }) }
 					min={ 0 }
 					max={ 20 }
 				/>
@@ -161,7 +136,7 @@ const Inspector = ({
 					label={ __( 'Height', 'otter-blocks' ) }
 				>
 					<UnitContol
-						value={ responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ]) }
+						value={ responsiveGetAttributes([ _px( attributes.height ), attributes.heightTablet, attributes.heightMobile ]) }
 						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
 					/>
 
@@ -183,13 +158,13 @@ const Inspector = ({
 				<ToggleControl
 					label={ __( 'Draggable Map', 'otter-blocks' ) }
 					checked={ attributes.draggable }
-					onChange={ toggleDraggable }
+					onChange={ () => setAttributes({ draggable: ! attributes.draggable }) }
 				/>
 
 				<ToggleControl
 					label={ __( 'Zoom Control', 'otter-blocks' ) }
 					checked={ attributes.zoomControl }
-					onChange={ toggleZoomControl }
+					onChange={ () => setAttributes({ zoomControl: ! attributes.zoomControl }) }
 				/>
 			</PanelBody>
 

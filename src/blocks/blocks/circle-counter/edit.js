@@ -30,10 +30,9 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import CircularProgressBar from './components/circular-progress-bar.js';
 import { blockInit } from '../../helpers/block-utility.js';
+import { _px } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
-
-const px = value => value ? `${ value }px` : value;
 
 /**
  *
@@ -116,7 +115,7 @@ const CircularProgressBarBlock = ({
 	}, [ attributes.percentage, attributes.height ]);
 
 	const inlineStyles = {
-		'--font-size-title': px( attributes.fontSizeTitle )
+		'--font-size-title': _px( attributes.fontSizeTitle )
 	};
 
 	const blockProps = useBlockProps({

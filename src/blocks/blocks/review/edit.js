@@ -48,10 +48,9 @@ import {
 } from '../../helpers/block-utility.js';
 
 import { useDarkBackground } from '../../helpers/utility-hooks.js';
+import { _px } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
-
-const px = value => value ? `${ value }px` : value;
 
 const Stars = ({ rating }) => {
 	const scale = Boolean( window.themeisleGutenberg.ratingScale );
@@ -175,8 +174,8 @@ const Edit = ({
 		...( attributes?.paddingMobile?.bottom && { '--padding-mobile-bottom': attributes.paddingMobile.bottom }),
 		...( attributes?.paddingMobile?.right && { '--padding-mobile-right': attributes.paddingMobile.right }),
 		...( attributes?.paddingMobile?.left && { '--padding-mobile-left': attributes.paddingMobile.left }),
-		'--border-width': px( getValue( 'borderWidth' ) ),
-		'--border-radius': px( getValue( 'borderRadius' ) ),
+		'--border-width': _px( getValue( 'borderWidth' ) ),
+		'--border-radius': _px( getValue( 'borderRadius' ) ),
 		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hexToRgba( boxShadow.color || '#FFFFFF', boxShadow.colorOpacity ) }`
 	};
 
