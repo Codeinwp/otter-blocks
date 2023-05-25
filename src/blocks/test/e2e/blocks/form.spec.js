@@ -10,7 +10,7 @@ test.describe( 'Form Block', () => {
 		await admin.createNewPost();
 	});
 
-	test( 'activate Otter Pro', async({ page }) => {
+	test( 'check if Otter Pro is active', async({ page }) => {
 		await page.goto( '/wp-admin/admin.php?page=otter' );
 
 		await page.waitForTimeout( 1000 );
@@ -19,15 +19,11 @@ test.describe( 'Form Block', () => {
 
 		expect( activateInputField ).toBeVisible();
 
-		await activateInputField.fill( 'test' );
-
-		const activateBtn = page.getByRole( 'button', { name: 'Activate' });
+		const activateBtn = page.getByRole( 'button', { name: 'Deactivate' });
 
 		expect( activateBtn ).toBeVisible();
 
 		await activateBtn.click();
-
-		// TODO: insert a valid license key
 	});
 
 
