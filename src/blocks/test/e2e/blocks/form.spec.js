@@ -163,4 +163,41 @@ test.describe( 'Form Block', () => {
 
 		expect( await submitBtn.isVisible() ).toBeTruthy();
 	});
+
+	test( 'insert a file field and check if it renders in frontend', async({ page, editor }) => {
+
+		await page.waitForTimeout( 1000 );
+		await editor.insertBlock({ name: 'themeisle-blocks/form', innerBlocks: [
+			{
+				name: 'themeisle-blocks/form-file',
+				attributes: {
+					label: 'File Field Test',
+					helpText: 'This is a help text',
+					allowedFileTypes: [ 'text/plain' ]
+				}
+			}
+		] });
+
+		const blocks = await editor.getBlocks();
+
+		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
+		expect( formBlock ).toBeTruthy();
+
+		const fileInputBlock = formBlock.innerBlocks.find( ( block ) => 'themeisle-blocks/form-file' === block.name );
+		expect( fileInputBlock ).toBeTruthy();
+
+		const { attributes } = fileInputBlock;
+
+		expect( attributes.id ).toBeTruthy();
+
+		const postId = await editor.publishPost();
+
+		await page.goto( `/?p=${postId}` );
+
+		const fileInput = await page.$( `#${attributes.id} input[type="file"]` );
+
+		expect( fileInput ).toBeTruthy();
+
+		// TODO: load a file and check if it is uploaded
+	});
 });
