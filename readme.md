@@ -229,6 +229,25 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 ## Changelog ##
 
+#### [Version 2.3.0](https://github.com/Codeinwp/otter-blocks/compare/v2.2.7...v2.3.0) (2023-05-25)
+
+- Add Custom Taxonomy Support to Dynamic Values
+- Add More New Fields to Form Block
+- Add Option to Store Form Block Emails to WordPress Dashboard
+- Add Api Field in Stripe Block
+- Add Support for HTML in Stripe Block Messages
+- Add CDN Links in Patterns
+- Various Form Block Enhancements
+- Bump Minimum PHP Compatibility to 5.6
+- Fix Dynamic Tags Not Working in Widgets
+- Fix Review Comparison Table Not Taking Reusable Review Blocks into Consideration
+- Fix Unused Assets Being Loaded When a Block Is Removed from Widgets
+- Fix Custom CSS Module Not Working with FSE
+- Fix Accordion Block Schema Conflicts with Neve PRO Performance Module and Lazy-loading Off-screen Elements
+
+
+
+
 ##### [Version 2.2.7](https://github.com/Codeinwp/otter-blocks/compare/v2.2.6...v2.2.7) (2023-05-08)
 
 - Add Width Option to Form Block
