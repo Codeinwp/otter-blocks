@@ -239,6 +239,10 @@ class Dynamic_Content {
 
 				$meta = implode( ', ', $display );
 			}
+
+			if ( isset( $meta['label'] ) ) {
+				$meta = $meta['label'];
+			}
 		}
 
 		if ( false === $meta || true === $meta ) {
