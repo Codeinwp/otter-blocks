@@ -13,14 +13,63 @@ import {
 	SelectControl,
 	Spinner,
 	TextControl,
-	TextareaControl
+	TextareaControl,
+	ExternalLink
 } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { ButtonToggleControl, RichTextEditor } from '../../components/index.js';
-import { useState } from '@wordpress/element';
+import { ButtonToggleControl, Notice, RichTextEditor } from '../../components/index.js';
+import { Fragment, useContext, useState } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
+import { FormContext } from '../form/edit';
+import { setUtm } from '../../helpers/helper-functions';
+
+const ProFeatures = () => {
+	return (
+		<Fragment>
+			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
+				<PanelBody
+					title={ __( 'Autoresponder (Pro)', 'otter-blocks' ) }
+				>
+					<TextControl
+						label={__( 'Autoresponder Subject', 'otter-blocks' )}
+						placeholder={__(
+							'Thank you for your purchase',
+							'otter-blocks'
+						)}
+						value={ undefined }
+						onChange={ () => {}}
+						help={__(
+							'Enter the subject of the autoresponder email.',
+							'otter-blocks'
+						)}
+					/>
+
+					<TextareaControl
+						label={ __( 'Autoresponder Body', 'otter-blocks' ) }
+						placeholder={ __( 'Thank you for choosing our online store for your recent purchase. We greatly appreciate your business and trust in our products.', 'otter-blocks' )}
+						rows={2}
+						value={ undefined }
+						onChange={ () => {} }
+						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
+						disabled
+						className="o-disabled"
+					/>
+
+					<div>
+						<Notice
+							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+							variant="upsell"
+						/>
+						<p className="description">{ __( 'Automatically send follow-up emails to your users with the Autoresponder feature.', 'otter-blocks' ) }</p>
+					</div>
+				</PanelBody>
+			)}
+		</Fragment>
+	);
+};
 
 const Inspector = ({
 	attributes,
@@ -160,6 +209,13 @@ const Inspector = ({
 					{ __( 'Save API Key', 'otter-blocks' ) }
 				</Button>
 			</PanelBody>
+
+			{ applyFilters(
+				'otter.stripe-checkout.inspector',
+				<ProFeatures />,
+				attributes,
+				setAttributes
+			) }
 		</InspectorControls>
 	);
 };

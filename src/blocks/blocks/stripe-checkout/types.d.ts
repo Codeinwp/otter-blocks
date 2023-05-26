@@ -5,6 +5,10 @@ type Attributes = {
 	price: string
 	successMessage: string
 	cancelMessage: string
+	autoresponder: {
+		subject: string
+		body: string
+	}
 }
 
 export type StripeCheckoutProps = BlockProps<Attributes>

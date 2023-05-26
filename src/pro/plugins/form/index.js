@@ -21,40 +21,16 @@ import { Notice as OtterNotice } from '../../../blocks/components';
 import { RichTextEditor } from '../../../blocks/components';
 import { FieldInputWidth, HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
+import AutoreponderBodyModal from '../../components/autoresponder/index.js';
 
 // +-------------- Autoresponder --------------+
 
 const AutoresponderBody = ({ formOptions, setFormOption }) => {
-	const [ isOpen, setOpen ] = useState( false );
 	const onChange = body => {
 		setFormOption({ autoresponder: { ...formOptions.autoresponder, body }});
 	};
 
-	return (
-		<>
-			{ isOpen && (
-				<Modal
-					title={ __( 'Autoresponder Body' ) }
-					onRequestClose={() => setOpen( false )}
-					shouldCloseOnClickOutside={ false }
-				>
-					<RichTextEditor
-						value={ formOptions.autoresponder?.body }
-						onChange={ onChange }
-						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
-						allowRawHTML
-					/>
-				</Modal>
-			) }
-			<br/>
-			<Button
-				variant="secondary"
-				onClick={() => setOpen( true )}
-			>
-				{ __( 'Add Autoresponder Body', 'otter-blocks' ) }
-			</Button>
-		</>
-	);
+	return <AutoresponderBodyModal value={formOptions.autoresponder?.body} onChange={onChange} />;
 };
 
 const helpMessages = {
