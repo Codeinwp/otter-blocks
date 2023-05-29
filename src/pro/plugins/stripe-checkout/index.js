@@ -12,10 +12,6 @@ const Autoresponder = ( Template, attributes, setAttributes ) => {
 		return (
 			<Fragment>
 				{ Template }
-				<OtterNotice
-					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Stripe Checkout.', 'otter-blocks' ) }
-				/>
 			</Fragment>
 		);
 	}

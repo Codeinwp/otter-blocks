@@ -51,7 +51,6 @@ class Stripe_Pro_Features {
 		if ( false !== $transient ) {
 			return;
 		}
-
 		$email = $stripe->get_session_email( $session_id );
 
 		if ( ! $email ) {
