@@ -181,6 +181,9 @@ const Edit = ({
 
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
 
+	const isOneColumn = attributes?.className?.includes( 'is-style-single-column' );
+	const isInlineFeature = attributes?.className?.includes( 'is-style-inline-features' );
+
 	const divide = Boolean( window.themeisleGutenberg.ratingScale ) ? 2 : 1;
 
 	const blockProps = useBlockProps({
@@ -342,10 +345,23 @@ const Edit = ({
 									<div className="o-review__left_feature_ratings">
 										<Stars rating={ Math.max( feature.rating, 1 ) } />
 
-										<span>
-											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
-										</span>
+										{
+											( isOneColumn || ! isInlineFeature ) && (
+												<span className="o-review__left_feature_num">
+													{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
+												</span>
+											)
+										}
+
 									</div>
+
+									{
+										( ! isOneColumn && isInlineFeature ) && (
+											<span className="o-review__left_feature_num">
+												{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
+											</span>
+										)
+									}
 
 									{ ( isSelected || feature.description ) && (
 										<RichText

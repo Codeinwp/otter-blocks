@@ -53,6 +53,22 @@
 		}
 	}
 
+	&:is(.is-style-inline-features) {
+		&:not(.is-style-single-column) {
+			.o-review__left_feature_ratings {
+				margin-left: -5px;
+			}
+		}
+
+		.o-review__left_features {
+			gap: 16px;
+		}
+
+		.o-review__left_feature {
+			flex-basis: 48%;
+		}
+	}
+
 	&.no-pros-cons {
 		grid-template-columns: 1fr;
 		grid-template-areas: 'header' 'left' 'footer';
@@ -217,6 +233,13 @@
 					font-size: var( --content-font-size );
 				}
 
+				&_num {
+					display: block;
+					color: var(--text-color);
+					font-size: 13px;
+					word-break: keep-all;
+				}
+
 				&_ratings {
 					display: flex;
 					align-items: center;
@@ -233,10 +256,7 @@
 					}
 
 					span {
-						color: var( --text-color );
 						padding-left: 10px;
-						font-size: 13px;
-						word-break: keep-all;
 					}
 				}
 
