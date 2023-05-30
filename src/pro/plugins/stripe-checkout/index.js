@@ -1,9 +1,14 @@
+/**
+ * WordPress dependencies
+ */
 import { Fragment } from '@wordpress/element';
-import { Notice, Notice as OtterNotice } from '../../../blocks/components';
 import { __ } from '@wordpress/i18n';
-import { ExternalLink, PanelBody, TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
-import { setUtm } from '../../../blocks/helpers/helper-functions';
 import { addFilter } from '@wordpress/hooks';
+import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
 import AutoresponderBodyModal from '../../components/autoresponder/index.js';
 
 const Autoresponder = ( Template, attributes, setAttributes ) => {
@@ -46,7 +51,7 @@ const Autoresponder = ( Template, attributes, setAttributes ) => {
 							/>
 
 							<AutoresponderBodyModal
-								value={ attributes.autoresponder?.body ?? __( 'Thank you for choosing our online store for your recent purchase. We greatly appreciate your business and trust in our products.', 'otter-blocks' ) }
+								value={ attributes.autoresponder?.body ?? __( 'Thank you for your recent purchase through our website. Your promotional code is <strong>GIFT2023</strong> and you can use it on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>.', 'otter-blocks' ) }
 								onChange={ ( body ) => setAttributes({ autoresponder: { ...attributes.autoresponder, body }}) } />
 						</Fragment>
 					)

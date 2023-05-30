@@ -4,24 +4,21 @@
 import { __ } from '@wordpress/i18n';
 import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
-	Button,
-	Modal,
 	TextControl,
 	FormTokenField,
 	ToggleControl,
 	Notice, SelectControl
 } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
-import { useState, Fragment } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { Notice as OtterNotice } from '../../../blocks/components';
-import { RichTextEditor } from '../../../blocks/components';
 import { FieldInputWidth, HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
-import AutoreponderBodyModal from '../../components/autoresponder/index.js';
+import AutoresponderBodyModal from '../../components/autoresponder/index.js';
 
 // +-------------- Autoresponder --------------+
 

@@ -36,7 +36,7 @@ class Stripe_Pro_Features {
 	 */
 	public function autoresponder( $attributes, $stripe, $session_id ) {
 
-		if ( ! isset( $attributes['autoresponder'] ) ) {
+		if ( ! isset( $attributes['autoresponder'] ) || ! isset( $attributes['autoresponder']['subject'] ) || ! isset( $attributes['autoresponder']['body'] ) ) {
 			return;
 		}
 
@@ -60,12 +60,12 @@ class Stripe_Pro_Features {
 		$to        = $email;
 		$headers[] = 'Content-Type: text/html';
 		$headers[] = 'From: ' . get_bloginfo( 'name', 'display' );
-		$subject   = isset( $attributes['autoresponder']['subject'] ) ? $attributes['autoresponder']['subject'] : __( 'Thank you for your purchase', 'otter-blocks' );
-		$body      = isset( $attributes['autoresponder']['body'] ) ? $attributes['autoresponder']['body'] : __( 'Thank you for choosing our online store for your recent purchase. We greatly appreciate your business and trust in our products.', 'otter-blocks' );
+		$subject   = $attributes['autoresponder']['subject'];
+		$body      = $attributes['autoresponder']['body'];
 
 		// phpcs:ignore
 		if ( wp_mail( $to, $subject, $body, $headers ) ) {
-			set_transient( $transient_key, true, 60 * 24 * 7 );
+			set_transient( $transient_key, true, WEEK_IN_SECONDS );
 		}
 	}
 

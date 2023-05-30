@@ -2,7 +2,8 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-
+import { Fragment, useState } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
@@ -21,17 +22,13 @@ import {
  * Internal dependencies
  */
 import { ButtonToggleControl, Notice as OtterNotice, Notice, RichTextEditor } from '../../components/index.js';
-import { Fragment, useContext, useState } from '@wordpress/element';
-import { applyFilters } from '@wordpress/hooks';
-import { FormContext } from '../form/edit';
 import { setUtm } from '../../helpers/helper-functions';
 
 const ProFeatures = () => {
 	return (
 		<Fragment>
-
 			<PanelBody
-				title={ __( 'Autoresponder (Pro)', 'otter-blocks' ) }
+				title={ __( 'Autoresponder', 'otter-blocks' ) }
 			>
 				<TextControl
 					label={__( 'Autoresponder Subject', 'otter-blocks' )}
@@ -50,7 +47,7 @@ const ProFeatures = () => {
 
 				<TextareaControl
 					label={ __( 'Autoresponder Body', 'otter-blocks' ) }
-					placeholder={ __( 'Thank you for choosing our online store for your recent purchase. We greatly appreciate your business and trust in our products.', 'otter-blocks' )}
+					placeholder={ __( 'Thank you for your recent purchase through our website. Your promotional code is <pre>GIFT2023</pre> and you can use it on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>. <br><br><br> This is a template.', 'otter-blocks' )}
 					rows={2}
 					value={ undefined }
 					onChange={ () => {} }
@@ -80,7 +77,6 @@ const ProFeatures = () => {
 					)
 				}
 			</PanelBody>
-
 		</Fragment>
 	);
 };
