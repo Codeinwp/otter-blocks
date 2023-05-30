@@ -26,58 +26,56 @@ import { setUtm } from '../../helpers/helper-functions';
 
 const ProFeatures = () => {
 	return (
-		<Fragment>
-			<PanelBody
-				title={ __( 'Autoresponder', 'otter-blocks' ) }
-			>
-				<TextControl
-					label={__( 'Autoresponder Subject', 'otter-blocks' )}
-					placeholder={__(
-						'Thank you for your purchase',
-						'otter-blocks'
-					)}
-					value={ undefined }
-					onChange={ () => {}}
-					help={__(
-						'Enter the subject of the autoresponder email.',
-						'otter-blocks'
-					)}
-					className="o-disabled"
-				/>
+		<PanelBody
+			title={ __( 'Autoresponder', 'otter-blocks' ) }
+		>
+			<TextControl
+				label={__( 'Autoresponder Subject', 'otter-blocks' )}
+				placeholder={__(
+					'Thank you for your purchase',
+					'otter-blocks'
+				)}
+				value={ undefined }
+				onChange={ () => {}}
+				help={__(
+					'Enter the subject of the autoresponder email.',
+					'otter-blocks'
+				)}
+				className="o-disabled"
+			/>
 
-				<TextareaControl
-					label={ __( 'Autoresponder Body', 'otter-blocks' ) }
-					placeholder={ __( 'Thank you for your recent purchase through our website. Your promotional code is <pre>GIFT2023</pre> and you can use it on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>. <br><br><br> This is a template.', 'otter-blocks' )}
-					rows={2}
-					value={ undefined }
-					onChange={ () => {} }
-					help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
-					disabled
-					className="o-disabled"
-				/>
+			<TextareaControl
+				label={ __( 'Autoresponder Body', 'otter-blocks' ) }
+				placeholder={ __( 'Thank you for your recent purchase through our website. Your promotional code is <pre>GIFT2023</pre> and you can use it on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>. <br><br><br> This is a template.', 'otter-blocks' )}
+				rows={2}
+				value={ undefined }
+				onChange={ () => {} }
+				help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
+				disabled
+				className="o-disabled"
+			/>
 
-				{
-					( ! Boolean( window?.otterPro?.isActive ) && Boolean( window?.themeisleGutenberg?.hasPro ) ) && (
-						<OtterNotice
-							notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Stripe Checkout.', 'otter-blocks' ) }
+			{
+				( ! Boolean( window?.otterPro?.isActive ) && Boolean( window?.themeisleGutenberg?.hasPro ) ) && (
+					<OtterNotice
+						notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+						instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Stripe Checkout.', 'otter-blocks' ) }
+					/>
+				)
+			}
+
+			{
+				( ! Boolean( window?.themeisleGutenberg?.hasPro ) ) && (
+					<div>
+						<Notice
+							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+							variant="upsell"
 						/>
-					)
-				}
-
-				{
-					( ! Boolean( window?.themeisleGutenberg?.hasPro ) ) && (
-						<div>
-							<Notice
-								notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
-								variant="upsell"
-							/>
-							<p className="description">{ __( 'Automatically send follow-up emails to your users with the Autoresponder feature.', 'otter-blocks' ) }</p>
-						</div>
-					)
-				}
-			</PanelBody>
-		</Fragment>
+						<p className="description">{ __( 'Automatically send follow-up emails to your users with the Autoresponder feature.', 'otter-blocks' ) }</p>
+					</div>
+				)
+			}
+		</PanelBody>
 	);
 };
 
