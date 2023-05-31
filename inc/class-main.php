@@ -482,7 +482,7 @@ class Main {
 			'logo'             => 'https://ps.w.org/otter-blocks/assets/icon-256x256.png?rev=2019293',
 			'has_upgrade_menu' => ! DEFINED( 'OTTER_PRO_VERSION' ),
 			'upgrade_link'     => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
-			'upgrade_text'     => __( 'Upgrade to Otter Pro', 'otter-blocks' ),
+			'upgrade_text'     => __( 'Get Otter Pro', 'otter-blocks' ),
 		);
 	}
 
