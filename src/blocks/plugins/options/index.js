@@ -18,7 +18,8 @@ import {
 	Button,
 	PanelBody,
 	PanelRow,
-	Snackbar
+	Snackbar,
+	ToggleControl
 } from '@wordpress/components';
 
 import {
@@ -61,6 +62,7 @@ import ReviewControl from './global-defaults/controls/review.js';
 import Form from './global-defaults/controls/form.js';
 import { otterIconColored } from '../../helpers/icons.js';
 import Tabs from './global-defaults/controls/tabs';
+import useSettings from '../../helpers/use-settings';
 
 export let NavigatorButton = ({
 	path,
@@ -147,6 +149,7 @@ const Options = () => {
 	const [ isLoading, setLoading ] = useState( false );
 
 	const settingsRef = useRef( null );
+	const [ getOption, updateOption, status ] = useSettings();
 
 	const dispatchNotice = value => {
 		if ( ! Snackbar ) {
@@ -251,6 +254,14 @@ const Options = () => {
 
 	const navigator = useNavigator();
 
+	const enabledModules = {
+		'css': Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ),
+		'animation': Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ),
+		'condition': Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) )
+	};
+
+	const allModulesDisabled = Object.values( enabledModules ).every( item => ! item );
+
 	return (
 		<Fragment>
 			{ ( canUser ) && (
@@ -280,6 +291,64 @@ const Options = () => {
 								</Button>
 							</PanelRow>
 						</PanelBody>
+
+						{
+							! allModulesDisabled && (
+								<PanelBody
+									title={ __( 'Block Tools Defaults', 'otter-blocks' ) }
+									initialOpen={ true }
+								>
+									<p>
+										{
+											__( 'Manage side-wide the Block Tools panels enabled by default.', 'otter-blocks' )
+										}
+									</p>
+									{
+										enabledModules?.css && (
+											<PanelRow>
+												<ToggleControl
+													className="o-sidebar-toggle"
+													label={ __( 'Custom CSS', 'otter-blocks' ) }
+													checked={ Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) }
+													disabled={ 'saving' === status }
+													onChange={ () => updateOption( 'themeisle_blocks_settings_css_module', ! Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) ) }
+												/>
+											</PanelRow>
+										)
+									}
+
+									{
+										enabledModules?.animation && (
+											<PanelRow>
+												<ToggleControl
+													className="o-sidebar-toggle"
+													label={ __( 'Animation', 'otter-blocks' ) }
+													checked={ Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) }
+													disabled={ 'saving' === status }
+													onChange={ () => updateOption( 'themeisle_blocks_settings_blocks_animation', ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) ) }
+												/>
+											</PanelRow>
+										)
+									}
+
+									{
+										enabledModules?.condition && (
+											<PanelRow>
+												<ToggleControl
+													className="o-sidebar-toggle"
+													label={ __( 'Visibility Condition', 'otter-blocks' ) }
+													checked={ Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) }
+													disabled={ 'saving' === status }
+													onChange={ () => updateOption( 'themeisle_blocks_settings_block_conditions', ! Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) ) }
+												/>
+											</PanelRow>
+										)
+									}
+
+								</PanelBody>
+							)
+						}
+
 
 						<NavigatorButton
 							path="/block-settings"
