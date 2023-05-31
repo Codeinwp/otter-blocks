@@ -88,9 +88,9 @@ const Edit = ({
 			context: 'view'
 		}, ( value ) => ! isUndefined( value ) );
 
-		const slugs = attributes.postTypes;
-		let posts = ( 0 < slugs.length ) ? (
-			slugs.map( slug => select( 'core' ).getEntityRecords( 'postType', slug, latestPostsQuery ) ).flat()
+		const postTypeSlugs = attributes.postTypes;
+		let posts = ( 0 < postTypeSlugs.length ) ? (
+			postTypeSlugs.map( slug => select( 'core' ).getEntityRecords( 'postType', slug, latestPostsQuery ) ).flat()
 		) : select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery );
 
 		if ( attributes.featuredPostOrder && 0 < posts?.length ) {
@@ -100,10 +100,22 @@ const Edit = ({
 			];
 		}
 
+		const taxonomies = select( 'core' )?.getTaxonomies()
+			?.map( ({ slug }) => slug )
+			?.filter( ( slug ) => postTypeSlugs.some( postTypeSlug => slug === `${postTypeSlug}_cat` ) ) ?? [];
+
+		if ( 0 === taxonomies.length ) {
+			taxonomies.push( 'category' );
+		}
+
+		const categoriesList = taxonomies
+			// eslint-disable-next-line camelcase
+			.map( taxonomy => select( 'core' ).getEntityRecords( 'taxonomy', taxonomy, { per_page: -1 }) ?? [])
+			.flat();
+
 		return {
 			posts,
-			// eslint-disable-next-line camelcase
-			categoriesList: select( 'core' ).getEntityRecords( 'taxonomy', 'category', { per_page: -1, context: 'view' }),
+			categoriesList: categoriesList,
 			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' })
 		};
 	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes, attributes.featuredPostOrder ]);
