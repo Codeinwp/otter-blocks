@@ -16,6 +16,7 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 	__experimentalUseNavigator as useNavigator,
 	Button,
+	ExternalLink,
 	PanelBody,
 	PanelRow,
 	Snackbar,
@@ -292,63 +293,74 @@ const Options = () => {
 							</PanelRow>
 						</PanelBody>
 
-						{
-							! allModulesDisabled && (
-								<PanelBody
-									title={ __( 'Block Tools Defaults', 'otter-blocks' ) }
-									initialOpen={ true }
-								>
+						<PanelBody
+							title={__( 'Block Tools Defaults', 'otter-blocks' )}
+							initialOpen={true}
+						>
+							{
+								allModulesDisabled ? (
+									<p>
+										{
+											__( 'No module is activate.', 'otter-blocks' )
+										}
+									</p>
+
+								) : (
 									<p>
 										{
 											__( 'Manage side-wide the Block Tools panels enabled by default.', 'otter-blocks' )
 										}
 									</p>
-									{
-										enabledModules?.css && (
-											<PanelRow>
-												<ToggleControl
-													className="o-sidebar-toggle"
-													label={ __( 'Custom CSS', 'otter-blocks' ) }
-													checked={ Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) }
-													disabled={ 'saving' === status }
-													onChange={ () => updateOption( 'themeisle_blocks_settings_css_module', ! Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) ) }
-												/>
-											</PanelRow>
-										)
-									}
+								)
+							}
 
-									{
-										enabledModules?.animation && (
-											<PanelRow>
-												<ToggleControl
-													className="o-sidebar-toggle"
-													label={ __( 'Animation', 'otter-blocks' ) }
-													checked={ Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) }
-													disabled={ 'saving' === status }
-													onChange={ () => updateOption( 'themeisle_blocks_settings_blocks_animation', ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) ) }
-												/>
-											</PanelRow>
-										)
-									}
+							{
+								enabledModules?.css && (
+									<PanelRow>
+										<ToggleControl
+											className="o-sidebar-toggle"
+											label={__( 'Custom CSS', 'otter-blocks' )}
+											checked={Boolean( getOption( 'themeisle_blocks_settings_css_module' ) )}
+											disabled={'saving' === status}
+											onChange={() => updateOption( 'themeisle_blocks_settings_css_module', ! Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) )}
+										/>
+									</PanelRow>
+								)
+							}
 
-									{
-										enabledModules?.condition && (
-											<PanelRow>
-												<ToggleControl
-													className="o-sidebar-toggle"
-													label={ __( 'Visibility Condition', 'otter-blocks' ) }
-													checked={ Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) }
-													disabled={ 'saving' === status }
-													onChange={ () => updateOption( 'themeisle_blocks_settings_block_conditions', ! Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) ) }
-												/>
-											</PanelRow>
-										)
-									}
+							{
+								enabledModules?.animation && (
+									<PanelRow>
+										<ToggleControl
+											className="o-sidebar-toggle"
+											label={__( 'Animation', 'otter-blocks' )}
+											checked={Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) )}
+											disabled={'saving' === status}
+											onChange={() => updateOption( 'themeisle_blocks_settings_blocks_animation', ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) )}
+										/>
+									</PanelRow>
+								)
+							}
 
-								</PanelBody>
-							)
-						}
+							{
+								enabledModules?.condition && (
+									<PanelRow>
+										<ToggleControl
+											className="o-sidebar-toggle"
+											label={__( 'Visibility Condition', 'otter-blocks' )}
+											checked={Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) )}
+											disabled={'saving' === status}
+											onChange={() => updateOption( 'themeisle_blocks_settings_block_conditions', ! Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) )}
+										/>
+									</PanelRow>
+								)
+							}
 
+							<p/>
+
+							<ExternalLink
+								href={( window?.themeisleGutenberg?.optionsPath )}>{__( 'Go to Dashboard.', 'otter-blocks' )}</ExternalLink>
+						</PanelBody>
 
 						<NavigatorButton
 							path="/block-settings"
