@@ -70,8 +70,8 @@ const Fields = ({
 	const [ isLoading, setLoading ] = useState( false );
 
 	useEffect( () => {
-		const context = select( 'core/editor' ).getCurrentPostId();
-		const { type } = attributes;
+		const context = select( 'core/editor' )?.getCurrentPostId();
+		const { type, taxonomy, termType } = attributes;
 
 		if ( !! attributes.type && 'none' !== attributes.type ) {
 			setLoading( true );

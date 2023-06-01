@@ -88,6 +88,7 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Input_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Textarea_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Multiple_Choice_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Flip_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Progress_Bar_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Popup_CSS',
@@ -232,22 +233,15 @@ class Base_CSS {
 	 */
 	public function get_widgets_css() {
 		if ( ! function_exists( 'has_blocks' ) ) {
-			return;
-		}
+      return;
+    }
 
-		$content = '';
-		$widgets = get_option( 'widget_block', array() );
-
-		foreach ( $widgets as $widget ) {
-			if ( is_array( $widget ) && isset( $widget['content'] ) ) {
-				$content .= $widget['content'];
-			}
-		}
+		$content = Registration::get_active_widgets_content();
 
 		$blocks = parse_blocks( $content );
 
 		if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-			return;
+			return '';
 		}
 
 		$animations = boolval( preg_match( '/\banimated\b/', $content ) );

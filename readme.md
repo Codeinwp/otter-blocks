@@ -3,7 +3,7 @@
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.9  
 **Tested up to:** 6.2  
-**Requires PHP:** 5.4  
+**Requires PHP:** 5.6  
 **Stable tag:** trunk  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
@@ -228,6 +228,25 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 ## Changelog ##
+
+#### [Version 2.3.0](https://github.com/Codeinwp/otter-blocks/compare/v2.2.7...v2.3.0) (2023-05-25)
+
+- Add Custom Taxonomy Support to Dynamic Values
+- Add More New Fields to Form Block
+- Add Option to Store Form Block Emails to WordPress Dashboard
+- Add Api Field in Stripe Block
+- Add Support for HTML in Stripe Block Messages
+- Add CDN Links in Patterns
+- Various Form Block Enhancements
+- Bump Minimum PHP Compatibility to 5.6
+- Fix Dynamic Tags Not Working in Widgets
+- Fix Review Comparison Table Not Taking Reusable Review Blocks into Consideration
+- Fix Unused Assets Being Loaded When a Block Is Removed from Widgets
+- Fix Custom CSS Module Not Working with FSE
+- Fix Accordion Block Schema Conflicts with Neve PRO Performance Module and Lazy-loading Off-screen Elements
+
+
+
 
 ##### [Version 2.2.7](https://github.com/Codeinwp/otter-blocks/compare/v2.2.6...v2.2.7) (2023-05-08)
 

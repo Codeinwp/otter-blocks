@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction } from 'react';
 
 export type BlockProps<T> = {
-	attributes: Partial< T & { className: string }>
-	setAttributes: ( attributes: Partial<T> ) => void
+	attributes: Partial< T & { className?: string }>
+	setAttributes: ( attributes: Partial<T & { className?: string }> ) => void
 	isSelected: boolean
 	clientId: string
 	name: string

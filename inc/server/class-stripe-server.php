@@ -46,7 +46,7 @@ class Stripe_Server {
 	 * Initialize the class
 	 */
 	public function init() {
-		$this->stripe = new Stripe_API();
+		
 		
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
@@ -105,7 +105,7 @@ class Stripe_Server {
 	 * @access  public
 	 */
 	public function get_products( \WP_REST_Request $request ) {
-		return $this->stripe->create_request(
+		return ( new Stripe_API() )->create_request(
 			'products',
 			array(
 				'active' => true,
@@ -123,7 +123,7 @@ class Stripe_Server {
 	 * @access  public
 	 */
 	public function get_price( \WP_REST_Request $request ) {
-		return $this->stripe->create_request(
+		return ( new Stripe_API() )->create_request(
 			'prices',
 			array(
 				'active'  => true,

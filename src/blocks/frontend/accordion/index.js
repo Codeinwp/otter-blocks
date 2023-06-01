@@ -29,6 +29,12 @@ domReady( () => {
 		});
 	};
 
+	/**
+	 * Generate FAQPage schema for the accordion.
+	 *
+	 * @param {HTMLDivElement} accordion The accordion root element.
+	 * @returns {void}
+	 */
 	const addFAQSchema = accordion => {
 		if ( ! accordion.dataset.hasSchema || 'false' === accordion.dataset.hasSchema ) {
 			return;
@@ -39,9 +45,10 @@ domReady( () => {
 
 		// build the JSON object for structured data
 		items.forEach( item => {
-			const question = item.querySelectorAll( '.wp-block-themeisle-blocks-accordion-item__title' )[0].innerText;
-			const textElements = item.querySelectorAll( '.wp-block-themeisle-blocks-accordion-item__content' )[0].querySelectorAll( 'p, h1, h2, h3, h4, h5, h6' );
-			const answer = Array.from( textElements ).reduce( ( acc, elem ) => `${acc} ${elem.innerHTML}`, '' );
+			const questionElem = item.querySelector( ':scope > .wp-block-themeisle-blocks-accordion-item__title > *' );
+			const question = questionElem?.innerText ?? questionElem?.innerHTML?.replace( /<[^>]*>?/gm, '' );
+			const textElements = item.querySelectorAll( ':scope > .wp-block-themeisle-blocks-accordion-item__content :is(p, h1, h2, h3, h4, h5, h6)' );
+			const answer = Array.from( textElements ).map( elem => elem.innerHTML ).join( ' ' );
 
 			mainEntity.push({
 				'@type': 'Question',
@@ -62,6 +69,7 @@ domReady( () => {
 		// add the structured data to the page
 		const script = document.createElement( 'script' );
 		script.setAttribute( 'type', 'application/ld+json' );
+		script.setAttribute( 'data-o-acc-id', accordion.id );
 		script.textContent = JSON.stringify( structuredData );
 		document.head.appendChild( script );
 	};

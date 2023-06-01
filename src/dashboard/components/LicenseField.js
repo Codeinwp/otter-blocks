@@ -64,6 +64,8 @@ const LicenseField = () => {
 					setLicense({});
 					setLicenseKey( '' );
 				}
+
+				window.location.reload();
 			}
 		).catch( err => {
 			setLoading( false );
