@@ -13,8 +13,6 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
  * @since 2.0.3
  */
 class Sendinblue_Integration implements FormSubscribeServiceInterface {
-
-
 	/**
 	 * The API Key of the service.
 	 *
@@ -32,19 +30,17 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	/**
 	 * The default constructor.
 	 */
-	public function __construct() {     }
+	public function __construct() {}
 
 	/**
 	 * Extract the API Key and the contact list.
 	 *
 	 * @access  public
-	 * @param Form_Settings_Data|null $wp_options_form The integration data.
+	 * @param Form_Settings_Data $wp_options_form The integration data.
 	 */
 	public function extract_data_from_integration( $wp_options_form ) {
-		if ( isset( $wp_options_form ) ) {
-			$this->set_api_key( $wp_options_form->get_api_key() );
-			$this->set_list_id( $wp_options_form->get_list_id() );
-		}
+		$this->set_api_key( $wp_options_form->get_api_key() );
+		$this->set_list_id( $wp_options_form->get_list_id() );
 		return $this;
 	}
 
@@ -138,7 +134,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR );
 			}
 
-			if ( ! empty( $body['message'] ) && str_contains( $body['message'], 'already' ) ) {
+			if ( ! empty( $body['message'] ) && strpos( $body['message'], 'already' ) !== false ) {
 				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED );
 			} else {
 				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
@@ -151,7 +147,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	/**
 	 * Test the subscription by registering a random generated email.
 	 *
-	 * @return Form_Data_Response
+	 * @return Form_Data_Request
 	 */
 	public function test_subscription() {
 		return $this->subscribe( Form_Utils::generate_test_email() );

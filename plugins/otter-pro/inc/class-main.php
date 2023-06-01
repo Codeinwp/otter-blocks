@@ -17,7 +17,7 @@ class Main {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Main
+	 * @var Main|null
 	 */
 	public static $instance = null;
 

@@ -15,7 +15,7 @@ class Blocks_Animation {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Blocks_Animation
+	 * @var Blocks_Animation|null
 	 */
 	public static $instance = null;
 

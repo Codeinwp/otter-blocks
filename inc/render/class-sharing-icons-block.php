@@ -78,7 +78,7 @@ class Sharing_Icons_Block {
 	/**
 	 * Checks if an icon is active and should be visible
 	 *
-	 * @param array $icon Icon to check.
+	 * @param array|int $icon Icon to check.
 	 *
 	 * @return bool
 	 */

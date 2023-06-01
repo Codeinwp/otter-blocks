@@ -29,7 +29,7 @@ class Form_Emails_Storing {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Emails_Storing
+	 * @var Form_Emails_Storing|null
 	 */
 	public static $instance = null;
 
@@ -165,11 +165,9 @@ class Form_Emails_Storing {
 	 * Store form record in custom post type.
 	 *
 	 * @param Form_Data_Request $form_data The form data object.
-	 * @return Form_Data_Request
 	 */
 	public function store_form_record( $form_data ) {
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error()
@@ -179,7 +177,7 @@ class Form_Emails_Storing {
 
 		$form_options = $form_data->get_form_options();
 
-		if ( ! isset( $form_options ) || ! str_starts_with( $form_options->get_submissions_save_location(), 'database' ) ) {
+		if ( ! isset( $form_options ) || 0 !== strpos( $form_options->get_submissions_save_location(), 'database' ) ) {
 			return $form_data;
 		}
 
@@ -523,7 +521,7 @@ class Form_Emails_Storing {
 	 * @param string $column The column name.
 	 * @param int    $post_id The post ID.
 	 *
-	 * @return void
+	 * @return string The column value.
 	 */
 	public function form_record_column_values( $column, $post_id ) {
 		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
@@ -591,6 +589,8 @@ class Form_Emails_Storing {
 				);
 				break;
 		}
+
+		return $column;
 	}
 
 	/**
@@ -673,7 +673,7 @@ class Form_Emails_Storing {
 		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
 
 		foreach ( $_POST as $key => $value ) {
-			if ( ! str_starts_with( $key, 'otter_meta_' ) ) {
+			if ( 0 !== strpos( $key, 'otter_meta_' ) ) {
 				continue;
 			}
 
@@ -766,7 +766,7 @@ class Form_Emails_Storing {
 					$url = esc_url( $field['path'] );
 					if ( isset( $field['saved_in_media'] ) && $field['saved_in_media'] ) {
 						$url = wp_get_attachment_url( $field['attachment_id'] );
-					} elseif ( ! str_starts_with( $field['path'], 'http' ) ) {
+					} elseif ( 0 === strpos( $field['path'], 'http' ) ) {
 						// If the file is not saved with a server link (external or media library). We need to get the file path relative to the uploads directory so that it can be displayed by the browser.
 						$url = substr( $url, strpos( $url, '/wp-content' ) );
 					}
@@ -774,7 +774,7 @@ class Form_Emails_Storing {
 
 					<a href="<?php echo esc_url_raw( $url ); ?>" target="_blank">
 						<?php
-						if ( isset( $field['mime_type'] ) && str_starts_with( $field['mime_type'], 'image' ) ) {
+						if ( isset( $field['mime_type'] ) && 0 === strpos( $field['mime_type'], 'image' ) ) {
 
 							?>
 								<img alt="" src="<?php echo esc_url_raw( $url ); ?>" style="display: block; height: 100px;" />

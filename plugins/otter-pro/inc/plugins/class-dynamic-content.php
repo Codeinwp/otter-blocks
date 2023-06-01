@@ -17,7 +17,7 @@ class Dynamic_Content {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dynamic_Content
+	 * @var Dynamic_Content|null
 	 */
 	protected static $instance = null;
 
@@ -40,7 +40,7 @@ class Dynamic_Content {
 	 * @param array  $data Content data.
 	 *
 	 * @since 2.0.5
-	 * @return bool
+	 * @return mixed
 	 */
 	public function evaluate_content( $value, $data ) {
 		if ( 'postDate' === $data['type'] ) {
@@ -89,7 +89,7 @@ class Dynamic_Content {
 	 * @param array  $data Content data.
 	 *
 	 * @since 2.0.14
-	 * @return bool
+	 * @return mixed
 	 */
 	public function evaluate_content_link( $value, $data ) {
 		if ( 'acfURL' === $data['type'] ) {
@@ -536,7 +536,7 @@ class Dynamic_Content {
 	 * @param string $url Image URL.
 	 *
 	 * @since 2.0.9
-	 * @return int
+	 * @return int|false
 	 */
 	public function get_image_id_from_url( $url ) {
 		global $wpdb;

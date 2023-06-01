@@ -17,7 +17,7 @@ class Dashboard_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dashboard_Server
+	 * @var Dashboard_Server|null
 	 */
 	public static $instance = null;
 

@@ -231,7 +231,7 @@ class Posts_Grid_Block {
 
 					$meta[] = $posted_on;
 
-					if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post->comment_count ) ) {
+					if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && $post->comment_count ) {
 						$meta[] = sprintf(
 							'%1$s %2$s',
 							$post->comment_count,
@@ -309,7 +309,7 @@ class Posts_Grid_Block {
 	/**
 	 * Render the featured post
 	 *
-	 * @param \WP_Post $post Post.
+	 * @param \WP_Post|int $post Post.
 	 * @param array    $attributes Blocks attrs.
 	 *
 	 * @return string

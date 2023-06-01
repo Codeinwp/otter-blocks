@@ -17,7 +17,7 @@ class Stripe_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Stripe_Server
+	 * @var Stripe_Server|null
 	 */
 	public static $instance = null;
 
@@ -36,18 +36,9 @@ class Stripe_Server {
 	public $version = 'v1';
 
 	/**
-	 * Stripe Object.
-	 *
-	 * @var Stripe_API
-	 */
-	public $stripe = '';
-
-	/**
 	 * Initialize the class
 	 */
 	public function init() {
-		
-		
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 

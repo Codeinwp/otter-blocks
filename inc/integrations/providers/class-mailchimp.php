@@ -47,14 +47,12 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * Extract the API Key and the contact list.
 	 *
 	 * @access  public
-	 * @param Form_Settings_Data|null $wp_options_form The integration data.
+	 * @param Form_Settings_Data $wp_options_form The integration data.
 	 * @since 2.0.3
 	 */
 	public function extract_data_from_integration( $wp_options_form ) {
-		if ( isset( $wp_options_form ) ) {
-			$this->set_api_key( $wp_options_form->get_api_key() );
-			$this->set_list_id( $wp_options_form->get_list_id() );
-		}
+		$this->set_api_key( $wp_options_form->get_api_key() );
+		$this->set_list_id( $wp_options_form->get_list_id() );
 		return $this;
 	}
 
@@ -139,7 +137,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 
-			if ( ! empty( $body['detail'] ) && str_contains( $body['detail'], 'fake' ) ) {
+			if ( ! empty( $body['detail'] ) && strpos( $body['detail'], 'fake' ) !== false ) {
 				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL );
 			} else {
 				if ( $this->is_credential_error( $body['status'] ) ) {
@@ -156,7 +154,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	/**
 	 * Test the subscription by registering a random generated email.
 	 *
-	 * @return Form_Data_Response
+	 * @return Form_Data_Request
 	 * @since 2.0.3
 	 */
 	public function test_subscription() {

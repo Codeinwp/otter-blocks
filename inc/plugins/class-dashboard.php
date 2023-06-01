@@ -17,7 +17,7 @@ class Dashboard {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dashboard
+	 * @var Dashboard|null
 	 */
 	protected static $instance = null;
 

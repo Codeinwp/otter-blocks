@@ -17,7 +17,7 @@ class Registration {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Registration
+	 * @var Registration|null
 	 */
 	public static $instance = null;
 
@@ -360,7 +360,7 @@ class Registration {
 	 * Handler which checks the blocks used and enqueue the assets which needs.
 	 *
 	 * @since   2.0.0
-	 * @param null $post Current post.
+	 * @param   string|null $post Current post.
 	 * @access  public
 	 */
 	public function enqueue_dependencies( $post = null ) {

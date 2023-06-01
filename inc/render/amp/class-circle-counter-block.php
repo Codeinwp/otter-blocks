@@ -14,7 +14,7 @@ class Circle_Counter_Block {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Circle_Counter_Block
+	 * @var Circle_Counter_Block|null
 	 */
 	public static $instance = null;
 

@@ -249,7 +249,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 	/**
 	 * Generate Accordion Global CSS
 	 *
-	 * @return string
+	 * @return  string|void
 	 * @since   2.0.0
 	 * @access  public
 	 */

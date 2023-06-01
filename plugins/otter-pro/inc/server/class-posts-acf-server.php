@@ -15,7 +15,7 @@ class Posts_ACF_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Posts_ACF_Server
+	 * @var Posts_ACF_Server|null
 	 */
 	public static $instance = null;
 

@@ -34,7 +34,7 @@ class Form_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Server
+	 * @var Form_Server|null
 	 * @since 2.0.0
 	 */
 	public static $instance = null;
@@ -255,7 +255,7 @@ class Form_Server {
 				throw new \Exception( __( 'The form data class is not valid! Some hook is corrupting the data.', 'otter-blocks' ) );
 			}
 
-			if ( ! isset( $form_data ) || $form_data->has_error() ) {
+			if ( $form_data->has_error() ) {
 				$res->set_code( $form_data->get_error_code() );
 			} else {
 				// Select the submit function based on the provider.
@@ -275,7 +275,7 @@ class Form_Server {
 					throw new \Exception( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
 				}
 
-				if ( ! isset( $form_data ) || $form_data->has_error() ) {
+				if ( $form_data->has_error() ) {
 					$res->set_code( $form_data->get_error_code() );
 				} else {
 					$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
@@ -301,14 +301,14 @@ class Form_Server {
 	 */
 	public function send_default_email( $form_data ) {
 
-		if ( ! isset( $form_data ) || $form_data->has_error() ) {
+		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
 
 		try {
 			$form_options = $form_data->get_form_options();
 
-			if ( Pro::is_pro_active() && ! str_ends_with( $form_options->get_submissions_save_location(), 'email' ) ) {
+			if ( Pro::is_pro_active() && ! substr( $form_options->get_submissions_save_location(), -strlen('email') ) === 'email' ) {
 				return $form_data;
 			}
 
@@ -383,9 +383,9 @@ class Form_Server {
 	 * @since 2.2.3
 	 */
 	public function send_error_email_to_admin( $form_data ) {
-		if ( ! isset( $form_data ) || ( ! $form_data instanceof Form_Data_Request ) || $form_data->has_error() || $form_data->has_warning() ) {
+		if ( ! $form_data instanceof Form_Data_Request || $form_data->has_error() || $form_data->has_warning() ) {
 
-			if ( ! isset( $form_data ) || ( ! $form_data instanceof Form_Data_Request ) ) {
+			if ( ! $form_data instanceof Form_Data_Request ) {
 				$form_data = new Form_Data_Request( array() );
 				$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( __( 'Some hook is corrupting the Form processing pipeline.', 'otter-blocks' ) ) );
 			}
@@ -432,7 +432,7 @@ class Form_Server {
 	 * @since 2.0.3
 	 */
 	public function change_provider_based_on_consent( $form_data ) {
-		if ( ! isset( $form_data ) || $form_data->has_error() ) {
+		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
 
@@ -459,7 +459,7 @@ class Form_Server {
 	 */
 	public function after_submit( $form_data ) {
 
-		if ( ! isset( $form_data ) || $form_data->has_error() ) {
+		if ( $form_data->has_error() ) {
 			return;
 		}
 
@@ -481,7 +481,7 @@ class Form_Server {
 	 * @since 2.2.3
 	 */
 	public function anti_spam_validation( $form_data ) {
-		if ( ! isset( $form_data ) || $form_data->has_error() ) {
+		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
 
@@ -510,11 +510,6 @@ class Form_Server {
 	 * @since 2.0.3
 	 */
 	public static function send_error_email( $form_data ) {
-
-		if ( ! isset( $form_data ) ) {
-			$form_data = new Form_Data_Request( array() );
-		}
-
 		$email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 		$email_message = Form_Email::instance()->build_error_email( $form_data );
 		$email_body    = apply_filters( 'otter_form_email_build_body_error', $email_message );
@@ -648,7 +643,7 @@ class Form_Server {
 	 * @since 2.0.3
 	 */
 	public function subscribe_to_service( $form_data ) {
-		if ( ! isset( $form_data ) || $form_data->has_error() ) {
+		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
 
@@ -747,7 +742,7 @@ class Form_Server {
 	 * @since 2.0.0
 	 */
 	public function check_form_conditions( $form_data ) {
-		if ( ! isset( $form_data ) || $form_data->has_error() ) {
+		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
 
@@ -770,7 +765,7 @@ class Form_Server {
 	 */
 	public function check_form_captcha( $form_data ) {
 
-		if ( ! isset( $form_data ) || $form_data->has_error() ) {
+		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
 
@@ -858,7 +853,7 @@ class Form_Server {
 	 * @since 2.2.3
 	 */
 	public function check_form_files( $form_data ) {
-		if ( ! isset( $form_data ) || $form_data->has_error() ) {
+		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
 

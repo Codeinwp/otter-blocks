@@ -17,7 +17,7 @@ class Posts_ACF_Integration {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Posts_ACF_Integration
+	 * @var Posts_ACF_Integration|null
 	 */
 	protected static $instance = null;
 

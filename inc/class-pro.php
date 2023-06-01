@@ -14,7 +14,7 @@ class Pro {
 	/**
 	 * Singleton.
 	 *
-	 * @var Pro Class object.
+	 * @var Pro|null Class object.
 	 */
 	protected static $instance = null;
 

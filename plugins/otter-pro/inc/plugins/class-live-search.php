@@ -14,7 +14,7 @@ class Live_Search {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Live_Search
+	 * @var Live_Search|null
 	 */
 	public static $instance = null;
 

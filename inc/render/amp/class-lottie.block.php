@@ -14,7 +14,7 @@ class Lottie_Block {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Lottie_Block
+	 * @var Lottie_Block|null
 	 */
 	public static $instance = null;
 

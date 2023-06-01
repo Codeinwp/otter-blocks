@@ -15,7 +15,7 @@ class Options_Settings {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Options_Settings
+	 * @var Options_Settings|null
 	 */
 	protected static $instance = null;
 

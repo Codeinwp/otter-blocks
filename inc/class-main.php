@@ -16,7 +16,7 @@ class Main {
 	/**
 	 * Singleton.
 	 *
-	 * @var Main Class object.
+	 * @var Main|null Class object.
 	 */
 	protected static $instance = null;
 
@@ -39,7 +39,7 @@ class Main {
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
 			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ), PHP_INT_MAX ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
-			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
+			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 3 );
 			add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_svg_attachment_metadata' ), PHP_INT_MAX, 2 );
 		}
 
@@ -355,16 +355,15 @@ class Main {
 	/**
 	 * Allow JSON uploads
 	 *
-	 * @param null $data File data.
-	 * @param null $file File object.
-	 * @param null $filename File name.
-	 * @param null $mimes Supported mimes.
+	 * @param array $data File data.
+	 * @param string $file File object.
+	 * @param string $filename File name.
 	 *
 	 * @return array
 	 * @since  1.5.7
 	 * @access public
 	 */
-	public function fix_mime_type_json_svg( $data = null, $file = null, $filename = null, $mimes = null ) {
+	public function fix_mime_type_json_svg( $data, $file, $filename ) {
 		$ext = isset( $data['ext'] ) ? $data['ext'] : '';
 		if ( 1 > strlen( $ext ) ) {
 			$exploded = explode( '.', $filename );

@@ -17,7 +17,7 @@ class Dynamic_Content_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dynamic_Content_Server
+	 * @var Dynamic_Content_Server|null
 	 */
 	public static $instance = null;
 
@@ -210,7 +210,9 @@ class Dynamic_Content_Server {
 				readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
 			$output = ob_get_contents();
 
-			header( 'Content-type: ' . $size['mime'] );
+			if ( isset( $size['mime'] ) ) {
+				header( 'Content-type: ' . $size['mime'] );
+			}
 			return $output;
 		}
 
@@ -218,7 +220,9 @@ class Dynamic_Content_Server {
 			readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
 		$output = ob_get_contents();
 
-		header( 'Content-type: ' . $size['mime'] );
+		if ( isset( $size['mime'] ) ) {
+			header( 'Content-type: ' . $size['mime'] );
+		}
 		return $output;
 	}
 

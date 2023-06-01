@@ -91,10 +91,10 @@ class Form_Data_Request {
 	/**
 	 * Error details.
 	 *
-	 * @var array
+	 * @var string
 	 * @since 2.2.3
 	 */
-	protected $error_details = array();
+	protected $error_details = null;
 
 	/**
 	 * A list of warning codes.
@@ -430,7 +430,7 @@ class Form_Data_Request {
 	/**
 	 * Get the error details.
 	 *
-	 * @return array
+	 * @return string
 	 * @since 2.2.3
 	 */
 	public function get_error_details() {

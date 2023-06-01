@@ -21,7 +21,7 @@ class Block_Frontend extends Base_CSS {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Block_Frontend
+	 * @var Block_Frontend|null
 	 */
 	public static $instance = null;
 
@@ -109,7 +109,7 @@ class Block_Frontend extends Base_CSS {
 		$content    = get_post_field( 'post_content', $post_id );
 		$blocks     = parse_blocks( $content );
 
-		if ( is_array( $blocks ) || ! empty( $blocks ) ) {
+		if ( is_array( $blocks ) ) {
 			$this->enqueue_reusable_fonts( $blocks );
 		}
 
@@ -306,7 +306,7 @@ class Block_Frontend extends Base_CSS {
 
 		$blocks = parse_blocks( $content );
 
-		if ( is_array( $blocks ) || ! empty( $blocks ) ) {
+		if ( is_array( $blocks ) ) {
 			$this->enqueue_reusable_styles( $blocks );
 		}
 

@@ -171,7 +171,6 @@ class Form_Data_Response {
 		return rest_ensure_response( $this->response );
 	}
 
-
 	/**
 	 * Mark response as success.
 	 *

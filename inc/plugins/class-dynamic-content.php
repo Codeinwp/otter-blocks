@@ -15,7 +15,7 @@ class Dynamic_Content {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dynamic_Content
+	 * @var Dynamic_Content|null
 	 */
 	protected static $instance = null;
 
@@ -71,7 +71,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string
+	 * @return string|void
 	 */
 	public function apply_magic_tags( $data ) {
 		if ( ! isset( $data[1] ) ) {
@@ -149,7 +149,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string
+	 * @return string|void
 	 */
 	public function apply_images( $data ) {
 		if ( ! isset( $data[0] ) ) {
@@ -176,7 +176,7 @@ class Dynamic_Content {
 
 		$id = ( defined( 'REST_REQUEST' ) && REST_REQUEST || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
 
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
+		if ( isset( $data['context'] ) && ( 0 === $data['context'] || 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
 			$data['context'] = $id;
 		}
 
@@ -531,7 +531,7 @@ class Dynamic_Content {
 	 *
 	 * @param string $qry URL.
 	 *
-	 * @return array
+	 * @return array|bool
 	 */
 	public static function query_string_to_array( $qry ) {
 		$result = array();
@@ -589,7 +589,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string
+	 * @return string|void
 	 */
 	public function apply_link_button( $data ) {
 		if ( ! isset( $data[0] ) ) {
@@ -613,7 +613,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string
+	 * @return string|void
 	 */
 	public function get_link( $data ) {
 		if ( ! isset( $data['type'] ) ) {

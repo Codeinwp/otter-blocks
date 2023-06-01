@@ -17,7 +17,7 @@ class Review_Woo_Integration {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Review_Woo_Integration
+	 * @var Review_Woo_Integration|null
 	 */
 	protected static $instance = null;
 

@@ -17,7 +17,7 @@ class Block_Conditions {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Block_Conditions
+	 * @var Block_Conditions|null
 	 */
 	protected static $instance = null;
 
@@ -290,9 +290,7 @@ class Block_Conditions {
 					return false;
 				}
 			} elseif ( ! isset( $cond_param['value'] ) ) {
-				if ( ! isset( $params[ $cond_param['key'] ] ) ) {
-					return false;
-				}
+				return false;
 			} else {
 				if ( $params[ $cond_param['key'] ] !== $cond_param['value'] ) {
 					return false;

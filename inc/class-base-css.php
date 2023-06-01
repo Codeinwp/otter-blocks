@@ -42,7 +42,7 @@ class Base_CSS {
 	/**
 	 * The namespace under which the block classees are saved.
 	 *
-	 * @var string
+	 * @var array
 	 */
 	protected static $blocks_classes = array();
 
@@ -203,7 +203,7 @@ class Base_CSS {
 	 * Get Blocks CSS
 	 *
 	 * @param int $post_id Post id.
-	 * @return string
+	 * @return string|void
 	 * @since   1.3.0
 	 * @access  public
 	 */
@@ -227,14 +227,14 @@ class Base_CSS {
 	/**
 	 * Get Widgets CSS
 	 *
-	 * @return string
+	 * @return string|void
 	 * @since   1.7.0
 	 * @access  public
 	 */
 	public function get_widgets_css() {
 		if ( ! function_exists( 'has_blocks' ) ) {
-      return;
-    }
+			return;
+		}
 
 		$content = Registration::get_active_widgets_content();
 
@@ -253,7 +253,7 @@ class Base_CSS {
 	 * Get Reusable Blocks CSS
 	 *
 	 * @param int $post_id Post id.
-	 * @return string
+	 * @return string|void
 	 * @since   1.3.0
 	 * @access  public
 	 */

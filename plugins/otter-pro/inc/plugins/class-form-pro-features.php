@@ -21,7 +21,7 @@ class Form_Pro_Features {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Pro_Features
+	 * @var Form_Pro_Features|null
 	 */
 	public static $instance = null;
 
@@ -46,7 +46,6 @@ class Form_Pro_Features {
 	 */
 	public function save_files_to_uploads( $form_data ) {
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ) {
@@ -207,7 +206,6 @@ class Form_Pro_Features {
 	public function clean_files_from_uploads( $form_data ) {
 
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error()
@@ -246,7 +244,6 @@ class Form_Pro_Features {
 	 */
 	public function load_files_to_media_library( $form_data ) {
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ) {
@@ -295,13 +292,10 @@ class Form_Pro_Features {
 	 * Send autoresponder email to the subscriber.
 	 *
 	 * @param Form_Data_Request $form_data The files to load.
-	 * @return Form_Data_Request
 	 * @since 2.2.5
 	 */
 	public function send_autoresponder( $form_data ) {
-
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ||
@@ -310,14 +304,14 @@ class Form_Pro_Features {
 			return $form_data;
 		}
 
+		$to = \ThemeIsle\GutenbergBlocks\Server\Form_Server::instance()->get_email_from_form_input( $form_data );
+
+		if ( empty( $to ) ) {
+			$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD );
+			return $form_data;
+		}
+
 		try {
-
-			$to = \ThemeIsle\GutenbergBlocks\Server\Form_Server::instance()->get_email_from_form_input( $form_data );
-			if ( empty( $to ) ) {
-				$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD );
-				return $form_data;
-			}
-
 			$headers[] = 'Content-Type: text/html';
 			$headers[] = 'From: ' . ( $form_data->get_form_options()->has_from_name() ? sanitize_text_field( $form_data->get_form_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
 

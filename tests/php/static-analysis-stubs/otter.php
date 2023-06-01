@@ -9,8 +9,6 @@ define( 'OTTER_BLOCKS_BASEFILE', __FILE__ );
 define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
 define( 'OTTER_BLOCKS_VERSION', '2.2.7' );
-define( 'OTTER_BLOCKS_PRO_SUPPORT', true );
-define( 'OTTER_BLOCKS_SHOW_NOTICES', false );
 
 define( 'OTTER_PRO_VERSION', OTTER_BLOCKS_VERSION );
 define( 'OTTER_PRO_URL', OTTER_BLOCKS_URL . 'plugins/otter-pro/' );

@@ -17,7 +17,7 @@ class Stripe_API {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Stripe_API
+	 * @var Stripe_API|null
 	 */
 	public static $instance = null;
 
@@ -26,7 +26,7 @@ class Stripe_API {
 	 *
 	 * @var StripeClient
 	 */
-	public $stripe = '';
+	public $stripe;
 
 	/**
 	 * Constructor
@@ -158,10 +158,6 @@ class Stripe_API {
 		} catch ( \Stripe\Exception\ApiConnectionException $e ) {
 			$response = $this->build_error_response( $e );
 		} catch ( \Stripe\Exception\ApiErrorException $e ) {
-			$response = $this->build_error_response( $e );
-		} catch ( \Stripe\Exception\InvalidArgumentException $e ) {
-			$response = $this->build_error_response( $e );
-		} catch ( \Exception $e ) {
 			$response = $this->build_error_response( $e );
 		}
 

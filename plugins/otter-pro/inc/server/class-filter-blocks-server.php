@@ -15,7 +15,7 @@ class Filter_Blocks_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Filter_Blocks_Server
+	 * @var Filter_Blocks_Server|null
 	 */
 	public static $instance = null;
 

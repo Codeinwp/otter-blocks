@@ -1,5 +1,5 @@
 parameters:
-	level: 2
+	level: 4
 	paths:
 		- %currentWorkingDirectory%/inc
 		- %currentWorkingDirectory%/plugins
@@ -14,6 +14,8 @@ parameters:
 	dynamicConstantNames:
 		- COOKIEPATH
 		- COOKIE_DOMAIN
+		- OTTER_BLOCKS_PRO_SUPPORT
+		- OTTER_BLOCKS_SHOW_NOTICES
 includes:
 	- %currentWorkingDirectory%/vendor/szepeviktor/phpstan-wordpress/extension.neon
 	- %currentWorkingDirectory%/vendor/spaze/phpstan-stripe/extension.neon

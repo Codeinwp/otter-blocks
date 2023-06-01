@@ -20,7 +20,7 @@ class Live_Search_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Live_Search_Server
+	 * @var Live_Search_Server|null
 	 * @since 2.0.0
 	 */
 	public static $instance = null;

@@ -19,7 +19,7 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * The main instance var.
 	 *
-	 * @var CSS_Handler
+	 * @var CSS_Handler|null
 	 */
 	public static $instance = null;
 
@@ -142,7 +142,7 @@ class CSS_Handler extends Base_CSS {
 	 *
 	 * @param int|string $type Post ID or Widget.
 	 *
-	 * @return string File url.
+	 * @return string|false File url.
 	 */
 	public static function get_css_url( $type = 'widgets' ) {
 		$file_name = '';

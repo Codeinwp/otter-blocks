@@ -14,7 +14,7 @@ class Masonry_Variant {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Masonry_Variant
+	 * @var Masonry_Variant|null
 	 */
 	public static $instance = null;
 

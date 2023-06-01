@@ -238,7 +238,7 @@ class Review_Comparison_Block {
 	 *
 	 * @param array $id Review ID.
 	 *
-	 * @return int
+	 * @return string
 	 */
 	public function extract_id( $id ) {
 		$id = explode( '-', $id );
@@ -251,7 +251,7 @@ class Review_Comparison_Block {
 	 *
 	 * @param array $features An array of features.
 	 *
-	 * @return int
+	 * @return float
 	 */
 	public function get_overall_ratings( $features ) {
 		if ( count( $features ) <= 0 ) {
@@ -308,7 +308,7 @@ class Review_Comparison_Block {
 	 *
 	 * @param array $post_blocks Post Blocks.
 	 * @param array $block Variable where we capture the data.
-	 * @param int   $id Block ID.
+	 * @param array   $id Block ID.
 	 *
 	 * @return array
 	 */
