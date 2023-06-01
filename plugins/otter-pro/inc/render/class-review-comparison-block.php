@@ -308,7 +308,7 @@ class Review_Comparison_Block {
 	 *
 	 * @param array $post_blocks Post Blocks.
 	 * @param array $block Variable where we capture the data.
-	 * @param array   $id Block ID.
+	 * @param array $id Block ID.
 	 *
 	 * @return array
 	 */

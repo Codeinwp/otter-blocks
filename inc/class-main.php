@@ -355,7 +355,7 @@ class Main {
 	/**
 	 * Allow JSON uploads
 	 *
-	 * @param array $data File data.
+	 * @param array  $data File data.
 	 * @param string $file File object.
 	 * @param string $filename File name.
 	 *

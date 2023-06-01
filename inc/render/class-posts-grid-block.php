@@ -310,7 +310,7 @@ class Posts_Grid_Block {
 	 * Render the featured post
 	 *
 	 * @param \WP_Post|int $post Post.
-	 * @param array    $attributes Blocks attrs.
+	 * @param array        $attributes Blocks attrs.
 	 *
 	 * @return string
 	 */

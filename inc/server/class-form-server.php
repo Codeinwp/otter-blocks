@@ -308,7 +308,7 @@ class Form_Server {
 		try {
 			$form_options = $form_data->get_form_options();
 
-			if ( Pro::is_pro_active() && ! substr( $form_options->get_submissions_save_location(), -strlen('email') ) === 'email' ) {
+			if ( Pro::is_pro_active() && ! substr( $form_options->get_submissions_save_location(), -strlen( 'email' ) ) === 'email' ) {
 				return $form_data;
 			}
 

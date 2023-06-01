@@ -27,6 +27,7 @@
 	"scripts": {
 		"lint": "phpcs",
 		"format": "phpcbf",
+		"phpunit": "phpunit",
 		"phpstan": "phpstan analyse"
 	},
 	"prefer-stable": true,

@@ -235,7 +235,7 @@ class CSS_Utility {
 
 		$attrs = $this->block['attrs'];
 
-		if ( ! empty( $this->block_id ) ) {
+		if ( empty( $this->block_id ) ) {
 			if ( isset( $attrs['id'] ) ) {
 				$this->block_id = $attrs['id'];
 			}

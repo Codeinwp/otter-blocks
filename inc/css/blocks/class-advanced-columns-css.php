@@ -652,10 +652,10 @@ class Advanced_Columns_CSS extends Base_CSS {
 				$padding_tablet['right'] = $attrs['paddingRightTablet'] . 'px';
 			}
 		} elseif ( isset( $attrs['paddingTablet'] ) && ! is_array( $attrs['paddingTablet'] ) ) {
-			$padding_tablet['top'] = $attrs['paddingTablet'] . 'px';
+			$padding_tablet['top']    = $attrs['paddingTablet'] . 'px';
 			$padding_tablet['bottom'] = $attrs['paddingTablet'] . 'px';
-			$padding_tablet['left'] = $attrs['paddingTablet'] . 'px';
-			$padding_tablet['right'] = $attrs['paddingTablet'] . 'px';
+			$padding_tablet['left']   = $attrs['paddingTablet'] . 'px';
+			$padding_tablet['right']  = $attrs['paddingTablet'] . 'px';
 		}
 
 		if ( isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] ) {
@@ -675,10 +675,10 @@ class Advanced_Columns_CSS extends Base_CSS {
 				$padding_mobile['right'] = $attrs['paddingRightMobile'] . 'px';
 			}
 		} elseif ( isset( $attrs['paddingMobile'] ) && ! is_array( $attrs['paddingMobile'] ) ) {
-			$padding_mobile['top'] = $attrs['paddingMobile'] . 'px';
+			$padding_mobile['top']    = $attrs['paddingMobile'] . 'px';
 			$padding_mobile['bottom'] = $attrs['paddingMobile'] . 'px';
-			$padding_mobile['left'] = $attrs['paddingMobile'] . 'px';
-			$padding_mobile['right'] = $attrs['paddingMobile'] . 'px';
+			$padding_mobile['left']   = $attrs['paddingMobile'] . 'px';
+			$padding_mobile['right']  = $attrs['paddingMobile'] . 'px';
 		}
 
 		if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] && ! isset( $attrs['margin'] ) ) {
@@ -706,7 +706,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 				$margin_tablet['bottom'] = $attrs['marginBottomTablet'] . 'px';
 			}
 		} elseif ( isset( $attrs['marginTablet'] ) && ! is_array( $attrs['marginTablet'] ) ) {
-			$margin_tablet['top'] = $attrs['marginTablet'] . 'px';
+			$margin_tablet['top']    = $attrs['marginTablet'] . 'px';
 			$margin_tablet['bottom'] = $attrs['marginTablet'] . 'px';
 		}
 
@@ -719,7 +719,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 				$margin_mobile['bottom'] = $attrs['marginBottomMobile'] . 'px';
 			}
 		} elseif ( isset( $attrs['marginMobile'] ) && ! is_array( $attrs['marginMobile'] ) ) {
-			$margin_mobile['top'] = $attrs['marginMobile'] . 'px';
+			$margin_mobile['top']    = $attrs['marginMobile'] . 'px';
 			$margin_mobile['bottom'] = $attrs['marginMobile'] . 'px';
 		}
 
@@ -740,10 +740,10 @@ class Advanced_Columns_CSS extends Base_CSS {
 				$border['right'] = $attrs['borderRight'] . 'px';
 			}
 		} elseif ( isset( $attrs['border'] ) && ! is_array( $attrs['border'] ) ) {
-			$border['top'] = $attrs['border'] . 'px';
+			$border['top']    = $attrs['border'] . 'px';
 			$border['bottom'] = $attrs['border'] . 'px';
-			$border['left'] = $attrs['border'] . 'px';
-			$border['right'] = $attrs['border'] . 'px';
+			$border['left']   = $attrs['border'] . 'px';
+			$border['right']  = $attrs['border'] . 'px';
 		}
 
 		if ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) {
@@ -763,10 +763,10 @@ class Advanced_Columns_CSS extends Base_CSS {
 				$border_radius['right'] = $attrs['borderRadiusRight'] . 'px';
 			}
 		} elseif ( isset( $attrs['borderRadius'] ) && ! is_array( $attrs['borderRadius'] ) ) {
-			$border_radius['top'] = $attrs['borderRadius'] . 'px';
+			$border_radius['top']    = $attrs['borderRadius'] . 'px';
 			$border_radius['bottom'] = $attrs['borderRadius'] . 'px';
-			$border_radius['left'] = $attrs['borderRadius'] . 'px';
-			$border_radius['right'] = $attrs['borderRadius'] . 'px';
+			$border_radius['left']   = $attrs['borderRadius'] . 'px';
+			$border_radius['right']  = $attrs['borderRadius'] . 'px';
 		}
 
 		$attrs_clone = array(
