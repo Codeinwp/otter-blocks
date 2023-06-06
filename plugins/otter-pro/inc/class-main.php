@@ -81,7 +81,7 @@ class Main {
 	/**
 	 * Register Blocks.
 	 *
-	 * @param string $blocks Blocks List.
+	 * @param array $blocks Blocks List.
 	 *
 	 * @since   2.0.1
 	 * @access  public
@@ -114,7 +114,7 @@ class Main {
 	/**
 	 * Register Dynamic Blocks.
 	 *
-	 * @param string $dynamic_blocks Dynamic Blocks.
+	 * @param array $dynamic_blocks Dynamic Blocks.
 	 *
 	 * @since   2.0.1
 	 * @access  public
@@ -145,7 +145,7 @@ class Main {
 	/**
 	 * Register Blocks CSS.
 	 *
-	 * @param string $blocks Blocks List.
+	 * @param array $blocks Blocks List.
 	 *
 	 * @since   2.0.1
 	 * @access  public
@@ -203,7 +203,7 @@ class Main {
 
 		global $pagenow;
 
-		if ( class_exists( 'WooCommerce' ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		if ( class_exists( 'WooCommerce' ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( intval( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 			$asset_file = include OTTER_PRO_BUILD_PATH . 'woocommerce.asset.php';
 
 			wp_enqueue_script(

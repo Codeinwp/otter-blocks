@@ -377,7 +377,7 @@ class Form_Server {
 				$form_data->set_error( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
 			}
 		} catch ( Exception  $e ) {
-			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
+			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 			$this->send_error_email( $form_data );
 		}
 
@@ -395,7 +395,7 @@ class Form_Server {
 
 			if ( ! $form_data instanceof Form_Data_Request ) {
 				$form_data = new Form_Data_Request();
-				$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( __( 'Some hook is corrupting the Form processing pipeline.', 'otter-blocks' ) ) );
+				$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, __( 'Some hook is corrupting the Form processing pipeline.', 'otter-blocks' ) );
 			}
 
 			$send_email = false;
@@ -674,7 +674,7 @@ class Form_Server {
 		$email = $form_data->get_email_from_form_input();
 
 		if ( '' === $email ) {
-			$form_data->set_error( Form_Data_Response::ERROR_MISSING_EMAIL, array( __( 'Marketing Integration is active, but there is no Email field in the form. Please check your Form block settings in the page.', 'otter-blocks' ) ) );
+			$form_data->set_error( Form_Data_Response::ERROR_MISSING_EMAIL, __( 'Marketing Integration is active, but there is no Email field in the form. Please check your Form block settings in the page.', 'otter-blocks' ) );
 			return $form_data;
 		}
 
@@ -716,7 +716,7 @@ class Form_Server {
 				$form_data->set_error( $error_code );
 			}
 		} catch ( Exception $e ) {
-			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
+			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 			$this->send_error_email( $form_data );
 		} finally {
 			return $form_data;

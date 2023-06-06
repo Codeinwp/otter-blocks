@@ -146,7 +146,7 @@ class Patterns {
 		);
 
 		foreach ( $block_patterns as $block_pattern ) {
-			if ( ! version_compare( get_bloginfo( 'version' ), $block_pattern['minimum'], '>=' ) ) {
+			if ( ! version_compare( get_bloginfo( 'version' ), strval( $block_pattern['minimum'] ), '>=' ) ) {
 				continue;
 			}
 

@@ -297,7 +297,7 @@ class Form_Data_Response {
 	/**
 	 * Get the error message based on the error code.
 	 *
-	 * @param int $error_code The error code.
+	 * @param string $error_code The error code.
 	 * @return string
 	 * @since 2.2.3
 	 */

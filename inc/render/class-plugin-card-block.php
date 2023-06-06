@@ -165,9 +165,9 @@ class Plugin_Card_Block {
 		$full_stars  = floor( $rating );
 		$half_stars  = ceil( $rating - $full_stars );
 		$empty_stars = 5 - $full_stars - $half_stars;
-		$output      = str_repeat( '<span class="star-full"></span>', $full_stars );
-		$output     .= str_repeat( '<span class="star-half"></span>', $half_stars );
-		$output     .= str_repeat( '<span class="star-empty"></span>', $empty_stars );
+		$output      = str_repeat( '<span class="star-full"></span>', intval( $full_stars ) );
+		$output     .= str_repeat( '<span class="star-half"></span>', intval( $half_stars ) );
+		$output     .= str_repeat( '<span class="star-empty"></span>', intval( $empty_stars ) );
 
 		return $output;
 	}

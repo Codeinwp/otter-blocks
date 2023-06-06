@@ -154,7 +154,7 @@ class Live_Search_Server {
 							'title'  => $post->post_title,
 							'type'   => $post->post_type,
 							'date'   => get_the_date( 'F d, Y', $post ),
-							'author' => get_the_author_meta( 'display_name', $post->post_author ),
+							'author' => get_the_author_meta( 'display_name', intval( $post->post_author ) ),
 							'parent' => get_post( $post->post_parent )->post_title,
 						);
 

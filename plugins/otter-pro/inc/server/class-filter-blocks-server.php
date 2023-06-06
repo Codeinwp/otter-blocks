@@ -155,8 +155,8 @@ class Filter_Blocks_Server {
 						}
 
 						$post_block['attrs']['image'] = array(
-							'url' => wp_get_attachment_image_url( $product->get_image_id(), '' ),
-							'alt' => get_post_meta( $product->get_image_id(), '_wp_attachment_image_alt', true ),
+							'url' => wp_get_attachment_image_url( intval( $product->get_image_id() ), '' ),
+							'alt' => get_post_meta( intval( $product->get_image_id() ), '_wp_attachment_image_alt', true ),
 						);
 
 						$post_block['attrs']['links'] = array(

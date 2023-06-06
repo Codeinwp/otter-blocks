@@ -159,8 +159,8 @@ class Base_CSS {
 	/**
 	 * Convert HEX to RGBA.
 	 *
-	 * @param string $color Color data.
-	 * @param bool   $opacity Opacity status.
+	 * @param string   $color Color data.
+	 * @param bool|int $opacity Opacity status.
 	 *
 	 * @return mixed
 	 * @since   1.3.0

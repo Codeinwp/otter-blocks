@@ -325,11 +325,11 @@ class Dynamic_Content {
 		}
 
 		if ( 'authorName' === $data['type'] ) {
-			return get_the_author_meta( 'display_name', get_post_field( 'post_author', $data['context'] ) );
+			return get_the_author_meta( 'display_name', intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
 		if ( 'authorDescription' === $data['type'] ) {
-			return get_the_author_meta( 'description', get_post_field( 'post_author', $data['context'] ) );
+			return get_the_author_meta( 'description', intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
 		if ( 'loggedInUserName' === $data['type'] ) {
@@ -639,11 +639,11 @@ class Dynamic_Content {
 		}
 
 		if ( 'authorURL' === $data['type'] ) {
-			return get_author_posts_url( get_post_field( 'post_author', $data['context'] ) );
+			return get_author_posts_url( intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
 		if ( 'authorWebsite' === $data['type'] ) {
-			return get_the_author_meta( 'url', get_post_field( 'post_author', $data['context'] ) );
+			return get_the_author_meta( 'url', intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
 		return apply_filters( 'otter_blocks_evaluate_dynamic_content_link', '', $data );

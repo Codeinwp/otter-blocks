@@ -584,7 +584,7 @@ class Form_Emails_Storing {
 				);
 				break;
 			case 'ID':
-				$this->format_based_on_status( substr( $post_id, -8 ), get_post_status( $post_id ) );
+				$this->format_based_on_status( substr( strval( $post_id ), -8 ), get_post_status( $post_id ) );
 				break;
 			case 'submission_date':
 				$this->format_based_on_status(
@@ -616,9 +616,7 @@ class Form_Emails_Storing {
 			__( 'Form Submissions', 'otter-blocks' ),
 			__( 'Form Submissions', 'otter-blocks' ),
 			'manage_options',
-			'edit.php?post_type=' . self::FORM_RECORD_TYPE,
-			'',
-			10
+			'edit.php?post_type=' . self::FORM_RECORD_TYPE
 		);
 	}
 
@@ -747,7 +745,7 @@ class Form_Emails_Storing {
 				<textarea
 					style="width: 100%; max-width: 350px;"
 					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
-					id="<?php echo esc_attr( $id ); ?>"
+					id="<?php echo intval( $id ); ?>"
 					class="otter_form_record_meta__value"
 					rows="5"
 				><?php echo esc_textarea( $field['value'] ); ?></textarea>
@@ -758,7 +756,7 @@ class Form_Emails_Storing {
 				<input
 					style="width: 100%; max-width: 350px;"
 					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
-					id="<?php echo esc_attr( $id ); ?>"
+					id="<?php echo intval( $id ); ?>"
 					type="text"
 					class="otter_form_record_meta__value"
 					value="<?php echo esc_html( $field['value'] ); ?>"
@@ -796,7 +794,7 @@ class Form_Emails_Storing {
 				<input
 					style="width: 100%; max-width: 350px;"
 					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
-					id="<?php echo esc_attr( $id ); ?>"
+					id="<?php echo intval( $id ); ?>"
 					type="<?php echo isset( $field['type'] ) ? esc_attr( $field['type'] ) : ''; ?>"
 					class="otter_form_record_meta__value"
 					value="<?php echo esc_html( $field['value'] ); ?>"
@@ -838,7 +836,7 @@ class Form_Emails_Storing {
 					echo sprintf(
 						'<a href="?action=%s&post=%s&_wpnonce=%s" class="submitdelete">%s</a>',
 						'trash',
-						esc_attr( $post->ID ),
+						intval( $post->ID ),
 						esc_attr( wp_create_nonce( 'trash-post_' . $post->ID ) ),
 						esc_html__( 'Move to Trash', 'otter-blocks' )
 					);
@@ -883,7 +881,7 @@ class Form_Emails_Storing {
 			return;
 		}
 
-		$post = sanitize_text_field( wp_unslash( $_REQUEST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$post = intval( wp_unslash( $_REQUEST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 		if ( ! get_post( $post ) || self::FORM_RECORD_TYPE !== get_post_type( $post ) ) {
 			return;
 		}
@@ -935,7 +933,7 @@ class Form_Emails_Storing {
 	 * @return void
 	 */
 	public function read_otter_form_record() {
-		$id = $this->check_posts( 'read' );
+		$id = intval( $this->check_posts( 'read' ) );
 		wp_update_post(
 			array(
 				'ID'          => $id,
@@ -953,7 +951,7 @@ class Form_Emails_Storing {
 	 * @return void
 	 */
 	public function unread_otter_form_record() {
-		$id = $this->check_posts( 'unread' );
+		$id = intval( $this->check_posts( 'unread' ) );
 		wp_update_post(
 			array(
 				'ID'          => $id,

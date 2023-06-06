@@ -143,7 +143,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 				if ( $this->is_credential_error( $body['status'] ) ) {
 					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR );
 				} else {
-					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR, array( $body['detail'] ) );
+					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR, $body['detail'] );
 				}
 			}
 		}

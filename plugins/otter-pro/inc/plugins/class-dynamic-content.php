@@ -239,7 +239,7 @@ class Dynamic_Content {
 	 */
 	public function get_author_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ), get_post_field( 'post_author', $data['context'] ) );
+		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ), intval( get_post_field( 'post_author', $data['context'] ) ) );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
@@ -439,7 +439,7 @@ class Dynamic_Content {
 			$image   = $product->get_image_id();
 			
 			if ( $image ) {
-				$path = wp_get_original_image_path( $image );
+				$path = wp_get_original_image_path( intval( $image ) );
 			} else {
 				$image = get_option( 'woocommerce_placeholder_image', 0 );
 
@@ -499,7 +499,7 @@ class Dynamic_Content {
 			$image   = $product->get_image_id();
 			
 			if ( $image ) {
-				$value = wp_get_attachment_image_url( $image, 'full' );
+				$value = wp_get_attachment_image_url( intval( $image ), 'full' );
 			} else {
 				$image = get_option( 'woocommerce_placeholder_image', 0 );
 

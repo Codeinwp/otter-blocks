@@ -276,7 +276,7 @@ class Review_Block {
 			),
 			'author'       => array(
 				'@type' => 'Person',
-				'name'  => get_the_author_meta( 'display_name', get_post_field( 'post_author', $post_id ) ),
+				'name'  => get_the_author_meta( 'display_name', intval( get_post_field( 'post_author', $post_id ) ) ),
 			),
 		);
 

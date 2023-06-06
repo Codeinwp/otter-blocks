@@ -163,7 +163,7 @@ class Posts_Grid_Block {
 	/**
 	 * Render Post Fields
 	 *
-	 * @param \WP_Post $id Post ID.
+	 * @param \WP_Post|int $id Post ID.
 	 * @param array    $attributes Blocks attrs.
 	 *
 	 * @return string
@@ -221,11 +221,13 @@ class Posts_Grid_Block {
 					}
 
 					if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
+						$post_author = intval( get_post_field( 'post_author', $id ) );
+
 						$posted_on .= sprintf(
 							'%1$s <a href="%2$s">%3$s</a>',
 							__( 'by', 'otter-blocks' ),
-							esc_url( get_author_posts_url( get_post_field( 'post_author', $id ) ) ),
-							esc_html( get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) ) )
+							esc_url( get_author_posts_url( $post_author ) ),
+							esc_html( get_the_author_meta( 'display_name', $post_author ) )
 						);
 					}
 

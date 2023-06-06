@@ -55,9 +55,7 @@ class Dashboard {
 			__( 'Settings', 'otter-blocks' ),
 			__( 'Settings', 'otter-blocks' ),
 			'manage_options',
-			'otter',
-			'',
-			0
+			'otter'
 		);
 
 		add_submenu_page(

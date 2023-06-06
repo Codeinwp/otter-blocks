@@ -360,7 +360,7 @@ class Registration {
 	 * Handler which checks the blocks used and enqueue the assets which needs.
 	 *
 	 * @since   2.0.0
-	 * @param   string|null $post Current post.
+	 * @param   string|int|null $post Current post.
 	 * @access  public
 	 */
 	public function enqueue_dependencies( $post = null ) {
