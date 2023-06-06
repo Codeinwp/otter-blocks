@@ -246,7 +246,7 @@ class Dynamic_Content {
 		}
 
 		if ( false === $meta || true === $meta ) {
-			$meta = $meta ? __( 'True', 'otter-blocks' ) : __( 'False', 'otter-blocks' );
+			$meta = $meta ? __( 'Yes', 'otter-blocks' ) : __( 'No', 'otter-blocks' );
 		}
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
