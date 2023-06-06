@@ -316,7 +316,7 @@ class Form_Server {
 
 			$can_send_email = substr( $form_options->get_submissions_save_location(), -strlen( 'email' ) ) === 'email';
 
-			if ( Pro::is_pro_active() && $can_send_email ) {
+			if ( Pro::is_pro_active() && ! $can_send_email ) {
 				return $form_data;
 			}
 
