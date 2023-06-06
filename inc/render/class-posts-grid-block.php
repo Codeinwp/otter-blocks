@@ -164,7 +164,7 @@ class Posts_Grid_Block {
 	 * Render Post Fields
 	 *
 	 * @param \WP_Post|int $id Post ID.
-	 * @param array    $attributes Blocks attrs.
+	 * @param array        $attributes Blocks attrs.
 	 *
 	 * @return string
 	 */

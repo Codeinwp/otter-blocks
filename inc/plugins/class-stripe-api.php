@@ -105,8 +105,8 @@ class Stripe_API {
 	/**
 	 * Make Stripe Request
 	 *
-	 * @param string $path Request path.
-	 * @param array|string  $args Request arguments.
+	 * @param string       $path Request path.
+	 * @param array|string $args Request arguments.
 	 *
 	 * @return mixed
 	 * @access public
