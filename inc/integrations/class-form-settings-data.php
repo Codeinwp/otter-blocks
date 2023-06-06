@@ -225,7 +225,7 @@ class Form_Settings_Data {
 				if ( isset( $form['bcc'] ) ) {
 					$integration->set_bcc( $form['bcc'] );
 				}
-				if ( count( $form['autoresponder'] ) > 0 ) {
+				if ( isset( $form['autoresponder'] ) && count( $form['autoresponder'] ) > 0 ) {
 					$integration->set_autoresponder( $form['autoresponder'] );
 				}
 				if ( isset( $form['integration'] ) ) {

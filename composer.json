@@ -28,7 +28,7 @@
 		"lint": "phpcs",
 		"format": "phpcbf",
 		"phpunit": "phpunit",
-		"phpstan": "phpstan analyse"
+		"phpstan": "phpstan analyse --memory-limit 2G"
 	},
 	"prefer-stable": true,
 	"config": {

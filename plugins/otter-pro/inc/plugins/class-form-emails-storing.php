@@ -177,7 +177,11 @@ class Form_Emails_Storing {
 
 		$form_options = $form_data->get_form_options();
 
-		if ( ! isset( $form_options ) || 0 !== strpos( $form_options->get_submissions_save_location(), 'database' ) ) {
+		if ( ! isset( $form_options ) ) {
+			return $form_data;
+		}
+
+		if ( false === strpos( $form_options->get_submissions_save_location(), 'database' ) ) {
 			return $form_data;
 		}
 

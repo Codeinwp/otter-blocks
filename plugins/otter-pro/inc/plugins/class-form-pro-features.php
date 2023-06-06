@@ -40,11 +40,16 @@ class Form_Pro_Features {
 	/**
 	 * Save the files from the form inputs.
 	 *
-	 * @param Form_Data_Request $form_data The form data.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data The form data.
+	 * @return Form_Data_Request|null
 	 * @since 2.2.5
 	 */
 	public function save_files_to_uploads( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if (
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
@@ -200,10 +205,14 @@ class Form_Pro_Features {
 	/**
 	 * Delete the files uploaded from the File field via attachments.
 	 *
-	 * @param Form_Data_Request $form_data The files to delete.
+	 * @param Form_Data_Request|null $form_data The files to delete.
 	 * @since 2.2.5
 	 */
 	public function clean_files_from_uploads( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
 
 		if (
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
@@ -238,11 +247,16 @@ class Form_Pro_Features {
 	/**
 	 * Load the files to the media library.
 	 *
-	 * @param Form_Data_Request $form_data The files to load.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data The files to load.
+	 * @return Form_Data_Request|null
 	 * @since 2.2.5
 	 */
 	public function load_files_to_media_library( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if (
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
@@ -291,10 +305,14 @@ class Form_Pro_Features {
 	/**
 	 * Send autoresponder email to the subscriber.
 	 *
-	 * @param Form_Data_Request $form_data The files to load.
+	 * @param Form_Data_Request|null $form_data The files to load.
 	 * @since 2.2.5
 	 */
 	public function send_autoresponder( $form_data ) {
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if (
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||

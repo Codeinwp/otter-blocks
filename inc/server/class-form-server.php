@@ -252,10 +252,11 @@ class Form_Server {
 
 			// Check if $form_data has function get_error_code. Otherwise, it will throw an error.
 			if ( ! ( $form_data instanceof Form_Data_Request ) ) {
-				throw new \Exception( __( 'The form data class is not valid! Some hook is corrupting the data.', 'otter-blocks' ) );
+				$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+				$res->add_reason( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
 			}
 
-			if ( $form_data->has_error() ) {
+			if ( $res->has_error() || $form_data->has_error() ) {
 				$res->set_code( $form_data->get_error_code() );
 			} else {
 				// Select the submit function based on the provider.
@@ -272,7 +273,8 @@ class Form_Server {
 				do_action( 'otter_form_after_submit', $form_data );
 
 				if ( ! ( $form_data instanceof Form_Data_Request ) ) {
-					throw new \Exception( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
+					$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+					$res->add_reason( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
 				}
 
 				if ( $form_data->has_error() ) {
@@ -295,11 +297,15 @@ class Form_Server {
 	/**
 	 * Send Email using SMTP.
 	 *
-	 * @param Form_Data_Request $form_data Data from request body.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data Data from request body.
+	 * @return Form_Data_Request|null
 	 * @since 2.0.3
 	 */
 	public function send_default_email( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
 
 		if ( $form_data->has_error() ) {
 			return $form_data;
@@ -308,11 +314,13 @@ class Form_Server {
 		try {
 			$form_options = $form_data->get_form_options();
 
-			if ( Pro::is_pro_active() && ! substr( $form_options->get_submissions_save_location(), -strlen( 'email' ) ) === 'email' ) {
+			$can_send_email = substr( $form_options->get_submissions_save_location(), -strlen( 'email' ) ) === 'email';
+
+			if ( Pro::is_pro_active() && $can_send_email ) {
 				return $form_data;
 			}
 
-			$email_subject = isset( $form_options ) && $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+			$email_subject = $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 
 			$email_message = Form_Email::instance()->build_email( $form_data );
 			$email_body    = apply_filters( 'otter_form_email_build_body', $email_message );
@@ -371,9 +379,9 @@ class Form_Server {
 		} catch ( Exception  $e ) {
 			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
 			$this->send_error_email( $form_data );
-		} finally {
-			return $form_data;
 		}
+
+		return $form_data;
 	}
 
 	/**
@@ -386,7 +394,7 @@ class Form_Server {
 		if ( ! $form_data instanceof Form_Data_Request || $form_data->has_error() || $form_data->has_warning() ) {
 
 			if ( ! $form_data instanceof Form_Data_Request ) {
-				$form_data = new Form_Data_Request( array() );
+				$form_data = new Form_Data_Request();
 				$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( __( 'Some hook is corrupting the Form processing pipeline.', 'otter-blocks' ) ) );
 			}
 
@@ -427,11 +435,15 @@ class Form_Server {
 	/**
 	 * Make additional changes before using the main handler function for submitting.
 	 *
-	 * @param Form_Data_Request $form_data The form request data.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data The form request data.
+	 * @return Form_Data_Request|null
 	 * @since 2.0.3
 	 */
 	public function change_provider_based_on_consent( $form_data ) {
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
@@ -453,11 +465,14 @@ class Form_Server {
 	/**
 	 * Process the extra actions after calling the main handler function for submitting.
 	 *
-	 * @param Form_Data_Request $form_data The form request data.
+	 * @param Form_Data_Request|null $form_data The form request data.
 	 * @return void
 	 * @since 2.0.3
 	 */
 	public function after_submit( $form_data ) {
+		if ( ! isset( $form_data ) ) {
+			return;
+		}
 
 		if ( $form_data->has_error() ) {
 			return;
@@ -476,11 +491,15 @@ class Form_Server {
 	/**
 	 * Check if the form was not completed by a bot.
 	 *
-	 * @param Form_Data_Request $form_data The form request data.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data The form request data.
+	 * @return Form_Data_Request|null
 	 * @since 2.2.3
 	 */
 	public function anti_spam_validation( $form_data ) {
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
@@ -638,33 +657,36 @@ class Form_Server {
 	/**
 	 * Subscribe the user to a service.
 	 *
-	 * @param Form_Data_Request $form_data The form data.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data The form data.
+	 * @return Form_Data_Request|null
 	 * @since 2.0.3
 	 */
 	public function subscribe_to_service( $form_data ) {
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
 
+		// Get the first email from form.
+		$email = $form_data->get_email_from_form_input();
+
+		if ( '' === $email ) {
+			$form_data->set_error( Form_Data_Response::ERROR_MISSING_EMAIL, array( __( 'Marketing Integration is active, but there is no Email field in the form. Please check your Form block settings in the page.', 'otter-blocks' ) ) );
+			return $form_data;
+		}
+
+		if (
+			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
+			$form_data->payload_has_field( 'consent' ) &&
+			! $form_data->get_payload_field( 'consent' )
+		) {
+			return $form_data;
+		}
+
 		try {
-
-			// Get the first email from form.
-			$email = $form_data->get_email_from_form_input();
-
-			if ( '' === $email ) {
-				$form_data->set_error( Form_Data_Response::ERROR_MISSING_EMAIL, array( __( 'Marketing Integration is active, but there is no Email field in the form. Please check your Form block settings in the page.', 'otter-blocks' ) ) );
-				return $form_data;
-			}
-
-			if (
-				'submit-subscribe' === $form_data->get_form_options()->get_action() &&
-				$form_data->payload_has_field( 'consent' ) &&
-				! $form_data->get_payload_field( 'consent' )
-			) {
-				return $form_data;
-			}
-
 			// Get the api credentials from the Form block.
 			$wp_options_form = $form_data->get_form_options();
 
@@ -736,12 +758,17 @@ class Form_Server {
 	 * Check if the data request has the data needed by form: captha, integrations.
 	 *
 	 * @access public
-	 * @param Form_Data_Request $form_data Data from the request.
+	 * @param Form_Data_Request|null $form_data Data from the request.
 	 *
-	 * @return Form_Data_Request
+	 * @return Form_Data_Request|null
 	 * @since 2.0.0
 	 */
 	public function check_form_conditions( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
@@ -758,12 +785,16 @@ class Form_Server {
 	 * Check if the data request has the data needed by form: captha, integrations.
 	 *
 	 * @access public
-	 * @param Form_Data_Request $form_data Data from the request.
+	 * @param Form_Data_Request|null $form_data Data from the request.
 	 *
-	 * @return Form_Data_Request
+	 * @return Form_Data_Request|null
 	 * @since 2.0.0
 	 */
 	public function check_form_captcha( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
 
 		if ( $form_data->has_error() ) {
 			return $form_data;
@@ -848,11 +879,16 @@ class Form_Server {
 	/**
 	 * Validate the input fields with files.
 	 *
-	 * @param Form_Data_Request $form_data The form data.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data The form data.
+	 * @return Form_Data_Request|null
 	 * @since 2.2.3
 	 */
 	public function check_form_files( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if ( $form_data->has_error() ) {
 			return $form_data;
 		}
