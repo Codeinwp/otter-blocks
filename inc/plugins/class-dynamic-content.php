@@ -371,7 +371,15 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_content( $data ) {
-		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', get_the_content( $data['context'] ) ) );
+		$data = $this->mark_exceptions( $data );
+		$key  = $this->get_exception_key( $data );
+
+		if ( isset( $data[ $key ] ) ) {
+			return '';
+		}
+
+		$content = get_the_content( $data['context'] );
+		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', $content ) );
 		return wp_kses_post( $content );
 	}
 
@@ -387,7 +395,12 @@ class Dynamic_Content {
 		$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
 
 		if ( empty( $excerpt ) ) {
-			$excerpt = wp_trim_excerpt( '', $post );
+			$data = $this->mark_exceptions( $data );
+			$key  = $this->get_exception_key( $data, $post->ID );
+
+			if ( ! isset( $data[ $key ] ) ) {
+				$excerpt = wp_trim_excerpt( '', $post );
+			}
 		}
 
 		if ( isset( $data['length'] ) && ! empty( $data['length'] ) ) {
@@ -647,6 +660,86 @@ class Dynamic_Content {
 		}
 
 		return apply_filters( 'otter_blocks_evaluate_dynamic_content_link', '', $data );
+	}
+
+	/**
+	 * Mark the exceptions for Dynamic request.
+	 *
+	 * Features that are using complex functions like `get_content` (directly or indirectly) might not behave correctly in every situation.
+	 * Based on the context, we decide if it is safe to use those functions..
+	 *
+	 * @param array $data Dynamic request.
+	 * @return array Dynamic request with marked exceptions.
+	 */
+	public function mark_exceptions( $data ) {
+		if ( 'postExcerpt' === $data['type'] || 'postContent' === $data['type'] ) {
+			if (
+				'valid' === apply_filters( 'product_neve_license_status', false ) &&
+				class_exists( '\Neve_Pro\Modules\Custom_Layouts\Module' )
+			) {
+				$post = get_post( $data['context'] );
+				if ( isset( $post ) && 'neve_custom_layouts' === $post->post_type ) {
+					$key = $this->get_exception_key( $data, $post->ID );
+					if ( $key ) {
+						$data[ $key ] = true;
+					}
+				}
+			}
+
+			if ( 'postContent' === $data['type'] ) {
+
+				// To do not trigger postContent action if the given content contains the postContent dynamic tag, because it will cause an infinite loop.
+				$content = get_the_content( $data['context'] );
+				if ( strpos( $content, 'data-type="postContent"' ) ) {
+					$key = $this->get_exception_key( $data, $post->ID );
+					if ( $key ) {
+						$data[ $key ] = true;
+					}
+				}
+			}
+		}
+
+		if ( has_filter( 'otter_blocks_dynamic_content_exception' ) ) {
+
+			/**
+			 * Gather exceptions for Dynamic request from other plugins via hooks. Before merging the changes, we make sure that critical data is present.
+			 */
+			$data_exceptions = apply_filters( 'otter_blocks_dynamic_content_exception', $data );
+			if (
+				isset( $data_exceptions ) &&
+				is_array( $data_exceptions )
+			) {
+				$merged = array_merge( $data, $data_exceptions );
+
+				if ( isset( $merged['type'] ) && isset( $merged['context'] ) ) {
+					$data = $merged;
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get the exception key for Dynamic request.
+	 *
+	 * @param array   $data Dynamic request.
+	 * @param numeric $post_id Post ID.
+	 * @return string|null
+	 */
+	public function get_exception_key( $data, $post_id = null ) {
+		if ( ! isset( $data ) ) {
+			return null;
+		}
+
+		if ( null == $post_id ) {
+			$post = get_post( $data['context'] );
+			if ( isset( $post ) ) {
+				$post_id = $post->ID;
+			}
+		}
+
+		return 'exception_dynamic_content_' . $data['type'] . '_' . $post_id;
 	}
 
 	/**
