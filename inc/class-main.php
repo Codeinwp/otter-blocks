@@ -43,6 +43,7 @@ class Main {
 			add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_svg_attachment_metadata' ), PHP_INT_MAX, 3 );
 		}
 
+		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
 	}
 
 	/**
@@ -466,6 +467,23 @@ class Main {
 		}
 
 		return update_option( 'themeisle_blocks_db_version', OTTER_BLOCKS_VERSION );
+	}
+
+	/**
+	 * About page SDK
+	 *
+	 * @return array
+	 * @since  2.3.1
+	 * @access public
+	 */
+	public function about_page() {
+		return array(
+			'location'         => 'otter',
+			'logo'             => esc_url_raw( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ),
+			'has_upgrade_menu' => ! DEFINED( 'OTTER_PRO_VERSION' ),
+			'upgrade_link'     => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
+			'upgrade_text'     => __( 'Get Otter Pro', 'otter-blocks' ),
+		);
 	}
 
 	/**
