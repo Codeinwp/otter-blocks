@@ -11,6 +11,8 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
+import { select } from '@wordpress/data';
+
 /**
  * Internal dependencies.
  */
@@ -38,6 +40,7 @@ const StickyExtension = ( el, props ) => {
 	if ( hasBlockSupport( props.name, 'customClassName', true ) && ! EXCEPTED_BLOCK_CONDITIONS.some( cond => props.name?.includes( cond ) ) ) {
 		const classes =  props.attributes?.className?.split( ' ' );
 		const isSticky = classes?.includes( 'o-sticky' ) || false;
+		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-sticky' ) );
 
 		return (
 			<Fragment>
@@ -48,9 +51,9 @@ const StickyExtension = ( el, props ) => {
 					label={ __( 'Transform to Sticky', 'otter-blocks' ) }
 					onSelect={ () => toggleSticky( classes, isSticky, props.setAttributes ) }
 					onDeselect={ () => toggleSticky( classes, isSticky, props.setAttributes ) }
-					isShownByDefault={ false }
+					isShownByDefault={  showAsDefault }
 				>
-					{ isSticky && <Edit { ...props } /> }
+					{ ( isSticky || showAsDefault ) && <Edit { ...props } /> }
 				</ToolsPanelItem>
 			</Fragment>
 		);

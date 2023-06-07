@@ -23,11 +23,14 @@ import './editor.scss';
 import Edit from './editor.js';
 import './count/index.js';
 import './typing/index.js';
+import { select } from '@wordpress/data';
 
 const excludedBlocks = [ 'themeisle-blocks/popup' ];
 
 const BlockAnimation = ( el, props ) => {
 	if ( hasBlockSupport( props.name, 'customClassName', true ) && ! excludedBlocks.includes( props.name ) ) {
+		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-animations' ) );
+
 		return (
 			<Fragment>
 				{ el }
@@ -36,7 +39,7 @@ const BlockAnimation = ( el, props ) => {
 					hasValue={ () => Boolean( props?.attributes?.className?.includes( 'animated' ) ) }
 					label={ __( 'Animations', 'otter-blocks' ) }
 					onDeselect={ () => window?.blocksAnimation?.removeAnimation() }
-					isShownByDefault={ false }
+					isShownByDefault={ showAsDefault }
 				>
 					<Edit { ...props } />
 				</ToolsPanelItem>

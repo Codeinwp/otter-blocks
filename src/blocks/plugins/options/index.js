@@ -24,8 +24,10 @@ import {
 } from '@wordpress/components';
 
 import {
+	select,
 	useDispatch,
-	useSelect
+	useSelect,
+	dispatch
 } from '@wordpress/data';
 
 import {
@@ -89,10 +91,12 @@ export let NavigatorButton = ({
 };
 
 const Options = () => {
-	const { isOnboardingVisible } = useSelect( select => {
+	const { isOnboardingVisible, get } = useSelect( select => {
 		const { isOnboardingVisible } = select( 'themeisle-gutenberg/data' );
+		const { get } = select( 'core/preferences' );
 		return {
-			isOnboardingVisible: isOnboardingVisible()
+			isOnboardingVisible: isOnboardingVisible(),
+			get
 		};
 	});
 
@@ -261,8 +265,6 @@ const Options = () => {
 		'condition': Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) )
 	};
 
-	const allModulesDisabled = Object.values( enabledModules ).every( item => ! item );
-
 	return (
 		<Fragment>
 			{ ( canUser ) && (
@@ -297,22 +299,11 @@ const Options = () => {
 							title={__( 'Block Tools Defaults', 'otter-blocks' )}
 							initialOpen={true}
 						>
-							{
-								allModulesDisabled ? (
-									<p>
-										{
-											__( 'No module is activate.', 'otter-blocks' )
-										}
-									</p>
-
-								) : (
-									<p>
-										{
-											__( 'Manage side-wide the Block Tools panels enabled by default.', 'otter-blocks' )
-										}
-									</p>
-								)
-							}
+							<p>
+								{
+									__( 'Make those features to be shown by default in Block Tools.', 'otter-blocks' )
+								}
+							</p>
 
 							{
 								enabledModules?.css && (
@@ -320,9 +311,9 @@ const Options = () => {
 										<ToggleControl
 											className="o-sidebar-toggle"
 											label={__( 'Custom CSS', 'otter-blocks' )}
-											checked={Boolean( getOption( 'themeisle_blocks_settings_css_module' ) )}
+											checked={get?.( 'themeisle/otter-blocks', 'show-custom-css' )}
 											disabled={'saving' === status}
-											onChange={() => updateOption( 'themeisle_blocks_settings_css_module', ! Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) )}
+											onChange={( value ) => dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-custom-css', value )}
 										/>
 									</PanelRow>
 								)
@@ -334,9 +325,9 @@ const Options = () => {
 										<ToggleControl
 											className="o-sidebar-toggle"
 											label={__( 'Animation', 'otter-blocks' )}
-											checked={Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) )}
+											checked={get?.( 'themeisle/otter-blocks', 'show-animations' ) ?? false}
 											disabled={'saving' === status}
-											onChange={() => updateOption( 'themeisle_blocks_settings_blocks_animation', ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) )}
+											onChange={( value ) => dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-animations', value )}
 										/>
 									</PanelRow>
 								)
@@ -348,13 +339,23 @@ const Options = () => {
 										<ToggleControl
 											className="o-sidebar-toggle"
 											label={__( 'Visibility Condition', 'otter-blocks' )}
-											checked={Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) )}
+											checked={get?.( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? false }
 											disabled={'saving' === status}
-											onChange={() => updateOption( 'themeisle_blocks_settings_block_conditions', ! Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) )}
+											onChange={( value ) => dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-block-conditions', value )}
 										/>
 									</PanelRow>
 								)
 							}
+
+							<PanelRow>
+								<ToggleControl
+									className="o-sidebar-toggle"
+									label={__( 'Sticky Block', 'otter-blocks' )}
+									checked={get?.( 'themeisle/otter-blocks', 'show-sticky' ) ?? false}
+									disabled={'saving' === status}
+									onChange={( value ) => dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-sticky', value )}
+								/>
+							</PanelRow>
 
 							<p/>
 
