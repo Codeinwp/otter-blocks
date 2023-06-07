@@ -39,7 +39,9 @@ class Posts_Grid_Block {
 			if ( 'product' === $post_type ) {
 				$categories = array();
 				foreach ( $attributes['categories'] as $category ) {
-					array_push( $categories, $category['slug'] );
+					if ( isset( $category['slug'] ) ) {
+						array_push( $categories, $category['slug'] );
+					}
 				}
 			}
 

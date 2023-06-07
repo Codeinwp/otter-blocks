@@ -46,6 +46,12 @@ const Layout = ({
 		>
 			{ posts
 				.filter( post => post )
+				.filter( post => {
+					if ( 'product' === post?.type && categoriesList ) {
+						return post?.['product_cat']?.some( cat => attributes.categories?.some( item => item.id === cat ) );
+					}
+					return true;
+				})
 				.slice( attributes.enableFeaturedPost ? 1 : 0 )
 				.map( post => {
 					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
