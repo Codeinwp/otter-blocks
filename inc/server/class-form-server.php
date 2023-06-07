@@ -63,7 +63,7 @@ class Form_Server {
 	/**
 	 * Autoresponder Email Error Expiration Time
 	 */
-	const AUTO_RESPONDER_ERROR_EXPIRATION_TIME = 7 * 24 * 60; // 1 week
+	const AUTO_RESPONDER_ERROR_EXPIRATION_TIME = WEEK_IN_SECONDS;
 
 	/**
 	 * Initialize the class
@@ -366,7 +366,13 @@ class Form_Server {
 			// phpcs:ignore
 			$email_was_send = wp_mail( $to, $email_subject, $email_body, $headers, $attachments );
 			if ( ! $email_was_send ) {
-				$form_data->set_error( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
+				$is_warning = Pro::is_pro_active() && strstr( $form_options->get_submissions_save_location(), 'database' );
+
+				if ( $is_warning ) {
+					$form_data->add_warning( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
+				} else {
+					$form_data->set_error( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
+				}
 			}
 		} catch ( Exception  $e ) {
 			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
@@ -412,7 +418,7 @@ class Form_Server {
 			) {
 				$key = $form_data->get_form_option_id() . '_autoresponder_error';
 
-				if ( ! get_transient( $key ) ) {
+				if ( false === get_transient( $key ) ) {
 					$send_email = true;
 					set_transient( $key, true, self::AUTO_RESPONDER_ERROR_EXPIRATION_TIME );
 				}
