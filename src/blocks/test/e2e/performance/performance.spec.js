@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import { basename, join } from 'path';
-import { writeFileSync } from 'fs';
 import { average, median, standardDeviation, quantileRank } from 'simple-statistics';
-const { PuppeteerScreenRecorder } = require( 'puppeteer-screen-recorder' );
+import { PuppeteerScreenRecorder } from 'puppeteer-screen-recorder';
+import path from 'path';
 
 /**
  * WordPress dependencies
@@ -12,7 +11,12 @@ const { PuppeteerScreenRecorder } = require( 'puppeteer-screen-recorder' );
 import {
 	createNewPost,
 	saveDraft,
-	insertBlock
+	insertBlock,
+	openGlobalBlockInserter,
+	closeGlobalBlockInserter,
+	openListView,
+	closeListView,
+	canvas
 } from '@wordpress/e2e-test-utils';
 
 /**
@@ -21,14 +25,57 @@ import {
 import {
 	readFile,
 	deleteFile,
-	getTypingEventDurations
+	saveResultsFile,
+	getTraceFilePath,
+	getTypingEventDurations,
+	getClickEventDurations,
+	getHoverEventDurations,
+	getSelectionEventDurations,
+	getLoadingDurations,
+	sum
 } from '../utils';
 
 import { mapValues } from 'lodash';
 
 jest.setTimeout( 1000000 );
 
+async function loadHtmlIntoTheBlockEditor( html ) {
+	await page.evaluate( ( _html ) => {
+		const { parse } = window.wp.blocks;
+		const { dispatch } = window.wp.data;
+		const blocks = parse( _html );
+
+		blocks.forEach( ( block ) => {
+			if ( 'core/image' === block.name ) {
+				delete block.attributes.id;
+				delete block.attributes.url;
+			}
+		});
+
+		dispatch( 'core/block-editor' ).resetBlocks( blocks );
+	}, html );
+}
+
+async function load1000Paragraphs() {
+	await page.evaluate( () => {
+		const { createBlock } = window.wp.blocks;
+		const { dispatch } = window.wp.data;
+		const blocks = Array.from({ length: 1000 }).map( () =>
+			createBlock( 'core/paragraph' )
+		);
+		dispatch( 'core/block-editor' ).resetBlocks( blocks );
+	});
+}
+
 let screenRecorder;
+
+const savePathVideo = './artifacts/tests/';
+
+const screenRecorderOptions = {
+	followNewTab: true,
+	fps: 25
+};
+
 
 describe( 'Post Editor Performance', () => {
 	const results = {
@@ -45,44 +92,10 @@ describe( 'Post Editor Performance', () => {
 		inserterHover: [],
 		inserterSearch: []
 	};
-	const traceFile = __dirname + '/trace.json';
+	const traceFilePath = getTraceFilePath();
 	let traceResults;
 
-	beforeAll( async() => {
-		const screenRecorderOptions = {
-			followNewTab: true,
-			fps: 25
-		};
-
-		const savePath = './artifact/tests/typing-test.mp4';
-		screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
-		await screenRecorder.start( savePath );
-
-		const html = readFile(
-			join( __dirname, '..', '/assets/large-otter-post.html' )
-		);
-
-		await createNewPost();
-		await page.evaluate( ( _html ) => {
-			const { parse } = window.wp.blocks;
-			const { dispatch } = window.wp.data;
-			const blocks = parse( _html );
-
-			blocks.forEach( ( block ) => {
-				if ( 'core/image' === block.name ) {
-					delete block.attributes.id;
-					delete block.attributes.url;
-				}
-			});
-
-			dispatch( 'core/block-editor' ).resetBlocks( blocks );
-		}, html );
-
-		await saveDraft();
-	});
-
 	afterAll( async() => {
-		await screenRecorder.stop();
 
 		const summary = Object.entries( results ).filter( ([ _, value ]) => 0 < value.length ).map( ([ key, value ]) => {
 
@@ -102,15 +115,12 @@ describe( 'Post Editor Performance', () => {
 		});
 		results.summary = Object.fromEntries( summary );
 
-		const resultsFilename = basename( __filename, '.js' ) + '.results.json';
-		writeFileSync(
-			join( __dirname, resultsFilename ),
-			JSON.stringify( results, null, 2 )
-		);
-		deleteFile( traceFile );
+		saveResultsFile( __filename, results );
+		deleteFile( traceFilePath );
 	});
 
 	beforeEach( async() => {
+		await createNewPost();
 
 		// Disable auto-save to avoid impacting the metrics.
 		await page.evaluate( () => {
@@ -121,13 +131,77 @@ describe( 'Post Editor Performance', () => {
 		});
 	});
 
+	// it( 'Loading', async() => {
+
+	// 	await loadHtmlIntoTheBlockEditor(
+	// 		readFile( path.join( __dirname, '../assets/large-post.html' ) )
+	// 	);
+
+	// 	await loadHtmlIntoTheBlockEditor(
+	// 		readFile( path.join( __dirname, '../assets/large-otter-post.html' ) )
+	// 	);
+
+	// 	await saveDraft();
+	// 	const draftURL = await page.url();
+
+	// 	// Number of sample measurements to take.
+	// 	const samples = 5;
+
+	// 	// Number of throwaway measurements to perform before recording samples.
+	// 	// Having at least one helps ensure that caching quirks don't manifest in
+	// 	// the results.
+	// 	const throwaway = 1;
+
+	// 	let i = throwaway + samples;
+	// 	while ( i-- ) {
+	// 		await page.close();
+	// 		page = await browser.newPage();
+
+	// 		await page.goto( draftURL );
+	// 		await page.waitForSelector( '.edit-post-layout', {
+	// 			timeout: 120000
+	// 		});
+	// 		await canvas().waitForSelector( '.wp-block', { timeout: 120000 });
+
+	// 		if ( i < samples ) {
+	// 			const {
+	// 				serverResponse,
+	// 				firstPaint,
+	// 				domContentLoaded,
+	// 				loaded,
+	// 				firstContentfulPaint,
+	// 				firstBlock
+	// 			} = await getLoadingDurations();
+
+	// 			results.serverResponse.push( serverResponse );
+	// 			results.firstPaint.push( firstPaint );
+	// 			results.domContentLoaded.push( domContentLoaded );
+	// 			results.loaded.push( loaded );
+	// 			results.firstContentfulPaint.push( firstContentfulPaint );
+	// 			results.firstBlock.push( firstBlock );
+	// 		}
+	// 	}
+
+	// 	await saveDraft();
+	// });
+
 	it( 'Typing', async() => {
 
-		// Measuring typing performance.
-		await insertBlock( 'Advanced Heading' );
-		let i = 100;
+		screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
+		await screenRecorder.start( savePathVideo + 'typing-test.mp4' );
+
+		await loadHtmlIntoTheBlockEditor(
+			readFile( path.join( __dirname, '../assets/large-post.html' ) )
+		);
+
+		await loadHtmlIntoTheBlockEditor(
+			readFile( path.join( __dirname, '../assets/large-otter-post.html' ) )
+		);
+
+		await insertBlock( 'Paragraph' );
+		let i = 20;
 		await page.tracing.start({
-			path: traceFile,
+			path: traceFilePath,
 			screenshots: false,
 			categories: [ 'devtools.timeline' ]
 		});
@@ -141,7 +215,7 @@ describe( 'Post Editor Performance', () => {
 			await page.keyboard.type( 'x' );
 		}
 		await page.tracing.stop();
-		traceResults = JSON.parse( readFile( traceFile ) );
+		traceResults = JSON.parse( readFile( traceFilePath ) );
 		const [ keyDownEvents, keyPressEvents, keyUpEvents ] =
 			getTypingEventDurations( traceResults );
 		if (
@@ -157,190 +231,37 @@ describe( 'Post Editor Performance', () => {
 				);
 			}
 		}
+
 		await saveDraft();
 
-		expect( 0 < results.type.length ).toBe( true );
+		await screenRecorder.stop();
 	});
 
-	// it( 'Loading', async() => {
+	it( 'Selecting blocks', async() => {
+		await load1000Paragraphs();
+		const paragraphs = await canvas().$$( '.wp-block' );
+		await paragraphs[ 0 ].click();
+		for ( let j = 1; 10 >= j; j++ ) {
 
-	// 	// Measuring loading time.
-	// 	let i = 5;
-	// 	while ( i-- ) {
-	// 		if ( await page.$( '.editor-post-save-draft' ) ) {
-	// 			await saveDraft();
-	// 		}
-	// 		await page.reload();
+			// Wait for the browser to be idle before starting the monitoring.
+			// eslint-disable-next-line no-restricted-syntax
+			await page.waitForTimeout( 1000 );
+			await page.tracing.start({
+				path: traceFilePath,
+				screenshots: false,
+				categories: [ 'devtools.timeline' ]
+			});
+			await paragraphs[ j ].click();
+			await page.tracing.stop();
+			traceResults = JSON.parse( readFile( traceFilePath ) );
+			const allDurations = getSelectionEventDurations( traceResults );
+			results.focus.push(
+				allDurations.reduce( ( acc, eventDurations ) => {
+					return acc + sum( eventDurations );
+				}, 0 )
+			);
+		}
 
-	// 		await page.waitForSelector( '.wp-block' );
-	// 		const {
-	// 			serverResponse,
-	// 			firstPaint,
-	// 			domContentLoaded,
-	// 			loaded,
-	// 			firstContentfulPaint,
-	// 			firstBlock
-	// 		} = await getLoadingDurations();
-
-	// 		results.serverResponse.push( serverResponse );
-	// 		results.firstPaint.push( firstPaint );
-	// 		results.domContentLoaded.push( domContentLoaded );
-	// 		results.loaded.push( loaded );
-	// 		results.firstContentfulPaint.push( firstContentfulPaint );
-	// 		results.firstBlock.push( firstBlock );
-	// 	}
-	// });
-
-	// it( 'Selecting blocks', async() => {
-
-	// 	// Measuring block selection performance.
-	// 	await createNewPost();
-	// 	await page.evaluate( () => {
-	// 		const { createBlock } = window.wp.blocks;
-	// 		const { dispatch } = window.wp.data;
-	// 		const blocks = window.lodash
-	// 			.times( 1000 )
-	// 			.map( () => createBlock( 'core/paragraph' ) );
-	// 		dispatch( 'core/block-editor' ).resetBlocks( blocks );
-	// 	});
-	// 	const paragraphs = await page.$$( '.wp-block' );
-	// 	await page.tracing.start({
-	// 		path: traceFile,
-	// 		screenshots: false,
-	// 		categories: [ 'devtools.timeline' ]
-	// 	});
-	// 	await paragraphs[ 0 ].click();
-	// 	for ( let j = 1; 10 >= j; j++ ) {
-
-	// 		// Wait for the browser to be idle before starting the monitoring.
-	// 		// eslint-disable-next-line no-restricted-syntax
-	// 		await page.waitForTimeout( 1000 );
-	// 		await paragraphs[ j ].click();
-	// 	}
-	// 	await page.tracing.stop();
-	// 	traceResults = JSON.parse( readFile( traceFile ) );
-	// 	const [ focusEvents ] = getSelectionEventDurations( traceResults );
-	// 	results.focus = focusEvents;
-	// 	await saveDraft();
-
-	// 	const sum = results.focus.reduce( ( s, x ) => s + x, 0 );
-	// 	const avg = sum / results.focus.length;
-	// 	results.summary.focusAvg = avg;
-	// });
-
-	// it( 'Opening persistent list view', async() => {
-
-	// 	// Measure time to open inserter.
-	// 	await page.waitForSelector( '.edit-post-layout' );
-	// 	for ( let j = 0; 10 > j; j++ ) {
-	// 		await page.tracing.start({
-	// 			path: traceFile,
-	// 			screenshots: false,
-	// 			categories: [ 'devtools.timeline' ]
-	// 		});
-	// 		await openListView();
-	// 		await page.tracing.stop();
-	// 		traceResults = JSON.parse( readFile( traceFile ) );
-	// 		const [ mouseClickEvents ] = getClickEventDurations( traceResults );
-	// 		for ( let k = 0; k < mouseClickEvents.length; k++ ) {
-	// 			results.listViewOpen.push( mouseClickEvents[ k ]);
-	// 		}
-	// 		await closeListView();
-	// 	}
-	// });
-
-	// it( 'Opening the inserter', async() => {
-
-	// 	// Measure time to open inserter.
-	// 	await page.waitForSelector( '.edit-post-layout' );
-	// 	for ( let j = 0; 10 > j; j++ ) {
-	// 		await page.tracing.start({
-	// 			path: traceFile,
-	// 			screenshots: false,
-	// 			categories: [ 'devtools.timeline' ]
-	// 		});
-	// 		await openGlobalBlockInserter();
-	// 		await page.tracing.stop();
-	// 		traceResults = JSON.parse( readFile( traceFile ) );
-	// 		const [ mouseClickEvents ] = getClickEventDurations( traceResults );
-	// 		for ( let k = 0; k < mouseClickEvents.length; k++ ) {
-	// 			results.inserterOpen.push( mouseClickEvents[ k ]);
-	// 		}
-	// 		await closeGlobalBlockInserter();
-	// 	}
-	// });
-
-	// it( 'Searching the inserter', async() => {
-	// 	function sum( arr ) {
-	// 		return arr.reduce( ( a, b ) => a + b, 0 );
-	// 	}
-
-	// 	// Measure time to search the inserter and get results.
-	// 	await openGlobalBlockInserter();
-	// 	for ( let j = 0; 10 > j; j++ ) {
-
-	// 		// Wait for the browser to be idle before starting the monitoring.
-	// 		// eslint-disable-next-line no-restricted-syntax
-	// 		await page.waitForTimeout( 500 );
-	// 		await page.tracing.start({
-	// 			path: traceFile,
-	// 			screenshots: false,
-	// 			categories: [ 'devtools.timeline' ]
-	// 		});
-	// 		await page.keyboard.type( 'p' );
-	// 		await page.tracing.stop();
-	// 		traceResults = JSON.parse( readFile( traceFile ) );
-	// 		const [ keyDownEvents, keyPressEvents, keyUpEvents ] =
-	// 			getTypingEventDurations( traceResults );
-	// 		if (
-	// 			keyDownEvents.length === keyPressEvents.length &&
-	// 			keyPressEvents.length === keyUpEvents.length
-	// 		) {
-	// 			results.inserterSearch.push(
-	// 				sum( keyDownEvents ) +
-	// 					sum( keyPressEvents ) +
-	// 					sum( keyUpEvents )
-	// 			);
-	// 		}
-	// 		await page.keyboard.press( 'Backspace' );
-	// 	}
-	// 	await closeGlobalBlockInserter();
-	// });
-
-	// it( 'Hovering Inserter Items', async() => {
-
-	// 	// Measure inserter hover performance.
-	// 	const paragraphBlockItem =
-	// 		'.block-editor-inserter__menu .editor-block-list-item-paragraph';
-	// 	const headingBlockItem =
-	// 		'.block-editor-inserter__menu .editor-block-list-item-heading';
-	// 	await openGlobalBlockInserter();
-	// 	await page.waitForSelector( paragraphBlockItem );
-	// 	await page.hover( paragraphBlockItem );
-	// 	await page.hover( headingBlockItem );
-	// 	for ( let j = 0; 10 > j; j++ ) {
-
-	// 		// Wait for the browser to be idle before starting the monitoring.
-	// 		// eslint-disable-next-line no-restricted-syntax
-	// 		await page.waitForTimeout( 200 );
-	// 		await page.tracing.start({
-	// 			path: traceFile,
-	// 			screenshots: false,
-	// 			categories: [ 'devtools.timeline' ]
-	// 		});
-	// 		await page.hover( paragraphBlockItem );
-	// 		await page.hover( headingBlockItem );
-	// 		await page.tracing.stop();
-
-	// 		traceResults = JSON.parse( readFile( traceFile ) );
-	// 		const [ mouseOverEvents, mouseOutEvents ] =
-	// 			getHoverEventDurations( traceResults );
-	// 		for ( let k = 0; k < mouseOverEvents.length; k++ ) {
-	// 			results.inserterHover.push(
-	// 				mouseOverEvents[ k ] + mouseOutEvents[ k ]
-	// 			);
-	// 		}
-	// 	}
-	// 	await closeGlobalBlockInserter();
-	// });
+		await saveDraft();
+	});
 });
