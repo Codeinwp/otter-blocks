@@ -11,3 +11,4 @@ todo.md
 artifacts
 *.results.json
 trace.json
+license.json
