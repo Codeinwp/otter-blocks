@@ -36,7 +36,7 @@ class Posts_Grid_Block {
 
 		$get_custom_post_types_posts = function ( $post_type ) use ( $attributes, $categories ) {
 
-			if ( 'product' === $post_type ) {
+			if ( 'product' === $post_type && isset( $attributes['categories'] ) ) {
 				$categories = array();
 				foreach ( $attributes['categories'] as $category ) {
 					if ( isset( $category['slug'] ) ) {

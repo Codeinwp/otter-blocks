@@ -47,7 +47,7 @@ const Layout = ({
 			{ posts
 				.filter( post => post )
 				.filter( post => {
-					if ( 'product' === post?.type && categoriesList ) {
+					if ( 'product' === post?.type && attributes?.categories?.length  ) {
 						return post?.['product_cat']?.some( cat => attributes.categories?.some( item => item.id === cat ) );
 					}
 					return true;
