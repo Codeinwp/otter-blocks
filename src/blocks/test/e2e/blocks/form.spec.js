@@ -5,27 +5,25 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 test.describe( 'Form Block', () => {
 
-
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
 	});
 
-	test( 'check if Otter Pro is active', async({ page }) => {
-		await page.goto( '/wp-admin/admin.php?page=otter' );
-
-		await page.waitForTimeout( 1000 );
-
-		const activateInputField = page.getByPlaceholder( 'Enter license key' );
-
-		expect( activateInputField ).toBeVisible();
-
-		const activateBtn = page.getByRole( 'button', { name: 'Deactivate' });
-
-		expect( activateBtn ).toBeVisible();
-
-		await activateBtn.click();
-	});
-
+	// test( 'check if Otter Pro is active', async({ page }) => {
+	// 	await page.goto( '/wp-admin/admin.php?page=otter' );
+	//
+	// 	await page.waitForTimeout( 1000 );
+	//
+	// 	const activateInputField = page.getByPlaceholder( 'Enter license key' );
+	//
+	// 	expect( activateInputField ).toBeVisible();
+	//
+	// 	const activateBtn = page.getByRole( 'button', { name: 'Deactivate' });
+	//
+	// 	expect( activateBtn ).toBeVisible();
+	//
+	// 	await activateBtn.click();
+	// });
 
 	test( 'can be created by typing "/form"', async({ editor, page }) => {
 

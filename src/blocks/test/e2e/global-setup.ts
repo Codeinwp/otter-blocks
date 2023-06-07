@@ -14,9 +14,20 @@ async function globalSetup( config: FullConfig ) {
 	const storageStatePath =
 		'string' === typeof storageState ? storageState : undefined;
 
+	console.log( `[INFO] Base URL Test Instance: ${baseURL}` );
+
 	const requestContext = await request.newContext({
 		baseURL
 	});
+
+	const r = await requestContext.head( baseURL );
+
+	console.log( '[Info] Request Status', r.status() );
+	console.log( '[INFO] Endpoint Link', r.headers().link );
+
+	if ( r.headers().link === undefined ) {
+		console.warn( '[Warning] No links header found. The connection might be invalid.' );
+	}
 
 	const requestUtils = new RequestUtils( requestContext, {
 		storageStatePath
