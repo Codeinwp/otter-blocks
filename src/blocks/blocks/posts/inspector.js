@@ -127,7 +127,8 @@ const Inspector = ({
 		const cat = categoriesList.find( cat => cat.id === Number( category.id ) );
 		return {
 			id: category.id,
-			name: cat?.name || cat?.slug || ''
+			name: cat?.name || cat?.slug || '',
+			slug: cat?.slug || ''
 		};
 	}) : [];
 
@@ -149,7 +150,8 @@ const Inspector = ({
 					if ( category ) {
 						return {
 							id: category.id,
-							name
+							name,
+							slug: category?.slug ?? ''
 						};
 					}
 				}).filter( e => undefined !== e );
@@ -157,7 +159,8 @@ const Inspector = ({
 		} else if ( '' !== value ) {
 			categories = [{
 				id: value,
-				name: categoriesList.find( e => e.id === Number( value ) ).name
+				name: categoriesList.find( e => e.id === Number( value ) ).name,
+				slug: categoriesList.find( e => e.id === Number( value ) )?.slug ?? ''
 			}];
 		}
 
