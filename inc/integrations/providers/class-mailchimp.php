@@ -106,15 +106,12 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	}
 
 	/**
-	 * Add a new subscriber to Mailchimp.
+	 * Make a request that add the email to the contact list.
 	 *
-	 * @param Form_Data_Request $form_data The wrapper around request data.
-	 * @return Form_Data_Request
-	 * @since 2.0.3
+	 * @param string $email The email address.
+	 * @return array|\WP_Error The response from Mailchimp.
 	 */
-	public function subscribe( $form_data ) {
-
-		$email       = $form_data->get_email_from_form_input();
+	private function make_subscribe_request( $email ) {
 		$user_status = $this->get_new_user_status_mailchimp( $this->list_id );
 
 		$url = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/members/' . md5( strtolower( $email ) );
@@ -132,7 +129,20 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 			'body'    => wp_json_encode( $payload ),
 		);
 
-		$response = wp_remote_post( $url, $args );
+		return wp_remote_post( $url, $args );
+	}
+
+	/**
+	 * Add a new subscriber to Mailchimp.
+	 *
+	 * @param Form_Data_Request $form_data The wrapper around request data.
+	 * @return Form_Data_Request
+	 * @since 2.0.3
+	 */
+	public function subscribe( $form_data ) {
+
+		$email    = $form_data->get_email_from_form_input();
+		$response = $this->make_subscribe_request( $email );
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
@@ -158,8 +168,14 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	public function test_subscription() {
+		$req      = new Form_Data_Request();
+		$response = $this->make_subscribe_request( Form_Utils::generate_test_email() );
 
-		return $this->subscribe( Form_Utils::generate_test_email() );
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			$req->set_error( Form_Data_Response::get_error_code_message( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR ) );
+		}
+
+		return $req;
 	}
 
 	/**
