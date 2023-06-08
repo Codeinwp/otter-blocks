@@ -20,6 +20,25 @@ import {
  */
 import './editor.scss';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
+import { useSelect } from '@wordpress/data';
+
+const FeaturePanel = ({ props }) => {
+
+	// Function that refresh the inspector slot when a store is updated. This is used for the preferences store.
+	const _ = useSelect( ( select ) => {
+		console.count( 'Refresh Inspector' );
+		select( 'core/preferences' );
+	}, []);
+
+	return (
+		<ToolsPanel
+			label={ __( 'Block Tools' ) }
+			className="o-block-tools"
+		>
+			{ applyFilters( 'otter.blockTools', '', props ) }
+		</ToolsPanel>
+	);
+};
 
 const withConditions = createHigherOrderComponent( BlockEdit => {
 	return props => {
@@ -31,12 +50,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 
 				{ props.isSelected && (
 					<Inspector>
-						<ToolsPanel
-							label={ __( 'Block Tools' ) }
-							className="o-block-tools"
-						>
-							{ applyFilters( 'otter.blockTools', '', props ) }
-						</ToolsPanel>
+						<FeaturePanel props={ props } />
 					</Inspector>
 				) }
 			</Fragment>

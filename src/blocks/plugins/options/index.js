@@ -19,7 +19,7 @@ import {
 	ExternalLink,
 	PanelBody,
 	PanelRow,
-	Snackbar,
+	Snackbar, Spinner,
 	ToggleControl
 } from '@wordpress/components';
 
@@ -98,7 +98,7 @@ const Options = () => {
 			isOnboardingVisible: isOnboardingVisible(),
 			get
 		};
-	});
+	}, []);
 
 	const { createNotice } = useDispatch( 'core/notices' );
 	const { showOnboarding } = useDispatch( 'themeisle-gutenberg/data' );
@@ -154,7 +154,14 @@ const Options = () => {
 	const [ isLoading, setLoading ] = useState( false );
 
 	const settingsRef = useRef( null );
-	const [ getOption, updateOption, status ] = useSettings();
+	const [ getOption, _, status ] = useSettings();
+	const [ preferenceStatus, setPreferenceStatus ] = useState( 'loaded' );
+
+	const updatedWithStatus = async( request ) => {
+		setPreferenceStatus( 'loading' );
+		await request;
+		setPreferenceStatus( 'loaded' );
+	};
 
 	const dispatchNotice = value => {
 		if ( ! Snackbar ) {
@@ -305,6 +312,25 @@ const Options = () => {
 								}
 							</p>
 
+							<PanelRow>
+								<ToggleControl
+									className="o-sidebar-toggle"
+									label={__( 'Sticky Block', 'otter-blocks' )}
+									checked={get?.( 'themeisle/otter-blocks', 'show-sticky' ) ?? false}
+									disabled={'loading' === preferenceStatus}
+									onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-sticky', value ) )}
+								/>
+							</PanelRow>
+
+							{
+								'loading' === status && (
+									<p>
+										<Spinner />
+										{ __( 'Checking optional module...', 'otter-blocks' ) }
+									</p>
+								)
+							}
+
 							{
 								enabledModules?.css && (
 									<PanelRow>
@@ -312,8 +338,8 @@ const Options = () => {
 											className="o-sidebar-toggle"
 											label={__( 'Custom CSS', 'otter-blocks' )}
 											checked={get?.( 'themeisle/otter-blocks', 'show-custom-css' )}
-											disabled={'saving' === status}
-											onChange={( value ) => dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-custom-css', value )}
+											disabled={'loading' === preferenceStatus}
+											onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-custom-css', value ) )}
 										/>
 									</PanelRow>
 								)
@@ -326,8 +352,8 @@ const Options = () => {
 											className="o-sidebar-toggle"
 											label={__( 'Animation', 'otter-blocks' )}
 											checked={get?.( 'themeisle/otter-blocks', 'show-animations' ) ?? false}
-											disabled={'saving' === status}
-											onChange={( value ) => dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-animations', value )}
+											disabled={'loading' === preferenceStatus}
+											onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-animations', value ) )}
 										/>
 									</PanelRow>
 								)
@@ -340,22 +366,12 @@ const Options = () => {
 											className="o-sidebar-toggle"
 											label={__( 'Visibility Condition', 'otter-blocks' )}
 											checked={get?.( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? false }
-											disabled={'saving' === status}
-											onChange={( value ) => dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-block-conditions', value )}
+											disabled={'loading' === preferenceStatus}
+											onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-block-conditions', value ) )}
 										/>
 									</PanelRow>
 								)
 							}
-
-							<PanelRow>
-								<ToggleControl
-									className="o-sidebar-toggle"
-									label={__( 'Sticky Block', 'otter-blocks' )}
-									checked={get?.( 'themeisle/otter-blocks', 'show-sticky' ) ?? false}
-									disabled={'saving' === status}
-									onChange={( value ) => dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-sticky', value )}
-								/>
-							</PanelRow>
 
 							<p/>
 

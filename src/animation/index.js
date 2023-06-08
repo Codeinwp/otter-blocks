@@ -15,6 +15,8 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
+import { select } from '@wordpress/data';
+
 /**
   * Internal dependencies.
   */
@@ -23,12 +25,12 @@ import './editor.scss';
 import Edit from './editor.js';
 import './count/index.js';
 import './typing/index.js';
-import { select } from '@wordpress/data';
 
 const excludedBlocks = [ 'themeisle-blocks/popup' ];
 
 const BlockAnimation = ( el, props ) => {
 	if ( hasBlockSupport( props.name, 'customClassName', true ) && ! excludedBlocks.includes( props.name ) ) {
+
 		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-animations' ) );
 
 		return (
