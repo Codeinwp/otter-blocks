@@ -41,7 +41,7 @@ class Main {
 			add_filter( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
 			add_filter( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
 			add_filter( 'otter_blocks_register_css', array( $this, 'register_blocks_css' ) );
-			add_action( 'admin_print_scripts-settings_page_otter', array( $this, 'enqueue_options_assets' ) );
+			add_action( 'admin_print_scripts-toplevel_page_otter', array( $this, 'enqueue_options_assets' ) );
 		}
 	}
 
