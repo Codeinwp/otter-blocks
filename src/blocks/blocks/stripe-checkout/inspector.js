@@ -36,8 +36,7 @@ const ProFeatures = () => {
 					'Thank you for your purchase',
 					'otter-blocks'
 				)}
-				value={ undefined }
-				onChange={ () => {}}
+				disabled
 				help={__(
 					'Enter the subject of the autoresponder email.',
 					'otter-blocks'
@@ -47,10 +46,8 @@ const ProFeatures = () => {
 
 			<TextareaControl
 				label={ __( 'Autoresponder Body', 'otter-blocks' ) }
-				placeholder={ __( 'Thank you for your recent purchase through our website. Your promotional code is <pre>GIFT2023</pre> and you can use it on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>. <br><br><br> This is a template.', 'otter-blocks' )}
+				placeholder={ __( 'W e appreciate your recent purchase made on our website. You have received a promotional code, namely <strong>EXAMPLE</strong>, which can be applied during checkout on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>', 'otter-blocks' )}
 				rows={2}
-				value={ undefined }
-				onChange={ () => {} }
 				help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
 				disabled
 				className="o-disabled"
