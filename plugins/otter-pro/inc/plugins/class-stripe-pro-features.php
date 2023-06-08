@@ -47,12 +47,11 @@ class Stripe_Pro_Features {
 		$transient_key = 'otter_stripe_checkout_' . $session_id;
 
 		$transient = get_transient( $transient_key );
-
 		if ( false !== $transient ) {
 			return;
 		}
-		$email = $stripe->get_session_email( $session_id );
 
+		$email = $stripe->get_session_email( $session_id );
 		if ( ! $email ) {
 			return;
 		}

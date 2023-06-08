@@ -28,6 +28,7 @@ const ProFeatures = () => {
 	return (
 		<PanelBody
 			title={ __( 'Autoresponder', 'otter-blocks' ) }
+			initialOpen={ false }
 		>
 			<TextControl
 				label={__( 'Autoresponder Subject', 'otter-blocks' )}

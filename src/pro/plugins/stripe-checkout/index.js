@@ -25,6 +25,7 @@ const Autoresponder = ( Template, attributes, setAttributes ) => {
 		<Fragment>
 			<PanelBody
 				title={ __( 'Autoresponder', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
 				<ToggleControl
 					label={ __( 'Enable Autoresponder', 'otter-blocks' ) }
@@ -51,7 +52,7 @@ const Autoresponder = ( Template, attributes, setAttributes ) => {
 							/>
 
 							<AutoresponderBodyModal
-								value={ attributes.autoresponder?.body ?? __( 'Thank you for your recent purchase through our website. Your promotional code is <strong>GIFT2023</strong> and you can use it on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>.', 'otter-blocks' ) }
+								value={ attributes.autoresponder?.body ?? __( 'Message example: We appreciate your recent purchase made on our website. You have received a promotional code, namely <strong>EXAMPLE</strong>, which can be applied during checkout on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>.', 'otter-blocks' ) }
 								onChange={ ( body ) => setAttributes({ autoresponder: { ...attributes.autoresponder, body }}) } />
 						</Fragment>
 					)
