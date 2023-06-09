@@ -15,21 +15,21 @@ class Dashboard_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dashboard_Server
+	 * @var Dashboard_Server|null
 	 */
 	public static $instance = null;
 
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Dashboard_Server
+	 * @var string
 	 */
 	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
 	 *
-	 * @var Dashboard_Server
+	 * @var string
 	 */
 	public $version = 'v1';
 

@@ -16,7 +16,7 @@ class Patterns {
 	/**
 	 * Singleton.
 	 *
-	 * @var Patterns Class object.
+	 * @var Patterns|null Class object.
 	 */
 	protected static $instance = null;
 

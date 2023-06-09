@@ -14,7 +14,7 @@ class License {
 	/**
 	 * The main instance var.
 	 *
-	 * @var License
+	 * @var License|null
 	 */
 	protected static $instance = null;
 
@@ -54,7 +54,7 @@ class License {
 	/**
 	 * Get active license.
 	 *
-	 * @return true
+	 * @return bool
 	 */
 	public static function has_active_license() {
 		$status = self::get_license_data();
@@ -88,7 +88,7 @@ class License {
 	/**
 	 * Check if license is expired.
 	 *
-	 * @return true
+	 * @return bool
 	 */
 	public static function has_expired_license() {
 		$status = self::get_license_data();
@@ -171,7 +171,7 @@ class License {
 	 * @static
 	 * @since 2.0.1
 	 * @access public
-	 * @return WooCommerce_Builder
+	 * @return License
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {

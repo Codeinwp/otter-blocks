@@ -15,7 +15,7 @@ class Blocks_Export_Import {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Blocks_Export_Import
+	 * @var Blocks_Export_Import|null
 	 */
 	public static $instance = null;
 
