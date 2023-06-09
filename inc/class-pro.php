@@ -14,7 +14,7 @@ class Pro {
 	/**
 	 * Singleton.
 	 *
-	 * @var Pro Class object.
+	 * @var Pro|null Class object.
 	 */
 	protected static $instance = null;
 
@@ -412,7 +412,7 @@ class Pro {
 	 *
 	 * @static
 	 *
-	 * @return  GutenbergBlocks
+	 * @return  Pro
 	 * @since   2.0.3
 	 * @access  public
 	 */

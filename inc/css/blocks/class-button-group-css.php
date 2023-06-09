@@ -189,7 +189,7 @@ class Button_Group_CSS extends Base_CSS {
 	/**
 	 * Generate Button Group Global CSS
 	 * 
-	 * @return string
+	 * @return string|void
 	 * @since 2.2.3
 	 * @access public
 	 */

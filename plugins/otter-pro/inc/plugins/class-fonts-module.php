@@ -17,7 +17,7 @@ class Fonts_Module {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Fonts_Module
+	 * @var Fonts_Module|null
 	 */
 	protected static $instance = null;
 

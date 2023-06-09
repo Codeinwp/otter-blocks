@@ -14,7 +14,7 @@ class Patterns {
 	/**
 	 * Singleton.
 	 *
-	 * @var Patterns Class object.
+	 * @var Patterns|null Class object.
 	 */
 	protected static $instance = null;
 
@@ -146,7 +146,7 @@ class Patterns {
 		);
 
 		foreach ( $block_patterns as $block_pattern ) {
-			if ( ! version_compare( get_bloginfo( 'version' ), $block_pattern['minimum'], '>=' ) ) {
+			if ( ! version_compare( get_bloginfo( 'version' ), strval( $block_pattern['minimum'] ), '>=' ) ) {
 				continue;
 			}
 
@@ -164,7 +164,7 @@ class Patterns {
 	 *
 	 * @static
 	 *
-	 * @return  GutenbergBlocks
+	 * @return  Patterns
 	 * @since   2.0.3
 	 * @access  public
 	 */

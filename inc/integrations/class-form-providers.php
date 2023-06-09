@@ -19,7 +19,7 @@ class Form_Providers {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Providers
+	 * @var Form_Providers|null
 	 */
 	public static $instance = null;
 

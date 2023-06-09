@@ -17,7 +17,7 @@ class Block_Conditions {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Block_Conditions
+	 * @var Block_Conditions|null
 	 */
 	protected static $instance = null;
 
@@ -270,7 +270,7 @@ class Block_Conditions {
 	 * @static
 	 * @since 1.7.0
 	 * @access public
-	 * @return Options_Settings
+	 * @return Block_Conditions
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {

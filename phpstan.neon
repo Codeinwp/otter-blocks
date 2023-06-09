@@ -1,0 +1,21 @@
+parameters:
+	level: 5
+	paths:
+		- %currentWorkingDirectory%/inc
+		- %currentWorkingDirectory%/plugins
+	scanFiles:
+	bootstrapFiles:
+		- %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+		- %currentWorkingDirectory%/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+		- %currentWorkingDirectory%/vendor/php-stubs/acf-pro-stubs/acf-pro-stubs.php
+		- %currentWorkingDirectory%/vendor/wptt/webfont-loader/wptt-webfont-loader.php
+		- %currentWorkingDirectory%/tests/php/static-analysis-stubs/otter.php
+		- %currentWorkingDirectory%/tests/php/static-analysis-stubs/learndash.php
+	dynamicConstantNames:
+		- COOKIEPATH
+		- COOKIE_DOMAIN
+		- OTTER_BLOCKS_PRO_SUPPORT
+		- OTTER_BLOCKS_SHOW_NOTICES
+includes:
+	- %currentWorkingDirectory%/vendor/szepeviktor/phpstan-wordpress/extension.neon
+	- %currentWorkingDirectory%/vendor/spaze/phpstan-stripe/extension.neon

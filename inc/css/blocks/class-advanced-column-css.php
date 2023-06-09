@@ -482,10 +482,10 @@ class Advanced_Column_CSS extends Base_CSS {
 			$padding['left']   = isset( $attrs['paddingLeft'] ) ? $attrs['paddingLeft'] . 'px' : '20px';
 			$padding['right']  = isset( $attrs['paddingRight'] ) ? $attrs['paddingRight'] . 'px' : '20px';
 		} elseif ( isset( $attrs['padding'] ) && ! is_array( $attrs['padding'] ) && ! isset( $attrs['paddingType'] ) ) {
-			$padding['top']    = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
-			$padding['bottom'] = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
-			$padding['left']   = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
-			$padding['right']  = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
+			$padding['top']    = $attrs['padding'] . 'px';
+			$padding['bottom'] = $attrs['padding'] . 'px';
+			$padding['left']   = $attrs['padding'] . 'px';
+			$padding['right']  = $attrs['padding'] . 'px';
 		} else {
 			$padding['top']    = isset( $attrs['paddingTop'] ) ? $attrs['paddingTop'] . 'px' : '20px';
 			$padding['bottom'] = isset( $attrs['paddingBottom'] ) ? $attrs['paddingBottom'] . 'px' : '20px';
@@ -510,21 +510,10 @@ class Advanced_Column_CSS extends Base_CSS {
 				$padding_tablet['right'] = $attrs['paddingRightTablet'] . 'px';
 			}
 		} elseif ( isset( $attrs['paddingTablet'] ) && ! is_array( $attrs['paddingTablet'] ) ) {
-			if ( isset( $attrs['paddingTablet'] ) ) {
-				$padding_tablet['top'] = $attrs['paddingTablet'] . 'px';
-			}
-
-			if ( isset( $attrs['paddingTablet'] ) ) {
-				$padding_tablet['bottom'] = $attrs['paddingTablet'] . 'px';
-			}
-
-			if ( isset( $attrs['paddingTablet'] ) ) {
-				$padding_tablet['left'] = $attrs['paddingTablet'] . 'px';
-			}
-
-			if ( isset( $attrs['paddingTablet'] ) ) {
-				$padding_tablet['right'] = $attrs['paddingTablet'] . 'px';
-			}
+			$padding_tablet['top']    = $attrs['paddingTablet'] . 'px';
+			$padding_tablet['bottom'] = $attrs['paddingTablet'] . 'px';
+			$padding_tablet['left']   = $attrs['paddingTablet'] . 'px';
+			$padding_tablet['right']  = $attrs['paddingTablet'] . 'px';
 		}
 
 		if ( isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] ) {
@@ -544,21 +533,10 @@ class Advanced_Column_CSS extends Base_CSS {
 				$padding_mobile['right'] = $attrs['paddingRightMobile'] . 'px';
 			}
 		} elseif ( isset( $attrs['paddingMobile'] ) && ! is_array( $attrs['paddingMobile'] ) ) {
-			if ( isset( $attrs['paddingMobile'] ) ) {
-				$padding_mobile['top'] = $attrs['paddingMobile'] . 'px';
-			}
-
-			if ( isset( $attrs['paddingMobile'] ) ) {
-				$padding_mobile['bottom'] = $attrs['paddingMobile'] . 'px';
-			}
-
-			if ( isset( $attrs['paddingMobile'] ) ) {
-				$padding_mobile['left'] = $attrs['paddingMobile'] . 'px';
-			}
-
-			if ( isset( $attrs['paddingMobile'] ) ) {
-				$padding_mobile['right'] = $attrs['paddingMobile'] . 'px';
-			}
+			$padding_mobile['top']    = $attrs['paddingMobile'] . 'px';
+			$padding_mobile['bottom'] = $attrs['paddingMobile'] . 'px';
+			$padding_mobile['left']   = $attrs['paddingMobile'] . 'px';
+			$padding_mobile['right']  = $attrs['paddingMobile'] . 'px';
 		}
 
 		if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] && ! isset( $attrs['margin'] ) ) {
@@ -567,10 +545,10 @@ class Advanced_Column_CSS extends Base_CSS {
 			$margin['left']   = isset( $attrs['marginLeft'] ) ? $attrs['marginLeft'] . 'px' : '20px';
 			$margin['right']  = isset( $attrs['marginRight'] ) ? $attrs['marginRight'] . 'px' : '20px';
 		} elseif ( isset( $attrs['margin'] ) && ! is_array( $attrs['margin'] ) && ( ! isset( $attrs['marginType'] ) ) ) {
-			$margin['top']    = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
-			$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
-			$margin['left']   = isset( $attrs['marginLeft'] ) ? $attrs['marginLeft'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
-			$margin['right']  = isset( $attrs['marginRight'] ) ? $attrs['marginRight'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
+			$margin['top']    = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : ( is_numeric( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px' );
+			$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : ( is_numeric( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px' );
+			$margin['left']   = isset( $attrs['marginLeft'] ) ? $attrs['marginLeft'] . 'px' : ( is_numeric( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px' );
+			$margin['right']  = isset( $attrs['marginRight'] ) ? $attrs['marginRight'] . 'px' : ( is_numeric( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px' );
 		} else {
 			if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] ) {
 				$margin['top']    = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : ( isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : '0px' );
@@ -604,21 +582,10 @@ class Advanced_Column_CSS extends Base_CSS {
 				$margin_tablet['right'] = $attrs['marginRightTablet'] . 'px';
 			}
 		} elseif ( isset( $attrs['marginTablet'] ) && ! is_array( $attrs['marginTablet'] ) ) {
-			if ( isset( $attrs['marginTablet'] ) ) {
-				$margin_tablet['top'] = $attrs['marginTablet'] . 'px';
-			}
-
-			if ( isset( $attrs['marginTablet'] ) ) {
-				$margin_tablet['bottom'] = $attrs['marginTablet'] . 'px';
-			}
-
-			if ( isset( $attrs['marginTablet'] ) ) {
-				$margin_tablet['left'] = $attrs['marginTablet'] . 'px';
-			}
-
-			if ( isset( $attrs['marginTablet'] ) ) {
-				$margin_tablet['right'] = $attrs['marginTablet'] . 'px';
-			}
+			$margin_tablet['top']    = $attrs['marginTablet'] . 'px';
+			$margin_tablet['bottom'] = $attrs['marginTablet'] . 'px';
+			$margin_tablet['left']   = $attrs['marginTablet'] . 'px';
+			$margin_tablet['right']  = $attrs['marginTablet'] . 'px';
 		}
 
 		if ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] ) {
@@ -638,21 +605,10 @@ class Advanced_Column_CSS extends Base_CSS {
 				$margin_mobile['right'] = $attrs['marginRightMobile'] . 'px';
 			}
 		} elseif ( isset( $attrs['marginMobile'] ) && ! is_array( $attrs['marginMobile'] ) ) {
-			if ( isset( $attrs['marginMobile'] ) ) {
-				$margin_mobile['top'] = $attrs['marginMobile'] . 'px';
-			}
-
-			if ( isset( $attrs['marginMobile'] ) ) {
-				$margin_mobile['bottom'] = $attrs['marginMobile'] . 'px';
-			}
-
-			if ( isset( $attrs['marginMobile'] ) ) {
-				$margin_mobile['left'] = $attrs['marginMobile'] . 'px';
-			}
-
-			if ( isset( $attrs['marginMobile'] ) ) {
-				$margin_mobile['right'] = $attrs['marginMobile'] . 'px';
-			}
+			$margin_mobile['top']    = $attrs['marginMobile'] . 'px';
+			$margin_mobile['bottom'] = $attrs['marginMobile'] . 'px';
+			$margin_mobile['left']   = $attrs['marginMobile'] . 'px';
+			$margin_mobile['right']  = $attrs['marginMobile'] . 'px';
 		}
 
 		if ( isset( $attrs['borderType'] ) && 'unlinked' === $attrs['borderType'] ) {
@@ -672,21 +628,10 @@ class Advanced_Column_CSS extends Base_CSS {
 				$border['right'] = $attrs['borderRight'] . 'px';
 			}
 		} elseif ( isset( $attrs['border'] ) && ! is_array( $attrs['border'] ) ) {
-			if ( isset( $attrs['border'] ) ) {
-				$border['top'] = $attrs['border'] . 'px';
-			}
-
-			if ( isset( $attrs['border'] ) ) {
-				$border['bottom'] = $attrs['border'] . 'px';
-			}
-
-			if ( isset( $attrs['border'] ) ) {
-				$border['left'] = $attrs['border'] . 'px';
-			}
-
-			if ( isset( $attrs['border'] ) ) {
-				$border['right'] = $attrs['border'] . 'px';
-			}
+			$border['top']    = $attrs['border'] . 'px';
+			$border['bottom'] = $attrs['border'] . 'px';
+			$border['left']   = $attrs['border'] . 'px';
+			$border['right']  = $attrs['border'] . 'px';
 		}
 
 		if ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) {
@@ -706,21 +651,10 @@ class Advanced_Column_CSS extends Base_CSS {
 				$border_radius['right'] = $attrs['borderRadiusRight'] . 'px';
 			}
 		} elseif ( isset( $attrs['borderRadius'] ) && ! is_array( $attrs['borderRadius'] ) ) {
-			if ( isset( $attrs['borderRadius'] ) ) {
-				$border_radius['top'] = $attrs['borderRadius'] . 'px';
-			}
-
-			if ( isset( $attrs['borderRadius'] ) ) {
-				$border_radius['bottom'] = $attrs['borderRadius'] . 'px';
-			}
-
-			if ( isset( $attrs['borderRadius'] ) ) {
-				$border_radius['left'] = $attrs['borderRadius'] . 'px';
-			}
-
-			if ( isset( $attrs['borderRadius'] ) ) {
-				$border_radius['right'] = $attrs['borderRadius'] . 'px';
-			}
+			$border_radius['top']    = $attrs['borderRadius'] . 'px';
+			$border_radius['bottom'] = $attrs['borderRadius'] . 'px';
+			$border_radius['left']   = $attrs['borderRadius'] . 'px';
+			$border_radius['right']  = $attrs['borderRadius'] . 'px';
 		}
 
 		$attrs_clone = array(
@@ -746,7 +680,7 @@ class Advanced_Column_CSS extends Base_CSS {
 	/**
 	 * Generate Advanced Column Global CSS
 	 *
-	 * @return string
+	 * @return string|void
 	 * @since   2.0.0
 	 * @access  public
 	 */
@@ -1027,7 +961,7 @@ class Advanced_Column_CSS extends Base_CSS {
 	 * A port of array.some for PHP.
 	 *
 	 * @param array    $array Haystack.
-	 * @param callback $fn Callback function.
+	 * @param callable $fn Callback function.
 	 * @return boolean
 	 * @since   2.0.0
 	 * @access  public
