@@ -28,13 +28,7 @@ const Layout = ({
 }) => {
 
 	const postsToDisplay = posts
-		.filter( post => post )
-		.filter( post => {
-			if ( 'product' === post?.type && attributes?.categories?.length  ) {
-				return post?.['product_cat']?.some( cat => attributes.categories?.some( item => item.id === cat ) );
-			}
-			return true;
-		});
+		.filter( post => post );
 
 	return (
 		<div
