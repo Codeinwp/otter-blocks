@@ -140,7 +140,7 @@ const Edit = ({
 	useEffect( () => {
 
 		/**
-		 * Stop loading message after 5 seconds if no posts are found.
+		 * Stop loading message after 30 seconds if no posts are found.
 		 * When switching between post types for first time we need to wait for the posts to load.
 		 * Since the hook for getting posts has no status we do not know when it is done,
 		 * because when it is loading is returning `[]` and we can not know if it did not find any posts, or it is still loading.
@@ -148,7 +148,7 @@ const Edit = ({
 		if ( autoStopLoadingTimeout && 0 < posts?.length ) {
 			clearTimeout( autoStopLoadingTimeout );
 		} else if ( ! autoStopLoadingTimeout && isLoading ) {
-			autoStopLoadingTimeout = setTimeout( () => toggleLoading( false ), 5000 );
+			autoStopLoadingTimeout = setTimeout( () => toggleLoading( false ), 30000 );
 		}
 
 	}, [ isLoading, posts ]);
@@ -258,6 +258,7 @@ const Edit = ({
 					setAttributes={ setAttributes }
 					categoriesList={ categoriesList }
 					toggleLoading={ toggleLoading }
+					isLoading={ isLoading }
 				/>
 			) }
 

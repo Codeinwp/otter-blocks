@@ -99,7 +99,8 @@ const Inspector = ({
 	attributes,
 	setAttributes,
 	categoriesList,
-	toggleLoading
+	toggleLoading,
+	isLoading
 }) => {
 	const [ tab, setTab ] = useState( 'settings' );
 
@@ -126,10 +127,13 @@ const Inspector = ({
 
 	const selectedCategories = attributes.categories ? attributes.categories.map( category => {
 		const cat = categoriesList.find( cat => cat.id === Number( category.id ) );
+		const isInvalid = ! isLoading && categoriesList?.length && ! cat;
+
 		return {
 			id: category.id,
-			name: cat?.name ?? cat?.slug ?? ( category?.name + ' (' + __( 'Invalid', 'otter-blocks' ) + ')' ),
-			slug: cat?.slug || ''
+			name: ( category?.name ?? cat?.name ?? cat?.slug ) +
+				( isInvalid ? ' (' + __( 'Invalid', 'otter-blocks' ) + ')' : '' ),
+			slug: category?.slug ?? cat?.slug ?? ''
 		};
 	}) : [];
 
