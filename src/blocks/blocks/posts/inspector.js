@@ -98,7 +98,8 @@ const defaultFontSizes = [
 const Inspector = ({
 	attributes,
 	setAttributes,
-	categoriesList
+	categoriesList,
+	toggleLoading
 }) => {
 	const [ tab, setTab ] = useState( 'settings' );
 
@@ -127,7 +128,7 @@ const Inspector = ({
 		const cat = categoriesList.find( cat => cat.id === Number( category.id ) );
 		return {
 			id: category.id,
-			name: cat?.name || cat?.slug || '',
+			name: cat?.name ?? cat?.slug ?? ( category?.name + ' (' + __( 'Invalid', 'otter-blocks' ) + ')' ),
 			slug: cat?.slug || ''
 		};
 	}) : [];
@@ -142,15 +143,11 @@ const Inspector = ({
 		if ( 'object' === typeof value ) {
 			if ( 0 < value.length ) {
 				categories = value.map( name => {
-					if ( 'object' === typeof name ) {
-						return name;
-					}
-
-					const category = categoriesList.find( e => e.name === name );
+					const category = categoriesList.find( e => e.name === name || e.name === name?.value );
 					if ( category ) {
 						return {
 							id: category.id,
-							name,
+							name: name?.value ?? name,
 							slug: category?.slug ?? ''
 						};
 					}
@@ -165,6 +162,7 @@ const Inspector = ({
 		}
 
 		setAttributes({ categories });
+		toggleLoading( true );
 	};
 
 	const changeStyle = value => {
@@ -207,7 +205,12 @@ const Inspector = ({
 							label={ __( 'Post Type', 'otter-blocks' ) }
 							help={ __( 'WordPress contains different types of content and they are divided into collections called "Post types". By default there are a few different ones such as blog posts and pages, but plugins could add more.', 'otter-blocks' ) }
 							value={ attributes.postTypes[0] || null }
-							onChange={ ( value ) => value && setAttributes({ postTypes: [ value ] }) }
+							onChange={ ( value ) => {
+								if ( value ) {
+									setAttributes({ postTypes: [ value ] });
+									toggleLoading( true );
+								}
+							} }
 							options={
 								slugs.map( slug => ({ label: convertToTitleCase( slug ), value: slug }) )
 							}

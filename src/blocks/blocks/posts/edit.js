@@ -71,6 +71,8 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const [ slugs, setSlugs ] = useState([]);
+	const [ isLoading, toggleLoading ] = useState( true );
+	let autoStopLoadingTimeout;
 
 	const {
 		posts,
@@ -100,6 +102,8 @@ const Edit = ({
 			];
 		}
 
+		posts = posts.filter( Boolean );
+
 		const taxonomies = select( 'core' )?.getTaxonomies()
 			?.map( ({ slug }) => slug )
 			?.filter( ( slug ) => postTypeSlugs.some( postTypeSlug => slug === `${postTypeSlug}_cat` ) ) ?? [];
@@ -118,7 +122,7 @@ const Edit = ({
 			categoriesList: categoriesList,
 			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' })
 		};
-	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes, attributes.featuredPostOrder ]);
+	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes, attributes.featuredPostOrder, isLoading ]);
 
 	const { responsiveGetAttributes } = useResponsiveAttributes();
 
@@ -132,6 +136,22 @@ const Edit = ({
 	useEffect( () => {
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
+
+	useEffect( () => {
+
+		/**
+		 * Stop loading message after 5 seconds if no posts are found.
+		 * When switching between post types for first time we need to wait for the posts to load.
+		 * Since the hook for getting posts has no status we do not know when it is done,
+		 * because when it is loading is returning `[]` and we can not know if it did not find any posts, or it is still loading.
+		 */
+		if ( autoStopLoadingTimeout && 0 < posts?.length ) {
+			clearTimeout( autoStopLoadingTimeout );
+		} else if ( ! autoStopLoadingTimeout && isLoading ) {
+			autoStopLoadingTimeout = setTimeout( () => toggleLoading( false ), 5000 );
+		}
+
+	}, [ isLoading, posts ]);
 
 	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
@@ -185,7 +205,7 @@ const Edit = ({
 		inlineStyles,
 		attributes
 	}) => {
-		if ( ! posts || ! categoriesList || ! authors ) {
+		if ( ! posts || ! categoriesList || ! authors || isLoading ) {
 			return (
 				<div { ...blockProps }>
 					<Placeholder>
@@ -200,7 +220,7 @@ const Edit = ({
 			return (
 				<div { ...blockProps }>
 					<Placeholder>
-						{ __( 'No Posts', 'otter-blocks' ) }
+						{ 0 < attributes.categories?.length ? __( 'No Post match the selected categories. Please revise the Categories in block settings.', 'otter-blocks' ) :  __( 'No Posts that match the Post Type. Please revise in Layout tab in block settings.', 'otter-blocks' ) }
 					</Placeholder>
 				</div>
 			);
@@ -237,6 +257,7 @@ const Edit = ({
 					attributes={ attributes }
 					setAttributes={ setAttributes }
 					categoriesList={ categoriesList }
+					toggleLoading={ toggleLoading }
 				/>
 			) }
 
