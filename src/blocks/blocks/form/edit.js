@@ -17,7 +17,7 @@ import api from '@wordpress/api';
 import apiFetch from '@wordpress/api-fetch';
 
 import {
-	__experimentalBlockVariationPicker as VariationPicker,
+	__experimentalBlockVariationPicker as VariationPicker, BlockControls,
 	InnerBlocks,
 	RichText,
 	useBlockProps
@@ -53,7 +53,9 @@ import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
-import { Notice } from '@wordpress/components';
+import { Button, Notice, ToolbarGroup } from '@wordpress/components';
+import PromptPlaceholder from '../../components/prompt';
+import { parseFormPromptResponse, sendPromptToOpenAI } from '../../helpers/prompt';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -874,6 +876,10 @@ const Edit = ({
 		}
 	};
 
+	const [ showPrompt, setShowPrompt ] = useState( false );
+	const [ prompt, setPrompt ] = useState( '' );
+	const [ generationStatus, setGenerationStatus ] = useState( 'default' );
+
 	return (
 		<Fragment>
 			<FormContext.Provider
@@ -901,7 +907,37 @@ const Edit = ({
 					setAttributes={ setAttributes }
 				/>
 
+				<BlockControls>
+					<ToolbarGroup>
+						<Button
+							onClick={()=> {
+								setShowPrompt( ! showPrompt );
+							}}
+						>
+							{ __( 'Create Form With AI', 'otter-blocks' ) }
+						</Button>
+					</ToolbarGroup>
+				</BlockControls>
+
+
 				<div { ...blockProps }>
+					{
+						( showPrompt ) && (
+							<PromptPlaceholder
+								value={prompt}
+								onValueChange={setPrompt}
+								status={generationStatus}
+								onSubmit={()=>{
+									sendPromptToOpenAI( prompt ).then ( ({ result, error }) => {
+										replaceInnerBlocks( clientId, parseFormPromptResponse( result ) );
+										setGenerationStatus( 'default' );
+									});
+									setGenerationStatus( 'loading' );
+								}}
+							/>
+						)
+					}
+
 					{
 						( hasInnerBlocks ) ? (
 							<form
