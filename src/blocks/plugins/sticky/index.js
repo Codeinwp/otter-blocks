@@ -40,7 +40,6 @@ const StickyExtension = ( el, props ) => {
 	if ( hasBlockSupport( props.name, 'customClassName', true ) && ! EXCEPTED_BLOCK_CONDITIONS.some( cond => props.name?.includes( cond ) ) ) {
 		const classes =  props.attributes?.className?.split( ' ' );
 		const isSticky = classes?.includes( 'o-sticky' ) || false;
-		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-sticky' ) );
 
 		return (
 			<Fragment>
@@ -51,7 +50,7 @@ const StickyExtension = ( el, props ) => {
 					label={ __( 'Transform to Sticky', 'otter-blocks' ) }
 					onSelect={ () => toggleSticky( classes, isSticky, props.setAttributes ) }
 					onDeselect={ () => toggleSticky( classes, isSticky, props.setAttributes ) }
-					isShownByDefault={  showAsDefault }
+					isShownByDefault={ false  }
 				>
 					{ ( isSticky || showAsDefault ) && <Edit { ...props } /> }
 				</ToolsPanelItem>

@@ -312,16 +312,6 @@ const Options = () => {
 								}
 							</p>
 
-							<PanelRow>
-								<ToggleControl
-									className="o-sidebar-toggle"
-									label={__( 'Sticky Block', 'otter-blocks' )}
-									checked={get?.( 'themeisle/otter-blocks', 'show-sticky' ) ?? false}
-									disabled={'loading' === preferenceStatus}
-									onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-sticky', value ) )}
-								/>
-							</PanelRow>
-
 							{
 								'loading' === status && (
 									<p>
@@ -372,11 +362,6 @@ const Options = () => {
 									</PanelRow>
 								)
 							}
-
-							<p/>
-
-							<ExternalLink
-								href={( window?.themeisleGutenberg?.optionsPath )}>{__( 'Go to Dashboard.', 'otter-blocks' )}</ExternalLink>
 						</PanelBody>
 
 						<NavigatorButton
