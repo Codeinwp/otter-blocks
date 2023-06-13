@@ -16,7 +16,6 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 	__experimentalUseNavigator as useNavigator,
 	Button,
-	ExternalLink,
 	PanelBody,
 	PanelRow,
 	Snackbar, Spinner,
@@ -24,7 +23,6 @@ import {
 } from '@wordpress/components';
 
 import {
-	select,
 	useDispatch,
 	useSelect,
 	dispatch

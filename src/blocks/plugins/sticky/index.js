@@ -11,8 +11,6 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
-import { select } from '@wordpress/data';
-
 /**
  * Internal dependencies.
  */
@@ -52,7 +50,7 @@ const StickyExtension = ( el, props ) => {
 					onDeselect={ () => toggleSticky( classes, isSticky, props.setAttributes ) }
 					isShownByDefault={ false  }
 				>
-					{ ( isSticky || showAsDefault ) && <Edit { ...props } /> }
+					{ ( isSticky ) && <Edit { ...props } /> }
 				</ToolsPanelItem>
 			</Fragment>
 		);
