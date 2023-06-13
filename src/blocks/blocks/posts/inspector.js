@@ -99,7 +99,6 @@ const Inspector = ({
 	attributes,
 	setAttributes,
 	categoriesList,
-	toggleLoading,
 	isLoading
 }) => {
 	const [ tab, setTab ] = useState( 'settings' );
@@ -166,7 +165,6 @@ const Inspector = ({
 		}
 
 		setAttributes({ categories });
-		toggleLoading( true );
 	};
 
 	const changeStyle = value => {
@@ -212,7 +210,6 @@ const Inspector = ({
 							onChange={ ( value ) => {
 								if ( value ) {
 									setAttributes({ postTypes: [ value ] });
-									toggleLoading( true );
 								}
 							} }
 							options={

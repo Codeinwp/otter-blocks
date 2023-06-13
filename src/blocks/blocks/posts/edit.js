@@ -71,13 +71,12 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const [ slugs, setSlugs ] = useState([]);
-	const [ isLoading, toggleLoading ] = useState( true );
-	let autoStopLoadingTimeout;
 
 	const {
 		posts,
 		categoriesList,
-		authors
+		authors,
+		isLoading
 	} = useSelect( select => {
 		const catIds = attributes.categories && 0 < attributes.categories.length ? attributes.categories.map( ( cat ) => cat.id ) : [];
 
@@ -90,10 +89,76 @@ const Edit = ({
 			context: 'view'
 		}, ( value ) => ! isUndefined( value ) );
 
+		const getPosts = ( postType ) => {
+
+			if ( 'product' === postType ) {
+				const { COLLECTIONS_STORE_KEY } = window?.wc?.wcBlocksData;
+
+				if ( ! COLLECTIONS_STORE_KEY ) {
+					return {
+						posts: [],
+						isLoading: false
+					};
+				}
+
+				latestPostsQuery.category = catIds.join( ',' );
+
+
+				const error = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', latestPostsQuery );
+
+				if ( error ) {
+					return {
+						posts: [],
+						isLoading: false
+					};
+				}
+
+				const products = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products', latestPostsQuery ) ?? [];
+				const isLoadingProducts = select( COLLECTIONS_STORE_KEY ).isResolving( '/wc/store', 'products', latestPostsQuery );
+
+				if ( isLoadingProducts ) {
+					return {
+						posts: [],
+						isLoading: true
+					};
+				}
+
+				return {
+					posts: products.map( ({ id }) => select( 'core' ).getEntityRecord( 'postType', postType, id ) ).filter( Boolean ) ?? [],
+					isLoading: products.reduce( ( acc, { id }) => acc || select( 'core' ).isResolving( 'core', 'getEntityRecord', [ 'postType', postType, id ]), false )
+				};
+			}
+
+			return {
+				posts: select( 'core' ).getEntityRecords( 'postType', postType, latestPostsQuery ),
+				isLoading: select( 'core' ).isResolving( 'core', 'getEntityRecords', [ 'postType', postType, latestPostsQuery ])
+			};
+		};
+
+		let posts = [];
+		let isLoading = false;
+
 		const postTypeSlugs = attributes.postTypes;
-		let posts = ( 0 < postTypeSlugs.length ) ? (
-			postTypeSlugs.map( slug => select( 'core' ).getEntityRecords( 'postType', slug, latestPostsQuery ) ).flat()
-		) : select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery );
+
+		if ( 0 < postTypeSlugs.length ) {
+			const { posts: loadedPosts, isLoading: loadingCheck, error: firstError } = postTypeSlugs.reduce( ( acc, slug ) => {
+				const { posts, isLoading } = getPosts( slug );
+
+				return {
+					posts: [
+						...acc.posts,
+						...( posts ?? [])
+					],
+					isLoading: acc.isLoading || isLoading
+				};
+			}, { posts: [], isLoading: false });
+
+			posts = loadedPosts;
+			isLoading = loadingCheck;
+		} else {
+			posts = select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery );
+			isLoading = select( 'core' ).isResolving( 'core', 'getEntityRecords', [ 'postType', 'post', latestPostsQuery ]);
+		}
 
 		if ( attributes.featuredPostOrder && 0 < posts?.length ) {
 			posts = [
@@ -120,9 +185,10 @@ const Edit = ({
 		return {
 			posts,
 			categoriesList: categoriesList,
-			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' })
+			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' }),
+			isLoading
 		};
-	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes, attributes.featuredPostOrder, isLoading ]);
+	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes, attributes.featuredPostOrder ]);
 
 	const { responsiveGetAttributes } = useResponsiveAttributes();
 
@@ -136,22 +202,6 @@ const Edit = ({
 	useEffect( () => {
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
-
-	useEffect( () => {
-
-		/**
-		 * Stop loading message after 30 seconds if no posts are found.
-		 * When switching between post types for first time we need to wait for the posts to load.
-		 * Since the hook for getting posts has no status we do not know when it is done,
-		 * because when it is loading is returning `[]` and we can not know if it did not find any posts, or it is still loading.
-		 */
-		if ( autoStopLoadingTimeout && 0 < posts?.length ) {
-			clearTimeout( autoStopLoadingTimeout );
-		} else if ( ! autoStopLoadingTimeout && isLoading ) {
-			autoStopLoadingTimeout = setTimeout( () => toggleLoading( false ), 30000 );
-		}
-
-	}, [ isLoading, posts ]);
 
 	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
@@ -216,16 +266,6 @@ const Edit = ({
 			);
 		}
 
-		if ( 0 === posts.length ) {
-			return (
-				<div { ...blockProps }>
-					<Placeholder>
-						{ 0 < attributes.categories?.length ? __( 'No Post match the selected categories. Please revise the Categories in block settings.', 'otter-blocks' ) :  __( 'No Posts that match the Post Type. Please revise in Layout tab in block settings.', 'otter-blocks' ) }
-					</Placeholder>
-				</div>
-			);
-		}
-
 		return (
 			<div { ...blockProps } style={ inlineStyles }>
 				<Disabled>
@@ -257,7 +297,6 @@ const Edit = ({
 					attributes={ attributes }
 					setAttributes={ setAttributes }
 					categoriesList={ categoriesList }
-					toggleLoading={ toggleLoading }
 					isLoading={ isLoading }
 				/>
 			) }
