@@ -17,7 +17,7 @@ class WooCommerce_Builder {
 	/**
 	 * The main instance var.
 	 *
-	 * @var WooCommerce_Builder
+	 * @var WooCommerce_Builder|null
 	 */
 	protected static $instance = null;
 

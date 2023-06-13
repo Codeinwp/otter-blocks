@@ -15,7 +15,7 @@ class Options_Settings {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Options_Settings
+	 * @var Options_Settings|null
 	 */
 	protected static $instance = null;
 
@@ -516,7 +516,6 @@ class Options_Settings {
 	/**
 	 * Register post meta.
 	 *
-	 * @return mixed
 	 * @since  1.7.0
 	 * @access public
 	 * @link   https://developer.wordpress.org/reference/functions/register_meta/

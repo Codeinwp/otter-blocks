@@ -91,10 +91,10 @@ class Form_Data_Request {
 	/**
 	 * Error details.
 	 *
-	 * @var array
+	 * @var string
 	 * @since 2.2.3
 	 */
-	protected $error_details = array();
+	protected $error_details = null;
 
 	/**
 	 * A list of warning codes.
@@ -108,10 +108,14 @@ class Form_Data_Request {
 	 * Constructor.
 	 *
 	 * @access  public
-	 * @param \WP_REST_Request $request Request Data.
+	 * @param \WP_REST_Request|mixed $request Request Data.
 	 * @since 2.0.3
 	 */
-	public function __construct( $request ) {
+	public function __construct( $request = null ) {
+
+		if ( ! is_a( $request, 'WP_REST_Request' ) ) {
+			return;
+		}
 
 		$this->request = $request;
 		$form_data     = $request->get_param( 'form_data' );
@@ -285,18 +289,18 @@ class Form_Data_Request {
 	/**
 	 * Sanitize the given array.
 	 *
-	 * @param array $array The array with the values.
+	 * @param array|string $array The array with the values.
 	 * @return array|string
 	 * @since 2.0.3
 	 */
 	public static function sanitize_array_map_deep( $array ) {
 		$new = array();
-		if ( is_array( $array ) || $array instanceof ArrayAccess ) {
+		if ( is_array( $array ) ) {
 			foreach ( $array as $key => $val ) {
 				if ( is_array( $val ) ) {
 					$new[ $key ] = self::sanitize_array_map_deep( $val );
 				} else {
-					$new[ $key ] = sanitize_text_field( $array[ $key ] );
+					$new[ $key ] = sanitize_text_field( $val );
 				}
 			}
 		} else {
@@ -414,7 +418,7 @@ class Form_Data_Request {
 	 * @since 2.2.3
 	 */
 	public function has_error() {
-		return isset( $this->error_code );
+		return ! empty( $this->error_code );
 	}
 
 	/**
@@ -430,7 +434,7 @@ class Form_Data_Request {
 	/**
 	 * Get the error details.
 	 *
-	 * @return array
+	 * @return string
 	 * @since 2.2.3
 	 */
 	public function get_error_details() {
@@ -476,7 +480,7 @@ class Form_Data_Request {
 	 */
 	public function add_field_option( $field_option ) {
 		if ( $field_option instanceof Form_Field_Option_Data ) {
-			if ( ! isset( $this->form_fields_options ) ) {
+			if ( empty( $this->form_fields_options ) ) {
 				$this->form_fields_options = array();
 			}
 
