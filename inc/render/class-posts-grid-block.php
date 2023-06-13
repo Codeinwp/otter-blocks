@@ -368,7 +368,7 @@ class Posts_Grid_Block {
 			// convert to array of post objects since the rest of the code expects that.
 			return array_map(
 				function( $product ) {
-					return get_post( $product->get_id() );
+					return $product->get_id();
 				},
 				$products
 			);

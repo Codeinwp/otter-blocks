@@ -123,15 +123,17 @@ const Edit = ({
 					};
 				}
 
+				const productIds = products.map( ({ id }) => id );
+
 				return {
-					posts: products.map( ({ id }) => select( 'core' ).getEntityRecord( 'postType', postType, id ) ).filter( Boolean ) ?? [],
-					isLoading: products.reduce( ( acc, { id }) => acc || select( 'core' ).isResolving( 'core', 'getEntityRecord', [ 'postType', postType, id ]), false )
+					posts: select( 'core' ).getEntityRecords( 'postType', postType, { include: productIds }) ?? [],
+					isLoading: select( 'core' ).isResolving( 'getEntityRecords', [ 'postType', postType, { include: productIds }])
 				};
 			}
 
 			return {
 				posts: select( 'core' ).getEntityRecords( 'postType', postType, latestPostsQuery ),
-				isLoading: select( 'core' ).isResolving( 'core', 'getEntityRecords', [ 'postType', postType, latestPostsQuery ])
+				isLoading: select( 'core' ).isResolving( 'getEntityRecords', [ 'postType', postType, latestPostsQuery ])
 			};
 		};
 
@@ -157,7 +159,7 @@ const Edit = ({
 			isLoading = loadingCheck;
 		} else {
 			posts = select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery );
-			isLoading = select( 'core' ).isResolving( 'core', 'getEntityRecords', [ 'postType', 'post', latestPostsQuery ]);
+			isLoading = select( 'core' ).isResolving( 'getEntityRecords', [ 'postType', 'post', latestPostsQuery ]);
 		}
 
 		if ( attributes.featuredPostOrder && 0 < posts?.length ) {
@@ -167,7 +169,7 @@ const Edit = ({
 			];
 		}
 
-		posts = posts.filter( Boolean );
+		posts = posts?.filter( Boolean ) ?? [];
 
 		const taxonomies = select( 'core' )?.getTaxonomies()
 			?.map( ({ slug }) => slug )
@@ -261,6 +263,16 @@ const Edit = ({
 					<Placeholder>
 						<Spinner />
 						{ __( 'Loading Posts', 'otter-blocks' ) }
+					</Placeholder>
+				</div>
+			);
+		}
+
+		if ( 0 === posts.length ) {
+			return (
+				<div { ...blockProps }>
+					<Placeholder>
+						{ __( 'No Posts', 'otter-blocks' ) }
 					</Placeholder>
 				</div>
 			);
