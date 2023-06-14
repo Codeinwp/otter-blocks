@@ -40,7 +40,7 @@ class Patterns {
 	 * @access  public
 	 */
 	public function maybe_sync_patterns() {
-		if ( ! get_transient( 'otter_pro_patterns' ) ) {
+		if ( ! get_transient( 'otter_pro_patterns' ) && ! get_transient( 'otter_pro_patterns_refetch' ) ) {
 			$this->sync_patterns();
 		}
 	}
@@ -72,11 +72,19 @@ class Patterns {
 		$response = json_decode( $response, true );
 
 		if ( ! is_array( $response ) || isset( $response['message'] ) || 0 === count( $response ) ) {
+			if ( ! get_transient( 'otter_pro_patterns_refetch' ) ) {
+				set_transient( 'otter_pro_patterns_refetch', true, HOUR_IN_SECONDS );
+			}
 			return;
 		}
 
 		foreach ( $response as $pattern_block ) {
 			if ( ! $this->check_pattern_structure( $pattern_block ) ) {
+
+				if ( ! get_transient( 'otter_pro_patterns_refetch' ) ) {
+					set_transient( 'otter_pro_patterns_refetch', true, HOUR_IN_SECONDS );
+				}
+
 				return;
 			}
 		}
