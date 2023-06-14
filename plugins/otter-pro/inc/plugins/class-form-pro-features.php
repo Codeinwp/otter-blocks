@@ -21,7 +21,7 @@ class Form_Pro_Features {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Pro_Features
+	 * @var Form_Pro_Features|null
 	 */
 	public static $instance = null;
 
@@ -40,13 +40,17 @@ class Form_Pro_Features {
 	/**
 	 * Save the files from the form inputs.
 	 *
-	 * @param Form_Data_Request $form_data The form data.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data The form data.
+	 * @return Form_Data_Request|null
 	 * @since 2.2.5
 	 */
 	public function save_files_to_uploads( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ) {
@@ -152,7 +156,7 @@ class Form_Pro_Features {
 
 							// Get $file_data file size.
 							$file_size = filesize( $file_data['tmp_name'] );
-							if ( false === $file_size || $max_file_size < strlen( $file_size ) ) {
+							if ( false === $file_size || $max_file_size < $file_size ) {
 								$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_MAX_SIZE );
 								break;
 							}
@@ -176,7 +180,7 @@ class Form_Pro_Features {
 						$file['key']                               = $field['metadata']['data'];
 						$saved_files[ $field['metadata']['data'] ] = $file;
 					} else {
-						$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD, array( $file['error'] ) );
+						$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD, $file['error'] );
 						break;
 					}
 				}
@@ -186,7 +190,7 @@ class Form_Pro_Features {
 				}
 			}
 		} catch ( \Exception $e ) {
-			$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD, array( $e->getMessage() ) );
+			$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD, $e->getMessage() );
 		} finally {
 			if ( $form_data->has_error() ) {
 				foreach ( $saved_files as $saved_file ) {
@@ -201,13 +205,16 @@ class Form_Pro_Features {
 	/**
 	 * Delete the files uploaded from the File field via attachments.
 	 *
-	 * @param Form_Data_Request $form_data The files to delete.
+	 * @param Form_Data_Request|null $form_data The files to delete.
 	 * @since 2.2.5
 	 */
 	public function clean_files_from_uploads( $form_data ) {
 
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error()
@@ -231,7 +238,7 @@ class Form_Pro_Features {
 				}
 			}
 		} catch ( \Exception $e ) {
-			$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
+			$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 		} finally {
 			return $form_data;
 		}
@@ -240,13 +247,17 @@ class Form_Pro_Features {
 	/**
 	 * Load the files to the media library.
 	 *
-	 * @param Form_Data_Request $form_data The files to load.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data The files to load.
+	 * @return Form_Data_Request|null
 	 * @since 2.2.5
 	 */
 	public function load_files_to_media_library( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ) {
@@ -285,7 +296,7 @@ class Form_Pro_Features {
 				}
 			}
 		} catch ( \Exception $e ) {
-			$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
+			$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 		} finally {
 			return $form_data;
 		}
@@ -294,14 +305,15 @@ class Form_Pro_Features {
 	/**
 	 * Send autoresponder email to the subscriber.
 	 *
-	 * @param Form_Data_Request $form_data The files to load.
-	 * @return Form_Data_Request
+	 * @param Form_Data_Request|null $form_data The files to load.
 	 * @since 2.2.5
 	 */
 	public function send_autoresponder( $form_data ) {
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
 
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ||
@@ -310,14 +322,14 @@ class Form_Pro_Features {
 			return $form_data;
 		}
 
+		$to = \ThemeIsle\GutenbergBlocks\Server\Form_Server::instance()->get_email_from_form_input( $form_data );
+
+		if ( empty( $to ) ) {
+			$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD );
+			return $form_data;
+		}
+
 		try {
-
-			$to = \ThemeIsle\GutenbergBlocks\Server\Form_Server::instance()->get_email_from_form_input( $form_data );
-			if ( empty( $to ) ) {
-				$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD );
-				return $form_data;
-			}
-
 			$headers[] = 'Content-Type: text/html';
 			$headers[] = 'From: ' . ( $form_data->get_form_options()->has_from_name() ? sanitize_text_field( $form_data->get_form_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
 
@@ -329,7 +341,7 @@ class Form_Pro_Features {
 				$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_AUTORESPONDER_COULD_NOT_SEND );
 			}
 		} catch ( \Exception $e ) {
-			$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, array( $e->getMessage() ) );
+			$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 		} finally {
 			return $form_data;
 		}

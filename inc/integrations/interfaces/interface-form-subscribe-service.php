@@ -35,7 +35,7 @@ interface FormSubscribeServiceInterface {
 	/**
 	 * Get the integration data of from the WordPress Options.
 	 *
-	 * @param array $wp_options_form The forms option.
+	 * @param Form_Settings_Data $wp_options_form The forms option.
 	 * @return mixed
 	 * @since 2.0.3
 	 */

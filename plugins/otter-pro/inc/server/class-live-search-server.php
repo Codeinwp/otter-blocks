@@ -20,7 +20,7 @@ class Live_Search_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Live_Search_Server
+	 * @var Live_Search_Server|null
 	 * @since 2.0.0
 	 */
 	public static $instance = null;
@@ -28,7 +28,7 @@ class Live_Search_Server {
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Live_Search_Server
+	 * @var string
 	 * @since 2.0.0
 	 */
 	public $namespace = 'otter/';
@@ -36,7 +36,7 @@ class Live_Search_Server {
 	/**
 	 * Rest route version.
 	 *
-	 * @var Live_Search_Server
+	 * @var string
 	 * @since 2.0.0
 	 */
 	public $version = 'v1';
@@ -71,7 +71,6 @@ class Live_Search_Server {
 	 * Parse the custom query vars.
 	 *
 	 * @param WP_Query $query WP Query object.
-	 * @return WP_Query
 	 */
 	public function parse_query( $query ) {
 		if ( get_query_var( 'o_post_type' ) ) {
@@ -155,7 +154,7 @@ class Live_Search_Server {
 							'title'  => $post->post_title,
 							'type'   => $post->post_type,
 							'date'   => get_the_date( 'F d, Y', $post ),
-							'author' => get_the_author_meta( 'display_name', $post->post_author ),
+							'author' => get_the_author_meta( 'display_name', intval( $post->post_author ) ),
 							'parent' => get_post( $post->post_parent )->post_title,
 						);
 

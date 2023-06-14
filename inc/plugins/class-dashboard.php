@@ -17,7 +17,7 @@ class Dashboard {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dashboard
+	 * @var Dashboard|null
 	 */
 	protected static $instance = null;
 
@@ -55,9 +55,7 @@ class Dashboard {
 			__( 'Settings', 'otter-blocks' ),
 			__( 'Settings', 'otter-blocks' ),
 			'manage_options',
-			'otter',
-			'',
-			0
+			'otter'
 		);
 
 		add_submenu_page(

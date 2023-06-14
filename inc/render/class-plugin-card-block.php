@@ -130,7 +130,6 @@ class Plugin_Card_Block {
 				'short_description' => true,
 				'slug'              => false,
 				'sections'          => false,
-				'requires'          => false,
 				'rating'            => true,
 				'ratings'           => false,
 			),
@@ -138,7 +137,7 @@ class Plugin_Card_Block {
 
 		$results = plugins_api( 'plugin_information', $request );
 
-		if ( is_wp_error( $request ) ) {
+		if ( is_wp_error( $results ) ) {
 			$return['data'] = 'error';
 
 			return $return;
@@ -162,13 +161,13 @@ class Plugin_Card_Block {
 	 * @return mixed|string
 	 */
 	protected function get_ratings( $rating ) {
-		$rating      = round( $rating / 10, 0 ) / 2;
+		$rating      = round( (int) $rating / 10, 0 ) / 2;
 		$full_stars  = floor( $rating );
 		$half_stars  = ceil( $rating - $full_stars );
 		$empty_stars = 5 - $full_stars - $half_stars;
-		$output      = str_repeat( '<span class="star-full"></span>', $full_stars );
-		$output     .= str_repeat( '<span class="star-half"></span>', $half_stars );
-		$output     .= str_repeat( '<span class="star-empty"></span>', $empty_stars );
+		$output      = str_repeat( '<span class="star-full"></span>', intval( $full_stars ) );
+		$output     .= str_repeat( '<span class="star-half"></span>', intval( $half_stars ) );
+		$output     .= str_repeat( '<span class="star-empty"></span>', intval( $empty_stars ) );
 
 		return $output;
 	}

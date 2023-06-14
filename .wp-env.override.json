@@ -17,7 +17,11 @@
     "tests": {
       "plugins": [
         "."
-      ]
+      ],
+      "mappings": {
+				"wp-content/mu-plugins": "./node_modules/@wordpress/e2e-tests/mu-plugins",
+				"wp-content/plugins/gutenberg-test-plugins": "./node_modules/@wordpress/e2e-tests/plugins"
+			}
     }
   }
 }

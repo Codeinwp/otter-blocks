@@ -29,7 +29,7 @@ class Form_Emails_Storing {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Emails_Storing
+	 * @var Form_Emails_Storing|null
 	 */
 	public static $instance = null;
 
@@ -95,7 +95,7 @@ class Form_Emails_Storing {
 				'description'     => __( 'Holds the data from the form submissions', 'otter-blocks' ),
 				'public'          => false,
 				'show_ui'         => true,
-				'show_in_rest'    => true,
+				'show_in_rest'    => false,
 				'supports'        => array( 'title' ),
 			)
 		);
@@ -165,13 +165,11 @@ class Form_Emails_Storing {
 	 * Store form record in custom post type.
 	 *
 	 * @param Form_Data_Request $form_data The form data object.
-	 * @return Form_Data_Request
 	 */
 	public function store_form_record( $form_data ) {
 		if (
-			! isset( $form_data ) ||
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
-			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
+			! ( $form_data instanceof Form_Data_Request ) ||
 			$form_data->has_error()
 		) {
 			return $form_data;
@@ -179,17 +177,26 @@ class Form_Emails_Storing {
 
 		$form_options = $form_data->get_form_options();
 
-		if ( ! isset( $form_options ) || ! str_starts_with( $form_options->get_submissions_save_location(), 'database' ) ) {
+		if ( ! isset( $form_options ) ) {
 			return $form_data;
 		}
 
-		$email = Form_Server::instance()->get_email_from_form_input( $form_data );
+		if ( false === strpos( $form_options->get_submissions_save_location(), 'database' ) ) {
+			return $form_data;
+		}
 
 		$post_id = wp_insert_post(
 			array(
 				'post_type'   => self::FORM_RECORD_TYPE,
-				'post_title'  => ! empty( $email ) ? $email : __( 'New submission', 'otter-blocks' ),
 				'post_status' => 'unread',
+			)
+		);
+
+		wp_update_post(
+			array(
+				'ID'         => $post_id,
+				/* translators: %s the ID of the submission */
+				'post_title' => sprintf( __( 'Submission #%s', 'otter-blocks' ), $post_id ),
 			)
 		);
 
@@ -198,10 +205,6 @@ class Form_Emails_Storing {
 		}
 
 		$meta = array(
-			'email'    => array(
-				'label' => 'Email',
-				'value' => $email,
-			),
 			'form'     => array(
 				'label' => 'Form',
 				'value' => $form_data->get_payload_field( 'formId' ),
@@ -219,7 +222,6 @@ class Form_Emails_Storing {
 		$form_inputs    = $form_data->get_form_inputs();
 		$uploaded_files = $form_data->get_uploaded_files_path();
 		$media_files    = $form_data->get_files_loaded_to_media_library();
-		$files          = $form_data->get_request()->get_file_params();
 
 		foreach ( $form_inputs as $input ) {
 			if ( ! isset( $input['id'] ) ) {
@@ -229,7 +231,6 @@ class Form_Emails_Storing {
 			$id = substr( $input['id'], -8 );
 
 			if ( 'file' === $input['type'] ) {
-
 				$id .= $input['metadata']['name'] . '_' . $input['metadata']['size'];
 
 				$meta['inputs'][ $id ] = array(
@@ -272,6 +273,7 @@ class Form_Emails_Storing {
 		}
 
 		add_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
+		return $form_data;
 	}
 
 	/**
@@ -300,7 +302,7 @@ class Form_Emails_Storing {
 	public function form_record_columns() {
 		return array(
 			'cb'              => '<input type="checkbox" />',
-			'email'           => __( 'Email', 'otter-blocks' ),
+			'title'           => __( 'Title', 'otter-blocks' ),
 			'form'            => __( 'Form ID', 'otter-blocks' ),
 			'post_url'        => __( 'Post', 'otter-blocks' ),
 			'ID'              => __( 'ID', 'otter-blocks' ),
@@ -315,7 +317,7 @@ class Form_Emails_Storing {
 	 */
 	public function form_record_sortable_columns() {
 		return array(
-			'email'           => __( 'Email', 'otter-blocks' ),
+			'title'           => __( 'Title', 'otter-blocks' ),
 			'ID'              => __( 'ID', 'otter-blocks' ),
 			'submission_date' => __( 'Submission Date', 'otter-blocks' ),
 		);
@@ -523,13 +525,13 @@ class Form_Emails_Storing {
 	 * @param string $column The column name.
 	 * @param int    $post_id The post ID.
 	 *
-	 * @return void
+	 * @return string The column value.
 	 */
 	public function form_record_column_values( $column, $post_id ) {
 		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
 
 		switch ( $column ) {
-			case 'email':
+			case 'title':
 				if ( get_post_status( $post_id ) !== 'trash' ) {
 					$this->format_based_on_status(
 						sprintf(
@@ -582,7 +584,7 @@ class Form_Emails_Storing {
 				);
 				break;
 			case 'ID':
-				$this->format_based_on_status( substr( $post_id, -8 ), get_post_status( $post_id ) );
+				$this->format_based_on_status( substr( strval( $post_id ), -8 ), get_post_status( $post_id ) );
 				break;
 			case 'submission_date':
 				$this->format_based_on_status(
@@ -591,6 +593,8 @@ class Form_Emails_Storing {
 				);
 				break;
 		}
+
+		return $column;
 	}
 
 	/**
@@ -612,9 +616,7 @@ class Form_Emails_Storing {
 			__( 'Form Submissions', 'otter-blocks' ),
 			__( 'Form Submissions', 'otter-blocks' ),
 			'manage_options',
-			'edit.php?post_type=' . self::FORM_RECORD_TYPE,
-			'',
-			10
+			'edit.php?post_type=' . self::FORM_RECORD_TYPE
 		);
 	}
 
@@ -673,7 +675,7 @@ class Form_Emails_Storing {
 		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
 
 		foreach ( $_POST as $key => $value ) {
-			if ( ! str_starts_with( $key, 'otter_meta_' ) ) {
+			if ( 0 !== strpos( $key, 'otter_meta_' ) ) {
 				continue;
 			}
 
@@ -743,7 +745,7 @@ class Form_Emails_Storing {
 				<textarea
 					style="width: 100%; max-width: 350px;"
 					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
-					id="<?php echo esc_attr( $id ); ?>"
+					id="<?php echo intval( $id ); ?>"
 					class="otter_form_record_meta__value"
 					rows="5"
 				><?php echo esc_textarea( $field['value'] ); ?></textarea>
@@ -754,7 +756,7 @@ class Form_Emails_Storing {
 				<input
 					style="width: 100%; max-width: 350px;"
 					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
-					id="<?php echo esc_attr( $id ); ?>"
+					id="<?php echo intval( $id ); ?>"
 					type="text"
 					class="otter_form_record_meta__value"
 					value="<?php echo esc_html( $field['value'] ); ?>"
@@ -766,7 +768,7 @@ class Form_Emails_Storing {
 					$url = esc_url( $field['path'] );
 					if ( isset( $field['saved_in_media'] ) && $field['saved_in_media'] ) {
 						$url = wp_get_attachment_url( $field['attachment_id'] );
-					} elseif ( ! str_starts_with( $field['path'], 'http' ) ) {
+					} elseif ( 0 === strpos( $field['path'], 'http' ) ) {
 						// If the file is not saved with a server link (external or media library). We need to get the file path relative to the uploads directory so that it can be displayed by the browser.
 						$url = substr( $url, strpos( $url, '/wp-content' ) );
 					}
@@ -774,7 +776,7 @@ class Form_Emails_Storing {
 
 					<a href="<?php echo esc_url_raw( $url ); ?>" target="_blank">
 						<?php
-						if ( isset( $field['mime_type'] ) && str_starts_with( $field['mime_type'], 'image' ) ) {
+						if ( isset( $field['mime_type'] ) && 0 === strpos( $field['mime_type'], 'image' ) ) {
 
 							?>
 								<img alt="" src="<?php echo esc_url_raw( $url ); ?>" style="display: block; height: 100px;" />
@@ -792,7 +794,7 @@ class Form_Emails_Storing {
 				<input
 					style="width: 100%; max-width: 350px;"
 					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
-					id="<?php echo esc_attr( $id ); ?>"
+					id="<?php echo intval( $id ); ?>"
 					type="<?php echo isset( $field['type'] ) ? esc_attr( $field['type'] ) : ''; ?>"
 					class="otter_form_record_meta__value"
 					value="<?php echo esc_html( $field['value'] ); ?>"
@@ -834,7 +836,7 @@ class Form_Emails_Storing {
 					echo sprintf(
 						'<a href="?action=%s&post=%s&_wpnonce=%s" class="submitdelete">%s</a>',
 						'trash',
-						esc_attr( $post->ID ),
+						intval( $post->ID ),
 						esc_attr( wp_create_nonce( 'trash-post_' . $post->ID ) ),
 						esc_html__( 'Move to Trash', 'otter-blocks' )
 					);
@@ -879,7 +881,7 @@ class Form_Emails_Storing {
 			return;
 		}
 
-		$post = sanitize_text_field( wp_unslash( $_REQUEST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$post = intval( wp_unslash( $_REQUEST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 		if ( ! get_post( $post ) || self::FORM_RECORD_TYPE !== get_post_type( $post ) ) {
 			return;
 		}
@@ -931,7 +933,7 @@ class Form_Emails_Storing {
 	 * @return void
 	 */
 	public function read_otter_form_record() {
-		$id = $this->check_posts( 'read' );
+		$id = intval( $this->check_posts( 'read' ) );
 		wp_update_post(
 			array(
 				'ID'          => $id,
@@ -949,7 +951,7 @@ class Form_Emails_Storing {
 	 * @return void
 	 */
 	public function unread_otter_form_record() {
-		$id = $this->check_posts( 'unread' );
+		$id = intval( $this->check_posts( 'unread' ) );
 		wp_update_post(
 			array(
 				'ID'          => $id,

@@ -194,7 +194,7 @@ class Review_CSS extends Base_CSS {
 	/**
 	 * Generate Review Global CSS
 	 *
-	 * @return string
+	 * @return  string|void
 	 * @since   2.0.0
 	 * @access  public
 	 */

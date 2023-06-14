@@ -24,7 +24,7 @@ class About_Author_Block {
 	public function render( $attributes ) {
 		$img_markup = sprintf(
 			'<a href="%1$s"><img src="%2$s" class="author-image" /></a>',
-			esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ),
+			esc_url( get_author_posts_url( intval( get_the_author_meta( 'ID' ) ) ) ),
 			esc_attr( get_avatar_url( get_the_author_meta( 'ID' ), array( 'size' => 130 ) ) )
 		);
 

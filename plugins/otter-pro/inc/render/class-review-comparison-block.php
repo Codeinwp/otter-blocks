@@ -28,8 +28,6 @@ class Review_Comparison_Block {
 			return;
 		}
 
-		$ids = array_map( array( $this, 'extract_id' ), $attributes['reviews'] );
-
 		$table_images      = '';
 		$table_title       = '';
 		$table_price       = '';
@@ -40,7 +38,7 @@ class Review_Comparison_Block {
 
 		foreach ( $attributes['reviews'] as $review ) {
 			$id   = explode( '-', $review );
-			$post = get_post( $id[0] );
+			$post = get_post( intval( $id[0] ) );
 
 			if ( is_null( $post ) || ! has_blocks( $post->post_content ) ) {
 				continue;
@@ -69,8 +67,8 @@ class Review_Comparison_Block {
 				}
 
 				$block['attrs']['image'] = array(
-					'url' => wp_get_attachment_image_url( $product->get_image_id(), '' ),
-					'alt' => get_post_meta( $product->get_image_id(), '_wp_attachment_image_alt', true ),
+					'url' => wp_get_attachment_image_url( intval( $product->get_image_id() ), '' ),
+					'alt' => get_post_meta( intval( $product->get_image_id() ), '_wp_attachment_image_alt', true ),
 				);
 
 				$block['attrs']['links'] = array(
@@ -113,7 +111,7 @@ class Review_Comparison_Block {
 
 			$table_title .= '<td>';
 			if ( isset( $block['attrs']['title'] ) ) {
-				$table_title .= '<a href="' . get_the_permalink( $id[0] ) . '" target="_blank">';
+				$table_title .= '<a href="' . get_the_permalink( intval( $id[0] ) ) . '" target="_blank">';
 				$table_title .= $block['attrs']['title'] ? $block['attrs']['title'] : __( 'Untitled review', 'otter-blocks' );
 				$table_title .= '</a>';
 			}
@@ -232,26 +230,11 @@ class Review_Comparison_Block {
 	}
 
 	/**
-	 * Extract post ID.
-	 *
-	 * Extract post ID from reviews attribute.
-	 *
-	 * @param array $id Review ID.
-	 *
-	 * @return int
-	 */
-	public function extract_id( $id ) {
-		$id = explode( '-', $id );
-		$id = $id[0];
-		return $id;
-	}
-
-	/**
 	 * Get overall ratings
 	 *
 	 * @param array $features An array of features.
 	 *
-	 * @return int
+	 * @return float
 	 */
 	public function get_overall_ratings( $features ) {
 		if ( count( $features ) <= 0 ) {
@@ -275,7 +258,7 @@ class Review_Comparison_Block {
 	/**
 	 * Get ratings stars
 	 *
-	 * @param array $ratings Ratings.
+	 * @param float $ratings Ratings.
 	 *
 	 * @return string
 	 */
@@ -308,7 +291,7 @@ class Review_Comparison_Block {
 	 *
 	 * @param array $post_blocks Post Blocks.
 	 * @param array $block Variable where we capture the data.
-	 * @param int   $id Block ID.
+	 * @param array $id Block ID.
 	 *
 	 * @return array
 	 */

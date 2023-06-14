@@ -27,6 +27,26 @@ const SERVICES = {
 	reddit: {
 		label: __( 'Reddit', 'otter-blocks' ),
 		icon: 'reddit-alien'
+	},
+	whatsapp: {
+		label: __( 'WhatsApp', 'otter-blocks' ),
+		icon: 'whatsapp'
+	},
+	email: {
+		label: __( 'Email', 'otter-blocks' ),
+		icon: 'envelope'
+	},
+	telegram: {
+		label: __( 'Telegram', 'otter-blocks' ),
+		icon: 'telegram'
+	},
+	mastodon: {
+		label: __( 'Mastodon', 'otter-blocks' ),
+		icon: 'mastodon'
+	},
+	comments: {
+		label: __( 'Comment', 'otter-blocks' ),
+		icon: 'comment'
 	}
 };
 

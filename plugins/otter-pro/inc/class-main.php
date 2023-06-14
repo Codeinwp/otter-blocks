@@ -17,7 +17,7 @@ class Main {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Main
+	 * @var Main|null
 	 */
 	public static $instance = null;
 
@@ -41,7 +41,7 @@ class Main {
 			add_filter( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
 			add_filter( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
 			add_filter( 'otter_blocks_register_css', array( $this, 'register_blocks_css' ) );
-			add_action( 'admin_print_scripts-settings_page_otter', array( $this, 'enqueue_options_assets' ) );
+			add_action( 'admin_print_scripts-toplevel_page_otter', array( $this, 'enqueue_options_assets' ) );
 		}
 	}
 
@@ -81,7 +81,7 @@ class Main {
 	/**
 	 * Register Blocks.
 	 *
-	 * @param string $blocks Blocks List.
+	 * @param array $blocks Blocks List.
 	 *
 	 * @since   2.0.1
 	 * @access  public
@@ -114,7 +114,7 @@ class Main {
 	/**
 	 * Register Dynamic Blocks.
 	 *
-	 * @param string $dynamic_blocks Dynamic Blocks.
+	 * @param array $dynamic_blocks Dynamic Blocks.
 	 *
 	 * @since   2.0.1
 	 * @access  public
@@ -145,7 +145,7 @@ class Main {
 	/**
 	 * Register Blocks CSS.
 	 *
-	 * @param string $blocks Blocks List.
+	 * @param array $blocks Blocks List.
 	 *
 	 * @since   2.0.1
 	 * @access  public
@@ -203,7 +203,7 @@ class Main {
 
 		global $pagenow;
 
-		if ( class_exists( 'WooCommerce' ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		if ( class_exists( 'WooCommerce' ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( intval( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 			$asset_file = include OTTER_PRO_BUILD_PATH . 'woocommerce.asset.php';
 
 			wp_enqueue_script(

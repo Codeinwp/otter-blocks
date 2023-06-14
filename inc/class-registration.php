@@ -17,7 +17,7 @@ class Registration {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Registration
+	 * @var Registration|null
 	 */
 	public static $instance = null;
 
@@ -97,8 +97,8 @@ class Registration {
 	/**
 	 * Register our custom block category.
 	 *
-	 * @param array                   $categories All categories.
-	 * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
+	 * @param array                    $categories All categories.
+	 * @param \WP_Block_Editor_Context $block_editor_context The current block editor context.
 	 *
 	 * @return mixed
 	 * @since   2.0.0
@@ -239,7 +239,6 @@ class Registration {
 			'themeisleGutenberg',
 			array(
 				'hasNeve'                 => defined( 'NEVE_VERSION' ),
-				'isCompatible'            => Main::is_compatible(),
 				'hasPro'                  => Pro::is_pro_installed(),
 				'isProActive'             => Pro::is_pro_active(),
 				'upgradeLink'             => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
@@ -361,7 +360,7 @@ class Registration {
 	 * Handler which checks the blocks used and enqueue the assets which needs.
 	 *
 	 * @since   2.0.0
-	 * @param null $post Current post.
+	 * @param   string|int|null $post Current post.
 	 * @access  public
 	 */
 	public function enqueue_dependencies( $post = null ) {
@@ -384,7 +383,7 @@ class Registration {
 			$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
 
 			foreach ( $templates_parts as $templates_part ) {
-				if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+				if ( isset( $templates_part->content ) && isset( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {
 					$content .= $templates_part->content;
 				}
 			}
@@ -1003,7 +1002,7 @@ class Registration {
 	 * @static
 	 * @since 1.0.0
 	 * @access public
-	 * @return Blocks_Export_Import
+	 * @return Registration
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
