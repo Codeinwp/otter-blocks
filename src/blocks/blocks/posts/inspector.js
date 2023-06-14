@@ -98,7 +98,8 @@ const defaultFontSizes = [
 const Inspector = ({
 	attributes,
 	setAttributes,
-	categoriesList
+	categoriesList,
+	isLoading
 }) => {
 	const [ tab, setTab ] = useState( 'settings' );
 
@@ -125,9 +126,13 @@ const Inspector = ({
 
 	const selectedCategories = attributes.categories ? attributes.categories.map( category => {
 		const cat = categoriesList.find( cat => cat.id === Number( category.id ) );
+		const isInvalid = ! isLoading && categoriesList?.length && ! cat;
+
 		return {
 			id: category.id,
-			name: cat?.name || cat?.slug || ''
+			name: ( category?.name ?? cat?.name ?? cat?.slug ) +
+				( isInvalid ? ' (' + __( 'Invalid', 'otter-blocks' ) + ')' : '' ),
+			slug: category?.slug ?? cat?.slug ?? ''
 		};
 	}) : [];
 
@@ -141,15 +146,12 @@ const Inspector = ({
 		if ( 'object' === typeof value ) {
 			if ( 0 < value.length ) {
 				categories = value.map( name => {
-					if ( 'object' === typeof name ) {
-						return name;
-					}
-
-					const category = categoriesList.find( e => e.name === name );
+					const category = categoriesList.find( e => e.name === name || e.name === name?.value );
 					if ( category ) {
 						return {
 							id: category.id,
-							name
+							name: name?.value ?? name,
+							slug: category?.slug ?? ''
 						};
 					}
 				}).filter( e => undefined !== e );
@@ -157,7 +159,8 @@ const Inspector = ({
 		} else if ( '' !== value ) {
 			categories = [{
 				id: value,
-				name: categoriesList.find( e => e.id === Number( value ) ).name
+				name: categoriesList.find( e => e.id === Number( value ) ).name,
+				slug: categoriesList.find( e => e.id === Number( value ) )?.slug ?? ''
 			}];
 		}
 
@@ -204,7 +207,11 @@ const Inspector = ({
 							label={ __( 'Post Type', 'otter-blocks' ) }
 							help={ __( 'WordPress contains different types of content and they are divided into collections called "Post types". By default there are a few different ones such as blog posts and pages, but plugins could add more.', 'otter-blocks' ) }
 							value={ attributes.postTypes[0] || null }
-							onChange={ ( value ) => value && setAttributes({ postTypes: [ value ] }) }
+							onChange={ ( value ) => {
+								if ( value ) {
+									setAttributes({ postTypes: [ value ] });
+								}
+							} }
 							options={
 								slugs.map( slug => ({ label: convertToTitleCase( slug ), value: slug }) )
 							}
