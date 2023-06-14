@@ -64,9 +64,13 @@
 			gap: 16px;
 		}
 
-		.o-review__left_feature {
-			flex-basis: 48%;
+		@media (min-width: 764px) {
+			.o-review__left_feature {
+				flex-basis: 48%;
+			}
 		}
+
+
 	}
 
 	&.no-pros-cons {
