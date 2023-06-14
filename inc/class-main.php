@@ -16,7 +16,7 @@ class Main {
 	/**
 	 * Singleton.
 	 *
-	 * @var Main Class object.
+	 * @var Main|null Class object.
 	 */
 	protected static $instance = null;
 
@@ -39,10 +39,11 @@ class Main {
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
 			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ), PHP_INT_MAX ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
-			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
-			add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_svg_attachment_metadata' ), PHP_INT_MAX, 3 );
+			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 3 );
+			add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_svg_attachment_metadata' ), PHP_INT_MAX, 2 );
 		}
 
+		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
 	}
 
 	/**
@@ -92,43 +93,6 @@ class Main {
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
 			\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();
 		}
-	}
-
-	/**
-	 * Get if the version of plugin in latest.
-	 *
-	 * @since   1.2.0
-	 * @access  public
-	 */
-	public static function is_compatible() {
-		if ( ! function_exists( 'plugins_api' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		}
-
-		if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
-			return true;
-		}
-
-		$current = OTTER_BLOCKS_VERSION;
-
-		$args = array(
-			'slug'   => 'otter-blocks',
-			'fields' => array(
-				'version' => true,
-			),
-		);
-
-		$call_api = plugins_api( 'plugin_information', $args );
-
-		if ( is_wp_error( $call_api ) ) {
-			return true;
-		} else {
-			if ( ! empty( $call_api->version ) ) {
-				$latest = $call_api->version;
-			}
-		}
-
-		return version_compare( $current, $latest, '>=' );
 	}
 
 	/**
@@ -392,16 +356,15 @@ class Main {
 	/**
 	 * Allow JSON uploads
 	 *
-	 * @param null $data File data.
-	 * @param null $file File object.
-	 * @param null $filename File name.
-	 * @param null $mimes Supported mimes.
+	 * @param array  $data File data.
+	 * @param string $file File object.
+	 * @param string $filename File name.
 	 *
 	 * @return array
 	 * @since  1.5.7
 	 * @access public
 	 */
-	public function fix_mime_type_json_svg( $data = null, $file = null, $filename = null, $mimes = null ) {
+	public function fix_mime_type_json_svg( $data, $file, $filename ) {
 		$ext = isset( $data['ext'] ) ? $data['ext'] : '';
 		if ( 1 > strlen( $ext ) ) {
 			$exploded = explode( '.', $filename );
@@ -453,7 +416,6 @@ class Main {
 	/**
 	 * After Update Migration
 	 *
-	 * @return bool
 	 * @since  2.0.9
 	 * @access public
 	 */
@@ -469,11 +431,28 @@ class Main {
 	}
 
 	/**
+	 * About page SDK
+	 *
+	 * @return array
+	 * @since  2.3.1
+	 * @access public
+	 */
+	public function about_page() {
+		return array(
+			'location'         => 'otter',
+			'logo'             => esc_url_raw( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ),
+			'has_upgrade_menu' => ! DEFINED( 'OTTER_PRO_VERSION' ),
+			'upgrade_link'     => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
+			'upgrade_text'     => __( 'Get Otter Pro', 'otter-blocks' ),
+		);
+	}
+
+	/**
 	 * Singleton method.
 	 *
 	 * @static
 	 *
-	 * @return  GutenbergBlocks
+	 * @return  Main
 	 * @since   1.0.0
 	 * @access  public
 	 */

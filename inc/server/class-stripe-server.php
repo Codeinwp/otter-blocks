@@ -17,21 +17,21 @@ class Stripe_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Stripe_Server
+	 * @var Stripe_Server|null
 	 */
 	public static $instance = null;
 
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Stripe_Server
+	 * @var string
 	 */
 	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
 	 *
-	 * @var Stripe_Server
+	 * @var string
 	 */
 	public $version = 'v1';
 
@@ -39,8 +39,6 @@ class Stripe_Server {
 	 * Initialize the class
 	 */
 	public function init() {
-		
-		
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 

@@ -326,7 +326,7 @@ class Form_CSS extends Base_CSS {
 	/**
 	 * Generate Form Global CSS
 	 * 
-	 * @return string
+	 * @return string|void
 	 * @since 2.1.7
 	 * @access public
 	 */

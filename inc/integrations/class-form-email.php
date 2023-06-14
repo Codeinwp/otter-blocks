@@ -17,7 +17,7 @@ class Form_Email {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Email
+	 * @var Form_Email|null
 	 */
 	public static $instance = null;
 

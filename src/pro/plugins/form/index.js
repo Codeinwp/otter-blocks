@@ -38,6 +38,7 @@ const helpMessages = {
 
 
 const FormOptions = ( Options, formOptions, setFormOption, config ) => {
+
 	return (
 		<>
 			{Options}
@@ -51,7 +52,7 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 				{Boolean( window.otterPro.isActive ) ? (
 					<SelectControl
 						label={ __( 'Save Location', 'otter-blocks' ) }
-						value={ formOptions.submissionsSaveLocation }
+						value={ formOptions.submissionsSaveLocation ?? 'database-email' }
 						onChange={ submissionsSaveLocation => setFormOption({ submissionsSaveLocation }) }
 						options={
 							[

@@ -14,7 +14,7 @@ class Live_Search {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Live_Search
+	 * @var Live_Search|null
 	 */
 	public static $instance = null;
 
@@ -22,7 +22,7 @@ class Live_Search {
 	 * Initialize the class
 	 */
 	public function init() {
-		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 3 );
+		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 2 );
 	}
 
 	/**

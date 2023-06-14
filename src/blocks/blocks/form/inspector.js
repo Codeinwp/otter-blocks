@@ -123,7 +123,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
-				hasValue={ () => undefined !== formOptions.cc }
+				hasValue={ () => Boolean( formOptions.cc ) }
 				label={ __( 'CC', 'otter-blocks' ) }
 				onDeselect={ () => setFormOption({ cc: '' }) }
 				isShownByDefault={ false }
@@ -139,7 +139,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
-				hasValue={ () => undefined !== formOptions.bcc }
+				hasValue={ () => Boolean( formOptions.bcc ) }
 				label={ __( 'BCC', 'otter-blocks' ) }
 				onDeselect={ () => setFormOption({ bcc: '' }) }
 				isShownByDefault={ false }
@@ -169,9 +169,9 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
-				hasValue={ () => undefined !== formOptions.fromEmail }
+				hasValue={ () => Boolean( formOptions.fromName ) }
 				label={ __( 'From Name', 'otter-blocks' ) }
-				onDeselect={ () => setFormOption({ fromEmail: '' }) }
+				onDeselect={ () => setFormOption({ fromName: '' }) }
 				isShownByDefault={ false }
 			>
 				<TextControl
@@ -183,7 +183,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
-				hasValue={ () => undefined !== formOptions.redirectLink }
+				hasValue={ () => Boolean( formOptions.redirectLink ) }
 				label={ __( 'Redirect on Submit', 'otter-blocks' ) }
 				onDeselect={ () => setFormOption({ redirectLink: '' }) }
 				isShownByDefault={ false }
@@ -427,18 +427,24 @@ const Inspector = ({
 								</div>
 							) }
 
-							{ applyFilters(
-								'otter.formBlock.options',
-								<FormOptions
-									formOptions={formOptions}
-									setFormOption={setFormOption}
-									attributes={attributes}
-									setAttributes={setAttributes}
-								/>,
-								formOptions,
-								setFormOption,
-								useContext( FormContext )
-							) }
+							{
+								'loading' !== loadingState?.formOptions && (
+									<Fragment>
+										{ applyFilters(
+											'otter.formBlock.options',
+											<FormOptions
+												formOptions={formOptions}
+												setFormOption={setFormOption}
+												attributes={attributes}
+												setAttributes={setAttributes}
+											/>,
+											formOptions,
+											setFormOption,
+											useContext( FormContext )
+										) }
+									</Fragment>
+								)
+							}
 						</ToolsPanel>
 
 						<PanelBody

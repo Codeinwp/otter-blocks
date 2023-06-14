@@ -191,9 +191,9 @@ class Tabs_CSS extends Base_CSS {
 	}
 
 	/**
-	 * Generate Form Global CSS
+	 * Generate Tabs Global CSS
 	 *
-	 * @return string
+	 * @return string|void
 	 * @since 2.2.2
 	 * @access public
 	 */

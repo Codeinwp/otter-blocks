@@ -235,7 +235,7 @@ class CSS_Utility {
 
 		$attrs = $this->block['attrs'];
 
-		if ( ! isset( $this->block_id ) ) {
+		if ( empty( $this->block_id ) ) {
 			if ( isset( $attrs['id'] ) ) {
 				$this->block_id = $attrs['id'];
 			}
@@ -400,8 +400,7 @@ class CSS_Utility {
 	 * @return string
 	 */
 	public static function render_box( $box ) {
-
-		if ( ! isset( $box ) || ! is_array( $box ) || count( $box ) === 0 ) {
+		if ( ! is_array( $box ) || count( $box ) === 0 ) {
 			return '';
 		}
 
