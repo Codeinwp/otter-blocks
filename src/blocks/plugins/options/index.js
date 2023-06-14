@@ -18,12 +18,14 @@ import {
 	Button,
 	PanelBody,
 	PanelRow,
-	Snackbar
+	Snackbar, Spinner,
+	ToggleControl
 } from '@wordpress/components';
 
 import {
 	useDispatch,
-	useSelect
+	useSelect,
+	dispatch
 } from '@wordpress/data';
 
 import {
@@ -61,6 +63,7 @@ import ReviewControl from './global-defaults/controls/review.js';
 import Form from './global-defaults/controls/form.js';
 import { otterIconColored } from '../../helpers/icons.js';
 import Tabs from './global-defaults/controls/tabs';
+import useSettings from '../../helpers/use-settings';
 
 export let NavigatorButton = ({
 	path,
@@ -86,12 +89,14 @@ export let NavigatorButton = ({
 };
 
 const Options = () => {
-	const { isOnboardingVisible } = useSelect( select => {
+	const { isOnboardingVisible, get } = useSelect( select => {
 		const { isOnboardingVisible } = select( 'themeisle-gutenberg/data' );
+		const { get } = select( 'core/preferences' );
 		return {
-			isOnboardingVisible: isOnboardingVisible()
+			isOnboardingVisible: isOnboardingVisible(),
+			get
 		};
-	});
+	}, []);
 
 	const { createNotice } = useDispatch( 'core/notices' );
 	const { showOnboarding } = useDispatch( 'themeisle-gutenberg/data' );
@@ -147,6 +152,14 @@ const Options = () => {
 	const [ isLoading, setLoading ] = useState( false );
 
 	const settingsRef = useRef( null );
+	const [ getOption, _, status ] = useSettings();
+	const [ preferenceStatus, setPreferenceStatus ] = useState( 'loaded' );
+
+	const updatedWithStatus = async( request ) => {
+		setPreferenceStatus( 'loading' );
+		await request;
+		setPreferenceStatus( 'loaded' );
+	};
 
 	const dispatchNotice = value => {
 		if ( ! Snackbar ) {
@@ -251,6 +264,12 @@ const Options = () => {
 
 	const navigator = useNavigator();
 
+	const enabledModules = {
+		'css': Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ),
+		'animation': Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ),
+		'condition': Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) )
+	};
+
 	return (
 		<Fragment>
 			{ ( canUser ) && (
@@ -279,6 +298,68 @@ const Options = () => {
 									{ __( 'Show Onboarding Modal', 'otter-blocks' ) }
 								</Button>
 							</PanelRow>
+						</PanelBody>
+
+						<PanelBody
+							title={__( 'Block Tools Defaults', 'otter-blocks' )}
+							initialOpen={true}
+						>
+							<p>
+								{
+									__( 'Make those features to be shown by default in Block Tools.', 'otter-blocks' )
+								}
+							</p>
+
+							{
+								'loading' === status && (
+									<p>
+										<Spinner />
+										{ __( 'Checking optional module...', 'otter-blocks' ) }
+									</p>
+								)
+							}
+
+							{
+								enabledModules?.css && (
+									<PanelRow>
+										<ToggleControl
+											className="o-sidebar-toggle"
+											label={__( 'Custom CSS', 'otter-blocks' )}
+											checked={get?.( 'themeisle/otter-blocks', 'show-custom-css' )}
+											disabled={'loading' === preferenceStatus}
+											onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-custom-css', value ) )}
+										/>
+									</PanelRow>
+								)
+							}
+
+							{
+								enabledModules?.animation && (
+									<PanelRow>
+										<ToggleControl
+											className="o-sidebar-toggle"
+											label={__( 'Animation', 'otter-blocks' )}
+											checked={get?.( 'themeisle/otter-blocks', 'show-animations' ) ?? false}
+											disabled={'loading' === preferenceStatus}
+											onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-animations', value ) )}
+										/>
+									</PanelRow>
+								)
+							}
+
+							{
+								enabledModules?.condition && (
+									<PanelRow>
+										<ToggleControl
+											className="o-sidebar-toggle"
+											label={__( 'Visibility Condition', 'otter-blocks' )}
+											checked={get?.( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? false }
+											disabled={'loading' === preferenceStatus}
+											onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-block-conditions', value ) )}
+										/>
+									</PanelRow>
+								)
+							}
 						</PanelBody>
 
 						<NavigatorButton
