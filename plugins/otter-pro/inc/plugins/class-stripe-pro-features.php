@@ -8,13 +8,13 @@
 namespace ThemeIsle\OtterPro\Plugins;
 
 /**
- * Class Live_Search
+ * Class Stripe_Pro_Features
  */
 class Stripe_Pro_Features {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Live_Search
+	 * @var Stripe_Pro_Features|null
 	 */
 	public static $instance = null;
 
@@ -30,9 +30,9 @@ class Stripe_Pro_Features {
 	/**
 	 * Autoresponder.
 	 *
-	 * @param mixed                                         $attributes Block attributes.
-	 * @param \ThemeIsle\GutenbergBlocks\Plugins\Stripe_API $stripe Stripe API object.
-	 * @param string                                        $session_id Session ID.
+	 * @param mixed                                              $attributes Block attributes.
+	 * @param \ThemeIsle\GutenbergBlocks\Plugins\Stripe_API|null $stripe Stripe API object.
+	 * @param string|null                                        $session_id Session ID.
 	 */
 	public function autoresponder( $attributes, $stripe, $session_id ) {
 
@@ -75,7 +75,7 @@ class Stripe_Pro_Features {
 	 * @static
 	 * @since 1.7.1
 	 * @access public
-	 * @return Live_Search
+	 * @return Stripe_Pro_Features
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
