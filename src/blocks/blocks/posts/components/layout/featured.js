@@ -27,12 +27,13 @@ const FeaturedPost = ({
 	post,
 	attributes,
 	author,
-	category,
 	categoriesList
 }) => {
 	if ( ! post  ) {
 		return '';
 	}
+
+	const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
 
 	return (
 		<div className="o-featured-container">
