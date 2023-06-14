@@ -12,15 +12,6 @@ import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
 import AutoresponderBodyModal from '../../components/autoresponder/index.js';
 
 const Autoresponder = ( Template, attributes, setAttributes ) => {
-
-	if ( ! Boolean( window?.otterPro?.isActive ) ) {
-		return (
-			<Fragment>
-				{ Template }
-			</Fragment>
-		);
-	}
-
 	return (
 		<Fragment>
 			<PanelBody
@@ -62,4 +53,7 @@ const Autoresponder = ( Template, attributes, setAttributes ) => {
 	);
 };
 
-addFilter( 'otter.stripe-checkout.inspector', 'themeisle-gutenberg/stripe-checkout-inspector', Autoresponder );
+if ( Boolean( window?.otterPro?.isActive ) ) {
+	addFilter( 'otter.stripe-checkout.inspector', 'themeisle-gutenberg/stripe-checkout-inspector', Autoresponder );
+}
+
