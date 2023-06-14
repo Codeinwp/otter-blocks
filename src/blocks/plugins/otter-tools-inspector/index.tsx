@@ -30,7 +30,6 @@ const FeaturePanel = ({ props }) => {
 
 	// Function that refresh the inspector slot when a store is updated. This is used for the preferences store.
 	const _ = useSelect( ( select ) => {
-		console.count( 'Refresh Inspector' );
 		select( 'core/preferences' );
 	}, []);
 
