@@ -3,4 +3,36 @@
 		display: flex;
 		flex-direction: column;
 	}
+
+	.prompt-placeholder__block-generation__container {
+		margin: 10px;
+		display: flex;
+		flex-direction: column;
+		padding: 10px;
+		border-radius: 10px;
+		gap: 10px;
+		font-size: 1.2em;
+
+		background-color: #FAA26A;
+
+		.prompt-placeholder__block-generation__field {
+			display: flex;
+			flex-direction: row;
+			gap: 10px;
+			align-items: center;
+		}
+
+		.prompt-placeholder__block-generation__field__type {
+			padding: 1px 5px;
+			background-color: azure;
+			border-radius: 5px;
+			min-width: 100px;
+			text-align: center;
+		}
+	}
+
+	.history-display {
+		padding: 0px 20px;
+		font-size: 1.2em;
+	}
 }

@@ -55,7 +55,7 @@ import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
 import { Button, Notice, ToolbarGroup } from '@wordpress/components';
 import PromptPlaceholder from '../../components/prompt';
-import { parseFormPromptResponse, sendPromptToOpenAI } from '../../helpers/prompt';
+import { parseFormPromptResponseToBlocks, sendPromptToOpenAI } from '../../helpers/prompt';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -877,9 +877,8 @@ const Edit = ({
 		}
 	};
 
-	const [ showPrompt, setShowPrompt ] = useState( false );
+	const [ showPrompt, setShowPrompt ] = useState( true );
 	const [ prompt, setPrompt ] = useState( '' );
-	const [ generationStatus, setGenerationStatus ] = useState( 'default' );
 
 	return (
 		<Fragment>
@@ -925,15 +924,11 @@ const Edit = ({
 					{
 						( showPrompt ) && (
 							<PromptPlaceholder
+								promptName="form"
 								value={prompt}
 								onValueChange={setPrompt}
-								status={generationStatus}
-								onSubmit={()=>{
-									sendPromptToOpenAI( prompt ).then ( ({ result, error }) => {
-										replaceInnerBlocks( clientId, parseFormPromptResponse( result ) );
-										setGenerationStatus( 'default' );
-									});
-									setGenerationStatus( 'loading' );
+								onSuccess={( result )=>{
+									replaceInnerBlocks( clientId, parseFormPromptResponseToBlocks( result ) );
 								}}
 							/>
 						)

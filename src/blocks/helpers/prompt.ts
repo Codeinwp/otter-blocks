@@ -1,8 +1,6 @@
 import { createBlock } from '@wordpress/blocks';
-
-const OPENAI_API_KEY  = 'ADD_YOUR_KEY';
-
-const embeddedPrompt = 'Add instruction ';
+import apiFetch from '@wordpress/api-fetch';
+import { addQueryArgs } from '@wordpress/url';
 
 type PromptResponse = {
 	result: string
@@ -39,7 +37,18 @@ type FormResponse = {
 	required?: boolean
 }[]
 
-export async function sendPromptToOpenAI( prompt: string ) {
+export type PromptsData = {
+	name: string
+	prompt: string
+}[]
+
+type PromptServerResponse = {
+	code: string
+	error: string
+	prompts: PromptsData
+}
+
+export async function sendPromptToOpenAI( prompt: string, apiKey: string, embeddedPrompt: string ) {
 
 	// Make a request to the OpenAI API using fetch then parse the response
 
@@ -49,7 +58,7 @@ export async function sendPromptToOpenAI( prompt: string ) {
 			'Content-Type': 'application/json',
 
 			// The Authorization header contains your API key
-			Authorization: `Bearer ${OPENAI_API_KEY}`
+			Authorization: `Bearer ${apiKey}`
 		},
 		body: JSON.stringify({
 			model: 'gpt-3.5-turbo',
@@ -96,7 +105,22 @@ const fieldMapping = {
 
 };
 
-export function parseFormPromptResponse( promptResponse: string ) {
+export function parseToDisplayPromptResponse( promptResponse: string ) {
+	const response = JSON.parse( promptResponse ) as FormResponse;
+
+	return response.map( ( field ) => {
+		return {
+			label: field.label,
+			type: field.type,
+			placeholder: field.placeholder,
+			helpText: field.helpText,
+			options: field.choices?.join( '\n' ),
+			allowedFileTypes: field.allowedFileTypes
+		};
+	}).filter( Boolean );
+}
+
+export function parseFormPromptResponseToBlocks( promptResponse: string ) {
 	if ( ! promptResponse ) {
 		return [];
 	}
@@ -122,7 +146,7 @@ export function replaceInnerBlockWithPrompt( blockClientId: string, promptRespon
 		return;
 	}
 
-	const formFields = parseFormPromptResponse( promptResponse );
+	const formFields = parseFormPromptResponseToBlocks( promptResponse );
 
 	if ( ! formFields.length ) {
 		return;
@@ -135,3 +159,11 @@ export function replaceInnerBlockWithPrompt( blockClientId: string, promptRespon
 	replaceInnerBlocks( blockClientId, formFields );
 }
 
+export function retrieveEmbeddedPrompt( promptName ?: string ) {
+	return apiFetch<PromptServerResponse>({
+		path: addQueryArgs( '/otter/v1/prompt', {
+			name: promptName
+		}),
+		method: 'GET'
+	});
+}

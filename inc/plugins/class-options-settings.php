@@ -511,6 +511,18 @@ class Options_Settings {
 				),
 			)
 		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_open_ai_api_key',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'The OpenAI API Key required for usage of Otter AI features.', 'otter-blocks' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => '',
+			)
+		);
 	}
 
 	/**
