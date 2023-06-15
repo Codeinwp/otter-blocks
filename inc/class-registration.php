@@ -246,7 +246,7 @@ class Registration {
 				'should_show_upsell'      => Pro::should_show_upsell(),
 				'assetsPath'              => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'              => admin_url( 'update-core.php' ),
-				'optionsPath'             => admin_url( 'options-general.php?page=otter' ),
+				'optionsPath'             => admin_url( 'admin.php?page=otter' ),
 				'mapsAPI'                 => $api,
 				'hasStripeAPI'            => Stripe_API::has_keys(),
 				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
