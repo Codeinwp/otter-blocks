@@ -93,7 +93,7 @@ const Edit = ({
 	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const [ loadingState, setLoadingState ] = useState({
-		formOptions: 'done',
+		formOptions: 'loading',
 		formIntegration: 'done',
 		listId: 'init',
 		captcha: 'init',
@@ -316,9 +316,10 @@ const Edit = ({
 		let controller = new AbortController();
 		const t = setTimeout( () => {
 			setLoading({ formOptions: 'done', formIntegration: 'done' });
-		}, 3000 );
+		}, 20000 );
 
 		if ( attributes.optionName ) {
+			setLoading({ formOptions: 'loading', formIntegration: 'loading' });
 			try {
 				api.loadPromise.then( () => {
 					setLoading({ formOptions: 'loading', formIntegration: 'loading' });
