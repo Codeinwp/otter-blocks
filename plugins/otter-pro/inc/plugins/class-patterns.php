@@ -40,7 +40,7 @@ class Patterns {
 	 * @access  public
 	 */
 	public function maybe_sync_patterns() {
-		if ( ! get_transient( 'otter_pro_patterns' ) ) {
+		if ( ! get_transient( 'otter_pro_patterns' ) && ! get_transient( 'otter_pro_patterns_refetch' ) ) {
 			$this->sync_patterns();
 		}
 	}
@@ -72,7 +72,21 @@ class Patterns {
 		$response = json_decode( $response, true );
 
 		if ( ! is_array( $response ) || isset( $response['message'] ) || 0 === count( $response ) ) {
+			if ( ! get_transient( 'otter_pro_patterns_refetch' ) ) {
+				set_transient( 'otter_pro_patterns_refetch', true, HOUR_IN_SECONDS );
+			}
 			return;
+		}
+
+		foreach ( $response as $pattern_block ) {
+			if ( ! $this->check_pattern_structure( $pattern_block ) ) {
+
+				if ( ! get_transient( 'otter_pro_patterns_refetch' ) ) {
+					set_transient( 'otter_pro_patterns_refetch', true, HOUR_IN_SECONDS );
+				}
+
+				return;
+			}
 		}
 
 		set_transient( 'otter_pro_patterns', $response, WEEK_IN_SECONDS );
@@ -90,6 +104,12 @@ class Patterns {
 			return;
 		}
 
+		// Fast check to see if we have some corrupted data.
+		if ( ! $this->check_pattern_structure( $block_patterns[0] ) ) {
+			delete_transient( 'otter_pro_patterns' );
+			return;
+		}
+
 		foreach ( $block_patterns as $block_pattern ) {
 			if ( ! version_compare( get_bloginfo( 'version' ), $block_pattern['minimum'], '>=' ) ) {
 				continue;
@@ -97,6 +117,21 @@ class Patterns {
 
 			register_block_pattern( 'otter-pro/' . $block_pattern['slug'], $block_pattern );
 		}
+	}
+
+	/**
+	 * Check if the given pattern block has the correct structure.
+	 *
+	 * @param mixed $pattern_block Pattern block to check.
+	 * @return bool
+	 */
+	public function check_pattern_structure( $pattern_block ) {
+
+		$valid = isset( $pattern_block['slug'] ) && is_string( $pattern_block['slug'] );
+		$valid = $valid && isset( $pattern_block['title'] ) && is_string( $pattern_block['title'] );
+		$valid = $valid && isset( $pattern_block['content'] ) && is_string( $pattern_block['content'] );
+		$valid = $valid && isset( $pattern_block['categories'] ) && is_array( $pattern_block['categories'] );
+		return $valid && isset( $pattern_block['minimum'] ) && is_numeric( $pattern_block['minimum'] );
 	}
 
 	/**

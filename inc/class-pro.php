@@ -248,7 +248,7 @@ class Pro {
 		<div class="clear">
 			<p><?php _e( 'Unlock the full power of WooCommerce Builder by activating Otter Pro license.', 'otter-blocks' ); ?></p>
 
-			<a href="<?php echo esc_url( admin_url( 'options-general.php?page=otter' ) ); ?>" target="_blank" class="button button-primary">
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=otter' ) ); ?>" target="_blank" class="button button-primary">
 				<?php _e( 'Activate License', 'otter-blocks' ); ?>
 			</a>
 		</div>
