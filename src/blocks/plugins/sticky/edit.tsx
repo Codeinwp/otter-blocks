@@ -317,7 +317,7 @@ const Edit = ({
 		And element with the classe like this 'o-sticky o-sticky-pos-bottom o-sticky-pos-bottom-30', it will be a sticky element with 30px distance from the bottom of the window viewport
 	*/
 
-	const limit = ( attributes?.className?.split( ' ' ) as string[]).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
+	const limit = ( attributes?.className?.split( ' ' ) as string[])?.filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
 
 	const addOptions = ( options: ( string | undefined )[], filtersOption: string[]) => {
 

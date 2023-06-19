@@ -18,6 +18,7 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import Thumbnail from './thumbnail.js';
 import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.js';
+import { Placeholder } from '@wordpress/components';
 
 const Layout = ({
 	attributes,
@@ -25,6 +26,10 @@ const Layout = ({
 	categoriesList,
 	authors
 }) => {
+
+	const postsToDisplay = posts
+		.filter( post => post );
+
 	return (
 		<div
 			className={
@@ -44,8 +49,7 @@ const Layout = ({
 					)
 			}
 		>
-			{ posts
-				.filter( post => post )
+			{ postsToDisplay
 				.slice( attributes.enableFeaturedPost ? 1 : 0 )
 				.map( post => {
 					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;

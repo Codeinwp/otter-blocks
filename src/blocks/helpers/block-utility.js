@@ -469,3 +469,10 @@ export function pullReusableBlockContentById( id ) {
 
 	return parse( reusableBlock.content.raw ?? reusableBlock.content );
 }
+
+/**
+ * Open the Otter sidebar menu.
+ */
+export function openOtterSidebarMenu() {
+	document?.querySelector( '.interface-pinned-items button[aria-label~="Otter"]' )?.click();
+}
