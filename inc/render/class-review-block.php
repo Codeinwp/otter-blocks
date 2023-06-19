@@ -82,7 +82,9 @@ class Review_Block {
 
 		$html .= '		<div class="o-review__header_meta">';
 		$html .= '			<div class="o-review__header_ratings">';
+		$html .= '			    <div class="o-review__header_ratings__stars">';
 		$html .= $this->get_overall_stars( $this->get_overall_ratings( $attributes['features'] ), $scale );
+		$html .= '			    </div>';
 		// translators: Overall rating from 1 to 10.
 		$html .= '				<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), $this->get_overall_ratings( $attributes['features'], $scale ), 10 / $scale ) . '</span>';
 		$html .= '			</div>';
@@ -127,17 +129,15 @@ class Review_Block {
 				}
 
 				$html .= '		<div class="o-review__left_feature_ratings">';
-				$html .= $this->get_overall_stars( $feature['rating'], $scale );
-				if ( $is_one_colum_layout || ! $is_inline_features ) {
-					// translators: Overall rating from 1 to 10.
-					$html .= '			<span class="o-review__left_feature_num">' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), 1 <= round( $feature['rating'] / $scale, 1 ) ? round( $feature['rating'] / $scale, 1 ) : 1, 10 / $scale ) . '</span>';
-				}
-				$html .= '		</div>';
 
-				if ( ! $is_one_colum_layout && $is_inline_features ) {
-					// translators: Overall rating from 1 to 10.
-					$html .= '			<span class="o-review__left_feature_num">' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), 1 <= round( $feature['rating'] / $scale, 1 ) ? round( $feature['rating'] / $scale, 1 ) : 1, 10 / $scale ) . '</span>';
-				}
+				$html .= '         <div class="o-review__left_feature_ratings__stars">';
+				$html .= $this->get_overall_stars( $feature['rating'], $scale );
+				$html .= '         </div>';
+
+				// translators: Overall rating from 1 to 10.
+				$html .= '			<span class="o-review__left_feature_num">' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), 1 <= round( $feature['rating'] / $scale, 1 ) ? round( $feature['rating'] / $scale, 1 ) : 1, 10 / $scale ) . '</span>';
+
+				$html .= '		</div>';
 
 				if ( isset( $feature['description'] ) ) {
 					$html .= '	<span class="o-review__left_feature_description">' . $feature['description'] . '</span>';

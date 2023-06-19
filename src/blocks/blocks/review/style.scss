@@ -54,9 +54,11 @@
 	}
 
 	&:is(.is-style-inline-features) {
-		&:not(.is-style-single-column) {
-			.o-review__left_feature_ratings {
-				margin-left: -5px;
+		.o-review__left_feature_ratings {
+			margin-left: -5px;
+
+			span {
+				padding-left: 5px;
 			}
 		}
 
@@ -70,7 +72,9 @@
 			}
 		}
 
-
+		.o-review__left_feature_ratings {
+			flex-wrap: wrap;
+		}
 	}
 
 	&.no-pros-cons {
@@ -154,6 +158,20 @@
 					padding-left: 10px;
 					font-size: 13px;
 					min-width: 50px;
+				}
+
+				&__stars {
+					display: flex;
+					gap: 5px;
+					flex-wrap: nowrap;
+				}
+
+				@media (max-width: 600px) {
+					flex-wrap: wrap;
+
+					span {
+						padding-left: 5px;
+					}
 				}
 			}
 
@@ -252,6 +270,7 @@
 						max-width: 25px;
 						max-height: 25px;
 						fill: var( --stars-color );
+						width: 100%;
 
 						&:not( .filled ) {
 							opacity: 0.5;
@@ -259,8 +278,23 @@
 						}
 					}
 
+					&__stars {
+						display: flex;
+						gap: 5px;
+						flex-wrap: nowrap;
+					}
+
 					span {
 						padding-left: 10px;
+					}
+
+					@media ( max-width: 600px ) {
+						flex-wrap: wrap;
+						margin-left: -5px;
+
+						span {
+							padding-left: 5px;
+						}
 					}
 				}
 
