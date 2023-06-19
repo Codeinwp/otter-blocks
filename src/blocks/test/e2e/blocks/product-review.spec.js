@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
-test.describe( 'Progress Bar Block', () => {
+test.describe( 'Product Review Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
 	});
@@ -40,6 +40,7 @@ test.describe( 'Progress Bar Block', () => {
 	});
 
 	test( 'add a new feature', async({ editor, page }) => {
+		await editor.insertBlock({ name: 'themeisle-blocks/review' });
 
 		/**
 		 * Add a new feature
