@@ -62,7 +62,7 @@ class Stripe_Pro_Features {
 		$subject   = $attributes['autoresponder']['subject'];
 		$body      = $attributes['autoresponder']['body'];
 
-		// phpcs:ignore
+		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
 		if ( wp_mail( $to, $subject, $body, $headers ) ) {
 			set_transient( $transient_key, true, WEEK_IN_SECONDS );
 		}

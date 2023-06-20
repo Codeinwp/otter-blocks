@@ -46,7 +46,7 @@ const ProFeatures = () => {
 
 			<TextareaControl
 				label={ __( 'Autoresponder Body', 'otter-blocks' ) }
-				placeholder={ __( 'W e appreciate your recent purchase made on our website. You have received a promotional code, namely <strong>EXAMPLE</strong>, which can be applied during checkout on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>', 'otter-blocks' )}
+				placeholder={ __( 'We appreciate your recent purchase made on our website. You have received a promotional code, namely <strong>EXAMPLE</strong>, which can be applied during checkout on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>', 'otter-blocks' )}
 				rows={2}
 				help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
 				disabled
