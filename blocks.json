@@ -272,5 +272,8 @@
 	"product-upsells": {
 		"isPro": true,
 		"block": "pro/woocommerce/upsells/block.json"
+	},
+	"content-generator": {
+		"block": "blocks/blocks/content-generator/block.json"
 	}
 }

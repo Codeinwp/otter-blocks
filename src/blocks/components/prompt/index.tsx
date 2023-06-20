@@ -11,13 +11,19 @@ import {
 	sendPromptToOpenAI
 } from '../../helpers/prompt';
 
+type PromptOnSuccessActions = {
+	clearHistory: () => void
+}
+
+export type PromptOnSuccess = ( result: string, actions: PromptOnSuccessActions ) => void;
+
 type PromptPlaceholderProps = {
 	promptName?: string
 	title?: string
 	description?: string
 	value: string
 	onValueChange: ( text: string ) => void
-	onSuccess?: ( result: string ) => void
+	onSuccess?: PromptOnSuccess
 };
 
 export const apiKeyName = 'themeisle_open_ai_api_key';
@@ -55,6 +61,14 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	const [ resultHistory, setResultHistory ] = useState<string[]>([]);
 	const [ resultHistoryIndex, setResultHistoryIndex ] = useState<number>( 0 );
+
+	const onSuccessActions = {
+		clearHistory: () => {
+			setResult( undefined );
+			setResultHistory([]);
+			setResultHistoryIndex( 0 );
+		}
+	};
 
 	useEffect( () => {
 		const getEmbeddedPrompt = async() => {
@@ -208,7 +222,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	return (
 		<Placeholder
 			className="prompt-placeholder"
-			label={title ?? __( 'Generate Form', 'otter-blocks' )}
+			label={title ?? __( 'Content Generator', 'otter-blocks' )}
 			instructions={description ?? __( 'Write what type of form do you want to have.', 'otter-blocks' )}
 		>
 			<TextControl value={value} onChange={onValueChange} />
@@ -278,7 +292,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 						<Button
 							variant="primary"
 							onClick={() => {
-								onSuccess?.( result );
+								onSuccess?.( result, onSuccessActions );
 							}}
 						>
 							{ __( 'Accept', 'otter-blocks' ) }

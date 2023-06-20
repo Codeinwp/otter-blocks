@@ -106,18 +106,30 @@ const fieldMapping = {
 };
 
 export function parseToDisplayPromptResponse( promptResponse: string ) {
-	const response = JSON.parse( promptResponse ) as FormResponse;
+	const response = tryParseResponse( promptResponse ) as FormResponse|undefined;
+
+	if ( ! response ) {
+		return [];
+	}
 
 	return response.map( ( field ) => {
 		return {
-			label: field.label,
-			type: field.type,
-			placeholder: field.placeholder,
-			helpText: field.helpText,
-			options: field.choices?.join( '\n' ),
-			allowedFileTypes: field.allowedFileTypes
+			label: field?.label,
+			type: field?.type,
+			placeholder: field?.placeholder,
+			helpText: field?.helpText,
+			options: field?.choices?.join( '\n' ),
+			allowedFileTypes: field?.allowedFileTypes
 		};
 	}).filter( Boolean );
+}
+
+function tryParseResponse( promptResponse: string ) {
+	try {
+		return JSON.parse( promptResponse );
+	} catch ( e ) {
+		return undefined;
+	}
 }
 
 export function parseFormPromptResponseToBlocks( promptResponse: string ) {
@@ -125,7 +137,11 @@ export function parseFormPromptResponseToBlocks( promptResponse: string ) {
 		return [];
 	}
 
-	const formResponse = JSON.parse( promptResponse ) as FormResponse;
+	const formResponse = tryParseResponse( promptResponse ) as FormResponse|undefined;
+
+	if ( ! formResponse ) {
+		return [];
+	}
 
 	return formResponse.map( ( field ) => {
 		return createBlock( fieldMapping[field.type], {

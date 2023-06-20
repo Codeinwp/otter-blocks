@@ -190,12 +190,17 @@ const Edit = ({
 
 	const [ hasEmailField, setHasEmailField ] = useState( false );
 
-	const { children, hasProtection } = useSelect( select => {
+	const { children, hasProtection, currentBlockPosition } = useSelect( select => {
 		const {
-			getBlock
+			getBlock,
+			getBlockOrder
 		} = select( 'core/block-editor' );
 		const children = getBlock( clientId ).innerBlocks;
+
+		const currentBlockPosition = getBlockOrder().indexOf( clientId );
+
 		return {
+			currentBlockPosition,
 			children,
 			hasProtection: 0 < children?.filter( ({ name }) => 'themeisle-blocks/form-nonce' === name )?.length
 		};
@@ -877,9 +882,6 @@ const Edit = ({
 		}
 	};
 
-	const [ showPrompt, setShowPrompt ] = useState( true );
-	const [ prompt, setPrompt ] = useState( '' );
-
 	return (
 		<Fragment>
 			<FormContext.Provider
@@ -911,7 +913,13 @@ const Edit = ({
 					<ToolbarGroup>
 						<Button
 							onClick={()=> {
-								setShowPrompt( ! showPrompt );
+								const generator = createBlock( 'themeisle-blocks/content-generator', {
+									blockToReplace: clientId,
+									generationType: 'form'
+								});
+
+								// Insert a new block after the current one.
+								insertBlock( generator, currentBlockPosition + 1 );
 							}}
 						>
 							{ __( 'Create Form With AI', 'otter-blocks' ) }
@@ -921,18 +929,6 @@ const Edit = ({
 
 
 				<div { ...blockProps }>
-					{
-						( showPrompt ) && (
-							<PromptPlaceholder
-								promptName="form"
-								value={prompt}
-								onValueChange={setPrompt}
-								onSuccess={( result )=>{
-									replaceInnerBlocks( clientId, parseFormPromptResponseToBlocks( result ) );
-								}}
-							/>
-						)
-					}
 
 					{
 						( hasInnerBlocks ) ? (
