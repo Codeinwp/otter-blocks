@@ -21,7 +21,7 @@ const ALLOWED_ACF_TYPES = [
 	'button_group',
 	'checkbox',
 	'color_picker',
-	'data_time_picker',
+	'date_time_picker',
 	'date_picker',
 	'email',
 	'number',
