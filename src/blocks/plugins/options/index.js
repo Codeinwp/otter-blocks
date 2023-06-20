@@ -90,10 +90,10 @@ export let NavigatorButton = ({
 
 const Options = () => {
 	const { isOnboardingVisible, get } = useSelect( select => {
-		const { isOnboardingVisible } = select( 'themeisle-gutenberg/data' );
-		const { get } = select( 'core/preferences' );
+		const isOnboardingVisible = select( 'themeisle-gutenberg/data' )?.isOnboardingVisible;
+		const get = select( 'core/preferences' )?.get;
 		return {
-			isOnboardingVisible: isOnboardingVisible(),
+			isOnboardingVisible: isOnboardingVisible?.(),
 			get
 		};
 	}, []);
