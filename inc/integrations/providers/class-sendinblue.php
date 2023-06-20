@@ -13,8 +13,6 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
  * @since 2.0.3
  */
 class Sendinblue_Integration implements FormSubscribeServiceInterface {
-
-
 	/**
 	 * The API Key of the service.
 	 *
@@ -32,19 +30,17 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	/**
 	 * The default constructor.
 	 */
-	public function __construct() {     }
+	public function __construct() {}
 
 	/**
 	 * Extract the API Key and the contact list.
 	 *
 	 * @access  public
-	 * @param Form_Settings_Data|null $wp_options_form The integration data.
+	 * @param Form_Settings_Data $wp_options_form The integration data.
 	 */
 	public function extract_data_from_integration( $wp_options_form ) {
-		if ( isset( $wp_options_form ) ) {
-			$this->set_api_key( $wp_options_form->get_api_key() );
-			$this->set_list_id( $wp_options_form->get_list_id() );
-		}
+		$this->set_api_key( $wp_options_form->get_api_key() );
+		$this->set_list_id( $wp_options_form->get_list_id() );
 		return $this;
 	}
 
@@ -97,20 +93,12 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	}
 
 	/**
-	 * Add a new subscriber to Mailchimp
+	 * Make a request that add the email to the contact list.
 	 *
-	 * @param Form_Data_Request $form_data The client email.
-	 *
-	 * @return Form_Data_Request
+	 * @param string $email The client email.
+	 * @return array|\WP_Error The response from the API.
 	 */
-	public function subscribe( $form_data ) {
-
-		if ( $form_data->has_error() ) {
-			return $form_data;
-		}
-
-		$email = $form_data->get_email_from_form_input();
-
+	public function make_subscribe_request( $email ) {
 		$url = 'https://api.sendinblue.com/v3/contacts';
 
 		$payload = array(
@@ -129,7 +117,25 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 			'body'    => wp_json_encode( $payload ),
 		);
 
-		$response = wp_remote_post( $url, $args );
+		return wp_remote_post( $url, $args );
+	}
+
+	/**
+	 * Add a new subscriber to Mailchimp
+	 *
+	 * @param Form_Data_Request $form_data The client email.
+	 *
+	 * @return Form_Data_Request
+	 */
+	public function subscribe( $form_data ) {
+
+		if ( $form_data->has_error() ) {
+			return $form_data;
+		}
+
+		$email = $form_data->get_email_from_form_input();
+
+		$response = $this->make_subscribe_request( $email );
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( is_wp_error( $response ) || 400 === wp_remote_retrieve_response_code( $response ) || ( ( isset( $body['code'] ) && 'unauthorized' === $body['code'] ) ) ) {
@@ -138,7 +144,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR );
 			}
 
-			if ( ! empty( $body['message'] ) && str_contains( $body['message'], 'already' ) ) {
+			if ( ! empty( $body['message'] ) && strpos( $body['message'], 'already' ) !== false ) {
 				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED );
 			} else {
 				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
@@ -151,10 +157,17 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	/**
 	 * Test the subscription by registering a random generated email.
 	 *
-	 * @return Form_Data_Response
+	 * @return Form_Data_Request
 	 */
 	public function test_subscription() {
-		return $this->subscribe( Form_Utils::generate_test_email() );
+		$req      = new Form_Data_Request();
+		$response = $this->make_subscribe_request( Form_Utils::generate_test_email() );
+
+		if ( is_wp_error( $response ) || 400 === wp_remote_retrieve_response_code( $response ) ) {
+			$req->set_error( Form_Data_Response::get_error_code_message( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR ) );
+		}
+
+		return $req;
 	}
 
 	/**
@@ -188,7 +201,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	public static function validate_api_key( $api_key ) {
-		if ( ! isset( $api_key ) || '' === $api_key ) {
+		if ( '' === $api_key ) {
 			return array(
 				'valid'  => false,
 				'reason' => __( 'API Key is missing!', 'otter-blocks' ),

@@ -16,7 +16,7 @@ class Slider_Block {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Slider_Block
+	 * @var Slider_Block|null
 	 */
 	public static $instance = null;
 
@@ -24,7 +24,7 @@ class Slider_Block {
 	 * Initialize the class
 	 */
 	public function init() {
-		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 3 );
+		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 2 );
 	}
 
 	/**

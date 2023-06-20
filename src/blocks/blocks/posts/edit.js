@@ -75,7 +75,8 @@ const Edit = ({
 	const {
 		posts,
 		categoriesList,
-		authors
+		authors,
+		isLoading
 	} = useSelect( select => {
 		const catIds = attributes.categories && 0 < attributes.categories.length ? attributes.categories.map( ( cat ) => cat.id ) : [];
 
@@ -88,10 +89,78 @@ const Edit = ({
 			context: 'view'
 		}, ( value ) => ! isUndefined( value ) );
 
-		const slugs = attributes.postTypes;
-		let posts = ( 0 < slugs.length ) ? (
-			slugs.map( slug => select( 'core' ).getEntityRecords( 'postType', slug, latestPostsQuery ) ).flat()
-		) : select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery );
+		const getPosts = ( postType ) => {
+
+			if ( 'product' === postType ) {
+				const { COLLECTIONS_STORE_KEY } = window?.wc?.wcBlocksData;
+
+				if ( ! COLLECTIONS_STORE_KEY ) {
+					return {
+						posts: [],
+						isLoading: false
+					};
+				}
+
+				latestPostsQuery.category = catIds.join( ',' );
+
+
+				const error = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', latestPostsQuery );
+
+				if ( error ) {
+					return {
+						posts: [],
+						isLoading: false
+					};
+				}
+
+				const products = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products', latestPostsQuery ) ?? [];
+				const isLoadingProducts = select( COLLECTIONS_STORE_KEY ).isResolving( '/wc/store', 'products', latestPostsQuery );
+
+				if ( isLoadingProducts ) {
+					return {
+						posts: [],
+						isLoading: true
+					};
+				}
+
+				const productIds = products.map( ({ id }) => id );
+
+				return {
+					posts: select( 'core' ).getEntityRecords( 'postType', postType, { include: productIds }) ?? [],
+					isLoading: select( 'core' ).isResolving( 'getEntityRecords', [ 'postType', postType, { include: productIds }])
+				};
+			}
+
+			return {
+				posts: select( 'core' ).getEntityRecords( 'postType', postType, latestPostsQuery ),
+				isLoading: select( 'core' ).isResolving( 'getEntityRecords', [ 'postType', postType, latestPostsQuery ])
+			};
+		};
+
+		let posts = [];
+		let isLoading = false;
+
+		const postTypeSlugs = attributes.postTypes;
+
+		if ( 0 < postTypeSlugs.length ) {
+			const { posts: loadedPosts, isLoading: loadingCheck, error: firstError } = postTypeSlugs.reduce( ( acc, slug ) => {
+				const { posts, isLoading } = getPosts( slug );
+
+				return {
+					posts: [
+						...acc.posts,
+						...( posts ?? [])
+					],
+					isLoading: acc.isLoading || isLoading
+				};
+			}, { posts: [], isLoading: false });
+
+			posts = loadedPosts;
+			isLoading = loadingCheck;
+		} else {
+			posts = select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery );
+			isLoading = select( 'core' ).isResolving( 'getEntityRecords', [ 'postType', 'post', latestPostsQuery ]);
+		}
 
 		if ( attributes.featuredPostOrder && 0 < posts?.length ) {
 			posts = [
@@ -100,11 +169,26 @@ const Edit = ({
 			];
 		}
 
+		posts = posts?.filter( Boolean ) ?? [];
+
+		const taxonomies = select( 'core' )?.getTaxonomies()
+			?.map( ({ slug }) => slug )
+			?.filter( ( slug ) => postTypeSlugs.some( postTypeSlug => slug === `${postTypeSlug}_cat` ) ) ?? [];
+
+		if ( 0 === taxonomies.length ) {
+			taxonomies.push( 'category' );
+		}
+
+		const categoriesList = taxonomies
+			// eslint-disable-next-line camelcase
+			.map( taxonomy => select( 'core' ).getEntityRecords( 'taxonomy', taxonomy, { per_page: -1 }) ?? [])
+			.flat();
+
 		return {
 			posts,
-			// eslint-disable-next-line camelcase
-			categoriesList: select( 'core' ).getEntityRecords( 'taxonomy', 'category', { per_page: -1, context: 'view' }),
-			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' })
+			categoriesList: categoriesList,
+			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' }),
+			isLoading
 		};
 	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes, attributes.featuredPostOrder ]);
 
@@ -173,7 +257,7 @@ const Edit = ({
 		inlineStyles,
 		attributes
 	}) => {
-		if ( ! posts || ! categoriesList || ! authors ) {
+		if ( ! posts || ! categoriesList || ! authors || isLoading ) {
 			return (
 				<div { ...blockProps }>
 					<Placeholder>
@@ -201,7 +285,6 @@ const Edit = ({
 						<FeaturedPost
 							attributes={ attributes }
 							post={ posts?.[0] }
-							category={ categoriesList[0] }
 							categoriesList={ categoriesList }
 							author={ authors[0] }
 						/>
@@ -225,6 +308,7 @@ const Edit = ({
 					attributes={ attributes }
 					setAttributes={ setAttributes }
 					categoriesList={ categoriesList }
+					isLoading={ isLoading }
 				/>
 			) }
 

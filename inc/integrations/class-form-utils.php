@@ -87,14 +87,15 @@ class Form_Utils {
 			'error'     => null,
 		);
 
+
+		$file_name     = self::generate_file_name( $field['metadata']['name'] );
+		$file_data_key = $field['metadata']['data'];
+
+		if ( ! isset( $file_data_key ) || ! isset( $files[ $file_data_key ] ) ) {
+			return $result;
+		}
+
 		try {
-			$file_name     = self::generate_file_name( $field['metadata']['name'] );
-			$file_data_key = $field['metadata']['data'];
-
-			if ( ! isset( $file_data_key ) || ! isset( $files[ $file_data_key ] ) ) {
-				return $result;
-			}
-
 			$file_data = $files[ $file_data_key ];
 
 			// Save file to uploads folder.

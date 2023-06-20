@@ -15,7 +15,7 @@ class Dynamic_Content {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dynamic_Content
+	 * @var Dynamic_Content|null
 	 */
 	protected static $instance = null;
 
@@ -71,7 +71,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string
+	 * @return string|void
 	 */
 	public function apply_magic_tags( $data ) {
 		if ( ! isset( $data[1] ) ) {
@@ -149,7 +149,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string
+	 * @return string|void
 	 */
 	public function apply_images( $data ) {
 		if ( ! isset( $data[0] ) ) {
@@ -176,7 +176,7 @@ class Dynamic_Content {
 
 		$id = ( defined( 'REST_REQUEST' ) && REST_REQUEST || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
 
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
+		if ( isset( $data['context'] ) && ( 0 === $data['context'] || 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
 			$data['context'] = $id;
 		}
 
@@ -325,11 +325,11 @@ class Dynamic_Content {
 		}
 
 		if ( 'authorName' === $data['type'] ) {
-			return get_the_author_meta( 'display_name', get_post_field( 'post_author', $data['context'] ) );
+			return get_the_author_meta( 'display_name', intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
 		if ( 'authorDescription' === $data['type'] ) {
-			return get_the_author_meta( 'description', get_post_field( 'post_author', $data['context'] ) );
+			return get_the_author_meta( 'description', intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
 		if ( 'loggedInUserName' === $data['type'] ) {
@@ -371,7 +371,15 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_content( $data ) {
-		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', get_the_content( $data['context'] ) ) );
+		$data = $this->mark_exceptions( $data );
+		$key  = $this->get_exception_key( $data );
+
+		if ( isset( $data[ $key ] ) ) {
+			return '';
+		}
+
+		$content = get_the_content( $data['context'] );
+		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', $content ) );
 		return wp_kses_post( $content );
 	}
 
@@ -387,7 +395,12 @@ class Dynamic_Content {
 		$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
 
 		if ( empty( $excerpt ) ) {
-			$excerpt = wp_trim_excerpt( '', $post );
+			$data = $this->mark_exceptions( $data );
+			$key  = $this->get_exception_key( $data, $post->ID );
+
+			if ( ! isset( $data[ $key ] ) ) {
+				$excerpt = wp_trim_excerpt( '', $post );
+			}
 		}
 
 		if ( isset( $data['length'] ) && ! empty( $data['length'] ) ) {
@@ -531,7 +544,7 @@ class Dynamic_Content {
 	 *
 	 * @param string $qry URL.
 	 *
-	 * @return array
+	 * @return array|bool
 	 */
 	public static function query_string_to_array( $qry ) {
 		$result = array();
@@ -551,7 +564,7 @@ class Dynamic_Content {
 			$result[ $key ]     = $val;
 		}
 
-		return empty( $result ) ? false : $result;
+		return $result;
 	}
 
 	/**
@@ -589,7 +602,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string
+	 * @return string|void
 	 */
 	public function apply_link_button( $data ) {
 		if ( ! isset( $data[0] ) ) {
@@ -613,7 +626,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string
+	 * @return string|void
 	 */
 	public function get_link( $data ) {
 		if ( ! isset( $data['type'] ) ) {
@@ -639,14 +652,90 @@ class Dynamic_Content {
 		}
 
 		if ( 'authorURL' === $data['type'] ) {
-			return get_author_posts_url( get_post_field( 'post_author', $data['context'] ) );
+			return get_author_posts_url( intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
 		if ( 'authorWebsite' === $data['type'] ) {
-			return get_the_author_meta( 'url', get_post_field( 'post_author', $data['context'] ) );
+			return get_the_author_meta( 'url', intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
 		return apply_filters( 'otter_blocks_evaluate_dynamic_content_link', '', $data );
+	}
+
+	/**
+	 * Mark the exceptions for Dynamic request.
+	 *
+	 * Features that are using complex functions like `get_content` (directly or indirectly) might not behave correctly in every situation.
+	 * Based on the context, we decide if it is safe to use those functions..
+	 *
+	 * @param array $data Dynamic request.
+	 * @return array Dynamic request with marked exceptions.
+	 */
+	public function mark_exceptions( $data ) {
+		if ( 'postExcerpt' === $data['type'] || 'postContent' === $data['type'] ) {
+			if (
+				'valid' === apply_filters( 'product_neve_license_status', false ) &&
+				class_exists( '\Neve_Pro\Modules\Custom_Layouts\Module' )
+			) {
+				$post = get_post( $data['context'] );
+				if ( isset( $post ) && 'neve_custom_layouts' === $post->post_type ) {
+					$key = $this->get_exception_key( $data, $post->ID );
+					if ( $key ) {
+						$data[ $key ] = true;
+					}
+				}
+			}
+
+			if ( 'postContent' === $data['type'] ) {
+
+				// To do not trigger postContent action if the given content contains the postContent dynamic tag, because it will cause an infinite loop.
+				$content = get_the_content( $data['context'] );
+				if ( isset( $post ) && strpos( $content, 'data-type="postContent"' ) ) {
+					$key = $this->get_exception_key( $data, $post->ID );
+					if ( $key ) {
+						$data[ $key ] = true;
+					}
+				}
+			}
+		}
+
+		if ( has_filter( 'otter_blocks_dynamic_content_exception' ) ) {
+
+			/**
+			 * Gather exceptions for Dynamic request from other plugins via hooks. Before merging the changes, we make sure that critical data is present.
+			 */
+			$data_exceptions = apply_filters( 'otter_blocks_dynamic_content_exception', $data );
+			if (
+				isset( $data_exceptions ) &&
+				is_array( $data_exceptions )
+			) {
+				$merged = array_merge( $data, $data_exceptions );
+
+				if ( isset( $merged['type'] ) && isset( $merged['context'] ) ) {
+					$data = $merged;
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get the exception key for Dynamic request.
+	 *
+	 * @param array   $data Dynamic request.
+	 * @param numeric $post_id Post ID.
+	 * @return string|null
+	 */
+	public function get_exception_key( $data, $post_id = null ) {
+		if ( null == $post_id ) {
+			$post = get_post( $data['context'] );
+			if ( isset( $post ) ) {
+				$post_id = $post->ID;
+			}
+		}
+
+		return 'exception_dynamic_content_' . $data['type'] . '_' . $post_id;
 	}
 
 	/**

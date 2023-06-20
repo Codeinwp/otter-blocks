@@ -19,30 +19,30 @@ class Form_Settings_Data {
 	/**
 	 * The name of the provider.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $provider = '';
+	private $provider;
 
 	/**
 	 * The API Key.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $api_key = '';
+	private $api_key;
 
 	/**
 	 * The contact list ID.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $list_id = '';
+	private $list_id;
 
 	/**
 	 * The name of the action.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $action = '';
+	private $action;
 
 	/**
 	 * The form has reCaptcha.
@@ -68,16 +68,16 @@ class Form_Settings_Data {
 	/**
 	 * The subject of the email.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $email_subject = '';
+	private $email_subject;
 
 	/**
 	 * The message when submit is successful.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $submit_message = '';
+	private $submit_message;
 
 	/**
 	 * The message when the email can not be send.
@@ -89,9 +89,9 @@ class Form_Settings_Data {
 	/**
 	 * The name of the sender.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $from_name = '';
+	private $from_name;
 
 	/**
 	 * The CC recipients.
@@ -199,7 +199,7 @@ class Form_Settings_Data {
 		$form_emails = get_option( 'themeisle_blocks_form_emails' );
 		$integration = new Form_Settings_Data( array() );
 		foreach ( $form_emails as $form ) {
-			if ( $form['form'] === $option_name ) {
+			if ( isset( $form['form'] ) && $form['form'] === $option_name ) {
 
 				if ( isset( $form['hasCaptcha'] ) ) {
 					$integration->set_captcha( $form['hasCaptcha'] );
@@ -225,7 +225,7 @@ class Form_Settings_Data {
 				if ( isset( $form['bcc'] ) ) {
 					$integration->set_bcc( $form['bcc'] );
 				}
-				if ( isset( $form['autoresponder'] ) ) {
+				if ( isset( $form['autoresponder'] ) && count( $form['autoresponder'] ) > 0 ) {
 					$integration->set_autoresponder( $form['autoresponder'] );
 				}
 				if ( isset( $form['integration'] ) ) {
@@ -233,7 +233,7 @@ class Form_Settings_Data {
 				}
 				if ( isset( $form['submissionsSaveLocation'] ) ) {
 					if ( '' === $form['submissionsSaveLocation'] && Pro::is_pro_active() ) {
-						$integration->set_submissions_save_location( 'database' );
+						$integration->set_submissions_save_location( 'database-email' );
 					} else {
 						$integration->set_submissions_save_location( $form['submissionsSaveLocation'] );
 					}
@@ -406,7 +406,7 @@ class Form_Settings_Data {
 	 * @since 2.0.3
 	 */
 	public function has_autoresponder() {
-		return isset( $this->autoresponder ) && ! empty( $this->autoresponder );
+		return count( $this->autoresponder ) > 0;
 	}
 
 	/**

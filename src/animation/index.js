@@ -15,6 +15,8 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
+import { select } from '@wordpress/data';
+
 /**
   * Internal dependencies.
   */
@@ -28,6 +30,9 @@ const excludedBlocks = [ 'themeisle-blocks/popup' ];
 
 const BlockAnimation = ( el, props ) => {
 	if ( hasBlockSupport( props.name, 'customClassName', true ) && ! excludedBlocks.includes( props.name ) ) {
+
+		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-animations' ) );
+
 		return (
 			<Fragment>
 				{ el }
@@ -36,7 +41,7 @@ const BlockAnimation = ( el, props ) => {
 					hasValue={ () => Boolean( props?.attributes?.className?.includes( 'animated' ) ) }
 					label={ __( 'Animations', 'otter-blocks' ) }
 					onDeselect={ () => window?.blocksAnimation?.removeAnimation() }
-					isShownByDefault={ false }
+					isShownByDefault={ showAsDefault }
 				>
 					<Edit { ...props } />
 				</ToolsPanelItem>

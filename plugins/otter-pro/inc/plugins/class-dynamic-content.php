@@ -17,7 +17,7 @@ class Dynamic_Content {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Dynamic_Content
+	 * @var Dynamic_Content|null
 	 */
 	protected static $instance = null;
 
@@ -40,7 +40,7 @@ class Dynamic_Content {
 	 * @param array  $data Content data.
 	 *
 	 * @since 2.0.5
-	 * @return bool
+	 * @return mixed
 	 */
 	public function evaluate_content( $value, $data ) {
 		if ( 'postDate' === $data['type'] ) {
@@ -89,7 +89,7 @@ class Dynamic_Content {
 	 * @param array  $data Content data.
 	 *
 	 * @since 2.0.14
-	 * @return bool
+	 * @return mixed
 	 */
 	public function evaluate_content_link( $value, $data ) {
 		if ( 'acfURL' === $data['type'] ) {
@@ -239,7 +239,7 @@ class Dynamic_Content {
 	 */
 	public function get_author_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ), get_post_field( 'post_author', $data['context'] ) );
+		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ), intval( get_post_field( 'post_author', $data['context'] ) ) );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
@@ -414,8 +414,8 @@ class Dynamic_Content {
 	/**
 	 * Evaluate dynamic media content
 	 *
-	 * @param string $path Current image path.
-	 * @param array  $request Request data.
+	 * @param string           $path Current image path.
+	 * @param \WP_REST_Request $request Request data.
 	 *
 	 * @since 2.0.9
 	 * @return string
@@ -439,7 +439,7 @@ class Dynamic_Content {
 			$image   = $product->get_image_id();
 			
 			if ( $image ) {
-				$path = wp_get_original_image_path( $image );
+				$path = wp_get_original_image_path( intval( $image ) );
 			} else {
 				$image = get_option( 'woocommerce_placeholder_image', 0 );
 
@@ -499,7 +499,7 @@ class Dynamic_Content {
 			$image   = $product->get_image_id();
 			
 			if ( $image ) {
-				$value = wp_get_attachment_image_url( $image, 'full' );
+				$value = wp_get_attachment_image_url( intval( $image ), 'full' );
 			} else {
 				$image = get_option( 'woocommerce_placeholder_image', 0 );
 
@@ -536,7 +536,7 @@ class Dynamic_Content {
 	 * @param string $url Image URL.
 	 *
 	 * @since 2.0.9
-	 * @return int
+	 * @return int|false
 	 */
 	public function get_image_id_from_url( $url ) {
 		global $wpdb;

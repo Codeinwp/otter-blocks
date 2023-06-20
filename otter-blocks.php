@@ -66,7 +66,7 @@ add_action(
 	function( $links ) {
 		array_unshift(
 			$links,
-			sprintf( '<a href="%s">%s</a>', admin_url( 'options-general.php?page=otter' ), __( 'Settings', 'otter-blocks' ) )
+			sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=otter' ), __( 'Settings', 'otter-blocks' ) )
 		);
 		return $links;
 	}

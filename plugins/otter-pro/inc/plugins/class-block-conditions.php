@@ -17,7 +17,7 @@ class Block_Conditions {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Block_Conditions
+	 * @var Block_Conditions|null
 	 */
 	protected static $instance = null;
 
@@ -290,9 +290,7 @@ class Block_Conditions {
 					return false;
 				}
 			} elseif ( ! isset( $cond_param['value'] ) ) {
-				if ( ! isset( $params[ $cond_param['key'] ] ) ) {
-					return false;
-				}
+				return false;
 			} else {
 				if ( $params[ $cond_param['key'] ] !== $cond_param['value'] ) {
 					return false;
@@ -314,13 +312,9 @@ class Block_Conditions {
 	public function has_country( $condition ) {
 		$location = Dynamic_Content::get_user_location( 'countryCode' );
 
-		if ( false !== $location ) {
-			$location = $location;
-		}
-
-		if ( ! isset( $location ) ) {
+		if ( false === $location ) {
 			return false;
-		};
+		}
 
 		if ( in_array( $location, array_map( 'strtoupper', array_map( 'trim', explode( ',', $condition['value'] ) ) ), true ) ) {
 			return true;
@@ -519,6 +513,10 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_total_cart_value( $value ) {
+		if ( ! isset( \WC()->cart->total ) ) {
+			return false;
+		}
+
 		$total = \WC()->cart->total;
 
 		if ( floatval( $value ) < floatval( $total ) ) {

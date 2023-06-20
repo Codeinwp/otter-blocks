@@ -35,7 +35,17 @@ class Posts_Grid_Block {
 		}
 
 		$get_custom_post_types_posts = function ( $post_type ) use ( $attributes, $categories ) {
-			return get_posts(
+
+			if ( 'product' === $post_type && isset( $attributes['categories'] ) ) {
+				$categories = array();
+				foreach ( $attributes['categories'] as $category ) {
+					if ( isset( $category['slug'] ) ) {
+						array_push( $categories, $category['slug'] );
+					}
+				}
+			}
+
+			return $this->get_posts(
 				apply_filters(
 					'themeisle_gutenberg_posts_block_query',
 					array(
@@ -53,7 +63,7 @@ class Posts_Grid_Block {
 			);
 		};
 
-		$recent_posts = ( isset( $attributes['postTypes'] ) && 0 < count( $attributes['postTypes'] ) ) ? array_merge( ...array_map( $get_custom_post_types_posts, $attributes['postTypes'] ) ) : get_posts(
+		$recent_posts = ( isset( $attributes['postTypes'] ) && 0 < count( $attributes['postTypes'] ) ) ? array_merge( ...array_map( $get_custom_post_types_posts, $attributes['postTypes'] ) ) : $this->get_posts(
 			apply_filters(
 				'themeisle_gutenberg_posts_block_query',
 				array(
@@ -77,26 +87,26 @@ class Posts_Grid_Block {
 				$sticky_posts = array_filter(
 					$recent_posts,
 					function ( $x ) use ( $sticky_posts_id ) {
-						return in_array( $x instanceof WP_Post ? $x->ID : $x, $sticky_posts_id );
+						return in_array( $x instanceof \WP_Post ? $x->ID : $x, $sticky_posts_id );
 					}
 				);
-		
+
 				$non_sticky_posts = array_filter(
 					$recent_posts,
 					function ( $x ) use ( $sticky_posts_id ) {
-						return ! in_array( $x instanceof WP_Post ? $x->ID : $x, $sticky_posts_id );
+						return ! in_array( $x instanceof \WP_Post ? $x->ID : $x, $sticky_posts_id );
 					}
 				);
-		
+
 				$recent_posts = array_merge( $sticky_posts, $non_sticky_posts );
 			}
 		}
 
 		$list_items_markup = '';
-	
+
 		foreach ( array_slice( $recent_posts, isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? 1 : 0 ) as $post ) {
 
-			$id = $post instanceof WP_Post ? $post->ID : $post;
+			$id = $post instanceof \WP_Post ? $post->ID : $post;
 
 			if ( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] === $id ) {
 				continue;
@@ -112,8 +122,7 @@ class Posts_Grid_Block {
 					$list_items_markup .= sprintf(
 						'<div class="o-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 						esc_url( get_the_permalink( $id ) ),
-						wp_get_attachment_image( get_post_thumbnail_id( $id ), $size ),
-						esc_html( get_the_title( $id ) ) // This does nothing?
+						wp_get_attachment_image( get_post_thumbnail_id( $id ), $size )
 					);
 				}
 			}
@@ -164,8 +173,8 @@ class Posts_Grid_Block {
 	/**
 	 * Render Post Fields
 	 *
-	 * @param WP_Post $id Post ID.
-	 * @param array   $attributes Blocks attrs.
+	 * @param \WP_Post|int $id Post ID.
+	 * @param array        $attributes Blocks attrs.
 	 *
 	 * @return string
 	 */
@@ -179,8 +188,8 @@ class Posts_Grid_Block {
 				if ( isset( $attributes['displayCategory'] ) && isset( $category[0] ) && $attributes['displayCategory'] ) {
 					$html .= sprintf(
 						'<span class="o-posts-grid-post-category"><a href="%1$s">%2$s</a></span>',
-						esc_url( get_category_link( $category[0]->cat_ID ) ),
-						esc_html( $category[0]->cat_name )
+						esc_url( get_category_link( $category[0]->term_id ) ),
+						esc_html( $category[0]->name )
 					);
 				}
 			}
@@ -222,18 +231,20 @@ class Posts_Grid_Block {
 					}
 
 					if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
+						$post_author = intval( get_post_field( 'post_author', $id ) );
+
 						$posted_on .= sprintf(
 							'%1$s <a href="%2$s">%3$s</a>',
 							__( 'by', 'otter-blocks' ),
-							esc_url( get_author_posts_url( get_post_field( 'post_author', $id ) ) ),
-							esc_html( get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) ) )
+							esc_url( get_author_posts_url( $post_author ) ),
+							esc_html( get_the_author_meta( 'display_name', $post_author ) )
 						);
 					}
 
 					$meta[] = $posted_on;
 
-					if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post->comment_count ) ) {
-						$meta[] .= sprintf(
+					if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && $post->comment_count ) {
+						$meta[] = sprintf(
 							'%1$s %2$s',
 							$post->comment_count,
 							'1' === $post->comment_count ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
@@ -247,7 +258,7 @@ class Posts_Grid_Block {
 							$output   .= sprintf(
 								'<a href="%1$s">%2$s</a>',
 								esc_url( get_category_link( $cat->term_id ) ),
-								esc_html( $cat->cat_name )
+								esc_html( $cat->name )
 							) . $separator;
 						}
 
@@ -310,23 +321,18 @@ class Posts_Grid_Block {
 	/**
 	 * Render the featured post
 	 *
-	 * @param WP_Post $post Post.
-	 * @param array   $attributes Blocks attrs.
+	 * @param \WP_Post|int $post Post.
+	 * @param array        $attributes Blocks attrs.
 	 *
 	 * @return string
 	 */
 	protected function render_featured_post( $post, $attributes ) {
-		if ( ! isset( $post ) ) {
-			return '';
-		}
-
-		$html = '';
-
-		$id        = $post instanceof WP_Post ? $post->ID : $post;
+		$html      = '';
+		$id        = $post instanceof \WP_Post ? $post->ID : $post;
 		$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
 		$thumbnail = wp_get_attachment_image( get_post_thumbnail_id( $id ), $size );
 
-		if ( isset( $thumbnail ) ) {
+		if ( $thumbnail ) {
 			$html .= sprintf(
 				'<div class="o-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 				esc_url( get_the_permalink( $id ) ),
@@ -339,5 +345,31 @@ class Posts_Grid_Block {
 		$html .= $this->get_post_fields( $id, $attributes );
 		$html .= '</div>';
 		return sprintf( '<div class="o-featured-container"><div class="o-featured-post">%1$s</div></div>', $html );
+	}
+
+	/**
+	 * Get posts to display.
+	 *
+	 * @param array $args Query args.
+	 * @return array|array[]|int[]|null[]|\WP_Post[] Posts.
+	 */
+	protected function get_posts( $args ) {
+		if ( isset( $args['post_type'] ) && 'product' === $args['post_type'] && function_exists( 'wc_get_products' ) ) {
+
+			// drop the post_type arg, as wc_get_products() doesn't support it.
+			unset( $args['post_type'] );
+
+			$products = wc_get_products( $args );
+
+			// convert to array of post objects since the rest of the code expects that.
+			return array_map(
+				function( $product ) {
+					return $product->get_id();
+				},
+				$products
+			);
+		}
+
+		return get_posts( $args );
 	}
 }

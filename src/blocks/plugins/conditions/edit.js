@@ -206,7 +206,7 @@ const AuthorsFieldToken = ( props ) => {
 		const { getUsers, isResolving } = select( 'core' );
 
 		return {
-			postAuthors: ( getUsers({ who: 'authors', context: 'view' }) ?? []).map( author => author.username ),
+			postAuthors: ( getUsers({ who: 'authors', context: 'view' }) ?? []).map( author => author.username ??  author.name ).filter( Boolean ),
 			isLoading: isResolving( 'getUsers', [{ who: 'authors', context: 'view' }])
 		};
 	}, []);
