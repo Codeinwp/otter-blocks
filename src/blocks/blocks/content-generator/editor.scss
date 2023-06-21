@@ -1,1 +1,19 @@
+.wp-block-themeisle-blocks-content-generator {
+	padding: 10px;
+	border-radius: 10px;
+	background-color: #1ee5de;
 
+	.block-editor-inner-blocks {
+		padding: 10px;
+		border-radius: 5px;
+		background-color: #fff;
+		margin: 10px 0px
+	}
+
+	.o-actions {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		align-items: baseline;
+	}
+}

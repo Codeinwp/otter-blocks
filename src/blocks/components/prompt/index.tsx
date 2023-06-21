@@ -295,7 +295,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 								onSuccess?.( result, onSuccessActions );
 							}}
 						>
-							{ __( 'Accept', 'otter-blocks' ) }
+							{ __( 'Preview', 'otter-blocks' ) }
 						</Button>
 
 					</div>

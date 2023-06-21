@@ -11,6 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { progressIcon as icon } from '../../helpers/icons.js';
 import edit from './edit.js';
+import './editor.scss';
 
 const { name } = metadata;
 
