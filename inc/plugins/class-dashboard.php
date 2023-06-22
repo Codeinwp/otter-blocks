@@ -322,16 +322,16 @@ class Dashboard {
 				$meta = get_post_meta( get_the_ID(), 'otter_form_record_meta', true );
 
 				$title = null;
-				$post  = null;
+				$date  = null;
 
-				if ( isset( $meta['post_id'] ) ) {
-					$post = get_the_title( $meta['post_id'] );
+				if ( isset( $meta['post_id']['value'] ) ) {
+					$date = get_the_date( 'F j, H:i', $meta['post_id']['value'] );
 				}
 
 				if ( isset( $meta['inputs'] ) && is_array( $meta['inputs'] ) ) {
 					// Find the first email field and use that as the title.
 					foreach ( $meta['inputs'] as $input ) {
-						if ( isset( $input['type'] ) && 'email' === $input['type'] ) {
+						if ( isset( $input['type'] ) && 'email' === $input['type'] && ! empty( $input['value'] ) ) {
 							$title = $input['value'];
 							break;
 						}
@@ -350,7 +350,7 @@ class Dashboard {
 
 				$entries[] = array(
 					'title' => $title,
-					'post'  => $post,
+					'date'  => $date,
 				);
 			}
 		}
@@ -362,7 +362,7 @@ class Dashboard {
 				justify-content: center;
 				align-items: center;
 				width: 100%;
-				margin-bottom: 10px;
+				margin-bottom: 8px;
 			}
 
 			.o-upsell-banner {
@@ -374,8 +374,7 @@ class Dashboard {
 				gap: 12px;
 				isolation: isolate;
 
-				width: 445px;
-				height: 273.4px;
+				width: fit-content;
 
 				background: #FFFFFF;
 				box-shadow: 0px 2px 25px 10px rgba(0, 0, 0, 0.08);
@@ -387,6 +386,7 @@ class Dashboard {
 				order: 0;
 				align-self: stretch;
 				flex-grow: 0;
+
 			}
 
 			.o-upsell-banner .o-banner-tile {
@@ -402,6 +402,7 @@ class Dashboard {
 				display: flex;
 				align-items: center;
 				text-align: center;
+				margin: 0px;
 			}
 
 			.o-upsell-banner a {
@@ -424,7 +425,7 @@ class Dashboard {
 			}
 
 			.otter-form-submissions-widget {
-				padding: 24px 12px 0px 12px;
+				padding: 6px 3px 0px 3px;
 			}
 
 			.otter-form-submissions-widget a {
@@ -446,6 +447,7 @@ class Dashboard {
 				flex-direction: row;
 				justify-content: space-between;
 				align-items: center;
+				font-size: 14px;
 			}
 
 
@@ -465,7 +467,7 @@ class Dashboard {
 			}
 
 			.o-entry:not(:last-child) {
-				padding-bottom: 5px;
+				padding-bottom: 6px;
 				border-bottom: 1px solid #eee;
 			}
 
@@ -514,8 +516,8 @@ class Dashboard {
 						<div class="o-banner-tile">
 							<?php esc_html_e( 'Collect your Form Submissions with Otter Blocks', 'otter-blocks' ); ?>
 						</div>
-						<p><?php esc_html_e( 'With Otter\'s pwerful features, you can store, manage and analyse your form submissions with ease - all in one place.', 'otter-blocks' ); ?></p>
-						<a href="<?php echo esc_url( Pro::get_url() ); ?>" ><?php esc_html_e( 'Upgrade to Otter Pro', 'otter-blocks' ); ?></a>
+						<p><?php esc_html_e( 'With Otter\'s powerful features, you can easily store and manage form submissions - all in one place.', 'otter-blocks' ); ?></p>
+						<a target="_blank" href="<?php echo esc_url( Pro::get_url() ); ?>" ><?php esc_html_e( 'Upgrade to Otter Pro', 'otter-blocks' ); ?></a>
 					</div>
 				</div>
 			<?php } ?>
@@ -547,10 +549,10 @@ class Dashboard {
 					<?php } else { ?>
 						<div class="o-entry header">
 							<div class="o-entry__title">
-								<?php esc_html_e( 'Email', 'otter-blocks' ); ?>
+								<?php esc_html_e( 'Submission', 'otter-blocks' ); ?>
 							</div>
 							<div class="o-entry__date">
-								<?php esc_html_e( 'Post', 'otter-blocks' ); ?>
+								<?php esc_html_e( 'Date', 'otter-blocks' ); ?>
 							</div>
 						</div>
 						<?php foreach ( $entries as $entry ) { ?>
@@ -559,7 +561,8 @@ class Dashboard {
 									<?php echo esc_html( $entry['title'] ); ?>
 								</div>
 								<div class="o-entry__date">
-									<?php echo esc_html( $entry['post'] ); ?>
+									<?php echo esc_html( $entry['date'] ); ?>
+
 								</div>
 							</div>
 						<?php } ?>
