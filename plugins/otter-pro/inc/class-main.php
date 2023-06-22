@@ -104,6 +104,7 @@ class Main {
 			'product-upsells',
 			'review-comparison',
 			'form-file',
+			'form-hidden-field',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
@@ -135,6 +136,7 @@ class Main {
 			'product-upsells'           => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Upsells_Block',
 			'review-comparison'         => '\ThemeIsle\OtterPro\Render\Review_Comparison_Block',
 			'form-file'                 => '\ThemeIsle\OtterPro\Render\Form_File_Block',
+			'form-hidden-field'         => '\ThemeIsle\OtterPro\Render\Form_Hidden_Block',
 		);
 
 		$dynamic_blocks = array_merge( $dynamic_blocks, $blocks );

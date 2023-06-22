@@ -53,7 +53,6 @@ import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
-import { Notice } from '@wordpress/components';
 
 const { attributes: defaultAttributes } = metadata;
 

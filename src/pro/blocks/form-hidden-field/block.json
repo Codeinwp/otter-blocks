@@ -1,0 +1,26 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/form-hidden-field",
+	"title": "Hidden Field",
+	"category": "themeisle-blocks",
+	"description": "A field used for adding extra metadata to the Form via URL params.",
+	"keywords": [ "metadata", "hidden", "field" ],
+	"textdomain": "otter-blocks",
+	"ancestor": [ "themeisle-blocks/form" ],
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"label": {
+			"type": "string",
+			"default": "Metadata"
+		},
+		"paramName": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	}
+}

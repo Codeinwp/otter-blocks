@@ -789,6 +789,18 @@ class Form_Emails_Storing {
 					<?php
 				}
 				break;
+			case 'hidden':
+				?>
+				<input
+					style="width: 100%; max-width: 350px;"
+					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
+					id="<?php echo intval( $id ); ?>"
+					type="text"
+					class="otter_form_record_meta__value"
+					value="<?php echo esc_html( $field['value'] ); ?>"
+				/>
+				<?php
+				break;
 			default:
 				?>
 				<input
