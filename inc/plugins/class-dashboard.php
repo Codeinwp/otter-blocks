@@ -496,7 +496,7 @@ class Dashboard {
 							// change the url param based on the value
 							const url = new URL(window.location.href);
 							url.searchParams.set('otter_form_widget_filter', value);
-							url.searchParams.set('otter_nonce', '<?php echo sanitize_text_field( wp_create_nonce( 'otter_widget_nonce' ) ); ?>')
+							url.searchParams.set('otter_nonce', '<?php echo esc_attr( wp_create_nonce( 'otter_widget_nonce' ) ); ?>')
 
 							// go to the new url using the href
 							window.location.href = url.href;
