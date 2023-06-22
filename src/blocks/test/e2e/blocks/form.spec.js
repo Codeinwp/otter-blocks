@@ -198,4 +198,42 @@ test.describe( 'Form Block', () => {
 
 		// TODO: load a file and check if it is uploaded
 	});
+
+	test( 'insert a hidden field and check if it renders in frontend', async({ page, editor }) => {
+
+		await page.waitForTimeout( 1000 );
+		await editor.insertBlock({ name: 'themeisle-blocks/form', innerBlocks: [
+			{
+				name: 'themeisle-blocks/form-hidden-field',
+				attributes: {
+					label: 'Hidden Field Test',
+					paramName: 'test'
+				}
+			}
+		] });
+
+		const blocks = await editor.getBlocks();
+
+		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
+		expect( formBlock ).toBeTruthy();
+
+		const fileHiddenBlock = formBlock.innerBlocks.find( ( block ) => 'themeisle-blocks/form-hidden-field' === block.name );
+
+		expect( fileHiddenBlock ).toBeTruthy();
+
+		const { attributes } = fileHiddenBlock;
+
+		expect( attributes.id ).toBeTruthy();
+
+		const postId = await editor.publishPost();
+
+		await page.goto( `/?p=${postId}&test=123` );
+
+		const hiddenInput = await page.locator( `#${attributes.id} input[type="hidden"]` );
+
+		expect( hiddenInput ).toBeTruthy();
+
+		await expect( hiddenInput ).toHaveAttribute( 'data-param-name', 'test' );
+
+	});
 });
