@@ -12,10 +12,6 @@ import metadata from './block.json';
 import { formFieldIcon as icon } from '../../../blocks/helpers/icons.js';
 import edit from './edit.js';
 
-import { useBlockProps } from '@wordpress/block-editor';
-import Inactive from '../../components/inactive';
-
-
 const { name } = metadata;
 
 console.log( 'Hidden Field Added' );

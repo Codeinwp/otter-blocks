@@ -1,12 +1,16 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
 
 import { Fragment, useEffect } from '@wordpress/element';
-import { RichText, useBlockProps } from '@wordpress/block-editor';
-import { _cssBlock } from '../../../blocks/helpers/helper-functions';
 import { __ } from '@wordpress/i18n';
+import { RichText, useBlockProps } from '@wordpress/block-editor';
+
+/**
+ * Internal dependencies
+ */
+
+import { _cssBlock } from '../../../blocks/helpers/helper-functions';
 import { blockInit } from '../../../blocks/helpers/block-utility';
 import metadata from '../../../blocks/blocks/form/block.json';
 const { attributes: defaultAttributes } = metadata;

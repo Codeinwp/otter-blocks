@@ -4,18 +4,20 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	InspectorControls,
-	PanelColorSettings
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
 	Button,
 	PanelBody,
-	SelectControl,
-	TextControl,
-	ToggleControl
+	TextControl
 } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
+
+/**
+ * Internal dependencies
+ */
+
 import { Notice as OtterNotice } from '../../../blocks/components';
 import { Fragment } from '@wordpress/element';
 

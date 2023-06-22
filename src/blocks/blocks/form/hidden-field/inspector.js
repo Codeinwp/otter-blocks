@@ -4,19 +4,24 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	InspectorControls,
-	PanelColorSettings
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
-	Button,
+	Button, ExternalLink,
 	PanelBody,
-	SelectControl,
-	TextControl,
-	ToggleControl
+	TextControl
 } from '@wordpress/components';
+
 import { useContext } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+
 import { FormContext } from '../edit';
+import { Notice } from '../../../components';
+import { setUtm } from '../../../helpers/helper-functions';
 
 
 /**
@@ -62,6 +67,11 @@ const Inspector = ({
 					placeholder={ __( 'e.g. utm_source', 'otter-blocks' ) }
 					disabled={true}
 				/>
+
+				<Notice
+					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'formfileblock' )}>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+					variant="upsell"
+				/> )
 			</PanelBody>
 
 		</InspectorControls>
