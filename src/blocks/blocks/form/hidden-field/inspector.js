@@ -8,8 +8,10 @@ import {
 } from '@wordpress/block-editor';
 
 import {
-	Button, ExternalLink,
+	Button,
+	ExternalLink,
 	PanelBody,
+	SelectControl,
 	TextControl
 } from '@wordpress/components';
 
@@ -22,6 +24,7 @@ import { useContext } from '@wordpress/element';
 import { FormContext } from '../edit';
 import { Notice } from '../../../components';
 import { setUtm } from '../../../helpers/helper-functions';
+import { fieldTypesOptions, switchFormFieldTo } from '../common';
 
 
 /**
@@ -50,6 +53,17 @@ const Inspector = ({
 				>
 					{ __( 'Back to the Form', 'otter-blocks' ) }
 				</Button>
+
+				<SelectControl
+					label={ __( 'Field Type', 'otter-blocks' ) }
+					value={ attributes.type ?? 'hidden' }
+					options={ fieldTypesOptions() }
+					onChange={ type => {
+						if ( 'hidden' !== type ) {
+							switchFormFieldTo( type, clientId, attributes );
+						}
+					}}
+				/>
 
 				<TextControl
 					label={ __( 'Label', 'otter-blocks' ) }

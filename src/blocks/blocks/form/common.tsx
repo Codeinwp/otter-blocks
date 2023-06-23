@@ -95,6 +95,10 @@ export const fieldTypesOptions = () => ([
 		value: 'file'
 	},
 	{
+		label: ( Boolean( window.otterPro?.isActive ) && ! Boolean( window.otterPro?.isExpired ) ) ? __( 'Hidden', 'otter-blocks' ) : __( 'Hidden (Pro)', 'otter-blocks' ),
+		value: 'hidden'
+	},
+	{
 		label: __( 'Number', 'otter-blocks' ),
 		value: 'number'
 	},
@@ -132,6 +136,7 @@ export const switchFormFieldTo = ( type?: string, clientId ?:string, attributes?
 		[ 'textarea' === type, 'form-textarea' ],
 		[ 'select' === type || 'checkbox' === type || 'radio' === type, 'form-multiple-choice' ],
 		[ 'file' === type, 'form-file' ],
+		[ 'hidden' === type, 'form-hidden-field' ],
 		[ 'form-input' ]
 	]);
 

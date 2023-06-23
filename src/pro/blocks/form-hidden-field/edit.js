@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 
-import { Fragment, useEffect } from '@wordpress/element';
+import { Fragment, useContext, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { RichText, useBlockProps } from '@wordpress/block-editor';
 
@@ -15,6 +15,7 @@ import { blockInit } from '../../../blocks/helpers/block-utility';
 import metadata from '../../../blocks/blocks/form/block.json';
 const { attributes: defaultAttributes } = metadata;
 import Inspector from './inspector';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Form Nonce component
@@ -31,6 +32,7 @@ const Edit = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
 
 	const blockProps = useBlockProps({
 		className: 'wp-block wp-block-themeisle-blocks-form-input'

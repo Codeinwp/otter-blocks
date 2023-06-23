@@ -10,6 +10,7 @@ import {
 import {
 	Button,
 	PanelBody,
+	SelectControl,
 	TextControl
 } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
@@ -20,6 +21,7 @@ import { applyFilters } from '@wordpress/hooks';
 
 import { Notice as OtterNotice } from '../../../blocks/components';
 import { Fragment } from '@wordpress/element';
+import { fieldTypesOptions, switchFormFieldTo } from '../../../blocks/blocks/form/common';
 
 
 /**
@@ -51,6 +53,17 @@ const Inspector = ({
 				>
 					{ __( 'Back to the Form', 'otter-blocks' ) }
 				</Button>
+
+				<SelectControl
+					label={ __( 'Field Type', 'otter-blocks' ) }
+					value={ attributes.type ?? 'hidden' }
+					options={ fieldTypesOptions() }
+					onChange={ type => {
+						if ( 'hidden' !== type ) {
+							switchFormFieldTo( type, clientId, attributes );
+						}
+					}}
+				/>
 
 				<TextControl
 					label={ __( 'Label', 'otter-blocks' ) }
