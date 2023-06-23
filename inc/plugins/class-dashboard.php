@@ -28,7 +28,11 @@ class Dashboard {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_add_otter_banner' ), 30 );
-		add_action( 'wp_dashboard_setup', array( $this, 'form_submissions_widget' ) );
+
+		$form_options = get_option( 'themeisle_blocks_form_emails' );
+		if ( ! empty( $form_options ) ) {
+			add_action( 'wp_dashboard_setup', array( $this, 'form_submissions_widget' ) );
+		}
 	}
 
 	/**
@@ -293,30 +297,29 @@ class Dashboard {
 
 		$query_args = array(
 			'post_type'      => 'otter_form_record',
-			'posts_per_page' => -1,
+			'posts_per_page' => 5,
 		);
 
 		if ( 'all' !== $posts_filter ) {
 			$query_args['post_status'] = $posts_filter;
 		}
 
-		$query         = new \WP_Query( $query_args );
-		$entries       = array();
-		$display_size  = 5;
-		$display_index = 0;
+		$query   = new \WP_Query( $query_args );
+		$entries = array();
 
-		$count = $query->found_posts;
+		$records_count = wp_count_posts( 'otter_form_record' );
+
+		$count = $records_count->read + $records_count->unread;
+
+		if ( 'read' === $posts_filter ) {
+			$count = $records_count->read;
+		} elseif ( 'unread' === $posts_filter ) {
+			$count = $records_count->unread;
+		}
 
 		if ( $query->have_posts() ) {
 
 			while ( $query->have_posts() ) {
-
-				$display_index ++;
-
-				if ( $display_index > $display_size ) {
-					break;
-				}
-
 				$query->the_post();
 
 				$meta = get_post_meta( get_the_ID(), 'otter_form_record_meta', true );
@@ -342,7 +345,7 @@ class Dashboard {
 				if ( ! $title ) {
 
 					if ( isset( $meta['post_id']['value'] ) ) {
-						$title = 'Submission #' . get_the_ID();
+						$title = __( 'Submission', 'otter-blocks' ) . ' #' . get_the_ID();
 					} else {
 						$title = __( 'No title', 'otter-blocks' );
 					}
