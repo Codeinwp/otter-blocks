@@ -14,19 +14,17 @@ import edit from './edit.js';
 
 const { name } = metadata;
 
-console.log( 'Hidden Field Added' );
-
 if ( ! window.themeisleGutenberg.isAncestorTypeAvailable ) {
 	metadata.parent = [ 'themeisle-blocks/form' ];
 }
 
-// if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
-// 	edit = () => <Inactive
-// 		icon={ icon }
-// 		label={ metadata.title }
-// 		blockProps={ useBlockProps() }
-// 	/>;
-// }
+if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
+	edit = () => <Inactive
+		icon={ icon }
+		label={ metadata.title }
+		blockProps={ useBlockProps() }
+	/>;
+}
 
 
 registerBlockType( name, {
