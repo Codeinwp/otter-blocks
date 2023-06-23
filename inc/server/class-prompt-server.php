@@ -106,7 +106,7 @@ class Prompt_Server {
 				$response['prompts'] = array_filter(
 					$prompts,
 					function ( $prompt ) use ( $request ) {
-						return $prompt['name'] === $request->get_param( 'name' );
+						return $prompt['otter_name'] === $request->get_param( 'name' );
 					}
 				);
 

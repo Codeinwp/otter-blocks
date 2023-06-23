@@ -124,7 +124,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	function onSubmit() {
 
-		const embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.name === promptName );
+		const embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptName );
 
 		if ( ! embeddedPrompt ) {
 			console.warn( 'Prompt not found' );
@@ -138,12 +138,14 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		setGenerationStatus( 'loading' );
 
-		sendPromptToOpenAI( value, apiKey, embeddedPrompt.prompt ).then ( ({ result, error }) => {
-			if ( error ) {
-				console.error( error );
+		sendPromptToOpenAI( value, apiKey, embeddedPrompt ).then ( ( data ) => {
+			if ( data?.error ) {
+				console.error( data?.error );
 				setGenerationStatus( 'error' );
 				return;
 			}
+
+			const result = data?.choices?.[0]?.message?.function_call?.arguments;
 
 			setGenerationStatus( 'loaded' );
 

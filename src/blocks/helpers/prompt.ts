@@ -14,6 +14,10 @@ type ChatResponse = {
 		message: {
 			content: string,
 			role: string
+			function_call?: {
+				name: string
+				arguments: string
+			}
 		}
 	}[]
 	created: number
@@ -28,19 +32,34 @@ type ChatResponse = {
 }
 
 type FormResponse = {
-	label: string
-	type: string
-	placeholder?: string
-	helpText?: string
-	choices?: string[]
-	allowedFileTypes?: string[]
-	required?: boolean
-}[]
+	fields: {
+		label: string
+		type: string
+		placeholder?: string
+		helpText?: string
+		choices?: string[]
+		allowedFileTypes?: string[]
+		required?: boolean
+	}[]
+}
+export type PromptData = {
+	otter_name: string
+	model: string
+	messages: {
+		role: string
+		content: string
+	}[]
+	functions: {
+		name: string
+		description: string
+		parameters: any
+	}
+	function_call: {
+		[key: string]: string
+	}
+}
 
-export type PromptsData = {
-	name: string
-	prompt: string
-}[]
+export type PromptsData = PromptData[]
 
 type PromptServerResponse = {
 	code: string
@@ -48,9 +67,32 @@ type PromptServerResponse = {
 	prompts: PromptsData
 }
 
-export async function sendPromptToOpenAI( prompt: string, apiKey: string, embeddedPrompt: string ) {
+export async function sendPromptToOpenAI( prompt: string, apiKey: string, embeddedPrompt: PromptData ) {
 
-	// Make a request to the OpenAI API using fetch then parse the response
+	const body = {
+		...embeddedPrompt,
+		messages: embeddedPrompt.messages.map( ( message ) => {
+			if ( 'user' === message.role && message.content.includes( '{INSERT_TASK}' ) ) {
+				return {
+					role: 'user',
+					content: message.content.replace( '{INSERT_TASK}', prompt )
+				};
+			}
+
+			return message;
+		})
+	};
+
+
+	function removeOtterKeys( obj ) {
+		for ( let key in obj ) {
+			if ( key.startsWith( 'otter_' ) ) {
+				delete obj[key];
+			}
+		}
+		return obj;
+	}
+
 
 	const response = await fetch( 'https://api.openai.com/v1/chat/completions', {
 		method: 'POST',
@@ -61,11 +103,7 @@ export async function sendPromptToOpenAI( prompt: string, apiKey: string, embedd
 			Authorization: `Bearer ${apiKey}`
 		},
 		body: JSON.stringify({
-			model: 'gpt-3.5-turbo',
-			messages: [{
-				role: 'user',
-				content: embeddedPrompt + prompt
-			}],
+			...( removeOtterKeys( body ) ),
 			temperature: 0.2,
 			// eslint-disable-next-line camelcase
 			top_p: 1,
@@ -80,12 +118,7 @@ export async function sendPromptToOpenAI( prompt: string, apiKey: string, embedd
 		};
 	}
 
-	const data = await response.json() as ChatResponse;
-
-	return {
-		result: data.choices?.[0]?.message.content ?? '',
-		error: undefined
-	};
+	return await response.json() as ChatResponse;
 }
 
 const fieldMapping = {
@@ -112,7 +145,7 @@ export function parseToDisplayPromptResponse( promptResponse: string ) {
 		return [];
 	}
 
-	return response.map( ( field ) => {
+	return response?.fields.map( ( field ) => {
 		return {
 			label: field?.label,
 			type: field?.type,
@@ -143,7 +176,7 @@ export function parseFormPromptResponseToBlocks( promptResponse: string ) {
 		return [];
 	}
 
-	return formResponse.map( ( field ) => {
+	return formResponse?.fields?.map( ( field ) => {
 		return createBlock( fieldMapping[field.type], {
 			label: field.label,
 			placeholder: field.placeholder,
