@@ -3,7 +3,7 @@ import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { RichTextEditor } from '../../../blocks/components';
 
-const AutoresponderBodyModal = ({ value, onChange }) => {
+const AutoresponderBodyModal = ({ value, onChange, area }) => {
 	const [ isOpen, setOpen ] = useState( false );
 
 	return (
@@ -19,6 +19,7 @@ const AutoresponderBodyModal = ({ value, onChange }) => {
 						onChange={ onChange }
 						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
 						allowRawHTML
+						area={ area }
 					/>
 				</Modal>
 			) }

@@ -44,7 +44,10 @@ const Autoresponder = ( Template, attributes, setAttributes ) => {
 
 							<AutoresponderBodyModal
 								value={ attributes.autoresponder?.body ?? __( 'Message example: We appreciate your recent purchase made on our website. You have received a promotional code, namely <strong>EXAMPLE</strong>, which can be applied during checkout on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>.', 'otter-blocks' ) }
-								onChange={ ( body ) => setAttributes({ autoresponder: { ...attributes.autoresponder, body }}) } />
+								onChange={ ( body ) => setAttributes({ autoresponder: { ...attributes.autoresponder, body }}) }
+								area="stripe-autoresponder"
+							/>
+
 						</Fragment>
 					)
 				}
