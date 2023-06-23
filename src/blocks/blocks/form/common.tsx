@@ -115,7 +115,7 @@ export const fieldTypesOptions = () => ([
 		value: 'textarea'
 	},
 	{
-		label: __( 'Url', 'otter-blocks' ),
+		label: __( 'URL', 'otter-blocks' ),
 		value: 'url'
 	}
 ]);
