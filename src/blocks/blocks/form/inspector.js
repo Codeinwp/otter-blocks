@@ -294,6 +294,44 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 						</div>
 
 					</ToolsPanelItem>
+					<ToolsPanelItem
+						hasValue={ () => undefined !== formOptions.webhookId }
+						label={ __( 'Webhook', 'otter-blocks' ) }
+						onDeselect={ () => setFormOption({ webhookId: undefined }) }
+						isShownByDefault={ true }
+					>
+						<SelectControl
+							label={ __( 'Webhook', 'otter-blocks' ) }
+							disabled
+							value={ undefined }
+							options={
+								[
+									{
+										label: __( 'Select Webhook', 'otter-blocks' ),
+										value: ''
+									}
+								]
+
+							}
+							onChange={ props.onChange }
+						/>
+						< br />
+						<Button
+							variant="secondary"
+							onClick={undefined}
+							disabled
+						>
+							{ __( 'Edit Webhooks', 'otter-blocks' ) }
+						</Button>
+
+						<div>
+							<Notice
+								notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+								variant="upsell"
+							/>
+							<p className="description">{ __( 'Trigger webhooks on Form submit action.', 'otter-blocks' ) }</p>
+						</div>
+					</ToolsPanelItem>
 				</Fragment>
 			) }
 		</Fragment>

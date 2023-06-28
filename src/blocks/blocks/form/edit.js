@@ -69,7 +69,8 @@ const formOptionsMap = {
 	cc: 'cc',
 	bcc: 'bcc',
 	autoresponder: 'autoresponder',
-	submissionsSaveLocation: 'submissionsSaveLocation'
+	submissionsSaveLocation: 'submissionsSaveLocation',
+	webhookId: 'webhookId'
 };
 
 /**
@@ -303,7 +304,8 @@ const Edit = ({
 			hasCaptcha: wpOptions?.hasCaptcha,
 			autoresponder: wpOptions?.autoresponder,
 			autoresponderSubject: wpOptions?.autoresponderSubject,
-			submissionsSaveLocation: wpOptions?.submissionsSaveLocation
+			submissionsSaveLocation: wpOptions?.submissionsSaveLocation,
+			webhookId: wpOptions?.webhookId
 		});
 	};
 

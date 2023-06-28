@@ -34,6 +34,7 @@ class Form_Pro_Features {
 			add_filter( 'otter_form_data_preparation', array( $this, 'load_files_to_media_library' ) );
 			add_action( 'otter_form_after_submit', array( $this, 'clean_files_from_uploads' ) );
 			add_action( 'otter_form_after_submit', array( $this, 'send_autoresponder' ), 99 );
+			add_action( 'otter_form_after_submit', array( $this, 'trigger_webhook' ) );
 		}
 	}
 
@@ -339,6 +340,93 @@ class Form_Pro_Features {
 			// phpcs:ignore
 			if ( ! wp_mail( $to, $autoresponder['subject'], $body, $headers ) ) {
 				$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_AUTORESPONDER_COULD_NOT_SEND );
+			}
+		} catch ( \Exception $e ) {
+			$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
+		} finally {
+			return $form_data;
+		}
+	}
+
+	/**
+	 * Send autoresponder email to the subscriber.
+	 *
+	 * @param Form_Data_Request|null $form_data The files to load.
+	 * @since 2.4
+	 */
+	public function trigger_webhook( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
+		if (
+			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
+			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
+			$form_data->has_error() ||
+			empty( $form_data->get_form_options()->get_webhook_id() )
+		) {
+			return $form_data;
+		}
+
+		try {
+			$form_webhook_id = $form_data->get_form_options()->get_webhook_id();
+
+			$webhooks = get_option( 'themeisle_webhooks_options', array() );
+
+			$webhook = null;
+
+			foreach ( $webhooks as $hook ) {
+				if ( $hook['id'] === $form_webhook_id ) {
+					$webhook = $hook;
+					break;
+				}
+			}
+
+			if ( ! empty( $webhook ) ) {
+				$method        = $webhook['method'];
+				$url           = $webhook['url'];
+				$headers_pairs = $webhook['headers'];
+				$headers       = array();
+
+				foreach ( $headers_pairs as $pair ) {
+					if ( empty( $pair['key'] ) || empty( $pair['value'] ) ) {
+						continue;
+					}
+					$headers[ $pair['key'] ] = $pair['value'];
+				}
+
+				$payload = array();
+				$inputs  = $form_data->get_form_inputs();
+
+				foreach ( $inputs as $input ) {
+					if ( isset( $input['id'] ) && isset( $input['value'] ) ) {
+						$input['id'] = str_replace( 'wp-block-themeisle-blocks-form-', '', $input['id'] );
+
+						$payload[ $input['id'] ] = $input['value'];
+					}
+				}
+
+				$payload = wp_json_encode( $payload );
+
+				$response = wp_remote_request(
+					$url,
+					array(
+						'method'  => $method,
+						'headers' => $headers,
+						'body'    => $payload,
+					)
+				);
+
+				if ( is_wp_error( $response ) ) {
+					$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER, $response->get_error_message() );
+
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						// TODO: use logger.
+						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+						error_log( __( '[Otter Webhook]', 'otter-blocks' ) . $response->get_error_message() );
+					}
+				}
 			}
 		} catch ( \Exception $e ) {
 			$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
