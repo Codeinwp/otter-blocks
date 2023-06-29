@@ -116,12 +116,14 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 									help={ __( 'Enter the URL to send the data to.', 'otter-blocks' )}
 									value={name}
 									onChange={setName}
+									placeholder={ __( 'My Webhook', 'otter-blocks' )}
 								/>
 								<TextControl
 									label={ __( 'URL', 'otter-blocks' ) }
 									help={ __( 'Enter the URL to send the data to.', 'otter-blocks' )}
 									value={url}
 									onChange={setUrl}
+									placeholder={ __( 'https://example.com', 'otter-blocks' )}
 								/>
 								<SelectControl
 									label={ __( 'Method', 'otter-blocks' ) }
@@ -281,14 +283,14 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 
 								</div>
 
-								<div className="o-webhook-actions" style={{ justifyContent: 'center' }}>
+								<div className="o-webhook-actions" style={{ justifyContent: 'center', marginTop: '10px' }}>
 									<Button
 										variant={ 'primary' }
 										onClick={() => {
 											setId( `w-${uuidv4()}` );
-											setName( 'New Webhook' );
-											setUrl( 'example.com' );
-											setMethod( 'GET' );
+											setName( '' );
+											setUrl( '' );
+											setMethod( 'POST' );
 											setHeaders([]);
 										}}>
 										{ __( 'Add New Webhook', 'otter-blocks' ) }

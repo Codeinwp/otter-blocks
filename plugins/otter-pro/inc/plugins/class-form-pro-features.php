@@ -397,13 +397,55 @@ class Form_Pro_Features {
 				}
 
 				$payload = array();
-				$inputs  = $form_data->get_form_inputs();
+
+				$inputs         = $form_data->get_form_inputs();
+				$uploaded_files = $form_data->get_uploaded_files_path();
+				$media_files    = $form_data->get_files_loaded_to_media_library();
 
 				foreach ( $inputs as $input ) {
 					if ( isset( $input['id'] ) && isset( $input['value'] ) ) {
-						$input['id'] = str_replace( 'wp-block-themeisle-blocks-form-', '', $input['id'] );
+						$key   = str_replace( 'wp-block-themeisle-blocks-form-', '', $input['id'] );
+						$value = $input['value'];
 
-						$payload[ $input['id'] ] = $input['value'];
+						if ( ! empty( $input['metadata']['mappedName'] ) ) {
+							$key = $input['metadata']['mappedName'];
+						}
+
+						$is_file_field = ! empty( $input['type'] ) && 'file' === $input['type'];
+
+						if ( $is_file_field && ! empty( $input['metadata']['data'] ) ) {
+							$file_data_key = $input['metadata']['data'];
+
+							if ( ! empty( $uploaded_files[ $file_data_key ] ) ) {
+								$value = $uploaded_files[ $file_data_key ]['file_path'];
+
+								/**
+								 * If the file was uploaded to the media library, we use the URL instead of the path.
+								 */
+								if ( ! empty( $uploaded_files[ $file_data_key ]['file_url'] ) ) {
+									$value = $uploaded_files[ $file_data_key ]['file_url'];
+								}
+							}
+						}
+
+
+						if ( array_key_exists( $key, $payload ) ) {
+							if ( is_array( $payload[ $key ] ) ) {
+								$payload[ $key ][] = $value;
+							} else {
+								/**
+								 * Overwrite the value if it's not an array.
+								 */
+								$payload[ $key ] = $value;
+							}
+						} elseif ( $is_file_field ) {
+							/**
+							 * If the field is a file field, we need to make sure the value is an array.
+							 */
+							$payload[ $key ] = array( $value );
+						} else {
+							$payload[ $key ] = $value;
+						}
 					}
 				}
 

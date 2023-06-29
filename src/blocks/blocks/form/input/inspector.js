@@ -16,8 +16,9 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 import { FieldInputWidth, fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
-import { useContext } from '@wordpress/element';
+import { Fragment, useContext } from '@wordpress/element';
 import { FormContext } from '../edit';
+import { HTMLAnchorControl } from '../../../components';
 
 /**
  *
@@ -35,78 +36,92 @@ const Inspector = ({
 	} = useContext( FormContext );
 
 	return (
-		<InspectorControls>
-			<PanelBody
-				title={ __( 'Field Settings', 'otter-blocks' ) }
-			>
-				<Button
-					isSecondary
-					variant="secondary"
-					onClick={ () => selectForm?.() }
+		<Fragment>
+			<InspectorControls>
+				<PanelBody
+					title={ __( 'Field Settings', 'otter-blocks' ) }
 				>
-					{ __( 'Back to the Form', 'otter-blocks' ) }
-				</Button>
+					<Button
+						isSecondary
+						variant="secondary"
+						onClick={ () => selectForm?.() }
+					>
+						{ __( 'Back to the Form', 'otter-blocks' ) }
+					</Button>
 
-				<SelectControl
-					label={ __( 'Field Type', 'otter-blocks' ) }
-					value={ attributes.type }
-					options={ fieldTypesOptions() }
-					onChange={ type => {
-						if ( 'textarea' === type || 'radio' === type || 'checkbox' === type || 'select' === type || 'file' === type ) {
-							switchFormFieldTo( type, clientId, attributes );
-							return;
-						}
+					<SelectControl
+						label={ __( 'Field Type', 'otter-blocks' ) }
+						value={ attributes.type }
+						options={ fieldTypesOptions() }
+						onChange={ type => {
+							if ( 'textarea' === type || 'radio' === type || 'checkbox' === type || 'select' === type || 'file' === type ) {
+								switchFormFieldTo( type, clientId, attributes );
+								return;
+							}
 
-						setAttributes({ type });
-					}}
-				/>
+							setAttributes({ type });
+						}}
+					/>
 
-				<TextControl
-					label={ __( 'Label', 'otter-blocks' ) }
-					value={ attributes.label }
-					onChange={ label => setAttributes({ label }) }
-				/>
+					<TextControl
+						label={ __( 'Label', 'otter-blocks' ) }
+						value={ attributes.label }
+						onChange={ label => setAttributes({ label }) }
+					/>
 
-				<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
+					<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
 
-				<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
+					<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
 
-				{
-					( 'date' !== attributes.type || undefined === attributes.type ) && (
-						<TextControl
-							label={ __( 'Placeholder', 'otter-blocks' ) }
-							value={ attributes.placeholder }
-							onChange={ placeholder => setAttributes({ placeholder }) }
-						/>
-					)
-				}
-
-				<TextControl
-					label={ __( 'Help Text', 'otter-blocks' ) }
-					value={ attributes.helpText }
-					onChange={ helpText => setAttributes({ helpText }) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Required', 'otter-blocks' ) }
-					help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
-					checked={ attributes.isRequired }
-					onChange={ isRequired => setAttributes({ isRequired }) }
-				/>
-			</PanelBody>
-
-			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
-				initialOpen={ false }
-				colorSettings={ [
 					{
-						value: attributes.labelColor,
-						onChange: labelColor => setAttributes({ labelColor }),
-						label: __( 'Label Color', 'otter-blocks' )
+						( 'date' !== attributes.type || undefined === attributes.type ) && (
+							<TextControl
+								label={ __( 'Placeholder', 'otter-blocks' ) }
+								value={ attributes.placeholder }
+								onChange={ placeholder => setAttributes({ placeholder }) }
+							/>
+						)
 					}
-				] }
+
+					<TextControl
+						label={ __( 'Help Text', 'otter-blocks' ) }
+						value={ attributes.helpText }
+						onChange={ helpText => setAttributes({ helpText }) }
+					/>
+
+					<ToggleControl
+						label={ __( 'Required', 'otter-blocks' ) }
+						help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
+						checked={ attributes.isRequired }
+						onChange={ isRequired => setAttributes({ isRequired }) }
+					/>
+
+					<TextControl
+						label={ __( 'Mapped Name', 'otter-blocks' ) }
+						help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+						value={ attributes.mappedName }
+						onChange={ mappedName => setAttributes({ mappedName }) }
+						placeholder={ __( 'first_name', 'otter-blocks' ) }
+					/>
+				</PanelBody>
+
+				<PanelColorSettings
+					title={ __( 'Color', 'otter-blocks' ) }
+					initialOpen={ false }
+					colorSettings={ [
+						{
+							value: attributes.labelColor,
+							onChange: labelColor => setAttributes({ labelColor }),
+							label: __( 'Label Color', 'otter-blocks' )
+						}
+					] }
+				/>
+			</InspectorControls>
+			<HTMLAnchorControl
+				value={ attributes.id }
+				onChange={ value => setAttributes({ id: value }) }
 			/>
-		</InspectorControls>
+		</Fragment>
 	);
 };
 

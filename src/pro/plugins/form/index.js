@@ -330,6 +330,14 @@ const FormFileInspector = ( Template, {
 				onChange={ isRequired => setAttributes({ isRequired }) }
 			/>
 
+			<TextControl
+				label={ __( 'Mapped Name', 'otter-blocks' ) }
+				help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+				value={ attributes.mappedName }
+				onChange={ mappedName => setAttributes({ mappedName }) }
+				placeholder={ __( 'photos', 'otter-blocks' ) }
+			/>
+
 			<ToggleControl
 				label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
 				checked={ Boolean( attributes.multipleFiles ) }
