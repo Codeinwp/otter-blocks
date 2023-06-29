@@ -180,3 +180,24 @@ svg.o-block-icon {
 	}
 }
 
+.o-webhooks {
+	display: flex;
+	flex-direction: column;
+
+	&> .o-options-global-defaults {
+		max-height: 500px;
+		overflow-y: auto;
+
+		.o-options-block-item .o-options-block-item-label {
+			margin-left: 10px;
+			flex-grow: 1;
+		}
+	}
+
+	.o-webhook-add {
+		display: flex;
+		justify-content: center;
+		margin-top: 10px;
+	}
+}
+

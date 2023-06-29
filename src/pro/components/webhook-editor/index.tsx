@@ -254,14 +254,14 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 								</div>
 							</Fragment>
 						) : (
-							<Fragment>
-								<div className="o-options-global-defaults" style={{ maxHeight: '500px', overflowY: 'auto' }}>
+							<div className="o-webhooks">
+								<div className="o-options-global-defaults">
 									{
 										webhooks?.map( ( webhook ) => {
 											return (
 												<div className="o-options-block-item">
 
-													<div className="o-options-block-item-label" style={{ marginLeft: '10px', flexGrow: '1' }}>
+													<div className="o-options-block-item-label">
 														{ webhook.name }
 													</div>
 													<Button
@@ -283,7 +283,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 
 								</div>
 
-								<div className="o-webhook-actions" style={{ justifyContent: 'center', marginTop: '10px' }}>
+								<div className="o-webhook-add">
 									<Button
 										variant={ 'primary' }
 										onClick={() => {
@@ -296,7 +296,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 										{ __( 'Add New Webhook', 'otter-blocks' ) }
 									</Button>
 								</div>
-							</Fragment>
+							</div>
 						)
 					}
 
@@ -354,6 +354,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 			<Button
 				variant="secondary"
 				onClick={() => setOpen( true )}
+				className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
 			>
 				{ __( 'Edit Webhooks', 'otter-blocks' ) }
 			</Button>
