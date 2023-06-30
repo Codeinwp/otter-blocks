@@ -401,6 +401,8 @@ class Dashboard {
 				font-weight: 600;
 				font-size: 16px;
 				line-height: 150%;
+				display: flex;
+				justify-content: center;
 			}
 
 			.o-upsell-banner p {
