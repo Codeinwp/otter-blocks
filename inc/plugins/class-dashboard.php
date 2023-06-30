@@ -291,70 +291,75 @@ class Dashboard {
 	 */
 	public function form_submissions_widget_content() {
 
-		$is_active = Pro::is_pro_active();
+		$is_active    = Pro::is_pro_active();
+		$entries      = array();
+		$count        = 0;
+		$posts_filter = 'all';
 
-		$posts_filter = isset( $_GET['otter_nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['otter_nonce'] ), 'otter_widget_nonce' ) && isset( $_GET['otter_form_widget_filter'] ) ? sanitize_key( $_GET['otter_form_widget_filter'] ) : 'all';
+		if ( $is_active ) {
+			$posts_filter = isset( $_GET['otter_nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['otter_nonce'] ), 'otter_widget_nonce' ) && isset( $_GET['otter_form_widget_filter'] ) ? sanitize_key( $_GET['otter_form_widget_filter'] ) : 'all';
 
-		$query_args = array(
-			'post_type'      => 'otter_form_record',
-			'posts_per_page' => 5,
-		);
+			$query_args = array(
+				'post_type'      => 'otter_form_record',
+				'posts_per_page' => 5,
+			);
 
-		if ( 'all' !== $posts_filter ) {
-			$query_args['post_status'] = $posts_filter;
-		}
+			if ( 'all' !== $posts_filter ) {
+				$query_args['post_status'] = $posts_filter;
+			}
 
-		$query   = new \WP_Query( $query_args );
-		$entries = array();
-
-		$records_count = wp_count_posts( 'otter_form_record' );
-
-		$count = $records_count->read + $records_count->unread;
-
-		if ( 'read' === $posts_filter ) {
-			$count = $records_count->read;
-		} elseif ( 'unread' === $posts_filter ) {
-			$count = $records_count->unread;
-		}
-
-		if ( $query->have_posts() ) {
-
-			while ( $query->have_posts() ) {
-				$query->the_post();
-
-				$meta = get_post_meta( get_the_ID(), 'otter_form_record_meta', true );
-
-				$title = null;
-				$date  = null;
-
-				if ( isset( $meta['post_id']['value'] ) ) {
-					$date = get_the_date( 'F j, H:i', $meta['post_id']['value'] );
-				}
-
-				if ( isset( $meta['inputs'] ) && is_array( $meta['inputs'] ) ) {
-					// Find the first email field and use that as the title.
-					foreach ( $meta['inputs'] as $input ) {
-						if ( isset( $input['type'] ) && 'email' === $input['type'] && ! empty( $input['value'] ) ) {
-							$title = $input['value'];
-							break;
-						}
-					}
-				}
+			$query = new \WP_Query( $query_args );
 
 
-				if ( ! $title ) {
+			$records_count = wp_count_posts( 'otter_form_record' );
+
+			$count = $records_count->read + $records_count->unread;
+
+			if ( 'read' === $posts_filter ) {
+				$count = $records_count->read;
+			} elseif ( 'unread' === $posts_filter ) {
+				$count = $records_count->unread;
+			}
+
+			if ( $query->have_posts() ) {
+
+				while ( $query->have_posts() ) {
+					$query->the_post();
+
+					$meta = get_post_meta( get_the_ID(), 'otter_form_record_meta', true );
+
+					$title = null;
+					$date  = null;
 
 					if ( isset( $meta['post_id']['value'] ) ) {
-						$title = __( 'Submission', 'otter-blocks' ) . ' #' . get_the_ID();
-					} else {
-						$title = __( 'No title', 'otter-blocks' );
+						$date = get_the_date( 'F j, H:i', $meta['post_id']['value'] );
 					}
-				}
 
-				$entries[] = array(
-					'title' => $title,
-					'date'  => $date,
-				);
+					if ( isset( $meta['inputs'] ) && is_array( $meta['inputs'] ) ) {
+						// Find the first email field and use that as the title.
+						foreach ( $meta['inputs'] as $input ) {
+							if ( isset( $input['type'] ) && 'email' === $input['type'] && ! empty( $input['value'] ) ) {
+								$title = $input['value'];
+								break;
+							}
+						}
+					}
+
+
+					if ( ! $title ) {
+
+						if ( isset( $meta['post_id']['value'] ) ) {
+							$title = __( 'Submission', 'otter-blocks' ) . ' #' . get_the_ID();
+						} else {
+							$title = __( 'No title', 'otter-blocks' );
+						}
+					}
+
+					$entries[] = array(
+						'title' => $title,
+						'date'  => $date,
+					);
+				}
 			}
 		}
 
@@ -496,7 +501,6 @@ class Dashboard {
 					if (select && entriesContainer) {
 						select.addEventListener('change', (e) => {
 							const value = e.target.value;
-							console.log(value);
 
 							// change the url param based on the value
 							const url = new URL(window.location.href);
