@@ -18,6 +18,12 @@
 		},
 		"paramName": {
 			"type": "string"
+		},
+		"mappedName": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "number"
 		}
 	},
 	"supports": {

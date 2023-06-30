@@ -33,14 +33,15 @@ class Form_Hidden_Block {
 		$id          = isset( $attributes['id'] ) ? $attributes['id'] : '';
 		$label       = isset( $attributes['label'] ) ? $attributes['label'] : __( 'Hidden Field', 'otter-blocks' );
 		$param_name  = isset( $attributes['paramName'] ) ? $attributes['paramName'] : '';
+		$mapped_name = isset( $attributes['mappedName'] ) ? $attributes['mappedName'] : 'field-' . $id;
 
 
 		$output = '<div style="display: none;" class="' . $class_names . '" id="' . $id . '">';
 
-		$output .= '<label class="otter-form-input-label" for="field-' . $id . '">' . $label . '</label>';
+		$output .= '<label class="otter-form-input-label" for="' . $mapped_name . '">' . $label . '</label>';
 
-		$output .= '<input type="hidden" class="otter-form-input" name="field-'
-			. $id . '" '
+		$output .= '<input type="hidden" class="otter-form-input" name="'
+			. $mapped_name . '" '
 			. ( ! empty( $param_name ) ? 'data-param-name="' . $param_name . '"' : '' )
 			. ' />';
 

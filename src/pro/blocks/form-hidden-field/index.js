@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { registerBlockType } from '@wordpress/blocks';
+import { createBlock, registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -11,6 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { formFieldIcon as icon } from '../../../blocks/helpers/icons.js';
 import edit from './edit.js';
+import { omit } from 'lodash';
 
 const { name } = metadata;
 
@@ -31,5 +32,49 @@ registerBlockType( name, {
 	...metadata,
 	icon,
 	edit,
-	save: () => null
+	save: () => null,
+	transforms: {
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-input' ],
+				transform: ( attributes ) => {
+
+					return createBlock( 'themeisle-blocks/form-input', {
+						...attributes
+					});
+				}
+			},
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-textarea' ],
+				transform: ( attributes ) => {
+					const attrs = omit( attributes, [ 'type' ]);
+					return createBlock( 'themeisle-blocks/form-textarea', {
+						...attrs
+					});
+				}
+			},
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-multiple-choice' ],
+				transform: ( attributes ) => {
+					const attrs = omit( attributes, [ 'type' ]);
+					return createBlock( 'themeisle-blocks/form-multiple-choice', {
+						...attrs
+					});
+				}
+			},
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-file' ],
+				transform: ( attributes ) => {
+					const attrs = omit( attributes, [ 'type' ]);
+					return createBlock( 'themeisle-blocks/form-file', {
+						...attrs
+					});
+				}
+			}
+		]
+	}
 });

@@ -13,9 +13,9 @@ import { RichText, useBlockProps } from '@wordpress/block-editor';
 import { _cssBlock } from '../../../blocks/helpers/helper-functions';
 import { blockInit } from '../../../blocks/helpers/block-utility';
 import metadata from '../../../blocks/blocks/form/block.json';
-const { attributes: defaultAttributes } = metadata;
 import Inspector from './inspector';
-import { useSelect } from '@wordpress/data';
+
+const { attributes: defaultAttributes } = metadata;
 
 /**
  * Form Nonce component
@@ -57,7 +57,7 @@ const Edit = ({
 					}
 				</style>
 				<label
-					htmlFor={ attributes.id }
+					htmlFor={ attributes.mappedName ?? attributes.id }
 					className="otter-form-input-label"
 				>
 					<span className="o-hidden-field-mark">
@@ -67,15 +67,15 @@ const Edit = ({
 						placeholder={ __( 'Type here…', 'otter-blocks' ) }
 						className="otter-form-input-label__label"
 						value={ attributes.label }
-						onChange={ label => setAttributes({ label }) }
+						onChange={ label  => setAttributes({ label }) }
 						tagName="span"
 					/>
 				</label>
 
 				<input
-					type={ attributes.type }
+					type="text"
 					placeholder={ placeholder }
-					name={ attributes.id }
+					name={ attributes.mappedName ?? attributes.id }
 					id={ attributes.id }
 					required={ attributes.isRequired }
 					disabled

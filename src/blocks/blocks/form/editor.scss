@@ -50,9 +50,17 @@
 	}
 }
 
+.wp-block-themeisle-blocks-form-hidden-field {
+	label {
+		position: relative;
+	}
+}
+
 .o-hidden-field-mark {
-	padding: 5px 10px;
-	background-color: var(--label-color, #2B2784);
+	position: absolute;
+	right: 0px;
+	padding: 0px 10px;
+	background-color: var(--label-color, #ed6f57);
 	color: white;
 	border-radius: 5px;
 	margin-right: 5px;

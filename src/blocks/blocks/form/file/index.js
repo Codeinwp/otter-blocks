@@ -70,6 +70,16 @@ if ( ! Boolean( window.themeisleGutenberg.hasPro ) ) {
 							...attrs
 						});
 					}
+				},
+				{
+					type: 'block',
+					blocks: [ 'themeisle-blocks/form-hidden-field' ],
+					transform: ( attributes ) => {
+						const attrs = omit( attributes, [ 'type' ]);
+						return createBlock( 'themeisle-blocks/form-hidden-field', {
+							...attrs
+						});
+					}
 				}
 			]
 		}

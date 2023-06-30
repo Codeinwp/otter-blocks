@@ -12,12 +12,22 @@
 		"id": {
 			"type": "string"
 		},
+		"type": {
+			"type": "string",
+			"default": "hidden"
+		},
 		"label": {
 			"type": "string",
 			"default": "Metadata"
 		},
 		"paramName": {
 			"type": "string"
+		},
+		"mappedName": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "number"
 		}
 	},
 	"supports": {

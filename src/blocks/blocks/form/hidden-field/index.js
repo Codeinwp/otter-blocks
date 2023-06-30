@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { registerBlockType } from '@wordpress/blocks';
+import { createBlock, registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -11,6 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import { formFieldIcon as icon } from '../../../helpers/icons.js';
 import Inspector from '../file/inspector';
+import { omit } from 'lodash';
 
 const { name } = metadata;
 
@@ -35,7 +36,51 @@ if ( ! Boolean( window.themeisleGutenberg.hasPro ) ) {
 				<Inspector { ...props } />
 			);
 		},
-		save: () => null
+		save: () => null,
+		transforms: {
+			to: [
+				{
+					type: 'block',
+					blocks: [ 'themeisle-blocks/form-input' ],
+					transform: ( attributes ) => {
+
+						return createBlock( 'themeisle-blocks/form-input', {
+							...attributes
+						});
+					}
+				},
+				{
+					type: 'block',
+					blocks: [ 'themeisle-blocks/form-textarea' ],
+					transform: ( attributes ) => {
+						const attrs = omit( attributes, [ 'type' ]);
+						return createBlock( 'themeisle-blocks/form-textarea', {
+							...attrs
+						});
+					}
+				},
+				{
+					type: 'block',
+					blocks: [ 'themeisle-blocks/form-multiple-choice' ],
+					transform: ( attributes ) => {
+						const attrs = omit( attributes, [ 'type' ]);
+						return createBlock( 'themeisle-blocks/form-multiple-choice', {
+							...attrs
+						});
+					}
+				},
+				{
+					type: 'block',
+					blocks: [ 'themeisle-blocks/form-file' ],
+					transform: ( attributes ) => {
+						const attrs = omit( attributes, [ 'type' ]);
+						return createBlock( 'themeisle-blocks/form-file', {
+							...attrs
+						});
+					}
+				}
+			]
+		}
 	});
 
 }

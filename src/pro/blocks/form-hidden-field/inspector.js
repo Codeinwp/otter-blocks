@@ -14,15 +14,15 @@ import {
 	TextControl
 } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
+import { Fragment } from '@wordpress/element';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 
 import { Notice as OtterNotice } from '../../../blocks/components';
-import { Fragment } from '@wordpress/element';
 import { fieldTypesOptions, switchFormFieldTo } from '../../../blocks/blocks/form/common';
-import { dispatch } from '@wordpress/data';
 
 
 /**
