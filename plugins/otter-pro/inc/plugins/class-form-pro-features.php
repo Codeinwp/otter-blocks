@@ -393,14 +393,14 @@ class Form_Pro_Features {
 					if ( empty( $pair['key'] ) || empty( $pair['value'] ) ) {
 						continue;
 					}
-					$headers[ $pair['key'] ] = $pair['value'];
+
+					$headers[] = $pair['key'] . ': ' . $pair['value'];
 				}
 
 				$payload = array();
 
 				$inputs         = $form_data->get_form_inputs();
 				$uploaded_files = $form_data->get_uploaded_files_path();
-				$media_files    = $form_data->get_files_loaded_to_media_library();
 
 				foreach ( $inputs as $input ) {
 					if ( isset( $input['id'] ) && isset( $input['value'] ) ) {

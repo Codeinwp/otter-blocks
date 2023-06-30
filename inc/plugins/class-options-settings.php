@@ -536,9 +536,10 @@ class Options_Settings {
 							if ( isset( $item['method'] ) ) {
 								$item['method'] = sanitize_text_field( $item['method'] );
 							}
-							if ( isset( $item['headers'] ) && is_array( $item['headers'] ) && count( array_keys( $item['headers'] ) ) > 0 ) {
-								foreach ( $item['headers'] as $key => $value ) {
-									$item['headers'][ $key ] = sanitize_text_field( $value );
+							if ( isset( $item['headers'] ) && is_array( $item['headers'] ) ) {
+								foreach ( $item['headers'] as &$header ) {
+									$header['key']   = sanitize_text_field( $header['key'] );
+									$header['value'] = sanitize_text_field( $header['value'] );
 								}
 							} else {
 								$item['headers'] = array();
