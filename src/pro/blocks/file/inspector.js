@@ -20,10 +20,14 @@ import {
 } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
 import { Fragment } from '@wordpress/element';
+import { dispatch } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
 import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../../../blocks/blocks/form/common';
 import { Notice } from '../../../blocks/components';
 import { setUtm } from '../../../blocks/helpers/helper-functions';
-import { dispatch } from '@wordpress/data';
 
 
 const ProPreview = ({ attributes }) => {
@@ -72,6 +76,14 @@ const ProPreview = ({ attributes }) => {
 					label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
 					checked={ attributes.multipleFiles }
 					onChange={ () => {} }
+				/>
+
+				<TextControl
+					label={ __( 'Mapped Name', 'otter-blocks' ) }
+					help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+					value={ attributes.mappedName }
+					onChange={ () => {} }
+					placeholder={ __( 'photos', 'otter-blocks' ) }
 				/>
 
 				{

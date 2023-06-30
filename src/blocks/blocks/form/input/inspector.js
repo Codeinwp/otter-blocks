@@ -15,8 +15,12 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
-import { FieldInputWidth, fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
 import { Fragment, useContext } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { FieldInputWidth, fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
 import { FormContext } from '../edit';
 import { HTMLAnchorControl } from '../../../components';
 

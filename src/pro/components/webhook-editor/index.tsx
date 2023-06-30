@@ -1,4 +1,11 @@
-import { Fragment } from 'react';
+/**
+ * External dependencies
+ */
+import { v4 as uuidv4 } from 'uuid';
+
+/**
+ * WordPress dependencies
+ */
 import {
 	BaseControl,
 	Button,
@@ -7,13 +14,15 @@ import {
 	Notice,
 	SelectControl,
 	Spinner,
-	TabPanel,
 	TextControl
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from '@wordpress/element';
-import { arrowRight, closeSmall, trash } from '@wordpress/icons';
-import { v4 as uuidv4 } from 'uuid';
+import { useEffect, useState, Fragment } from '@wordpress/element';
+import { arrowRight, closeSmall } from '@wordpress/icons';
+
+/**
+ * Internal dependencies
+ */
 import useSettings from '../../../blocks/helpers/use-settings';
 
 
@@ -46,7 +55,6 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 
 	const fetchWebhook = () => {
 		const hooksOptions = getOption?.( 'themeisle_webhooks_options' );
-		console.log( hooksOptions );
 
 		if ( hooksOptions ) {
 			setWebhooks( hooksOptions );

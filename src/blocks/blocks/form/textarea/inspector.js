@@ -12,9 +12,13 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
+import { Fragment, useContext } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
 import { FieldInputWidth, fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
 import { FormContext } from '../edit';
-import { Fragment, useContext } from '@wordpress/element';
 import { HTMLAnchorControl } from '../../../components';
 
 const Inspector = ({

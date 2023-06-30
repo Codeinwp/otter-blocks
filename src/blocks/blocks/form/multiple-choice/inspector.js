@@ -16,10 +16,13 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
+import { Fragment, useContext } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
 import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
 import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
-import { Fragment, useContext } from '@wordpress/element';
 import { FormContext } from '../edit.js';
 import { HTMLAnchorControl } from '../../../components';
 
