@@ -35,7 +35,17 @@ class Posts_Grid_Block {
 		}
 
 		$get_custom_post_types_posts = function ( $post_type ) use ( $attributes, $categories ) {
-			return get_posts(
+
+			if ( 'product' === $post_type && isset( $attributes['categories'] ) ) {
+				$categories = array();
+				foreach ( $attributes['categories'] as $category ) {
+					if ( isset( $category['slug'] ) ) {
+						array_push( $categories, $category['slug'] );
+					}
+				}
+			}
+
+			return $this->get_posts(
 				apply_filters(
 					'themeisle_gutenberg_posts_block_query',
 					array(
@@ -53,7 +63,7 @@ class Posts_Grid_Block {
 			);
 		};
 
-		$recent_posts = ( isset( $attributes['postTypes'] ) && 0 < count( $attributes['postTypes'] ) ) ? array_merge( ...array_map( $get_custom_post_types_posts, $attributes['postTypes'] ) ) : get_posts(
+		$recent_posts = ( isset( $attributes['postTypes'] ) && 0 < count( $attributes['postTypes'] ) ) ? array_merge( ...array_map( $get_custom_post_types_posts, $attributes['postTypes'] ) ) : $this->get_posts(
 			apply_filters(
 				'themeisle_gutenberg_posts_block_query',
 				array(
@@ -80,20 +90,20 @@ class Posts_Grid_Block {
 						return in_array( $x instanceof \WP_Post ? $x->ID : $x, $sticky_posts_id );
 					}
 				);
-		
+
 				$non_sticky_posts = array_filter(
 					$recent_posts,
 					function ( $x ) use ( $sticky_posts_id ) {
 						return ! in_array( $x instanceof \WP_Post ? $x->ID : $x, $sticky_posts_id );
 					}
 				);
-		
+
 				$recent_posts = array_merge( $sticky_posts, $non_sticky_posts );
 			}
 		}
 
 		$list_items_markup = '';
-	
+
 		foreach ( array_slice( $recent_posts, isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? 1 : 0 ) as $post ) {
 
 			$id = $post instanceof \WP_Post ? $post->ID : $post;
@@ -335,5 +345,31 @@ class Posts_Grid_Block {
 		$html .= $this->get_post_fields( $id, $attributes );
 		$html .= '</div>';
 		return sprintf( '<div class="o-featured-container"><div class="o-featured-post">%1$s</div></div>', $html );
+	}
+
+	/**
+	 * Get posts to display.
+	 *
+	 * @param array $args Query args.
+	 * @return array|array[]|int[]|null[]|\WP_Post[] Posts.
+	 */
+	protected function get_posts( $args ) {
+		if ( isset( $args['post_type'] ) && 'product' === $args['post_type'] && function_exists( 'wc_get_products' ) ) {
+
+			// drop the post_type arg, as wc_get_products() doesn't support it.
+			unset( $args['post_type'] );
+
+			$products = wc_get_products( $args );
+
+			// convert to array of post objects since the rest of the code expects that.
+			return array_map(
+				function( $product ) {
+					return $product->get_id();
+				},
+				$products
+			);
+		}
+
+		return get_posts( $args );
 	}
 }

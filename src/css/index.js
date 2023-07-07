@@ -33,6 +33,7 @@ import CSSEditor from './editor.js';
 import './inject-css.js';
 
 import { onDeselect } from './inject-css.js';
+import { select } from '@wordpress/data';
 
 const addAttribute = ( settings ) => {
 	if ( hasBlockSupport( settings, 'customClassName', true ) ) {
@@ -76,6 +77,8 @@ const Edit = ({
 
 const BlockCSSWrapper = ( el, props ) => {
 	if ( hasBlockSupport( props.name, 'customClassName', true ) ) {
+		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-custom-css' ) );
+
 		return (
 			<Fragment>
 				{ el }
@@ -91,7 +94,7 @@ const BlockCSSWrapper = ( el, props ) => {
 
 						onDeselect();
 					} }
-					isShownByDefault={ false }
+					isShownByDefault={ showAsDefault }
 				>
 					<Edit { ...props } />
 				</ToolsPanelItem>

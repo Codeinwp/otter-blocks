@@ -199,7 +199,7 @@ class Form_Settings_Data {
 		$form_emails = get_option( 'themeisle_blocks_form_emails' );
 		$integration = new Form_Settings_Data( array() );
 		foreach ( $form_emails as $form ) {
-			if ( $form['form'] === $option_name ) {
+			if ( isset( $form['form'] ) && $form['form'] === $option_name ) {
 
 				if ( isset( $form['hasCaptcha'] ) ) {
 					$integration->set_captcha( $form['hasCaptcha'] );

@@ -768,7 +768,7 @@ class Form_Emails_Storing {
 					$url = esc_url( $field['path'] );
 					if ( isset( $field['saved_in_media'] ) && $field['saved_in_media'] ) {
 						$url = wp_get_attachment_url( $field['attachment_id'] );
-					} elseif ( 0 === strpos( $field['path'], 'http' ) ) {
+					} elseif ( 0 !== strpos( $field['path'], 'http' ) ) {
 						// If the file is not saved with a server link (external or media library). We need to get the file path relative to the uploads directory so that it can be displayed by the browser.
 						$url = substr( $url, strpos( $url, '/wp-content' ) );
 					}
