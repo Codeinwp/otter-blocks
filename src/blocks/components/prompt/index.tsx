@@ -10,6 +10,9 @@ import {
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI
 } from '../../helpers/prompt';
+import PromptInput from './prompt-input';
+import { closeSmall, redo, undo } from '@wordpress/icons';
+import { ReactNode } from 'react';
 
 type PromptOnSuccessActions = {
 	clearHistory: () => void
@@ -24,6 +27,8 @@ type PromptPlaceholderProps = {
 	value: string
 	onValueChange: ( text: string ) => void
 	onSuccess?: PromptOnSuccess
+	resultAreaTitle?: string
+	resutActionLabel?: string
 };
 
 export const apiKeyName = 'themeisle_open_ai_api_key';
@@ -47,6 +52,78 @@ const BlockGenerationArea = ( props: { result?: string }) => {
 	);
 };
 
+const PromptResultArea = (
+	props: {
+		children?: ReactNode
+		mainActionName?: string
+		mainAction?: () => void
+		onRegenerate?: () => void
+		onPrevResult?: () => void
+		onNextResult?: () => void
+		currentResultIndex?: number
+		totalResults: number
+		title?: string
+		onClose?: () => void
+	}
+) => {
+	return (
+		<div className="prompt-result__container">
+			<div className="prompt-result__header">
+				<div className="prompt-result__header__title">
+					{ props?.title ?? __( 'Result', 'otter-blocks' ) }
+				</div>
+				<div className="prompt-result__header__actions">
+					<Button
+						variant="tertiary"
+						onClick={ props.onClose }
+						icon={closeSmall}
+					/>
+				</div>
+			</div>
+			<div className="prompt-result__content">
+				{ props.children }
+			</div>
+			<div className="prompt-result__actions">
+				<Button
+					variant="primary"
+					onClick={ props.mainAction }
+				>
+					{ props.mainActionName ?? __( 'Preview Generated Content', 'otter-blocks' ) }
+				</Button>
+				<Button
+					variant={'secondary'}
+					onClick={ props.onRegenerate }
+				>
+					{ __( 'Regenerate', 'otter-blocks' ) }
+				</Button>
+				<div className="prompt-result__actions__navigation">
+					{
+						0 < props.totalResults && (
+							<Fragment>
+								<Button
+									variant={'tertiary'}
+									icon={undo}
+									onClick={ props.onPrevResult }
+								/>
+
+								<div className="prompt-result__actions__navigation__current">
+									{ props.currentResultIndex } / { props.totalResults }
+								</div>
+
+								<Button
+									variant={'tertiary'}
+									icon={redo}
+									onClick={ props.onNextResult }
+								/>
+							</Fragment>
+						)
+					}
+				</div>
+			</div>
+		</div>
+	);
+};
+
 const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	const { title, description, value, onValueChange, onSuccess, promptName } = props;
 
@@ -61,6 +138,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	const [ resultHistory, setResultHistory ] = useState<string[]>([]);
 	const [ resultHistoryIndex, setResultHistoryIndex ] = useState<number>( 0 );
+
+	const [ showResultArea, setShowResultArea ] = useState<boolean>( true );
 
 	const onSuccessActions = {
 		clearHistory: () => {
@@ -151,6 +230,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 			setResult( result );
 			setResultHistory([ ...resultHistory, result ]);
+			setShowResultArea( true );
 		});
 	}
 
@@ -222,88 +302,37 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	}
 
 	return (
-		<Placeholder
-			className="prompt-placeholder"
-			label={title ?? __( 'Content Generator', 'otter-blocks' )}
-			instructions={description ?? __( 'Write what type of form do you want to have.', 'otter-blocks' )}
-		>
-			<TextControl value={value} onChange={onValueChange} />
-
-			<div className="prompt-placeholder__submit">
-				<Button
-					variant="primary"
-					onClick={onSubmit}
-					isBusy={'loading' === generationStatus}
-				>
-
-					{ 'loading' !== generationStatus &&  __( 'Generate', 'otter-blocks' ) }
-					{ 'loading' === generationStatus && (
-						<Fragment>
-							<span>{ __( 'Generating...', 'otter-blocks' ) }</span>
-						</Fragment>
-					) }
-				</Button>
-				{
-					0 < resultHistory.length && (
-						<Fragment>
-							{
-								1 < resultHistory.length && (
-									<span className="history-display">
-										{ `${resultHistoryIndex + 1}/${resultHistory.length}` }
-									</span>
-								)
-							}
-
-							{
-								0 < resultHistoryIndex && (
-									<Button
-										variant="secondary"
-										onClick={() => {
-											setResultHistoryIndex( resultHistoryIndex - 1 );
-										}}
-									>
-										{ __( 'Previous', 'otter-blocks' ) }
-									</Button>
-								)
-
-							}
-
-							{
-								resultHistoryIndex < resultHistory.length - 1 && (
-									<Button
-										variant="secondary"
-										onClick={() => {
-											setResultHistoryIndex( resultHistoryIndex + 1 );
-										}}
-									>
-										{ __( 'Next', 'otter-blocks' ) }
-									</Button>
-								)
-							}
-
-						</Fragment>
-					)
-				}
-			</div>
-
-			<BlockGenerationArea result={ result } />
-
+		<div>
 			{
-				result && (
-					<div>
-						<Button
-							variant="primary"
-							onClick={() => {
+				showResultArea && (
+					<PromptResultArea
+						title={ props.resultAreaTitle }
+						mainAction={
+							() => {
 								onSuccess?.( result, onSuccessActions );
-							}}
-						>
-							{ __( 'Preview', 'otter-blocks' ) }
-						</Button>
-
-					</div>
+							}
+						}
+						currentResultIndex={ resultHistoryIndex }
+						totalResults={ resultHistory.length }
+						onPrevResult={() => {
+							setResultHistoryIndex( resultHistoryIndex - 1 );
+						}}
+						onNextResult={() => {
+							setResultHistoryIndex( resultHistoryIndex + 1 );
+						}}
+						onClose={() => {
+							setShowResultArea( false );
+						}}
+						mainActionName={props.resultAreaTitle}
+					>
+						<BlockGenerationArea result={ result } />
+					</PromptResultArea>
 				)
 			}
-		</Placeholder>
+
+			<PromptInput value={value} onValueChange={onValueChange} onGenerate={onSubmit} status={generationStatus} />
+		</div>
+
 	);
 };
 

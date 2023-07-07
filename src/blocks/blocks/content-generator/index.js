@@ -9,7 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
-import { progressIcon as icon } from '../../helpers/icons.js';
+import { aiGeneration as icon } from '../../helpers/icons.js';
 import edit from './edit.js';
 import './editor.scss';
 

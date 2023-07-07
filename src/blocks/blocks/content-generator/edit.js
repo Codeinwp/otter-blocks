@@ -36,8 +36,8 @@ const { attributes: defaultAttributes } = metadata;
 
 const PRESETS = {
 	form: {
-		title: 'Form Generator',
-		description: 'Write what type of form do you want to have.'
+		title: __( 'Suggested form structure', 'otter-blocks' ),
+		mainAction: __( 'Preview Form', 'otter-blocks' )
 	}
 };
 
@@ -152,8 +152,8 @@ const ContentGenerator = ({
 			<div { ...blockProps }>
 				<PromptPlaceholder
 					promptName={attributes.generationType}
-					title={PRESETS?.[attributes.generationType]?.title}
-					description={PRESETS?.[attributes.generationType]?.description}
+					resultAreaTitle={PRESETS?.[attributes.generationType]?.title}
+					resutActionLabel={PRESETS?.[attributes.generationType]?.mainAction}
 					value={prompt}
 					onValueChange={setPrompt}
 					onSuccess={onSuccess}
