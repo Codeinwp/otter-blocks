@@ -35,17 +35,23 @@ export const apiKeyName = 'themeisle_open_ai_api_key';
 
 const BlockGenerationArea = ( props: { result?: string }) => {
 	return (
-		<div className="prompt-placeholder__block-generation__container" >
+		<div className="prompt-fields" >
+			<div className="prompt-column-title">
+				{ __( 'Label', 'otter-blocks' ) }
+			</div>
+			<div className="prompt-column-title">
+				{ __( 'Field Type', 'otter-blocks' ) }
+			</div>
 			{ props.result?.length && parseToDisplayPromptResponse( props.result ).map( field => {
 				return (
-					<div className="prompt-placeholder__block-generation__field">
-						<div className="prompt-placeholder__block-generation__field__type">
-							{ field.type }
-						</div>
-						<div className="prompt-placeholder__block-generation__field__label">
+					<Fragment>
+						<div className="prompt-field__label">
 							{ field.label }
 						</div>
-					</div>
+						<div className="prompt-field__type">
+							{ field.type }
+						</div>
+					</Fragment>
 				);
 			}) }
 		</div>
@@ -104,6 +110,7 @@ const PromptResultArea = (
 									variant={'tertiary'}
 									icon={undo}
 									onClick={ props.onPrevResult }
+									disabled={ 1 === props.currentResultIndex }
 								/>
 
 								<div className="prompt-result__actions__navigation__current">
@@ -114,6 +121,7 @@ const PromptResultArea = (
 									variant={'tertiary'}
 									icon={redo}
 									onClick={ props.onNextResult }
+									disabled={ props.totalResults === props.currentResultIndex }
 								/>
 							</Fragment>
 						)
@@ -139,7 +147,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	const [ resultHistory, setResultHistory ] = useState<string[]>([]);
 	const [ resultHistoryIndex, setResultHistoryIndex ] = useState<number>( 0 );
 
-	const [ showResultArea, setShowResultArea ] = useState<boolean>( true );
+	const [ showResultArea, setShowResultArea ] = useState<boolean>( false );
 
 	const onSuccessActions = {
 		clearHistory: () => {
@@ -312,7 +320,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 								onSuccess?.( result, onSuccessActions );
 							}
 						}
-						currentResultIndex={ resultHistoryIndex }
+						currentResultIndex={ resultHistoryIndex + 1 }
 						totalResults={ resultHistory.length }
 						onPrevResult={() => {
 							setResultHistoryIndex( resultHistoryIndex - 1 );
@@ -323,7 +331,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 						onClose={() => {
 							setShowResultArea( false );
 						}}
-						mainActionName={props.resultAreaTitle}
+						mainActionName={props.resutActionLabel}
 					>
 						<BlockGenerationArea result={ result } />
 					</PromptResultArea>

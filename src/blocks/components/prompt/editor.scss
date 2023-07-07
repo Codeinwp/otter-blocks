@@ -4,36 +4,34 @@
 		flex-direction: column;
 	}
 
-	.prompt-placeholder__block-generation__container {
-		margin: 10px;
-		display: flex;
-		flex-direction: column;
-		padding: 10px;
-		border-radius: 10px;
-		gap: 10px;
-		font-size: 1.2em;
 
-		background-color: #FAA26A;
-
-		.prompt-placeholder__block-generation__field {
-			display: flex;
-			flex-direction: row;
-			gap: 10px;
-			align-items: center;
-		}
-
-		.prompt-placeholder__block-generation__field__type {
-			padding: 1px 5px;
-			background-color: azure;
-			border-radius: 5px;
-			min-width: 100px;
-			text-align: center;
-		}
-	}
 
 	.history-display {
 		padding: 0px 20px;
 		font-size: 1.2em;
+	}
+}
+
+.prompt-fields {
+	margin: 10px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	padding: 10px;
+	border-radius: 10px;
+	gap: 10px;
+	font-size: 13px;
+
+	.prompt-column-title {
+		text-transform: uppercase;
+	}
+
+	.prompt-field__label, .prompt-field__type {
+		padding: 12px 16px;
+	}
+
+	.prompt-field__label {
+		border-radius: 3px;
+		background: rgba(159, 171, 178, 0.20);
 	}
 }
 

@@ -31,6 +31,7 @@ import Inspector from './inspector.js';
 import PromptPlaceholder from '../../components/prompt';
 import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -159,13 +160,16 @@ const ContentGenerator = ({
 					onSuccess={onSuccess}
 				/>
 
-				<Disabled>
-					<InnerBlocks renderAppender={false}/>
-				</Disabled>
-
+				{
+					hasInnerBlocks ? (
+						<Disabled>
+							<InnerBlocks renderAppender={false}/>
+						</Disabled>
+					) : ''
+				}
 
 				{
-					showActionsButton && (
+					showActionsButton ? (
 						<div className="o-actions">
 							<Button
 								variant={ 'primary' }
@@ -193,7 +197,7 @@ const ContentGenerator = ({
 								}}
 							/>
 						</div>
-					)
+					) : ''
 				}
 
 			</div>
