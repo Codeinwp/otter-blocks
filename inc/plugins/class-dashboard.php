@@ -507,8 +507,8 @@ class Dashboard {
 							const url = new URL(window.location.href);
 							url.searchParams.set('otter_form_widget_filter', value);
 							url.searchParams.set('otter_nonce', '<?php echo esc_attr( wp_create_nonce( 'otter_widget_nonce' ) ); ?>')
-
-							// go to the new url using the href
+							url.hash = '#otter_form_submissions_widget';
+							
 							window.location.href = url.href;
 						})
 					}
