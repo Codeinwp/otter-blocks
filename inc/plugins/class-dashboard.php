@@ -195,7 +195,7 @@ class Dashboard {
 		}
 
 		update_option( 'themeisle_blocks_settings_redirect', false );
-		wp_safe_redirect( admin_url( 'options-general.php?page=otter' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=otter' ) );
 		exit;
 	}
 

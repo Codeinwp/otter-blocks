@@ -91,10 +91,11 @@ export let NavigatorButton = ({
 const Options = () => {
 	const { isOnboardingVisible, get } = useSelect( select => {
 		const { isOnboardingVisible } = select( 'themeisle-gutenberg/data' );
-		const { get } = select( 'core/preferences' );
+		const get = select( 'core/preferences' )?.get;
+
 		return {
-			isOnboardingVisible: isOnboardingVisible(),
-			get
+			isOnboardingVisible: isOnboardingVisible?.(),
+			get: get
 		};
 	}, []);
 
