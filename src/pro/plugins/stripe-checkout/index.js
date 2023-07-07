@@ -10,6 +10,7 @@ import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
  * Internal dependencies
  */
 import AutoresponderBodyModal from '../../components/autoresponder/index.js';
+import { Notice } from '../../../blocks/components';
 
 const Autoresponder = ( Template, attributes, setAttributes ) => {
 	return (
@@ -47,6 +48,15 @@ const Autoresponder = ( Template, attributes, setAttributes ) => {
 								onChange={ ( body ) => setAttributes({ autoresponder: { ...attributes.autoresponder, body }}) }
 								area="stripe-autoresponder"
 							/>
+
+							{
+								(  ! Boolean( attributes.autoresponder?.title ) && ! Boolean( attributes.autoresponder.body ) ) && (
+									<Notice
+										notice={ __( 'Replace the placeholders for Subject and Body.', 'otter-blocks' ) }
+										instructions={ __( 'You need to fill the Subject field and replace the value of Body of the Autoresponder. Email will not be send if the placeholders are still present.', 'otter-blocks' ) }
+									/>
+								)
+							}
 
 						</Fragment>
 					)

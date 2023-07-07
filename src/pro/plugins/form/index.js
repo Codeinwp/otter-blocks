@@ -27,7 +27,7 @@ const AutoresponderBody = ({ formOptions, setFormOption }) => {
 		setFormOption({ autoresponder: { ...formOptions.autoresponder, body }});
 	};
 
-	return <AutoresponderBodyModal value={formOptions.autoresponder?.body} onChange={onChange} />;
+	return <AutoresponderBodyModal value={formOptions.autoresponder?.body} onChange={onChange} addExtraMargin={true} />;
 };
 
 const helpMessages = {

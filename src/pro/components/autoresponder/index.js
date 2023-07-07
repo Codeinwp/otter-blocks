@@ -2,8 +2,9 @@ import { useState } from '@wordpress/element';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { RichTextEditor } from '../../../blocks/components';
+import classNames from 'classnames';
 
-const AutoresponderBodyModal = ({ value, onChange, area }) => {
+const AutoresponderBodyModal = ({ value, onChange, area, addExtraMargin }) => {
 	const [ isOpen, setOpen ] = useState( false );
 
 	return (
@@ -23,10 +24,10 @@ const AutoresponderBodyModal = ({ value, onChange, area }) => {
 					/>
 				</Modal>
 			) }
-			<br/>
 			<Button
 				variant="secondary"
 				onClick={() => setOpen( true )}
+				className={ classNames({ 'o-autoresponder-margin': Boolean( addExtraMargin ) }) }
 			>
 				{ __( 'Add Autoresponder Body', 'otter-blocks' ) }
 			</Button>
