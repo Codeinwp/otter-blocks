@@ -356,6 +356,10 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 
 					form?.querySelector( 'form' )?.reset();
 
+					if ( 0 < res?.redirectLink?.length ) {
+						form.setAttribute( 'data-redirect', res.redirectLink );
+					}
+
 					setTimeout( () => {
 						if ( 0 < res?.redirectLink?.length ) {
 							let a = document.createElement( 'a' );
