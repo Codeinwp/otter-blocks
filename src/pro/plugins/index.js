@@ -14,3 +14,4 @@ import './wc-integration/index.js';
 import './countdown/index';
 import './live-search/index.js';
 import './form/index.js';
+import './stripe-checkout/index.js';
