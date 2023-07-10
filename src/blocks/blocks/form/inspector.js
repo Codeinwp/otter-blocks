@@ -261,7 +261,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 					</ToolsPanelItem>
 					<ToolsPanelItem
 						hasValue={ () => false }
-						label={ __( 'Autoresponder (Pro)', 'otter-blocks' ) }
+						label={ __( 'Autoresponder', 'otter-blocks' ) }
 						onDeselect={ () => {} }
 					>
 						<TextControl
