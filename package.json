@@ -54,7 +54,7 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
-		"@wordpress/icons": "^9.23.0",
+		"@wordpress/icons": "^9.27.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.3.1",
 		"currency-symbol-map": "^5.0.1",
@@ -82,7 +82,7 @@
 		"@wordpress/components": "^24.0.0",
 		"@wordpress/compose": "^6.10.0",
 		"@wordpress/data": "^9.3.0",
-		"@wordpress/dom-ready": "^3.33.0",
+		"@wordpress/dom-ready": "^3.36.0",
 		"@wordpress/e2e-test-utils": "^10.4.0",
 		"@wordpress/e2e-test-utils-playwright": "^0.2.0",
 		"@wordpress/e2e-tests": "^7.4.0",
