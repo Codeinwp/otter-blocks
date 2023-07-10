@@ -103,7 +103,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 		}
 
 		// Save to wp options
-		setOption?.( 'themeisle_webhooks_options', [ ...webhooksToSave ], __( 'Webhooks saved!', 'otter-blocks' ), 'webhook', ( response ) => {
+		setOption?.( 'themeisle_webhooks_options', [ ...webhooksToSave ], __( 'Webhooks saved.', 'otter-blocks' ), 'webhook', ( response ) => {
 			setWebhooks( response?.['themeisle_webhooks_options'] ?? []);
 		});
 	};
