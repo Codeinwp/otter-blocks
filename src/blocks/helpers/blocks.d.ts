@@ -10,7 +10,7 @@ export type BlockProps<T> = {
 }
 
 export interface InspectorProps<T> {
-	attributes: Partial<T>
+	attributes: Partial<T> & { className?: string }
 	setAttributes: ( attributes: Partial<T> ) => void
 }
 
@@ -79,4 +79,10 @@ export type Responsive<T> = {
 	desktop?: T,
 	tablet?: T,
 	mobile?: T
+}
+
+export type BlockStyle = {
+	label: string,
+	value: string
+	isDefault?: boolean
 }
