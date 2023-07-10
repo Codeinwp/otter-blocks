@@ -13,7 +13,7 @@ jobs:
   add-labels:
     runs-on: ubuntu-latest
     name: Label PR based on checklist
-    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name && github.actor != 'dependabot[bot]'
     steps:
       - name: Check if checklist items are completed
         uses: Codeinwp/gha-pr-check-helper@master

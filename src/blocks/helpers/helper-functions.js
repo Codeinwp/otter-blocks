@@ -461,7 +461,7 @@ export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Deskto
 /**
  * Get Active Style Name.
  *
- * @param { Object } styles    Block styles.
+ * @param { import('./blocks').BlockStyle[] } styles    Block styles.
  * @param { string | undefined }  className Classes of the block.
  *
  * @returns { string }

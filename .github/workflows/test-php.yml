@@ -1,6 +1,8 @@
 name: Test PHP
 
-on: [pull_request]
+on:
+  pull_request:
+    types: [ opened, synchronize, ready_for_review ]
 
 jobs:
   phplint:
