@@ -10,7 +10,7 @@ import { createBlock, registerBlockType } from '@wordpress/blocks';
  */
 import metadata from './block.json';
 import { formFieldIcon as icon } from '../../../helpers/icons.js';
-import Inspector from '../file/inspector';
+import Inspector from './inspector';
 import { omit } from 'lodash';
 
 const { name } = metadata;
@@ -23,14 +23,9 @@ if ( ! Boolean( window.themeisleGutenberg.hasPro ) ) {
 
 	registerBlockType( name, {
 		...metadata,
-		title: __( 'Nonce Field', 'otter-blocks' ),
-		description: __( 'Protect the form from CSRF.', 'otter-blocks' ),
+		title: __( 'Hidden Field', 'otter-blocks' ),
+		description: __( 'A field used for adding extra metadata to the Form via URL params.', 'otter-blocks' ),
 		icon,
-		keywords: [
-			'protection',
-			'csrf',
-			'field'
-		],
 		edit: ( props ) => {
 			return (
 				<Inspector { ...props } />

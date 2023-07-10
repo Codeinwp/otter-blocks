@@ -85,7 +85,7 @@ const Inspector = ({
 				<Notice
 					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'formfileblock' )}>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
 					variant="upsell"
-				/> )
+				/>
 			</PanelBody>
 
 		</InspectorControls>
