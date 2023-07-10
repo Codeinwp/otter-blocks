@@ -259,6 +259,11 @@ class Form_Server {
 			if ( $res->has_error() || $form_data->has_error() ) {
 				$res->set_code( $form_data->get_error_code() );
 			} else {
+
+				if ( ! empty( $form_options->get_redirect_link() ) ) {
+					$res->add_response_field( 'redirectLink', $form_options->get_redirect_link() );
+				}
+
 				// Select the submit function based on the provider.
 				$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );
 

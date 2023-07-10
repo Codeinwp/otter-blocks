@@ -48,9 +48,9 @@ const StickyExtension = ( el, props ) => {
 					label={ __( 'Transform to Sticky', 'otter-blocks' ) }
 					onSelect={ () => toggleSticky( classes, isSticky, props.setAttributes ) }
 					onDeselect={ () => toggleSticky( classes, isSticky, props.setAttributes ) }
-					isShownByDefault={ false }
+					isShownByDefault={ false  }
 				>
-					{ isSticky && <Edit { ...props } /> }
+					{ ( isSticky ) && <Edit { ...props } /> }
 				</ToolsPanelItem>
 			</Fragment>
 		);

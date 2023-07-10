@@ -223,6 +223,32 @@ class Dynamic_Content {
 			$meta = get_field( esc_html( $data['metaKey'] ), $data['context'], true );
 		}
 
+		if ( is_array( $meta ) ) {
+			if ( isset( $meta[0] ) ) {
+				$display = array();
+
+				if ( is_string( $meta[0] ) ) {
+					$display = $meta;
+				} elseif ( isset( $meta[0]['label'] ) ) {
+					foreach ( $meta as $item ) {
+						if ( isset( $item['label'] ) ) {
+							$display[] = $item['label'];
+						}
+					}
+				}
+
+				$meta = implode( ', ', $display );
+			}
+
+			if ( isset( $meta['label'] ) ) {
+				$meta = $meta['label'];
+			}
+		}
+
+		if ( false === $meta || true === $meta ) {
+			$meta = $meta ? __( 'Yes', 'otter-blocks' ) : __( 'No', 'otter-blocks' );
+		}
+
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
 		}
@@ -437,7 +463,7 @@ class Dynamic_Content {
 		if ( 'product' === $type && class_exists( 'WooCommerce' ) && ! empty( $id ) ) {
 			$product = wc_get_product( $id );
 			$image   = $product->get_image_id();
-			
+
 			if ( $image ) {
 				$path = wp_get_original_image_path( intval( $image ) );
 			} else {
@@ -497,7 +523,7 @@ class Dynamic_Content {
 		if ( 'product' === $data['type'] && class_exists( 'WooCommerce' ) && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
 			$product = wc_get_product( $data['id'] );
 			$image   = $product->get_image_id();
-			
+
 			if ( $image ) {
 				$value = wp_get_attachment_image_url( intval( $image ), 'full' );
 			} else {

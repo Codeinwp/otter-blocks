@@ -1,3 +1,17 @@
+##### [Version 2.3.1](https://github.com/Codeinwp/otter-blocks/compare/v2.3.0...v2.3.1) (2023-06-20)
+
+- Added Option to Allow Block Tools to Be Enabled by Default
+- Improvements for Social Sharing Block
+- Improvements to Posts Block’s Handling of WooCommerce Products
+- Fix Dynamic Tags Not Working with Neve Pro Custom Layouts
+- Fix Wrong Defaults in Form
+- Fix Form Submissions Not Saving to Database If SMTP Fails
+- Fix the Option to save Google Fonts Locally Not Working
+- Fix Form Option Not Saving
+- Fix Illegal String Offset on Minimal Version Check
+- Fix the Issue with Otter Menu Pointing to the Old URL
+- Fix Form Submission Email Being Used as Post Title of Form Submissions
+
 #### [Version 2.3.0](https://github.com/Codeinwp/otter-blocks/compare/v2.2.7...v2.3.0) (2023-05-25)
 
 - Add Custom Taxonomy Support to Dynamic Values

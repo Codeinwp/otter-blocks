@@ -23,6 +23,7 @@ import { addFilter } from '@wordpress/hooks';
  */
 import './editor.scss';
 import Edit from './edit.js';
+import { select } from '@wordpress/data';
 
 const addAttribute = ( props ) => {
 	props.attributes = assign( props.attributes, {
@@ -36,6 +37,8 @@ const addAttribute = ( props ) => {
 };
 
 const BlockConditions = ( el, props ) => {
+	const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-block-conditions' ) );
+
 	return (
 		<Fragment>
 			{ el }
@@ -44,7 +47,7 @@ const BlockConditions = ( el, props ) => {
 				hasValue={ () => undefined !== props.attributes.otterConditions && Boolean( props.attributes.otterConditions?.length ) }
 				label={ __( 'Visibility Conditions', 'otter-blocks' ) }
 				onDeselect={ () => props.setAttributes({ otterConditions: undefined }) }
-				isShownByDefault={ false }
+				isShownByDefault={ showAsDefault }
 			>
 				<Edit { ...props } />
 			</ToolsPanelItem>
