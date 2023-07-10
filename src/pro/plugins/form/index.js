@@ -4,58 +4,31 @@
 import { __ } from '@wordpress/i18n';
 import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
-	Button,
-	Modal,
 	TextControl,
 	FormTokenField,
 	ToggleControl,
 	Notice, SelectControl
 } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
-import { useState, Fragment } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { Notice as OtterNotice } from '../../../blocks/components';
-import { RichTextEditor } from '../../../blocks/components';
 import { FieldInputWidth, HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
+import AutoresponderBodyModal from '../../components/autoresponder/index.js';
 import WebhookEditor from '../../components/webhook-editor';
 
 // +-------------- Autoresponder --------------+
 
 const AutoresponderBody = ({ formOptions, setFormOption }) => {
-	const [ isOpen, setOpen ] = useState( false );
 	const onChange = body => {
 		setFormOption({ autoresponder: { ...formOptions.autoresponder, body }});
 	};
 
-	return (
-		<>
-			{ isOpen && (
-				<Modal
-					title={ __( 'Autoresponder Body' ) }
-					onRequestClose={() => setOpen( false )}
-					shouldCloseOnClickOutside={ false }
-				>
-					<RichTextEditor
-						value={ formOptions.autoresponder?.body }
-						onChange={ onChange }
-						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
-						allowRawHTML
-					/>
-				</Modal>
-			) }
-			<br/>
-			<Button
-				variant="secondary"
-				onClick={() => setOpen( true )}
-			>
-				{ __( 'Add Autoresponder Body', 'otter-blocks' ) }
-			</Button>
-		</>
-	);
+	return <AutoresponderBodyModal value={formOptions.autoresponder?.body} onChange={onChange} addExtraMargin={true} />;
 };
 
 const helpMessages = {

@@ -338,7 +338,7 @@ class Form_Pro_Features {
 			$autoresponder = $form_data->get_form_options()->get_autoresponder();
 			$body          = $this->replace_magic_tags( $autoresponder['body'], $form_data->get_form_inputs() );
 
-			// phpcs:ignore
+			// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
 			if ( ! wp_mail( $to, $autoresponder['subject'], $body, $headers ) ) {
 				$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_AUTORESPONDER_COULD_NOT_SEND );
 			}
