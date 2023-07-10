@@ -55,6 +55,11 @@ import {
 } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
+/**
+ * Block Styles
+ *
+ * @type {import('../../helpers/blocks').BlockStyle[]}
+ */
 const styles = [
 	{
 		label: __( 'Default', 'otter-blocks' ),
@@ -64,6 +69,18 @@ const styles = [
 	{
 		label: __( 'Boxed', 'otter-blocks' ),
 		value: 'boxed'
+	}
+];
+
+/**
+ * Extra Styles
+ *
+ * @type {import('../../helpers/blocks').BlockStyle[]}
+ */
+const extraStyles = [
+	{
+		label: __( 'Inline', 'otter-blocks' ),
+		value: 'inline-features'
 	}
 ];
 
@@ -430,6 +447,16 @@ const Inspector = ({
 						title={ __( 'Product Features', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
+						<ToggleControl
+							label={ __( 'Inline rating features', 'otter-blocks' ) }
+							checked={ 'inline-features' === getActiveStyle( extraStyles, attributes?.className )}
+							onChange={ ( value ) => {
+								setAttributes({
+									className: changeActiveStyle( attributes?.className, extraStyles, value ?  'inline-features' : undefined )
+								});
+							} }
+						/>
+
 						{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => (
 							<PanelItem
 								key={ index }

@@ -67,6 +67,9 @@ class Review_Block {
 			)
 		);
 
+		$is_one_colum_layout = strpos( $wrapper_attributes, 'is-style-single-column' ) !== false;
+		$is_inline_features  = strpos( $wrapper_attributes, 'is-style-inline-features' ) !== false;
+
 		$main_heading = isset( $attributes['mainHeading'] ) ? $attributes['mainHeading'] : 'h2';
 		$sub_heading  = isset( $attributes['subHeading'] ) ? $attributes['subHeading'] : 'h3';
 
@@ -79,7 +82,9 @@ class Review_Block {
 
 		$html .= '		<div class="o-review__header_meta">';
 		$html .= '			<div class="o-review__header_ratings">';
+		$html .= '			    <div class="o-review__header_ratings__stars">';
 		$html .= $this->get_overall_stars( $this->get_overall_ratings( $attributes['features'] ), $scale );
+		$html .= '			    </div>';
 		// translators: Overall rating from 1 to 10.
 		$html .= '				<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), $this->get_overall_ratings( $attributes['features'], $scale ), 10 / $scale ) . '</span>';
 		$html .= '			</div>';
@@ -124,9 +129,14 @@ class Review_Block {
 				}
 
 				$html .= '		<div class="o-review__left_feature_ratings">';
+
+				$html .= '         <div class="o-review__left_feature_ratings__stars">';
 				$html .= $this->get_overall_stars( $feature['rating'], $scale );
+				$html .= '         </div>';
+
 				// translators: Overall rating from 1 to 10.
-				$html .= '			<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), 1 <= round( $feature['rating'] / $scale, 1 ) ? round( $feature['rating'] / $scale, 1 ) : 1, 10 / $scale ) . '</span>';
+				$html .= '			<span class="o-review__left_feature_num">' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), 1 <= round( $feature['rating'] / $scale, 1 ) ? round( $feature['rating'] / $scale, 1 ) : 1, 10 / $scale ) . '</span>';
+
 				$html .= '		</div>';
 
 				if ( isset( $feature['description'] ) ) {
