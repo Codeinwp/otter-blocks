@@ -241,6 +241,18 @@ class Form_Data_Response {
 	}
 
 	/**
+	 * Add new field to the response.
+	 *
+	 * @param string $key The key.
+	 * @param mixed  $value The value.
+	 * @return $this
+	 */
+	public function add_response_field( $key, $value ) {
+		$this->response[ $key ] = $value;
+		return $this;
+	}
+
+	/**
 	 * Add new data to the response.
 	 *
 	 * @param array $values The new data.
