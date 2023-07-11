@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { Button, ExternalLink, Placeholder, Spinner, TextControl } from '@wordpress/components';
+import { Button, ExternalLink, Notice, Placeholder, Spinner, TextControl } from '@wordpress/components';
 import './editor.scss';
 import { Fragment, useEffect, useState } from '@wordpress/element';
 import useSettings from '../../helpers/use-settings';
@@ -70,6 +70,7 @@ const PromptResultArea = (
 		totalResults: number
 		title?: string
 		onClose?: () => void
+		tokenUsageDescription?: string
 	}
 ) => {
 	return (
@@ -91,7 +92,7 @@ const PromptResultArea = (
 			</div>
 			<div className="prompt-result__actions">
 				<Button
-					variant="primary"
+					variant="secondary"
 					onClick={ props.mainAction }
 				>
 					{ props.mainActionName ?? __( 'Preview Generated Content', 'otter-blocks' ) }
@@ -128,6 +129,11 @@ const PromptResultArea = (
 					}
 				</div>
 			</div>
+			<span className="prompt-token-usage">
+				{
+					props.tokenUsageDescription
+				}
+			</span>
 		</div>
 	);
 };
@@ -144,10 +150,14 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
 	const [ result, setResult ] = useState<string | undefined>( undefined );
 
-	const [ resultHistory, setResultHistory ] = useState<string[]>([]);
+	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number }}[]>([]);
 	const [ resultHistoryIndex, setResultHistoryIndex ] = useState<number>( 0 );
 
 	const [ showResultArea, setShowResultArea ] = useState<boolean>( false );
+
+	const [ showError, setShowError ] = useState<boolean>( false );
+	const [ errorMessage, setErrorMessage ] = useState<string>( '' );
+	const [ tokenUsageDescription, setTokenUsageDescription ] = useState<string>( '' );
 
 	const onSuccessActions = {
 		clearHistory: () => {
@@ -205,7 +215,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			return;
 		}
 
-		setResult( resultHistory[ resultHistoryIndex ]);
+		setResult( resultHistory[ resultHistoryIndex ].result );
+		setTokenUsageDescription( __( 'Used tokens: ', 'otter-blocks' ) + resultHistory[ resultHistoryIndex ].meta.usedToken );
 
 	}, [ resultHistoryIndex, resultHistory ]);
 
@@ -214,12 +225,15 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		const embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptName );
 
 		if ( ! embeddedPrompt ) {
-			console.warn( 'Prompt not found' );
+			setShowError( true );
+			setErrorMessage( __( 'Prompt not found. Reload the page. If the error still persist the server might be down.', 'otter-blocks' ) );
 			return;
 		}
 
 		if ( ! apiKey ) {
 			console.warn( 'API Key not found' );
+			setShowError( true );
+			setErrorMessage( __( 'API Key not found. Please add your API Key in the settings page.', 'otter-blocks' ) );
 			return;
 		}
 
@@ -229,6 +243,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			if ( data?.error ) {
 				console.error( data?.error );
 				setGenerationStatus( 'error' );
+				setShowError( true );
+				setErrorMessage( `Error ${data.error.code} - ${data.error.message}` ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 				return;
 			}
 
@@ -236,9 +252,21 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 			setGenerationStatus( 'loaded' );
 
+			if ( ! result ) {
+				setShowError( true );
+				setErrorMessage( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
+				return;
+			}
+
 			setResult( result );
-			setResultHistory([ ...resultHistory, result ]);
+			setResultHistory([ ...resultHistory, {
+				result,
+				meta: {
+					usedToken: data.usage.total_tokens
+				}
+			}]);
 			setShowResultArea( true );
+			setTokenUsageDescription( __( 'Token used: ', 'otter-blocks' ) + data.usage.total_tokens );
 		});
 	}
 
@@ -332,6 +360,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 							setShowResultArea( false );
 						}}
 						mainActionName={props.resutActionLabel}
+						tokenUsageDescription={tokenUsageDescription}
 					>
 						<BlockGenerationArea result={ result } />
 					</PromptResultArea>
@@ -339,6 +368,20 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			}
 
 			<PromptInput value={value} onValueChange={onValueChange} onGenerate={onSubmit} status={generationStatus} />
+
+			{
+				showError && (
+					<Notice
+						status="warning"
+						isDismissible
+						onDismiss={() => setShowError( false )}
+					>
+						{
+							errorMessage
+						}
+					</Notice>
+				)
+			}
 		</div>
 
 	);

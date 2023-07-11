@@ -28,6 +28,12 @@ type ChatResponse = {
 		completion_tokens: number,
 		prompt_tokens: number,
 		total_tokens: number
+	},
+	error?: {
+		code: string | null,
+		message: string
+		param: string | null
+		type: string
 	}
 }
 
@@ -110,13 +116,6 @@ export async function sendPromptToOpenAI( prompt: string, apiKey: string, embedd
 			stream: false
 		})
 	});
-
-	if ( ! response.ok ) {
-		return {
-			result: '',
-			error: `Error ${response.status}: ${response.statusText}`
-		};
-	}
 
 	return await response.json() as ChatResponse;
 }

@@ -146,7 +146,7 @@ class Prompt_Server {
 				'license_id' => apply_filters( 'product_otter_license_key', 'free' ),
 				'cache'      => gmdate( 'u' ),
 			),
-			'http://localhost:3000/prompts'
+			'https://qm5dr6t4f4.execute-api.us-east-1.amazonaws.com/default/prompts'
 		);
 
 		$response = '';
