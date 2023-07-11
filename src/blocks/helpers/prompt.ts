@@ -73,52 +73,72 @@ type PromptServerResponse = {
 	prompts: PromptsData
 }
 
-export async function sendPromptToOpenAI( prompt: string, apiKey: string, embeddedPrompt: PromptData ) {
+function createPromptRequest( settings ) {
 
-	const body = {
-		...embeddedPrompt,
-		messages: embeddedPrompt.messages.map( ( message ) => {
-			if ( 'user' === message.role && message.content.includes( '{INSERT_TASK}' ) ) {
-				return {
-					role: 'user',
-					content: message.content.replace( '{INSERT_TASK}', prompt )
-				};
-			}
-
-			return message;
-		})
+	settings ??= {
+		temperature: 0.2,
+		// eslint-disable-next-line camelcase
+		top_p: 1,
+		stream: false
 	};
 
+	return async( prompt: string, apiKey: string, embeddedPrompt: PromptData ) => {
+		const body = {
+			...embeddedPrompt,
+			messages: embeddedPrompt.messages.map( ( message ) => {
+				if ( 'user' === message.role && message.content.includes( '{INSERT_TASK}' ) ) {
+					return {
+						role: 'user',
+						content: message.content.replace( '{INSERT_TASK}', prompt )
+					};
+				}
 
-	function removeOtterKeys( obj ) {
-		for ( let key in obj ) {
-			if ( key.startsWith( 'otter_' ) ) {
-				delete obj[key];
+				return message;
+			})
+		};
+
+
+		function removeOtterKeys( obj ) {
+			for ( let key in obj ) {
+				if ( key.startsWith( 'otter_' ) ) {
+					delete obj[key];
+				}
 			}
+			return obj;
 		}
-		return obj;
-	}
 
 
-	const response = await fetch( 'https://api.openai.com/v1/chat/completions', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
+		const response = await fetch( 'https://api.openai.com/v1/chat/completions', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
 
-			// The Authorization header contains your API key
-			Authorization: `Bearer ${apiKey}`
-		},
-		body: JSON.stringify({
-			...( removeOtterKeys( body ) ),
-			temperature: 0.2,
-			// eslint-disable-next-line camelcase
-			top_p: 1,
-			stream: false
-		})
-	});
+				// The Authorization header contains your API key
+				Authorization: `Bearer ${apiKey}`
+			},
+			body: JSON.stringify({
+				...( removeOtterKeys( body ) ),
+				...settings
+			})
+		});
 
-	return await response.json() as ChatResponse;
+		return await response.json() as ChatResponse;
+	};
 }
+
+export const sendPromptToOpenAI = createPromptRequest({
+	temperature: 0.2,
+	// eslint-disable-next-line camelcase
+	top_p: 1,
+	stream: false
+});
+
+export const sendPromptToOpenAIWithRegenerate = createPromptRequest({
+	temperature: 0.5,
+	// eslint-disable-next-line camelcase
+	top_p: 1,
+	stream: false
+});
 
 const fieldMapping = {
 	'text': 'themeisle-blocks/form-input',

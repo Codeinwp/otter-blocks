@@ -8,7 +8,7 @@ import {
 	parseToDisplayPromptResponse,
 	PromptsData,
 	retrieveEmbeddedPrompt,
-	sendPromptToOpenAI
+	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
 import PromptInput from './prompt-input';
 import { closeSmall, redo, undo } from '@wordpress/icons';
@@ -220,7 +220,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	}, [ resultHistoryIndex, resultHistory ]);
 
-	function onSubmit() {
+	function onSubmit( regenerate = false ) {
 
 		const embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptName );
 
@@ -239,7 +239,9 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		setGenerationStatus( 'loading' );
 
-		sendPromptToOpenAI( value, apiKey, embeddedPrompt ).then ( ( data ) => {
+		const sendPrompt = regenerate ? sendPromptToOpenAIWithRegenerate : sendPromptToOpenAI;
+
+		sendPrompt?.( value, apiKey, embeddedPrompt ).then ( ( data ) => {
 			if ( data?.error ) {
 				console.error( data?.error );
 				setGenerationStatus( 'error' );
@@ -361,6 +363,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 						}}
 						mainActionName={props.resutActionLabel}
 						tokenUsageDescription={tokenUsageDescription}
+						onRegenerate={() => onSubmit( true )}
 					>
 						<BlockGenerationArea result={ result } />
 					</PromptResultArea>

@@ -171,12 +171,7 @@ const ContentGenerator = ({
 				{
 					showActionsButton ? (
 						<div className="o-actions">
-							<Button
-								variant={ 'primary' }
-								onClick={replaceTargetBlock}
-							>
-								{ 'Replace Fields' }
-							</Button>
+
 							<SelectControl
 								value={attributes.blockToReplace}
 								options={[
@@ -196,6 +191,16 @@ const ContentGenerator = ({
 									});
 								}}
 							/>
+
+							{
+								attributes.blockToReplace ? (
+									<Button
+										variant={ 'primary' }
+										onClick={replaceTargetBlock}
+									>
+										{ 'Replace Original Content' }
+									</Button> ) : ''
+							}
 						</div>
 					) : ''
 				}
