@@ -35,7 +35,7 @@ class Form_Pro_Features {
 			add_action( 'otter_form_after_submit', array( $this, 'clean_files_from_uploads' ) );
 			add_action( 'otter_form_after_submit', array( $this, 'send_autoresponder' ), 99 );
 			add_action( 'otter_form_after_submit', array( $this, 'trigger_webhook' ) );
-			add_filter( 'themeisle_blocks_form_webhook_payload', array( $this, 'prepare_webhook_payload' ), 10, 2 );
+			add_filter( 'themeisle_blocks_form_webhook_payload', array( $this, 'prepare_webhook_payload' ), 10, 3 );
 		}
 	}
 
@@ -384,10 +384,10 @@ class Form_Pro_Features {
 				}
 			}
 
-			if ( ! empty( $webhook ) ) {
-				$method        = $webhook['method'];
+			if ( ! empty( $webhook ) && ! empty( $webhook['url'] ) ) {
+				$method        = empty( $webhook['method'] ) ? 'POST' : $webhook['method'];
 				$url           = $webhook['url'];
-				$headers_pairs = $webhook['headers'];
+				$headers_pairs = empty( $webhook['headers'] ) ? array() : $webhook['headers'];
 				$headers       = array();
 
 				foreach ( $headers_pairs as $pair ) {
@@ -398,7 +398,7 @@ class Form_Pro_Features {
 					$headers[] = $pair['key'] . ': ' . $pair['value'];
 				}
 
-				$payload = apply_filters( 'themeisle_blocks_form_webhook_payload', array(), $form_data );
+				$payload = apply_filters( 'themeisle_blocks_form_webhook_payload', array(), $form_data, $webhook );
 				$payload = wp_json_encode( $payload );
 
 				$response = wp_remote_request(
@@ -432,9 +432,10 @@ class Form_Pro_Features {
 	 *
 	 * @param mixed             $payload The payload.
 	 * @param Form_Data_Request $form_data The form data.
+	 * @param mixed             $webhook The webhook.
 	 * @return mixed
 	 */
-	public function prepare_webhook_payload( $payload, $form_data ) {
+	public function prepare_webhook_payload( $payload, $form_data, $webhook ) {
 
 		if ( ! is_array( $payload ) ) {
 			return $payload;

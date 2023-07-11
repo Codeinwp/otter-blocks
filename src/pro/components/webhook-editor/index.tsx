@@ -63,7 +63,6 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 
 	const [ webhooks, setWebhooks ] = useState<Webhook[]>([]);
 
-
 	const [ initWebhooks, setInitWebhooks ] = useState( true );
 	useEffect( () => {
 		if ( 'loaded' === status && initWebhooks ) {
@@ -107,6 +106,19 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 			setWebhooks( response?.['themeisle_webhooks_options'] ?? []);
 		});
 	};
+
+	useEffect( () => {
+		if ( isOpen && 0 < webhooks?.length && props.webhookId && id !== props.webhookId ) {
+			const webhook = webhooks.find( ( hook: Webhook ) => hook.id === props.webhookId );
+			if ( webhook ) {
+				setId( webhook.id );
+				setName( webhook.name );
+				setUrl( webhook.url );
+				setMethod( webhook.method );
+				setHeaders( webhook.headers );
+			}
+		}
+	}, [ isOpen, webhooks, props.webhookId ]);
 
 	return (
 		<Fragment>
