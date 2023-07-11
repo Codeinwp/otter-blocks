@@ -22,7 +22,12 @@ const PromptInput = ( props: PromptInputProps ) => {
 		<div className="prompt-input__container">
 			<div className="prompt-input__input__container">
 				<Icon icon={aiGeneration} width={24} />
-				<input className="prompt-input__input" value={ props.value } onChange={ ( e ) => props.onValueChange( e.target.value ) } />
+				<input
+					className="prompt-input__input"
+					value={ props.value }
+					onChange={ ( e ) => props.onValueChange( e.target.value ) }
+					placeholder={ __( 'Type here the prompt...', 'otter-blocks' ) }
+				/>
 			</div>
 			<div className="prompt-input__submit__container">
 				<Button

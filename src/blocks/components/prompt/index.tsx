@@ -370,7 +370,12 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				)
 			}
 
-			<PromptInput value={value} onValueChange={onValueChange} onGenerate={onSubmit} status={generationStatus} />
+			<PromptInput
+				value={value}
+				onValueChange={onValueChange}
+				onGenerate={onSubmit}
+				status={generationStatus}
+			/>
 
 			{
 				showError && (
