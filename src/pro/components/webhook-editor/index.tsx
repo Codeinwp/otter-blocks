@@ -217,7 +217,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 											variant={ 'tertiary' }
 											isDestructive
 											onClick={() => {
-												setWebhooks( webhooks.filter( ( webhook ) => webhook.id !== id ) );
+												saveWebhooks( webhooks.filter( ( webhook ) => webhook.id !== id ) );
 												setId( '' );
 											}}
 										>
