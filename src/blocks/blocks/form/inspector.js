@@ -313,16 +313,22 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 								]
 
 							}
-							onChange={ props.onChange }
+							onChange={ undefined }
 						/>
 						< br />
 						<Button
 							variant="secondary"
 							onClick={undefined}
 							disabled
+							className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
 						>
 							{ __( 'Edit Webhooks', 'otter-blocks' ) }
 						</Button>
+
+						< br />
+						<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation">
+							{ __( 'Learn more about webhooks.', 'otter-blocks' ) }
+						</ExternalLink>
 
 						<div>
 							<Notice

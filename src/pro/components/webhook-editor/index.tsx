@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
  */
 import {
 	BaseControl,
-	Button,
+	Button, ExternalLink,
 	Icon,
 	Modal,
 	Notice,
@@ -378,6 +378,10 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 			>
 				{ __( 'Edit Webhooks', 'otter-blocks' ) }
 			</Button>
+			< br />
+			<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation">
+				{ __( 'Learn more about webhooks.', 'otter-blocks' ) }
+			</ExternalLink>
 		</Fragment>
 	);
 };
