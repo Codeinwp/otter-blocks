@@ -398,7 +398,7 @@ class Form_Pro_Features {
 				}
 
 				$payload = $this->prepare_webhook_payload( array(), $form_data, $webhook );
-				$payload = apply_filters( 'themeisle_blocks_form_webhook_payload', $payload, $form_data, $webhook );
+				$payload = apply_filters( 'otter_form_webhook_payload', $payload, $form_data, $webhook );
 				$payload = wp_json_encode( $payload );
 
 				$response = wp_remote_request(
