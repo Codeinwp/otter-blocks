@@ -28,35 +28,15 @@ type PromptPlaceholderProps = {
 	onValueChange: ( text: string ) => void
 	onSuccess?: PromptOnSuccess
 	resultAreaTitle?: string
-	resutActionLabel?: string
+	children?: ReactNode
+	onClose?: () => void
+	mainActionLabel?: string
+	onMainAction?: () => void
+	onPreview?: ( result: string ) => void
+	actionButtons?: ReactNode
 };
 
 export const apiKeyName = 'themeisle_open_ai_api_key';
-
-const BlockGenerationArea = ( props: { result?: string }) => {
-	return (
-		<div className="prompt-fields" >
-			<div className="prompt-column-title">
-				{ __( 'Label', 'otter-blocks' ) }
-			</div>
-			<div className="prompt-column-title">
-				{ __( 'Field Type', 'otter-blocks' ) }
-			</div>
-			{ props.result?.length && parseToDisplayPromptResponse( props.result ).map( field => {
-				return (
-					<Fragment>
-						<div className="prompt-field__label">
-							{ field.label }
-						</div>
-						<div className="prompt-field__type">
-							{ field.type }
-						</div>
-					</Fragment>
-				);
-			}) }
-		</div>
-	);
-};
 
 const PromptResultArea = (
 	props: {
@@ -71,6 +51,7 @@ const PromptResultArea = (
 		title?: string
 		onClose?: () => void
 		tokenUsageDescription?: string
+		actionButtons?: ReactNode
 	}
 ) => {
 	return (
@@ -91,14 +72,11 @@ const PromptResultArea = (
 				{ props.children }
 			</div>
 			<div className="prompt-result__actions">
+
+				{ props.actionButtons }
+
 				<Button
-					variant="secondary"
-					onClick={ props.mainAction }
-				>
-					{ props.mainActionName ?? __( 'Preview Generated Content', 'otter-blocks' ) }
-				</Button>
-				<Button
-					variant={'secondary'}
+					variant={'tertiary'}
 					onClick={ props.onRegenerate }
 				>
 					{ __( 'Regenerate', 'otter-blocks' ) }
@@ -150,7 +128,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
 	const [ result, setResult ] = useState<string | undefined>( undefined );
 
-	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number }}[]>([]);
+	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number, prompt: string }}[]>([]);
 	const [ resultHistoryIndex, setResultHistoryIndex ] = useState<number>( 0 );
 
 	const [ showResultArea, setShowResultArea ] = useState<boolean>( false );
@@ -203,6 +181,9 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	useEffect( () => {
 
+		console.log( 'resultHistoryIndex', resultHistoryIndex );
+		console.log( 'resultHistory', resultHistory );
+
 		if ( ! result ) {
 			return;
 		}
@@ -217,10 +198,11 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		setResult( resultHistory[ resultHistoryIndex ].result );
 		setTokenUsageDescription( __( 'Used tokens: ', 'otter-blocks' ) + resultHistory[ resultHistoryIndex ].meta.usedToken );
+		props.onPreview?.( resultHistory[ resultHistoryIndex ].result );
 
 	}, [ resultHistoryIndex, resultHistory ]);
 
-	function onSubmit( regenerate = false ) {
+	function onPromptSubmit( regenerate = false ) {
 
 		const embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptName );
 
@@ -261,14 +243,31 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			}
 
 			setResult( result );
-			setResultHistory([ ...resultHistory, {
-				result,
-				meta: {
-					usedToken: data.usage.total_tokens
-				}
-			}]);
+			if ( regenerate ) {
+				console.log( 'Not' );
+				const newResultHistory = [ ...resultHistory ];
+				newResultHistory[ resultHistoryIndex ] = {
+					result,
+					meta: {
+						usedToken: data.usage.total_tokens,
+						prompt: value
+					}
+				};
+				setResultHistory( newResultHistory );
+			} else {
+				setResultHistory([ ...resultHistory, {
+					result,
+					meta: {
+						usedToken: data.usage.total_tokens,
+						prompt: value
+					}
+				}]);
+				setResultHistoryIndex( resultHistory.length );
+
+			}
 			setShowResultArea( true );
 			setTokenUsageDescription( __( 'Token used: ', 'otter-blocks' ) + data.usage.total_tokens );
+			props.onPreview?.( result );
 		});
 	}
 
@@ -342,14 +341,10 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	return (
 		<div>
 			{
-				showResultArea && (
+				showResultArea ? (
 					<PromptResultArea
-						title={ props.resultAreaTitle }
-						mainAction={
-							() => {
-								onSuccess?.( result, onSuccessActions );
-							}
-						}
+						title={ props.title }
+						mainAction={ props.onMainAction }
 						currentResultIndex={ resultHistoryIndex + 1 }
 						totalResults={ resultHistory.length }
 						onPrevResult={() => {
@@ -359,23 +354,35 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 							setResultHistoryIndex( resultHistoryIndex + 1 );
 						}}
 						onClose={() => {
-							setShowResultArea( false );
+							props.onClose?.();
 						}}
-						mainActionName={props.resutActionLabel}
+						mainActionName={props.mainActionLabel}
 						tokenUsageDescription={tokenUsageDescription}
-						onRegenerate={() => onSubmit( true )}
+						onRegenerate={() => onPromptSubmit( true )}
+						actionButtons={props.actionButtons}
 					>
-						<BlockGenerationArea result={ result } />
+
+						<PromptInput
+							value={value}
+							onValueChange={onValueChange}
+							onGenerate={() => onPromptSubmit()}
+							status={generationStatus}
+							placeholder={__( 'Start describing what form you need...', 'otter-blocks' )}
+						/>
+
+
+						{props.children}
 					</PromptResultArea>
+				) : (
+					<PromptInput
+						value={value}
+						onValueChange={onValueChange}
+						onGenerate={() => onPromptSubmit()}
+						status={generationStatus}
+						placeholder={__( 'Start describing what form you need...', 'otter-blocks' )}
+					/>
 				)
 			}
-
-			<PromptInput
-				value={value}
-				onValueChange={onValueChange}
-				onGenerate={onSubmit}
-				status={generationStatus}
-			/>
 
 			{
 				showError && (

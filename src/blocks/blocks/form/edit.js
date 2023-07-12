@@ -47,7 +47,7 @@ import {
 import metadata from './block.json';
 import {
 	blockInit,
-	getDefaultValueByField
+	getDefaultValueByField, insertBlockBelow
 } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
@@ -918,8 +918,7 @@ const Edit = ({
 									generationType: 'form'
 								});
 
-								// Insert a new block after the current one.
-								insertBlock( generator, currentBlockPosition + 1 );
+								insertBlockBelow( clientId, generator );
 							}}
 						>
 							{ __( 'Create Form With AI', 'otter-blocks' ) }

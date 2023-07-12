@@ -476,3 +476,32 @@ export function pullReusableBlockContentById( id ) {
 export function openOtterSidebarMenu() {
 	document?.querySelector( '.interface-pinned-items button[aria-label~="Otter"]' )?.click();
 }
+
+/**
+ * Insert a block below the given block.
+ *
+ * @param {string} clientId The client id of the reference block.
+ * @param {any} block The block to insert.
+ * @see https://github.com/WordPress/gutenberg/blob/e448fa70163ce936eae9aec454ca99f5a6287f15/packages/block-editor/src/store/actions.js#L1604-L1622
+ */
+export function insertBlockBelow( clientId, block ) {
+	const {
+		getBlockRootClientId,
+		getTemplateLock,
+		getBlockIndex
+	} = select( 'core/block-editor' );
+
+	const {
+		insertBlock
+	} = dispatch( 'core/block-editor' );
+
+	const rootClientId = getBlockRootClientId( clientId );
+	const isLocked = getTemplateLock( rootClientId );
+
+	if ( isLocked ) {
+		return;
+	}
+
+	const index = getBlockIndex( clientId, rootClientId );
+	insertBlock( block, index + 1, rootClientId );
+}

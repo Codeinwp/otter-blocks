@@ -9,7 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
-import { aiGeneration as icon } from '../../helpers/icons.js';
+import { aiGeneration as icon, formAiGeneration } from '../../helpers/icons.js';
 import edit from './edit.js';
 import './editor.scss';
 
@@ -24,5 +24,17 @@ registerBlockType( name, {
 		'layout'
 	],
 	edit,
-	save: () => null
+	save: () => null,
+	variations: [
+		{
+			name: 'themeisle-blocks/content-generator-form',
+			description: __( 'Generate Form with OpenAI.', 'otter-blocks' ),
+			icon: formAiGeneration,
+			title: __( 'AI Form Generator', 'otter-blocks' ),
+			scope: [ 'block' ],
+			attributes: {
+				generationType: 'form'
+			}
+		}
+	]
 });

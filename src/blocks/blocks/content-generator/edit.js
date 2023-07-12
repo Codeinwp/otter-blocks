@@ -2,13 +2,15 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import { get } from 'lodash';
 
 /**
  * WordPress dependencies
  */
-import { Button, Disabled, ResizableBox, SelectControl } from '@wordpress/components';
+import { Button, Disabled, Dropdown, ResizableBox, SelectControl } from '@wordpress/components';
 
 import {
+	__experimentalBlockVariationPicker as VariationPicker,
 	InnerBlocks,
 	RichText,
 	useBlockProps
@@ -21,7 +23,7 @@ import {
 	useState
 } from '@wordpress/element';
 
-import { createBlock } from '@wordpress/blocks';
+import { createBlock, createBlocksFromInnerBlocksTemplate } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -32,13 +34,14 @@ import PromptPlaceholder from '../../components/prompt';
 import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { chevronDown, Icon } from '@wordpress/icons';
+import { insertBlockBelow } from '../../helpers/block-utility';
 
 const { attributes: defaultAttributes } = metadata;
 
 const PRESETS = {
 	form: {
-		title: __( 'Suggested form structure', 'otter-blocks' ),
-		mainAction: __( 'Preview Form', 'otter-blocks' )
+		title: __( 'AI Form generator', 'otter-blocks' )
 	}
 };
 
@@ -56,13 +59,15 @@ const ContentGenerator = ({
 	setAttributes,
 	isSelected,
 	clientId,
-	toggleSelection
+	toggleSelection,
+	name
 }) => {
 
 	const blockProps = useBlockProps();
 
 	const [ prompt, setPrompt ] = useState( '' );
 	const [ promptActions, setPromptActions ] = useState({});
+	const [ showDropdown, setShowDropdown ] = useState( false );
 
 	const [ containerCliendId, setContainerCliendId ] = useState( '' );
 
@@ -71,7 +76,8 @@ const ContentGenerator = ({
 		removeBlock,
 		replaceInnerBlocks,
 		selectBlock,
-		moveBlockToPosition
+		moveBlockToPosition,
+		insertBlocks
 	} = useDispatch( 'core/block-editor' );
 
 	/**
@@ -79,7 +85,7 @@ const ContentGenerator = ({
 	 *
 	 * @type {import('../../components/prompt').PromptOnSuccess}
 	 */
-	const onSuccess = ( result, actions ) => {
+	const onPreview = ( result ) => {
 		if ( 'form' === attributes.generationType ) {
 
 			const formFields = parseFormPromptResponseToBlocks( result );
@@ -88,51 +94,41 @@ const ContentGenerator = ({
 
 			console.log( form );
 
-			setPromptActions( actions );
-
 			replaceInnerBlocks( clientId, [ form ]);
 		}
 	};
 
-	const { hasInnerBlocks, containerId, getBlocks } = useSelect(
+	const { hasInnerBlocks, containerId, getBlocks, getBlock, getBlockOrder, getBlockRootClientId } = useSelect(
 		select => {
 
-			const { getBlocks } = select( 'core/block-editor' );
+			const { getBlocks, getBlock, getBlockRootClientId, getBlockOrder } = select( 'core/block-editor' );
 
 			const blocks = getBlocks?.( clientId ) ?? [];
 
 			return {
 				hasInnerBlocks: getBlocks?.( clientId ).length,
 				containerId: blocks[0]?.clientId,
-				getBlocks
+				getBlocks,
+				getBlock,
+				getBlockRootClientId,
+				getBlockOrder
 			};
 		},
 		[ clientId ]
 	);
 
-	const validBlocksToReplace = useSelect( select => {
+	const canReplaceBlock = useSelect( select => {
 		const { getBlocks } = select( 'core/block-editor' );
 
-		const blocks = getBlocks?.( ) ?? [];
-
-		return blocks
-			.filter( block => {
-				return 'themeisle-blocks/form' === block?.name;
-			})
-			.filter( block => block.clientId && block.clientId !== clientId )
-			.map( ( block, idx ) => ({
-				clientId: block?.clientId,
-				name: `${formatNameBlock( block?.name )}#${idx}`
-			}) );
-	}, [ clientId ]);
+		return ( getBlocks?.() ?? []).some( block => block.clientId === attributes.blockToReplace );
+	}, [ clientId, attributes.blockToReplace ]);
 
 	const replaceTargetBlock = () => {
 
-		if ( ! validBlocksToReplace?.some( block => block?.clientId === attributes.blockToReplace ) ) {
-			return;
-		}
+		const blocksToAdd = getBlocks?.( containerId )?.map( block => {
+			return createBlock( block.name, block.attributes, block.innerBlocks );
+		}) ?? [];
 
-		const blocksToAdd = getBlocks?.( containerId ) ?? [];
 		if ( ! blocksToAdd.length ) {
 			return;
 		}
@@ -140,71 +136,154 @@ const ContentGenerator = ({
 		replaceInnerBlocks( attributes.blockToReplace, blocksToAdd );
 	};
 
+	const appendToTargetBlock = () => {
+		const blocksToAdd = getBlocks?.( containerId )?.map( block => {
+			return createBlock( block.name, block.attributes, block.innerBlocks );
+		}) ?? [];
+
+		const targetBlock = getBlock( attributes.blockToReplace );
+
+		if ( ! blocksToAdd.length ) {
+			return;
+		}
+
+		insertBlocks( blocksToAdd, targetBlock.innerBlocks?.length ?? 0, attributes.blockToReplace );
+	};
+
+	const insertNewBlockFromContainer = () => {
+		const containerBlock = getBlock( containerId );
+		const copy = createBlock(
+			containerBlock.name,
+			containerBlock.attributes,
+			containerBlock.innerBlocks?.map( block => {
+				return createBlock( block.name, block.attributes, block.innerBlocks );
+			})
+		);
+
+		insertBlockBelow( clientId, copy );
+	};
+
 	const showActionsButton = isSelected && hasInnerBlocks;
+
+	const { blockType, defaultVariation, variations } = useSelect(
+		select => {
+			const {
+				getBlockVariations,
+				getBlockType,
+				getDefaultBlockVariation
+			} = select( 'core/blocks' );
+
+			return {
+				blockType: getBlockType( name ),
+				defaultVariation: getDefaultBlockVariation( name, 'block' ),
+				variations: getBlockVariations( name, 'block' )
+			};
+		},
+		[ name ]
+	);
+
+	const FormActions = (
+		<Fragment>
+			<Button
+				variant="secondary"
+				onClick={ insertNewBlockFromContainer }
+			>
+				{ __( 'Insert Form below', 'otter-blocks' ) }
+			</Button>
+
+			{
+				canReplaceBlock && (
+					<Dropdown
+						renderToggle={
+							({ isOpen, onToggle }) => (
+								<Button
+									variant="secondary"
+									onClick={ () => onToggle( ! isOpen ) }
+								>
+									{ __( 'Remix', 'otter-blocks' )  }
+									<Icon icon={chevronDown} />
+								</Button>
+							)
+						}
+						renderContent={
+
+							({ isOpen }) => (
+								<Fragment>
+									{
+										isOpen ? (
+											<Fragment>
+												<Button
+													variant="tertiary"
+													onClick={ replaceTargetBlock }
+												>
+													{ __( 'Replace current Form', 'otter-blocks' )  }
+												</Button>
+												<Button
+													variant="tertiary"
+													onClick={ appendToTargetBlock }
+												>
+													{ __( 'Append generated fields', 'otter-blocks' )  }
+												</Button>
+											</Fragment>
+										) : ''
+									}
+
+								</Fragment>
+							)
+						}
+					/>
+				)
+			}
+
+
+		</Fragment>
+	);
 
 	return (
 		<Fragment>
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-
 			/>
 
 			<div { ...blockProps }>
-				<PromptPlaceholder
-					promptName={attributes.generationType}
-					resultAreaTitle={PRESETS?.[attributes.generationType]?.title}
-					resutActionLabel={PRESETS?.[attributes.generationType]?.mainAction}
-					value={prompt}
-					onValueChange={setPrompt}
-					onSuccess={onSuccess}
-				/>
 
 				{
-					hasInnerBlocks ? (
-						<Disabled>
-							<InnerBlocks renderAppender={false}/>
-						</Disabled>
-					) : ''
-				}
-
-				{
-					showActionsButton ? (
-						<div className="o-actions">
-
-							<SelectControl
-								value={attributes.blockToReplace}
-								options={[
-									{
-										label: 'Select block to replace',
-										value: ''
-									},
-									...( validBlocksToReplace?.map( block => ({
-										label: block.name,
-										value: block.clientId
-									}) ) ?? [])
-								]}
-								onChange={value => {
-									console.log( 'Replace original block with new one' );
-									setAttributes({
-										blockToReplace: value
-									});
-								}}
-							/>
-
+					attributes.generationType === undefined ? (
+						<VariationPicker
+							icon={ get( blockType, [ 'icon', 'src' ]) }
+							label={ get( blockType, [ 'title' ]) }
+							variations={ variations }
+							onSelect={ ( nextVariation = defaultVariation ) => {
+								if ( nextVariation ) {
+									setAttributes( nextVariation.attributes );
+								}
+								selectBlock( clientId );
+							} }
+							allowSkip
+						/>
+					) : (
+						<PromptPlaceholder
+							promptName={attributes.generationType}
+							title={PRESETS?.[attributes.generationType]?.title}
+							mainActionLabel={ '' }
+							value={prompt}
+							onValueChange={setPrompt}
+							onMainAction={ replaceTargetBlock }
+							onPreview={onPreview}
+							actionButtons={FormActions}
+							onClose={() => removeBlock( clientId )}
+						>
 							{
-								attributes.blockToReplace ? (
-									<Button
-										variant={ 'primary' }
-										onClick={replaceTargetBlock}
-									>
-										{ 'Replace Original Content' }
-									</Button> ) : ''
+								hasInnerBlocks ? (
+									<Disabled>
+										<InnerBlocks renderAppender={false}/>
+									</Disabled>
+								) : ''
 							}
-						</div>
-					) : ''
+						</PromptPlaceholder>
+					)
 				}
-
 			</div>
 		</Fragment>
 	);
