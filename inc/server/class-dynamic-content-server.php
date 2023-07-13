@@ -210,7 +210,7 @@ class Dynamic_Content_Server {
 				readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
 			$output = ob_get_contents();
 
-			if ( isset( $size['mime'] ) ) {
+			if ( ! empty( $size['mime'] ) ) {
 				header( 'Content-type: ' . $size['mime'] );
 			}
 			return $output;
