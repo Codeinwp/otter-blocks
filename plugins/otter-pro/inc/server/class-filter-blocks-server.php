@@ -92,7 +92,7 @@ class Filter_Blocks_Server {
 			)
 		);
 
-		unset( $post_types['attachment'] );
+		$post_types = array_diff( $post_types, array( 'attachment' ) );
 		array_push( $post_types, 'wp_block' );
 
 		foreach ( $post_types as $key => $post_type ) {
