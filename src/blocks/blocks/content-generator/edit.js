@@ -154,14 +154,14 @@ const ContentGenerator = ({
 							onClick={transformToContainerBlock}
 							disabled={'loading' === props.status}
 						>
-							{__( 'Transform to Form', 'otter-blocks' )}
+							{__( 'Finish', 'otter-blocks' )}
 						</Button>
 						<Button
 							variant="secondary"
 							onClick={insertNewBlockFromContainer}
 							disabled={'loading' === props.status}
 						>
-							{__( 'Insert Form below', 'otter-blocks' )}
+							{__( 'Insert below', 'otter-blocks' )}
 						</Button>
 					</Fragment>
 				);
