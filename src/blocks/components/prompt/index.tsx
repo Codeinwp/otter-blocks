@@ -1,48 +1,44 @@
+/**
+ * WordPress dependencies
+ */
+
 import { __ } from '@wordpress/i18n';
+import { closeSmall, redo, undo } from '@wordpress/icons';
+import { ReactNode } from 'react';
 import { Button, ExternalLink, Notice, Placeholder, Spinner, TextControl } from '@wordpress/components';
-import './editor.scss';
 import { Fragment, useEffect, useState } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+
 import useSettings from '../../helpers/use-settings';
 import {
-	parseFormPromptResponseToBlocks,
-	parseToDisplayPromptResponse,
 	PromptsData,
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
 import PromptInput from './prompt-input';
-import { closeSmall, redo, undo } from '@wordpress/icons';
-import { ReactNode } from 'react';
-
-type PromptOnSuccessActions = {
-	clearHistory: () => void
-}
-
-export type PromptOnSuccess = ( result: string, actions: PromptOnSuccessActions ) => void;
+import './editor.scss';
 
 type PromptPlaceholderProps = {
-	promptName?: string
+	promptID?: string
+	promptPlaceholder?: string
 	title?: string
-	description?: string
 	value: string
 	onValueChange: ( text: string ) => void
-	onSuccess?: PromptOnSuccess
-	resultAreaTitle?: string
 	children?: ReactNode
 	onClose?: () => void
 	mainActionLabel?: string
-	onMainAction?: () => void
 	onPreview?: ( result: string ) => void
-	actionButtons?: ReactNode
+	actionButtons?: ( props: {status?: string}) => ReactNode
 };
 
 export const apiKeyName = 'themeisle_open_ai_api_key';
 
-const PromptResultArea = (
+const PromptBlockEditor = (
 	props: {
 		children?: ReactNode
-		mainActionName?: string
-		mainAction?: () => void
 		onRegenerate?: () => void
 		onPrevResult?: () => void
 		onNextResult?: () => void
@@ -52,6 +48,7 @@ const PromptResultArea = (
 		onClose?: () => void
 		tokenUsageDescription?: string
 		actionButtons?: ReactNode
+		status?: string
 	}
 ) => {
 	return (
@@ -76,8 +73,9 @@ const PromptResultArea = (
 				{ props.actionButtons }
 
 				<Button
-					variant={'tertiary'}
+					variant={ 'tertiary' }
 					onClick={ props.onRegenerate }
+					disabled={ 'loading' === props.status }
 				>
 					{ __( 'Regenerate', 'otter-blocks' ) }
 				</Button>
@@ -117,7 +115,7 @@ const PromptResultArea = (
 };
 
 const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
-	const { title, description, value, onValueChange, onSuccess, promptName } = props;
+	const { title, value, onValueChange, promptID } = props;
 
 	const [ getOption, updateOption, status ] = useSettings();
 	const [ apiKey, setApiKey ] = useState<string | null>( null );
@@ -147,7 +145,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	useEffect( () => {
 		const getEmbeddedPrompt = async() => {
-			retrieveEmbeddedPrompt( promptName ).then( ( promptServer ) => {
+			retrieveEmbeddedPrompt( promptID ).then( ( promptServer ) => {
 				setEmbeddedPrompts( promptServer.prompts );
 				console.log( promptServer );
 			});
@@ -180,10 +178,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	}, [ resultHistory ]);
 
 	useEffect( () => {
-
-		console.log( 'resultHistoryIndex', resultHistoryIndex );
-		console.log( 'resultHistory', resultHistory );
-
 		if ( ! result ) {
 			return;
 		}
@@ -204,7 +198,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	function onPromptSubmit( regenerate = false ) {
 
-		const embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptName );
+		const embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
 
 		if ( ! embeddedPrompt ) {
 			setShowError( true );
@@ -213,7 +207,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		}
 
 		if ( ! apiKey ) {
-			console.warn( 'API Key not found' );
 			setShowError( true );
 			setErrorMessage( __( 'API Key not found. Please add your API Key in the settings page.', 'otter-blocks' ) );
 			return;
@@ -225,7 +218,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		sendPrompt?.( value, apiKey, embeddedPrompt ).then ( ( data ) => {
 			if ( data?.error ) {
-				console.error( data?.error );
 				setGenerationStatus( 'error' );
 				setShowError( true );
 				setErrorMessage( `Error ${data.error.code} - ${data.error.message}` ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
@@ -244,7 +236,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 			setResult( result );
 			if ( regenerate ) {
-				console.log( 'Not' );
 				const newResultHistory = [ ...resultHistory ];
 				newResultHistory[ resultHistoryIndex ] = {
 					result,
@@ -302,7 +293,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 									variant="primary"
 									disabled={ ! apiKey || 'saving' === status}
 									onClick={() => {
-										console.log( apiKey );
 
 										if ( ! apiKey ) {
 											return;
@@ -342,9 +332,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		<div>
 			{
 				showResultArea ? (
-					<PromptResultArea
+					<PromptBlockEditor
 						title={ props.title }
-						mainAction={ props.onMainAction }
 						currentResultIndex={ resultHistoryIndex + 1 }
 						totalResults={ resultHistory.length }
 						onPrevResult={() => {
@@ -356,30 +345,33 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 						onClose={() => {
 							props.onClose?.();
 						}}
-						mainActionName={props.mainActionLabel}
 						tokenUsageDescription={tokenUsageDescription}
 						onRegenerate={() => onPromptSubmit( true )}
-						actionButtons={props.actionButtons}
+						actionButtons={props.actionButtons?.({
+							status: generationStatus
+						})}
+						status={generationStatus}
 					>
 
 						<PromptInput
 							value={value}
 							onValueChange={onValueChange}
-							onGenerate={() => onPromptSubmit()}
+							onGenerate={() => {
+								setShowError( false );
+								onPromptSubmit();
+							}}
 							status={generationStatus}
-							placeholder={__( 'Start describing what form you need...', 'otter-blocks' )}
+							placeholder={ props.promptPlaceholder }
 						/>
-
-
 						{props.children}
-					</PromptResultArea>
+					</PromptBlockEditor>
 				) : (
 					<PromptInput
 						value={value}
 						onValueChange={onValueChange}
 						onGenerate={() => onPromptSubmit()}
 						status={generationStatus}
-						placeholder={__( 'Start describing what form you need...', 'otter-blocks' )}
+						placeholder={ props.promptPlaceholder }
 					/>
 				)
 			}

@@ -33,7 +33,7 @@ registerBlockType( name, {
 			title: __( 'AI Form Generator', 'otter-blocks' ),
 			scope: [ 'block' ],
 			attributes: {
-				generationType: 'form'
+				promptID: 'form'
 			}
 		}
 	]

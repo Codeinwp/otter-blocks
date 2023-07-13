@@ -217,10 +217,22 @@ const Edit = ({
 		};
 	});
 
+	/**
+	 * Prevent saving data if the block is inside an AI block. This will prevent polluting the wp_options table.
+	 */
+	const isInsideAiBlock = useSelect( select => {
+		const {
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const parents = getBlockParentsByBlockName( clientId, 'themeisle-blocks/content-generator' );
+		return 0 < parents?.length;
+	}, [ clientId ]);
+
 	const hasEssentialData = attributes.optionName && hasProtection;
 
 	useEffect( () => {
-		if ( canSaveData ) {
+		if ( canSaveData && ! isInsideAiBlock ) {
 			saveFormEmailOptions();
 		}
 	}, [ canSaveData ]);
@@ -914,8 +926,7 @@ const Edit = ({
 						<Button
 							onClick={()=> {
 								const generator = createBlock( 'themeisle-blocks/content-generator', {
-									blockToReplace: clientId,
-									generationType: 'form'
+									promptID: 'form'
 								});
 
 								insertBlockBelow( clientId, generator );

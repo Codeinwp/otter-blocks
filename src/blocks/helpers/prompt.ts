@@ -7,6 +7,18 @@ type PromptResponse = {
 	error?: string
 }
 
+type OpenAiSettings = {
+	model?: string
+	temperature?: number
+	max_tokens?: number
+	top_p?: number
+	stream?: boolean
+	logprobs?: number
+	presence_penalty?: number
+	frequency_penalty?: number
+	stop?: string|string[]
+}
+
 type ChatResponse = {
 	choices: {
 		finish_reason: string,
@@ -48,6 +60,7 @@ type FormResponse = {
 		required?: boolean
 	}[]
 }
+
 export type PromptData = {
 	otter_name: string
 	model: string
@@ -73,12 +86,14 @@ type PromptServerResponse = {
 	prompts: PromptsData
 }
 
-function createPromptRequest( settings ) {
+/**
+ * Create a prompt request emebdded with the given settings.
+ *
+ * @param settings
+ */
+function promptRequestBuilder( settings?: OpenAiSettings ) {
 
 	settings ??= {
-		temperature: 0.2,
-		// eslint-disable-next-line camelcase
-		top_p: 1,
 		stream: false
 	};
 
@@ -107,36 +122,45 @@ function createPromptRequest( settings ) {
 			return obj;
 		}
 
+		try {
+			const response = await fetch( 'https://api.openai.com/v1/chat/completions', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
 
-		const response = await fetch( 'https://api.openai.com/v1/chat/completions', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
+					// The Authorization header contains your API key
+					Authorization: `Bearer ${apiKey}`
+				},
+				body: JSON.stringify({
+					...( removeOtterKeys( body ) ),
+					...settings
+				})
+			});
 
-				// The Authorization header contains your API key
-				Authorization: `Bearer ${apiKey}`
-			},
-			body: JSON.stringify({
-				...( removeOtterKeys( body ) ),
-				...settings
-			})
-		});
+			return await response.json() as ChatResponse;
+		} catch ( e ) {
+			return {
+				error: {
+					code: 'system',
+					message: e.message
+				}
+			};
+		}
 
-		return await response.json() as ChatResponse;
 	};
 }
 
-export const sendPromptToOpenAI = createPromptRequest({
-	temperature: 0.2,
-	// eslint-disable-next-line camelcase
-	top_p: 1,
-	stream: false
-});
+/**
+ * Send the prompt to OpenAI. This will be the default function.
+ */
+export const sendPromptToOpenAI = promptRequestBuilder();
 
-export const sendPromptToOpenAIWithRegenerate = createPromptRequest({
-	temperature: 0.5,
+/**
+ * Send the prompt to OpenAI. This will have more randomness.
+ */
+export const sendPromptToOpenAIWithRegenerate = promptRequestBuilder({
+	temperature: 1.3,
 	// eslint-disable-next-line camelcase
-	top_p: 1,
 	stream: false
 });
 
@@ -196,6 +220,11 @@ export function parseFormPromptResponseToBlocks( promptResponse: string ) {
 	}
 
 	return formResponse?.fields?.map( ( field ) => {
+
+		if ( ! fieldMapping?.[field.type]) {
+			return undefined;
+		}
+
 		return createBlock( fieldMapping[field.type], {
 			label: field.label,
 			placeholder: field.placeholder,
@@ -204,27 +233,6 @@ export function parseFormPromptResponseToBlocks( promptResponse: string ) {
 			allowedFileTypes: field.allowedFileTypes
 		});
 	}).filter( Boolean );
-}
-
-export function replaceInnerBlockWithPrompt( blockClientId: string, promptResponse: string ) {
-
-	console.log( '[Call] replaceInnerBlockWithPrompt', blockClientId, promptResponse );
-
-	if ( blockClientId === undefined ) {
-		return;
-	}
-
-	const formFields = parseFormPromptResponseToBlocks( promptResponse );
-
-	if ( ! formFields.length ) {
-		return;
-	}
-
-	console.log( 'replaceInnerBlockWithPrompt', blockClientId, formFields );
-
-	const { replaceInnerBlocks } = window.wp.data.dispatch( 'core/block-editor' );
-
-	replaceInnerBlocks( blockClientId, formFields );
 }
 
 export function retrieveEmbeddedPrompt( promptName ?: string ) {

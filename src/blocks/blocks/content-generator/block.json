@@ -13,10 +13,7 @@
 	],
 	"textdomain": "otter-blocks",
 	"attributes": {
-		"blockToReplace": {
-			"type": "string"
-		},
-		"generationType": {
+		"promptID": {
 			"type": "string"
 		}
 	}

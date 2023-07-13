@@ -51,7 +51,7 @@ const PromptInput = ( props: PromptInputProps ) => {
 						variant="secondary"
 						onClick={props.onGenerate}
 						isBusy={'loading' === props.status}
-						disabled={ 'loading' === props.status}
+						disabled={ 'loading' === props.status ||  0 === props.value.length}
 					>
 						{__( 'Generate', 'otter-blocks' )}
 					</Button>
