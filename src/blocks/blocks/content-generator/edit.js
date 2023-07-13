@@ -154,7 +154,7 @@ const ContentGenerator = ({
 							onClick={transformToContainerBlock}
 							disabled={'loading' === props.status}
 						>
-							{__( 'Finish', 'otter-blocks' )}
+							{__( 'Replace', 'otter-blocks' )}
 						</Button>
 						<Button
 							variant="secondary"
