@@ -144,13 +144,13 @@ const ContentGenerator = ({
 
 	const PRESETS = {
 		form: {
-			title: __( 'AI Form generator', 'otter-blocks' ),
+			title: __( 'AI Form generator (Beta)', 'otter-blocks' ),
 			placeholder: __( 'Start describing what form you need...', 'otter-blocks' ),
 			actions: ( props ) => {
 				return (
 					<Fragment>
 						<Button
-							variant="secondary"
+							variant="primary"
 							onClick={transformToContainerBlock}
 							disabled={'loading' === props.status}
 						>

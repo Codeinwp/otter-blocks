@@ -41,6 +41,10 @@ import {
 	createContext
 } from '@wordpress/element';
 
+import {
+	Icon
+} from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
@@ -56,6 +60,7 @@ import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../h
 import { Button, Notice, ToolbarGroup } from '@wordpress/components';
 import PromptPlaceholder from '../../components/prompt';
 import { parseFormPromptResponseToBlocks, sendPromptToOpenAI } from '../../helpers/prompt';
+import { aiGeneration, formAiGeneration } from '../../helpers/icons';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -933,6 +938,7 @@ const Edit = ({
 							}}
 						>
 							{ __( 'Create Form With AI', 'otter-blocks' ) }
+							<Icon width={22} icon={aiGeneration} style={{ marginLeft: '8px' }} />
 						</Button>
 					</ToolbarGroup>
 				</BlockControls>
