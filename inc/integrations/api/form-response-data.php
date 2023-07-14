@@ -44,6 +44,7 @@ class Form_Data_Response {
 	const ERROR_BOT_DETECTED          = '110';
 	const ERROR_FILES_METADATA_FORMAT = '111';
 	const ERROR_FILE_MISSING_BINARY   = '112';
+	const ERROR_MISSING_DUMP_DATA     = '113';
 
 
 
@@ -344,6 +345,7 @@ class Form_Data_Response {
 			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the Form Block with Autoresponder activated.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
 			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
+			self::ERROR_MISSING_DUMP_DATA                  => __( 'The form dump data is missing.', 'otter-blocks' ),
 		);
 
 		if ( ! isset( $error_messages[ $error_code ] ) ) {

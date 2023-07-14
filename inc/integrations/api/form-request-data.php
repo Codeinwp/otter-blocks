@@ -105,6 +105,13 @@ class Form_Data_Request {
 	protected $warning_codes = array();
 
 	/**
+	 * Saving mode of the form data.
+	 *
+	 * @var string $saving_mode Saving mode.
+	 */
+	protected $saving_mode = 'permanent';
+
+	/**
 	 * Constructor.
 	 *
 	 * @access  public
@@ -113,7 +120,7 @@ class Form_Data_Request {
 	 */
 	public function __construct( $request = null ) {
 
-		if ( ! is_a( $request, 'WP_REST_Request' ) ) {
+		if ( ! isset( $request ) || ! is_a( $request, 'WP_REST_Request' ) ) {
 			return;
 		}
 
@@ -122,8 +129,22 @@ class Form_Data_Request {
 
 		$form_data = json_decode( $form_data, true );
 
-		$this->request_data = $this->sanitize_request_data( $form_data );
+		$this->set_form_data( $this->sanitize_request_data( $form_data ) );
 		$this->form_options = new Form_Settings_Data( array() );
+
+		if ( ! empty( $request->get_header( 'O-Form-Save-Mode' ) ) ) {
+			$this->set_saving_mode( $request->get_header( 'O-Form-Save-Mode' ) );
+		}
+	}
+
+	/**
+	 * Set the form data.
+	 *
+	 * @param mixed $form_data The form data.
+	 * @return void
+	 */
+	private function set_form_data( $form_data ) {
+		$this->request_data = $form_data;
 	}
 
 	/**
@@ -372,12 +393,14 @@ class Form_Data_Request {
 	/**
 	 * Set if we should keep the uploaded files.
 	 *
-	 * @param bool $keep_uploaded_files True if we should keep the uploaded files.
+	 * @param bool|mixed $keep_uploaded_files True if we should keep the uploaded files.
 	 * @return void
 	 * @since 2.2.3
 	 */
 	public function set_keep_uploaded_files( $keep_uploaded_files ) {
-		$this->keep_uploaded_files = $keep_uploaded_files;
+		if ( is_bool( $keep_uploaded_files ) ) {
+			$this->keep_uploaded_files = (bool) $keep_uploaded_files;
+		}
 	}
 
 	/**
@@ -403,12 +426,14 @@ class Form_Data_Request {
 	/**
 	 * Set the files loaded to media library.
 	 *
-	 * @param array $files_loaded_to_media_library The files loaded to media library.
+	 * @param array|mixed $files_loaded_to_media_library The files loaded to media library.
 	 * @return void
 	 * @since 2.2.3
 	 */
 	public function set_files_loaded_to_media_library( $files_loaded_to_media_library ) {
-		$this->files_loaded_to_media_library = $files_loaded_to_media_library;
+		if ( is_array( $files_loaded_to_media_library ) ) {
+			$this->files_loaded_to_media_library = $files_loaded_to_media_library;
+		}
 	}
 
 	/**
@@ -595,5 +620,98 @@ class Form_Data_Request {
 	 */
 	public function get_request() {
 		return $this->request;
+	}
+
+	/**
+	 * Get the saving mode.
+	 *
+	 * @return string|null
+	 */
+	public function get_saving_mode() {
+		return $this->saving_mode;
+	}
+
+	/**
+	 * Check if we are saving temporary data.
+	 *
+	 * @return bool
+	 */
+	public function is_temporary_data() {
+		return 'temporary' === $this->saving_mode;
+	}
+
+	/**
+	 * Check if we are saving duplicate data.
+	 *
+	 * @return bool
+	 */
+	public function is_duplicate() {
+		return 'duplicate' === $this->saving_mode;
+	}
+
+	/**
+	 * Set the saving mode.
+	 *
+	 * @param string $saving_mode The saving mode.
+	 * @return void
+	 */
+	public function set_saving_mode( $saving_mode ) {
+		if ( empty( $saving_mode ) ) {
+			return;
+		}
+
+		$this->saving_mode = $saving_mode;
+	}
+
+	/**
+	 * Mark as duplicate.
+	 *
+	 * @return void
+	 */
+	public function mark_as_duplicate() {
+		$this->set_saving_mode( 'duplicate' );
+	}
+
+	/**
+	 * Dump the data. Can be used to reconstruct the object.
+	 *
+	 * @return array The data to dump.
+	 */
+	public function dump_data() {
+		return array(
+			'form_data'                     => $this->request_data,
+			'uploaded_files_path'           => $this->uploaded_files_path,
+			'files_loaded_to_media_library' => $this->files_loaded_to_media_library,
+			'keep_uploaded_files'           => $this->keep_uploaded_files,
+		);
+	}
+
+	/**
+	 * Create a new instance from dumped data.
+	 *
+	 * @param array $dumped_data The dumped data.
+	 * @return Form_Data_Request
+	 */
+	public static function create_from_dump( $dumped_data ) {
+
+		$form = new self( null );
+
+		if ( ! empty( $dumped_data['form_data'] ) ) {
+			$form->set_form_data( $dumped_data['form_data'] );
+		}
+
+		if ( ! empty( $dumped_data['uploaded_files_path'] ) ) {
+			$form->set_uploaded_files_path( $dumped_data['uploaded_files_path'] );
+		}
+
+		if ( ! empty( $dumped_data['files_loaded_to_media_library'] ) ) {
+			$form->set_files_loaded_to_media_library( $dumped_data['files_loaded_to_media_library'] );
+		}
+
+		if ( ! empty( $dumped_data['keep_uploaded_files'] ) ) {
+			$form->set_keep_uploaded_files( $dumped_data['keep_uploaded_files'] );
+		}
+
+		return $form;
 	}
 }

@@ -8,6 +8,8 @@
 namespace ThemeIsle\OtterPro\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
 use WP_Post;
 use WP_Query;
@@ -67,6 +69,8 @@ class Form_Emails_Storing {
 		add_action( 'add_meta_boxes', array( $this, 'add_form_record_meta_box' ) );
 		add_action( 'admin_menu', array( $this, 'handle_admin_menu' ) );
 		add_action( 'save_post', array( $this, 'form_record_save_meta_box' ), 10, 2 );
+
+		add_filter( 'otter_form_record_confirm', array( $this, 'confirm_submission' ), 10, 2 );
 	}
 
 	/**
@@ -181,6 +185,10 @@ class Form_Emails_Storing {
 			return $form_data;
 		}
 
+		if ( $form_data->is_duplicate() ) {
+			return $form_data;
+		}
+
 		if ( false === strpos( $form_options->get_submissions_save_location(), 'database' ) ) {
 			return $form_data;
 		}
@@ -188,7 +196,7 @@ class Form_Emails_Storing {
 		$post_id = wp_insert_post(
 			array(
 				'post_type'   => self::FORM_RECORD_TYPE,
-				'post_status' => 'unread',
+				'post_status' => $form_data->is_temporary_data() ? 'draft' : 'unread',
 			)
 		);
 
@@ -216,6 +224,10 @@ class Form_Emails_Storing {
 			'post_id'  => array(
 				'label' => 'Post ID',
 				'value' => $form_data->get_payload_field( 'postId' ),
+			),
+			'dump'     => array(
+				'label' => 'Dumped data',
+				'value' => $form_data->is_temporary_data() ? $form_data->dump_data() : array(),
 			),
 		);
 
@@ -1080,6 +1092,71 @@ class Form_Emails_Storing {
 		}
 
 		echo wp_kses_post( $content );
+	}
+
+	/**
+	 * Confirm submission.
+	 *
+	 * @param Form_Data_Response $response The response.
+	 * @param \WP_REST_Request   $request The request.
+	 * @return Form_Data_Response
+	 */
+	public function confirm_submission( $response, $request ) {
+
+		$record_id   = $request->get_param( 'record_id' );
+		$post_status = get_post_status( $record_id );
+
+			// If the post status is not 'draft', then the submission has already been confirmed.
+		if ( 'draft' !== $post_status ) {
+			$response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+			$response->mark_as_success();
+			return $response;
+		}
+
+		$meta = get_post_meta( $record_id, self::FORM_RECORD_META_KEY, true );
+
+		if ( ! isset( $meta['dump'] ) || empty( $meta['dump']['value'] ) ) {
+			$response->set_code( Form_Data_Response::ERROR_MISSING_DUMP_DATA );
+			return $response;
+		}
+
+		$form_data = Form_Data_Request::create_from_dump( $meta['dump']['value'] );
+		$form_data->mark_as_duplicate();
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
+		$form_data->set_form_options( $form_options );
+		$form_data = Form_Server::pull_fields_options_for_form( $form_data );
+
+		do_action( 'otter_form_on_submission_confirmed', $form_data );
+
+		if (
+			! isset( $form_data ) ||
+			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
+			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request )
+		) {
+
+			$response->set_code( $form_data->get_error_code() );
+			return $response;
+		}
+
+		do_action( 'otter_form_after_submit', $form_data );
+
+		if ( $form_data->has_error() ) {
+			$response->set_code( $form_data->get_error_code() );
+			return $response;
+		}
+
+		wp_update_post(
+			array(
+				'ID'          => $record_id,
+				'post_status' => 'unread',
+			)
+		);
+
+		$response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+		$response->mark_as_success();
+
+
+		return $response;
 	}
 
 	/**

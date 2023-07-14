@@ -329,7 +329,8 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 		fetch( formURlEndpoint, {
 			method: 'POST',
 			headers: {
-				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce
+				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce,
+				'O-Form-Save-Mode': 'temporary'
 			},
 			credentials: 'include',
 			body: formData
@@ -503,3 +504,12 @@ domReady( () => {
 		});
 	});
 });
+
+window.confirmRecord = ( recordId ) => {
+	const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/confirm';
+
+	fetch( formURlEndpoint + '?record_id=' + recordId, {
+		method: 'GET',
+		credentials: 'include'
+	});
+};

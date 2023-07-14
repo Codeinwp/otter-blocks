@@ -224,7 +224,7 @@ class Form_Pro_Features {
 
 		try {
 			$form_options = $form_data->get_form_options();
-			$can_delete   = true;
+			$can_delete   = ! $form_data->is_temporary_data();
 
 			if ( isset( $form_options ) ) {
 				$can_delete = 'email' === $form_options->get_submissions_save_location();
@@ -317,7 +317,8 @@ class Form_Pro_Features {
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ||
-			! $form_data->get_form_options()->has_autoresponder()
+			! $form_data->get_form_options()->has_autoresponder() ||
+			$form_data->is_temporary_data()
 		) {
 			return $form_data;
 		}

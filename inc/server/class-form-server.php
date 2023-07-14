@@ -146,6 +146,8 @@ class Form_Server {
 		 */
 		add_action( 'otter_form_after_submit', array( $this, 'after_submit' ) );
 		add_action( 'otter_form_after_submit', array( $this, 'send_error_email_to_admin' ), 999 );
+
+		add_action( 'otter_form_on_submission_confirmed', array( $this, 'apply_main_provider' ) );
 	}
 
 	/**
@@ -173,6 +175,26 @@ class Form_Server {
 						}
 						return __return_false();
 					},
+				),
+			)
+		);
+		register_rest_route(
+			$namespace,
+			'/form/confirm',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'confirm_form' ),
+					'permission_callback' => function ( $request ) {
+						return __return_true();
+					},
+					'args'                => array(
+						'record_id' => array(
+							'validate_callback' => function( $param, $request, $key ) {
+								return is_numeric( $param );
+							},
+						),
+					),
 				),
 			)
 		);
@@ -242,7 +264,7 @@ class Form_Server {
 
 			$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
 			$form_data->set_form_options( $form_options );
-			$form_data = $this->pull_fields_options_for_form( $form_data );
+			$form_data = self::pull_fields_options_for_form( $form_data );
 
 			// Check bot validation.
 			$form_data = apply_filters( 'otter_form_anti_spam_validation', $form_data );
@@ -264,16 +286,7 @@ class Form_Server {
 					$res->add_response_field( 'redirectLink', $form_options->get_redirect_link() );
 				}
 
-				// Select the submit function based on the provider.
-				$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );
-
-				if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $form_data->get( 'handler' ) ) ) {
-
-					// Send the data to the provider handler.
-					$form_data = $provider_handlers[ $form_data->get( 'handler' ) ]( $form_data );
-				} else {
-					$res->set_code( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
-				}
+				$this->apply_main_provider( $form_data ); // Send the data to the provider.
 
 				do_action( 'otter_form_after_submit', $form_data );
 
@@ -296,6 +309,56 @@ class Form_Server {
 			$this->send_error_email( $form_data );
 		} finally {
 			return $res->build_response();
+		}
+	}
+
+	/**
+	 * Confirm form submission.
+	 *
+	 * @param WP_REST_Request $request Form request.
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
+	public function confirm_form( $request ) {
+
+		$record_id = $request->get_param( 'record_id' );
+		$response  = new Form_Data_Response();
+
+		try {
+			if ( ! empty( $record_id ) ) {
+				$response = apply_filters( 'otter_form_record_confirm', $response, $request );
+			}
+		} catch ( Exception $e ) {
+			$response->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$response->add_reason( $e->getMessage() );
+		} finally {
+			return $response->build_response();
+		}
+	}
+
+	/**
+	 * Apply the main provider.
+	 *
+	 * @param Form_Data_Request|null $form_data Form data.
+	 * @return void
+	 */
+	public function apply_main_provider( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return;
+		}
+
+		if ( $form_data->has_error() ) {
+			return;
+		}
+
+		$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );
+
+		if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $form_data->get( 'handler' ) ) && ! $form_data->is_temporary_data() ) {
+
+			// Send the data to the provider handler.
+			$provider_handlers[ $form_data->get( 'handler' ) ]( $form_data );
+		} else {
+			$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
 		}
 	}
 
@@ -677,7 +740,7 @@ class Form_Server {
 			return $form_data;
 		}
 
-		if ( $form_data->has_error() ) {
+		if ( $form_data->has_error() || $form_data->is_temporary_data() ) {
 			return $form_data;
 		}
 
@@ -922,7 +985,7 @@ class Form_Server {
 	 * @param Form_Data_Request $form_data The form data.
 	 * @since 2.2.3
 	 */
-	public function pull_fields_options_for_form( $form_data ) {
+	public static function pull_fields_options_for_form( $form_data ) {
 		if ( ! ( $form_data instanceof Form_Data_Request ) || $form_data->has_error() ) {
 			return $form_data;
 		}
