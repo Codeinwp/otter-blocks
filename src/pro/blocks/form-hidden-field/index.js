@@ -30,6 +30,8 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 
 registerBlockType( name, {
 	...metadata,
+	title: __( 'Hidden Field', 'otter-blocks' ),
+	description: __( 'A field used for adding extra metadata to the Form via URL params.', 'otter-blocks' ),
 	icon,
 	edit,
 	save: () => null,

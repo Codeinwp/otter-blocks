@@ -34,7 +34,8 @@ import { fieldTypesOptions, switchFormFieldTo } from '../common';
  */
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	clientId
 }) => {
 
 	const {

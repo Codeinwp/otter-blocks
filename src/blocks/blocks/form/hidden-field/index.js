@@ -23,7 +23,7 @@ if ( ! Boolean( window.themeisleGutenberg.hasPro ) ) {
 
 	registerBlockType( name, {
 		...metadata,
-		title: __( 'Hidden Field', 'otter-blocks' ),
+		title: __( 'Hidden Field (PRO)', 'otter-blocks' ),
 		description: __( 'A field used for adding extra metadata to the Form via URL params.', 'otter-blocks' ),
 		icon,
 		edit: ( props ) => {
