@@ -10,24 +10,9 @@ let METADATA_VERSION = 1;
 
 let saveMode = 'permanent';
 
-window.confirmRecord = async( recordId ) => {
-	const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/confirm';
-
-	console.group( 'Making a request for ' + formURlEndpoint );
-
-	const response = await fetch( formURlEndpoint + '?record_id=' + recordId, {
-		method: 'GET',
-		credentials: 'include'
-	});
-
-	// If response is a redirect, print the location
-	if ( response.redirected ) {
-		console.log( 'Redirected to: ', response.url );
-	} else {
-		console.log( await response.json() );
-	}
-
-	console.groupEnd();
+const hasRecordId = () => {
+	const urlParams = new URLSearchParams( window.location.search );
+	return urlParams.has( 'record_id' );
 };
 
 const confirmRecord = async() => {
@@ -36,9 +21,7 @@ const confirmRecord = async() => {
 	const urlParams = new URLSearchParams( window.location.search );
 	const recordId = urlParams.get( 'record_id' );
 
-	if ( ! recordId ) {
-		return;
-	}
+	console.log( 'Record ID: ' + recordId ); // TODO: remove after QA.
 
 	const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/confirm';
 
@@ -294,9 +277,6 @@ const handleAfterSubmit = ( request, displayMsg, onSuccess, onFail, onCleanUp ) 
 		const res =  response;
 
 		if ( '0' === res?.code || '1' === res?.code || res?.success ) {
-			const msg = res?.submitMessage ? res.submitMessage :  'Success';
-			displayMsg.setMsg( msg ).show();
-
 			onSuccess?.( res, displayMsg );
 		} else {
 			let errorMsgSlug = '';
@@ -443,7 +423,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 			method: 'POST',
 			headers: {
 				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce,
-				'O-Form-Save-Mode': 'temporary'
+				'O-Form-Save-Mode': saveMode
 			},
 			credentials: 'include',
 			body: formData
@@ -460,6 +440,9 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 					window.open( res.frontend_external_confirmation_url, '_blank' );
 					return;
 				}
+
+				const msg = res?.submitMessage ? res.submitMessage :  'Success';
+				displayMsg.setMsg( msg ).show();
 
 				form?.querySelector( 'form' )?.reset();
 
@@ -531,9 +514,7 @@ domReady( () => {
 		const sendBtn = form.querySelector( 'button' );
 		const displayMsg = new DisplayFormMessage( form );
 
-		const submissionConfirmation = confirmRecord();
-
-		if ( submissionConfirmation ) {
+		if ( hasRecordId() ) {
 			sendBtn.disabled = true;
 
 			const btnText = sendBtn.innerHTML;
@@ -542,7 +523,10 @@ domReady( () => {
 			const spinner = makeSpinner( sendBtn );
 			spinner.show();
 
-			handleAfterSubmit( submissionConfirmation, displayMsg, () => {}, () => {}, () => {
+			handleAfterSubmit( confirmRecord(), displayMsg, ( res, displayMsg ) => {
+				const msg = res?.submitMessage ? res.submitMessage :  'Success';
+				displayMsg.setMsg( msg ).show();
+			}, () => {}, () => {
 				sendBtn.disabled = false;
 				spinner.hide();
 				sendBtn.innerHTML = btnText;
@@ -612,5 +596,6 @@ domReady( () => {
 
 window.activateTempSave = () => {
 	saveMode = 'temporary';
+	console.log( 'Temporary save mode activated' );
 };
 
