@@ -112,6 +112,13 @@ class Form_Data_Request {
 	protected $saving_mode = 'permanent';
 
 	/**
+	 * The form metadata generated through the request. Use prefix 'frontend_' to make the value visible in the frontend.
+	 *
+	 * @var array
+	 */
+	public $metadata = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @access  public
@@ -683,6 +690,7 @@ class Form_Data_Request {
 			'uploaded_files_path'           => $this->uploaded_files_path,
 			'files_loaded_to_media_library' => $this->files_loaded_to_media_library,
 			'keep_uploaded_files'           => $this->keep_uploaded_files,
+			'metadata'                      => $this->metadata,
 		);
 	}
 
@@ -712,6 +720,24 @@ class Form_Data_Request {
 			$form->set_keep_uploaded_files( $dumped_data['keep_uploaded_files'] );
 		}
 
+		if ( ! empty( $dumped_data['metadata'] ) ) {
+			$form->metadata = $dumped_data['metadata'];
+		}
+
 		return $form;
+	}
+
+	/**
+	 * Append the frontend metadata to the response.
+	 *
+	 * @param Form_Data_Response $response The response.
+	 * @return void
+	 */
+	public function append_metadata( $response ) {
+		foreach ( $this->metadata as $key => $value ) {
+			if ( 0 === strpos( $key, 'frontend_' ) ) {
+				$response->add_response_field( $key, $value );
+			}
+		}
 	}
 }

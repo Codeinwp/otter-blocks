@@ -46,6 +46,8 @@ class Form_Emails_Storing {
 		add_action( 'init', array( $this, 'create_form_records_type' ) );
 		add_action( 'admin_init', array( $this, 'set_form_records_cap' ), 10, 0 );
 		add_action( 'otter_form_after_submit', array( $this, 'store_form_record' ) );
+		add_action( 'otter_form_after_submit', array( $this, 'test_redirect_link_with_record_id' ) );
+
 		add_action( 'admin_head', array( $this, 'add_style' ) );
 
 		// Customize the wp_list_table.
@@ -189,7 +191,7 @@ class Form_Emails_Storing {
 			return $form_data;
 		}
 
-		if ( false === strpos( $form_options->get_submissions_save_location(), 'database' ) ) {
+		if ( false === strpos( $form_options->get_submissions_save_location(), 'database' ) && ! $form_data->is_temporary_data() ) {
 			return $form_data;
 		}
 
@@ -285,6 +287,9 @@ class Form_Emails_Storing {
 		}
 
 		add_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
+
+		$form_data->metadata['record_id'] = $post_id;
+
 		return $form_data;
 	}
 
@@ -1106,13 +1111,12 @@ class Form_Emails_Storing {
 		$record_id   = $request->get_param( 'record_id' );
 		$post_status = get_post_status( $record_id );
 
-			// If the post status is not 'draft', then the submission has already been confirmed.
-		if ( 'draft' !== $post_status ) {
-			$response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
-			$response->mark_as_success();
-			return $response;
-		}
-
+		// If the post status is not 'draft', then the submission has already been confirmed.
+		// if ( 'draft' !== $post_status ) {
+		// $response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+		// $response->mark_as_success();
+		// return $response;
+		// }
 		$meta = get_post_meta( $record_id, self::FORM_RECORD_META_KEY, true );
 
 		if ( ! isset( $meta['dump'] ) || empty( $meta['dump']['value'] ) ) {
@@ -1155,8 +1159,46 @@ class Form_Emails_Storing {
 		$response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
 		$response->mark_as_success();
 
-
 		return $response;
+	}
+
+	/**
+	 * Test redirect link with record id.
+	 *
+	 * @param Form_Data_Request|null $form_data The form data.
+	 */
+	public function test_redirect_link_with_record_id( $form_data ) {
+
+		/**
+		 * In this manner things like Stripe confirmation link will work.
+		 */
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
+		if (
+			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
+			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
+			$form_data->has_error() ||
+			! $form_data->is_temporary_data()
+		) {
+			return $form_data;
+		}
+
+		/**
+		 * If the `record_id` and `stripe_payment_intent` (to be added in future PR) are set, then we can generate the confirmation link.
+		 */
+		if ( array_key_exists( 'record_id', $form_data->metadata ) ) {
+			$form_data->metadata['frontend_external_confirmation_url'] = add_query_arg(
+				array(
+					'record_id' => $form_data->metadata['record_id'],
+				),
+				$form_data->get_payload_field( 'postUrl' )
+			);
+		}
+
+		return $form_data;
 	}
 
 	/**

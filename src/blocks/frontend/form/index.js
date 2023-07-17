@@ -8,6 +8,48 @@ import { domReady } from '../../helpers/frontend-helper-functions.js';
 let startTimeAntiBot = null;
 let METADATA_VERSION = 1;
 
+let saveMode = 'permanent';
+
+window.confirmRecord = async( recordId ) => {
+	const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/confirm';
+
+	console.group( 'Making a request for ' + formURlEndpoint );
+
+	const response = await fetch( formURlEndpoint + '?record_id=' + recordId, {
+		method: 'GET',
+		credentials: 'include'
+	});
+
+	// If response is a redirect, print the location
+	if ( response.redirected ) {
+		console.log( 'Redirected to: ', response.url );
+	} else {
+		console.log( await response.json() );
+	}
+
+	console.groupEnd();
+};
+
+const confirmRecord = async() => {
+
+	// Get the record id from the URL
+	const urlParams = new URLSearchParams( window.location.search );
+	const recordId = urlParams.get( 'record_id' );
+
+	if ( ! recordId ) {
+		return;
+	}
+
+	const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/confirm';
+
+	console.log( 'Making a request for ' + formURlEndpoint ); // TODO: remove after QA.
+
+	return await fetch( formURlEndpoint + '?record_id=' + recordId, {
+		method: 'GET',
+		credentials: 'include'
+	});
+};
+
 /**
  * Get the form fields.
  * @param {HTMLDivElement} form The form.
@@ -233,6 +275,79 @@ const getCurrentPostId = () => {
 };
 
 /**
+ * Handle the response after the form is submitted.
+ *
+ * @param {Promise<Response>} request
+ * @param {DisplayFormMessage} displayMsg
+ * @param {(response: import('./types.js').IFormResponse, displayMsg:DisplayFormMessage) => void} onSuccess
+ * @param {(response: import('./types.js').IFormResponse, displayMsg:DisplayFormMessage) => void} onFail
+ * @param {() => void} onCleanUp
+ */
+const handleAfterSubmit = ( request, displayMsg, onSuccess, onFail, onCleanUp ) => {
+	request.then( r => r.json() ).then( response  => {
+
+		console.log( response );
+
+		/**
+		 * @type {import('./types.js').IFormResponse}
+		 */
+		const res =  response;
+
+		if ( '0' === res?.code || '1' === res?.code || res?.success ) {
+			const msg = res?.submitMessage ? res.submitMessage :  'Success';
+			displayMsg.setMsg( msg ).show();
+
+			onSuccess?.( res, displayMsg );
+		} else {
+			let errorMsgSlug = '';
+
+			// TODO: Write pattern to display a more useful error message.
+			if ( '110' === res.code ) {
+				displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
+			} else if ( '12' === res.code || '13' === res.code ) {
+				displayMsg.pullMsg( 'invalid-file', 'error' ).show();
+			} else if ( 0 < res?.displayError?.length ) {
+				errorMsgSlug = res?.displayError;
+				displayMsg.setMsg( errorMsgSlug, 'error' ).show();
+			} else {
+				displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
+			}
+
+			onFail?.( res, displayMsg );
+
+			// eslint-disable-next-line no-console
+			console.error( `(${res?.code}) ${res?.reasons?.join( '' )}` );
+		}
+
+		/**
+		 * Reset the form.
+		 */
+
+		onCleanUp?.();
+
+	})?.catch( ( error ) => {
+		console.error( error );
+		displayMsg.pullMsg( 'try-again', 'error' ).show();
+
+		onFail?.( error, displayMsg );
+	});
+};
+
+const makeSpinner = ( anchor ) => {
+	const spinner = document.createElement( 'span' );
+	spinner.classList.add( 'spinner' );
+
+	return {
+		show: () => {
+			anchor.appendChild( spinner );
+		},
+		hide: () => {
+			anchor.removeChild( spinner );
+		}
+	};
+};
+
+/**
  * Send the date from the form to the server
  *
  * @param {HTMLDivElement}    form The element that contains all the inputs
@@ -250,14 +365,12 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
 	const hasValidToken = id && window.themeisleGutenberg?.tokens?.[id]?.token;
 
-
-	const spinner = document.createElement( 'span' );
-	spinner.classList.add( 'spinner' );
-	btn.appendChild( spinner );
+	const spinner = makeSpinner( btn );
+	spinner.show();
 
 	if ( formIsEmpty ) {
 		btn.disabled = false;
-		btn.removeChild( spinner );
+		spinner.hide();
 		return;
 	}
 
@@ -326,7 +439,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 			payload
 		});
 
-		fetch( formURlEndpoint, {
+		const request = fetch( formURlEndpoint, {
 			method: 'POST',
 			headers: {
 				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce,
@@ -334,72 +447,44 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 			},
 			credentials: 'include',
 			body: formData
-		})
-			.then( r => r.json() )
-			.then( ( response ) => {
+		});
 
-				/**
-				 * @type {import('./types.js').IFormResponse}
-				 */
-				const res = response;
+		handleAfterSubmit(
+			request,
+			displayMsg,
+			( res, displayMsg ) => {
 
-				if ( '0' === res?.code || '1' === res?.code || res?.success ) {
-					const msg = res?.submitMessage ? res.submitMessage :  'Success';
-					displayMsg.setMsg( msg ).show();
+				if ( 0 < res?.frontend_external_confirmation_url?.length ) {
 
-					form?.querySelector( 'form' )?.reset();
+					// Redirect to the external confirmation URL in a new tab.
+					window.open( res.frontend_external_confirmation_url, '_blank' );
+					return;
+				}
 
+				form?.querySelector( 'form' )?.reset();
+
+				if ( 0 < res?.redirectLink?.length ) {
+					form.setAttribute( 'data-redirect', res.redirectLink );
+				}
+
+				setTimeout( () => {
 					if ( 0 < res?.redirectLink?.length ) {
-						form.setAttribute( 'data-redirect', res.redirectLink );
+						let a = document.createElement( 'a' );
+						a.target = '_blank';
+						a.href = res.redirectLink;
+						a.click();
 					}
-
-					setTimeout( () => {
-						if ( 0 < res?.redirectLink?.length ) {
-							let a = document.createElement( 'a' );
-							a.target = '_blank';
-							a.href = res.redirectLink;
-							a.click();
-						}
-					}, 1000 );
-				} else {
-					let errorMsgSlug = '';
-
-					// TODO: Write pattern to display a more useful error message.
-					if ( '110' === res.code ) {
-						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
-					} else if ( '12' === res.code || '13' === res.code ) {
-						displayMsg.pullMsg( 'invalid-file', 'error' ).show();
-					} else if ( 0 < res?.displayError?.length ) {
-						errorMsgSlug = res?.displayError;
-						displayMsg.setMsg( errorMsgSlug, 'error' ).show();
-					} else {
-						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
-					}
-
-
-					// eslint-disable-next-line no-console
-					console.error( `(${res?.code}) ${res?.reasons?.join( '' )}` );
-				}
-
-				/**
-				 * Reset the form.
-				 */
-
+				}, 1000 );
+			},
+			( res, displayMsg ) => {},
+			() => {
 				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
 					window.themeisleGutenberg?.tokens?.[ id ].reset();
 				}
 				btn.disabled = false;
-				btn.removeChild( spinner );
-			})?.catch( ( error ) => {
-				console.error( error );
-				displayMsg.pullMsg( 'try-again', 'error' ).show();
-
-				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
-					window.themeisleGutenberg?.tokens?.[ id ].reset();
-				}
-				btn.disabled = false;
-				btn.removeChild( spinner );
-			});
+				spinner.hide();
+			}
+		);
 	}
 };
 
@@ -445,6 +530,25 @@ domReady( () => {
 
 		const sendBtn = form.querySelector( 'button' );
 		const displayMsg = new DisplayFormMessage( form );
+
+		const submissionConfirmation = confirmRecord();
+
+		if ( submissionConfirmation ) {
+			sendBtn.disabled = true;
+
+			const btnText = sendBtn.innerHTML;
+			sendBtn.innerHTML = displayMsg.getMsgBySlug( 'confirmingSubmission' );
+
+			const spinner = makeSpinner( sendBtn );
+			spinner.show();
+
+			handleAfterSubmit( submissionConfirmation, displayMsg, () => {}, () => {}, () => {
+				sendBtn.disabled = false;
+				spinner.hide();
+				sendBtn.innerHTML = btnText;
+			});
+		}
+
 
 		if ( form.querySelector( ':scope > form > button[type="submit"]' ) ) {
 			form?.addEventListener( 'submit', ( event ) => {
@@ -505,11 +609,8 @@ domReady( () => {
 	});
 });
 
-window.confirmRecord = ( recordId ) => {
-	const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/confirm';
 
-	fetch( formURlEndpoint + '?record_id=' + recordId, {
-		method: 'GET',
-		credentials: 'include'
-	});
+window.activateTempSave = () => {
+	saveMode = 'temporary';
 };
+

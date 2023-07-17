@@ -78,6 +78,13 @@ class Form_Data_Response {
 	protected $is_credential_error = false;
 
 	/**
+	 * The REST response.
+	 *
+	 * @var WP_REST_Response|WP_Error|WP_HTTP_Response|null
+	 */
+	public $rest_response = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @access public
@@ -166,10 +173,23 @@ class Form_Data_Response {
 	 * @since 2.0.3
 	 */
 	public function build_response() {
-		// TODO: We can to addition operation when returning the response.
+		if ( isset( $this->rest_response ) ) {
+			$this->rest_response->set_data( $this->response );
+			return $this->rest_response;
+		}
+
 		$this->process_error_code();
 
 		return rest_ensure_response( $this->response );
+	}
+
+	/**
+	 * Create the REST response.
+	 *
+	 * @return void
+	 */
+	public function make_internal_response() {
+		$this->rest_response = $this->build_response();
 	}
 
 	/**

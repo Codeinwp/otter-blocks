@@ -308,6 +308,7 @@ class Form_Server {
 			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 			$this->send_error_email( $form_data );
 		} finally {
+			$form_data->append_metadata( $res );
 			return $res->build_response();
 		}
 	}
@@ -347,13 +348,13 @@ class Form_Server {
 			return;
 		}
 
-		if ( $form_data->has_error() ) {
+		if ( $form_data->has_error() || $form_data->is_temporary_data() ) {
 			return;
 		}
 
 		$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );
 
-		if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $form_data->get( 'handler' ) ) && ! $form_data->is_temporary_data() ) {
+		if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $form_data->get( 'handler' ) ) ) {
 
 			// Send the data to the provider handler.
 			$provider_handlers[ $form_data->get( 'handler' ) ]( $form_data );
