@@ -321,4 +321,22 @@ class Stripe_API {
 
 		return $bool;
 	}
+
+	/**
+	 * Get session email.
+	 *
+	 * @param string $session_id Stripe Session ID.
+	 *
+	 * @return  bool|string
+	 * @access  public
+	 */
+	public function get_session_email( $session_id ) {
+		$session = $this->create_request( 'get_session', $session_id );
+
+		if ( empty( $session['customer_details']['email'] ) ) {
+			return false;
+		}
+
+		return $session['customer_details']['email'];
+	}
 }

@@ -201,7 +201,7 @@ const Integrations = () => {
 							</ExternalLink>
 
 							<ExternalLink
-								href="#"
+								href="https://docs.themeisle.com/article/1688-integrations-related-blocks#stripe-checkout"
 							>
 								{ __( 'More Info', 'otter-blocks' ) }
 							</ExternalLink>

@@ -2,7 +2,8 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-
+import { Fragment, useState } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
@@ -13,14 +14,68 @@ import {
 	SelectControl,
 	Spinner,
 	TextControl,
-	TextareaControl
+	TextareaControl,
+	ExternalLink
 } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { ButtonToggleControl, RichTextEditor } from '../../components/index.js';
-import { useState } from '@wordpress/element';
+import { ButtonToggleControl, Notice as OtterNotice, Notice, RichTextEditor } from '../../components/index.js';
+import { setUtm } from '../../helpers/helper-functions';
+
+const ProFeatures = () => {
+	return (
+		<PanelBody
+			title={ __( 'Autoresponder', 'otter-blocks' ) }
+			initialOpen={ false }
+		>
+			<TextControl
+				label={__( 'Autoresponder Subject', 'otter-blocks' )}
+				placeholder={__(
+					'Thank you for your purchase',
+					'otter-blocks'
+				)}
+				disabled
+				help={__(
+					'Enter the subject of the autoresponder email.',
+					'otter-blocks'
+				)}
+				className="o-disabled"
+			/>
+
+			<TextareaControl
+				label={ __( 'Autoresponder Body', 'otter-blocks' ) }
+				placeholder={ __( 'We appreciate your recent purchase made on our website. You have received a promotional code, namely <strong>EXAMPLE</strong>, which can be applied during checkout on our <a href="https://themeisle.com/plugins/otter-blocks/">website</a>', 'otter-blocks' )}
+				rows={2}
+				help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
+				disabled
+				className="o-disabled"
+			/>
+
+			{
+				( ! Boolean( window?.otterPro?.isActive ) && Boolean( window?.themeisleGutenberg?.hasPro ) ) && (
+					<OtterNotice
+						notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+						instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Stripe Checkout.', 'otter-blocks' ) }
+					/>
+				)
+			}
+
+			{
+				( ! Boolean( window?.themeisleGutenberg?.hasPro ) ) && (
+					<div>
+						<Notice
+							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+							variant="upsell"
+						/>
+						<p className="description">{ __( 'Automatically send follow-up emails to your users with the Autoresponder feature.', 'otter-blocks' ) }</p>
+					</div>
+				)
+			}
+		</PanelBody>
+	);
+};
 
 const Inspector = ({
 	attributes,
@@ -160,6 +215,13 @@ const Inspector = ({
 					{ __( 'Save API Key', 'otter-blocks' ) }
 				</Button>
 			</PanelBody>
+
+			{ applyFilters(
+				'otter.stripe-checkout.inspector',
+				<ProFeatures />,
+				attributes,
+				setAttributes
+			) }
 		</InspectorControls>
 	);
 };

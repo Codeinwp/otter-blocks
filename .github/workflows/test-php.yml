@@ -1,11 +1,14 @@
 name: Test PHP
 
-on: [pull_request]
+on:
+  pull_request:
+    types: [ opened, synchronize, ready_for_review ]
 
 jobs:
   phplint:
     name: Phplint
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     steps:
       - name: Setup PHP version
         uses: shivammathur/setup-php@v1
@@ -33,6 +36,7 @@ jobs:
   phpunit:
     name: Phpunit
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     services:
       mysql:
         image: mysql:5.7
@@ -72,6 +76,7 @@ jobs:
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     steps:
       - name: Setup PHP version
         uses: shivammathur/setup-php@v2

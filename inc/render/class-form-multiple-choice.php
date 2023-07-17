@@ -32,11 +32,12 @@ class Form_Multiple_Choice_Block {
 		$options_array          = explode( "\n", $options );
 		$is_required            = isset( $attributes['isRequired'] ) ? boolval( $attributes['isRequired'] ) : false;
 		$has_multiple_selection = isset( $attributes['multipleSelection'] ) ? boolval( $attributes['multipleSelection'] ) : false;
+		$mapped_name            = isset( $attributes['mappedName'] ) ? $attributes['mappedName'] : $id;
 
 		$output = '<div class="' . $class_names . '" id="' . $id . '">';
 
 		if ( 'select' === $field_type ) {
-			$output .= $this->render_select_field( $label, $options_array, $id, $has_multiple_selection, $is_required );
+			$output .= $this->render_select_field( $label, $options_array, $id, $mapped_name, $has_multiple_selection, $is_required );
 		} else {
 			$output .= '<label class="otter-form-input-label" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
 
@@ -50,7 +51,7 @@ class Form_Multiple_Choice_Block {
 				$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
 				$field_id    = 'field-' . $field_value;
 
-				$output .= $this->render_field( $field_type, $field_label, $field_value, $id, $field_id, $is_required );
+				$output .= $this->render_field( $field_type, $field_label, $field_value, $mapped_name, $field_id, $is_required );
 			}
 
 			$output .= '</div>';
@@ -90,13 +91,14 @@ class Form_Multiple_Choice_Block {
 	 * @param string $label The label of the field.
 	 * @param array  $options_array The options of the field.
 	 * @param string $id The id of the field.
+	 * @param string $name The name of the field.
 	 * @param bool   $is_multiple The multiple status of the field.
 	 * @param bool   $is_required The required status of the field.
 	 * @return string
 	 */
-	public function render_select_field( $label, $options_array, $id, $is_multiple, $is_required ) {
+	public function render_select_field( $label, $options_array, $id, $name, $is_multiple, $is_required ) {
 		$output  = '<label class="otter-form-input-label" for="' . $id . '" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
-		$output .= '<select id="' . $id . '" ' . ( $is_multiple ? ' multiple ' : '' ) . ( $is_required ? ' required ' : '' ) . '>';
+		$output .= '<select id="' . $id . '" ' . ( $is_multiple ? ' multiple ' : '' ) . ( $is_required ? ' required ' : '' ) . ' name="' . $name . '">';
 
 		foreach ( $options_array as $field_label ) {
 
@@ -114,7 +116,7 @@ class Form_Multiple_Choice_Block {
 
 	/**
 	 * Render the required sign.
-	 * 
+	 *
 	 * @param bool $is_required The required status of the field.
 	 * @return string
 	 */

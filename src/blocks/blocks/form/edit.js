@@ -45,6 +45,8 @@ import {
 	Icon
 } from '@wordpress/icons';
 
+import { Button, Notice, ToolbarGroup } from '@wordpress/components';
+
 /**
  * Internal dependencies
  */
@@ -57,7 +59,6 @@ import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
-import { Button, Notice, ToolbarGroup } from '@wordpress/components';
 import PromptPlaceholder from '../../components/prompt';
 import { parseFormPromptResponseToBlocks, sendPromptToOpenAI } from '../../helpers/prompt';
 import { aiGeneration, formAiGeneration } from '../../helpers/icons';
@@ -76,7 +77,8 @@ const formOptionsMap = {
 	cc: 'cc',
 	bcc: 'bcc',
 	autoresponder: 'autoresponder',
-	submissionsSaveLocation: 'submissionsSaveLocation'
+	submissionsSaveLocation: 'submissionsSaveLocation',
+	webhookId: 'webhookId'
 };
 
 /**
@@ -165,6 +167,7 @@ const Edit = ({
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
 	const [ showAutoResponderNotice, setShowAutoResponderNotice ] = useState( false );
+	const [ showDuplicatedMappedName, setShowDuplicatedMappedName ] = useState( false );
 
 	const [ listIDOptions, setListIDOptions ] = useState([{ label: __( 'None', 'otter-blocks' ), value: '' }]);
 
@@ -290,13 +293,42 @@ const Edit = ({
 				}
 			);
 
-
 			setHasEmailField( 0 < emailFields?.length );
 
 			setShowAutoResponderNotice( 0 === emailFields?.length );
 		}
 
-	}, [ children, formOptions.autoresponder, formOptions.action ]);
+		if ( formOptions.webhookId ) {
+			const allFields = findInnerBlocks(
+				children,
+				block => {
+					return block?.name?.startsWith( 'themeisle-blocks/form-' );
+				},
+				block => {
+
+					// Do not find email field inside inner Form blocks.
+					return 'themeisle-blocks/form' !== block?.name;
+				}
+			);
+
+
+			const mappedNames = [];
+			let hasDuplicateMappedNames = false;
+
+			for ( const block of allFields ) {
+				if ( block?.attributes?.mappedName ) {
+					if ( mappedNames.includes( block?.attributes?.mappedName ) ) {
+						hasDuplicateMappedNames = block.clientId;
+						break;
+					}
+					mappedNames.push( block?.attributes?.mappedName );
+				}
+			}
+
+			setShowDuplicatedMappedName( hasDuplicateMappedNames );
+		}
+
+	}, [ children, formOptions.autoresponder, formOptions.action, formOptions.webhookId ]);
 
 	/**
 	 * Get the data from the WP Options for the current form.
@@ -327,7 +359,8 @@ const Edit = ({
 			hasCaptcha: wpOptions?.hasCaptcha,
 			autoresponder: wpOptions?.autoresponder,
 			autoresponderSubject: wpOptions?.autoresponderSubject,
-			submissionsSaveLocation: wpOptions?.submissionsSaveLocation
+			submissionsSaveLocation: wpOptions?.submissionsSaveLocation,
+			webhookId: wpOptions?.webhookId
 		});
 	};
 
@@ -1045,6 +1078,21 @@ const Edit = ({
 															)
 														}
 													</Fragment>
+												)
+											}
+											{
+												showDuplicatedMappedName && (
+													<Notice isDismissible={false} status={'error'}>
+														<p>{__( 'Some Form fields have the same Mapped Name! Please change the Mapped Name of the duplicated fields.', 'otter-blocks' )}</p>
+														<Button
+															variant={'primary'}
+															onClick={ () => {
+																selectBlock( showDuplicatedMappedName );
+															}}
+														>
+															{__( 'Go to Block', 'otter-blocks' )}
+														</Button>
+													</Notice>
 												)
 											}
 										</Fragment>

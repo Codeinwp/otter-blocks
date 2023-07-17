@@ -4,57 +4,31 @@
 import { __ } from '@wordpress/i18n';
 import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
-	Button,
-	Modal,
 	TextControl,
 	FormTokenField,
 	ToggleControl,
 	Notice, SelectControl
 } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
-import { useState, Fragment } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { Notice as OtterNotice } from '../../../blocks/components';
-import { RichTextEditor } from '../../../blocks/components';
 import { FieldInputWidth, HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
+import AutoresponderBodyModal from '../../components/autoresponder/index.js';
+import WebhookEditor from '../../components/webhook-editor';
 
 // +-------------- Autoresponder --------------+
 
 const AutoresponderBody = ({ formOptions, setFormOption }) => {
-	const [ isOpen, setOpen ] = useState( false );
 	const onChange = body => {
 		setFormOption({ autoresponder: { ...formOptions.autoresponder, body }});
 	};
 
-	return (
-		<>
-			{ isOpen && (
-				<Modal
-					title={ __( 'Autoresponder Body' ) }
-					onRequestClose={() => setOpen( false )}
-					shouldCloseOnClickOutside={ false }
-				>
-					<RichTextEditor
-						value={ formOptions.autoresponder?.body }
-						onChange={ onChange }
-						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
-						allowRawHTML
-					/>
-				</Modal>
-			) }
-			<br/>
-			<Button
-				variant="secondary"
-				onClick={() => setOpen( true )}
-			>
-				{ __( 'Add Autoresponder Body', 'otter-blocks' ) }
-			</Button>
-		</>
-	);
+	return <AutoresponderBodyModal value={formOptions.autoresponder?.body} onChange={onChange} addExtraMargin={true} />;
 };
 
 const helpMessages = {
@@ -63,7 +37,15 @@ const helpMessages = {
 	'database-email': __( 'Save the submissions to the database and notify also via email.', 'otter-blocks' )
 };
 
-
+/**
+ * Form Options
+ *
+ * @param {React.ReactNode} Options The children of the FormOptions component.
+ * @param {import('../../../blocks/blocks/form/type').FormOptions} formOptions The form options.
+ * @param { (options: import('../../../blocks/blocks/form/type').FormOptions) => void } setFormOption The function to set the form options.
+ * @param {any} config The form config.
+ * @returns {JSX.Element}
+ */
 const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 
 	return (
@@ -151,6 +133,37 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 							)
 						}
 
+					</>
+				) : (
+					<div>
+						<OtterNotice
+							notice={__(
+								'You need to activate Otter Pro.',
+								'otter-blocks'
+							)}
+							instructions={__(
+								'You need to activate your Otter Pro license to use Pro features of Form Block.',
+								'otter-blocks'
+							)}
+						/>
+					</div>
+				)}
+			</ToolsPanelItem>
+			<ToolsPanelItem
+				hasValue={() => formOptions.webhookId }
+				label={__( 'Webhook', 'otter-blocks' )}
+				onDeselect={() => setFormOption({ webhookId: undefined })}
+			>
+				{Boolean( window.otterPro.isActive ) ? (
+					<>
+						<WebhookEditor
+							webhookId={formOptions.webhookId}
+							onChange={( webhookId ) => {
+								setFormOption({
+									webhookId: webhookId
+								});
+							}}
+						/>
 					</>
 				) : (
 					<div>
@@ -288,6 +301,14 @@ const FormFileInspector = ( Template, {
 				help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
 				checked={ attributes.isRequired }
 				onChange={ isRequired => setAttributes({ isRequired }) }
+			/>
+
+			<TextControl
+				label={ __( 'Mapped Name', 'otter-blocks' ) }
+				help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+				value={ attributes.mappedName }
+				onChange={ mappedName => setAttributes({ mappedName }) }
+				placeholder={ __( 'photos', 'otter-blocks' ) }
 			/>
 
 			<ToggleControl

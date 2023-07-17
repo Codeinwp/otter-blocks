@@ -55,20 +55,25 @@ const extractFormFields = async( form ) => {
 
 		let value = undefined;
 		let fieldType = undefined;
+		let mappedName = undefined;
 		const { id } = input;
 
 		const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"]), .otter-form-textarea-input' );
 		if ( null !== valueElem ) {
 			value = valueElem?.value;
 			fieldType = valueElem?.type;
+			mappedName = valueElem?.name;
 		} else {
 			const select = input.querySelector( 'select' );
+			mappedName = select?.name;
 
 			/** @type{HTMLInputElement} */
 			const fileInput = input.querySelector( 'input[type="file"]' );
 
+
 			if ( fileInput ) {
 				const files = fileInput?.files;
+				const mappedName = fileInput?.name;
 
 				for ( let i = 0; i < files.length; i++ ) {
 					formFieldsData.push({
@@ -82,7 +87,8 @@ const extractFormFields = async( form ) => {
 							size: files[i].size,
 							file: files[i],
 							fieldOptionName: fileInput?.dataset?.fieldOptionName,
-							position: index + 1
+							position: index + 1,
+							mappedName: mappedName
 						}
 					});
 				}
@@ -92,6 +98,7 @@ const extractFormFields = async( form ) => {
 			} else {
 				const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
 				const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
+				mappedName = valuesElem[0]?.name;
 				value = [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' );
 				fieldType = 'multiple-choice';
 			}
@@ -105,7 +112,8 @@ const extractFormFields = async( form ) => {
 				id: id,
 				metadata: {
 					version: METADATA_VERSION,
-					position: index + 1
+					position: index + 1,
+					mappedName: mappedName
 				}
 			});
 		}
@@ -347,6 +355,10 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 					displayMsg.setMsg( msg ).show();
 
 					form?.querySelector( 'form' )?.reset();
+
+					if ( 0 < res?.redirectLink?.length ) {
+						form.setAttribute( 'data-redirect', res.redirectLink );
+					}
 
 					setTimeout( () => {
 						if ( 0 < res?.redirectLink?.length ) {

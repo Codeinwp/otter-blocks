@@ -19,6 +19,9 @@
 		},
 		"cancelMessage": {
 			"type": "string"
+		},
+		"autoresponder": {
+			"type": "object"
 		}
 	},
 	"supports": {

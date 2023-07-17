@@ -67,6 +67,7 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
+			'\ThemeIsle\OtterPro\Plugins\Stripe_Pro_Features',
 			'\ThemeIsle\OtterPro\Server\Dashboard_Server',
 			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
 			'\ThemeIsle\OtterPro\Server\Live_Search_Server',

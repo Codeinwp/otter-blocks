@@ -18,13 +18,22 @@ import { useSelect } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
 
 const ALLOWED_ACF_TYPES = [
+	'button_group',
+	'checkbox',
+	'color_picker',
+	'date_time_picker',
+	'date_picker',
+	'email',
+	'number',
+	'password',
+	'radio',
+	'range',
+	'select',
 	'text',
 	'textarea',
-	'range',
-	'number',
-	'url',
-	'email',
-	'password'
+	'time_picker',
+	'true_false',
+	'url'
 ];
 
 const Edit = ({

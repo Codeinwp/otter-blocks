@@ -57,6 +57,7 @@ class Form_Data_Response {
 	const ERROR_PROVIDER_INVALID_EMAIL             = '207';
 	const ERROR_PROVIDER_DUPLICATED_EMAIL          = '208';
 	const ERROR_PROVIDER_CREDENTIAL_ERROR          = '209';
+	const ERROR_WEBHOOK_COULD_NOT_TRIGGER          = '210';
 
 
 	/**
@@ -241,6 +242,18 @@ class Form_Data_Response {
 	}
 
 	/**
+	 * Add new field to the response.
+	 *
+	 * @param string $key The key.
+	 * @param mixed  $value The value.
+	 * @return $this
+	 */
+	public function add_response_field( $key, $value ) {
+		$this->response[ $key ] = $value;
+		return $this;
+	}
+
+	/**
 	 * Add new data to the response.
 	 *
 	 * @param array $values The new data.
@@ -332,6 +345,7 @@ class Form_Data_Response {
 			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the Form Block with Autoresponder activated.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
 			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
+			self::ERROR_WEBHOOK_COULD_NOT_TRIGGER          => __( 'The webhook could not be triggered.', 'otter-blocks' ),
 		);
 
 		if ( ! isset( $error_messages[ $error_code ] ) ) {

@@ -145,3 +145,63 @@ svg.o-block-icon {
 		}
 	}
 }
+
+.o-autoresponder-margin {
+	margin-top: 10px;
+}
+
+.o-webhook-headers {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	.o-webhook-header {
+		display: grid;
+		grid-template-columns: 1fr 1fr 35px;
+		gap: 10px;
+		align-items: center;
+
+		.components-base-control__field {
+			margin: 0;
+		}
+	}
+
+	button {
+		display: flex;
+		justify-content: center;
+	}
+}
+
+.o-webhook-actions {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+
+	.o-webhook-actions__left {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+	}
+}
+
+.o-webhooks {
+	display: flex;
+	flex-direction: column;
+
+	&> .o-options-global-defaults {
+		max-height: 500px;
+		overflow-y: auto;
+
+		.o-options-block-item .o-options-block-item-label {
+			margin-left: 10px;
+			flex-grow: 1;
+		}
+	}
+
+	.o-webhook-add {
+		display: flex;
+		justify-content: center;
+		margin-top: 10px;
+	}
+}
+

@@ -39,6 +39,8 @@ class Stripe_Checkout_Block {
 			if ( false !== $status ) {
 				if ( 'success' === $status ) {
 					$message = isset( $attributes['successMessage'] ) ? wp_kses_post( $attributes['successMessage'] ) : __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
+
+					do_action( 'otter_blocks_stripe_checkout_success', $attributes, $stripe, $session_id );
 				} else {
 					$message = isset( $attributes['cancelMessage'] ) ? wp_kses_post( $attributes['cancelMessage'] ) : __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
 				}

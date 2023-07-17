@@ -9,6 +9,7 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
