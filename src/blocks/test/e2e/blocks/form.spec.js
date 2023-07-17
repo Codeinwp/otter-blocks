@@ -198,4 +198,57 @@ test.describe( 'Form Block', () => {
 
 		// TODO: load a file and check if it is uploaded
 	});
+
+	test( 'redirect to a page after form submission', async({ page, editor, browser }) => {
+
+		/*
+		 * Create a form block and insert the Redirect value using the Inspector Controls.
+		 */
+
+		await editor.insertBlock({ name: 'themeisle-blocks/form' });
+
+		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+
+		expect( formBlock ).toBeTruthy();
+
+		const { clientId } = formBlock;
+
+		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+
+		// Open the options panel
+		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+
+		// activate the option
+		await page.getByRole( 'menuitemcheckbox', { name: 'Redirect on Submit' }).click();
+
+		const redirectField = page.getByPlaceholder( 'https://example.com' );
+
+		const REDIRECT_URL = page.url();
+
+		await redirectField.fill( REDIRECT_URL );
+
+		expect( await redirectField.inputValue() ).toBe( REDIRECT_URL );
+
+		const postId = await editor.publishPost();
+
+		await page.waitForTimeout( 1000 );
+
+		await page.goto( `/?p=${postId}` );
+
+		await page.getByLabel( 'Name*' ).fill( 'John Doe' );
+		await page.getByLabel( 'Email*' ).fill( 'test@otter.com' );
+
+		await page.waitForTimeout( 5000 );
+
+		page.on( 'response', ( response ) =>
+			console.log( '<<', response.status(), response.url() )
+		);
+
+		await page.getByRole( 'button', { name: 'Submit' }).click();
+
+		await expect( await page.getByText( 'Success' ) ).toBeVisible();
+
+		// check for a element with the attribute data-redirect-url
+		await expect( await page.$( `[data-redirect="${REDIRECT_URL}"]` ) ).toBeTruthy();
+	});
 });

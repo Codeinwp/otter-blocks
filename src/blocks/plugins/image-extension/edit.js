@@ -103,20 +103,17 @@ const Edit = ({
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
 	useEffect( () => {
 		setNodeCSS([
-			`img {
+			attributes.boxShadow ? `img {
 				box-shadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() }
 			}
-			` ]);
-	}, [ attributes.boxShadowHorizontal, attributes.boxShadowVertical, attributes.boxShadowBlur, attributes.boxShadowColor, attributes.boxShadowColorOpacity ]);
+			` : '' ]);
+	}, [ attributes.boxShadowHorizontal, attributes.boxShadowVertical, attributes.boxShadowBlur, attributes.boxShadowColor, attributes.boxShadowColorOpacity, attributes.boxShadow ]);
 
 
 	return (
 		<Fragment>
-			{ attributes.boxShadow ? (
-				<BlockEdit {...props } className={ props.className + ` ${cssNodeName};` } />
-			) : (
-				<BlockEdit {...props } className={ props.className + ` ${cssNodeName};` } />
-			) }
+
+			<BlockEdit {...props } className={ props.className + ` ${cssNodeName}` } />
 
 			<InspectorControls>
 				<PanelBody

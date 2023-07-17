@@ -1,11 +1,14 @@
 name: Test JS
 
 
-on: [pull_request]
+on:
+  pull_request:
+    types: [ opened, synchronize, ready_for_review ]
 
 jobs:
   run:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     strategy:
       matrix:
         node-version: [18.x]
