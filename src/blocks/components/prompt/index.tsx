@@ -147,7 +147,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		const getEmbeddedPrompt = async() => {
 			retrieveEmbeddedPrompt( promptID ).then( ( promptServer ) => {
 				setEmbeddedPrompts( promptServer.prompts );
-				console.log( promptServer );
 			});
 		};
 
