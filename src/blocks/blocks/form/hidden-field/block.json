@@ -13,8 +13,7 @@
 			"type": "string"
 		},
 		"label": {
-			"type": "string",
-			"default": "Hidden Field"
+			"type": "string"
 		},
 		"paramName": {
 			"type": "string"

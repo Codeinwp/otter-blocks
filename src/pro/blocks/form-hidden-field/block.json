@@ -17,8 +17,7 @@
 			"default": "hidden"
 		},
 		"label": {
-			"type": "string",
-			"default": "Metadata"
+			"type": "string"
 		},
 		"paramName": {
 			"type": "string"
