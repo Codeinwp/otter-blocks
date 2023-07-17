@@ -122,6 +122,13 @@ class Form_Settings_Data {
 	private $submissions_save_location = '';
 
 	/**
+	 * The webhook ID.
+	 *
+	 * @var string
+	 */
+	private $webhook_id = '';
+
+	/**
 	 * The default constructor.
 	 *
 	 * @param array $integration_data The integration data.
@@ -241,6 +248,9 @@ class Form_Settings_Data {
 					$integration->set_submissions_save_location( 'database-email' );
 				}
 				$integration->set_meta( $form );
+				if ( isset( $form['webhookId'] ) ) {
+					$integration->set_webhook_id( $form['webhookId'] );
+				}
 			}
 		}
 		return $integration;
@@ -645,6 +655,15 @@ class Form_Settings_Data {
 	}
 
 	/**
+	 * Get the webhook id.
+	 *
+	 * @return string
+	 */
+	public function get_webhook_id() {
+		return $this->webhook_id;
+	}
+
+	/**
 	 * Set the autoresponder.
 	 *
 	 * @param array $autoresponder The email bcc.
@@ -673,6 +692,19 @@ class Form_Settings_Data {
 	 */
 	public function set_submissions_save_location( $submissions_save_location ) {
 		$this->submissions_save_location = $submissions_save_location;
+		return $this;
+	}
+
+	/**
+	 * Set the webhook ID.
+	 *
+	 * @param string $webhook_id The webhook ID.
+	 * @return $this
+	 */
+	private function set_webhook_id( $webhook_id ) {
+		if ( ! empty( $webhook_id ) ) {
+			$this->webhook_id = $webhook_id;
+		}
 		return $this;
 	}
 }

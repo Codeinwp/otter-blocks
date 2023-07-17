@@ -294,6 +294,50 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 						</div>
 
 					</ToolsPanelItem>
+					<ToolsPanelItem
+						hasValue={ () => undefined !== formOptions.webhookId }
+						label={ __( 'Webhook', 'otter-blocks' ) }
+						onDeselect={ () => setFormOption({ webhookId: undefined }) }
+						isShownByDefault={ true }
+					>
+						<SelectControl
+							label={ __( 'Webhook', 'otter-blocks' ) }
+							disabled
+							value={ undefined }
+							options={
+								[
+									{
+										label: __( 'Select Webhook', 'otter-blocks' ),
+										value: ''
+									}
+								]
+
+							}
+							onChange={ undefined }
+						/>
+						< br />
+						<Button
+							variant="secondary"
+							onClick={undefined}
+							disabled
+							className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
+						>
+							{ __( 'Edit Webhooks', 'otter-blocks' ) }
+						</Button>
+
+						< br />
+						<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation">
+							{ __( 'Learn more about webhooks.', 'otter-blocks' ) }
+						</ExternalLink>
+
+						<div>
+							<Notice
+								notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+								variant="upsell"
+							/>
+							<p className="description">{ __( 'Trigger webhooks on Form submit action.', 'otter-blocks' ) }</p>
+						</div>
+					</ToolsPanelItem>
 				</Fragment>
 			) }
 		</Fragment>
