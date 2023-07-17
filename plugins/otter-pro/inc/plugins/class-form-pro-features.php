@@ -34,6 +34,7 @@ class Form_Pro_Features {
 			add_filter( 'otter_form_data_preparation', array( $this, 'load_files_to_media_library' ) );
 			add_action( 'otter_form_after_submit', array( $this, 'clean_files_from_uploads' ) );
 			add_action( 'otter_form_after_submit', array( $this, 'send_autoresponder' ), 99 );
+			add_action( 'otter_form_after_submit', array( $this, 'trigger_webhook' ) );
 		}
 	}
 
@@ -345,6 +346,151 @@ class Form_Pro_Features {
 		} finally {
 			return $form_data;
 		}
+	}
+
+	/**
+	 * Send autoresponder email to the subscriber.
+	 *
+	 * @param Form_Data_Request|null $form_data The files to load.
+	 * @since 2.4
+	 */
+	public function trigger_webhook( $form_data ) {
+
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
+		if (
+			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
+			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
+			$form_data->has_error() ||
+			empty( $form_data->get_form_options()->get_webhook_id() )
+		) {
+			return $form_data;
+		}
+
+		try {
+			$form_webhook_id = $form_data->get_form_options()->get_webhook_id();
+
+			$webhooks = get_option( 'themeisle_webhooks_options', array() );
+
+			$webhook = null;
+
+			foreach ( $webhooks as $hook ) {
+				if ( $hook['id'] === $form_webhook_id ) {
+					$webhook = $hook;
+					break;
+				}
+			}
+
+			if ( ! empty( $webhook ) && ! empty( $webhook['url'] ) ) {
+				$method        = empty( $webhook['method'] ) ? 'POST' : $webhook['method'];
+				$url           = $webhook['url'];
+				$headers_pairs = empty( $webhook['headers'] ) ? array() : $webhook['headers'];
+				$headers       = array();
+
+				foreach ( $headers_pairs as $pair ) {
+					if ( empty( $pair['key'] ) || empty( $pair['value'] ) ) {
+						continue;
+					}
+
+					$headers[] = $pair['key'] . ': ' . $pair['value'];
+				}
+
+				$payload = $this->prepare_webhook_payload( array(), $form_data, $webhook );
+				$payload = apply_filters( 'otter_form_webhook_payload', $payload, $form_data, $webhook );
+				$payload = wp_json_encode( $payload );
+
+				$response = wp_remote_request(
+					$url,
+					array(
+						'method'  => $method,
+						'headers' => $headers,
+						'body'    => $payload,
+					)
+				);
+
+				if ( is_wp_error( $response ) ) {
+					$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER, $response->get_error_message() );
+
+					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+						// TODO: use logger.
+						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+						error_log( __( '[Otter Webhook]', 'otter-blocks' ) . $response->get_error_message() );
+					}
+				}
+			}
+		} catch ( \Exception $e ) {
+			$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
+		} finally {
+			return $form_data;
+		}
+	}
+
+	/**
+	 * Prepare webhook payload with form data.
+	 *
+	 * @param mixed             $payload The payload.
+	 * @param Form_Data_Request $form_data The form data.
+	 * @param mixed             $webhook The webhook.
+	 * @return mixed
+	 */
+	public function prepare_webhook_payload( $payload, $form_data, $webhook ) {
+
+		if ( ! is_array( $payload ) ) {
+			return $payload;
+		}
+
+		$inputs         = $form_data->get_form_inputs();
+		$uploaded_files = $form_data->get_uploaded_files_path();
+
+		foreach ( $inputs as $input ) {
+			if ( isset( $input['id'] ) && isset( $input['value'] ) ) {
+				$key   = str_replace( 'wp-block-themeisle-blocks-form-', '', $input['id'] );
+				$value = $input['value'];
+
+				if ( ! empty( $input['metadata']['mappedName'] ) ) {
+					$key = $input['metadata']['mappedName'];
+				}
+
+				$is_file_field = ! empty( $input['type'] ) && 'file' === $input['type'];
+
+				if ( $is_file_field && ! empty( $input['metadata']['data'] ) ) {
+					$file_data_key = $input['metadata']['data'];
+
+					if ( ! empty( $uploaded_files[ $file_data_key ] ) ) {
+						$value = $uploaded_files[ $file_data_key ]['file_path'];
+
+						/**
+						 * If the file was uploaded to the media library, we use the URL instead of the path.
+						 */
+						if ( ! empty( $uploaded_files[ $file_data_key ]['file_url'] ) ) {
+							$value = $uploaded_files[ $file_data_key ]['file_url'];
+						}
+					}
+				}
+
+				if ( array_key_exists( $key, $payload ) ) {
+					if ( is_array( $payload[ $key ] ) ) {
+						$payload[ $key ][] = $value;
+					} else {
+						/**
+						 * Overwrite the value if it's not an array.
+						 */
+						$payload[ $key ] = $value;
+					}
+				} elseif ( $is_file_field ) {
+					/**
+					 * If the field is a file field, we need to make sure the value is an array.
+					 */
+					$payload[ $key ] = array( $value );
+				} else {
+					$payload[ $key ] = $value;
+				}
+			}
+		}
+
+		return $payload;
 	}
 
 	/**

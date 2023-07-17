@@ -37,12 +37,13 @@ class Form_File_Block {
 		$has_multiple_files = isset( $attributes['multipleFiles'] ) && boolval( $attributes['multipleFiles'] ) && ( ! isset( $attributes['maxFilesNumber'] ) || intval( $attributes['maxFilesNumber'] ) > 1 );
 		$allowed_files      = isset( $attributes['allowedFileTypes'] ) ? implode( ',', $attributes['allowedFileTypes'] ) : '';
 
-		$output = '<div class="' . $class_names . '" id="' . $id . '">';
+		$output      = '<div class="' . $class_names . '" id="' . $id . '">';
+		$mapped_name = isset( $attributes['mappedName'] ) ? $attributes['mappedName'] : 'field-' . $id;
 
-		$output .= '<label class="otter-form-input-label" for="field-' . $id . '" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
+		$output .= '<label class="otter-form-input-label" for="' . $mapped_name . '" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
 
-		$output .= '<input type="file" class="otter-form-input" name="field-'
-		. $id . '" '
+		$output .= '<input type="file" class="otter-form-input" name="'
+		. $mapped_name . '" '
 		. ( $is_required ? 'required ' : '' ) . ' '
 		. ( $has_multiple_files ? 'multiple ' : '' )
 		. ( isset( $attributes['allowedFileTypes'] ) ? ( ' accept="' . $allowed_files ) . '"' : '' )
