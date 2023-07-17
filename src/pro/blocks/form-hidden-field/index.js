@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 /**
  * Internal dependencies
  */
@@ -12,6 +14,8 @@ import metadata from './block.json';
 import { formFieldIcon as icon } from '../../../blocks/helpers/icons.js';
 import edit from './edit.js';
 import { omit } from 'lodash';
+import Inactive from '../../components/inactive';
+
 
 const { name } = metadata;
 
