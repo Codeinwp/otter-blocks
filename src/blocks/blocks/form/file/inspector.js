@@ -24,7 +24,7 @@ import { Fragment, useContext } from '@wordpress/element';
 import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
 import { FormContext } from '../edit';
 import { setUtm } from '../../../helpers/helper-functions';
-import { Notice } from '../../../components';
+import { HTMLAnchorControl, Notice } from '../../../components';
 
 const ProPreview = ({ attributes }) => {
 
@@ -66,6 +66,14 @@ const ProPreview = ({ attributes }) => {
 					help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
 					checked={ attributes.isRequired }
 					onChange={ () => {} }
+				/>
+
+				<TextControl
+					label={ __( 'Mapped Name', 'otter-blocks' ) }
+					help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+					value={ attributes.mappedName }
+					onChange={ () => {} }
+					placeholder={ __( 'photos', 'otter-blocks' ) }
 				/>
 
 				<ToggleControl
@@ -118,45 +126,52 @@ const Inspector = ({
 	} = useContext( FormContext );
 
 	return (
-		<InspectorControls>
-			<PanelBody
-				title={ __( 'Field Settings', 'otter-blocks' ) }
-			>
-				<Button
-					isSecondary
-					variant="secondary"
-					onClick={ () => selectForm?.() }
+		<Fragment>
+			<InspectorControls>
+				<PanelBody
+					title={ __( 'Field Settings', 'otter-blocks' ) }
 				>
-					{ __( 'Back to the Form', 'otter-blocks' ) }
-				</Button>
+					<Button
+						isSecondary
+						variant="secondary"
+						onClick={ () => selectForm?.() }
+					>
+						{ __( 'Back to the Form', 'otter-blocks' ) }
+					</Button>
 
-				<SelectControl
-					label={ __( 'Field Type', 'otter-blocks' ) }
-					value={ attributes.type }
-					options={ fieldTypesOptions() }
-					onChange={ type => {
-						if ( 'file' !== type ) {
-							switchFormFieldTo( type, clientId, attributes );
+					<SelectControl
+						label={ __( 'Field Type', 'otter-blocks' ) }
+						value={ attributes.type }
+						options={ fieldTypesOptions() }
+						onChange={ type => {
+							if ( 'file' !== type ) {
+								switchFormFieldTo( type, clientId, attributes );
+							}
+						}}
+					/>
+
+					<ProPreview attributes={ attributes } />
+
+				</PanelBody>
+
+				<PanelColorSettings
+					title={ __( 'Color', 'otter-blocks' ) }
+					initialOpen={ false }
+					colorSettings={ [
+						{
+							value: attributes.labelColor,
+							onChange: () => {},
+							label: __( 'Label Color', 'otter-blocks' )
 						}
-					}}
+					] }
 				/>
-
-				<ProPreview attributes={ attributes } />
-
-			</PanelBody>
-
-			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
-				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: attributes.labelColor,
-						onChange: () => {},
-						label: __( 'Label Color', 'otter-blocks' )
-					}
-				] }
+			</InspectorControls>
+			<HTMLAnchorControl
+				value={ attributes.id }
+				onChange={ value => setAttributes({ id: value }) }
 			/>
-		</InspectorControls>
+		</Fragment>
+
 	);
 };
 

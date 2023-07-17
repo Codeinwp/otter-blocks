@@ -20,9 +20,18 @@ const RichTextEditor = ({
 	value,
 	onChange,
 	help = '',
-	allowRawHTML = false
+	allowRawHTML = false,
+	area = ''
 }) => {
 	const instanceId = useInstanceId( RichTextEditor );
+
+	const editorRef = useRef( null );
+
+	const removeEditor = () => {
+		if ( editorRef?.current?.id !== undefined ) {
+			wp.oldEditor.remove( editorRef.current.id );
+		}
+	};
 
 	useEffect( () => {
 		const settings = {
@@ -47,12 +56,10 @@ const RichTextEditor = ({
 			onChange( allowRawHTML ? decodeHTMLEntities( editor.getContent() ) : editor.getContent() );
 		});
 
-		return () => editorRef?.current?.id !== undefined ? wp.oldEditor.remove( editorRef.current.id ) : undefined;
+		return removeEditor;
 	}, []);
 
-	const id = `inspector-textarea-control-${ instanceId }`;
-
-	const editorRef = useRef( null );
+	const id = `inspector-textarea-control-${ instanceId }-${ area }`;
 
 	const onChangeValue = ( e ) => onChange( e.target.value );
 

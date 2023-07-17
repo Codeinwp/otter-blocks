@@ -394,6 +394,9 @@ class Options_Settings {
 								'submissionsSaveLocation' => array(
 									'type' => 'string',
 								),
+								'webhookId'               => array(
+									'type' => 'string',
+								),
 							),
 						),
 					),
@@ -508,6 +511,79 @@ class Options_Settings {
 				),
 				'default'           => array(
 					'editor_upsell' => false,
+				),
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_webhooks_options',
+			array(
+				'type'              => 'array',
+				'description'       => __( 'Otter Registered Webhooks.', 'otter-blocks' ),
+				'sanitize_callback' => function ( $array ) {
+					return array_map(
+						function ( $item ) {
+							if ( isset( $item['id'] ) ) {
+								$item['id'] = sanitize_text_field( $item['id'] );
+							}
+							if ( isset( $item['url'] ) ) {
+								$item['url'] = esc_url_raw( $item['url'] );
+							}
+							if ( isset( $item['name'] ) ) {
+								$item['name'] = sanitize_text_field( $item['name'] );
+							}
+							if ( isset( $item['method'] ) ) {
+								$item['method'] = sanitize_text_field( $item['method'] );
+							}
+							if ( isset( $item['headers'] ) && is_array( $item['headers'] ) ) {
+								foreach ( $item['headers'] as &$header ) {
+									$header['key']   = sanitize_text_field( $header['key'] );
+									$header['value'] = sanitize_text_field( $header['value'] );
+								}
+							} else {
+								$item['headers'] = array();
+							}
+							return $item;
+						},
+						$array
+					);
+				},
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'  => 'array',
+						'items' => array(
+							'type'       => 'object',
+							'properties' => array(
+								'id'      => array(
+									'type' => 'string',
+								),
+								'url'     => array(
+									'type' => 'string',
+								),
+								'headers' => array(
+									'type'  => 'array',
+									'items' => array(
+										'type'       => 'object',
+										'properties' => array(
+											'key'   => array(
+												'type' => 'string',
+											),
+											'value' => array(
+												'type' => 'string',
+											),
+										),
+									),
+								),
+								'name'    => array(
+									'type' => 'string',
+								),
+								'method'  => array(
+									'type' => 'string',
+								),
+							),
+						),
+					),
 				),
 			)
 		);
