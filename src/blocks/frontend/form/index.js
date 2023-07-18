@@ -600,10 +600,3 @@ domReady( () => {
 		});
 	});
 });
-
-
-window.activateTempSave = () => {
-	saveMode = 'temporary';
-	console.log( 'Temporary save mode activated' );
-};
-

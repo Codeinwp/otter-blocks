@@ -512,6 +512,10 @@ class Registration {
 					),
 				)
 			);
+
+			if ( Pro::is_pro_active() ) {
+				add_action( 'wp_footer', array( $this, 'test_add_temp_save' ) );
+			}
 		}
 
 		if ( ! self::$scripts_loaded['google-map'] && has_block( 'themeisle-blocks/google-map', $post ) ) {
@@ -960,6 +964,31 @@ class Registration {
 	 */
 	public static function sticky_style() {
 		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
+	}
+
+	/**
+	 * Add inline script for temporary save mode.
+	 *
+	 * @static
+	 * @access public
+	 */
+	public static function test_add_temp_save() {
+
+		/**
+		 * In this function we add a script that will activate the temporary save mode.
+		 * This will be for the Pro users. This will be removed in the future and moved to the Pro plugin.
+		 */
+
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		echo "<script id='o-tmp-save'>
+			window.activateTempSave = () => {
+				saveMode = 'temporary';
+				console.log( 'Temporary save mode activated' );
+			};
+		</script>";
 	}
 
 	/**
