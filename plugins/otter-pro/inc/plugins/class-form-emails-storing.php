@@ -1112,11 +1112,11 @@ class Form_Emails_Storing {
 		$post_status = get_post_status( $record_id );
 
 		// If the post status is not 'draft', then the submission has already been confirmed.
-		// if ( 'draft' !== $post_status ) {
-		// $response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
-		// $response->mark_as_success();
-		// return $response;
-		// }
+		if ( 'draft' !== $post_status ) {
+			$response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+			$response->mark_as_success();
+			return $response;
+		}
 		$meta = get_post_meta( $record_id, self::FORM_RECORD_META_KEY, true );
 
 		if ( ! isset( $meta['dump'] ) || empty( $meta['dump']['value'] ) ) {
