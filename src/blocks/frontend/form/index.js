@@ -23,7 +23,7 @@ const getFormFieldInputs = ( form ) => {
 	 *
 	 * @type {Array.<HTMLDivElement>}
 	 */
-	return [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file' ) ].filter( input => {
+	return [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file, :scope > .otter-form__container > .wp-block-themeisle-blocks-form-hidden-field ' ) ].filter( input => {
 		return ! innerForms?.some( innerForm => innerForm?.contains( input ) );
 	});
 };
@@ -58,7 +58,7 @@ const extractFormFields = async( form ) => {
 		let mappedName = undefined;
 		const { id } = input;
 
-		const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"]), .otter-form-textarea-input' );
+		const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"]), .otter-form-textarea-input' );
 		if ( null !== valueElem ) {
 			value = valueElem?.value;
 			fieldType = valueElem?.type;
@@ -70,6 +70,7 @@ const extractFormFields = async( form ) => {
 			/** @type{HTMLInputElement} */
 			const fileInput = input.querySelector( 'input[type="file"]' );
 
+			const hiddenInput = input.querySelector( 'input[type="hidden"]' );
 
 			if ( fileInput ) {
 				const files = fileInput?.files;
@@ -95,6 +96,14 @@ const extractFormFields = async( form ) => {
 			} else if ( select ) {
 				value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => Boolean( l ) ).join( ', ' );
 				fieldType = 'multiple-choice';
+			} else if ( hiddenInput ) {
+				const paramName = hiddenInput?.dataset?.paramName;
+
+				if ( paramName ) {
+					const urlParams = new URLSearchParams( window.location.search );
+					value = urlParams.get( paramName );
+					fieldType = 'hidden';
+				}
 			} else {
 				const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
 				const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );

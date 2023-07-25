@@ -40,7 +40,8 @@ const fieldNames: Record<string, string> = {
 	'checkbox': __( 'Checkbox Field', 'otter-blocks' ),
 	'radio': __( 'Radio Field', 'otter-blocks' ),
 	'file': __( 'File Field', 'otter-blocks' ),
-	'url': __( 'URL Field', 'otter-blocks' )
+	'url': __( 'URL Field', 'otter-blocks' ),
+	'hidden': __( 'Hidden Field', 'otter-blocks' )
 };
 
 const extractFieldName = ( input: FormInputProps ) => {
@@ -52,6 +53,10 @@ const extractFieldName = ( input: FormInputProps ) => {
 
 	if ( 'form-file' === tag ) {
 		return 'file';
+	}
+
+	if ( 'form-hidden-field' === tag ) {
+		return 'hidden';
 	}
 
 	return 'textarea';
