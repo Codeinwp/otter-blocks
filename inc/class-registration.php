@@ -985,7 +985,7 @@ class Registration {
 
 		echo "<script id='o-tmp-save'>
 			window.activateTempSave = () => {
-				saveMode = 'temporary';
+				window.saveMode = 'temporary';
 				console.log( 'Temporary save mode activated' );
 			};
 		</script>";

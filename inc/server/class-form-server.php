@@ -148,6 +148,7 @@ class Form_Server {
 		add_action( 'otter_form_after_submit', array( $this, 'send_error_email_to_admin' ), 999 );
 
 		add_action( 'otter_form_on_submission_confirmed', array( $this, 'apply_main_provider' ) );
+		add_filter( 'otter_form_session_confirmation', array( $this, 'verify_confirmation_session' ) );
 	}
 
 	/**
@@ -186,12 +187,22 @@ class Form_Server {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'confirm_form' ),
 					'permission_callback' => function ( $request ) {
-						return __return_true();
+						$session = $request->get_param( 'session' );
+
+						if ( apply_filters( 'otter_form_session_confirmation', $session ) ) {
+							return __return_true();
+						}
+						return __return_false();
 					},
 					'args'                => array(
 						'record_id' => array(
 							'validate_callback' => function( $param, $request, $key ) {
 								return is_numeric( $param );
+							},
+						),
+						'session'   => array(
+							'validate_callback' => function( $param, $request, $key ) {
+								return is_string( $param );
 							},
 						),
 					),
@@ -1013,6 +1024,16 @@ class Form_Server {
 		return $form_data;
 	}
 
+	/**
+	 * Verify the given confirmation session.
+	 *
+	 * @param string $session The session id.
+	 * @return bool
+	 */
+	public function verify_confirmation_session( $session ) {
+		// TODO: Add verification for Stripe session when adding the stripe field.
+		return 'test_123' === $session; // Test ONLY.
+	}
 	/**
 	 * The instance method for the static class.
 	 * Defines and returns the instance of the static class.

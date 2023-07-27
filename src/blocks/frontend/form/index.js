@@ -8,7 +8,7 @@ import { domReady } from '../../helpers/frontend-helper-functions.js';
 let startTimeAntiBot = null;
 let METADATA_VERSION = 1;
 
-let saveMode = 'permanent';
+window.saveMode = 'permanent';
 
 const hasRecordId = () => {
 	const urlParams = new URLSearchParams( window.location.search );
@@ -19,7 +19,8 @@ const confirmRecord = async() => {
 
 	// Get the record id from the URL
 	const urlParams = new URLSearchParams( window.location.search );
-	const recordId = urlParams.get( 'record_id' );
+	const recordId = urlParams.get( 'record_id' ); // TODO: test ONLY. This will be extracted from Stripe.
+	const session = urlParams.get( 'session' );
 
 	console.log( 'Record ID: ' + recordId ); // TODO: remove after QA.
 
@@ -27,7 +28,7 @@ const confirmRecord = async() => {
 
 	console.log( 'Making a request for ' + formURlEndpoint ); // TODO: remove after QA.
 
-	return await fetch( formURlEndpoint + '?record_id=' + recordId, {
+	return await fetch( formURlEndpoint + `?record_id=${recordId}&session=${session}`, {
 		method: 'GET',
 		credentials: 'include'
 	});
@@ -431,7 +432,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 			method: 'POST',
 			headers: {
 				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce,
-				'O-Form-Save-Mode': saveMode
+				'O-Form-Save-Mode': window.saveMode
 			},
 			credentials: 'include',
 			body: formData

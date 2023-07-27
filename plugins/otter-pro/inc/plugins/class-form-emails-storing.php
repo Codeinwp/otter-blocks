@@ -1192,7 +1192,8 @@ class Form_Emails_Storing {
 		if ( array_key_exists( 'record_id', $form_data->metadata ) ) {
 			$form_data->metadata['frontend_external_confirmation_url'] = add_query_arg(
 				array(
-					'record_id' => $form_data->metadata['record_id'],
+					'record_id' => $form_data->metadata['record_id'], // TODO: Test ONLY. This will will be extracted from Stripe payment intent metadata.
+					'session'   => 'test_123',
 				),
 				$form_data->get_payload_field( 'postUrl' )
 			);
