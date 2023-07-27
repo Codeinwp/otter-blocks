@@ -51,4 +51,31 @@ test.describe( 'Accordion Block', () => {
 
 		expect( accordionBlock.innerBlocks.length ).toBeGreaterThan( currentAccordionItems );
 	});
+
+	test( 'show/hide with default content', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/accordion'
+		});
+
+		let accordionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/accordion' === block.name );
+
+		expect( accordionBlock.innerBlocks.length ).toBeGreaterThan( 0 );
+
+		const postId = await editor.publishPost();
+
+		await page.goto( `/?p=${postId}` );
+
+		// No tabs should be opened by default
+		expect( await page.getByRole( 'paragraph' ).filter({ hasText: 'This is a placeholder tab content. It is important to have the necessary informa' }).isVisible() ).toBeFalsy();
+
+		// Open the first tab
+		await page.locator( 'summary' ).filter({ hasText: 'Accordion title 1' }).click();
+
+		expect( await page.getByRole( 'paragraph' ).filter({ hasText: 'This is a placeholder tab content. It is important to have the necessary informa' }).isVisible() ).toBeTruthy();
+
+		// Close the first tab
+		await page.locator( 'summary' ).filter({ hasText: 'Accordion title 1' }).click();
+
+		expect( await page.getByRole( 'paragraph' ).filter({ hasText: 'This is a placeholder tab content. It is important to have the necessary informa' }).isVisible() ).toBeFalsy();
+	});
 });

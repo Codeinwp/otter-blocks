@@ -93,4 +93,45 @@ test.describe( 'Slider Block', () => {
 
 		await expect( page.locator( 'div:nth-child(2) > figure > .wp-block-themeisle-blocks-slider-item' ) ).toBeVisible();
 	});
+
+	test( 'check frontend rendering and interaction', async({ page, editor }) => {
+		const images = [
+			{
+				id: uploadedMedia.id,
+				url: uploadedMedia.source_url,
+				alt: uploadedMedia.alt_text
+			}
+		];
+
+		images.push( images[ 0 ]);
+		images.push( images[ 0 ]);
+		images.push( images[ 0 ]);
+
+		await editor.insertBlock({
+			name: 'themeisle-blocks/slider',
+			attributes: {
+				images: images
+			}
+		});
+
+		const postId = await editor.publishPost();
+
+		await page.goto( `/?p=${postId}` );
+
+		expect( await page.locator( '.wp-block-themeisle-blocks-slider img' ).count() ).toBe( 4 );
+
+		await page.waitForTimeout( 500 );
+
+		let hasError = false;
+		page.on( 'console', msg => {
+			if ( 'error' === msg.type() ) {
+				hasError = true;
+			}
+		});
+
+		await page.locator( '.glide__arrows > button:nth-child(2)' ).click({ clickCount: 3 });
+
+		// There should be no errors in the console after clicking the next button.
+		expect( hasError ).toBeFalsy();
+	});
 });

@@ -48,4 +48,24 @@ test.describe( 'Tabs Block', () => {
 
 		expect( tabBlock.innerBlocks.length ).toBeGreaterThan( currentTabsItems );
 	});
+
+	test( 'change tab with the default content', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/tabs'
+		});
+
+		let tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );
+
+		expect( tabBlock.innerBlocks.length ).toBeGreaterThan( 0 );
+
+		const postId = await editor.publishPost();
+
+		await page.goto( `/?p=${postId}` );
+
+		await page.getByRole( 'tab', { name: 'Tab 2' }).click();
+
+		await expect( page.locator( '.wp-block-themeisle-blocks-tabs__header_item' ).filter({ hasText: /^Tab 2$/ }).first() ).toHaveClass( /active/ );
+
+		expect( await page.getByRole( 'paragraph' ).filter({ hasText: 'This is just a placeholder to help you visualize how the content is displayed in' }).isVisible() ).toBeTruthy();
+	});
 });

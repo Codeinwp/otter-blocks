@@ -21,12 +21,13 @@ test.describe( 'Countdown Block', () => {
 		expect( hasCountdown ).toBeTruthy();
 	});
 
-	test( 'select a data', async({ editor, page }) => {
+	test( 'select a data and check the rendering', async({ editor, page }) => {
 		await editor.insertBlock({
 			name: 'themeisle-blocks/countdown'
 		});
 
 		let countdownBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/countdown' === block.name );
+		const otterId = countdownBlock.attributes.id;
 
 		await page.getByRole( 'button', { name: 'Select Date' }).click();
 
@@ -38,5 +39,37 @@ test.describe( 'Countdown Block', () => {
 
 		// If everything is ok, the day label text should be changed to "Days".
 		await expect( page.getByText( 'Days' ) ).toBeVisible();
+
+		await page.locator( '.editor-styles-wrapper' ).click();
+		const postId = await editor.publishPost();
+
+		await page.goto( `/?p=${postId}` );
+
+		expect( ( await page.$eval( `#${otterId}`, ( el ) => el.getAttribute( 'data-date' ) ) ).startsWith( '2030-08-17' ) ).toBeTruthy();
+
+		// If everything is ok, the day label text should be changed to "Days".
+		await expect( page.getByText( 'Days' ) ).toBeVisible();
+
+		// Capture the current value of the seconds.
+		const currentValue = await page.locator( '.otter-countdown__display-area' )
+			.filter({
+				hasText: 'Seconds'
+			})
+			.locator( '.otter-countdown__value' )
+			.innerHTML();
+
+		// Wait for 1 second for the seconds to change.
+		await page.waitForTimeout( 1000 );
+
+		// Capture the new value of the seconds.
+		const newValue = await page.locator( '.otter-countdown__display-area' )
+			.filter({
+				hasText: 'Seconds'
+			})
+			.locator( '.otter-countdown__value' )
+			.innerHTML();
+
+		// Check if the new value is different from the old one.
+		expect( currentValue ).not.toEqual( newValue );
 	});
 });
