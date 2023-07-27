@@ -3,12 +3,12 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
-test.describe( 'Tabs Block', () => {
+test.describe( 'Countdown Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
 	});
 
-	test( 'can be created by typing "/tabs"', async({ editor, page }) => {
+	test( 'can be created by typing "/countdown"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
 		await page.click( 'role=button[name="Add default block"i]' );
@@ -31,18 +31,12 @@ test.describe( 'Tabs Block', () => {
 		await page.getByRole( 'button', { name: 'Select Date' }).click();
 
 		await page.getByLabel( 'Day' ).fill( '17' );
-
+		await page.getByRole( 'combobox', { name: 'Month' }).selectOption( 'August' );
 		await page.getByLabel( 'Year' ).fill( '2030' );
 
-		await page.getByRole( 'combobox', { name: 'Month' }).selectOption( 'August' );
+		await page.getByLabel( 'Year' ).press( 'Enter' );
 
-
-		await page.getByRole( 'button', { name: 'August 17, 2023. Selected' }).click();
-
-
-		// Add a small delay to allow the block to update.
-		await page.waitForTimeout( 200 );
-
-		// TODO: add render test
+		// If everything is ok, the day label text should be changed to "Days".
+		await expect( page.getByText( 'Days' ) ).toBeVisible();
 	});
 });
