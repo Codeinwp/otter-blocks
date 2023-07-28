@@ -102,6 +102,9 @@
 	"form-hidden-field": {
 		"block": "blocks/blocks/form/hidden-field/block.json"
 	},
+	"form-stripe-field": {
+		"block": "blocks/blocks/form/stripe-field/block.json"
+	},
 	"google-map": {
 		"block": "blocks/blocks/google-map/block.json",
 		"assets": {

@@ -117,6 +117,16 @@ registerBlockType( name, {
 						...attrs
 					});
 				}
+			},
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-stripe-field' ],
+				transform: ( attributes ) => {
+					const attrs = omit( attributes, [ 'type' ]);
+					return createBlock( 'themeisle-blocks/form-stripe-field', {
+						...attrs
+					});
+				}
 			}
 		]
 	}
