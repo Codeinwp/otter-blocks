@@ -67,7 +67,7 @@
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-replace-textdomain": "^1.0.24",
-		"@playwright/test": "^1.33.0",
+		"@playwright/test": "^1.36.1",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/exec": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
@@ -77,7 +77,7 @@
 		"@types/jest": "^29.5.1",
 		"@types/wordpress__block-editor": "^11.5.1",
 		"@types/wordpress__components": "^23.0.1",
-		"@typescript-eslint/parser": "^5.61.0",
+		"@typescript-eslint/parser": "^6.0.0",
 		"@wordpress/block-editor": "^12.5.0",
 		"@wordpress/components": "^25.3.0",
 		"@wordpress/compose": "^6.10.0",
