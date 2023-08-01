@@ -141,6 +141,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	&.has-light-bg {
 		color: var( --text-color, var( --nv-text-color , #000 ) );
 	}
+
+	&> .innerblocks-wrap:not(:first-child, :last-child) {
+			z-index: 1; // If dividers are present, make sure they are behind the columns.
+	}
 }
 
 @media ( min-width: 960px ) {
@@ -155,10 +159,6 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			flex-basis: 100%;
 			word-break: keep-all;
 			max-width: var( --columns-width );
-
-			&:not(:first-child, :last-child) {
-				z-index: 1; // If dividers are present, make sure they are behind the columns.
-			}
 
 			.wp-block-themeisle-blocks-advanced-column {
 				position: relative;
