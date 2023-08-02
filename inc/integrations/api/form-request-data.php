@@ -680,6 +680,15 @@ class Form_Data_Request {
 	}
 
 	/**
+	 * Mark as temporary data.
+	 *
+	 * @return void
+	 */
+	public function mark_as_temporary_data() {
+		$this->set_saving_mode( 'temporary' );
+	}
+
+	/**
 	 * Dump the data. Can be used to reconstruct the object.
 	 *
 	 * @return array The data to dump.
@@ -739,5 +748,15 @@ class Form_Data_Request {
 				$response->add_response_field( $key, $value );
 			}
 		}
+	}
+
+	/**
+	 * Check if field is present in the metadata.
+	 *
+	 * @param string $key The key.
+	 * @return bool
+	 */
+	public function has_metadata( $key ) {
+		return isset( $this->metadata[ $key ] );
 	}
 }

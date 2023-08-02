@@ -17,6 +17,7 @@ use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Utils;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
+use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 use ThemeIsle\GutenbergBlocks\Pro;
 use WP_Error;
 use WP_HTTP_Response;
@@ -187,7 +188,7 @@ class Form_Server {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'confirm_form' ),
 					'permission_callback' => function ( $request ) {
-						$session = $request->get_param( 'session' );
+						$session = $request->get_param( 'stripe_session_id' );
 
 						if ( apply_filters( 'otter_form_session_confirmation', $session ) ) {
 							return __return_true();
@@ -332,15 +333,12 @@ class Form_Server {
 	 */
 	public function confirm_form( $request ) {
 
-		$record_id = $request->get_param( 'record_id' );
-		$response  = new Form_Data_Response();
+		$response = new Form_Data_Response();
 
 		try {
-			if ( ! empty( $record_id ) ) {
-				$response = apply_filters( 'otter_form_record_confirm', $response, $request );
-			}
+			$response = apply_filters( 'otter_form_record_confirm', $response, $request );
 		} catch ( Exception $e ) {
-			$response->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$response->set_code( Form_Data_Response::ERROR_RUNTIME_STRIPE_SESSION_VALIDATION );
 			$response->add_reason( $e->getMessage() );
 		} finally {
 			return $response->build_response();
@@ -1032,7 +1030,7 @@ class Form_Server {
 		foreach ( $required_fields as $required_field ) {
 			foreach ( $global_fields_options as $field ) {
 				if ( isset( $field['fieldOptionName'] ) && $field['fieldOptionName'] === $required_field ) {
-					$new_field = new Form_Field_WP_Option_Data( $field_name, $field['fieldOptionType'] );
+					$new_field = new Form_Field_WP_Option_Data( $required_field, $field['fieldOptionType'] );
 					if ( isset( $field['options'] ) ) {
 						$new_field->set_options( $field['options'] );
 					}
@@ -1055,8 +1053,7 @@ class Form_Server {
 	 * @return bool
 	 */
 	public function verify_confirmation_session( $session ) {
-		// TODO: Add verification for Stripe session when adding the stripe field.
-		return 'test_123' === $session; // Test ONLY.
+		return ! empty( $session ) && is_string( $session );
 	}
 	/**
 	 * The instance method for the static class.

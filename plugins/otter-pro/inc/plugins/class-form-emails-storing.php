@@ -10,6 +10,7 @@ namespace ThemeIsle\OtterPro\Plugins;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
+use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
 use WP_Post;
 use WP_Query;
@@ -46,7 +47,6 @@ class Form_Emails_Storing {
 		add_action( 'init', array( $this, 'create_form_records_type' ) );
 		add_action( 'admin_init', array( $this, 'set_form_records_cap' ), 10, 0 );
 		add_action( 'otter_form_after_submit', array( $this, 'store_form_record' ) );
-		add_action( 'otter_form_after_submit', array( $this, 'test_redirect_link_with_record_id' ) );
 
 		add_action( 'admin_head', array( $this, 'add_style' ) );
 
@@ -288,7 +288,7 @@ class Form_Emails_Storing {
 
 		add_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
 
-		$form_data->metadata['record_id'] = $post_id;
+		$form_data->metadata['otter_form_record_id'] = $post_id;
 
 		return $form_data;
 	}
@@ -1120,7 +1120,31 @@ class Form_Emails_Storing {
 	 */
 	public function confirm_submission( $response, $request ) {
 
-		$record_id   = $request->get_param( 'record_id' );
+		$session_id = $request->get_param( 'stripe_session_id' );
+
+		$stripe = new Stripe_API();
+
+		$stripe_response = $stripe->create_request( 'get_session', $session_id );
+
+		if ( is_wp_error( $stripe_response ) ) {
+			$response->set_code( Form_Data_Response::ERROR_STRIPE_CHECKOUT_SESSION_NOT_FOUND );
+			return $response;
+		}
+
+		$is_paid = 'paid' === $stripe_response->payment_status;
+
+		if ( ! $is_paid ) {
+			$response->set_code( Form_Data_Response::ERROR_STRIPE_PAYMENT_UNPAID );
+			return $response;
+		}
+
+		$record_id = $stripe_response->metadata['otter_form_record_id'];
+
+		if ( empty( $record_id ) ) {
+			$response->set_code( Form_Data_Response::ERROR_STRIPE_METADATA_RECORD_NOT_FOUND );
+			return $response;
+		}
+
 		$post_status = get_post_status( $record_id );
 
 		// If the post status is not 'draft', then the submission has already been confirmed.
@@ -1129,6 +1153,7 @@ class Form_Emails_Storing {
 			$response->mark_as_success();
 			return $response;
 		}
+
 		$meta = get_post_meta( $record_id, self::FORM_RECORD_META_KEY, true );
 
 		if ( ! isset( $meta['dump'] ) || empty( $meta['dump']['value'] ) ) {
@@ -1149,15 +1174,14 @@ class Form_Emails_Storing {
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request )
 		) {
-
-			$response->set_code( $form_data->get_error_code() );
+			$response->set_code( Form_Data_Response::ERROR_RUNTIME_STRIPE_SESSION_VALIDATION );
 			return $response;
 		}
 
 		do_action( 'otter_form_after_submit', $form_data );
 
 		if ( $form_data->has_error() ) {
-			$response->set_code( $form_data->get_error_code() );
+			$response->set_code( Form_Data_Response::ERROR_RUNTIME_STRIPE_SESSION_VALIDATION );
 			return $response;
 		}
 
@@ -1172,46 +1196,6 @@ class Form_Emails_Storing {
 		$response->mark_as_success();
 
 		return $response;
-	}
-
-	/**
-	 * Test redirect link with record id.
-	 *
-	 * @param Form_Data_Request|null $form_data The form data.
-	 */
-	public function test_redirect_link_with_record_id( $form_data ) {
-
-		/**
-		 * In this manner things like Stripe confirmation link will work.
-		 */
-
-		if ( ! isset( $form_data ) ) {
-			return $form_data;
-		}
-
-		if (
-			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
-			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
-			$form_data->has_error() ||
-			! $form_data->is_temporary_data()
-		) {
-			return $form_data;
-		}
-
-		/**
-		 * If the `record_id` and `stripe_payment_intent` (to be added in future PR) are set, then we can generate the confirmation link.
-		 */
-		if ( array_key_exists( 'record_id', $form_data->metadata ) ) {
-			$form_data->metadata['frontend_external_confirmation_url'] = add_query_arg(
-				array(
-					'record_id' => $form_data->metadata['record_id'], // TODO: Test ONLY. This will will be extracted from Stripe payment intent metadata.
-					'session'   => 'test_123',
-				),
-				$form_data->get_payload_field( 'postUrl' )
-			);
-		}
-
-		return $form_data;
 	}
 
 	/**

@@ -33,10 +33,12 @@ class Form_Pro_Features {
 		if ( License::has_active_license() ) {
 			add_filter( 'otter_form_data_preparation', array( $this, 'save_files_to_uploads' ) );
 			add_filter( 'otter_form_data_preparation', array( $this, 'load_files_to_media_library' ) );
+			add_filter( 'otter_form_data_preparation', array( $this, 'mark_request_with_stripe_as_temp' ), 0 );
+
 			add_action( 'otter_form_after_submit', array( $this, 'clean_files_from_uploads' ) );
 			add_action( 'otter_form_after_submit', array( $this, 'send_autoresponder' ), 99 );
 			add_action( 'otter_form_after_submit', array( $this, 'trigger_webhook' ) );
-			add_action( 'otter_form_after_submit', array( $this, 'create_stripe_session' ) );
+			add_action( 'otter_form_after_submit', array( $this, 'create_stripe_session' ), 50 );
 		}
 	}
 
@@ -516,11 +518,11 @@ class Form_Pro_Features {
 	}
 
 	/**
-	 * Create a Stripe session.
+	 * Mark request with Stripe as temp.
 	 *
-	 * @param Form_Data_Request $form_data The form data.
+	 * @param Form_Data_Request|null $form_data The form data.
 	 */
-	public function create_stripe_session( $form_data ) {
+	public function mark_request_with_stripe_as_temp( $form_data ) {
 		if ( ! isset( $form_data ) ) {
 			return $form_data;
 		}
@@ -530,6 +532,41 @@ class Form_Pro_Features {
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error()
 		) {
+			return $form_data;
+		}
+
+		$fields_options = $form_data->get_wp_fields_options();
+
+		foreach ( $fields_options as $field ) {
+			if ( $field->has_type() && 'stripe' === $field->get_type() ) {
+				$form_data->mark_as_temporary_data();
+				break;
+			}
+		}
+
+		return $form_data;
+	}
+
+	/**
+	 * Create a Stripe session.
+	 *
+	 * @param Form_Data_Request|null $form_data The form data.
+	 */
+	public function create_stripe_session( $form_data ) {
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
+		if (
+			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
+			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
+			$form_data->has_error() ||
+			$form_data->is_duplicate()
+		) {
+			return $form_data;
+		}
+
+		if ( ! $form_data->has_metadata( 'otter_form_record_id' ) ) {
 			return $form_data;
 		}
 
@@ -581,11 +618,6 @@ class Form_Pro_Features {
 		$payload['success_url'] = $permalink;
 		$payload['cancel_url']  = $permalink;
 
-		$customer_email = $form_data->get_email_from_form_input();
-		if ( ! empty( $customer_email ) ) {
-			$payload['customer_email'] = $customer_email;
-		}
-
 		// Prepare the line items for the Stripe session request.
 		$line_items = array();
 		foreach ( $products_to_process as $product ) {
@@ -604,6 +636,8 @@ class Form_Pro_Features {
 		foreach ( $raw_metadata as $key => $value ) {
 			$metadata[ mb_substr( $key, 0, 40 ) ] = mb_substr( wp_json_encode( $value ), 0, 500 );
 		}
+		$metadata['otter_form_record_id'] = $form_data->metadata['otter_form_record_id'];
+
 		$payload['metadata'] = $metadata;
 
 		$stripe = new Stripe_API();
@@ -613,6 +647,12 @@ class Form_Pro_Features {
 			$payload
 		);
 
+		if ( is_wp_error( $session ) ) {
+			$form_data->set_error( Form_Data_Response::ERROR_STRIPE_CHECKOUT_SESSION_CREATION );
+			return $form_data;
+		}
+
+		$form_data->metadata['frontend_external_confirmation_url'] = $session->url;
 
 		return $form_data;
 	}

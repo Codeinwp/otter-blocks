@@ -8,27 +8,26 @@ import { domReady } from '../../helpers/frontend-helper-functions.js';
 let startTimeAntiBot = null;
 let METADATA_VERSION = 1;
 
-window.saveMode = 'permanent';
+let saveMode = 'permanent';
 
-const hasRecordId = () => {
+const hasStripeConfirmation = () => {
 	const urlParams = new URLSearchParams( window.location.search );
-	return urlParams.has( 'record_id' );
+	return urlParams.has( 'stripe_session_id' );
 };
 
 const confirmRecord = async() => {
 
 	// Get the record id from the URL
 	const urlParams = new URLSearchParams( window.location.search );
-	const recordId = urlParams.get( 'record_id' ); // TODO: test ONLY. This will be extracted from Stripe.
-	const session = urlParams.get( 'session' );
+	const stripeSessionId = urlParams.get( 'stripe_session_id' );
 
-	console.log( 'Record ID: ' + recordId ); // TODO: remove after QA.
+	console.log( 'Session ID: ' + stripeSessionId ); // TODO: remove after QA.
 
 	const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/confirm';
 
 	console.log( 'Making a request for ' + formURlEndpoint ); // TODO: remove after QA.
 
-	return await fetch( formURlEndpoint + `?record_id=${recordId}&session=${session}`, {
+	return await fetch( formURlEndpoint + `?stripe_session_id=${stripeSessionId}`, {
 		method: 'GET',
 		credentials: 'include'
 	});
@@ -144,6 +143,7 @@ const extractFormFields = async( form ) => {
 				metadata = {
 					fieldOptionName: input?.dataset?.fieldOptionName
 				};
+				saveMode = 'temporary';
 			} else {
 				const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
 				const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
@@ -302,8 +302,6 @@ const getCurrentPostId = () => {
 const handleAfterSubmit = ( request, displayMsg, onSuccess, onFail, onCleanUp ) => {
 	request.then( r => r.json() ).then( response  => {
 
-		console.log( response );
-
 		/**
 		 * @type {import('./types.js').IFormResponse}
 		 */
@@ -456,7 +454,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 			method: 'POST',
 			headers: {
 				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce,
-				'O-Form-Save-Mode': window.saveMode
+				'O-Form-Save-Mode': saveMode
 			},
 			credentials: 'include',
 			body: formData
@@ -547,7 +545,7 @@ domReady( () => {
 		const sendBtn = form.querySelector( 'button' );
 		const displayMsg = new DisplayFormMessage( form );
 
-		if ( hasRecordId() ) {
+		if ( hasStripeConfirmation() ) {
 			sendBtn.disabled = true;
 
 			const btnText = sendBtn.innerHTML;
