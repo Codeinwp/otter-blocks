@@ -106,6 +106,7 @@ class Main {
 			'review-comparison',
 			'form-file',
 			'form-hidden-field',
+			'form-stripe-field',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
@@ -138,6 +139,7 @@ class Main {
 			'review-comparison'         => '\ThemeIsle\OtterPro\Render\Review_Comparison_Block',
 			'form-file'                 => '\ThemeIsle\OtterPro\Render\Form_File_Block',
 			'form-hidden-field'         => '\ThemeIsle\OtterPro\Render\Form_Hidden_Block',
+			'form-stripe-field'         => '\ThemeIsle\OtterPro\Render\Form_Stripe_Block',
 		);
 
 		$dynamic_blocks = array_merge( $dynamic_blocks, $blocks );

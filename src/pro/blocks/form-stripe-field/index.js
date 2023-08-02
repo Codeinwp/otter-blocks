@@ -34,8 +34,8 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 
 registerBlockType( name, {
 	...metadata,
-	title: __( 'Hidden Field', 'otter-blocks' ),
-	description: __( 'A field used for adding extra metadata to the Form via URL params.', 'otter-blocks' ),
+	title: __( 'Stripe Field', 'otter-blocks' ),
+	description: __( 'A field used for adding Stripe products to the form.', 'otter-blocks' ),
 	icon,
 	edit,
 	save: () => null,
@@ -45,9 +45,10 @@ registerBlockType( name, {
 				type: 'block',
 				blocks: [ 'themeisle-blocks/form-input' ],
 				transform: ( attributes ) => {
+					const attrs = omit( attributes, [ 'type' ]);
 
 					return createBlock( 'themeisle-blocks/form-input', {
-						...attributes
+						...attrs
 					});
 				}
 			},
@@ -83,10 +84,10 @@ registerBlockType( name, {
 			},
 			{
 				type: 'block',
-				blocks: [ 'themeisle-blocks/form-stripe-field' ],
+				blocks: [ 'themeisle-blocks/form-hidden-field' ],
 				transform: ( attributes ) => {
 					const attrs = omit( attributes, [ 'type' ]);
-					return createBlock( 'themeisle-blocks/form-stripe-field', {
+					return createBlock( 'themeisle-blocks/form-hidden-field', {
 						...attrs
 					});
 				}

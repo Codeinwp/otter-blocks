@@ -49,7 +49,7 @@ const getFormFieldInputs = ( form ) => {
 	 *
 	 * @type {Array.<HTMLDivElement>}
 	 */
-	return [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file, :scope > .otter-form__container > .wp-block-themeisle-blocks-form-hidden-field ' ) ].filter( input => {
+	return [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file, :scope > .otter-form__container .wp-block-themeisle-blocks-form-hidden-field, :scope > .otter-form__container .wp-block-themeisle-blocks-form-stripe-field' ) ].filter( input => {
 		return ! innerForms?.some( innerForm => innerForm?.contains( input ) );
 	});
 };
@@ -77,11 +77,13 @@ const extractFormFields = async( form ) => {
 		const labelContainer = input.querySelector( '.otter-form-input-label' );
 		const labelElem = ( labelContainer ?? input ).querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' );
 
-		const label = `(Field ${index + 1}) ${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
+		const fieldNumberLabel = `(Field ${index + 1})`;
+		let label = `${fieldNumberLabel} ${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
 
 		let value = undefined;
 		let fieldType = undefined;
 		let mappedName = undefined;
+		let metadata = {};
 		const { id } = input;
 
 		const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"]), .otter-form-textarea-input' );
@@ -97,6 +99,8 @@ const extractFormFields = async( form ) => {
 			const fileInput = input.querySelector( 'input[type="file"]' );
 
 			const hiddenInput = input.querySelector( 'input[type="hidden"]' );
+
+			const stripeField = input.classList.contains( 'wp-block-themeisle-blocks-form-stripe-field' );
 
 			if ( fileInput ) {
 				const files = fileInput?.files;
@@ -130,6 +134,16 @@ const extractFormFields = async( form ) => {
 					value = urlParams.get( paramName );
 					fieldType = 'hidden';
 				}
+			} else if ( stripeField ) {
+
+				// Find more proper selectors instead of h3 and h5
+				label = `${fieldNumberLabel} ${input.querySelector( '.o-stripe-checkout-description h3' )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
+				value = input.querySelector( '.o-stripe-checkout-description h5' )?.innerHTML?.replace( /<[^>]*>?/gm, '' );
+				fieldType = 'stripe-field';
+				mappedName = input.name;
+				metadata = {
+					fieldOptionName: input?.dataset?.fieldOptionName
+				};
 			} else {
 				const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
 				const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
@@ -146,6 +160,7 @@ const extractFormFields = async( form ) => {
 				type: fieldType,
 				id: id,
 				metadata: {
+					...metadata,
 					version: METADATA_VERSION,
 					position: index + 1,
 					mappedName: mappedName

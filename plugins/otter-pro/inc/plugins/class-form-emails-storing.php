@@ -181,7 +181,7 @@ class Form_Emails_Storing {
 			return $form_data;
 		}
 
-		$form_options = $form_data->get_form_options();
+		$form_options = $form_data->get_form_wp_options();
 
 		if ( ! isset( $form_options ) ) {
 			return $form_data;

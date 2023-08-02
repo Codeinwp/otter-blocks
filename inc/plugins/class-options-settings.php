@@ -218,6 +218,18 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_stripe_public_api_key',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'Stripe Public API key for the Stripe Field Block.', 'otter-blocks' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => '',
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_google_captcha_api_site_key',
 			array(
 				'type'              => 'string',
@@ -322,6 +334,14 @@ class Options_Settings {
 								$item['submissionsSaveLocation'] = sanitize_text_field( $item['submissionsSaveLocation'] );
 							}
 
+							if ( isset( $item['requiredFields'] ) ) {
+								if ( is_array( $item['requiredFields'] ) ) {
+									$item['requiredFields'] = array_map( 'sanitize_text_field', $item['requiredFields'] );
+								} else {
+									$item['requiredFields'] = array();
+								}
+							}
+
 							return $item;
 						},
 						$array
@@ -397,6 +417,12 @@ class Options_Settings {
 								'webhookId'               => array(
 									'type' => 'string',
 								),
+								'requiredFields'          => array(
+									'type'  => 'array',
+									'items' => array(
+										'type' => 'string',
+									),
+								),
 							),
 						),
 					),
@@ -436,6 +462,18 @@ class Options_Settings {
 								$item['options']['maxFilesNumber'] = sanitize_text_field( $item['options']['maxFilesNumber'] );
 							}
 
+							if ( isset( $item['stripe']['product'] ) ) {
+								$item['stripe']['product'] = sanitize_text_field( $item['stripe']['product'] );
+							}
+
+							if ( isset( $item['stripe']['price'] ) ) {
+								$item['stripe']['price'] = sanitize_text_field( $item['stripe']['price'] );
+							}
+
+							if ( isset( $item['stripe']['quantity'] ) && ! is_int( $item['stripe']['quantity'] ) ) {
+								$item['stripe']['quantity'] = sanitize_text_field( $item['stripe']['quantity'] );
+							}
+
 							return $item;
 						},
 						$array
@@ -473,6 +511,22 @@ class Options_Settings {
 										),
 									),
 									'default'    => array(),
+								),
+								'stripe'          => array(
+									'type'       => 'object',
+									'properties' => array(
+										'product'  => array(
+											'type' => 'string',
+										),
+										'price'    => array(
+											'type' => 'string',
+										),
+										'quantity' => array(
+											'type'    => 'number',
+											'default' => 1,
+										),
+									),
+
 								),
 							),
 						),

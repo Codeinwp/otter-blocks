@@ -9,6 +9,7 @@ namespace ThemeIsle\OtterPro\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
+use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
 use WP_Error;
 use WP_HTTP_Response;
@@ -35,6 +36,7 @@ class Form_Pro_Features {
 			add_action( 'otter_form_after_submit', array( $this, 'clean_files_from_uploads' ) );
 			add_action( 'otter_form_after_submit', array( $this, 'send_autoresponder' ), 99 );
 			add_action( 'otter_form_after_submit', array( $this, 'trigger_webhook' ) );
+			add_action( 'otter_form_after_submit', array( $this, 'create_stripe_session' ) );
 		}
 	}
 
@@ -224,7 +226,7 @@ class Form_Pro_Features {
 		}
 
 		try {
-			$form_options = $form_data->get_form_options();
+			$form_options = $form_data->get_form_wp_options();
 			$can_delete   = ! $form_data->is_temporary_data();
 
 			if ( isset( $form_options ) ) {
@@ -318,7 +320,7 @@ class Form_Pro_Features {
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ||
-			! $form_data->get_form_options()->has_autoresponder() ||
+			! $form_data->get_form_wp_options()->has_autoresponder() ||
 			$form_data->is_temporary_data()
 		) {
 			return $form_data;
@@ -333,9 +335,9 @@ class Form_Pro_Features {
 
 		try {
 			$headers[] = 'Content-Type: text/html';
-			$headers[] = 'From: ' . ( $form_data->get_form_options()->has_from_name() ? sanitize_text_field( $form_data->get_form_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
+			$headers[] = 'From: ' . ( $form_data->get_form_wp_options()->has_from_name() ? sanitize_text_field( $form_data->get_form_wp_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
 
-			$autoresponder = $form_data->get_form_options()->get_autoresponder();
+			$autoresponder = $form_data->get_form_wp_options()->get_autoresponder();
 			$body          = $this->replace_magic_tags( $autoresponder['body'], $form_data->get_form_inputs() );
 
 			// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
@@ -365,13 +367,13 @@ class Form_Pro_Features {
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ||
-			empty( $form_data->get_form_options()->get_webhook_id() )
+			empty( $form_data->get_form_wp_options()->get_webhook_id() )
 		) {
 			return $form_data;
 		}
 
 		try {
-			$form_webhook_id = $form_data->get_form_options()->get_webhook_id();
+			$form_webhook_id = $form_data->get_form_wp_options()->get_webhook_id();
 
 			$webhooks = get_option( 'themeisle_webhooks_options', array() );
 
@@ -511,6 +513,108 @@ class Form_Pro_Features {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Create a Stripe session.
+	 *
+	 * @param Form_Data_Request $form_data The form data.
+	 */
+	public function create_stripe_session( $form_data ) {
+		if ( ! isset( $form_data ) ) {
+			return $form_data;
+		}
+
+		if (
+			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
+			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
+			$form_data->has_error()
+		) {
+			return $form_data;
+		}
+
+		$has_stripe = false;
+
+		$fields_options = $form_data->get_wp_fields_options();
+
+		foreach ( $fields_options as $field ) {
+			if ( $field->has_type() && 'stripe' === $field->get_type() ) {
+				$has_stripe = true;
+				break;
+			}
+		}
+
+		if ( ! $has_stripe ) {
+			return $form_data;
+		}
+
+		$required_fields = $form_data->get_form_wp_options()->get_required_fields();
+
+		$products_to_process = array();
+
+		foreach ( $fields_options as $field ) {
+			if (
+				$field->has_name() &&
+				'stripe' === $field->get_type() &&
+				in_array( $field->get_name(), $required_fields, true ) &&
+				$field->has_stripe_product_info()
+			) {
+				$products_to_process[] = $field->get_stripe_product_info();
+			}
+		}
+
+		if ( empty( $products_to_process ) ) {
+			return $form_data;
+		}
+
+		$payload = array(
+			'mode' => 'payment',
+		);
+
+		$permalink = add_query_arg(
+			array(
+				'stripe_session_id' => '{CHECKOUT_SESSION_ID}',
+			),
+			$form_data->get_payload_field( 'postUrl' )
+		);
+
+		$payload['success_url'] = $permalink;
+		$payload['cancel_url']  = $permalink;
+
+		$customer_email = $form_data->get_email_from_form_input();
+		if ( ! empty( $customer_email ) ) {
+			$payload['customer_email'] = $customer_email;
+		}
+
+		// Prepare the line items for the Stripe session request.
+		$line_items = array();
+		foreach ( $products_to_process as $product ) {
+			$line_items[] = array(
+				'price'    => $product['price'],
+				'quantity' => 1,
+			);
+		}
+		$payload['line_items'] = $line_items;
+
+
+		// Create the metadata array for the Stripe session request.
+		// TODO: Save also the record ID.
+		$raw_metadata = $this->prepare_webhook_payload( array(), $form_data, null );
+		$metadata     = array();
+		foreach ( $raw_metadata as $key => $value ) {
+			$metadata[ mb_substr( $key, 0, 40 ) ] = mb_substr( wp_json_encode( $value ), 0, 500 );
+		}
+		$payload['metadata'] = $metadata;
+
+		$stripe = new Stripe_API();
+
+		$session = $stripe->create_request(
+			'create_session',
+			$payload
+		);
+
+
+		return $form_data;
 	}
 
 
