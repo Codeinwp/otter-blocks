@@ -171,7 +171,7 @@ test.describe( 'Form Block', () => {
 				attributes: {
 					label: 'File Field Test',
 					helpText: 'This is a help text',
-					allowedFileTypes: [ 'text/plain' ]
+					allowedFileTypes: [ 'text/plain', 'image/*' ]
 				}
 			}
 		] });
@@ -196,7 +196,29 @@ test.describe( 'Form Block', () => {
 
 		expect( fileInput ).toBeTruthy();
 
-		// TODO: load a file and check if it is uploaded
+		// This is a base64 representation of a 1x1 red pixel in PNG format
+		const base64Image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAA1JREFUCNdjYGBgYAAAAAUAAXhP/o8AAAAASUVORK5CYII=';
+
+		await page.locator( 'input[type="file"]' ).setInputFiles(
+			{
+				name: 'test.png',
+				mimeType: 'image/png',
+				buffer: Buffer.from( base64Image, 'base64' )
+			}
+		);
+
+		await page.waitForTimeout( 5000 );
+
+		// Click the submit button
+		await page.getByRole( 'button', { name: 'Submit' }).click();
+
+		await page.waitForTimeout( 1000 );
+
+		// Check if Success message div is visible
+		const successMsg = page.locator( 'div' ).filter({ hasText: /^Success$/ });
+
+		expect( await successMsg.isVisible() ).toBeTruthy();
+
 	});
 
 	test( 'insert a hidden field and check if it renders in frontend', async({ page, editor }) => {
