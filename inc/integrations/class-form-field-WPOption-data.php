@@ -13,7 +13,7 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
  * @package ThemeIsle\GutenbergBlocks\Integration
  * @since 2.2.3
  */
-class Form_Field_Option_Data {
+class Form_Field_WP_Option_Data {
 
 	/**
 	 * The name of the field option.
@@ -37,16 +37,21 @@ class Form_Field_Option_Data {
 	protected $options = array();
 
 	/**
+	 * The stripe data of the field option.
+	 *
+	 * @var array
+	 */
+	protected $stripe_product_info = array();
+
+	/**
 	 * Form_Field_Option_Data constructor.
 	 *
 	 * @param string $field_option_name The name of the field option.
 	 * @param string $field_option_type The type of the field option.
-	 * @param array  $options The options of the field option.
 	 */
-	public function __construct( $field_option_name = '', $field_option_type = '', $options = array() ) {
+	public function __construct( $field_option_name = '', $field_option_type = '' ) {
 		$this->field_option_name = $field_option_name;
 		$this->field_option_type = $field_option_type;
-		$this->options           = $options;
 	}
 
 	/**
@@ -92,6 +97,15 @@ class Form_Field_Option_Data {
 	}
 
 	/**
+	 * Get the stripe data of the field option.
+	 *
+	 * @return array The stripe data of the field option.
+	 */
+	public function get_stripe_product_info() {
+		return $this->stripe_product_info;
+	}
+
+	/**
 	 * Set the option of the field option.
 	 *
 	 * @param string $option_name The name of the option.
@@ -129,6 +143,24 @@ class Form_Field_Option_Data {
 	}
 
 	/**
+	 * Set the stripe product data of the field option.
+	 *
+	 * @param array $stripe_product_info The stripe product data of the field option.
+	 * @return void
+	 */
+	public function set_stripe_product_info( $stripe_product_info ) {
+		if ( ! is_array( $stripe_product_info ) ) {
+			return;
+		}
+
+		if ( ! isset( $stripe_product_info['product'] ) || ! isset( $stripe_product_info['price'] ) ) {
+			return;
+		}
+
+		$this->stripe_product_info = $stripe_product_info;
+	}
+
+	/**
 	 * Check if the field option has the option.
 	 *
 	 * @param string $option_name The name of the option.
@@ -147,6 +179,8 @@ class Form_Field_Option_Data {
 		return ! empty( $this->options );
 	}
 
+
+
 	/**
 	 * Check if the field option has type.
 	 *
@@ -163,5 +197,14 @@ class Form_Field_Option_Data {
 	 */
 	public function has_name() {
 		return ! empty( $this->field_option_name );
+	}
+
+	/**
+	 * Check if the field option has stripe product data.
+	 *
+	 * @return bool
+	 */
+	public function has_stripe_product_info() {
+		return ! empty( $this->stripe_product_info );
 	}
 }

@@ -29,7 +29,7 @@ import { fieldTypesOptions, switchFormFieldTo } from '../common';
 
 /**
  *
- * @param {import('./types').FormHiddenFieldInspectorPros} props
+ * @param {FormStripeFieldInspectorPros} props
  * @returns {JSX.Element}
  */
 const Inspector = ({

@@ -43,7 +43,7 @@ class Form_Data_Request {
 	/**
 	 * Form fields options.
 	 *
-	 * @var array
+	 * @var array<Form_Field_WP_Option_Data>
 	 * @since 2.2.3
 	 */
 	protected $form_fields_options = array();
@@ -325,7 +325,7 @@ class Form_Data_Request {
 	 * @return Form_Settings_Data|null
 	 * @since 2.0.0
 	 */
-	public function get_form_options() {
+	public function get_form_wp_options() {
 		return $this->form_options;
 	}
 
@@ -475,11 +475,11 @@ class Form_Data_Request {
 	/**
 	 * Add a field option.
 	 *
-	 * @param Form_Field_Option_Data $field_option The field option.
+	 * @param Form_Field_WP_Option_Data $field_option The field option.
 	 * @return void
 	 */
-	public function add_field_option( $field_option ) {
-		if ( $field_option instanceof Form_Field_Option_Data ) {
+	public function add_field_wp_option( $field_option ) {
+		if ( $field_option instanceof Form_Field_WP_Option_Data ) {
 			if ( empty( $this->form_fields_options ) ) {
 				$this->form_fields_options = array();
 			}
@@ -494,7 +494,7 @@ class Form_Data_Request {
 	 * @param string $field_option_name The field option name.
 	 * @return void
 	 */
-	public function remove_field_option( $field_option_name ) {
+	public function remove_field_wp_option( $field_option_name ) {
 		if ( isset( $this->form_fields_options[ $field_option_name ] ) ) {
 			unset( $this->form_fields_options[ $field_option_name ] );
 		}
@@ -503,9 +503,9 @@ class Form_Data_Request {
 	/**
 	 * Get the field options.
 	 *
-	 * @return array
+	 * @return array<Form_Field_WP_Option_Data>
 	 */
-	public function get_field_options() {
+	public function get_wp_fields_options() {
 		return $this->form_fields_options;
 	}
 
@@ -513,7 +513,7 @@ class Form_Data_Request {
 	 * Get the field option.
 	 *
 	 * @param string $field_option_name The field option name.
-	 * @return Form_Field_Option_Data|null
+	 * @return Form_Field_WP_Option_Data|null
 	 */
 	public function get_field_option( $field_option_name ) {
 		if ( isset( $this->form_fields_options[ $field_option_name ] ) ) {

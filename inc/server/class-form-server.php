@@ -11,7 +11,7 @@ use Exception;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
-use ThemeIsle\GutenbergBlocks\Integration\Form_Field_Option_Data;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Field_WP_Option_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Providers;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Utils;
@@ -238,7 +238,7 @@ class Form_Server {
 		try {
 
 			// Validate the form data.
-			$form_data = apply_filters( 'otter_form_data_validation', $form_data );
+			$form_data = apply_filters( 'otter_form_validate_form', $form_data );
 
 			$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
 			$form_data->set_form_options( $form_options );
@@ -317,7 +317,7 @@ class Form_Server {
 		}
 
 		try {
-			$form_options = $form_data->get_form_options();
+			$form_options = $form_data->get_form_wp_options();
 
 			$can_send_email = substr( $form_options->get_submissions_save_location(), -strlen( 'email' ) ) === 'email';
 
@@ -461,7 +461,7 @@ class Form_Server {
 
 		// If there is no consent, change the service to send only an email.
 		if (
-			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
+			'submit-subscribe' === $form_data->get_form_wp_options()->get_action() &&
 			(
 				! $form_data->payload_has_field( 'consent' ) ||
 				! $form_data->get_payload_field( 'consent' )
@@ -491,9 +491,9 @@ class Form_Server {
 
 		// Send also an email to the form editor/owner with the data alongside the subscription.
 		if (
-			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
-			$form_data->get_form_options()->has_provider() &&
-			'default' !== $form_data->get_form_options()->get_provider()
+			'submit-subscribe' === $form_data->get_form_wp_options()->get_action() &&
+			$form_data->get_form_wp_options()->has_provider() &&
+			'default' !== $form_data->get_form_wp_options()->get_provider()
 		) {
 			$this->send_default_email( $form_data );
 		}
@@ -690,7 +690,7 @@ class Form_Server {
 		}
 
 		if (
-			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
+			'submit-subscribe' === $form_data->get_form_wp_options()->get_action() &&
 			$form_data->payload_has_field( 'consent' ) &&
 			! $form_data->get_payload_field( 'consent' )
 		) {
@@ -699,7 +699,7 @@ class Form_Server {
 
 		try {
 			// Get the api credentials from the Form block.
-			$wp_options_form = $form_data->get_form_options();
+			$wp_options_form = $form_data->get_form_wp_options();
 
 			$error_code = $wp_options_form->check_data();
 
@@ -811,7 +811,7 @@ class Form_Server {
 			return $form_data;
 		}
 
-		$form_options = $form_data->get_form_options();
+		$form_options = $form_data->get_form_wp_options();
 
 		if (
 			$form_options->form_has_captcha() &&
@@ -938,10 +938,34 @@ class Form_Server {
 				$field_name = $input['metadata']['fieldOptionName'];
 				foreach ( $global_fields_options as $field ) {
 					if ( isset( $field['fieldOptionName'] ) && $field['fieldOptionName'] === $field_name ) {
-						$new_field = new Form_Field_Option_Data( $field_name, $field['fieldOptionType'], $field['options'] );
-						$form_data->add_field_option( $new_field );
+						$new_field = new Form_Field_WP_Option_Data( $field_name, $field['fieldOptionType'] );
+						if ( isset( $field['options'] ) ) {
+							$new_field->set_options( $field['options'] );
+						}
+						if ( isset( $field['stripe'] ) ) {
+							$new_field->set_stripe_product_info( $field['stripe'] );
+						}
+						$form_data->add_field_wp_option( $new_field );
 						break;
 					}
+				}
+			}
+		}
+
+		$required_fields = $form_data->get_form_wp_options()->get_required_fields();
+
+		foreach ( $required_fields as $required_field ) {
+			foreach ( $global_fields_options as $field ) {
+				if ( isset( $field['fieldOptionName'] ) && $field['fieldOptionName'] === $required_field ) {
+					$new_field = new Form_Field_WP_Option_Data( $field_name, $field['fieldOptionType'] );
+					if ( isset( $field['options'] ) ) {
+						$new_field->set_options( $field['options'] );
+					}
+					if ( isset( $field['stripe'] ) ) {
+						$new_field->set_stripe_product_info( $field['stripe'] );
+					}
+					$form_data->add_field_wp_option( $new_field );
+					break;
 				}
 			}
 		}

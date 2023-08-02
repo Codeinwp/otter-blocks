@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+import hash from 'object-hash';
 
 /**
  * WordPress dependencies
@@ -8,7 +9,7 @@ import { Fragment, useContext, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
 import { store } from '@wordpress/icons';
-import { dispatch, useSelect } from '@wordpress/data';
+import { dispatch, select, useSelect } from '@wordpress/data';
 import { Button, ExternalLink, Notice, Placeholder, SelectControl, Spinner, TextControl } from '@wordpress/components';
 
 /**
@@ -47,6 +48,17 @@ const Edit = ({
 			setCanRetrieveProducts( 'loaded' === status && 0 < apiKey?.length );
 		}
 	}, [ status, getOption ]);
+
+	/**
+	 * Create the form identification tag for Otter Options.
+	 */
+	useEffect( () => {
+		if ( attributes.id && select( 'core/edit-widgets' ) ) {
+			setAttributes({ fieldOptionName: `widget_${ attributes.id.slice( -8 ) }` });
+		} else if ( attributes.id ) {
+			setAttributes({ fieldOptionName: `${ hash({ url: window.location.pathname }) }_${ attributes.id.slice( -8 ) }` });
+		}
+	}, [ attributes.id ]);
 
 	const { products, productsList, hasProductsRequestFailed, productsError, isLoadingProducts } = useSelect( select => {
 
@@ -149,6 +161,60 @@ const Edit = ({
 		updateOption( 'themeisle_stripe_api_key', apiKey?.replace?.( /\s/g, '' ), __( 'Stripe API Key saved!', 'otter-blocks' ), 'stripe-api-key', reset );
 	};
 
+
+	const saveProduct = ( fieldOptionName, product, price ) => {
+		if ( ! product || ! price || ! fieldOptionName || ! Boolean( window.themeisleGutenberg?.hasPro ) ) {
+			return;
+		}
+
+		/** @type{import('../../../blocks/blocks/form/common').FieldOption[]} */
+		const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
+
+		const fieldIndex = fieldOptions?.findIndex( field => field.fieldOptionName === fieldOptionName );
+
+		if ( fieldIndex === undefined ) {
+			return;
+		}
+
+		if ( -1 !== fieldIndex ) {
+			fieldOptions[fieldIndex] = {
+				...fieldOptions[fieldIndex],
+				stripe: {
+					product: attributes.product ? attributes.product : undefined,
+					price: attributes.price ? attributes.price : undefined
+				}
+			};
+		} else {
+			fieldOptions.push({
+				fieldOptionName: attributes.fieldOptionName,
+				fieldOptionType: 'stripe',
+				stripe: {
+					product: attributes.product ? attributes.product : undefined,
+					price: attributes.price ? attributes.price : undefined
+				}
+			});
+		}
+
+		updateOption( 'themeisle_blocks_form_fields_option', fieldOptions, __( 'Field settings saved.', 'otter-blocks' ), 'field-option' );
+	};
+
+	const { canSaveData } = useSelect( select => {
+		const isSavingPost = select( 'core/editor' )?.isSavingPost();
+		const isPublishingPost = select( 'core/editor' )?.isPublishingPost();
+		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
+		const widgetSaving = select( 'core/edit-widgets' )?.isSavingWidgetAreas();
+
+		return {
+			canSaveData: ( ! isAutosaving && ( isSavingPost || isPublishingPost ) ) || widgetSaving
+		};
+	});
+
+	useEffect( () => {
+		if ( canSaveData ) {
+			saveProduct( attributes.fieldOptionName, attributes.product, attributes.price );
+		}
+	}, [ canSaveData ]);
+
 	if ( showPlaceholder ) {
 		return (
 			<div { ...blockProps }>
@@ -238,7 +304,9 @@ const Edit = ({
 											},
 											...productsList
 										] }
-										onChange={ ( product ) => setAttributes({ product: 'none' !== product ? product : undefined }) }
+										onChange={ ( product ) => {
+											setAttributes({ product: 'none' !== product ? product : undefined });
+										} }
 									/>
 								) }
 
@@ -253,7 +321,9 @@ const Edit = ({
 											},
 											...pricesList
 										] }
-										onChange={ ( price ) => setAttributes({ price: 'none' !== price ? price : undefined }) }
+										onChange={ ( price ) => {
+											setAttributes({ price: 'none' !== price ? price : undefined });
+										} }
 									/>
 								) }
 

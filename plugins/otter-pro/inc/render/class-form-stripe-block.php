@@ -71,11 +71,13 @@ class Form_Stripe_Block {
 		$details_markup .= '<h5>' . $currency . $amount . '</h5>';
 		$details_markup .= '</div>';
 
-		$metadata = ' data-product="' . $product['id'] . '" data-price="' . $price['id'] . '" ';
+		$html_attributes = 'id="' . $attributes['id'] . '" ' .
+			( isset( $attributes['mappedName'] ) ? ( ' name="' . $attributes['mappedName'] . '"' ) : '' ) .
+			( isset( $attributes['fieldOptionName'] ) ? ( ' data-field-option-name="' . $attributes['fieldOptionName'] . '"' ) : '' );
 
 		return sprintf(
-			'<div %1$s><div class="o-stripe-checkout">%2$s</div></div>',
-			get_block_wrapper_attributes() . $metadata,
+			'<div %1$s><div class="o-stripe-checkout">%2$s</div><div class="o-payment-element"></div></div>',
+			get_block_wrapper_attributes() . $html_attributes,
 			$details_markup
 		);
 	}

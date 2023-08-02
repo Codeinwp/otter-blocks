@@ -12,6 +12,9 @@
 		"id": {
 			"type": "string"
 		},
+		"fieldOptionName": {
+			"type": "string"
+		},
 		"type": {
 			"type": "string"
 		},

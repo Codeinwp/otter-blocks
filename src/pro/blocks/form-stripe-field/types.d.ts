@@ -10,6 +10,7 @@ type Attributes = {
 	type: string
 	product: string
 	price: string
+	fieldOptionName: string
 }
 
 export type FormStripeFieldProps = BlockProps<Attributes>

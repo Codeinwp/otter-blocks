@@ -27,7 +27,7 @@ import { fieldTypesOptions, switchFormFieldTo } from '../../../blocks/blocks/for
 
 /**
  *
- * @param {import('./types').FormHiddenFieldInspectorPros} props
+ * @param {import('./types').FormStripeFieldInspectorPros} props
  * @returns {JSX.Element}
  */
 const Inspector = ({
@@ -129,7 +129,9 @@ const Inspector = ({
 							},
 							...pricesList
 						] }
-						onChange={ price => setAttributes({ price: 'none' !== price ? price : undefined }) }
+						onChange={ price => {
+							setAttributes({ price: 'none' !== price ? price : undefined });
+						} }
 					/>
 				) }
 

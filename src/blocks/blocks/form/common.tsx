@@ -65,6 +65,11 @@ export type FieldOption = {
 		saveFiles?: string
 		maxFilesNumber?: number
 	}
+	stripe?: {
+		product: string,
+		price: string,
+		quantity: number,
+	}
 }
 
 export type FormInputCommonProps = {

@@ -78,7 +78,8 @@ const formOptionsMap = {
 	bcc: 'bcc',
 	autoresponder: 'autoresponder',
 	submissionsSaveLocation: 'submissionsSaveLocation',
-	webhookId: 'webhookId'
+	webhookId: 'webhookId',
+	requiredFields: 'requiredFields'
 };
 
 /**
@@ -360,7 +361,8 @@ const Edit = ({
 			autoresponder: wpOptions?.autoresponder,
 			autoresponderSubject: wpOptions?.autoresponderSubject,
 			submissionsSaveLocation: wpOptions?.submissionsSaveLocation,
-			webhookId: wpOptions?.webhookId
+			webhookId: wpOptions?.webhookId,
+			requiredFields: wpOptions?.requiredFields
 		});
 	};
 
@@ -417,6 +419,8 @@ const Edit = ({
 				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 				let isMissing = true;
 				let hasUpdated = false;
+
+				formOptions.requiredFields = extractRequiredFields();
 
 				emails?.forEach( ({ form }, index ) => {
 					if ( form !== attributes.optionName ) {
@@ -479,6 +483,17 @@ const Edit = ({
 			console.error( e );
 			setLoading({ formOptions: 'error' });
 		}
+	};
+
+	const extractRequiredFields = () => {
+
+		const stripeFields = findInnerBlocks(
+			children,
+			block => 'themeisle-blocks/form-stripe-field' === block.name,
+			block => 'themeisle-blocks/form' !== block?.name
+		);
+
+		return stripeFields?.map( block => block.attributes.fieldOptionName ) || [];
 	};
 
 	/**
