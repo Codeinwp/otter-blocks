@@ -95,6 +95,10 @@ export const fieldTypesOptions = () => ([
 		value: 'file'
 	},
 	{
+		label: ( Boolean( window.otterPro?.isActive ) && ! Boolean( window.otterPro?.isExpired ) ) ? __( 'Hidden', 'otter-blocks' ) : __( 'Hidden (Pro)', 'otter-blocks' ),
+		value: 'hidden'
+	},
+	{
 		label: __( 'Number', 'otter-blocks' ),
 		value: 'number'
 	},
@@ -115,7 +119,7 @@ export const fieldTypesOptions = () => ([
 		value: 'textarea'
 	},
 	{
-		label: __( 'Url', 'otter-blocks' ),
+		label: __( 'URL', 'otter-blocks' ),
 		value: 'url'
 	}
 ]);
@@ -132,6 +136,7 @@ export const switchFormFieldTo = ( type?: string, clientId ?:string, attributes?
 		[ 'textarea' === type, 'form-textarea' ],
 		[ 'select' === type || 'checkbox' === type || 'radio' === type, 'form-multiple-choice' ],
 		[ 'file' === type, 'form-file' ],
+		[ 'hidden' === type, 'form-hidden-field' ],
 		[ 'form-input' ]
 	]);
 
@@ -168,7 +173,7 @@ export const HideFieldLabelToggle = ( props: Partial<BlockProps<FormInputCommonP
 	);
 };
 
-export const hasFormFieldName = ( name?: string ) => ( name?.startsWith( 'themeisle-blocks/form-input' ) || name?.startsWith( 'themeisle-blocks/form-textarea' ) || name?.startsWith( 'themeisle-blocks/form-multiple-choice' ) || name?.startsWith( 'themeisle-blocks/form-file' ) );
+export const hasFormFieldName = ( name?: string ) => [ 'input', 'textarea', 'multiple-choice', 'file', 'hidden-field' ].some( ( type ) => name?.startsWith( `themeisle-blocks/form-${ type }` ) );
 
 export const getFormFieldsFromInnerBlock = ( block: any ) : ( any | undefined )[] => {
 	return block?.innerBlocks?.map( ( child: any ) => {

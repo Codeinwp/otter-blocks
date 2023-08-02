@@ -17,7 +17,7 @@ import api from '@wordpress/api';
 import apiFetch from '@wordpress/api-fetch';
 
 import {
-	__experimentalBlockVariationPicker as VariationPicker,
+	__experimentalBlockVariationPicker as VariationPicker, BlockControls,
 	InnerBlocks,
 	RichText,
 	useBlockProps
@@ -41,7 +41,11 @@ import {
 	createContext
 } from '@wordpress/element';
 
-import { Button, Notice } from '@wordpress/components';
+import {
+	Icon
+} from '@wordpress/icons';
+
+import { Button, Notice, ToolbarGroup } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -49,12 +53,15 @@ import { Button, Notice } from '@wordpress/components';
 import metadata from './block.json';
 import {
 	blockInit,
-	getDefaultValueByField
+	getDefaultValueByField, insertBlockBelow
 } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
+import PromptPlaceholder from '../../components/prompt';
+import { parseFormPromptResponseToBlocks, sendPromptToOpenAI } from '../../helpers/prompt';
+import { aiGeneration, formAiGeneration } from '../../helpers/icons';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -191,12 +198,17 @@ const Edit = ({
 
 	const [ hasEmailField, setHasEmailField ] = useState( false );
 
-	const { children, hasProtection } = useSelect( select => {
+	const { children, hasProtection, currentBlockPosition } = useSelect( select => {
 		const {
-			getBlock
+			getBlock,
+			getBlockOrder
 		} = select( 'core/block-editor' );
 		const children = getBlock( clientId ).innerBlocks;
+
+		const currentBlockPosition = getBlockOrder().indexOf( clientId );
+
 		return {
+			currentBlockPosition,
 			children,
 			hasProtection: 0 < children?.filter( ({ name }) => 'themeisle-blocks/form-nonce' === name )?.length
 		};
@@ -213,10 +225,22 @@ const Edit = ({
 		};
 	});
 
+	/**
+	 * Prevent saving data if the block is inside an AI block. This will prevent polluting the wp_options table.
+	 */
+	const isInsideAiBlock = useSelect( select => {
+		const {
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const parents = getBlockParentsByBlockName( clientId, 'themeisle-blocks/content-generator' );
+		return 0 < parents?.length;
+	}, [ clientId ]);
+
 	const hasEssentialData = attributes.optionName && hasProtection;
 
 	useEffect( () => {
-		if ( canSaveData ) {
+		if ( canSaveData && ! isInsideAiBlock ) {
 			saveFormEmailOptions();
 		}
 	}, [ canSaveData ]);
@@ -935,7 +959,26 @@ const Edit = ({
 					setAttributes={ setAttributes }
 				/>
 
+				<BlockControls>
+					<ToolbarGroup>
+						<Button
+							onClick={()=> {
+								const generator = createBlock( 'themeisle-blocks/content-generator', {
+									promptID: 'form'
+								});
+
+								insertBlockBelow( clientId, generator );
+							}}
+						>
+							{ __( 'Create Form With AI', 'otter-blocks' ) }
+							<Icon width={22} icon={aiGeneration} style={{ marginLeft: '8px' }} />
+						</Button>
+					</ToolbarGroup>
+				</BlockControls>
+
+
 				<div { ...blockProps }>
+
 					{
 						( hasInnerBlocks ) ? (
 							<form

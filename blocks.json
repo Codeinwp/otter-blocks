@@ -99,6 +99,9 @@
 	"form-file": {
 		"block": "blocks/blocks/form/file/block.json"
 	},
+	"form-hidden-field": {
+		"block": "blocks/blocks/form/hidden-field/block.json"
+	},
 	"google-map": {
 		"block": "blocks/blocks/google-map/block.json",
 		"assets": {
@@ -272,5 +275,8 @@
 	"product-upsells": {
 		"isPro": true,
 		"block": "pro/woocommerce/upsells/block.json"
+	},
+	"content-generator": {
+		"block": "blocks/blocks/content-generator/block.json"
 	}
 }

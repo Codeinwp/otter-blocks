@@ -229,6 +229,17 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 ## Changelog ##
 
+##### [Version 2.3.2](https://github.com/Codeinwp/otter-blocks/compare/v2.3.1...v2.3.2) (2023-07-17)
+
+- Added Autoresponder to Stripe Block
+- Adding Alternative Style to Review Block
+- Improvements to Dynamic Value Module
+- Fix Form Redirection Not Working Correctly
+- Fix Bow Shadow Not Visible in the Editor
+
+
+
+
 ##### [Version 2.3.1](https://github.com/Codeinwp/otter-blocks/compare/v2.3.0...v2.3.1) (2023-06-20)
 
 - Added Option to Allow Block Tools to Be Enabled by Default

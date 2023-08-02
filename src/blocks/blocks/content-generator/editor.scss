@@ -1,0 +1,27 @@
+.wp-block-themeisle-blocks-content-generator {
+	padding: 10px;
+	border-radius: 10px;
+
+	.o-preview {
+		padding: 10px;
+		border-radius: 5px;
+		background-color: #fff;
+		margin: 10px 0px;
+		border: 1px solid #1E1E1E;
+	}
+
+	.prompt-result__content .wp-block-themeisle-blocks-form .wp-block-button {
+		display: none;
+	}
+
+	.o-actions {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		align-items: baseline;
+
+		padding: 10px;
+		border: 1px dashed #1E1E1E;
+		border-radius: 3px;
+	}
+}
