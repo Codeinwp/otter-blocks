@@ -186,9 +186,9 @@ class Form_Server {
 			array(
 				array(
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'confirm_form' ),
+					'callback'            => array( $this, 'confirm_form_submission'),
 					'permission_callback' => function ( $request ) {
-						$session = $request->get_param( 'stripe_session_id' );
+						$session = $request->get_param( 'stripe_checkout' );
 
 						if ( apply_filters( 'otter_form_session_confirmation', $session ) ) {
 							return __return_true();
@@ -331,7 +331,7 @@ class Form_Server {
 	 * @param WP_REST_Request $request Form request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	public function confirm_form( $request ) {
+	public function confirm_form_submission( $request ) {
 
 		$response = new Form_Data_Response();
 

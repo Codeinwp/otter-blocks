@@ -73,6 +73,12 @@ class Form_Emails_Storing {
 		add_action( 'save_post', array( $this, 'form_record_save_meta_box' ), 10, 2 );
 
 		add_filter( 'otter_form_record_confirm', array( $this, 'confirm_submission' ), 10, 2 );
+
+		add_action( 'transition_post_status', array( $this, 'apply_hooks_on_draft_transition' ), 10, 3 );
+		add_action( 'otter_form_update_record_meta_dump', array( $this, 'update_submission_dump_data' ), 10, 2 );
+		add_action( 'otter_form_automatic_confirmation', array( $this, 'move_old_stripe_draft_sessions_to_unread' ) );
+		add_filter( 'cron_schedules', array( $this, 'form_confirmation_schedule' ) );
+		add_action( 'wp', array( $this, 'schedule_automatic_confirmation' ) );
 	}
 
 	/**
@@ -716,13 +722,24 @@ class Form_Emails_Storing {
 		$meta                  = get_post_meta( $post->ID, self::FORM_RECORD_META_KEY, true );
 		$previous_field_option = '';
 
+
 		if ( empty( $meta ) ) {
 			return;
 		}
+
+		$inputs = array();
+		foreach ( $meta['inputs'] as $id => $field ) {
+			if ( empty( $field ) || 'stripe-field' === $field['type'] ) {
+				continue;
+			}
+
+			$inputs[ $id ] = $field;
+		}
+
 		?>
 		<table class="otter_form_record_meta form-table" style="border-spacing: 10px; width: 100%">
 			<tbody>
-				<?php foreach ( $meta['inputs'] as $id => $field ) { ?>
+				<?php foreach ( $inputs as $id => $field ) { ?>
 					<tr>
 						<th scope="row">
 							<label for="<?php echo esc_attr( $id ); ?>">
@@ -1120,7 +1137,7 @@ class Form_Emails_Storing {
 	 */
 	public function confirm_submission( $response, $request ) {
 
-		$session_id = $request->get_param( 'stripe_session_id' );
+		$session_id = $request->get_param( 'stripe_checkout' );
 
 		$stripe = new Stripe_API();
 
@@ -1154,11 +1171,35 @@ class Form_Emails_Storing {
 			return $response;
 		}
 
-		$meta = get_post_meta( $record_id, self::FORM_RECORD_META_KEY, true );
+		wp_update_post(
+			array(
+				'ID'          => $record_id,
+				'post_status' => 'unread',
+			)
+		);
+
+		$response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+		$response->mark_as_success();
+
+		return $response;
+	}
+
+	/**
+	 * Apply the 'after_submit' action when changing the status from 'draft' to 'unread'.
+	 *
+	 * @param string  $new_status The new status.
+	 * @param string  $old_status The old status.
+	 * @param WP_Post $post The post.
+	 */
+	public function apply_hooks_on_draft_transition( $new_status, $old_status, $post ) {
+		if ( 'draft' !== $old_status || self::FORM_RECORD_TYPE !== $post->post_type || $old_status === $new_status ) {
+			return;
+		}
+
+		$meta = get_post_meta( $post->ID, self::FORM_RECORD_META_KEY, true );
 
 		if ( ! isset( $meta['dump'] ) || empty( $meta['dump']['value'] ) ) {
-			$response->set_code( Form_Data_Response::ERROR_MISSING_DUMP_DATA );
-			return $response;
+			return;
 		}
 
 		$form_data = Form_Data_Request::create_from_dump( $meta['dump']['value'] );
@@ -1174,28 +1215,128 @@ class Form_Emails_Storing {
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request )
 		) {
-			$response->set_code( Form_Data_Response::ERROR_RUNTIME_STRIPE_SESSION_VALIDATION );
-			return $response;
+			return;
 		}
 
 		do_action( 'otter_form_after_submit', $form_data );
+	}
 
-		if ( $form_data->has_error() ) {
-			$response->set_code( Form_Data_Response::ERROR_RUNTIME_STRIPE_SESSION_VALIDATION );
-			return $response;
+	/**
+	 * Update the submission dump data.
+	 *
+	 * @param Form_Data_Request $form_data The form data.
+	 * @param int               $record_id The record ID.
+	 */
+	public function update_submission_dump_data( $form_data, $record_id ) {
+
+		if ( ! get_post( $record_id ) ) {
+			return;
 		}
 
-		wp_update_post(
+		$meta = get_post_meta( $record_id, self::FORM_RECORD_META_KEY, true );
+		$meta = is_array( $meta ) ? $meta : array();
+		$meta = array_merge(
+			$meta,
 			array(
-				'ID'          => $record_id,
-				'post_status' => 'unread',
+				'dump' => array(
+					'label' => 'Dumped data',
+					'value' => $form_data->is_temporary_data() ? $form_data->dump_data() : array(),
+				),
 			)
 		);
+		update_post_meta( $record_id, self::FORM_RECORD_META_KEY, $meta );
+	}
 
-		$response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
-		$response->mark_as_success();
+	/**
+	 * Move old drafts to unread.
+	 */
+	public function move_old_stripe_draft_sessions_to_unread() {
+		$now = current_time( 'mysql' );
 
-		return $response;
+		// Calculate the time 15 minutes ago.
+		$time_15_minutes_ago = date( 'Y-m-d H:i:s', strtotime( '-15 minutes', strtotime( $now ) ) );
+
+		$args = array(
+			'post_type'      => self::FORM_RECORD_TYPE,
+			'post_status'    => 'draft',
+			'posts_per_page' => 10,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+			'date_query'     => array(
+				'before' => $time_15_minutes_ago,
+			),
+		);
+
+		$query = new WP_Query( $args );
+		if ( $query->have_posts() ) {
+
+			try {
+				$stripe = new Stripe_API();
+
+				while ( $query->have_posts() ) {
+					$query->the_post();
+
+					// Get the meta data.
+					$meta = get_post_meta( get_the_ID(), self::FORM_RECORD_META_KEY, true );
+
+					// Check if we have a Stripe session id in the meta dump data.
+					if ( ! isset( $meta['dump']['value']['metadata']['otter_form_stripe_checkout_session_id'] ) ) {
+						continue;
+					}
+
+					$stripe_checkout_session_id = $meta['dump']['value']['metadata']['otter_form_stripe_checkout_session_id'];
+
+					// Check if the session has status of paid.
+					$session = $stripe->create_request( 'get_session', $stripe_checkout_session_id );
+
+					if ( is_wp_error( $session ) ) {
+						continue;
+					}
+
+					$is_paid = isset( $session->payment_status ) && 'paid' === $session->payment_status;
+
+					if ( ! $is_paid ) {
+						continue;
+					}
+
+					wp_update_post(
+						array(
+							'ID'          => get_the_ID(),
+							'post_status' => 'unread',
+						)
+					);
+				}
+			} catch ( \Exception $e ) {
+				// Do nothing.
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Add a new cron schedule for automatic submission confirmation.
+	 *
+	 * @param array $schedules The schedules.
+	 * @return array
+	 */
+	public function form_confirmation_schedule( $schedules ) {
+		$schedules['otter_every_hour'] = array(
+			'interval' => HOUR_IN_SECONDS,
+			'display'  => esc_html__( 'Every hour', 'otter-blocks' ),
+		);
+
+		return $schedules;
+	}
+
+	/**
+	 * Schedule the automatic confirmation.
+	 *
+	 * @return void
+	 */
+	public function schedule_automatic_confirmation() {
+		if ( ! wp_next_scheduled( 'otter_form_confirmation' ) ) {
+			wp_schedule_event( time(), 'otter_every_hour', 'otter_form_automatic_confirmation' );
+		}
 	}
 
 	/**

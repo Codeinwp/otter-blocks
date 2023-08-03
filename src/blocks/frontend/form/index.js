@@ -12,14 +12,14 @@ let saveMode = 'permanent';
 
 const hasStripeConfirmation = () => {
 	const urlParams = new URLSearchParams( window.location.search );
-	return urlParams.has( 'stripe_session_id' );
+	return urlParams.has( 'stripe_checkout' );
 };
 
 const confirmRecord = async() => {
 
 	// Get the record id from the URL
 	const urlParams = new URLSearchParams( window.location.search );
-	const stripeSessionId = urlParams.get( 'stripe_session_id' );
+	const stripeSessionId = urlParams.get( 'stripe_checkout' );
 
 	console.log( 'Session ID: ' + stripeSessionId ); // TODO: remove after QA.
 
@@ -27,7 +27,7 @@ const confirmRecord = async() => {
 
 	console.log( 'Making a request for ' + formURlEndpoint ); // TODO: remove after QA.
 
-	return await fetch( formURlEndpoint + `?stripe_session_id=${stripeSessionId}`, {
+	return await fetch( formURlEndpoint + `?stripe_checkout=${stripeSessionId}`, {
 		method: 'GET',
 		credentials: 'include'
 	});

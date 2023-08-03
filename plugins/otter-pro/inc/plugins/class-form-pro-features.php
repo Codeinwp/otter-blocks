@@ -610,7 +610,7 @@ class Form_Pro_Features {
 
 		$permalink = add_query_arg(
 			array(
-				'stripe_session_id' => '{CHECKOUT_SESSION_ID}',
+				'stripe_checkout' => '{CHECKOUT_SESSION_ID}', // Testing mode.
 			),
 			$form_data->get_payload_field( 'postUrl' )
 		);
@@ -634,7 +634,7 @@ class Form_Pro_Features {
 		$raw_metadata = $this->prepare_webhook_payload( array(), $form_data, null );
 		$metadata     = array();
 		foreach ( $raw_metadata as $key => $value ) {
-			$metadata[ mb_substr( $key, 0, 40 ) ] = mb_substr( wp_json_encode( $value ), 0, 500 );
+			$metadata[ mb_substr( $key, 0, 40 ) ] = mb_substr( is_string( $value ) ? $value : wp_json_encode( $value ), 0, 500 );
 		}
 		$metadata['otter_form_record_id'] = $form_data->metadata['otter_form_record_id'];
 
@@ -651,6 +651,11 @@ class Form_Pro_Features {
 			$form_data->set_error( Form_Data_Response::ERROR_STRIPE_CHECKOUT_SESSION_CREATION );
 			return $form_data;
 		}
+
+		$form_data->metadata['otter_form_stripe_checkout_session_id'] = $session->id;
+		$form_data->metadata['otter_form_stripe_payment_intent_id']   = $session->payment_intent;
+
+		do_action( 'otter_form_update_record_meta_dump', $form_data, $form_data->metadata['otter_form_record_id'] );
 
 		$form_data->metadata['frontend_external_confirmation_url'] = $session->url;
 
