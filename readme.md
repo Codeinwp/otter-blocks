@@ -8,7 +8,7 @@
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
-Otter is a dynamic collection of page building blocks and templates for the WordPress Gutenberg Block Editor. Create beautiful and attractive posts, pages, and landing pages with Otter - Page Builder Blocks & Extensions for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
+Otter offers dynamic Gutenberg blocks for the WordPress block editor. Craft beautiful posts & pages using post blocks, post grids & WordPress blocks. Beyond a page builder, it provides essential Gutenberg extensions for an enhanced block editor experience.
 
 ## Description ##
 
