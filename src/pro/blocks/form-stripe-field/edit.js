@@ -20,6 +20,7 @@ import metadata from './block.json';
 import Inspector from './inspector';
 import useSettings from '../../../blocks/helpers/use-settings';
 import { blockInit } from '../../../blocks/helpers/block-utility';
+import DeferredWpOptionsSave from '../../../blocks/helpers/defered-wp-options-save';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -41,6 +42,7 @@ const Edit = ({
 
 	const [ getOption, updateOption, status ] = useSettings();
 	const [ canRetrieveProducts, setCanRetrieveProducts ] = useState( false );
+	const { createNotice } = dispatch( 'core/notices' );
 
 	useEffect( () => {
 		if ( 'loaded' === status ) {
@@ -167,35 +169,37 @@ const Edit = ({
 			return;
 		}
 
-		/** @type{import('../../../blocks/blocks/form/common').FieldOption[]} */
-		const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
-
-		const fieldIndex = fieldOptions?.findIndex( field => field.fieldOptionName === fieldOptionName );
-
-		if ( fieldIndex === undefined ) {
-			return;
-		}
-
-		if ( -1 !== fieldIndex ) {
-			fieldOptions[fieldIndex] = {
-				...fieldOptions[fieldIndex],
-				stripe: {
-					product: attributes.product ? attributes.product : undefined,
-					price: attributes.price ? attributes.price : undefined
-				}
-			};
-		} else {
-			fieldOptions.push({
+		( new DeferredWpOptionsSave() )
+			.save( 'field_options', {
 				fieldOptionName: attributes.fieldOptionName,
 				fieldOptionType: 'stripe',
 				stripe: {
 					product: attributes.product ? attributes.product : undefined,
 					price: attributes.price ? attributes.price : undefined
 				}
+			}, ( res, error ) => {
+				if ( error ) {
+					createNotice(
+						'info',
+						__( 'Error saving Stripe product on Form.', 'otter-blocks' ),
+						{
+							type: 'snackbar',
+							isDismissible: true,
+							id: 'stripe-product-error'
+						}
+					);
+				} else {
+					createNotice(
+						'success',
+						__( 'Form Stripe product saved.', 'otter-blocks' ),
+						{
+							type: 'snackbar',
+							isDismissible: true,
+							id: 'stripe-product'
+						}
+					);
+				}
 			});
-		}
-
-		updateOption( 'themeisle_blocks_form_fields_option', fieldOptions, __( 'Field settings saved.', 'otter-blocks' ), 'field-option' );
 	};
 
 	const { canSaveData } = useSelect( select => {
@@ -209,8 +213,20 @@ const Edit = ({
 		};
 	});
 
+	/**
+	 * Prevent saving data if the block is inside an AI block. This will prevent polluting the wp_options table.
+	 */
+	const isInsideAiBlock = useSelect( select => {
+		const {
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const parents = getBlockParentsByBlockName( clientId, 'themeisle-blocks/content-generator' );
+		return 0 < parents?.length;
+	}, [ clientId ]);
+
 	useEffect( () => {
-		if ( canSaveData ) {
+		if ( canSaveData && ! isInsideAiBlock ) {
 			saveProduct( attributes.fieldOptionName, attributes.product, attributes.price );
 		}
 	}, [ canSaveData ]);
@@ -218,6 +234,21 @@ const Edit = ({
 	if ( showPlaceholder ) {
 		return (
 			<div { ...blockProps }>
+				<Inspector
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					view={ view }
+					setView={ setView }
+					isLoadingProducts={ isLoadingProducts }
+					productsList={ productsList }
+					isLoadingPrices={ isLoadingPrices }
+					pricesList={ pricesList }
+					apiKey={ apiKey }
+					setAPIKey={ setAPIKey }
+					saveApiKey={ saveApiKey }
+					status={ status }
+				/>
+
 				<Placeholder
 					icon={ store }
 					label={ __( 'Stripe Checkout', 'otter-blocks' ) }
