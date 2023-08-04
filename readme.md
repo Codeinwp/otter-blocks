@@ -1,6 +1,6 @@
-# Otter - Gutenberg Blocks – Page Builder for Gutenberg Editor & FSE #
+# Otter Blocks - Gutenberg Blocks, Page Builder for Gutenberg Editor & FSE #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
-**Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
+**Tags:** block, blocks, gutenberg, gutenberg blocks, wordPress blocks, editor, block Editor, page Builder, post blocks, post grids  
 **Requires at least:** 5.9  
 **Tested up to:** 6.2  
 **Requires PHP:** 5.6  
@@ -8,32 +8,38 @@
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
-Otter is a dynamic collection of page building blocks and templates for the WordPress Gutenberg Block Editor. Create beautiful and attractive posts, pages, and landing pages with Otter - Page Builder Blocks & Extensions for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
+Otter offers dynamic Gutenberg blocks for the WordPress block editor. Craft beautiful posts & pages using post blocks, post grids & WordPress blocks. Beyond a page builder, it provides essential Gutenberg extensions for an enhanced block editor experience.
 
 ## Description ##
 
-Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor (also known as Gutenberg) for a better page building experience without the need for traditional page builders like Elementor and Divi.
+Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor (also known as Gutenberg) for a better page-building experience without the need for traditional page builders like Elementor and Divi.
 
-### [See the Otter Blocks in action](https://demo.themeisle.com/otter-blocks/) | [Documentation](https://docs.themeisle.com/article/1478-otter-blocks-documentation) | [Otter Pro](https://themeisle.com/plugins/otter-blocks/upgrade/)
+## Quick Links 🔗
 
-Otter Blocks Plugin not only adds extra custom blocks for Gutenberg, but it also adds extra functionality such as Custom CSS, Animations and Visibility Conditions to default or third party blocks present on your website. 
+- Want to see Otter blocks in action before installing? [SEE OTTER BLOCKS DEMO](https://demo.themeisle.com/otter-blocks/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks)
+- New to the Gutenberg Blocks ecosystem? Check out our article on [GUTENBERG EXPLAINED](https://themeisle.com/blog/gutenberg-blocks-explained/)
+- Need any help with setup? Checkout our [DOCUMENTATION](https://docs.themeisle.com/article/1478-otter-blocks-documentation)
+- Interested in Otter Pro? Here are more details about [OTTER PRO](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks)
+
+
+## With Otter Blocks, You Get Access To
+
+- 23+ extra blocks for Gutenberg
+- Collection of Patterns
+- Visibility Conditions
+- Custom CSS 
+- Animations and more
+
+For all blocks including third-party blocks present on your website.
 
 The Custom CSS block feature makes it possible to directly customize the CSS properties of any Gutenberg block on the page, while the Animation feature makes it quick and easy to add animations to any block to enhance the appeal of your different page blocks and sections. With the Visibility Conditions feature by Otter, you can set which conditions should be met for your chosen blocks to be displayed on the page.
 
-New to the Gutenberg Blocks ecosystem? Checkout our article on [Gutenberg Explained.](https://themeisle.com/blog/gutenberg-blocks-explained/)
+Patterns Library, contains a range of different elements in a variety of styles to help you build great pages. All of your website’s most important areas are covered: headers, testimonials, pricing tables, sections and more.
 
-## Who is Otter For?
-
-- Anyone looking to bring out the best features of the new Gutenberg Editor with useful and easy to use Gutenberg blocks.
-- Anyone thinking of moving away from traditional page builders like Elementor and Divi Builder in favor of the new Gutenberg Block Editor.
-- Anyone trying to build quick Gutenberg pages in record time.
-- Anyone trying to hide/show Gutenberg blocks based on conditions like user logged in/out status.
-- Anyone trying to add animations to Gutenberg blocks.
-
-#### Checkout a quick overview of Otter:
+### Checkout a quick overview of Otter Blocks
 https://www.youtube.com/watch?v=WcS2Vi4IOYw
 
-## How Can Otter’s Gutenberg Blocks Help Me?
+## How Can Otter’s Gutenberg Blocks Help You? 🤔
 
 ### A WordPress Gutenberg Blocks Plugin
 
@@ -41,13 +47,15 @@ Otter adds 23+ amazing and useful blocks to make page building in Gutenberg a br
 
 More than just blocks, you need advanced customisation options to give you control over style and appearance. With Otter, you’ve got it all.
 
-Create mobile-friendly designs with Otter’s built-in responsive settings. Each block can be tweaked to provide a consistent experience for mobile, tablet, and desktop.
-
 Every block has customization support to help you style your site according to your vision:
 
 - Color controls for primary, accents, and backgrounds.
-- Animation at the click of a button.
+- Animation backing, bouncing, fading, flipping, rotating, sliding, rolling, light speed and more at the click of a button.
 - Typography controls from spacing to font choice.
+
+### Mobile Responsiveness of Otter Blocks
+
+Create mobile-friendly designs with Otter’s built-in responsive settings. Each block can be tweaked to provide a consistent experience for mobile, tablet, and desktop.
 
 ### A WordPress Gutenberg Block Conditions Plugin
 
@@ -64,77 +72,85 @@ Want to show certain blocks only when a user is Logged in or Logged Out? How abo
 
 ### A WordPress Gutenberg Blocks Animation Plugin
 
-WOW your website visitors with amazing animations that can be added to any block on the page. With over 50+ animations available to choose from; Otter makes it possible to add some extra flare to any post or page on your website
+WOW, your website visitors with amazing animations that can be added to any block on the page. With over 50+ animations available to choose from; Otter makes it possible to add some extra flare to any post or page on your website
 
 ### A WordPress Gutenberg Popup Plugin
 
-Popups are one of the oldest lead capturing and notice conveying techniques on the web. With the Gutenberg Popup Block available in Otter, you can create popups made from any other block available in Gutenberg! Fine-tune your popup by setting when they should appear and how they can be closed.
+Popups are one of the oldest lead-capturing and notice-conveying techniques on the web. With the Gutenberg Popup Block available in Otter, you can create popups made from any other block available in Gutenberg! Fine-tune your popup by setting when they should appear and how they can be closed.
+
+With our popup block, you gain access to multiple triggers such as on load, on exit, on anchor click, and on scroll. Additionally, you can design your popup with custom overlays to align with your brand identity and capture more attention. [Check live demo](https://demo.themeisle.com/otter-blocks/popup/)
 
 ### Global Defaults for Otter's Blocks
 
 Tired of always having to set the same options every time you add a block to the page? With Otter, you can set the default configuration for some of the most commonly used blocks like the Section Block, Icon Block, Advanced Heading and more.
 
+### Impact on Page Loading Speed and Performance 
+At Otter Blocks, we prioritize performance to elevate your website's user experience. Each block is carefully optimized, striking the perfect balance between speed, design, and functionality.
+
+### Enhance your Posts with Otter Blocks
+Discover a Wide Range of Post Blocks for Engaging Content, with Otter Block's post blocks, you can elevate your posts to new heights. From interactive accordions for FAQs to product reviews, countdowns, maps, and more, our versatile post blocks enrich your content seamlessly.
+
 ## Blocks Available in Otter
 
 #### Section Gutenberg Block [FREE]
 
-A column block on steroids! This block allows you to create a section with up to 6 columns that can each have a custom background color, image or gradient. Use this block's responsive features to set the padding and margin for desktop, tablet and mobile displays. 
+A column block on steroids! This block allows you to create a section with up to 6 columns that can each have a custom background color, image or gradient. Use this block's responsive features to set the padding and margin for desktop, tablet and mobile displays. [Check live demo](https://demo.themeisle.com/otter-blocks/section/)
 
 #### Advanced Heading Gutenberg Block [FREE]
 
-The heading block you didn't know you needed. This Otter block has all the functionality of the default heading block with a few other capabilities like the ability to change the font, highlight parts of the text and more.
+The heading block you didn't know you needed. This Otter block has all the functionality of the default heading block with a few other capabilities like the ability to change the font, highlight parts of the text and more. [Check live demo](https://demo.themeisle.com/otter-blocks/advanced-heading/)
 
 #### Button Group Gutenberg Block [FREE]
 
-Create multiple buttons quick and easily and show them vertically or horizontally based on the device the page is being viewed on.
+Create multiple buttons quickly and easily and show them vertically or horizontally based on the device the page is being viewed on. [Check live demo](https://demo.themeisle.com/otter-blocks/button-group/)
 
 #### Slider Gutenberg Block [FREE]
 
-Use this Gutenberg block to create image sliders on any Gutenberg page. Settings include slider height, delay, slides per page, autoplay and more.
+Use this Gutenberg block to create image sliders on any Gutenberg page. Settings include slider height, delay, slides per page, autoplay and more. [Check live demo](https://demo.themeisle.com/otter-blocks/slider/)
 
 #### Accordion Gutenberg Block [FREE]
 
-Use this block to create vertically stacked lists of content that can be revealed or hidden with the click of a button; more commonly known as Accordions.
+Use this block to create vertically stacked lists of content that can be revealed or hidden with the click of a button; more commonly known as Accordions. [Check live demo](https://demo.themeisle.com/otter-blocks/accordion/)
 
 #### Tabs Gutenberg Block [FREE]
 
-Use this block to create horizontally stacked lists of content that can be revealed or hidden with the click of a button; more commonly known as Tabs. 
+Use this block to create horizontally stacked lists of content that can be revealed or hidden with the click of a button; more commonly known as Tabs. [Check live demo](https://demo.themeisle.com/otter-blocks/tabs/)
 
 #### Maps Gutenberg Block [FREE]
 
-Choose between either an Open Street Map or Google Maps block and create markers for your points of interest for your website visitors. Our Maps block helps you customize the map experience right down to the color and description of the markers, search for places by name or coordinates, add and remove map controls, or change the size and style of the maps with a few clicks.
+Choose between either an Open Street Map or Google Maps block and create markers for your points of interest for your website visitors. Our Maps block helps you customize the map experience right down to the color and description of the markers, search for places by name or coordinates, add and remove map controls, or change the size and style of the maps with a few clicks. [Check live demo](https://demo.themeisle.com/otter-blocks/maps/)
 
 #### Countdown Gutenberg Block [FREE]
 
-Counting down to a big event? Show it by making use of these Gutenberg blocks. Count down from Days, Hours, Minutes or Seconds.
+Counting down to a big event? Show it by making use of these Gutenberg blocks. Count down from Days, Hours, Minutes or Seconds. [Check live demo](https://demo.themeisle.com/otter-blocks/countdown/)
 
 #### Contact Form Gutenberg Block [FREE]
 
-Quickly and easily insert a contact form anywhere on the page. Optionally, turn the form into a lead generating machine by integrating it with Sendinblue or Mailchimp.
+Quickly and easily insert a contact form anywhere on the page. Optionally, turn the form into a lead-generating machine by integrating it with Brevo(Sendinblue) or Mailchimp. [Check live demo](https://demo.themeisle.com/otter-blocks/form/)
 
 #### Masonry Gallery Gutenberg Block [FREE]
 
-Add some pizzazz to your gallery by making it a Masonry layout Gallery instead.  
+Add some pizzazz to your gallery by making it a Masonry layout Gallery instead. [Check live demo](https://demo.themeisle.com/otter-blocks/masonry-gallery/) 
 
 #### Posts Gutenberg Block [FREE]
 
-Use this block to insert items from posts, pages and custom post types into the current page being edited.
+Use this block to insert items from posts, pages and custom post types into the current page being edited. The Posts block allows displaying a certain number of posts on different pages. Customizations available for this block cover areas such as styles, post types, settings, designs, and layout.
 
 #### Product Review Gutenberg Block [FREE]
 
-Blogging about a product you love? Or maybe you run a review website? Use this block to create a review table for the item and list its features, pros and cons as well as optional buy links.
+Blogging about a product you love? Or maybe you run a review website? Use this block to create a review table for the item and list its features, pros and cons as well as optional buy links. [Check live demo](https://demo.themeisle.com/otter-blocks/product-review/)
 
 #### Service Gutenberg Block [FREE]
 
-Use this block to list your business services with an optional button to lead to more details.
+Use this block to list your business services with an optional button to lead to more details. [Check live demo](https://demo.themeisle.com/otter-blocks/service/)
 
 #### Pricing & Pricing Section Gutenberg Block [FREE]
 
-Use this block to quickly create beautiful pricing tables for your services/products. 
+Use this block to quickly create beautiful pricing tables for your services/products. [Check live demo](https://demo.themeisle.com/otter-blocks/pricing-block-and-section/)
 
 #### Testimonial Gutenberg Block [FREE]
 
-Display your customer reviews on any post or page using Otter's Gutenberg Testimonial Block.
+Display your customer reviews on any post or page using Otter's Gutenberg Testimonial Block. 
 
 #### About Author Gutenberg Block [FREE]
 
@@ -142,23 +158,32 @@ The About Author Gutenberg block allows editors to add their bio at the end of t
 
 #### Icon Gutenberg Block [FREE]
 
-Display any icon from Font Awesome or our own list of custom icons anywhere on the page. Change colors, add borders and couple with other blocks to enhance the look of your page.
+Display any icon from Font Awesome or our own list of custom icons anywhere on the page. Change colors, add borders and couple with other blocks to enhance the look of your page. [Check live demo](https://demo.themeisle.com/otter-blocks/icon/)
 
 #### Icon List Gutenberg Block [FREE]
 
-Supercharge boring point lists by using custom icons as the pointers.
+Supercharge boring point lists by using custom icons as the pointers. [Check live demo](https://demo.themeisle.com/otter-blocks/icon-list/)
 
 #### Lottie Animation Gutenberg Block [FREE]
 
-Have you heard about Lottie? Awesome! With Otter's Lottie Animation Gutenberg Block, you can display Lottie animations anywhere in Gutenberg.
+Have you heard about Lottie? Awesome! With Otter's Lottie Animation Gutenberg Block, you can display Lottie animations anywhere in Gutenberg. [Check live demo](https://demo.themeisle.com/otter-blocks/lottie-animation/)
 
 #### Add to Cart Gutenberg Block [PRO]
 
-Drop an Add to cart button block for any WooCommerce product anywhere on the post or page that you're editing.
+Drop an Add to Cart button block for any WooCommerce product anywhere on the post or page that you're editing.
 
 #### Business Hours Gutenberg Block [PRO]
 
-Create a beautifully styled Business Hours table and fine-tune it's settings until it's perfect.
+Create a beautifully styled Business Hours table and fine-tune its settings until it's perfect.
+
+#### Review Comparision Table [PRO]
+
+Get ready to impress your readers with Otter's "Review Comparison Table" block. Effortlessly create professional-looking product comparison tables for your blog or website.
+
+#### Live Search [PRO]
+
+The Live Search feature enhances the core block Search by adding two additional attributes ( isLive and postTypes ) that can be set inside the inspector under the Live Search panel.
+
 
 ---
 
@@ -171,31 +196,74 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 - Sharing Icons Gutenberg Block [FREE]
 - Subscribe Form Gutenberg Block [FREE]
 
-### Get More Options in Otter Pro
+### Get More Options in Otter Pro 🤩
 
-With [Otter Pro](https://themeisle.com/plugins/otter-blocks/), you get a lot more features, including:
+#### WooCommerce Builder Blocks 
+
+Build custom Single Product Pages using WooCommerce Builder Blocks by Otter. All the new features are designed to maximize your conversion rate and bring more improvements. 
+
+With [Otter Pro](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks), you get a lot more features, including:
 
 - Add to Cart Block
 - Business Hours Block
 - Product Review Comparison Block
+- Live Search Block
 - More Dynamic Content options
 - More Visibility Conditions options
 - and more!
 
-You can try a live demo of Otter Pro [by clicking here](https://themeisle.com/plugins/otter-blocks/try-otter/).
+You can try a live demo of Otter Pro [by clicking here](https://themeisle.com/plugins/otter-blocks/try-otter/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks).
 
-### Support
+## Who is Otter For? 👀
+
+- Anyone looking to bring out the best features of the new Gutenberg Editor with useful and easy-to-use Gutenberg blocks.
+- Anyone thinking of moving away from traditional page builders like Elementor and Divi Builder in favor of the new Gutenberg Block Editor.
+- Anyone trying to build quick Gutenberg pages in record time.
+- Anyone trying to hide/show Gutenberg blocks based on conditions like user logged in/out status.
+- Anyone trying to add animations to Gutenberg blocks.
+
+## Let's See Some Use Cases 🚀
+
+Otter opens up a world of opportunities! Discover how different audience segments can make the most of it:
+
+- **Travel Bloggers:** Enhance your travel blog with captivating maps using Otter's Maps and Google Maps blocks to showcase your journeys to the world.
+  
+- **Non-Profit Organizations:** Engage your audience and promote your cause with Otter's Circle Counter and Testimonial blocks to share inspiring success stories.
+  
+- **Restaurant Owners:** Showcase your restaurant's menus and gather reservations easily with Otter's Flip Card and Form blocks for a mouth-watering online presence.
+
+- **Tech Product Reviewers:** Present detailed product reviews with Otter's Product Review, making your content informative and captivating.
+
+- **Bloggers:** Enhance your blog posts with Sharing Icons, creating easy sharing options for your readers. Use Slider to display image galleries and engage your audience.
+
+- **Content Creators and Digital Product Sellers:** Stripe checkout gutenberg block offers a convenient way to sell digital products, such as e-books, online courses, software licenses, or digital artwork, without the need to set up a full-fledged online store. By integrating this block, you can provide a streamlined and secure checkout experience to customers.
+
+- **Product Reviewers:** Create informative and attractive product review comparisons with Review Comparison Table, helping users make informed decisions.
+
+- **Restaurant Owners:** Display your business hours in a stylish format using Business Hours blocks, making it easy for customers to find you.
+
+- **Online Directories:** Websites offering directories, listings, or extensive content where live search simplifies content access.
+
+---
+
+### Support 🤝
 
 We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/otter-blocks/).
 
-### Documentation
+### Documentation 📚
 
-You can check Otter documentation [here](https://docs.themeisle.com/article/1478-otter-blocks-documentation).
+Discover how to make the most of Otter Blocks with our detailed and user-friendly [documentation](https://docs.themeisle.com/article/1478-otter-blocks-documentation).
 
-### Useful Resources
+### Become a Contributor 💁‍♂️
+
+Otter Blocks is an open-source project, and we welcome contributors to be part of our vibrant community! Help us improve the plugin and make it even better - [GitHub Link](https://github.com/Codeinwp/otter-blocks/)
+
+### Useful Resources 📌
 
 - Read more about WordPress on our [blog](https://themeisle.com/blog/).
-- Take a look at our other plugins see [here](https://themeisle.com/wordpress-plugins/).
+- Interested in our other plugins? Take a look [here](https://themeisle.com/wordpress-plugins/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks).
+- Get the most out of Otter Blocks with our helpful [YouTube Tutorials Playlist](https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP).
+
 
 ## Screenshots ##
 
@@ -204,6 +272,26 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 3. Posts Block
 4. Google Map Block
 5. Section Block
+
+## Installation ##
+
+#### Automatic Installation
+
+To download and install the Otter plugin, make sure you follow the steps below:
+
+- Navigate to the WordPress  Dashboard > Plugins.
+- Click the Add New button and type in the Search Bar "Otter Blocks".
+- When the plugin appears, click on the Install button and then on  Activate.
+
+#### Manual Installation
+
+- Log into your website admin page, then go to Appearance > Plugins. You will see all the plugins currently installed in your dashboard listed there.
+- To install a new WordPress plugin, simply click on the Add New tab.
+- Click the Upload Plugin button in the WordPress Dashboard.
+- Click the Choose File button, select the ZIP archive of the Otter Blocks plugin from your local computer and press the Install Now button.
+- Click on the Activate button under the "Plugin installed successfully" message.
+
+If you want to upload the plugin using FTP, [click here](https://themeisle.com/blog/what-is-ftp-wordpress/) to see a detailed explanation about it.
 
 ## Frequently Asked Questions ##
 
