@@ -288,7 +288,7 @@ To download and install the Otter plugin, make sure you follow the steps below:
 - Log into your website admin page, then go to Appearance > Plugins. You will see all the plugins currently installed in your dashboard listed there.
 - To install a new WordPress plugin, simply click on the Add New tab.
 - Click the Upload Plugin button in the WordPress Dashboard.
-- Click the Choose File button, select the ZIP archive of the Otter plugin from your local computer and press the Install Now button.
+- Click the Choose File button, select the ZIP archive of the Otter Blocks plugin from your local computer and press the Install Now button.
 - Click on the Activate button under the "Plugin installed successfully" message.
 
 If you want to upload the plugin using FTP, [click here](https://themeisle.com/blog/what-is-ftp-wordpress/) to see a detailed explanation about it.
