@@ -21,11 +21,23 @@
 		"label": {
 			"type": "string"
 		},
+		"labelColor": {
+			"type": "string"
+		},
 		"mappedName": {
 			"type": "string"
 		},
 		"inputWidth": {
 			"type": "number"
+		},
+		"borderRadius": {
+			"type": "object"
+		},
+		"borderWidth": {
+			"type": "object"
+		},
+		"borderColor": {
+			"type": "string"
 		},
 		"product": {
 			"type": "string"

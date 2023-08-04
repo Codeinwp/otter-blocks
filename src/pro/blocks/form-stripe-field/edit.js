@@ -21,6 +21,7 @@ import Inspector from './inspector';
 import useSettings from '../../../blocks/helpers/use-settings';
 import { blockInit } from '../../../blocks/helpers/block-utility';
 import DeferredWpOptionsSave from '../../../blocks/helpers/defered-wp-options-save';
+import { _cssBlock, boxValues } from '../../../blocks/helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -385,6 +386,16 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
+				<style>
+					{
+						`#block-${clientId}` + _cssBlock([
+							[ '--label-color', attributes.labelColor ],
+							[ '--stripe-border-color', attributes.borderColor ],
+							[ '--stripe-border-radius', boxValues( attributes.borderRadius ), attributes.borderRadius !== undefined ],
+							[ '--stripe-border-width', boxValues( attributes.borderWidth ), attributes.borderRadius !== undefined ]
+						])
+					}
+				</style>
 				{ 'default' === view && (
 					<Fragment>
 						<div className="o-stripe-checkout">

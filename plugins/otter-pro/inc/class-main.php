@@ -161,6 +161,7 @@ class Main {
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_Item_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Review_Comparison_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Form_File_CSS',
+			'\ThemeIsle\OtterPro\CSS\Blocks\Form_Stripe_Field_CSS',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );

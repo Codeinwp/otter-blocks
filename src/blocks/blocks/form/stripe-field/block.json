@@ -21,6 +21,9 @@
 		"label": {
 			"type": "string"
 		},
+		"labelColor": {
+			"type": "string"
+		},
 		"mappedName": {
 			"type": "string"
 		},

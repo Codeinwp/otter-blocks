@@ -4,25 +4,30 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	InspectorControls
+	ContrastChecker,
+	InspectorControls, PanelColorSettings
 } from '@wordpress/block-editor';
 
 import {
+	__experimentalBoxControl as BoxControl,
 	Button,
-	PanelBody, Placeholder,
-	SelectControl, Spinner,
+	PanelBody,
+	Placeholder,
+	SelectControl,
+	Spinner,
 	TextControl
 } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
-import { Fragment } from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 
-import { Notice as OtterNotice } from '../../../blocks/components';
-import { fieldTypesOptions, switchFormFieldTo } from '../../../blocks/blocks/form/common';
+import { InspectorHeader, Notice as OtterNotice, SyncColorPanel } from '../../../blocks/components';
+import { FieldInputWidth, fieldTypesOptions, switchFormFieldTo } from '../../../blocks/blocks/form/common';
+import { objectOrNumberAsBox } from '../../../blocks/helpers/helper-functions';
 
 
 /**
@@ -48,6 +53,7 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
+
 			<PanelBody
 				title={ __( 'Field Settings', 'otter-blocks' ) }
 			>
@@ -70,6 +76,8 @@ const Inspector = ({
 					}}
 				/>
 
+				<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
+
 				<TextControl
 					label={ __( 'Mapped Name', 'otter-blocks' ) }
 					help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
@@ -90,13 +98,15 @@ const Inspector = ({
 				}
 
 				<div className="o-fp-wrap">
-					{ applyFilters( 'otter.feedback', '', 'form' ) }
+					{
+						applyFilters( 'otter.feedback', '', 'form' ) // BUG: This is not working when added in a Settings/Style tab like in the other blocks.
+					}
 					{ applyFilters( 'otter.poweredBy', '' ) }
 				</div>
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Stripe Settings', 'otter-blocks' ) }
+				title={ __( 'Stripe Product', 'otter-blocks' ) }
 			>
 				{ ! isLoadingProducts && (
 					<SelectControl
@@ -138,6 +148,39 @@ const Inspector = ({
 				{ ( isLoadingProducts || isLoadingPrices ) && <Placeholder><Spinner /></Placeholder> }
 			</PanelBody>
 
+
+			<PanelColorSettings
+				title={ __( 'Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.labelColor,
+						onChange: labelColor => setAttributes({ labelColor }),
+						label: __( 'Label Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.borderColor,
+						onChange: borderColor => setAttributes({ borderColor }),
+						label: __( 'Border Color', 'otter-blocks' )
+					}
+				] }
+			/>
+			<PanelBody
+				title={ __( 'Border', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<BoxControl
+					label={ __( 'Border Width', 'otter-blocks' ) }
+					values={ attributes.borderWidth }
+					onChange={ borderWidth => setAttributes({ borderWidth }) }
+				/>
+
+				<BoxControl
+					label={ __( 'Border Radius', 'otter-blocks' ) }
+					values={ attributes.borderRadius }
+					onChange={ borderRadius => setAttributes({ borderRadius }) }
+				/>
+			</PanelBody>
 
 		</InspectorControls>
 	);

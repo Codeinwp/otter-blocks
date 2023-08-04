@@ -186,7 +186,7 @@ class Form_Server {
 			array(
 				array(
 					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'confirm_form_submission'),
+					'callback'            => array( $this, 'confirm_form_submission' ),
 					'permission_callback' => function ( $request ) {
 						$session = $request->get_param( 'stripe_checkout' );
 

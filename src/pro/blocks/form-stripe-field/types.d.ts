@@ -1,4 +1,5 @@
 import { BlockProps, InspectorProps } from '../../helpers/blocks';
+import { BoxBorder } from '../../../blocks/common';
 
 
 type Attributes = {
@@ -11,6 +12,9 @@ type Attributes = {
 	product: string
 	price: string
 	fieldOptionName: string
+	borderColor: string
+	borderWidth: BoxBorder
+	borderRadius: BoxBorder
 }
 
 export type FormStripeFieldProps = BlockProps<Attributes>
