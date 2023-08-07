@@ -99,20 +99,15 @@ class Form_Field_WP_Option_Data {
 	/**
 	 * Get the stripe data of the field option.
 	 *
-	 * @return array The stripe data of the field option.
+	 * @return array The stripe data of the field option:
+	 *      [
+	 *          'product' => (string) The ID of the product,
+	 *          'price' => (string) The price ID of the product,
+	 *          'quantity' => (int) The quantity of the product to order
+	 *      ]
 	 */
 	public function get_stripe_product_info() {
 		return $this->stripe_product_info;
-	}
-
-	/**
-	 * Set the option of the field option.
-	 *
-	 * @param string $option_name The name of the option.
-	 * @param mixed  $option_value The value of the option.
-	 */
-	public function set_option( $option_name, $option_value ) {
-		$this->options[ $option_name ] = $option_value;
 	}
 
 	/**

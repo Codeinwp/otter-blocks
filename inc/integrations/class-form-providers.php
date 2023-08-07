@@ -92,7 +92,7 @@ class Form_Providers {
 	 * @since 2.0.3
 	 */
 	public function select_provider_from_form_options( $form_request ) {
-		$form_options = $form_request->get_form_wp_options();
+		$form_options = $form_request->get_wp_options();
 		if ( $form_options->has_provider() && $form_options->has_credentials() ) {
 			return $this->get_provider_handlers( $form_options->get_provider() );
 		}

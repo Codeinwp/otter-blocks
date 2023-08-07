@@ -21,11 +21,7 @@ const confirmRecord = async() => {
 	const urlParams = new URLSearchParams( window.location.search );
 	const stripeSessionId = urlParams.get( 'stripe_checkout' );
 
-	console.log( 'Session ID: ' + stripeSessionId ); // TODO: remove after QA.
-
 	const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/confirm';
-
-	console.log( 'Making a request for ' + formURlEndpoint ); // TODO: remove after QA.
 
 	return await fetch( formURlEndpoint + `?stripe_checkout=${stripeSessionId}`, {
 		method: 'GET',
@@ -254,19 +250,23 @@ function validateInputs( form ) {
  */
 const createFormData = ( data ) => {
 	var formData = new FormData();
-	var filesPairs = [];
 
+	/**
+	 * For simple data, we will encode them as JSON in 'form_data' key.
+	 * This gives the flexibility to have the same data shape like in backend without creating complex serializers.
+	 * For complex data like files, we will use FormData way to handle them.
+	 */
 	data?.payload?.formInputsData?.forEach( ( field, index ) => {
 		if ( 'file' === field.type ) {
 			let key = 'file__' + field.metadata.position + '_' + index;
-			filesPairs.push([ key, field.metadata.file ]);
+
+			formData.append( key, field.metadata.file );
 			data.payload.formInputsData[index].metadata.file = undefined;
-			data.payload.formInputsData[index].metadata.data = key;
+			data.payload.formInputsData[index].metadata.data = key; // Create a link with the file which will be used in backend via $_FILES.
 		}
 	});
 
 	formData.append( 'form_data',  JSON.stringify( data ) );
-	filesPairs.forEach( pair => formData.append( pair[0], pair[1]) );
 
 	return formData;
 };
@@ -303,7 +303,7 @@ const handleAfterSubmit = ( request, displayMsg, onSuccess, onFail, onCleanUp ) 
 	request.then( r => r.json() ).then( response  => {
 
 		/**
-		 * @type {import('./types.js').IFormResponse}
+		 * @type {import('./types.js').IFormResponse} The response from the server.
 		 */
 		const res =  response;
 
@@ -450,55 +450,62 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 			payload
 		});
 
-		const request = fetch( formURlEndpoint, {
-			method: 'POST',
-			headers: {
-				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce,
-				'O-Form-Save-Mode': saveMode
-			},
-			credentials: 'include',
-			body: formData
-		});
+		try {
+			const request = fetch( formURlEndpoint, {
+				method: 'POST',
+				headers: {
+					'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce,
+					'O-Form-Save-Mode': saveMode
+				},
+				credentials: 'include',
+				body: formData
+			});
 
-		handleAfterSubmit(
-			request,
-			displayMsg,
-			( res, displayMsg ) => {
+			handleAfterSubmit(
+				request,
+				displayMsg,
+				( res, displayMsg ) => {
 
-				if ( 0 < res?.frontend_external_confirmation_url?.length ) {
+					if ( 0 < res?.frontend_external_confirmation_url?.length ) {
 
-					// Redirect to the external confirmation URL in a new tab.
-					window.open( res.frontend_external_confirmation_url, '_blank' );
-					return;
-				}
-
-				const msg = res?.submitMessage ? res.submitMessage :  'Success';
-				displayMsg.setMsg( msg ).show();
-
-				form?.querySelector( 'form' )?.reset();
-
-				if ( 0 < res?.redirectLink?.length ) {
-					form.setAttribute( 'data-redirect', res.redirectLink );
-				}
-
-				setTimeout( () => {
-					if ( 0 < res?.redirectLink?.length ) {
-						let a = document.createElement( 'a' );
-						a.target = '_blank';
-						a.href = res.redirectLink;
-						a.click();
+						// Redirect to the external confirmation URL in a new tab.
+						window.open( res.frontend_external_confirmation_url, '_blank' );
+						return;
 					}
-				}, 1000 );
-			},
-			( res, displayMsg ) => {},
-			() => {
-				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
-					window.themeisleGutenberg?.tokens?.[ id ].reset();
+
+					const msg = res?.submitMessage ? res.submitMessage :  'Success';
+					displayMsg.setMsg( msg ).show();
+
+					form?.querySelector( 'form' )?.reset();
+
+					if ( 0 < res?.redirectLink?.length ) {
+						form.setAttribute( 'data-redirect', res.redirectLink );
+					}
+
+					setTimeout( () => {
+						if ( 0 < res?.redirectLink?.length ) {
+							let a = document.createElement( 'a' );
+							a.target = '_blank';
+							a.href = res.redirectLink;
+							a.click();
+						}
+					}, 1000 );
+				},
+				( res, displayMsg ) => {},
+				() => {
+					if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
+						window.themeisleGutenberg?.tokens?.[ id ].reset();
+					}
+					btn.disabled = false;
+					spinner.hide();
 				}
-				btn.disabled = false;
-				spinner.hide();
-			}
-		);
+			);
+		} catch ( e ) {
+			console.error( e );
+			displayMsg.pullMsg( 'try-again', 'error' ).show();
+			btn.disabled = false;
+			spinner.hide();
+		}
 	}
 };
 

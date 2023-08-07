@@ -205,3 +205,10 @@ svg.o-block-icon {
 	}
 }
 
+.o-license-warning {
+	&.components-placeholder.is-medium {
+		legend.components-placeholder__instructions {
+			display: block;
+		}
+	}
+}

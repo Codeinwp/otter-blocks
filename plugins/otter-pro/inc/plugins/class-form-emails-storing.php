@@ -187,7 +187,7 @@ class Form_Emails_Storing {
 			return $form_data;
 		}
 
-		$form_options = $form_data->get_form_wp_options();
+		$form_options = $form_data->get_wp_options();
 
 		if ( ! isset( $form_options ) ) {
 			return $form_data;
@@ -197,14 +197,14 @@ class Form_Emails_Storing {
 			return $form_data;
 		}
 
-		if ( false === strpos( $form_options->get_submissions_save_location(), 'database' ) && ! $form_data->is_temporary_data() ) {
+		if ( false === strpos( $form_options->get_submissions_save_location(), 'database' ) && ! $form_data->is_temporary() ) {
 			return $form_data;
 		}
 
 		$post_id = wp_insert_post(
 			array(
 				'post_type'   => self::FORM_RECORD_TYPE,
-				'post_status' => $form_data->is_temporary_data() ? 'draft' : 'unread',
+				'post_status' => $form_data->is_temporary() ? 'draft' : 'unread',
 			)
 		);
 
@@ -223,23 +223,23 @@ class Form_Emails_Storing {
 		$meta = array(
 			'form'     => array(
 				'label' => 'Form',
-				'value' => $form_data->get_payload_field( 'formId' ),
+				'value' => $form_data->get_data_from_payload( 'formId' ),
 			),
 			'post_url' => array(
 				'label' => 'Post URL',
-				'value' => $form_data->get_payload_field( 'postUrl' ),
+				'value' => $form_data->get_data_from_payload( 'postUrl' ),
 			),
 			'post_id'  => array(
 				'label' => 'Post ID',
-				'value' => $form_data->get_payload_field( 'postId' ),
+				'value' => $form_data->get_data_from_payload( 'postId' ),
 			),
 			'dump'     => array(
 				'label' => 'Dumped data',
-				'value' => $form_data->is_temporary_data() ? $form_data->dump_data() : array(),
+				'value' => $form_data->is_temporary() ? $form_data->dump_data() : array(),
 			),
 		);
 
-		$form_inputs    = $form_data->get_form_inputs();
+		$form_inputs    = $form_data->get_fields();
 		$uploaded_files = $form_data->get_uploaded_files_path();
 		$media_files    = $form_data->get_files_loaded_to_media_library();
 
@@ -1204,7 +1204,7 @@ class Form_Emails_Storing {
 
 		$form_data = Form_Data_Request::create_from_dump( $meta['dump']['value'] );
 		$form_data->mark_as_duplicate();
-		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_data_from_payload( 'formOption' ) );
 		$form_data->set_form_options( $form_options );
 		$form_data = Form_Server::pull_fields_options_for_form( $form_data );
 
@@ -1240,7 +1240,7 @@ class Form_Emails_Storing {
 			array(
 				'dump' => array(
 					'label' => 'Dumped data',
-					'value' => $form_data->is_temporary_data() ? $form_data->dump_data() : array(),
+					'value' => $form_data->is_temporary() ? $form_data->dump_data() : array(),
 				),
 			)
 		);

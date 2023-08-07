@@ -7,8 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
-use ArrayAccess;
-
 /**
  * Class Form_Data_Request
  *
@@ -108,6 +106,7 @@ class Form_Data_Request {
 	 * Saving mode of the form data.
 	 *
 	 * @var string $saving_mode Saving mode.
+	 * @since 2.4
 	 */
 	protected $saving_mode = 'permanent';
 
@@ -115,6 +114,7 @@ class Form_Data_Request {
 	 * The form metadata generated through the request. Use prefix 'frontend_' to make the value visible in the frontend.
 	 *
 	 * @var array
+	 * @since 2.4
 	 */
 	public $metadata = array();
 
@@ -136,7 +136,7 @@ class Form_Data_Request {
 
 		$form_data = json_decode( $form_data, true );
 
-		$this->set_form_data( $this->sanitize_request_data( $form_data ) );
+		$this->set_data_from_request( $this->sanitize_request_data( $form_data ) );
 		$this->form_options = new Form_Settings_Data( array() );
 
 		if ( ! empty( $request->get_header( 'O-Form-Save-Mode' ) ) ) {
@@ -147,11 +147,11 @@ class Form_Data_Request {
 	/**
 	 * Set the form data.
 	 *
-	 * @param mixed $form_data The form data.
+	 * @param mixed $form_request_data The form data.
 	 * @return void
 	 */
-	private function set_form_data( $form_data ) {
-		$this->request_data = $form_data;
+	private function set_data_from_request( $form_request_data ) {
+		$this->request_data = $form_request_data;
 	}
 
 	/**
@@ -168,34 +168,34 @@ class Form_Data_Request {
 	/**
 	 * Get the value of the field from the request.
 	 *
-	 * @param string $field_name The name of the field.
+	 * @param string $key The name of the field.
 	 * @return mixed
 	 * @since 2.0.3
 	 */
-	public function get( $field_name ) {
-		return $this->is_set( $field_name ) ? $this->request_data[ $field_name ] : null;
+	public function get_root_data( $key ) {
+		return $this->is_root_data_set( $key ) ? $this->request_data[ $key ] : null;
 	}
 
 	/**
-	 * Get the field value.
+	 * Get the item from the payload.
 	 *
-	 * @param string $field_name The name of the field.
+	 * @param string $key The name of the item.
 	 * @return mixed|null
 	 * @since 2.0.3
 	 */
-	public function get_payload_field( $field_name ) {
-		return $this->payload_has_field( $field_name ) ? $this->request_data['payload'][ $field_name ] : null;
+	public function get_data_from_payload( $key ) {
+		return $this->payload_has( $key ) ? $this->request_data['payload'][ $key ] : null;
 	}
 
 	/**
-	 * Check if the payload has the field.
+	 * Check if the payload has the data item set.
 	 *
-	 * @param string $field_name The name of the field.
+	 * @param string $key The name of the item.
 	 * @return bool
 	 * @since 2.0.3
 	 */
-	public function payload_has_field( $field_name ) {
-		return $this->has_payload() && isset( $this->request_data['payload'][ $field_name ] );
+	public function payload_has( $key ) {
+		return $this->has_payload() && isset( $this->request_data['payload'][ $key ] );
 	}
 
 	/**
@@ -220,27 +220,29 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * Check if the value of the field is set.
+	 * Check if the root data of the request is set.
+	 * The root data is the top level structure of the request.
 	 *
-	 * @param string $field_name The name of the field.
+	 * @param string $key The name of the field.
 	 * @return boolean
 	 * @since 2.0.0
 	 */
-	public function is_set( $field_name ) {
+	public function is_root_data_set( $key ) {
 		// TODO: we can do a more refined verification like checking for empty strings or arrays.
-		return isset( $this->request_data[ $field_name ] );
+		return isset( $this->request_data[ $key ] );
 	}
 
 	/**
-	 * Check if the given fields are set.
+	 * Check if the root data of the request has the given fields.
+	 * The root data is the top level structure of the request.
 	 *
-	 * @param array $fields_name The name of the fields.
+	 * @param array $keys The name of the fields.
 	 * @return boolean
 	 * @since 2.0.0
 	 */
-	public function are_fields_set( $fields_name ) {
-		foreach ( $fields_name as $field_name ) {
-			if ( ! isset( $this->request_data[ $field_name ] ) ) {
+	public function are_root_data_set( $keys ) {
+		foreach ( $keys as $key ) {
+			if ( ! $this->is_root_data_set( $key ) ) {
 				return false;
 			}
 		}
@@ -248,59 +250,19 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * Check if the given fields are set.
+	 * Check if the given data fields are set in the payload.
 	 *
-	 * @param array $fields_name The name of the fields.
+	 * @param array $keys The name of the fields.
 	 * @return boolean
 	 * @since 2.0.3
 	 */
-	public function are_payload_fields_set( $fields_name ) {
-		foreach ( $fields_name as $field_name ) {
-			if ( ! isset( $this->request_data['payload'][ $field_name ] ) || '' === $this->request_data['payload'][ $field_name ] ) {
+	public function are_payload_data_set( $keys ) {
+		foreach ( $keys as $key ) {
+			if ( ! isset( $this->request_data['payload'][ $key ] ) || '' === $this->request_data['payload'][ $key ] ) {
 				return false;
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * Check if the payload has the given fields.
-	 *
-	 * @param array $fields_name The name of the fields.
-	 * @return bool
-	 * @since 2.0.3
-	 */
-	public function payload_has_fields( $fields_name ) {
-		foreach ( $fields_name as $field_name ) {
-			if ( ! $this->payload_has_field( $field_name ) ) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Check if the field has one of the given values.
-	 *
-	 * @param string $field_name The name of the field.
-	 * @param array  $values The desired values of the field.
-	 * @return boolean
-	 * @since 2.0.0
-	 */
-	public function field_has( $field_name, $values ) {
-		return in_array( $this->get( $field_name ), $values, true );
-	}
-
-	/**
-	 * Check if a field has the given values.
-	 *
-	 * @param string $field_name The field name.
-	 * @param array  $values The values.
-	 * @return bool
-	 * @since 2.0.3
-	 */
-	public function payload_field_has( $field_name, $values ) {
-		return in_array( $this->get_payload_field( $field_name ), $values, true );
 	}
 
 	/**
@@ -343,8 +305,8 @@ class Form_Data_Request {
 	 * @return mixed Form input data.
 	 * @since 2.0.0
 	 */
-	public function get_form_inputs() {
-		return $this->get_payload_field( 'formInputsData' );
+	public function get_fields() {
+		return $this->get_data_from_payload( 'formInputsData' );
 	}
 
 	/**
@@ -353,7 +315,7 @@ class Form_Data_Request {
 	 * @return Form_Settings_Data|null
 	 * @since 2.0.0
 	 */
-	public function get_form_wp_options() {
+	public function get_wp_options() {
 		return $this->form_options;
 	}
 
@@ -464,16 +426,6 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * Get the error details.
-	 *
-	 * @return string
-	 * @since 2.2.3
-	 */
-	public function get_error_details() {
-		return $this->error_details;
-	}
-
-	/**
 	 * Set the error.
 	 *
 	 * @param string $error_code The error code.
@@ -492,11 +444,11 @@ class Form_Data_Request {
 	 * @return mixed|string
 	 * @since 2.2.3
 	 */
-	public function get_email_from_form_input() {
-		$inputs = $this->get_form_inputs();
+	public function get_first_email_from_input_fields() {
+		$inputs = $this->get_fields();
 		if ( is_array( $inputs ) ) {
 			foreach ( $inputs as $input_field ) {
-				if ( 'email' == $input_field['type'] ) {
+				if ( ! empty( $input_field['type'] ) && 'email' == $input_field['type'] ) {
 					return $input_field['value'];
 				}
 			}
@@ -517,18 +469,6 @@ class Form_Data_Request {
 			}
 
 			$this->form_fields_options[ $field_option->get_name() ] = $field_option;
-		}
-	}
-
-	/**
-	 * Remove a field option.
-	 *
-	 * @param string $field_option_name The field option name.
-	 * @return void
-	 */
-	public function remove_field_wp_option( $field_option_name ) {
-		if ( isset( $this->form_fields_options[ $field_option_name ] ) ) {
-			unset( $this->form_fields_options[ $field_option_name ] );
 		}
 	}
 
@@ -617,7 +557,7 @@ class Form_Data_Request {
 	 * @return mixed|string|null
 	 */
 	public function get_form_option_id() {
-		return $this->get_payload_field( 'formOption' );
+		return $this->get_data_from_payload( 'formOption' );
 	}
 
 	/**
@@ -643,7 +583,7 @@ class Form_Data_Request {
 	 *
 	 * @return bool
 	 */
-	public function is_temporary_data() {
+	public function is_temporary() {
 		return 'temporary' === $this->saving_mode;
 	}
 
@@ -684,7 +624,7 @@ class Form_Data_Request {
 	 *
 	 * @return void
 	 */
-	public function mark_as_temporary_data() {
+	public function mark_as_temporary() {
 		$this->set_saving_mode( 'temporary' );
 	}
 
@@ -714,7 +654,7 @@ class Form_Data_Request {
 		$form = new self( null );
 
 		if ( ! empty( $dumped_data['form_data'] ) ) {
-			$form->set_form_data( $dumped_data['form_data'] );
+			$form->set_data_from_request( $dumped_data['form_data'] );
 		}
 
 		if ( ! empty( $dumped_data['uploaded_files_path'] ) ) {

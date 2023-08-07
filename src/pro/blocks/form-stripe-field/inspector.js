@@ -42,7 +42,11 @@ const Inspector = ({
 	productsList,
 	pricesList,
 	isLoadingProducts,
-	isLoadingPrices
+	isLoadingPrices,
+	status,
+	apiKey,
+	setAPIKey,
+	saveApiKey
 }) => {
 
 	// FormContext is not available here. This is a workaround.
@@ -180,6 +184,31 @@ const Inspector = ({
 					values={ attributes.borderRadius }
 					onChange={ borderRadius => setAttributes({ borderRadius }) }
 				/>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Global Settings', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<TextControl
+					label={ __( 'Change Stripe API Key', 'otter-blocks' ) }
+					type="text"
+					placeholder={ __( 'Type a new Stripe API Key', 'otter-blocks' ) }
+					value={ apiKey }
+					className="components-placeholder__input"
+					autoComplete='off'
+					onChange={ setAPIKey }
+					help={ __( 'Changing the API key effects all Stripe Checkout blocks. You will have to refresh the page after changing your API keys.', 'otter-blocks' ) }
+				/>
+
+				<Button
+					isSecondary
+					type="submit"
+					onClick={ saveApiKey }
+					isBusy={ 'loading' === status }
+				>
+					{ __( 'Save API Key', 'otter-blocks' ) }
+				</Button>
 			</PanelBody>
 
 		</InspectorControls>

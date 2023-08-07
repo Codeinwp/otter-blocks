@@ -62,7 +62,7 @@ class Form_Pro_Features {
 			return $form_data;
 		}
 
-		$inputs = $form_data->get_form_inputs();
+		$inputs = $form_data->get_fields();
 
 		$saved_files     = array();
 		$approved_fields = array();
@@ -228,8 +228,8 @@ class Form_Pro_Features {
 		}
 
 		try {
-			$form_options = $form_data->get_form_wp_options();
-			$can_delete   = ! $form_data->is_temporary_data();
+			$form_options = $form_data->get_wp_options();
+			$can_delete   = ! $form_data->is_temporary();
 
 			if ( isset( $form_options ) ) {
 				$can_delete = 'email' === $form_options->get_submissions_save_location();
@@ -322,8 +322,8 @@ class Form_Pro_Features {
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ||
-			! $form_data->get_form_wp_options()->has_autoresponder() ||
-			$form_data->is_temporary_data()
+			! $form_data->get_wp_options()->has_autoresponder() ||
+			$form_data->is_temporary()
 		) {
 			return $form_data;
 		}
@@ -337,10 +337,10 @@ class Form_Pro_Features {
 
 		try {
 			$headers[] = 'Content-Type: text/html';
-			$headers[] = 'From: ' . ( $form_data->get_form_wp_options()->has_from_name() ? sanitize_text_field( $form_data->get_form_wp_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
+			$headers[] = 'From: ' . ( $form_data->get_wp_options()->has_from_name() ? sanitize_text_field( $form_data->get_wp_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
 
-			$autoresponder = $form_data->get_form_wp_options()->get_autoresponder();
-			$body          = $this->replace_magic_tags( $autoresponder['body'], $form_data->get_form_inputs() );
+			$autoresponder = $form_data->get_wp_options()->get_autoresponder();
+			$body          = $this->replace_magic_tags( $autoresponder['body'], $form_data->get_fields() );
 
 			// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
 			if ( ! wp_mail( $to, $autoresponder['subject'], $body, $headers ) ) {
@@ -369,13 +369,13 @@ class Form_Pro_Features {
 			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
 			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request ) ||
 			$form_data->has_error() ||
-			empty( $form_data->get_form_wp_options()->get_webhook_id() )
+			empty( $form_data->get_wp_options()->get_webhook_id() )
 		) {
 			return $form_data;
 		}
 
 		try {
-			$form_webhook_id = $form_data->get_form_wp_options()->get_webhook_id();
+			$form_webhook_id = $form_data->get_wp_options()->get_webhook_id();
 
 			$webhooks = get_option( 'themeisle_webhooks_options', array() );
 
@@ -446,7 +446,7 @@ class Form_Pro_Features {
 			return $payload;
 		}
 
-		$inputs         = $form_data->get_form_inputs();
+		$inputs         = $form_data->get_fields();
 		$uploaded_files = $form_data->get_uploaded_files_path();
 
 		foreach ( $inputs as $input ) {
@@ -539,7 +539,7 @@ class Form_Pro_Features {
 
 		foreach ( $fields_options as $field ) {
 			if ( $field->has_type() && 'stripe' === $field->get_type() ) {
-				$form_data->mark_as_temporary_data();
+				$form_data->mark_as_temporary();
 				break;
 			}
 		}
@@ -551,6 +551,7 @@ class Form_Pro_Features {
 	 * Create a Stripe session.
 	 *
 	 * @param Form_Data_Request|null $form_data The form data.
+	 * @see https://stripe.com/docs/api/checkout/sessions/create
 	 */
 	public function create_stripe_session( $form_data ) {
 		if ( ! isset( $form_data ) ) {
@@ -585,7 +586,7 @@ class Form_Pro_Features {
 			return $form_data;
 		}
 
-		$required_fields = $form_data->get_form_wp_options()->get_required_fields();
+		$required_fields = $form_data->get_wp_options()->get_required_fields();
 
 		$products_to_process = array();
 
@@ -612,11 +613,16 @@ class Form_Pro_Features {
 			array(
 				'stripe_checkout' => '{CHECKOUT_SESSION_ID}', // Testing mode.
 			),
-			$form_data->get_payload_field( 'postUrl' )
+			$form_data->get_data_from_payload( 'postUrl' )
 		);
 
 		$payload['success_url'] = $permalink;
 		$payload['cancel_url']  = $permalink;
+
+		$customer_email = $form_data->get_first_email_from_input_fields();
+		if ( ! empty( $customer_email ) ) {
+			$payload['customer_email'] = $customer_email;
+		}
 
 		// Prepare the line items for the Stripe session request.
 		$line_items = array();
