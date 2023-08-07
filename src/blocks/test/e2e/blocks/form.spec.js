@@ -175,6 +175,9 @@ test.describe( 'Form Block', () => {
 					helpText: 'This is a help text',
 					allowedFileTypes: [ 'text/plain', 'image/*' ]
 				}
+			},
+			{
+				name: 'themeisle-blocks/form-nonce'
 			}
 		] });
 
@@ -191,6 +194,8 @@ test.describe( 'Form Block', () => {
 		expect( attributes.id ).toBeTruthy();
 
 		const postId = await editor.publishPost();
+
+		await page.waitForTimeout( 1700 );
 
 		await page.goto( `/?p=${postId}` );
 
@@ -233,6 +238,9 @@ test.describe( 'Form Block', () => {
 					label: 'Hidden Field Test',
 					paramName: 'test'
 				}
+			},
+			{
+				name: 'themeisle-blocks/form-nonce'
 			}
 		] });
 
@@ -250,6 +258,8 @@ test.describe( 'Form Block', () => {
 		expect( attributes.id ).toBeTruthy();
 
 		const postId = await editor.publishPost();
+
+		await page.waitForTimeout( 1500 );
 
 		await page.goto( `/?p=${postId}&test=123` );
 
