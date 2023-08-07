@@ -40,6 +40,7 @@ import {
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { _px } from '../../helpers/helper-functions.js';
 import { getMaxPerView } from './edit.js';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 /**
  *
@@ -52,7 +53,7 @@ const Inspector = ({
 	onSelectImages,
 	changePerView
 }) => {
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const {
 		responsiveSetAttributes,

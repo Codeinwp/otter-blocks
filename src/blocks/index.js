@@ -24,6 +24,7 @@ import {
 	otterIconColored as icon
 } from './helpers/icons.js';
 import { setUtm } from './helpers/helper-functions.js';
+import { GlobalStateMemory } from './helpers/block-utility';
 
 updateCategory( 'themeisle-blocks', { icon });
 updateCategory( 'themeisle-woocommerce-blocks', { icon });
@@ -115,3 +116,5 @@ domReady( () => {
 		gradient
 	);
 });
+
+window.otterStateMemory = new GlobalStateMemory();
