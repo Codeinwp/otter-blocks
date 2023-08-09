@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 // @ts-ignore
 import {
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem, DropdownMenu, MenuGroup, MenuItem, Toolbar, Spinner
+	__experimentalToolsPanelItem as ToolsPanelItem, DropdownMenu, MenuGroup, MenuItem, Toolbar, Spinner, ExternalLink
 } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -32,6 +32,7 @@ import { PromptsData, injectActionIntoPrompt, retrieveEmbeddedPrompt, sendPrompt
 import useSettings from '../../helpers/use-settings';
 import { openAiAPIKeyName } from '../../components/prompt';
 import { insertBlockBelow } from '../../helpers/block-utility';
+import { BlockProps } from '../../helpers/blocks';
 
 const isValidBlock =  ( blockName: string|undefined ) => {
 	if ( ! blockName ) {
@@ -39,13 +40,29 @@ const isValidBlock =  ( blockName: string|undefined ) => {
 	}
 
 	return [
-		'core/paragraph'
+		'core/paragraph',
+		'core/heading'
 	].some( ( name ) => name === blockName );
 };
 
-const extractContent = ( props ) => {
-	if ( 'core/paragraph' === props.name ) {
-		return props.attributes.content;
+/**
+ * Extract the content from a block or blocks.
+ *
+ * @param source The block or blocks to extract the content from.
+ */
+const extractContent = ( source: BlockProps<unknown> | BlockProps<unknown>[]): string => {
+
+	if ( Array.isArray( source ) ) {
+		return source.reduce( ( content: string, block: BlockProps<unknown> ) => {
+			return content + extractContent( block );
+		}, '' );
+	}
+
+	if (
+		'core/paragraph' === source.name ||
+		'core/heading' === source.name
+	) {
+		return source.attributes.content as string;
 	}
 
 	return '';
@@ -64,8 +81,24 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 		// Get the create notice function from the hooks api.
 		const { createNotice } = useDispatch( 'core/notices' );
 
+		const {
+			isMultipleSelection,
+			areValidBlocks,
+			selectedBlocks
+		} = useSelect( ( select ) => {
+			const selectedBlocks = select( 'core/block-editor' ).getMultiSelectedBlocks();
+
+			return {
+				isMultipleSelection: 1 < selectedBlocks.length,
+				areValidBlocks: selectedBlocks.every( ( block ) => isValidBlock( block.name ) ),
+				selectedBlocks
+			};
+		}, []);
+
 
 		useEffect( () => {
+
+			// TODO: retrieve the prompts from the server ONCE and cache them.
 			const getEmbeddedPrompt = async() => {
 				retrieveEmbeddedPrompt( 'textTransformation' ).then( ( promptServer ) => {
 					setEmbeddedPrompts( promptServer.prompts );
@@ -161,6 +194,8 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 					HTML: blockContentRaw
 				});
 
+				const clientId = ! isMultipleSelection ? props.clientId : selectedBlocks.pop().clientId;
+
 				insertBlockBelow( props.clientId, newBlocks );
 
 				setIsProcessing( prevState => ({ ...prevState, [ actionKey ]: false }) );
@@ -174,83 +209,110 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 		return (
 			<Fragment>
 				<BlockEdit { ...props } />
-
-				{ isValidBlock( props.name ) && props.isSelected && (
-					<BlockControls>
-						<Toolbar>
-							<DropdownMenu
-								icon={aiGeneration}
-								label={ __( 'Otter AI Content' ) }
-							>
-								{
-									({ onClose }) => (
-										<Fragment>
-											<MenuGroup>
-												<span className="o-menu-item-header">{__( 'Writing', 'otter-blocks' )}</span>
-												<MenuItem onClick={ () => {
-													generateContent( extractContent( props ), 'otter_action_generate_title', onClose );
-												} }>
-													{ __( 'Generate a title', 'otter-blocks' ) }
-													{ isProcessing?.['otter_action_generate_title'] && <Spinner /> }
-												</MenuItem>
-												<MenuItem  onClick={ () => {
-													generateContent( extractContent( props ), 'otter_action_continue_writing', onClose );
-												} }>
-													{ __( 'Continue writing', 'otter-blocks' ) }
-													{ isProcessing?.['otter_action_continue_writing'] && <Spinner /> }
-												</MenuItem>
-												<MenuItem  onClick={ () => {
-													generateContent( extractContent( props ), 'otter_action_summarize', onClose );
-												} }>
-													{ __( 'Summarize text', 'otter-blocks' ) }
-													{ isProcessing?.['otter_action_summarize'] && <Spinner /> }
-												</MenuItem>
-												<MenuItem  onClick={ () => {
-													generateContent( extractContent( props ), 'otter_action_make_shorter', onClose );
-												} }>
-													{ __( 'Make shorter', 'otter-blocks' ) }
-													{ isProcessing?.['otter_action_make_shorter'] && <Spinner /> }
-												</MenuItem>
-												<MenuItem  onClick={ () => {
-													generateContent( extractContent( props ), 'otter_action_make_longer', onClose );
-												} }>
-													{ __( 'Make longer', 'otter-blocks' ) }
-													{ isProcessing?.['otter_action_make_longer'] && <Spinner /> }
-												</MenuItem>
-											</MenuGroup>
-											<MenuGroup>
-												<span className="o-menu-item-header">{__( 'Tone', 'otter-blocks' )}</span>
-												<MenuItem  onClick={ () => {
-													generateContent( extractContent( props ), 'otter_action_tone_professional', onClose );
-												} }>
-													{ __( 'Professional', 'otter-blocks' ) }
-													{ isProcessing?.['otter_action_tone_professional'] && <Spinner /> }
-												</MenuItem>
-												<MenuItem  onClick={ () => {
-													generateContent( extractContent( props ), 'otter_action_tone_friendly', onClose );
-												} }>
-													{ __( 'Friendly', 'otter-blocks' ) }
-													{ isProcessing?.['otter_action_tone_friendly'] && <Spinner /> }
-												</MenuItem>
-												<MenuItem  onClick={ () => {
-													generateContent( extractContent( props ), 'otter_action_tone_humorous', onClose );
-												} }>
-													{ __( 'Humorous', 'otter-blocks' ) }
-													{ isProcessing?.['otter_action_tone_humorous'] && <Spinner /> }
-												</MenuItem>
-											</MenuGroup>
-											<MenuGroup>
-												<MenuItem onClick={ onClose }>
-													{ __( 'Discard changes', 'otter-blocks' ) }
-												</MenuItem>
-											</MenuGroup>
-										</Fragment>
-									)
-								}
-							</DropdownMenu>
-						</Toolbar>
-					</BlockControls>
-				) }
+				{(
+					( isValidBlock( props.name ) && props.isSelected ) || ( areValidBlocks && isMultipleSelection ) ) &&
+					(
+						<BlockControls>
+							<Toolbar>
+								<DropdownMenu
+									icon={aiGeneration}
+									label={ __( 'Otter AI Content' ) }
+								>
+									{
+										({ onClose }) => (
+											<Fragment>
+												<MenuGroup>
+													<span className="o-menu-item-header">{__( 'Writing', 'otter-blocks' )}</span>
+													<MenuItem onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_generate_title', onClose );
+													} }>
+														{ __( 'Generate a heading', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_generate_title'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_continue_writing', onClose );
+													} }>
+														{ __( 'Continue writing', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_continue_writing'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_summarize', onClose );
+													} }>
+														{ __( 'Summarize it', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_summarize'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_make_shorter', onClose );
+													} }>
+														{ __( 'Make it shorter', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_make_shorter'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_make_longer', onClose );
+													} }>
+														{ __( 'Make it longer', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_make_longer'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_make_descriptive', onClose );
+													} }>
+														{ __( 'Make it more descriptive', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_make_descriptive'] && <Spinner /> }
+													</MenuItem>
+												</MenuGroup>
+												<MenuGroup>
+													<span className="o-menu-item-header">{__( 'Tone', 'otter-blocks' )}</span>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_professional', onClose );
+													} }>
+														{ __( 'Professional', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_tone_professional'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_friendly', onClose );
+													} }>
+														{ __( 'Friendly', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_tone_friendly'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_humorous', onClose );
+													} }>
+														{ __( 'Humorous', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_tone_humorous'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_confident', onClose );
+													} }>
+														{ __( 'Confident', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_tone_confident'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_persuasive', onClose );
+													} }>
+														{ __( 'Persuasive', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_tone_persuasive'] && <Spinner /> }
+													</MenuItem>
+													<MenuItem  onClick={ () => {
+														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_casual', onClose );
+													} }>
+														{ __( 'Casual', 'otter-blocks' ) }
+														{ isProcessing?.['otter_action_tone_casual'] && <Spinner /> }
+													</MenuItem>
+												</MenuGroup>
+												<MenuGroup>
+													<ExternalLink href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions" target="_blank" rel="noopener noreferrer">
+														{
+															__( 'Go to docs', 'otter-blocks' ) // TODO: Add link to docs & CSS styling
+														}
+													</ExternalLink>
+												</MenuGroup>
+											</Fragment>
+										)
+									}
+								</DropdownMenu>
+							</Toolbar>
+						</BlockControls>
+					) }
 			</Fragment>
 		);
 	};

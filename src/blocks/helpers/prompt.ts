@@ -137,6 +137,8 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 				})
 			});
 
+			// TODO: Make a proxy in PHP
+
 			return await response.json() as ChatResponse;
 		} catch ( e ) {
 			return {
