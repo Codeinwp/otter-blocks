@@ -103,12 +103,7 @@ class Prompt_Server {
 			if ( $request->get_param( 'name' ) !== null ) {
 				$prompts = false !== $prompts ? $prompts : $response['prompts'];
 				// Prompt can be filtered by name. By filtering by name, we can get only the prompt we need and save some bandwidth.
-				$response['prompts'] = array_filter(
-					$prompts,
-					function ( $prompt ) use ( $request ) {
-						return $prompt['otter_name'] === $request->get_param( 'name' );
-					}
-				);
+				$response['prompts'] = $prompts; // TODO: temporary change. The original did not give an array as JSON response.
 
 				if ( empty( $response['prompts'] ) ) {
 					$response['prompts'] = array();
@@ -146,7 +141,7 @@ class Prompt_Server {
 				'license_id' => apply_filters( 'product_otter_license_key', 'free' ),
 				'cache'      => gmdate( 'u' ),
 			),
-			'https://api.themeisle.com/templates-cloud/otter-prompts'
+			'http://localhost:3000/prompts' // TODO: change to https://api.themeisle.com/otter/prompts when it is ready.
 		);
 
 		$response = '';

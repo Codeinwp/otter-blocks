@@ -492,7 +492,8 @@ export function insertBlockBelow( clientId, block ) {
 	} = select( 'core/block-editor' );
 
 	const {
-		insertBlock
+		insertBlock,
+		insertBlocks
 	} = dispatch( 'core/block-editor' );
 
 	const rootClientId = getBlockRootClientId( clientId );
@@ -503,5 +504,11 @@ export function insertBlockBelow( clientId, block ) {
 	}
 
 	const index = getBlockIndex( clientId, rootClientId );
+
+	// If the block is an array of blocks, insert them all.
+	if ( Array.isArray( block ) ) {
+		return insertBlocks( block, index + 1, rootClientId );
+	}
+
 	insertBlock( block, index + 1, rootClientId );
 }

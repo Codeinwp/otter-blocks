@@ -34,7 +34,7 @@ type PromptPlaceholderProps = {
 	actionButtons?: ( props: {status?: string}) => ReactNode
 };
 
-export const apiKeyName = 'themeisle_open_ai_api_key';
+export const openAiAPIKeyName = 'themeisle_open_ai_api_key';
 
 const PromptBlockEditor = (
 	props: {
@@ -159,9 +159,9 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		}
 
 		if ( 'loaded' === status ) {
-			if ( getOption( apiKeyName ) ) {
+			if ( getOption( openAiAPIKeyName ) ) {
 				setApiKeyStatus( 'present' );
-				setApiKey( getOption( apiKeyName ) );
+				setApiKey( getOption( openAiAPIKeyName ) );
 			} else {
 				setApiKeyStatus( 'missing' );
 			}
@@ -297,7 +297,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 											return;
 										}
 
-										updateOption( apiKeyName, apiKey.slice(), __( 'Open AI API Key saved.', 'otter-blocks' ), 'o-api-key', () => {
+										updateOption( openAiAPIKeyName, apiKey.slice(), __( 'Open AI API Key saved.', 'otter-blocks' ), 'o-api-key', () => {
 											setApiKey( '' );
 										});
 										setApiKeyStatus( 'checking' );

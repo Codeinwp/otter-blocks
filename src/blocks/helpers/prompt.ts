@@ -76,7 +76,7 @@ export type PromptData = {
 	function_call: {
 		[key: string]: string
 	}
-}
+} & Record<string, string>
 
 export type PromptsData = PromptData[]
 
@@ -242,4 +242,20 @@ export function retrieveEmbeddedPrompt( promptName ?: string ) {
 		}),
 		method: 'GET'
 	});
+}
+
+export function injectActionIntoPrompt( embeddedPrompt: PromptData, actionPrompt: string ): PromptData {
+	return {
+		...embeddedPrompt,
+		messages: embeddedPrompt.messages.map( ( message ) => {
+			if ( 'user' === message.role && message.content.includes( '{ACTION}' ) ) {
+				return {
+					role: 'user',
+					content: message.content.replace( '{ACTION}', actionPrompt )
+				};
+			}
+
+			return message;
+		})
+	} as PromptData;
 }
