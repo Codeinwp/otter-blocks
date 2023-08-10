@@ -193,6 +193,7 @@ class Prompt_Server {
 					'Content-Type'  => 'application/json',
 				),
 				'body'    => wp_json_encode( $body ),
+				'timeout' => 2 * MINUTE_IN_SECONDS,
 			)
 		);
 
