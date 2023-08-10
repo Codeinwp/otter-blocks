@@ -77,7 +77,6 @@ class Form_Emails_Storing {
 		add_action( 'transition_post_status', array( $this, 'apply_hooks_on_draft_transition' ), 10, 3 );
 		add_action( 'otter_form_update_record_meta_dump', array( $this, 'update_submission_dump_data' ), 10, 2 );
 		add_action( 'otter_form_automatic_confirmation', array( $this, 'move_old_stripe_draft_sessions_to_unread' ) );
-		add_filter( 'cron_schedules', array( $this, 'form_confirmation_schedule' ) );
 		add_action( 'wp', array( $this, 'schedule_automatic_confirmation' ) );
 	}
 
@@ -1314,28 +1313,13 @@ class Form_Emails_Storing {
 	}
 
 	/**
-	 * Add a new cron schedule for automatic submission confirmation.
-	 *
-	 * @param array $schedules The schedules.
-	 * @return array
-	 */
-	public function form_confirmation_schedule( $schedules ) {
-		$schedules['otter_every_hour'] = array(
-			'interval' => HOUR_IN_SECONDS,
-			'display'  => esc_html__( 'Every hour', 'otter-blocks' ),
-		);
-
-		return $schedules;
-	}
-
-	/**
 	 * Schedule the automatic confirmation.
 	 *
 	 * @return void
 	 */
 	public function schedule_automatic_confirmation() {
 		if ( ! wp_next_scheduled( 'otter_form_confirmation' ) ) {
-			wp_schedule_event( time(), 'otter_every_hour', 'otter_form_automatic_confirmation' );
+			wp_schedule_event( time(), 'hourly', 'otter_form_automatic_confirmation' );
 		}
 	}
 

@@ -10,10 +10,6 @@ namespace ThemeIsle\OtterPro\Plugins;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
-use ThemeIsle\GutenbergBlocks\Server\Form_Server;
-use WP_Error;
-use WP_HTTP_Response;
-use WP_REST_Response;
 
 /**
  * Class Form_Pro_Features
@@ -619,6 +615,8 @@ class Form_Pro_Features {
 		$payload['success_url'] = $permalink;
 		$payload['cancel_url']  = $permalink;
 
+		// For @HardeepAsrani: by pre-filling the customer email, it will appear in the Stripe Checkout page without the possibility to change it. You can try it first then we can remove it if you want.
+		// TODO: remove the above message after Code Review. 
 		$customer_email = $form_data->get_first_email_from_input_fields();
 		if ( ! empty( $customer_email ) ) {
 			$payload['customer_email'] = $customer_email;
@@ -636,7 +634,6 @@ class Form_Pro_Features {
 
 
 		// Create the metadata array for the Stripe session request.
-		// TODO: Save also the record ID.
 		$raw_metadata = $this->prepare_webhook_payload( array(), $form_data, null );
 		$metadata     = array();
 		foreach ( $raw_metadata as $key => $value ) {
