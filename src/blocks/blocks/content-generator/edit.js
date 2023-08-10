@@ -23,7 +23,7 @@ import {
 	useState
 } from '@wordpress/element';
 
-import { createBlock, createBlocksFromInnerBlocksTemplate } from '@wordpress/blocks';
+import { createBlock, rawHandler } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -68,7 +68,8 @@ const ContentGenerator = ({
 		selectBlock,
 		moveBlockToPosition,
 		insertBlocks,
-		replaceBlock
+		replaceBlock,
+		replaceBlocks
 	} = useDispatch( 'core/block-editor' );
 
 	/**
@@ -84,6 +85,14 @@ const ContentGenerator = ({
 			const form = createBlock( 'themeisle-blocks/form', {}, formFields );
 
 			replaceInnerBlocks( clientId, [ form ]);
+		}
+
+		if ( 'textTransformation' === attributes.promptID ) {
+			const blocks = rawHandler({
+				HTML: result
+			});
+
+			replaceInnerBlocks( clientId, blocks );
 		}
 	};
 
@@ -106,21 +115,29 @@ const ContentGenerator = ({
 		[ clientId ]
 	);
 
-	const transformToContainerBlock = () => {
-		const container = getBlock( containerId );
+	/**
+	 * Replace the block with the blocks generated from the prompt response
+	 */
+	const selfReplaceWithContent = () => {
+		const blocks = getBlocks( clientId );
 
-		replaceBlock( clientId, container );
+		replaceBlocks( clientId, blocks );
 	};
 
-	const insertNewBlockFromContainer = () => {
-		const containerBlock = getBlock( containerId );
-		const copy = createBlock(
-			containerBlock.name,
-			containerBlock.attributes,
-			containerBlock.innerBlocks?.map( block => {
-				return createBlock( block.name, block.attributes, block.innerBlocks );
-			})
-		);
+	/**
+	 * Insert the blocks generated from the prompt response below the current block
+	 */
+	const insertContentIntoPage = () => {
+		const blocks = getBlocks( clientId );
+		const copy = blocks.map( blockRoot => {
+			return createBlock(
+				blockRoot.name,
+				blockRoot.attributes,
+				blockRoot.innerBlocks?.map( block => {
+					return createBlock( block.name, block.attributes, block.innerBlocks );
+				})
+			);
+		});
 
 		insertBlockBelow( clientId, copy );
 	};
@@ -144,21 +161,45 @@ const ContentGenerator = ({
 
 	const PRESETS = {
 		form: {
-			title: __( 'AI Form generator (Beta)', 'otter-blocks' ),
+			title: __( 'AI Form generator', 'otter-blocks' ),
 			placeholder: __( 'Start describing what form you need...', 'otter-blocks' ),
 			actions: ( props ) => {
 				return (
 					<Fragment>
 						<Button
 							variant="primary"
-							onClick={transformToContainerBlock}
+							onClick={selfReplaceWithContent}
 							disabled={'loading' === props.status}
 						>
 							{__( 'Replace', 'otter-blocks' )}
 						</Button>
 						<Button
 							variant="secondary"
-							onClick={insertNewBlockFromContainer}
+							onClick={insertContentIntoPage}
+							disabled={'loading' === props.status}
+						>
+							{__( 'Insert below', 'otter-blocks' )}
+						</Button>
+					</Fragment>
+				);
+			}
+		},
+		textTransformation: {
+			title: __( 'AI Content generator', 'otter-blocks' ),
+			placeholder: __( 'Start describing what content you need...', 'otter-blocks' ),
+			actions: ( props ) => {
+				return (
+					<Fragment>
+						<Button
+							variant="primary"
+							onClick={selfReplaceWithContent}
+							disabled={'loading' === props.status}
+						>
+							{__( 'Replace', 'otter-blocks' )}
+						</Button>
+						<Button
+							variant="secondary"
+							onClick={insertContentIntoPage}
 							disabled={'loading' === props.status}
 						>
 							{__( 'Insert below', 'otter-blocks' )}
@@ -168,44 +209,6 @@ const ContentGenerator = ({
 			}
 		}
 	};
-
-
-	// INFO: those are function for changing the content of an existing block.
-	// const [ showDropdown, setShowDropdown ] = useState( false );
-	// const [ containerClientId, setContainerClientId ] = useState( '' );
-	//
-	// const canReplaceBlock = useSelect( select => {
-	// 	const { getBlocks } = select( 'core/block-editor' );
-	//
-	// 	return ( getBlocks?.() ?? []).some( block => block.clientId === attributes.blockToReplace );
-	// }, [ clientId, attributes.blockToReplace ]);
-	//
-	// const replaceTargetBlock = () => {
-	//
-	// 	const blocksToAdd = getBlocks?.( containerId )?.map( block => {
-	// 		return createBlock( block.name, block.attributes, block.innerBlocks );
-	// 	}) ?? [];
-	//
-	// 	if ( ! blocksToAdd.length ) {
-	// 		return;
-	// 	}
-	//
-	// 	replaceInnerBlocks( attributes.blockToReplace, blocksToAdd );
-	// };
-	//
-	// const appendToTargetBlock = () => {
-	// 	const blocksToAdd = getBlocks?.( containerId )?.map( block => {
-	// 		return createBlock( block.name, block.attributes, block.innerBlocks );
-	// 	}) ?? [];
-	//
-	// 	const targetBlock = getBlock( attributes.blockToReplace );
-	//
-	// 	if ( ! blocksToAdd.length ) {
-	// 		return;
-	// 	}
-	//
-	// 	insertBlocks( blocksToAdd, targetBlock.innerBlocks?.length ?? 0, attributes.blockToReplace );
-	// };
 
 	return (
 		<Fragment>
@@ -256,3 +259,40 @@ const ContentGenerator = ({
 };
 
 export default ContentGenerator;
+
+// INFO: those are function for changing the content of an existing block.
+// const [ showDropdown, setShowDropdown ] = useState( false );
+// const [ containerClientId, setContainerClientId ] = useState( '' );
+//
+// const canReplaceBlock = useSelect( select => {
+// 	const { getBlocks } = select( 'core/block-editor' );
+//
+// 	return ( getBlocks?.() ?? []).some( block => block.clientId === attributes.blockToReplace );
+// }, [ clientId, attributes.blockToReplace ]);
+//
+// const replaceTargetBlock = () => {
+//
+// 	const blocksToAdd = getBlocks?.( containerId )?.map( block => {
+// 		return createBlock( block.name, block.attributes, block.innerBlocks );
+// 	}) ?? [];
+//
+// 	if ( ! blocksToAdd.length ) {
+// 		return;
+// 	}
+//
+// 	replaceInnerBlocks( attributes.blockToReplace, blocksToAdd );
+// };
+//
+// const appendToTargetBlock = () => {
+// 	const blocksToAdd = getBlocks?.( containerId )?.map( block => {
+// 		return createBlock( block.name, block.attributes, block.innerBlocks );
+// 	}) ?? [];
+//
+// 	const targetBlock = getBlock( attributes.blockToReplace );
+//
+// 	if ( ! blocksToAdd.length ) {
+// 		return;
+// 	}
+//
+// 	insertBlocks( blocksToAdd, targetBlock.innerBlocks?.length ?? 0, attributes.blockToReplace );
+// };

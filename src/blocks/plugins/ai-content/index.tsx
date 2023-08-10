@@ -5,8 +5,13 @@ import { __ } from '@wordpress/i18n';
 
 // @ts-ignore
 import {
-	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem, DropdownMenu, MenuGroup, MenuItem, Toolbar, Spinner, ExternalLink
+	DropdownMenu,
+	MenuGroup,
+	MenuItem,
+	Toolbar,
+	Spinner,
+	ExternalLink,
+	Disabled
 } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -19,13 +24,12 @@ import {
 } from '@wordpress/hooks';
 
 import { useDispatch, useSelect } from '@wordpress/data';
-import { rawHandler, serialize } from '@wordpress/blocks';
-import { store as blockEditorStore } from '@wordpress/block-editor';
+import { rawHandler } from '@wordpress/blocks';
+import { BlockControls } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies.
  */
-import { BlockControls } from '@wordpress/block-editor';
 import { aiGeneration } from '../../helpers/icons';
 import './editor.scss';
 import { PromptsData, injectActionIntoPrompt, retrieveEmbeddedPrompt, sendPromptToOpenAI } from '../../helpers/prompt';
@@ -72,7 +76,6 @@ let embeddedPromptsCache: PromptsData|null = null;
 
 const withConditions = createHigherOrderComponent( BlockEdit => {
 	return props => {
-		const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData|null>( null );
 		const [ getOption, updateOption, status ] = useSettings();
 		const [ apiKey, setApiKey ] = useState<string | null>( null );
 		const [ isProcessing, setIsProcessing ] = useState<Record<string, boolean>>({});
@@ -93,23 +96,6 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 				areValidBlocks: selectedBlocks.every( ( block ) => isValidBlock( block.name ) ),
 				selectedBlocks
 			};
-		}, []);
-
-
-		useEffect( () => {
-
-			// TODO: retrieve the prompts from the server ONCE and cache them.
-			const getEmbeddedPrompt = async() => {
-				retrieveEmbeddedPrompt( 'textTransformation' ).then( ( promptServer ) => {
-					setEmbeddedPrompts( promptServer.prompts );
-					embeddedPromptsCache = promptServer.prompts;
-				});
-			};
-
-			if ( ! embeddedPromptsCache ) {
-				console.count( 'getEmbeddedPrompt' ); // TODO: remove after prototyping
-				getEmbeddedPrompt();
-			}
 		}, []);
 
 		useEffect( () => {
@@ -142,11 +128,16 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 			setDisplayError( undefined );
 		}, [ displayError ]);
 
-		const generateContent = ( content: string, actionKey: string, callback: Function = () =>{}) => {
+		const generateContent = async( content: string, actionKey: string, callback: Function = () =>{}) => {
 
 			if ( ! content ) {
 				setDisplayError( __( 'No content detected in selected block.', 'otter-blocks' ) );
 				return;
+			}
+
+			if ( ! embeddedPromptsCache ) {
+				const response = await retrieveEmbeddedPrompt( 'textTransformation' );
+				embeddedPromptsCache = response?.prompts ?? [];
 			}
 
 			const embeddedPrompt = embeddedPromptsCache?.find( ( prompt ) => 'textTransformation' === prompt.otter_name );
@@ -206,6 +197,21 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 			});
 		};
 
+		const ActionMenuItem = ( args: { actionKey: string, children: React.ReactNode, callback: Function }) => {
+			return (
+				<Disabled isDisabled={Object.values( isProcessing ).some( x => x )}>
+					<MenuItem
+						onClick={ () => {
+							generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), args.actionKey, () => args.callback?.( args.actionKey ) );
+						}}
+					>
+						{ args.children }
+						{ isProcessing?.[args.actionKey] && <Spinner /> }
+					</MenuItem>
+				</Disabled>
+			);
+		};
+
 		return (
 			<Fragment>
 				<BlockEdit { ...props } />
@@ -222,85 +228,49 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 										({ onClose }) => (
 											<Fragment>
 												<MenuGroup>
-													<span className="o-menu-item-header">{__( 'Writing', 'otter-blocks' )}</span>
-													<MenuItem onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_generate_title', onClose );
-													} }>
+													<span className="o-menu-item-header o-menu-item-alignment">{__( 'Writing', 'otter-blocks' )}</span>
+													<ActionMenuItem actionKey='otter_action_generate_title' callback={onClose}>
 														{ __( 'Generate a heading', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_generate_title'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_continue_writing', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_continue_writing' callback={onClose}>
 														{ __( 'Continue writing', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_continue_writing'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_summarize', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_summarize' callback={onClose}>
 														{ __( 'Summarize it', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_summarize'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_make_shorter', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_make_shorter' callback={onClose}>
 														{ __( 'Make it shorter', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_make_shorter'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_make_longer', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_make_longer' callback={onClose}>
 														{ __( 'Make it longer', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_make_longer'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_make_descriptive', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_make_longer' callback={onClose}>
 														{ __( 'Make it more descriptive', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_make_descriptive'] && <Spinner /> }
-													</MenuItem>
+													</ActionMenuItem>
 												</MenuGroup>
 												<MenuGroup>
-													<span className="o-menu-item-header">{__( 'Tone', 'otter-blocks' )}</span>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_professional', onClose );
-													} }>
+													<span className="o-menu-item-header o-menu-item-alignment">{__( 'Tone', 'otter-blocks' )}</span>
+													<ActionMenuItem actionKey='otter_action_tone_professional' callback={onClose}>
 														{ __( 'Professional', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_tone_professional'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_friendly', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_tone_friendly' callback={onClose}>
 														{ __( 'Friendly', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_tone_friendly'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_humorous', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_tone_humorous' callback={onClose}>
 														{ __( 'Humorous', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_tone_humorous'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_confident', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_tone_confident' callback={onClose}>
 														{ __( 'Confident', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_tone_confident'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_persuasive', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_tone_persuasive' callback={onClose}>
 														{ __( 'Persuasive', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_tone_persuasive'] && <Spinner /> }
-													</MenuItem>
-													<MenuItem  onClick={ () => {
-														generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), 'otter_action_tone_casual', onClose );
-													} }>
+													</ActionMenuItem>
+													<ActionMenuItem actionKey='otter_action_tone_casual' callback={onClose}>
 														{ __( 'Casual', 'otter-blocks' ) }
-														{ isProcessing?.['otter_action_tone_casual'] && <Spinner /> }
-													</MenuItem>
+													</ActionMenuItem>
 												</MenuGroup>
 												<MenuGroup>
-													<ExternalLink href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions" target="_blank" rel="noopener noreferrer">
+													<ExternalLink className='o-menu-item-alignment' href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions" target="_blank" rel="noopener noreferrer">
 														{
 															__( 'Go to docs', 'otter-blocks' ) // TODO: Add link to docs & CSS styling
 														}

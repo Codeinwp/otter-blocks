@@ -15,6 +15,7 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
 import useSettings from '../../helpers/use-settings';
 import {
 	PromptsData,
+	injectActionIntoPrompt,
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
@@ -197,12 +198,17 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	function onPromptSubmit( regenerate = false ) {
 
-		const embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
+		let embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
 
 		if ( ! embeddedPrompt ) {
 			setShowError( true );
 			setErrorMessage( __( 'Prompt not found. Reload the page. If the error still persist the server might be down.', 'otter-blocks' ) );
 			return;
+		}
+
+		// TODO: refactor this into a more reusable way
+		if ( 'textTransformation' === promptID ) {
+			embeddedPrompt = injectActionIntoPrompt( embeddedPrompt, 'otter_action_prompt' );
 		}
 
 		if ( ! apiKey ) {
@@ -223,7 +229,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				return;
 			}
 
-			const result = data?.choices?.[0]?.message?.function_call?.arguments;
+			const result = data?.choices?.[0]?.message?.function_call?.arguments ?? data?.choices?.[0]?.message?.content;
 
 			setGenerationStatus( 'loaded' );
 
