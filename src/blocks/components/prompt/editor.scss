@@ -42,6 +42,10 @@
 	align-items: center;
 	justify-content: center;
 	margin-top: 10px;
+	
+	:not(:last-child) {
+		margin-bottom: 10px;
+	}
 
 	.prompt-input__input__container {
 		display: flex;

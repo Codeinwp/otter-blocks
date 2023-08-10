@@ -105,7 +105,6 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 
 			if ( 'loaded' === status && ! apiKey ) {
 				if ( getOption( openAiAPIKeyName ) ) {
-					console.log( getOption( openAiAPIKeyName ) );
 					setApiKey( getOption( openAiAPIKeyName ) );
 				}
 			}
@@ -166,7 +165,11 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 				injectActionIntoPrompt(
 					embeddedPrompt,
 					action
-				)
+				),
+				{
+					'otter_used_action': `textTransformation::${ actionKey }`,
+					'otter_user_content': content
+				}
 			).then( ( response ) => {
 				if ( response.error ) {
 					setDisplayError( response.error );
@@ -267,6 +270,11 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 													</ActionMenuItem>
 													<ActionMenuItem actionKey='otter_action_tone_casual' callback={onClose}>
 														{ __( 'Casual', 'otter-blocks' ) }
+													</ActionMenuItem>
+												</MenuGroup>
+												<MenuGroup>
+													<ActionMenuItem actionKey='otter_action_prompt' callback={onClose}>
+														{ __( 'Use as prompt', 'otter-blocks' ) }
 													</ActionMenuItem>
 												</MenuGroup>
 												<MenuGroup>

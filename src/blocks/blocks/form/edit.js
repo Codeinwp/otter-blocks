@@ -59,9 +59,7 @@ import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
-import PromptPlaceholder from '../../components/prompt';
-import { parseFormPromptResponseToBlocks, sendPromptToOpenAI } from '../../helpers/prompt';
-import { aiGeneration, formAiGeneration } from '../../helpers/icons';
+import { aiGeneration } from '../../helpers/icons';
 
 const { attributes: defaultAttributes } = metadata;
 

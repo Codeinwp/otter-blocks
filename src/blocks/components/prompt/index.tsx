@@ -208,7 +208,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		// TODO: refactor this into a more reusable way
 		if ( 'textTransformation' === promptID ) {
-			embeddedPrompt = injectActionIntoPrompt( embeddedPrompt, 'otter_action_prompt' );
+			const action = embeddedPrompt?.['otter_action_prompt'] ?? '';
+			embeddedPrompt = injectActionIntoPrompt( embeddedPrompt, action );
 		}
 
 		if ( ! apiKey ) {
@@ -221,7 +222,10 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		const sendPrompt = regenerate ? sendPromptToOpenAIWithRegenerate : sendPromptToOpenAI;
 
-		sendPrompt?.( value, apiKey, embeddedPrompt ).then ( ( data ) => {
+		sendPrompt?.( value, apiKey, embeddedPrompt, {
+			'otter_used_action': 'textTransformation' === promptID ? 'textTransformation::otter_action_prompt' : ( promptID ?? '' ),
+			'otter_user_content': value
+		}).then ( ( data ) => {
 			if ( data?.error ) {
 				setGenerationStatus( 'error' );
 				setShowError( true );
