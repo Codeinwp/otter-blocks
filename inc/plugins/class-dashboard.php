@@ -253,6 +253,11 @@ class Dashboard {
 			.otter-banner__version {
 				align-self: center;
 			}
+
+			/* Hide the "Add New" button for Multisite WP */
+			a.page-title-action {
+				display: none;
+			}
 		</style>
 		<div class="otter-banner">
 			<div class="otter-banner__image">
