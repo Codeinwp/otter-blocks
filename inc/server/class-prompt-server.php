@@ -303,7 +303,7 @@ class Prompt_Server {
 		$response = json_decode( $response, true );
 
 		if ( ! is_array( $response ) || 0 === count( $response ) || ! $this->check_prompt_structure( $response ) ) {
-			set_transient( $this->timeout_transient, '1', HOUR_IN_SECONDS );
+			set_transient( $this->timeout_transient, '1', 5 * MINUTE_IN_SECONDS );
 			return array(
 				'response' => array(),
 				'code'     => '2',
