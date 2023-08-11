@@ -614,14 +614,7 @@ class Form_Pro_Features {
 
 		$payload['success_url'] = $permalink;
 		$payload['cancel_url']  = $permalink;
-
-		// For @HardeepAsrani: by pre-filling the customer email, it will appear in the Stripe Checkout page without the possibility to change it. You can try it first then we can remove it if you want.
-		// TODO: remove the above message after Code Review. 
-		$customer_email = $form_data->get_first_email_from_input_fields();
-		if ( ! empty( $customer_email ) ) {
-			$payload['customer_email'] = $customer_email;
-		}
-
+		
 		// Prepare the line items for the Stripe session request.
 		$line_items = array();
 		foreach ( $products_to_process as $product ) {

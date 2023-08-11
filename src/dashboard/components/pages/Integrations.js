@@ -41,18 +41,12 @@ const Integrations = () => {
 
 	useEffect( () => {
 		setStripeAPI( getOption( 'themeisle_stripe_api_key' ) );
-		setStripePublicKey( getOption( 'themeisle_stripe_public_api_key' ) );
 	}, [ getOption( 'themeisle_stripe_api_key' ) ]);
-
-	useEffect( () => {
-		setStripePublicKey( getOption( 'themeisle_stripe_public_api_key' ) );
-	}, [ getOption( 'themeisle_stripe_public_api_key' ) ]);
 
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 	const [ stripeAPI, setStripeAPI ] = useState( '' );
-	const [ stripePublicKey, setStripePublicKey ] = useState( '' );
 
 	let ProModules = () => {
 		return (
@@ -182,19 +176,10 @@ const Integrations = () => {
 						className="otter-button-field"
 					>
 						<TextControl
-							type="text"
-							label={ __( 'Publishable key (Optional)', 'otter-blocks' ) }
-							value={ stripePublicKey }
-							placeholder={ __( 'Insert the API Key', 'otter-blocks' ) }
-							disabled={ 'saving' === status }
-							onChange={ value => setStripePublicKey( value ) }
-						/>
-
-						<TextControl
 							type="password"
 							label={ __( 'Secret Key', 'otter-blocks' ) }
 							value={ stripeAPI }
-							placeholder={ __( 'Insert the API Key', 'otter-blocks' ) }
+							placeholder={ __( 'Stripe API Key', 'otter-blocks' ) }
 							disabled={ 'saving' === status }
 							onChange={ value => setStripeAPI( value ) }
 						/>
@@ -204,10 +189,7 @@ const Integrations = () => {
 								variant="secondary"
 								isSecondary
 								disabled={ 'saving' === status }
-								onClick={ () => {
-									updateOption( 'themeisle_stripe_api_key', stripeAPI );
-									updateOption( 'themeisle_stripe_public_api_key', stripePublicKey );
-								} }
+								onClick={ () => updateOption( 'themeisle_stripe_api_key', stripeAPI ) }
 							>
 								{ __( 'Save', 'otter-blocks' ) }
 							</Button>
