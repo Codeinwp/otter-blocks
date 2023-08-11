@@ -118,7 +118,7 @@ class Prompt_Server {
 
 
 		if ( isset( $otter_data['otter_used_action'] ) && isset( $otter_data['otter_user_content'] ) ) {
-			
+
 			$action       = $otter_data['otter_used_action'];
 			$user_content = $otter_data['otter_user_content'];
 
@@ -183,7 +183,7 @@ class Prompt_Server {
 			update_option( 'themeisle_otter_ai_usage', $usage );
 		}
 
-		
+
 		$response = wp_remote_post(
 			$open_ai_endpoint,
 			array(
@@ -203,7 +203,7 @@ class Prompt_Server {
 
 		$body = wp_remote_retrieve_body( $response );
 		$body = json_decode( $body, true );
-		
+
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
 			return new \WP_Error( 'rest_invalid_json', __( 'Invalid JSON body.', 'otter-blocks' ), array( 'status' => 400 ) );
 		}
@@ -237,7 +237,17 @@ class Prompt_Server {
 		if ( '0' === $response['code'] ) {
 			if ( $request->get_param( 'name' ) !== null ) {
 				$prompts = false !== $prompts ? $prompts : $response['prompts'];
+
 				// Prompt can be filtered by name. By filtering by name, we can get only the prompt we need and save some bandwidth.
+				$prompts = array_values( array_filter(
+					$prompts,
+					function ( $prompt ) use ( $request ) {
+						return $prompt['otter_name'] === $request->get_param( 'name' );
+					}
+				) );
+
+
+
 				$response['prompts'] = $prompts; // TODO: temporary change. The original did not give an array as JSON response.
 
 				if ( empty( $response['prompts'] ) ) {
@@ -276,7 +286,7 @@ class Prompt_Server {
 				'license_id' => apply_filters( 'product_otter_license_key', 'free' ),
 				'cache'      => gmdate( 'u' ),
 			),
-			'http://localhost:3000/prompts' // TODO: change to https://api.themeisle.com/otter/prompts when it is ready.
+			'https://qm5dr6t4f4.execute-api.us-east-1.amazonaws.com/default/prompts' // TODO: change to https://api.themeisle.com/otter/prompts when it is ready.
 		);
 
 		$response = '';
@@ -302,9 +312,9 @@ class Prompt_Server {
 		set_transient( $this->transient_prompts, $response, WEEK_IN_SECONDS );
 
 		return array(
-			'response' => $response,
-			'code'     => '0',
-			'error'    => '',
+			'prompts' => $response,
+			'code'    => '0',
+			'error'   => '',
 		);
 	}
 
