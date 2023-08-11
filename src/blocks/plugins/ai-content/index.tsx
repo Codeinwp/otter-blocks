@@ -161,7 +161,6 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 			setIsProcessing( prevState => ({ ...prevState, [ actionKey ]: true }) );
 			sendPromptToOpenAI(
 				content,
-				apiKey,
 				injectActionIntoPrompt(
 					embeddedPrompt,
 					action
@@ -172,10 +171,9 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 				}
 			).then( ( response ) => {
 				if ( response.error ) {
-					setDisplayError( response.error );
+					setDisplayError( response.error?.message ?? response.error );
 					return;
 				}
-				console.log( response );
 
 				console.log( response?.choices?.[0]?.message.content );
 				const blockContentRaw = response?.choices?.[0]?.message.content;
@@ -230,6 +228,20 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 									{
 										({ onClose }) => (
 											<Fragment>
+												{
+													( ! apiKey || 0 === apiKey.length ) && (
+														<MenuGroup>
+															<span className='o-menu-item-alignment' style={{ display: 'block', marginBottom: '10px' }}>
+																{ __( 'Please add your OpenAI API key in Integrations.', 'otter-blocks' ) }
+															</span>
+															<ExternalLink className='o-menu-item-alignment' href={window.themeisleGutenberg.optionsPath} target="_blank" rel="noopener noreferrer">
+																{
+																	__( 'Go to Dashboard', 'otter-blocks' )
+																}
+															</ExternalLink>
+														</MenuGroup>
+													)
+												}
 												<MenuGroup>
 													<span className="o-menu-item-header o-menu-item-alignment">{__( 'Writing', 'otter-blocks' )}</span>
 													<ActionMenuItem actionKey='otter_action_generate_title' callback={onClose}>

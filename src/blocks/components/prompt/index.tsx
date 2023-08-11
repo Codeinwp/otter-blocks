@@ -222,7 +222,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		const sendPrompt = regenerate ? sendPromptToOpenAIWithRegenerate : sendPromptToOpenAI;
 
-		sendPrompt?.( value, apiKey, embeddedPrompt, {
+		sendPrompt?.( value, embeddedPrompt, {
 			'otter_used_action': 'textTransformation' === promptID ? 'textTransformation::otter_action_prompt' : ( promptID ?? '' ),
 			'otter_user_content': value
 		}).then ( ( data ) => {

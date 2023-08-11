@@ -98,7 +98,7 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 	};
 
 	// TODO: remove the apiKey from the function definition.
-	return async( prompt: string, apiKey: string, embeddedPrompt: PromptData, metadata: Record<string, string> ) => {
+	return async( prompt: string, embeddedPrompt: PromptData, metadata: Record<string, string> ) => {
 		const body = {
 			...embeddedPrompt,
 			messages: embeddedPrompt.messages.map( ( message ) => {
@@ -138,7 +138,7 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 			return {
 				error: {
 					code: 'system',
-					message: e.message
+					message: e.error?.message ?? e.error
 				}
 			};
 		}

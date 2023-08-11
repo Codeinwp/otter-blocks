@@ -43,10 +43,15 @@ const Integrations = () => {
 		setStripeAPI( getOption( 'themeisle_stripe_api_key' ) );
 	}, [ getOption( 'themeisle_stripe_api_key' ) ]);
 
+	useEffect( () => {
+		setOpenAISecretKey( getOption( 'themeisle_open_ai_api_key' ) );
+	}, [ getOption( 'themeisle_open_ai_api_key' ) ]);
+
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 	const [ stripeAPI, setStripeAPI ] = useState( '' );
+	const [ openAISecretKey, setOpenAISecretKey ] = useState( '' );
 
 	let ProModules = () => {
 		return (
@@ -202,6 +207,51 @@ const Integrations = () => {
 
 							<ExternalLink
 								href="https://docs.themeisle.com/article/1688-integrations-related-blocks#stripe-checkout"
+							>
+								{ __( 'More Info', 'otter-blocks' ) }
+							</ExternalLink>
+						</div>
+					</BaseControl>
+				</PanelRow>
+			</PanelBody>
+			<PanelBody
+				title={ __( 'Open AI', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<PanelRow>
+					<BaseControl
+						label={ __( 'Open API', 'otter-blocks' ) }
+						help={ __( 'In order to use AI Block, you need to use OpenAI API.', 'otter-blocks' ) }
+						id="otter-options-stripe-api"
+						className="otter-button-field"
+					>
+						<TextControl
+							type="password"
+							label={ __( 'Secret Key', 'otter-blocks' ) }
+							value={ openAISecretKey }
+							placeholder={ __( 'OpenAI API Key', 'otter-blocks' ) }
+							disabled={ 'saving' === status }
+							onChange={ value => setOpenAISecretKey( value ) }
+						/>
+
+						<div className="otter-button-group">
+							<Button
+								variant="secondary"
+								isSecondary
+								disabled={ 'saving' === status }
+								onClick={ () => updateOption( 'themeisle_open_ai_api_key', openAISecretKey ) }
+							>
+								{ __( 'Save', 'otter-blocks' ) }
+							</Button>
+
+							<ExternalLink
+								href="https://platform.openai.com/account/api-keys"
+							>
+								{ __( 'Get API Key', 'otter-blocks' ) }
+							</ExternalLink>
+
+							<ExternalLink
+								href="https://docs.themeisle.com/article/1674-form-blocks#ai-form"
 							>
 								{ __( 'More Info', 'otter-blocks' ) }
 							</ExternalLink>
