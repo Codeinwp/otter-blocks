@@ -308,6 +308,13 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+##### [Version 2.3.3](https://github.com/Codeinwp/otter-blocks/compare/v2.3.2...v2.3.3) (2023-08-11)
+
+- WordPress 6.3 Compatibility
+
+
+
+
 ##### [Version 2.3.2](https://github.com/Codeinwp/otter-blocks/compare/v2.3.1...v2.3.2) (2023-07-17)
 
 - Added Autoresponder to Stripe Block
