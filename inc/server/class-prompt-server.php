@@ -239,12 +239,14 @@ class Prompt_Server {
 				$prompts = false !== $prompts ? $prompts : $response['prompts'];
 
 				// Prompt can be filtered by name. By filtering by name, we can get only the prompt we need and save some bandwidth.
-				$prompts = array_values( array_filter(
-					$prompts,
-					function ( $prompt ) use ( $request ) {
-						return $prompt['otter_name'] === $request->get_param( 'name' );
-					}
-				) );
+				$prompts = array_values(
+					array_filter(
+						$prompts,
+						function ( $prompt ) use ( $request ) {
+							return $prompt['otter_name'] === $request->get_param( 'name' );
+						}
+					) 
+				);
 
 
 
