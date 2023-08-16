@@ -242,6 +242,7 @@ const ContentGenerator = ({
 							actionButtons={PRESETS?.[attributes.promptID]?.actions}
 							onClose={() => removeBlock( clientId )}
 							promptPlaceholder={PRESETS?.[attributes.promptID]?.placeholder}
+							resultHistory={attributes.resultHistory}
 						>
 							{
 								hasInnerBlocks ? (

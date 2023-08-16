@@ -33,6 +33,7 @@ type PromptPlaceholderProps = {
 	mainActionLabel?: string
 	onPreview?: ( result: string ) => void
 	actionButtons?: ( props: {status?: string}) => ReactNode
+	resultHistory?: {result: string, meta: { usedToken: number, prompt: string }}[]
 };
 
 export const openAiAPIKeyName = 'themeisle_open_ai_api_key';
@@ -127,7 +128,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
 	const [ result, setResult ] = useState<string | undefined>( undefined );
 
-	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number, prompt: string }}[]>([]);
+	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number, prompt: string }}[]>( props.resultHistory ?? []);
 	const [ resultHistoryIndex, setResultHistoryIndex ] = useState<number>( 0 );
 
 	const [ showResultArea, setShowResultArea ] = useState<boolean>( false );
@@ -178,9 +179,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	}, [ resultHistory ]);
 
 	useEffect( () => {
-		if ( ! result ) {
-			return;
-		}
 
 		if ( 0 > resultHistoryIndex ) {
 			return;
@@ -190,7 +188,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			return;
 		}
 
-		setResult( resultHistory[ resultHistoryIndex ].result );
+		setResult( resultHistory?.[ resultHistoryIndex ].result );
 		setTokenUsageDescription( __( 'Used tokens: ', 'otter-blocks' ) + resultHistory[ resultHistoryIndex ].meta.usedToken );
 		props.onPreview?.( resultHistory[ resultHistoryIndex ].result );
 
@@ -340,7 +338,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	return (
 		<div>
 			{
-				showResultArea ? (
+				( 0 < resultHistory?.length ) ? (
 					<PromptBlockEditor
 						title={ props.title }
 						currentResultIndex={ resultHistoryIndex + 1 }

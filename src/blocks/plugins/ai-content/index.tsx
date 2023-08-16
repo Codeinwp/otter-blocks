@@ -23,8 +23,8 @@ import {
 	applyFilters
 } from '@wordpress/hooks';
 
-import { useDispatch, useSelect } from '@wordpress/data';
-import { rawHandler } from '@wordpress/blocks';
+import { useDispatch, useSelect, dispatch } from '@wordpress/data';
+import { rawHandler, createBlock } from '@wordpress/blocks';
 import { BlockControls } from '@wordpress/block-editor';
 
 /**
@@ -188,7 +188,22 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 
 				const clientId = ! isMultipleSelection ? props.clientId : selectedBlocks.pop().clientId;
 
-				insertBlockBelow( props.clientId, newBlocks );
+				const aiBlock = createBlock(
+					'themeisle-blocks/content-generator',
+					{
+						promptID: 'textTransformation',
+						resultHistory: [{
+							result: response?.choices?.[0]?.message.content ?? '',
+							meta: {
+								usedToken: response?.usage.total_tokens,
+								prompt: ''
+							}
+						}]
+					},
+					newBlocks
+				);
+
+				insertBlockBelow( props.clientId, aiBlock );
 
 				setIsProcessing( prevState => ({ ...prevState, [ actionKey ]: false }) );
 				callback?.();

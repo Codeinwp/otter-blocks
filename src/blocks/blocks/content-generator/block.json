@@ -15,6 +15,10 @@
 	"attributes": {
 		"promptID": {
 			"type": "string"
+		},
+		"resultHistory": {
+			"type": "array",
+			"default": []
 		}
 	}
 }
