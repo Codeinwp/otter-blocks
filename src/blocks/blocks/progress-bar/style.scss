@@ -90,7 +90,7 @@
 		border-radius: 2px;
 		line-height: 20px;
 		opacity: 0;
-		font-size: max( clamp(0px, var(--title-font-size), 1.25rem), 12px );
+		font-size: clamp(12px, var(--title-font-size), 26px );
 		text-align: center;
 
 		&.show {
@@ -197,12 +197,12 @@ html[amp] {
 			.wp-block-themeisle-blocks-progress-bar__area__bar,
 			.wp-block-themeisle-blocks-progress-bar__progress__append 
 		) {
-				height: clamp(0px, var(--height), 45px);
-				font-size: clamp(0px, var(--font-size), 24px);
+				height: min( var(--height), 64px);
+				font-size: min( var(--font-size), 64px);
 		}
 	
 		:is(.wp-block-themeisle-blocks-progress-bar__outer__title, .wp-block-themeisle-blocks-progress-bar__outer__value) {
-			font-size: clamp(0px, var(--title-font-size), 24px);
+			font-size: min( var(--title-font-size), 64px);
 		}
 	} 
 }
