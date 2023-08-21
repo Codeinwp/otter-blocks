@@ -129,6 +129,15 @@ const WelcomeGuide = () => {
 					)
 				},
 				{
+					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-section.png' } />,
+					content: (
+						<Fragment>
+							<h1 className="o-welcome-guide__heading">{ __( 'Create unique pages with the Section Block', 'otter-blocks' ) }</h1>
+							<p className="o-welcome-guide__text">{ __( 'Section Block allows you to create responsive sections with up to 6 columns that have advanced customization options.', 'otter-blocks' ) }</p>
+						</Fragment>
+					)
+				},
+				{
 					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-css.png' } />,
 					content: (
 						<Fragment>
