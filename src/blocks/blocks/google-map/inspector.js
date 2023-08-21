@@ -38,6 +38,7 @@ import {
 
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import MarkerWrapper from './components/marker-wrapper.js';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 const px = value => value ? `${ value }px` : value;
 
@@ -64,7 +65,7 @@ const Inspector = ({
 	changeAPI,
 	saveAPIKey
 }) => {
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const {
 		responsiveSetAttributes,

@@ -34,6 +34,7 @@ import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
 import { changeActiveStyle, getActiveStyle, isEmptyBox, objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
 import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
 import { makeBox } from '../../../plugins/copy-paste/utils';
+import { useTabSwitch } from '../../../helpers/block-utility';
 
 const styles = [
 	{
@@ -120,7 +121,7 @@ const Inspector = ({
 		return { label: `${ index + 1 }. ${ c.attributes.title || __( 'Untitled Tab', 'otter-blocks' ) }`, value: c.clientId };
 	});
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 
 	return (

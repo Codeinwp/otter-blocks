@@ -58,6 +58,7 @@ import {
 } from '../../../components/index.js';
 
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
+import { useTabSwitch } from '../../../helpers/block-utility';
 
 /**
  *
@@ -82,7 +83,7 @@ const Inspector = ({
 
 	const { responsiveSetAttributes } = useResponsiveAttributes( setAttributes );
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const changeColumns = value => {
 		if ( 6 >= value ) {

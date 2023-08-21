@@ -54,6 +54,7 @@ import {
 	setUtm
 } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 /**
  * Block Styles
@@ -181,7 +182,7 @@ const Inspector = ({
 	getValue,
 	productAttributes
 }) => {
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const {
 		responsiveSetAttributes,

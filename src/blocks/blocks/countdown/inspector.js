@@ -48,6 +48,7 @@ import {
 import { mergeBoxDefaultValues, removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.js';
 
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 const defaultFontSizes = [
 	{
@@ -174,7 +175,7 @@ const Inspector = ({
 		}
 	};
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const settings = __experimentalGetSettings();
 

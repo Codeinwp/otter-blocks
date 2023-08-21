@@ -37,6 +37,7 @@ import { InspectorHeader, SyncControlDropdown } from '../../../components/index.
 import { getChoice, _i, _px } from '../../../helpers/helper-functions.js';
 import TypographySelectorControl from '../../../components/typography-selector-control/index';
 import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr';
+import { useTabSwitch } from '../../../helpers/block-utility';
 
 /**
  *
@@ -116,7 +117,7 @@ const Inspector = ({
 		};
 	};
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const [ proxyStore, setProxyStore ] = useState({
 		padding: makeBoxFromSplitAxis(
