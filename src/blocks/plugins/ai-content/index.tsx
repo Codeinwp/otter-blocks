@@ -76,8 +76,8 @@ let embeddedPromptsCache: PromptsData|null = null;
 
 const withConditions = createHigherOrderComponent( BlockEdit => {
 	return props => {
-		const [ getOption, updateOption, status ] = useSettings();
-		const [ apiKey, setApiKey ] = useState<string | null>( null );
+		const [ getOption, _, status ] = useSettings();
+		const [ hasAPIKey, setHasAPIKey ] = useState<boolean>( false );
 		const [ isProcessing, setIsProcessing ] = useState<Record<string, boolean>>({});
 		const [ displayError, setDisplayError ] = useState<string|undefined>( undefined );
 
@@ -103,10 +103,9 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 				return;
 			}
 
-			if ( 'loaded' === status && ! apiKey ) {
-				if ( getOption( openAiAPIKeyName ) ) {
-					setApiKey( getOption( openAiAPIKeyName ) );
-				}
+			if ( 'loaded' === status && ! hasAPIKey ) {
+				const key = getOption( openAiAPIKeyName ) as string;
+				setHasAPIKey(  Boolean( key ) && 0 < key.length );
 			}
 		}, [ status, getOption ]);
 
@@ -153,7 +152,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 				return;
 			}
 
-			if ( ! apiKey ) {
+			if ( ! hasAPIKey ) {
 				setDisplayError( __( 'No Open API key detected. Please add your key.', 'otter-blocks' ) );
 				return;
 			}
@@ -175,7 +174,6 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 					return;
 				}
 
-				console.log( response?.choices?.[0]?.message.content );
 				const blockContentRaw = response?.choices?.[0]?.message.content;
 
 				if ( ! blockContentRaw ) {
@@ -185,8 +183,6 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 				const newBlocks = rawHandler({
 					HTML: blockContentRaw
 				});
-
-				const clientId = ! isMultipleSelection ? props.clientId : selectedBlocks.pop().clientId;
 
 				const aiBlock = createBlock(
 					'themeisle-blocks/content-generator',
@@ -244,7 +240,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 										({ onClose }) => (
 											<Fragment>
 												{
-													( ! apiKey || 0 === apiKey.length ) && (
+													( ! hasAPIKey ) && (
 														<MenuGroup>
 															<span className='o-menu-item-alignment' style={{ display: 'block', marginBottom: '10px' }}>
 																{ __( 'Please add your OpenAI API key in Integrations.', 'otter-blocks' ) }
