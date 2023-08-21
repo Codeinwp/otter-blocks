@@ -270,7 +270,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 													<ActionMenuItem actionKey='otter_action_make_longer' callback={onClose}>
 														{ __( 'Make it longer', 'otter-blocks' ) }
 													</ActionMenuItem>
-													<ActionMenuItem actionKey='otter_action_make_longer' callback={onClose}>
+													<ActionMenuItem actionKey='otter_action_make_descriptive' callback={onClose}>
 														{ __( 'Make it more descriptive', 'otter-blocks' ) }
 													</ActionMenuItem>
 												</MenuGroup>
