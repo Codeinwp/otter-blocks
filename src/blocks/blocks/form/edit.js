@@ -981,10 +981,10 @@ const Edit = ({
 										<Fragment>
 											<div>
 												<div className='o-form-server-response o-success' style={{ color: attributes.submitMessageColor }}>
-													{ formOptions.submitMessage || __( 'Success', 'otter-blocks' ) }
+													{ formOptions.submitMessage ?? __( 'Success', 'otter-blocks' ) }
 												</div>
 												<div className='o-form-server-response o-error' style={{ color: attributes.submitMessageErrorColor, margin: '0px' }}>
-													{ __( 'Error. Please try again.', 'otter-blocks' ) }
+													{ formOptions.errorMessage ?? __( 'Error. Please try again.', 'otter-blocks' ) }
 												</div>
 											</div>
 											{
