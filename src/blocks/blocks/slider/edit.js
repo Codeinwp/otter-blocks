@@ -66,6 +66,7 @@ const Edit = ({
 
 	const initObserver = useRef( null );
 	const sliderRef = useRef( null );
+	const containerRef = useRef( null );
 
 	useEffect( () => {
 		try {
@@ -89,27 +90,26 @@ const Edit = ({
 
 	useEffect( () => {
 
-		const container = document.querySelector( `#${ attributes.id }` ) ?? getEditorIframe()?.contentDocument?.querySelector( `#${ attributes.id }` );
-
-		if ( container ) {
+		if ( containerRef.current ) {
 			initObserver.current = new IntersectionObserver( ( entries ) => {
 				entries.forEach( entry => {
 					if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
 						if ( attributes.images.length ) {
 							initSlider();
-							initObserver.current?.unobserve( container );
+							initObserver.current?.unobserve( containerRef.current );
 						}
 					}
 				});
 			}, options );
 
-			initObserver.current?.observe( container );
+			initObserver.current?.observe( containerRef.current );
 		}
 
 		return () => {
 			if ( attributes?.images?.length ) {
 				sliderRef?.current?.destroy();
 			}
+			initObserver.current?.disconnect();
 		};
 	}, [ attributes.id ]);
 
@@ -136,12 +136,12 @@ const Edit = ({
 	const initSlider = () => {
 
 		// Clean up old references.
-		if ( null !== sliderRef.current ) {
+		if ( Boolean( sliderRef.current ) ) {
 			sliderRef.current?.destroy?.();
+			sliderRef.current = undefined;
 		}
 
 		const iframe = getEditorIframe();
-		const container = document?.querySelector( `#${ attributes.id }` ) ?? iframe?.contentDocument?.querySelector( `#${ attributes.id }` );
 
 		const config = {
 			type: 'carousel',
@@ -167,7 +167,7 @@ const Edit = ({
 		if ( Boolean( iframe ) ) {
 			const initFrame = () => {
 				if ( iframe?.contentWindow?.Glide ) {
-					sliderRef.current = new iframe.contentWindow.Glide( container, config ).mount();
+					sliderRef.current = new iframe.contentWindow.Glide( containerRef.current, config ).mount();
 				}
 			};
 
@@ -179,7 +179,7 @@ const Edit = ({
 				initFrame();
 			}
 		} else {
-			sliderRef.current = new window.Glide( container, config ).mount();
+			sliderRef.current = new window.Glide( containerRef.current, config ).mount();
 		}
 	};
 
@@ -192,8 +192,6 @@ const Edit = ({
 				caption: image.caption
 			}) )
 		});
-
-		initSlider();
 	};
 
 	const changePerView = value => {
@@ -203,6 +201,15 @@ const Edit = ({
 			peek: 1 === value ? 0 : attributes.peek
 		});
 	};
+
+	useEffect( () => {
+
+		if ( ! attributes.images.length ) {
+			return;
+		}
+
+		initSlider();
+	}, [ attributes.images ]);
 
 	useEffect( () => {
 		if ( Boolean( sliderRef?.current?.update ) ) {
@@ -257,6 +264,7 @@ const Edit = ({
 					id={ attributes.id }
 					className="glide"
 					style={ inlineStyles }
+					ref={ containerRef }
 				>
 					<div className="glide__track" data-glide-el="track">
 						<div
