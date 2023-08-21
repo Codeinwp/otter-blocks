@@ -377,7 +377,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	const hasValidToken = id && window.themeisleGutenberg?.tokens?.[id]?.token;
 
 	const spinner = makeSpinner( btn );
-	spinner.show();
+
 
 	if ( formIsEmpty ) {
 		btn.disabled = false;
@@ -461,6 +461,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 				body: formData
 			});
 
+			spinner.show();
 			handleAfterSubmit(
 				request,
 				displayMsg,
