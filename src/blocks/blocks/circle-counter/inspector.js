@@ -110,7 +110,7 @@ const Inspector = ({
 								<ToggleControl
 									label={ __( 'Display the Title', 'otter-blocks' ) }
 									checked={ 'hide' !== attributes.titleStyle }
-									onChange={ () => setAttributes({ titleStyle: 'default' }) }
+									onChange={ () => setAttributes({ titleStyle: 'hide' !== attributes.titleStyle ? 'hide' : 'default' }) }
 								/>
 
 								{ 'hide' !== attributes.titleStyle && (
