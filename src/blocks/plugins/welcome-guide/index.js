@@ -138,15 +138,6 @@ const WelcomeGuide = () => {
 					)
 				},
 				{
-					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-css.png' } />,
-					content: (
-						<Fragment>
-							<h1 className="o-welcome-guide__heading">{ __( 'Extend each block with more powerful features', 'otter-blocks' ) }</h1>
-							<p className="o-welcome-guide__text">{ __( 'Otter adds extra functionalities such as Custom CSS, Animations and Visibility Conditions to default and third party blocks.', 'otter-blocks' ) }</p>
-						</Fragment>
-					)
-				},
-				{
 					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-pro.png' } />,
 					content: (
 						<Fragment>
