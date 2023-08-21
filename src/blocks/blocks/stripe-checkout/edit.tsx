@@ -91,9 +91,9 @@ const Edit = ({
 					value: product?.id
 				};
 			}) : [],
-			hasProductsRequestFailed: Boolean( getResolutionError( 'getStripeProducts' ) ),
-			productsError: getResolutionError( 'getStripeProducts' ),
-			isLoadingProducts: isResolving( 'getStripeProducts' )
+			hasProductsRequestFailed: Boolean( getResolutionError?.( 'getStripeProducts' ) ),
+			productsError: getResolutionError?.( 'getStripeProducts' ),
+			isLoadingProducts: isResolving?.( 'getStripeProducts' )
 		};
 	}, [ canRetrieveProducts, status ]);
 
@@ -119,7 +119,7 @@ const Edit = ({
 			isResolving: Function
 		} = select( 'themeisle-gutenberg/data' );
 
-		const prices = attributes.product ? getStripeProductPrices( attributes.product ) : [];
+		const prices = attributes.product ? getStripeProductPrices?.( attributes.product ) : [];
 
 		return {
 			prices,
@@ -129,9 +129,9 @@ const Edit = ({
 					value: prices?.id
 				};
 			}) : [],
-			hasPricesRequestFailed: Boolean( getResolutionError( 'getStripeProductPrices', [ attributes.product ]) ),
-			pricesError: getResolutionError( 'getStripeProductPrices', [ attributes.product ]),
-			isLoadingPrices: isResolving( 'getStripeProductPrices', [ attributes.product ])
+			hasPricesRequestFailed: Boolean( getResolutionError?.( 'getStripeProductPrices', [ attributes.product ]) ),
+			pricesError: getResolutionError?.( 'getStripeProductPrices', [ attributes.product ]),
+			isLoadingPrices: isResolving?.( 'getStripeProductPrices', [ attributes.product ])
 		};
 	}, [ attributes.product, canRetrieveProducts ]);
 
