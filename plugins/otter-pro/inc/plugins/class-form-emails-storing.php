@@ -74,7 +74,7 @@ class Form_Emails_Storing {
 
 		add_filter( 'otter_form_record_confirm', array( $this, 'confirm_submission' ), 10, 2 );
 
-		add_action( 'transition_post_status', array( $this, 'apply_hooks_on_draft_transition' ), 10, 3 );
+		add_action( 'draft_to_unread', array( $this, 'apply_hooks_on_draft_transition' ), 10 );
 		add_action( 'otter_form_update_record_meta_dump', array( $this, 'update_submission_dump_data' ), 10, 2 );
 		add_action( 'otter_form_automatic_confirmation', array( $this, 'move_old_stripe_draft_sessions_to_unread' ) );
 		add_action( 'wp', array( $this, 'schedule_automatic_confirmation' ) );
@@ -221,19 +221,19 @@ class Form_Emails_Storing {
 
 		$meta = array(
 			'form'     => array(
-				'label' => 'Form',
+				'label' => __( 'Form', 'otter-blocks' ),
 				'value' => $form_data->get_data_from_payload( 'formId' ),
 			),
 			'post_url' => array(
-				'label' => 'Post URL',
+				'label' => __( 'Post URL', 'otter-blocks' ),
 				'value' => $form_data->get_data_from_payload( 'postUrl' ),
 			),
 			'post_id'  => array(
-				'label' => 'Post ID',
+				'label' => __( 'Post ID', 'otter-blocks' ),
 				'value' => $form_data->get_data_from_payload( 'postId' ),
 			),
 			'dump'     => array(
-				'label' => 'Dumped data',
+				'label' => __( 'Dumped data', 'otter-blocks' ),
 				'value' => $form_data->is_temporary() ? $form_data->dump_data() : array(),
 			),
 		);
@@ -1186,12 +1186,10 @@ class Form_Emails_Storing {
 	/**
 	 * Apply the 'after_submit' action when changing the status from 'draft' to 'unread'.
 	 *
-	 * @param string  $new_status The new status.
-	 * @param string  $old_status The old status.
 	 * @param WP_Post $post The post.
 	 */
-	public function apply_hooks_on_draft_transition( $new_status, $old_status, $post ) {
-		if ( 'draft' !== $old_status || self::FORM_RECORD_TYPE !== $post->post_type || $old_status === $new_status ) {
+	public function apply_hooks_on_draft_transition( $post ) {
+		if ( self::FORM_RECORD_TYPE !== $post->post_type ) {
 			return;
 		}
 

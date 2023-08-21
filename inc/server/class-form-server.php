@@ -193,7 +193,7 @@ class Form_Server {
 						if ( apply_filters( 'otter_form_session_confirmation', $session ) ) {
 							return __return_true();
 						}
-						return __return_false();
+						return false;
 					},
 					'args'                => array(
 						'record_id' => array(
