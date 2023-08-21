@@ -32,6 +32,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		word-break: keep-all;
 		max-width: var( --columns-width );
 
+		&:not(:first-child, :last-child) {
+			z-index: 1; // If dividers are present, make sure they are behind the columns.
+		}
+
 		> .block-editor-inner-blocks > .block-editor-block-list__layout {
 			display: flex;
 			flex-wrap: nowrap;
