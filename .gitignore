@@ -12,3 +12,4 @@ artifacts
 *.results.json
 trace.json
 license.json
+.phpunit.result.cache
