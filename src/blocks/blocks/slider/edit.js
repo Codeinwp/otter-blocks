@@ -117,9 +117,7 @@ const Edit = ({
 		if ( attributes.images.length ) {
 			setSelectedImage( null );
 
-			if ( null !== sliderRef.current && attributes.id ) {
-				initSlider();
-			}
+			initSlider();
 		}
 	}, [ isSelected, attributes.id, sliderRef.current, attributes.images, attributes.width ]);
 
@@ -164,22 +162,29 @@ const Edit = ({
 		/**
 		 * Init the Slider inside the iframe.
 		 */
-		if ( Boolean( iframe ) ) {
-			const initFrame = () => {
-				if ( iframe?.contentWindow?.Glide ) {
-					sliderRef.current = new iframe.contentWindow.Glide( containerRef.current, config ).mount();
+		try {
+			if ( Boolean( iframe ) ) {
+				const initFrame = () => {
+					if ( iframe?.contentWindow?.Glide ) {
+						sliderRef.current = new iframe.contentWindow.Glide( containerRef.current, config ).mount();
+					}
+				};
+
+				if ( ! Boolean( iframe.contentDocument?.querySelector( '#glidejs-js' ) ) ) {
+
+					// Load the JS file into the iframe.
+					copyScriptAssetToIframe( '#glidejs-js', initFrame );
+				} else {
+					initFrame();
 				}
-			};
-
-			if ( ! Boolean( iframe.contentDocument?.querySelector( '#glidejs-js' ) ) ) {
-
-				// Load the JS file into the iframe.
-				copyScriptAssetToIframe( '#glidejs-js', initFrame );
 			} else {
-				initFrame();
+				sliderRef.current = new window.Glide( containerRef.current, config ).mount();
 			}
-		} else {
-			sliderRef.current = new window.Glide( containerRef.current, config ).mount();
+		} catch ( e ) {
+
+			// We don't want to break the block if the slider fails to init.
+			// The main cause is when the block runs inside an iFrame and can not access the root node.
+			console.warn( e );
 		}
 	};
 
@@ -201,15 +206,6 @@ const Edit = ({
 			peek: 1 === value ? 0 : attributes.peek
 		});
 	};
-
-	useEffect( () => {
-
-		if ( ! attributes.images.length ) {
-			return;
-		}
-
-		initSlider();
-	}, [ attributes.images ]);
 
 	useEffect( () => {
 		if ( Boolean( sliderRef?.current?.update ) ) {
