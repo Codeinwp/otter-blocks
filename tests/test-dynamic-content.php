@@ -4,7 +4,6 @@
  *
  * @package gutenberg-blocks
  */
-use \ThemeIsle\GutenbergBlocks\Plugins;
 use PHPUnit\Framework\TestCase;
 use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertEqualsCanonicalizing;
