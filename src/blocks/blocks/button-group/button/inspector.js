@@ -33,6 +33,7 @@ import { ColorDropdownControl, InspectorHeader, SyncControlDropdown, ToogleGroup
 import { changeActiveStyle, getActiveStyle, objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
 import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
 import { uniq } from 'lodash';
+import { useTabSwitch } from '../../../helpers/block-utility';
 
 const styles = [
 	{
@@ -150,7 +151,7 @@ const Inspector = ({
 		);
 	};
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	return (
 		<InspectorControls>

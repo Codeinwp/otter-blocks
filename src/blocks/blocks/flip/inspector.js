@@ -67,6 +67,7 @@ import {
 import { alignBottom, alignTop, alignCenter as oAlignCenter } from '../../helpers/icons.js';
 
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 const defaultFontSizes = [
 	{
@@ -102,7 +103,7 @@ const Inspector = ({
 	currentSide,
 	setSide
 }) => {
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const {
 		responsiveSetAttributes,

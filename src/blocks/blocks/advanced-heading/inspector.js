@@ -54,6 +54,7 @@ import {
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { makeBox } from '../../plugins/copy-paste/utils';
 import { _px } from '../../helpers/helper-functions.js';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 /**
  *
@@ -65,7 +66,7 @@ const Inspector = ({
 	setAttributes
 }) => {
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const changeFontFamily = value => {

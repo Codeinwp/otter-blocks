@@ -66,6 +66,7 @@ import { _px, setUtm } from '../../helpers/helper-functions.js';
 import { SortableInputField } from './sortable-input-fields';
 import AutoDisableSyncAttr from '../../components/auto-disable-sync-attr/index';
 import { selectAllFieldsFromForm } from './common';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 const compare = x => {
 	return x?.[1] && x[0] !== x[1];
@@ -310,7 +311,7 @@ const Inspector = ({
 	setAttributes
 }) => {
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 	const [ buttonColorView, setButtonColorView ] = useState( 'normal' );
 
 	const {
