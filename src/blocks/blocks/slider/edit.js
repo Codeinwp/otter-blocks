@@ -94,7 +94,7 @@ const Edit = ({
 			initObserver.current = new IntersectionObserver( ( entries ) => {
 				entries.forEach( entry => {
 					if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
-						if ( attributes.images.length ) {
+						if ( attributes.images && 0 < attributes.images.length ) {
 							initSlider();
 							initObserver.current?.unobserve( containerRef.current );
 						}
@@ -114,7 +114,7 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-		if ( attributes.images.length ) {
+		if ( attributes.images && 0 < attributes.images.length && attributes.id ) {
 			setSelectedImage( null );
 
 			initSlider();
@@ -158,6 +158,11 @@ const Edit = ({
 				}
 			}
 		};
+
+		// This will prevent the slider from initializing if the block is not in the DOM that it can reach (like Inserter block preview)
+		if ( ! Boolean( document.querySelector( `#${ attributes.id }` ) ?? iframe?.contentDocument?.querySelector( `#${ attributes.id }` ) ) ) {
+			return;
+		}
 
 		/**
 		 * Init the Slider inside the iframe.
