@@ -614,7 +614,9 @@ class Form_Pro_Features {
 
 		$payload['success_url'] = $permalink;
 		$payload['cancel_url']  = $permalink;
-		
+
+		$stripe = new Stripe_API();
+
 		// Prepare the line items for the Stripe session request.
 		$line_items = array();
 		foreach ( $products_to_process as $product ) {
@@ -622,6 +624,19 @@ class Form_Pro_Features {
 				'price'    => $product['price'],
 				'quantity' => 1,
 			);
+
+			if ( 'payment' === $payload['mode'] ) {
+				$price = $stripe->create_request( 'price', $product['price'] );
+				if ( is_wp_error( $price ) ) {
+					$form_data->set_error( Form_Data_Response::ERROR_STRIPE_CHECKOUT_SESSION_CREATION );
+					$form_data->add_warning( Form_Data_Response::ERROR_STRIPE_CHECKOUT_SESSION_CREATION, $price->get_error_message() );
+					return $form_data;
+				}
+
+				if ( 'recurring' === $price['type'] ) {
+					$payload['mode'] = 'subscription';
+				}
+			}       
 		}
 		$payload['line_items'] = $line_items;
 
@@ -636,7 +651,7 @@ class Form_Pro_Features {
 
 		$payload['metadata'] = $metadata;
 
-		$stripe = new Stripe_API();
+
 
 		$session = $stripe->create_request(
 			'create_session',
@@ -645,6 +660,7 @@ class Form_Pro_Features {
 
 		if ( is_wp_error( $session ) ) {
 			$form_data->set_error( Form_Data_Response::ERROR_STRIPE_CHECKOUT_SESSION_CREATION );
+			$form_data->add_warning( Form_Data_Response::ERROR_STRIPE_CHECKOUT_SESSION_CREATION, $session->get_error_message() );
 			return $form_data;
 		}
 
