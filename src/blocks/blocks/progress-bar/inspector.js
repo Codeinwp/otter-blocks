@@ -28,6 +28,7 @@ import { Fragment, useState } from '@wordpress/element';
  * Internal dependencies
 */
 import { InspectorHeader } from '../../components';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 
 const defaultFontSizes = [
@@ -66,7 +67,7 @@ const Inspector = ({
 	setHeightMode
 }) => {
 
-	const [ tab, setTab ] = useState( 'settings' ); // TODO: After #1801 is merged, use `useTabState` hook.
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const onPercentageChange = value => {
 		if ( value === undefined ) {
