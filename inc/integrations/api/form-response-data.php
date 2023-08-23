@@ -83,10 +83,11 @@ class Form_Data_Response {
 	 * @since 2.0.0
 	 */
 	public function __construct() {
-		$this->response['success']      = false;
-		$this->response['reasons']      = array();
-		$this->response['code']         = self::SUCCESS_EMAIL_SEND;
-		$this->response['displayError'] = 'Error. Please try again.';
+		$this->response['success']       = false;
+		$this->response['reasons']       = array();
+		$this->response['code']          = self::SUCCESS_EMAIL_SEND;
+		$this->response['displayError']  = 'Error. Please try again.';
+		$this->response['submitMessage'] = 'Success';
 	}
 
 	/**
@@ -145,6 +146,17 @@ class Form_Data_Response {
 	 */
 	public function set_reasons( $reasons ) {
 		$this->response['reasons'] = $reasons;
+		return $this;
+	}
+
+	/**
+	 * Set success message.
+	 * 
+	 * @param string $message The message.
+	 * @since 2.4
+	 */
+	public function set_success_message( $message ) {
+		$this->response['submitMessage'] = $message;
 		return $this;
 	}
 
