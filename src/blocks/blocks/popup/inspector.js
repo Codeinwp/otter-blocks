@@ -37,6 +37,7 @@ import {
 
 import { removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 /**
  *
@@ -79,7 +80,7 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const {
 		responsiveSetAttributes,

@@ -49,6 +49,7 @@ import {
 	isNullObject,
 	removeBoxDefaultValues
 } from '../../../helpers/helper-functions.js';
+import { useTabSwitch } from '../../../helpers/block-utility';
 
 /**
  *
@@ -72,7 +73,7 @@ const Inspector = ({
 		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
 
-	const [ tab, setTab ] = useState( 'layout' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'layout' );
 
 	const changeColumnWidth = value => {
 		const width = value || 10;

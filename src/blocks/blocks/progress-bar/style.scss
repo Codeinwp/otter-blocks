@@ -90,7 +90,7 @@
 		border-radius: 2px;
 		line-height: 20px;
 		opacity: 0;
-		font-size: max( clamp(0px, var(--title-font-size), 1.25rem), 12px );
+		font-size: clamp(12px, var(--title-font-size), 26px );
 		text-align: center;
 
 		&.show {
@@ -189,34 +189,20 @@ html[amp] {
 
 @media ( max-width: 600px ) {
 	.wp-block-themeisle-blocks-progress-bar {
-		.wp-block-themeisle-blocks-progress-bar__area {
-			font-size: 20px;
-			height: 30px;
+		:is(
+			.wp-block-themeisle-blocks-progress-bar__area,
+			.wp-block-themeisle-blocks-progress-bar__area__title,
+			.wp-block-themeisle-blocks-progress-bar__area__title span,
+			.wp-block-themeisle-blocks-progress-bar__progress,
+			.wp-block-themeisle-blocks-progress-bar__area__bar,
+			.wp-block-themeisle-blocks-progress-bar__progress__append 
+		) {
+				height: min( var(--height), 64px);
+				font-size: min( var(--font-size), 64px);
 		}
-
-		.wp-block-themeisle-blocks-progress-bar__area__title {
-			font-size: 20px;
-			height: 30px;
-			
-			span {
-				font-size: 20px;
-				height: 30px;
-			}
+	
+		:is(.wp-block-themeisle-blocks-progress-bar__outer__title, .wp-block-themeisle-blocks-progress-bar__outer__value) {
+			font-size: min( var(--title-font-size), 64px);
 		}
-
-		.wp-block-themeisle-blocks-progress-bar__progress {
-			font-size: 20px;
-			height: 30px;
-		}
-
-		.wp-block-themeisle-blocks-progress-bar__area__bar {
-			font-size: 20px;
-			height: 30px;
-		}
-
-		.wp-block-themeisle-blocks-progress-bar__progress__append {
-			font-size: 20px;
-			height: 30px;
-		}
-	}
+	} 
 }

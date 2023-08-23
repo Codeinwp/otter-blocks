@@ -278,20 +278,22 @@ class Form_Server {
 				do_action( 'otter_form_after_submit', $form_data );
 
 				if ( ! ( $form_data instanceof Form_Data_Request ) ) {
-					$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
-					$res->add_reason( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
+					$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR )
+						->add_reason( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
 				}
 
 				if ( $form_data->has_error() ) {
-					$res->set_code( $form_data->get_error_code() );
+					$res->set_code( $form_data->get_error_code() )
+						->set_display_error( $form_options->get_error_message() );
 				} else {
-					$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
-					$res->mark_as_success();
+					$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND )
+						->set_success_message( $form_options->get_submit_message() )
+						->mark_as_success();
 				}
 			}
 		} catch ( Exception $e ) {
-			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
-			$res->add_reason( $e->getMessage() );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR )
+				->add_reason( $e->getMessage() );
 			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 			$this->send_error_email( $form_data );
 		} finally {
