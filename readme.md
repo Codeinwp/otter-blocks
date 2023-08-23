@@ -2,7 +2,7 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
 **Tags:** block, blocks, gutenberg, gutenberg blocks, wordPress blocks, editor, block Editor, page Builder, post blocks, post grids  
 **Requires at least:** 5.9  
-**Tested up to:** 6.2  
+**Tested up to:** 6.3  
 **Requires PHP:** 5.6  
 **Stable tag:** trunk  
 **License:** GPLv3  
@@ -20,7 +20,6 @@ Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to
 - New to the Gutenberg Blocks ecosystem? Check out our article on [GUTENBERG EXPLAINED](https://themeisle.com/blog/gutenberg-blocks-explained/)
 - Need any help with setup? Checkout our [DOCUMENTATION](https://docs.themeisle.com/article/1478-otter-blocks-documentation)
 - Interested in Otter Pro? Here are more details about [OTTER PRO](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks)
-
 
 ## With Otter Blocks, You Get Access To
 
@@ -72,7 +71,7 @@ Want to show certain blocks only when a user is Logged in or Logged Out? How abo
 
 ### A WordPress Gutenberg Blocks Animation Plugin
 
-WOW, your website visitors with amazing animations that can be added to any block on the page. With over 50+ animations available to choose from; Otter makes it possible to add some extra flare to any post or page on your website
+WOW your website visitors with amazing animations that can be added to any block on the page. With over 50+ animations available to choose from; Otter makes it possible to add some extra flare to any post or page on your website
 
 ### A WordPress Gutenberg Popup Plugin
 
@@ -83,12 +82,6 @@ With our popup block, you gain access to multiple triggers such as on load, on e
 ### Global Defaults for Otter's Blocks
 
 Tired of always having to set the same options every time you add a block to the page? With Otter, you can set the default configuration for some of the most commonly used blocks like the Section Block, Icon Block, Advanced Heading and more.
-
-### Impact on Page Loading Speed and Performance 
-At Otter Blocks, we prioritize performance to elevate your website's user experience. Each block is carefully optimized, striking the perfect balance between speed, design, and functionality.
-
-### Enhance your Posts with Otter Blocks
-Discover a Wide Range of Post Blocks for Engaging Content, with Otter Block's post blocks, you can elevate your posts to new heights. From interactive accordions for FAQs to product reviews, countdowns, maps, and more, our versatile post blocks enrich your content seamlessly.
 
 ## Blocks Available in Otter
 
@@ -184,7 +177,6 @@ Get ready to impress your readers with Otter's "Review Comparison Table" block. 
 
 The Live Search feature enhances the core block Search by adding two additional attributes ( isLive and postTypes ) that can be set inside the inspector under the Live Search panel.
 
-
 ---
 
 We're constantly adding new Gutenberg Blocks to Otter to assist in your website page building. Feel free to tell us what we’re missing on our [Support Forum](https://wordpress.org/support/plugin/otter-blocks/)! Some other blocks include:
@@ -264,7 +256,6 @@ Otter Blocks is an open-source project, and we welcome contributors to be part o
 - Interested in our other plugins? Take a look [here](https://themeisle.com/wordpress-plugins/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks).
 - Get the most out of Otter Blocks with our helpful [YouTube Tutorials Playlist](https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP).
 
-
 ## Screenshots ##
 
 1. Gutenberg Block Animations
@@ -316,6 +307,13 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 ## Changelog ##
+
+##### [Version 2.3.3](https://github.com/Codeinwp/otter-blocks/compare/v2.3.2...v2.3.3) (2023-08-11)
+
+- WordPress 6.3 Compatibility
+
+
+
 
 ##### [Version 2.3.2](https://github.com/Codeinwp/otter-blocks/compare/v2.3.1...v2.3.2) (2023-07-17)
 
