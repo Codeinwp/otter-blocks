@@ -40,8 +40,11 @@ class TestBlockConditions extends WP_UnitTestCase
 	 */
 	public function set_up() {
 		parent::set_up();
-		$this->block_conditions = new Block_Conditions();
-		$this->user_id          = wp_create_user( 'test_user_deletion', 'userlogin', 'test@userrecover.com' );
+		$this->block_conditions            = new Block_Conditions();
+		$this->otter_pro_blocks_conditions = new \ThemeIsle\OtterPro\Plugins\Block_Conditions();
+		$this->user_id                     = wp_create_user( 'test_user_deletion', 'userlogin', 'test@userrecover.com' );
+
+		$this->block_conditions->init();
 
 		/**
 		 * Create a test post.
@@ -63,6 +66,12 @@ class TestBlockConditions extends WP_UnitTestCase
 				'post_category' => array( $this->category_id ),
 			)
 		);
+
+		// Add some meta values to the post.
+		update_post_meta( $this->post_id, 'test_meta', 'test' );
+
+		// Add some meta to the user.
+		update_user_meta( $this->user_id, 'test_meta', 'test' );
 
 		// Set the post as the current post.
 		$this->go_to( get_permalink( $this->post_id ) );
@@ -226,5 +235,103 @@ class TestBlockConditions extends WP_UnitTestCase
 		$this->assertFalse( $result );
 	}
 
-	
+	/**
+	 * Test logged in user meta.
+	 */
+	public function test_logged_in_user_meta() {
+		wp_set_current_user( $this->user_id );
+
+		$condition = array(
+			'type'         => 'loggedInUserMeta',
+			'meta_key'     => 'test_meta',
+			'meta_compare' => 'is_true',
+		);
+
+		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test logged in user meta.
+	 */
+	public function test_logged_in_user_meta_invalid() {
+		wp_set_current_user( $this->user_id );
+
+		$condition = array(
+			'type'         => 'loggedInUserMeta',
+			'meta_key'     => 'test_',
+			'meta_compare' => 'is_true',
+		);
+
+		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test post meta.
+	 */
+	public function test_post_meta() {
+		wp_set_current_user( $this->user_id );
+
+		$condition = array(
+			'type'         => 'postMeta',
+			'meta_key'     => 'test_meta',
+			'meta_compare' => 'is_true',
+		);
+
+		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test post meta.
+	 */
+	public function test_post_meta_invalid() {
+		wp_set_current_user( $this->user_id );
+
+		$condition = array(
+			'type'         => 'postMeta',
+			'meta_key'     => 'test_',
+			'meta_compare' => 'is_true',
+		);
+
+		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test data range.
+	 */
+	public function test_date_range() {
+
+		$condition = array(
+			'type'       => 'dateRange',
+			'start_date' => '2020-01-01',
+			'end_date'   => '2030-12-31',
+		);
+
+		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test data range.
+	 */
+	public function test_date_range_invalid() {
+
+		$condition = array(
+			'type'       => 'dateRange',
+			'start_date' => '2020-01-01',
+			'end_date'   => '2020-12-31',
+		);
+
+		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+
+		$this->assertFalse( $result );
+	}
 }

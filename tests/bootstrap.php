@@ -24,6 +24,7 @@ require $_tests_dir . '/includes/bootstrap.php';
 require dirname( dirname( __FILE__ ) ) . '/inc/css/class-css-utility.php';
 require dirname( dirname( __FILE__ ) ) . '/inc/plugins/class-block-conditions.php';
 require dirname( dirname( __FILE__ ) ) . '/inc/plugins/class-dynamic-content.php';
+require dirname( dirname( __FILE__ ) ) . '/plugins/otter-pro/inc/plugins/class-block-conditions.php';
 
 global $current_user;
 $current_user = new WP_User( 1 );
