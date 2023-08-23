@@ -38,6 +38,7 @@ class Dashboard_Server {
 	 */
 	public function init() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action( 'after_switch_theme', array( $this, 'regenerate_styles' ) );
 	}
 
 	/**
@@ -65,7 +66,7 @@ class Dashboard_Server {
 	 * Regenerate styles.
 	 *
 	 * @param \WP_REST_Request $request The request.
-	 * 
+	 *
 	 * @return \WP_REST_Response
 	 * @since   2.0.9
 	 * @access  public
