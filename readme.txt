@@ -308,6 +308,18 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+##### [Version 2.3.4](https://github.com/Codeinwp/otter-blocks/compare/v2.3.3...v2.3.4) (2023-08-23)
+
+- Fix z-index with Shape Divider in Section
+- Fix Tabs Block Resetting Editor Sidebar When Changing Viewport
+- Fix Fatal Error in Form Submission Page in Certain Cases If Viewed as Super Admin
+- Fix Progress Bar Height for Mobile Devices
+- Fix Stripe Block Not Working Correctly in WP 5.9
+- Fix Form Submit Messages Not Working
+
+
+
+
 ##### [Version 2.3.3](https://github.com/Codeinwp/otter-blocks/compare/v2.3.2...v2.3.3) (2023-08-11)
 
 - WordPress 6.3 Compatibility
