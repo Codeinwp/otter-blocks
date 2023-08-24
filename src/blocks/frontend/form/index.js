@@ -483,10 +483,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 						form.setAttribute( 'data-redirect', res.redirectLink );
 
 						setTimeout( () => {
-							let a = document.createElement( 'a' );
-							a.target = '_blank';
-							a.href = res.redirectLink;
-							a.click();
+							window.location.href = res.redirectLink;
 						}, 1000 );
 					}
 
@@ -568,19 +565,9 @@ domReady( () => {
 				if ( 0 < res?.redirectLink?.length ) {
 					form.setAttribute( 'data-redirect', res.redirectLink );
 
-					let a = document.createElement( 'a' );
-					a.target = '_blank';
-					a.innerHTML = displayMsg.getMsgBySlug( 'redirecting' );
-					a.href = res.redirectLink;
-					a.classList.add( 'o-form-redirect-link' );
-
 					setTimeout( () => {
-						a.click();
+						window.location.href = res.redirectLink;
 					}, 1000 );
-
-					setTimeout( () => {
-						form.querySelector( '.has-submit-msg' ).appendChild( a );
-					}, 1500 );
 				}
 			}, () => {}, () => {
 				sendBtn.disabled = false;
