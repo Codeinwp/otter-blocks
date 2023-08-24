@@ -636,7 +636,7 @@ class Form_Pro_Features {
 				if ( 'recurring' === $price['type'] ) {
 					$payload['mode'] = 'subscription';
 				}
-			}       
+			}
 		}
 		$payload['line_items'] = $line_items;
 
@@ -649,9 +649,11 @@ class Form_Pro_Features {
 		}
 		$metadata['otter_form_record_id'] = $form_data->metadata['otter_form_record_id'];
 
+		if ( $form_data->get_wp_options()->get_redirect_link() !== null ) {
+			$metadata['otter_redirect_link'] = $form_data->get_wp_options()->get_redirect_link();
+		}
+
 		$payload['metadata'] = $metadata;
-
-
 
 		$session = $stripe->create_request(
 			'create_session',

@@ -1161,6 +1161,10 @@ class Form_Emails_Storing {
 			return $response;
 		}
 
+		if ( isset( $stripe_response->metadata['otter_redirect_link'] ) ) {
+			$response->add_response_field( 'redirectLink', $stripe_response->metadata['otter_redirect_link'] );
+		}
+
 		$post_status = get_post_status( $record_id );
 
 		// If the post status is not 'draft', then the submission has already been confirmed.
@@ -1316,7 +1320,7 @@ class Form_Emails_Storing {
 	 * @return void
 	 */
 	public function schedule_automatic_confirmation() {
-		if ( ! wp_next_scheduled( 'otter_form_confirmation' ) ) {
+		if ( ! wp_next_scheduled( 'otter_form_automatic_confirmation' ) ) {
 			wp_schedule_event( time(), 'hourly', 'otter_form_automatic_confirmation' );
 		}
 	}

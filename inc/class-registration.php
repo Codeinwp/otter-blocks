@@ -509,6 +509,7 @@ class Registration {
 						'big-file'             => __( 'File size is to big. The limit is: ', 'otter-blocks' ),
 						'invalid-file'         => __( 'Invalid files type. The submitted files could not be processed.', 'otter-blocks' ),
 						'confirmingSubmission' => __( 'Confirming submission', 'otter-blocks' ),
+						'redirecting'          => __( 'Click here for manual redirect!', 'otter-blocks' ),
 					),
 				)
 			);

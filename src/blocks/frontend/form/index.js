@@ -481,16 +481,15 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 
 					if ( 0 < res?.redirectLink?.length ) {
 						form.setAttribute( 'data-redirect', res.redirectLink );
-					}
 
-					setTimeout( () => {
-						if ( 0 < res?.redirectLink?.length ) {
+						setTimeout( () => {
 							let a = document.createElement( 'a' );
 							a.target = '_blank';
 							a.href = res.redirectLink;
 							a.click();
-						}
-					}, 1000 );
+						}, 1000 );
+					}
+
 				},
 				( res, displayMsg ) => {},
 				() => {
@@ -565,6 +564,23 @@ domReady( () => {
 			handleAfterSubmit( confirmRecord(), displayMsg, ( res, displayMsg ) => {
 				const msg = res?.submitMessage ? res.submitMessage :  'Success';
 				displayMsg.setMsg( msg ).show();
+
+				if ( 0 < res?.redirectLink?.length ) {
+					form.setAttribute( 'data-redirect', res.redirectLink );
+
+					let a = document.createElement( 'a' );
+					a.target = '_blank';
+					a.innerHTML = displayMsg.getMsgBySlug( 'redirecting' );
+					a.href = res.redirectLink;
+
+					setTimeout( () => {
+						a.click();
+					}, 1000 );
+
+					setTimeout( () => {
+						form.querySelector( '.has-submit-msg' ).appendChild( a );
+					}, 1500 );
+				}
 			}, () => {}, () => {
 				sendBtn.disabled = false;
 				spinner.hide();
