@@ -60,7 +60,7 @@ class Dynamic_Content {
 	 * Parse dynamic content query.
 	 *
 	 * @param string $content The content to parse.
-	 * @return \string[]
+	 * @return array
 	 */
 	public static function parse_dynamic_content_query( $content ) {
 		$re = self::dynamic_content_regex();

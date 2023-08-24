@@ -77,6 +77,14 @@ class TestBlockConditions extends WP_UnitTestCase
 		$this->go_to( get_permalink( $this->post_id ) );
 	}
 
+	public function tear_down()
+	{
+		wp_delete_user( $this->user_id, true );
+		wp_delete_post( $this->post_id, true );
+		wp_delete_term( $this->category_id, 'category' );
+		parent::tear_down();
+	}
+
 	/**
 	 * Test logged-in user when user is logged in.
 	 */
@@ -331,6 +339,146 @@ class TestBlockConditions extends WP_UnitTestCase
 		);
 
 		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test the date reccuring condition.
+	 */
+	public function test_date_recurring() {
+		$condition = array(
+			'type' => 'dateRecurring',
+			'days' => array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' ),
+		);
+
+		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test multiple conditions.
+	 */
+	public function test_multiple_conditions() {
+
+		$this->go_to( get_permalink( $this->post_id ) );
+		wp_set_current_user( $this->user_id );
+
+		$collection = array(
+			array(
+				array(
+					'type' => 'loggedInUser',
+				),
+				array(
+					'type'       => 'postType',
+					'post_types' => array( 'post' ),
+				),
+			)
+		);
+
+		$result = $this->block_conditions->evaluate_condition_collection( $collection );
+
+		$this->assertTrue( $result );
+	}
+
+
+	/**
+	 * Test multiple conditions.
+	 */
+	public function test_multiple_conditions__with_one_invalid() {
+		$this->go_to( get_permalink( $this->post_id ) );
+		wp_set_current_user( 0 );
+
+		$collection = array(
+			array(
+				array(
+					'type' => 'loggedInUser',
+				),
+				array(
+					'type'       => 'postType',
+					'post_types' => array( 'post' ),
+				),
+			),
+		);
+
+		$result = $this->block_conditions->evaluate_condition_collection( $collection );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test multiple conditions.
+	 */
+	public function test_multiple_conditions_with_all_invalid() {
+		$this->go_to( get_permalink( $this->post_id ) );
+		wp_set_current_user( 0 );
+
+		$collection = array(
+			array(
+				array(
+					'type' => 'loggedInUser',
+				),
+				array(
+					'type'       => 'postType',
+					'post_types' => array( 'test_17' ),
+				),
+			),
+		);
+
+		$result = $this->block_conditions->evaluate_condition_collection( $collection );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * Test OR collection.
+	 */
+	public function test_or_collection() {
+		$this->go_to( get_permalink( $this->post_id ) );
+
+		$collection = array(
+			array(
+				array(
+					'type'       => 'postType',
+					'post_types' => array( 'post' ),
+				),
+			),
+			array(
+				array(
+					'type'       => 'postType',
+					'post_types' => array( 'test_17' ),
+				),
+			),
+		);
+
+		$result = $this->block_conditions->evaluate_condition_collection( $collection );
+
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * Test OR collection. All invalid
+	 */
+	public function test_or_collection_invalid() {
+		$this->go_to( get_permalink( $this->post_id ) );
+
+		$collection = array(
+			array(
+				array(
+					'type'       => 'postType',
+					'post_types' => array( 'post_42' ),
+				),
+			),
+			array(
+				array(
+					'type'       => 'postType',
+					'post_types' => array( 'test_17' ),
+				),
+			),
+		);
+
+		$result = $this->block_conditions->evaluate_condition_collection( $collection );
 
 		$this->assertFalse( $result );
 	}
