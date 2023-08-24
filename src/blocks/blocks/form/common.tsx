@@ -183,7 +183,7 @@ export const HideFieldLabelToggle = ( props: Partial<BlockProps<FormInputCommonP
 	);
 };
 
-export const hasFormFieldName = ( name?: string ) => [ 'input', 'textarea', 'multiple-choice', 'file', 'hidden-field' ].some( ( type ) => name?.startsWith( `themeisle-blocks/form-${ type }` ) );
+export const hasFormFieldName = ( name?: string ) => [ 'input', 'textarea', 'multiple-choice', 'file', 'hidden-field', 'stripe-field' ].some( ( type ) => name?.startsWith( `themeisle-blocks/form-${ type }` ) );
 
 export const getFormFieldsFromInnerBlock = ( block: any ) : ( any | undefined )[] => {
 	return block?.innerBlocks?.map( ( child: any ) => {

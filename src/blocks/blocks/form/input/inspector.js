@@ -58,7 +58,7 @@ const Inspector = ({
 						value={ attributes.type }
 						options={ fieldTypesOptions() }
 						onChange={ type => {
-							if ( 'textarea' === type || 'radio' === type || 'checkbox' === type || 'select' === type || 'file' === type || 'hidden' === type ) {
+							if ( 'textarea' === type || 'radio' === type || 'checkbox' === type || 'select' === type || 'file' === type || 'hidden' === type || 'stripe' === type ) {
 								switchFormFieldTo( type, clientId, attributes );
 								return;
 							}

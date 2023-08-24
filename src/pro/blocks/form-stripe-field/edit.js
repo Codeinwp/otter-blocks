@@ -248,6 +248,7 @@ const Edit = ({
 					setAPIKey={ setAPIKey }
 					saveApiKey={ saveApiKey }
 					status={ status }
+					clientId={ clientId }
 				/>
 
 				<Placeholder
@@ -383,6 +384,7 @@ const Edit = ({
 				setAPIKey={ setAPIKey }
 				saveApiKey={ saveApiKey }
 				status={ status }
+				clientId={ clientId }
 			/>
 
 			<div { ...blockProps }>
