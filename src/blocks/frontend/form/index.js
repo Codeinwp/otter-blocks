@@ -572,6 +572,7 @@ domReady( () => {
 					a.target = '_blank';
 					a.innerHTML = displayMsg.getMsgBySlug( 'redirecting' );
 					a.href = res.redirectLink;
+					a.classList.add( 'o-form-redirect-link' );
 
 					setTimeout( () => {
 						a.click();
