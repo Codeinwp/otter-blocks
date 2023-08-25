@@ -1021,7 +1021,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={ 'helpFontSize' }>
 								<BaseControl
-									label={ __( 'Helper Text Size', 'otter-blocks' ) }
+									label={ __( 'Helper Text', 'otter-blocks' ) }
 								>
 									<FontSizePicker
 										fontSizes={ defaultFontSizes }
@@ -1034,7 +1034,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={ 'messageFontSize' }>
 								<BaseControl
-									label={ __( 'Success/Error Message Size', 'otter-blocks' ) }
+									label={ __( 'Success/Error Message', 'otter-blocks' ) }
 								>
 									<FontSizePicker
 										fontSizes={ defaultFontSizes }
