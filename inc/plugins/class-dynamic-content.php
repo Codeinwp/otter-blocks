@@ -43,7 +43,27 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		return $this->apply_data( self::parse_dynamic_content_query( $content ) );
+		$matches = array();
+		$num     = self::parse_dynamic_content_query( $content, $matches );
+
+		if ( isset( $num ) && 0 === $num ) {
+			return $content;
+		}
+
+		foreach ( $matches as $match ) {
+			$replacement       = $this->apply_data( $match );
+			$string_to_replace = $match[0];
+			$position          = strstr( $content, $string_to_replace, true );
+
+			if ( false === $position ) {
+				continue;
+			}
+
+			$position = strlen( $position );
+			$content  = substr_replace( $content, $replacement, $position, strlen( $string_to_replace ) );
+		}
+
+		return $content;
 	}
 
 	/**
@@ -60,17 +80,12 @@ class Dynamic_Content {
 	 * Parse dynamic content query.
 	 *
 	 * @param string $content The content to parse.
-	 * @return array
+	 * @param array  $matches The matches.
+	 * @return mixed
 	 */
-	public static function parse_dynamic_content_query( $content ) {
+	public static function parse_dynamic_content_query( $content, &$matches ) {
 		$re = self::dynamic_content_regex();
-		preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
-
-		if ( ! isset( $matches[0] ) ) {
-			return array();
-		}
-
-		return $matches[0];
+		return preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
 	}
 
 	/**
