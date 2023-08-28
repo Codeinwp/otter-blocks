@@ -51,6 +51,8 @@ const PromptBlockEditor = (
 		tokenUsageDescription?: string
 		actionButtons?: ReactNode
 		status?: string
+		currentPrompt?: string
+		showRegenerate?: boolean
 	}
 ) => {
 	return (
@@ -74,13 +76,18 @@ const PromptBlockEditor = (
 
 				{ props.actionButtons }
 
-				<Button
-					variant={ 'tertiary' }
-					onClick={ props.onRegenerate }
-					disabled={ 'loading' === props.status }
-				>
-					{ __( 'Regenerate', 'otter-blocks' ) }
-				</Button>
+				{
+					props.showRegenerate && (
+						<Button
+							variant={ 'tertiary' }
+							onClick={ props.onRegenerate }
+							disabled={ 'loading' === props.status }
+						>
+							{ __( 'Regenerate', 'otter-blocks' ) }
+						</Button>
+					)
+				}
+
 				<div className="prompt-result__actions__navigation">
 					{
 						0 < props.totalResults && (
@@ -358,6 +365,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 							status: generationStatus
 						})}
 						status={generationStatus}
+						currentPrompt={value}
+						showRegenerate={ Boolean( resultHistory?.[ resultHistoryIndex ]?.meta?.prompt ) }
 					>
 
 						<PromptInput

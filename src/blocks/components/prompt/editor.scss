@@ -60,6 +60,11 @@
 		border: unset;
 		flex-grow: 1;
 		outline: unset;
+		max-height: 500px;
+		appearance: none;
+		padding: 13px;
+		min-height: 52px;
+		resize: none;
 	}
 
 	.prompt-input__submit__container button {

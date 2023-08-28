@@ -19,33 +19,42 @@ type PromptInputProps = {
 	onGenerate: () => void;
 }
 const PromptInput = ( props: PromptInputProps ) => {
-	const inputRef = useRef<HTMLInputElement|null>( null );
+	const inputRef = useRef<HTMLTextAreaElement|null>( null );
 
-	useEffect( () => {
-		if ( inputRef.current ) {
-			inputRef.current?.addEventListener(
-				'keydown',
-				( e ) => {
-					if ( 'Enter' === e.key ) {
-						e.preventDefault();
-						props.onGenerate();
-					}
-				}
-			);
+	/**
+	 * Handle keydown event.
+	 */
+	const handleKeyDown = ( e: React.KeyboardEvent<HTMLTextAreaElement> ) => {
+		if ( 'Enter' === e.key && ! e.shiftKey ) {
+			e.preventDefault();
+			props.onGenerate();
 		}
-	}, []);
+	};
 
 	return (
 		<div className="prompt-input__container">
 			<div className="prompt-input__input__container">
 				<Icon icon={aiGeneration} width={24} />
-				<input
+				<textarea
 					ref={ inputRef }
 					className="prompt-input__input"
-					value={ props.value }
-					onChange={ ( e ) => props.onValueChange( e.target.value ) }
+
+					onChange={ ( e ) => {
+						props.onValueChange( e.target.value );
+
+						if ( ! inputRef.current ) {
+							return;
+						}
+
+						inputRef.current.style.cssText = 'height:auto; padding:0; overflow-y: hidden;';
+						inputRef.current.style.cssText = 'height:' + inputRef.current.scrollHeight + 'px; overflow-y: auto;';
+					} }
 					placeholder={ props.placeholder }
-				/>
+					rows={1}
+					onKeyDown={ handleKeyDown }
+				>
+					{ props.value }
+				</textarea>
 				<div className="prompt-input__submit__container">
 					<Button
 						variant="secondary"
