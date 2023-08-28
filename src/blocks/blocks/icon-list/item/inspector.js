@@ -71,14 +71,14 @@ const Inspector = ({
 					{
 						value: attributes.contentColor,
 						onChange: contentColor => setAttributes({ contentColor }),
-						label: __( 'Content Color', 'otter-blocks' ),
+						label: __( 'Content', 'otter-blocks' ),
 						isShownByDefault: true
 					},
 					...( 'image' !== attributes.library ? [
 						{
 							value: attributes.iconColor,
 							onChange: iconColor => setAttributes({ iconColor }),
-							label: __( 'Icon Color', 'otter-blocks' ),
+							label: __( 'Icon', 'otter-blocks' ),
 							isShownByDefault: true
 						}
 					] : [])

@@ -984,7 +984,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={'inputBorderRadius'}>
 								<BoxControl
-									label={ __( 'Border Radius', 'otter-blocks' ) }
+									label={ __( 'Radius', 'otter-blocks' ) }
 									values={ ! isObjectLike( attributes.inputBorderRadius ) ? makeBox( _px( attributes.inputBorderRadius ?? 4 ) ) : attributes.inputBorderRadius }
 									onChange={ inputBorderRadius  => setAttributes({ inputBorderRadius }) }
 									id="o-border-raduis-box"
@@ -993,7 +993,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={'inputBorderWidth'}>
 								<BoxControl
-									label={ __( 'Border Width', 'otter-blocks' ) }
+									label={ __( 'Width', 'otter-blocks' ) }
 									values={ ! isObjectLike( attributes.inputBorderWidth ) ? makeBox( _px( attributes.inputBorderWidth ?? 1 ) ) : attributes.inputBorderWidth }
 									onChange={ inputBorderWidth  => setAttributes({ inputBorderWidth }) }
 								/>
