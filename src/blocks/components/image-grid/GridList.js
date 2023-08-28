@@ -8,7 +8,7 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { useRef, useState } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -23,7 +23,6 @@ const GridList = ({
 	const [ selectedItems, setSelectedItems ] = useState([]);
 	const [ isSorting, setIsSorting ] = useState( false );
 	const [ sortingItemKey, setSortingItemKey ] = useState( null );
-	const containerRef = useRef( null );
 
 	const handleUpdateBeforeSortStart = ({ index }) => {
 		return new Promise( resolve => {
@@ -51,20 +50,6 @@ const GridList = ({
 		setSortingItemKey( null );
 		setSelectedItems([]);
 		onSelectImages( newItems );
-
-		// Remove all extra nodes that react-sortable-hoc adds to the DOM but doesn't remove after sorting is done.
-		document.querySelectorAll( '.o-images-grid-component__image' ).forEach( node => {
-			if ( ! containerRef.current?.container.contains?.( node ) ) {
-
-				// Hide the node until it can be removed to prevent a flash of unstyled content.
-				node.style.display = 'none';
-				setTimeout( () => {
-
-					// Remove the node after a short delay to allow the transition to finish.
-					node.remove();
-				}, 250 );
-			}
-		});
 	};
 
 	const handleItemSelect = item => {
@@ -111,7 +96,6 @@ const GridList = ({
 			onSortEnd={ onSortEnd }
 			distance={ 3 }
 			axis="xy"
-			ref={ containerRef }
 		/>
 	);
 };

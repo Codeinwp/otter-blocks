@@ -27,14 +27,12 @@ const SortableList = SortableContainer( ({
 	selectedItems,
 	isSorting,
 	sortingItemKey,
-	open,
-	ref
+	open
 }) => {
 	return (
 		<div
 			className={ className }
 			tabIndex="0"
-			ref={ ref }
 		>
 			{ items.map( ( item, index ) => {
 				const isSelected = selectedItems.includes( item );
