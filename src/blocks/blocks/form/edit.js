@@ -47,13 +47,13 @@ import {
 import metadata from './block.json';
 import {
 	blockInit,
-	getDefaultValueByField
+	getDefaultValueByField,
+	triggerSave
 } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
-import { Notice } from '@wordpress/components';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -143,17 +143,13 @@ const Edit = ({
 		moveBlockToPosition
 	} = useDispatch( 'core/block-editor' );
 
-	const {
-		unlockPostSaving
-	} = useDispatch( 'core/editor' );
-
 	const setFormOption = option => {
 		setFormOptions( options => ({ ...options, ...option }) );
 	};
 
 	const setFormOptionAndSaveUnlock = option => {
 		setFormOption( option );
-		unlockPostSaving?.();
+		triggerSave();
 	};
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
