@@ -331,9 +331,18 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 							</div>
 							<p/>
 
-							<ExternalLink href={'https://platform.openai.com/account/api-keys'}>
-								{ __( 'Get your API Key', 'otter-blocks' ) }
-							</ExternalLink>
+							<div className='o-info-row'>
+								<ExternalLink href={'https://platform.openai.com/account/api-keys'}>
+									{ __( 'Get your API Key', 'otter-blocks' ) }
+								</ExternalLink>
+
+								<ExternalLink
+									href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
+								>
+									{ __( 'More Info', 'otter-blocks' ) }
+								</ExternalLink>
+							</div>
+
 						</Fragment>
 					)
 				}

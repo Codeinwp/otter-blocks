@@ -4,11 +4,15 @@
 		flex-direction: column;
 	}
 
-
-
 	.history-display {
 		padding: 0px 20px;
 		font-size: 1.2em;
+	}
+
+	.o-info-row {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
 	}
 }
 
