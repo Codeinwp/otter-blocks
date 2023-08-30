@@ -215,7 +215,7 @@ const Integrations = () => {
 				</PanelRow>
 			</PanelBody>
 			<PanelBody
-				title={ __( 'Open AI', 'otter-blocks' ) }
+				title={ __( 'OpenAI', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				<PanelRow>
@@ -251,7 +251,7 @@ const Integrations = () => {
 							</ExternalLink>
 
 							<ExternalLink
-								href="https://docs.themeisle.com/article/1674-form-blocks#ai-form"
+								href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
 							>
 								{ __( 'More Info', 'otter-blocks' ) }
 							</ExternalLink>
