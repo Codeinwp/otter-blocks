@@ -25,7 +25,7 @@ import { dispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../../../blocks/blocks/form/common';
+import { fieldTypesOptions, HideFieldLabelToggle, mappedNameInfo, switchFormFieldTo } from '../../../blocks/blocks/form/common';
 import { Notice } from '../../../blocks/components';
 import { setUtm } from '../../../blocks/helpers/helper-functions';
 
@@ -80,7 +80,7 @@ const ProPreview = ({ attributes }) => {
 
 				<TextControl
 					label={ __( 'Mapped Name', 'otter-blocks' ) }
-					help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+					help={ mappedNameInfo }
 					value={ attributes.mappedName }
 					onChange={ () => {} }
 					placeholder={ __( 'photos', 'otter-blocks' ) }

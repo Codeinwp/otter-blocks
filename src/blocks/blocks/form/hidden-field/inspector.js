@@ -24,7 +24,7 @@ import { useContext } from '@wordpress/element';
 import { FormContext } from '../edit';
 import { Notice } from '../../../components';
 import { setUtm } from '../../../helpers/helper-functions';
-import { fieldTypesOptions, switchFormFieldTo } from '../common';
+import { fieldTypesOptions, mappedNameInfo, switchFormFieldTo } from '../common';
 
 
 /**
@@ -81,6 +81,14 @@ const Inspector = ({
 					help={ __( 'The query parameter name that is used in URL. If the param is present, its value will be extracted and send with the Form.', 'otter-blocks' ) }
 					placeholder={ __( 'e.g. utm_source', 'otter-blocks' ) }
 					disabled={true}
+				/>
+
+				<TextControl
+					label={ __( 'Mapped Name', 'otter-blocks' ) }
+					help={ mappedNameInfo }
+					value={ attributes.mappedName }
+					onChange={ () => {} }
+					placeholder={ __( 'photos', 'otter-blocks' ) }
 				/>
 
 				<Notice

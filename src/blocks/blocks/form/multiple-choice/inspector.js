@@ -22,7 +22,7 @@ import { Fragment, useContext } from '@wordpress/element';
  * Internal dependencies
  */
 import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
-import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
+import { fieldTypesOptions, HideFieldLabelToggle, mappedNameInfo, switchFormFieldTo } from '../common';
 import { FormContext } from '../edit.js';
 import { HTMLAnchorControl } from '../../../components';
 
@@ -128,7 +128,7 @@ const Inspector = ({
 
 					<TextControl
 						label={ __( 'Mapped Name', 'otter-blocks' ) }
-						help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+						help={ mappedNameInfo }
 						value={ attributes.mappedName }
 						onChange={ mappedName => setAttributes({ mappedName }) }
 						placeholder={ __( 'car_type', 'otter-blocks' ) }

@@ -16,7 +16,7 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import { Notice as OtterNotice } from '../../../blocks/components';
-import { FieldInputWidth, HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
+import { FieldInputWidth, HideFieldLabelToggle, mappedNameInfo } from '../../../blocks/blocks/form/common';
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
 import AutoresponderBodyModal from '../../components/autoresponder/index.js';
 import WebhookEditor from '../../components/webhook-editor';
@@ -305,7 +305,7 @@ const FormFileInspector = ( Template, {
 
 			<TextControl
 				label={ __( 'Mapped Name', 'otter-blocks' ) }
-				help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+				help={ mappedNameInfo }
 				value={ attributes.mappedName }
 				onChange={ mappedName => setAttributes({ mappedName }) }
 				placeholder={ __( 'photos', 'otter-blocks' ) }

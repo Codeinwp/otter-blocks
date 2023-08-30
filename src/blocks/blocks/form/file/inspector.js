@@ -21,7 +21,7 @@ import {
 import { applyFilters } from '@wordpress/hooks';
 import { Fragment, useContext } from '@wordpress/element';
 
-import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
+import { fieldTypesOptions, HideFieldLabelToggle, mappedNameInfo, switchFormFieldTo } from '../common';
 import { FormContext } from '../edit';
 import { setUtm } from '../../../helpers/helper-functions';
 import { HTMLAnchorControl, Notice } from '../../../components';
@@ -70,7 +70,7 @@ const ProPreview = ({ attributes }) => {
 
 				<TextControl
 					label={ __( 'Mapped Name', 'otter-blocks' ) }
-					help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+					help={ mappedNameInfo }
 					value={ attributes.mappedName }
 					onChange={ () => {} }
 					placeholder={ __( 'photos', 'otter-blocks' ) }
