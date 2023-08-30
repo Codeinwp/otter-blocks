@@ -218,10 +218,8 @@ export const selectAllFieldsFromForm = ( children: any[]) : ({ parentClientId: s
 
 export const mappedNameInfo = (
 	<Fragment>
-		<Fragment>
-			{__( 'Allow easy identification of the field with features like: webhooks.', 'otter-blocks' )}
-			<ExternalLink href='https://docs.themeisle.com/article/1878-how-to-use-webhooks-in-otter-forms#mapped-name'> { __( 'Learn More', 'otter-blocks' ) } </ExternalLink>
-		</Fragment>
+		{__( 'Allow easy identification of the field.', 'otter-blocks' )}
+		<ExternalLink href='https://docs.themeisle.com/article/1878-how-to-use-webhooks-in-otter-forms#mapped-name'> { __( 'Learn More', 'otter-blocks' ) } </ExternalLink>
 	</Fragment>
 );
 
