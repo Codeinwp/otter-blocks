@@ -199,7 +199,7 @@ class Form_Server {
 	 * @since 2.0.3
 	 */
 	public function editor( $request ) {
-		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
+		$data = new Form_Data_Request( $request );
 		$res  = new Form_Data_Response();
 
 		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get_payload_field( 'formOption' ) );
@@ -211,6 +211,10 @@ class Form_Server {
 			$provider = $data->get_payload_field( 'provider' );
 		}
 		$provider_handlers = Form_Providers::$instance->get_provider_handlers( $provider, 'editor' );
+
+		if ( $data->has_error() ) {
+			return $res->set_code( $data->get_error_code() )->build_response();
+		}
 
 		if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $data->get( 'handler' ) ) ) {
 			// Send the data to the provider.
