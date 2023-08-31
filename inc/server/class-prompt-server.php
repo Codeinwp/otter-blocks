@@ -288,7 +288,7 @@ class Prompt_Server {
 				'license_id' => apply_filters( 'product_otter_license_key', 'free' ),
 				'cache'      => gmdate( 'u' ),
 			),
-			'https://api.themeisle.com/otter/prompts'
+			'https://api.themeisle.com/templates-cloud/otter-prompts'
 		);
 
 		$response = '';
