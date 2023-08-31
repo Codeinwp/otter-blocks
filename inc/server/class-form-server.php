@@ -655,7 +655,13 @@ class Form_Server {
 				if ( $valid_api_key['valid'] ) {
 					if ( $form_options->has_list_id() ) {
 						$service->set_api_key( $form_options->get_api_key() )->set_list_id( $form_options->get_list_id() );
-						$res = $service->test_subscription();
+						$response = $service->make_subscribe_request( Form_Utils::generate_test_email() );
+
+						if ( is_wp_error( $response ) ) {
+							$res->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $response->get_error_message() );
+						} else {
+							$res->mark_as_success();
+						}
 					} else {
 						$res->set_error( __( 'Contact list ID is missing!', 'otter-blocks' ) );
 					}
