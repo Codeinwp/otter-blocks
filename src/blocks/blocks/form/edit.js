@@ -3,7 +3,7 @@
  */
 import classnames from 'classnames';
 
-import { get, isEqual } from 'lodash';
+import { debounce, get, isEqual } from 'lodash';
 
 import hash from 'object-hash';
 
@@ -47,8 +47,7 @@ import {
 import metadata from './block.json';
 import {
 	blockInit,
-	getDefaultValueByField,
-	triggerSave
+	getDefaultValueByField
 } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
@@ -147,9 +146,20 @@ const Edit = ({
 		setFormOptions( options => ({ ...options, ...option }) );
 	};
 
+	/**
+	 * This mark the block as dirty which allow us to use the save button to trigger the update of the form options tied to WP Options.
+	 *
+	 * @type {DebouncedFunc<(function(): void)|*>}
+	 */
+	const enableSaveBtn = debounce( () => {
+		const dummyBlock = createBlock( 'core/spacer', { height: '0px' });
+		insertBlock( dummyBlock, 0, clientId, false );
+		removeBlock( dummyBlock.clientId, false );
+	}, 3000 );
+
 	const setFormOptionAndSaveUnlock = option => {
 		setFormOption( option );
-		triggerSave();
+		enableSaveBtn();
 	};
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
