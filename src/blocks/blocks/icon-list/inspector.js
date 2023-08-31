@@ -221,7 +221,7 @@ const Inspector = ({
 							initialOpen={ false }
 						>
 							<BaseControl
-								label={ __( 'Font Size', 'otter-blocks' ) }
+								label={ __( 'Font', 'otter-blocks' ) }
 								__nextHasNoMarginBottom={ true }
 
 								// help={ __( 'The size of the font size of the content and icon.', 'otter-blocks' ) }
@@ -256,7 +256,7 @@ const Inspector = ({
 							</BaseControl>
 
 							<BaseControl
-								label={ __( 'Icon Size', 'otter-blocks' ) }
+								label={ __( 'Icon', 'otter-blocks' ) }
 								__nextHasNoMarginBottom={ true }
 
 								//help={ __( 'The size of the font size of the content and icon.', 'otter-blocks' ) }

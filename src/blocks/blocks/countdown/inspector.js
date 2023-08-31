@@ -497,7 +497,7 @@ const Inspector = ({
 						) }
 
 						<BoxControl
-							label={ __( 'Border Radius', 'otter-blocks' ) }
+							label={ __( 'Radius', 'otter-blocks' ) }
 							values={
 								mergeBoxDefaultValues(
 									attributes.borderRadiusBox,
