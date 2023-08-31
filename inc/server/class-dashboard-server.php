@@ -38,6 +38,7 @@ class Dashboard_Server {
 	 */
 	public function init() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action( 'after_switch_theme', array( $this, 'regenerate_styles_on_theme_change' ) );
 	}
 
 	/**
@@ -65,13 +66,22 @@ class Dashboard_Server {
 	 * Regenerate styles.
 	 *
 	 * @param \WP_REST_Request $request The request.
-	 * 
+	 *
 	 * @return \WP_REST_Response
 	 * @since   2.0.9
 	 * @access  public
 	 */
 	public function rest_regenerate_styles( \WP_REST_Request $request ) {
 		return self::regenerate_styles();
+	}
+
+	/**
+	 * Regenerate styles on theme change.
+	 *
+	 * @since 2.3
+	 */
+	public function regenerate_styles_on_theme_change() {
+		self::regenerate_styles();
 	}
 
 	/**

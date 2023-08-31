@@ -49,7 +49,7 @@
     }
 }
 
-body:not( .branch-6-1 ) {
+body:is( [class*="branch-5-"], [class*="version-6-0"] ) {
     .o-button-dropdown-control-content {
         .components-popover__content {
             @media (min-width: 782px) {

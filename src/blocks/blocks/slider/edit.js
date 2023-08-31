@@ -66,6 +66,7 @@ const Edit = ({
 
 	const initObserver = useRef( null );
 	const sliderRef = useRef( null );
+	const containerRef = useRef( null );
 
 	useEffect( () => {
 		try {
@@ -89,37 +90,34 @@ const Edit = ({
 
 	useEffect( () => {
 
-		const container = document.querySelector( `#${ attributes.id }` ) ?? getEditorIframe()?.contentDocument?.querySelector( `#${ attributes.id }` );
-
-		if ( container ) {
+		if ( containerRef.current ) {
 			initObserver.current = new IntersectionObserver( ( entries ) => {
 				entries.forEach( entry => {
 					if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
-						if ( attributes.images.length ) {
+						if ( attributes.images && 0 < attributes.images.length ) {
 							initSlider();
-							initObserver.current?.unobserve( container );
+							initObserver.current?.unobserve( containerRef.current );
 						}
 					}
 				});
 			}, options );
 
-			initObserver.current?.observe( container );
+			initObserver.current?.observe( containerRef.current );
 		}
 
 		return () => {
 			if ( attributes?.images?.length ) {
 				sliderRef?.current?.destroy();
 			}
+			initObserver.current?.disconnect();
 		};
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-		if ( attributes.images.length ) {
+		if ( attributes.images && 0 < attributes.images.length && attributes.id ) {
 			setSelectedImage( null );
 
-			if ( null !== sliderRef.current && attributes.id ) {
-				initSlider();
-			}
+			initSlider();
 		}
 	}, [ isSelected, attributes.id, sliderRef.current, attributes.images, attributes.width ]);
 
@@ -136,12 +134,12 @@ const Edit = ({
 	const initSlider = () => {
 
 		// Clean up old references.
-		if ( null !== sliderRef.current ) {
+		if ( Boolean( sliderRef.current ) ) {
 			sliderRef.current?.destroy?.();
+			sliderRef.current = undefined;
 		}
 
 		const iframe = getEditorIframe();
-		const container = document?.querySelector( `#${ attributes.id }` ) ?? iframe?.contentDocument?.querySelector( `#${ attributes.id }` );
 
 		const config = {
 			type: 'carousel',
@@ -161,25 +159,37 @@ const Edit = ({
 			}
 		};
 
+		// This will prevent the slider from initializing if the block is not in the DOM that it can reach (like Inserter block preview)
+		if ( ! Boolean( document.querySelector( `#${ attributes.id }` ) ?? iframe?.contentDocument?.querySelector( `#${ attributes.id }` ) ) ) {
+			return;
+		}
+
 		/**
 		 * Init the Slider inside the iframe.
 		 */
-		if ( Boolean( iframe ) ) {
-			const initFrame = () => {
-				if ( iframe?.contentWindow?.Glide ) {
-					sliderRef.current = new iframe.contentWindow.Glide( container, config ).mount();
+		try {
+			if ( Boolean( iframe ) ) {
+				const initFrame = () => {
+					if ( iframe?.contentWindow?.Glide ) {
+						sliderRef.current = new iframe.contentWindow.Glide( containerRef.current, config ).mount();
+					}
+				};
+
+				if ( ! Boolean( iframe.contentDocument?.querySelector( '#glidejs-js' ) ) ) {
+
+					// Load the JS file into the iframe.
+					copyScriptAssetToIframe( '#glidejs-js', initFrame );
+				} else {
+					initFrame();
 				}
-			};
-
-			if ( ! Boolean( iframe.contentDocument?.querySelector( '#glidejs-js' ) ) ) {
-
-				// Load the JS file into the iframe.
-				copyScriptAssetToIframe( '#glidejs-js', initFrame );
 			} else {
-				initFrame();
+				sliderRef.current = new window.Glide( containerRef.current, config ).mount();
 			}
-		} else {
-			sliderRef.current = new window.Glide( container, config ).mount();
+		} catch ( e ) {
+
+			// We don't want to break the block if the slider fails to init.
+			// The main cause is when the block runs inside an iFrame and can not access the root node.
+			console.warn( e );
 		}
 	};
 
@@ -192,8 +202,6 @@ const Edit = ({
 				caption: image.caption
 			}) )
 		});
-
-		initSlider();
 	};
 
 	const changePerView = value => {
@@ -257,6 +265,7 @@ const Edit = ({
 					id={ attributes.id }
 					className="glide"
 					style={ inlineStyles }
+					ref={ containerRef }
 				>
 					<div className="glide__track" data-glide-el="track">
 						<div

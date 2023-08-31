@@ -704,7 +704,7 @@ const Inspector = ({
 						/>
 
 						<BaseControl
-							label={ __( 'Content Font Size', 'otter-blocks' ) }
+							label={ __( 'Content', 'otter-blocks' ) }
 						>
 							<FontSizePicker
 								fontSizes={ defaultFontSizes }
