@@ -273,4 +273,26 @@ test.describe( 'Form Block', () => {
 		// check for a element with the attribute data-redirect-url
 		await expect( await page.$( `[data-redirect="${REDIRECT_URL}"]` ) ).toBeTruthy();
 	});
+
+	test( 'errors on invalid API Key for Market Integration', async({ page, editor, browser }) => {
+
+		await editor.insertBlock({ name: 'themeisle-blocks/form' });
+
+		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+
+		expect( formBlock ).toBeTruthy();
+
+		const { clientId } = formBlock;
+
+		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+
+		await page.getByRole( 'button', { name: 'Marketing Integration' }).click();
+
+		// Select the Mailchimp option on the select with label Provider
+		await page.getByLabel( 'Provider' ).selectOption( 'mailchimp' );
+
+		await page.getByLabel( 'API Key' ).fill( 'invalid-api-key' );
+
+		await expect( page.getByLabel( 'Dismiss this notice' ) ).toBeVisible();
+	});
 });
