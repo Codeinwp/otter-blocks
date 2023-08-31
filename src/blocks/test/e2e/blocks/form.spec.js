@@ -273,4 +273,49 @@ test.describe( 'Form Block', () => {
 		// check for a element with the attribute data-redirect-url
 		await expect( await page.$( `[data-redirect="${REDIRECT_URL}"]` ) ).toBeTruthy();
 	});
+
+	test( 'enable post save button on options changed', async({ page, editor }) => {
+		const ccValue = 'otter@test-form.com';
+
+		/*
+		 * Create a form block and insert the CC value using the Inspector Controls.
+		 */
+
+		await editor.insertBlock({ name: 'themeisle-blocks/form' });
+
+		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+
+		expect( formBlock ).toBeTruthy();
+
+		const { clientId } = formBlock;
+
+		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+
+		// Open the options panel
+		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+
+		// activate the option
+		await page.getByRole( 'menuitemcheckbox', { name: 'Show CC' }).click();
+
+		// Close the options panel
+		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+
+		const cc = page.getByPlaceholder( 'Send copies to' );
+
+		await cc.fill( ccValue );
+
+		await editor.publishPost();
+
+		await page.getByLabel( 'Close panel' ).click();
+
+		await page.getByPlaceholder( 'Default is to admin site' ).fill( ccValue );
+
+		const saveBtn = page.getByRole( 'button', { name: 'Update', disabled: false });
+
+		await saveBtn.waitFor({
+			timeout: 4000
+		});
+
+		expect( await saveBtn.isEnabled() ).toBeTruthy();
+	});
 });
