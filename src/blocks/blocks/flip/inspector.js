@@ -112,7 +112,7 @@ const Inspector = ({
 
 	const changeBoxShadowColor = value => {
 		setAttributes({
-			boxShadowColor: ( 100 > attributes.boxShadowColorOpacity && attributes.boxShadowColor?.includes( 'var(' ) ) ?
+			boxShadowColor: ( 100 > attributes.boxShadowColorOpacity && value?.includes( 'var(' ) ) ?
 				getComputedStyle( document.documentElement, null ).getPropertyValue( value?.replace( 'var(', '' )?.replace( ')', '' ) ) :
 				value
 		});
