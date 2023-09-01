@@ -598,6 +598,12 @@ const Inspector = ({
 									checked={ link.isSponsored }
 									disabled={ attributes.product }
 								/>
+
+								<ToggleControl
+									label={ __( 'Open in New Tab', 'otter-blocks' ) }
+									checked={ '_blank' === link.target }
+									disabled={ attributes.product }
+								/>
 							</PanelItem>
 						) ) }
 
@@ -629,6 +635,12 @@ const Inspector = ({
 											label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
 											checked={ link.isSponsored }
 											onChange={ () => onChangeLink({ action: 'update', index, value: { isSponsored: ! link.isSponsored }}) }
+										/>
+
+										<ToggleControl
+											label={ __( 'Open in New Tab', 'otter-blocks' ) }
+											checked={ '_blank' === link.target }
+											onChange={ () => onChangeLink({ action: 'update', index, value: { target: '_blank' === link.target ? '_self' : '_blank' }}) }
 										/>
 									</PanelItem>
 								) ) }
