@@ -193,7 +193,7 @@ class Review_Block {
 
 			foreach ( $attributes['links'] as $link ) {
 				$rel   = ( isset( $link['isSponsored'] ) && true === $link['isSponsored'] ) ? 'sponsored' : 'nofollow';
-				$html .= '	<a href="' . esc_url( $link['href'] ) . '" rel="' . $rel . '" target="' . $link['target'] . '">' . esc_html( $link['label'] ) . '</a>';
+				$html .= '	<a href="' . esc_url( $link['href'] ) . '" rel="' . $rel . '" target="' . ( empty( $link['target'] ) ? '_blank' : $link['target'] ) . '">' . esc_html( $link['label'] ) . '</a>';
 			}
 			$html .= '		</div>';
 			$html .= '	</div>';

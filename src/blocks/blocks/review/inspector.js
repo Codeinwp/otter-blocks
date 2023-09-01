@@ -639,8 +639,8 @@ const Inspector = ({
 
 										<ToggleControl
 											label={ __( 'Open in New Tab', 'otter-blocks' ) }
-											checked={ '_blank' === link.target }
-											onChange={ () => onChangeLink({ action: 'update', index, value: { target: '_blank' === link.target ? '_self' : '_blank' }}) }
+											checked={ undefined === link.target || '_blank' === link.target }
+											onChange={ () => onChangeLink({ action: 'update', index, value: { target: '_blank' === link.target || undefined === link.target ? '_self' : '_blank' }}) }
 										/>
 									</PanelItem>
 								) ) }
