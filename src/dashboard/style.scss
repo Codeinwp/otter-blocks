@@ -161,7 +161,14 @@
 
 					&:hover {
 						border-bottom: 1px solid #d6e2ed !important;
+						background: #E8E8E8;
 					}
+				}
+			}
+
+			.components-panel__body-toggle {
+				&:hover {
+					background: #E8E8E8;
 				}
 			}
 
