@@ -315,6 +315,10 @@
 									margin-right: 10px;
 									color: var(--main-link-color);
 									box-shadow: inset 0 0 0 1px var(--main-link-color);
+
+									&:focus {
+										box-shadow: inset 0 0 0 1.5px var(--main-link-color);
+									}
 								}
 
 								.components-external-link {
@@ -372,6 +376,10 @@
 
 						&:not(:last-child) {
 							margin-right: 15px;
+						}
+
+						&:focus {
+							box-shadow: inset 0 0 0 1.5px var(--main-link-color);
 						}
 					}
 				}
@@ -519,6 +527,7 @@
 	.components-textarea-control__input:focus,
 	.components-text-control__input:focus {
 		border-color: var(--main-link-color);
+		box-shadow: 0 0 0 1px var(--main-link-color);
 	}
 }
 
