@@ -559,7 +559,7 @@ const Edit = ({
 					} else {
 						createNotice(
 							'error',
-							res?.error,
+							res?.error ?? res?.reasons?.join( '. ' ) ?? __( 'An error has occurred.', 'otter-blocks' ),
 							{
 								isDismissible: true,
 								type: 'snackbar',

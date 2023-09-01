@@ -51,10 +51,10 @@ interface FormSubscribeServiceInterface {
 	public static function validate_api_key( $api_key );
 
 	/**
-	 * Test if the service is set up by registering a random email address on the contact list.
+	 * Make a request that add the email to the contact list.
 	 *
-	 * @return mixed
-	 * @since 2.0.3
+	 * @param string $email The email address.
+	 * @return array|\WP_Error The response from Mailchimp.
 	 */
-	public function test_subscription();
+	public function make_subscribe_request( $email );
 }
