@@ -89,9 +89,17 @@
 					margin: 0;
 					border: 0;
 					cursor: pointer;
+					margin-right: 8px;
+
+					&:hover {
+						span {
+							color: #282828;
+						}
+						border-bottom: 3px solid #e5e5e5;
+					}
 
 					&.is-active {
-						border-bottom: 4px solid #1E7DB2;
+						border-bottom: 3px solid #1E7DB2;
 
 						span {
 							color: #282828;
@@ -100,7 +108,7 @@
 
 						@media ( max-width: 960px ) {
 							border-bottom: 0;
-							border-left: 4px solid #1E7DB2;
+							border-left: 3px solid #1E7DB2;
 						}
 					}
 
