@@ -108,7 +108,7 @@
 		"typescript": "^5.1.6"
 	},
 	"optionalDependencies": {
-		"fsevents": "^2.3.2"
+		"fsevents": "^2.3.3"
 	},
 	"overrides": {
 		"react": "^17.0.0",
