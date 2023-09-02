@@ -41,7 +41,8 @@ const fieldNames: Record<string, string> = {
 	'radio': __( 'Radio Field', 'otter-blocks' ),
 	'file': __( 'File Field', 'otter-blocks' ),
 	'url': __( 'URL Field', 'otter-blocks' ),
-	'hidden': __( 'Hidden Field', 'otter-blocks' )
+	'hidden': __( 'Hidden Field', 'otter-blocks' ),
+	'stripe': __( 'Stripe Field', 'otter-blocks' )
 };
 
 const extractFieldName = ( input: FormInputProps ) => {
@@ -59,6 +60,10 @@ const extractFieldName = ( input: FormInputProps ) => {
 		return 'hidden';
 	}
 
+	if ( 'form-stripe-field' === tag ) {
+		return 'stripe';
+	}
+
 	return 'textarea';
 };
 
@@ -71,7 +76,7 @@ export const SortableInputField = SortableElement( ({ item, actions } : Sortable
 			<DragHandle />
 
 			<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__name">
-				{ inputField?.attributes?.label ?? fieldNames[fieldName] ?? __( 'Invalid Field', 'otter-blocks' ) }
+				{ 'stripe' === fieldName ? fieldNames.stripe : ( inputField?.attributes?.label ?? fieldNames[fieldName] ?? __( 'Invalid Field', 'otter-blocks' ) ) }
 			</div>
 
 			<Button

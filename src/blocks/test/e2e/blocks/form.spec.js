@@ -101,6 +101,8 @@ test.describe( 'Form Block', () => {
 			hasText: 'Form options have been saved.'
 		});
 
+		await page.waitForTimeout( 1500 );
+
 		expect( await msg.isVisible() ).toBeTruthy();
 
 		/*
@@ -173,6 +175,9 @@ test.describe( 'Form Block', () => {
 					helpText: 'This is a help text',
 					allowedFileTypes: [ 'text/plain', 'image/*' ]
 				}
+			},
+			{
+				name: 'themeisle-blocks/form-nonce'
 			}
 		] });
 
@@ -189,6 +194,8 @@ test.describe( 'Form Block', () => {
 		expect( attributes.id ).toBeTruthy();
 
 		const postId = await editor.publishPost();
+
+		await page.waitForTimeout( 1700 );
 
 		await page.goto( `/?p=${postId}` );
 
@@ -231,6 +238,9 @@ test.describe( 'Form Block', () => {
 					label: 'Hidden Field Test',
 					paramName: 'test'
 				}
+			},
+			{
+				name: 'themeisle-blocks/form-nonce'
 			}
 		] });
 
@@ -248,6 +258,8 @@ test.describe( 'Form Block', () => {
 		expect( attributes.id ).toBeTruthy();
 
 		const postId = await editor.publishPost();
+
+		await page.waitForTimeout( 1500 );
 
 		await page.goto( `/?p=${postId}&test=123` );
 
@@ -291,24 +303,26 @@ test.describe( 'Form Block', () => {
 
 		const postId = await editor.publishPost();
 
-		await page.waitForTimeout( 1000 );
+		await page.waitForTimeout( 2000 );
 
 		await page.goto( `/?p=${postId}` );
 
 		await page.getByLabel( 'Name*' ).fill( 'John Doe' );
 		await page.getByLabel( 'Email*' ).fill( 'test@otter.com' );
 
-		await page.waitForTimeout( 5000 );
-
 		page.on( 'response', ( response ) =>
 			console.log( '<<', response.status(), response.url() )
 		);
 
+		await page.waitForTimeout( 5000 ); // Wait to prevent the anti-spam check from blocking the request.
+
 		await page.getByRole( 'button', { name: 'Submit' }).click();
 
+		await page.waitForTimeout( 500 );
+
+		await expect( await page.$( `[data-redirect="${REDIRECT_URL}"]` ) ).toBeTruthy();
 		await expect( await page.getByText( 'Success' ) ).toBeVisible();
 
 		// check for a element with the attribute data-redirect-url
-		await expect( await page.$( `[data-redirect="${REDIRECT_URL}"]` ) ).toBeTruthy();
 	});
 });

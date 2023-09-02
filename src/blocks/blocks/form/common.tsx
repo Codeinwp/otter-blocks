@@ -67,6 +67,11 @@ export type FieldOption = {
 		saveFiles?: string
 		maxFilesNumber?: number
 	}
+	stripe?: {
+		product: string,
+		price: string,
+		quantity: number,
+	}
 }
 
 export type FormInputCommonProps = {
@@ -113,6 +118,10 @@ export const fieldTypesOptions = () => ([
 		value: 'select'
 	},
 	{
+		label: ( Boolean( window.otterPro?.isActive ) && ! Boolean( window.otterPro?.isExpired ) ) ? __( 'Stripe', 'otter-blocks' ) : __( 'Stripe (Pro)', 'otter-blocks' ),
+		value: 'stripe'
+	},
+	{
 		label: __( 'Text', 'otter-blocks' ),
 		value: 'text'
 	},
@@ -139,6 +148,7 @@ export const switchFormFieldTo = ( type?: string, clientId ?:string, attributes?
 		[ 'select' === type || 'checkbox' === type || 'radio' === type, 'form-multiple-choice' ],
 		[ 'file' === type, 'form-file' ],
 		[ 'hidden' === type, 'form-hidden-field' ],
+		[ 'stripe' === type, 'form-stripe-field' ],
 		[ 'form-input' ]
 	]);
 
@@ -175,7 +185,7 @@ export const HideFieldLabelToggle = ( props: Partial<BlockProps<FormInputCommonP
 	);
 };
 
-export const hasFormFieldName = ( name?: string ) => [ 'input', 'textarea', 'multiple-choice', 'file', 'hidden-field' ].some( ( type ) => name?.startsWith( `themeisle-blocks/form-${ type }` ) );
+export const hasFormFieldName = ( name?: string ) => [ 'input', 'textarea', 'multiple-choice', 'file', 'hidden-field', 'stripe-field' ].some( ( type ) => name?.startsWith( `themeisle-blocks/form-${ type }` ) );
 
 export const getFormFieldsFromInnerBlock = ( block: any ) : ( any | undefined )[] => {
 	return block?.innerBlocks?.map( ( child: any ) => {

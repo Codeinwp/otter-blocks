@@ -62,6 +62,7 @@ import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../h
 import PromptPlaceholder from '../../components/prompt';
 import { parseFormPromptResponseToBlocks, sendPromptToOpenAI } from '../../helpers/prompt';
 import { aiGeneration, formAiGeneration } from '../../helpers/icons';
+import DeferredWpOptionsSave from '../../helpers/defered-wp-options-save';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -78,7 +79,8 @@ const formOptionsMap = {
 	bcc: 'bcc',
 	autoresponder: 'autoresponder',
 	submissionsSaveLocation: 'submissionsSaveLocation',
-	webhookId: 'webhookId'
+	webhookId: 'webhookId',
+	requiredFields: 'requiredFields'
 };
 
 /**
@@ -360,7 +362,8 @@ const Edit = ({
 			autoresponder: wpOptions?.autoresponder,
 			autoresponderSubject: wpOptions?.autoresponderSubject,
 			submissionsSaveLocation: wpOptions?.submissionsSaveLocation,
-			webhookId: wpOptions?.webhookId
+			webhookId: wpOptions?.webhookId,
+			requiredFields: wpOptions?.requiredFields
 		});
 	};
 
@@ -412,73 +415,44 @@ const Edit = ({
 
 	const saveFormEmailOptions = () => {
 		setLoading({ formOptions: 'saving' });
+
+		const data = { form: attributes.optionName };
+		formOptions.requiredFields = extractRequiredFields();
+
+		Object.keys( formOptionsMap ).forEach( key => {
+			data[key] = formOptions[formOptionsMap[key]];
+		});
+
 		try {
-			( new api.models.Settings() ).fetch().done( res => {
-				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-				let isMissing = true;
-				let hasUpdated = false;
-
-				emails?.forEach( ({ form }, index ) => {
-					if ( form !== attributes.optionName ) {
-						return;
-					}
-
-					hasUpdated = Object.keys( formOptionsMap ).reduce( ( acc, key ) => {
-						return acc || ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]);
-					}, false );
-
-					hasUpdated = Object.keys( formOptionsMap ).some( key => ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]) );
-
-					// Update the values
-					if ( hasUpdated ) {
-						Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
-					}
-
-					isMissing = false;
-				});
-
-				if ( isMissing ) {
-					const data = { form: attributes.optionName };
-
-					Object.keys( formOptionsMap ).forEach( key => {
-						data[key] = formOptions[formOptionsMap[key]];
-					});
-
-					emails.push( data );
-				}
-
-				if ( isMissing || hasUpdated ) {
-					const model = new api.models.Settings({
-						// eslint-disable-next-line camelcase
-						themeisle_blocks_form_emails: emails
-					});
-
-					model.save().then( response => {
-						const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
-						if ( formOptions ) {
-							parseDataFormOptions( formOptions );
-							setSavedFormOptions( formOptions );
-							setLoading({ formOptions: 'done' });
-							createNotice(
-								'info',
-								__( 'Form options have been saved.', 'otter-blocks' ),
-								{
-									isDismissible: true,
-									type: 'snackbar'
-								}
-							);
-						} else {
-							setLoading({ formOptions: 'error' });
-						}
-					});
+			( new DeferredWpOptionsSave() ).save( 'form_options', data, ( res, error ) => {
+				if ( error ) {
+					setLoading({ formOptions: 'error' });
 				} else {
 					setLoading({ formOptions: 'done' });
+					createNotice(
+						'info',
+						__( 'Form options have been saved.', 'otter-blocks' ),
+						{
+							isDismissible: true,
+							type: 'snackbar'
+						}
+					);
 				}
-			}).catch( () => setLoading({ formOptions: 'error' }) );
+			});
 		} catch ( e ) {
-			console.error( e );
 			setLoading({ formOptions: 'error' });
 		}
+	};
+
+	const extractRequiredFields = () => {
+
+		const stripeFields = findInnerBlocks(
+			children,
+			block => 'themeisle-blocks/form-stripe-field' === block.name,
+			block => 'themeisle-blocks/form' !== block?.name
+		);
+
+		return stripeFields?.map( block => block.attributes.fieldOptionName ) || [];
 	};
 
 	/**

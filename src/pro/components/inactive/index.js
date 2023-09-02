@@ -25,6 +25,7 @@ const Inactive = ({
 				icon={ icon }
 				label={ label }
 				instructions={ instructions }
+				className="o-license-warning"
 			/>
 		</div>
 	);

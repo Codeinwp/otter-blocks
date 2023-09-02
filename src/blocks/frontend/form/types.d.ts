@@ -6,6 +6,7 @@ export interface IFormResponse {
 	error_source?: string
 	submitMessage: string
 	provider: string
+	frontend_external_confirmation_url?: string
 }
 
 export interface FormFieldData {

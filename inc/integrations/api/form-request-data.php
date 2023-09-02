@@ -7,8 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
-use ArrayAccess;
-
 /**
  * Class Form_Data_Request
  *
@@ -43,7 +41,7 @@ class Form_Data_Request {
 	/**
 	 * Form fields options.
 	 *
-	 * @var array
+	 * @var array<Form_Field_WP_Option_Data>
 	 * @since 2.2.3
 	 */
 	protected $form_fields_options = array();
@@ -105,6 +103,22 @@ class Form_Data_Request {
 	protected $warning_codes = array();
 
 	/**
+	 * Saving mode of the form data.
+	 *
+	 * @var string $saving_mode Saving mode.
+	 * @since 2.4
+	 */
+	protected $saving_mode = 'permanent';
+
+	/**
+	 * The form metadata generated through the request. Use prefix 'frontend_' to make the value visible in the frontend.
+	 *
+	 * @var array
+	 * @since 2.4
+	 */
+	public $metadata = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @access  public
@@ -113,7 +127,7 @@ class Form_Data_Request {
 	 */
 	public function __construct( $request = null ) {
 
-		if ( ! is_a( $request, 'WP_REST_Request' ) ) {
+		if ( ! isset( $request ) || ! is_a( $request, 'WP_REST_Request' ) ) {
 			return;
 		}
 
@@ -122,8 +136,22 @@ class Form_Data_Request {
 
 		$form_data = json_decode( $form_data, true );
 
-		$this->request_data = $this->sanitize_request_data( $form_data );
+		$this->set_data_from_request( $this->sanitize_request_data( $form_data ) );
 		$this->form_options = new Form_Settings_Data( array() );
+
+		if ( ! empty( $request->get_header( 'O-Form-Save-Mode' ) ) ) {
+			$this->set_saving_mode( $request->get_header( 'O-Form-Save-Mode' ) );
+		}
+	}
+
+	/**
+	 * Set the form data.
+	 *
+	 * @param mixed $form_request_data The form data.
+	 * @return void
+	 */
+	private function set_data_from_request( $form_request_data ) {
+		$this->request_data = $form_request_data;
 	}
 
 	/**
@@ -140,34 +168,34 @@ class Form_Data_Request {
 	/**
 	 * Get the value of the field from the request.
 	 *
-	 * @param string $field_name The name of the field.
+	 * @param string $key The name of the field.
 	 * @return mixed
 	 * @since 2.0.3
 	 */
-	public function get( $field_name ) {
-		return $this->is_set( $field_name ) ? $this->request_data[ $field_name ] : null;
+	public function get_root_data( $key ) {
+		return $this->is_root_data_set( $key ) ? $this->request_data[ $key ] : null;
 	}
 
 	/**
-	 * Get the field value.
+	 * Get the item from the payload.
 	 *
-	 * @param string $field_name The name of the field.
+	 * @param string $key The name of the item.
 	 * @return mixed|null
 	 * @since 2.0.3
 	 */
-	public function get_payload_field( $field_name ) {
-		return $this->payload_has_field( $field_name ) ? $this->request_data['payload'][ $field_name ] : null;
+	public function get_data_from_payload( $key ) {
+		return $this->payload_has( $key ) ? $this->request_data['payload'][ $key ] : null;
 	}
 
 	/**
-	 * Check if the payload has the field.
+	 * Check if the payload has the data item set.
 	 *
-	 * @param string $field_name The name of the field.
+	 * @param string $key The name of the item.
 	 * @return bool
 	 * @since 2.0.3
 	 */
-	public function payload_has_field( $field_name ) {
-		return $this->has_payload() && isset( $this->request_data['payload'][ $field_name ] );
+	public function payload_has( $key ) {
+		return $this->has_payload() && isset( $this->request_data['payload'][ $key ] );
 	}
 
 	/**
@@ -192,27 +220,29 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * Check if the value of the field is set.
+	 * Check if the root data of the request is set.
+	 * The root data is the top level structure of the request.
 	 *
-	 * @param string $field_name The name of the field.
+	 * @param string $key The name of the field.
 	 * @return boolean
 	 * @since 2.0.0
 	 */
-	public function is_set( $field_name ) {
+	public function is_root_data_set( $key ) {
 		// TODO: we can do a more refined verification like checking for empty strings or arrays.
-		return isset( $this->request_data[ $field_name ] );
+		return isset( $this->request_data[ $key ] );
 	}
 
 	/**
-	 * Check if the given fields are set.
+	 * Check if the root data of the request has the given fields.
+	 * The root data is the top level structure of the request.
 	 *
-	 * @param array $fields_name The name of the fields.
+	 * @param array $keys The name of the fields.
 	 * @return boolean
 	 * @since 2.0.0
 	 */
-	public function are_fields_set( $fields_name ) {
-		foreach ( $fields_name as $field_name ) {
-			if ( ! isset( $this->request_data[ $field_name ] ) ) {
+	public function are_root_data_set( $keys ) {
+		foreach ( $keys as $key ) {
+			if ( ! $this->is_root_data_set( $key ) ) {
 				return false;
 			}
 		}
@@ -220,59 +250,19 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * Check if the given fields are set.
+	 * Check if the given data fields are set in the payload.
 	 *
-	 * @param array $fields_name The name of the fields.
+	 * @param array $keys The name of the fields.
 	 * @return boolean
 	 * @since 2.0.3
 	 */
-	public function are_payload_fields_set( $fields_name ) {
-		foreach ( $fields_name as $field_name ) {
-			if ( ! isset( $this->request_data['payload'][ $field_name ] ) || '' === $this->request_data['payload'][ $field_name ] ) {
+	public function are_payload_data_set( $keys ) {
+		foreach ( $keys as $key ) {
+			if ( ! isset( $this->request_data['payload'][ $key ] ) || '' === $this->request_data['payload'][ $key ] ) {
 				return false;
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * Check if the payload has the given fields.
-	 *
-	 * @param array $fields_name The name of the fields.
-	 * @return bool
-	 * @since 2.0.3
-	 */
-	public function payload_has_fields( $fields_name ) {
-		foreach ( $fields_name as $field_name ) {
-			if ( ! $this->payload_has_field( $field_name ) ) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Check if the field has one of the given values.
-	 *
-	 * @param string $field_name The name of the field.
-	 * @param array  $values The desired values of the field.
-	 * @return boolean
-	 * @since 2.0.0
-	 */
-	public function field_has( $field_name, $values ) {
-		return in_array( $this->get( $field_name ), $values, true );
-	}
-
-	/**
-	 * Check if a field has the given values.
-	 *
-	 * @param string $field_name The field name.
-	 * @param array  $values The values.
-	 * @return bool
-	 * @since 2.0.3
-	 */
-	public function payload_field_has( $field_name, $values ) {
-		return in_array( $this->get_payload_field( $field_name ), $values, true );
 	}
 
 	/**
@@ -315,8 +305,8 @@ class Form_Data_Request {
 	 * @return mixed Form input data.
 	 * @since 2.0.0
 	 */
-	public function get_form_inputs() {
-		return $this->get_payload_field( 'formInputsData' );
+	public function get_fields() {
+		return $this->get_data_from_payload( 'formInputsData' );
 	}
 
 	/**
@@ -325,7 +315,7 @@ class Form_Data_Request {
 	 * @return Form_Settings_Data|null
 	 * @since 2.0.0
 	 */
-	public function get_form_options() {
+	public function get_wp_options() {
 		return $this->form_options;
 	}
 
@@ -372,12 +362,14 @@ class Form_Data_Request {
 	/**
 	 * Set if we should keep the uploaded files.
 	 *
-	 * @param bool $keep_uploaded_files True if we should keep the uploaded files.
+	 * @param bool|mixed $keep_uploaded_files True if we should keep the uploaded files.
 	 * @return void
 	 * @since 2.2.3
 	 */
 	public function set_keep_uploaded_files( $keep_uploaded_files ) {
-		$this->keep_uploaded_files = $keep_uploaded_files;
+		if ( is_bool( $keep_uploaded_files ) ) {
+			$this->keep_uploaded_files = (bool) $keep_uploaded_files;
+		}
 	}
 
 	/**
@@ -403,12 +395,14 @@ class Form_Data_Request {
 	/**
 	 * Set the files loaded to media library.
 	 *
-	 * @param array $files_loaded_to_media_library The files loaded to media library.
+	 * @param array|mixed $files_loaded_to_media_library The files loaded to media library.
 	 * @return void
 	 * @since 2.2.3
 	 */
 	public function set_files_loaded_to_media_library( $files_loaded_to_media_library ) {
-		$this->files_loaded_to_media_library = $files_loaded_to_media_library;
+		if ( is_array( $files_loaded_to_media_library ) ) {
+			$this->files_loaded_to_media_library = $files_loaded_to_media_library;
+		}
 	}
 
 	/**
@@ -432,16 +426,6 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * Get the error details.
-	 *
-	 * @return string
-	 * @since 2.2.3
-	 */
-	public function get_error_details() {
-		return $this->error_details;
-	}
-
-	/**
 	 * Set the error.
 	 *
 	 * @param string $error_code The error code.
@@ -460,11 +444,11 @@ class Form_Data_Request {
 	 * @return mixed|string
 	 * @since 2.2.3
 	 */
-	public function get_email_from_form_input() {
-		$inputs = $this->get_form_inputs();
+	public function get_first_email_from_input_fields() {
+		$inputs = $this->get_fields();
 		if ( is_array( $inputs ) ) {
 			foreach ( $inputs as $input_field ) {
-				if ( 'email' == $input_field['type'] ) {
+				if ( ! empty( $input_field['type'] ) && 'email' == $input_field['type'] ) {
 					return $input_field['value'];
 				}
 			}
@@ -475,11 +459,11 @@ class Form_Data_Request {
 	/**
 	 * Add a field option.
 	 *
-	 * @param Form_Field_Option_Data $field_option The field option.
+	 * @param Form_Field_WP_Option_Data $field_option The field option.
 	 * @return void
 	 */
-	public function add_field_option( $field_option ) {
-		if ( $field_option instanceof Form_Field_Option_Data ) {
+	public function add_field_wp_option( $field_option ) {
+		if ( $field_option instanceof Form_Field_WP_Option_Data ) {
 			if ( empty( $this->form_fields_options ) ) {
 				$this->form_fields_options = array();
 			}
@@ -489,23 +473,11 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * Remove a field option.
-	 *
-	 * @param string $field_option_name The field option name.
-	 * @return void
-	 */
-	public function remove_field_option( $field_option_name ) {
-		if ( isset( $this->form_fields_options[ $field_option_name ] ) ) {
-			unset( $this->form_fields_options[ $field_option_name ] );
-		}
-	}
-
-	/**
 	 * Get the field options.
 	 *
-	 * @return array
+	 * @return array<Form_Field_WP_Option_Data>
 	 */
-	public function get_field_options() {
+	public function get_wp_fields_options() {
 		return $this->form_fields_options;
 	}
 
@@ -513,7 +485,7 @@ class Form_Data_Request {
 	 * Get the field option.
 	 *
 	 * @param string $field_option_name The field option name.
-	 * @return Form_Field_Option_Data|null
+	 * @return Form_Field_WP_Option_Data|null
 	 */
 	public function get_field_option( $field_option_name ) {
 		if ( isset( $this->form_fields_options[ $field_option_name ] ) ) {
@@ -585,7 +557,7 @@ class Form_Data_Request {
 	 * @return mixed|string|null
 	 */
 	public function get_form_option_id() {
-		return $this->get_payload_field( 'formOption' );
+		return $this->get_data_from_payload( 'formOption' );
 	}
 
 	/**
@@ -595,5 +567,136 @@ class Form_Data_Request {
 	 */
 	public function get_request() {
 		return $this->request;
+	}
+
+	/**
+	 * Get the saving mode.
+	 *
+	 * @return string|null
+	 */
+	public function get_saving_mode() {
+		return $this->saving_mode;
+	}
+
+	/**
+	 * Check if we are saving temporary data.
+	 *
+	 * @return bool
+	 */
+	public function is_temporary() {
+		return 'temporary' === $this->saving_mode;
+	}
+
+	/**
+	 * Check if we are saving duplicate data.
+	 *
+	 * @return bool
+	 */
+	public function is_duplicate() {
+		return 'duplicate' === $this->saving_mode;
+	}
+
+	/**
+	 * Set the saving mode.
+	 *
+	 * @param string $saving_mode The saving mode.
+	 * @return void
+	 */
+	public function set_saving_mode( $saving_mode ) {
+		if ( empty( $saving_mode ) ) {
+			return;
+		}
+
+		$this->saving_mode = $saving_mode;
+	}
+
+	/**
+	 * Mark as duplicate.
+	 *
+	 * @return void
+	 */
+	public function mark_as_duplicate() {
+		$this->set_saving_mode( 'duplicate' );
+	}
+
+	/**
+	 * Mark as temporary data.
+	 *
+	 * @return void
+	 */
+	public function mark_as_temporary() {
+		$this->set_saving_mode( 'temporary' );
+	}
+
+	/**
+	 * Dump the data. Can be used to reconstruct the object.
+	 *
+	 * @return array The data to dump.
+	 */
+	public function dump_data() {
+		return array(
+			'form_data'                     => $this->request_data,
+			'uploaded_files_path'           => $this->uploaded_files_path,
+			'files_loaded_to_media_library' => $this->files_loaded_to_media_library,
+			'keep_uploaded_files'           => $this->keep_uploaded_files,
+			'metadata'                      => $this->metadata,
+		);
+	}
+
+	/**
+	 * Create a new instance from dumped data.
+	 *
+	 * @param array $dumped_data The dumped data.
+	 * @return Form_Data_Request
+	 */
+	public static function create_from_dump( $dumped_data ) {
+
+		$form = new self( null );
+
+		if ( ! empty( $dumped_data['form_data'] ) ) {
+			$form->set_data_from_request( $dumped_data['form_data'] );
+		}
+
+		if ( ! empty( $dumped_data['uploaded_files_path'] ) ) {
+			$form->set_uploaded_files_path( $dumped_data['uploaded_files_path'] );
+		}
+
+		if ( ! empty( $dumped_data['files_loaded_to_media_library'] ) ) {
+			$form->set_files_loaded_to_media_library( $dumped_data['files_loaded_to_media_library'] );
+		}
+
+		if ( ! empty( $dumped_data['keep_uploaded_files'] ) ) {
+			$form->set_keep_uploaded_files( $dumped_data['keep_uploaded_files'] );
+		}
+
+		if ( ! empty( $dumped_data['metadata'] ) ) {
+			$form->metadata = $dumped_data['metadata'];
+		}
+
+		return $form;
+	}
+
+	/**
+	 * Append the frontend metadata to the response.
+	 *
+	 * @param Form_Data_Response $response The response.
+	 * @return void
+	 */
+	public function append_metadata( $response ) {
+		foreach ( $this->metadata as $key => $value ) {
+			if ( 0 === strpos( $key, 'frontend_' ) ) {
+				$response->add_response_field( $key, $value );
+			}
+		}
+	}
+
+	/**
+	 * Check if field is present in the metadata.
+	 *
+	 * @param string $key The key.
+	 * @return bool
+	 */
+	public function has_metadata( $key ) {
+		return isset( $this->metadata[ $key ] );
 	}
 }

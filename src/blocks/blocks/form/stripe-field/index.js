@@ -3,11 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { registerBlockType } from '@wordpress/blocks';
-
-import { createBlock } from '@wordpress/blocks';
-
-import { omit } from 'lodash';
+import { createBlock, registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -15,6 +11,7 @@ import { omit } from 'lodash';
 import metadata from './block.json';
 import { formFieldIcon as icon } from '../../../helpers/icons.js';
 import Inspector from './inspector';
+import { omit } from 'lodash';
 
 const { name } = metadata;
 
@@ -23,16 +20,12 @@ if ( ! window.themeisleGutenberg.isAncestorTypeAvailable ) {
 }
 
 if ( ! Boolean( window.themeisleGutenberg.hasPro ) ) {
+
 	registerBlockType( name, {
 		...metadata,
-		title: __( 'File Field (Pro)', 'otter-blocks' ),
-		description: __( 'Display a file field for uploading.', 'otter-blocks' ),
+		title: __( 'Stripe Field (PRO)', 'otter-blocks' ),
+		description: __( 'A field used for adding Stripe products to the form.', 'otter-blocks' ),
 		icon,
-		keywords: [
-			'input',
-			'field',
-			'file'
-		],
 		edit: ( props ) => {
 			return (
 				<Inspector { ...props } />
@@ -73,6 +66,16 @@ if ( ! Boolean( window.themeisleGutenberg.hasPro ) ) {
 				},
 				{
 					type: 'block',
+					blocks: [ 'themeisle-blocks/form-file' ],
+					transform: ( attributes ) => {
+						const attrs = omit( attributes, [ 'type' ]);
+						return createBlock( 'themeisle-blocks/form-file', {
+							...attrs
+						});
+					}
+				},
+				{
+					type: 'block',
 					blocks: [ 'themeisle-blocks/form-hidden-field' ],
 					transform: ( attributes ) => {
 						const attrs = omit( attributes, [ 'type' ]);
@@ -80,19 +83,9 @@ if ( ! Boolean( window.themeisleGutenberg.hasPro ) ) {
 							...attrs
 						});
 					}
-				},
-				{
-					type: 'block',
-					blocks: [ 'themeisle-blocks/form-stripe-field' ],
-					transform: ( attributes ) => {
-						const attrs = omit( attributes, [ 'type' ]);
-						return createBlock( 'themeisle-blocks/form-stripe-field', {
-							...attrs
-						});
-					}
 				}
 			]
 		}
 	});
-}
 
+}
