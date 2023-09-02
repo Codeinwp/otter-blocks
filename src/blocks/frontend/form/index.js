@@ -98,6 +98,7 @@ const extractFormFields = async( form ) => {
 				fieldType = 'multiple-choice';
 			} else if ( hiddenInput ) {
 				const paramName = hiddenInput?.dataset?.paramName;
+				mappedName = hiddenInput?.name;
 
 				if ( paramName ) {
 					const urlParams = new URLSearchParams( window.location.search );
