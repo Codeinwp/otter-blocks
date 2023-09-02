@@ -750,16 +750,16 @@
         },
         {
             "name": "php-stubs/acf-pro-stubs",
-            "version": "v6.0.6",
+            "version": "v6.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/acf-pro-stubs.git",
-                "reference": "3301f61c975ee6078fc89c1f6ba70358349ea137"
+                "reference": "0e6c6da1c581b7a6fa555da1ccd90260b5bbc495"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/3301f61c975ee6078fc89c1f6ba70358349ea137",
-                "reference": "3301f61c975ee6078fc89c1f6ba70358349ea137",
+                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/0e6c6da1c581b7a6fa555da1ccd90260b5bbc495",
+                "reference": "0e6c6da1c581b7a6fa555da1ccd90260b5bbc495",
                 "shasum": ""
             },
             "require": {
@@ -788,9 +788,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/acf-pro-stubs/issues",
-                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v6.0.6"
+                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v6.1.7"
             },
-            "time": "2022-12-25T22:14:41+00:00"
+            "time": "2023-07-21T09:18:17+00:00"
         },
         {
             "name": "php-stubs/woocommerce-stubs",
@@ -838,21 +838,21 @@
         },
         {
             "name": "php-stubs/wordpress-stubs",
-            "version": "v6.2.1",
+            "version": "v6.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "0009429e639b748eef1c955200ea0d4e5ad5627d"
+                "reference": "adda7609e71d5f4dc7b87c74f8ec9e3437d2e92c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/0009429e639b748eef1c955200ea0d4e5ad5627d",
-                "reference": "0009429e639b748eef1c955200ea0d4e5ad5627d",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/adda7609e71d5f4dc7b87c74f8ec9e3437d2e92c",
+                "reference": "adda7609e71d5f4dc7b87c74f8ec9e3437d2e92c",
                 "shasum": ""
             },
             "require-dev": {
-                "nikic/php-parser": "< 4.12.0",
-                "php": "~7.3 || ~8.0",
+                "nikic/php-parser": "^4.13",
+                "php": "^7.4 || ~8.0.0",
                 "php-stubs/generator": "^0.8.3",
                 "phpdocumentor/reflection-docblock": "^5.3",
                 "phpstan/phpstan": "^1.10.12",
@@ -860,7 +860,6 @@
             },
             "suggest": {
                 "paragonie/sodium_compat": "Pure PHP implementation of libsodium",
-                "symfony/polyfill-php73": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
                 "szepeviktor/phpstan-wordpress": "WordPress extensions for PHPStan"
             },
             "type": "library",
@@ -877,9 +876,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
-                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.2.1"
+                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.3.0"
             },
-            "time": "2023-05-18T04:35:23+00:00"
+            "time": "2023-08-10T16:34:11+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
