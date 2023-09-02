@@ -1,24 +1,9 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
-
-import { clamp } from 'lodash';
-
 import {
-	InspectorControls,
-	PanelColorSettings
+	InspectorControls
 } from '@wordpress/block-editor';
-
-import {
-	BaseControl,
-	PanelBody,
-	RangeControl,
-	SelectControl,
-	TextControl,
-	FontSizePicker
-} from '@wordpress/components';
-
 
 /**
  *
@@ -30,15 +15,8 @@ const Inspector = ({
 	setAttributes
 }) => {
 
-
 	return (
 		<InspectorControls>
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-			>
-
-
-			</PanelBody>
 		</InspectorControls>
 	);
 };

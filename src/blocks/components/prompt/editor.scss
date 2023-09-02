@@ -4,11 +4,15 @@
 		flex-direction: column;
 	}
 
-
-
 	.history-display {
 		padding: 0px 20px;
 		font-size: 1.2em;
+	}
+
+	.o-info-row {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
 	}
 }
 
@@ -60,6 +64,11 @@
 		border: unset;
 		flex-grow: 1;
 		outline: unset;
+		max-height: 500px;
+		appearance: none;
+		padding: 13px;
+		min-height: 52px;
+		resize: none;
 	}
 
 	.prompt-input__submit__container button {

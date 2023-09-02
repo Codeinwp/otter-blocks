@@ -35,6 +35,16 @@ registerBlockType( name, {
 			attributes: {
 				promptID: 'form'
 			}
+		},
+		{
+			name: 'themeisle-blocks/content-generator-content',
+			description: __( 'Generate new content with OpenAI.', 'otter-blocks' ),
+			icon: formAiGeneration,
+			title: __( 'AI Content Generator', 'otter-blocks' ),
+			scope: [ 'block' ],
+			attributes: {
+				promptID: 'textTransformation'
+			}
 		}
 	]
 });

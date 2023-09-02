@@ -76,7 +76,7 @@ export type PromptData = {
 	function_call: {
 		[key: string]: string
 	}
-}
+} & Record<string, string>
 
 export type PromptsData = PromptData[]
 
@@ -97,7 +97,8 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 		stream: false
 	};
 
-	return async( prompt: string, apiKey: string, embeddedPrompt: PromptData ) => {
+	// TODO: remove the apiKey from the function definition.
+	return async( prompt: string, embeddedPrompt: PromptData, metadata: Record<string, string> ) => {
 		const body = {
 			...embeddedPrompt,
 			messages: embeddedPrompt.messages.map( ( message ) => {
@@ -112,7 +113,6 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 			})
 		};
 
-
 		function removeOtterKeys( obj ) {
 			for ( let key in obj ) {
 				if ( key.startsWith( 'otter_' ) ) {
@@ -123,26 +123,22 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 		}
 
 		try {
-			const response = await fetch( 'https://api.openai.com/v1/chat/completions', {
+			const response = await apiFetch({
+				path: addQueryArgs( '/otter/v1/generate', {}),
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-
-					// The Authorization header contains your API key
-					Authorization: `Bearer ${apiKey}`
-				},
 				body: JSON.stringify({
+					...( metadata ?? {}),
 					...( removeOtterKeys( body ) ),
 					...settings
 				})
 			});
 
-			return await response.json() as ChatResponse;
+			return response as ChatResponse;
 		} catch ( e ) {
 			return {
 				error: {
 					code: 'system',
-					message: e.message
+					message: e.error?.message ?? e.error
 				}
 			};
 		}
@@ -242,4 +238,20 @@ export function retrieveEmbeddedPrompt( promptName ?: string ) {
 		}),
 		method: 'GET'
 	});
+}
+
+export function injectActionIntoPrompt( embeddedPrompt: PromptData, actionPrompt: string ): PromptData {
+	return {
+		...embeddedPrompt,
+		messages: embeddedPrompt.messages.map( ( message ) => {
+			if ( 'user' === message.role && message.content.includes( '{ACTION}' ) ) {
+				return {
+					role: 'user',
+					content: message.content.replace( '{ACTION}', actionPrompt )
+				};
+			}
+
+			return message;
+		})
+	} as PromptData;
 }

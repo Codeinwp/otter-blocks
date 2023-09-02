@@ -641,6 +641,56 @@ class Options_Settings {
 				'default'           => '',
 			)
 		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_otter_ai_usage',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'Usage of Otter AI features.', 'otter-blocks' ),
+				'show_in_test' => array(
+					'schema' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'usage_count' => array(
+								'type'    => 'array',
+								'items'   => array(
+									'type'       => 'object',
+									'properties' => array(
+										'key'   => array(
+											'type' => 'string',
+										),
+										'value' => array(
+											'type' => 'string',
+										),
+									),
+								),
+								'default' => array(),
+							),
+							'prompts'     => array(
+								'type'    => 'array',
+								'items'   => array(
+									'type'       => 'object',
+									'properties' => array(
+										'key'    => array(
+											'type' => 'string',
+										),
+										'values' => array(
+											'type'  => 'array',
+											'items' => array(
+												'type' => 'string',
+											),
+										),
+									),
+								),
+								'default' => array(),
+							),
+						),
+					),
+				),
+				'default'      => array(),
+			)
+		);
 	}
 
 	/**

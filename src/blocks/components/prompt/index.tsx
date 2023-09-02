@@ -15,6 +15,7 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
 import useSettings from '../../helpers/use-settings';
 import {
 	PromptsData,
+	injectActionIntoPrompt,
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
@@ -32,9 +33,10 @@ type PromptPlaceholderProps = {
 	mainActionLabel?: string
 	onPreview?: ( result: string ) => void
 	actionButtons?: ( props: {status?: string}) => ReactNode
+	resultHistory?: {result: string, meta: { usedToken: number, prompt: string }}[]
 };
 
-export const apiKeyName = 'themeisle_open_ai_api_key';
+export const openAiAPIKeyName = 'themeisle_open_ai_api_key';
 
 const PromptBlockEditor = (
 	props: {
@@ -49,6 +51,8 @@ const PromptBlockEditor = (
 		tokenUsageDescription?: string
 		actionButtons?: ReactNode
 		status?: string
+		currentPrompt?: string
+		showRegenerate?: boolean
 	}
 ) => {
 	return (
@@ -72,13 +76,18 @@ const PromptBlockEditor = (
 
 				{ props.actionButtons }
 
-				<Button
-					variant={ 'tertiary' }
-					onClick={ props.onRegenerate }
-					disabled={ 'loading' === props.status }
-				>
-					{ __( 'Regenerate', 'otter-blocks' ) }
-				</Button>
+				{
+					props.showRegenerate && (
+						<Button
+							variant={ 'tertiary' }
+							onClick={ props.onRegenerate }
+							disabled={ 'loading' === props.status }
+						>
+							{ __( 'Regenerate', 'otter-blocks' ) }
+						</Button>
+					)
+				}
+
 				<div className="prompt-result__actions__navigation">
 					{
 						0 < props.totalResults && (
@@ -126,7 +135,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
 	const [ result, setResult ] = useState<string | undefined>( undefined );
 
-	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number, prompt: string }}[]>([]);
+	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number, prompt: string }}[]>( props.resultHistory ?? []);
 	const [ resultHistoryIndex, setResultHistoryIndex ] = useState<number>( 0 );
 
 	const [ showResultArea, setShowResultArea ] = useState<boolean>( false );
@@ -159,9 +168,9 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		}
 
 		if ( 'loaded' === status ) {
-			if ( getOption( apiKeyName ) ) {
+			if ( getOption( openAiAPIKeyName ) ) {
 				setApiKeyStatus( 'present' );
-				setApiKey( getOption( apiKeyName ) );
+				setApiKey( getOption( openAiAPIKeyName ) );
 			} else {
 				setApiKeyStatus( 'missing' );
 			}
@@ -177,9 +186,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	}, [ resultHistory ]);
 
 	useEffect( () => {
-		if ( ! result ) {
-			return;
-		}
 
 		if ( 0 > resultHistoryIndex ) {
 			return;
@@ -189,7 +195,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			return;
 		}
 
-		setResult( resultHistory[ resultHistoryIndex ].result );
+		setResult( resultHistory?.[ resultHistoryIndex ].result );
 		setTokenUsageDescription( __( 'Used tokens: ', 'otter-blocks' ) + resultHistory[ resultHistoryIndex ].meta.usedToken );
 		props.onPreview?.( resultHistory[ resultHistoryIndex ].result );
 
@@ -197,12 +203,18 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	function onPromptSubmit( regenerate = false ) {
 
-		const embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
+		let embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
 
 		if ( ! embeddedPrompt ) {
 			setShowError( true );
 			setErrorMessage( __( 'Prompt not found. Reload the page. If the error still persist the server might be down.', 'otter-blocks' ) );
 			return;
+		}
+
+		// TODO: refactor this into a more reusable way
+		if ( 'textTransformation' === promptID ) {
+			const action = embeddedPrompt?.['otter_action_prompt'] ?? '';
+			embeddedPrompt = injectActionIntoPrompt( embeddedPrompt, action );
 		}
 
 		if ( ! apiKey ) {
@@ -215,7 +227,10 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		const sendPrompt = regenerate ? sendPromptToOpenAIWithRegenerate : sendPromptToOpenAI;
 
-		sendPrompt?.( value, apiKey, embeddedPrompt ).then ( ( data ) => {
+		sendPrompt?.( value, embeddedPrompt, {
+			'otter_used_action': 'textTransformation' === promptID ? 'textTransformation::otter_action_prompt' : ( promptID ?? '' ),
+			'otter_user_content': value
+		}).then ( ( data ) => {
 			if ( data?.error ) {
 				setGenerationStatus( 'error' );
 				setShowError( true );
@@ -223,7 +238,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				return;
 			}
 
-			const result = data?.choices?.[0]?.message?.function_call?.arguments;
+			const result = data?.choices?.[0]?.message?.function_call?.arguments ?? data?.choices?.[0]?.message?.content;
 
 			setGenerationStatus( 'loaded' );
 
@@ -297,7 +312,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 											return;
 										}
 
-										updateOption( apiKeyName, apiKey.slice(), __( 'Open AI API Key saved.', 'otter-blocks' ), 'o-api-key', () => {
+										updateOption( openAiAPIKeyName, apiKey.slice(), __( 'Open AI API Key saved.', 'otter-blocks' ), 'o-api-key', () => {
 											setApiKey( '' );
 										});
 										setApiKeyStatus( 'checking' );
@@ -316,9 +331,18 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 							</div>
 							<p/>
 
-							<ExternalLink href={'https://platform.openai.com/account/api-keys'}>
-								{ __( 'Get your API Key', 'otter-blocks' ) }
-							</ExternalLink>
+							<div className='o-info-row'>
+								<ExternalLink href={'https://platform.openai.com/account/api-keys'}>
+									{ __( 'Get your API Key', 'otter-blocks' ) }
+								</ExternalLink>
+
+								<ExternalLink
+									href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
+								>
+									{ __( 'More Info', 'otter-blocks' ) }
+								</ExternalLink>
+							</div>
+
 						</Fragment>
 					)
 				}
@@ -330,7 +354,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	return (
 		<div>
 			{
-				showResultArea ? (
+				( 0 < resultHistory?.length ) ? (
 					<PromptBlockEditor
 						title={ props.title }
 						currentResultIndex={ resultHistoryIndex + 1 }
@@ -350,6 +374,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 							status: generationStatus
 						})}
 						status={generationStatus}
+						currentPrompt={value}
+						showRegenerate={ Boolean( resultHistory?.[ resultHistoryIndex ]?.meta?.prompt ) }
 					>
 
 						<PromptInput

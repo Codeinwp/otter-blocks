@@ -74,6 +74,141 @@ class Prompt_Server {
 			)
 		);
 
+		register_rest_route(
+			$namespace,
+			'/generate',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'forward_prompt' ),
+					'permission_callback' => function () {
+						return current_user_can( 'edit_posts' );
+					},
+				),
+			)
+		);
+	}
+
+	/**
+	 * Forward the prompt to OpenAI API.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
+	 */
+	public function forward_prompt( $request ) {
+		$open_ai_endpoint = 'https://api.openai.com/v1/chat/completions';
+
+		// Get the body from request and decode it.
+		$body = $request->get_body();
+		$body = json_decode( $body, true );
+
+		$api_key = get_option( 'themeisle_open_ai_api_key' );
+
+		// Extract the data from keys that start with 'otter_'.
+		$otter_data = array_filter(
+			$body,
+			function ( $key ) {
+				return 0 === strpos( $key, 'otter_' );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		// Remove the values which keys start with 'otter_'.
+		$body = array_diff_key( $body, $otter_data );
+
+
+		if ( isset( $otter_data['otter_used_action'] ) && isset( $otter_data['otter_user_content'] ) ) {
+
+			$action       = $otter_data['otter_used_action'];
+			$user_content = $otter_data['otter_user_content'];
+
+			$usage = get_option( 'themeisle_otter_ai_usage' );
+
+			if ( ! is_array( $usage ) ) {
+				$usage = array(
+					'usage_count' => array(),
+					'prompts'     => array(),
+				);
+			}
+
+			if ( ! is_array( $usage['usage_count'] ) ) {
+				$usage['usage_count'] = array();
+			}
+
+			if ( ! is_array( $usage['prompts'] ) ) {
+				$usage['prompts'] = array();
+			}
+
+			$is_missing = true;
+
+			foreach ( $usage['usage_count'] as &$u ) {
+				if ( isset( $u['key'] ) && $u['key'] === $action ) {
+					$u['value']++;
+					$is_missing = false;
+				}
+			}
+
+			unset( $u );
+
+			if ( $is_missing ) {
+				$usage['usage_count'][] = array(
+					'key'   => $action,
+					'value' => 1,
+				);
+			}
+
+			$is_missing = true;
+
+			foreach ( $usage['prompts'] as &$u ) {
+				if ( isset( $u['key'] ) && $u['key'] === $action ) {
+					$u['values'][] = $user_content;
+					$is_missing    = false;
+
+					// Keep only the last 10 prompts.
+					if ( count( $u['values'] ) > 10 ) {
+						array_shift( $u['values'] );
+					}
+				}
+			}
+
+			unset( $u );
+
+			if ( $is_missing ) {
+				$usage['prompts'][] = array(
+					'key'    => $action,
+					'values' => array( $user_content ),
+				);
+			}
+
+			update_option( 'themeisle_otter_ai_usage', $usage );
+		}
+
+
+		$response = wp_remote_post(
+			$open_ai_endpoint,
+			array(
+				'method'  => 'POST',
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $api_key,
+					'Content-Type'  => 'application/json',
+				),
+				'body'    => wp_json_encode( $body ),
+				'timeout' => 2 * MINUTE_IN_SECONDS,
+			)
+		);
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		$body = json_decode( $body, true );
+
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 400 ) );
+		}
+
+		return new \WP_REST_Response( $body, wp_remote_retrieve_response_code( $response ) );
 	}
 
 	/**
@@ -102,13 +237,20 @@ class Prompt_Server {
 		if ( '0' === $response['code'] ) {
 			if ( $request->get_param( 'name' ) !== null ) {
 				$prompts = false !== $prompts ? $prompts : $response['prompts'];
+
 				// Prompt can be filtered by name. By filtering by name, we can get only the prompt we need and save some bandwidth.
-				$response['prompts'] = array_filter(
-					$prompts,
-					function ( $prompt ) use ( $request ) {
-						return $prompt['otter_name'] === $request->get_param( 'name' );
-					}
+				$prompts = array_values(
+					array_filter(
+						$prompts,
+						function ( $prompt ) use ( $request ) {
+							return $prompt['otter_name'] === $request->get_param( 'name' );
+						}
+					)
 				);
+
+
+
+				$response['prompts'] = $prompts; // TODO: temporary change. The original did not give an array as JSON response.
 
 				if ( empty( $response['prompts'] ) ) {
 					$response['prompts'] = array();
@@ -161,7 +303,7 @@ class Prompt_Server {
 		$response = json_decode( $response, true );
 
 		if ( ! is_array( $response ) || 0 === count( $response ) || ! $this->check_prompt_structure( $response ) ) {
-			set_transient( $this->timeout_transient, '1', HOUR_IN_SECONDS );
+			set_transient( $this->timeout_transient, '1', 5 * MINUTE_IN_SECONDS );
 			return array(
 				'response' => array(),
 				'code'     => '2',
@@ -172,9 +314,9 @@ class Prompt_Server {
 		set_transient( $this->transient_prompts, $response, WEEK_IN_SECONDS );
 
 		return array(
-			'response' => $response,
-			'code'     => '0',
-			'error'    => '',
+			'prompts' => $response,
+			'code'    => '0',
+			'error'   => '',
 		);
 	}
 

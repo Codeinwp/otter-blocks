@@ -10,9 +10,15 @@
 		border: 1px solid #1E1E1E;
 	}
 
-	.prompt-result__content .wp-block-themeisle-blocks-form .wp-block-button {
-		display: none;
-	}
+	.prompt-result__content {
+		.wp-block-themeisle-blocks-form .wp-block-button {
+			display: none;
+		}
+
+		&> div:not(.prompt-input__container):last-child {
+			padding: 10px;
+		}
+	} 
 
 	.o-actions {
 		display: flex;
