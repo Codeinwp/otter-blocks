@@ -24,12 +24,12 @@ import { useContext } from '@wordpress/element';
 import { FormContext } from '../edit';
 import { Notice } from '../../../components';
 import { setUtm } from '../../../helpers/helper-functions';
-import { fieldTypesOptions, mappedNameInfo, switchFormFieldTo } from '../common';
+import { fieldTypesOptions, switchFormFieldTo } from '../common';
 
 
 /**
  *
- * @param {import('./types').FormHiddenFieldInspectorPros} props
+ * @param {FormStripeFieldInspectorPros} props
  * @returns {JSX.Element}
  */
 const Inspector = ({
@@ -57,38 +57,13 @@ const Inspector = ({
 
 				<SelectControl
 					label={ __( 'Field Type', 'otter-blocks' ) }
-					value={ attributes.type ?? 'hidden' }
+					value={ attributes.type ?? 'stripe' }
 					options={ fieldTypesOptions() }
 					onChange={ type => {
-						if ( 'hidden' !== type ) {
+						if ( 'stripe' !== type ) {
 							switchFormFieldTo( type, clientId, attributes );
 						}
 					}}
-				/>
-
-				<TextControl
-					label={ __( 'Label', 'otter-blocks' ) }
-					value={ attributes.label }
-					onChange={ undefined }
-					help={ __( 'The label will be used as the field name.', 'otter-blocks' ) }
-					disabled={true}
-				/>
-
-				<TextControl
-					label={ __( 'Query Param', 'otter-blocks' ) }
-					value={ attributes.paramName }
-					onChange={ undefined }
-					help={ __( 'The query parameter name that is used in URL. If the param is present, its value will be extracted and send with the Form.', 'otter-blocks' ) }
-					placeholder={ __( 'e.g. utm_source', 'otter-blocks' ) }
-					disabled={true}
-				/>
-
-				<TextControl
-					label={ __( 'Mapped Name', 'otter-blocks' ) }
-					help={ mappedNameInfo }
-					value={ attributes.mappedName }
-					onChange={ () => {} }
-					placeholder={ __( 'photos', 'otter-blocks' ) }
 				/>
 
 				<Notice

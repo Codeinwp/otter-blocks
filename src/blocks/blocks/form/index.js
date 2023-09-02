@@ -19,6 +19,7 @@ import './textarea/index.js';
 import './multiple-choice/index.js';
 import './file/index.js';
 import './hidden-field/index.js';
+import './stripe-field/index.js';
 
 const { name } = metadata;
 

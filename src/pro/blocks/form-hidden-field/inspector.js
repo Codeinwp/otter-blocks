@@ -22,7 +22,7 @@ import { dispatch } from '@wordpress/data';
  */
 
 import { Notice as OtterNotice } from '../../../blocks/components';
-import { fieldTypesOptions, switchFormFieldTo } from '../../../blocks/blocks/form/common';
+import { fieldTypesOptions, mappedNameInfo, switchFormFieldTo } from '../../../blocks/blocks/form/common';
 
 
 /**
@@ -80,6 +80,15 @@ const Inspector = ({
 					onChange={ paramName => setAttributes({ paramName }) }
 					help={ __( 'The query parameter name that is used in URL. If the param is present, its value will be extracted and send with the Form.', 'otter-blocks' ) }
 					placeholder={ __( 'e.g. utm_source', 'otter-blocks' ) }
+					disabled={! Boolean( window?.otterPro?.isActive )}
+				/>
+
+				<TextControl
+					label={ __( 'Mapped Name', 'otter-blocks' ) }
+					help={ mappedNameInfo }
+					value={ attributes.mappedName }
+					onChange={ mappedName => setAttributes({ mappedName }) }
+					placeholder={ __( 'car_type', 'otter-blocks' ) }
 					disabled={! Boolean( window?.otterPro?.isActive )}
 				/>
 

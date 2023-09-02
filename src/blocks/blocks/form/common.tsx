@@ -2,7 +2,8 @@ import { __ } from '@wordpress/i18n';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-	ToggleControl
+	ToggleControl,
+	ExternalLink
 } from '@wordpress/components';
 import { omit } from 'lodash';
 import { createBlock } from '@wordpress/blocks';
@@ -10,6 +11,7 @@ import { dispatch } from '@wordpress/data';
 
 import { BlockProps } from '../../helpers/blocks';
 import { changeActiveStyle, getActiveStyle, getChoice } from '../../helpers/helper-functions';
+import { Fragment } from '@wordpress/element';
 
 export const FieldInputWidth = ( props ) => {
 
@@ -65,6 +67,11 @@ export type FieldOption = {
 		saveFiles?: string
 		maxFilesNumber?: number
 	}
+	stripe?: {
+		product: string,
+		price: string,
+		quantity: number,
+	}
 }
 
 export type FormInputCommonProps = {
@@ -111,6 +118,10 @@ export const fieldTypesOptions = () => ([
 		value: 'select'
 	},
 	{
+		label: ( Boolean( window.otterPro?.isActive ) && ! Boolean( window.otterPro?.isExpired ) ) ? __( 'Stripe', 'otter-blocks' ) : __( 'Stripe (Pro)', 'otter-blocks' ),
+		value: 'stripe'
+	},
+	{
 		label: __( 'Text', 'otter-blocks' ),
 		value: 'text'
 	},
@@ -137,6 +148,7 @@ export const switchFormFieldTo = ( type?: string, clientId ?:string, attributes?
 		[ 'select' === type || 'checkbox' === type || 'radio' === type, 'form-multiple-choice' ],
 		[ 'file' === type, 'form-file' ],
 		[ 'hidden' === type, 'form-hidden-field' ],
+		[ 'stripe' === type, 'form-stripe-field' ],
 		[ 'form-input' ]
 	]);
 
@@ -173,7 +185,7 @@ export const HideFieldLabelToggle = ( props: Partial<BlockProps<FormInputCommonP
 	);
 };
 
-export const hasFormFieldName = ( name?: string ) => [ 'input', 'textarea', 'multiple-choice', 'file', 'hidden-field' ].some( ( type ) => name?.startsWith( `themeisle-blocks/form-${ type }` ) );
+export const hasFormFieldName = ( name?: string ) => [ 'input', 'textarea', 'multiple-choice', 'file', 'hidden-field', 'stripe-field' ].some( ( type ) => name?.startsWith( `themeisle-blocks/form-${ type }` ) );
 
 export const getFormFieldsFromInnerBlock = ( block: any ) : ( any | undefined )[] => {
 	return block?.innerBlocks?.map( ( child: any ) => {
@@ -213,5 +225,12 @@ export const selectAllFieldsFromForm = ( children: any[]) : ({ parentClientId: s
 		return undefined;
 	}).flat().filter( c => c !== undefined ) ?? []) as ({ parentClientId: string, inputField: any })[];
 };
+
+export const mappedNameInfo = (
+	<Fragment>
+		{__( 'Allow easy identification of the field.', 'otter-blocks' )}
+		<ExternalLink href='https://docs.themeisle.com/article/1878-how-to-use-webhooks-in-otter-forms#mapped-name'> { __( 'Learn More', 'otter-blocks' ) } </ExternalLink>
+	</Fragment>
+);
 
 export default { switchFormFieldTo, HideFieldLabelToggle, FieldInputWidth };

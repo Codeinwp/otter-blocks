@@ -8,6 +8,27 @@ import { domReady } from '../../helpers/frontend-helper-functions.js';
 let startTimeAntiBot = null;
 let METADATA_VERSION = 1;
 
+let saveMode = 'permanent';
+
+const hasStripeConfirmation = () => {
+	const urlParams = new URLSearchParams( window.location.search );
+	return urlParams.has( 'stripe_checkout' );
+};
+
+const confirmRecord = async() => {
+
+	// Get the record id from the URL
+	const urlParams = new URLSearchParams( window.location.search );
+	const stripeSessionId = urlParams.get( 'stripe_checkout' );
+
+	const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/confirm';
+
+	return await fetch( formURlEndpoint + `?stripe_checkout=${stripeSessionId}`, {
+		method: 'GET',
+		credentials: 'include'
+	});
+};
+
 /**
  * Get the form fields.
  * @param {HTMLDivElement} form The form.
@@ -23,7 +44,7 @@ const getFormFieldInputs = ( form ) => {
 	 *
 	 * @type {Array.<HTMLDivElement>}
 	 */
-	return [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file, :scope > .otter-form__container > .wp-block-themeisle-blocks-form-hidden-field ' ) ].filter( input => {
+	return [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file, :scope > .otter-form__container .wp-block-themeisle-blocks-form-hidden-field, :scope > .otter-form__container .wp-block-themeisle-blocks-form-stripe-field' ) ].filter( input => {
 		return ! innerForms?.some( innerForm => innerForm?.contains( input ) );
 	});
 };
@@ -51,11 +72,13 @@ const extractFormFields = async( form ) => {
 		const labelContainer = input.querySelector( '.otter-form-input-label' );
 		const labelElem = ( labelContainer ?? input ).querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' );
 
-		const label = `(Field ${index + 1}) ${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
+		const fieldNumberLabel = `(Field ${index + 1})`;
+		let label = `${fieldNumberLabel} ${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
 
 		let value = undefined;
 		let fieldType = undefined;
 		let mappedName = undefined;
+		let metadata = {};
 		const { id } = input;
 
 		const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"]), .otter-form-textarea-input' );
@@ -71,6 +94,8 @@ const extractFormFields = async( form ) => {
 			const fileInput = input.querySelector( 'input[type="file"]' );
 
 			const hiddenInput = input.querySelector( 'input[type="hidden"]' );
+
+			const stripeField = input.classList.contains( 'wp-block-themeisle-blocks-form-stripe-field' );
 
 			if ( fileInput ) {
 				const files = fileInput?.files;
@@ -98,12 +123,24 @@ const extractFormFields = async( form ) => {
 				fieldType = 'multiple-choice';
 			} else if ( hiddenInput ) {
 				const paramName = hiddenInput?.dataset?.paramName;
+				mappedName = hiddenInput?.name;
 
 				if ( paramName ) {
 					const urlParams = new URLSearchParams( window.location.search );
 					value = urlParams.get( paramName );
 					fieldType = 'hidden';
 				}
+			} else if ( stripeField ) {
+
+				// Find more proper selectors instead of h3 and h5
+				label = `${fieldNumberLabel} ${input.querySelector( '.o-stripe-checkout-description h3' )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
+				value = input.querySelector( '.o-stripe-checkout-description h5' )?.innerHTML?.replace( /<[^>]*>?/gm, '' );
+				fieldType = 'stripe-field';
+				mappedName = input.name;
+				metadata = {
+					fieldOptionName: input?.dataset?.fieldOptionName
+				};
+				saveMode = 'temporary';
 			} else {
 				const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
 				const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
@@ -120,6 +157,7 @@ const extractFormFields = async( form ) => {
 				type: fieldType,
 				id: id,
 				metadata: {
+					...metadata,
 					version: METADATA_VERSION,
 					position: index + 1,
 					mappedName: mappedName
@@ -213,19 +251,23 @@ function validateInputs( form ) {
  */
 const createFormData = ( data ) => {
 	var formData = new FormData();
-	var filesPairs = [];
 
+	/**
+	 * For simple data, we will encode them as JSON in 'form_data' key.
+	 * This gives the flexibility to have the same data shape like in backend without creating complex serializers.
+	 * For complex data like files, we will use FormData way to handle them.
+	 */
 	data?.payload?.formInputsData?.forEach( ( field, index ) => {
 		if ( 'file' === field.type ) {
 			let key = 'file__' + field.metadata.position + '_' + index;
-			filesPairs.push([ key, field.metadata.file ]);
+
+			formData.append( key, field.metadata.file );
 			data.payload.formInputsData[index].metadata.file = undefined;
-			data.payload.formInputsData[index].metadata.data = key;
+			data.payload.formInputsData[index].metadata.data = key; // Create a link with the file which will be used in backend via $_FILES.
 		}
 	});
 
 	formData.append( 'form_data',  JSON.stringify( data ) );
-	filesPairs.forEach( pair => formData.append( pair[0], pair[1]) );
 
 	return formData;
 };
@@ -250,6 +292,74 @@ const getCurrentPostId = () => {
 };
 
 /**
+ * Handle the response after the form is submitted.
+ *
+ * @param {Promise<Response>} request
+ * @param {DisplayFormMessage} displayMsg
+ * @param {(response: import('./types.js').IFormResponse, displayMsg:DisplayFormMessage) => void} onSuccess
+ * @param {(response: import('./types.js').IFormResponse, displayMsg:DisplayFormMessage) => void} onFail
+ * @param {() => void} onCleanUp
+ */
+const handleAfterSubmit = ( request, displayMsg, onSuccess, onFail, onCleanUp ) => {
+	request.then( r => r.json() ).then( response  => {
+
+		/**
+		 * @type {import('./types.js').IFormResponse} The response from the server.
+		 */
+		const res =  response;
+
+		if ( '0' === res?.code || '1' === res?.code || res?.success ) {
+			onSuccess?.( res, displayMsg );
+		} else {
+			let errorMsgSlug = '';
+
+			// TODO: Write pattern to display a more useful error message.
+			if ( '110' === res.code ) {
+				displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
+			} else if ( '12' === res.code || '13' === res.code ) {
+				displayMsg.pullMsg( 'invalid-file', 'error' ).show();
+			} else if ( 0 < res?.displayError?.length ) {
+				errorMsgSlug = res?.displayError;
+				displayMsg.setMsg( errorMsgSlug, 'error' ).show();
+			} else {
+				displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
+			}
+
+			onFail?.( res, displayMsg );
+
+			// eslint-disable-next-line no-console
+			console.error( `(${res?.code}) ${res?.reasons?.join( '' )}` );
+		}
+
+		/**
+		 * Reset the form.
+		 */
+
+		onCleanUp?.();
+
+	})?.catch( ( error ) => {
+		console.error( error );
+		displayMsg.pullMsg( 'try-again', 'error' ).show();
+
+		onFail?.( error, displayMsg );
+	});
+};
+
+const makeSpinner = ( anchor ) => {
+	const spinner = document.createElement( 'span' );
+	spinner.classList.add( 'spinner' );
+
+	return {
+		show: () => {
+			anchor.appendChild( spinner );
+		},
+		hide: () => {
+			anchor.removeChild( spinner );
+		}
+	};
+};
+
+/**
  * Send the date from the form to the server
  *
  * @param {HTMLDivElement}    form The element that contains all the inputs
@@ -267,14 +377,12 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
 	const hasValidToken = id && window.themeisleGutenberg?.tokens?.[id]?.token;
 
+	const spinner = makeSpinner( btn );
 
-	const spinner = document.createElement( 'span' );
-	spinner.classList.add( 'spinner' );
-	btn.appendChild( spinner );
 
 	if ( formIsEmpty ) {
 		btn.disabled = false;
-		btn.removeChild( spinner );
+		spinner.hide();
 		return;
 	}
 
@@ -343,23 +451,30 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 			payload
 		});
 
-		fetch( formURlEndpoint, {
-			method: 'POST',
-			headers: {
-				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce
-			},
-			credentials: 'include',
-			body: formData
-		})
-			.then( r => r.json() )
-			.then( ( response ) => {
+		try {
+			const request = fetch( formURlEndpoint, {
+				method: 'POST',
+				headers: {
+					'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce,
+					'O-Form-Save-Mode': saveMode
+				},
+				credentials: 'include',
+				body: formData
+			});
 
-				/**
-				 * @type {import('./types.js').IFormResponse}
-				 */
-				const res = response;
+			spinner.show();
+			handleAfterSubmit(
+				request,
+				displayMsg,
+				( res, displayMsg ) => {
 
-				if ( '0' === res?.code || '1' === res?.code || res?.success ) {
+					if ( 0 < res?.frontend_external_confirmation_url?.length ) {
+
+						// Redirect to the external confirmation URL in a new tab.
+						window.open( res.frontend_external_confirmation_url, '_blank' );
+						return;
+					}
+
 					const msg = res?.submitMessage ? res.submitMessage :  'Success';
 					displayMsg.setMsg( msg ).show();
 
@@ -367,55 +482,28 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 
 					if ( 0 < res?.redirectLink?.length ) {
 						form.setAttribute( 'data-redirect', res.redirectLink );
+
+						setTimeout( () => {
+							window.location.href = res.redirectLink;
+						}, 1000 );
 					}
 
-					setTimeout( () => {
-						if ( 0 < res?.redirectLink?.length ) {
-							let a = document.createElement( 'a' );
-							a.target = '_blank';
-							a.href = res.redirectLink;
-							a.click();
-						}
-					}, 1000 );
-				} else {
-					let errorMsgSlug = '';
-
-					// TODO: Write pattern to display a more useful error message.
-					if ( '110' === res.code ) {
-						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
-					} else if ( '12' === res.code || '13' === res.code ) {
-						displayMsg.pullMsg( 'invalid-file', 'error' ).show();
-					} else if ( 0 < res?.displayError?.length ) {
-						errorMsgSlug = res?.displayError;
-						displayMsg.setMsg( errorMsgSlug, 'error' ).show();
-					} else {
-						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
+				},
+				( res, displayMsg ) => {},
+				() => {
+					if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
+						window.themeisleGutenberg?.tokens?.[ id ].reset();
 					}
-
-
-					// eslint-disable-next-line no-console
-					console.error( `(${res?.code}) ${res?.reasons?.join( '' )}` );
+					btn.disabled = false;
+					spinner.hide();
 				}
-
-				/**
-				 * Reset the form.
-				 */
-
-				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
-					window.themeisleGutenberg?.tokens?.[ id ].reset();
-				}
-				btn.disabled = false;
-				btn.removeChild( spinner );
-			})?.catch( ( error ) => {
-				console.error( error );
-				displayMsg.pullMsg( 'try-again', 'error' ).show();
-
-				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
-					window.themeisleGutenberg?.tokens?.[ id ].reset();
-				}
-				btn.disabled = false;
-				btn.removeChild( spinner );
-			});
+			);
+		} catch ( e ) {
+			console.error( e );
+			displayMsg.pullMsg( 'try-again', 'error' ).show();
+			btn.disabled = false;
+			spinner.hide();
+		}
 	}
 };
 
@@ -461,6 +549,34 @@ domReady( () => {
 
 		const sendBtn = form.querySelector( 'button' );
 		const displayMsg = new DisplayFormMessage( form );
+
+		if ( hasStripeConfirmation() ) {
+			sendBtn.disabled = true;
+
+			const btnText = sendBtn.innerHTML;
+			sendBtn.innerHTML = displayMsg.getMsgBySlug( 'confirmingSubmission' );
+
+			const spinner = makeSpinner( sendBtn );
+			spinner.show();
+
+			handleAfterSubmit( confirmRecord(), displayMsg, ( res, displayMsg ) => {
+				const msg = res?.submitMessage ? res.submitMessage :  'Success';
+				displayMsg.setMsg( msg ).show();
+
+				if ( 0 < res?.redirectLink?.length ) {
+					form.setAttribute( 'data-redirect', res.redirectLink );
+
+					setTimeout( () => {
+						window.location.href = res.redirectLink;
+					}, 1000 );
+				}
+			}, () => {}, () => {
+				sendBtn.disabled = false;
+				spinner.hide();
+				sendBtn.innerHTML = btnText;
+			});
+		}
+
 
 		if ( form.querySelector( ':scope > form > button[type="submit"]' ) ) {
 			form?.addEventListener( 'submit', ( event ) => {

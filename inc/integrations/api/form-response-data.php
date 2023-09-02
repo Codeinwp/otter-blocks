@@ -44,6 +44,7 @@ class Form_Data_Response {
 	const ERROR_BOT_DETECTED          = '110';
 	const ERROR_FILES_METADATA_FORMAT = '111';
 	const ERROR_FILE_MISSING_BINARY   = '112';
+	const ERROR_MISSING_DUMP_DATA     = '113';
 
 
 
@@ -58,6 +59,11 @@ class Form_Data_Response {
 	const ERROR_PROVIDER_DUPLICATED_EMAIL          = '208';
 	const ERROR_PROVIDER_CREDENTIAL_ERROR          = '209';
 	const ERROR_WEBHOOK_COULD_NOT_TRIGGER          = '210';
+	const ERROR_RUNTIME_STRIPE_SESSION_VALIDATION  = '300';
+	const ERROR_STRIPE_CHECKOUT_SESSION_CREATION   = '301';
+	const ERROR_STRIPE_CHECKOUT_SESSION_NOT_FOUND  = '302';
+	const ERROR_STRIPE_PAYMENT_UNPAID              = '303';
+	const ERROR_STRIPE_METADATA_RECORD_NOT_FOUND   = '304';
 
 
 	/**
@@ -76,6 +82,13 @@ class Form_Data_Response {
 	 * @since 2.0.3
 	 */
 	protected $is_credential_error = false;
+
+	/**
+	 * The REST response.
+	 *
+	 * @var WP_REST_Response|WP_Error|WP_HTTP_Response|null
+	 */
+	public $rest_response = null;
 
 	/**
 	 * Constructor.
@@ -166,10 +179,23 @@ class Form_Data_Response {
 	 * @since 2.0.3
 	 */
 	public function build_response() {
-		// TODO: We can to addition operation when returning the response.
+		if ( isset( $this->rest_response ) ) {
+			$this->rest_response->set_data( $this->response );
+			return $this->rest_response;
+		}
+
 		$this->process_error_code();
 
 		return rest_ensure_response( $this->response );
+	}
+
+	/**
+	 * Create the REST response.
+	 *
+	 * @return void
+	 */
+	public function make_internal_response() {
+		$this->rest_response = $this->build_response();
 	}
 
 	/**
@@ -346,6 +372,12 @@ class Form_Data_Response {
 			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
 			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
 			self::ERROR_WEBHOOK_COULD_NOT_TRIGGER          => __( 'The webhook could not be triggered.', 'otter-blocks' ),
+			self::ERROR_MISSING_DUMP_DATA                  => __( 'The form dump data is missing.', 'otter-blocks' ),
+			self::ERROR_STRIPE_CHECKOUT_SESSION_CREATION   => __( 'The Stripe Checkout session could not be created.', 'otter-blocks' ),
+			self::ERROR_STRIPE_CHECKOUT_SESSION_NOT_FOUND  => __( 'The Stripe Checkout session was not found.', 'otter-blocks' ),
+			self::ERROR_STRIPE_PAYMENT_UNPAID              => __( 'The payment was not completed.', 'otter-blocks' ),
+			self::ERROR_STRIPE_METADATA_RECORD_NOT_FOUND   => __( 'The metadata submission record was not found.', 'otter-blocks' ),
+			self::ERROR_RUNTIME_STRIPE_SESSION_VALIDATION  => __( 'The payment has been processed. You will be contacted by the support team.', 'otter-blocks' ),
 		);
 
 		if ( ! isset( $error_messages[ $error_code ] ) ) {
