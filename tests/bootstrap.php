@@ -21,6 +21,7 @@ require_once $_tests_dir . '/includes/functions.php';
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';
 
+require dirname( dirname( __FILE__ ) ) . '/tests/stripe-http-client-mock.php';
 require dirname( dirname( __FILE__ ) ) . '/inc/css/class-css-utility.php';
 require dirname( dirname( __FILE__ ) ) . '/inc/plugins/class-block-conditions.php';
 require dirname( dirname( __FILE__ ) ) . '/inc/plugins/class-dynamic-content.php';

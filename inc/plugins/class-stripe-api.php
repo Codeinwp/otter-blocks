@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use Stripe\Collection;
 use Stripe\StripeClient;
 
 /**
@@ -34,7 +35,7 @@ class Stripe_API {
 	 * @access public
 	 */
 	public function __construct() {
-		if ( ! self::has_keys() ) {
+		if ( ! self::has_keys() && empty( $client ) ) {
 			return;
 		}
 
@@ -108,7 +109,7 @@ class Stripe_API {
 	 * @param string       $path Request path.
 	 * @param array|string $args Request arguments.
 	 *
-	 * @return mixed
+	 * @return mixed|\WP_Error|Collection
 	 * @access public
 	 */
 	public function create_request( $path, $args = array() ) {
