@@ -106,7 +106,7 @@ const Edit = ({
 	 * @param {import('../../common').SyncAttrs<import('./type').FormAttrs>} field
 	 * @returns
 	 */
-	const getSyncValue = field =>{
+	const getSyncValue = field => {
 		if ( attributes?.isSynced?.includes( field ) ) {
 			return getDefaultValueByField({ name, field, defaultAttributes, attributes });
 		}
@@ -210,9 +210,10 @@ const Edit = ({
 		const isPublishingPost = select( 'core/editor' )?.isPublishingPost();
 		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
 		const widgetSaving = select( 'core/edit-widgets' )?.isSavingWidgetAreas();
+		const nonPostEntitySaving = select( 'core/editor' )?.isSavingNonPostEntityChanges();
 
 		return {
-			canSaveData: ( ! isAutosaving && ( isSavingPost || isPublishingPost ) ) || widgetSaving
+			canSaveData: ( ! isAutosaving && ( isSavingPost || isPublishingPost || nonPostEntitySaving ) ) || widgetSaving
 		};
 	});
 
