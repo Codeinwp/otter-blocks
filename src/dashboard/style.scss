@@ -1,9 +1,5 @@
 @import "../blocks/plugins/feedback/editor.scss";
 
-:root {
-	--main-link-color: #2271b1;
-  }
-
 * {
 	box-sizing: inherit;
 }
@@ -31,6 +27,8 @@
 }
 
 #otter {
+	--main-link-color: #2271b1;
+	
 	.components-button {
 		&.is-primary {
 			--wp-admin-theme-color: #ed6f57;
@@ -524,8 +522,16 @@
 		background-color: var(--main-link-color);
 	}
 
-	.components-textarea-control__input:focus,
-	.components-text-control__input:focus {
+	#o-feedback {
+		box-shadow: inset 0 0 0 1px var(--main-link-color);
+    	color: var(--main-link-color);
+
+		&:focus {
+			box-shadow: inset 0 0 0 1.5px var(--main-link-color);
+		}
+	}
+
+	:is(.components-textarea-control__input, .components-text-control__input):focus {
 		border-color: var(--main-link-color);
 		box-shadow: 0 0 0 1px var(--main-link-color);
 	}
