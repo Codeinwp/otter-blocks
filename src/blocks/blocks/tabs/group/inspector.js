@@ -34,6 +34,7 @@ import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
 import { changeActiveStyle, getActiveStyle, isEmptyBox, objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
 import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
 import { makeBox } from '../../../plugins/copy-paste/utils';
+import { useTabSwitch } from '../../../helpers/block-utility';
 
 const styles = [
 	{
@@ -120,7 +121,7 @@ const Inspector = ({
 		return { label: `${ index + 1 }. ${ c.attributes.title || __( 'Untitled Tab', 'otter-blocks' ) }`, value: c.clientId };
 	});
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 
 	return (
@@ -330,22 +331,22 @@ const Inspector = ({
 									},
 									{
 										value: attributes.activeTitleBackgroundColor,
-										label: __( 'Active Title Tackground', 'otter-blocks' ),
+										label: __( 'Active Title Background', 'otter-blocks' ),
 										slug: 'activeTitleBackgroundColor'
 									},
 									{
 										value: attributes.titleColor ?? attributes.tabColor ?? 'white',
-										label: __( 'Title Color', 'otter-blocks' ),
+										label: __( 'Title', 'otter-blocks' ),
 										slug: 'titleColor'
 									},
 									{
 										value: attributes.activeTitleColor,
-										label: __( 'Active Title Color', 'otter-blocks' ),
+										label: __( 'Active Title', 'otter-blocks' ),
 										slug: 'activeTitleColor'
 									},
 									{
 										value: attributes.contentTextColor,
-										label: __( 'Content Text Color', 'otter-blocks' ),
+										label: __( 'Content Text', 'otter-blocks' ),
 										slug: 'contentTextColor'
 									},
 									{

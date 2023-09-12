@@ -66,6 +66,7 @@ import { _px, setUtm } from '../../helpers/helper-functions.js';
 import { SortableInputField } from './sortable-input-fields';
 import AutoDisableSyncAttr from '../../components/auto-disable-sync-attr/index';
 import { selectAllFieldsFromForm } from './common';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 const compare = x => {
 	return x?.[1] && x[0] !== x[1];
@@ -354,7 +355,7 @@ const Inspector = ({
 	setAttributes
 }) => {
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 	const [ buttonColorView, setButtonColorView ] = useState( 'normal' );
 
 	const {
@@ -1027,7 +1028,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={'inputBorderRadius'}>
 								<BoxControl
-									label={ __( 'Border Radius', 'otter-blocks' ) }
+									label={ __( 'Radius', 'otter-blocks' ) }
 									values={ ! isObjectLike( attributes.inputBorderRadius ) ? makeBox( _px( attributes.inputBorderRadius ?? 4 ) ) : attributes.inputBorderRadius }
 									onChange={ inputBorderRadius  => setAttributes({ inputBorderRadius }) }
 									id="o-border-raduis-box"
@@ -1036,7 +1037,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={'inputBorderWidth'}>
 								<BoxControl
-									label={ __( 'Border Width', 'otter-blocks' ) }
+									label={ __( 'Width', 'otter-blocks' ) }
 									values={ ! isObjectLike( attributes.inputBorderWidth ) ? makeBox( _px( attributes.inputBorderWidth ?? 1 ) ) : attributes.inputBorderWidth }
 									onChange={ inputBorderWidth  => setAttributes({ inputBorderWidth }) }
 								/>
@@ -1064,7 +1065,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={ 'helpFontSize' }>
 								<BaseControl
-									label={ __( 'Helper Text Size', 'otter-blocks' ) }
+									label={ __( 'Helper Text', 'otter-blocks' ) }
 								>
 									<FontSizePicker
 										fontSizes={ defaultFontSizes }
@@ -1077,7 +1078,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={ 'messageFontSize' }>
 								<BaseControl
-									label={ __( 'Success/Error Message Size', 'otter-blocks' ) }
+									label={ __( 'Success/Error Message', 'otter-blocks' ) }
 								>
 									<FontSizePicker
 										fontSizes={ defaultFontSizes }

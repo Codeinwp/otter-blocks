@@ -49,6 +49,7 @@ import {
 	numberToBox
 } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 const styles = [
 	{
@@ -101,7 +102,7 @@ const Inspector = ({
 	categoriesList,
 	isLoading
 }) => {
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const {
 		slugs

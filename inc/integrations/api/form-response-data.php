@@ -30,6 +30,7 @@ class Form_Data_Response {
 	const ERROR_MISSING_FILE_FIELD_OPTION         = '16';
 	const ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD = '17';
 	const ERROR_AUTORESPONDER_COULD_NOT_SEND      = '18';
+	const ERROR_MALFORMED_REQUEST                 = '19';
 
 	// Request validation errors.
 	const ERROR_MISSING_DATA          = '101';
@@ -97,10 +98,11 @@ class Form_Data_Response {
 	 * @since 2.0.0
 	 */
 	public function __construct() {
-		$this->response['success']      = false;
-		$this->response['reasons']      = array();
-		$this->response['code']         = self::SUCCESS_EMAIL_SEND;
-		$this->response['displayError'] = 'Error. Please try again.';
+		$this->response['success']       = false;
+		$this->response['reasons']       = array();
+		$this->response['code']          = self::SUCCESS_EMAIL_SEND;
+		$this->response['displayError']  = 'Error. Please try again.';
+		$this->response['submitMessage'] = 'Success';
 	}
 
 	/**
@@ -159,6 +161,17 @@ class Form_Data_Response {
 	 */
 	public function set_reasons( $reasons ) {
 		$this->response['reasons'] = $reasons;
+		return $this;
+	}
+
+	/**
+	 * Set success message.
+	 *
+	 * @param string $message The message.
+	 * @since 2.4
+	 */
+	public function set_success_message( $message ) {
+		$this->response['submitMessage'] = $message;
 		return $this;
 	}
 
@@ -371,6 +384,7 @@ class Form_Data_Response {
 			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the Form Block with Autoresponder activated.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
 			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
+			self::ERROR_MALFORMED_REQUEST                  => __( 'The request is malformed.', 'otter-blocks' ),
 			self::ERROR_WEBHOOK_COULD_NOT_TRIGGER          => __( 'The webhook could not be triggered.', 'otter-blocks' ),
 			self::ERROR_MISSING_DUMP_DATA                  => __( 'The form dump data is missing.', 'otter-blocks' ),
 			self::ERROR_STRIPE_CHECKOUT_SESSION_CREATION   => __( 'The Stripe Checkout session could not be created.', 'otter-blocks' ),

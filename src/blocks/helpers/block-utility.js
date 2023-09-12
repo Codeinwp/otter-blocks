@@ -512,3 +512,66 @@ export function insertBlockBelow( clientId, block ) {
 
 	insertBlock( block, index + 1, rootClientId );
 }
+
+export class GlobalStateMemory {
+	constructor() {
+		this.states = {};
+		window.addEventListener( 'message', this.handleMessage.bind( this ) );
+	}
+
+	/**
+	 * Handle the message event.
+	 *
+     * @param {MessageEvent} event The message event.
+     */
+	handleMessage( event ) {
+		if ( 'object' === typeof event.data && null !== event.data && 'otterMemoryState' in event.data ) {
+			const { key, value, location } = event.data.otterMemoryState;
+			if ( this.states[location] === undefined ) {
+				this.states[location] = {};
+			}
+
+			this.states[location][key] = value;
+		}
+	}
+
+	/**
+	 * Get the state value.
+     * @param {string} location The location of the state.
+     * @param {string} key The key of the state.
+     * @returns {undefined|*}
+     */
+	getState( location, key ) {
+		if ( this.states[location] === undefined ) {
+			return undefined;
+		}
+		return this.states[location][key];
+	}
+}
+
+/**
+ * The global state memory.
+ *
+ * @param {string} key The key of the state.
+ * @param {any} defaultValue The default value of the state.
+ * @returns {unknown[]}
+ */
+export function useTabSwitch( key, defaultValue ) {
+	const location = 'tab';
+	const [ tab, setTab ] = useState( ( window?.parent ?? window ).otterStateMemory.getState( location, key ) ?? defaultValue );
+
+	useEffect( () => {
+		( window.parent !== undefined ? window?.parent : window )
+			.postMessage?.({
+				otterMemoryState: {
+					key,
+					location,
+					value: tab
+				}
+			});
+	}, [ tab ]);
+
+	return [ tab, setTab ];
+}
+
+

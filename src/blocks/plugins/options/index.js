@@ -136,6 +136,9 @@ const Options = () => {
 						setAPILoaded( true );
 					});
 				}
+			} else {
+				setCanUser( false );
+				setAPILoaded( true );
 			}
 		};
 
@@ -301,75 +304,81 @@ const Options = () => {
 							</PanelRow>
 						</PanelBody>
 
-						<PanelBody
-							title={__( 'Block Tools Defaults', 'otter-blocks' )}
-							initialOpen={true}
-						>
-							<p>
-								{
-									__( 'Make those features to be shown by default in Block Tools.', 'otter-blocks' )
-								}
-							</p>
+						{
+							canUser && (
+								<Fragment>
+									<PanelBody
+										title={__( 'Block Tools Defaults', 'otter-blocks' )}
+										initialOpen={true}
+									>
+										<p>
+											{
+												__( 'Make those features to be shown by default in Block Tools.', 'otter-blocks' )
+											}
+										</p>
 
-							{
-								'loading' === status && (
-									<p>
-										<Spinner />
-										{ __( 'Checking optional module...', 'otter-blocks' ) }
-									</p>
-								)
-							}
+										{
+											'loading' === status && (
+												<p>
+													<Spinner />
+													{ __( 'Checking optional module...', 'otter-blocks' ) }
+												</p>
+											)
+										}
 
-							{
-								enabledModules?.css && (
-									<PanelRow>
-										<ToggleControl
-											className="o-sidebar-toggle"
-											label={__( 'Custom CSS', 'otter-blocks' )}
-											checked={get?.( 'themeisle/otter-blocks', 'show-custom-css' )}
-											disabled={'loading' === preferenceStatus}
-											onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-custom-css', value ) )}
-										/>
-									</PanelRow>
-								)
-							}
+										{
+											enabledModules?.css && (
+												<PanelRow>
+													<ToggleControl
+														className="o-sidebar-toggle"
+														label={__( 'Custom CSS', 'otter-blocks' )}
+														checked={get?.( 'themeisle/otter-blocks', 'show-custom-css' )}
+														disabled={'loading' === preferenceStatus}
+														onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-custom-css', value ) )}
+													/>
+												</PanelRow>
+											)
+										}
 
-							{
-								enabledModules?.animation && (
-									<PanelRow>
-										<ToggleControl
-											className="o-sidebar-toggle"
-											label={__( 'Animation', 'otter-blocks' )}
-											checked={get?.( 'themeisle/otter-blocks', 'show-animations' ) ?? false}
-											disabled={'loading' === preferenceStatus}
-											onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-animations', value ) )}
-										/>
-									</PanelRow>
-								)
-							}
+										{
+											enabledModules?.animation && (
+												<PanelRow>
+													<ToggleControl
+														className="o-sidebar-toggle"
+														label={__( 'Animation', 'otter-blocks' )}
+														checked={get?.( 'themeisle/otter-blocks', 'show-animations' ) ?? false}
+														disabled={'loading' === preferenceStatus}
+														onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-animations', value ) )}
+													/>
+												</PanelRow>
+											)
+										}
 
-							{
-								enabledModules?.condition && (
-									<PanelRow>
-										<ToggleControl
-											className="o-sidebar-toggle"
-											label={__( 'Visibility Condition', 'otter-blocks' )}
-											checked={get?.( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? false }
-											disabled={'loading' === preferenceStatus}
-											onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-block-conditions', value ) )}
-										/>
-									</PanelRow>
-								)
-							}
-						</PanelBody>
+										{
+											enabledModules?.condition && (
+												<PanelRow>
+													<ToggleControl
+														className="o-sidebar-toggle"
+														label={__( 'Visibility Condition', 'otter-blocks' )}
+														checked={get?.( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? false }
+														disabled={'loading' === preferenceStatus}
+														onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-block-conditions', value ) )}
+													/>
+												</PanelRow>
+											)
+										}
+									</PanelBody>
 
-						<NavigatorButton
-							path="/block-settings"
-							icon={ chevronRightSmall }
-							className="o-navi-button"
-						>
-							{ __( 'Block Settings', 'otter-blocks' ) }
-						</NavigatorButton>
+									<NavigatorButton
+										path="/block-settings"
+										icon={ chevronRightSmall }
+										className="o-navi-button"
+									>
+										{ __( 'Block Settings', 'otter-blocks' ) }
+									</NavigatorButton>
+								</Fragment>
+							)
+						}
 
 						{ applyFilters( 'otter.feedback', '', 'otter-menu-editor', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
 					</NavigatorScreen>

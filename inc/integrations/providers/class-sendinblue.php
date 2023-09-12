@@ -155,22 +155,6 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	}
 
 	/**
-	 * Test the subscription by registering a random generated email.
-	 *
-	 * @return Form_Data_Request
-	 */
-	public function test_subscription() {
-		$req      = new Form_Data_Request();
-		$response = $this->make_subscribe_request( Form_Utils::generate_test_email() );
-
-		if ( is_wp_error( $response ) || 400 === wp_remote_retrieve_response_code( $response ) ) {
-			$req->set_error( Form_Data_Response::get_error_code_message( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR ) );
-		}
-
-		return $req;
-	}
-
-	/**
 	 * Set the API Key
 	 *
 	 * @param string $api_key The API Key of the provider.

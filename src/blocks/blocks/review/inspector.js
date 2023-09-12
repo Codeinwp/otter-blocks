@@ -54,6 +54,7 @@ import {
 	setUtm
 } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import { useTabSwitch } from '../../helpers/block-utility';
 
 /**
  * Block Styles
@@ -181,7 +182,7 @@ const Inspector = ({
 	getValue,
 	productAttributes
 }) => {
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
 	const {
 		responsiveSetAttributes,
@@ -597,6 +598,12 @@ const Inspector = ({
 									checked={ link.isSponsored }
 									disabled={ attributes.product }
 								/>
+
+								<ToggleControl
+									label={ __( 'Open in New Tab', 'otter-blocks' ) }
+									checked={ '_blank' === link.target }
+									disabled={ attributes.product }
+								/>
 							</PanelItem>
 						) ) }
 
@@ -628,6 +635,12 @@ const Inspector = ({
 											label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
 											checked={ link.isSponsored }
 											onChange={ () => onChangeLink({ action: 'update', index, value: { isSponsored: ! link.isSponsored }}) }
+										/>
+
+										<ToggleControl
+											label={ __( 'Open in New Tab', 'otter-blocks' ) }
+											checked={ undefined === link.target || '_blank' === link.target }
+											onChange={ () => onChangeLink({ action: 'update', index, value: { target: '_blank' === link.target || undefined === link.target ? '_self' : '_blank' }}) }
 										/>
 									</PanelItem>
 								) ) }
@@ -703,7 +716,7 @@ const Inspector = ({
 						/>
 
 						<BaseControl
-							label={ __( 'Content Font Size', 'otter-blocks' ) }
+							label={ __( 'Content', 'otter-blocks' ) }
 						>
 							<FontSizePicker
 								fontSizes={ defaultFontSizes }

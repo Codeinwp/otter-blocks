@@ -122,7 +122,7 @@ class Form_Data_Request {
 	 * Constructor.
 	 *
 	 * @access  public
-	 * @param \WP_REST_Request|mixed $request Request Data.
+	 * @param \WP_REST_Request $request Request Data.
 	 * @since 2.0.3
 	 */
 	public function __construct( $request = null ) {
@@ -132,11 +132,20 @@ class Form_Data_Request {
 		}
 
 		$this->request = $request;
-		$form_data     = $request->get_param( 'form_data' );
 
-		$form_data = json_decode( $form_data, true );
+		if ( ! empty( $request->get_param( 'form_data' ) ) ) {
+			$form_data          = $request->get_param( 'form_data' );
+			$form_data          = json_decode( $form_data, true );
+			$this->request_data = $this->sanitize_request_data( $form_data );
+		} else {
+			$body = json_decode( $request->get_body(), true );
+			if ( null !== $body ) {
+				$this->request_data = $this->sanitize_request_data( $body );
+			} else {
+				$this->error_code = Form_Data_Response::ERROR_MALFORMED_REQUEST;
+			}
+		}
 
-		$this->set_data_from_request( $this->sanitize_request_data( $form_data ) );
 		$this->form_options = new Form_Settings_Data( array() );
 
 		if ( ! empty( $request->get_header( 'O-Form-Save-Mode' ) ) ) {

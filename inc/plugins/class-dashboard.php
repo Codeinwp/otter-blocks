@@ -258,6 +258,11 @@ class Dashboard {
 			.otter-banner__version {
 				align-self: center;
 			}
+
+			/* Hide the "Add New" button for Multisite WP. Second part is for Elementor */
+			a.page-title-action:first-of-type, #e-admin-top-bar-root:not(.e-admin-top-bar--active)~#wpbody .wrap a.page-title-action:first-of-type {
+				display: none;
+			}
 		</style>
 		<div class="otter-banner">
 			<div class="otter-banner__image">
