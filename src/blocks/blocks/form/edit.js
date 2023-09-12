@@ -3,7 +3,7 @@
  */
 import classnames from 'classnames';
 
-import { get, isEqual } from 'lodash';
+import { debounce, get, isEqual } from 'lodash';
 
 import hash from 'object-hash';
 
@@ -53,7 +53,6 @@ import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
-import { Notice } from '@wordpress/components';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -107,7 +106,7 @@ const Edit = ({
 	 * @param {import('../../common').SyncAttrs<import('./type').FormAttrs>} field
 	 * @returns
 	 */
-	const getSyncValue = field =>{
+	const getSyncValue = field => {
 		if ( attributes?.isSynced?.includes( field ) ) {
 			return getDefaultValueByField({ name, field, defaultAttributes, attributes });
 		}
@@ -143,17 +142,24 @@ const Edit = ({
 		moveBlockToPosition
 	} = useDispatch( 'core/block-editor' );
 
-	const {
-		unlockPostSaving
-	} = useDispatch( 'core/editor' );
-
 	const setFormOption = option => {
 		setFormOptions( options => ({ ...options, ...option }) );
 	};
 
+	/**
+	 * This mark the block as dirty which allow us to use the save button to trigger the update of the form options tied to WP Options.
+	 *
+	 * @type {DebouncedFunc<(function(): void)|*>}
+	 */
+	const enableSaveBtn = debounce( () => {
+		const dummyBlock = createBlock( 'core/spacer', { height: '0px' });
+		insertBlock( dummyBlock, 0, clientId, false );
+		removeBlock( dummyBlock.clientId, false );
+	}, 3000 );
+
 	const setFormOptionAndSaveUnlock = option => {
 		setFormOption( option );
-		unlockPostSaving?.();
+		enableSaveBtn();
 	};
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
@@ -204,9 +210,10 @@ const Edit = ({
 		const isPublishingPost = select( 'core/editor' )?.isPublishingPost();
 		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
 		const widgetSaving = select( 'core/edit-widgets' )?.isSavingWidgetAreas();
+		const nonPostEntitySaving = select( 'core/editor' )?.isSavingNonPostEntityChanges();
 
 		return {
-			canSaveData: ( ! isAutosaving && ( isSavingPost || isPublishingPost ) ) || widgetSaving
+			canSaveData: ( ! isAutosaving && ( isSavingPost || isPublishingPost || nonPostEntitySaving ) ) || widgetSaving
 		};
 	});
 
