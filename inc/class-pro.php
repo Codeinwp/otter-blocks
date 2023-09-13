@@ -159,6 +159,10 @@ class Pro {
 	 * @access  public
 	 */
 	public function should_show_dashboard_upsell() {
+		if ( defined( 'OTTER_PRO_VERSION' ) ) {
+			return;
+		}
+
 		$show_upsell = false;
 
 		$installed     = get_option( 'otter_blocks_install' );
@@ -398,6 +402,11 @@ class Pro {
 	 * @access public
 	 */
 	public function add_pro_link( $links ) {
+
+		if ( defined( 'OTTER_PRO_VERSION' ) ) {
+			return $links;
+		}
+
 		$links[] = sprintf(
 			'<a href="%s" target="_blank" style="color:#ed6f57;font-weight:bold;">%s</a>',
 			esc_url_raw( tsdk_utmify( self::get_url(), 'pluginspage', 'action' ) ),
