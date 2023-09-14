@@ -130,6 +130,19 @@ jobs:
         run: |
           printf "{\"key\":\"${{ secrets.OTTER_PRO_LICENSE }}\"}" > license.json
 
+      # setup the node cache (node_modules) with github actions cache
+      - name: Cache Node - npm
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-cache-
+
+      - name: npm ci
+        run: |
+          npm ci
+
       - name: Setup WP Env
         run: |
           npm run test:unit:php:setup
