@@ -19,7 +19,7 @@ import {
 
 import { useInstanceId } from '@wordpress/compose';
 
-import { Fragment } from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -27,6 +27,7 @@ import { Fragment } from '@wordpress/element';
 import './editor.scss';
 import ControlPanelControl from '../control-panel-control/index.js';
 import ToogleGroupControl from '../toogle-group-control/index.js';
+import { use } from '@wordpress/data';
 
 const BackgroundSelectorControl = ({
 	backgroundType,
@@ -49,6 +50,15 @@ const BackgroundSelectorControl = ({
 }) => {
 	const instanceId = useInstanceId( BackgroundSelectorControl );
 
+	const [ backgroundTypeValue, setBackgroundTypeValue ] = useState( backgroundType );
+
+	const withBackground = ( backgroundType, f ) => {
+		return value => {
+			f( value );
+			changeBackgroundType( backgroundType );
+		};
+	};
+
 	const id = `inspector-background-selector-control-${ instanceId }`;
 
 	return (
@@ -69,20 +79,20 @@ const BackgroundSelectorControl = ({
 						value: 'gradient'
 					}
 				]}
-				onChange={ changeBackgroundType }
+				onChange={ setBackgroundTypeValue }
 			/>
 
 			{
-				( 'color' === backgroundType || undefined === backgroundType ) && (
+				( 'color' === backgroundTypeValue || undefined === backgroundTypeValue ) && (
 					<ColorGradientControl
 						label={ __( 'Background Color', 'otter-blocks' ) }
 						colorValue={ backgroundColor }
-						onColorChange={ changeColor }
+						onColorChange={ withBackground( 'color', changeColor ) }
 					/>
 				)
 			}
 			{
-				'image' === backgroundType && (
+				'image' === backgroundTypeValue && (
 					image?.url ? (
 						<Fragment>
 							<FocalPointPicker
@@ -91,7 +101,7 @@ const BackgroundSelectorControl = ({
 								value={ focalPoint }
 								onDragStart={ changeFocalPoint }
 								onDrag={ changeFocalPoint }
-								onChange={ changeFocalPoint }
+								onChange={ withBackground( 'image', changeFocalPoint ) }
 							/>
 
 							<div className="o-background-image-manage">
@@ -101,7 +111,7 @@ const BackgroundSelectorControl = ({
 									mediaId={ image?.id }
 									accept="image/*"
 									allowedTypes={ [ 'image' ] }
-									onSelect={ changeImage }
+									onSelect={ withBackground( 'image', changeImage ) }
 								>
 									<MenuItem
 										icon={ trash }
@@ -123,7 +133,7 @@ const BackgroundSelectorControl = ({
 										{ label: __( 'Fixed', 'otter-blocks' ), value: 'fixed' },
 										{ label: __( 'Local', 'otter-blocks' ), value: 'local' }
 									] }
-									onChange={ changeBackgroundAttachment }
+									onChange={ withBackground( 'image', changeBackgroundAttachment ) }
 								/>
 
 								<SelectControl
@@ -133,7 +143,7 @@ const BackgroundSelectorControl = ({
 										{ label: __( 'Repeat', 'otter-blocks' ), value: 'repeat' },
 										{ label: __( 'No-repeat', 'otter-blocks' ), value: 'no-repeat' }
 									] }
-									onChange={ changeBackgroundRepeat }
+									onChange={ withBackground( 'image', changeBackgroundRepeat ) }
 								/>
 
 								<SelectControl
@@ -144,7 +154,7 @@ const BackgroundSelectorControl = ({
 										{ label: __( 'Cover', 'otter-blocks' ), value: 'cover' },
 										{ label: __( 'Contain', 'otter-blocks' ), value: 'contain' }
 									] }
-									onChange={ changeBackgroundSize }
+									onChange={ withBackground( 'image', changeBackgroundSize ) }
 								/>
 							</ControlPanelControl>
 						</Fragment>
@@ -159,7 +169,7 @@ const BackgroundSelectorControl = ({
 									name: __( 'an image', 'otter-blocks' )
 								} }
 								value={ image?.id }
-								onSelect={ changeImage }
+								onSelect={ withBackground( 'image', changeImage ) }
 								accept="image/*"
 								allowedTypes={ [ 'image' ] }
 							/>
@@ -168,12 +178,12 @@ const BackgroundSelectorControl = ({
 				)
 			}
 			{
-				'gradient' === backgroundType && (
+				'gradient' === backgroundTypeValue && (
 					<ColorGradientControl
 						label={ __( 'Background Gradient', 'otter-blocks' ) }
 						gradientValue={ gradient }
 						disableCustomColors={ true }
-						onGradientChange={ changeGradient }
+						onGradientChange={ withBackground( 'gradient', changeGradient ) }
 						clearable={ false }
 					/>
 				)
