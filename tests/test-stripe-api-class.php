@@ -113,6 +113,6 @@ class TestStripeAPI extends WP_UnitTestCase {
 	public function test_status_for_price_id() {
 		$status = $this->stripe_api->get_status_for_price_id( 'sess_1','price_1' );
 
-		$this->assertTrue( 'complete' === $status );
+		$this->assertTrue( 'success' === $status );
 	}
 }
