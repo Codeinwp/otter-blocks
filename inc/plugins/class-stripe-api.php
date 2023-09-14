@@ -238,7 +238,7 @@ class Stripe_API {
 
 		array_push( $data, $object );
 
-		if ( defined( 'COOKIEPATH' ) && defined( 'COOKIE_DOMAIN' ) && ! $user_id ) {
+		if ( defined( 'COOKIEPATH' ) && defined( 'COOKIE_DOMAIN' ) && ! headers_sent() && ! $user_id ) {
 			setcookie( 'o_stripe_data', wp_json_encode( $data ), strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, false ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
 			return;
 		}

@@ -36,12 +36,12 @@ class StripeHttpClientMock implements ClientInterface
 			return array($this->mockCreateSession(), 200, null);
 		}
 
-		if (preg_match('#^/v1/checkout/sessions/\w+$#', $path)) {
-			return array($this->mockGetSession($path), 200, null);
-		}
-
 		if (preg_match('#^/v1/checkout/sessions/\w+/line_items$#', $path)) {
 			return array($this->mockSessionItems($path), 200, null);
+		}
+
+		if (preg_match('#^/v1/checkout/sessions/\w+$#', $path)) {
+			return array($this->mockGetSession($path), 200, null);
 		}
 
 		if (preg_match('#^/v1/subscriptions/\w+$#', $path)) {
@@ -95,15 +95,13 @@ class StripeHttpClientMock implements ClientInterface
 	{
 		return json_encode(
 			[
-				'object' => 'object',
-				'data' => [
-					'id' => 'prod_1',
-					'name' => 'Laptop',
-					'description' => 'High-performance laptop',
-					'price' => 1200,
-					'currency' => 'USD',
-					'active' => true
-				]
+				'id' => 'prod_1',
+				'name' => 'Laptop',
+				'description' => 'High-performance laptop',
+				'price' => 1200,
+				'currency' => 'USD',
+				'active' => true,
+				'object' => 'product'
 			]
 		);
 	}
@@ -133,12 +131,13 @@ class StripeHttpClientMock implements ClientInterface
 	{
 		return json_encode(
 			[
-				'object' => 'object',
-				'data'   => [
-					'id' => 'price_1',
-					'product' => 'prod_1',
-					'unit_amount' => 1000
-				]
+				'id' => 'price_1',
+				'product' => 'prod_1',
+				'unit_amount' => 1000,
+				'currency' => 'USD',
+				'object' => 'price',
+				'active' => true,
+				'billing_scheme' => 'per_unit',
 			]
 		);
 	}
@@ -160,11 +159,18 @@ class StripeHttpClientMock implements ClientInterface
 	{
 		return json_encode(
 			[
-				'object' => 'object',
-				'data'   => [
-					'id' => 'sess_1',
-					'status' => 'created'
-				]
+				'id' => 'sess_1',
+				'status' => 'complete',
+				'customer' => 'cus_1',
+				'customer_details' => [
+					'email' => 'test@test.com'
+				],
+				'mode' => 'payment',
+				'payment_status' => 'paid',
+				'payment_intent' => 'pi_1',
+				'object' => 'checkout.session',
+				'success_url' => 'https://example.com/success?product_id=prod_1',
+				'complete' => true
 			]
 		);
 	}
@@ -177,13 +183,31 @@ class StripeHttpClientMock implements ClientInterface
 				'data' => [
 					[
 						'id' => 'item_1',
-						'price' => 'price_1',
-						'quantity' => 1
+						'quantity' => 1,
+						'object' => 'item',
+						'price' => [
+							'id' => 'price_1',
+							'product' => 'prod_1',
+							'unit_amount' => 1000,
+							'currency' => 'USD',
+							'object' => 'price',
+							'active' => true,
+							'billing_scheme' => 'per_unit',
+						]
 					],
 					[
 						'id' => 'item_2',
-						'price' => 'price_2',
-						'quantity' => 2
+						'quantity' => 2,
+						'object' => 'item',
+						'price' => [
+							'id' => 'price_1',
+							'product' => 'prod_1',
+							'unit_amount' => 1000,
+							'currency' => 'USD',
+							'object' => 'price',
+							'active' => true,
+							'billing_scheme' => 'per_unit',
+						]
 					]
 				]
 			]

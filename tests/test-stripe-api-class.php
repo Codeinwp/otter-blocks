@@ -77,7 +77,7 @@ class TestStripeAPI extends WP_UnitTestCase {
 	public function test_retrieve_product() {
 		$product = $this->stripe_api->create_request('product', 'prod_1' );
 
-		$this->assertTrue( 'prod_1' === $product->data['id'] );
+		$this->assertTrue( 'prod_1' === $product['id'] );
 	}
 
 	/**
@@ -86,6 +86,33 @@ class TestStripeAPI extends WP_UnitTestCase {
 	public function test_retrieve_price() {
 		$price = $this->stripe_api->create_request('price', 'price_1' );
 
-		$this->assertTrue( 'price_1' === $price->data['id'] );
+		$this->assertTrue( 'price_1' === $price['id'] );
+	}
+
+	/**
+	 * Test get customer email from session.
+	 */
+	public function test_retrieve_session_email() {
+		$this->assertTrue( 'test@test.com' === $this->stripe_api->get_session_email( 'sess_1' ) );
+	}
+
+	/**
+	 * Test user purchase.
+	 */
+	public function test_user_purchase() {
+		wp_set_current_user( 1 );
+		$this->stripe_api->save_customer_data( 'sess_1' );
+		$data = $this->stripe_api->get_customer_data();
+
+		$this->assertFalse( empty( $data[0]['id'] ) );
+	}
+
+	/**
+	 * Test status for price id.
+	 */
+	public function test_status_for_price_id() {
+		$status = $this->stripe_api->get_status_for_price_id( 'sess_1','price_1' );
+
+		$this->assertTrue( 'complete' === $status );
 	}
 }
