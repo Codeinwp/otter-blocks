@@ -64,7 +64,7 @@ const BackgroundSelectorControl = ({
 	return (
 		<div id={ id } className="components-base-control o-background-selector-control">
 			<ToogleGroupControl
-				value={ backgroundType }
+				value={ backgroundTypeValue }
 				options={[
 					{
 						label: __( 'Color', 'otter-blocks' ),
