@@ -917,13 +917,30 @@ const Inspector = ({
 									<ColorGradientControl
 										label={ __( 'Shadow Color', 'otter-blocks' ) }
 										colorValue={ attributes.boxShadowColor }
-										onColorChange={ value => setAttributes({ boxShadowColor: value }) }
+										onColorChange={ value => setAttributes({
+											boxShadowColor: ( 100 > attributes.boxShadowColorOpacity && value?.includes( 'var(' ) ) ?
+												getComputedStyle( document.documentElement, null ).getPropertyValue( value?.replace( 'var(', '' )?.replace( ')', '' ) ) :
+												value
+										}) }
 									/>
 
 									<RangeControl
 										label={ __( 'Opacity', 'otter-blocks' ) }
 										value={ attributes.boxShadowColorOpacity }
-										onChange={ value => setAttributes({ boxShadowColorOpacity: value }) }
+										onChange={ value => {
+
+											const changes = { boxShadowColorOpacity: value };
+
+											/**
+											 * If the value is less than 100 and the color is CSS a variable, then replace the CSS variable with the computed value.
+											 * This is needed because the way calculate the opacity of the color is by using the HEX value since we are doing in the server side.
+											 */
+											if ( 100 > value && attributes.boxShadowColor?.includes( 'var(' ) ) {
+												changes.boxShadowColor = getComputedStyle( document.documentElement, null ).getPropertyValue( attributes.boxShadowColor.replace( 'var(', '' ).replace( ')', '' ) );
+											}
+
+											setAttributes( changes );
+										} }
 										min={ 0 }
 										max={ 100 }
 									/>

@@ -81,5 +81,26 @@ test.describe( 'Product Review Block', () => {
 		await expect( await page.getByRole( 'document', { name: 'Block: Product Review' }).getByText( FEATURE_DESCRIPTION, { exact: true }) ).toBeVisible();
 	});
 
+	test( 'open in new tab', async({ editor, page }) => {
+		await editor.insertBlock({ name: 'themeisle-blocks/review' });
 
+		await page.getByRole( 'button', { name: 'Buttons' }).click({ clickCount: 1 });
+
+		await page.getByRole( 'button', { name: 'Add Links' }).click();
+
+		await page.getByRole( 'button', { name: 'Buy Now' }).click();
+
+		await page.getByPlaceholder( 'Button label' ).fill( 'Buy Now in same tab' );
+		await page.getByLabel( 'Open in New Tab' ).click();
+
+		await page.getByRole( 'button', { name: 'Add Links' }).click();
+
+		const postId = await editor.publishPost();
+
+		await page.goto( `/?p=${postId}` );
+
+		await expect( page.getByRole( 'link', { name: 'Buy Now in same tab' }) ).toHaveAttribute( 'target', '_self' );
+		await expect( page.getByRole( 'link', { name: 'Buy Now', exact: true }) ).toHaveAttribute( 'target', '_blank' );
+
+	});
 });

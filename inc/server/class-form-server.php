@@ -199,7 +199,7 @@ class Form_Server {
 	 * @since 2.0.3
 	 */
 	public function editor( $request ) {
-		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
+		$data = new Form_Data_Request( $request );
 		$res  = new Form_Data_Response();
 
 		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get_payload_field( 'formOption' ) );
@@ -211,6 +211,10 @@ class Form_Server {
 			$provider = $data->get_payload_field( 'provider' );
 		}
 		$provider_handlers = Form_Providers::$instance->get_provider_handlers( $provider, 'editor' );
+
+		if ( $data->has_error() ) {
+			return $res->set_code( $data->get_error_code() )->build_response();
+		}
 
 		if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $data->get( 'handler' ) ) ) {
 			// Send the data to the provider.
@@ -651,7 +655,13 @@ class Form_Server {
 				if ( $valid_api_key['valid'] ) {
 					if ( $form_options->has_list_id() ) {
 						$service->set_api_key( $form_options->get_api_key() )->set_list_id( $form_options->get_list_id() );
-						$res = $service->test_subscription();
+						$response = $service->make_subscribe_request( Form_Utils::generate_test_email() );
+
+						if ( is_wp_error( $response ) ) {
+							$res->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $response->get_error_message() );
+						} else {
+							$res->mark_as_success();
+						}
 					} else {
 						$res->set_error( __( 'Contact list ID is missing!', 'otter-blocks' ) );
 					}

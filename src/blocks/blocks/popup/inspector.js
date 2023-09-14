@@ -394,7 +394,7 @@ const Inspector = ({
 
 							<BoxControl
 								id="o-border-raduis-box"
-								label={ __( 'Border Radius', 'otter-blocks' ) }
+								label={ __( 'Radius', 'otter-blocks' ) }
 								values={ attributes.borderRadius ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
 								onChange={ value => {
 									setAttributes({

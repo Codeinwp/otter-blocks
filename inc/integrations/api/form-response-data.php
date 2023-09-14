@@ -30,6 +30,7 @@ class Form_Data_Response {
 	const ERROR_MISSING_FILE_FIELD_OPTION         = '16';
 	const ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD = '17';
 	const ERROR_AUTORESPONDER_COULD_NOT_SEND      = '18';
+	const ERROR_MALFORMED_REQUEST                 = '19';
 
 	// Request validation errors.
 	const ERROR_MISSING_DATA          = '101';
@@ -151,7 +152,7 @@ class Form_Data_Response {
 
 	/**
 	 * Set success message.
-	 * 
+	 *
 	 * @param string $message The message.
 	 * @since 2.4
 	 */
@@ -356,6 +357,7 @@ class Form_Data_Response {
 			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the Form Block with Autoresponder activated.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
 			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
+			self::ERROR_MALFORMED_REQUEST                  => __( 'The request is malformed.', 'otter-blocks' ),
 		);
 
 		if ( ! isset( $error_messages[ $error_code ] ) ) {

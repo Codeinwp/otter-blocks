@@ -275,6 +275,14 @@ class Shared_CSS {
 						'value'   => 'boxShadowColor',
 						'default' => '#000',
 						'format'  => function( $value, $attrs ) {
+							if ( ! isset( $attrs['boxShadowColorOpacity'] ) ) {
+								return $value;
+							}
+
+							if ( 100 === $attrs['boxShadowColorOpacity'] ) {
+								return $value;
+							}
+
 							$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 ) / 100;
 							return Base_CSS::hex2rgba( $value, $opacity );
 						},
