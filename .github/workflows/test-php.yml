@@ -100,3 +100,40 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest
       - name: PHPStan Static Analysis
         run: composer phpstan
+
+  unit:
+    name: UnitTests
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      # setup the composer cache (vendor) with github actions cache and the cache dir defined in the previous step
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      # run composer install
+      - name: Install composer
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Create License File
+        run: |
+          printf "{\"key\":\"${{ secrets.OTTER_PRO_LICENSE }}\"}" > license.json
+
+      - name: Setup WP Env
+        run: |
+          npm run test:unit:php:setup
+
+      - name: Run PHP Unit Tests
+        run: |
+          npm run test:unit:php:base

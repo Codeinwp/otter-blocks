@@ -35,7 +35,7 @@ class Stripe_API {
 	 * @access public
 	 */
 	public function __construct() {
-		if ( ! self::has_keys() && empty( $client ) ) {
+		if ( ! self::has_keys() ) {
 			return;
 		}
 
