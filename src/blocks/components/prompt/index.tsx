@@ -220,7 +220,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			}
 			if ( 'yes' === getOption( 'otter_blocks_logger_flag' ) ) {
 				setTrackingConsent( true );
-				console.log( 'tracking consent', getOption( 'otter_blocks_logger_flag' ) );
 				setShowTrackingConsent( false );
 			}
 		}
@@ -438,18 +437,18 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 							placeholder={ props.promptPlaceholder }
 						/>
 
-						{
-							showTrackingConsent && (
-								<TrackingConsentToggle
-									onToggle={ onToggleTrackingConsent }
-									value={ trackingConsent }
-									onClose={() => {
-										setShowTrackingConsent( false );
-										localStorage.setItem( 'o-tracking-consent', 'true' );
-									}}
-								/>
-							)
-						}
+						{/*{*/}
+						{/*	showTrackingConsent && (*/}
+						{/*		<TrackingConsentToggle*/}
+						{/*			onToggle={ onToggleTrackingConsent }*/}
+						{/*			value={ trackingConsent }*/}
+						{/*			onClose={() => {*/}
+						{/*				setShowTrackingConsent( false );*/}
+						{/*				localStorage.setItem( 'o-tracking-consent', 'true' );*/}
+						{/*			}}*/}
+						{/*		/>*/}
+						{/*	)*/}
+						{/*}*/}
 
 						{props.children}
 					</PromptBlockEditor>

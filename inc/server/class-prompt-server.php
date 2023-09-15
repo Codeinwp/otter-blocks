@@ -116,74 +116,6 @@ class Prompt_Server {
 		// Remove the values which keys start with 'otter_'.
 		$body = array_diff_key( $body, $otter_data );
 
-
-		if ( isset( $otter_data['otter_used_action'] ) && isset( $otter_data['otter_user_content'] ) ) {
-
-			$action       = $otter_data['otter_used_action'];
-			$user_content = $otter_data['otter_user_content'];
-
-			$usage = get_option( 'themeisle_otter_ai_usage' );
-
-			if ( ! is_array( $usage ) ) {
-				$usage = array(
-					'usage_count' => array(),
-					'prompts'     => array(),
-				);
-			}
-
-			if ( ! is_array( $usage['usage_count'] ) ) {
-				$usage['usage_count'] = array();
-			}
-
-			if ( ! is_array( $usage['prompts'] ) ) {
-				$usage['prompts'] = array();
-			}
-
-			$is_missing = true;
-
-			foreach ( $usage['usage_count'] as &$u ) {
-				if ( isset( $u['key'] ) && $u['key'] === $action ) {
-					$u['value']++;
-					$is_missing = false;
-				}
-			}
-
-			unset( $u );
-
-			if ( $is_missing ) {
-				$usage['usage_count'][] = array(
-					'key'   => $action,
-					'value' => 1,
-				);
-			}
-
-			$is_missing = true;
-
-			foreach ( $usage['prompts'] as &$u ) {
-				if ( isset( $u['key'] ) && $u['key'] === $action ) {
-					$u['values'][] = $user_content;
-					$is_missing    = false;
-
-					// Keep only the last 10 prompts.
-					if ( count( $u['values'] ) > 10 ) {
-						array_shift( $u['values'] );
-					}
-				}
-			}
-
-			unset( $u );
-
-			if ( $is_missing ) {
-				$usage['prompts'][] = array(
-					'key'    => $action,
-					'values' => array( $user_content ),
-				);
-			}
-
-			update_option( 'themeisle_otter_ai_usage', $usage );
-		}
-
-
 		$response = wp_remote_post(
 			$open_ai_endpoint,
 			array(
@@ -341,6 +273,82 @@ class Prompt_Server {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Record prompt usage.
+	 *
+	 * @param array $otter_metadata The metadata from the prompt usage request.
+	 * @return void
+	 * @phpstan-ignore-next-line
+	 */
+	private function record_prompt_usage( $otter_metadata ) {
+		if ( ! isset( $otter_metadata['otter_used_action'] ) || ! isset( $otter_metadata['otter_user_content'] ) ) {
+			return;
+		}
+
+		$action       = $otter_metadata['otter_used_action'];
+		$user_content = $otter_metadata['otter_user_content'];
+
+		$usage = get_option( 'themeisle_otter_ai_usage' );
+
+		if ( ! is_array( $usage ) ) {
+			$usage = array(
+				'usage_count' => array(),
+				'prompts'     => array(),
+			);
+		}
+
+		if ( ! is_array( $usage['usage_count'] ) ) {
+			$usage['usage_count'] = array();
+		}
+
+		if ( ! is_array( $usage['prompts'] ) ) {
+			$usage['prompts'] = array();
+		}
+
+		$is_missing = true;
+
+		foreach ( $usage['usage_count'] as &$u ) {
+			if ( isset( $u['key'] ) && $u['key'] === $action ) {
+				$u['value']++;
+				$is_missing = false;
+			}
+		}
+
+		unset( $u );
+
+		if ( $is_missing ) {
+			$usage['usage_count'][] = array(
+				'key'   => $action,
+				'value' => 1,
+			);
+		}
+
+		$is_missing = true;
+
+		foreach ( $usage['prompts'] as &$u ) {
+			if ( isset( $u['key'] ) && $u['key'] === $action ) {
+				$u['values'][] = $user_content;
+				$is_missing    = false;
+
+				// Keep only the last 10 prompts.
+				if ( count( $u['values'] ) > 10 ) {
+					array_shift( $u['values'] );
+				}
+			}
+		}
+
+		unset( $u );
+
+		if ( $is_missing ) {
+			$usage['prompts'][] = array(
+				'key'    => $action,
+				'values' => array( $user_content ),
+			);
+		}
+
+		update_option( 'themeisle_otter_ai_usage', $usage );
 	}
 
 
