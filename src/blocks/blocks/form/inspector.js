@@ -456,13 +456,6 @@ const Inspector = ({
 
 							<br /> <br />
 
-							{ 'loading' === loadingState?.formIntegration && (
-								<div className="o-fetch-msg">
-									<Spinner />
-									{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
-								</div>
-							) }
-
 							<b>{ __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) }</b>
 
 							<SelectControl
@@ -583,6 +576,13 @@ const Inspector = ({
 										</Fragment>
 									) }
 								</Fragment>
+							) }
+
+							{ 'loading' === loadingState?.formIntegration && (
+								<div className="o-fetch-msg">
+									<Spinner />
+									{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
+								</div>
 							) }
 
 							<div
