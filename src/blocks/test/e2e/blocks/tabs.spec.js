@@ -68,4 +68,14 @@ test.describe( 'Tabs Block', () => {
 
 		expect( await page.getByRole( 'paragraph' ).filter({ hasText: 'This is just a placeholder to help you visualize how the content is displayed in' }).isVisible() ).toBeTruthy();
 	});
+
+	test( 'change tab header content', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/tabs'
+		});
+
+		await page.getByRole( 'textbox', { name: 'Add title…' }).first().fill( 'Tab 1000' );
+
+		await expect( page.locator( 'div' ).filter({ hasText: /^Tab 1000$/ }).first() ).toBeVisible();
+	});
 });
