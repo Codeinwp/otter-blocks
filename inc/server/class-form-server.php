@@ -497,9 +497,12 @@ class Form_Server {
 
 		// Send also an email to the form editor/owner with the data alongside the subscription.
 		if (
-			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
 			$form_data->get_form_options()->has_provider() &&
-			'default' !== $form_data->get_form_options()->get_provider()
+			$form_data->get_form_options()->has_list_id() &&
+			(
+				'submit-subscribe' === $form_data->get_form_options()->get_action() ||
+				empty( $form_data->get_form_options()->get_action() )
+			)
 		) {
 			$this->send_default_email( $form_data );
 		}

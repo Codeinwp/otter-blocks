@@ -279,7 +279,7 @@ const Edit = ({
 			setShowAutoResponderNotice( 0 === emailFields?.length );
 		}
 
-	}, [ children, formOptions.autoresponder, formOptions.action ]);
+	}, [ children, formOptions.autoresponder, formOptions.listId, formOptions.action ]);
 
 	/**
 	 * Get the data from the WP Options for the current form.

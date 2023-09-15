@@ -557,19 +557,25 @@ const Inspector = ({
 											{ 2 <= listIDOptions?.length && formOptions.listId && (
 												<Fragment>
 													<SelectControl
-														label={ __( 'Action', 'otter-blocks' ) }
+														label={ __( 'Submit Action', 'otter-blocks' ) }
 														value={ formOptions.action }
 														options={ [
 															{ label: __( 'Default', 'otter-blocks' ), value: '' },
-															{ label: __( 'Subscribe', 'otter-blocks' ), value: 'subscribe' },
+															{ label: __( 'Subscribe Only', 'otter-blocks' ), value: 'subscribe' },
 															{ label: __( 'Submit & Subscribe', 'otter-blocks' ), value: 'submit-subscribe' }
 														] }
 														onChange={ action => setFormOption({ action }) }
 													/>
 
-													{ 'submit-subscribe' === formOptions.action && (
+													{ ( ! formOptions.action || 'submit-subscribe' === formOptions.action ) && (
 														<div style={{ marginBottom: '10px' }}>
-															{ __( 'This action will add the client to the contact list and send a separate email with the form data to administrator or to the email mentioned in \'Form to\' field. A checkbox for data-sharing consent with third-party will be added on form.', 'otter-blocks' ) }
+															{ __( 'Adds the client to your contact list and emails form data to the specified \'Form to\' address or the admin. Includes a checkbox for third-party data-sharing consent.', 'otter-blocks' ) }
+														</div>
+													) }
+
+													{ 'subscribe' === formOptions.action && (
+														<div style={{ marginBottom: '10px' }}>
+															{ __( 'Automatically adds the client to your selected contact list, skipping the usual email alert. Ideal for newsletter sign-up forms. ', 'otter-blocks' ) }
 														</div>
 													) }
 												</Fragment>

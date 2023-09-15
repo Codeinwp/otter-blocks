@@ -474,7 +474,7 @@ class Form_Data_Request {
 		$inputs = $this->get_form_inputs();
 		if ( is_array( $inputs ) ) {
 			foreach ( $inputs as $input_field ) {
-				if ( 'email' == $input_field['type'] ) {
+				if ( ! empty( $input_field['type'] ) && 'email' == $input_field['type'] ) {
 					return $input_field['value'];
 				}
 			}
