@@ -187,8 +187,8 @@ describe( 'Post Editor Performance', () => {
 
 	it( 'Typing', async() => {
 
-		screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
-		await screenRecorder.start( savePathVideo + 'typing-test.mp4' );
+		// screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
+		// await screenRecorder.start( savePathVideo + 'typing-test.mp4' );
 
 		await loadHtmlIntoTheBlockEditor(
 			readFile( path.join( __dirname, '../assets/large-post.html' ) )
@@ -234,7 +234,7 @@ describe( 'Post Editor Performance', () => {
 
 		await saveDraft();
 
-		await screenRecorder.stop();
+		// await screenRecorder.stop();
 	});
 
 	it( 'Selecting blocks', async() => {

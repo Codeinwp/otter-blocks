@@ -18,6 +18,7 @@ import apiFetch from '@wordpress/api-fetch';
 
 import {
 	__experimentalBlockVariationPicker as VariationPicker,
+	BlockControls,
 	InnerBlocks,
 	RichText,
 	useBlockProps
@@ -41,18 +42,29 @@ import {
 	createContext
 } from '@wordpress/element';
 
+import {
+	Icon
+} from '@wordpress/icons';
+
+import { Button, Notice, ToolbarGroup } from '@wordpress/components';
+
 /**
  * Internal dependencies
  */
 import metadata from './block.json';
 import {
 	blockInit,
-	getDefaultValueByField
+	getDefaultValueByField,
+	insertBlockBelow
 } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 import { renderBoxOrNumWithUnit, _cssBlock, _px, findInnerBlocks } from '../../helpers/helper-functions';
+import PromptPlaceholder from '../../components/prompt';
+import { parseFormPromptResponseToBlocks, sendPromptToOpenAI } from '../../helpers/prompt';
+import { aiGeneration, formAiGeneration } from '../../helpers/icons';
+import DeferredWpOptionsSave from '../../helpers/defered-wp-options-save';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -68,7 +80,9 @@ const formOptionsMap = {
 	cc: 'cc',
 	bcc: 'bcc',
 	autoresponder: 'autoresponder',
-	submissionsSaveLocation: 'submissionsSaveLocation'
+	submissionsSaveLocation: 'submissionsSaveLocation',
+	webhookId: 'webhookId',
+	requiredFields: 'requiredFields'
 };
 
 /**
@@ -164,6 +178,7 @@ const Edit = ({
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
 	const [ showAutoResponderNotice, setShowAutoResponderNotice ] = useState( false );
+	const [ showDuplicatedMappedName, setShowDuplicatedMappedName ] = useState( false );
 
 	const [ listIDOptions, setListIDOptions ] = useState([{ label: __( 'None', 'otter-blocks' ), value: '' }]);
 
@@ -194,12 +209,17 @@ const Edit = ({
 
 	const [ hasEmailField, setHasEmailField ] = useState( false );
 
-	const { children, hasProtection } = useSelect( select => {
+	const { children, hasProtection, currentBlockPosition } = useSelect( select => {
 		const {
-			getBlock
+			getBlock,
+			getBlockOrder
 		} = select( 'core/block-editor' );
 		const children = getBlock( clientId ).innerBlocks;
+
+		const currentBlockPosition = getBlockOrder().indexOf( clientId );
+
 		return {
+			currentBlockPosition,
 			children,
 			hasProtection: 0 < children?.filter( ({ name }) => 'themeisle-blocks/form-nonce' === name )?.length
 		};
@@ -217,10 +237,22 @@ const Edit = ({
 		};
 	});
 
+	/**
+	 * Prevent saving data if the block is inside an AI block. This will prevent polluting the wp_options table.
+	 */
+	const isInsideAiBlock = useSelect( select => {
+		const {
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const parents = getBlockParentsByBlockName( clientId, 'themeisle-blocks/content-generator' );
+		return 0 < parents?.length;
+	}, [ clientId ]);
+
 	const hasEssentialData = attributes.optionName && hasProtection;
 
 	useEffect( () => {
-		if ( canSaveData ) {
+		if ( canSaveData && ! isInsideAiBlock ) {
 			saveFormEmailOptions();
 		}
 	}, [ canSaveData ]);
@@ -273,13 +305,42 @@ const Edit = ({
 				}
 			);
 
-
 			setHasEmailField( 0 < emailFields?.length );
 
 			setShowAutoResponderNotice( 0 === emailFields?.length );
 		}
 
-	}, [ children, formOptions.autoresponder, formOptions.action ]);
+		if ( formOptions.webhookId ) {
+			const allFields = findInnerBlocks(
+				children,
+				block => {
+					return block?.name?.startsWith( 'themeisle-blocks/form-' );
+				},
+				block => {
+
+					// Do not find email field inside inner Form blocks.
+					return 'themeisle-blocks/form' !== block?.name;
+				}
+			);
+
+
+			const mappedNames = [];
+			let hasDuplicateMappedNames = false;
+
+			for ( const block of allFields ) {
+				if ( block?.attributes?.mappedName ) {
+					if ( mappedNames.includes( block?.attributes?.mappedName ) ) {
+						hasDuplicateMappedNames = block.clientId;
+						break;
+					}
+					mappedNames.push( block?.attributes?.mappedName );
+				}
+			}
+
+			setShowDuplicatedMappedName( hasDuplicateMappedNames );
+		}
+
+	}, [ children, formOptions.autoresponder, formOptions.action, formOptions.webhookId ]);
 
 	/**
 	 * Get the data from the WP Options for the current form.
@@ -310,7 +371,9 @@ const Edit = ({
 			hasCaptcha: wpOptions?.hasCaptcha,
 			autoresponder: wpOptions?.autoresponder,
 			autoresponderSubject: wpOptions?.autoresponderSubject,
-			submissionsSaveLocation: wpOptions?.submissionsSaveLocation
+			submissionsSaveLocation: wpOptions?.submissionsSaveLocation,
+			webhookId: wpOptions?.webhookId,
+			requiredFields: wpOptions?.requiredFields
 		});
 	};
 
@@ -362,73 +425,44 @@ const Edit = ({
 
 	const saveFormEmailOptions = () => {
 		setLoading({ formOptions: 'saving' });
+
+		const data = { form: attributes.optionName };
+		formOptions.requiredFields = extractRequiredFields();
+
+		Object.keys( formOptionsMap ).forEach( key => {
+			data[key] = formOptions[formOptionsMap[key]];
+		});
+
 		try {
-			( new api.models.Settings() ).fetch().done( res => {
-				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-				let isMissing = true;
-				let hasUpdated = false;
-
-				emails?.forEach( ({ form }, index ) => {
-					if ( form !== attributes.optionName ) {
-						return;
-					}
-
-					hasUpdated = Object.keys( formOptionsMap ).reduce( ( acc, key ) => {
-						return acc || ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]);
-					}, false );
-
-					hasUpdated = Object.keys( formOptionsMap ).some( key => ! isEqual( emails[index][key], formOptions[formOptionsMap[key]]) );
-
-					// Update the values
-					if ( hasUpdated ) {
-						Object.keys( formOptionsMap ).forEach( key => emails[index][key] = formOptions[formOptionsMap[key]]);
-					}
-
-					isMissing = false;
-				});
-
-				if ( isMissing ) {
-					const data = { form: attributes.optionName };
-
-					Object.keys( formOptionsMap ).forEach( key => {
-						data[key] = formOptions[formOptionsMap[key]];
-					});
-
-					emails.push( data );
-				}
-
-				if ( isMissing || hasUpdated ) {
-					const model = new api.models.Settings({
-						// eslint-disable-next-line camelcase
-						themeisle_blocks_form_emails: emails
-					});
-
-					model.save().then( response => {
-						const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
-						if ( formOptions ) {
-							parseDataFormOptions( formOptions );
-							setSavedFormOptions( formOptions );
-							setLoading({ formOptions: 'done' });
-							createNotice(
-								'info',
-								__( 'Form options have been saved.', 'otter-blocks' ),
-								{
-									isDismissible: true,
-									type: 'snackbar'
-								}
-							);
-						} else {
-							setLoading({ formOptions: 'error' });
-						}
-					});
+			( new DeferredWpOptionsSave() ).save( 'form_options', data, ( res, error ) => {
+				if ( error ) {
+					setLoading({ formOptions: 'error' });
 				} else {
 					setLoading({ formOptions: 'done' });
+					createNotice(
+						'info',
+						__( 'Form options have been saved.', 'otter-blocks' ),
+						{
+							isDismissible: true,
+							type: 'snackbar'
+						}
+					);
 				}
-			}).catch( () => setLoading({ formOptions: 'error' }) );
+			});
 		} catch ( e ) {
-			console.error( e );
 			setLoading({ formOptions: 'error' });
 		}
+	};
+
+	const extractRequiredFields = () => {
+
+		const stripeFields = findInnerBlocks(
+			children,
+			block => 'themeisle-blocks/form-stripe-field' === block.name,
+			block => 'themeisle-blocks/form' !== block?.name
+		);
+
+		return stripeFields?.map( block => block.attributes.fieldOptionName ) || [];
 	};
 
 	/**
@@ -909,7 +943,26 @@ const Edit = ({
 					setAttributes={ setAttributes }
 				/>
 
+				<BlockControls>
+					<ToolbarGroup>
+						<Button
+							onClick={()=> {
+								const generator = createBlock( 'themeisle-blocks/content-generator', {
+									promptID: 'form'
+								});
+
+								insertBlockBelow( clientId, generator );
+							}}
+						>
+							{ __( 'Create Form With AI', 'otter-blocks' ) }
+							<Icon width={22} icon={aiGeneration} style={{ marginLeft: '8px' }} />
+						</Button>
+					</ToolbarGroup>
+				</BlockControls>
+
+
 				<div { ...blockProps }>
+
 					{
 						( hasInnerBlocks ) ? (
 							<form
@@ -1009,6 +1062,21 @@ const Edit = ({
 															)
 														}
 													</Fragment>
+												)
+											}
+											{
+												showDuplicatedMappedName && (
+													<Notice isDismissible={false} status={'error'}>
+														<p>{__( 'Some Form fields have the same Mapped Name! Please change the Mapped Name of the duplicated fields.', 'otter-blocks' )}</p>
+														<Button
+															variant={'primary'}
+															onClick={ () => {
+																selectBlock( showDuplicatedMappedName );
+															}}
+														>
+															{__( 'Go to Block', 'otter-blocks' )}
+														</Button>
+													</Notice>
 												)
 											}
 										</Fragment>

@@ -16,9 +16,10 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import { Notice as OtterNotice } from '../../../blocks/components';
-import { FieldInputWidth, HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
+import { FieldInputWidth, HideFieldLabelToggle, mappedNameInfo } from '../../../blocks/blocks/form/common';
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
 import AutoresponderBodyModal from '../../components/autoresponder/index.js';
+import WebhookEditor from '../../components/webhook-editor';
 
 // +-------------- Autoresponder --------------+
 
@@ -36,7 +37,15 @@ const helpMessages = {
 	'database-email': __( 'Save the submissions to the database and notify also via email.', 'otter-blocks' )
 };
 
-
+/**
+ * Form Options
+ *
+ * @param {React.ReactNode} Options The children of the FormOptions component.
+ * @param {import('../../../blocks/blocks/form/type').FormOptions} formOptions The form options.
+ * @param { (options: import('../../../blocks/blocks/form/type').FormOptions) => void } setFormOption The function to set the form options.
+ * @param {any} config The form config.
+ * @returns {JSX.Element}
+ */
 const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 
 	return (
@@ -124,6 +133,37 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 							)
 						}
 
+					</>
+				) : (
+					<div>
+						<OtterNotice
+							notice={__(
+								'You need to activate Otter Pro.',
+								'otter-blocks'
+							)}
+							instructions={__(
+								'You need to activate your Otter Pro license to use Pro features of Form Block.',
+								'otter-blocks'
+							)}
+						/>
+					</div>
+				)}
+			</ToolsPanelItem>
+			<ToolsPanelItem
+				hasValue={() => formOptions.webhookId }
+				label={__( 'Webhook', 'otter-blocks' )}
+				onDeselect={() => setFormOption({ webhookId: undefined })}
+			>
+				{Boolean( window.otterPro.isActive ) ? (
+					<>
+						<WebhookEditor
+							webhookId={formOptions.webhookId}
+							onChange={( webhookId ) => {
+								setFormOption({
+									webhookId: webhookId
+								});
+							}}
+						/>
 					</>
 				) : (
 					<div>
@@ -261,6 +301,14 @@ const FormFileInspector = ( Template, {
 				help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
 				checked={ attributes.isRequired }
 				onChange={ isRequired => setAttributes({ isRequired }) }
+			/>
+
+			<TextControl
+				label={ __( 'Mapped Name', 'otter-blocks' ) }
+				help={ mappedNameInfo }
+				value={ attributes.mappedName }
+				onChange={ mappedName => setAttributes({ mappedName }) }
+				placeholder={ __( 'photos', 'otter-blocks' ) }
 			/>
 
 			<ToggleControl

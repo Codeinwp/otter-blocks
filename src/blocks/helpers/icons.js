@@ -11,7 +11,8 @@ import {
 	G,
 	Path,
 	Rect,
-	SVG
+	SVG,
+	LinearGradient
 } from '@wordpress/primitives';
 import { Circle } from '@wordpress/components';
 
@@ -654,4 +655,103 @@ export const popupWithImageAndText = (
 		<Rect x="42" y="11" width="2" height="2" rx="1" fill="#ED6F57"/>
 	</SVG>
 
+);
+
+export const aiGeneration = (
+	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: 'transparent' }}>
+		<Path d="M6 17V21" stroke="url(#paint0_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M4 19H8" stroke="url(#paint1_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M17 3V7" stroke="url(#paint2_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M15 5H19" stroke="url(#paint3_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M6.5 5C6.5 6.933 8.067 8.5 10 8.5" stroke="url(#paint4_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M10 8.5C8.067 8.5 6.5 10.067 6.5 12" stroke="url(#paint5_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M6.5 12C6.5 10.067 4.933 8.5 3 8.5" stroke="url(#paint6_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M3 8.5C4.933 8.5 6.5 6.933 6.5 5" stroke="url(#paint7_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M11.609 15.778C14.202 15.778 16.304 13.676 16.304 11.083" stroke="url(#paint8_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M16.3051 11.083C16.3051 13.676 18.4071 15.778 21.0001 15.778" stroke="url(#paint9_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M21.0001 15.7781C18.4071 15.7781 16.3051 17.8801 16.3051 20.4731" stroke="url(#paint10_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Path d="M16.305 20.4731C16.305 17.8801 14.203 15.7781 11.61 15.7781" stroke="url(#paint11_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<Defs>
+			<LinearGradient id="paint0_linear_3599_37937" x1="6" y1="17" x2="6" y2="21" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint1_linear_3599_37937" x1="6" y1="18.5" x2="6" y2="19.5" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint2_linear_3599_37937" x1="17" y1="3" x2="17" y2="7" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint3_linear_3599_37937" x1="17" y1="4.5" x2="17" y2="5.5" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint4_linear_3599_37937" x1="8.25" y1="5" x2="8.25" y2="8.5" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint5_linear_3599_37937" x1="8.25" y1="8.5" x2="8.25" y2="12" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint6_linear_3599_37937" x1="4.75" y1="8.5" x2="4.75" y2="12" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint7_linear_3599_37937" x1="4.75" y1="5" x2="4.75" y2="8.5" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint8_linear_3599_37937" x1="13.9565" y1="11.083" x2="13.9565" y2="15.778" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint9_linear_3599_37937" x1="18.6526" y1="11.083" x2="18.6526" y2="15.778" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint10_linear_3599_37937" x1="18.6526" y1="15.7781" x2="18.6526" y2="20.4731" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint11_linear_3599_37937" x1="13.9575" y1="15.7781" x2="13.9575" y2="20.4731" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+		</Defs>
+	</SVG>
+);
+
+export const formAiGeneration = (
+	<SVG width="20" height="21" viewBox="0 0 20 21" fill="none" style={{ color: 'transparent' }} xmlns="http://www.w3.org/2000/svg">
+		<Path d="M17.5044 8.5V20C17.5044 20.3 17.3044 20.5 17.0044 20.5H3.00439C2.70439 20.5 2.50439 20.3 2.50439 20V2C2.50439 1.7 2.70439 1.5 3.00439 1.5H12.8044" stroke="url(#paint0_linear_3726_618)" stroke-linecap="round"/>
+		<Path d="M5.00439 3.5H10.0044C10.3044 3.5 10.5044 3.7 10.5044 4V6C10.5044 6.3 10.3044 6.5 10.0044 6.5H5.00439C4.70439 6.5 4.50439 6.3 4.50439 6V4C4.50439 3.7 4.70439 3.5 5.00439 3.5Z" stroke="url(#paint1_linear_3726_618)"/>
+		<Path d="M5.00439 9.5H13.0044C13.3044 9.5 13.5044 9.7 13.5044 10V11C13.5044 11.3 13.3044 11.5 13.0044 11.5H5.00439C4.70439 11.5 4.50439 11.3 4.50439 11V10C4.50439 9.7 4.70439 9.5 5.00439 9.5Z" stroke="url(#paint2_linear_3726_618)"/>
+		<Path d="M5.00439 13.5H15.0044C15.3044 13.5 15.5044 13.7 15.5044 14V18C15.5044 18.3 15.3044 18.5 15.0044 18.5H5.00439C4.70439 18.5 4.50439 18.3 4.50439 18V14C4.50439 13.7 4.70439 13.5 5.00439 13.5Z" stroke="url(#paint3_linear_3726_618)"/>
+		<Path d="M16.0044 7C16.0044 5.3 17.3044 4 19.0044 4C17.3044 4 16.0044 2.7 16.0044 1C16.0044 2.7 14.7044 4 13.0044 4C13.8044 4 14.6044 4.3 15.1044 4.9C15.7044 5.4 16.0044 6.2 16.0044 7Z" stroke="url(#paint4_linear_3726_618)" stroke-linecap="round" stroke-linejoin="round"/>
+		<Defs>
+			<LinearGradient id="paint0_linear_3726_618" x1="10.0044" y1="1" x2="10.0044" y2="21" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint1_linear_3726_618" x1="7.50439" y1="3" x2="7.50439" y2="7" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint2_linear_3726_618" x1="9.00439" y1="9" x2="9.00439" y2="12" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint3_linear_3726_618" x1="10.0044" y1="13" x2="10.0044" y2="19" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint4_linear_3726_618" x1="16.0057" y1="1" x2="16.0057" y2="7.0025" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+		</Defs>
+	</SVG>
 );

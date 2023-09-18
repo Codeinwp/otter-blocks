@@ -16,11 +16,15 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
+import { Fragment, useContext } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
 import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
-import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
-import { useContext } from '@wordpress/element';
+import { fieldTypesOptions, HideFieldLabelToggle, mappedNameInfo, switchFormFieldTo } from '../common';
 import { FormContext } from '../edit.js';
+import { HTMLAnchorControl } from '../../../components';
 
 const styles = [
 	{
@@ -45,95 +49,109 @@ const Inspector = ({
 	} = useContext( FormContext );
 
 	return (
-		<InspectorControls>
-			<PanelBody
-				title={ __( 'Field Settings', 'otter-blocks' ) }
-			>
-				<Button
-					isSecondary
-					variant="secondary"
-					onClick={ () => selectForm?.() }
+		<Fragment>
+			<InspectorControls>
+				<PanelBody
+					title={ __( 'Field Settings', 'otter-blocks' ) }
 				>
-					{ __( 'Back to the Form', 'otter-blocks' ) }
-				</Button>
+					<Button
+						isSecondary
+						variant="secondary"
+						onClick={ () => selectForm?.() }
+					>
+						{ __( 'Back to the Form', 'otter-blocks' ) }
+					</Button>
 
-				<SelectControl
-					label={ __( 'Field Type', 'otter-blocks' ) }
-					value={ attributes.type }
-					options={ fieldTypesOptions() }
-					onChange={ type => {
-						if ( 'radio' === type || 'checkbox' === type || 'select' === type ) {
-							setAttributes({ type });
-							return;
-						}
-						switchFormFieldTo( type, clientId, attributes );
-					}}
-				/>
+					<SelectControl
+						label={ __( 'Field Type', 'otter-blocks' ) }
+						value={ attributes.type }
+						options={ fieldTypesOptions() }
+						onChange={ type => {
+							if ( 'radio' === type || 'checkbox' === type || 'select' === type ) {
+								setAttributes({ type });
+								return;
+							}
+							switchFormFieldTo( type, clientId, attributes );
+						}}
+					/>
 
-				<TextControl
-					label={ __( 'Label', 'otter-blocks' ) }
-					value={ attributes.label }
-					onChange={ label => setAttributes({ label }) }
-				/>
+					<TextControl
+						label={ __( 'Label', 'otter-blocks' ) }
+						value={ attributes.label }
+						onChange={ label => setAttributes({ label }) }
+					/>
 
-				<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
+					<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
 
-				<TextareaControl
-					label={ __( 'Options', 'otter-blocks' ) }
-					help={ __( 'Enter each option in a different line.', 'otter-blocks' ) }
-					value={ attributes.options }
-					onChange={ ( options ) => setAttributes({ options }) }
-				/>
+					<TextareaControl
+						label={ __( 'Options', 'otter-blocks' ) }
+						help={ __( 'Enter each option in a different line.', 'otter-blocks' ) }
+						value={ attributes.options }
+						onChange={ ( options ) => setAttributes({ options }) }
+					/>
 
-				<TextControl
-					label={ __( 'Help Text', 'otter-blocks' ) }
-					value={ attributes.helpText }
-					onChange={ helpText => setAttributes({ helpText }) }
-				/>
+					<TextControl
+						label={ __( 'Help Text', 'otter-blocks' ) }
+						value={ attributes.helpText }
+						onChange={ helpText => setAttributes({ helpText }) }
+					/>
 
-				{
-					'select' !== attributes?.type && (
-						<ToggleControl
-							label={ __( 'Inline list', 'otter-blocks' ) }
-							checked={ Boolean( getActiveStyle( styles, attributes.className ) ) }
-							onChange={ value => {
-								const classes = changeActiveStyle( attributes.className, styles, value ? 'inline-list' : undefined );
-								setAttributes({ className: classes });
-							} }
-						/>
-					)
-				}
-
-				{
-					'select' === attributes?.type && (
-						<ToggleControl
-							label={ __( 'Multiple selection', 'otter-blocks' ) }
-							checked={ attributes.multipleSelection }
-							onChange={ multipleSelection => setAttributes({ multipleSelection }) }
-						/>
-					)
-				}
-
-				<ToggleControl
-					label={ __( 'Required', 'otter-blocks' ) }
-					help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
-					checked={ attributes.isRequired }
-					onChange={ isRequired => setAttributes({ isRequired }) }
-				/>
-			</PanelBody>
-
-			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
-				initialOpen={ false }
-				colorSettings={ [
 					{
-						value: attributes.labelColor,
-						onChange: labelColor => setAttributes({ labelColor }),
-						label: __( 'Label Color', 'otter-blocks' )
+						'select' !== attributes?.type && (
+							<ToggleControl
+								label={ __( 'Inline list', 'otter-blocks' ) }
+								checked={ Boolean( getActiveStyle( styles, attributes.className ) ) }
+								onChange={ value => {
+									const classes = changeActiveStyle( attributes.className, styles, value ? 'inline-list' : undefined );
+									setAttributes({ className: classes });
+								} }
+							/>
+						)
 					}
-				] }
+
+					{
+						'select' === attributes?.type && (
+							<ToggleControl
+								label={ __( 'Multiple selection', 'otter-blocks' ) }
+								checked={ attributes.multipleSelection }
+								onChange={ multipleSelection => setAttributes({ multipleSelection }) }
+							/>
+						)
+					}
+
+					<ToggleControl
+						label={ __( 'Required', 'otter-blocks' ) }
+						help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
+						checked={ attributes.isRequired }
+						onChange={ isRequired => setAttributes({ isRequired }) }
+					/>
+
+					<TextControl
+						label={ __( 'Mapped Name', 'otter-blocks' ) }
+						help={ mappedNameInfo }
+						value={ attributes.mappedName }
+						onChange={ mappedName => setAttributes({ mappedName }) }
+						placeholder={ __( 'car_type', 'otter-blocks' ) }
+					/>
+				</PanelBody>
+
+				<PanelColorSettings
+					title={ __( 'Color', 'otter-blocks' ) }
+					initialOpen={ false }
+					colorSettings={ [
+						{
+							value: attributes.labelColor,
+							onChange: () => {},
+							label: __( 'Label Color', 'otter-blocks' )
+						}
+					] }
+				/>
+			</InspectorControls>
+			<HTMLAnchorControl
+				value={ attributes.id }
+				onChange={ value => setAttributes({ id: value }) }
 			/>
-		</InspectorControls>
+		</Fragment>
 	);
 };
 
