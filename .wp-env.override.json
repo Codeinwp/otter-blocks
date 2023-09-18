@@ -1,5 +1,5 @@
 {
-  "core": "WordPress/WordPress#6.2.2",
+  "core": null,
   "plugins": [
     "."
   ],
@@ -11,6 +11,10 @@
   },
   "env": {
     "tests": {
+      "config": {
+        "WP_DEBUG": false,
+        "WP_DEBUG_DISPLAY": false
+      },
       "plugins": [
         "."
       ],
