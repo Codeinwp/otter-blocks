@@ -29,8 +29,6 @@ test.describe( 'Countdown Block', () => {
 		let countdownBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/countdown' === block.name );
 		const otterId = countdownBlock.attributes.id;
 
-		await page.getByLabel( 'Settings', { exact: true }).click({ force: true });
-
 		await page.getByRole( 'button', { name: 'Select Date' }).click();
 
 		await page.getByLabel( 'Day' ).fill( '17' );
