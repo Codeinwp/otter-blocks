@@ -168,10 +168,10 @@ class Prompt_Server {
 
 		if ( '0' === $response['code'] ) {
 			if ( $request->get_param( 'name' ) !== null ) {
-				$prompts = false !== $prompts ? $prompts : $response['prompts'];
+				$prompts = ! empty( $prompts ) ? $prompts : $response['prompts'];
 
 				// Prompt can be filtered by name. By filtering by name, we can get only the prompt we need and save some bandwidth.
-				$prompts = array_values(
+				$single_prompt = array_values(
 					array_filter(
 						$prompts,
 						function ( $prompt ) use ( $request ) {
@@ -180,14 +180,12 @@ class Prompt_Server {
 					)
 				);
 
-
-
-				$response['prompts'] = $prompts; // TODO: temporary change. The original did not give an array as JSON response.
-
-				if ( empty( $response['prompts'] ) ) {
-					$response['prompts'] = array();
+				if ( empty( $single_prompt ) ) {
+					$response['prompts'] = $prompts;
 					$response['code']    = '1';
 					$response['error']   = __( 'Something went wrong when preparing the data for this feature.', 'otter-blocks' );
+				} else {
+					$response['prompts'] = $single_prompt;
 				}
 			} else {
 				$response['prompts'] = $prompts;
@@ -210,7 +208,7 @@ class Prompt_Server {
 			return array(
 				'response' => array(),
 				'code'     => '3',
-				'error'    => __( 'Fetching from central server has failed. Please try again later.', 'otter-blocks' ),
+				'error'    => __( 'Timeout is active. Please try again in', 'otter-blocks' ) . 5 . __( 'minutes.', 'otter-blocks' ),
 			);
 		}
 
@@ -240,7 +238,7 @@ class Prompt_Server {
 			return array(
 				'response' => array(),
 				'code'     => '2',
-				'error'    => __( 'Could not fetch the data from the central server.', 'otter-blocks' ),
+				'error'    => __( 'Invalid data from central server. Please try again in', 'otter-blocks' ) . 5 . __( 'minutes.', 'otter-blocks' ),
 			);
 		}
 
