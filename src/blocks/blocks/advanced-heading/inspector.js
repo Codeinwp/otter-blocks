@@ -53,7 +53,7 @@ import {
 
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { makeBox } from '../../plugins/copy-paste/utils';
-import { _px } from '../../helpers/helper-functions.js';
+import { _px, compactObject } from '../../helpers/helper-functions.js';
 import { useTabSwitch } from '../../helpers/block-utility';
 
 /**
@@ -372,11 +372,13 @@ const Inspector = ({
 									<BoxControl
 										label={ __( 'Padding', 'otter-blocks' ) }
 										values={
-											responsiveGetAttributes([
-												isObjectLike( attributes.padding ) ?  attributes.padding : oldPaddingDesktop,
-												isObjectLike( attributes.paddingTablet ) ? attributes.paddingTablet : oldPaddingTablet,
-												isObjectLike( attributes.paddingMobile ) ?  attributes.paddingMobile : oldPaddingMobile
-											]) ?? makeBox( '0px' )
+											compactObject(
+												responsiveGetAttributes([
+													isObjectLike( attributes.padding ) ?  attributes.padding : oldPaddingDesktop,
+													isObjectLike( attributes.paddingTablet ) ? attributes.paddingTablet : oldPaddingTablet,
+													isObjectLike( attributes.paddingMobile ) ?  attributes.paddingMobile : oldPaddingMobile
+												])
+											) ?? makeBox( '0px' )
 										}
 										onChange={ value => {
 											responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
@@ -386,11 +388,16 @@ const Inspector = ({
 									<BoxControl
 										label={ __( 'Margin', 'otter-blocks' ) }
 										values={
-											responsiveGetAttributes([
-												isObjectLike( attributes.margin ) ? attributes.margin : oldMarginDesktop,
-												isObjectLike( attributes.marginTablet ) ? attributes.marginTablet : oldMarginTablet,
-												isObjectLike( attributes.marginMobile ) ?  attributes.marginMobile : oldMarginMobile
-											]) ?? makeBox( '0px' )
+											compactObject(
+												responsiveGetAttributes([
+													isObjectLike( attributes.margin ) ? attributes.margin : oldMarginDesktop,
+													isObjectLike( attributes.marginTablet ) ? attributes.marginTablet : oldMarginTablet,
+													isObjectLike( attributes.marginMobile ) ?  attributes.marginMobile : oldMarginMobile
+												])
+											) ?? {
+												top: '0px',
+												bottom: '25px'
+											}
 										}
 										onChange={ value => {
 											responsiveSetAttributes( value, [ 'margin', 'marginTablet', 'marginMobile' ]);
