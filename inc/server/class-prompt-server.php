@@ -217,7 +217,7 @@ class Prompt_Server {
 				'site_url'   => get_site_url(),
 				'license_id' => apply_filters( 'product_otter_license_key', 'free' ),
 				'cache'      => gmdate( 'u' ),
-				'isValid'    => boolval( get_option( 'themeisle_open_ai_api_key', false ) ),
+				'isValid'    => boolval( get_option( 'themeisle_open_ai_api_key', false ) ) ? 'true' : 'false',
 			),
 			'https://api.themeisle.com/templates-cloud/otter-prompts'
 		);
