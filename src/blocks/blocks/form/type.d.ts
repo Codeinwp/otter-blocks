@@ -63,7 +63,8 @@ export type FormOptions = {
 		subject?: string
 		body?: string
 	}
-	submissionSaveLocation?: string
+	submissionsSaveLocation?: string
+	webhookId?: string
 }
 
 export type FormAttrs = Partial<Attributes>

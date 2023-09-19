@@ -28,6 +28,11 @@ class Dashboard {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_add_otter_banner' ), 30 );
+
+		$form_options = get_option( 'themeisle_blocks_form_emails' );
+		if ( ! empty( $form_options ) ) {
+			add_action( 'wp_dashboard_setup', array( $this, 'form_submissions_widget' ) );
+		}
 	}
 
 	/**
@@ -267,6 +272,321 @@ class Dashboard {
 				<h1 class="otter-banner__title" style="line-height: normal;"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
 				<span class="otter-banner__version"><?php echo esc_html( 'v' . OTTER_BLOCKS_VERSION ); ?></span>
 			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Hook the form submissions widget.
+	 *
+	 * @return void
+	 */
+	public function form_submissions_widget() {
+		wp_add_dashboard_widget(
+			'otter_form_submissions_widget',
+			__( 'Otter Blocks - Form Submissions', 'otter-blocks' ),
+			array( $this, 'form_submissions_widget_content' )
+		);
+	}
+
+	/**
+	 * Display the form submissions widget content.
+	 *
+	 * @return void
+	 */
+	public function form_submissions_widget_content() {
+
+		$is_active    = Pro::is_pro_active();
+		$entries      = array();
+		$count        = 0;
+		$posts_filter = 'all';
+
+		if ( $is_active ) {
+			$posts_filter = isset( $_GET['otter_nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['otter_nonce'] ), 'otter_widget_nonce' ) && isset( $_GET['otter_form_widget_filter'] ) ? sanitize_key( $_GET['otter_form_widget_filter'] ) : 'all';
+
+			$query_args = array(
+				'post_type'      => 'otter_form_record',
+				'posts_per_page' => 5,
+			);
+
+			if ( 'all' !== $posts_filter ) {
+				$query_args['post_status'] = $posts_filter;
+			}
+
+			$query = new \WP_Query( $query_args );
+
+
+			$records_count = wp_count_posts( 'otter_form_record' );
+
+			$count = $records_count->read + $records_count->unread;
+
+			if ( 'read' === $posts_filter ) {
+				$count = $records_count->read;
+			} elseif ( 'unread' === $posts_filter ) {
+				$count = $records_count->unread;
+			}
+
+			if ( $query->have_posts() ) {
+
+				while ( $query->have_posts() ) {
+					$query->the_post();
+
+					$meta = get_post_meta( get_the_ID(), 'otter_form_record_meta', true );
+
+					$title = null;
+					$date  = null;
+
+					if ( isset( $meta['post_id']['value'] ) ) {
+						$date = get_the_date( 'F j, H:i', $meta['post_id']['value'] );
+					}
+
+					if ( isset( $meta['inputs'] ) && is_array( $meta['inputs'] ) ) {
+						// Find the first email field and use that as the title.
+						foreach ( $meta['inputs'] as $input ) {
+							if ( isset( $input['type'] ) && 'email' === $input['type'] && ! empty( $input['value'] ) ) {
+								$title = $input['value'];
+								break;
+							}
+						}
+					}
+
+
+					if ( ! $title ) {
+
+						if ( isset( $meta['post_id']['value'] ) ) {
+							$title = __( 'Submission', 'otter-blocks' ) . ' #' . get_the_ID();
+						} else {
+							$title = __( 'No title', 'otter-blocks' );
+						}
+					}
+
+					$entries[] = array(
+						'title' => $title,
+						'date'  => $date,
+					);
+				}
+			}
+		}
+
+		?>
+		<style>
+			.o-upsell-container {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: 100%;
+				margin-bottom: 8px;
+			}
+
+			.o-upsell-banner {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				padding: 24px;
+				gap: 12px;
+				isolation: isolate;
+
+				width: fit-content;
+
+				background: #FFFFFF;
+				box-shadow: 0px 2px 25px 10px rgba(0, 0, 0, 0.08);
+				border-radius: 6px;
+
+				/* Inside auto layout */
+
+				flex: none;
+				order: 0;
+				align-self: stretch;
+				flex-grow: 0;
+
+			}
+
+			.o-upsell-banner .o-banner-tile {
+				font-weight: 600;
+				font-size: 16px;
+				line-height: 150%;
+				text-align: center;
+			}
+
+			.o-upsell-banner p {
+				font-weight: 400;
+				font-size: 13px;
+				line-height: 150%;
+				display: flex;
+				align-items: center;
+				text-align: center;
+				margin: 0px;
+			}
+
+			.o-upsell-banner a {
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				padding: 13.5px 24px;
+				background: #ED6F57;
+				border-radius: 2px;
+				font-style: normal;
+				font-weight: 600;
+				font-size: 13px;
+				line-height: 13px;
+				color: #FFFFFF;
+			}
+
+			.o-upsell-banner img {
+				width: 80px
+			}
+
+			.otter-form-submissions-widget {
+				padding: 6px 3px 0px 3px;
+			}
+
+			.otter-form-submissions-widget a {
+				text-decoration: none;
+				text-align: center;
+			}
+
+			.otter-form-submissions-widget, .o-form-entries, .o-entries-list {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.o-form-entries {
+				gap: 12px;
+			}
+
+			.o-entries-header, .o-entry {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: center;
+				font-size: 14px;
+			}
+
+
+			.o-entries-header .o-title {
+				font-size: 14px;
+				font-weight: 600;
+			}
+
+			.o-entries-list {
+				gap: 5px;
+				font-size: 13px;
+			}
+
+			.o-entry.header {
+				font-size: 14px;
+				font-weight: bold;
+			}
+
+			.o-entry:not(:last-child) {
+				padding-bottom: 6px;
+				border-bottom: 1px solid #eee;
+			}
+
+			.o-submissions-view {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding-top: 10px;
+			}
+
+			.otter-form-submissions-widget.inactive .o-form-entries {
+				color: #CCC;
+			}
+
+		</style>
+		<?php if ( $is_active ) { ?>
+			<script>
+				window.document.addEventListener('DOMContentLoaded', () => {
+					const select = document.querySelector('#otter_form_submissions_widget #otter-form-submissions-widget__form-select');
+					const entriesContainer = document.querySelector('#otter_form_submissions_widget .o-entries-list');
+
+					if (select && entriesContainer) {
+						select.addEventListener('change', (e) => {
+							const value = e.target.value;
+
+							// change the url param based on the value
+							const url = new URL(window.location.href);
+							url.searchParams.set('otter_form_widget_filter', value);
+							url.searchParams.set('otter_nonce', '<?php echo esc_attr( wp_create_nonce( 'otter_widget_nonce' ) ); ?>')
+							url.hash = '#otter_form_submissions_widget';
+
+							window.location.href = url.href;
+						})
+					}
+				})
+			</script>
+		<?php } ?>
+		<div class="otter-form-submissions-widget <?php echo ! $is_active ? 'inactive' : ''; ?>">
+
+			<?php if ( ! $is_active ) { ?>
+				<div class="o-upsell-container">
+					<div class="o-upsell-banner">
+						<img src="<?php echo esc_url_raw( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ); ?>" alt="Otter Logo" />
+						<div class="o-banner-tile">
+							<?php esc_html_e( 'Collect your Form Submissions with Otter Blocks', 'otter-blocks' ); ?>
+						</div>
+						<p><?php esc_html_e( 'With Otter\'s powerful features, you can easily store and manage form submissions - all in one place.', 'otter-blocks' ); ?></p>
+						<a target="_blank" href="<?php echo esc_url( Pro::get_url() ); ?>" ><?php esc_html_e( 'Upgrade to Otter Pro', 'otter-blocks' ); ?></a>
+					</div>
+				</div>
+			<?php } ?>
+
+			<div class="o-form-entries">
+				<div class="o-entries-header">
+					<div class="o-title">
+						<?php if ( 0 === count( $entries ) || ! $is_active ) { ?>
+							<?php esc_html_e( 'Total Entries', 'otter-blocks' ); ?>
+						<?php } else { ?>
+							<?php esc_html_e( 'Total Entries', 'otter-blocks' ); ?>:
+							<span class="otter-form-submissions-widget__total-entries">
+							<?php echo esc_html( strval( $count ) ); ?>
+						</span>
+						<?php } ?>
+					</div>
+
+					<select name="otter-form-submissions-widget__form-select" id="otter-form-submissions-widget__form-select" class="o-entries-filter" <?php echo ! $is_active ? 'disabled' : ''; ?> >
+						<option value="all" <?php echo 'all' === $posts_filter ? 'selected' : ''; ?> ><?php esc_html_e( 'All', 'otter-blocks' ); ?></option>
+						<option value="read" <?php echo 'read' === $posts_filter ? 'selected' : ''; ?>><?php esc_html_e( 'Read', 'otter-blocks' ); ?></option>
+						<option value="unread" <?php echo 'unread' === $posts_filter ? 'selected' : ''; ?>><?php esc_html_e( 'Unread', 'otter-blocks' ); ?></option>
+					</select>
+				</div>
+				<div class="o-entries-list">
+					<?php if ( 0 === count( $entries ) || ! $is_active ) { ?>
+						<div class="o-no-entries">
+							<?php esc_html_e( 'Your submission will appear here.', 'otter-blocks' ); ?>
+						</div>
+					<?php } else { ?>
+						<div class="o-entry header">
+							<div class="o-entry__title">
+								<?php esc_html_e( 'Submission', 'otter-blocks' ); ?>
+							</div>
+							<div class="o-entry__date">
+								<?php esc_html_e( 'Date', 'otter-blocks' ); ?>
+							</div>
+						</div>
+						<?php foreach ( $entries as $entry ) { ?>
+							<div class="o-entry">
+								<div class="o-entry__title">
+									<?php echo esc_html( $entry['title'] ); ?>
+								</div>
+								<div class="o-entry__date">
+									<?php echo esc_html( $entry['date'] ); ?>
+
+								</div>
+							</div>
+						<?php } ?>
+						<div class="o-submissions-view">
+							<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=otter_form_record' ) ); ?>" ><?php esc_html_e( 'Manage all Submissions', 'otter-blocks' ); ?></a>
+						</div>
+					<?php } ?>
+				</div>
+			</div>
+
+
 		</div>
 		<?php
 	}
