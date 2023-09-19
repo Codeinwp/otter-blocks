@@ -13,3 +13,4 @@ artifacts
 trace.json
 license.json
 .phpunit.result.cache
+.fleet

@@ -118,7 +118,7 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_body( $form_data ) {
-		$email_form_content = $form_data->get_form_inputs();
+		$email_form_content = $form_data->get_fields();
 		$content            = '';
 		$attachment_links   = '';
 
@@ -282,7 +282,7 @@ class Form_Email {
 			esc_html__( 'Mail From: ', 'otter-blocks' ),
 			sanitize_email( get_site_option( 'admin_email' ) ),
 			esc_html( __( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks' ) ),
-			$form_data->get_payload_field( 'site' )
+			$form_data->get_data_from_payload( 'site' )
 		);
 	}
 

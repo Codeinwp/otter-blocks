@@ -31,6 +31,7 @@ import './feedback/index.js';
 import './otter-tools-inspector/index';
 import './live-search/index.js';
 import './upsell-block/index.js';
+import './ai-content/index.tsx';
 
 const icon = <Icon icon={ otterIcon } />;
 

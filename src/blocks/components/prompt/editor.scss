@@ -1,0 +1,128 @@
+.prompt-placeholder {
+	fieldset {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.history-display {
+		padding: 0px 20px;
+		font-size: 1.2em;
+	}
+
+	.o-info-row {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+	}
+}
+
+.prompt-fields {
+	margin: 10px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	padding: 10px;
+	border-radius: 10px;
+	gap: 10px;
+	font-size: 13px;
+
+	.prompt-column-title {
+		text-transform: uppercase;
+	}
+
+	.prompt-field__label, .prompt-field__type {
+		padding: 12px 16px;
+	}
+
+	.prompt-field__label {
+		border-radius: 3px;
+		background: rgba(159, 171, 178, 0.20);
+	}
+}
+
+.prompt-input__container {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	align-items: center;
+	justify-content: center;
+	margin-top: 10px;
+
+	.prompt-input__input__container {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		flex-grow: 1;
+		align-items: center;
+
+		border: 1px solid #949494;
+		padding: 6px 6px 6px 14px;
+	}
+
+	.prompt-input__input {
+		margin: 0;
+		font-size: 18px;
+		border: unset;
+		flex-grow: 1;
+		outline: unset;
+		max-height: 500px;
+		appearance: none;
+		padding: 13px;
+		min-height: 52px;
+		resize: none;
+	}
+
+	.prompt-input__submit__container button {
+		font-size: 18px;
+		padding: 26px;
+	}
+}
+
+.prompt-result__container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 10px;
+
+	background-color: white;
+	border-radius: 2px;
+	border: 1px solid #1E1E1E;
+	width: 100%;
+	max-width: 800px;
+	padding: 10px;
+
+	.prompt-result__header {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		align-items: center;
+
+		.prompt-result__header__title {
+			font-size: 1.2em;
+			font-weight: bold;
+			flex-grow: 1;
+		}
+	}
+
+	.prompt-result__actions {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		align-items: center;
+		border-top: 1px solid #DDD;
+		padding-top: 10px;
+
+		.prompt-result__actions__navigation {
+			display: flex;
+			flex-direction: row;
+			gap: 10px;
+			align-items: center;
+			flex-grow: 1;
+			justify-content: flex-end;
+		}
+	}
+
+	.prompt-token-usage {
+		color: #757575;
+		font-size: 14px;
+	}
+}

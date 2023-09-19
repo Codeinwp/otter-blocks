@@ -322,6 +322,14 @@ class Options_Settings {
 								$item['submissionsSaveLocation'] = sanitize_text_field( $item['submissionsSaveLocation'] );
 							}
 
+							if ( isset( $item['requiredFields'] ) ) {
+								if ( is_array( $item['requiredFields'] ) ) {
+									$item['requiredFields'] = array_map( 'sanitize_text_field', $item['requiredFields'] );
+								} else {
+									$item['requiredFields'] = array();
+								}
+							}
+
 							return $item;
 						},
 						$array
@@ -394,6 +402,15 @@ class Options_Settings {
 								'submissionsSaveLocation' => array(
 									'type' => 'string',
 								),
+								'webhookId'               => array(
+									'type' => 'string',
+								),
+								'requiredFields'          => array(
+									'type'  => 'array',
+									'items' => array(
+										'type' => 'string',
+									),
+								),
 							),
 						),
 					),
@@ -431,6 +448,18 @@ class Options_Settings {
 							}
 							if ( isset( $item['options']['maxFilesNumber'] ) && ! is_int( $item['options']['maxFilesNumber'] ) ) {
 								$item['options']['maxFilesNumber'] = sanitize_text_field( $item['options']['maxFilesNumber'] );
+							}
+
+							if ( isset( $item['stripe']['product'] ) ) {
+								$item['stripe']['product'] = sanitize_text_field( $item['stripe']['product'] );
+							}
+
+							if ( isset( $item['stripe']['price'] ) ) {
+								$item['stripe']['price'] = sanitize_text_field( $item['stripe']['price'] );
+							}
+
+							if ( isset( $item['stripe']['quantity'] ) && ! is_int( $item['stripe']['quantity'] ) ) {
+								$item['stripe']['quantity'] = sanitize_text_field( $item['stripe']['quantity'] );
 							}
 
 							return $item;
@@ -471,6 +500,22 @@ class Options_Settings {
 									),
 									'default'    => array(),
 								),
+								'stripe'          => array(
+									'type'       => 'object',
+									'properties' => array(
+										'product'  => array(
+											'type' => 'string',
+										),
+										'price'    => array(
+											'type' => 'string',
+										),
+										'quantity' => array(
+											'type'    => 'number',
+											'default' => 1,
+										),
+									),
+
+								),
 							),
 						),
 					),
@@ -509,6 +554,141 @@ class Options_Settings {
 				'default'           => array(
 					'editor_upsell' => false,
 				),
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_webhooks_options',
+			array(
+				'type'              => 'array',
+				'description'       => __( 'Otter Registered Webhooks.', 'otter-blocks' ),
+				'sanitize_callback' => function ( $array ) {
+					return array_map(
+						function ( $item ) {
+							if ( isset( $item['id'] ) ) {
+								$item['id'] = sanitize_text_field( $item['id'] );
+							}
+							if ( isset( $item['url'] ) ) {
+								$item['url'] = esc_url_raw( $item['url'] );
+							}
+							if ( isset( $item['name'] ) ) {
+								$item['name'] = sanitize_text_field( $item['name'] );
+							}
+							if ( isset( $item['method'] ) ) {
+								$item['method'] = sanitize_text_field( $item['method'] );
+							}
+							if ( isset( $item['headers'] ) && is_array( $item['headers'] ) ) {
+								foreach ( $item['headers'] as &$header ) {
+									$header['key']   = sanitize_text_field( $header['key'] );
+									$header['value'] = sanitize_text_field( $header['value'] );
+								}
+							} else {
+								$item['headers'] = array();
+							}
+							return $item;
+						},
+						$array
+					);
+				},
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'  => 'array',
+						'items' => array(
+							'type'       => 'object',
+							'properties' => array(
+								'id'      => array(
+									'type' => 'string',
+								),
+								'url'     => array(
+									'type' => 'string',
+								),
+								'headers' => array(
+									'type'  => 'array',
+									'items' => array(
+										'type'       => 'object',
+										'properties' => array(
+											'key'   => array(
+												'type' => 'string',
+											),
+											'value' => array(
+												'type' => 'string',
+											),
+										),
+									),
+								),
+								'name'    => array(
+									'type' => 'string',
+								),
+								'method'  => array(
+									'type' => 'string',
+								),
+							),
+						),
+					),
+				),
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_open_ai_api_key',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'The OpenAI API Key required for usage of Otter AI features.', 'otter-blocks' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => '',
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_otter_ai_usage',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'Usage of Otter AI features.', 'otter-blocks' ),
+				'show_in_test' => array(
+					'schema' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'usage_count' => array(
+								'type'    => 'array',
+								'items'   => array(
+									'type'       => 'object',
+									'properties' => array(
+										'key'   => array(
+											'type' => 'string',
+										),
+										'value' => array(
+											'type' => 'string',
+										),
+									),
+								),
+								'default' => array(),
+							),
+							'prompts'     => array(
+								'type'    => 'array',
+								'items'   => array(
+									'type'       => 'object',
+									'properties' => array(
+										'key'    => array(
+											'type' => 'string',
+										),
+										'values' => array(
+											'type'  => 'array',
+											'items' => array(
+												'type' => 'string',
+											),
+										),
+									),
+								),
+								'default' => array(),
+							),
+						),
+					),
+				),
+				'default'      => array(),
 			)
 		);
 	}
