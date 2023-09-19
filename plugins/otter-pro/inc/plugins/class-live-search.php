@@ -71,6 +71,13 @@ class Live_Search {
 	 * @static
 	 */
 	public static function load_deps() {
+
+		$has_license = in_array( License::get_license_type(), array( 2, 3 ) ) || ( License::has_active_license() && isset( License::get_license_data()->otter_pro ) );
+
+		if ( ! $has_license ) {
+			return;
+		}
+
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/live-search.asset.php';
 		wp_enqueue_script(
 			'otter-live-search',
