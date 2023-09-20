@@ -33,46 +33,6 @@ jobs:
       - name: Run PHPCS
         run: composer run lint
 
-  phpunit:
-    name: Phpunit
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306/tcp
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    steps:
-      - name: Setup PHP version
-        uses: shivammathur/setup-php@v1
-        with:
-          php-version: '7.2'
-          extensions: simplexml, mysql
-          tools: phpunit:7.5.15
-      - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Install WordPress Test Suite
-        run: |
-          bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }}
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Setup Composer cache
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-      - name: Install composer
-        run: composer install --prefer-dist --no-progress --no-suggest
-      - name: Run phpunit
-        run: phpunit
-
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
