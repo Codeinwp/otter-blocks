@@ -612,9 +612,19 @@ const Inspector = ({
 
 													{ 'subscribe' === formOptions.action && (
 														<div style={{ marginBottom: '10px' }}>
-															{ __( 'Automatically adds the client to your selected contact list, skipping the usual email alert. Ideal for newsletter sign-up forms. ', 'otter-blocks' ) }
+															{ __( 'Add users to the contact list and skip email alerts for each submission. Ideal for news letter sign-up forms.', 'otter-blocks' ) }
 														</div>
 													) }
+
+													{
+														'subscribe' === formOptions.action &&
+														( 'email' === formOptions.submissionsSaveLocation || ! Boolean( window?.otterPro?.isActive ) ) &&
+														(
+															<div style={{ marginBottom: '10px' }}>
+																{ __( 'By skipping the email notification you will lose the data from other fields. If this is a problem, we recommend switching to Database saving or using Submit & Subscribe Action', 'otter-blocks' ) }
+															</div>
+														)
+													}
 												</Fragment>
 											) }
 										</Fragment>
