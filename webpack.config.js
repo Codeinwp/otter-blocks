@@ -8,15 +8,15 @@ const blocks = require( './blocks.json' );
 
 defaultConfig.plugins.splice( 1, 1 ); // We need to remove Core's Copy Files plugin.
 
-const blockFiles = Object.keys( blocks ).filter( block => blocks[block].block !== undefined && true !== blocks[block]?.isPro )
+const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true !== blocks[ block ]?.isPro )
 	.map( block => {
 		return {
-			source: `src/${blocks[block].block}`,
-			destination: `build/blocks/${block}/`
+			source: `src/${ blocks[ block ].block }`,
+			destination: `build/blocks/${ block }/`
 		};
 	});
 
-const blockFolders = Object.keys( blocks ).filter( block => true !== blocks[block]?.isPro ).map( block => `build/blocks/${block}` );
+const blockFolders = Object.keys( blocks ).filter( block => true !== blocks[ block ]?.isPro ).map( block => `build/blocks/${ block }` );
 
 module.exports = [
 	{
@@ -132,8 +132,7 @@ module.exports = [
 			sticky: './src/blocks/frontend/sticky/index.ts',
 			accordion: './src/blocks/frontend/accordion/index.js',
 			'live-search': './src/blocks/frontend/live-search/index.ts',
-			'live-search-style': './src/blocks/frontend/live-search/style.scss',
-			'rank-math-content': './src/blocks/frontend/rank-math-content/index.ts'
+			'live-search-style': './src/blocks/frontend/live-search/style.scss'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/blocks' ),
