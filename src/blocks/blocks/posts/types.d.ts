@@ -32,7 +32,7 @@ type Attributes = {
 	customDescriptionFontSize: number
 	customDescriptionFontSizeTablet: number
 	customDescriptionFontSizeMobile: number
-	borderRadius: number|object
+	borderRadius: number | object
 	borderWidth: string
 	cardBorderRadius: object
 	boxShadow: BoxShadow
@@ -40,7 +40,7 @@ type Attributes = {
 	textAlign: string
 	verticalAlign: string
 	enableFeaturedPost: boolean
-	imageWidth: number|string
+	imageWidth: number | string
 	imageWidthTablet: string
 	imageWidthMobile: string
 	columnGap: string
@@ -54,7 +54,8 @@ type Attributes = {
 	paddingMobile: string
 	contentGap: string
 	featuredPostOrder: string
+	enableRankMathContentAnalysis: boolean
 }
 
 export type PostProps = BlockProps<Attributes>
-export interface PostInspectorProps extends InspectorProps<Attributes> {}
+export interface PostInspectorProps extends InspectorProps<Attributes> { }

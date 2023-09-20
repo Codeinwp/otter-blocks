@@ -231,6 +231,10 @@
 		},
 		"featuredPostOrder": {
 			"type": "string"
+		},
+		"enableRankMathContentAnalysis": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {
