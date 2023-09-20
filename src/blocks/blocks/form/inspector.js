@@ -621,7 +621,7 @@ const Inspector = ({
 														( 'email' === formOptions.submissionsSaveLocation || ! Boolean( window?.otterPro?.isActive ) ) &&
 														(
 															<div style={{ marginBottom: '10px' }}>
-																{ __( 'By skipping the email notification you will lose the data from other fields. If this is a problem, we recommend switching to Database saving or using Submit & Subscribe Action', 'otter-blocks' ) }
+																{ __( 'By skipping the email alerts you will lose the data from other fields. If this is a problem, we recommend switching to Database saving or using Submit & Subscribe Action', 'otter-blocks' ) }
 															</div>
 														)
 													}
