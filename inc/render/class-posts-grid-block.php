@@ -22,18 +22,6 @@ class Posts_Grid_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-
-		if ( ! empty( $attributes['enableRankMathContentAnalysis'] ) ) {
-			
-			// Load script for rank math integration.
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/rank-math-content.asset.php';
-			$asset_file['dependencies'][] = 'wp-hooks';
-			$asset_file['dependencies'][] = 'rank-math-analyzer';
-			wp_enqueue_script( 'otter-rank-math-integration', OTTER_BLOCKS_URL . 'build/blocks/rank-math-content.js', $asset_file['dependencies'], $asset_file['version'], true  );
-			wp_script_add_data( 'otter-rank-math-integration', 'defer', true );
-		}
-
-
 		$categories = 0;
 
 		if ( isset( $attributes['categories'] ) ) {

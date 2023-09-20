@@ -120,7 +120,7 @@ const Inspector = ({
 	const categorySuggestions = categoriesList.reduce(
 		( accumulator, category ) => ({
 			...accumulator,
-			[category.name]: category
+			[ category.name ]: category
 		}),
 		{}
 	);
@@ -174,7 +174,7 @@ const Inspector = ({
 	};
 
 	const changeBoxShadow = ( type, data ) => {
-		const boxShadow = { ...attributes[type] };
+		const boxShadow = { ...attributes[ type ] };
 		Object.entries( data ).map( ([ key, val ] = data ) => {
 			boxShadow[key] = val;
 		});
@@ -185,7 +185,7 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<InspectorHeader
-				value={tab}
+				value={ tab }
 				options={[
 					{
 						label: __( 'Settings', 'otter-blocks' ),
@@ -196,30 +196,30 @@ const Inspector = ({
 						value: 'style'
 					}
 				]}
-				onChange={setTab}
+				onChange={ setTab }
 			/>
 
-			{'settings' === tab && (
+			{ 'settings' === tab && (
 				<Fragment>
 					<PanelBody
-						title={__( 'Layout', 'otter-blocks' )}
+						title={ __( 'Layout', 'otter-blocks' ) }
 					>
 						<SelectControl
-							label={__( 'Post Type', 'otter-blocks' )}
-							help={__( 'WordPress contains different types of content and they are divided into collections called "Post types". By default there are a few different ones such as blog posts and pages, but plugins could add more.', 'otter-blocks' )}
-							value={attributes.postTypes[0] || null}
-							onChange={( value ) => {
+							label={ __( 'Post Type', 'otter-blocks' ) }
+							help={ __( 'WordPress contains different types of content and they are divided into collections called "Post types". By default there are a few different ones such as blog posts and pages, but plugins could add more.', 'otter-blocks' ) }
+							value={ attributes.postTypes[0] || null }
+							onChange={ ( value ) => {
 								if ( value ) {
 									setAttributes({ postTypes: [ value ] });
 								}
-							}}
+							} }
 							options={
 								slugs.map( slug => ({ label: convertToTitleCase( slug ), value: slug }) )
 							}
 						/>
 
 						<ButtonToggleControl
-							label={__( 'Layout', 'otter-blocks' )}
+							label={ __( 'Layout', 'otter-blocks' ) }
 							options={[
 								{
 									label: __( 'Grid', 'otter-blocks' ),
@@ -230,25 +230,25 @@ const Inspector = ({
 									value: 'list'
 								}
 							]}
-							value={attributes.style}
-							onChange={value => setAttributes({ style: value })}
+							value={ attributes.style }
+							onChange={ value => setAttributes({ style: value }) }
 						/>
 
-						{'grid' === attributes.style && (
+						{ 'grid' === attributes.style && (
 							<RangeControl
-								label={__( 'Columns', 'otter-blocks' )}
-								value={attributes.columns}
-								onChange={columns => setAttributes({ columns })}
-								min={1}
-								max={5}
+								label={ __( 'Columns', 'otter-blocks' ) }
+								value={ attributes.columns }
+								onChange={ columns => setAttributes({ columns }) }
+								min={ 1 }
+								max={ 5 }
 							/>
-						)}
+						) }
 
 						<BaseControl
-							label={__( 'Content Alignment', 'otter-blocks' )}
+							label={ __( 'Content Alignment', 'otter-blocks' ) }
 						>
 							<ToogleGroupControl
-								value={attributes.textAlign}
+								value={ attributes.textAlign }
 								options={[
 									{
 										icon: 'editor-alignleft',
@@ -266,148 +266,142 @@ const Inspector = ({
 										value: 'right'
 									}
 								]}
-								onChange={textAlign => setAttributes({ textAlign })}
+								onChange={ textAlign => setAttributes({ textAlign }) }
 								hasIcon
 							/>
 						</BaseControl>
 					</PanelBody>
 
 					<PanelBody
-						title={__( 'Settings', 'otter-blocks' )}
-						initialOpen={false}
+						title={ __( 'Settings', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
 						<QueryControls
-							order={attributes.order}
-							orderBy={attributes.orderBy}
-							onOrderChange={value => setAttributes({ order: value })}
-							onOrderByChange={value => setAttributes({ orderBy: value })}
-							numberOfItems={attributes.postsToShow}
-							onNumberOfItemsChange={value => setAttributes({ postsToShow: value })}
-							categorySuggestions={categorySuggestions}
-							selectedCategoryId={selectedCategoryId}
-							selectedCategories={selectedCategories}
-							onCategoryChange={selectCategories}
+							order={ attributes.order }
+							orderBy={ attributes.orderBy }
+							onOrderChange={ value => setAttributes({ order: value }) }
+							onOrderByChange={ value => setAttributes({ orderBy: value }) }
+							numberOfItems={ attributes.postsToShow }
+							onNumberOfItemsChange={ value => setAttributes({ postsToShow: value }) }
+							categorySuggestions={ categorySuggestions }
+							selectedCategoryId={ selectedCategoryId }
+							selectedCategories={ selectedCategories }
+							onCategoryChange={ selectCategories }
 						/>
 
 						<TextControl
-							label={__( 'Offset', 'otter-blocks' )}
-							help={__( 'Number of post to displace or pass over.', 'otter-blocks' )}
+							label={ __( 'Offset', 'otter-blocks' ) }
+							help={ __( 'Number of post to displace or pass over.', 'otter-blocks' ) }
 							type="number"
-							value={attributes.offset}
-							min={0}
-							onChange={value => setAttributes({ offset: Number( value ) })}
+							value={ attributes.offset }
+							min={ 0 }
+							onChange={ value => setAttributes({ offset: Number( value ) }) }
 						/>
 
 						<ToggleControl
-							label={__( 'Enable Featured Post', 'otter-blocks' )}
-							checked={attributes.enableFeaturedPost}
-							onChange={enableFeaturedPost => setAttributes({ enableFeaturedPost })}
+							label={ __( 'Enable Featured Post', 'otter-blocks' ) }
+							checked={ attributes.enableFeaturedPost }
+							onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
 						/>
 
 						{
 							attributes.enableFeaturedPost && (
 								<SelectControl
-									label={__( 'Featured Post', 'otter-blocks' )}
-									value={attributes.featuredPostOrder}
-									options={[
+									label={ __( 'Featured Post', 'otter-blocks' ) }
+									value={ attributes.featuredPostOrder }
+									options={ [
 										{ label: __( 'Latest Post', 'otter-blocks' ), value: 'none' },
 										{ label: __( 'Sticky Post', 'otter-blocks' ), value: 'sticky-first' }
-									]}
-									onChange={value => setAttributes({ featuredPostOrder: 'none' !== value ? value : undefined })}
+									] }
+									onChange={ value => setAttributes({ featuredPostOrder: 'none' !== value ? value : undefined }) }
 								/>
 							)
 						}
 
-						<ToggleControl
-							label={__( 'Enable RankMath Content Analysis', 'otter-blocks' )}
-							checked={Boolean( attributes.enableRankMathContentAnalysis )}
-							onChange={enableRankMathContentAnalysis => setAttributes({ enableRankMathContentAnalysis })}
-						/>
-
 					</PanelBody>
 
 					<PanelBody
-						title={__( 'Elements', 'otter-blocks' )}
-						initialOpen={false}
+						title={ __( 'Elements', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
 						<LayoutBuilder
-							attributes={attributes}
-							setAttributes={setAttributes}
+							attributes={ attributes }
+							setAttributes={ setAttributes }
 						/>
 					</PanelBody>
 
-					<InspectorExtensions />
+					<InspectorExtensions/>
 				</Fragment>
-			)}
+			) }
 
-			{'style' === tab && (
+			{ 'style' === tab && (
 				<Fragment>
 					<PanelBody
-						title={__( 'Style', 'otter-blocks' )}
+						title={ __( 'Style', 'otter-blocks' ) }
 					>
 						<ButtonToggleControl
-							options={styles}
-							value={getActiveStyle( styles, attributes?.className )}
-							onChange={changeStyle}
+							options={ styles }
+							value={ getActiveStyle( styles, attributes?.className ) }
+							onChange={ changeStyle }
 						/>
 					</PanelBody>
 
 					<PanelBody
-						title={__( 'Typography', 'otter-blocks' )}
-						initialOpen={false}
+						title={ __( 'Typography', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
 						<SelectControl
-							label={__( 'Title Tag', 'otter-blocks' )}
-							value={attributes.titleTag || 'h5'}
-							options={[
+							label={ __( 'Title Tag', 'otter-blocks' ) }
+							value={ attributes.titleTag || 'h5' }
+							options={ [
 								{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
 								{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
 								{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
 								{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
 								{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
 								{ label: __( 'H6', 'otter-blocks' ), value: 'h6' }
-							]}
-							onChange={titleTag => setAttributes({ titleTag })}
+							] }
+							onChange={ titleTag => setAttributes({ titleTag }) }
 						/>
 
 						<ResponsiveControl
-							label={__( 'Title Size', 'otter-blocks' )}
+							label={ __( 'Title Size', 'otter-blocks' ) }
 						>
 							<FontSizePicker
-								fontSizes={defaultFontSizes}
+								fontSizes={ defaultFontSizes }
 								withReset
-								value={responsiveGetAttributes([ attributes.customTitleFontSize, attributes.customTitleFontSizeTablet, attributes.customTitleFontSizeMobile ])}
-								onChange={value => responsiveSetAttributes( value, [ 'customTitleFontSize', 'customTitleFontSizeTablet', 'customTitleFontSizeMobile' ])}
+								value={ responsiveGetAttributes([ attributes.customTitleFontSize, attributes.customTitleFontSizeTablet, attributes.customTitleFontSizeMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'customTitleFontSize', 'customTitleFontSizeTablet', 'customTitleFontSizeMobile' ]) }
 							/>
 						</ResponsiveControl>
 
 						<ResponsiveControl
-							label={__( 'Description Size', 'otter-blocks' )}
+							label={ __( 'Description Size', 'otter-blocks' ) }
 						>
 							<FontSizePicker
-								fontSizes={defaultFontSizes}
+								fontSizes={ defaultFontSizes }
 								withReset
-								value={responsiveGetAttributes([ attributes.customDescriptionFontSize, attributes.customDescriptionFontSizeTablet, attributes.customDescriptionFontSizeMobile ])}
-								onChange={value => responsiveSetAttributes( value, [ 'customDescriptionFontSize', 'customDescriptionFontSizeTablet', 'customDescriptionFontSizeMobile' ])}
+								value={ responsiveGetAttributes([ attributes.customDescriptionFontSize, attributes.customDescriptionFontSizeTablet, attributes.customDescriptionFontSizeMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'customDescriptionFontSize', 'customDescriptionFontSizeTablet', 'customDescriptionFontSizeMobile' ]) }
 							/>
 						</ResponsiveControl>
 
 						<ResponsiveControl
-							label={__( 'Meta Size', 'otter-blocks' )}
+							label={ __( 'Meta Size', 'otter-blocks' ) }
 						>
 							<FontSizePicker
-								fontSizes={defaultFontSizes}
+								fontSizes={ defaultFontSizes }
 								withReset
-								value={responsiveGetAttributes([ attributes.customMetaFontSize, attributes.customMetaFontSizeTablet, attributes.customMetaFontSizeMobile ])}
-								onChange={value => responsiveSetAttributes( value, [ 'customMetaFontSize', 'customMetaFontSizeTablet', 'customMetaFontSizeMobile' ])}
+								value={ responsiveGetAttributes([ attributes.customMetaFontSize, attributes.customMetaFontSizeTablet, attributes.customMetaFontSizeMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'customMetaFontSize', 'customMetaFontSizeTablet', 'customMetaFontSizeMobile' ]) }
 							/>
 						</ResponsiveControl>
 					</PanelBody>
 
 					<PanelColorSettings
-						title={__( 'Color', 'otter-blocks' )}
-						initialOpen={false}
-						colorSettings={[
+						title={ __( 'Color', 'otter-blocks' ) }
+						initialOpen={ false }
+						colorSettings={ [
 							{
 								value: attributes.textColor,
 								onChange: textColor => setAttributes({ textColor }),
@@ -426,133 +420,133 @@ const Inspector = ({
 								label: __( 'Border', 'otter-blocks' ),
 								isShownByDefault: false
 							}
-						]}
+						] }
 					/>
 
 					<PanelBody
-						title={__( 'Image', 'otter-blocks' )}
-						initialOpen={false}
+						title={ __( 'Image', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
 						<BoxControl
-							label={__( 'Border Radius', 'otter-blocks' )}
-							values={numberToBox( attributes.borderRadius )}
-							onChange={borderRadius => setAttributes({ borderRadius })}
+							label={ __( 'Border Radius', 'otter-blocks' ) }
+							values={ numberToBox( attributes.borderRadius ) }
+							onChange={ borderRadius => setAttributes({ borderRadius }) }
 							id="o-border-raduis-box"
 						/>
 
-						{'list' === attributes.style && (
+						{ 'list' === attributes.style && (
 							<Fragment>
 								<ResponsiveControl
-									label={__( 'Image Width', 'otter-blocks' )}
+									label={ __( 'Image Width', 'otter-blocks' ) }
 								>
 									<UnitContol
-										value={responsiveGetAttributes([ attributes.imageWidth, attributes.imageWidthTablet, attributes.imageWidthMobile ])}
-										onChange={value => responsiveSetAttributes( value, [ 'imageWidth', 'imageWidthTablet', 'imageWidthMobile' ])}
+										value={ responsiveGetAttributes([ attributes.imageWidth, attributes.imageWidthTablet, attributes.imageWidthMobile ]) }
+										onChange={ value => responsiveSetAttributes( value, [ 'imageWidth', 'imageWidthTablet', 'imageWidthMobile' ]) }
 									/>
 
 									<ClearButton
 										values={[ 'imageWidth', 'imageWidthTablet', 'imageWidthMobile' ]}
-										setAttributes={setAttributes}
+										setAttributes={ setAttributes }
 									/>
 								</ResponsiveControl>
 							</Fragment>
-						)}
+						) }
 
 						<BoxShadowControl
-							boxShadow={attributes.imageBoxShadow}
-							onChange={data => changeBoxShadow( 'imageBoxShadow', data )}
+							boxShadow={ attributes.imageBoxShadow }
+							onChange={ data => changeBoxShadow( 'imageBoxShadow', data ) }
 						/>
 					</PanelBody>
 
 					<PanelBody
-						title={__( 'Spacing', 'otter-blocks' )}
-						initialOpen={false}
+						title={ __( 'Spacing', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
-						{'list' !== attributes.style && (
+						{ 'list' !== attributes.style && (
 							<ResponsiveControl
-								label={__( 'Column Gap', 'otter-blocks' )}
+								label={ __( 'Column Gap', 'otter-blocks' ) }
 							>
 								<UnitContol
-									value={responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ])}
-									onChange={value => responsiveSetAttributes( value, [ 'columnGap', 'columnGapTablet', 'columnGapMobile' ])}
+									value={ responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ]) }
+									onChange={ value => responsiveSetAttributes( value, [ 'columnGap', 'columnGapTablet', 'columnGapMobile' ]) }
 								/>
 
 								<ClearButton
 									values={[ 'columnGap', 'columnGapTablet', 'columnGapMobile' ]}
-									setAttributes={setAttributes}
+									setAttributes={ setAttributes }
 								/>
 							</ResponsiveControl>
-						)}
+						) }
 
 						<ResponsiveControl
-							label={__( 'Row Gap', 'otter-blocks' )}
+							label={ __( 'Row Gap', 'otter-blocks' ) }
 						>
 							<UnitContol
-								value={responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ])}
-								onChange={value => responsiveSetAttributes( value, [ 'rowGap', 'rowGapTablet', 'rowGapMobile' ])}
+								value={ responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'rowGap', 'rowGapTablet', 'rowGapMobile' ]) }
 							/>
 
 							<ClearButton
 								values={[ 'rowGap', 'rowGapTablet', 'rowGapMobile' ]}
-								setAttributes={setAttributes}
+								setAttributes={ setAttributes }
 							/>
 						</ResponsiveControl>
 
 						<ResponsiveControl
-							label={__( 'Content Padding', 'otter-blocks' )}
+							label={ __( 'Content Padding', 'otter-blocks' ) }
 						>
 							<UnitContol
-								value={responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ])}
-								onChange={value => responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ])}
+								value={ responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]) }
 							/>
 
 							<ClearButton
 								values={[ 'padding', 'paddingTablet', 'paddingMobile' ]}
-								setAttributes={setAttributes}
+								setAttributes={ setAttributes }
 							/>
 						</ResponsiveControl>
 
 						<BaseControl
-							label={__( 'Space Between', 'otter-blocks' )}
+							label={ __( 'Space Between', 'otter-blocks' ) }
 						>
 							<FontSizePicker
-								fontSizes={defaultFontSizes}
+								fontSizes={ defaultFontSizes }
 								withReset
-								value={attributes.contentGap}
-								onChange={contentGap => setAttributes({ contentGap })}
+								value={ attributes.contentGap }
+								onChange={ contentGap => setAttributes({ contentGap }) }
 							/>
 						</BaseControl>
 					</PanelBody>
 
 					<PanelBody
-						title={__( 'Border', 'otter-blocks' )}
-						initialOpen={false}
+						title={ __( 'Border', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
 						<UnitContol
-							label={__( 'Width', 'otter-blocks' )}
-							value={attributes.borderWidth}
-							onChange={borderWidth => setAttributes({ borderWidth })}
+							label={ __( 'Width', 'otter-blocks' ) }
+							value={ attributes.borderWidth }
+							onChange={ borderWidth => setAttributes({ borderWidth }) }
 						/>
 
 						<ClearButton
 							values={[ 'borderWidth' ]}
-							setAttributes={setAttributes}
+							setAttributes={ setAttributes }
 						/>
 
 						<BoxControl
-							label={__( 'Radius', 'otter-blocks' )}
-							value={attributes.cardBorderRadius}
-							onChange={cardBorderRadius => setAttributes({ cardBorderRadius })}
+							label={ __( 'Radius', 'otter-blocks' ) }
+							value={ attributes.cardBorderRadius }
+							onChange={ cardBorderRadius => setAttributes({ cardBorderRadius }) }
 							id="o-border-raduis-box"
 						/>
 
 						<BoxShadowControl
-							boxShadow={attributes.boxShadow}
-							onChange={data => changeBoxShadow( 'boxShadow', data )}
+							boxShadow={ attributes.boxShadow }
+							onChange={ data => changeBoxShadow( 'boxShadow', data ) }
 						/>
 					</PanelBody>
 				</Fragment>
-			)}
+			) }
 		</InspectorControls>
 	);
 };
