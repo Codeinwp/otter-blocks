@@ -308,6 +308,27 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+#### [Version 2.4.0](https://github.com/Codeinwp/otter-blocks/compare/v2.3.4...v2.4.0) (2023-09-21)
+
+- Introducing Otter AI Block With Form AI & Content AI Support
+- Added Webhooks Integration to Form Block
+- Added Hidden Field to Form Block
+- Circle Counter Block Enhancements
+- Adding RequestAnimationFrame() to Scroll Sniffing for Better Performance
+- Added Stripe Field to Form Block
+- Add Link Target Setting in Product Review Block
+- Fix Slider Block Image Arrangement Behaving Weirdly
+- Fix CSS Not Generating When Switching to FSE Theme
+- Fix Visual Issues in Section’s Background & Overlay Controls
+- Fix Box Shadow Not Changing on Section Columns
+- Fix Block Settings Panel Being Visible for Non-Admins
+- Fix Form Block Not Saving Changes in FSE Templates
+- Fix Multiple Otter Notices Appearing at Once
+- Various Small Fixes
+
+
+
+
 ##### [Version 2.3.4](https://github.com/Codeinwp/otter-blocks/compare/v2.3.3...v2.3.4) (2023-08-23)
 
 - Fix z-index with Shape Divider in Section
