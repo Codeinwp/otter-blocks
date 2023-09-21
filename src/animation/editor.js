@@ -6,7 +6,8 @@ import { __ } from '@wordpress/i18n';
 import {
 	Button,
 	PanelBody,
-	SelectControl
+	SelectControl,
+	ToggleControl
 } from '@wordpress/components';
 
 import {
@@ -16,6 +17,8 @@ import {
 } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
+
+import { __experimentalUnitControl as UnitControl } from '@wordpress/components';
 
 /**
   * Internal dependencies.
@@ -42,7 +45,18 @@ const AnimationType = {
 };
 
 import { memo } from '@wordpress/element';
+import { useCSSNode } from '../blocks/helpers/block-utility.js';
 
+/**
+ * Update the animation config.
+ *
+ * @param {string} type The type of animation. (e.g. count, typing, default)
+ * @param {string|undefined} oldValue The old value of the animation.
+ * @param {string|undefined} newValue The new value of the animation.
+ * @param {Function|undefined} callback The callback function which will be called after the animation is updated.
+ * @param {Object} attributes The attributes of the block.
+ * @param {(x: Object) => void} setAttributes The setAttributes function of the block.
+ */
 export const updateAnimConfig = ( type, oldValue, newValue, callback, attributes, setAttributes ) => {
 	let template;
 	switch ( type ) {
@@ -57,6 +71,7 @@ export const updateAnimConfig = ( type, oldValue, newValue, callback, attributes
 		break;
 	}
 
+	oldValue ??= '';
 	const oldClassName = template + oldValue;
 	const newClassName = 'none' !== newValue ? template + newValue : '';
 	let classes;
@@ -64,7 +79,20 @@ export const updateAnimConfig = ( type, oldValue, newValue, callback, attributes
 	if ( attributes.className ) {
 		classes = attributes.className;
 		classes = classes.split( ' ' );
-		const exists = classes.find( ( i ) => i === oldClassName );
+		const exists = classes.find( ( i ) =>  i === oldClassName );
+
+		if ( 'o-anim-value-delay-' === oldValue || 'o-anim-value-speed-' === oldValue ) {
+
+			// Remove the old custom value.
+			classes = classes.filter( ( i ) => ! i.includes( oldValue ) );
+		}
+
+		if ( 'o-anim-custom-delay' === oldValue || 'o-anim-custom-speed' === oldValue ) {
+			const cssKey = 'o-anim-custom-delay' === oldValue ? 'o-anim-value-delay-' : 'o-anim-value-speed-';
+
+			// Remove the old custom value.
+			classes = classes.filter( ( i ) => ! i.includes( cssKey ) );
+		}
 
 		if ( exists ) {
 			classes = classes.join( ' ' ).replace( oldClassName, newClassName );
@@ -91,39 +119,18 @@ function AnimationControls({
 	attributes,
 	setAttributes
 }) {
-	useEffect( () => {
-		let classes;
-
-		if ( attributes.className ) {
-			classes = attributes.className;
-			classes = classes.split( ' ' );
-
-			let animationClass = Array.from( animationsList ).find( ( i ) => {
-				return classes.find( ( o ) => o === i.value );
-			});
-
-			const delayClass = Array.from( delayList ).find( ( i ) => {
-				return classes.find( ( o ) => o === i.value );
-			});
-
-			const speedClass = Array.from( speedList ).find( ( i ) => {
-				return classes.find( ( o ) => o === i.value );
-			});
-
-			setAnimation( animationClass ? animationClass.value : 'none' );
-			setDelay( delayClass ? delayClass.value : 'none' );
-			setSpeed( speedClass ? speedClass.value : 'none' );
-			setCurrentAnimationLabel(
-				animationClass ? animationClass.label : 'none'
-			);
-		}
-
-	}, []);
 
 	const [ animation, setAnimation ] = useState( 'none' );
 	const [ delay, setDelay ] = useState( 'none' );
 	const [ speed, setSpeed ] = useState( 'none' );
 	const [ currentAnimationLabel, setCurrentAnimationLabel ] = useState( __( 'None', 'otter-blocks' ) );
+	const [ customDelayValue, setCustomDelayValue ] = useState( 0 );
+	const [ customSpeedValue, setCustomSpeedValue ] = useState( 0 );
+	const [ playOnHover, setPlayOnHover ] = useState( false );
+	const [ cssNode, setNodeCSS ] = useCSSNode({
+		selector: 'animated',
+		appendToRoot: true
+	});
 
 	const updateAnimation = ( e ) => {
 		let classes;
@@ -189,12 +196,6 @@ function AnimationControls({
 		}
 	};
 
-	useEffect( () => {
-		if ( undefined !== window?.blocksAnimation ) {
-			window.blocksAnimation.removeAnimation = () => updateAnimation( 'none' );
-		}
-	}, []);
-
 	const replayAnimation = () => {
 		let classes = attributes.className;
 		classes = classes.replace( animation, 'o-replay' );
@@ -203,6 +204,84 @@ function AnimationControls({
 
 		setTimeout( () => setAttributes({ className: classes.replace( 'o-replay', animation ) }), 100 );
 	};
+
+	useEffect( () => {
+		if ( undefined !== window?.blocksAnimation ) {
+			window.blocksAnimation.removeAnimation = () => updateAnimation( 'none' );
+		}
+	}, []);
+
+	useEffect( () => {
+		setNodeCSS(
+			attributes.className
+				.split( ' ' )
+				.map( ( i ) => {
+					if ( i.includes( 'o-anim-value-delay-' ) ) {
+						return `.${ i } { animation-delay: ${ i.replace( 'o-anim-value-delay-', '' ) }; --webkit-animation-delay: ${ i.replace( 'o-anim-value-delay-', '' ) }; }`;
+					} else if ( i.includes( 'o-anim-value-speed-' ) ) {
+						return `.${ i } { animation-duration: ${ i.replace( 'o-anim-value-speed-', '' ) }; --webkit-animation-duration: ${ i.replace( 'o-anim-value-speed-', '' ) }; }`;
+					}
+					return '';
+				})
+				.filter( ( i ) => i )
+		);
+
+	}, [ attributes.className ]);
+
+	useEffect( () => {
+		let classes;
+
+		if ( attributes.className ) {
+			classes = attributes.className;
+			classes = classes.split( ' ' );
+
+			const animationClass = Array.from( animationsList ).find( ( i ) => {
+				return classes.find( ( o ) => o === i.value );
+			});
+
+			const delayClass = Array.from( delayList ).find( ( i ) => {
+				return classes.find( ( o ) => o === i.value );
+			});
+
+			const speedClass = Array.from( speedList ).find( ( i ) => {
+				return classes.find( ( o ) => o === i.value );
+			});
+
+			let customDelay = classes.find( ( i ) => i.includes( 'o-anim-value-delay' ) );
+			if ( customDelay ) {
+				customDelay = customDelay.replace( 'o-anim-value-delay-', '' );
+
+				// The string must start with a number and end with s or ms.
+				if ( ! customDelay.match( /^[0-9]+[sm]$/ ) ) {
+					customDelay = undefined;
+				}
+			}
+
+			let customSpeed = classes.find( ( i ) => i.includes( 'o-anim-value-speed' ) );
+			if ( customSpeed ) {
+				customSpeed = customSpeed.replace( 'o-anim-value-speed-', '' );
+
+				// The string must start with a number and end with s or ms.
+				if ( ! customSpeed.match( /^[0-9]+[sm]$/ ) ) {
+					customSpeed = undefined;
+				}
+			}
+
+			const playOnHover = classes.find( ( i ) => i.includes( 'o-anim-hover' ) );
+
+			setAnimation( animationClass ? animationClass.value : 'none' );
+			setDelay( delayClass ? delayClass.value : 'none' );
+			setSpeed( speedClass ? speedClass.value : 'none' );
+			setCustomDelayValue( customDelay || 0 );
+			setCustomSpeedValue( customSpeed || 0 );
+			setPlayOnHover( playOnHover ? true : false );
+			setCurrentAnimationLabel(
+				animationClass ? animationClass.label : 'none'
+			);
+
+		}
+
+	}, []);
 
 	return (
 		<PanelBody
@@ -226,11 +305,68 @@ function AnimationControls({
 							onChange={  value => updateAnimConfig( AnimationType.default, delay, value, () => setDelay( value ), attributes, setAttributes ) }
 						/>
 
+						{
+							'o-anim-custom-delay' === delay && (
+								<UnitControl
+									label={ __( 'Value', 'otter-blocks' ) }
+									value={ customDelayValue }
+									onChange={ value => updateAnimConfig( AnimationType.default, 'o-anim-value-delay-', value ? `o-anim-value-delay-${value}` : undefined, () => setCustomDelayValue( value ), attributes, setAttributes ) }
+									min={ 0 }
+									step={ 0.1 }
+									allowReset
+									units={
+										[
+											{
+												label: __( 'S', 'otter-blocks' ),
+												value: 's'
+											},
+											{
+												label: __( 'MS', 'otter-blocks' ),
+												value: 'ms'
+											}
+										]
+									}
+								/>
+							)
+						}
+
 						<SelectControl
 							label={ __( 'Speed', 'otter-blocks' ) }
 							value={ speed || 'none' }
 							options={ speedList }
 							onChange={ value => updateAnimConfig( AnimationType.default, speed, value, () => setSpeed( value ), attributes, setAttributes ) }
+						/>
+
+						{
+							'o-anim-custom-speed' === speed && (
+								<UnitControl
+									label={ __( 'Value', 'otter-blocks' ) }
+									value={ customSpeedValue }
+									onChange={ value => updateAnimConfig( AnimationType.default, 'o-anim-value-speed-', value ? `o-anim-value-speed-${value}` : '', () => setCustomSpeedValue( value ), attributes, setAttributes ) }
+									min={ 0 }
+									step={ 0.1 }
+									allowReset
+									units={
+										[
+											{
+												label: __( 'S', 'otter-blocks' ),
+												value: 's'
+											},
+											{
+												label: __( 'MS', 'otter-blocks' ),
+												value: 'ms'
+											}
+										]
+									}
+								/>
+							)
+						}
+
+						<ToggleControl
+							label={ __( 'Play on Hover', 'otter-blocks' ) }
+							checked={ playOnHover }
+							onChange={ value  => updateAnimConfig( AnimationType.default, 'o-anim-hover', value ? 'o-anim-hover' : '', () => setPlayOnHover( value ), attributes, setAttributes ) }
+
 						/>
 
 						<Button

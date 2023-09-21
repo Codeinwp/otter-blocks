@@ -159,6 +159,8 @@ const speed = [ 'none', 'slow', 'slower', 'fast', 'faster' ];
 window.addEventListener( 'load', () => {
 	const elements = document.querySelectorAll( '.animated' );
 
+	createCustomAnimationNode( elements );
+
 	for ( const element of elements ) {
 		classes = element.classList;
 		element.animationClasses = [];
@@ -205,6 +207,15 @@ window.addEventListener( 'load', () => {
 				});
 			}
 		});
+
+		if ( classes.contains( 'o-anim-hover' ) ) {
+			element.classList.remove( 'hidden-animated' ); // We asume that elements with hover animation are visible by default.
+			element.classList.remove( 'animated' );
+
+			element.addEventListener( 'mouseenter', () => {
+				element.classList.add( 'animated' );
+			});
+		}
 	}
 
 	window.addEventListener( 'scroll', () => {
@@ -249,4 +260,72 @@ const isElementInViewport = ( el ) => {
 		( bounds.bottom >= viewport.top && bounds.bottom <= viewport.bottom ) ||
 		( bounds.top <= viewport.bottom && bounds.top >= viewport.top )
 	);
+};
+
+const createCustomAnimationNode = ( elements ) => {
+	let customDelays = [];
+	let customSpeeds = [];
+
+	for ( const element of elements ) {
+		const classes = element.classList;
+
+		if ( classes.contains( 'o-anim-custom-delay' ) ) {
+			let delay;
+			for ( const className of classes ) {
+				if ( className.includes( 'o-anim-value-delay-' ) ) {
+					delay = className;
+					break;
+				}
+			}
+			if ( delay ) {
+				customDelays.push( delay );
+			}
+		}
+
+		if ( classes.contains( 'o-anim-custom-speed' ) ) {
+			let speed;
+			for ( const className of classes ) {
+				if ( className.includes( 'o-anim-value-speed-' ) ) {
+					speed = className;
+					break;
+				}
+			}
+			if ( speed ) {
+				customSpeeds.push( speed );
+			}
+		}
+	}
+
+
+	// Remove duplicate values
+	customDelays = [ ...new Set( customDelays ) ];
+	customSpeeds = [ ...new Set( customSpeeds ) ];
+
+	if ( 0 < customDelays.length || 0 < customSpeeds.length ) {
+		const customValuesNode = document.createElement( 'style' );
+		customValuesNode.id = 'o-anim-custom-values';
+		customValuesNode.innerHTML = customDelays.reduce(
+			( accumulator, cssClass ) => {
+				const delayValue = cssClass.replace( 'o-anim-value-delay-', '' );
+
+				return (
+					accumulator +
+					`.animated.${ cssClass } { animation-delay: ${ delayValue }; -webkit-animation-delay: ${ delayValue }; }`
+				);
+			},
+			''
+		) + '\n' + customSpeeds.reduce(
+			( accumulator, cssClass ) => {
+				const speedValue = cssClass.replace( 'o-anim-value-speed-', '' );
+
+				return (
+					accumulator +
+					`.animated.${ cssClass } { animation-duration: ${ speedValue }; -webkit-animation-duration: ${ speedValue }; }`
+				);
+			},
+			''
+		);
+
+		document.body.appendChild( customValuesNode );
+	}
 };

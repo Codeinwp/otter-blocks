@@ -101,6 +101,10 @@
          position: absolute;
       }
    }
+
+   &> .components-unit-control-wrapper {
+      margin-top: 10px;
+   }
 }
 
 .otter-animations-count-image {
