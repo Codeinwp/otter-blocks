@@ -216,7 +216,7 @@ function AnimationControls({
 	useEffect( () => {
 		setNodeCSS(
 			attributes.className
-				.split( ' ' )
+				?.split( ' ' )
 				.map( ( i ) => {
 					if ( i.includes( 'o-anim-value-delay-' ) ) {
 						return `.${ i } { animation-delay: ${ i.replace( 'o-anim-value-delay-', '' ) }; --webkit-animation-delay: ${ i.replace( 'o-anim-value-delay-', '' ) }; }`;
@@ -225,7 +225,7 @@ function AnimationControls({
 					}
 					return '';
 				})
-				.filter( ( i ) => i )
+				.filter( ( i ) => i ) ?? ''
 		);
 
 	}, [ attributes.className ]);

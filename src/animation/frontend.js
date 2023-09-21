@@ -267,7 +267,7 @@ const isElementInViewport = ( el ) => {
 	let scroll = window.scrollY || window.pageYOffset;
 	const offset = calculateOffset( getTriggerOffset( el ) );
 
-	const boundsTop = el.getBoundingClientRect().top + scroll = offset;
+	const boundsTop = el.getBoundingClientRect().top + scroll + offset;
 
 	const viewport = {
 		top: scroll,
