@@ -218,33 +218,56 @@ window.addEventListener( 'load', () => {
 		}
 	}
 
+	/** @type {Array<HTMLDivElement>} */
+	const elementsScroll = [];
+
+	for ( const element of elements ) {
+		if (
+			element.animationClasses &&
+			0 < element.animationClasses.length
+		) {
+			elementsScroll.push({ element, triggerOffset: getTriggerOffset( element ) });
+		}
+	}
+
 	window.addEventListener( 'scroll', () => {
 		requestAnimationFrame( () => {
-			for ( const element of elements ) {
-				if (
-					element.getBoundingClientRect().top <=
-						window.innerHeight * 0.95 &&
-					0 < element.getBoundingClientRect().top
-				) {
-					if (
-						element.animationClasses &&
-						0 < element.animationClasses.length
-					) {
-						const classes = element.animationClasses;
-						classes.forEach( ( i ) => element.classList.add( i ) );
+			const elemtsToRemove = [];
 
-						element.classList.remove( 'hidden-animated' );
-						delete element.animationClasses;
-					}
+			for ( const e of elementsScroll ) {
+				const { element, triggerOffset } = e;
+
+				const { top } = element.getBoundingClientRect();
+
+				const offset = calculateOffset( triggerOffset );
+
+				const isVisible = ( top + offset ) <= window.innerHeight * 0.95 && 0 < top;
+
+				if ( ! isVisible ) {
+					continue;
 				}
+
+				const classes = element.animationClasses;
+				classes.forEach( ( i ) => element.classList.add( i ) );
+
+				element.classList.remove( 'hidden-animated' );
+				delete element.animationClasses;
+				elemtsToRemove.push( e );
 			}
+
+			elemtsToRemove.forEach( ( e ) => {
+				const index = elementsScroll.indexOf( e );
+				elementsScroll.splice( index, 1 );
+			});
 		});
 	});
 });
 
 const isElementInViewport = ( el ) => {
-	const scroll = window.scrollY || window.pageYOffset;
-	const boundsTop = el.getBoundingClientRect().top + scroll;
+	let scroll = window.scrollY || window.pageYOffset;
+	const offset = calculateOffset( getTriggerOffset( el ) );
+
+	const boundsTop = el.getBoundingClientRect().top + scroll + offset;
 
 	const viewport = {
 		top: scroll,
@@ -328,4 +351,39 @@ const createCustomAnimationNode = ( elements ) => {
 
 		document.body.appendChild( customValuesNode );
 	}
+};
+
+const getTriggerOffset = ( element ) => {
+	let triggerOffset = 0;
+
+	for ( const className of element.classList.entries() ) {
+		if ( className[1].includes( 'o-anim-offset-' ) ) {
+			const rawValue = className[1].replace( 'o-anim-offset-', '' );
+
+			// Check if it starts with a number.
+			if ( isNaN( rawValue.charAt( 0 ) ) ) {
+				continue;
+			}
+
+			// If raw values ends with px parse it to float.
+			triggerOffset = rawValue.endsWith( 'px' ) ? parseFloat( rawValue ) : rawValue;
+			break;
+		}
+	}
+
+	return triggerOffset;
+};
+
+const calculateOffset = ( offset ) => {
+	if ( 'string' === typeof offset ) {
+		offset = parseFloat( offset ) ?? 0;
+
+		// Clamp the value between 0 and 100.
+		offset = Math.min( Math.max( offset, 0 ), 100 );
+		offset = window.innerHeight * ( offset / 100 );
+	} else if ( 'number' !== typeof offset ) {
+		offset = 0;
+	}
+
+	return offset;
 };

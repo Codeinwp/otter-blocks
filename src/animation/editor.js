@@ -81,7 +81,7 @@ export const updateAnimConfig = ( type, oldValue, newValue, callback, attributes
 		classes = classes.split( ' ' );
 		const exists = classes.find( ( i ) =>  i === oldClassName );
 
-		if ( 'o-anim-value-delay-' === oldValue || 'o-anim-value-speed-' === oldValue ) {
+		if ( oldValue.startsWith( 'o-anim-value-delay-' ) || oldValue.startsWith( 'o-anim-value-speed-' ) || oldValue.startsWith( 'o-anim-offset-' ) ) {
 
 			// Remove the old custom value.
 			classes = classes.filter( ( i ) => ! i.includes( oldValue ) );
@@ -127,6 +127,8 @@ function AnimationControls({
 	const [ customDelayValue, setCustomDelayValue ] = useState( 0 );
 	const [ customSpeedValue, setCustomSpeedValue ] = useState( 0 );
 	const [ playOnHover, setPlayOnHover ] = useState( false );
+	const [ triggerOffset, setTriggerOffset ] = useState( '' );
+	const [ triggerOffsetValue, setTriggerOffsetValue ] = useState( '0px' );
 	const [ cssNode, setNodeCSS ] = useCSSNode({
 		selector: 'animated',
 		appendToRoot: true
@@ -252,7 +254,7 @@ function AnimationControls({
 				customDelay = customDelay.replace( 'o-anim-value-delay-', '' );
 
 				// The string must start with a number and end with s or ms.
-				if ( ! customDelay.match( /^[0-9]+[sm]$/ ) ) {
+				if ( ! customDelay.match( /^[0-9]+(ms|s)$/ ) ) {
 					customDelay = undefined;
 				}
 			}
@@ -262,8 +264,18 @@ function AnimationControls({
 				customSpeed = customSpeed.replace( 'o-anim-value-speed-', '' );
 
 				// The string must start with a number and end with s or ms.
-				if ( ! customSpeed.match( /^[0-9]+[sm]$/ ) ) {
+				if ( ! customSpeed.match( /^[0-9]+(ms|s)$/ ) ) {
 					customSpeed = undefined;
+				}
+			}
+
+			let triggerOffsetValue = classes.find( ( i ) => i.includes( 'o-anim-offset-' ) );
+			if ( triggerOffsetValue ) {
+				triggerOffsetValue = triggerOffsetValue.replace( 'o-anim-offset-', '' );
+
+				// The string must start with a number and end with px or %.
+				if ( ! triggerOffsetValue.match( /^[0-9]+(px|%)$/ ) ) {
+					triggerOffsetValue = '0px';
 				}
 			}
 
@@ -279,9 +291,28 @@ function AnimationControls({
 				animationClass ? animationClass.label : 'none'
 			);
 
+			setTriggerOffset( triggerOffsetValue ? `o-anim-offset-${triggerOffsetValue}` : '' );
+			setTriggerOffsetValue( triggerOffsetValue || '0px' );
 		}
 
 	}, []);
+
+	useEffect( () => {
+
+		if ( ! triggerOffset ) {
+			return;
+		}
+
+		if ( ! triggerOffsetValue ) {
+			return;
+		}
+
+		if ( triggerOffset === `o-anim-offset-${triggerOffsetValue}` ) {
+			return;
+		}
+
+		updateAnimConfig( AnimationType.default, 'o-anim-offset-', triggerOffsetValue ? `o-anim-offset-${triggerOffsetValue}` : '', () => setTriggerOffset( `o-anim-offset-${triggerOffsetValue}` ), attributes, setAttributes );
+	}, [ triggerOffsetValue, triggerOffset ]);
 
 	return (
 		<PanelBody
@@ -342,7 +373,7 @@ function AnimationControls({
 								<UnitControl
 									label={ __( 'Value', 'otter-blocks' ) }
 									value={ customSpeedValue }
-									onChange={ value => updateAnimConfig( AnimationType.default, 'o-anim-value-speed-', value ? `o-anim-value-speed-${value}` : '', () => setCustomSpeedValue( value ), attributes, setAttributes ) }
+									onChange={ value => updateAnimConfig( AnimationType.default, 'o-anim-value-speed-', `o-anim-value-speed-${value}`, () => setCustomSpeedValue( value ), attributes, setAttributes ) }
 									min={ 0 }
 									step={ 0.1 }
 									allowReset
@@ -368,6 +399,48 @@ function AnimationControls({
 							onChange={ value  => updateAnimConfig( AnimationType.default, 'o-anim-hover', value ? 'o-anim-hover' : '', () => setPlayOnHover( value ), attributes, setAttributes ) }
 
 						/>
+
+						<ToggleControl
+							label={ __( 'Trigger Offset', 'otter-blocks' ) }
+							checked={ Boolean( triggerOffset ) }
+							onChange={
+								value  => updateAnimConfig(
+									AnimationType.default,
+									'o-anim-offset-0px', value ? 'o-anim-offset-0px' : '',
+									() => {
+										setTriggerOffset( value ? 'o-anim-offset-0px' : '' );
+										setTriggerOffsetValue( value ? 'o-anim-offset-0px' : '' );
+									},
+									attributes,
+									setAttributes
+								)
+							}
+							help={ __( 'This will offset the trigger of animation relative to the screen.', 'otter-blocks' ) }
+						/>
+
+						{
+							Boolean( triggerOffset ) && (
+								<UnitControl
+									label={ __( 'Height Trigger Offset', 'otter-blocks' ) }
+									value={ triggerOffsetValue }
+									onChange={ setTriggerOffsetValue }
+									step={ 0.1 }
+									allowReset
+									units={
+										[
+											{
+												label: __( 'px', 'otter-blocks' ),
+												value: 'px'
+											},
+											{
+												label: __( '%', 'otter-blocks' ),
+												value: '%'
+											}
+										]
+									}
+								/>
+							)
+						}
 
 						<Button
 							variant="secondary"
