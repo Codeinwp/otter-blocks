@@ -101,6 +101,8 @@ test.describe( 'Form Block', () => {
 			hasText: 'Form options have been saved.'
 		});
 
+		await page.waitForTimeout( 1500 );
+
 		expect( await msg.isVisible() ).toBeTruthy();
 
 		/*
@@ -173,6 +175,9 @@ test.describe( 'Form Block', () => {
 					helpText: 'This is a help text',
 					allowedFileTypes: [ 'text/plain', 'image/*' ]
 				}
+			},
+			{
+				name: 'themeisle-blocks/form-nonce'
 			}
 		] });
 
@@ -189,6 +194,8 @@ test.describe( 'Form Block', () => {
 		expect( attributes.id ).toBeTruthy();
 
 		const postId = await editor.publishPost();
+
+		await page.waitForTimeout( 1700 );
 
 		await page.goto( `/?p=${postId}` );
 
@@ -218,6 +225,49 @@ test.describe( 'Form Block', () => {
 		const successMsg = page.locator( 'div' ).filter({ hasText: /^Success$/ });
 
 		expect( await successMsg.isVisible() ).toBeTruthy();
+
+	});
+
+	test( 'insert a hidden field and check if it renders in frontend', async({ page, editor }) => {
+
+		await page.waitForTimeout( 1000 );
+		await editor.insertBlock({ name: 'themeisle-blocks/form', innerBlocks: [
+			{
+				name: 'themeisle-blocks/form-hidden-field',
+				attributes: {
+					label: 'Hidden Field Test',
+					paramName: 'test'
+				}
+			},
+			{
+				name: 'themeisle-blocks/form-nonce'
+			}
+		] });
+
+		const blocks = await editor.getBlocks();
+
+		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
+		expect( formBlock ).toBeTruthy();
+
+		const fileHiddenBlock = formBlock.innerBlocks.find( ( block ) => 'themeisle-blocks/form-hidden-field' === block.name );
+
+		expect( fileHiddenBlock ).toBeTruthy();
+
+		const { attributes } = fileHiddenBlock;
+
+		expect( attributes.id ).toBeTruthy();
+
+		const postId = await editor.publishPost();
+
+		await page.waitForTimeout( 1500 );
+
+		await page.goto( `/?p=${postId}&test=123` );
+
+		const hiddenInput = await page.locator( `#${attributes.id} input[type="hidden"]` );
+
+		expect( hiddenInput ).toBeTruthy();
+
+		await expect( hiddenInput ).toHaveAttribute( 'data-param-name', 'test' );
 
 	});
 
@@ -253,24 +303,93 @@ test.describe( 'Form Block', () => {
 
 		const postId = await editor.publishPost();
 
-		await page.waitForTimeout( 1000 );
+		await page.waitForTimeout( 2000 );
 
 		await page.goto( `/?p=${postId}` );
 
 		await page.getByLabel( 'Name*' ).fill( 'John Doe' );
 		await page.getByLabel( 'Email*' ).fill( 'test@otter.com' );
 
-		await page.waitForTimeout( 5000 );
-
 		page.on( 'response', ( response ) =>
 			console.log( '<<', response.status(), response.url() )
 		);
 
+		await page.waitForTimeout( 5000 ); // Wait to prevent the anti-spam check from blocking the request.
+
 		await page.getByRole( 'button', { name: 'Submit' }).click();
 
+		await page.waitForTimeout( 500 );
+
+		await expect( await page.$( `[data-redirect="${REDIRECT_URL}"]` ) ).toBeTruthy();
 		await expect( await page.getByText( 'Success' ) ).toBeVisible();
 
 		// check for a element with the attribute data-redirect-url
-		await expect( await page.$( `[data-redirect="${REDIRECT_URL}"]` ) ).toBeTruthy();
+	});
+
+	test( 'errors on invalid API Key for Market Integration', async({ page, editor, browser }) => {
+
+		await editor.insertBlock({ name: 'themeisle-blocks/form' });
+
+		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+
+		expect( formBlock ).toBeTruthy();
+
+		const { clientId } = formBlock;
+
+		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+
+		await page.getByRole( 'button', { name: 'Marketing Integration' }).click();
+
+		// Select the Mailchimp option on the select with label Provider
+		await page.getByLabel( 'Provider' ).selectOption( 'mailchimp' );
+
+		await page.getByLabel( 'API Key' ).fill( 'invalid-api-key' );
+
+		await expect( page.getByLabel( 'Dismiss this notice' ) ).toBeVisible();
+	});
+
+	test( 'enable post save button on options changed', async({ page, editor }) => {
+		const ccValue = 'otter@test-form.com';
+
+		/*
+		 * Create a form block and insert the CC value using the Inspector Controls.
+		 */
+
+		await editor.insertBlock({ name: 'themeisle-blocks/form' });
+
+		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+
+		expect( formBlock ).toBeTruthy();
+
+		const { clientId } = formBlock;
+
+		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+
+		// Open the options panel
+		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+
+		// activate the option
+		await page.getByRole( 'menuitemcheckbox', { name: 'Show CC' }).click();
+
+		// Close the options panel
+		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+
+		const cc = page.getByPlaceholder( 'Send copies to' );
+
+		await cc.fill( ccValue );
+
+		await editor.publishPost();
+
+		await page.getByLabel( 'Close panel' ).click();
+
+		await page.getByPlaceholder( 'Default is to admin site' ).fill( ccValue );
+
+		const saveBtn = page.getByRole( 'button', { name: 'Update', disabled: false });
+
+		await saveBtn.waitFor({
+			timeout: 4000
+		});
+
+		expect( await saveBtn.isEnabled() ).toBeTruthy();
 	});
 });

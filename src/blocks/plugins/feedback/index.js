@@ -7,6 +7,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import {
+	Fragment,
 	useState
 } from '@wordpress/element';
 import {
@@ -33,7 +34,7 @@ export const FeedbackModalComponent = ({
 	isOpen
 }) => {
 	return (
-		<>
+		<Fragment>
 			{ isOpen && (
 				<Modal
 					className={ classnames( 'o-feedback-modal', { 'no-header': 'submitted' === status }) }
@@ -67,7 +68,7 @@ export const FeedbackModalComponent = ({
 					) }
 				</Modal>
 			) }
-		</>
+		</Fragment>
 	);
 };
 
@@ -94,7 +95,7 @@ const FeedbackModal = (
 	};
 
 	return (
-		<>
+		<Fragment>
 			<Button
 				id="o-feedback"
 				variant={ variant }
@@ -112,7 +113,7 @@ const FeedbackModal = (
 				source={source}
 				setStatus={setStatus}
 			/>
-		</>
+		</Fragment>
 	);
 };
 

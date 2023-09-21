@@ -70,16 +70,18 @@
 		"links": {
 			"type": "array",
 			"default": [
-			{
-				"label": "Buy on Amazon",
-				"href": "",
-				"isSponsored": false
-			},
-			{
-				"label": "Buy on eBay",
-				"href": "",
-				"isSponsored": false
-			}
+				{
+					"label": "Buy on Amazon",
+					"href": "",
+					"isSponsored": false,
+					"target": "_blank"
+				},
+				{
+					"label": "Buy on eBay",
+					"href": "",
+					"isSponsored": false,
+					"target": "_blank"
+				}
 			]
 		},
 		"prosLabel": {

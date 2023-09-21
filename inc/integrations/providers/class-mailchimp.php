@@ -111,7 +111,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @param string $email The email address.
 	 * @return array|\WP_Error The response from Mailchimp.
 	 */
-	private function make_subscribe_request( $email ) {
+	public function make_subscribe_request( $email ) {
 		$user_status = $this->get_new_user_status_mailchimp( $this->list_id );
 
 		$url = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/members/' . md5( strtolower( $email ) );
@@ -141,7 +141,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 */
 	public function subscribe( $form_data ) {
 
-		$email    = $form_data->get_email_from_form_input();
+		$email    = $form_data->get_first_email_from_input_fields();
 		$response = $this->make_subscribe_request( $email );
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
@@ -159,23 +159,6 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		}
 
 		return $form_data;
-	}
-
-	/**
-	 * Test the subscription by registering a random generated email.
-	 *
-	 * @return Form_Data_Request
-	 * @since 2.0.3
-	 */
-	public function test_subscription() {
-		$req      = new Form_Data_Request();
-		$response = $this->make_subscribe_request( Form_Utils::generate_test_email() );
-
-		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			$req->set_error( Form_Data_Response::get_error_code_message( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR ) );
-		}
-
-		return $req;
 	}
 
 	/**
@@ -282,8 +265,8 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	public function get_information_from_provider( $request ) {
-		if ( $request->is_set( 'action' ) ) {
-			if ( $request->get( 'action' ) == 'listId' ) {
+		if ( $request->is_root_data_set( 'action' ) ) {
+			if ( $request->get_root_data( 'action' ) == 'listId' ) {
 				return $this->get_lists();
 			}
 		}

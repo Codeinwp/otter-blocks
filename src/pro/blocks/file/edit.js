@@ -24,7 +24,8 @@ import Inspector from './inspector.js';
 import { blockInit } from '../../../blocks/helpers/block-utility';
 import { _cssBlock, pullSavedState, setSavedState } from '../../../blocks/helpers/helper-functions';
 import useSettings from '../../../blocks/helpers/use-settings';
-import { select } from '@wordpress/data';
+import { dispatch, select, useSelect } from '@wordpress/data';
+import DeferedWpOptionsSave from '../../../blocks/helpers/defered-wp-options-save';
 
 
 const { attributes: defaultAttributes } = metadata;
@@ -60,51 +61,61 @@ const Edit = ({
 		}
 	}, [ attributes.id ]);
 
-	const blockProps = useBlockProps();
-	const [ getOption, updateOption, status ] = useSettings();
+	const { canSaveData } = useSelect( select => {
+		const isSavingPost = select( 'core/editor' )?.isSavingPost();
+		const isPublishingPost = select( 'core/editor' )?.isPublishingPost();
+		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
+		const widgetSaving = select( 'core/edit-widgets' )?.isSavingWidgetAreas();
+
+		return {
+			canSaveData: ( ! isAutosaving && ( isSavingPost || isPublishingPost ) ) || widgetSaving
+		};
+	});
+
+	const { createNotice } = dispatch( 'core/notices' );
+
+	/**
+	 * Prevent saving data if the block is inside an AI block. This will prevent polluting the wp_options table.
+	 */
+	const isInsideAiBlock = useSelect( select => {
+		const {
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const parents = getBlockParentsByBlockName( clientId, 'themeisle-blocks/content-generator' );
+		return 0 < parents?.length;
+	}, [ clientId ]);
 
 	useEffect( () => {
-		const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
-		const fieldIndex = fieldOptions?.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
-
-		if ( Boolean( window.themeisleGutenberg?.hasPro ) && attributes.fieldOptionName && 'loaded' === status ) {
-
-			/** @type{import('../../../blocks/blocks/form/common').FieldOption[]} */
-			const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
-
-			const fieldIndex = fieldOptions?.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
-
-			if ( fieldIndex === undefined ) {
-				return;
-			}
-
-			const isChanged = pullSavedState( attributes.id, false ) || -1 === fieldIndex;
-
-			if ( isChanged ) {
-				if ( -1 !== fieldIndex ) {
-					fieldOptions[fieldIndex].options.allowedFileTypes = attributes.allowedFileTypes ? attributes.allowedFileTypes : undefined;
-					fieldOptions[fieldIndex].options.maxFileSize = attributes.maxFileSize ? attributes.maxFileSize : undefined;
-					fieldOptions[fieldIndex].options.saveFiles = attributes.saveFiles ? attributes.saveFiles : undefined;
-					fieldOptions[fieldIndex].options.maxFilesNumber = attributes.multipleFiles ? ( attributes.maxFilesNumber ?? 10 ) : undefined;
+		if ( canSaveData && ! isInsideAiBlock ) {
+			( new DeferedWpOptionsSave() ).save( 'field_options', {
+				fieldOptionName: attributes.fieldOptionName,
+				fieldOptionType: 'file',
+				options: {
+					allowedFileTypes: attributes.allowedFileTypes ? attributes.allowedFileTypes : undefined,
+					maxFileSize: Boolean( attributes.multipleFiles ) ? ( attributes.maxFileSize ?? 10 ) : undefined,
+					saveFiles: attributes.saveFiles ? attributes.saveFiles : undefined,
+					maxFilesNumber: attributes.multipleFiles ? ( attributes.maxFilesNumber ?? 10 ) : undefined
+				}
+			}, ( res, error ) => {
+				if ( error ) {
+					createNotice( 'error', __( 'Error saving File Field settings.', 'otter-blocks' ), {
+						isDismissible: true,
+						type: 'snackbar',
+						id: 'file-field-option-error'
+					});
 				} else {
-					fieldOptions.push({
-						fieldOptionName: attributes.fieldOptionName,
-						fieldOptionType: 'file',
-						options: {
-							allowedFileTypes: attributes.allowedFileTypes ? attributes.allowedFileTypes : undefined,
-							maxFileSize: Boolean( attributes.multipleFiles ) ? ( attributes.maxFileSize ?? 10 ) : undefined,
-							saveFiles: attributes.saveFiles ? attributes.saveFiles : undefined,
-							maxFilesNumber: attributes.multipleFiles ? ( attributes.maxFilesNumber ?? 10 ) : undefined
-						}
+					createNotice( 'info', __( 'File Field settings saved.', 'otter-blocks' ), {
+						isDismissible: true,
+						type: 'snackbar',
+						id: 'file-field-option-success'
 					});
 				}
-
-				updateOption( 'themeisle_blocks_form_fields_option', fieldOptions, __( 'Field settings saved.', 'otter-blocks' ), 'field-option' );
-
-				setSavedState( attributes.id, false );
-			}
+			});
 		}
-	}, [ attributes.fieldOptionName, attributes.allowedFileTypes, attributes.maxFileSize, attributes.saveFiles, attributes.multipleFiles, status ]);
+	}, [ canSaveData ]);
+
+	const blockProps = useBlockProps();
 
 	return (
 		<Fragment>

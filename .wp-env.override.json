@@ -6,22 +6,23 @@
   "config": {
     "WP_DEBUG": true,
     "WP_DEBUG_DISPLAY": true,
-    "FS_METHOD": "direct"
+    "FS_METHOD": "direct",
+    "WP_DEFAULT_THEME": "twentytwentythree"
   },
   "env": {
-    "development": {
-      "themes": [
-        "./one-theme"
-      ]
-    },
     "tests": {
+      "config": {
+        "WP_DEBUG": false,
+        "WP_DEBUG_DISPLAY": false
+      },
       "plugins": [
         "."
       ],
       "mappings": {
-				"wp-content/mu-plugins": "./node_modules/@wordpress/e2e-tests/mu-plugins",
-				"wp-content/plugins/gutenberg-test-plugins": "./node_modules/@wordpress/e2e-tests/plugins"
-			}
+          "wp-content/mu-plugins": "./node_modules/@wordpress/e2e-tests/mu-plugins",
+          "wp-content/plugins/gutenberg-test-plugins": "./node_modules/@wordpress/e2e-tests/plugins",
+          "wp-content/themes/gutenberg-test-themes/twentytwentythree": "https://downloads.wordpress.org/theme/twentytwentythree.1.0.zip"
+		}
     }
   }
 }

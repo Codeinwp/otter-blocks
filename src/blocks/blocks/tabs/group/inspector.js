@@ -331,22 +331,22 @@ const Inspector = ({
 									},
 									{
 										value: attributes.activeTitleBackgroundColor,
-										label: __( 'Active Title Tackground', 'otter-blocks' ),
+										label: __( 'Active Title Background', 'otter-blocks' ),
 										slug: 'activeTitleBackgroundColor'
 									},
 									{
 										value: attributes.titleColor ?? attributes.tabColor ?? 'white',
-										label: __( 'Title Color', 'otter-blocks' ),
+										label: __( 'Title', 'otter-blocks' ),
 										slug: 'titleColor'
 									},
 									{
 										value: attributes.activeTitleColor,
-										label: __( 'Active Title Color', 'otter-blocks' ),
+										label: __( 'Active Title', 'otter-blocks' ),
 										slug: 'activeTitleColor'
 									},
 									{
 										value: attributes.contentTextColor,
-										label: __( 'Content Text Color', 'otter-blocks' ),
+										label: __( 'Content Text', 'otter-blocks' ),
 										slug: 'contentTextColor'
 									},
 									{

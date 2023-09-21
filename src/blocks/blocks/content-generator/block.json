@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/content-generator",
+	"title": "AI Block (Beta)",
+	"category": "themeisle-blocks",
+	"description": "Generate content for your block with AI.",
+	"keywords": [
+		"content",
+		"generator",
+		"ai",
+		"layout"
+	],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"promptID": {
+			"type": "string"
+		},
+		"resultHistory": {
+			"type": "array",
+			"default": []
+		}
+	}
+}

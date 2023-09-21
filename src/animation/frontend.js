@@ -208,24 +208,26 @@ window.addEventListener( 'load', () => {
 	}
 
 	window.addEventListener( 'scroll', () => {
-		for ( const element of elements ) {
-			if (
-				element.getBoundingClientRect().top <=
-					window.innerHeight * 0.95 &&
-				0 < element.getBoundingClientRect().top
-			) {
+		requestAnimationFrame( () => {
+			for ( const element of elements ) {
 				if (
-					element.animationClasses &&
-					0 < element.animationClasses.length
+					element.getBoundingClientRect().top <=
+						window.innerHeight * 0.95 &&
+					0 < element.getBoundingClientRect().top
 				) {
-					const classes = element.animationClasses;
-					classes.forEach( ( i ) => element.classList.add( i ) );
+					if (
+						element.animationClasses &&
+						0 < element.animationClasses.length
+					) {
+						const classes = element.animationClasses;
+						classes.forEach( ( i ) => element.classList.add( i ) );
 
-					element.classList.remove( 'hidden-animated' );
-					delete element.animationClasses;
+						element.classList.remove( 'hidden-animated' );
+						delete element.animationClasses;
+					}
 				}
 			}
-		}
+		});
 	});
 });
 

@@ -8,6 +8,7 @@ on:
 jobs:
     deploy:
         runs-on: ubuntu-latest
+        if: ${{ github.repository_owner == 'Codeinwp' }} # Disable on forks
         env:
             SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
             SSH_KEY: ${{ secrets.SSH_KEY }}

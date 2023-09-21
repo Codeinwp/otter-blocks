@@ -1,0 +1,43 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/form-stripe-field",
+	"title": "Stripe Field",
+	"category": "themeisle-blocks",
+	"description": "A field used for adding Stripe products to the form.",
+	"keywords": [ "product", "stripe", "field" ],
+	"textdomain": "otter-blocks",
+	"ancestor": [ "themeisle-blocks/form" ],
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"fieldOptionName": {
+			"type": "string"
+		},
+		"type": {
+			"type": "string"
+		},
+		"label": {
+			"type": "string"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"mappedName": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "number"
+		},
+		"product": {
+			"type": "string"
+		},
+		"price": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	}
+}

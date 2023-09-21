@@ -295,6 +295,50 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 						</div>
 
 					</ToolsPanelItem>
+					<ToolsPanelItem
+						hasValue={ () => undefined !== formOptions.webhookId }
+						label={ __( 'Webhook', 'otter-blocks' ) }
+						onDeselect={ () => setFormOption({ webhookId: undefined }) }
+						isShownByDefault={ true }
+					>
+						<SelectControl
+							label={ __( 'Webhook', 'otter-blocks' ) }
+							disabled
+							value={ undefined }
+							options={
+								[
+									{
+										label: __( 'Select Webhook', 'otter-blocks' ),
+										value: ''
+									}
+								]
+
+							}
+							onChange={ undefined }
+						/>
+						< br />
+						<Button
+							variant="secondary"
+							onClick={undefined}
+							disabled
+							className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
+						>
+							{ __( 'Edit Webhooks', 'otter-blocks' ) }
+						</Button>
+
+						< br />
+						<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation">
+							{ __( 'Learn more about webhooks.', 'otter-blocks' ) }
+						</ExternalLink>
+
+						<div>
+							<Notice
+								notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+								variant="upsell"
+							/>
+							<p className="description">{ __( 'Trigger webhooks on Form submit action.', 'otter-blocks' ) }</p>
+						</div>
+					</ToolsPanelItem>
 				</Fragment>
 			) }
 		</Fragment>
@@ -984,7 +1028,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={'inputBorderRadius'}>
 								<BoxControl
-									label={ __( 'Border Radius', 'otter-blocks' ) }
+									label={ __( 'Radius', 'otter-blocks' ) }
 									values={ ! isObjectLike( attributes.inputBorderRadius ) ? makeBox( _px( attributes.inputBorderRadius ?? 4 ) ) : attributes.inputBorderRadius }
 									onChange={ inputBorderRadius  => setAttributes({ inputBorderRadius }) }
 									id="o-border-raduis-box"
@@ -993,7 +1037,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={'inputBorderWidth'}>
 								<BoxControl
-									label={ __( 'Border Width', 'otter-blocks' ) }
+									label={ __( 'Width', 'otter-blocks' ) }
 									values={ ! isObjectLike( attributes.inputBorderWidth ) ? makeBox( _px( attributes.inputBorderWidth ?? 1 ) ) : attributes.inputBorderWidth }
 									onChange={ inputBorderWidth  => setAttributes({ inputBorderWidth }) }
 								/>
@@ -1021,7 +1065,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={ 'helpFontSize' }>
 								<BaseControl
-									label={ __( 'Helper Text Size', 'otter-blocks' ) }
+									label={ __( 'Helper Text', 'otter-blocks' ) }
 								>
 									<FontSizePicker
 										fontSizes={ defaultFontSizes }
@@ -1034,7 +1078,7 @@ const Inspector = ({
 
 							<AutoDisableSyncAttr attributes={ attributes } attr={ 'messageFontSize' }>
 								<BaseControl
-									label={ __( 'Success/Error Message Size', 'otter-blocks' ) }
+									label={ __( 'Success/Error Message', 'otter-blocks' ) }
 								>
 									<FontSizePicker
 										fontSizes={ defaultFontSizes }

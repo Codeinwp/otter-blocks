@@ -112,7 +112,7 @@ const Inspector = ({
 
 	const changeBoxShadowColor = value => {
 		setAttributes({
-			boxShadowColor: ( 100 > attributes.boxShadowColorOpacity && attributes.boxShadowColor?.includes( 'var(' ) ) ?
+			boxShadowColor: ( 100 > attributes.boxShadowColorOpacity && value?.includes( 'var(' ) ) ?
 				getComputedStyle( document.documentElement, null ).getPropertyValue( value?.replace( 'var(', '' )?.replace( ')', '' ) ) :
 				value
 		});
@@ -290,7 +290,7 @@ const Inspector = ({
 								( 'front' === currentSide && ! Boolean( attributes.isInverted ) ) || ( 'back' === currentSide && Boolean( attributes.isInverted ) ) ? (
 									<Fragment>
 										<BaseControl
-											label={ __( 'Vertical Alignment', 'otter-blocks' ) }
+											label={ __( 'Vertical', 'otter-blocks' ) }
 										>
 											<ToogleGroupControl
 
@@ -314,7 +314,7 @@ const Inspector = ({
 										</BaseControl>
 
 										<BaseControl
-											label={ __( 'Horizontal Alignment', 'otter-blocks' ) }
+											label={ __( 'Horizontal', 'otter-blocks' ) }
 										>
 											<ToogleGroupControl
 												options={[
@@ -339,7 +339,7 @@ const Inspector = ({
 									</Fragment>
 								) : (
 									<BaseControl
-										label={ __( 'Vertical Alignment', 'otter-blocks' ) }
+										label={ __( 'Vertical', 'otter-blocks' ) }
 									>
 										<ToogleGroupControl
 
@@ -544,19 +544,19 @@ const Inspector = ({
 								{
 									value: attributes.borderColor,
 									onChange: borderColor => setAttributes({ borderColor }),
-									label: __( 'Border Color', 'otter-blocks' ),
+									label: __( 'Border', 'otter-blocks' ),
 									isShownByDefault: false
 								},
 								{
 									value: attributes.titleColor,
 									onChange: titleColor => setAttributes({ titleColor }),
-									label: __( 'Title Color', 'otter-blocks' ),
+									label: __( 'Title', 'otter-blocks' ),
 									isShownByDefault: false
 								},
 								{
 									value: attributes.descriptionColor,
 									onChange: descriptionColor => setAttributes({ descriptionColor }),
-									label: __( 'Description Color', 'otter-blocks' ),
+									label: __( 'Description', 'otter-blocks' ),
 									isShownByDefault: false
 								}
 							] }
@@ -567,7 +567,7 @@ const Inspector = ({
 							initialOpen={ false }
 						>
 							<BoxControl
-								label={ __( 'Border Width', 'otter-blocks' ) }
+								label={ __( 'Width', 'otter-blocks' ) }
 								values={
 									mergeBoxDefaultValues(
 										numberToBox( attributes.borderWidth ),
@@ -584,7 +584,7 @@ const Inspector = ({
 
 							<BoxControl
 								id="o-border-raduis-box"
-								label={ __( 'Border Radius', 'otter-blocks' ) }
+								label={ __( 'Radius', 'otter-blocks' ) }
 								values={
 									mergeBoxDefaultValues(
 										numberToBox( attributes.borderRadius ),
