@@ -438,6 +438,7 @@ function AnimationControls({
 											}
 										]
 									}
+									help={ triggerOffsetValue?.endsWith( '%' ) ? __( 'Is the percentage of the screen height. E.g: with 50% the animation will trigger after passing the middle of screen.', 'otter-blocks' ) : '' }
 								/>
 							)
 						}
