@@ -1,4 +1,5 @@
 import { BlockProps, InspectorProps, BoxShadow } from '../../helpers/blocks';
+import { BoxBorder, BoxPadding } from '../../common';
 
 type Attributes = {
 	id: string
@@ -54,6 +55,20 @@ type Attributes = {
 	paddingMobile: string
 	contentGap: string
 	featuredPostOrder: string
+	hasPagination: boolean
+	pagColor: string
+	pagBgColor: string
+	pagColorHover: string
+	pagBgHoverColor: string
+	pagColorActive: string
+	pagBgColorActive: string
+	pagPadding: BoxPadding
+	pagGap: string
+	pagBorderRadius: BoxBorder
+	pagBorderWidth: BoxBorder
+	pagBorderColor: string
+	pagBorderColorHover: string
+	pagBorderColorActive: string
 }
 
 export type PostProps = BlockProps<Attributes>

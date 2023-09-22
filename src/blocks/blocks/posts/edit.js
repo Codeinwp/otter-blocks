@@ -296,6 +296,56 @@ const Edit = ({
 						categoriesList={ categoriesList }
 						authors={ authors }
 					/>
+
+					{
+						attributes.hasPagination && (
+							<div className='o-posts-grid-pag'>
+								<div class="o-posts-grid-pag-btn">
+									<a>
+										{
+											__( 'Prev', 'otter-blocks' )
+										}
+									</a>
+								</div>
+								<div class="o-posts-grid-pag-btn">
+									<a>
+										{
+											__( '1', 'otter-blocks' )
+										}
+									</a>
+								</div>
+								<div class="o-posts-grid-pag-btn" aria-current="page" >
+									<a>
+										{
+											__( '2', 'otter-blocks' )
+										}
+									</a>
+								</div>
+								<div class="o-posts-grid-pag-btn">
+									<a>
+										{
+											__( '3', 'otter-blocks' )
+										}
+									</a>
+								</div>
+								...
+								<div class="o-posts-grid-pag-btn">
+									<a>
+										{
+											__( '8', 'otter-blocks' )
+										}
+									</a>
+								</div>
+								<div class="o-posts-grid-pag-btn">
+									<a>
+										{
+											__( 'Prev', 'otter-blocks' )
+										}
+									</a>
+								</div>
+							</div>
+						)
+					}
 				</Disabled>
 			</div>
 		);
