@@ -152,7 +152,7 @@ class Posts_Grid_Block {
 			isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? $this->render_featured_post( $recent_posts[0], $attributes ) : '',
 			trim( $class ),
 			$list_items_markup,
-			$this->render_pagination( $uri, $page_number, ceil( $total_posts / $attributes['postsToShow'] ) )
+			$this->render_pagination( $uri, $page_number, intval( ceil( $total_posts / $attributes['postsToShow'] ) ) )
 		);
 
 		// TODO: Remove after QA.
@@ -446,7 +446,7 @@ class Posts_Grid_Block {
 			}
 			$current_btn++;
 
-			if ( $current_btn > $skip_trigger && ! $skip ) {
+			if ( $current_btn > $skip_trigger ) {
 				$current_btn = $total_pages - 1;
 				$skip        = true;
 			}
