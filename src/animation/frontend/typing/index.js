@@ -109,16 +109,15 @@ domReady( () => {
 		.o-anim-typing-caret::after {
 			font-weight: 100;
 			content: '|';
-			color: #2E3D48;
 			animation: 1s blink step-end infinite;
 		}
-	
+
 		@keyframes blink {
 			from, to {
 			  color: transparent;
 		   }
 			50% {
-			  color: black;
+			  color: inherit;
 		   }
 		}
 	`;
