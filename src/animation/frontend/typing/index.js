@@ -67,7 +67,6 @@ const initTyping = ( elem ) => {
 	const typingPlaceholder = document.createElement( 'span' );
 	typingPlaceholder.classList.add( 'o-anim-typing-caret' );
 	typingPlaceholder.style.whiteSpace = 'pre-wrap';
-	typingPlaceholder.style.color = 'inherit';
 
 	const fillPlaceholder = document.createElement( 'span' );
 	fillPlaceholder.style.whiteSpace = 'pre-wrap';
@@ -110,7 +109,6 @@ domReady( () => {
 		.o-anim-typing-caret::after {
 			font-weight: 100;
 			content: '|';
-			color: #2E3D48;
 			animation: 1s blink step-end infinite;
 		}
 
@@ -119,7 +117,7 @@ domReady( () => {
 			  color: transparent;
 		   }
 			50% {
-			  color: black;
+			  color: inherit;
 		   }
 		}
 	`;
