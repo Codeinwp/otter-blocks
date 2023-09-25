@@ -596,7 +596,7 @@ class Block_Frontend extends Base_CSS {
 		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
 
 		foreach ( $templates_parts as $templates_part ) {
-			if ( isset( $templates_part->content ) && isset( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {
+			if ( ! empty( $templates_part->content ) && ! empty( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {
 				$content .= $templates_part->content;
 			}
 		}
