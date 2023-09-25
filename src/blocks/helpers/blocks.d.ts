@@ -1,16 +1,17 @@
 import { Dispatch, SetStateAction } from 'react';
 
 export type BlockProps<T> = {
-	attributes: Partial< T & { className?: string }>
+	attributes: Partial< T & { className?: string }> & Record<string, unknown>
 	setAttributes: ( attributes: Partial<T & { className?: string }> ) => void
 	isSelected: boolean
 	clientId: string
 	name: string
 	toggleSelection: ( value: boolean ) => void
+	innerBlocks: BlockProps<unknown>[]
 }
 
 export interface InspectorProps<T> {
-	attributes: Partial<T> & { className?: string }
+	attributes: Partial<T> & { className?: string } & Record<string, unknown>
 	setAttributes: ( attributes: Partial<T> ) => void
 }
 

@@ -120,6 +120,15 @@ const WelcomeGuide = () => {
 					)
 				},
 				{
+					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-ai.png' } />,
+					content: (
+						<Fragment>
+							<h1 className="o-welcome-guide__heading">{ __( 'Create amazing things in less time with AI', 'otter-blocks' ) }</h1>
+							<p className="o-welcome-guide__text">{ __( 'Supercharge your productivity with our new AI Block, which can generate forms for you in seconds. More features are coming soon.', 'otter-blocks' ) }</p>
+						</Fragment>
+					)
+				},
+				{
 					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-section.png' } />,
 					content: (
 						<Fragment>

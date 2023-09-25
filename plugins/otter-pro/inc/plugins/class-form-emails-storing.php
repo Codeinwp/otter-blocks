@@ -8,6 +8,9 @@
 namespace ThemeIsle\OtterPro\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
+use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
 use WP_Post;
 use WP_Query;
@@ -44,6 +47,7 @@ class Form_Emails_Storing {
 		add_action( 'init', array( $this, 'create_form_records_type' ) );
 		add_action( 'admin_init', array( $this, 'set_form_records_cap' ), 10, 0 );
 		add_action( 'otter_form_after_submit', array( $this, 'store_form_record' ) );
+
 		add_action( 'admin_head', array( $this, 'add_style' ) );
 
 		// Customize the wp_list_table.
@@ -67,6 +71,13 @@ class Form_Emails_Storing {
 		add_action( 'add_meta_boxes', array( $this, 'add_form_record_meta_box' ) );
 		add_action( 'admin_menu', array( $this, 'handle_admin_menu' ) );
 		add_action( 'save_post', array( $this, 'form_record_save_meta_box' ), 10, 2 );
+
+		add_filter( 'otter_form_record_confirm', array( $this, 'confirm_submission' ), 10, 2 );
+
+		add_action( 'draft_to_unread', array( $this, 'apply_hooks_on_draft_transition' ), 10 );
+		add_action( 'otter_form_update_record_meta_dump', array( $this, 'update_submission_dump_data' ), 10, 2 );
+		add_action( 'otter_form_automatic_confirmation', array( $this, 'move_old_stripe_draft_sessions_to_unread' ) );
+		add_action( 'wp', array( $this, 'schedule_automatic_confirmation' ) );
 	}
 
 	/**
@@ -175,20 +186,24 @@ class Form_Emails_Storing {
 			return $form_data;
 		}
 
-		$form_options = $form_data->get_form_options();
+		$form_options = $form_data->get_wp_options();
 
 		if ( ! isset( $form_options ) ) {
 			return $form_data;
 		}
 
-		if ( false === strpos( $form_options->get_submissions_save_location(), 'database' ) ) {
+		if ( $form_data->is_duplicate() ) {
+			return $form_data;
+		}
+
+		if ( false === strpos( $form_options->get_submissions_save_location(), 'database' ) && ! $form_data->is_temporary() ) {
 			return $form_data;
 		}
 
 		$post_id = wp_insert_post(
 			array(
 				'post_type'   => self::FORM_RECORD_TYPE,
-				'post_status' => 'unread',
+				'post_status' => $form_data->is_temporary() ? 'draft' : 'unread',
 			)
 		);
 
@@ -206,20 +221,24 @@ class Form_Emails_Storing {
 
 		$meta = array(
 			'form'     => array(
-				'label' => 'Form',
-				'value' => $form_data->get_payload_field( 'formId' ),
+				'label' => __( 'Form', 'otter-blocks' ),
+				'value' => $form_data->get_data_from_payload( 'formId' ),
 			),
 			'post_url' => array(
-				'label' => 'Post URL',
-				'value' => $form_data->get_payload_field( 'postUrl' ),
+				'label' => __( 'Post URL', 'otter-blocks' ),
+				'value' => $form_data->get_data_from_payload( 'postUrl' ),
 			),
 			'post_id'  => array(
-				'label' => 'Post ID',
-				'value' => $form_data->get_payload_field( 'postId' ),
+				'label' => __( 'Post ID', 'otter-blocks' ),
+				'value' => $form_data->get_data_from_payload( 'postId' ),
+			),
+			'dump'     => array(
+				'label' => __( 'Dumped data', 'otter-blocks' ),
+				'value' => $form_data->is_temporary() ? $form_data->dump_data() : array(),
 			),
 		);
 
-		$form_inputs    = $form_data->get_form_inputs();
+		$form_inputs    = $form_data->get_fields();
 		$uploaded_files = $form_data->get_uploaded_files_path();
 		$media_files    = $form_data->get_files_loaded_to_media_library();
 
@@ -273,6 +292,9 @@ class Form_Emails_Storing {
 		}
 
 		add_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
+
+		$form_data->metadata['otter_form_record_id'] = $post_id;
+
 		return $form_data;
 	}
 
@@ -699,13 +721,24 @@ class Form_Emails_Storing {
 		$meta                  = get_post_meta( $post->ID, self::FORM_RECORD_META_KEY, true );
 		$previous_field_option = '';
 
+
 		if ( empty( $meta ) ) {
 			return;
 		}
+
+		$inputs = array();
+		foreach ( $meta['inputs'] as $id => $field ) {
+			if ( empty( $field ) || 'stripe-field' === $field['type'] ) {
+				continue;
+			}
+
+			$inputs[ $id ] = $field;
+		}
+
 		?>
 		<table class="otter_form_record_meta form-table" style="border-spacing: 10px; width: 100%">
 			<tbody>
-				<?php foreach ( $meta['inputs'] as $id => $field ) { ?>
+				<?php foreach ( $inputs as $id => $field ) { ?>
 					<tr>
 						<th scope="row">
 							<label for="<?php echo esc_attr( $id ); ?>">
@@ -788,6 +821,18 @@ class Form_Emails_Storing {
 					</a>
 					<?php
 				}
+				break;
+			case 'hidden':
+				?>
+				<input
+					style="width: 100%; max-width: 350px;"
+					name="<?php echo esc_attr( 'otter_meta_' . $id ); ?>"
+					id="<?php echo intval( $id ); ?>"
+					type="text"
+					class="otter_form_record_meta__value"
+					value="<?php echo esc_html( $field['value'] ); ?>"
+				/>
+				<?php
 				break;
 			default:
 				?>
@@ -1080,6 +1125,204 @@ class Form_Emails_Storing {
 		}
 
 		echo wp_kses_post( $content );
+	}
+
+	/**
+	 * Confirm submission.
+	 *
+	 * @param Form_Data_Response $response The response.
+	 * @param \WP_REST_Request   $request The request.
+	 * @return Form_Data_Response
+	 */
+	public function confirm_submission( $response, $request ) {
+
+		$session_id = $request->get_param( 'stripe_checkout' );
+
+		$stripe = new Stripe_API();
+
+		$stripe_response = $stripe->create_request( 'get_session', $session_id );
+
+		if ( is_wp_error( $stripe_response ) ) {
+			$response->set_code( Form_Data_Response::ERROR_STRIPE_CHECKOUT_SESSION_NOT_FOUND );
+			return $response;
+		}
+
+		$is_paid = 'paid' === $stripe_response->payment_status;
+
+		if ( ! $is_paid ) {
+			$response->set_code( Form_Data_Response::ERROR_STRIPE_PAYMENT_UNPAID );
+			return $response;
+		}
+
+		$record_id = $stripe_response->metadata['otter_form_record_id'];
+
+		if ( empty( $record_id ) ) {
+			$response->set_code( Form_Data_Response::ERROR_STRIPE_METADATA_RECORD_NOT_FOUND );
+			return $response;
+		}
+
+		if ( isset( $stripe_response->metadata['otter_redirect_link'] ) ) {
+			$response->add_response_field( 'redirectLink', $stripe_response->metadata['otter_redirect_link'] );
+		}
+
+		$post_status = get_post_status( $record_id );
+
+		// If the post status is not 'draft', then the submission has already been confirmed.
+		if ( 'draft' !== $post_status ) {
+			$response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+			$response->mark_as_success();
+			return $response;
+		}
+
+		wp_update_post(
+			array(
+				'ID'          => $record_id,
+				'post_status' => 'unread',
+			)
+		);
+
+		$response->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+		$response->mark_as_success();
+
+		return $response;
+	}
+
+	/**
+	 * Apply the 'after_submit' action when changing the status from 'draft' to 'unread'.
+	 *
+	 * @param WP_Post $post The post.
+	 */
+	public function apply_hooks_on_draft_transition( $post ) {
+		if ( self::FORM_RECORD_TYPE !== $post->post_type ) {
+			return;
+		}
+
+		$meta = get_post_meta( $post->ID, self::FORM_RECORD_META_KEY, true );
+
+		if ( ! isset( $meta['dump'] ) || empty( $meta['dump']['value'] ) ) {
+			return;
+		}
+
+		$form_data = Form_Data_Request::create_from_dump( $meta['dump']['value'] );
+		$form_data->mark_as_duplicate();
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_data_from_payload( 'formOption' ) );
+		$form_data->set_form_options( $form_options );
+		$form_data = Form_Server::pull_fields_options_for_form( $form_data );
+
+		do_action( 'otter_form_on_submission_confirmed', $form_data );
+
+		if (
+			! isset( $form_data ) ||
+			( ! class_exists( 'ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request' ) ) ||
+			! ( $form_data instanceof \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request )
+		) {
+			return;
+		}
+
+		do_action( 'otter_form_after_submit', $form_data );
+	}
+
+	/**
+	 * Update the submission dump data.
+	 *
+	 * @param Form_Data_Request $form_data The form data.
+	 * @param int               $record_id The record ID.
+	 */
+	public function update_submission_dump_data( $form_data, $record_id ) {
+
+		if ( ! get_post( $record_id ) ) {
+			return;
+		}
+
+		$meta = get_post_meta( $record_id, self::FORM_RECORD_META_KEY, true );
+		$meta = is_array( $meta ) ? $meta : array();
+		$meta = array_merge(
+			$meta,
+			array(
+				'dump' => array(
+					'label' => 'Dumped data',
+					'value' => $form_data->is_temporary() ? $form_data->dump_data() : array(),
+				),
+			)
+		);
+		update_post_meta( $record_id, self::FORM_RECORD_META_KEY, $meta );
+	}
+
+	/**
+	 * Move old drafts to unread.
+	 */
+	public function move_old_stripe_draft_sessions_to_unread() {
+		$now = current_time( 'mysql' );
+
+		// Calculate the time 15 minutes ago.
+		$time_15_minutes_ago = date( 'Y-m-d H:i:s', strtotime( '-15 minutes', strtotime( $now ) ) );
+
+		$args = array(
+			'post_type'      => self::FORM_RECORD_TYPE,
+			'post_status'    => 'draft',
+			'posts_per_page' => 10,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+			'date_query'     => array(
+				'before' => $time_15_minutes_ago,
+			),
+		);
+
+		$query = new WP_Query( $args );
+		if ( $query->have_posts() ) {
+
+			try {
+				$stripe = new Stripe_API();
+
+				while ( $query->have_posts() ) {
+					$query->the_post();
+
+					// Get the meta data.
+					$meta = get_post_meta( get_the_ID(), self::FORM_RECORD_META_KEY, true );
+
+					// Check if we have a Stripe session id in the meta dump data.
+					if ( ! isset( $meta['dump']['value']['metadata']['otter_form_stripe_checkout_session_id'] ) ) {
+						continue;
+					}
+
+					$stripe_checkout_session_id = $meta['dump']['value']['metadata']['otter_form_stripe_checkout_session_id'];
+
+					// Check if the session has status of paid.
+					$session = $stripe->create_request( 'get_session', $stripe_checkout_session_id );
+
+					if ( is_wp_error( $session ) ) {
+						continue;
+					}
+
+					$is_paid = isset( $session->payment_status ) && 'paid' === $session->payment_status;
+
+					if ( ! $is_paid ) {
+						continue;
+					}
+
+					wp_update_post(
+						array(
+							'ID'          => get_the_ID(),
+							'post_status' => 'unread',
+						)
+					);
+				}
+			} catch ( \Exception $e ) {
+				// Do nothing.
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Schedule the automatic confirmation.
+	 *
+	 * @return void
+	 */
+	public function schedule_automatic_confirmation() {
+		if ( ! wp_next_scheduled( 'otter_form_automatic_confirmation' ) ) {
+			wp_schedule_event( time(), 'hourly', 'otter_form_automatic_confirmation' );
+		}
 	}
 
 	/**

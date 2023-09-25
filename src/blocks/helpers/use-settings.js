@@ -106,8 +106,9 @@ const useSettings = () => {
 					}
 				);
 			}
-			onSuccess?.( response );
+
 			getSettings();
+			onSuccess?.( response );
 		});
 
 		save.error( ( response ) => {
