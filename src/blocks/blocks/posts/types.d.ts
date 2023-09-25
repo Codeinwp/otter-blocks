@@ -69,6 +69,7 @@ type Attributes = {
 	pagBorderColor: string
 	pagBorderColorHover: string
 	pagBorderColorActive: string
+	pagSize: string
 }
 
 export type PostProps = BlockProps<Attributes>

@@ -39,6 +39,7 @@
 	--content-padding-tablet: var( --content-padding );
 	--content-padding-mobile: var( --content-padding-tablet );
 
+	--pag-size: 16px;
 	--pag-color: inherit;
 	--pag-bg-color: transparent;
 	--pag-color-hover: var(--pag-color);
@@ -274,11 +275,13 @@
 
 		display: flex;
 		flex-direction: row;
+		flex-wrap: wrap;
 		justify-content: center;
 		align-items: baseline;
 		width: 100%;
 		gap: var(--pag-gap);
 		color: var(--pag-color);
+		font-size: var(--pag-size);
 
 		.o-pag-item:not(.o-dots) {
 			background-color: var(--pag-bg-color);

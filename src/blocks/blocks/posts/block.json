@@ -316,6 +316,9 @@
 					"type": "string"
 				}
 			}
+		},
+		"pagSize": {
+			"type": "string"
 		}
 	},
 	"supports": {

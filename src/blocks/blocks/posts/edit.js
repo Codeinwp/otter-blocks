@@ -257,7 +257,8 @@ const Edit = ({
 		'--pag-border-radius': boxValues( attributes.pagBorderRadius ),
 		'--pag-border-width': boxValues( attributes.pagBorderWidth ),
 		'--pag-padding': boxValues( attributes.pagPadding, { top: '5px', right: '15px', bottom: '5px', left: '15px' }),
-		'--pag-gap': attributes.pagGap
+		'--pag-gap': attributes.pagGap,
+		'--pag-size': attributes.pagSize
 	};
 
 	const blockProps = useBlockProps();

@@ -354,6 +354,10 @@ class Posts_CSS extends Base_CSS {
 						'value'    => 'pagBorderColorActive',
 					),
 					array(
+						'property' => '--pag-size',
+						'value'    => 'pagSize',
+					),
+					array(
 						'property' => '--pag-border-radius',
 						'value'    => 'pagBorderRadius',
 						'format'   => function( $value, $attrs ) {
