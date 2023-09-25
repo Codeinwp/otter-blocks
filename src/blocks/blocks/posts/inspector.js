@@ -50,6 +50,7 @@ import {
 } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { useTabSwitch } from '../../helpers/block-utility';
+import { makeBox } from '../../plugins/copy-paste/utils';
 
 const styles = [
 	{
@@ -446,7 +447,7 @@ const Inspector = ({
 							},
 							{
 								value: attributes.pagColorActive,
-								onChange: pagActiveColor => setAttributes({ pagActiveColor }),
+								onChange: pagColorActive => setAttributes({ pagColorActive }),
 								label: __( 'Pagination Active Link', 'otter-blocks' ),
 								isShownByDefault: false
 							},
@@ -533,7 +534,7 @@ const Inspector = ({
 								label={ __( 'Column Gap', 'otter-blocks' ) }
 							>
 								<UnitContol
-									value={ responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ]) }
+									value={ responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ]) ?? '30px' }
 									onChange={ value => responsiveSetAttributes( value, [ 'columnGap', 'columnGapTablet', 'columnGapMobile' ]) }
 								/>
 
@@ -548,7 +549,7 @@ const Inspector = ({
 							label={ __( 'Row Gap', 'otter-blocks' ) }
 						>
 							<UnitContol
-								value={ responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ]) }
+								value={ responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ]) ?? '30px' }
 								onChange={ value => responsiveSetAttributes( value, [ 'rowGap', 'rowGapTablet', 'rowGapMobile' ]) }
 							/>
 
@@ -588,14 +589,14 @@ const Inspector = ({
 								<Fragment>
 									<RangeControl
 										label={ __( 'Pagination Gap', 'otter-blocks' ) }
-										value={ attributes.pagGap ? parseInt( attributes.pagGap ) : 10 }
+										value={ attributes.pagGap ? parseInt( attributes.pagGap ) : 5 }
 										onChange={ pagGap => setAttributes({ pagGap: pagGap + 'px' }) }
 										min={ 0 }
 										max={ 50 }
 									/>
 									<BoxControl
 										label={ __( 'Pagination Padding', 'otter-blocks' ) }
-										values={ attributes.pagPadding }
+										values={ attributes.pagPadding ?? { top: '5px', right: '15px', bottom: '5px', left: '15px' } }
 										onChange={ pagPadding => setAttributes({ pagPadding }) }
 										allowReset
 									/>
@@ -610,7 +611,7 @@ const Inspector = ({
 					>
 						<UnitContol
 							label={ __( 'Width', 'otter-blocks' ) }
-							value={ attributes.borderWidth }
+							value={ attributes.borderWidth ?? '0px' }
 							onChange={ borderWidth => setAttributes({ borderWidth }) }
 						/>
 
@@ -621,7 +622,7 @@ const Inspector = ({
 
 						<BoxControl
 							label={ __( 'Radius', 'otter-blocks' ) }
-							value={ attributes.cardBorderRadius }
+							values={ attributes.cardBorderRadius ?? makeBox( '0px' )  }
 							onChange={ cardBorderRadius => setAttributes({ cardBorderRadius }) }
 							id="o-border-raduis-box"
 						/>
@@ -631,14 +632,14 @@ const Inspector = ({
 								<Fragment>
 									<BoxControl
 										label={ __( 'Pagination Border Radius', 'otter-blocks' ) }
-										values={ attributes.pagBorderRadius }
+										values={ attributes.pagBorderRadius ?? makeBox( '0px' ) }
 										onChange={ pagBorderRadius => setAttributes({ pagBorderRadius }) }
 										id="o-border-raduis-box"
 										allowReset
 									/>
 									<BoxControl
 										label={ __( 'Pagination Border Width', 'otter-blocks' ) }
-										values={ attributes.pagBorderWidth }
+										values={ attributes.pagBorderWidth ?? makeBox( '0px' ) }
 										onChange={ pagBorderWidth => setAttributes({ pagBorderWidth }) }
 										allowReset
 									/>

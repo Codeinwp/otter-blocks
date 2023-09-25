@@ -47,11 +47,11 @@
 	--pag-bg-color-active: rgba(0,0,0,0.1);
 
 	--pag-border-color: transparent;
+	--pag-border-color-hover: var(--pag-border-color); // TODO: add handles for this.
 	--pag-border-color-active: var(--pag-border-color);
 
 	--pag-border-radius: 0;
 	--pag-border-width: 0;
-	--pag-margin: 0;
 	--pag-padding: 5px 15px;
 	--pag-gap: 5px;
 
@@ -275,40 +275,37 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
+		align-items: baseline;
 		width: 100%;
-		gap: var( --pag-gap );
-	}
+		gap: var(--pag-gap);
+		color: var(--pag-color);
 
-	.o-posts-grid-pag-btn {
-		background-color: var( --pag-bg-color );
-		border-color: var( --pag-border-color );
-		border-radius: var( --pag-border-radius );
-		border-width: var( --pag-border-width );
-		margin: var( --pag-margin );
-		padding: var( --pag-padding );
+		.o-pag-item:not(.o-dots) {
+			background-color: var(--pag-bg-color);
+			border-color: var(--pag-border-color);
+			border-radius: var(--pag-border-radius);
+			border-width: var(--pag-border-width);
+			padding: var(--pag-padding);
 
-		text-align: center;
-
-		a {
 			text-decoration: none;
-			color: var( --pag-color );
-		}
+			color: inherit;
+			border-style: solid;
+			box-sizing: border-box;
+			text-align: center;
+			margin: 0;
 
-		&[aria-current="page"] {
-			background-color: var( --pag-bg-color-active );
-			border-color: var( --pag-border-color-active );
+			&:hover {
+				background-color: var(--pag-bg-color-hover);
+				border-color: var(--pag-border-color-hover);
 
-			a {
-				color: var( --pag-color-active );
+				color: var(--pag-color-hover);
 			}
-		}
 
-		&:hover {
-			background-color: var( --pag-bg-color-hover );
-			border-color: var( --pag-border-color-hover );
+			&[aria-current="page"] {
+				background-color: var(--pag-bg-color-active);
+				border-color: var(--pag-border-color-active);
 
-			a {
-				color: var( --pag-color-hover );
+				color: var(--pag-color-active);
 			}
 		}
 	}

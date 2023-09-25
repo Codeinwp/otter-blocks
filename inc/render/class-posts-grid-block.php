@@ -23,6 +23,8 @@ class Posts_Grid_Block {
 	 */
 	public function render( $attributes ) {
 
+		$start_time = microtime( true );
+
 		$uri = esc_url_raw( $_SERVER['REQUEST_URI'] );
 
 		if ( preg_match( '#/page/(\d+)$#', $uri, $matches ) ) {
@@ -152,6 +154,11 @@ class Posts_Grid_Block {
 			$list_items_markup,
 			$this->render_pagination( $uri, $page_number, ceil( $total_posts / $attributes['postsToShow'] ) )
 		);
+
+		// TODO: Remove after QA.
+		$end_time       = microtime( true );
+		$elapsed_time   = $end_time - $start_time;
+		$block_content .= '<!-- Rendered in ' . $elapsed_time . ' seconds -->';
 
 		return $block_content;
 	}
@@ -418,23 +425,25 @@ class Posts_Grid_Block {
 		$output = '<div class="o-posts-grid-pag">';
 
 		if ( $page_number > 1 ) {
-			$output .= '<div class="o-posts-grid-pag-btn">';
-			$output .= '<a href="' . $url . '/page/' . ( $page_number - 1 ) . '">';
+			$output .= '<a class="o-pag-item" href="' . $url . '/page/' . ( $page_number - 1 ) . '">';
 			$output .= __( 'Prev', 'otter-blocks' );
 			$output .= '</a>';
-			$output .= '</div>';
 		}
 
 		$current_btn  = 1;
-		$skip 	      = false;
+		$skip         = false;
 		$skip_trigger = 5;
 
 		while ( $current_btn <= $total_pages && ! $skip ) {
-			$output .= '<div class="o-posts-grid-pag-btn"' . ( $current_btn === $page_number ? ' aria-current="page"' : '' ) . '>';
-			$output .= '<a href="' . $url . 'page/' . $current_btn . '">';
-			$output .= $current_btn;
-			$output .= '</a>';
-			$output .= '</div>';
+			if ( $current_btn === $page_number ) {
+				$output .= '<span class="o-pag-item" aria-current="page" >';
+				$output .= $current_btn;
+				$output .= '</span>';
+			} else {
+				$output .= '<a class="o-pag-item" href="' . $url . 'page/' . $current_btn . '">';
+				$output .= $current_btn;
+				$output .= '</a>';
+			}
 			$current_btn++;
 
 			if ( $current_btn > $skip_trigger && ! $skip ) {
@@ -444,20 +453,16 @@ class Posts_Grid_Block {
 		}
 
 		if ( $skip ) {
-			$output .= '...';
-			$output .= '<div class="o-posts-grid-pag-btn">';
-			$output .= '<a href="' . $url . 'page/' . $current_btn . '">';
+			$output .= '<span class="o-pag-item o-dots">...</span>';
+			$output .= '<a class="o-pag-item" href="' . $url . 'page/' . $current_btn . '">';
 			$output .= $total_pages;
 			$output .= '</a>';
-			$output .= '</div>';
 		}
 
 		if ( $page_number < $total_pages ) {
-			$output .= '<div class="o-posts-grid-pag-btn">';
-			$output .= '<a href="' . $url . 'page/' . ( $page_number + 1 ) . '">';
+			$output .= '<a class="o-pag-item" href="' . $url . 'page/' . ( $page_number + 1 ) . '">';
 			$output .= __( 'Next', 'otter-blocks' );
 			$output .= '</a>';
-			$output .= '</div>';
 		}
 
 		$output .= '</div>';
