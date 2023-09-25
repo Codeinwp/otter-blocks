@@ -351,14 +351,6 @@ domReady( () => {
 	/**
 	 * If the RankMath plugin is present on the page, we will sent the content of the posts grid to RankMath for analysis.
 	 */
-
-	/** @type {HTMLScriptElement} */
-	const rankMathScript = document.querySelector( 'script[src*="rank-math-app"]' );
-
-	if ( ! rankMathScript ) {
-		return;
-	}
-
 	let maxTries = 10;
 
 	const init = () => {
