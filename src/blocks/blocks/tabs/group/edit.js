@@ -12,12 +12,14 @@ import { createBlock } from '@wordpress/blocks';
 
 import {
 	InnerBlocks,
+	RichText,
 	useBlockProps
 } from '@wordpress/block-editor';
 
 import {
 	useSelect,
-	useDispatch
+	useDispatch,
+	dispatch
 } from '@wordpress/data';
 
 import {
@@ -34,7 +36,7 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import Controls from './controls.js';
 import { blockInit, getDefaultValueByField } from '../../../helpers/block-utility.js';
-import { boxToCSS, objectOrNumberAsBox, _i, _px } from '../../../helpers/helper-functions';
+import { boxToCSS, objectOrNumberAsBox, _px } from '../../../helpers/helper-functions';
 import classNames from 'classnames';
 import BlockAppender from '../../../components/block-appender-button';
 import { useDarkBackground } from '../../../helpers/utility-hooks.js';
@@ -45,7 +47,8 @@ const TabHeader = ({
 	tag,
 	title,
 	onClick,
-	active
+	active,
+	onChangeTitle
 }) => {
 	const CustomTag = tag ?? 'div';
 	return (
@@ -58,7 +61,14 @@ const TabHeader = ({
 			) }
 			onClick={ onClick }
 		>
-			<CustomTag >{ title }</CustomTag>
+			<RichText
+				placeholder={ __( 'Add title…', 'otter-blocks' ) }
+				value={ title }
+				onChange={ onChangeTitle }
+				tagName={ tag ?? 'div' }
+				withoutInteractiveFormatting
+				multiline={ false }
+			/>
 		</div>
 	);
 };
@@ -251,9 +261,12 @@ const Edit = ({
 							<TabHeader
 								key={ tabHeader.clientId }
 								tag={ attributes.titleTag }
-								title={ tabHeader.attributes.title ?? `${__( 'Tab', 'otter-blocks' )} ${idx + 1}` }
+								title={ tabHeader.attributes?.title ?? `${__( 'Tab', 'otter-blocks' )} ${idx + 1}` }
 								active={ tabHeader.clientId === activeTab }
 								onClick={ () => toggleActiveTab( tabHeader.clientId ) }
+								onChangeTitle={ value => {
+									dispatch( 'core/block-editor' ).updateBlockAttributes( tabHeader.clientId, { title: value.replace( /(\r\n|\n|\r|<br>)/gm, '' ) });
+								}}
 							/>
 						);
 					}) || '' }
