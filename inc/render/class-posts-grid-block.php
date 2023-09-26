@@ -24,7 +24,7 @@ class Posts_Grid_Block {
 	public function render( $attributes ) {
 
 		$start_time = microtime( true );
-		
+
 		$has_pagination = isset( $attributes['hasPagination'] ) && $attributes['hasPagination'];
 		$page_number    = 1;
 
