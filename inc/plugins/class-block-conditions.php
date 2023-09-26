@@ -42,7 +42,8 @@ class Block_Conditions {
 	 */
 	public function render_blocks( $block_content, $block ) {
 		if ( ! is_admin() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) && isset( $block['attrs']['otterConditions'] ) ) {
-			$display = true;
+			$display            = true;
+			$hide_css_condition = false;
 
 			foreach ( $block['attrs']['otterConditions'] as $group ) {
 				if ( 0 === count( $group ) ) {
@@ -54,6 +55,10 @@ class Block_Conditions {
 				foreach ( $group as $condition ) {
 					if ( ! $this->evaluate_condition( $condition ) ) {
 						$visibility = false;
+					}
+
+					if ( ! empty( $condition['type'] ) && ! empty( $condition['screen_sizes'] ) ) {
+						$hide_css_condition = $condition;
 					}
 				}
 
@@ -70,6 +75,12 @@ class Block_Conditions {
 
 			if ( false === $display ) {
 				return;
+			}
+
+			$enhanced_content = $this->should_add_hide_css_class( $hide_css_condition, $block_content );
+
+			if ( false !== $enhanced_content ) {
+				return $enhanced_content;
 			}
 		}
 
@@ -162,6 +173,10 @@ class Block_Conditions {
 					return ! $this->has_category( $condition['categories'] );
 				}
 			}
+		}
+
+		if ( 'screenSize' === $condition['type'] ) {
+			return true;
 		}
 
 		if ( 'stripePurchaseHistory' === $condition['type'] ) {
@@ -261,6 +276,51 @@ class Block_Conditions {
 	public function has_stripe_product( $product ) {
 		$stripe = new Stripe_API();
 		return $stripe->check_purchase( $product );
+	}
+
+	/**
+	 * If the block has a hide condition, add the appropriate CSS class.
+	 *
+	 * @param array  $condition Condition.
+	 * @param string $block_content Reference to block content.
+	 * @return string|bool
+	 */
+	public function should_add_hide_css_class( $condition, $block_content ) {
+
+		if ( empty( $condition['type'] ) || empty( $condition['screen_sizes'] ) ) {
+			return false;
+		}
+
+		$screen_sizes = $condition['screen_sizes'];
+		$css_class    = '';
+
+		if ( in_array( 'mobile', $screen_sizes ) ) {
+			$css_class .= ' o-hide-on-mobile';
+		}
+
+		if ( in_array( 'tablet', $screen_sizes ) ) {
+			$css_class .= ' o-hide-on-tablet';
+		}
+
+		if ( in_array( 'desktop', $screen_sizes ) ) {
+			$css_class .= ' o-hide-on-desktop';
+		}
+
+		if ( empty( $css_class ) ) {
+			return false;
+		}
+
+		$class_exists = strstr( $block_content, 'class="' );
+
+		if ( false === $class_exists ) {
+			return false;
+		}
+
+		$css_class    = ltrim( $css_class, ' ' );
+		$before_class = strstr( $block_content, 'class="', true );
+		$after_class  = strstr( $block_content, 'class="' );
+		$after_class  = substr( $after_class, strlen( 'class="' ) );
+		return $before_class . 'class="' . $css_class . ' ' . $after_class;
 	}
 
 	/**
