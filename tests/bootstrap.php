@@ -21,6 +21,10 @@ require_once $_tests_dir . '/includes/functions.php';
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';
 
+if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
+	define('OTTER_BLOCKS_VERSION', '1.0.0');
+}
+
 require dirname( dirname( __FILE__ ) ) . '/tests/stripe-http-client-mock.php';
 require dirname( dirname( __FILE__ ) ) . '/inc/css/class-css-utility.php';
 require dirname( dirname( __FILE__ ) ) . '/inc/plugins/class-block-conditions.php';

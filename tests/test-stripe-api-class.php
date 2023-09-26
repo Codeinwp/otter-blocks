@@ -8,9 +8,6 @@
 use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 use ThemeIsle\GutenbergBlocks\Tests\StripeHttpClientMock;
 
-// Replace with the correct namespace from your uploaded file.
-
-
 /**
  * Stripe API test case.
  */
@@ -29,9 +26,6 @@ class TestStripeAPI extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
-		if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
-			define('OTTER_BLOCKS_VERSION', '1.0.0');
-		}
 		update_option( 'themeisle_stripe_api_key', 'sk_test' );
 
 		// Set the mock HTTP client for Stripe
