@@ -212,8 +212,12 @@ window.addEventListener( 'load', () => {
 			element.classList.remove( 'hidden-animated' ); // We asume that elements with hover animation are visible by default.
 			element.classList.remove( 'animated' );
 
+			const { animationName } = element.style;
+			element.style.animationName = 'none';
+
 			element.addEventListener( 'mouseenter', () => {
 				element.classList.add( 'animated' );
+				element.style.animationName = animationName;
 			});
 		}
 	}
