@@ -24,16 +24,14 @@ class Posts_Grid_Block {
 	public function render( $attributes ) {
 
 		$start_time = microtime( true );
+		
+		$has_pagination = isset( $attributes['hasPagination'] ) && $attributes['hasPagination'];
+		$page_number    = 1;
 
-		$uri = add_query_arg( array() );
-
-		// If URI is in form of ?p= then page number will be in `paged=` query arg.
-		if ( preg_match( '#paged=(\d+)#', $uri, $matches ) ) {
-			$page_number = intval( $matches[1] );
-		} elseif ( preg_match( '#/page/(\d+)#', $uri, $matches ) ) {
-			$page_number = intval( $matches[1] );
-		} else {
-			$page_number = 1;
+		if ( $has_pagination ) {
+			if ( ! empty( get_query_var( 'page' ) ) || ! empty( get_query_var( 'paged' ) ) ) {
+				$page_number = is_front_page() ? get_query_var( 'page' ) : get_query_var( 'paged' );
+			}
 		}
 
 		$offset = ( $page_number - 1 ) * $attributes['postsToShow'] + $attributes['offset'];
@@ -67,7 +65,7 @@ class Posts_Grid_Block {
 		);
 
 		$total_posts  = 0;
-		$recent_posts = $this->get_posts( $query_args, $attributes, $total_posts );
+		$recent_posts = $this->get_posts( $query_args, $attributes, $has_pagination, $total_posts );
 
 		if ( isset( $attributes['featuredPostOrder'] ) && 'sticky-first' === $attributes['featuredPostOrder'] ) {
 
@@ -155,7 +153,7 @@ class Posts_Grid_Block {
 			isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? $this->render_featured_post( $recent_posts[0], $attributes ) : '',
 			trim( $class ),
 			$list_items_markup,
-			$this->render_pagination( $uri, $page_number, intval( ceil( $total_posts / $attributes['postsToShow'] ) ) )
+			$has_pagination ? $this->render_pagination( $page_number, intval( ceil( $total_posts / $attributes['postsToShow'] ) ) ) : ''
 		);
 
 		// TODO: Remove after QA.
@@ -348,10 +346,11 @@ class Posts_Grid_Block {
 	 *
 	 * @param array $args Query args.
 	 * @param array $attributes Blocks attrs.
+	 * @param bool  $count_posts Enable post count.
 	 * @param int   $total_posts Total posts.
 	 * @return array|array[]|int[]|null[]|\WP_Post[] Posts.
 	 */
-	protected function get_posts( $args, $attributes, &$total_posts ) {
+	protected function get_posts( $args, $attributes, $count_posts, &$total_posts ) {
 
 		$posts               = array();
 		$fetch_only_products = false;
@@ -384,29 +383,33 @@ class Posts_Grid_Block {
 				$posts[] = $product->get_id();
 			}
 
-			$count_args = array(
-				'limit'            => -1,
-				'post_status'      => 'publish',
-				'order'            => $attributes['order'],
-				'orderby'          => $attributes['orderBy'],
-				'category'         => $categories,
-				'suppress_filters' => false,
-				'return'           => 'ids',
-			);
+			if ( $count_posts ) {
+				$count_args = array(
+					'limit'            => -1,
+					'post_status'      => 'publish',
+					'order'            => $attributes['order'],
+					'orderby'          => $attributes['orderBy'],
+					'category'         => $categories,
+					'suppress_filters' => false,
+					'return'           => 'ids',
+				);
 
-			$query        = new \WC_Product_Query( $count_args );
-			$total_posts += count( $query->get_products() );
+				$query        = new \WC_Product_Query( $count_args );
+				$total_posts += count( $query->get_products() );
+			}
 		}
 
 		if ( ! $fetch_only_products ) {
 			$posts = array_merge( $posts, get_posts( $args ) );
 
-			unset( $args['offset'] );
-			unset( $args['numberposts'] );
-			$args['posts_per_page'] = -1;
-			$args['fields']         = 'ids';
+			if ( $count_posts ) {
+				unset( $args['offset'] );
+				unset( $args['numberposts'] );
+				$args['posts_per_page'] = -1;
+				$args['fields']         = 'ids';
 
-			$total_posts += ( new \WP_Query( $args ) )->found_posts;
+				$total_posts += ( new \WP_Query( $args ) )->found_posts;
+			}
 		}
 
 		return $posts;
@@ -415,76 +418,26 @@ class Posts_Grid_Block {
 	/**
 	 * Render the pagination.
 	 *
-	 * @param string $url The url.
-	 * @param int    $page_number The page number.
-	 * @param int    $total_pages The total pages.
+	 * @param int $page_number The page number.
+	 * @param int $total_pages The total pages.
 	 * @return string
 	 */
-	protected function render_pagination( $url, $page_number, $total_pages ) {
-		$output = '<div class="o-posts-grid-pag">';
+	protected function render_pagination( $page_number, $total_pages ) {
+		$big = 9999999;
 
-		if ( $page_number > 1 ) {
-			$output .= '<a class="o-pag-item" href="' . $this->render_paged_url( $url, $page_number - 1 ) . '">';
-			$output .= __( 'Prev', 'otter-blocks' );
-			$output .= '</a>';
-		}
-
-		$current_btn  = 1;
-		$skip         = false;
-		$skip_trigger = 5;
-
-		while ( $current_btn <= $total_pages && ! $skip ) {
-			if ( $current_btn === $page_number ) {
-				$output .= '<span class="o-pag-item" aria-current="page" >';
-				$output .= $current_btn;
-				$output .= '</span>';
-			} else {
-				$output .= '<a class="o-pag-item" href="' . $this->render_paged_url( $url, $current_btn ) . '">';
-				$output .= $current_btn;
-				$output .= '</a>';
-			}
-			$current_btn++;
-
-			if ( $current_btn > $skip_trigger ) {
-				$current_btn = $total_pages - 1;
-				$skip        = true;
-			}
-		}
-
-		if ( $skip ) {
-			$output .= '<span class="o-pag-item o-dots">...</span>';
-			$output .= '<a class="o-pag-item" href="' . $this->render_paged_url( $url, $current_btn ) . '">';
-			$output .= $total_pages;
-			$output .= '</a>';
-		}
-
-		if ( $page_number < $total_pages ) {
-			$output .= '<a class="o-pag-item" href="' . $this->render_paged_url( $url, $page_number + 1 ) . '">';
-			$output .= __( 'Next', 'otter-blocks' );
-			$output .= '</a>';
-		}
-
+		$output  = '<div class="o-posts-grid-pag">';
+		$output .= paginate_links(
+			array(
+				'base'      => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+				'format'    => '?paged=%#%',
+				'current'   => $page_number,
+				'total'     => $total_pages,
+				'prev_text' => __( 'Prev', 'otter-blocks' ),
+				'next_text' => __( 'Next', 'otter-blocks' ),
+			)
+		);
 		$output .= '</div>';
 
 		return $output;
-	}
-
-	/**
-	 * Render the paged url.
-	 *
-	 * @param string $url The url.
-	 * @param int    $page_number The page number.
-	 * @return array|string|string[]|null
-	 */
-	protected function render_paged_url( $url, $page_number ) {
-		if ( preg_match( '#\?p=(\d+)#', $url, $matches ) ) {
-			$url = add_query_arg( 'paged', $page_number, $url );
-		} elseif ( preg_match( '#/page/(\d+)#', $url, $matches ) ) {
-			$url = preg_replace( '#/page/(\d+)#', '/page/' . $page_number, $url );
-		} else {
-			$url = trailingslashit( $url ) . 'page/' . $page_number;
-		}
-
-		return $url;
 	}
 }

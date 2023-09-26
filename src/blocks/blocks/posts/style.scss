@@ -283,7 +283,7 @@
 		color: var(--pag-color);
 		font-size: var(--pag-size);
 
-		.o-pag-item:not(.o-dots) {
+		.page-numbers:not(.dots) {
 			background-color: var(--pag-bg-color);
 			border-color: var(--pag-border-color);
 			border-radius: var(--pag-border-radius);

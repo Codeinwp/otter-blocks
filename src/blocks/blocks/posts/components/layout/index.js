@@ -189,35 +189,35 @@ export const PostsDescription = ({ attributes,  element, post }) => {
 
 export const PaginationPreview = () => (
 	<div className='o-posts-grid-pag'>
-		<a className="o-pag-item">
+		<a className="page-numbers">
 			{
 				__( 'Prev', 'otter-blocks' )
 			}
 		</a>
-		<a className="o-pag-item">
+		<a className="page-numbers" aria-current="page">
 			{
 				__( '1', 'otter-blocks' )
 			}
 		</a>
-		<span className="o-pag-item" aria-current="page">
+		<span className="page-numbers">
 			{
 				__( '2', 'otter-blocks' )
 			}
 		</span>
-		<a className="o-pag-item">
+		<a className="page-numbers">
 			{
 				__( '3', 'otter-blocks' )
 			}
 		</a>
-		<span className="o-pag-item o-dots">
+		<span className="page-numbers dots">
 			...
 		</span>
-		<a className="o-pag-item">
+		<a className="page-numbers">
 			{
 				__( '8', 'otter-blocks' )
 			}
 		</a>
-		<a className="o-pag-item">
+		<a className="page-numbers">
 			{
 				__( 'Next', 'otter-blocks' )
 			}
