@@ -34,7 +34,7 @@ class Posts_Grid_Block {
 			}
 		}
 
-		$offset = ( $page_number - 1 ) * $attributes['postsToShow'] + $attributes['offset'];
+		$offset = ! empty( $attributes['offset'] ) ? $attributes['offset'] : 0;
 
 		$categories = 0;
 
@@ -49,14 +49,21 @@ class Posts_Grid_Block {
 		}
 
 		$base_query_args = array(
-			'numberposts'      => $attributes['postsToShow'],
+			'post_type'        => $attributes['postTypes'],
+			'posts_per_page'   => $attributes['postsToShow'],
 			'post_status'      => 'publish',
 			'order'            => $attributes['order'],
 			'orderby'          => $attributes['orderBy'],
 			'offset'           => $offset,
 			'category'         => $categories,
 			'suppress_filters' => false,
+			'no_found_rows'    => true,
 		);
+
+		if ( $has_pagination ) {
+			$base_query_args['no_found_rows'] = false;
+			$base_query_args['paged']         = $page_number;
+		}
 
 		$query_args = apply_filters(
 			'themeisle_gutenberg_posts_block_query',
@@ -65,7 +72,7 @@ class Posts_Grid_Block {
 		);
 
 		$total_posts  = 0;
-		$recent_posts = $this->get_posts( $query_args, $attributes, $has_pagination, $total_posts );
+		$recent_posts = $this->retrive_posts( $query_args, $attributes, $has_pagination, $total_posts );
 
 		if ( isset( $attributes['featuredPostOrder'] ) && 'sticky-first' === $attributes['featuredPostOrder'] ) {
 
@@ -153,7 +160,7 @@ class Posts_Grid_Block {
 			isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? $this->render_featured_post( $recent_posts[0], $attributes ) : '',
 			trim( $class ),
 			$list_items_markup,
-			$has_pagination ? $this->render_pagination( $page_number, intval( ceil( $total_posts / $attributes['postsToShow'] ) ) ) : ''
+			$has_pagination ? $this->render_pagination( $page_number, $total_posts ) : ''
 		);
 
 		// TODO: Remove after QA.
@@ -348,71 +355,40 @@ class Posts_Grid_Block {
 	 * @param array $attributes Blocks attrs.
 	 * @param bool  $count_posts Enable post count.
 	 * @param int   $total_posts Total posts.
-	 * @return array|array[]|int[]|null[]|\WP_Post[] Posts.
+	 * @return array|int[]|null[]|\WP_Post[] Posts.
 	 */
-	protected function get_posts( $args, $attributes, $count_posts, &$total_posts ) {
-
-		$posts               = array();
-		$fetch_only_products = false;
-
+	protected function retrive_posts( $args, $attributes, $count_posts, &$total_posts ) {
 		if ( isset( $args['post_type'] ) && in_array( 'product', $args['post_type'] ) && function_exists( 'wc_get_products' ) ) {
 
-			$copy_args = json_decode( wp_json_encode( $args ), true );
-			unset( $copy_args['post_type'] );
-
-			// Remove 'product' from $args['post_type'] so that get_posts() doesn't complain about an invalid post type.
-			$args['post_type'] = array_diff( $args['post_type'], array( 'product' ) );
-
-			if ( empty( $args['post_type'] ) ) {
-				$fetch_only_products = true;
+			if ( $count_posts ) {
+				// Paged is not working for WC, so we doing a manual count.
+				$args['offset'] = $args['offset'] + ( $args['posts_per_page'] * ( $args['paged'] - 1 ) );
 			}
 
-			$categories = array();
 			if ( isset( $attributes['categories'] ) ) {
+
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				$args['tax_query'] = array();
 				foreach ( $attributes['categories'] as $category ) {
 					if ( isset( $category['slug'] ) ) {
-						array_push( $categories, $category['slug'] );
+						$args['tax_query'][] = array(
+							'taxonomy' => 'product_cat',
+							'field'    => 'slug',
+							'terms'    => $category['slug'],
+						);
 					}
 				}
-				$copy_args['category'] = $categories;
-			}
-
-
-			$products = wc_get_products( $args );
-			foreach ( $products as $product ) {
-				$posts[] = $product->get_id();
-			}
-
-			if ( $count_posts ) {
-				$count_args = array(
-					'limit'            => -1,
-					'post_status'      => 'publish',
-					'order'            => $attributes['order'],
-					'orderby'          => $attributes['orderBy'],
-					'category'         => $categories,
-					'suppress_filters' => false,
-					'return'           => 'ids',
-				);
-
-				$query        = new \WC_Product_Query( $count_args );
-				$total_posts += count( $query->get_products() );
+				$args['tax_query']['relation'] = 'OR';
 			}
 		}
 
-		if ( ! $fetch_only_products ) {
-			$posts = array_merge( $posts, get_posts( $args ) );
+		$query = new \WP_Query( $args );
 
-			if ( $count_posts ) {
-				unset( $args['offset'] );
-				unset( $args['numberposts'] );
-				$args['posts_per_page'] = -1;
-				$args['fields']         = 'ids';
-
-				$total_posts += ( new \WP_Query( $args ) )->found_posts;
-			}
+		if ( $count_posts ) {
+			$total_posts += $query->max_num_pages;
 		}
 
-		return $posts;
+		return $query->posts;
 	}
 
 	/**
@@ -428,7 +404,7 @@ class Posts_Grid_Block {
 		$output  = '<div class="o-posts-grid-pag">';
 		$output .= paginate_links(
 			array(
-				'base'      => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+				'base'      => str_replace( (string) $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
 				'format'    => '?paged=%#%',
 				'current'   => $page_number,
 				'total'     => $total_pages,
