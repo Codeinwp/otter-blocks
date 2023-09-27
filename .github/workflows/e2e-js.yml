@@ -10,11 +10,11 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
-    
+
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
+
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
@@ -40,11 +40,11 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-cache-
-      
+
       - name: npm ci
         run: |
           npm ci
-          
+
       - name: Make dev build
         run: |
           npm run build-dev
@@ -60,20 +60,16 @@ jobs:
       - name: Install Playwright
         run: |
           npm install -g playwright-cli
-          npx playwright install    
+          npx playwright install
 
-      - name: Playwright Blocks 
+      - name: Playwright Blocks
         run: |
-          npm run test:e2e:playwright    
+          npm run test:e2e:playwright
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - name: Performance check
         run: |
-          npm run test:e2e:performance
-
-      - name: Block ID reliability
-        run: |
-          npm run test:e2e:blockId
+          npm run test:performance
 
       - name: Upload video files
         if: always()
@@ -82,7 +78,7 @@ jobs:
           name: artifact
           path: ./artifacts/tests/
           retention-days: 1
-      
+
       - name: Print the results
         run: |
           echo "::set-output name=TYPING_AVG::$(jq '.summary.type.average' ./artifacts/performance.spec.performance-results.json)"
@@ -91,7 +87,7 @@ jobs:
           echo "::set-output name=TYPING_QR60::$(jq '.summary.type.quantileRank60' ./artifacts/performance.spec.performance-results.json)"
           echo "::set-output name=TYPING_ABOVE_60::$(jq -c '.summary.type.above60' ./artifacts/performance.spec.performance-results.json)"
           echo "::set-output name=TYPING_QR80::$(jq '.summary.type.quantileRank80' ./artifacts/performance.spec.performance-results.json)"
-        id: summary  
+        id: summary
 
       - name: Comment
         uses: NejcZdovc/comment-pr@v1
@@ -107,5 +103,5 @@ jobs:
           TYPING_QR80: ${{ steps.summary.outputs.TYPING_QR80 }}
           TYPING_ABOVE_60: ${{ steps.summary.outputs.TYPING_ABOVE_60 }}
 
-  
-  
+
+

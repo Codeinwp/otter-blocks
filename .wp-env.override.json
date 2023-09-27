@@ -18,10 +18,13 @@
       "plugins": [
         "."
       ],
+		"themes": [ "./test/emptytheme" ],
       "mappings": {
-          "wp-content/mu-plugins": "./node_modules/@wordpress/e2e-tests/mu-plugins",
-          "wp-content/plugins/gutenberg-test-plugins": "./node_modules/@wordpress/e2e-tests/plugins",
-          "wp-content/themes/gutenberg-test-themes/twentytwentythree": "https://downloads.wordpress.org/theme/twentytwentythree.1.0.zip"
+		  "wp-content/mu-plugins": "./packages/e2e-tests/mu-plugins",
+		  "wp-content/plugins/gutenberg-test-plugins": "./packages/e2e-tests/plugins",
+		  "wp-content/themes/gutenberg-test-themes": "./test/gutenberg-test-themes",
+		  "wp-content/themes/gutenberg-test-themes/twentytwentyone": "https://downloads.wordpress.org/theme/twentytwentyone.1.7.zip",
+		  "wp-content/themes/gutenberg-test-themes/twentytwentythree": "https://downloads.wordpress.org/theme/twentytwentythree.1.0.zip"
 		}
     }
   }
