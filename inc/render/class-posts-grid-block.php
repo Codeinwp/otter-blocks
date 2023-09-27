@@ -34,45 +34,8 @@ class Posts_Grid_Block {
 			}
 		}
 
-		$offset = ! empty( $attributes['offset'] ) ? $attributes['offset'] : 0;
-
-		$categories = 0;
-
-		if ( isset( $attributes['categories'] ) ) {
-			$cats = array();
-
-			foreach ( $attributes['categories'] as $category ) {
-				array_push( $cats, $category['id'] );
-			}
-
-			$categories = join( ', ', $cats );
-		}
-
-		$base_query_args = array(
-			'post_type'        => $attributes['postTypes'],
-			'posts_per_page'   => $attributes['postsToShow'],
-			'post_status'      => 'publish',
-			'order'            => $attributes['order'],
-			'orderby'          => $attributes['orderBy'],
-			'offset'           => $offset,
-			'category'         => $categories,
-			'suppress_filters' => false,
-			'no_found_rows'    => true,
-		);
-
-		if ( $has_pagination ) {
-			$base_query_args['no_found_rows'] = false;
-			$base_query_args['paged']         = $page_number;
-		}
-
-		$query_args = apply_filters(
-			'themeisle_gutenberg_posts_block_query',
-			$base_query_args,
-			$attributes
-		);
-
 		$total_posts  = 0;
-		$recent_posts = $this->retrive_posts( $query_args, $attributes, $has_pagination, $total_posts );
+		$recent_posts = $this->retrive_posts( $attributes, $has_pagination, $page_number, $total_posts );
 
 		if ( isset( $attributes['featuredPostOrder'] ) && 'sticky-first' === $attributes['featuredPostOrder'] ) {
 
@@ -351,13 +314,46 @@ class Posts_Grid_Block {
 	/**
 	 * Get posts to display.
 	 *
-	 * @param array $args Query args.
 	 * @param array $attributes Blocks attrs.
 	 * @param bool  $count_posts Enable post count.
+	 * @param int   $page_number Page number.
 	 * @param int   $total_posts Total posts.
 	 * @return array|int[]|null[]|\WP_Post[] Posts.
 	 */
-	protected function retrive_posts( $args, $attributes, $count_posts, &$total_posts ) {
+	protected function retrive_posts( $attributes, $count_posts, $page_number, &$total_posts ) {
+
+		$offset = ! empty( $attributes['offset'] ) ? $attributes['offset'] : 0;
+
+		$categories = 0;
+
+		if ( isset( $attributes['categories'] ) ) {
+			$cats = array();
+
+			foreach ( $attributes['categories'] as $category ) {
+				array_push( $cats, $category['id'] );
+			}
+
+			$categories = join( ', ', $cats );
+		}
+
+		$args = array(
+			'post_type'        => $attributes['postTypes'],
+			'posts_per_page'   => $attributes['postsToShow'],
+			'post_status'      => 'publish',
+			'order'            => $attributes['order'],
+			'orderby'          => $attributes['orderBy'],
+			'offset'           => $offset,
+			'category'         => $categories,
+			'suppress_filters' => false,
+			'no_found_rows'    => true,
+		);
+
+		if ( $count_posts ) {
+			$args['no_found_rows'] = false;
+			$args['paged']         = $page_number;
+		}
+
+		// Handle the case when the post type is a WooCommerce product.
 		if ( isset( $args['post_type'] ) && in_array( 'product', $args['post_type'] ) && function_exists( 'wc_get_products' ) ) {
 
 			if ( $count_posts ) {
@@ -381,6 +377,12 @@ class Posts_Grid_Block {
 				$args['tax_query']['relation'] = 'OR';
 			}
 		}
+
+		$args = apply_filters(
+			'themeisle_gutenberg_posts_block_query',
+			$args,
+			$attributes
+		);
 
 		$query = new \WP_Query( $args );
 
