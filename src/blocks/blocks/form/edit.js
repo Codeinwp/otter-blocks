@@ -434,21 +434,25 @@ const Edit = ({
 		});
 
 		try {
-			( new DeferredWpOptionsSave() ).save( 'form_options', data, ( res, error ) => {
-				if ( error ) {
-					setLoading({ formOptions: 'error' });
-				} else {
-					setLoading({ formOptions: 'done' });
-					createNotice(
-						'info',
-						__( 'Form options have been saved.', 'otter-blocks' ),
-						{
-							isDismissible: true,
-							type: 'snackbar'
-						}
-					);
-				}
-			});
+			( new DeferredWpOptionsSave() ).save(
+				'form_options',
+				oldValue => {
+					return { ...( oldValue ?? {}), ...data };
+				}, ( res, error ) => {
+					if ( error ) {
+						setLoading({ formOptions: 'error' });
+					} else {
+						setLoading({ formOptions: 'done' });
+						createNotice(
+							'info',
+							__( 'Form options have been saved.', 'otter-blocks' ),
+							{
+								isDismissible: true,
+								type: 'snackbar'
+							}
+						);
+					}
+				});
 		} catch ( e ) {
 			setLoading({ formOptions: 'error' });
 		}
