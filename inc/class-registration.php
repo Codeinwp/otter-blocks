@@ -980,6 +980,13 @@ class Registration {
 		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
 	}
 
+	/**
+	 * Load the Hide on condition styles.
+	 *
+	 * @param string $block_content The block content.
+	 * @param array  $block The block data.
+	 * @return string
+	 */
 	public function load_condition_hide_on_styles( $block_content, $block ) {
 		if ( self::$scripts_loaded['condition_hide_on'] ) {
 			return $block_content;
