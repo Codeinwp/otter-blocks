@@ -415,6 +415,24 @@ const Edit = ({
 		setAttributes({ otterConditions });
 	};
 
+	/**
+	 * Toggle the value of the condition in the nested array.
+	 *
+	 * @param {any} value The value to set.
+	 * @param {number} index The index of the group.
+	 * @param {number} key The index of the condition.
+	 * @param {string} type The type of the condition.
+	 */
+	const toggleValueInArray = ( value, index, key, type ) => {
+		const otterConditions = [ ...attributes.otterConditions ];
+		if ( otterConditions[ index ][ key ][ type ].includes( value ) ) {
+			otterConditions[ index ][ key ][ type ] = otterConditions[ index ][ key ][ type ].filter( v => v !== value );
+		} else {
+			otterConditions[ index ][ key ][ type ].push( value );
+		}
+		setAttributes({ otterConditions });
+	};
+
 	return (
 		<PanelBody
 			title={ __( 'Visibility Conditions', 'otter-blocks' ) }
@@ -495,18 +513,23 @@ const Edit = ({
 									) }
 
 									{ 'screenSize' === condObj.type && (
-										<FormTokenField
-											label={ __( 'Sizes', 'otter-blocks' ) }
-											value={ condObj.screen_sizes }
-											suggestions={ [
-												'mobile',
-												'tablet',
-												'desktop'
-											] }
-											onChange={ types => changeArrayValue( types, index, condIdx, 'screen_sizes' ) }
-											__experimentalExpandOnFocus={ true }
-											__experimentalValidateInput={ newValue => [ 'mobile', 'tablet', 'desktop' ].includes( newValue ) }
-										/>
+										<Fragment>
+											<ToggleControl
+												label={ __( 'Hide on mobile', 'otter-blocks' ) }
+												checked={ condObj?.screen_sizes?.includes( 'mobile' ) }
+												onChange={ () => toggleValueInArray( 'mobile', index, condIdx, 'screen_sizes' )}
+											/>
+											<ToggleControl
+												label={ __( 'Hide on tablet', 'otter-blocks' ) }
+												checked={ condObj?.screen_sizes?.includes( 'tablet' ) }
+												onChange={ () => toggleValueInArray( 'tablet', index, condIdx, 'screen_sizes' )}
+											/>
+											<ToggleControl
+												label={ __( 'Hide on desktop', 'otter-blocks' ) }
+												checked={ condObj?.screen_sizes?.includes( 'desktop' ) }
+												onChange={ () => toggleValueInArray( 'desktop', index, condIdx, 'screen_sizes' )}
+											/>
+										</Fragment>
 									) }
 
 									{ 'stripePurchaseHistory' === condObj.type && (
