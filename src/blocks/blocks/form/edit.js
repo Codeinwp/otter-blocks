@@ -437,7 +437,13 @@ const Edit = ({
 			( new DeferredWpOptionsSave() ).save(
 				'form_options',
 				oldValue => {
-					return { ...( oldValue ?? {}), ...data };
+					if ( null === oldValue ) {
+						return data;
+					}
+					Object.keys( data ).forEach( k => {
+						oldValue[k] = data[k];
+					});
+					return oldValue;
 				}, ( res, error ) => {
 					if ( error ) {
 						setLoading({ formOptions: 'error' });
