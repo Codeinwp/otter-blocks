@@ -172,7 +172,10 @@ module.exports = [
 							'build/dashboard/pro/',
 							'build/export-import/blocks/',
 							'build/export-import/pro/',
-							'build/blocks/pro/'
+							'build/blocks/pro/',
+							'build/blocks/blocks/',
+							'build/pro/pro',
+							'build/pro/blocks'
 						]
 					}
 				},
