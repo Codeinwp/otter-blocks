@@ -30,6 +30,7 @@ import './editor.scss';
 import { useInstanceId } from '@wordpress/compose';
 import googleFontsLoader from '../../helpers/google-fonts';
 import classNames from 'classnames';
+import { all } from 'deepmerge';
 
 const TwoItemOnRow = ({ children }) => {
 	return <div className='o-two-column-components'>
@@ -45,6 +46,7 @@ interface IsEnabled {
 	decoration: boolean;
 	letterCase: boolean;
 	lineHeight: boolean;
+	variant: boolean;
 }
 
 interface ComponentsValue {
@@ -55,6 +57,7 @@ interface ComponentsValue {
 	decoration: string;
 	letterCase: string;
 	lineHeight: string | number;
+	variant: string;
 }
 
 type OnChange = ( values: Partial<ComponentsValue> ) => void
@@ -66,7 +69,8 @@ const defaultStates = {
 		spacing: false,
 		decoration: false,
 		letterCase: false,
-		lineHeight: false
+		lineHeight: false,
+		variant: false
 	},
 	fontSizes: [
 		{
@@ -112,8 +116,10 @@ const defaultStates = {
 		spacing: __( 'Spacing', 'otter-blocks' ),
 		decoration: __( 'Decoration', 'otter-blocks' ),
 		letterCase: __( 'Letter Case', 'otter-blocks' ),
-		lineHeight: __( 'Line Height', 'otter-blocks' )
-	}
+		lineHeight: __( 'Line Height', 'otter-blocks' ),
+		variant: __( 'Variant', 'otter-blocks' )
+	},
+	title: __( 'Font Size', 'otter-blocks' )
 };
 
 type TypographySelectorControlProps = {
@@ -144,6 +150,11 @@ type TypographySelectorControlProps = {
 	onChange?: OnChange
 
 	/**
+	 * It triggers when the reset button is clicked. It offers the name of the component.
+	 */
+	onReset?: ( field: keyof ComponentsValue ) => void
+
+	/**
 	 * The font sizes options for FontSizePicker
 	 */
 	fontSizes?: ({ name?: string, slug?: string, size?: string | number })[]
@@ -154,6 +165,16 @@ type TypographySelectorControlProps = {
 	config?: {
 		fontFamilyAsSelect?: boolean
 	}
+
+	/**
+	 * The title of the component.
+	 */
+	title?: string
+
+	/**
+	 * Allow variants for the font family.
+	 */
+	allowVariants?: boolean
 }
 
 const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
@@ -163,8 +184,13 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 		componentsValue,
 		componentsDefaultValue,
 		onChange,
-		showAsDisable
+		showAsDisable,
+		title,
+		onReset,
+		allowVariants
 	} = props;
+
+	console.log( allowVariants );
 
 	const [ showComponent, setShowComponent ] = useState(
 		mapValues( componentsValue ?? defaultStates.isEnabled, x => Boolean( x ) )
@@ -174,12 +200,16 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 		onChange?.({ ...( componentsValue ?? {}), [ field ]: value });
 	};
 
+	const onBulkChangeValue = ( values: Partial<ComponentsValue> ) => {
+		onChange?.({ ...( componentsValue ?? {}), ...values });
+	};
+
 	const instanceId = useInstanceId( TypographySelectorControl );
 	const id = `inspector-google-fonts-control-${ instanceId }`;
 
 	const [ fonts, setFonts ] = useState<any[]>([]);
 
-	// const [ variants, setVariants ] = useState<{label: string, value: string}[]>([]);
+	const [ variants, setVariants ] = useState<{label: string, value: string}[]>([]);
 	const [ search, setSearch ] = useState( '' );
 	const [ isLoading, setLoading ] = useState( false );
 
@@ -196,19 +226,21 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 			googleFontsLoader.afterLoading().then( ( loader ) => {
 				setFonts( loader.fonts );
 				setLoading( false );
-
-				// if ( componentsValue?.fontFamily ) {
-				// 	setVariants( loader.getVariants( componentsValue?.fontFamily ) );
-				// }
 			});
 		}
 
-	}, [ showComponent?.fontFamily, fonts ]);
+	}, [ showComponent?.fontFamily, fonts, allowVariants, componentsValue?.fontFamily ]);
+
+	useEffect( () => {
+		if ( allowVariants && componentsValue?.fontFamily ) {
+			setVariants( googleFontsLoader.getVariants( componentsValue?.fontFamily ) );
+		}
+	}, [ allowVariants, componentsValue?.fontFamily ]);
 
 	return (
 		<div className='o-typo-component'>
 			<HStack className="o-typo-header">
-				<p>{ __( 'Font Size', 'otter-blocks' ) }</p>
+				<p>{ title ?? defaultStates.title }</p>
 
 				<DropdownMenu
 					icon={ moreVertical }
@@ -242,32 +274,35 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 										'spacing',
 										'decoration',
 										'letterCase',
-										'lineHeight'
-									] as ( keyof IsEnabled )[]).map( ( component ) => {
-										if ( enableComponents?.[component]) {
-											return <MenuItem
-												key={ component }
-												isSelected={ Boolean( showComponent?.[component]) }
-												label={ defaultStates.componentNames?.[component] }
-												icon={ Boolean( showComponent?.[component]) ? check : undefined }
-												onClick={ () => {
-													setShowComponent({
-														...showComponent,
-														[component]: ! Boolean( showComponent?.[component])
-													});
+										'lineHeight',
+										'variant'
+									] as ( keyof IsEnabled )[])
+										.filter( o => {
+											return ! ( 'variant' === o && ! allowVariants );
+										}).map( ( component ) => {
+											if ( enableComponents?.[component]) {
+												return <MenuItem
+													key={ component }
+													isSelected={ Boolean( showComponent?.[component]) }
+													label={ defaultStates.componentNames?.[component] }
+													icon={ Boolean( showComponent?.[component]) ? check : undefined }
+													onClick={ () => {
+														setShowComponent({
+															...showComponent,
+															[component]: ! Boolean( showComponent?.[component])
+														});
 
-													onChange?.({
-														[component]: undefined
-													});
-
-												} }
-												role="menuitemcheckbox"
-											>
-												{ defaultStates.componentNames?.[component] }
-											</MenuItem>;
-										}
-										return <Fragment></Fragment>;
-									})
+														if ( showComponent?.[component]) {
+															onReset?.( component );
+														}
+													} }
+													role="menuitemcheckbox"
+												>
+													{ defaultStates.componentNames?.[component] }
+												</MenuItem>;
+											}
+											return <Fragment></Fragment>;
+										})
 								}
 							</MenuGroup>
 
@@ -281,7 +316,8 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 											spacing: undefined,
 											decoration: undefined,
 											letterCase: undefined,
-											lineHeight: undefined
+											lineHeight: undefined,
+											variant: undefined
 										});
 										setShowComponent( defaultStates.isEnabled );
 										onClose?.();
@@ -367,9 +403,9 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 																setFonts( loader.fonts );
 																setLoading( false );
 
-															// if ( componentsValue?.fontFamily ) {
-															// 	setVariants( loader.getVariants( componentsValue?.fontFamily ) );
-															// }
+																if ( allowVariants && componentsValue?.fontFamily ) {
+																	setVariants( loader.getVariants( componentsValue?.fontFamily ) );
+																}
 															});
 														}
 														onToggle?.();
@@ -419,7 +455,11 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 																		onClick={ () => {
 																			onToggle();
 
-																			onChangeValue( 'fontFamily', i.family );
+																			onBulkChangeValue({
+																				fontFamily: i.family,
+																				variant: 'normal'
+																			});
+
 																			setSearch( '' );
 																		}}
 																	>
@@ -455,6 +495,66 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 			}
 
 			<div></div>
+
+			{
+				( ( allowVariants && showComponent?.variant ) || showComponent?.lineHeight ) && (
+					<TwoItemOnRow>
+						{
+							allowVariants && showComponent?.variant && (
+								<Disabled
+
+									// @ts-ignore
+									isDisabled={ Boolean( showAsDisable?.variant ) }
+								>
+									<SelectControl
+										label={ __( 'Variants', 'otter-blocks' ) }
+										value={ componentsValue?.variant ?? 'normal' }
+										options={ variants }
+										onChange={ appearance => onChangeValue( 'variant', appearance ) }
+									/>
+								</Disabled>
+							)
+						}
+						{
+							showComponent?.lineHeight && (
+								<Disabled
+
+									// @ts-ignore
+									isDisabled={ Boolean( showAsDisable?.lineHeight ) }
+								>
+									<UnitControl
+										label={ __( 'Line Height', 'otter-blocks' ) }
+
+										/*@ts-ignore */
+										value={ componentsValue?.lineHeight ?? componentsDefaultValue?.lineHeight }
+										onChange={ ( lineHeight: string ) => onChangeValue( 'lineHeight', lineHeight ) }
+										units={[
+											{
+												a11yLabel: 'Unitless (-)',
+												label: '-',
+												step: 0.1,
+												value: ''
+											},
+											{
+												a11yLabel: 'Pixels (px)',
+												label: 'px',
+												step: 0.1,
+												value: 'px'
+											},
+											{
+												a11yLabel: 'Percentage (%)',
+												label: '%',
+												step: 1,
+												value: '%'
+											}
+										]}
+									/>
+								</Disabled>
+							)
+						}
+					</TwoItemOnRow>
+				)
+			}
 
 			{
 				( showComponent?.appearance || showComponent?.spacing ) && (
@@ -591,25 +691,6 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 					</Disabled>
 				)
 			}
-
-			{
-				showComponent?.lineHeight && (
-					<Disabled
-
-						// @ts-ignore
-						isDisabled={ Boolean( showAsDisable?.lineHeight ) }
-					>
-						<UnitControl
-							label={ __( 'Line Height', 'otter-blocks' ) }
-
-							/*@ts-ignore */
-							value={ componentsValue?.lineHeight ?? componentsDefaultValue?.lineHeight }
-							onChange={ ( lineHeight: string ) => onChangeValue( 'lineHeight', lineHeight ) }
-						/>
-					</Disabled>
-				)
-			}
-
 		</div>
 	);
 };
