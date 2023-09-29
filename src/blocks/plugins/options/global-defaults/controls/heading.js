@@ -38,7 +38,10 @@ const Heading = ({
 	changeConfig
 }) => {
 
-	const setAttributes = x => changeConfig( blockName, x );
+	const setAttributes = x => {
+		changeConfig( blockName, x );
+	};
+
 	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const changeFontFamily = value => {
@@ -96,12 +99,6 @@ const Heading = ({
 		top: _px( attributes.marginTopMobile ) ?? '0px',
 		bottom: _px( attributes.marginBottomMobile ) ?? '0px'
 	}) : ( isFinite( attributes.marginMobile ) ? makeBox( _px( attributes.marginMobile ) ) : undefined );
-
-	console.log( compactObject( responsiveGetAttributes([
-		isObjectLike( attributes.margin ) ? attributes.margin : oldMarginDesktop,
-		isObjectLike( attributes.marginTablet ) ? attributes.marginTablet : oldMarginTablet,
-		isObjectLike( attributes.marginMobile ) ?  attributes.marginMobile : oldMarginMobile
-	]) ) );
 
 	return (
 		<Fragment>
@@ -263,7 +260,7 @@ const Heading = ({
 							) ?? makeBox( '0px' )
 						}
 						onChange={ value => {
-							responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
+							responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ], {}, setAttributes );
 						} }
 					/>
 
@@ -282,7 +279,7 @@ const Heading = ({
 							}
 						}
 						onChange={ value => {
-							responsiveSetAttributes( value, [ 'margin', 'marginTablet', 'marginMobile' ]);
+							responsiveSetAttributes( value, [ 'margin', 'marginTablet', 'marginMobile' ], {}, setAttributes );
 						} }
 						sides={ [ 'top', 'bottom' ] }
 					/>
