@@ -47,7 +47,7 @@ test.describe( 'Advanced Heading Block', () => {
 		await page.getByRole( 'button', { name: 'View options' }).click();
 
 		// Open the family font menu to start the fonts loading. Then close the panel and come back after some time.
-		await page.getByRole( 'button', { name: 'Select Font Family' }).click();
+		await page.getByRole( 'button', { name: 'Font Family' }).click();
 
 		// Fill the line height.
 		await page.getByLabel( 'Line Height' ).fill( '1.5' );
