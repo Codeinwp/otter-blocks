@@ -345,6 +345,7 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 					/*@ts-ignore */
 					fontSizes={ props.fontSizes ?? defaultStates.fontSizes }
 					onChange={ fontSize => onChangeValue( 'fontSize', fontSize?.toString() ) }
+					__nextHasNoMarginBottom={ true }
 				/>
 			</Disabled>
 

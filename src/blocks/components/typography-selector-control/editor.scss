@@ -29,6 +29,10 @@
 			margin-top: 10px;
 		}
 	}
+
+	.components-font-size-picker__controls .components-base-control {
+		margin: 0 0 8px 0;
+	}
 }
 
 .o-options-global-defaults-modal .o-typo-component .o-two-column-components {
@@ -36,11 +40,11 @@
 }
 
 .block-editor-block-inspector, .o-options-global-defaults-modal {
-	.o-typo-component .components-base-control.o-no-margin {
-		margin: 0px;
+	:is(.o-typo-component) :is(.components-base-control).o-no-margin {
+		margin: 0;
 
 		&> .components-base-control__field .components-base-control {
-			margin: 0px 0px 14px 0px;
+			margin: 0 0 14px 0;
 		}
 	}
 }
