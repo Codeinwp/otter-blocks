@@ -62,7 +62,7 @@ test.describe( 'Advanced Heading Block', () => {
 		await page.getByRole( 'combobox', { name: 'Appearance' }).selectOption( 'Italic' );
 
 		// Select a font family.
-		await page.getByRole( 'button', { name: 'Select Font Family' }).click();
+		await page.getByRole( 'button', { name: 'Font Family' }).click();
 		await page.waitForSelector( '.o-gfont-popover .components-menu-item__button div[style*="Comic Neue"]' );
 		await page.getByRole( 'menuitem', { name: 'Comic Neue' }).click();
 
