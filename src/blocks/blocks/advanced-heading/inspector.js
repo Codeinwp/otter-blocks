@@ -254,7 +254,9 @@ const Inspector = ({
 												[responsiveGetAttributes([ 'fontSize', 'fontSizeTablet', 'fontSizeMobile' ])]: undefined
 											});
 										} else {
-											setAttributes({ [fieldMapping[field]]: undefined });
+											setAttributes({
+												[fieldMapping[field]]: undefined
+											});
 										}
 									}}
 

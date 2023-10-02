@@ -510,7 +510,7 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 										label={ __( 'Variants', 'otter-blocks' ) }
 										value={ componentsValue?.variant ?? 'normal' }
 										options={ variants }
-										onChange={ appearance => onChangeValue( 'variant', appearance ) }
+										onChange={ variant => onChangeValue( 'variant', variant ) }
 									/>
 								</Disabled>
 							)
