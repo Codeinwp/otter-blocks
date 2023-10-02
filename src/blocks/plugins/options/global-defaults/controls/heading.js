@@ -29,7 +29,7 @@ import {
 
 import { _px, compactObject } from '../../../../helpers/helper-functions';
 import { useResponsiveAttributes } from '../../../../helpers/utility-hooks';
-import { ClearButton, GoogleFontsControl, ResponsiveControl } from '../../../../components';
+import { ClearButton, ControlPanelControl, GoogleFontsControl, ResponsiveControl } from '../../../../components';
 import { makeBox } from '../../../copy-paste/utils';
 
 const Heading = ({
