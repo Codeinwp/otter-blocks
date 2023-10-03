@@ -74,7 +74,7 @@ class Block_Conditions {
 			}
 
 			if ( false === $display ) {
-				return;
+				return $block_content;
 			}
 
 			$enhanced_content = $this->should_add_hide_css_class( $hide_css_condition, $block_content );
@@ -291,36 +291,56 @@ class Block_Conditions {
 			return false;
 		}
 
-		$screen_sizes = $condition['screen_sizes'];
-		$css_class    = '';
+		$screen_sizes     = $condition['screen_sizes'];
+		$hide_css_classes = '';
 
 		if ( in_array( 'mobile', $screen_sizes ) ) {
-			$css_class .= ' o-hide-on-mobile';
+			$hide_css_classes .= ' o-hide-on-mobile';
 		}
 
 		if ( in_array( 'tablet', $screen_sizes ) ) {
-			$css_class .= ' o-hide-on-tablet';
+			$hide_css_classes .= ' o-hide-on-tablet';
 		}
 
 		if ( in_array( 'desktop', $screen_sizes ) ) {
-			$css_class .= ' o-hide-on-desktop';
+			$hide_css_classes .= ' o-hide-on-desktop';
 		}
 
-		if ( empty( $css_class ) ) {
+		if ( empty( $hide_css_classes ) ) {
 			return false;
 		}
 
-		$class_exists = strstr( $block_content, 'class="' );
+		// Get the parent node.
+		$html_nodes_matches = array();
+		preg_match( '/<[^>]+>/', $block_content, $html_nodes_matches, PREG_OFFSET_CAPTURE );
 
-		if ( false === $class_exists ) {
+		// If we have not match, then the content might not be a valid HTML element.
+		if ( empty( $html_nodes_matches ) ) {
 			return false;
 		}
 
-		$css_class    = ltrim( $css_class, ' ' );
-		$before_class = strstr( $block_content, 'class="', true );
-		$after_class  = strstr( $block_content, 'class="' );
-		$after_class  = substr( $after_class, strlen( 'class="' ) );
-		return $before_class . 'class="' . $css_class . ' ' . $after_class;
+		$parent_node      = $html_nodes_matches[0][0];
+		$hide_css_classes = ltrim( $hide_css_classes, ' ' );
+
+		// If we have a class attribute, append the CSS class to it. Otherwise, add the class attribute.
+		if ( false !== strpos( $parent_node, 'class="' ) ) {
+			$before_class  = strstr( $block_content, 'class="', true );
+			$after_class   = strstr( $block_content, 'class="' );
+			$after_class   = substr( $after_class, strlen( 'class="' ) );
+			$block_content = $before_class . 'class="' . $hide_css_classes . ' ' . $after_class;
+		} elseif ( false !== strpos( $parent_node, "class='" ) ) {
+			// Special case with single quotes.
+			$before_class  = strstr( $block_content, "class='", true );
+			$after_class   = strstr( $block_content, "class='" );
+			$after_class   = substr( $after_class, strlen( "class='" ) );
+			$block_content = $before_class . "class='" . $hide_css_classes . ' ' . $after_class;
+		} else {
+			$class_attribute_string = ' class="' . $hide_css_classes . '"';
+			$enhanced_parent_node   = preg_replace( '/>$/', $class_attribute_string . '>', $parent_node );
+			$block_content          = str_replace( $parent_node, $enhanced_parent_node, $block_content );
+		}
+
+		return $block_content;
 	}
 
 	/**
