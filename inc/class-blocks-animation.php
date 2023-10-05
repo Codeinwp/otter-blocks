@@ -166,7 +166,7 @@ class Blocks_Animation {
 
 			wp_script_add_data( 'otter-animation-frontend', 'async', true );
 
-			add_action( 'wp_footer', array( $this, 'add_frontend_anim_inline_style'), 10 );
+			add_action( 'wp_footer', array( $this, 'add_frontend_anim_inline_style' ), 10 );
 
 			self::$scripts_loaded['animation'] = true;
 		}
