@@ -373,6 +373,10 @@ const Edit = ({
 			attrs.visibility = true;
 		}
 
+		if ( 'screenSize' === value ) {
+			attrs['screen_sizes'] = [];
+		}
+
 		if ( 'none' === value ) {
 			otterConditions[ index ][ key ] = {};
 		} else {
@@ -425,10 +429,10 @@ const Edit = ({
 	 */
 	const toggleValueInArray = ( value, index, key, type ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
-		if ( otterConditions[ index ][ key ][ type ].includes( value ) ) {
+		if ( otterConditions[ index ][ key ][ type ]?.includes( value ) ) {
 			otterConditions[ index ][ key ][ type ] = otterConditions[ index ][ key ][ type ].filter( v => v !== value );
 		} else {
-			otterConditions[ index ][ key ][ type ].push( value );
+			otterConditions[ index ][ key ][ type ]?.push( value );
 		}
 		setAttributes({ otterConditions });
 	};
@@ -515,17 +519,17 @@ const Edit = ({
 									{ 'screenSize' === condObj.type && (
 										<Fragment>
 											<ToggleControl
-												label={ __( 'Hide on mobile', 'otter-blocks' ) }
+												label={ __( 'Hide on Mobile', 'otter-blocks' ) }
 												checked={ condObj?.screen_sizes?.includes( 'mobile' ) }
 												onChange={ () => toggleValueInArray( 'mobile', index, condIdx, 'screen_sizes' )}
 											/>
 											<ToggleControl
-												label={ __( 'Hide on tablet', 'otter-blocks' ) }
+												label={ __( 'Hide on Tablet', 'otter-blocks' ) }
 												checked={ condObj?.screen_sizes?.includes( 'tablet' ) }
 												onChange={ () => toggleValueInArray( 'tablet', index, condIdx, 'screen_sizes' )}
 											/>
 											<ToggleControl
-												label={ __( 'Hide on desktop', 'otter-blocks' ) }
+												label={ __( 'Hide on Desktop', 'otter-blocks' ) }
 												checked={ condObj?.screen_sizes?.includes( 'desktop' ) }
 												onChange={ () => toggleValueInArray( 'desktop', index, condIdx, 'screen_sizes' )}
 											/>
