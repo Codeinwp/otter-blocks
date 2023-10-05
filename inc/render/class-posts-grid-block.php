@@ -129,7 +129,7 @@ class Posts_Grid_Block {
 		// TODO: Remove after QA.
 		$end_time       = microtime( true );
 		$elapsed_time   = $end_time - $start_time;
-		$block_content .= '<!-- Rendered in ' . $elapsed_time . ' seconds -->';
+		$block_content .= '<!-- Rendered in ' . $elapsed_time . ' seconds | Page ' . $page_number . ' -->';
 
 		return $block_content;
 	}
@@ -349,6 +349,7 @@ class Posts_Grid_Block {
 		);
 
 		if ( $count_posts ) {
+			$args['offset']        = $args['posts_per_page'] * ( $page_number - 1 ) + $args['offset'];
 			$args['no_found_rows'] = false;
 			$args['paged']         = $page_number;
 		}
