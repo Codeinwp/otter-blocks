@@ -122,7 +122,8 @@
 
 @media screen {
 	.hidden-animated {
-		visibility: hidden;
+       visibility: hidden;
+       animation-play-state: paused;
 	}
 
    .animated .wp-block-navigation,

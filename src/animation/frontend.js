@@ -156,7 +156,7 @@ const delay = [
 
 const speed = [ 'none', 'slow', 'slower', 'fast', 'faster' ];
 
-window.addEventListener( 'load', () => {
+const animateElements = () => {
 	const elements = document.querySelectorAll( '.animated' );
 
 	createCustomAnimationNode( elements );
@@ -164,8 +164,6 @@ window.addEventListener( 'load', () => {
 	for ( const element of elements ) {
 		classes = element.classList;
 		element.animationClasses = [];
-
-		classes.add( 'o-anim-ready' );
 
 		if ( ! isElementInViewport( element ) ) {
 			const animationClass = animations.find( ( i ) => {
@@ -179,8 +177,6 @@ window.addEventListener( 'load', () => {
 			const speedClass = speed.find( ( i ) => {
 				return Array.from( classes ).find( ( o ) => o === i );
 			});
-
-			element.classList.add( 'hidden-animated' );
 
 			if ( animationClass ) {
 				element.animationClasses.push( animationClass );
@@ -196,7 +192,11 @@ window.addEventListener( 'load', () => {
 				element.animationClasses.push( speedClass );
 				element.classList.remove( speedClass );
 			}
+
+			element.classList.add( 'hidden-animated' );
 		}
+
+		classes.add( 'o-anim-ready' );
 
 		outAnimation.forEach( ( i ) => {
 			const isOut = element.className.includes( i );
@@ -265,7 +265,7 @@ window.addEventListener( 'load', () => {
 			});
 		});
 	});
-});
+};
 
 const isElementInViewport = ( el ) => {
 	let scroll = window.scrollY || window.pageYOffset;
@@ -391,3 +391,5 @@ const calculateOffset = ( offset ) => {
 
 	return offset;
 };
+
+window.addEventListener( 'load', animateElements );
