@@ -21,36 +21,27 @@ import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import { _cssBlock } from '../../../helpers/helper-functions';
 import { Disabled } from '@wordpress/components';
+import { isString } from 'lodash';
 
 
 const { attributes: defaultAttributes } = metadata;
 
-const Field = ({ fieldType, label, setAttributes, position, attributes }) => {
+const Field = ({ fieldType, label, position, attributes, checked, onChange }) => {
 
 	const id = `${attributes.id ?? ''}-field-${position}`;
 	const value = label?.toLowerCase().replace( / /g, '_' );
 
-	const onChangeLabel = label => {
-		const options = attributes.options?.split( '\n' ) ?? [];
-		if ( options.length < position ) {
-			return;
-		}
-
-		options[ position ] = label;
-		setAttributes({ options: options.join( '\n' ) });
-	};
-
 	return (
 		<div className='o-form-multiple-choice-field'>
 			<Disabled>
-				<input type={fieldType} id={id} name={attributes.mappedName} value={value} />
+				<input type={fieldType} id={id} name={attributes.mappedName} value={value} checked={checked} />
 			</Disabled>
 			<label for={id}>
 				<RichText
 					placeholder={ __( 'Type here…', 'otter-blocks' ) }
 					className="o-form-choice-label"
 					value={ label }
-					onChange={ onChangeLabel }
+					onChange={ onChange }
 					tagName="div"
 				/>
 			</label>
@@ -58,17 +49,18 @@ const Field = ({ fieldType, label, setAttributes, position, attributes }) => {
 	);
 };
 
-const SelectField = ({ attributes }) => {
+const SelectField = ({ attributes, options }) => {
 	return (
 		<select name={attributes.mappedName} id={attributes?.id} multiple={attributes.multipleSelection}>
 			{
-				( attributes?.options ?? '' )?.split( '\n' )?.filter( x => x )?.map( ( label, index ) => {
-					const value = label?.toLowerCase().replace( / /g, '_' );
+				options?.map( ( choice, index ) => {
+					const value = choice?.content?.toLowerCase().replace( / /g, '_' );
 
 					return <option
 						key={index}
 						value={value}
-					> {label}</option>;
+						selected={choice.isDefault}
+					> {choice.content}</option>;
 				})
 			}
 		</select>
@@ -91,6 +83,8 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const blockProps = useBlockProps();
+
+	const options = ( isString( attributes.options ) ? attributes.options?.split( '\n' )?.map( x => ({ isDefault: false, content: x }) ) : attributes.options ) ?? [];
 
 	return (
 		<Fragment>
@@ -125,17 +119,23 @@ const Edit = ({
 				</label>
 
 				{
-					'select' === attributes?.type ? <SelectField attributes={attributes} /> : (
+					'select' === attributes?.type ? <SelectField attributes={attributes} options={options} /> : (
 						<div className='o-form-choices'>
 							{
-								( attributes?.options ?? '' )?.split( '\n' )?.map( ( label, index ) => {
+								options?.map( ( c, index ) => {
 									return <Field
 										key={index}
 										fieldType={attributes.type}
-										label={label}
+										label={c.content}
 										setAttributes={setAttributes}
 										position={index}
 										attributes={attributes}
+										checked={c.isDefault}
+										onChange={ ( label ) => {
+											const o = [ ...options ];
+											o[index] = { ...o[index], content: label };
+											setAttributes({ options: o });
+										}}
 									/>;
 								})
 							}

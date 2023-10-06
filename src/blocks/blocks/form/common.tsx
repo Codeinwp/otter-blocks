@@ -3,7 +3,7 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	ToggleControl,
-	ExternalLink
+	ExternalLink, Button, CheckboxControl, RadioControl
 } from '@wordpress/components';
 import { omit } from 'lodash';
 import { createBlock } from '@wordpress/blocks';
@@ -12,6 +12,9 @@ import { dispatch } from '@wordpress/data';
 import { BlockProps } from '../../helpers/blocks';
 import { changeActiveStyle, getActiveStyle, getChoice } from '../../helpers/helper-functions';
 import { Fragment } from '@wordpress/element';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { RichText } from '@wordpress/block-editor';
+import attributes from '../lottie/attributes';
 
 export const FieldInputWidth = ( props ) => {
 
@@ -82,6 +85,7 @@ export type FormInputCommonProps = {
 	mappedName: string
 	labelColor: string
 	helpText: string
+	defaultValue: string
 }
 
 export const fieldTypesOptions = () => ([
@@ -233,4 +237,53 @@ export const mappedNameInfo = (
 	</Fragment>
 );
 
-export default { switchFormFieldTo, HideFieldLabelToggle, FieldInputWidth };
+const DragHandle = SortableHandle( () => {
+	return (
+		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__drag" tabIndex="0">
+			<span></span>
+		</div>
+	);
+});
+
+export const SortableChoiceItem = SortableElement( ( props ) => {
+	return (
+		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">
+
+			{
+				props?.useRadio ? (
+					<Fragment>
+						<div style={{ width: '13px', marginLeft: '8px' }}>
+							<input
+								type="radio"
+								checked={ props?.tab?.isDefault }
+								onChange={ props?.setAsDefault }
+								name={ 'default-tab' }
+							/>
+						</div>
+					</Fragment>
+				) : (
+					<CheckboxControl checked={props?.tab?.isDefault} onChange={props?.setAsDefault} />
+				)
+			}
+
+			<DragHandle />
+
+			<RichText
+				onChange={props.onLabelChange}
+				value={ props?.tab?.content || __( 'Untitled Tab', 'otter-blocks' ) }
+				tagName={'div'}
+				className={'wp-block-themeisle-blocks-tabs-inspector-tab-option__name'}
+			/>
+
+			<Button
+				icon="no-alt"
+				label={ __( 'Remove Tab', 'otter-blocks' ) }
+				showTooltip={ true }
+				className="wp-block-themeisle-blocks-tabs-inspector-tab-option__actions"
+				onClick={ props?.deleteTab }
+			/>
+		</div>
+	);
+});
+
+export default { switchFormFieldTo, HideFieldLabelToggle, FieldInputWidth, SortableChoiceItem };

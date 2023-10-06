@@ -38,7 +38,7 @@
 			"type": "string"
 		},
 		"options": {
-			"type": "string"
+			"type": ["string", "array"]
 		},
 		"multipleSelection": {
 			"type": "boolean"

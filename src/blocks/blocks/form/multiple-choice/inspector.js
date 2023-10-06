@@ -9,6 +9,7 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	BaseControl,
 	Button,
 	PanelBody,
 	SelectControl,
@@ -21,10 +22,19 @@ import { Fragment, useContext } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
-import { fieldTypesOptions, HideFieldLabelToggle, mappedNameInfo, switchFormFieldTo } from '../common';
+import { getActiveStyle, changeActiveStyle, buildResponsiveSetAttributes } from '../../../helpers/helper-functions.js';
+import {
+	fieldTypesOptions,
+	HideFieldLabelToggle,
+	mappedNameInfo, SortableChoiceItem,
+	SortableChoiceList,
+	switchFormFieldTo
+} from '../common';
 import { FormContext } from '../edit.js';
 import { HTMLAnchorControl } from '../../../components';
+import { debounce, isString } from 'lodash';
+import { SortableContainer } from 'react-sortable-hoc';
+import arrayMove from 'array-move';
 
 const styles = [
 	{
@@ -48,6 +58,56 @@ const Inspector = ({
 		selectForm
 	} = useContext( FormContext );
 
+	const options = ( isString( attributes.options ) ? attributes.options?.split( '\n' )?.map( x => ({ isDefault: false, content: x }) ) : attributes.options ) ?? [];
+
+	// Without debouncing, the RichText will lose focus on every keypress.
+	const debouncedSet = debounce( setAttributes, 1 );
+
+	const ChoiceList = SortableContainer( ( props ) => {
+		return (
+			<div>
+				{
+					props.options?.map(
+						( tab, index ) => (
+							<SortableChoiceItem
+								key={tab?.content}
+								index={index}
+								tab={tab}
+								setAsDefault={() => {
+									const updatedOptions = options.map( ( item, i ) => {
+										let updatedItem = { ...item };
+										if (
+											( 'select' === attributes.type || 'radio' === attributes.type ) &&
+											i !== index
+										) {
+											updatedItem.isDefault = false;
+										}
+										if ( i === index ) {
+											updatedItem.isDefault = ! Boolean( item.isDefault );
+										}
+										return updatedItem;
+									});
+
+									setAttributes({ options: updatedOptions });
+								}}
+								deleteTab={() => {
+									const o = [ ...options ];
+									o.splice( index, 1 );
+									setAttributes({ options: o });
+								}}
+								onLabelChange={( value ) => {
+									const o = [ ...options ];
+									o[index] = { ...o[index], content: value };
+									debouncedSet({ options: o });
+								}}
+								useRadio={'select' === attributes.type || 'radio' === attributes.type}
+							/>
+						) )
+				}
+			</div>
+		);
+	});
+
 	return (
 		<Fragment>
 			<InspectorControls>
@@ -68,7 +128,17 @@ const Inspector = ({
 						options={ fieldTypesOptions() }
 						onChange={ type => {
 							if ( 'radio' === type || 'checkbox' === type || 'select' === type ) {
-								setAttributes({ type });
+
+
+								if ( 'checkbox' === attributes.type ) {
+
+									// Remove all the default values.
+									const o = options?.map( item => ({ ...item, isDefault: false }) );
+									setAttributes({ type, options: o });
+								} else {
+									setAttributes({ type });
+								}
+
 								return;
 							}
 							switchFormFieldTo( type, clientId, attributes );
@@ -83,12 +153,34 @@ const Inspector = ({
 
 					<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
 
-					<TextareaControl
+					<BaseControl
+						id="otter-form-multiple-choice-options"
 						label={ __( 'Options', 'otter-blocks' ) }
-						help={ __( 'Enter each option in a different line.', 'otter-blocks' ) }
-						value={ attributes.options }
-						onChange={ ( options ) => setAttributes({ options }) }
-					/>
+					>
+						<ChoiceList
+							options={ options }
+							useDragHandle
+							axis="y"
+							lockAxis="y"
+							onSortEnd={ ({ oldIndex, newIndex }) => {
+								let o = [ ...options ];
+								o = arrayMove( o, oldIndex, newIndex );
+								setAttributes({ options: o });
+							} }
+						/>
+						<Button
+							isSecondary
+							className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
+							onClick={ () => {
+								const o = [ ...options ];
+								o.push({ isDefault: false, content: '' });
+								setAttributes({ options: o });
+							} }
+						>
+							{ __( 'Add Option', 'otter-blocks' ) }
+						</Button>
+					</BaseControl>
+
 
 					<TextControl
 						label={ __( 'Help Text', 'otter-blocks' ) }

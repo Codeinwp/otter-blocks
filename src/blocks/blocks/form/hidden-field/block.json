@@ -23,6 +23,9 @@
 		},
 		"inputWidth": {
 			"type": "number"
+		},
+		"defaultValue": {
+			"type": "string"
 		}
 	},
 	"supports": {
