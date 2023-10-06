@@ -299,12 +299,16 @@ class Dashboard {
 					})
 						.then(response => response.text())
 						.then(response => {
-							console.log(response);
+							const currentDate = new Date();
+							const year = currentDate.getFullYear();
+							const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+							const day = String(currentDate.getDate()).padStart(2, '0');
+
 							const blob = new Blob([response], {type: 'text/xml'});
 							const url = window.URL.createObjectURL(blob);
 							const a = document.createElement('a');
 							a.href = url;
-							a.download = 'otter-form-submissions.xml';
+							a.download = `otter_form_submissions__${year}-${month}-${day}.xml`;
 							document.body.appendChild(a);
 							a.click();
 						})
