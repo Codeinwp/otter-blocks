@@ -28,6 +28,15 @@ class DisplayFormMessage {
 	}
 
 	/**
+	 * Get the message from global themeisleGutenbergForm?.messages
+	 * @param {string} msgSlug
+	 * @returns {*|string}
+	 */
+	getMsgBySlug( msgSlug ) {
+		return window?.themeisleGutenbergForm?.messages[msgSlug] || 'Messages are missing!';
+	}
+
+	/**
 	 * Set the message from global themeisleGutenbergForm?.messages
 	 * @param {string} msgSlug
 	 * @param {'error'|'warning'|'success'} type
@@ -35,7 +44,7 @@ class DisplayFormMessage {
 	 */
 	pullMsg( msgSlug, type ) {
 		return this.setMsg(
-			window?.themeisleGutenbergForm?.messages[msgSlug] || 'Messages are missing!',
+			this.getMsgBySlug( msgSlug ),
 			type
 		);
 	}

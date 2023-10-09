@@ -71,8 +71,9 @@ const useSettings = () => {
 	 * @param {string?} success Success message for Notice.
 	 * @param {string?} noticeId Notice ID.
 	 * @param {function?} onSuccess Callback function to be executed on success.
+	 * @param {function?} onError Callback function to be executed on error.
 	 */
-	const updateOption = ( option, value, success = __( 'Settings saved.', 'otter-blocks' ), noticeId = undefined, onSuccess = () => {}) => {
+	const updateOption = ( option, value, success = __( 'Settings saved.', 'otter-blocks' ), noticeId = undefined, onSuccess = () => {}, onError = () => {}) => {
 		setStatus( 'saving' );
 
 		const save = new api.models.Settings({ [option]: value }).save();
@@ -105,8 +106,9 @@ const useSettings = () => {
 					}
 				);
 			}
-			onSuccess?.();
+
 			getSettings();
+			onSuccess?.( response );
 		});
 
 		save.error( ( response ) => {
@@ -114,13 +116,15 @@ const useSettings = () => {
 
 			createNotice(
 				'error',
-				response.responseJSON.message ? response.responseJSON.message : __( 'An unknown error occurred.', 'otter-blocks' ),
+				response?.responseJSON?.message ?? __( 'An unknown error occurred.', 'otter-blocks' ),
 				{
 					isDismissible: true,
 					type: 'snackbar',
 					id: noticeId
 				}
 			);
+
+			onError?.( response );
 		});
 	};
 

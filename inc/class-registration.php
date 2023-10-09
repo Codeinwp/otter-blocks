@@ -36,6 +36,13 @@ class Registration {
 	public static $block_dependencies = array();
 
 	/**
+	 * The ids of the used widgets in the page.
+	 *
+	 * @var array<string>
+	 */
+	public static $widget_used = array(); // TODO: Monitor all the rendered widgets and enqueue the assets.
+
+	/**
 	 * Flag to mark that the scripts which have loaded.
 	 *
 	 * @var array
@@ -81,6 +88,7 @@ class Registration {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
 		add_filter( 'render_block', array( $this, 'subscribe_fa' ), 10, 2 );
+		add_filter( 'dynamic_sidebar_params', array( $this, 'watch_used_widgets' ), 9999 );
 
 		add_action(
 			'wp_footer',
@@ -348,7 +356,15 @@ class Registration {
 		}
 
 		if ( $has_widgets ) {
-			$this->enqueue_dependencies( 'widgets' );
+			add_filter(
+				'wp_footer',
+				function ( $content ) {
+					$this->enqueue_dependencies( 'widgets' );
+
+					return $content;
+				}
+			);
+
 		}
 
 		if ( function_exists( 'get_block_templates' ) && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) {
@@ -383,7 +399,7 @@ class Registration {
 			$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
 
 			foreach ( $templates_parts as $templates_part ) {
-				if ( isset( $templates_part->content ) && isset( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {
+				if ( ! empty( $templates_part->content ) && ! empty( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {
 					$content .= $templates_part->content;
 				}
 			}
@@ -498,16 +514,17 @@ class Registration {
 					'root'               => esc_url_raw( rest_url() ),
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
-						'submission'         => __( 'Form submission from', 'otter-blocks' ),
-						'captcha-not-loaded' => __( 'Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' ),
-						'check-captcha'      => __( 'Please check the captcha.', 'otter-blocks' ),
-						'invalid-email'      => __( 'The email address is invalid!', 'otter-blocks' ),
-						'already-registered' => __( 'The email was already registered!', 'otter-blocks' ),
-						'try-again'          => __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' ),
-						'privacy'            => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
-						'too-many-files'     => __( 'Too many files loaded. Maximum is: ', 'otter-blocks' ),
-						'big-file'           => __( 'File size is to big. The limit is: ', 'otter-blocks' ),
-						'invalid-file'       => __( 'Invalid files type. The submitted files could not be processed.', 'otter-blocks' ),
+						'submission'           => __( 'Form submission from', 'otter-blocks' ),
+						'captcha-not-loaded'   => __( 'Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' ),
+						'check-captcha'        => __( 'Please check the captcha.', 'otter-blocks' ),
+						'invalid-email'        => __( 'The email address is invalid!', 'otter-blocks' ),
+						'already-registered'   => __( 'The email was already registered!', 'otter-blocks' ),
+						'try-again'            => __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' ),
+						'privacy'              => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
+						'too-many-files'       => __( 'Too many files loaded. Maximum is: ', 'otter-blocks' ),
+						'big-file'             => __( 'File size is to big. The limit is: ', 'otter-blocks' ),
+						'invalid-file'         => __( 'Invalid files type. The submitted files could not be processed.', 'otter-blocks' ),
+						'confirmingSubmission' => __( 'Confirming submission', 'otter-blocks' ),
 					),
 				)
 			);
@@ -967,24 +984,30 @@ class Registration {
 	 * @return string
 	 */
 	public static function get_active_widgets_content() {
+		$content = '';
+
+		if ( 0 === count( self::$widget_used ) ) {
+			return $content;
+		}
+
 		global $wp_registered_widgets;
-		$content       = '';
 		$valid_widgets = array();
 		$widget_data   = get_option( 'widget_block', array() );
 
 		// Loop through all widgets, and add any that are active.
 		foreach ( $wp_registered_widgets as $widget_name => $widget ) {
-			// Get the active sidebar the widget is located in.
-			$sidebar = is_active_widget( $widget['callback'], $widget['id'] );
+			if ( ! in_array( $widget['id'], self::$widget_used, true ) ) {
+				continue;
+			}
 
-			if ( $sidebar && 'wp_inactive_widgets' !== $sidebar ) {
-				$key = $widget['params'][0]['number'];
+			$key = $widget['params'][0]['number'];
 
-				if ( isset( $widget_data[ $key ] ) ) {
-					$valid_widgets[] = (object) $widget_data[ $key ];
-				}
+			if ( isset( $widget_data[ $key ] ) ) {
+				$valid_widgets[] = (object) $widget_data[ $key ];
 			}
 		}
+
+		self::$widget_used = array();
 
 		foreach ( $valid_widgets as $widget ) {
 			if ( isset( $widget->content ) ) {
@@ -993,6 +1016,20 @@ class Registration {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Watch and save the used widgets.
+	 *
+	 * @param array $params The widget params.
+	 * @return mixed
+	 */
+	public function watch_used_widgets( $params ) {
+		if ( isset( $params[0]['widget_id'] ) && ! in_array( $params[0]['widget_id'], self::$widget_used ) ) {
+			self::$widget_used[] = $params[0]['widget_id'];
+		}
+
+		return $params;
 	}
 
 	/**

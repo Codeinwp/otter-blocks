@@ -133,7 +133,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 			return $form_data;
 		}
 
-		$email = $form_data->get_email_from_form_input();
+		$email = $form_data->get_first_email_from_input_fields();
 
 		$response = $this->make_subscribe_request( $email );
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
@@ -220,8 +220,8 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	public function get_information_from_provider( $request ) {
-		if ( $request->is_set( 'action' ) ) {
-			if ( $request->get( 'action' ) == 'listId' ) {
+		if ( $request->is_root_data_set( 'action' ) ) {
+			if ( $request->get_root_data( 'action' ) == 'listId' ) {
 				return $this->get_lists();
 			}
 		}

@@ -122,6 +122,20 @@ class Form_Settings_Data {
 	private $submissions_save_location = '';
 
 	/**
+	 * The webhook ID.
+	 *
+	 * @var string
+	 */
+	private $webhook_id = '';
+
+	/**
+	 * The required fields.
+	 *
+	 * @var array
+	 */
+	private $required_fields = array();
+
+	/**
 	 * The default constructor.
 	 *
 	 * @param array $integration_data The integration data.
@@ -241,6 +255,12 @@ class Form_Settings_Data {
 					$integration->set_submissions_save_location( 'database-email' );
 				}
 				$integration->set_meta( $form );
+				if ( isset( $form['webhookId'] ) ) {
+					$integration->set_webhook_id( $form['webhookId'] );
+				}
+				if ( isset( $form['requiredFields'] ) && is_array( $form['requiredFields'] ) ) {
+					$integration->set_required_fields( $form['requiredFields'] );
+				}
 			}
 		}
 		return $integration;
@@ -645,6 +665,15 @@ class Form_Settings_Data {
 	}
 
 	/**
+	 * Get the webhook id.
+	 *
+	 * @return string
+	 */
+	public function get_webhook_id() {
+		return $this->webhook_id;
+	}
+
+	/**
 	 * Set the autoresponder.
 	 *
 	 * @param array $autoresponder The email bcc.
@@ -674,5 +703,48 @@ class Form_Settings_Data {
 	public function set_submissions_save_location( $submissions_save_location ) {
 		$this->submissions_save_location = $submissions_save_location;
 		return $this;
+	}
+
+	/**
+	 * Set the webhook ID.
+	 *
+	 * @param string $webhook_id The webhook ID.
+	 * @return $this
+	 */
+	private function set_webhook_id( $webhook_id ) {
+		if ( ! empty( $webhook_id ) ) {
+			$this->webhook_id = $webhook_id;
+		}
+		return $this;
+	}
+
+	/**
+	 * Set the required fields.
+	 *
+	 * @param array $required_fields The required fields.
+	 * @return $this
+	 */
+	public function set_required_fields( $required_fields ) {
+
+		$this->required_fields = $required_fields;
+		return $this;
+	}
+
+	/**
+	 * Get the required fields.
+	 *
+	 * @return array
+	 */
+	public function get_required_fields() {
+		return $this->required_fields;
+	}
+
+	/**
+	 * Check if the form has required fields.
+	 *
+	 * @return bool
+	 */
+	public function has_required_fields() {
+		return ! empty( $this->required_fields );
 	}
 }

@@ -34,6 +34,7 @@ import {
 } from '@wordpress/element';
 
 import {
+	isEmpty,
 	isObjectLike
 } from 'lodash';
 
@@ -55,6 +56,17 @@ import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { makeBox } from '../../plugins/copy-paste/utils';
 import { _px, compactObject } from '../../helpers/helper-functions.js';
 import { useTabSwitch } from '../../helpers/block-utility';
+import TypographySelectorControl from '../../components/typography-selector-control';
+
+const fieldMapping = {
+	'fontFamily': 'fontFamily',
+	'fontSize': 'fontSize',
+	'lineHeight': 'lineHeight',
+	'letterCase': 'textTransform',
+	'spacing': 'letterSpacing',
+	'appearance': 'fontStyle',
+	'variant': 'fontVariant'
+};
 
 /**
  *
@@ -204,97 +216,52 @@ const Inspector = ({
 								title={ __( 'Typography', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
+								<TypographySelectorControl
+									enableComponents={{
+										fontFamily: true,
+										appearance: true,
+										lineHeight: true,
+										letterCase: true,
+										spacing: true,
+										variant: true
+									}}
 
-								<ResponsiveControl
-									label={ __( 'Font Size', 'otter-blocks' ) }
-								>
+									componentsValue={{
+										fontSize: _px( responsiveGetAttributes([ attributes.fontSize, attributes.fontSizeTablet, attributes.fontSizeMobile  ]) ),
+										fontFamily: attributes.fontFamily,
+										lineHeight: attributes.lineHeight,
+										appearance: attributes.fontStyle,
+										letterCase: attributes.textTransform,
+										spacing: attributes.letterSpacing,
+										variant: attributes.fontVariant
+									}}
 
-									<FontSizePicker
-										value={ _px( responsiveGetAttributes([ attributes.fontSize, attributes.fontSizeTablet, attributes.fontSizeMobile  ]) ) }
-										onChange={ value => responsiveSetAttributes( value, [ 'fontSize', 'fontSizeTablet', 'fontSizeMobile' ]) }
-										fontSizes={
-											[
-												{
-													name: __( '13', 'otter-blocks' ),
-													size: '13px',
-													slug: 'small'
-												},
-												{
-													name: __( '20', 'otter-blocks' ),
-													size: '20px',
-													slug: 'medium'
-												},
-												{
-													name: __( '36', 'otter-blocks' ),
-													size: '36px',
-													slug: 'large'
-												},
-												{
-													name: __( '42', 'otter-blocks' ),
-													size: '42px',
-													slug: 'xl'
-												}
-											]
+									onChange={ ( values ) => {
+										setAttributes({
+											fontFamily: values.fontFamily,
+											lineHeight: values.lineHeight,
+											fontStyle: values.appearance,
+											textTransform: values.letterCase,
+											letterSpacing: values.spacing,
+											[responsiveGetAttributes([ 'fontSize', 'fontSizeTablet', 'fontSizeMobile' ]) ?? 'fontSize']: values.fontSize,
+											fontVariant: values.variant
+										});
+									} }
+
+									onReset={ field => {
+										if ( 'fontSize' === field ) {
+											setAttributes({
+												[responsiveGetAttributes([ 'fontSize', 'fontSizeTablet', 'fontSizeMobile' ])]: undefined
+											});
+										} else {
+											setAttributes({
+												[fieldMapping[field]]: undefined
+											});
 										}
-									/>
-								</ResponsiveControl>
+									}}
 
-								<GoogleFontsControl
-									label={ __( 'Font Family', 'otter-blocks' ) }
-									value={ attributes.fontFamily }
-									onChangeFontFamily={ changeFontFamily }
-									valueVariant={ attributes.fontVariant }
-									onChangeFontVariant={ fontVariant => setAttributes({ fontVariant }) }
-									valueStyle={ attributes.fontStyle }
-									onChangeFontStyle={ fontStyle => setAttributes({ fontStyle }) }
-									valueTransform={ attributes.textTransform }
-									onChangeTextTransform={ textTransform => setAttributes({ textTransform }) }
+									allowVariants={true}
 								/>
-
-								<UnitControl
-									label={ __( 'Line Height', 'otter-blocks' ) }
-									value={ attributes.lineHeight }
-									onChange={ lineHeight => setAttributes({ lineHeight }) }
-									step={ 0.1 }
-									min={ 0 }
-									units={[
-										{
-											a11yLabel: 'Unitless (-)',
-											label: '-',
-											step: 0.1,
-											value: ''
-										},
-										{
-											a11yLabel: 'Pixels (px)',
-											label: 'px',
-											step: 0.1,
-											value: 'px'
-										},
-										{
-											a11yLabel: 'Percentage (%)',
-											label: '%',
-											step: 1,
-											value: '%'
-										}
-									]}
-								/>
-
-								<br />
-
-								<UnitControl
-									label={ __( 'Letter Spacing', 'otter-blocks' ) }
-									value={ attributes.letterSpacing }
-									onChange={ letterSpacing => setAttributes({ letterSpacing }) }
-									step={ 0.1 }
-									min={ -50 }
-									max={ 100 }
-								/>
-
-								<ClearButton
-									values={[ 'fontFamily', 'fontVariant', 'fontStyle', 'textTransform', 'lineHeight', 'letterSpacing' ]}
-									setAttributes={ setAttributes }
-								/>
-
 							</PanelBody>
 
 							<PanelColorSettings

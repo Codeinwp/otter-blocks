@@ -158,7 +158,7 @@ const Edit = ({
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
 		fontStyle: attributes.fontStyle || undefined,
 		textTransform: attributes.textTransform || undefined,
-		lineHeight: ( 3 < attributes.lineHeight && ! isString( attributes.lineHeight ) ) ? attributes.lineHeight + 'px' : attributes.lineHeight,
+		lineHeight: ( ( ! isString( attributes.lineHeight ) &&  3 < attributes.lineHeight ) ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
 		letterSpacing: _px( attributes.letterSpacing ),
 		background: attributes.backgroundColor,
 		...textShadowStyle,
