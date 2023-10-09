@@ -1,17 +1,4 @@
-import {
-	isEmpty,
-	merge,
-	set,
-	unset,
-	without,
-	omitBy,
-	isObjectLike,
-	isString,
-	isNumber,
-	isNil,
-	cloneDeep,
-	isFunction
-} from 'lodash';
+import { isEmpty, merge, set, unset, without, omitBy, isObjectLike, isString, isNumber, isNil, cloneDeep } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -434,27 +421,22 @@ export const setUtm = ( urlAdress, linkArea ) => {
 };
 
 /**
- * Build a responsive wrapper around `setAttributes`.
+ * Build a responsive wrapper around `setAttributes`
  *
  * @param {Function} setAttributes The function that set the attributes.
  * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
  * @template T
- * @returns {(value: T, keys: string[], oldAttr: Object, setAttr: (Function | null)) => void}) => void}
+ * @returns {(value: T, keys: string[], oldAttr: Object) => void}) => void}
  */
 export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
-	return ( value, keys, oldAttr = {}, setAttr = null ) => {
+	return ( value, keys, oldAttr = {}) => {
 
 		const attrName = keys[mapViewToKey[currentView] ?? 0]?.split( '.' )[0];
 		const attr = { [attrName]: { ...oldAttr }};
 
 		set( attr, keys[mapViewToKey[currentView] ?? 0], value );
 
-		// In case of reactivity issue like `setAttributes` is using an old value. You can use `setAttr` to avoid this problem by providing an updated function with the latest value.
-		if ( isFunction( setAttr ) ) {
-			setAttr?.( 'object' === typeof attr[attrName] && isEmpty( attr[attrName]) ? { [attrName]: undefined } : attr );
-		} else {
-			setAttributes( 'object' === typeof attr[attrName] && isEmpty( attr[attrName]) ? { [attrName]: undefined } : attr );
-		}
+		setAttributes( 'object' === typeof attr[attrName] && isEmpty( attr[attrName]) ? { [attrName]: undefined } : attr );
 	};
 };
 

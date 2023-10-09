@@ -19,22 +19,18 @@ import {
 } from '@wordpress/block-editor';
 
 import {
-	FontSizePicker,
 	PanelBody,
 	RangeControl,
 	SelectControl,
 	ToggleControl,
-	__experimentalBoxControl as BoxControl,
-	__experimentalUnitControl as UnitControl
+	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
 import {
-	Fragment,
-	useState
+	Fragment
 } from '@wordpress/element';
 
 import {
-	isEmpty,
 	isObjectLike
 } from 'lodash';
 
@@ -42,9 +38,7 @@ import {
  * Internal dependencies
  */
 import {
-	ClearButton,
 	ControlPanelControl,
-	GoogleFontsControl,
 	HTMLAnchorControl,
 	InspectorExtensions,
 	InspectorHeader,
@@ -80,21 +74,6 @@ const Inspector = ({
 
 	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
-
-	const changeFontFamily = value => {
-		if ( ! value ) {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: value
-			});
-		} else {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: 'normal',
-				fontStyle: 'normal'
-			});
-		}
-	};
 
 	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
 		top: _px( attributes.paddingTop ) ?? '0px',
@@ -216,6 +195,10 @@ const Inspector = ({
 								title={ __( 'Typography', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
+								<ResponsiveControl
+									label={ __( 'Screen Type', 'otter-blocks' ) }
+								/>
+
 								<TypographySelectorControl
 									enableComponents={{
 										fontFamily: true,
