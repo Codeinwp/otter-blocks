@@ -109,7 +109,7 @@ test.describe( 'Post Editor Performance', () => {
 
 			const paragraph = canvas.getByRole( 'document', {
 				name: /Empty block/i
-			});
+			}).nth( 1 );
 
 			// The first character typed triggers a longer time (isTyping change).
 			// It can impact the stability of the metric, so we exclude it. It
