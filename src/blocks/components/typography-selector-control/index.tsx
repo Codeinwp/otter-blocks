@@ -190,8 +190,6 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 		allowVariants
 	} = props;
 
-	console.log( allowVariants );
-
 	const [ showComponent, setShowComponent ] = useState(
 		mapValues( componentsValue ?? defaultStates.isEnabled, x => Boolean( x ) )
 	);
