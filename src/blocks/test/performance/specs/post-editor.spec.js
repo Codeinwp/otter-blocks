@@ -485,5 +485,3 @@ test.describe( 'Post Editor Performance', () => {
 		});
 	});
 });
-
-/* eslint-enable playwright/no-conditional-in-test, playwright/expect-expect */
