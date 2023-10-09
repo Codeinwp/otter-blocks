@@ -8,7 +8,7 @@ import hexToRgba from 'hex-rgba';
  */
 import { __ } from '@wordpress/i18n';
 
-import { isObjectLike, omitBy } from 'lodash';
+import { isObjectLike, isString, omitBy } from 'lodash';
 
 import {
 	createBlock,
@@ -158,7 +158,7 @@ const Edit = ({
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
 		fontStyle: attributes.fontStyle || undefined,
 		textTransform: attributes.textTransform || undefined,
-		lineHeight: ( 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
+		lineHeight: ( ( ! isString( attributes.lineHeight ) &&  3 < attributes.lineHeight ) ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
 		letterSpacing: _px( attributes.letterSpacing ),
 		background: attributes.backgroundColor,
 		...textShadowStyle,
