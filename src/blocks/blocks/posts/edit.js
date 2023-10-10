@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { debounce } from 'lodash';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -52,6 +57,7 @@ import {
 } from '../../helpers/utility-hooks.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
+import { domReady } from '../../helpers/frontend-helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -65,6 +71,7 @@ const Edit = ({
 	setAttributes,
 	clientId
 }) => {
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -183,6 +190,16 @@ const Edit = ({
 			// eslint-disable-next-line camelcase
 			.map( taxonomy => select( 'core' ).getEntityRecords( 'taxonomy', taxonomy, { per_page: -1 }) ?? [])
 			.flat();
+
+		if ( window?.rankMathEditor ) {
+
+			/**
+			 * If RankMath is present on the page, we will refresh the RankMath editor analysis when the posts are updated.
+			 */
+			debounce( () => {
+				window?.rankMathEditor.refresh( 'content' );
+			}, 500 );
+		}
 
 		return {
 			posts,
@@ -346,5 +363,38 @@ const Edit = ({
 		</Fragment>
 	);
 };
+
+domReady( () => {
+
+	/**
+	 * If the RankMath plugin is present on the page, we will sent the content of the posts grid to RankMath for analysis.
+	 */
+	let maxTries = 10;
+
+	const init = () => {
+		window.wp.hooks.addFilter( 'rank_math_content', 'rank-math', () => {
+
+			/**
+			 * @type {NodeListOf<HTMLDivElement>} postsHtml - The HTML nodes which contain the relevent post content for RankMath.
+			 */
+			const postsHtml = document.querySelectorAll( '.o-posts-grid-post-body' );
+			return Array.from( postsHtml ).map( ( post ) => post.innerHTML ).join( '' );
+		});
+
+		window?.rankMathEditor?.refresh( 'content' );
+	};
+
+	const t = setInterval( () => {
+		if ( window?.rankMathEditor ) {
+			clearInterval( t );
+			init();
+		} else {
+			maxTries--;
+			if ( 0 === maxTries ) {
+				clearInterval( t );
+			}
+		}
+	}, 1000 );
+});
 
 export default Edit;
