@@ -20,11 +20,13 @@ import { FieldInputWidth, HideFieldLabelToggle, mappedNameInfo } from '../../../
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
 import AutoresponderBodyModal from '../../components/autoresponder/index.js';
 import WebhookEditor from '../../components/webhook-editor';
+import attributes from '../../../blocks/blocks/lottie/attributes';
 
 // +-------------- Autoresponder --------------+
 
 const AutoresponderBody = ({ formOptions, setFormOption }) => {
 	const onChange = body => {
+		window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'body' });
 		setFormOption({ autoresponder: { ...formOptions.autoresponder, body }});
 	};
 
@@ -62,7 +64,10 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 					<SelectControl
 						label={ __( 'Save Location', 'otter-blocks' ) }
 						value={ formOptions.submissionsSaveLocation ?? 'database-email' }
-						onChange={ submissionsSaveLocation => setFormOption({ submissionsSaveLocation }) }
+						onChange={ submissionsSaveLocation => {
+							window.oTrk?.set( `${attributes.id}_save`, { feature: 'form-file', featureComponent: 'save-location', featureValue: submissionsSaveLocation });
+							setFormOption({ submissionsSaveLocation });
+						} }
 						options={
 							[
 								{ label: __( 'Database', 'otter-blocks' ), value: 'database' },
@@ -104,14 +109,15 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 								'otter-blocks'
 							)}
 							value={formOptions.autoresponder?.subject}
-							onChange={( subject ) =>
+							onChange={( subject ) => {
+								window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'subject' });
 								setFormOption({
 									autoresponder: {
 										...formOptions.autoresponder,
 										subject
 									}
-								})
-							}
+								});
+							}}
 							help={__(
 								'Enter the subject of the autoresponder email.',
 								'otter-blocks'
@@ -159,6 +165,7 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 						<WebhookEditor
 							webhookId={formOptions.webhookId}
 							onChange={( webhookId ) => {
+								window.oTrk?.add({ feature: 'form-webhook', featureComponent: 'webhook-creation' });
 								setFormOption({
 									webhookId: webhookId
 								});
@@ -273,6 +280,7 @@ const FormFileInspector = ( Template, {
 				type="number"
 				value={ ! isNaN( parseInt( attributes.maxFileSize ) ) ? attributes.maxFileSize : undefined }
 				onChange={ maxFileSize => {
+					window.oTrk?.set( `${attributes.id}_size`, { feature: 'form-file', featureComponent: 'file-size', featureValue: maxFileSize });
 					setSavedState( attributes.id, true );
 					setAttributes({ maxFileSize: maxFileSize ? maxFileSize?.toString() : undefined });
 				} }
@@ -283,6 +291,7 @@ const FormFileInspector = ( Template, {
 				label={ __( 'Allowed File Types', 'otter-blocks' ) }
 				value={ attributes.allowedFileTypes }
 				onChange={ allowedFileTypes => {
+					window.oTrk?.set( `${attributes.id}_type`, { feature: 'form-file', featureComponent: 'file-size', featureValue: allowedFileTypes });
 					setSavedState( attributes.id, true );
 					setAttributes({ allowedFileTypes: allowedFileTypes ? allowedFileTypes.map( replaceJPGWithJPEG ) : undefined });
 				} }
@@ -315,6 +324,7 @@ const FormFileInspector = ( Template, {
 				label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
 				checked={ Boolean( attributes.multipleFiles ) }
 				onChange={ multipleFiles => {
+					window.oTrk?.add({ feature: 'form-file', featureComponent: 'enable-multiple-file' });
 					setSavedState( attributes.id, true );
 					setAttributes({ multipleFiles: multipleFiles ? multipleFiles : undefined });
 				} }
@@ -327,6 +337,7 @@ const FormFileInspector = ( Template, {
 						type="number"
 						value={ ! isNaN( parseInt( attributes.maxFilesNumber ) ) ? ( attributes.maxFilesNumber ) : undefined }
 						onChange={ maxFilesNumber => {
+							window.oTrk?.set( `${attributes.id}_num`, { feature: 'form-file', featureComponent: 'multiple-file', featureValue: maxFilesNumber });
 							setSavedState( attributes.id, true );
 							setAttributes({ maxFilesNumber: maxFilesNumber ? maxFilesNumber?.toString() : undefined });
 						} }
@@ -340,6 +351,7 @@ const FormFileInspector = ( Template, {
 				help={ __( 'If enabled, the files will be saved to Media Library instead of adding them as attachments to email.', 'otter-blocks' ) }
 				checked={ 'media-library' === attributes.saveFiles }
 				onChange={ value => {
+					window.oTrk?.add({ feature: 'form-file', featureComponent: 'enable-media-saving' });
 					setSavedState( attributes.id, true );
 					setAttributes({ saveFiles: value ? 'media-library' : undefined });
 				} }

@@ -25,7 +25,6 @@ import { arrowRight, closeSmall } from '@wordpress/icons';
  */
 import useSettings from '../../../blocks/helpers/use-settings';
 
-
 type WebhookEditorProps = {
 	webhookId: string,
 	onChange: ( webhookId: string ) => void,
@@ -104,6 +103,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 		// Save to wp options
 		setOption?.( 'themeisle_webhooks_options', [ ...webhooksToSave ], __( 'Webhooks saved.', 'otter-blocks' ), 'webhook', ( response ) => {
 			setWebhooks( response?.['themeisle_webhooks_options'] ?? []);
+			window.oTrk?.add({ feature: 'webhook', featureComponent: 'saving' });
 		});
 	};
 
@@ -205,6 +205,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 										<Button
 											variant={ 'secondary' }
 											onClick={() => {
+												window.oTrk?.add({ feature: 'webhook', featureComponent: 'new' });
 												setHeaders([
 													...headers,
 													{ key: '', value: '' }

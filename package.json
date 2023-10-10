@@ -75,6 +75,7 @@
 		"@testing-library/react": "^14.0.0",
 		"@testing-library/user-event": "^14.4.3",
 		"@types/jest": "^29.5.1",
+		"@types/object-hash": "^3.0.4",
 		"@types/wordpress__block-editor": "^11.5.1",
 		"@types/wordpress__components": "^23.0.1",
 		"@typescript-eslint/parser": "^6.3.0",

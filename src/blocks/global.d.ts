@@ -1,3 +1,5 @@
+import type OtterEventTracking from './helpers/tracking';
+
 declare global {
 	interface Window {
 		themeisleGutenberg?: {
@@ -102,7 +104,8 @@ declare global {
 		},
 		oSavedStates?: {
 			[key: string]: any
-		}
+		},
+		oTrk?: OtterEventTracking
 	}
 }
 
