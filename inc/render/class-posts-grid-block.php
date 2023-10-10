@@ -19,11 +19,9 @@ class Posts_Grid_Block {
 	 * the server side output of the block.
 	 *
 	 * @param array $attributes Blocks attrs.
-	 * @return mixed|string
+	 * @return string
 	 */
 	public function render( $attributes ) {
-
-		$start_time = microtime( true );
 
 		$has_pagination = isset( $attributes['hasPagination'] ) && $attributes['hasPagination'];
 		$page_number    = 1;
@@ -35,7 +33,7 @@ class Posts_Grid_Block {
 		}
 
 		$total_posts  = 0;
-		$recent_posts = $this->retrive_posts( $attributes, $has_pagination, $page_number, $total_posts );
+		$recent_posts = $this->retrieve_posts( $attributes, $has_pagination, $page_number, $total_posts );
 
 		if ( isset( $attributes['featuredPostOrder'] ) && 'sticky-first' === $attributes['featuredPostOrder'] ) {
 
@@ -125,11 +123,6 @@ class Posts_Grid_Block {
 			$list_items_markup,
 			$has_pagination ? $this->render_pagination( $page_number, $total_posts ) : ''
 		);
-
-		// TODO: Remove after QA.
-		$end_time       = microtime( true );
-		$elapsed_time   = $end_time - $start_time;
-		$block_content .= '<!-- Rendered in ' . $elapsed_time . ' seconds | Page ' . $page_number . ' -->';
 
 		return $block_content;
 	}
@@ -320,7 +313,7 @@ class Posts_Grid_Block {
 	 * @param int   $total_posts Total posts.
 	 * @return array|int[]|null[]|\WP_Post[] Posts.
 	 */
-	protected function retrive_posts( $attributes, $count_posts, $page_number, &$total_posts ) {
+	protected function retrieve_posts( $attributes, $count_posts, $page_number, &$total_posts ) {
 
 		$offset = ! empty( $attributes['offset'] ) ? $attributes['offset'] : 0;
 
@@ -330,7 +323,7 @@ class Posts_Grid_Block {
 			$cats = array();
 
 			foreach ( $attributes['categories'] as $category ) {
-				array_push( $cats, $category['id'] );
+				$cats[] = $category['id'];
 			}
 
 			$categories = join( ', ', $cats );
@@ -356,11 +349,6 @@ class Posts_Grid_Block {
 
 		// Handle the case when the post type is a WooCommerce product.
 		if ( isset( $args['post_type'] ) && in_array( 'product', $args['post_type'] ) && function_exists( 'wc_get_products' ) ) {
-
-			if ( $count_posts ) {
-				// Paged is not working for WC, so we doing a manual count.
-				$args['offset'] = $args['offset'] + ( $args['posts_per_page'] * ( $args['paged'] - 1 ) );
-			}
 
 			if ( isset( $attributes['categories'] ) ) {
 
