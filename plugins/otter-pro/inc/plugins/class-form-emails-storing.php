@@ -78,6 +78,8 @@ class Form_Emails_Storing {
 		add_action( 'otter_form_update_record_meta_dump', array( $this, 'update_submission_dump_data' ), 10, 2 );
 		add_action( 'otter_form_automatic_confirmation', array( $this, 'move_old_stripe_draft_sessions_to_unread' ) );
 		add_action( 'wp', array( $this, 'schedule_automatic_confirmation' ) );
+
+		add_action( 'wp_ajax_otter_form_submissions', array( $this, 'export_submissions' ) );
 	}
 
 	/**
@@ -1323,6 +1325,25 @@ class Form_Emails_Storing {
 		if ( ! wp_next_scheduled( 'otter_form_automatic_confirmation' ) ) {
 			wp_schedule_event( time(), 'hourly', 'otter_form_automatic_confirmation' );
 		}
+	}
+
+	/**
+	 * Export submissions with ajax.
+	 */
+	public function export_submissions() {
+		$nonce = isset( $_POST['_nonce'] ) ? sanitize_text_field( $_POST['_nonce'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		if ( ! wp_verify_nonce( $nonce, 'otter_form_export_submissions' ) ) {
+			wp_die( esc_html( __( 'Invalid nonce.', 'otter-blocks' ) ) );
+		}
+
+		// Export submissions.
+		require_once ABSPATH . 'wp-admin/includes/export.php';
+		ob_start();
+		export_wp( array( 'content' => self::FORM_RECORD_TYPE ) );
+		$export = ob_get_clean();
+
+		echo ent2ncr( $export ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		wp_die();
 	}
 
 	/**

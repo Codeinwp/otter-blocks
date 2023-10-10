@@ -392,4 +392,28 @@ test.describe( 'Form Block', () => {
 
 		expect( await saveBtn.isEnabled() ).toBeTruthy();
 	});
+
+	test( 'can export form data', async({ page, editor }) => {
+		let downloadTriggered = false;
+		let fileName = '';
+
+		await page.goto( '/wp-admin/edit.php?post_type=otter_form_record' );
+
+		page.on( 'download', async download => {
+			await download.path(); // Wait for download to complete.
+			downloadTriggered = true;
+			fileName = download.suggestedFilename();
+		});
+
+		const exportBtn = page.getByRole( 'button', { name: 'Export' });
+
+		await expect( exportBtn ).toBeVisible();
+
+		await exportBtn.click();
+
+		await page.waitForTimeout( 1000 );
+
+		expect( downloadTriggered ).toBeTruthy();
+		expect( fileName.startsWith( 'otter_form_submissions' ) ).toBeTruthy();
+	});
 });
