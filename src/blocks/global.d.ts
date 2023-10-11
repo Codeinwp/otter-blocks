@@ -20,6 +20,8 @@ declare global {
 			imageSizes: string[]
 			isWPVIP: boolean
 			canTrack: boolean
+			trackHash: string
+			trackAPI: string
 			userRoles: {
 				[key: string]: {
 					name: string

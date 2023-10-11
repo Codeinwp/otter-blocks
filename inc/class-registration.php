@@ -242,6 +242,9 @@ class Registration {
 
 		global $wp_roles;
 
+		$license      = apply_filters( 'product_otter_license_key', 'free' );
+		$license_hash = 'free' === $license ? 'free' : wp_hash( $license );
+
 		wp_localize_script(
 			'otter-blocks',
 			'themeisleGutenberg',
@@ -262,6 +265,8 @@ class Registration {
 				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
 				'isWPVIP'                 => function_exists( 'is_wpcom_vip' ),
 				'canTrack'                => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
+				'trackHash'               => $license_hash,
+				'trackAPI'                => Tracker::$track_url,
 				'userRoles'               => $wp_roles->roles,
 				'isBlockEditor'           => 'post' === $current_screen->base,
 				'postTypes'               => get_post_types( [ 'public' => true ] ),

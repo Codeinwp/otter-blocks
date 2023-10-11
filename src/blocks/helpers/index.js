@@ -7,6 +7,8 @@ import * as icons from './icons.js';
 
 import useSettings from './use-settings.js';
 
+import './tracking.js';
+
 window.otterUtils = {};
 
 window.otterUtils.blockInit = blockInit;

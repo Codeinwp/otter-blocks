@@ -38,15 +38,18 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId
+	clientId,
+	name
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		if ( attributes.id === undefined ) {
+			window.oTrk?.add({ block: name, action: 'block-created', groupID: attributes.id });
 
 			// Set the default value for newly created blocks.
 			setAttributes({ saveFiles: 'media-library' });
 		}
+
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 

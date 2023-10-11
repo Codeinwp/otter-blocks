@@ -485,7 +485,8 @@ const Inspector = ({
 											/>,
 											formOptions,
 											setFormOption,
-											useContext( FormContext )
+											useContext( FormContext ),
+											attributes
 										) }
 									</Fragment>
 								)
@@ -518,7 +519,7 @@ const Inspector = ({
 									{ label: __( 'Sendinblue', 'otter-blocks' ), value: 'sendinblue' }
 								] }
 								onChange={ provider => {
-									window.oTrk?.add({ feature: 'marketing', featureComponent: 'provider', featureValue: provider });
+									window.oTrk?.add({ feature: 'marketing', featureComponent: 'provider', featureValue: provider, groupID: attributes.id });
 									setFormOption({ provider, listId: '', apiKey: '' });
 								} }
 							/>
@@ -554,7 +555,7 @@ const Inspector = ({
 										help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
 										value={ formOptions.apiKey ? `*************************${formOptions.apiKey.slice( -8 )}` : '' }
 										onChange={ apiKey => {
-											window.oTrk?.add({ feature: 'marketing', featureComponent: 'api-key' });
+											window.oTrk?.add({ feature: 'marketing', featureComponent: 'api-key', groupID: attributes.id });
 											setListIDOptions([]);
 											setFormOption({
 												listId: '',
@@ -596,7 +597,7 @@ const Inspector = ({
 												value={ formOptions.listId }
 												options={ listIDOptions }
 												onChange={ listId => {
-													window.oTrk?.add({ feature: 'marketing', featureComponent: 'contact-list' });
+													window.oTrk?.set( `${attributes.id}_list`, { feature: 'marketing', featureComponent: 'contact-list', groupID: attributes.id });
 													setFormOption({ listId });
 												} }
 											/>
@@ -614,7 +615,7 @@ const Inspector = ({
 															{ label: __( 'Submit & Subscribe', 'otter-blocks' ), value: 'submit-subscribe' }
 														] }
 														onChange={ action => {
-															window.oTrk?.add({ feature: 'marketing', featureComponent: 'provider', featureValue: action });
+															window.oTrk?.set( `${attributes.id}_action`, { feature: 'marketing', featureComponent: 'action', featureValue: action, groupID: attributes.id });
 															setFormOption({ action });
 														} }
 													/>

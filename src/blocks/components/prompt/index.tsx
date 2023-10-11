@@ -275,6 +275,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		const sendPrompt = regenerate ? sendPromptToOpenAIWithRegenerate : sendPromptToOpenAI;
 
+		window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'prompt', featureValue: value }, { consent: true });
+
 		sendPrompt?.( value, embeddedPrompt, {
 			'otter_used_action': 'textTransformation' === promptID ? 'textTransformation::otter_action_prompt' : ( promptID ?? '' ),
 			'otter_user_content': value

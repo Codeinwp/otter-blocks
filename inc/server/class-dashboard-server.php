@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use ThemeIsle\GutenbergBlocks\Tracker;
+
 /**
  * Class Dashboard_Server
  */
@@ -38,7 +40,7 @@ class Dashboard_Server {
 	 */
 	public function init() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
-		add_action( 'after_switch_theme', array( $this, 'regenerate_styles_on_theme_change' ) );
+		add_action( 'after_switch_theme', array( $this, 'regenerate_styles_on_theme_change' ), 10, 2 );
 	}
 
 	/**
@@ -80,7 +82,16 @@ class Dashboard_Server {
 	 *
 	 * @since 2.3
 	 */
-	public function regenerate_styles_on_theme_change() {
+	public function regenerate_styles_on_theme_change( $new_name, $new_theme ) {
+
+		Tracker::track(
+			array(
+				'feature'          => 'system',
+				'featureComponent' => 'theme-change',
+				'featureValue'     => $new_name,
+			)
+		);
+
 		self::regenerate_styles();
 	}
 
