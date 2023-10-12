@@ -79,6 +79,9 @@ class Dashboard_Server {
 
 	/**
 	 * Regenerate styles on theme change.
+	 * 
+	 * @param string $new_name New theme name.
+	 * @param string $new_theme New theme object.
 	 *
 	 * @since 2.3
 	 */
