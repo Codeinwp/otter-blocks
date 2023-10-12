@@ -361,43 +361,31 @@ class Posts_CSS extends Base_CSS {
 						'property' => '--pag-border-radius',
 						'value'    => 'pagBorderRadius',
 						'format'   => function( $value, $attrs ) {
-							return CSS_Utility::box_values(
-								$value,
-								array(
-									'left'   => '0px',
-									'right'  => '0px',
-									'top'    => '0px',
-									'bottom' => '0px',
-								)
-							);
+							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
 						'property' => '--pag-border-width',
 						'value'    => 'pagBorderWidth',
 						'format'   => function( $value, $attrs ) {
-							return CSS_Utility::box_values(
-								$value,
-								array(
-									'left'   => '0px',
-									'right'  => '0px',
-									'top'    => '0px',
-									'bottom' => '0px',
-								)
-							);
+							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
 						'property' => '--pag-padding',
 						'value'    => 'pagPadding',
 						'format'   => function( $value, $attrs ) {
+							return CSS_Utility::box_values( $value );
+						},
+					),
+					array(
+						'property' => '--pag-cont-margin',
+						'value'    => 'pagContMargin',
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
-									'left'   => '0px',
-									'right'  => '0px',
-									'top'    => '0px',
-									'bottom' => '0px',
+									'top' => '10px',
 								)
 							);
 						},

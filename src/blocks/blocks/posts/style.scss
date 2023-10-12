@@ -55,6 +55,7 @@
 	--pag-border-width: 0;
 	--pag-padding: 5px 15px;
 	--pag-gap: 5px;
+	--pag-cont-margin: 10px 0 0 0;
 
 	border: none;
 
@@ -270,7 +271,6 @@
 	}
 
 	.o-posts-grid-pag {
-		margin-top: 10px;
 		margin-bottom: 30px;
 
 		display: flex;
@@ -279,9 +279,11 @@
 		justify-content: center;
 		align-items: baseline;
 		width: 100%;
+
 		gap: var(--pag-gap);
 		color: var(--pag-color);
 		font-size: var(--pag-size);
+		margin: var(--pag-cont-margin);
 
 		.page-numbers:not(.dots) {
 			background-color: var(--pag-bg-color);

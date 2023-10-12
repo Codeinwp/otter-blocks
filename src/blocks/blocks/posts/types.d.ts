@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps, BoxShadow } from '../../helpers/blocks';
+import { BlockProps, InspectorProps, BoxShadow, BoxType } from '../../helpers/blocks';
 import { BoxBorder, BoxPadding } from '../../common';
 
 type Attributes = {
@@ -70,6 +70,7 @@ type Attributes = {
 	pagBorderColorHover: string
 	pagBorderColorActive: string
 	pagSize: string
+	pagContMargin: BoxType
 }
 
 export type PostProps = BlockProps<Attributes>

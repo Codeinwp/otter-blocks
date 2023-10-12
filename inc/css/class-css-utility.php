@@ -371,7 +371,7 @@ class CSS_Utility {
 			$views,
 			function( $view ) {
 				return isset( $view ) && is_array( $view );
-			} 
+			}
 		);
 
 		foreach ( $valid as $arr ) {

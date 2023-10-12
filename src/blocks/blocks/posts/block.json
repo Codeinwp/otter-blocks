@@ -317,6 +317,23 @@
 				}
 			}
 		},
+		"pagContMargin": {
+			"type": "object",
+			"properties": {
+				"top": {
+					"type": "string"
+				},
+				"left": {
+					"type": "string"
+				},
+				"right": {
+					"type": "string"
+				},
+				"bottom": {
+					"type": "string"
+				}
+			}
+		},
 		"pagSize": {
 			"type": "string"
 		}

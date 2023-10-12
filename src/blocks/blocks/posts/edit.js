@@ -222,6 +222,10 @@ const Edit = ({
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
 
+	useEffect( () => {
+		console.log( attributes );
+	}, [ attributes ]);
+
 	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
@@ -275,7 +279,8 @@ const Edit = ({
 		'--pag-border-width': boxValues( attributes.pagBorderWidth ),
 		'--pag-padding': boxValues( attributes.pagPadding, { top: '5px', right: '15px', bottom: '5px', left: '15px' }),
 		'--pag-gap': attributes.pagGap,
-		'--pag-size': attributes.pagSize
+		'--pag-size': attributes.pagSize,
+		'--pag-cont-margin': boxValues( attributes.pagContMargin, { top: '10px' })
 	};
 
 	const blockProps = useBlockProps();

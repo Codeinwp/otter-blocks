@@ -302,7 +302,7 @@ const Inspector = ({
 						<ToggleControl
 							label={ __( 'Enable Featured Post', 'otter-blocks' ) }
 							checked={ attributes.enableFeaturedPost }
-							onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
+							onChange={ () => setAttributes({ enableFeaturedPost: ! Boolean( attributes.enableFeaturedPost ), hasPagination: undefined })}
 						/>
 
 						{
@@ -322,7 +322,7 @@ const Inspector = ({
 						<ToggleControl
 							label={ __( 'Enable Pagination', 'otter-blocks' ) }
 							checked={ attributes.hasPagination }
-							onChange={ hasPagination => setAttributes({ hasPagination })}
+							onChange={ () => setAttributes({ hasPagination: ! Boolean( attributes.hasPagination ), enableFeaturedPost: undefined, featuredPostOrder: undefined }) }
 						/>
 
 					</PanelBody>
@@ -475,12 +475,6 @@ const Inspector = ({
 									isShownByDefault: false
 								},
 								{
-									value: attributes.pagBorderColorActive,
-									onChange: pagBorderColorActive => setAttributes({ pagBorderColorActive }),
-									label: __( 'Pagination Active Border', 'otter-blocks' ),
-									isShownByDefault: false
-								},
-								{
 									value: attributes.pagColorHover,
 									onChange: pagColorHover => setAttributes({ pagColorHover }),
 									label: __( 'Pagination Hover Link', 'otter-blocks' ),
@@ -616,6 +610,13 @@ const Inspector = ({
 										label={ __( 'Pagination Padding', 'otter-blocks' ) }
 										values={ attributes.pagPadding ?? { top: '5px', right: '15px', bottom: '5px', left: '15px' } }
 										onChange={ pagPadding => setAttributes({ pagPadding }) }
+										allowReset
+									/>
+									<BoxControl
+										label={ __( 'Pagination Container Margin', 'otter-blocks' ) }
+										values={ attributes.pagContMargin ?? { top: '10px' } }
+										onChange={ pagContMargin => setAttributes({ pagContMargin }) }
+										sides={[ 'top' ]}
 										allowReset
 									/>
 								</Fragment>
