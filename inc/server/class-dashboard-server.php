@@ -89,9 +89,11 @@ class Dashboard_Server {
 
 		Tracker::track(
 			array(
-				'feature'          => 'system',
-				'featureComponent' => 'theme-change',
-				'featureValue'     => $new_name,
+				array(
+					'feature'          => 'system',
+					'featureComponent' => 'theme-change',
+					'featureValue'     => $new_name,
+				),
 			)
 		);
 
