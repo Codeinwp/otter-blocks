@@ -112,7 +112,10 @@ const MediaItem = ({
 					type="button"
 					className="check"
 					tabIndex="-1"
-					onClick={ () => onSelect( url, true ) }
+					onClick={ () => {
+						window.oTrk?.add({ feature: 'dynamic', featureComponent: 'media-option', featureValue: item?.type });
+						onSelect( url, true );
+					} }
 				>
 					<span className="media-modal-icon"></span>
 					<span className="screen-reader-text">{ __( 'Deselect', 'otter-blocks' ) }</span>

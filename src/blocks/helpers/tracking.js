@@ -85,10 +85,16 @@ export class EventTrackingAccumulator {
 	 * @param {EventOptions} [options] - Options to be passed to the accumulator.
 	 */
 	set( key, data, options ) {
-		if ( options?.consent || this.hasConsent() ) {
-			const enhancedData = options?.directSave ? data : this.trkMetadata( data );
-			this.events.set( key, enhancedData );
+		if ( ! ( options?.consent || this.hasConsent() ) ) {
+			return;
 		}
+
+		if ( ! this.validate( data ) ) {
+			return;
+		}
+
+		const enhancedData = options?.directSave ? data : this.trkMetadata( data );
+		this.events.set( key, enhancedData );
 
 		if ( options?.refreshTimer ) {
 			this.refreshTimer();
@@ -234,6 +240,25 @@ export class EventTrackingAccumulator {
 	refreshTimer() {
 		this.stop();
 		this.start();
+	}
+
+	/**
+	 * Validate the tracking data. The data is valid if it has at least one property and all the values are defined.
+	 *
+	 * @param {any} data - Tracking data to be validated.
+	 * @returns {boolean} - True if the data is valid.
+	 */
+	validate( data ) {
+		if ( 'object' === typeof data ) {
+
+			if ( 0 === Object.keys( data ).length ) {
+				return false;
+			}
+
+			return Object.values( data ).every( this.validate );
+		}
+
+		return 'undefined' !== typeof data;
 	}
 }
 
