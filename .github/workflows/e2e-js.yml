@@ -80,11 +80,12 @@ jobs:
 
       - name: Print the results
         run: |
-          echo "::set-output name=PERFORMANCE_OUTPUT::$(sed -n '/post-editor/,/└──────────────────────┴─────────────┘/p' performance-results.txt)"
+          echo "$(sed -n '/post-editor/,/└──────────────────────┴─────────────┘/p' performance-results.txt)"
+          echo "PERFORMANCE_OUTPUT=$(sed -n '/post-editor/,/└──────────────────────┴─────────────┘/p' performance-results.txt)" >> $GITHUB_OUTPUT
         id: summary
 
       - name: Comment
-        uses: NejcZdovc/comment-pr@v1
+        uses: NejcZdovc/comment-pr@v2
         with:
           file: "e2e-summary.md"
           identifier: "GITHUB_E2E_SUMMARY"
