@@ -396,8 +396,12 @@ class Posts_Grid_Block {
 			$format = 'page/%#%/';
 		} else {
 			$format = '&paged=%#%';
+
+			if ( is_front_page() ) {
+				$format = '?paged=%#%';
+			}
 		}
-		$base = get_pagenum_link( 1 ) . '%_%';
+		$base = get_pagenum_link() . '%_%';
 
 		$output  = '<div class="o-posts-grid-pag">';
 		$output .= paginate_links(
