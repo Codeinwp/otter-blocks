@@ -485,7 +485,6 @@ const Edit = ({
 			let isMissing = true;
 			let hasUpdated = false;
 
-
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
 					if ( ! emails[index]?.integration ) {
@@ -529,22 +528,22 @@ const Edit = ({
 					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
 					if ( formOptions ) {
 						parseDataFormOptions( formOptions );
-						setSavedFormOptions( formOptions );
+
 						setAttributes({
 							action: formOptions?.integration?.action
 						});
 					}
 					setLoading({ formIntegration: 'done' });
-					if ( hasUpdated ) {
-						createNotice(
-							'info',
-							__( 'Integration details have been saved.', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
-					}
+
+					createNotice(
+						'info',
+						__( 'Integration details have been saved.', 'otter-blocks' ),
+						{
+							isDismissible: true,
+							type: 'snackbar'
+						}
+					);
+
 				}).catch( e => {
 					console.error( e );
 					setLoading({ formIntegration: 'error' });
