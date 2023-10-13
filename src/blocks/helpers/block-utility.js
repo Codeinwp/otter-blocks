@@ -526,12 +526,27 @@ export class GlobalStateMemory {
      */
 	handleMessage( event ) {
 		if ( 'object' === typeof event.data && null !== event.data && 'otterMemoryState' in event.data ) {
-			const { key, value, location } = event.data.otterMemoryState;
-			if ( this.states[location] === undefined ) {
-				this.states[location] = {};
+			const { key, value, location, action } = event.data.otterMemoryState;
+
+			if ( 'set' === action ) {
+				if ( this.states[location] === undefined ) {
+					this.states[location] = {};
+				}
+
+				this.states[location][key] = value;
 			}
 
-			this.states[location][key] = value;
+			if ( 'get' === action ) {
+				( window.parent !== undefined ? window?.parent : window )
+					.postMessage?.({
+						otterMemoryState: {
+							key,
+							location,
+							value: this.getState( location, key ),
+							action: 'value'
+						}
+					});
+			}
 		}
 	}
 
@@ -558,20 +573,56 @@ export class GlobalStateMemory {
  */
 export function useTabSwitch( key, defaultValue ) {
 	const location = 'tab';
-	const [ tab, setTab ] = useState( ( window?.parent ?? window ).otterStateMemory.getState( location, key ) ?? defaultValue );
+	const [ tab, setTab ] = useState( defaultValue );
 
 	useEffect( () => {
+
+		/**
+		 * Retrieve the initial state from the parent via bi-directional communication.
+		 */
+		const listener = ( event ) => {
+			if ( 'object' === typeof event.data && null !== event.data && 'otterMemoryState' in event.data ) {
+				const { key: componentKey, value, location, action } = event.data.otterMemoryState;
+				if ( 'tab' === location && key === componentKey && 'value' === action ) {
+					setTab( value ?? defaultValue );
+				}
+			}
+		};
+		window.addEventListener( 'message', listener );
+
+
+		// Request the state from the parent.
+		( window.parent !== undefined ? window?.parent : window )
+			.postMessage({
+				otterMemoryState: {
+					key,
+					location,
+					action: 'get'
+				}
+			});
+
+
+		return () => {
+			window.removeEventListener( 'message', listener );
+		};
+	}, []);
+
+	return [ tab, ( value ) => {
+
+		/**
+		 * Update the state in the parent.
+		 */
 		( window.parent !== undefined ? window?.parent : window )
 			.postMessage?.({
 				otterMemoryState: {
 					key,
 					location,
-					value: tab
+					value: value,
+					action: 'set'
 				}
 			});
-	}, [ tab ]);
-
-	return [ tab, setTab ];
+		setTab( value );
+	} ];
 }
 
 
