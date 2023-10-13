@@ -392,4 +392,94 @@ test.describe( 'Form Block', () => {
 
 		expect( await saveBtn.isEnabled() ).toBeTruthy();
 	});
+
+	test( 'default values for fields', async({ page, editor }) => {
+		await editor.insertBlock(
+			{
+				name: 'themeisle-blocks/form',
+				innerBlocks: [
+					{
+						name: 'themeisle-blocks/form-input',
+						attributes: {
+							label: 'Name',
+							defaultValue: 'John Doe'
+						}
+					},
+					{
+						name: 'themeisle-blocks/form-textarea',
+						attributes: {
+							label: 'Message',
+							defaultValue: 'Hello World'
+						}
+					},
+					{
+						name: 'themeisle-blocks/form-multiple-choice',
+						attributes: {
+							label: 'Checkbox',
+							type: 'checkbox',
+							options: [
+								{ isDefault: true, content: 'Checkbox Option 1' },
+								{ isDefault: true, content: 'Checkbox Option 2' },
+								{ isDefault: false, content: 'Checkbox Option 3' }
+							]
+						}
+					},
+					{
+						name: 'themeisle-blocks/form-multiple-choice',
+						attributes: {
+							label: 'Radio',
+							type: 'radio',
+							options: [
+								{ isDefault: false, content: 'Radio Option 1' },
+								{ isDefault: true, content: 'Radio Option 2' }
+							]
+						}
+					}, {
+						name: 'themeisle-blocks/form-multiple-choice',
+						attributes: {
+							label: 'Select',
+							type: 'select',
+							options: [
+								{ isDefault: false, content: 'Select Option 1' },
+								{ isDefault: true, content: 'Select Option 2' }
+							]
+						}
+					},
+					{
+						name: 'themeisle-blocks/form-hidden-field',
+						attributes: {
+							label: 'Hidden Field Test',
+							paramName: 'test',
+							defaultValue: '123'
+						}
+					}
+				]
+			}
+		);
+
+		const postId = await editor.publishPost();
+
+		await page.goto( `/?p=${postId}` );
+
+		// Text input.
+		expect( await page.getByLabel( 'Name' ).inputValue() ).toBe( 'John Doe' );
+
+		// Textarea.
+		expect( await page.getByLabel( 'Message' ).inputValue() ).toBe( 'Hello World' );
+
+		// Checkboxes.
+		expect( await page.getByLabel( 'Checkbox Option 1' ).isChecked() ).toBeTruthy();
+		expect( await page.getByLabel( 'Checkbox Option 2' ).isChecked() ).toBeTruthy();
+		expect( await page.getByLabel( 'Checkbox Option 3' ).isChecked() ).toBeFalsy();
+
+		// Radio.
+		expect( await page.getByLabel( 'Radio Option 1' ).isChecked() ).toBeFalsy();
+		expect( await page.getByLabel( 'Radio Option 2' ).isChecked() ).toBeTruthy();
+
+		// Select.
+		expect( await page.getByRole( 'combobox' ).inputValue() ).toBe( 'select-option-2' );
+
+		// Hidden field.
+		expect( await page.locator( '.otter-form-input[type="hidden"]' ).inputValue() ).toBe( '123' );
+	});
 });
