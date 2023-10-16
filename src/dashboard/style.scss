@@ -28,7 +28,7 @@
 
 #otter {
 	--main-link-color: #2271b1;
-	
+
 	.components-button {
 		&.is-primary {
 			--wp-admin-theme-color: #ed6f57;
@@ -579,4 +579,31 @@
 	bottom: 40px;
 	padding-left: 16px;
 	padding-right: 16px;
+}
+
+.otter-deal {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	margin-top: 20px;
+
+	a {
+		position: relative;
+	}
+
+	.o-remaining-time {
+		position: absolute;
+		top: 15px;
+		left: 20px;
+
+		color: #FFF;
+		font-family: Barlow; // TODO: Ask about font clarification since it is dynamic.
+		font-size: 14px;
+		font-style: normal;
+		font-weight: 700;
+		line-height: normal;
+		letter-spacing: 0.3px;
+		text-transform: uppercase;
+	}
 }

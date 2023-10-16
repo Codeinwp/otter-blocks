@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
+use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
 use ThemeIsle\GutenbergBlocks\Server\Dashboard_Server;
 
 /**
@@ -44,6 +45,14 @@ class Main {
 		}
 
 		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
+
+		if ( LimitedOffers::can_show_dashboard_banner() ) {
+			$offer = new LimitedOffers();
+
+			if ( $offer->is_active() ) {
+				$offer->load_dashboard_hooks();
+			}
+		}
 	}
 
 	/**

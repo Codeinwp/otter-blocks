@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
+use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
+
 /**
  * Class Pro
  */
@@ -129,6 +131,13 @@ class Pro {
 	 */
 	public static function should_show_upsell() {
 		$show_upsell = false;
+
+		$offer = new LimitedOffers();
+
+		// Do not show any upsell if there is a big promotion active.
+		if ( $offer->is_active() ) {
+			return false;
+		}
 
 		if ( defined( 'OTTER_PRO_VERSION' ) ) {
 			return $show_upsell;

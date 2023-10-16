@@ -8,6 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks;
 
 use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
+use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
 
 /**
  * Class Registration.
