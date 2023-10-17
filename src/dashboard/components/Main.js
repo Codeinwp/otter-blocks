@@ -83,6 +83,7 @@ const Main = ({
 					<Deal
 						link={window.otterObj.deal.linkGlobal}
 						image={window.otterObj.deal.bannerUrl}
+						alt={window.otterObj.deal.bannerAlt}
 						urgencyText={window.otterObj.deal.urgencyText}
 					/>
 				)

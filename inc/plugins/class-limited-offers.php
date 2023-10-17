@@ -24,18 +24,18 @@ class LimitedOffers {
 	private $active = '';
 
 	/**
-	 * The banner URL.
-	 *
-	 * @var string
-	 */
-	public $banner_url = OTTER_BLOCKS_URL . 'assets/images/black-friday-banner.png'; // TODO: change this based on product.
-
-	/**
 	 * The key for WP Options to disable the dashboard notification.
 	 *
 	 * @var string
 	 */
 	public $wp_option_dismiss_notification_key_base = 'dismiss_themeisle_notice_event_';
+
+	/**
+	 * Offer Links
+	 *
+	 * @var array<string>
+	 */
+	public $offer_metadata = array();
 
 	/**
 	 * LimitedOffers constructor.
@@ -58,8 +58,9 @@ class LimitedOffers {
 	 * @return void
 	 */
 	public function load_dashboard_hooks() {
+		add_filter( 'themeisle_products_deal_priority', array( $this, 'add_priority' ) );
 		add_action( 'admin_notices', array( $this, 'render_dashboard_banner' ) );
-		add_action( 'wp_ajax_dismiss_themeisle_bf_notice', array( $this, 'disable_notification_ajax' ) );
+		add_action( 'wp_ajax_dismiss_themeisle_event_notice_otter', array( $this, 'disable_notification_ajax' ) );
 	}
 
 	/**
@@ -78,6 +79,13 @@ class LimitedOffers {
 	 */
 	public function activate_bff() {
 		$this->active = 'bf';
+
+		$this->offer_metadata = array(
+			'bannerUrl'     => OTTER_BLOCKS_URL . 'assets/images/black-friday-banner.png', // TODO: change this based on product.
+			'bannerAlt'     => 'Otter Black Friday Sale',
+			'linkDashboard' => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'dashboard' ), // TODO: change this based on product.
+			'linkGlobal'    => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'globalnotice' ),
+		);
 	}
 
 	/**
@@ -179,14 +187,14 @@ class LimitedOffers {
 	 * @return array Localized data.
 	 */
 	public function get_localized_data() {
-		return array(
-			'active'        => $this->is_active(),
-			'deal'          => $this->get_active_deal(),
-			'remainingTime' => $this->get_remaining_time_for_deal( $this->get_active_deal() ),
-			'urgencyText'   => __( 'Hurry Up! Only', 'otter-blocks' ) . ' ' . $this->get_remaining_time_for_deal( $this->get_active_deal() ) . ' ' . __( 'left', 'otter-blocks' ),
-			'bannerUrl'     => $this->banner_url,
-			'linkDashboard' => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'dashboard' ), // TODO: change this based on product.
-			'linkGlobal'    => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'global' ),
+		return array_merge(
+			array(
+				'active'        => $this->is_active(),
+				'dealSlug'      => $this->get_active_deal(),
+				'remainingTime' => $this->get_remaining_time_for_deal( $this->get_active_deal() ),
+				'urgencyText'   => 'Hurry Up! Only ' . $this->get_remaining_time_for_deal( $this->get_active_deal() ) . ' left',
+			),
+			$this->offer_metadata
 		);
 	}
 
@@ -196,12 +204,12 @@ class LimitedOffers {
 	 * @return void
 	 */
 	public function disable_notification_ajax() {
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'dismiss_themeisle_bf_notice' ) ) {
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'dismiss_themeisle_event_notice_otter' ) ) {
 			wp_die( esc_html( __( 'Invalid nonce! Refresh the page and try again.', 'otter-blocks' ) ) );
 		}
 
 		// We record the time and the plugin of the dismissed notification.
-		update_option( $this->wp_option_dismiss_notification_key_base . $this->active, 'otter_' . $this->active . '_' . current_time( 'timestamp' ) );
+		update_option( $this->wp_option_dismiss_notification_key_base . $this->active, 'otter_' . $this->active . '_' . current_time( 'Y_m_d' ) );
 		wp_die( 'success' );
 	}
 
@@ -212,13 +220,7 @@ class LimitedOffers {
 	 */
 	public function render_dashboard_banner() {
 
-		$message = sprintf(
-		// translators: %1$s - sale title, %2$s - license type, %3$s - number of licenses, %4$s - url .
-			__( '%1$s - Save big with a %2$s of Otter Pro Plan. %3$s, for a limited time!', 'otter-blocks' ),
-			'<strong>' . __( 'Otter Black Friday Sale', 'otter-blocks' ) . '</strong>', // TODO: change this based on product.
-			'<strong>' . __( 'Lifetime License', 'otter-blocks' ) . '</strong>',
-			'<strong>' . __( 'Only 100 licenses', 'otter-blocks' ) . '</strong>'
-		);
+		$message = 'Otter <strong>Black Friday Sale</strong> - Save big with a <strong>Lifetime License</strong> of Otter Pro Plan. <strong>Only 100 licenses</strong>, for a limited time!';
 
 		?>
 		<style>
@@ -255,7 +257,7 @@ class LimitedOffers {
 			<span>
 				<?php echo wp_kses_post( $message ); ?>
 			</span>
-			<a href="<?php echo esc_url( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'dashboard' ) ); ?>" target="_blank" rel="external noreferrer noopener">
+			<a href="<?php echo esc_url( ! empty( $this->offer_metadata['linkGlobal'] ) ? $this->offer_metadata['linkGlobal'] : '' ); ?>" target="_blank" rel="external noreferrer noopener">
 				<?php esc_html_e( 'Learn more', 'otter-blocks' ); ?>
 			</a>
 			<span class="themeisle-sale-error"></span>
@@ -271,8 +273,8 @@ class LimitedOffers {
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
 						body: new URLSearchParams({
-							action: 'dismiss_themeisle_bf_notice',
-							nonce: '<?php echo esc_attr( wp_create_nonce( 'dismiss_themeisle_bf_notice' ) ); ?>'
+							action: 'dismiss_themeisle_event_notice_otter',
+							nonce: '<?php echo esc_attr( wp_create_nonce( 'dismiss_themeisle_event_notice_otter' ) ); ?>'
 						})
 					})
 					.then(response => response.text())
@@ -301,5 +303,32 @@ class LimitedOffers {
 	 */
 	public function can_show_dashboard_banner() {
 		return ! get_option( $this->wp_option_dismiss_notification_key_base . $this->active, false );
+	}
+
+	/**
+	 * Add priority to the filter.
+	 *
+	 * @param array $products Registered products.
+	 * @return array Array enhanced with Neve priority.
+	 */
+	public function add_priority( $products ) {
+		$products['otter'] = 1; // TODO: change this based on product.
+		return $products;
+	}
+
+	/**
+	 * Check if the current product has priority.
+	 *
+	 * @return bool True if the current product has priority.
+	 */
+	public function has_priority() {
+		$products = apply_filters( 'themeisle_products_deal_priority', array() );
+
+		if ( empty( $products ) ) {
+			return true;
+		}
+
+		$highest_priority = array_search( min( $products ), $products, true );
+		return 'otter' === $highest_priority; // TODO: change this based on product.
 	}
 }
