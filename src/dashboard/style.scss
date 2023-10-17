@@ -1,5 +1,7 @@
 @import "../blocks/plugins/feedback/editor.scss";
 
+@import url('https://fonts.cdnfonts.com/css/barlow');
+
 * {
 	box-sizing: inherit;
 }
@@ -592,13 +594,13 @@
 		position: relative;
 	}
 
-	.o-remaining-time {
+	.o-urgency {
 		position: absolute;
 		top: 15px;
-		left: 20px;
+		left: 19px;
 
 		color: #FFF;
-		font-family: Barlow; // TODO: Ask about font clarification since it is dynamic.
+		font-family: Barlow, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", sans-serif;
 		font-size: 14px;
 		font-style: normal;
 		font-weight: 700;

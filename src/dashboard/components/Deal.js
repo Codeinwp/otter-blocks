@@ -8,7 +8,7 @@ const Deal = ( props ) => {
 		<div className="otter-deal">
 			<a href={props.link}>
 				<img src={ props.image } alt={ props.alt } />
-				<div className="o-remaining-time">{props.remainingTime}</div>
+				<div className="o-urgency">{props.urgencyText}</div>
 			</a>
 		</div>
 	);

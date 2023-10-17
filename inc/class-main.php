@@ -46,12 +46,9 @@ class Main {
 
 		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
 
-		if ( LimitedOffers::can_show_dashboard_banner() ) {
-			$offer = new LimitedOffers();
-
-			if ( $offer->is_active() ) {
-				$offer->load_dashboard_hooks();
-			}
+		$offer = new LimitedOffers();
+		if ( $offer->can_show_dashboard_banner() && $offer->is_active() ) {
+			$offer->load_dashboard_hooks();
 		}
 	}
 
