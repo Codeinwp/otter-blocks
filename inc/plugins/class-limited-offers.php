@@ -71,7 +71,7 @@ class LimitedOffers {
 	 */
 	public function load_dashboard_hooks() {
 		add_filter( 'themeisle_products_deal_priority', array( $this, 'add_priority' ) );
-		add_action( 'admin_notices', array( $this, 'render_dashboard_banner' ) );
+		add_action( 'admin_notices', array( $this, 'render_notice' ) );
 		add_action( 'wp_ajax_dismiss_themeisle_event_notice_otter', array( $this, 'disable_notification_ajax' ) );
 	}
 
@@ -217,7 +217,7 @@ class LimitedOffers {
 	 *
 	 * @return void
 	 */
-	public function render_dashboard_banner() {
+	public function render_notice() {
 
 		if ( ! $this->has_priority() ) {
 			return;
