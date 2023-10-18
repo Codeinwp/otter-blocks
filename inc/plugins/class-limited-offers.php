@@ -220,6 +220,10 @@ class LimitedOffers {
 	 */
 	public function render_dashboard_banner() {
 
+		if ( ! $this->has_priority() ) {
+			return;
+		}
+
 		$message = 'Otter <strong>Black Friday Sale</strong> - Save big with a <strong>Lifetime License</strong> of Otter Pro Plan. <strong>Only 100 licenses</strong>, for a limited time!';
 
 		?>
@@ -318,6 +322,7 @@ class LimitedOffers {
 
 	/**
 	 * Check if the current product has priority.
+	 * Use this for conditional rendering if you want to show the banner only for one product.
 	 *
 	 * @return bool True if the current product has priority.
 	 */
