@@ -258,10 +258,10 @@ class LimitedOffers {
 			</svg>
 			<span>
 				<?php echo wp_kses_post( $message ); ?>
+				<a href="<?php echo esc_url( ! empty( $this->offer_metadata['linkGlobal'] ) ? $this->offer_metadata['linkGlobal'] : '' ); ?>" target="_blank" rel="external noreferrer noopener">
+					<?php esc_html_e( 'Learn more', 'otter-blocks' ); ?>
+				</a>
 			</span>
-			<a href="<?php echo esc_url( ! empty( $this->offer_metadata['linkGlobal'] ) ? $this->offer_metadata['linkGlobal'] : '' ); ?>" target="_blank" rel="external noreferrer noopener">
-				<?php esc_html_e( 'Learn more', 'otter-blocks' ); ?>
-			</a>
 			<span class="themeisle-sale-error"></span>
 		</div>
 		<script type="text/javascript">

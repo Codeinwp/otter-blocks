@@ -594,10 +594,15 @@
 		position: relative;
 	}
 
+	img {
+		width: 100%;
+	}
+
 	.o-urgency {
 		position: absolute;
-		top: 15px;
-		left: 19px;
+
+		top: 10%;
+		left: 2.1%;
 
 		color: #FFF;
 		font-family: Barlow, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -609,3 +614,16 @@
 		text-transform: uppercase;
 	}
 }
+
+@media(max-width: 480px) {
+	.otter-deal .o-urgency {
+		font-size: 7px;
+	}
+}
+
+@media (min-width: 481px) and (max-width: 1024px) {
+	.otter-deal .o-urgency {
+		font-size: 10px;
+	}
+}
+
