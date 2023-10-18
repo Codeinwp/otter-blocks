@@ -81,9 +81,9 @@ class LimitedOffers {
 		$this->active = 'bf';
 
 		$this->offer_metadata = array(
-			'bannerUrl'     => OTTER_BLOCKS_URL . 'assets/images/black-friday-banner.png', // TODO: change this based on product.
+			'bannerUrl'     => OTTER_BLOCKS_URL . 'assets/images/black-friday-banner.png',
 			'bannerAlt'     => 'Otter Black Friday Sale',
-			'linkDashboard' => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'dashboard' ), // TODO: change this based on product.
+			'linkDashboard' => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'dashboard' ),
 			'linkGlobal'    => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'globalnotice' ),
 		);
 	}
@@ -246,7 +246,6 @@ class LimitedOffers {
 		</style>
 		<div class="themeisle-sale notice notice-info is-dismissible">
 			<div class="notice-dismiss"></div>
-			<!--- TODO: change this based on product. -->
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 32" width="20" height="20">
 			<path d="M19.831 7.877c0.001-0.003 0.001-0.005 0.001-0.009s-0-0.006-0.001-0.009l0 0c-0.047-0.081-0.092-0.164-0.132-0.247l-0.057-0.115c-0.277-0.498-0.381-0.99-1.033-1.064h-0.045c-0.001 0-0.002 0-0.003 0-0.486 0-0.883 0.382-0.908 0.862l-0 0.002c0.674 0.126 1.252 0.278 1.813 0.468l-0.092-0.027 0.283 0.096 0.147 0.053s0.028 0 0.028-0.011z" />
 			<path d="M23.982 13.574c-0.008-2.41-0.14-4.778-0.39-7.112l0.026 0.299 0.070-0.019c0.459-0.139 0.787-0.558 0.787-1.053 0-0.479-0.307-0.887-0.735-1.037l-0.008-0.002h-0.026c-0.479-0.164-0.874-0.468-1.149-0.861l-0.005-0.007c-2.7-3.96-8.252-3.781-8.252-3.781s-5.55-0.179-8.25 3.781c-0.28 0.401-0.676 0.704-1.14 0.862l-0.016 0.005c-0.441 0.148-0.754 0.557-0.754 1.040 0 0.009 0 0.017 0 0.026l-0-0.001c-0 0.010-0.001 0.022-0.001 0.034 0 0.493 0.335 0.907 0.789 1.029l0.007 0.002 0.045 0.011c-0.224 2.034-0.356 4.403-0.364 6.801l-0 0.012s-9.493 13.012-1.277 17.515c4.733 2.431 6.881-0.769 6.881-0.769s1.397-1.661-1.784-3.355v-4.609c0.006-0.344 0.282-0.621 0.625-0.628h1.212v-0.59c0-0.275 0.223-0.498 0.498-0.498v0h1.665c0.274 0.001 0.496 0.224 0.496 0.498 0 0 0 0 0 0v0 0.59h2.721v-0.59c0-0.275 0.223-0.498 0.498-0.498v0h1.665c0.271 0.005 0.49 0.226 0.49 0.498 0 0 0 0 0 0v0 0.59h1.209c0 0 0 0 0 0 0.349 0 0.633 0.28 0.639 0.627v4.584c-3.193 1.703-1.784 3.355-1.784 3.355s2.148 3.193 6.879 0.769c8.222-4.503-1.269-17.515-1.269-17.515zM22.586 10.261c-0.097 1.461-0.67 2.772-1.563 3.797l0.007-0.008c-1.703 2.010-4.407 3.249-6.721 4.432v0c-2.325-1.177-5.026-2.416-6.736-4.432-0.883-1.019-1.455-2.329-1.555-3.769l-0.001-0.020c-0.126-2.22 0.583-5.929 3.044-6.74 2.416-0.788 3.947 1.288 4.494 2.227 0.152 0.258 0.429 0.428 0.745 0.428s0.593-0.17 0.743-0.424l0.002-0.004c0.551-0.932 2.080-3.008 4.494-2.22 2.474 0.805 3.174 4.513 3.046 6.734z" />
@@ -310,13 +309,13 @@ class LimitedOffers {
 	}
 
 	/**
-	 * Add priority to the filter.
+	 * Add product priority to the filter.
 	 *
 	 * @param array $products Registered products.
 	 * @return array Array enhanced with Neve priority.
 	 */
 	public function add_priority( $products ) {
-		$products['otter'] = 1; // TODO: change this based on product.
+		$products['otter'] = 1;
 		return $products;
 	}
 
@@ -334,6 +333,6 @@ class LimitedOffers {
 		}
 
 		$highest_priority = array_search( min( $products ), $products, true );
-		return 'otter' === $highest_priority; // TODO: change this based on product.
+		return 'otter' === $highest_priority;
 	}
 }
