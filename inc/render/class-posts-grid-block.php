@@ -390,24 +390,14 @@ class Posts_Grid_Block {
 	 * @return string
 	 */
 	protected function render_pagination( $page_number, $total_pages ) {
-		// Check permalink structure.
-		$permalink_structure = get_option( 'permalink_structure' );
-		if ( $permalink_structure ) {
-			$format = 'page/%#%/';
-		} else {
-			$format = '&paged=%#%';
-
-			if ( is_front_page() ) {
-				$format = '?paged=%#%';
-			}
-		}
-		$base = get_pagenum_link() . '%_%';
+		$big  = 9999999;
+		$base = str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) );
 
 		$output  = '<div class="o-posts-grid-pag">';
 		$output .= paginate_links(
 			array(
 				'base'      => $base,
-				'format'    => $format,
+				'format'    => '?paged=%#%',
 				'current'   => $page_number,
 				'total'     => $total_pages,
 				'prev_text' => __( 'Prev', 'otter-blocks' ),
