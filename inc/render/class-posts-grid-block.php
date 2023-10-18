@@ -391,7 +391,7 @@ class Posts_Grid_Block {
 	 */
 	protected function render_pagination( $page_number, $total_pages ) {
 		$big  = 9999999;
-		$base = str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) );
+		$base = str_replace( strval( $big ), '%#%', esc_url( get_pagenum_link( $big ) ) );
 
 		$output  = '<div class="o-posts-grid-pag">';
 		$output .= paginate_links(
