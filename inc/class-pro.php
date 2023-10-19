@@ -132,13 +132,6 @@ class Pro {
 	public static function should_show_upsell() {
 		$show_upsell = false;
 
-		$offer = new LimitedOffers();
-
-		// Do not show any upsell if there is a big promotion active.
-		if ( $offer->is_active() ) {
-			return false;
-		}
-
 		if ( defined( 'OTTER_PRO_VERSION' ) ) {
 			return $show_upsell;
 		}
@@ -187,6 +180,12 @@ class Pro {
 
 		if ( defined( 'OTTER_BLOCKS_SHOW_NOTICES' ) && true === OTTER_BLOCKS_SHOW_NOTICES ) {
 			$show_upsell = true;
+		}
+
+		$offers = new LimitedOffers();
+
+		if ( $offers->is_active() ) {
+			$show_upsell = false;
 		}
 
 		if ( $show_upsell ) {

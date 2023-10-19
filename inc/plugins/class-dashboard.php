@@ -177,7 +177,7 @@ class Dashboard {
 					'upgradeLink'        => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
 					'docsLink'           => Pro::get_docs_url(),
 					'showFeedbackNotice' => $this->should_show_feedback_notice(),
-					'deal'               => $offer->get_localized_data(),
+					'deal'               => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
 				)
 			)
 		);
