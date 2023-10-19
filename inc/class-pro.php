@@ -53,6 +53,8 @@ class Pro {
 		add_action( 'otter_montly_scheduled_events', array( $this, 'reset_dashboard_notice' ) );
 		add_action( 'admin_init', array( $this, 'should_show_dashboard_upsell' ), 11 );
 		add_filter( 'plugin_action_links_' . plugin_basename( OTTER_BLOCKS_BASEFILE ), array( $this, 'add_pro_link' ) );
+
+		add_action( 'admin_init', array( $this, 'load_offers' ), 11 );
 	}
 
 	/**
@@ -422,6 +424,20 @@ class Pro {
 		);
 
 		return $links;
+	}
+
+	/**
+	 * Load offers.
+	 *
+	 * @return void
+	 */
+	public function load_offers() {
+		if ( ! self::is_pro_installed() ) {
+			$offer = new LimitedOffers();
+			if ( $offer->can_show_dashboard_banner() && $offer->is_active() ) {
+				$offer->load_dashboard_hooks();
+			}
+		}
 	}
 
 	/**
