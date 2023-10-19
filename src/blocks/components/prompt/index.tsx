@@ -251,6 +251,10 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	function onPromptSubmit( regenerate = false ) {
 
+		console.log( 'onPromptSubmit', promptID );
+
+		console.log( embeddedPrompts );
+
 		let embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
 
 		if ( ! embeddedPrompt ) {

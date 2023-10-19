@@ -196,7 +196,7 @@ export function parseToDisplayPromptResponse( promptResponse: string ) {
 	}).filter( Boolean );
 }
 
-function tryParseResponse( promptResponse: string ) {
+export function tryParseResponse( promptResponse: string ) {
 	try {
 		return JSON.parse( promptResponse );
 	} catch ( e ) {

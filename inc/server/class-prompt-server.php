@@ -219,7 +219,7 @@ class Prompt_Server {
 				'cache'      => gmdate( 'u' ),
 				'isValid'    => boolval( get_option( 'themeisle_open_ai_api_key', false ) ) ? 'true' : 'false',
 			),
-			'https://api.themeisle.com/templates-cloud/otter-prompts'
+			'https://qm5dr6t4f4.execute-api.us-east-1.amazonaws.com/default/prompts'
 		);
 
 		$response = '';

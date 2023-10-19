@@ -45,6 +45,16 @@ registerBlockType( name, {
 			attributes: {
 				promptID: 'textTransformation'
 			}
+		},
+		{
+			name: 'themeisle-blocks/content-generator-layout',
+			description: __( 'Use AI to pick Otter patterns that fits your needs.', 'otter-blocks' ),
+			icon: formAiGeneration,
+			title: __( 'Smart Patterns Picker', 'otter-blocks' ),
+			scope: [ 'block' ],
+			attributes: {
+				promptID: 'patternsPicker'
+			}
 		}
 	]
 });

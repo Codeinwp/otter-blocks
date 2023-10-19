@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 import { get } from 'lodash';
 
 /**
@@ -28,16 +27,12 @@ import { createBlock, rawHandler } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import metadata from './block.json';
 import Inspector from './inspector.js';
 import PromptPlaceholder from '../../components/prompt';
-import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
+import { parseFormPromptResponseToBlocks, tryParseResponse } from '../../helpers/prompt';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { chevronDown, Icon } from '@wordpress/icons';
-import { insertBlockBelow } from '../../helpers/block-utility';
-
-const { attributes: defaultAttributes } = metadata;
+import { insertBlockBelow, pullOtterPatterns } from '../../helpers/block-utility';
 
 function formatNameBlock( name ) {
 	const namePart = name.split( '/' )[1];
@@ -51,9 +46,7 @@ function formatNameBlock( name ) {
 const ContentGenerator = ({
 	attributes,
 	setAttributes,
-	isSelected,
 	clientId,
-	toggleSelection,
 	name
 }) => {
 
@@ -62,13 +55,9 @@ const ContentGenerator = ({
 	const [ prompt, setPrompt ] = useState( '' );
 
 	const {
-		insertBlock,
 		removeBlock,
 		replaceInnerBlocks,
 		selectBlock,
-		moveBlockToPosition,
-		insertBlocks,
-		replaceBlock,
 		replaceBlocks
 	} = useDispatch( 'core/block-editor' );
 
@@ -90,6 +79,25 @@ const ContentGenerator = ({
 		if ( 'textTransformation' === attributes.promptID ) {
 			const blocks = rawHandler({
 				HTML: result
+			});
+
+			replaceInnerBlocks( clientId, blocks );
+		}
+
+		if ( 'patternsPicker' === attributes.promptID ) {
+			const r = tryParseResponse( result ) ?? {};
+
+			console.log( 'PATTERNS PICKED', r?.slugs?.join( ', ' ) );
+
+			const content = pullOtterPatterns()
+				.filter( pattern => {
+					return r?.slugs?.some( test => pattern.name.endsWith( test ) );
+				})
+				.map( pattern => pattern.content )
+				.join( '\n' );
+
+			const blocks = rawHandler({
+				HTML: content
 			});
 
 			replaceInnerBlocks( clientId, blocks );
@@ -187,6 +195,30 @@ const ContentGenerator = ({
 		textTransformation: {
 			title: __( 'AI Content generator', 'otter-blocks' ),
 			placeholder: __( 'Start describing what content you need...', 'otter-blocks' ),
+			actions: ( props ) => {
+				return (
+					<Fragment>
+						<Button
+							variant="primary"
+							onClick={selfReplaceWithContent}
+							disabled={'loading' === props.status}
+						>
+							{__( 'Replace', 'otter-blocks' )}
+						</Button>
+						<Button
+							variant="secondary"
+							onClick={insertContentIntoPage}
+							disabled={'loading' === props.status}
+						>
+							{__( 'Insert below', 'otter-blocks' )}
+						</Button>
+					</Fragment>
+				);
+			}
+		},
+		patternsPicker: {
+			title: __( 'Smart Otter Patterns Picker', 'otter-blocks' ),
+			placeholder: __( 'Describe what kind of page do you want.', 'otter-blocks' ),
 			actions: ( props ) => {
 				return (
 					<Fragment>
