@@ -1,7 +1,5 @@
 @import "../blocks/plugins/feedback/editor.scss";
 
-@import url('https://fonts.cdnfonts.com/css/barlow');
-
 * {
 	box-sizing: inherit;
 }
@@ -605,7 +603,7 @@
 		left: 2.1%;
 
 		color: #FFF;
-		font-family: Barlow, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", sans-serif;
 		font-size: 14px;
 		font-style: normal;
 		font-weight: 700;
