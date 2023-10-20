@@ -28,7 +28,7 @@
 
 #otter {
 	--main-link-color: #2271b1;
-	
+
 	.components-button {
 		&.is-primary {
 			--wp-admin-theme-color: #ed6f57;
@@ -144,14 +144,16 @@
 	}
 
 	.otter-main {
-		display: grid;
-		grid-template-columns: 2fr 1fr;
-		gap: 25px;
 		margin-left: auto;
 		margin-right: auto;
 		max-width: 930px;
 
-		&.is-upsell {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		gap: 25px;
+
+
+		&:is(.is-upsell, .is-blocks) {
 			grid-template-columns: auto;
 		}
 
@@ -579,4 +581,67 @@
 	bottom: 40px;
 	padding-left: 16px;
 	padding-right: 16px;
+}
+
+.o-block-cards {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	margin: 10px 0;
+}
+
+.o-block-card {
+	display: flex;
+	width: 280px;
+	padding: 16px;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+	flex-shrink: 0;
+	background-color: white;
+
+	.o-block-card__icon {
+		display: flex;
+		width: 42px;
+		height: 42px;
+		// padding: 7px 5.25px 5.25px 5.25px;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.o-block-card__description {
+		flex-grow: 1;
+
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		h3 {
+			font-family: 'SF Pro Display', sans-serif;
+			font-size: 16px;
+			font-style: normal;
+			font-weight: 600;
+			line-height: normal;
+		}
+
+		span {
+			color: #757575;
+
+			/* UI / label */
+			font-family: 'SF Pro Text', sans-serif;
+			font-size: 13px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 140%; /* 18.2px */
+		}
+	}
+
+	.components-toggle-control {
+		margin: 0;
+	}
 }

@@ -25,7 +25,7 @@ if ( undefined === window.otterUtils ) {
 window.otterUtils.useSettings = useSettings;
 
 const App = () => {
-	const [ currentTab, setTab ] = useState( 'dashboard' );
+	const [ currentTab, setTab ] = useState( 'blocks' );
 
 	return (
 		<Fragment>

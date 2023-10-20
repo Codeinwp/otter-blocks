@@ -24,6 +24,7 @@ import Integrations from './pages/Integrations.js';
 import Feedback from './pages/Feedback.js';
 import NoticeCard from './NoticeCard';
 import { applyFilters } from '@wordpress/hooks';
+import Blocks from './pages/Blocks';
 
 let daysLeft = sprintf( __( '%s Days', 'otter-blocks' ), Number( window.otterObj.daysLeft ) );
 
@@ -62,6 +63,10 @@ const Main = ({
 			return (
 				<Feedback />
 			);
+		case 'blocks':
+			return (
+				<Blocks />
+			);
 		default:
 			return (
 				<div className="otter-left">
@@ -96,7 +101,7 @@ const Main = ({
 
 				<Content />
 
-				{ 'upsell' !== currentTab && (
+				{ ( 'upsell' !== currentTab && 'blocks' !== currentTab ) && (
 					<div className="otter-right">
 						<Sidebar setTab={ setTab }/>
 					</div>
