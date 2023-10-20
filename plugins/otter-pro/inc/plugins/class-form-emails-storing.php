@@ -12,7 +12,6 @@ use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
-use ThemeIsle\GutenbergBlocks\Tracker;
 use WP_Post;
 use WP_Query;
 
@@ -79,11 +78,6 @@ class Form_Emails_Storing {
 		add_action( 'otter_form_update_record_meta_dump', array( $this, 'update_submission_dump_data' ), 10, 2 );
 		add_action( 'otter_form_automatic_confirmation', array( $this, 'move_old_stripe_draft_sessions_to_unread' ) );
 		add_action( 'wp', array( $this, 'schedule_automatic_confirmation' ) );
-
-		if ( Tracker::has_consent() ) {
-			add_action( 'otter_form_tracking_usage', array( $this, 'track_usage' ) );
-			add_action( 'wp', array( $this, 'schedule_tracking_usage' ) );
-		}
 	}
 
 	/**
@@ -1328,51 +1322,6 @@ class Form_Emails_Storing {
 	public function schedule_automatic_confirmation() {
 		if ( ! wp_next_scheduled( 'otter_form_automatic_confirmation' ) ) {
 			wp_schedule_event( time(), 'hourly', 'otter_form_automatic_confirmation' );
-		}
-	}
-
-	/**
-	 * Track usage.
-	 */
-	public function track_usage() {
-
-		if ( ! Tracker::has_consent() ) {
-			return;
-		}
-
-		$count_posts = wp_count_posts( self::FORM_RECORD_TYPE );
-
-		if ( ! isset( $count_posts->read ) || ! isset( $count_posts->draft ) ) {
-			return;
-		}
-
-		Tracker::track(
-			array(
-				array(
-					'feature'          => 'form-storing',
-					'featureComponent' => 'confirmed-submissions',
-					'featureValue'     => strval( $count_posts->read + $count_posts->unread ),
-				),
-				array(
-					'feature'          => 'form-storing',
-					'featureComponent' => 'draft-submissions',
-					'featureValue'     => strval( $count_posts->draft ),
-				),
-				array(
-					'feature'          => 'form-storing',
-					'featureComponent' => 'total-submissions',
-					'featureValue'     => strval( $count_posts->read + $count_posts->unread + $count_posts->draft ),
-				),
-			)
-		);
-	}
-
-	/**
-	 * Schedule the tracking usage.
-	 */
-	public function schedule_tracking_usage() {
-		if ( ! wp_next_scheduled( 'otter_form_tracking_usage' ) ) {
-			wp_schedule_event( time(), 'weekly', 'otter_form_tracking_usage' );
 		}
 	}
 
