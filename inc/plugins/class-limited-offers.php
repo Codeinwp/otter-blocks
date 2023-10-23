@@ -141,19 +141,19 @@ class LimitedOffers {
 			$current_date = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
 			$diff         = $end_date->diff( $current_date );
 
-			if ( $diff->days > 0 ) {
-				return $diff->days === 1 ? $diff->format( '%a day' ) : $diff->format( '%a days' );
+			if ( 0 < $diff->days ) {
+				return 1 === $diff->days ? $diff->format( '%a day' ) : $diff->format( '%a days' );
 			}
 
-			if ( $diff->h > 0 ) {
-				return $diff->h === 1 ? $diff->format( '%h hour' ) : $diff->format( '%h hours' );
+			if ( 0 < $diff->h ) {
+				return 1 === $diff->h ? $diff->format( '%h hour' ) : $diff->format( '%h hours' );
 			}
 
-			if ( $diff->i > 0 ) {
-				return $diff->i === 1 ? $diff->format( '%i minute' ) : $diff->format( '%i minutes' );
+			if ( 0 < $diff->i ) {
+				return 1 === $diff->i ? $diff->format( '%i minute' ) : $diff->format( '%i minutes' );
 			}
 
-			return $diff->s === 1 ? $diff->format( '%s second' ) : $diff->format( '%s seconds' );
+			return 1 === $diff->s ? $diff->format( '%s second' ) : $diff->format( '%s seconds' );
 		} catch ( Exception $e ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				error_log( $e->getMessage() ); // phpcs:ignore
