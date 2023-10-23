@@ -157,6 +157,11 @@
 			grid-template-columns: auto;
 		}
 
+		&.is-blocks {
+			max-width: 1150px;
+			gap: 10px;
+		}
+
 		&.is-feedback .components-panel__body {
 			height: max-content;
 		}
@@ -583,24 +588,100 @@
 	padding-right: 16px;
 }
 
-.o-block-cards {
+.o-blocks-header {
 	display: flex;
+	flex-direction: row;
+	margin: 20px 20px 0 20px;
+
+	.o-blocks-header__left {
+		display: flex;
+		flex-direction: row;
+
+		align-items: center;
+		flex-grow: 1;
+
+		font-size: 21px;
+		font-style: normal;
+		font-weight: 600;
+
+		h3 {
+			margin: 0;
+		}
+	}
+
+	.o-blocks-header__right {
+		display: flex;
+		flex-direction: row;
+
+		align-items: center;
+
+		height: max-content;
+
+		padding: 0;
+
+		gap: 5px;
+
+		//border-radius: 10px;
+		//border: 1px solid #E2E4E7;
+		//
+		//background-color: #FFF;
+
+		button {
+			//margin: 0;
+			//border-style: hidden;
+			//background: transparent;
+			//
+			//font-size: 13px;
+			//font-style: normal;
+			//font-weight: 500;
+			//line-height: normal;
+			//
+			//font-family: 'SF Pro Text', sans-serif;
+			//
+			//display: inline-flex;
+			//height: 32px;
+			//padding: 18px 32px;
+			//justify-content: center;
+			//align-items: center;
+			//flex-shrink: 0;
+			//
+			//cursor: pointer;
+
+			&.is-active {
+				color: white;
+				border-radius: 6px;
+				background: #ED6F57;
+			}
+		}
+	}
+}
+
+.o-block-cards {
+	display: grid;
 	flex-wrap: wrap;
 	gap: 20px;
-	margin: 10px 0;
+	margin: 10px 20px;
+
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+
+	@media ( min-width: 1024px ) {
+		grid-template-columns: repeat(3, minmax(250px, 1fr));
+	}
 
 	justify-content: center;
 }
 
 .o-block-card {
 	display: flex;
-	width: 280px;
 	padding: 16px;
 	flex-direction: row;
 	align-items: center;
-	gap: 10px;
 	flex-shrink: 0;
 	background-color: white;
+	gap: 10px;
+
+	align-items: center;
+	justify-content: center;
 
 	.o-block-card__icon {
 		display: flex;
@@ -609,6 +690,16 @@
 		// padding: 7px 5.25px 5.25px 5.25px;
 		justify-content: center;
 		align-items: center;
+
+		svg, span {
+			width: 100%;
+			height: 100%;
+		}
+
+		span {
+			font-size: 42px;
+		}
+
 	}
 
 	.o-block-card__description {

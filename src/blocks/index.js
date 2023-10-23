@@ -15,6 +15,8 @@ import { render } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
+import apiFetch from '@wordpress/api-fetch';
+
 /**
  * Internal dependencies
  */
@@ -88,7 +90,31 @@ if ( Boolean( window.themeisleGutenberg.should_show_upsell ) ) {
 	);
 }
 
+const disableBlocks = () => {
+	apiFetch({
+		path: '/wp/v2/settings'
+	}).then( settings => {
+		if ( settings.themeisle_disabled_blocks ) {
+			settings.themeisle_disabled_blocks.forEach( block => {
+				const blockRegistration = wp?.blocks?.getBlockType( block );
+				if ( ! blockRegistration ) {
+					return;
+				}
+
+				wp?.blocks?.unregisterBlockType( block );
+				blockRegistration.supports.inserter = false;
+				wp?.blocks?.registerBlockType( block, blockRegistration );
+			});
+		}
+	});
+};
+
 domReady( () => {
+
+	setTimeout( () => {
+		disableBlocks();
+	}, 5000 );
+
 	if ( document.querySelector( 'svg.o-icon-gradient' ) ) {
 		return;
 	}
