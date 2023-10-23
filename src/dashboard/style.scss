@@ -28,7 +28,7 @@
 
 #otter {
 	--main-link-color: #2271b1;
-	
+
 	.components-button {
 		&.is-primary {
 			--wp-admin-theme-color: #ed6f57;
@@ -580,3 +580,48 @@
 	padding-left: 16px;
 	padding-right: 16px;
 }
+
+.otter-deal {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	margin-top: 20px;
+
+	a {
+		position: relative;
+	}
+
+	img {
+		width: 100%;
+	}
+
+	.o-urgency {
+		position: absolute;
+
+		top: 10%;
+		left: 2.1%;
+
+		color: #FFF;
+		font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		font-size: 14px;
+		font-style: normal;
+		font-weight: 700;
+		line-height: normal;
+		letter-spacing: 0.3px;
+		text-transform: uppercase;
+	}
+}
+
+@media(max-width: 480px) {
+	.otter-deal .o-urgency {
+		font-size: 7px;
+	}
+}
+
+@media (min-width: 481px) and (max-width: 1024px) {
+	.otter-deal .o-urgency {
+		font-size: 10px;
+	}
+}
+
