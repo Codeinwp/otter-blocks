@@ -44,9 +44,9 @@ class LimitedOffers {
 	 */
 	public $timelines = array(
 		'bf' => array(
-			'start' => '2023-10-10 00:00:00',
+			'start' => '2023-11-20 00:00:00',
 			'end'   => '2023-11-27 23:59:00',
-		), // TODO: Add the correct date.
+		),
 	);
 
 	/**
@@ -95,8 +95,8 @@ class LimitedOffers {
 		$this->offer_metadata = array(
 			'bannerUrl'     => OTTER_BLOCKS_URL . 'assets/images/black-friday-banner.png',
 			'bannerAlt'     => 'Otter Black Friday Sale',
-			'linkDashboard' => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'dashboard' ),
-			'linkGlobal'    => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'blackfridayltd23', 'globalnotice' ),
+			'linkDashboard' => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday/', 'blackfridayltd23', 'dashboard' ),
+			'linkGlobal'    => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday/', 'blackfridayltd23', 'globalnotice' ),
 		);
 	}
 
@@ -142,18 +142,18 @@ class LimitedOffers {
 			$diff         = $end_date->diff( $current_date );
 
 			if ( $diff->days > 0 ) {
-				return $diff->format( '%a days' );
+				return $diff->days === 1 ? $diff->format( '%a day' ) : $diff->format( '%a days' );
 			}
 
 			if ( $diff->h > 0 ) {
-				return $diff->format( '%h hours' );
+				return $diff->h === 1 ? $diff->format( '%h hour' ) : $diff->format( '%h hours' );
 			}
 
 			if ( $diff->i > 0 ) {
-				return $diff->format( '%i minutes' );
+				return $diff->i === 1 ? $diff->format( '%i minute' ) : $diff->format( '%i minutes' );
 			}
 
-			return $diff->format( '%s seconds' );
+			return $diff->s === 1 ? $diff->format( '%s second' ) : $diff->format( '%s seconds' );
 		} catch ( Exception $e ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				error_log( $e->getMessage() ); // phpcs:ignore
@@ -235,12 +235,16 @@ class LimitedOffers {
 			}
 			.themeisle-sale svg {
 				margin-right: 15px;
+				min-width: 24px;
 			}
 			.themeisle-sale a {
 				margin-left: 5px;
 			}
 			.themeisle-sale-error {
 				color: red;
+			}
+			.themeisle-sdk-notice:is([id*="review"]) { /* Do not show the review notice when the sale is active. */
+				display: none;
 			}
 		</style>
 		<div class="themeisle-sale notice notice-info is-dismissible">
