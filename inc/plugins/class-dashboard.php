@@ -162,6 +162,8 @@ class Dashboard {
 
 		wp_set_script_translations( 'otter-blocks-scripts', 'otter-blocks' );
 
+		$offer = new LimitedOffers();
+
 		wp_localize_script(
 			'otter-blocks-scripts',
 			'otterObj',
@@ -175,6 +177,7 @@ class Dashboard {
 					'upgradeLink'        => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
 					'docsLink'           => Pro::get_docs_url(),
 					'showFeedbackNotice' => $this->should_show_feedback_notice(),
+					'deal'               => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
 				)
 			)
 		);
