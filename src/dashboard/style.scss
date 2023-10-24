@@ -158,7 +158,6 @@
 		}
 
 		&.is-blocks {
-			max-width: 1150px;
 			gap: 10px;
 		}
 
@@ -627,6 +626,11 @@
 				border-radius: 6px;
 				background: #ED6F57;
 			}
+
+			&:disabled {
+				opacity: 0.35;
+				color: white;
+			}
 		}
 	}
 }
@@ -650,10 +654,13 @@
 	display: flex;
 	padding: 16px;
 	flex-direction: row;
-	align-items: center;
+
 	flex-shrink: 0;
-	background-color: white;
 	gap: 10px;
+
+	border-radius: 10px;
+	border: 0.999px solid #E2E4E7;
+	background: #FFF;
 
 	align-items: center;
 	justify-content: center;
@@ -662,12 +669,22 @@
 		display: flex;
 		min-width: 42px;
 		height: 42px;
-		// padding: 7px 5.25px 5.25px 5.25px;
 		justify-content: center;
 		align-items: center;
 		svg, span {
 			width: 100%;
 			height: 100%;
+
+			color: #313233;
+			flex-shrink: 0;
+		}
+
+		svg * {
+			fill: #313233; // TODO: check AI Block which is stroke. might need for a refactor.
+		}
+
+		&.is-disabled {
+			opacity: 0.35;
 		}
 
 		span {
@@ -691,10 +708,12 @@
 
 		h3 {
 			font-family: 'SF Pro Display', sans-serif;
-			font-size: 16px;
+			font-size: 15px;
 			font-style: normal;
 			font-weight: 600;
 			line-height: normal;
+
+			color: #3c434a;
 
 			flex-grow: 1;
 			width: 100%;
@@ -704,8 +723,7 @@
 			color: #757575;
 			text-decoration: none;
 
-			/* UI / label */
-			font-family: 'SF Pro Text', sans-serif;
+			font-family: sans-serif;
 			font-size: 13px;
 			font-style: normal;
 			font-weight: 400;
@@ -734,10 +752,17 @@
 		align-items: center;
 
 		border-radius: 3px;
-		background: var(--brand-otter-accent, #ED6F57);
+		background: #ED6F57;
 
 		text-transform: uppercase;
-		color: white;
+
+		color: #FFF;
+		font-family: sans-serif;
+		font-size: 10px;
+		font-style: normal;
+		font-weight: 700;
+		line-height: 160%; /* 16px */
+		letter-spacing: 0.4px;
 	}
 }
 

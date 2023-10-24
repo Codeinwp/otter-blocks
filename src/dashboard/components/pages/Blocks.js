@@ -114,12 +114,6 @@ const otterBlocks = [
 		'icon': lottieIcon
 	},
 	{
-		'slug': 'themeisle-blocks/plugin-cards',
-		'name': __( 'Plugin Card', 'otter-blocks' ),
-		'icon': 'admin-plugins',
-		'docLink': 'https://docs.themeisle.com/article/1688-integrations-related-blocks#plugin-card'
-	},
-	{
 		'slug': 'themeisle-blocks/popup',
 		'name': __( 'Popup', 'otter-blocks' ),
 		'icon': popupIcon,
