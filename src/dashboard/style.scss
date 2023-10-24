@@ -660,12 +660,11 @@
 
 	.o-block-card__icon {
 		display: flex;
-		width: 42px;
+		min-width: 42px;
 		height: 42px;
 		// padding: 7px 5.25px 5.25px 5.25px;
 		justify-content: center;
 		align-items: center;
-
 		svg, span {
 			width: 100%;
 			height: 100%;

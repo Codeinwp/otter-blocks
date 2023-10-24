@@ -36,11 +36,6 @@ import { isString } from 'lodash';
 
 const otterBlocks = [
 	{
-		'slug': 'themeisle-blocks/about-author',
-		'name': __( 'About Author', 'otter-blocks' ),
-		'icon': 'admin-users'
-	},
-	{
 		'slug': 'themeisle-blocks/accordion',
 		'name': __( 'Accordion', 'otter-blocks' ),
 		'icon': accordionIcon,
@@ -204,11 +199,11 @@ const otterBlocks = [
 	},
 	{
 		'slug': 'themeisle-blocks/content-generator',
-		'name': __( 'Content Generator', 'otter-blocks' ),
+		'name': __( 'AI Block', 'otter-blocks' ),
 		'icon': () => aiGeneration,
 		'docLink': 'https://docs.themeisle.com/article/1917-the-ai-block-otter-blocks-library#content-generator'
 	}
-];
+].sort( ( a, b ) => a.name.localeCompare( b.name ) );
 
 /**
  * Block Card component.
