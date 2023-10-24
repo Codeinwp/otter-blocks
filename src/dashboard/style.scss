@@ -621,32 +621,7 @@
 
 		gap: 5px;
 
-		//border-radius: 10px;
-		//border: 1px solid #E2E4E7;
-		//
-		//background-color: #FFF;
-
 		button {
-			//margin: 0;
-			//border-style: hidden;
-			//background: transparent;
-			//
-			//font-size: 13px;
-			//font-style: normal;
-			//font-weight: 500;
-			//line-height: normal;
-			//
-			//font-family: 'SF Pro Text', sans-serif;
-			//
-			//display: inline-flex;
-			//height: 32px;
-			//padding: 18px 32px;
-			//justify-content: center;
-			//align-items: center;
-			//flex-shrink: 0;
-			//
-			//cursor: pointer;
-
 			&.is-active {
 				color: white;
 				border-radius: 6px;
@@ -766,3 +741,48 @@
 		color: white;
 	}
 }
+
+.otter-deal {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	margin-top: 20px;
+
+	a {
+		position: relative;
+	}
+
+	img {
+		width: 100%;
+	}
+
+	.o-urgency {
+		position: absolute;
+
+		top: 10%;
+		left: 2.1%;
+
+		color: #FFF;
+		font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		font-size: 14px;
+		font-style: normal;
+		font-weight: 700;
+		line-height: normal;
+		letter-spacing: 0.3px;
+		text-transform: uppercase;
+	}
+}
+
+@media(max-width: 480px) {
+	.otter-deal .o-urgency {
+		font-size: 7px;
+	}
+}
+
+@media (min-width: 481px) and (max-width: 1024px) {
+	.otter-deal .o-urgency {
+		font-size: 10px;
+	}
+}
+

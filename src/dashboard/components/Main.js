@@ -25,6 +25,7 @@ import Feedback from './pages/Feedback.js';
 import NoticeCard from './NoticeCard';
 import { applyFilters } from '@wordpress/hooks';
 import Blocks from './pages/Blocks';
+import Deal from './Deal';
 
 let daysLeft = sprintf( __( '%s Days', 'otter-blocks' ), Number( window.otterObj.daysLeft ) );
 
@@ -82,6 +83,16 @@ const Main = ({
 
 	return (
 		<Fragment>
+			{
+				window.otterObj.deal.active && (
+					<Deal
+						link={window.otterObj.deal.linkDashboard}
+						image={window.otterObj.deal.bannerUrl}
+						alt={window.otterObj.deal.bannerAlt}
+						urgencyText={window.otterObj.deal.urgencyText}
+					/>
+				)
+			}
 			<div className={ `otter-main is-${ currentTab }`}>
 
 				{ 'dashboard' === currentTab && window.otterObj.showFeedbackNotice && (
