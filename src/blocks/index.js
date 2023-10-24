@@ -90,21 +90,60 @@ if ( Boolean( window.themeisleGutenberg.should_show_upsell ) ) {
 	);
 }
 
-const disableBlocks = () => {
+/**
+ * Hide blocks in inserter based on the `themeisle_disabled_blocks` setting.
+ */
+const hideBlocksInInserter = () => {
+
+	const variationsMap = {
+		'themeisle-gutenberg/masonry': 'core/gallery',
+		'themeisle-gutenberg/live-search': 'core/search'
+	};
+
+	/**
+	 * Check if the block is a variation.
+	 * @param blockSlug The block slug.
+	 * @returns {boolean} True if the block is a variation.
+	 */
+	const isVariation = ( blockSlug ) => {
+		return variationsMap.hasOwnProperty( blockSlug );
+	};
+
 	apiFetch({
 		path: '/wp/v2/settings'
 	}).then( settings => {
 		if ( settings.themeisle_disabled_blocks ) {
-			settings.themeisle_disabled_blocks.forEach( block => {
-				const blockRegistration = wp?.blocks?.getBlockType( block );
-				if ( ! blockRegistration ) {
-					return;
-				}
 
-				wp?.blocks?.unregisterBlockType( block );
-				blockRegistration.supports.inserter = false;
-				wp?.blocks?.registerBlockType( block, blockRegistration );
-			});
+			/**
+			 * Unregister the blocks then register them again with the inserter disabled.
+			 */
+			settings
+				.themeisle_disabled_blocks
+				.forEach( blockName => {
+					if ( isVariation( blockName ) ) {
+						const parentBlockName = variationsMap[blockName];
+						const blockVariations = wp?.blocks?.getBlockVariations( parentBlockName );
+						const blockRegistration = blockVariations.find( block => block.name === blockName );
+
+						if ( ! blockRegistration ) {
+							return;
+						}
+
+						wp?.blocks?.unregisterBlockVariation( parentBlockName, blockName );
+						blockRegistration.scope = [];
+						wp?.blocks?.registerBlockVariation( parentBlockName, blockRegistration );
+					} else {
+						const blockRegistration = wp?.blocks?.getBlockType( blockName );
+
+						if ( ! blockRegistration ) {
+							return;
+						}
+
+						wp?.blocks?.unregisterBlockType( blockName );
+						blockRegistration.supports.inserter = false;
+						wp?.blocks?.registerBlockType( blockName, blockRegistration );
+					}
+				});
 		}
 	});
 };
@@ -112,8 +151,8 @@ const disableBlocks = () => {
 domReady( () => {
 
 	setTimeout( () => {
-		disableBlocks();
-	}, 5000 );
+		hideBlocksInInserter();
+	}, 200 );
 
 	if ( document.querySelector( 'svg.o-icon-gradient' ) ) {
 		return;

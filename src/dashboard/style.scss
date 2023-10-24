@@ -706,8 +706,9 @@
 		flex-grow: 1;
 
 		display: flex;
-		flex-direction: column;
 		gap: 5px;
+
+		flex-wrap: wrap;
 
 		* {
 			margin: 0;
@@ -720,10 +721,14 @@
 			font-style: normal;
 			font-weight: 600;
 			line-height: normal;
+
+			flex-grow: 1;
+			width: 100%;
 		}
 
-		span {
+		a {
 			color: #757575;
+			text-decoration: none;
 
 			/* UI / label */
 			font-family: 'SF Pro Text', sans-serif;
@@ -734,7 +739,30 @@
 		}
 	}
 
-	.components-toggle-control {
-		margin: 0;
+	.o-block-card__action {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 50px;
+
+		.components-h-stack {
+			gap: 0;
+		}
+
+		.components-toggle-control {
+			margin: 0;
+		}
+	}
+
+	.o-block-upsell {
+		display: inline-flex;
+		padding: 2px 8px;
+		align-items: center;
+
+		border-radius: 3px;
+		background: var(--brand-otter-accent, #ED6F57);
+
+		text-transform: uppercase;
+		color: white;
 	}
 }
