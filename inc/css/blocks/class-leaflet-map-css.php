@@ -40,7 +40,16 @@ class Leaflet_Map_CSS extends Base_CSS {
 						'property' => '--height',
 						'value'    => 'height',
 						'format'   => function( $value, $attrs ) {
-							return is_numeric( $value ) ? $value . 'px' : $value;
+
+							// Check if the value is a number.
+							if ( is_numeric( $value ) ) {
+								$suffix = substr( $value, -2 );
+								if ( 'px' !== $suffix ) {
+									return $value . 'px';
+								}
+							}
+
+							return $value;
 						},
 					),
 					array(
