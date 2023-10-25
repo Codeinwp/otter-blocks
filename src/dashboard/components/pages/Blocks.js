@@ -10,7 +10,9 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
  * Internal dependencies
  */
 import {
-	accordionIcon, aiGeneration, businessHoursIcon,
+	accordionIcon,
+	aiGeneration,
+	businessHoursIcon,
 	buttonsIcon,
 	cartIcon,
 	circleIcon,
@@ -33,7 +35,13 @@ import {
 
 import useSettings from '../../../blocks/helpers/use-settings';
 import { isString } from 'lodash';
+import classNames from 'classnames';
 
+/**
+ * List with all the blocks that can be disabled.
+ *
+ * @type {import('../../dashboard').BlocksToDisableList}
+ */
 const otterBlocks = [
 	{
 		'slug': 'themeisle-blocks/accordion',
@@ -200,12 +208,13 @@ const otterBlocks = [
 ].sort( ( a, b ) => a.name.localeCompare( b.name ) );
 
 /**
- * Block Card component.
+ * Dashboard Block Card component.
+ * @param {import('../../dashboard').BlockCardProps} props Component props.
  */
 const BlockCard = ({ block, isLoading, onToggle }) => {
 	return (
 		<div className="o-block-card">
-			<div className="o-block-card__icon">
+			<div className="o-block-card__icon" className={classNames( 'o-block-card__icon', { 'is-disabled': block?.isPro && ! otterObj?.hasPro })}>
 				{ isString( block.icon ) ? <span className={ `dashicons dashicons-${ block.icon }` } /> : block.icon?.() }
 			</div>
 			<div className="o-block-card__description">
@@ -246,6 +255,10 @@ const BlockCard = ({ block, isLoading, onToggle }) => {
 	);
 };
 
+/**
+ * Dashboard Header component.
+ * @param {import('../../dashboard').BlockCardHeaderProps} props Component props.
+ */
 const Header = ({ blocks, onDisableAll, onEnableAll }) => {
 
 	const allEnabled = blocks.every( block => ! block.isDisabled );
@@ -266,6 +279,9 @@ const Header = ({ blocks, onDisableAll, onEnableAll }) => {
 	</div>;
 };
 
+/**
+ * Dashboard Blocks component page.
+ */
 const Blocks = () => {
 
 	const [ blocksStatus, setBlocksStatus ] = useState( otterBlocks );
@@ -273,11 +289,19 @@ const Blocks = () => {
 	const [ getOption, updateOption, status ] = useSettings();
 	const [ isLoading, setLoading ] = useState( true );
 
+	/**
+	 * Update the WP Option with the new value.
+	 * @param {import('../../dashboard').BlocksToDisableList} blocks Blocks to be updated.
+	 */
 	const sendUpdates = ( blocks ) => {
 		const optionValue = blocks.filter( block => Boolean( block.isDisabled ) ).map( block => block.slug );
 		updateOption( 'themeisle_disabled_blocks', optionValue, __( 'Blocks Settings updated.', 'otter-blocks' ), 'o-blocks-update' );
 	};
 
+	/**
+	 * Toggle the block status.
+	 * @param {string} blockSlug Block slug.
+	 */
 	const toggleBlock = ( blockSlug ) => {
 		const updatedBlocksStatus = blocksStatus.map( block => {
 			if ( block.slug === blockSlug ) {
@@ -291,6 +315,9 @@ const Blocks = () => {
 		setBlocksStatus( updatedBlocksStatus );
 	};
 
+	/**
+	 * Disable all blocks and update the WP Option.
+	 */
 	const onDisableAll = () => {
 		const updatedBlocksStatus = blocksStatus.map( block => {
 			block.isDisabled = true;
@@ -302,6 +329,9 @@ const Blocks = () => {
 		setBlocksStatus( updatedBlocksStatus );
 	};
 
+	/**
+	 * Enable all blocks and update the WP Option.
+	 */
 	const onEnableAll = () => {
 		const updatedBlocksStatus = blocksStatus.map( block => {
 			block.isDisabled = false;
@@ -314,6 +344,9 @@ const Blocks = () => {
 	};
 
 
+	/**
+	 * Initiate the blocks status.
+	 */
 	useEffect( () => {
 		if ( isLoading && 'loaded' === status ) {
 			setLoading( false );

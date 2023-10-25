@@ -8,7 +8,7 @@
 // phpcs:ignoreFile
 
 if ( ! defined( 'ENABLE_OTTER_PRO_DEV' ) ) {
-	define( 'ENABLE_OTTER_PRO_DEV', true );
+	define( 'ENABLE_OTTER_PRO_DEV', false );
 }
 
 if ( ENABLE_OTTER_PRO_DEV && defined( 'WPINC' ) && class_exists( '\ThemeIsle\OtterPro\Main' ) ) {
