@@ -16,14 +16,14 @@ Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to
 
 ## Quick Links 🔗
 
-- Want to see Otter blocks in action before installing? [SEE OTTER BLOCKS DEMO](https://demo.themeisle.com/otter-blocks/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks)
+- Do you want to see Otter blocks in action before installing? [SEE OTTER BLOCKS DEMO](https://demo.themeisle.com/otter-blocks/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks)
 - New to the Gutenberg Blocks ecosystem? Check out our article on [GUTENBERG EXPLAINED](https://themeisle.com/blog/gutenberg-blocks-explained/)
 - Need any help with setup? Checkout our [DOCUMENTATION](https://docs.themeisle.com/article/1478-otter-blocks-documentation)
 - Interested in Otter Pro? Here are more details about [OTTER PRO](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks)
 
 ## With Otter Blocks, You Get Access To
 
-- 23+ extra blocks for Gutenberg
+- 26+ extra blocks for Gutenberg
 - Collection of Patterns
 - Visibility Conditions
 - Custom CSS 
@@ -31,7 +31,9 @@ Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to
 
 For all blocks including third-party blocks present on your website.
 
-The Custom CSS block feature makes it possible to directly customize the CSS properties of any Gutenberg block on the page, while the Animation feature makes it quick and easy to add animations to any block to enhance the appeal of your different page blocks and sections. With the Visibility Conditions feature by Otter, you can set which conditions should be met for your chosen blocks to be displayed on the page.
+The Custom CSS block feature makes it possible to directly customize the CSS properties of any Gutenberg block on the page, while the Animation feature makes it quick and easy to add animations to any block to enhance the appeal of your different page blocks and sections. 
+
+With the Visibility Conditions feature by Otter, you can set which conditions should be met for your chosen blocks to be displayed on the page.
 
 Patterns Library, contains a range of different elements in a variety of styles to help you build great pages. All of your website’s most important areas are covered: headers, testimonials, pricing tables, sections and more.
 
@@ -42,7 +44,7 @@ https://www.youtube.com/watch?v=WcS2Vi4IOYw
 
 ### A WordPress Gutenberg Blocks Plugin
 
-Otter adds 23+ amazing and useful blocks to make page building in Gutenberg a breeze! 
+Otter adds 26+ amazing and useful blocks to make page building in Gutenberg a breeze! 
 
 More than just blocks, you need advanced customisation options to give you control over style and appearance. With Otter, you’ve got it all.
 
@@ -67,17 +69,20 @@ Want to show certain blocks only when a user is Logged in or Logged Out? How abo
 - WooCommerce Products in Cart
 - WooCommerce Total Spent
 - WooCommerce Cart Total
+- Cookie-based
 - And more
 
 ### A WordPress Gutenberg Blocks Animation Plugin
 
-WOW your website visitors with amazing animations that can be added to any block on the page. With over 50+ animations available to choose from; Otter makes it possible to add some extra flare to any post or page on your website
+WOW, your website visitors with amazing animations that can be added to any block on the page. With over 50+ animations available to choose from; Otter makes it possible to add some extra flare to any post or page on your website
 
 ### A WordPress Gutenberg Popup Plugin
 
-Popups are one of the oldest lead-capturing and notice-conveying techniques on the web. With the Gutenberg Popup Block available in Otter, you can create popups made from any other block available in Gutenberg! Fine-tune your popup by setting when they should appear and how they can be closed.
+Popups are one of the oldest lead-capturing and notice-conveying techniques on the web. With the Gutenberg Popup Block available in Otter, you can create popups made from any other block available in Gutenberg! 
 
-With our popup block, you gain access to multiple triggers such as on load, on exit, on anchor click, and on scroll. Additionally, you can design your popup with custom overlays to align with your brand identity and capture more attention. [Check live demo](https://demo.themeisle.com/otter-blocks/popup/)
+Fine-tune your popups by setting when they should appear and how they can be closed. With our popup block, you gain access to multiple triggers such as on load, on exit, on anchor click, and on scroll. 
+
+Additionally, you can design your popup with custom overlays to align with your brand identity and capture more attention. [Check live demo](https://demo.themeisle.com/otter-blocks/popup/)
 
 ### Global Defaults for Otter's Blocks
 
@@ -119,7 +124,7 @@ Counting down to a big event? Show it by making use of these Gutenberg blocks. C
 
 #### Contact Form Gutenberg Block [FREE]
 
-Quickly and easily insert a contact form anywhere on the page. Optionally, turn the form into a lead-generating machine by integrating it with Brevo(Sendinblue) or Mailchimp. [Check live demo](https://demo.themeisle.com/otter-blocks/form/)
+Quickly and easily insert a contact form anywhere on the page. Optionally, turn the form into a lead-generating machine by integrating it with Brevo(Sendinblue) or Mailchimp. Plus, streamline data management with webhook integration and ensure enhanced security with hCaptcha integration. [Check live demo](https://demo.themeisle.com/otter-blocks/form/)
 
 #### Masonry Gallery Gutenberg Block [FREE]
 
@@ -133,6 +138,10 @@ Use this block to insert items from posts, pages and custom post types into the 
 
 Blogging about a product you love? Or maybe you run a review website? Use this block to create a review table for the item and list its features, pros and cons as well as optional buy links. [Check live demo](https://demo.themeisle.com/otter-blocks/product-review/)
 
+#### AI Block [FREE]
+
+Step inside the AI Block, your gateway to effortless content and form creation, all powered by AI. With the AI Content Generator, crafting text, dynamic headings, and insightful paragraphs is a breeze, while the AI Form Generator simplifies building forms. It's your all-in-one solution for seamless work — everything you need with AI, neatly packed into a single block.
+
 #### Service Gutenberg Block [FREE]
 
 Use this block to list your business services with an optional button to lead to more details. [Check live demo](https://demo.themeisle.com/otter-blocks/service/)
@@ -145,9 +154,9 @@ Use this block to quickly create beautiful pricing tables for your services/prod
 
 Display your customer reviews on any post or page using Otter's Gutenberg Testimonial Block. 
 
-#### About Author Gutenberg Block [FREE]
+#### Stripe Checkout [FREE]
 
-The About Author Gutenberg block allows editors to add their bio at the end of the blog posts that they publish. 
+This block will be very useful if you want to sell a couple of products without setting up a whole store, such as ebooks, some licenses, etc.
 
 #### Icon Gutenberg Block [FREE]
 
@@ -204,12 +213,12 @@ With [Otter Pro](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=
 - More Visibility Conditions options
 - and more!
 
-You can try a live demo of Otter Pro [by clicking here](https://themeisle.com/plugins/otter-blocks/try-otter/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks).
+You can try a live demo of Otter Blocks - no setup required. [Click here](https://themeisle.com/plugins/otter-blocks/try-otter/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks) to try it out.
 
 ## Who is Otter For? 👀
 
 - Anyone looking to bring out the best features of the new Gutenberg Editor with useful and easy-to-use Gutenberg blocks.
-- Anyone thinking of moving away from traditional page builders like Elementor and Divi Builder in favor of the new Gutenberg Block Editor.
+- Anyone thinking of moving away from traditional page builders like Elementor and Divi Builder in favour of the new Gutenberg Block Editor.
 - Anyone trying to build quick Gutenberg pages in record time.
 - Anyone trying to hide/show Gutenberg blocks based on conditions like user logged in/out status.
 - Anyone trying to add animations to Gutenberg blocks.
@@ -230,7 +239,7 @@ Otter opens up a world of opportunities! Discover how different audience segment
 
 - **Content Creators and Digital Product Sellers:** Stripe checkout gutenberg block offers a convenient way to sell digital products, such as e-books, online courses, software licenses, or digital artwork, without the need to set up a full-fledged online store. By integrating this block, you can provide a streamlined and secure checkout experience to customers.
 
-- **Product Reviewers:** Create informative and attractive product review comparisons with Review Comparison Table, helping users make informed decisions.
+- **Product Reviewers:** Create informative and attractive product review comparisons with a Review Comparison Table, helping users make informed decisions.
 
 - **Restaurant Owners:** Display your business hours in a stylish format using Business Hours blocks, making it easy for customers to find you.
 
@@ -307,6 +316,27 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 ## Changelog ##
+
+##### [Version 2.4.1](https://github.com/Codeinwp/otter-blocks/compare/v2.4.0...v2.4.1) (2023-10-25)
+
+### New Features
+- **Live Search Extension Asset Loading**: Now allows you to load assets required for live search with a hook.
+- **Rank Math Compatibility**: Added support for Rank Maths internal links detection in Posts Block.
+
+### Improvements
+- **Enhancement for Tabs Block**: Makes it easier to switch between tabs in the editor.
+- **Decrease Delay in Dashboard Options**: This PR decreases the delay in enabling/disabling dashboard options.
+- **State Consistency for Dashboard Buttons**: Improved the state consistency of buttons in the Dashboard.
+- **Typography Control Enhancements**: Made enhancements to typography controls for better user experience.
+- **Black Friday Preparations**: Getting set for upcoming Black Friday updates.
+
+### Bug Fixes
+- **Widget Assets**: Fixed the issue where assets for widgets appeared even in pages where the asset doesn’t exist.
+- **Typing Animation Cursor Color**: Addressed the issue with the typing animation cursor color not being correct.
+- **Build Files Placement**: Resolved the problem of build files being added to unnecessary places.
+
+
+
 
 #### [Version 2.4.0](https://github.com/Codeinwp/otter-blocks/compare/v2.3.4...v2.4.0) (2023-09-21)
 
