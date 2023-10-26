@@ -119,7 +119,8 @@ const otterBlocks = [
 	{
 		'slug': 'themeisle-blocks/lottie',
 		'name': __( 'Lottie Animation', 'otter-blocks' ),
-		'icon': lottieIcon
+		'icon': lottieIcon,
+		'docLink': 'https://docs.themeisle.com/article/1668-image-related-blocks#lottie-animation'
 	},
 	{
 		'slug': 'themeisle-blocks/popup',
@@ -167,7 +168,8 @@ const otterBlocks = [
 	{
 		'slug': 'themeisle-blocks/slider',
 		'name': __( 'Slider', 'otter-blocks' ),
-		'icon': sliderIcon
+		'icon': sliderIcon,
+		'docLink': 'https://docs.themeisle.com/article/1668-image-related-blocks#slider'
 	},
 	{
 		'slug': 'themeisle-blocks/stripe-checkout',
@@ -192,7 +194,8 @@ const otterBlocks = [
 		'slug': 'themeisle-gutenberg/live-search', // TODO: find why this can not be disabled.
 		'name': __( 'Live Search', 'otter-blocks' ),
 		'isPro': true,
-		'icon': searchIcon
+		'icon': searchIcon,
+		'docLink': 'https://docs.themeisle.com/article/1747-the-live-search-feature-otter-features-library'
 	},
 	{
 		'slug': 'themeisle-gutenberg/masonry', // TODO: find why this can not be disabled.
@@ -250,7 +253,6 @@ const BlockCard = ({ block, isLoading, onToggle }) => {
 					)
 				}
 			</div>
-
 		</div>
 	);
 };
@@ -320,6 +322,11 @@ const Blocks = () => {
 	 */
 	const onDisableAll = () => {
 		const updatedBlocksStatus = blocksStatus.map( block => {
+
+			if ( block.isPro && ! otterObj.hasPro ) {
+				return block;
+			}
+
 			block.isDisabled = true;
 
 			return block;
@@ -345,7 +352,7 @@ const Blocks = () => {
 
 
 	/**
-	 * Initiate the blocks status.
+	 * Initiate the blocks' status.
 	 */
 	useEffect( () => {
 		if ( isLoading && 'loaded' === status ) {
