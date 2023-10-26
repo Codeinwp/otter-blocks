@@ -1,8 +1,17 @@
 import hash from 'object-hash';
 
-import { __ } from '@wordpress/i18n';
+const ENDPOINT = 'http://localhost:3000/bulk-tracking'; // TODO: change this to the real endpoint.
 
-import { getChoice } from './helper-functions';
+/**
+ * Return the value of pair [condition, value] which has the first true condition.
+ *
+ * @param {([bool, any]|[any])[]} arr - Array of pairs [condition, value].
+ * @returns {*}
+ */
+export const getChoice = arr => {
+	const r = arr?.filter( x => x?.[0])?.[0];
+	return r?.[1] ?? r?.[0];
+};
 
 /**
  * @typedef {Object} TrackingData
@@ -42,7 +51,7 @@ import { getChoice } from './helper-functions';
  * @property {boolean} [ignoreLimit] - Ignore the limit of the events to be send.
  */
 
-export class EventTrackingAccumulator {
+class EventTrackingAccumulator {
 	constructor() {
 
 		/**
@@ -73,8 +82,23 @@ export class EventTrackingAccumulator {
 
 		// When tab is closed, send all events.
 		window.addEventListener( 'beforeunload', async() => {
-			await this.sendAll();
+			await this.uploadEvents();
 		});
+
+		/**
+         * @type {boolean} - Indicates whether the user has given consent to send the events.
+         */
+		this.consent = false;
+
+		/**
+         * @type {string} - The endpoint to send the events.
+         */
+		this.endpoint = ENDPOINT;
+
+		/**
+		 * @type {number} - The interval to send the events automatically.
+		 */
+		this.autoSendIntervalTime = 5 * 60 * 1000; // 5 minutes
 	}
 
 	/**
@@ -84,7 +108,8 @@ export class EventTrackingAccumulator {
 	 * @param {TrackingData} data - Tracking data to be sent.
 	 * @param {EventOptions} [options] - Options to be passed to the accumulator.
 	 */
-	set( key, data, options ) {
+	_set = ( key, data, options ) => {
+
 		if ( ! ( options?.consent || this.hasConsent() ) ) {
 			return;
 		}
@@ -101,11 +126,11 @@ export class EventTrackingAccumulator {
 		}
 
 		if ( options?.sendNow ) {
-			this.sendAll();
+			this.uploadEvents();
 		} else if ( ! options?.ignoreLimit ) {
 			this.sendIfLimitReached();
 		}
-	}
+	};
 
 	/**
 	 * Add tracking data to the accumulator. If the hash of the data already exists, it will overwrite the existing data.
@@ -114,28 +139,52 @@ export class EventTrackingAccumulator {
 	 * @param {EventOptions} [options] - Options to be passed to the accumulator.
 	 * @returns {string} - Hash of the data.
 	 */
-	add( data, options ) {
+	_add = ( data, options ) => {
 		const h = hash( data );
-		this.set( h.toString(), data, options );
+		this._set( h.toString(), data, options );
 		return h.toString();
-	}
+	};
+
+	/**
+     * Enhance the tracking data with the plugin slug and the environment information.
+     *
+     * @param {string} pluginSlug  - The slug of the plugin.
+     */
+	with = ( pluginSlug ) => {
+		const payload = {
+			slug: pluginSlug,
+			...this.envInfo()
+		};
+		return {
+			add: ( data, options ) => this._add({ ...payload, ...data }, options ),
+			set: ( key, data, options ) => this._set( key, { ...payload, ...data }, options ),
+			base: this
+		};
+	};
+
+	/**
+     * Get the environment information.
+     *
+     * @returns {Object} - The environment information.
+     */
+	envInfo = () => {
+		return {
+			site: window.location.hostname,
+			license: window?.themeisleTracking?.trackHash ?? 'free'
+		};
+	};
 
 	/**
 	 * Send all the events in the accumulator. Clears the accumulator after sending. All the listeners will be notified.
 	 */
-	async sendAll() {
+	uploadEvents = async() => {
 		try {
 			const events = Array.from( this.events.values() );
 			this.events.clear();
-			const response = await this.sendBulkTracking( events.map( event => ({
-				slug: 'otter',
-				site: window?.themeisleGutenberg?.rootUrl ?? window.location.hostname,
-				license: window?.themeisleGutenberg?.trackHash,
-				data: event
-			}) ) );
+			const response = await this.sendBulkTracking( events.map( ({ slug, site, license, ...data }) => ({ slug, site, license, data }) ) );
 
 			if ( ! response.ok ) {
-				this.listeners.forEach( listener => listener({ success: false, error: __( 'Failed to send tracking events' ) }) );
+				this.listeners.forEach( listener => listener({ success: false, error: 'Failed to send tracking events' }) );
 			}
 
 			const body = await response.json();
@@ -143,17 +192,17 @@ export class EventTrackingAccumulator {
 		} catch ( error ) {
 			console.error( error );
 		}
-	}
+	};
 
 	/**
 	 * Automatically send all the events if the limit is reached.
 	 * @returns - Promise that resolves when all the events are sent.
 	 */
-	sendIfLimitReached() {
+	sendIfLimitReached = () => {
 		if ( this.events.size >= this.eventsLimit ) {
-			return this.sendAll();
+			return this.uploadEvents();
 		}
-	}
+	};
 
 	/**
 	 * Subscribe to the event when the events are sent.
@@ -161,21 +210,21 @@ export class EventTrackingAccumulator {
 	 * @param {(response: EventResponse) => void} callback - Callback to be called when the events are sent.
 	 * @returns {() => void} - Function to unsubscribe from the event.
 	 */
-	subscribe( callback ) {
+	subscribe = ( callback ) => {
 		this.listeners.push( callback );
 		return () => {
 			this.listeners = this.listeners.filter( listener => listener !== callback );
 		};
-	}
+	};
 
 	/**
 	 * Check if the user has given consent to send the events.
 	 *
 	 * @returns - True if the user has given consent to send the events.
 	 */
-	hasConsent() {
-		return Boolean( '1' === window?.themeisleGutenberg?.canTrack );
-	}
+	hasConsent = () => {
+		return this.consent;
+	};
 
 	/**
 	 * Send the tracking data to the server.
@@ -183,15 +232,15 @@ export class EventTrackingAccumulator {
 	 * @param {Array<TrackingData>} payload - Tracking data to be sent.
 	 * @returns {Promise<Response>} - Response from the server.
 	 */
-	sendBulkTracking( payload ) {
-		return fetch( window.themeisleGutenberg.trackAPI, {
+	sendBulkTracking = ( payload ) => {
+		return fetch( this.endpoint, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify( payload )
 		});
-	}
+	};
 
 	/**
 	 * Add common metadata to the tracking data. Metadata includes the environment, etc. It does not overwrite the given data.
@@ -199,7 +248,7 @@ export class EventTrackingAccumulator {
 	 * @param {TrackingData} data - Tracking data to be sent.
 	 * @returns {TrackingData} - Tracking data with the common metadata.
 	 */
-	trkMetadata( data ) {
+	trkMetadata = ( data ) => {
 		return {
 			env: getChoice([
 				[ window.location.href.includes( 'customize.php' ), 'customizer' ],
@@ -209,38 +258,38 @@ export class EventTrackingAccumulator {
 			]),
 			...( data ?? {})
 		};
-	}
+	};
 
 	/**
 	 * Start the interval to send the events automatically.
 	 */
-	start() {
+	start = () => {
 		if ( this.interval ) {
 			return;
 		}
 
 		this.interval = window.setInterval( () => {
-			this.sendAll();
-		}, 5 * 60 * 1000 ); // 5 minutes
-	}
+			this.uploadEvents();
+		}, this.autoSendIntervalTime ); // 5 minutes
+	};
 
 	/**
 	 * Stop the interval to send the events automatically.
 	 */
-	stop() {
+	stop = () => {
 		if ( this.interval ) {
 			window.clearInterval( this.interval );
 			this.interval = null;
 		}
-	}
+	};
 
 	/**
 	 * Refresh the interval to send the events automatically.
 	 */
-	refreshTimer() {
+	refreshTimer = () => {
 		this.stop();
 		this.start();
-	}
+	};
 
 	/**
 	 * Validate the tracking data. The data is valid if it has at least one property and all the values are defined.
@@ -248,7 +297,7 @@ export class EventTrackingAccumulator {
 	 * @param {any} data - Tracking data to be validated.
 	 * @returns {boolean} - True if the data is valid.
 	 */
-	validate( data ) {
+	validate = ( data ) => {
 		if ( 'object' === typeof data ) {
 
 			if ( 0 === Object.keys( data ).length ) {
@@ -259,9 +308,26 @@ export class EventTrackingAccumulator {
 		}
 
 		return 'undefined' !== typeof data;
-	}
+	};
+
+	/**
+     * Clone the accumulator.
+     * @returns {EventTrackingAccumulator} - A clone of the accumulator.
+     */
+	clone = () => {
+		const clone = new EventTrackingAccumulator();
+		clone.events = new Map( this.events );
+		clone.listeners = [ ...this.listeners ];
+		clone.interval = this.interval;
+		clone.consent = this.consent;
+		clone.endpoint = this.endpoint;
+		return clone;
+	};
 }
 
-window.oTrk = new EventTrackingAccumulator();
+// TODO: do this from SDK.
+// Initialize the accumulator.
+window.tiTrk = new EventTrackingAccumulator();
 
-export default EventTrackingAccumulator;
+// Create a shortcut for the accumulator.
+window.oTrk = window.tiTrk.with( 'otter' );
