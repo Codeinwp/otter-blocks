@@ -17,18 +17,22 @@ import {
 	cartIcon,
 	circleIcon,
 	columnsIcon,
-	countdownIcon, faIcon,
+	comparisonTableIcon,
+	countdownIcon,
+	faIcon,
 	flipIcon,
 	formIcon,
 	googleMapIcon,
 	headingIcon,
 	iconListIcon,
 	lottieIcon,
-	mapIcon, masonryIcon,
+	mapIcon,
+	masonryIcon,
 	popupIcon,
 	postsIcon,
 	progressIcon,
-	reviewIcon, searchIcon,
+	reviewIcon,
+	searchIcon,
 	sharingIcon,
 	sliderIcon, tabsIcon
 } from '../../../blocks/helpers/icons';
@@ -150,7 +154,7 @@ const otterBlocks = [
 		'slug': 'themeisle-blocks/review-comparison',
 		'name': __( 'Review Comparison Table', 'otter-blocks' ),
 		'isPro': true,
-		'icon': reviewIcon,
+		'icon': comparisonTableIcon,
 		'docLink': 'https://docs.themeisle.com/article/1671-shop-related-blocks#comparison-table'
 	},
 	{
@@ -224,7 +228,7 @@ const BlockCard = ({ block, isLoading, onToggle }) => {
 				<h3>
 					{ block.name }
 				</h3>
-				<a href={block?.docLink ?? 'https://docs.themeisle.com/category/1611-blocks-library'}>
+				<a href={block?.docLink ?? 'https://docs.themeisle.com/category/1611-blocks-library'} target="_blank" rel="noopener noreferrer">
 					Learn More
 				</a>
 				{
