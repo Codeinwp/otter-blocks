@@ -755,3 +755,40 @@ export const formAiGeneration = (
 		</Defs>
 	</SVG>
 );
+
+export const contentAiGenerationIcon = ( props = {}) => (
+	<SVG width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: 'transparent' }} {...props}>
+		<Path d="M17.5044 8.49112V19.9911C17.5044 20.2911 17.3044 20.4911 17.0044 20.4911H3.00439C2.70439 20.4911 2.50439 20.2911 2.50439 19.9911V1.99112C2.50439 1.69112 2.70439 1.49112 3.00439 1.49112H12.8044" stroke="url(#paint0_linear_1006_2437)" stroke-linecap="round"/>
+		<Path d="M5.50439 4.49112H9.50439" stroke="url(#paint1_linear_1006_2437)" stroke-linecap="round"/>
+		<Path d="M5.50439 8.49112H13.5044" stroke="url(#paint2_linear_1006_2437)" stroke-linecap="round"/>
+		<Path d="M5.50439 12.4911H14.5044" stroke="url(#paint3_linear_1006_2437)" stroke-linecap="round"/>
+		<Path d="M5.50439 16.4911H14.5044" stroke="url(#paint4_linear_1006_2437)" stroke-linecap="round"/>
+		<Path d="M16.0044 6.99112C16.0044 5.29112 17.3044 3.99112 19.0044 3.99112C17.3044 3.99112 16.0044 2.69112 16.0044 0.991119C16.0044 2.69112 14.7044 3.99112 13.0044 3.99112C13.8044 3.99112 14.6044 4.29112 15.1044 4.89112C15.7044 5.39112 16.0044 6.19112 16.0044 6.99112Z" stroke="url(#paint5_linear_1006_2437)" stroke-linecap="round" stroke-linejoin="round"/>
+		<Defs>
+			<LinearGradient id="paint0_linear_1006_2437" x1="10.0044" y1="1.49112" x2="10.0044" y2="20.4911" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint1_linear_1006_2437" x1="7.50439" y1="4.24112" x2="7.50439" y2="5.74112" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint2_linear_1006_2437" x1="9.50439" y1="8.24112" x2="9.50439" y2="9.74112" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint3_linear_1006_2437" x1="10.0044" y1="12.2411" x2="10.0044" y2="13.7411" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint4_linear_1006_2437" x1="10.0044" y1="16.2411" x2="10.0044" y2="17.7411" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint5_linear_1006_2437" x1="16.0044" y1="0.991119" x2="16.0044" y2="6.99112" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+		</Defs>
+	</SVG>
+);
