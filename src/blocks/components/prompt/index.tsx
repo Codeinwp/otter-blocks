@@ -163,7 +163,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	const [ generationStatus, setGenerationStatus ] = useState<'loading' | 'loaded' | 'error'>( 'loaded' );
 
-	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( 'checking' );
+	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( window.themeisleGutenberg?.hasOpenAiKey ? 'present' : 'checking' );
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
 	const [ result, setResult ] = useState<string | undefined>( undefined );
 
@@ -209,7 +209,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	}, []);
 
 	useEffect( () => {
-		if ( 'loading' === status ) {
+		if ( 'loading' === status || 'present' === apiKeyStatus ) {
 			return;
 		}
 
@@ -220,7 +220,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			} else {
 				setApiKeyStatus( 'missing' );
 			}
-			if ( 'yes' === getOption( 'otter_blocks_logger_flag' ) ) {
+
+			if ( window.themeisleGutenberg?.canTrack ) {
 				setTrackingConsent( true );
 				setShowTrackingConsent( false );
 			}
@@ -229,7 +230,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		if ( 'error' === status ) {
 			setApiKeyStatus( 'error' );
 		}
-	}, [ status, getOption ]);
+	}, [ status, getOption, apiKeyStatus ]);
 
 	useEffect( () => {
 		setResultHistoryIndex( resultHistory.length - 1 );
@@ -283,7 +284,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			});
 		}
 
-		if ( ! apiKey ) {
+		if ( 'present' !== apiKeyStatus ) {
 			setShowError( true );
 			setErrorMessage( __( 'API Key not found. Please add your API Key in the settings page.', 'otter-blocks' ) );
 			return;
