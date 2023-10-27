@@ -3,7 +3,10 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	ToggleControl,
-	ExternalLink, Button, CheckboxControl, RadioControl
+	ExternalLink,
+	Button,
+	CheckboxControl,
+	Tooltip
 } from '@wordpress/components';
 import { omit } from 'lodash';
 import { createBlock } from '@wordpress/blocks';
@@ -12,9 +15,8 @@ import { dispatch } from '@wordpress/data';
 import { BlockProps } from '../../helpers/blocks';
 import { changeActiveStyle, getActiveStyle, getChoice } from '../../helpers/helper-functions';
 import { Fragment } from '@wordpress/element';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import { SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { RichText } from '@wordpress/block-editor';
-import attributes from '../lottie/attributes';
 
 export const FieldInputWidth = ( props ) => {
 
@@ -247,42 +249,43 @@ const DragHandle = SortableHandle( () => {
 
 export const SortableChoiceItem = SortableElement( ( props ) => {
 	return (
-		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">
+		<Tooltip text={ __( 'Set as default or reorder', 'otter-blocks' ) } placement='left-start' delay={1800}>
+			<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">
+				{
+					props?.useRadio ? (
+						<Fragment>
+							<div style={{ width: '13px', marginLeft: '8px' }}>
+								<input
+									type="radio"
+									checked={ props?.tab?.isDefault }
+									onChange={ props?.setAsDefault }
+									name={ 'default-tab' }
+								/>
+							</div>
+						</Fragment>
+					) : (
+						<CheckboxControl checked={props?.tab?.isDefault} onChange={props?.setAsDefault} />
+					)
+				}
 
-			{
-				props?.useRadio ? (
-					<Fragment>
-						<div style={{ width: '13px', marginLeft: '8px' }}>
-							<input
-								type="radio"
-								checked={ props?.tab?.isDefault }
-								onChange={ props?.setAsDefault }
-								name={ 'default-tab' }
-							/>
-						</div>
-					</Fragment>
-				) : (
-					<CheckboxControl checked={props?.tab?.isDefault} onChange={props?.setAsDefault} />
-				)
-			}
+				<DragHandle />
 
-			<DragHandle />
+				<RichText
+					onChange={props.onLabelChange}
+					value={ props?.tab?.content || __( 'Untitled Tab', 'otter-blocks' ) }
+					tagName={'div'}
+					className={'wp-block-themeisle-blocks-tabs-inspector-tab-option__name'}
+				/>
 
-			<RichText
-				onChange={props.onLabelChange}
-				value={ props?.tab?.content || __( 'Untitled Tab', 'otter-blocks' ) }
-				tagName={'div'}
-				className={'wp-block-themeisle-blocks-tabs-inspector-tab-option__name'}
-			/>
-
-			<Button
-				icon="no-alt"
-				label={ __( 'Remove Tab', 'otter-blocks' ) }
-				showTooltip={ true }
-				className="wp-block-themeisle-blocks-tabs-inspector-tab-option__actions"
-				onClick={ props?.deleteTab }
-			/>
-		</div>
+				<Button
+					icon="no-alt"
+					label={ __( 'Remove Tab', 'otter-blocks' ) }
+					showTooltip={ true }
+					className="wp-block-themeisle-blocks-tabs-inspector-tab-option__actions"
+					onClick={ props?.deleteTab }
+				/>
+			</div>
+		</Tooltip>
 	);
 });
 
