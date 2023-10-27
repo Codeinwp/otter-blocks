@@ -14,8 +14,10 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
 
 import useSettings from '../../helpers/use-settings';
 import {
+	PromptConversation,
 	PromptsData,
 	injectActionIntoPrompt,
+	injectConversationIntoPrompt,
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
@@ -257,7 +259,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		let embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
 
-		if ( ! embeddedPrompt ) {
+		if ( undefined === embeddedPrompt ) {
 			setShowError( true );
 			setErrorMessage( __( 'Prompt not found. Reload the page. If the error still persist the server might be down.', 'otter-blocks' ) );
 			return;
@@ -267,6 +269,18 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		if ( 'textTransformation' === promptID ) {
 			const action = embeddedPrompt?.['otter_action_prompt'] ?? '';
 			embeddedPrompt = injectActionIntoPrompt( embeddedPrompt, action );
+		}
+
+		if ( 'patternsPicker' === promptID && window.themeisleGutenberg?.hasPro ) {
+
+			// Add the Pro patterns to the prompt.
+			const addon: PromptConversation[] = embeddedPrompt?.['otter_pro_addon'] ?? [];
+
+			addon?.forEach( ( conversation ) => {
+				if ( embeddedPrompt ) {
+					embeddedPrompt = injectConversationIntoPrompt( embeddedPrompt, conversation );
+				}
+			});
 		}
 
 		if ( ! apiKey ) {

@@ -589,7 +589,7 @@ export function pullPatterns() {
  * @returns {{name: string, title: string, content: string, categories: string[], source: (string|undefined), blockTypes: (string[]|undefined)}[]}
  */
 export function pullOtterPatterns() {
-	return pullPatterns().filter( pattern => pattern.categories.includes( 'otter-blocks' ) );
+	return pullPatterns().filter( pattern => pattern?.categories?.includes( 'otter-blocks' ) );
 }
 
 
