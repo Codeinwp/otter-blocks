@@ -7,7 +7,7 @@ import { updateCategory } from '@wordpress/blocks';
 
 import { Icon } from '@wordpress/components';
 
-import { dispatch } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 
 import domReady from '@wordpress/dom-ready';
 
@@ -95,6 +95,10 @@ if ( Boolean( window.themeisleGutenberg.should_show_upsell ) ) {
  */
 const hideBlocksInInserter = () => {
 
+	/**
+	 * Since some variations are based on core blocks, they need to be unregistered and registered again with an empty scope.
+	 */
+
 	const variationsMap = {
 		'themeisle-gutenberg/masonry': 'core/gallery',
 		'themeisle-gutenberg/live-search': 'core/search'
@@ -109,41 +113,21 @@ const hideBlocksInInserter = () => {
 		return variationsMap.hasOwnProperty( blockSlug );
 	};
 
-	apiFetch({
-		path: '/wp/v2/settings'
-	}).then( settings => {
-		if ( settings.themeisle_disabled_blocks ) {
+	const hiddenBlocks = select( 'core/preferences' )?.get( 'core/edit-post', 'hiddenBlockTypes' ) || [];
 
-			/**
-			 * Unregister the blocks then register them again with the inserter disabled.
-			 */
-			settings
-				.themeisle_disabled_blocks
-				.forEach( blockName => {
-					if ( isVariation( blockName ) ) {
-						const parentBlockName = variationsMap[blockName];
-						const blockVariations = wp?.blocks?.getBlockVariations( parentBlockName );
-						const blockRegistration = blockVariations.find( block => block.name === blockName );
+	hiddenBlocks.forEach( blockName => {
+		if ( isVariation( blockName ) ) {
+			const parentBlockName = variationsMap[blockName];
+			const blockVariations = wp?.blocks?.getBlockVariations( parentBlockName );
+			const blockRegistration = blockVariations.find( block => block.name === blockName );
 
-						if ( ! blockRegistration ) {
-							return;
-						}
+			if ( ! blockRegistration ) {
+				return;
+			}
 
-						wp?.blocks?.unregisterBlockVariation( parentBlockName, blockName );
-						blockRegistration.scope = [];
-						wp?.blocks?.registerBlockVariation( parentBlockName, blockRegistration );
-					} else {
-						const blockRegistration = wp?.blocks?.getBlockType( blockName );
-
-						if ( ! blockRegistration ) {
-							return;
-						}
-
-						wp?.blocks?.unregisterBlockType( blockName );
-						blockRegistration.supports.inserter = false;
-						wp?.blocks?.registerBlockType( blockName, blockRegistration );
-					}
-				});
+			wp?.blocks?.unregisterBlockVariation( parentBlockName, blockName );
+			blockRegistration.scope = [];
+			wp?.blocks?.registerBlockVariation( parentBlockName, blockRegistration );
 		}
 	});
 };
@@ -152,7 +136,7 @@ domReady( () => {
 
 	setTimeout( () => {
 		hideBlocksInInserter();
-	}, 200 );
+	}, 500 );
 
 	if ( document.querySelector( 'svg.o-icon-gradient' ) ) {
 		return;

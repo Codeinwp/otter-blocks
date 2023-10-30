@@ -1,10 +1,18 @@
 /**
  * External dependencies
  */
+import { isString } from 'lodash';
+import classNames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
 import { Button, Spinner, ToggleControl } from '@wordpress/components';
 
 import { Fragment, useEffect, useState } from '@wordpress/element';
+import { dispatch, useSelect } from '@wordpress/data';
+import '@wordpress/edit-site'; // Hack: This is by the toolchain to load the 'wp-edit-site' package so that we can use the 'core/preferences' store.
 
 /**
  * Internal dependencies
@@ -36,10 +44,6 @@ import {
 	sharingIcon,
 	sliderIcon, tabsIcon
 } from '../../../blocks/helpers/icons';
-
-import useSettings from '../../../blocks/helpers/use-settings';
-import { isString } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * List with all the blocks that can be disabled.
@@ -292,16 +296,37 @@ const Blocks = () => {
 
 	const [ blocksStatus, setBlocksStatus ] = useState( otterBlocks );
 
-	const [ getOption, updateOption, status ] = useSettings();
-	const [ isLoading, setLoading ] = useState( true );
+	const { preferencesHiddenBlocks, isLoading } = useSelect( ( select ) => {
+
+		/**
+		 * Array of hidden block types.
+		 * @type {Array<string>|undefined}
+		 */
+		const hiddenBlocks = select( 'core/preferences' )?.get( 'core/edit-post', 'hiddenBlockTypes' );
+
+		const isResolving = select( 'core/preferences' ).isResolving( 'get' ) ?? false;
+
+		return {
+			preferencesHiddenBlocks: hiddenBlocks ? new Set( hiddenBlocks ) : undefined,
+			isLoading: isResolving || undefined === hiddenBlocks
+		};
+	}, [ blocksStatus ]);
+
 
 	/**
 	 * Update the WP Option with the new value.
 	 * @param {import('../../dashboard').BlocksToDisableList} blocks Blocks to be updated.
 	 */
 	const sendUpdates = ( blocks ) => {
-		const optionValue = blocks.filter( block => Boolean( block.isDisabled ) ).map( block => block.slug );
-		updateOption( 'themeisle_disabled_blocks', optionValue, __( 'Blocks Settings updated.', 'otter-blocks' ), 'o-blocks-update' );
+		blocks.forEach( block => {
+			if ( block.isDisabled ) {
+				preferencesHiddenBlocks.add( block.slug );
+			} else {
+				preferencesHiddenBlocks.delete( block.slug );
+			}
+		});
+
+		dispatch( 'core/preferences' ).set( 'core/edit-post', 'hiddenBlockTypes', [ ...preferencesHiddenBlocks ]);
 	};
 
 	/**
@@ -359,24 +384,22 @@ const Blocks = () => {
 	 * Initiate the blocks' status.
 	 */
 	useEffect( () => {
-		if ( isLoading && 'loaded' === status ) {
-			setLoading( false );
-			const savedValue = getOption( 'themeisle_disabled_blocks' );
-			if ( savedValue ) {
-				const updatedBlocksStatus = blocksStatus.map( block => {
-					if ( savedValue.includes( block.slug ) ) {
-						block.isDisabled = true;
-					} else {
-						block.isDisabled = false;
-					}
-
-					return block;
-				});
-
-				setBlocksStatus( updatedBlocksStatus );
-			}
+		if ( isLoading ) {
+			return;
 		}
-	}, [ status, isLoading ]);
+
+		const updatedBlocksStatus = blocksStatus.map( block => {
+			if ( preferencesHiddenBlocks.has( block.slug ) ) {
+				block.isDisabled = true;
+			} else {
+				block.isDisabled = false;
+			}
+
+			return block;
+		});
+
+		setBlocksStatus( updatedBlocksStatus );
+	}, [ isLoading ]);
 
 	return (
 		<Fragment>
