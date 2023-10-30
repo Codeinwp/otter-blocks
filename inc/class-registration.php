@@ -327,6 +327,8 @@ class Registration {
 			return;
 		}
 
+		
+
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
@@ -358,6 +360,7 @@ class Registration {
 		}
 
 		if ( $has_widgets ) {
+			
 			add_filter(
 				'wp_footer',
 				function ( $content ) {
@@ -1008,8 +1011,6 @@ class Registration {
 				$valid_widgets[] = (object) $widget_data[ $key ];
 			}
 		}
-
-		self::$widget_used = array();
 
 		foreach ( $valid_widgets as $widget ) {
 			if ( isset( $widget->content ) ) {
