@@ -40,9 +40,11 @@ test.describe( 'Live Search Block', () => {
 
 		await page.goto( `/?p=${postId}` );
 
-		expect ( page.locator( '#wp-block-search__input-1' ) ).toBeVisible();
+		const input = page.locator( '.otter-popup__modal_body .o-live-search input' );
 
-		await page.fill( '#wp-block-search__input-1', 'u' );
+		expect ( input ).toBeVisible();
+
+		await input.fill( 'u' );
 
 		// If the width is 0, it means the results are not rendered properly.
 		const container = page.locator( '.o-live-search .container-wrap' );
