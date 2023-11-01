@@ -272,7 +272,8 @@ export const SortableChoiceItem = SortableElement( ( props ) => {
 
 				<RichText
 					onChange={props.onLabelChange}
-					value={ props?.tab?.content || __( 'Untitled Tab', 'otter-blocks' ) }
+					value={ props?.tab?.content }
+					placeholder={__( 'Click to Edit', 'otter-blocks' )}
 					tagName={'div'}
 					className={'wp-block-themeisle-blocks-tabs-inspector-tab-option__name'}
 				/>

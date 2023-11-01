@@ -61,7 +61,7 @@ const Inspector = ({
 	const options = ( isString( attributes.options ) ? attributes.options?.split( '\n' )?.map( x => ({ isDefault: false, content: x }) ) : attributes.options ) ?? [];
 
 	// Without debouncing, the RichText will lose focus on every keypress.
-	const debouncedSet = debounce( setAttributes, 1 );
+	const debouncedSet = debounce( setAttributes, 800 );
 
 	const ChoiceList = SortableContainer( ( props ) => {
 		return (
@@ -175,6 +175,9 @@ const Inspector = ({
 								const o = [ ...options ];
 								o.push({ isDefault: false, content: '' });
 								setAttributes({ options: o });
+								setTimeout( () => {
+									document.querySelector( '.wp-block-themeisle-blocks-tabs-inspector-tab-option:last-child .wp-block-themeisle-blocks-tabs-inspector-tab-option__name' )?.focus();
+								}, 300 );
 							} }
 						>
 							{ __( 'Add Option', 'otter-blocks' ) }
