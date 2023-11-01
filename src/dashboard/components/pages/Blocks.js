@@ -195,7 +195,7 @@ const otterBlocks = [
 		'slug': 'themeisle-blocks/woo-comparison',
 		'name': __( 'WooCommerce Comparison Table', 'otter-blocks' ),
 		'isPro': true,
-		'icon': 'editor-table',
+		'icon': comparisonTableIcon,
 		'docLink': 'https://docs.themeisle.com/article/1671-shop-related-blocks#product-comparison-table'
 	},
 	{
@@ -295,6 +295,7 @@ const Header = ({ blocks, onDisableAll, onEnableAll }) => {
 const Blocks = () => {
 
 	const [ blocksStatus, setBlocksStatus ] = useState( otterBlocks );
+	const [ canShowNotice, canShowNoticeSet ] = useState( false );
 
 	const { preferencesHiddenBlocks, isLoading } = useSelect( ( select ) => {
 
@@ -304,7 +305,7 @@ const Blocks = () => {
 		 */
 		const hiddenBlocks = select( 'core/preferences' )?.get( 'core/edit-post', 'hiddenBlockTypes' );
 
-		const isResolving = select( 'core/preferences' ).isResolving( 'get' ) ?? false;
+		const isResolving = select( 'core/preferences' ).isResolving( 'get', [ 'hiddenBlockTypes' ]);
 
 		return {
 			preferencesHiddenBlocks: hiddenBlocks ? new Set( hiddenBlocks ) : undefined,
@@ -344,6 +345,7 @@ const Blocks = () => {
 
 		sendUpdates( updatedBlocksStatus );
 		setBlocksStatus( updatedBlocksStatus );
+		canShowNoticeSet( true );
 	};
 
 	/**
@@ -400,6 +402,17 @@ const Blocks = () => {
 
 		setBlocksStatus( updatedBlocksStatus );
 	}, [ isLoading ]);
+
+	useEffect( () => {
+		if ( ! canShowNotice || isLoading ) {
+			return;
+		}
+
+		dispatch?.( 'core/notices' )?.createNotice( 'info', __( 'Option Updated.', 'otter-blocks' ), { isDismissible: true, type: 'snackbar', id: 'saved-options' });
+
+
+		canShowNoticeSet( false );
+	}, [ canShowNotice, preferencesHiddenBlocks, isLoading ]);
 
 	return (
 		<Fragment>

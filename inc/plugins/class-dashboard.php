@@ -55,6 +55,11 @@ class Dashboard {
 
 		add_action( "admin_print_scripts-$page_hook_suffix", array( $this, 'enqueue_options_assets' ) );
 
+		/**
+		 * Add shortcut to the Blocks tab in Dashboard.
+		 */
+		
+
 		add_submenu_page(
 			'otter',
 			__( 'Settings', 'otter-blocks' ),
@@ -71,6 +76,18 @@ class Dashboard {
 			'form-submissions-free',
 			array( $this, 'form_submissions_callback' ),
 			10
+		);
+
+		add_submenu_page(
+			'otter',
+			__( 'Blocks', 'otter-blocks' ),
+			__( 'Blocks', 'otter-blocks' ),
+			'manage_options',
+			'otter-blocks-toggle',
+			function() {
+				echo '<p>Redirecting...</p>
+				<script>document.location.href = "/wp-admin/admin.php?page=otter#blocks";</script>';
+			}
 		);
 	}
 

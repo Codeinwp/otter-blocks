@@ -24,8 +24,14 @@ if ( undefined === window.otterUtils ) {
 
 window.otterUtils.useSettings = useSettings;
 
+function getInitialStateFromURLQuery() {
+	const hash = window.location.hash.slice( 1 ); // Remove the '#' at the start
+	return hash;
+}
+
+
 const App = () => {
-	const [ currentTab, setTab ] = useState( 'blocks' );
+	const [ currentTab, setTab ] = useState( getInitialStateFromURLQuery() );
 
 	return (
 		<Fragment>
