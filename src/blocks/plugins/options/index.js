@@ -61,6 +61,7 @@ import SectionColumns from './global-defaults/controls/section-columns.js';
 import SectionColumn from './global-defaults/controls/section-column.js';
 import ReviewControl from './global-defaults/controls/review.js';
 import Form from './global-defaults/controls/form.js';
+import Heading from './global-defaults/controls/heading.js';
 import { otterIconColored } from '../../helpers/icons.js';
 import Tabs from './global-defaults/controls/tabs';
 import useSettings from '../../helpers/use-settings';
@@ -237,6 +238,10 @@ const Options = () => {
 		{
 			name: 'themeisle-blocks/font-awesome-icons',
 			control: FontAwesomeIcons
+		},
+		{
+			name: 'themeisle-blocks/advanced-heading',
+			control: Heading
 		},
 		{
 			name: 'themeisle-blocks/review',

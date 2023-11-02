@@ -19,22 +19,18 @@ import {
 } from '@wordpress/block-editor';
 
 import {
-	FontSizePicker,
 	PanelBody,
 	RangeControl,
 	SelectControl,
 	ToggleControl,
-	__experimentalBoxControl as BoxControl,
-	__experimentalUnitControl as UnitControl
+	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
 import {
-	Fragment,
-	useState
+	Fragment
 } from '@wordpress/element';
 
 import {
-	isEmpty,
 	isObjectLike
 } from 'lodash';
 
@@ -42,9 +38,7 @@ import {
  * Internal dependencies
  */
 import {
-	ClearButton,
 	ControlPanelControl,
-	GoogleFontsControl,
 	HTMLAnchorControl,
 	InspectorExtensions,
 	InspectorHeader,
@@ -54,7 +48,7 @@ import {
 
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { makeBox } from '../../plugins/copy-paste/utils';
-import { _px } from '../../helpers/helper-functions.js';
+import { _px, compactObject } from '../../helpers/helper-functions.js';
 import { useTabSwitch } from '../../helpers/block-utility';
 import TypographySelectorControl from '../../components/typography-selector-control';
 
@@ -80,21 +74,6 @@ const Inspector = ({
 
 	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
-
-	const changeFontFamily = value => {
-		if ( ! value ) {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: value
-			});
-		} else {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: 'normal',
-				fontStyle: 'normal'
-			});
-		}
-	};
 
 	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
 		top: _px( attributes.paddingTop ) ?? '0px',
@@ -216,6 +195,10 @@ const Inspector = ({
 								title={ __( 'Typography', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
+								<ResponsiveControl
+									label={ __( 'Screen Type', 'otter-blocks' ) }
+								/>
+
 								<TypographySelectorControl
 									enableComponents={{
 										fontFamily: true,
@@ -339,11 +322,13 @@ const Inspector = ({
 									<BoxControl
 										label={ __( 'Padding', 'otter-blocks' ) }
 										values={
-											responsiveGetAttributes([
-												isObjectLike( attributes.padding ) ?  attributes.padding : oldPaddingDesktop,
-												isObjectLike( attributes.paddingTablet ) ? attributes.paddingTablet : oldPaddingTablet,
-												isObjectLike( attributes.paddingMobile ) ?  attributes.paddingMobile : oldPaddingMobile
-											]) ?? makeBox( '0px' )
+											compactObject(
+												responsiveGetAttributes([
+													isObjectLike( attributes.padding ) ?  attributes.padding : oldPaddingDesktop,
+													isObjectLike( attributes.paddingTablet ) ? attributes.paddingTablet : oldPaddingTablet,
+													isObjectLike( attributes.paddingMobile ) ?  attributes.paddingMobile : oldPaddingMobile
+												])
+											) ?? makeBox( '0px' )
 										}
 										onChange={ value => {
 											responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
@@ -353,11 +338,16 @@ const Inspector = ({
 									<BoxControl
 										label={ __( 'Margin', 'otter-blocks' ) }
 										values={
-											responsiveGetAttributes([
-												isObjectLike( attributes.margin ) ? attributes.margin : oldMarginDesktop,
-												isObjectLike( attributes.marginTablet ) ? attributes.marginTablet : oldMarginTablet,
-												isObjectLike( attributes.marginMobile ) ?  attributes.marginMobile : oldMarginMobile
-											]) ?? makeBox( '0px' )
+											compactObject(
+												responsiveGetAttributes([
+													isObjectLike( attributes.margin ) ? attributes.margin : oldMarginDesktop,
+													isObjectLike( attributes.marginTablet ) ? attributes.marginTablet : oldMarginTablet,
+													isObjectLike( attributes.marginMobile ) ?  attributes.marginMobile : oldMarginMobile
+												])
+											) ?? {
+												top: '0px',
+												bottom: '25px'
+											}
 										}
 										onChange={ value => {
 											responsiveSetAttributes( value, [ 'margin', 'marginTablet', 'marginMobile' ]);
