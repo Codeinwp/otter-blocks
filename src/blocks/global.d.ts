@@ -45,6 +45,7 @@ declare global {
 			isAncestorTypeAvailable: boolean
 			highlightDynamicText: boolean
 			isPreview: boolean
+			hasOpenAiKey: boolean
 		}
 		otterPro?: Readonly<{
 			isActive: boolean
