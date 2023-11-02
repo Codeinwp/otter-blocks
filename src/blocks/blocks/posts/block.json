@@ -231,6 +231,111 @@
 		},
 		"featuredPostOrder": {
 			"type": "string"
+		},
+		"hasPagination": {
+			"type": "boolean",
+			"default": false
+		},
+		"pagColor": {
+			"type": "string"
+		},
+		"pagBgColor": {
+			"type": "string"
+		},
+		"pagColorHover": {
+			"type": "string"
+		},
+		"pagBgColorHover": {
+			"type": "string"
+		},
+		"pagColorActive": {
+			"type": "string"
+		},
+		"pagBgColorActive": {
+			"type": "string"
+		},
+		"pagBorderColor": {
+			"type": "string"
+		},
+		"pagBorderColorHover": {
+			"type": "string"
+		},
+		"pagBorderColorActive": {
+			"type": "string"
+		},
+		"pagGap": {
+			"type": "string"
+		},
+		"pagBorderRadius": {
+			"type": "object",
+			"properties": {
+				"top": {
+					"type": "string"
+				},
+				"left": {
+					"type": "string"
+				},
+				"right": {
+					"type": "string"
+				},
+				"bottom": {
+					"type": "string"
+				}
+			}
+		},
+		"pagBorderWidth": {
+			"type": "object",
+			"properties": {
+				"top": {
+					"type": "string"
+				},
+				"left": {
+					"type": "string"
+				},
+				"right": {
+					"type": "string"
+				},
+				"bottom": {
+					"type": "string"
+				}
+			}
+		},
+		"pagPadding": {
+			"type": "object",
+			"properties": {
+				"top": {
+					"type": "string"
+				},
+				"left": {
+					"type": "string"
+				},
+				"right": {
+					"type": "string"
+				},
+				"bottom": {
+					"type": "string"
+				}
+			}
+		},
+		"pagContMargin": {
+			"type": "object",
+			"properties": {
+				"top": {
+					"type": "string"
+				},
+				"left": {
+					"type": "string"
+				},
+				"right": {
+					"type": "string"
+				},
+				"bottom": {
+					"type": "string"
+				}
+			}
+		},
+		"pagSize": {
+			"type": "string"
 		}
 	},
 	"supports": {

@@ -187,4 +187,42 @@ export const PostsDescription = ({ attributes,  element, post }) => {
 	return '';
 };
 
+export const PaginationPreview = () => (
+	<div className='o-posts-grid-pag'>
+		<a className="page-numbers">
+			{
+				__( 'Prev', 'otter-blocks' )
+			}
+		</a>
+		<a className="page-numbers" aria-current="page">
+			{
+				__( '1', 'otter-blocks' )
+			}
+		</a>
+		<span className="page-numbers">
+			{
+				__( '2', 'otter-blocks' )
+			}
+		</span>
+		<a className="page-numbers">
+			{
+				__( '3', 'otter-blocks' )
+			}
+		</a>
+		<span className="page-numbers dots">
+			...
+		</span>
+		<a className="page-numbers">
+			{
+				__( '8', 'otter-blocks' )
+			}
+		</a>
+		<a className="page-numbers">
+			{
+				__( 'Next', 'otter-blocks' )
+			}
+		</a>
+	</div>
+);
+
 export default Layout;
