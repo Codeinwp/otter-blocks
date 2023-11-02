@@ -8,6 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks;
 
 use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
+use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
 
 /**
  * Class Registration.
@@ -282,6 +283,7 @@ class Registration {
 				'version'                 => OTTER_BLOCKS_VERSION,
 				'isRTL'                   => is_rtl(),
 				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true ),
+				'hasOpenAiKey'            => ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
 			)
 		);
 
@@ -327,6 +329,8 @@ class Registration {
 			return;
 		}
 
+		
+
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
@@ -358,6 +362,7 @@ class Registration {
 		}
 
 		if ( $has_widgets ) {
+			
 			add_filter(
 				'wp_footer',
 				function ( $content ) {
@@ -1060,8 +1065,6 @@ class Registration {
 				$valid_widgets[] = (object) $widget_data[ $key ];
 			}
 		}
-
-		self::$widget_used = array();
 
 		foreach ( $valid_widgets as $widget ) {
 			if ( isset( $widget->content ) ) {

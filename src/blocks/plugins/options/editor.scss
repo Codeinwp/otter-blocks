@@ -156,9 +156,12 @@
 		}
 	}
 
-	.components-base-control,
-	.o-responsive-control {
-		padding: 10px;
+	:is(
+		.components-unit-control-wrapper,
+		.components-base-control,
+		.o-responsive-control
+	) {
+		padding-left: 10px;
 		margin: 0;
 	}
 
@@ -174,19 +177,28 @@
 			margin-bottom: 1em;
 		}
 
-		.components-base-control {
-			padding: 0;
-		}
-
-		.components-font-size-picker__header {
+		:is(.components-base-control, .components-font-size-picker__header  ) {
 			padding: 0;
 		}
 	}
 
-	.components-font-size-picker__header,
-	.component-box-control__header,
-	.component-box-control__header-control-wrapper {
-		padding: 0 10px;
+	:is(
+		.o-typo-header,
+		.o-control-panel-control,
+		.components-font-size-picker__header,
+		.component-box-control__header,
+		.component-box-control__header-control-wrapper
+	) {
+		padding-left: 10px;
+	}
+
+	.o-responsive-control :is(
+		.components-base-control,
+		.component-box-control__header,
+		.components-font-size-picker__header,
+		.component-box-control__header-control-wrapper
+	) {
+		padding: 0;
 	}
 
 	.components-font-size-picker__controls {

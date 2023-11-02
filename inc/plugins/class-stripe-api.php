@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use Stripe\Collection;
 use Stripe\StripeClient;
 
 /**
@@ -108,7 +109,7 @@ class Stripe_API {
 	 * @param string       $path Request path.
 	 * @param array|string $args Request arguments.
 	 *
-	 * @return mixed
+	 * @return mixed|\WP_Error|Collection
 	 * @access public
 	 */
 	public function create_request( $path, $args = array() ) {
@@ -237,7 +238,7 @@ class Stripe_API {
 
 		array_push( $data, $object );
 
-		if ( defined( 'COOKIEPATH' ) && defined( 'COOKIE_DOMAIN' ) && ! $user_id ) {
+		if ( defined( 'COOKIEPATH' ) && defined( 'COOKIE_DOMAIN' ) && ! headers_sent() && ! $user_id ) {
 			setcookie( 'o_stripe_data', wp_json_encode( $data ), strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, false ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
 			return;
 		}

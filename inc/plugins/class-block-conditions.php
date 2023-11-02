@@ -42,42 +42,14 @@ class Block_Conditions {
 	 */
 	public function render_blocks( $block_content, $block ) {
 		if ( ! is_admin() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) && isset( $block['attrs']['otterConditions'] ) ) {
-			$display            = true;
-			$hide_css_condition = false;
-
-			foreach ( $block['attrs']['otterConditions'] as $group ) {
-				if ( 0 === count( $group ) ) {
-					continue;
-				}
-
-				$visibility = true;
-
-				foreach ( $group as $condition ) {
-					if ( ! $this->evaluate_condition( $condition ) ) {
-						$visibility = false;
-					}
-
-					if ( ! empty( $condition['type'] ) && ! empty( $condition['screen_sizes'] ) ) {
-						$hide_css_condition = $condition;
-					}
-				}
-
-				if ( true === $visibility ) {
-					$display = true;
-					break;
-				}
-
-
-				if ( false === $visibility ) {
-					$display = false;
-				}
-			}
+			
+			$display = $this->evaluate_condition_collection( $block['attrs']['otterConditions'] );
 
 			if ( false === $display ) {
-				return $block_content;
+				return;
 			}
 
-			$enhanced_content = $this->should_add_hide_css_class( $hide_css_condition, $block_content );
+			$enhanced_content = $this->should_add_hide_css_class( $this->get_hide_css_condition( $block['attrs']['otterConditions'] ), $block_content );
 
 			if ( false !== $enhanced_content ) {
 				return $enhanced_content;
@@ -85,6 +57,63 @@ class Block_Conditions {
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * Evaluate conditions
+	 *
+	 * @param array<array> $collection The conditions collection to evaluate.
+	 * @return bool Whether the conditions are met.
+	 */
+	public function evaluate_condition_collection( $collection ) {
+		$display = true;
+
+		foreach ( $collection as $group ) {
+			if ( 0 === count( $group ) ) {
+				continue;
+			}
+
+			$visibility = true;
+
+			foreach ( $group as $condition ) {
+				if ( ! $this->evaluate_condition( $condition ) ) {
+					$visibility = false;
+				}
+			}
+
+			if ( true === $visibility ) {
+				$display = true;
+				break;
+			}
+
+			if ( false === $visibility ) {
+				$display = false;
+			}
+		}
+			
+		return $display;
+	}
+
+	/**
+	 * Get the hide CSS condition.
+	 * 
+	 * @param array<array> $collection The conditions collection to evaluate.
+	 * @return array|bool The hide CSS condition, or false if none is found.
+	 */
+	public function get_hide_css_condition( $collection ) {
+		foreach ( $collection as $group ) {
+			if ( 0 === count( $group ) ) {
+				continue;
+			}
+			
+			foreach ( $group as $condition ) {
+				if ( ! empty( $condition['type'] ) && ! empty( $condition['screen_sizes'] ) ) {
+					return $condition;
+				}
+			}
+		}
+			
+		return false;
 	}
 
 	/**
