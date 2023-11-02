@@ -32,6 +32,18 @@
 		"test:e2e:blockId": "wp-scripts test-e2e uniq-id-checking.spec.js",
 		"test:e2e:playwright": "npx playwright test --config src/blocks/test/e2e/playwright.config.js",
 		"test:e2e:playwright-ui": "npx playwright test --config src/blocks/test/e2e/playwright.config.js --ui",
+		"test:unit:php:setup": "wp-env start",
+		"test:unit:php:setup:debug": "wp-env start --xdebug",
+		"test:unit:php:base": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' tests-wordpress vendor/bin/phpunit -c phpunit.xml --verbose",
+		"test:unit:php": "npm-run-all test:unit:php:setup test:unit:php:base",
+		"test:unit:php:debug": "npm-run-all test:unit:php:setup:debug test:unit:php:base",
+		"test:unit:php:multisite:base": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' tests-wordpress vendor/bin/phpunit -c phpunit/multisite.xml --verbose",
+		"test:unit:php:multisite": "npm-run-all test:unit:php:setup test:unit:php:multisite:base",
+		"test:unit:php:multisite:debug": "npm-run-all test:unit:php:setup:debug test:unit:php:multisite:base",
+		"test:php": "npm-run-all lint:php test:unit:php",
+		"test:php:watch": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' tests-cli composer run-script test:watch",
+		"lint:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script lint",
+		"format:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script format",
 		"wp-env": "wp-env"
 	},
 	"repository": {
