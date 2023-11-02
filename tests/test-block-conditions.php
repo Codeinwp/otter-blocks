@@ -482,4 +482,113 @@ class TestBlockConditions extends WP_UnitTestCase
 
 		$this->assertFalse( $result );
 	}
+
+	public function test_hide_css_desktop_condition() {
+		$condition = array(
+			'type'         => 'test',
+			'screen_sizes' => array(
+				'desktop',
+			),
+		);
+
+		$content = '<p class="test">Test</p>';
+
+		$result = $this->block_conditions->should_add_hide_css_class( $condition, $content );
+		
+		$this->assertEquals( '<p class="o-hide-on-desktop test">Test</p>', $result );
+	}
+
+	public function test_hide_css_tablet_condition() {
+		$condition = array(
+			'type'         => 'test',
+			'screen_sizes' => array(
+				'tablet',
+			),
+		);
+
+		$content = '<p class="test">Test</p>';
+
+		$result = $this->block_conditions->should_add_hide_css_class( $condition, $content );
+		
+		$this->assertEquals( '<p class="o-hide-on-tablet test">Test</p>', $result );
+	}
+
+	public function test_hide_css_mobile_condition() {
+		$condition = array(
+			'type'         => 'test',
+			'screen_sizes' => array(
+				'mobile',
+			),
+		);
+
+		$content = '<p class="test">Test</p>';
+
+		$result = $this->block_conditions->should_add_hide_css_class( $condition, $content );
+		
+		$this->assertEquals( '<p class="o-hide-on-mobile test">Test</p>', $result );
+	}
+
+	public function test_hide_css_all_condition() {
+		$condition = array(
+			'type'         => 'test',
+			'screen_sizes' => array(
+				'desktop',
+				'tablet',
+				'mobile'
+			),
+		);
+
+		$content = '<p class="test">Test</p>';
+
+		$result = $this->block_conditions->should_add_hide_css_class( $condition, $content );
+		
+		$this->assertEquals( '<p class="o-hide-on-mobile o-hide-on-tablet o-hide-on-desktop test">Test</p>', $result );
+	}
+
+	public function test_get_css_hide_condition() {
+		$collection = array(
+			array(
+				array(
+					'type'       => 'postType',
+					'post_types' => array( 'post_42' ),
+				),
+			),
+			array(
+				array(
+					'type'       => 'test',
+					'screen_sizes' => array(
+						'desktop',
+						'tablet',
+						'mobile'
+					),
+				),
+			),
+		);
+
+		$result = $this->block_conditions->get_hide_css_condition( $collection );
+		
+		// Check if screen_sizes exists.
+		$this->assertArrayHasKey( 'screen_sizes', $result );
+
+		// Check if screen_sizes is an array.
+		$this->assertIsArray( $result['screen_sizes'] );
+
+		// Check if screen_sizes has the correct values.
+		$this->assertEqualsCanonicalizing( array( 'desktop', 'tablet', 'mobile' ), $result['screen_sizes'] );
+	}
+
+	public function test_get_css_hide_condition_no_hide() {
+		$collection = array(
+			array(
+				array(
+					'type'       => 'postType',
+					'post_types' => array( 'post_42' ),
+				),
+			),
+		);
+
+		$result = $this->block_conditions->get_hide_css_condition( $collection );
+		
+		$this->assertFalse( $result );
+	}
 }
