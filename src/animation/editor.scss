@@ -101,6 +101,10 @@
          position: absolute;
       }
    }
+
+   &> .components-unit-control-wrapper {
+      margin-top: 10px;
+   }
 }
 
 .otter-animations-count-image {
@@ -118,7 +122,8 @@
 
 @media screen {
 	.hidden-animated {
-		visibility: hidden;
+       visibility: hidden;
+       animation-play-state: paused;
 	}
 
    .animated .wp-block-navigation,

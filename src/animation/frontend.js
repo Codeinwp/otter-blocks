@@ -156,14 +156,14 @@ const delay = [
 
 const speed = [ 'none', 'slow', 'slower', 'fast', 'faster' ];
 
-window.addEventListener( 'load', () => {
+const animateElements = () => {
 	const elements = document.querySelectorAll( '.animated' );
+
+	createCustomAnimationNode( elements );
 
 	for ( const element of elements ) {
 		classes = element.classList;
 		element.animationClasses = [];
-
-		classes.add( 'o-anim-ready' );
 
 		if ( ! isElementInViewport( element ) ) {
 			const animationClass = animations.find( ( i ) => {
@@ -177,8 +177,6 @@ window.addEventListener( 'load', () => {
 			const speedClass = speed.find( ( i ) => {
 				return Array.from( classes ).find( ( o ) => o === i );
 			});
-
-			element.classList.add( 'hidden-animated' );
 
 			if ( animationClass ) {
 				element.animationClasses.push( animationClass );
@@ -194,7 +192,11 @@ window.addEventListener( 'load', () => {
 				element.animationClasses.push( speedClass );
 				element.classList.remove( speedClass );
 			}
+
+			element.classList.add( 'hidden-animated' );
 		}
+
+		classes.add( 'o-anim-ready' );
 
 		outAnimation.forEach( ( i ) => {
 			const isOut = element.className.includes( i );
@@ -205,35 +207,71 @@ window.addEventListener( 'load', () => {
 				});
 			}
 		});
+
+		if ( classes.contains( 'o-anim-hover' ) ) {
+			element.classList.remove( 'hidden-animated' ); // We asume that elements with hover animation are visible by default.
+			element.classList.remove( 'animated' );
+
+			const { animationName } = element.style;
+			element.style.animationName = 'none';
+
+			element.addEventListener( 'mouseenter', () => {
+				element.classList.add( 'animated' );
+				element.style.animationName = animationName;
+			});
+		}
+	}
+
+	/** @type {Array<HTMLDivElement>} */
+	const elementsScroll = [];
+
+	for ( const element of elements ) {
+		if (
+			element.animationClasses &&
+			0 < element.animationClasses.length
+		) {
+			elementsScroll.push({ element, triggerOffset: getTriggerOffset( element ) });
+		}
 	}
 
 	window.addEventListener( 'scroll', () => {
 		requestAnimationFrame( () => {
-			for ( const element of elements ) {
-				if (
-					element.getBoundingClientRect().top <=
-						window.innerHeight * 0.95 &&
-					0 < element.getBoundingClientRect().top
-				) {
-					if (
-						element.animationClasses &&
-						0 < element.animationClasses.length
-					) {
-						const classes = element.animationClasses;
-						classes.forEach( ( i ) => element.classList.add( i ) );
+			const elemtsToRemove = [];
 
-						element.classList.remove( 'hidden-animated' );
-						delete element.animationClasses;
-					}
+			for ( const e of elementsScroll ) {
+				const { element, triggerOffset } = e;
+
+				const { top } = element.getBoundingClientRect();
+
+				const offset = calculateOffset( triggerOffset );
+
+				const isVisible = ( top + offset ) <= window.innerHeight * 0.95 && 0 < top;
+
+				if ( ! isVisible ) {
+					continue;
 				}
+
+				const classes = element.animationClasses;
+				classes.forEach( ( i ) => element.classList.add( i ) );
+
+				element.classList.remove( 'hidden-animated' );
+				delete element.animationClasses;
+				elemtsToRemove.push( e );
 			}
+
+			elemtsToRemove.forEach( ( e ) => {
+				const index = elementsScroll.indexOf( e );
+				elementsScroll.splice( index, 1 );
+			});
 		});
 	});
-});
+};
 
 const isElementInViewport = ( el ) => {
-	const scroll = window.scrollY || window.pageYOffset;
-	const boundsTop = el.getBoundingClientRect().top + scroll;
+	let scroll = window.scrollY || window.pageYOffset;
+	const offset = calculateOffset( getTriggerOffset( el ) );
+
+	const boundsTop = el.getBoundingClientRect().top + scroll + offset;
 
 	const viewport = {
 		top: scroll,
@@ -250,3 +288,108 @@ const isElementInViewport = ( el ) => {
 		( bounds.top <= viewport.bottom && bounds.top >= viewport.top )
 	);
 };
+
+const createCustomAnimationNode = ( elements ) => {
+	let customDelays = [];
+	let customSpeeds = [];
+
+	for ( const element of elements ) {
+		const classes = element.classList;
+
+		if ( classes.contains( 'o-anim-custom-delay' ) ) {
+			let delay;
+			for ( const className of classes ) {
+				if ( className.includes( 'o-anim-value-delay-' ) ) {
+					delay = className;
+					break;
+				}
+			}
+			if ( delay ) {
+				customDelays.push( delay );
+			}
+		}
+
+		if ( classes.contains( 'o-anim-custom-speed' ) ) {
+			let speed;
+			for ( const className of classes ) {
+				if ( className.includes( 'o-anim-value-speed-' ) ) {
+					speed = className;
+					break;
+				}
+			}
+			if ( speed ) {
+				customSpeeds.push( speed );
+			}
+		}
+	}
+
+
+	// Remove duplicate values
+	customDelays = [ ...new Set( customDelays ) ];
+	customSpeeds = [ ...new Set( customSpeeds ) ];
+
+	if ( 0 < customDelays.length || 0 < customSpeeds.length ) {
+		const customValuesNode = document.createElement( 'style' );
+		customValuesNode.id = 'o-anim-custom-values';
+		customValuesNode.innerHTML = customDelays.reduce(
+			( accumulator, cssClass ) => {
+				const delayValue = cssClass.replace( 'o-anim-value-delay-', '' );
+
+				return (
+					accumulator +
+					`.animated.${ cssClass } { animation-delay: ${ delayValue }; -webkit-animation-delay: ${ delayValue }; }`
+				);
+			},
+			''
+		) + '\n' + customSpeeds.reduce(
+			( accumulator, cssClass ) => {
+				const speedValue = cssClass.replace( 'o-anim-value-speed-', '' );
+
+				return (
+					accumulator +
+					`.animated.${ cssClass } { animation-duration: ${ speedValue }; -webkit-animation-duration: ${ speedValue }; }`
+				);
+			},
+			''
+		);
+
+		document.body.appendChild( customValuesNode );
+	}
+};
+
+const getTriggerOffset = ( element ) => {
+	let triggerOffset = 0;
+
+	for ( const className of element.classList.entries() ) {
+		if ( className[1].includes( 'o-anim-offset-' ) ) {
+			const rawValue = className[1].replace( 'o-anim-offset-', '' );
+
+			// Check if it starts with a number.
+			if ( isNaN( rawValue.charAt( 0 ) ) ) {
+				continue;
+			}
+
+			// If raw values ends with px parse it to float.
+			triggerOffset = rawValue.endsWith( 'px' ) ? parseFloat( rawValue ) : rawValue;
+			break;
+		}
+	}
+
+	return triggerOffset;
+};
+
+const calculateOffset = ( offset ) => {
+	if ( 'string' === typeof offset ) {
+		offset = parseFloat( offset ) ?? 0;
+
+		// Clamp the value between 0 and 100.
+		offset = Math.min( Math.max( offset, 0 ), 100 );
+		offset = window.innerHeight * ( offset / 100 );
+	} else if ( 'number' !== typeof offset ) {
+		offset = 0;
+	}
+
+	return offset;
+};
+
+window.addEventListener( 'load', animateElements );
