@@ -69,6 +69,6 @@ class Tracker {
 	 * @return bool
 	 */
 	public static function has_consent() {
-		return boolval( get_option( 'otter_blocks_logger_flag', false ) );
+		return (bool) get_option( 'otter_blocks_logger_flag', false );
 	}
 }
