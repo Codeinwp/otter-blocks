@@ -1,3 +1,21 @@
+##### [Version 2.4.1](https://github.com/Codeinwp/otter-blocks/compare/v2.4.0...v2.4.1) (2023-10-25)
+
+### New Features
+- **Live Search Extension Asset Loading**: Now allows you to load assets required for live search with a hook.
+- **Rank Math Compatibility**: Added support for Rank Maths internal links detection in Posts Block.
+
+### Improvements
+- **Enhancement for Tabs Block**: Makes it easier to switch between tabs in the editor.
+- **Decrease Delay in Dashboard Options**: This PR decreases the delay in enabling/disabling dashboard options.
+- **State Consistency for Dashboard Buttons**: Improved the state consistency of buttons in the Dashboard.
+- **Typography Control Enhancements**: Made enhancements to typography controls for better user experience.
+- **Black Friday Preparations**: Getting set for upcoming Black Friday updates.
+
+### Bug Fixes
+- **Widget Assets**: Fixed the issue where assets for widgets appeared even in pages where the asset doesn’t exist.
+- **Typing Animation Cursor Color**: Addressed the issue with the typing animation cursor color not being correct.
+- **Build Files Placement**: Resolved the problem of build files being added to unnecessary places.
+
 #### [Version 2.4.0](https://github.com/Codeinwp/otter-blocks/compare/v2.3.4...v2.4.0) (2023-09-21)
 
 - Introducing Otter AI Block With Form AI & Content AI Support
