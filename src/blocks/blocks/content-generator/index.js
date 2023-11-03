@@ -9,7 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
-import { aiGeneration as icon, formAiGeneration, contentAiGenerationIcon } from '../../helpers/icons.js';
+import { aiGeneration as icon, formAiGeneration, contentAiGenerationIcon, aiLayoutGeneratorIcon } from '../../helpers/icons.js';
 import edit from './edit.js';
 import './editor.scss';
 
@@ -30,7 +30,7 @@ registerBlockType( name, {
 			name: 'themeisle-blocks/content-generator-form',
 			description: __( 'Generate Form with OpenAI.', 'otter-blocks' ),
 			icon: formAiGeneration,
-			title: __( 'AI Form Generator', 'otter-blocks' ),
+			title: __( 'Form Generator', 'otter-blocks' ),
 			scope: [ 'block' ],
 			attributes: {
 				promptID: 'form'
@@ -40,7 +40,7 @@ registerBlockType( name, {
 			name: 'themeisle-blocks/content-generator-content',
 			description: __( 'Generate new content with OpenAI.', 'otter-blocks' ),
 			icon: contentAiGenerationIcon(),
-			title: __( 'AI Content Generator', 'otter-blocks' ),
+			title: __( 'Content Generator', 'otter-blocks' ),
 			scope: [ 'block' ],
 			attributes: {
 				promptID: 'textTransformation'
@@ -49,8 +49,8 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/content-generator-layout',
 			description: __( 'Use AI to pick Otter patterns that fits your needs.', 'otter-blocks' ),
-			icon: contentAiGenerationIcon(),
-			title: __( 'Smart Patterns Picker', 'otter-blocks' ),
+			icon: aiLayoutGeneratorIcon(),
+			title: __( 'Layout Generator', 'otter-blocks' ),
 			scope: [ 'block' ],
 			attributes: {
 				promptID: 'patternsPicker'
