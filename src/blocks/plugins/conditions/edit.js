@@ -366,7 +366,7 @@ const Edit = ({
 	};
 
 	const changeCondition = ( value, index, key ) => {
-		window.oTrk?.add({ block: name, feature: 'condition', featureComponent: 'condition-type', featureValue: value });
+		window.oTrk?.set( `condition-type_${attributes?.id ?? name}_${index}_${key}`, { groupID: attributes?.id ?? name, feature: 'condition', featureComponent: 'condition-type', featureValue: value });
 
 		const otterConditions = [ ...attributes.otterConditions ];
 
