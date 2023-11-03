@@ -377,13 +377,14 @@ domReady( () => {
 	let maxTries = 10;
 
 	const init = () => {
-		window.wp.hooks.addFilter( 'rank_math_content', 'rank-math', () => {
+
+		window.wp.hooks.addFilter( 'rank_math_content', 'rank-math', ( content ) => {
 
 			/**
 			 * @type {NodeListOf<HTMLDivElement>} postsHtml - The HTML nodes which contain the relevent post content for RankMath.
 			 */
 			const postsHtml = document.querySelectorAll( '.o-posts-grid-post-body' );
-			return Array.from( postsHtml ).map( ( post ) => post.innerHTML ).join( '' );
+			return ( content ?? '' ) + ( Array.from( postsHtml )?.map( ( post ) => post.innerHTML )?.join( '' ) ?? '' );
 		});
 
 		window?.rankMathEditor?.refresh( 'content' );
