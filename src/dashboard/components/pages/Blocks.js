@@ -369,6 +369,7 @@ const Blocks = () => {
 
 		sendUpdates( updatedBlocksStatus );
 		setBlocksStatus( updatedBlocksStatus );
+		canShowNoticeSet( true );
 	};
 
 	/**
@@ -383,6 +384,7 @@ const Blocks = () => {
 
 		sendUpdates( updatedBlocksStatus );
 		setBlocksStatus( updatedBlocksStatus );
+		canShowNoticeSet( true );
 	};
 
 
