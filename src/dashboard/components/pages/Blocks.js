@@ -251,7 +251,7 @@ const BlockCard = ({ block, isLoading, onToggle }) => {
 					isLoading ? (
 						<Spinner />
 					) : (
-						( block?.isPro && ! otterObj?.hasPro ) ? (
+						( block?.isPro && ! ( otterObj?.hasPro && 'valid' === otterObj?.license.valid ) ) ? (
 							<span className="o-block-upsell" >
 								{ __( 'Pro', 'otter-blocks' ) }
 							</span>
@@ -269,7 +269,7 @@ const BlockCard = ({ block, isLoading, onToggle }) => {
  * Dashboard Header component.
  * @param {import('../../dashboard').BlockCardHeaderProps} props Component props.
  */
-const Header = ({ blocks, onDisableAll, onEnableAll }) => {
+const Header = ({ blocks, onDisableAll, onEnableAll, canDisplayBtn }) => {
 
 	const allEnabled = blocks.every( block => ! block.isDisabled );
 	const allDisabled = blocks.every( block => block.isDisabled );
@@ -278,14 +278,18 @@ const Header = ({ blocks, onDisableAll, onEnableAll }) => {
 		<div className="o-blocks-header__left">
 			<h3>{ __( 'Otter Blocks', 'otter-blocks' ) }</h3>
 		</div>
-		<div className="o-blocks-header__right">
-			<Button variant="secondary" disabled={allDisabled} onClick={onDisableAll} >
-				{ __( 'Disable All', 'otter-blocks' ) }
-			</Button>
-			<Button variant="primary" disabled={allEnabled} onClick={onEnableAll}>
-				{ __( 'Enable All', 'otter-blocks' ) }
-			</Button>
-		</div>
+		{
+			canDisplayBtn && (
+				<div className="o-blocks-header__right">
+					<Button variant="secondary" disabled={allDisabled} onClick={onDisableAll} >
+						{ __( 'Disable All', 'otter-blocks' ) }
+					</Button>
+					<Button variant="primary" disabled={allEnabled} onClick={onEnableAll}>
+						{ __( 'Enable All', 'otter-blocks' ) }
+					</Button>
+				</div>
+			)
+		}
 	</div>;
 };
 
@@ -409,14 +413,12 @@ const Blocks = () => {
 		}
 
 		dispatch?.( 'core/notices' )?.createNotice( 'info', __( 'Option Updated.', 'otter-blocks' ), { isDismissible: true, type: 'snackbar', id: 'saved-options' });
-
-
 		canShowNoticeSet( false );
 	}, [ canShowNotice, preferencesHiddenBlocks, isLoading ]);
 
 	return (
 		<Fragment>
-			<Header blocks={blocksStatus} onDisableAll={onDisableAll} onEnableAll={onEnableAll} />
+			<Header blocks={ blocksStatus } onDisableAll={ onDisableAll } onEnableAll={ onEnableAll } canDisplayBtn={ ! isLoading } />
 			<div className="o-block-cards">
 				{
 					blocksStatus.map( block => {

@@ -64,7 +64,7 @@ const Headers = ({
 					{ NAVIGATION_ITEMS.map( item => item.visibility && (
 						<button
 							className={ classnames(
-								{ 'is-active': item.slug === isActive }
+								{ 'is-active': item.slug === ( isActive || 'dashboard' ) }
 							) }
 							onClick={ () => setActive( item.slug ) }
 							key={ item.slug }
