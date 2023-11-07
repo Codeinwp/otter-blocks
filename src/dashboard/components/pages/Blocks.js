@@ -316,7 +316,7 @@ const Blocks = () => {
 
 		return {
 			preferencesHiddenBlocks: hiddenBlocks ? new Set( hiddenBlocks ) : undefined,
-			isLoading: isResolving || undefined === hiddenBlocks
+			isLoading: isResolving
 		};
 	}, [ blocksStatus ]);
 
@@ -326,15 +326,26 @@ const Blocks = () => {
 	 * @param {import('../../dashboard').BlocksToDisableList} blocks Blocks to be updated.
 	 */
 	const sendUpdates = ( blocks ) => {
+
+		const newPreferencesHiddenBlocks = new Set();
+
+		// Copy the old preferences.
+		if ( preferencesHiddenBlocks ) {
+			preferencesHiddenBlocks.forEach( block => {
+				newPreferencesHiddenBlocks.add( block );
+			});
+		}
+
+		// Add the new preferences.
 		blocks.forEach( block => {
 			if ( block.isDisabled ) {
-				preferencesHiddenBlocks.add( block.slug );
+				newPreferencesHiddenBlocks.add( block.slug );
 			} else {
-				preferencesHiddenBlocks.delete( block.slug );
+				newPreferencesHiddenBlocks.delete( block.slug );
 			}
 		});
 
-		dispatch( 'core/preferences' ).set( 'core/edit-post', 'hiddenBlockTypes', [ ...preferencesHiddenBlocks ]);
+		dispatch( 'core/preferences' ).set( 'core/edit-post', 'hiddenBlockTypes', [ ...newPreferencesHiddenBlocks ]);
 	};
 
 	/**
@@ -400,7 +411,7 @@ const Blocks = () => {
 		}
 
 		const updatedBlocksStatus = blocksStatus.map( block => {
-			if ( preferencesHiddenBlocks.has( block.slug ) ) {
+			if ( preferencesHiddenBlocks?.has( block.slug ) ) {
 				block.isDisabled = true;
 			} else {
 				block.isDisabled = false;
