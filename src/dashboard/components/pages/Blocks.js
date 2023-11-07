@@ -12,7 +12,10 @@ import { Button, Spinner, ToggleControl } from '@wordpress/components';
 
 import { Fragment, useEffect, useState } from '@wordpress/element';
 import { dispatch, useSelect } from '@wordpress/data';
-import '@wordpress/edit-site'; // Hack: This is by the toolchain to load the 'wp-edit-site' package so that we can use the 'core/preferences' store.
+
+// Hack: This is by the toolchain to load the 'wp-edit-site' package so that we can use the 'core/preferences' store.
+import '@wordpress/edit-site';
+import '@wordpress/edit-post';
 
 /**
  * Internal dependencies
