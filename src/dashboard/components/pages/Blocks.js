@@ -15,7 +15,6 @@ import { dispatch, useSelect } from '@wordpress/data';
 
 // Hack: This is by the toolchain to load the 'wp-edit-site' package so that we can use the 'core/preferences' store.
 import '@wordpress/edit-site';
-import '@wordpress/edit-post';
 
 /**
  * Internal dependencies
