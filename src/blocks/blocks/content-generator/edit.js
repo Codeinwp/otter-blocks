@@ -30,7 +30,7 @@ import { createBlock, rawHandler } from '@wordpress/blocks';
 import Inspector from './inspector.js';
 import PromptPlaceholder from '../../components/prompt';
 import { parseFormPromptResponseToBlocks, tryParseResponse } from '../../helpers/prompt';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { insertBlockBelow, pullOtterPatterns } from '../../helpers/block-utility';
 
@@ -87,14 +87,27 @@ const ContentGenerator = ({
 		if ( 'patternsPicker' === attributes.promptID ) {
 			const r = tryParseResponse( result ) ?? {};
 
-			console.log( 'PATTERNS PICKED', r?.slugs?.join( ', ' ) );
+			console.log( 'PATTERNS PICKED', r?.slugs?.join( ', ' ) ); // TODO: remove after testing.
 
 			const content = pullOtterPatterns()
 				.filter( pattern => {
 					return r?.slugs?.some( test => pattern.name.endsWith( test ) );
 				})
-				.map( pattern => pattern.content )
+				.map( pattern => pattern?.content )
+				.filter( Boolean )
 				.join( '\n' );
+
+			if ( ! content ) {
+				dispatch( 'core/notices' )?.createNotice(
+					'info',
+					__( 'No patterns found for your query.', 'otter-blocks' ),
+					{
+						type: 'snackbar',
+						isDismissible: true,
+						id: 'o-no-patterns'
+					}
+				);
+			}
 
 			const blocks = rawHandler({
 				HTML: content
@@ -104,20 +117,14 @@ const ContentGenerator = ({
 		}
 	};
 
-	const { hasInnerBlocks, containerId, getBlocks, getBlock, getBlockOrder, getBlockRootClientId } = useSelect(
+	const { hasInnerBlocks, getBlocks } = useSelect(
 		select => {
 
-			const { getBlocks, getBlock, getBlockRootClientId, getBlockOrder } = select( 'core/block-editor' );
-
-			const blocks = getBlocks?.( clientId ) ?? [];
+			const { getBlocks } = select( 'core/block-editor' );
 
 			return {
 				hasInnerBlocks: getBlocks?.( clientId ).length,
-				containerId: blocks[0]?.clientId,
-				getBlocks,
-				getBlock,
-				getBlockRootClientId,
-				getBlockOrder
+				getBlocks
 			};
 		},
 		[ clientId ]
