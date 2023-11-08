@@ -17,7 +17,7 @@ class Tracker {
 	 *
 	 * @var string
 	 */
-	public static $track_url = 'http://localhost:3000/bulk-tracking'; // TODO: Change this to the real URL.
+	public static $track_url = 'https://gentle-cove-mrsmydq0zy5o.ymirsites.com/wp-json/track/events/'; // TODO: Change this to the real URL.
 
 	/**
 	 * Send data to the server if the user has opted in.
