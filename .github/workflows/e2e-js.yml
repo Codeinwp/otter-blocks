@@ -68,7 +68,10 @@ jobs:
 
       - name: Performance check
         run: |
+          touch performance-results.txt 
           npm run test:performance > performance-results.txt
+          cat performance-results.txt > artifacts/performance-results.txt
+          ls -la artifacts
 
       - name: Upload tests artifacts
         if: always()
@@ -80,8 +83,8 @@ jobs:
 
       - name: Print the results
         run: |
-          echo "$(sed -n '/post-editor/,/└──────────────────────┴─────────────┘/p' performance-results.txt)"
-          echo "PERFORMANCE_OUTPUT=$(sed -n '/post-editor/,/└──────────────────────┴─────────────┘/p' performance-results.txt)" >> $GITHUB_OUTPUT
+          cat performance-results.txt
+          echo "PERFORMANCE_OUTPUT=$(cat performance-results.txt)" >> $GITHUB_ENV
         id: summary
 
       - name: Comment
