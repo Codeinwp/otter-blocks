@@ -254,6 +254,19 @@
             margin: 2px;
         }
     }
+
+    .components-checkbox-control {
+        margin: 0 0 0 8px !important;
+
+        .components-base-control__field {
+            margin: 0;
+            padding: 0;
+
+            .components-checkbox-control__input-container {
+                margin: 0;
+            }
+        }
+    }
 }
 
 .wp-block-themeisle-blocks-tabs-inspector-add-tab {
