@@ -72,7 +72,7 @@ class Form_Utils {
 	 * @since 2.2.3
 	 */
 	public static function is_file_field_valid( $field ) {
-		return isset( $field['metadata']['name'] ) && isset( $field['metadata']['size'] ) && isset( $field['metadata']['data'] ) && is_string( $field['metadata']['name'] ) && is_numeric( $field['metadata']['size'] ) && is_string( $field['metadata']['data'] ) && self::is_base64_string( $field['metadata']['data'] );
+		return isset( $field['metadata']['name'] ) && isset( $field['metadata']['size'] ) && isset( $field['metadata']['data'] ) && is_string( $field['metadata']['name'] ) && is_numeric( $field['metadata']['size'] ) && is_string( $field['metadata']['data'] );
 	}
 
 	/**
@@ -139,18 +139,5 @@ class Form_Utils {
 		$hash_code     = substr( $hash_code, 0, 8 );
 
 		return $hash_code . '_' . $original_name;
-	}
-
-	/**
-	 * Check if a string is a valid base64 string.
-	 *
-	 * @param string $data String to check.
-	 * @return boolean
-	 * @since 2.2.3
-	 */
-	public static function is_base64_string( $data ) {
-		// Separate out the headers from the data.
-		$parts = explode( ';base64,', $data );
-		return preg_match( '%^[a-zA-Z0-9/+]*={0,2}$%', $parts[1] );
 	}
 }
