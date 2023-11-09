@@ -86,9 +86,6 @@ const ContentGenerator = ({
 
 		if ( 'patternsPicker' === attributes.promptID ) {
 			const r = tryParseResponse( result ) ?? {};
-
-			console.log( 'PATTERNS PICKED', r?.slugs?.join( ', ' ) ); // TODO: remove after testing.
-
 			const content = pullOtterPatterns()
 				.filter( pattern => {
 					return r?.slugs?.some( test => pattern.name.endsWith( test ) );
@@ -144,17 +141,15 @@ const ContentGenerator = ({
 	 */
 	const insertContentIntoPage = () => {
 		const blocks = getBlocks( clientId );
-		const copy = blocks.map( blockRoot => {
-			return createBlock(
-				blockRoot.name,
-				blockRoot.attributes,
-				blockRoot.innerBlocks?.map( block => {
-					return createBlock( block.name, block.attributes, block.innerBlocks );
-				})
-			);
-		});
 
-		insertBlockBelow( clientId, copy );
+		const makeBlockCopy = ( block ) => {
+			if ( undefined === block ) {
+				return;
+			}
+			return createBlock( block.name, block.attributes, block?.innerBlocks?.filter( b => b?.name && b?.attributes )?.map( makeBlockCopy ) );
+		};
+
+		insertBlockBelow( clientId, blocks.map( makeBlockCopy ) );
 	};
 
 	const { blockType, defaultVariation, variations } = useSelect(
