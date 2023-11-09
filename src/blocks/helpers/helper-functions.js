@@ -369,6 +369,7 @@ export const lightnessFromColor = color => {
  * @return {string}
  */
 export const boxValues = ( box = {}, defaultBox = {}) => {
+	box ??= {};
 	return `${ box?.top ?? defaultBox?.top ?? '0px' } ${ box?.right ?? defaultBox?.right ?? '0px' } ${ box?.bottom ?? defaultBox?.bottom ?? '0px' } ${ box?.left ?? defaultBox?.left ?? '0px' }`;
 };
 
