@@ -81,7 +81,7 @@ jobs:
 
       - name: Print the results
         run: |
-          RESULTS=$(jq -r 'to_entries|map("\(.key): \(.value)")|.[]' artifacts/post-editor.performance-results.json)
+          RESULTS=$(jq -r 'to_entries|map("\(.key): \(.value)")|join(", ")' artifacts/post-editor.performance-results.json)
           echo $RESULTS
           echo "PERFORMANCE_OUTPUT=$RESULTS"  >> $GITHUB_ENV
         id: summary
