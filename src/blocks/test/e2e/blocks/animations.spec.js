@@ -16,7 +16,7 @@ test.describe( 'Animations', () => {
 			}
 		});
 
-		const box = await page.getByLabel( 'Paragraph block' ).boundingBox();
+		const box = await page.getByRole( 'document', { name: 'Block: Paragraph' }).boundingBox();
 
 		// Select a text inside the paragraph block.
 		await page.mouse.move( box.x + 10, box.y + 10 );
