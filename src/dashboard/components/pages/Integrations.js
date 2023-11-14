@@ -194,7 +194,10 @@ const Integrations = () => {
 								variant="secondary"
 								isSecondary
 								disabled={ 'saving' === status }
-								onClick={ () => updateOption( 'themeisle_stripe_api_key', stripeAPI ) }
+								onClick={ () => {
+									window.tiTrk?.with( 'otter' ).add({ feature: 'dashboard-integration', featureComponent: 'stripe' });
+									updateOption( 'themeisle_stripe_api_key', stripeAPI );
+								} }
 							>
 								{ __( 'Save', 'otter-blocks' ) }
 							</Button>
@@ -239,7 +242,10 @@ const Integrations = () => {
 								variant="secondary"
 								isSecondary
 								disabled={ 'saving' === status }
-								onClick={ () => updateOption( 'themeisle_open_ai_api_key', openAISecretKey ) }
+								onClick={ () => {
+									window.tiTrk?.with( 'otter' ).add({ feature: 'dashboard-integration', featureComponent: 'open-ai' });
+									updateOption( 'themeisle_open_ai_api_key', openAISecretKey );
+								} }
 							>
 								{ __( 'Save', 'otter-blocks' ) }
 							</Button>

@@ -25,11 +25,17 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId
+	clientId,
+	name
 }) => {
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
+
+		if ( undefined === attributes.id ) {
+			window.oTrk?.add({ block: name, action: 'block-created', groupID: attributes.id });
+		}
+
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 

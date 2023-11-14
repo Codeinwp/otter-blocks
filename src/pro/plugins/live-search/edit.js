@@ -73,7 +73,14 @@ const Edit = ({
 								<ToggleControl
 									label={ __( 'Enable Live Search', 'otter-blocks' ) }
 									checked={ props.attributes.otterIsLive }
-									onChange={ toggleLive }
+									onChange={ value => {
+
+										if ( value ) {
+											window.oTrk?.add({ feature: 'live-search', featureComponent: 'enable' });
+										}
+
+										toggleLive();
+									} }
 								/>
 
 								{ props.attributes.otterIsLive && (

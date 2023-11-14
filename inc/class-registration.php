@@ -244,7 +244,7 @@ class Registration {
 		}
 
 		global $wp_roles;
-
+		
 		wp_localize_script(
 			'otter-blocks',
 			'themeisleGutenberg',

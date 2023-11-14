@@ -267,7 +267,8 @@ const Separator = ({ label }) => {
 
 const Edit = ({
 	attributes,
-	setAttributes: _setAttributes
+	setAttributes: _setAttributes,
+	name
 }) => {
 	const [ buffer, setBuffer ] = useState( null );
 	const [ conditions, setConditions ] = useState({});
@@ -365,6 +366,8 @@ const Edit = ({
 	};
 
 	const changeCondition = ( value, index, key ) => {
+		window.oTrk?.set( `condition-type_${attributes?.id ?? name}_${index}_${key}`, { groupID: attributes?.id ?? name, feature: 'condition', featureComponent: 'condition-type', featureValue: value });
+
 		const otterConditions = [ ...attributes.otterConditions ];
 
 		const attrs = applyFilters( 'otter.blockConditions.defaults', {}, value );

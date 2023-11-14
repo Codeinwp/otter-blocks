@@ -95,6 +95,7 @@ const CSSEditor = ({
 		});
 
 		const onChange = () => {
+			window?.oTrk?.add({ feature: 'custom-css', featureComponent: 'used' });
 			clearTimeout( inputTimeout );
 			inputTimeout = setTimeout( () => {
 				checkInput( editorRef.current );

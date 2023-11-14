@@ -141,6 +141,7 @@ subscribe( () => {
 		});
 
 		if ( ( isPublishing || ( postPublished && isSaving ) ) && ! isAutoSaving && ! isSavingCSS ) {
+			window.oTrk?.base.uploadEvents();
 			isSavingCSS = true;
 			savePostMeta();
 		}

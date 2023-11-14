@@ -161,6 +161,9 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 			}
 
 			setIsProcessing( prevState => ({ ...prevState, [ actionKey ]: true }) );
+
+			window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'ai-toolbar', featureValue: actionKey }, { consent: true });
+
 			sendPromptToOpenAI(
 				content,
 				injectActionIntoPrompt(

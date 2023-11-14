@@ -91,6 +91,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 						attrs.endInterval = undefined;
 					}
 
+					window.oTrk?.set( `${attributes.id}_type`, { feature: 'countdown', featureComponent: 'countdown-type', featureValue: value, groupID: attributes.id });
 					setAttributes( attrs );
 				}
 
@@ -243,6 +244,7 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 				label={ __( 'On Expire', 'otter-blocks' ) }
 				value={ attributes.behaviour }
 				onChange={ behaviour => {
+					window.oTrk?.set( `${attributes.id}_beh`, { feature: 'countdown', featureComponent: 'countdown-behaviour', featureValue: behaviour, groupID: attributes.id });
 					if ( 'redirectLink' === behaviour ) {
 						setAttributes({ behaviour, redirectLink: undefined });
 					} else {
@@ -283,6 +285,7 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 				help={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
 				checked={ attributes.onEndAction !== undefined }
 				onChange={ value => {
+					window.oTrk?.set( `${attributes.id}_hide`, { feature: 'countdown', featureComponent: 'countdown-hide', featureValue: value ? 'all' : 'none', groupID: attributes.id });
 					if ( value ) {
 						setAttributes({ onEndAction: 'all' });
 					} else {

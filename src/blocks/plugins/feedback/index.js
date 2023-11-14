@@ -102,7 +102,10 @@ const FeedbackModal = (
 				isLink={ 'link' === variant }
 				isSecondary={ 'secondary' === variant }
 				isPrimary={ 'primary' === variant }
-				onClick={() => setIsOpen( ! isOpen )}
+				onClick={() => {
+					window.oTrk?.add({ feature: 'feedback', featureComponent: 'open-button' });
+					setIsOpen( ! isOpen );
+				}}
 			>
 				{ text }
 			</Button>
