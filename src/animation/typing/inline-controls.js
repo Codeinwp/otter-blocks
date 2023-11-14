@@ -35,6 +35,10 @@ import { format as settings } from './index.js';
 
 import { updateAnimConfig } from '../editor.js';
 
+// Fitler out 'custom' value from delayList and speedList
+delayList.pop();
+speedList.pop();
+
 const InlineControls = ({
 	value,
 	contentRef
