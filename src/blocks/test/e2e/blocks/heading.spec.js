@@ -26,11 +26,21 @@ test.describe( 'Advanced Heading Block', () => {
 			name: 'themeisle-blocks/advanced-heading'
 		});
 
+		await page.getByRole( 'document', { name: 'Block: Advanced Heading' }).click();
+
+		const sidebarClass = await page.getByRole( 'button', { name: 'Settings', exact: true }).first().getAttribute( 'class' );
+		if ( ! sidebarClass.includes( 'is-pressed' ) ) {
+			await page.getByRole( 'button', { name: 'Settings', exact: true }).first().click();
+		}
+
 		// Open Style tab.
 		await page.getByRole( 'button', { name: 'Style' }).click();
 
+		// Open custom font size.
+		await page.getByRole( 'button', { name: 'Set custom size' }).click();
+
 		// Select font size.
-		await page.getByRole( 'radio', { name: '16' }).click();
+		await page.getByLabel( 'Custom', { exact: true }).fill( '16' );
 
 		// Open the menu for more options.
 		await page.getByRole( 'button', { name: 'View options' }).click();
