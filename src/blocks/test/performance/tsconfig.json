@@ -1,0 +1,21 @@
+{
+	"extends": "../../../../tsconfig.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"emitDeclarationOnly": false,
+		"allowJs": true,
+		"checkJs": false,
+		"target": "esnext",
+		"module": "esnext",
+		"lib": [ "dom", "esnext" ],
+		"declaration": true,
+		"declarationMap": true,
+		"composite": true,
+		"isolatedModules": true,
+		"esModuleInterop": false,
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true
+	},
+	"include": [ "**/*" ],
+	"exclude": []
+}

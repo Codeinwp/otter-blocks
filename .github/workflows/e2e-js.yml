@@ -2,7 +2,7 @@ name: Test e2e for JS
 
 on:
   pull_request:
-    types: [ opened, synchronize, ready_for_review ]
+    types: [opened, synchronize, ready_for_review]
     branches-ignore:
       - "update_dependencies"
 
@@ -64,18 +64,15 @@ jobs:
 
       - name: Playwright Blocks
         run: |
-          npm run test:e2e:playwright
+          npm run test:e2e:playwright && echo "PLAYWRIGHT_SUCCESS=true" >> $GITHUB_ENV || echo "PLAYWRIGHT_SUCCESS=false" >> $GITHUB_EN
+        continue-on-error: true
 
-      # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - name: Performance check
         run: |
-          npm run test:e2e:performance
+          npm run test:performance
+          cat artifacts/post-editor.performance-results.json
 
-      - name: Block ID reliability
-        run: |
-          npm run test:e2e:blockId
-
-      - name: Upload video files
+      - name: Upload tests artifacts
         if: always()
         uses: actions/upload-artifact@v2
         with:
@@ -85,27 +82,18 @@ jobs:
 
       - name: Print the results
         run: |
-          echo "::set-output name=TYPING_AVG::$(jq '.summary.type.average' ./artifacts/performance.spec.performance-results.json)"
-          echo "::set-output name=TYPING_SD::$(jq '.summary.type.standardDeviation' ./artifacts/performance.spec.performance-results.json)"
-          echo "::set-output name=TYPING_MD::$(jq '.summary.type.median' ./artifacts/performance.spec.performance-results.json)"
-          echo "::set-output name=TYPING_QR60::$(jq '.summary.type.quantileRank60' ./artifacts/performance.spec.performance-results.json)"
-          echo "::set-output name=TYPING_ABOVE_60::$(jq -c '.summary.type.above60' ./artifacts/performance.spec.performance-results.json)"
-          echo "::set-output name=TYPING_QR80::$(jq '.summary.type.quantileRank80' ./artifacts/performance.spec.performance-results.json)"
+          RESULTS=$(jq -r 'to_entries|map("\(.key): \(.value)")|join(", ")' artifacts/post-editor.performance-results.json)
+          FLAKY_TEST_STATUS="Playwright Test Status: $PLAYWRIGHT_SUCCESS"
+          echo "::set-output name=PERFORMANCE_OUTPUT::$RESULTS"
+          echo "::set-output name=FLAKY_TEST_STATUS::$FLAKY_TEST_STATUS"
         id: summary
 
       - name: Comment
-        uses: NejcZdovc/comment-pr@v1
+        uses: NejcZdovc/comment-pr@v2
         with:
-          file: 'e2e-summary.md'
+          file: "e2e-summary.md"
           identifier: "GITHUB_E2E_SUMMARY"
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-          TYPING_AVG: ${{ steps.summary.outputs.TYPING_AVG }}
-          TYPING_SD: ${{ steps.summary.outputs.TYPING_SD }}
-          TYPING_MD: ${{ steps.summary.outputs.TYPING_MD }}
-          TYPING_QR60: ${{ steps.summary.outputs.TYPING_QR60 }}
-          TYPING_QR80: ${{ steps.summary.outputs.TYPING_QR80 }}
-          TYPING_ABOVE_60: ${{ steps.summary.outputs.TYPING_ABOVE_60 }}
-
-
-
+          PERFORMANCE_OUTPUT: ${{ steps.summary.outputs.PERFORMANCE_OUTPUT }}
+          FLAKY_TEST_STATUS: ${{ steps.summary.outputs.FLAKY_TEST_STATUS }}

@@ -47,9 +47,7 @@ test.describe( 'Form Block', () => {
 
 		expect( formBlock ).toBeTruthy();
 
-		const { clientId } = formBlock;
-
-		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
 
 		// Check if the blocks has innerBlocks
 
@@ -73,9 +71,7 @@ test.describe( 'Form Block', () => {
 
 		expect( formBlock ).toBeTruthy();
 
-		const { clientId } = formBlock;
-
-		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
 
 		// Open the options panel
 		await page.getByRole( 'button', { name: 'Form Options options' }).click();
@@ -145,7 +141,7 @@ test.describe( 'Form Block', () => {
 
 		expect( otterId ).toBeTruthy();
 
-		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
 
 		const postId = await editor.publishPost();
 
@@ -285,7 +281,7 @@ test.describe( 'Form Block', () => {
 
 		const { clientId } = formBlock;
 
-		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
 
 		// Open the options panel
 		await page.getByRole( 'button', { name: 'Form Options options' }).click();
@@ -334,9 +330,7 @@ test.describe( 'Form Block', () => {
 
 		expect( formBlock ).toBeTruthy();
 
-		const { clientId } = formBlock;
-
-		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
 
 		await page.getByRole( 'button', { name: 'Marketing Integration' }).click();
 
@@ -363,7 +357,7 @@ test.describe( 'Form Block', () => {
 
 		const { clientId } = formBlock;
 
-		await page.click( `#block-${clientId} > div > fieldset > ul > li:nth-child(1) > button` );
+		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
 
 		// Open the options panel
 		await page.getByRole( 'button', { name: 'Form Options options' }).click();
