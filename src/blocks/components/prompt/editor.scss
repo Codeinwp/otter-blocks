@@ -1,5 +1,5 @@
 .prompt-placeholder {
-	fieldset {
+	fieldset, .components-placeholder__fieldset {
 		display: flex;
 		flex-direction: column;
 	}
@@ -87,7 +87,7 @@
 	border-radius: 2px;
 	border: 1px solid #1E1E1E;
 	width: 100%;
-	max-width: 800px;
+	max-width: 1200px;
 	padding: 10px;
 
 	.prompt-result__header {

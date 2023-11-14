@@ -574,4 +574,22 @@ export function useTabSwitch( key, defaultValue ) {
 	return [ tab, setTab ];
 }
 
+/**
+ * Get all registered patterns.
+ *
+ * @returns {Array.<{name: string, title: string, content: string, categories: string[], source: string | undefined, blockTypes: string[]|undefined}>}
+ */
+export function pullPatterns() {
+	return select( 'core' )?.getBlockPatterns() ?? [];
+}
+
+/**
+ * Get all registered patterns that are part of the Otter Blocks category.
+ *
+ * @returns {{name: string, title: string, content: string, categories: string[], source: (string|undefined), blockTypes: (string[]|undefined)}[]}
+ */
+export function pullOtterPatterns() {
+	return pullPatterns().filter( pattern => pattern?.name?.startsWith( 'otter-blocks/' ) || pattern?.name?.startsWith( 'otter-pro/' ) );
+}
+
 

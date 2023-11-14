@@ -2,11 +2,6 @@ import { createBlock } from '@wordpress/blocks';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 
-type PromptResponse = {
-	result: string
-	error?: string
-}
-
 type OpenAiSettings = {
 	model?: string
 	temperature?: number
@@ -61,13 +56,15 @@ type FormResponse = {
 	}[]
 }
 
+export type PromptConversation = {
+	role: string
+	content: string
+}
+
 export type PromptData = {
 	otter_name: string
 	model: string
-	messages: {
-		role: string
-		content: string
-	}[]
+	messages: PromptConversation[]
 	functions: {
 		name: string
 		description: string
@@ -76,7 +73,8 @@ export type PromptData = {
 	function_call: {
 		[key: string]: string
 	}
-} & Record<string, string>
+	[key: `otter_${string}`]: any
+}
 
 export type PromptsData = PromptData[]
 
@@ -177,26 +175,13 @@ const fieldMapping = {
 
 };
 
-export function parseToDisplayPromptResponse( promptResponse: string ) {
-	const response = tryParseResponse( promptResponse ) as FormResponse|undefined;
-
-	if ( ! response ) {
-		return [];
-	}
-
-	return response?.fields.map( ( field ) => {
-		return {
-			label: field?.label,
-			type: field?.type,
-			placeholder: field?.placeholder,
-			helpText: field?.helpText,
-			options: field?.choices?.join( '\n' ),
-			allowedFileTypes: field?.allowedFileTypes
-		};
-	}).filter( Boolean );
-}
-
-function tryParseResponse( promptResponse: string ) {
+/**
+ * Small helper to try to parse a prompt response without throwing an error.
+ *
+ * @param promptResponse - The prompt response to parse.
+ * @returns - The parsed response or undefined.
+ */
+export function tryParseResponse( promptResponse: string ) {
 	try {
 		return JSON.parse( promptResponse );
 	} catch ( e ) {
@@ -204,6 +189,12 @@ function tryParseResponse( promptResponse: string ) {
 	}
 }
 
+/**
+ * Create a block from a form prompt response.
+ *
+ * @param promptResponse - The prompt response to parse.
+ * @returns - An array of blocks Form field blocks.
+ */
 export function parseFormPromptResponseToBlocks( promptResponse: string ) {
 	if ( ! promptResponse ) {
 		return [];
@@ -231,6 +222,12 @@ export function parseFormPromptResponseToBlocks( promptResponse: string ) {
 	}).filter( Boolean );
 }
 
+/**
+ * Retrieves an embedded prompt from the server.
+ *
+ * @param promptName - The name of the prompt to retrieve. If not provided, the default prompt is retrieved.
+ * @returns - A promise that resolves to the server's response.
+ */
 export function retrieveEmbeddedPrompt( promptName ?: string ) {
 	return apiFetch<PromptServerResponse>({
 		path: addQueryArgs( '/otter/v1/prompt', {
@@ -240,6 +237,13 @@ export function retrieveEmbeddedPrompt( promptName ?: string ) {
 	});
 }
 
+/**
+ * This function injects an action into an existing prompt.
+ *
+ * @param embeddedPrompt - The existing prompt data.
+ * @param actionPrompt - The action to be injected.
+ * @returns - The updated prompt data with the action injected.
+ */
 export function injectActionIntoPrompt( embeddedPrompt: PromptData, actionPrompt: string ): PromptData {
 	return {
 		...embeddedPrompt,
@@ -254,4 +258,30 @@ export function injectActionIntoPrompt( embeddedPrompt: PromptData, actionPrompt
 			return message;
 		})
 	} as PromptData;
+}
+
+/**
+ * This function injects a conversation into an existing prompt.
+ *
+ * @param embeddedPrompt - The existing prompt data.
+ * @param conversation - The conversation to be injected.
+ * @returns - The updated prompt data with the conversation injected.
+ */
+export function injectConversationIntoPrompt( embeddedPrompt: PromptData, conversation: PromptConversation ): PromptData {
+
+	const { messages } = embeddedPrompt;
+	const lastUserMessageIndex = messages.map( ( message ) => message.role ).lastIndexOf( 'user' );
+
+	if ( -1 === lastUserMessageIndex ) {
+		return embeddedPrompt;
+	}
+
+	return {
+		...embeddedPrompt,
+		messages: [
+			...messages.slice( 0, lastUserMessageIndex ),
+			conversation,
+			...messages.slice( lastUserMessageIndex )
+		]
+	};
 }
