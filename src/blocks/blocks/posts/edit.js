@@ -43,7 +43,7 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../helpers/block-utility.js';
-import Layout from './components/layout/index.js';
+import Layout, { PaginationPreview } from './components/layout/index.js';
 import {
 	_align,
 	_px,
@@ -222,6 +222,10 @@ const Edit = ({
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
 
+	useEffect( () => {
+		console.log( attributes );
+	}, [ attributes ]);
+
 	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
@@ -261,7 +265,22 @@ const Edit = ({
 		'--row-gap-mobile': attributes.rowGapMobile,
 		'--content-padding': responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]),
 		'--content-padding-tablet': attributes.paddingTablet,
-		'--content-padding-mobile': attributes.paddingMobile
+		'--content-padding-mobile': attributes.paddingMobile,
+		'--pag-color': attributes.pagColor,
+		'--pag-bg-color': attributes.pagBgColor,
+		'--pag-color-hover': attributes.pagColorHover,
+		'--pag-bg-color-hover': attributes.pagBgColorHover,
+		'--pag-color-active': attributes.pagColorActive,
+		'--pag-bg-color-active': attributes.pagBgColorActive,
+		'--pag-border-color': attributes.pagBorderColor,
+		'--pag-border-color-hover': attributes.pagBorderColorHover,
+		'--pag-border-color-active': attributes.pagBorderColorActive,
+		'--pag-border-radius': boxValues( attributes.pagBorderRadius ),
+		'--pag-border-width': boxValues( attributes.pagBorderWidth ),
+		'--pag-padding': boxValues( attributes.pagPadding, { top: '5px', right: '15px', bottom: '5px', left: '15px' }),
+		'--pag-gap': attributes.pagGap,
+		'--pag-size': attributes.pagSize,
+		'--pag-cont-margin': boxValues( attributes.pagContMargin, { top: '10px' })
 	};
 
 	const blockProps = useBlockProps();
@@ -313,7 +332,11 @@ const Edit = ({
 						categoriesList={ categoriesList }
 						authors={ authors }
 					/>
+
 				</Disabled>
+				{
+					attributes.hasPagination && <PaginationPreview />
+				}
 			</div>
 		);
 	};
@@ -354,13 +377,14 @@ domReady( () => {
 	let maxTries = 10;
 
 	const init = () => {
-		window.wp.hooks.addFilter( 'rank_math_content', 'rank-math', () => {
+
+		window.wp.hooks.addFilter( 'rank_math_content', 'rank-math', ( content ) => {
 
 			/**
 			 * @type {NodeListOf<HTMLDivElement>} postsHtml - The HTML nodes which contain the relevent post content for RankMath.
 			 */
 			const postsHtml = document.querySelectorAll( '.o-posts-grid-post-body' );
-			return Array.from( postsHtml ).map( ( post ) => post.innerHTML ).join( '' );
+			return ( content ?? '' ) + ( Array.from( postsHtml )?.map( ( post ) => post.innerHTML )?.join( '' ) ?? '' );
 		});
 
 		window?.rankMathEditor?.refresh( 'content' );

@@ -18,6 +18,11 @@ const NAVIGATION_ITEMS = [
 		visibility: true
 	},
 	{
+		slug: 'blocks',
+		label: __( 'Blocks', 'otter-blocks' ),
+		visibility: true
+	},
+	{
 		slug: 'integrations',
 		label: __( 'Integrations', 'otter-blocks' ),
 		visibility: true
@@ -59,7 +64,7 @@ const Headers = ({
 					{ NAVIGATION_ITEMS.map( item => item.visibility && (
 						<button
 							className={ classnames(
-								{ 'is-active': item.slug === isActive }
+								{ 'is-active': item.slug === ( isActive || 'dashboard' ) }
 							) }
 							onClick={ () => setActive( item.slug ) }
 							key={ item.slug }

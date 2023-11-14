@@ -49,18 +49,19 @@ class Registration {
 	 * @var array
 	 */
 	public static $scripts_loaded = array(
-		'circle-counter' => false,
-		'countdown'      => false,
-		'form'           => false,
-		'google-map'     => false,
-		'leaflet-map'    => false,
-		'lottie'         => false,
-		'slider'         => false,
-		'sticky'         => false,
-		'tabs'           => false,
-		'popup'          => false,
-		'progress-bar'   => false,
-		'accordion'      => false,
+		'circle-counter'    => false,
+		'countdown'         => false,
+		'form'              => false,
+		'google-map'        => false,
+		'leaflet-map'       => false,
+		'lottie'            => false,
+		'slider'            => false,
+		'sticky'            => false,
+		'tabs'              => false,
+		'popup'             => false,
+		'progress-bar'      => false,
+		'accordion'         => false,
+		'condition_hide_on' => false,
 	);
 
 	/**
@@ -90,6 +91,7 @@ class Registration {
 		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
 		add_filter( 'render_block', array( $this, 'subscribe_fa' ), 10, 2 );
 		add_filter( 'dynamic_sidebar_params', array( $this, 'watch_used_widgets' ), 9999 );
+		add_filter( 'render_block', array( $this, 'load_condition_hide_on_styles' ), 10, 2 );
 
 		add_action(
 			'wp_footer',
@@ -327,6 +329,8 @@ class Registration {
 			return;
 		}
 
+		
+
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
@@ -358,6 +362,7 @@ class Registration {
 		}
 
 		if ( $has_widgets ) {
+			
 			add_filter(
 				'wp_footer',
 				function ( $content ) {
@@ -970,7 +975,7 @@ class Registration {
 	}
 
 	/**
-	 * Add styles for sticky blocks.
+	 * Get styles for sticky blocks.
 	 *
 	 * @static
 	 * @since 2.0.14
@@ -978,6 +983,58 @@ class Registration {
 	 */
 	public static function sticky_style() {
 		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
+	}
+
+	/**
+	 * Load the Hide on condition styles.
+	 *
+	 * @param string $block_content The block content.
+	 * @param array  $block The block data.
+	 * @return string
+	 */
+	public function load_condition_hide_on_styles( $block_content, $block ) {
+		if ( self::$scripts_loaded['condition_hide_on'] ) {
+			return $block_content;
+		}
+
+		if ( empty( $block['attrs']['otterConditions'] ) || ! is_array( $block['attrs']['otterConditions'] ) ) {
+			return $block_content;
+		}
+
+		$has_condition = false;
+
+		foreach ( $block['attrs']['otterConditions'] as $group ) {
+			foreach ( $group as $condition ) {
+				if ( 'screenSize' === $condition['type'] && isset( $condition['screen_sizes'] ) && is_array( $condition['screen_sizes'] ) ) {
+					$has_condition = true;
+					break;
+				}
+			}
+
+			if ( $has_condition ) {
+				break;
+			}
+		}
+
+		if ( ! $has_condition ) {
+			return $block_content;
+		}
+
+		add_action( 'wp_footer', array( $this, 'condition_hide_on_style' ) );
+		self::$scripts_loaded['condition_hide_on'] = true;
+
+		return $block_content;
+	}
+
+	/**
+	 * Get the styles for Hide on condition.
+	 *
+	 * @static
+	 * @since 2.4
+	 * @access public
+	 */
+	public static function condition_hide_on_style() {
+		echo '<style id="o-condition-hide-inline-css">@media (max-width:768px){.o-hide-on-mobile{display:none!important}}@media (min-width:767px) and (max-width:1024px){.o-hide-on-tablet{display:none!important}}@media (min-width:1023px){.o-hide-on-desktop{display:none!important}}</style>';
 	}
 
 	/**
@@ -1008,8 +1065,6 @@ class Registration {
 				$valid_widgets[] = (object) $widget_data[ $key ];
 			}
 		}
-
-		self::$widget_used = array();
 
 		foreach ( $valid_widgets as $widget ) {
 			if ( isset( $widget->content ) ) {

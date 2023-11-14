@@ -658,7 +658,7 @@ export const popupWithImageAndText = (
 );
 
 export const aiGeneration = (
-	<SVG xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: 'transparent' }}>
+	<SVG data-target="generator-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: 'transparent' }}>
 		<Path d="M6 17V21" stroke="url(#paint0_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 		<Path d="M4 19H8" stroke="url(#paint1_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 		<Path d="M17 3V7" stroke="url(#paint2_linear_3599_37937)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -821,6 +821,28 @@ export const aiLayoutGeneratorIcon = ( props = {}) => (
 				<stop stop-color="#ED6F57"/>
 				<stop offset="1" stop-color="#F22B6C"/>
 			</LinearGradient>
+		</Defs>
+	</SVG>
+);
+
+export const comparisonTableIcon = ( props = {}) => (
+	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<G clip-path="url(#clip0_1028_2592)">
+			<path d="M20 3H4C3.45 3 3 3.45 3 4V19C3 19.55 3.45 20 4 20H11.502C12.052 20 12.502 19.55 12.502 19V12H20C20.55 12 21 11.55 21 11V4C21 3.45 20.55 3 20 3ZM11.502 19H4V12H11.502V19ZM4 4H20V11H12.502V3.82L11.502 3.64V11H4V4Z" fill="url(#paint0_linear_1028_2592)"/>
+			<path d="M16.8007 12.7084C16.8822 12.5432 17.1178 12.5432 17.1993 12.7084L18.1239 14.5818C18.1562 14.6474 18.2188 14.6929 18.2912 14.7034L20.3586 15.0038C20.5409 15.0303 20.6137 15.2543 20.4818 15.3829L18.9858 16.8411C18.9334 16.8922 18.9095 16.9657 18.9219 17.0378L19.275 19.0969C19.3062 19.2785 19.1156 19.4169 18.9526 19.3312L17.1034 18.359C17.0387 18.325 16.9613 18.325 16.8966 18.359L15.0474 19.3312C14.8844 19.4169 14.6938 19.2785 14.725 19.0969L15.0781 17.0378C15.0905 16.9657 15.0666 16.8922 15.0142 16.8411L13.5182 15.3829C13.3863 15.2543 13.4591 15.0303 13.6414 15.0038L15.7088 14.7034C15.7812 14.6929 15.8438 14.6474 15.8761 14.5818L16.8007 12.7084Z" fill="url(#paint1_linear_1028_2592)"/>
+		</G>
+		<Defs>
+			<LinearGradient id="paint0_linear_1028_2592" x1="12" y1="3" x2="12" y2="20" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<LinearGradient id="paint1_linear_1028_2592" x1="17" y1="12.3046" x2="17" y2="19.5407" gradientUnits="userSpaceOnUse">
+				<stop stop-color="#ED6F57"/>
+				<stop offset="1" stop-color="#F22B6C"/>
+			</LinearGradient>
+			<clipPath id="clip0_1028_2592">
+				<rect width="18" height="17" fill="white" transform="translate(3 3)"/>
+			</clipPath>
 		</Defs>
 	</SVG>
 );

@@ -87,14 +87,17 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 		const {
 			isMultipleSelection,
 			areValidBlocks,
-			selectedBlocks
+			selectedBlocks,
+			isHidden
 		} = useSelect( ( select ) => {
 			const selectedBlocks = select( 'core/block-editor' ).getMultiSelectedBlocks();
+			const hiddenBlocks = select( 'core/preferences' )?.get( 'core/edit-post', 'hiddenBlockTypes' ) || [];
 
 			return {
 				isMultipleSelection: 1 < selectedBlocks.length,
 				areValidBlocks: selectedBlocks.every( ( block ) => isValidBlock( block.name ) ),
-				selectedBlocks
+				selectedBlocks,
+				isHidden: hiddenBlocks.find( ( blockName: string ) => 'themeisle-blocks/content-generator' === blockName ) ?? false
 			};
 		}, []);
 
@@ -227,8 +230,13 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 		return (
 			<Fragment>
 				<BlockEdit { ...props } />
-				{(
-					( isValidBlock( props.name ) && props.isSelected ) || ( areValidBlocks && isMultipleSelection ) ) &&
+				{
+					(
+						! isHidden &&
+						(
+							( isValidBlock( props.name ) && props.isSelected ) || ( areValidBlocks && isMultipleSelection )
+						)
+					) &&
 					(
 						<BlockControls>
 							<Toolbar>

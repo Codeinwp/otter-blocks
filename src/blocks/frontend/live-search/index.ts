@@ -17,6 +17,11 @@ type ResultsEntry = {
 
 type ResultsContainer = Element | null | undefined;
 
+/**
+ * Returns an icon component based on the post type.
+ * @param type - The post type.
+ * @returns The icon component.
+ */
 const getPostIcon = ( type: string ) => {
 	switch ( type ) {
 	case 'post': return post();
@@ -26,6 +31,11 @@ const getPostIcon = ( type: string ) => {
 	}
 };
 
+/**
+ * Returns a div element containing meta information for a given ResultsEntry object.
+ * @param entry - The ResultsEntry object to generate meta information for.
+ * @returns A div element containing the meta information.
+ */
 const getMeta = ( entry: ResultsEntry ) => {
 	const meta = document.createElement( 'div' );
 
@@ -56,6 +66,13 @@ domReady( () => {
 	const liveSearch = document.querySelectorAll( '.o-live-search' );
 	const loadingIcon = '<svg class="spinner" viewBox="0 0 100 100" width="16" height="16" xmlns="http://www.w3.org/2000/svg" focusable="false" style="width: calc(16px); height: calc(16px);"><circle cx="50" cy="50" r="50" vector-effect="non-scaling-stroke" class="main-circle"></circle><path d="m 50 0 a 50 50 0 0 1 50 50" vector-effect="non-scaling-stroke" class="moving-circle"></path></svg>';
 
+	/**
+	 * Get the post search from our endpoint.
+	 *
+	 * @param search - The search query string.
+	 * @param postTypes - An array of post types to search in.
+	 * @returns A Promise that resolves to the JSON response from the REST API.
+	 */
 	const requestData = async( search: string, postTypes: Array<string> ) => {
 		const options = {
 			method: 'GET',
@@ -78,20 +95,30 @@ domReady( () => {
 		return response.json();
 	};
 
-	const handleLiveSearch = ( element: Element ) => {
+	const initializeLiveSearch = ( element: Element ) => {
 		const inputElement = element.querySelector( 'input.wp-block-search__input' ) as HTMLInputElement;
 		if ( ! inputElement ) {
 			return;
 		}
 
+		inputElement.value = '';
+		inputElement.setAttribute( 'autocomplete', 'off' );
+
 		const form = element.querySelector( 'form' );
 		const block = element.querySelector( '.wp-block-search__inside-wrapper' );
+
+		// Create this variable to cache the results
+		let resultsContainer: ResultsContainer;
+
+		const { postTypes } = ( element as HTMLElement ).dataset;
+		const postTypesArray: Array<string> = postTypes ? JSON.parse( postTypes ) : [];
 
 		const inputStyle = getComputedStyle( inputElement );
 		const parentStyle = inputElement.parentElement ? getComputedStyle( inputElement.parentElement ) : null;
 
-		inputElement.value = '';
-
+		/**
+		 * Create result search area.
+		 */
 		const wrap = document.createElement( 'div' );
 		wrap.classList.add( 'container-wrap' );
 		wrap.style.width = inputElement.offsetWidth + 'px';
@@ -110,15 +137,10 @@ domReady( () => {
 
 		wrap.style.maxHeight = Math.min( 500, inputEdgeDistance - 20 ) + 'px';
 
-		// Create this variable to cache the results
-		let resultsContainer: ResultsContainer;
-
-		const { postTypes } = ( element as HTMLElement ).dataset;
-		const postTypesArray: Array<string> = postTypes ? JSON.parse( postTypes ) : [];
-
-		inputElement.setAttribute( 'autocomplete', 'off' );
-
-		const debouncedRequest = debounce( ( searchValue: string ) => {
+		/**
+		 * Request data from the server. Debounce the request to avoid flooding the server.
+		 */
+		const debouncedSearchRequest = debounce( ( searchValue: string ) => {
 			addLoadingIcon( resultsContainer );
 			requestData( searchValue, postTypesArray ).then( r => {
 				removeLoadingIcon( block );
@@ -161,7 +183,7 @@ domReady( () => {
 				resultsContainer = createResultsContainer( wrap, resultsContainer, block, inputStyle );
 			}
 
-			debouncedRequest( searchValue );
+			debouncedSearchRequest( searchValue );
 		});
 
 		// Open the results container when the input is focused
@@ -171,11 +193,12 @@ domReady( () => {
 				resultsContainer = createResultsContainer( wrap, resultsContainer, block, inputStyle );
 
 				if ( resultsContainer && ! resultsContainer.querySelector( '.search-results > :not(.spinner-container):not(.no-results)' ) ) {
-					debouncedRequest( ( inputElement as HTMLInputElement ).value );
+					debouncedSearchRequest( ( inputElement as HTMLInputElement ).value );
 				}
 			}
 		});
 
+		// Navigate through the results with the arrow keys.
 		inputElement.addEventListener( 'keydown', ( event: Event ) => {
 			if ( ! resultsContainer || ! resultsContainer.parentElement ) {
 				return;
@@ -234,8 +257,28 @@ domReady( () => {
 		});
 	};
 
-	liveSearch.forEach( handleLiveSearch );
+	// Initialize the live search for each block on the page when it becomes visible.
+	let observer = new IntersectionObserver( ( entries, observer ) => {
+		entries.forEach( entry => {
+			if ( entry.isIntersecting ) {
+				initializeLiveSearch( entry.target );
+				observer.unobserve( entry.target );
+			}
+		});
+	});
 
+	liveSearch.forEach( element => observer.observe( element ) );
+
+	/**
+	 * Creates a container for search results and appends it to the provided wrap element.
+	 * If a resultsContainer is provided and a search_results element is not found in the block, the resultsContainer is appended to the wrap element.
+	 * Otherwise, a new container is created and appended to the wrap element.
+	 * @param wrap - The element to which the results container will be appended.
+	 * @param resultsContainer - The pre-existing results container to be appended to the wrap element if a search_results element is not found in the block.
+	 * @param block - The block element to which the wrap element will be appended.
+	 * @param inputStyle - The CSSStyleDeclaration object containing the style properties of the input element.
+	 * @returns The created results container.
+	 */
 	const createResultsContainer = ( wrap: Element, resultsContainer: ResultsContainer, block: Element | null, inputStyle: CSSStyleDeclaration ) => {
 		wrap.innerHTML = '';
 
@@ -260,6 +303,14 @@ domReady( () => {
 		return container;
 	};
 
+	/**
+	 * Removes the results container from the given block element.
+	 *
+	 * @param block - The block element to remove the results container from.
+	 * @param resultsContainer - The results container to remove.
+	 * @param cache - Whether to cache the removed container for later use.
+	 * @returns The removed container if `cache` is `true`, otherwise `null`.
+	 */
 	const removeResultsContainer = ( block: Element | null, resultsContainer: ResultsContainer, cache = true ) => {
 		const tmpResultsContainer = block?.querySelector( '.container-wrap' );
 		if ( ! tmpResultsContainer ) {
@@ -275,6 +326,14 @@ domReady( () => {
 		return null;
 	};
 
+	/**
+	 * Updates the search results in the specified block with the given search value and results.
+	 *
+	 * @param searchValue - The search value to use for filtering the results.
+	 * @param block - The block element to update the results in.
+	 * @param results - The array of results to display.
+	 * @param inputElement - The input element used for the search.
+	 */
 	const updateResults = ( searchValue: string, block: Element | null, results: Array<ResultsEntry>, inputElement: Element ) => {
 		const container = block?.querySelector( `.${CONTAINER_CLASS}` );
 		if ( ! container ) {
@@ -310,6 +369,11 @@ domReady( () => {
 		});
 	};
 
+	/**
+	 * Adds a loading icon to the specified results container.
+	 *
+	 * @param container - The container to add the loading icon to.
+	 */
 	const addLoadingIcon = ( container: ResultsContainer ) => {
 		if ( ! container || container.querySelector( '.spinner-container' ) ) {
 			return;
@@ -323,6 +387,11 @@ domReady( () => {
 		container?.appendChild( loading );
 	};
 
+	/**
+	 * Removes the loading icon from the specified block element.
+	 *
+	 * @param block - The block element to remove the loading icon from.
+	 */
 	const removeLoadingIcon = ( block: Element | null ) => {
 		const container = block?.querySelector( `.${CONTAINER_CLASS}` );
 		if ( ! container ) {
@@ -335,6 +404,11 @@ domReady( () => {
 		}
 	};
 
+	/**
+	 * Highlights the given element with a background color based on the input element's background color.
+	 * @param element - The element to highlight.
+	 * @param input - The input element to get the background color from.
+	 */
 	const highlight = ( element: HTMLElement, input: Element ) => {
 
 		// Determine the background color for a light/dark theme
@@ -346,11 +420,22 @@ domReady( () => {
 		element.style.backgroundColor = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(49, 50, 51, 0.12)';
 	};
 
+	/**
+	 * Removes the 'highlight' class and 'style' attribute from the given element.
+	 * @param element - The element to remove the 'highlight' class and 'style' attribute from.
+	 */
 	const removeHighlight = ( element: Element ) => {
 		element.classList.remove( 'highlight' );
 		element.removeAttribute( 'style' );
 	};
 
+	/**
+	 * Returns a DOM element representing a search result.
+	 * @param entry - The search result entry.
+	 * @param index - The index of the search result.
+	 * @param inputElement - The input element used for the search.
+	 * @returns A DOM element representing the search result.
+	 */
 	const getResultElement = ( entry: ResultsEntry, index: number, inputElement: Element ) => {
 		const optionWrap = document.createElement( 'div' );
 		const option = document.createElement( 'a' );

@@ -50,6 +50,7 @@ import {
 } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { useTabSwitch } from '../../helpers/block-utility';
+import { makeBox } from '../../plugins/copy-paste/utils';
 
 const styles = [
 	{
@@ -93,7 +94,7 @@ const defaultFontSizes = [
 
 /**
  *
- * @param {import('../popup/types.js').PopupInspectorProps} props
+ * @param {import('./types.js').PostInspectorProps} props
  * @returns
  */
 const Inspector = ({
@@ -301,7 +302,7 @@ const Inspector = ({
 						<ToggleControl
 							label={ __( 'Enable Featured Post', 'otter-blocks' ) }
 							checked={ attributes.enableFeaturedPost }
-							onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
+							onChange={ () => setAttributes({ enableFeaturedPost: ! Boolean( attributes.enableFeaturedPost ), hasPagination: undefined })}
 						/>
 
 						{
@@ -317,6 +318,12 @@ const Inspector = ({
 								/>
 							)
 						}
+
+						<ToggleControl
+							label={ __( 'Enable Pagination', 'otter-blocks' ) }
+							checked={ attributes.hasPagination }
+							onChange={ () => setAttributes({ hasPagination: ! Boolean( attributes.hasPagination ), enableFeaturedPost: undefined, featuredPostOrder: undefined }) }
+						/>
 
 					</PanelBody>
 
@@ -396,6 +403,22 @@ const Inspector = ({
 								onChange={ value => responsiveSetAttributes( value, [ 'customMetaFontSize', 'customMetaFontSizeTablet', 'customMetaFontSizeMobile' ]) }
 							/>
 						</ResponsiveControl>
+
+						{
+							attributes.hasPagination && (
+								<BaseControl
+									id="o-posts-grid-pagination-font-size"
+									label={ __( 'Pagination', 'otter-blocks' ) }
+								>
+									<FontSizePicker
+										fontSizes={ defaultFontSizes }
+										withReset
+										value={ attributes.pagSize ?? '16px' }
+										onChange={ pagSize => setAttributes({ pagSize }) }
+									/>
+								</BaseControl>
+							)
+						}
 					</PanelBody>
 
 					<PanelColorSettings
@@ -419,7 +442,63 @@ const Inspector = ({
 								onChange: borderColor => setAttributes({ borderColor }),
 								label: __( 'Border', 'otter-blocks' ),
 								isShownByDefault: false
-							}
+							},
+							...( attributes.hasPagination ? [
+								{
+									value: attributes.pagColor,
+									onChange: pagColor => setAttributes({ pagColor }),
+									label: __( 'Pagination Link', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.pagBgColor,
+									onChange: pagBgColor => setAttributes({ pagBgColor }),
+									label: __( 'Pagination Background', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.pagBorderColor,
+									onChange: pagBorderColor => setAttributes({ pagBorderColor }),
+									label: __( 'Pagination Border', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.pagColorActive,
+									onChange: pagColorActive => setAttributes({ pagColorActive }),
+									label: __( 'Pagination Active Link', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.pagBgColorActive,
+									onChange: pagBgColorActive => setAttributes({ pagBgColorActive }),
+									label: __( 'Pagination Active Background', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.pagColorHover,
+									onChange: pagColorHover => setAttributes({ pagColorHover }),
+									label: __( 'Pagination Hover Link', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.pagBgColorHover,
+									onChange: pagBgColorHover => setAttributes({ pagBgColorHover }),
+									label: __( 'Pagination Hover Background', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.pagBorderColorHover,
+									onChange: pagBorderColorHover => setAttributes({ pagBorderColorHover }),
+									label: __( 'Pagination Hover Border', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.pagBorderColorActive,
+									onChange: pagBorderColorActive => setAttributes({ pagBorderColorActive }),
+									label: __( 'Pagination Active Border', 'otter-blocks' ),
+									isShownByDefault: false
+								}
+							] : [])
 						] }
 					/>
 
@@ -467,7 +546,7 @@ const Inspector = ({
 								label={ __( 'Column Gap', 'otter-blocks' ) }
 							>
 								<UnitContol
-									value={ responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ]) }
+									value={ responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ]) ?? '30px' }
 									onChange={ value => responsiveSetAttributes( value, [ 'columnGap', 'columnGapTablet', 'columnGapMobile' ]) }
 								/>
 
@@ -482,7 +561,7 @@ const Inspector = ({
 							label={ __( 'Row Gap', 'otter-blocks' ) }
 						>
 							<UnitContol
-								value={ responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ]) }
+								value={ responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ]) ?? '30px' }
 								onChange={ value => responsiveSetAttributes( value, [ 'rowGap', 'rowGapTablet', 'rowGapMobile' ]) }
 							/>
 
@@ -516,6 +595,33 @@ const Inspector = ({
 								onChange={ contentGap => setAttributes({ contentGap }) }
 							/>
 						</BaseControl>
+
+						{
+							attributes.hasPagination && (
+								<Fragment>
+									<RangeControl
+										label={ __( 'Pagination Gap', 'otter-blocks' ) }
+										value={ attributes.pagGap ? parseInt( attributes.pagGap ) : 5 }
+										onChange={ pagGap => setAttributes({ pagGap: pagGap + 'px' }) }
+										min={ 0 }
+										max={ 50 }
+									/>
+									<BoxControl
+										label={ __( 'Pagination Padding', 'otter-blocks' ) }
+										values={ attributes.pagPadding ?? { top: '5px', right: '15px', bottom: '5px', left: '15px' } }
+										onChange={ pagPadding => setAttributes({ pagPadding }) }
+										allowReset
+									/>
+									<BoxControl
+										label={ __( 'Pagination Container Margin', 'otter-blocks' ) }
+										values={ attributes.pagContMargin ?? { top: '10px' } }
+										onChange={ pagContMargin => setAttributes({ pagContMargin }) }
+										sides={[ 'top' ]}
+										allowReset
+									/>
+								</Fragment>
+							)
+						}
 					</PanelBody>
 
 					<PanelBody
@@ -524,7 +630,7 @@ const Inspector = ({
 					>
 						<UnitContol
 							label={ __( 'Width', 'otter-blocks' ) }
-							value={ attributes.borderWidth }
+							value={ attributes.borderWidth ?? '0px' }
 							onChange={ borderWidth => setAttributes({ borderWidth }) }
 						/>
 
@@ -535,10 +641,30 @@ const Inspector = ({
 
 						<BoxControl
 							label={ __( 'Radius', 'otter-blocks' ) }
-							value={ attributes.cardBorderRadius }
+							values={ attributes.cardBorderRadius ?? makeBox( '0px' )  }
 							onChange={ cardBorderRadius => setAttributes({ cardBorderRadius }) }
 							id="o-border-raduis-box"
 						/>
+
+						{
+							attributes.hasPagination && (
+								<Fragment>
+									<BoxControl
+										label={ __( 'Pagination Border Radius', 'otter-blocks' ) }
+										values={ attributes.pagBorderRadius ?? makeBox( '0px' ) }
+										onChange={ pagBorderRadius => setAttributes({ pagBorderRadius }) }
+										id="o-border-raduis-box"
+										allowReset
+									/>
+									<BoxControl
+										label={ __( 'Pagination Border Width', 'otter-blocks' ) }
+										values={ attributes.pagBorderWidth ?? makeBox( '0px' ) }
+										onChange={ pagBorderWidth => setAttributes({ pagBorderWidth }) }
+										allowReset
+									/>
+								</Fragment>
+							)
+						}
 
 						<BoxShadowControl
 							boxShadow={ attributes.boxShadow }

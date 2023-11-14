@@ -81,6 +81,7 @@ const Edit = ({
 					required={ attributes.isRequired }
 					disabled
 					className="otter-form-input components-text-control__input"
+					value={ attributes?.defaultValue }
 				/>
 				{
 					attributes.helpText && (

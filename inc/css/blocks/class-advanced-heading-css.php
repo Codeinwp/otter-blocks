@@ -75,7 +75,11 @@ class Advanced_Heading_CSS extends Base_CSS {
 							return isset( $attrs['lineHeight'] ) && is_numeric( $attrs['lineHeight'] );
 						},
 						'format'    => function( $value ) {
-							return 3 < $value ? $value . 'px' : $value;
+							if ( is_numeric( $value ) && ! is_string( $value ) ) {
+								return 3 < $value ? $value . 'px' : $value;
+							}
+
+							return $value;
 						},
 					),
 					array(

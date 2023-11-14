@@ -102,6 +102,12 @@ const Inspector = ({
 					/>
 
 					<TextControl
+						label={ __( 'Default Value', 'otter-blocks' ) }
+						value={ attributes.defaultValue }
+						onChange={ defaultValue => setAttributes({ defaultValue }) }
+					/>
+
+					<TextControl
 						label={ __( 'Mapped Name', 'otter-blocks' ) }
 						help={ mappedNameInfo }
 						value={ attributes.mappedName }

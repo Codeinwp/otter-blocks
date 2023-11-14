@@ -292,7 +292,7 @@ const Edit = ({
 			}
 		}
 
-		if ( formOptions.autoresponder || formOptions.action ) {
+		if ( formOptions.autoresponder || formOptions.provider || formOptions.listId || formOptions.action ) {
 			const emailFields = findInnerBlocks(
 				children,
 				block => {
@@ -340,7 +340,7 @@ const Edit = ({
 			setShowDuplicatedMappedName( hasDuplicateMappedNames );
 		}
 
-	}, [ children, formOptions.autoresponder, formOptions.action, formOptions.webhookId ]);
+	}, [ children, formOptions.autoresponder, formOptions.provider, formOptions.listId, formOptions.action, formOptions.webhookId ]);
 
 	/**
 	 * Get the data from the WP Options for the current form.
@@ -434,21 +434,31 @@ const Edit = ({
 		});
 
 		try {
-			( new DeferredWpOptionsSave() ).save( 'form_options', data, ( res, error ) => {
-				if ( error ) {
-					setLoading({ formOptions: 'error' });
-				} else {
-					setLoading({ formOptions: 'done' });
-					createNotice(
-						'info',
-						__( 'Form options have been saved.', 'otter-blocks' ),
-						{
-							isDismissible: true,
-							type: 'snackbar'
-						}
-					);
-				}
-			});
+			( new DeferredWpOptionsSave() ).save(
+				'form_options',
+				oldValue => {
+					if ( null === oldValue ) {
+						return data;
+					}
+					Object.keys( data ).forEach( k => {
+						oldValue[k] = data[k];
+					});
+					return oldValue;
+				}, ( res, error ) => {
+					if ( error ) {
+						setLoading({ formOptions: 'error' });
+					} else {
+						setLoading({ formOptions: 'done' });
+						createNotice(
+							'info',
+							__( 'Form options have been saved.', 'otter-blocks' ),
+							{
+								isDismissible: true,
+								type: 'snackbar'
+							}
+						);
+					}
+				});
 		} catch ( e ) {
 			setLoading({ formOptions: 'error' });
 		}
@@ -474,7 +484,6 @@ const Edit = ({
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
 			let hasUpdated = false;
-
 
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
@@ -519,22 +528,22 @@ const Edit = ({
 					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
 					if ( formOptions ) {
 						parseDataFormOptions( formOptions );
-						setSavedFormOptions( formOptions );
+
 						setAttributes({
 							action: formOptions?.integration?.action
 						});
 					}
 					setLoading({ formIntegration: 'done' });
-					if ( hasUpdated ) {
-						createNotice(
-							'info',
-							__( 'Integration details have been saved.', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
-					}
+
+					createNotice(
+						'info',
+						__( 'Integration details have been saved.', 'otter-blocks' ),
+						{
+							isDismissible: true,
+							type: 'snackbar'
+						}
+					);
+
 				}).catch( e => {
 					console.error( e );
 					setLoading({ formIntegration: 'error' });
