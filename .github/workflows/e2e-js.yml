@@ -84,7 +84,7 @@ jobs:
         run: |
           RESULTS=$(jq -r 'to_entries|map("\(.key): \(.value)")|join(", ")' artifacts/post-editor.performance-results.json)
           FLAKY_TEST_STATUS="Playwright Test Status: $PLAYWRIGHT_SUCCESS"
-          echo "::set-output name=PERFORMANCE_OUTPUT::$RESULTS""
+          echo "::set-output name=PERFORMANCE_OUTPUT::$RESULTS"
           echo "::set-output name=FLAKY_TEST_STATUS::$FLAKY_TEST_STATUS"
         id: summary
 
