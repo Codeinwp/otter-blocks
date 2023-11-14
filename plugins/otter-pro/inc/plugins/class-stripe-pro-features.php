@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\OtterPro\Plugins;
 
+use ThemeIsle\GutenbergBlocks\Tracker;
+
 /**
  * Class Stripe_Pro_Features
  */

@@ -1100,6 +1100,7 @@ const Edit = ({
 								variations={ variations }
 								onSelect={ ( nextVariation = defaultVariation ) => {
 									if ( nextVariation ) {
+										window.oTrk?.add({ feature: 'form', featureComponent: 'variant', featureValue: nextVariation.name });
 										replaceInnerBlocks(
 											clientId,
 											createBlocksFromInnerBlocksTemplate(

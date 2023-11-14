@@ -186,6 +186,8 @@ const Options = () => {
 		for ( const option in object ) {
 			defaultValues[ block ][ option ] = object[ option ];
 		}
+
+		window.oTrk?.add({ feature: 'global-defaults', featureComponent: 'block', featureValue: block });
 		setBlockDefaults( defaultValues );
 	};
 

@@ -353,6 +353,10 @@ export const delayList = [
 	{
 		label: __( 'Five Second', 'otter-blocks' ),
 		value: 'delay-5s'
+	},
+	{
+		label: __( 'Custom', 'otter-blocks' ),
+		value: 'o-anim-custom-delay'
 	}
 ];
 
@@ -376,5 +380,9 @@ export const speedList = [
 	{
 		label: __( 'Faster', 'otter-blocks' ),
 		value: 'faster'
+	},
+	{
+		label: __( 'Custom', 'otter-blocks' ),
+		value: 'o-anim-custom-speed'
 	}
 ];

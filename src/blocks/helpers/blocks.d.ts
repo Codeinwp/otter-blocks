@@ -49,7 +49,8 @@ export type BoxShadow = {
 }
 
 export type OtterNodeCSSOptions = {
-	selector: string
+	selector?: string
+	appendToRoot?: boolean
 }
 
 export type OtterSetNodeCSS = ( css: string[], media?: string[]) => void;

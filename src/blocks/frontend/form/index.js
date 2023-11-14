@@ -125,9 +125,17 @@ const extractFormFields = async( form ) => {
 				const paramName = hiddenInput?.dataset?.paramName;
 				mappedName = hiddenInput?.name;
 
+				// Extract the value from the URL.
 				if ( paramName ) {
 					const urlParams = new URLSearchParams( window.location.search );
-					value = urlParams.get( paramName );
+					if ( urlParams.has( paramName ) ) {
+						hiddenInput.value = urlParams.get( paramName );
+					}
+				}
+
+				if ( hiddenInput?.value ) {
+					// eslint-disable-next-line prefer-destructuring
+					value = hiddenInput.value;
 					fieldType = 'hidden';
 				}
 			} else if ( stripeField ) {

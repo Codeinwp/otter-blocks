@@ -62,7 +62,10 @@ const Fields = ({
 				>
 					<select
 						value={ attributes.type || '' }
-						onChange={ e => changeType( e.target.value ) }
+						onChange={ e => {
+							window.oTrk?.add({ feature: 'dynamic', featureComponent: 'link-option', featureValue: e.target.value });
+							changeType( e.target.value );
+						} }
 						id="o-dynamic-select"
 						className="components-select-control__input"
 					>

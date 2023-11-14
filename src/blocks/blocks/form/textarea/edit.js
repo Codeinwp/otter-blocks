@@ -78,9 +78,12 @@ const Edit = ({
 					name={ attributes.id }
 					id={ attributes.id ? attributes.id + '-input' : '' }
 					required={ attributes.isRequired }
-					disabled
 					rows={ 10 }
 					className="otter-form-textarea-input components-textarea-control__input"
+					onChange={ e => {
+						setAttributes({ defaultValue: e.target.value });
+					} }
+					value={ attributes.defaultValue }
 				>
 				</textarea>
 				{

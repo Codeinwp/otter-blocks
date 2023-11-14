@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 import { get } from 'lodash';
 
 /**
@@ -28,16 +27,12 @@ import { createBlock, rawHandler } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import metadata from './block.json';
 import Inspector from './inspector.js';
 import PromptPlaceholder from '../../components/prompt';
-import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { parseFormPromptResponseToBlocks, tryParseResponse } from '../../helpers/prompt';
+import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { chevronDown, Icon } from '@wordpress/icons';
-import { insertBlockBelow } from '../../helpers/block-utility';
-
-const { attributes: defaultAttributes } = metadata;
+import { insertBlockBelow, pullOtterPatterns } from '../../helpers/block-utility';
 
 function formatNameBlock( name ) {
 	const namePart = name.split( '/' )[1];
@@ -51,9 +46,7 @@ function formatNameBlock( name ) {
 const ContentGenerator = ({
 	attributes,
 	setAttributes,
-	isSelected,
 	clientId,
-	toggleSelection,
 	name
 }) => {
 
@@ -62,13 +55,9 @@ const ContentGenerator = ({
 	const [ prompt, setPrompt ] = useState( '' );
 
 	const {
-		insertBlock,
 		removeBlock,
 		replaceInnerBlocks,
 		selectBlock,
-		moveBlockToPosition,
-		insertBlocks,
-		replaceBlock,
 		replaceBlocks
 	} = useDispatch( 'core/block-editor' );
 
@@ -94,22 +83,45 @@ const ContentGenerator = ({
 
 			replaceInnerBlocks( clientId, blocks );
 		}
+
+		if ( 'patternsPicker' === attributes.promptID ) {
+			const r = tryParseResponse( result ) ?? {};
+			const content = pullOtterPatterns()
+				.filter( pattern => {
+					return r?.slugs?.some( test => pattern.name.endsWith( test ) );
+				})
+				.map( pattern => pattern?.content )
+				.filter( Boolean )
+				.join( '\n' );
+
+			if ( ! content ) {
+				dispatch( 'core/notices' )?.createNotice(
+					'info',
+					__( 'No patterns found for your query.', 'otter-blocks' ),
+					{
+						type: 'snackbar',
+						isDismissible: true,
+						id: 'o-no-patterns'
+					}
+				);
+			}
+
+			const blocks = rawHandler({
+				HTML: content
+			});
+
+			replaceInnerBlocks( clientId, blocks );
+		}
 	};
 
-	const { hasInnerBlocks, containerId, getBlocks, getBlock, getBlockOrder, getBlockRootClientId } = useSelect(
+	const { hasInnerBlocks, getBlocks } = useSelect(
 		select => {
 
-			const { getBlocks, getBlock, getBlockRootClientId, getBlockOrder } = select( 'core/block-editor' );
-
-			const blocks = getBlocks?.( clientId ) ?? [];
+			const { getBlocks } = select( 'core/block-editor' );
 
 			return {
 				hasInnerBlocks: getBlocks?.( clientId ).length,
-				containerId: blocks[0]?.clientId,
-				getBlocks,
-				getBlock,
-				getBlockRootClientId,
-				getBlockOrder
+				getBlocks
 			};
 		},
 		[ clientId ]
@@ -129,17 +141,15 @@ const ContentGenerator = ({
 	 */
 	const insertContentIntoPage = () => {
 		const blocks = getBlocks( clientId );
-		const copy = blocks.map( blockRoot => {
-			return createBlock(
-				blockRoot.name,
-				blockRoot.attributes,
-				blockRoot.innerBlocks?.map( block => {
-					return createBlock( block.name, block.attributes, block.innerBlocks );
-				})
-			);
-		});
 
-		insertBlockBelow( clientId, copy );
+		const makeBlockCopy = ( block ) => {
+			if ( undefined === block ) {
+				return;
+			}
+			return createBlock( block.name, block.attributes, block?.innerBlocks?.filter( b => b?.name && b?.attributes )?.map( makeBlockCopy ) );
+		};
+
+		insertBlockBelow( clientId, blocks.map( makeBlockCopy ) );
 	};
 
 	const { blockType, defaultVariation, variations } = useSelect(
@@ -187,6 +197,30 @@ const ContentGenerator = ({
 		textTransformation: {
 			title: __( 'AI Content generator', 'otter-blocks' ),
 			placeholder: __( 'Start describing what content you need...', 'otter-blocks' ),
+			actions: ( props ) => {
+				return (
+					<Fragment>
+						<Button
+							variant="primary"
+							onClick={selfReplaceWithContent}
+							disabled={'loading' === props.status}
+						>
+							{__( 'Replace', 'otter-blocks' )}
+						</Button>
+						<Button
+							variant="secondary"
+							onClick={insertContentIntoPage}
+							disabled={'loading' === props.status}
+						>
+							{__( 'Insert below', 'otter-blocks' )}
+						</Button>
+					</Fragment>
+				);
+			}
+		},
+		patternsPicker: {
+			title: __( 'Smart Otter Patterns Picker', 'otter-blocks' ),
+			placeholder: __( 'Describe what kind of page do you want.', 'otter-blocks' ),
 			actions: ( props ) => {
 				return (
 					<Fragment>

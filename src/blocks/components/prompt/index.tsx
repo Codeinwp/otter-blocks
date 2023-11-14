@@ -14,8 +14,10 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
 
 import useSettings from '../../helpers/use-settings';
 import {
+	PromptConversation,
 	PromptsData,
 	injectActionIntoPrompt,
+	injectConversationIntoPrompt,
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
@@ -252,9 +254,13 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	function onPromptSubmit( regenerate = false ) {
 
+		console.log( 'onPromptSubmit', promptID );
+
+		console.log( embeddedPrompts );
+
 		let embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
 
-		if ( ! embeddedPrompt ) {
+		if ( undefined === embeddedPrompt ) {
 			setShowError( true );
 			setErrorMessage( __( 'Prompt not found. Reload the page. If the error still persist the server might be down.', 'otter-blocks' ) );
 			return;
@@ -266,6 +272,18 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			embeddedPrompt = injectActionIntoPrompt( embeddedPrompt, action );
 		}
 
+		if ( 'patternsPicker' === promptID && window.themeisleGutenberg?.hasPro ) {
+
+			// Add the Pro patterns to the prompt.
+			const addon: PromptConversation[] = embeddedPrompt?.['otter_pro_addon'] ?? [];
+
+			addon?.forEach( ( conversation ) => {
+				if ( embeddedPrompt ) {
+					embeddedPrompt = injectConversationIntoPrompt( embeddedPrompt, conversation );
+				}
+			});
+		}
+
 		if ( 'present' !== apiKeyStatus ) {
 			setShowError( true );
 			setErrorMessage( __( 'API Key not found. Please add your API Key in the settings page.', 'otter-blocks' ) );
@@ -275,6 +293,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		setGenerationStatus( 'loading' );
 
 		const sendPrompt = regenerate ? sendPromptToOpenAIWithRegenerate : sendPromptToOpenAI;
+
+		window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'prompt', featureValue: value }, { consent: true });
 
 		sendPrompt?.( value, embeddedPrompt, {
 			'otter_used_action': 'textTransformation' === promptID ? 'textTransformation::otter_action_prompt' : ( promptID ?? '' ),

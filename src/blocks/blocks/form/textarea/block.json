@@ -32,6 +32,11 @@
 		},
 		"helpText": {
 			"type": "string"
+		},
+		"defaultValue": {
+			"type": "string",
+			"source": "text",
+			"selector": "textarea.otter-form-textarea-input"
 		}
 	},
 	"supports": {
