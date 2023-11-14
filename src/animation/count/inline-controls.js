@@ -35,6 +35,10 @@ import { format as settings } from './index.js';
 
 import { updateAnimConfig } from '../editor.js';
 
+// Fitler out 'custom' value from delayList and speedList
+delayList.pop();
+speedList.pop();
+
 const InlineControls = ({
 	value,
 	contentRef
@@ -99,14 +103,14 @@ const InlineControls = ({
 				label={ __( 'Delay', 'otter-blocks' ) }
 				value={ countDelay || 'none' }
 				options={ delayList }
-				onChange={ value => updateAnimConfig( 'count', countDelay, value, () => setCountDelay( value ) ), attributes, setAttributes }
+				onChange={ value => updateAnimConfig( 'count', countDelay, value, () => setCountDelay( value ), attributes, setAttributes ) }
 			/>
 
 			<SelectControl
 				label={ __( 'Speed', 'otter-blocks' ) }
 				value={ countSpeed || 'none' }
 				options={ speedList }
-				onChange={ value => updateAnimConfig( 'count', countSpeed, value, () => setTypingSpeed( value ) ), attributes, setAttributes }
+				onChange={ value => updateAnimConfig( 'count', countSpeed, value, () => setCountSpeed( value ), attributes, setAttributes ) }
 			/>
 
 			{ applyFilters( 'otter.poweredBy', '' ) }
