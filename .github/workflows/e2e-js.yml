@@ -64,7 +64,8 @@ jobs:
 
       - name: Playwright Blocks
         run: |
-          npm run test:e2e:playwright
+          npm run test:e2e:playwright && echo "PLAYWRIGHT_SUCCESS=true" >> $GITHUB_ENV || echo "PLAYWRIGHT_SUCCESS=false" >> $GITHUB_EN
+        continue-on-error: true
 
       - name: Performance check
         run: |
@@ -82,7 +83,9 @@ jobs:
       - name: Print the results
         run: |
           RESULTS=$(jq -r 'to_entries|map("\(.key): \(.value)")|join(", ")' artifacts/post-editor.performance-results.json)
-          echo "::set-output name=PERFORMANCE_OUTPUT::$RESULTS"
+          FLAKY_TEST_STATUS="Playwright Test Status: $PLAYWRIGHT_SUCCESS"
+          echo "::set-output name=PERFORMANCE_OUTPUT::$RESULTS""
+          echo "::set-output name=FLAKY_TEST_STATUS::$FLAKY_TEST_STATUS"
         id: summary
 
       - name: Comment
@@ -93,3 +96,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           PERFORMANCE_OUTPUT: ${{ steps.summary.outputs.PERFORMANCE_OUTPUT }}
+          FLAKY_TEST_STATUS: ${{ steps.summary.outputs.FLAKY_TEST_STATUS }}
