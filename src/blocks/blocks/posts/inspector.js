@@ -614,9 +614,9 @@ const Inspector = ({
 									/>
 									<BoxControl
 										label={ __( 'Pagination Container Margin', 'otter-blocks' ) }
-										values={ attributes.pagContMargin ?? { top: '10px' } }
+										values={ attributes.pagContMargin ?? { top: '10px', 'bottom': '30px' } }
 										onChange={ pagContMargin => setAttributes({ pagContMargin }) }
-										sides={[ 'top' ]}
+										sides={[ 'top', 'bottom' ]}
 										allowReset
 									/>
 								</Fragment>

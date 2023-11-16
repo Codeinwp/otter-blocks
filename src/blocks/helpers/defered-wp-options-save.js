@@ -83,8 +83,6 @@ class DeferredWpOptionsSave {
 					}
 
 					const fieldIndex = fieldOptions.findIndex( ( field ) => {
-
-						// console.log( field.fieldOptionName, change.value.fieldOptionName );
 						return field.fieldOptionName === payload.fieldOptionName;
 					});
 

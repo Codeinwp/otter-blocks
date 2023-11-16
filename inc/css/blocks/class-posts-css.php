@@ -385,7 +385,8 @@ class Posts_CSS extends Base_CSS {
 							return CSS_Utility::box_values(
 								$value,
 								array(
-									'top' => '10px',
+									'top'    => '10px',
+									'bottom' => '30px',
 								)
 							);
 						},

@@ -79,7 +79,6 @@ add_filter(
 	function( $products ) {
 		$already_registered = false;
 
-		// Since Otter can use Neve license, the SDK might not detected it so we need to update it manually.
 		$license    = apply_filters( 'product_otter_license_key', 'free' );
 		$track_hash = 'free' === $license ? 'free' : wp_hash( $license );
 

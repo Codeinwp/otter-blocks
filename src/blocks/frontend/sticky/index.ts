@@ -766,7 +766,6 @@ domReady( () => {
 
 			// create an Observer instance
 			const resizeObserver = new ResizeObserver( entries => {
-				console.log( 'Body height changed:', entries?.[0]?.target.clientHeight );
 				if ( entries?.[0]?.target.clientHeight ) {
 					runner.updateTriggers();
 				}

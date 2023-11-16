@@ -252,7 +252,6 @@ const ContentGenerator = ({
 			/>
 
 			<div { ...blockProps }>
-
 				{
 					attributes.promptID === undefined ? (
 						<VariationPicker
