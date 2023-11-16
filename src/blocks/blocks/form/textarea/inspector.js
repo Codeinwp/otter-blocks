@@ -8,7 +8,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	Button,
 	PanelBody,
-	SelectControl,
+	SelectControl, TextareaControl,
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
@@ -21,6 +21,11 @@ import { FieldInputWidth, fieldTypesOptions, HideFieldLabelToggle, mappedNameInf
 import { FormContext } from '../edit';
 import { HTMLAnchorControl } from '../../../components';
 
+/**
+ *
+ * @param {import('./types').FormTextareaProps} props
+ * @returns {JSX.Element}
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,
@@ -84,6 +89,12 @@ const Inspector = ({
 						help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
 						checked={ attributes.isRequired }
 						onChange={ isRequired => setAttributes({ isRequired }) }
+					/>
+
+					<TextareaControl
+						label={ __( 'Default Value', 'otter-blocks' ) }
+						value={attributes.defaultValue}
+						onChange={ defaultValue => setAttributes({ defaultValue }) }
 					/>
 
 					<TextControl

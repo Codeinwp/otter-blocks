@@ -39,6 +39,7 @@ const Save = ({
 				required={ attributes.isRequired }
 				placeholder={ attributes.placeholder }
 				className="otter-form-input"
+				value={ attributes?.defaultValue }
 			/>
 			{
 				attributes.helpText && (

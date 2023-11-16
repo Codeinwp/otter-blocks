@@ -38,7 +38,7 @@ test.describe( 'Countdown Block', () => {
 		await page.getByLabel( 'Year' ).press( 'Enter' );
 
 		// If everything is ok, the day label text should be changed to "Days".
-		await expect( page.getByText( 'Days' ) ).toBeVisible();
+		await expect( page.getByText( 'Days', { exact: true }) ).toBeVisible();
 
 		await page.locator( '.editor-styles-wrapper' ).click();
 		const postId = await editor.publishPost();
@@ -48,7 +48,7 @@ test.describe( 'Countdown Block', () => {
 		expect( ( await page.$eval( `#${otterId}`, ( el ) => el.getAttribute( 'data-date' ) ) ).startsWith( '2030-08-17' ) ).toBeTruthy();
 
 		// If everything is ok, the day label text should be changed to "Days".
-		await expect( page.getByText( 'Days' ) ).toBeVisible();
+		await expect( page.getByText( 'Days', { exact: true }) ).toBeVisible();
 
 		// Capture the current value of the seconds.
 		const currentValue = await page.locator( '.otter-countdown__display-area' )
@@ -59,7 +59,7 @@ test.describe( 'Countdown Block', () => {
 			.innerHTML();
 
 		// Wait for 1 second for the seconds to change.
-		await page.waitForTimeout( 1000 );
+		await page.waitForTimeout( 1300 );
 
 		// Capture the new value of the seconds.
 		const newValue = await page.locator( '.otter-countdown__display-area' )

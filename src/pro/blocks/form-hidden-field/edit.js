@@ -25,11 +25,17 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId
+	clientId,
+	name
 }) => {
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
+
+		if ( undefined === attributes.id ) {
+			window.oTrk?.add({ block: name, action: 'block-created', groupID: attributes.id });
+		}
+
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
@@ -80,6 +86,7 @@ const Edit = ({
 					required={ attributes.isRequired }
 					disabled
 					className="otter-form-input components-text-control__input"
+					value={ attributes.defaultValue }
 				/>
 				{
 					attributes.helpText && (

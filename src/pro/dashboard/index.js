@@ -46,7 +46,10 @@ const Integrations = props => {
 						help={ __( 'Enable this option to save Google Fonts locally to make your website faster', 'otter-blocks' ) }
 						checked={ Boolean( getOption( 'otter_offload_fonts' ) ) }
 						disabled={ 'saving' === status }
-						onChange={ () => updateOption( 'otter_offload_fonts', ! Boolean( getOption( 'otter_offload_fonts' ) ) ) }
+						onChange={ () => {
+							window.tiTrk?.with( 'otter' ).set( 'fonts', { feature: 'dashboard-integration', featureComponent: 'fonts-module', featureValue: ! Boolean( getOption( 'otter_offload_fonts' ) ) });
+							updateOption( 'otter_offload_fonts', ! Boolean( getOption( 'otter_offload_fonts' ) ) );
+						} }
 					/>
 				</PanelRow>
 			</PanelBody>
@@ -77,7 +80,10 @@ const Integrations = props => {
 								variant="secondary"
 								isSecondary
 								disabled={ 'saving' === status }
-								onClick={ () => updateOption( 'otter_iphub_api_key', IPHubAPI ) }
+								onClick={ () => {
+									window.tiTrk?.with( 'otter' ).add({ feature: 'dashboard-integration', featureComponent: 'iphub' });
+									updateOption( 'otter_iphub_api_key', IPHubAPI );
+								} }
 							>
 								{ __( 'Save', 'otter-blocks' ) }
 							</Button>

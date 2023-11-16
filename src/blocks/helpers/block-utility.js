@@ -299,8 +299,8 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 /**
  * Create a Style node for handling `head` Node change when working in a Tablet, Mobile mode or in FSE Editor.
  *
- * @param {OtterNodeCSSOptions } options The options.
- * @returns {OtterNodeCSSReturn} The name of the node and function handler.
+ * @param {import('./blocks.js').OtterNodeCSSOptions } options The options.
+ * @returns {import('./blocks.js').OtterNodeCSSReturn} The name of the node and function handler.
  */
 export const useCSSNode = ( options = {}) => {
 	const [ cssList, setCSSProps ] = useState({
@@ -392,9 +392,9 @@ export const useCSSNode = ( options = {}) => {
 				.map( x => {
 					const [ css, media ] = x;
 					if ( media ) {
-						return `${media} { \n\t .${settings.cssNodeName} ${css} }`;
+						return `${media} { \n\t .${settings.cssNodeName}${options?.appendToRoot ? '' : ' '}${css} }`;
 					}
-					return `.${settings.cssNodeName} ${css}`;
+					return `.${settings.cssNodeName}${options?.appendToRoot ? '' : ' '}${css}`;
 				})
 				.join( '\n' ) || '';
 			settings.node.textContent = text;
@@ -572,6 +572,24 @@ export function useTabSwitch( key, defaultValue ) {
 	}, [ tab ]);
 
 	return [ tab, setTab ];
+}
+
+/**
+ * Get all registered patterns.
+ *
+ * @returns {Array.<{name: string, title: string, content: string, categories: string[], source: string | undefined, blockTypes: string[]|undefined}>}
+ */
+export function pullPatterns() {
+	return select( 'core' )?.getBlockPatterns() ?? [];
+}
+
+/**
+ * Get all registered patterns that are part of the Otter Blocks category.
+ *
+ * @returns {{name: string, title: string, content: string, categories: string[], source: (string|undefined), blockTypes: (string[]|undefined)}[]}
+ */
+export function pullOtterPatterns() {
+	return pullPatterns().filter( pattern => pattern?.name?.startsWith( 'otter-blocks/' ) || pattern?.name?.startsWith( 'otter-pro/' ) );
 }
 
 

@@ -71,3 +71,34 @@ add_action(
 		return $links;
 	}
 );
+
+add_filter( 'themeisle_sdk_enable_telemetry', '__return_true' );
+
+add_filter(
+	'themeisle_sdk_telemetry_products',
+	function( $products ) {
+		$already_registered = false;
+
+		$license    = apply_filters( 'product_otter_license_key', 'free' );
+		$track_hash = 'free' === $license ? 'free' : wp_hash( $license );
+
+		foreach ( $products as &$product ) {
+			if ( strstr( $product['slug'], 'otter' ) !== false ) {
+				$already_registered   = true;
+				$product['trackHash'] = $track_hash;
+			}
+		}
+
+		if ( $already_registered ) {
+			return $products;
+		}
+	
+		// Add Otter Blocks to the list of products to track the usage of AI Block.
+		$products[] = array(
+			'slug'      => 'otter',
+			'consent'   => false,
+			'trackHash' => $track_hash,
+		);
+		return $products;
+	} 
+);

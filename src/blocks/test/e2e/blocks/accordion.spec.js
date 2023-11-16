@@ -42,9 +42,6 @@ test.describe( 'Accordion Block', () => {
 		const { clientId } = accordionBlock;
 		const currentAccordionItems = accordionBlock.innerBlocks.length;
 
-		await page.click( `#block-${clientId}` );
-		await page.getByRole( 'button', { name: 'Select Accordion' }).click();
-
 		await page.getByRole( 'button', { name: 'Add Accordion Item' }).click();
 
 		accordionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/accordion' === block.name );

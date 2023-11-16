@@ -35,6 +35,9 @@ import { format as settings } from './index.js';
 
 import { updateAnimConfig } from '../editor.js';
 
+const delayListInline = delayList.filter( ( i ) => 'o-anim-custom-delay' !== i.value );
+const speedListInline = speedList.filter( ( i ) => 'o-anim-custom-speed' !== i.value );
+
 const InlineControls = ({
 	value,
 	contentRef
@@ -46,11 +49,11 @@ const InlineControls = ({
 			classes = attributes.className;
 			classes = classes.split( ' ' );
 
-			const typingDelayClass = Array.from( delayList ).find( ( i ) => {
+			const typingDelayClass = Array.from( delayListInline ).find( ( i ) => {
 				return classes.find( ( o ) => o === `o-typing-${ i.value }` );
 			});
 
-			const typingSpeedClass = Array.from( speedList ).find( ( i ) => {
+			const typingSpeedClass = Array.from( speedListInline ).find( ( i ) => {
 				return classes.find( ( o ) => o === `o-typing-${ i.value }` );
 			});
 
@@ -98,14 +101,14 @@ const InlineControls = ({
 			<SelectControl
 				label={ __( 'Delay', 'otter-blocks' ) }
 				value={ typingDelay || 'none' }
-				options={ delayList }
+				options={ delayListInline }
 				onChange={ value => updateAnimConfig( 'typing', typingDelay, value, () => setTypingDelay( value ), attributes, setAttributes ) }
 			/>
 
 			<SelectControl
 				label={ __( 'Speed', 'otter-blocks' ) }
 				value={ typingSpeed || 'none' }
-				options={ speedList }
+				options={ speedListInline }
 				onChange={ value => updateAnimConfig( 'typing', typingSpeed, value, () => setTypingSpeed( value ), attributes, setAttributes ) }
 			/>
 

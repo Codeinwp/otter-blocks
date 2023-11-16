@@ -111,6 +111,7 @@ const Inspector = ({
 							...productsList
 						] }
 						onChange={ product => {
+							window.oTrk?.add({ feature: 'stripe-checkout', featureComponent: 'product-changed' });
 							setAttributes({
 								product: 'none' !== product ? product : undefined,
 								price: undefined
@@ -130,7 +131,10 @@ const Inspector = ({
 							},
 							...pricesList
 						] }
-						onChange={ price => setAttributes({ price: 'none' !== price ? price : undefined }) }
+						onChange={ price => {
+							window.oTrk?.add({ feature: 'stripe-checkout', featureComponent: 'price-changed' });
+							setAttributes({ price: 'none' !== price ? price : undefined });
+						} }
 					/>
 				) }
 

@@ -55,6 +55,11 @@ class Dashboard {
 
 		add_action( "admin_print_scripts-$page_hook_suffix", array( $this, 'enqueue_options_assets' ) );
 
+		/**
+		 * Add shortcut to the Blocks tab in Dashboard.
+		 */
+		
+
 		add_submenu_page(
 			'otter',
 			__( 'Settings', 'otter-blocks' ),
@@ -71,6 +76,18 @@ class Dashboard {
 			'form-submissions-free',
 			array( $this, 'form_submissions_callback' ),
 			10
+		);
+
+		add_submenu_page(
+			'otter',
+			__( 'Blocks', 'otter-blocks' ),
+			__( 'Blocks', 'otter-blocks' ),
+			'manage_options',
+			'otter-blocks-toggle',
+			function() {
+				echo '<p>Redirecting...</p>
+				<script>document.location.href = "/wp-admin/admin.php?page=otter#blocks";</script>';
+			}
 		);
 	}
 
@@ -255,16 +272,23 @@ class Dashboard {
 				flex-wrap: wrap;
 				align-content: center;
 				width: 100%;
-				margin-left: 10px
+				margin-left: 10px;
+				align-items: center;
 			}
 
 			.otter-banner__version {
 				align-self: center;
+				font-size: 11px;
 			}
 
 			/* Hide the "Add New" button for Multisite WP. Second part is for Elementor */
 			a.page-title-action:first-of-type, #e-admin-top-bar-root:not(.e-admin-top-bar--active)~#wpbody .wrap a.page-title-action:first-of-type {
 				display: none;
+			}
+
+			#export-submissions {
+				font-size: 14px;
+				max-height: 35px;
 			}
 		</style>
 		<div class="otter-banner">
@@ -272,10 +296,47 @@ class Dashboard {
 				<img src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ); ?>" alt="<?php esc_attr_e( 'Otter Blocks', 'otter-blocks' ); ?>" style="width: 90px">
 			</div>
 			<div class="otter-banner__content">
-				<h1 class="otter-banner__title" style="line-height: normal;"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
-				<span class="otter-banner__version"><?php echo esc_html( 'v' . OTTER_BLOCKS_VERSION ); ?></span>
+				<h1 class="otter-banner__title" style="line-height: normal;"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?>
+					<sub class="otter-banner__version"><?php echo esc_html( 'v' . OTTER_BLOCKS_VERSION ); ?></sub>
+				</h1>
+				<button id="export-submissions" class="button">
+					<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
+				</button>
 			</div>
 		</div>
+		<script>
+			window.document.addEventListener('DOMContentLoaded', () => {
+				document.querySelector('#export-submissions')?.addEventListener('click', () => {
+					fetch('<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+						body: new URLSearchParams({
+							action: 'otter_form_submissions',
+							_nonce: '<?php echo esc_attr( wp_create_nonce( 'otter_form_export_submissions' ) ); ?>'
+						})
+					})
+						.then(response => response.text())
+						.then(response => {
+							const currentDate = new Date();
+							const year = currentDate.getFullYear();
+							const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+							const day = String(currentDate.getDate()).padStart(2, '0');
+
+							const blob = new Blob([response], {type: 'text/xml'});
+							const url = window.URL.createObjectURL(blob);
+							const a = document.createElement('a');
+							a.href = url;
+							a.download = `otter_form_submissions__${year}-${month}-${day}.xml`;
+							document.body.appendChild(a);
+							a.click();
+						})
+						.catch(error => console.error('Error:', error));
+				});
+
+			})
+		</script>
 		<?php
 	}
 

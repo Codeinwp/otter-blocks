@@ -23,35 +23,41 @@ class Form_Multiple_Choice_Block {
 	 */
 	public function render( $attributes ) {
 
-		$class_names            = 'wp-block-themeisle-blocks-form-multiple-choice ' . ( isset( $attributes['className'] ) ? $attributes['className'] : '' );
-		$id                     = isset( $attributes['id'] ) ? $attributes['id'] : '';
-		$options                = isset( $attributes['options'] ) ? $attributes['options'] : '';
-		$field_type             = isset( $attributes['type'] ) ? $attributes['type'] : 'checkbox';
-		$label                  = isset( $attributes['label'] ) ? $attributes['label'] : __( 'Select option', 'otter-blocks' );
-		$help_text              = isset( $attributes['helpText'] ) ? $attributes['helpText'] : '';
-		$options_array          = explode( "\n", $options );
+		$class_names = 'wp-block-themeisle-blocks-form-multiple-choice ' . ( isset( $attributes['className'] ) ? $attributes['className'] : '' );
+		$id          = isset( $attributes['id'] ) ? $attributes['id'] : '';
+		$options     = isset( $attributes['options'] ) ? $attributes['options'] : array();
+		$field_type  = isset( $attributes['type'] ) ? $attributes['type'] : 'checkbox';
+		$label       = isset( $attributes['label'] ) ? $attributes['label'] : __( 'Select option', 'otter-blocks' );
+		$help_text   = isset( $attributes['helpText'] ) ? $attributes['helpText'] : '';
+
 		$is_required            = isset( $attributes['isRequired'] ) ? boolval( $attributes['isRequired'] ) : false;
 		$has_multiple_selection = isset( $attributes['multipleSelection'] ) ? boolval( $attributes['multipleSelection'] ) : false;
 		$mapped_name            = isset( $attributes['mappedName'] ) ? $attributes['mappedName'] : $id;
 
 		$output = '<div class="' . $class_names . '" id="' . $id . '">';
 
+		// Compatibility with the old version of the block.
+		if ( ! empty( $options ) && is_string( $options ) ) {
+			$options = explode( "\n", $options );
+		}
+
 		if ( 'select' === $field_type ) {
-			$output .= $this->render_select_field( $label, $options_array, $id, $mapped_name, $has_multiple_selection, $is_required );
+			$output .= $this->render_select_field( $label, $options, $id, $mapped_name, $has_multiple_selection, $is_required );
 		} else {
 			$output .= '<label class="otter-form-input-label" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
 
 			$output .= '<div class="o-form-choices">';
 
-			foreach ( $options_array as $field_label ) {
-				if ( empty( $field_label ) ) {
+			foreach ( $options as $choice ) {
+				if ( empty( $choice['content'] ) ) {
 					continue;
 				}
 
-				$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
+				$field_value = implode( '_', explode( ' ', sanitize_title( $choice['content'] ) ) );
 				$field_id    = 'field-' . $field_value;
+				$checked     = isset( $choice['isDefault'] ) && $choice['isDefault'];
 
-				$output .= $this->render_field( $field_type, $field_label, $field_value, $mapped_name, $field_id, $is_required );
+				$output .= $this->render_field( $field_type, $choice['content'], $field_value, $mapped_name, $field_id, $checked, $is_required );
 			}
 
 			$output .= '</div>';
@@ -71,13 +77,14 @@ class Form_Multiple_Choice_Block {
 	 * @param string $value The value of the field.
 	 * @param string $name The name of the field.
 	 * @param string $id The id of the field.
+	 * @param bool   $checked The checked status of the field.
 	 * @param bool   $is_required The required status of the field.
 	 * @return string
 	 */
-	public function render_field( $type, $label, $value, $name, $id, $is_required = false ) {
+	public function render_field( $type, $label, $value, $name, $id, $checked = false, $is_required = false ) {
 		$output = '<div class="o-form-multiple-choice-field">';
 
-		$output .= '<input type="' . $type . '" name="' . $name . '" id="' . $id . '" value="' . $value . '" ' . ( $is_required ? 'required' : '' ) . ' />';
+		$output .= '<input type="' . $type . '" name="' . $name . '" id="' . $id . '" value="' . $value . '" ' . ( $is_required ? 'required' : '' ) . ( $checked ? ' checked' : '' ) . ' />';
 		$output .= '<label for="' . $id . '" class="o-form-choice-label">' . $label . '</label>';
 
 		$output .= '</div>';
@@ -100,14 +107,16 @@ class Form_Multiple_Choice_Block {
 		$output  = '<label class="otter-form-input-label" for="' . $id . '" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
 		$output .= '<select id="' . $id . '" ' . ( $is_multiple ? ' multiple ' : '' ) . ( $is_required ? ' required ' : '' ) . ' name="' . $name . '">';
 
-		foreach ( $options_array as $field_label ) {
+		foreach ( $options_array as $option ) {
 
-			if ( empty( $field_label ) ) {
+			if ( empty( $option['content'] ) ) {
 				continue;
 			}
 
-			$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
-			$output     .= '<option value="' . $field_value . '">' . $field_label . '</option>';
+			$is_selected = isset( $option['isDefault'] ) && $option['isDefault'];
+
+			$field_value = implode( '_', explode( ' ', sanitize_title( $option['content'] ) ) );
+			$output     .= '<option value="' . $field_value . '"' . ( $is_selected ? 'selected' : '' ) . '>' . $option['content'] . '</option>';
 		}
 
 		$output .= '</select>';

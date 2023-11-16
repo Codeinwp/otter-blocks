@@ -35,6 +35,12 @@
 	}
 }
 
+.o-responsive-control ~ .o-typo-component {
+	.o-typo-header {
+		padding-top: 0;
+	}
+}
+
 .o-options-global-defaults-modal .o-typo-component .o-two-column-components {
 	margin-bottom: 25px;
 }

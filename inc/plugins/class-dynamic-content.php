@@ -43,10 +43,49 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		// Todo: Improve this Regex, it can't go on for like this. Soon it will be longer than the available space in the universe!!!
-		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-parameter=["\'](?P<parameter>[^"\'<>]+)["\']|data-format=["\'](?P<format>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|data-taxonomy=["\'](?P<taxonomy>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+		$matches = array();
+		$num     = self::parse_dynamic_content_query( $content, $matches );
 
-		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
+		if ( isset( $num ) && 0 === $num ) {
+			return $content;
+		}
+
+		foreach ( $matches as $match ) {
+			$replacement       = $this->apply_data( $match );
+			$string_to_replace = $match[0];
+			$position          = strstr( $content, $string_to_replace, true );
+
+			if ( false === $position ) {
+				continue;
+			}
+
+			$position = strlen( $position );
+			$content  = substr_replace( $content, $replacement, $position, strlen( $string_to_replace ) );
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Get the Dynamic Content regex.
+	 *
+	 * @return string
+	 */
+	public static function dynamic_content_regex() {
+		// Todo: Improve this Regex, it can't go on for like this. Soon it will be longer than the available space in the universe!!!
+		return '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-parameter=["\'](?P<parameter>[^"\'<>]+)["\']|data-format=["\'](?P<format>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|data-taxonomy=["\'](?P<taxonomy>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+	}
+
+	/**
+	 * Parse dynamic content query.
+	 *
+	 * @param string $content The content to parse.
+	 * @param array  $matches The matches.
+	 * @return mixed
+	 */
+	public static function parse_dynamic_content_query( $content, &$matches ) {
+		$re = self::dynamic_content_regex();
+		return preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
 	}
 
 	/**
