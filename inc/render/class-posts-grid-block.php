@@ -336,7 +336,7 @@ class Posts_Grid_Block {
 			'order'            => $attributes['order'],
 			'orderby'          => $attributes['orderBy'],
 			'offset'           => $offset,
-			'category'         => $categories,
+			'cat'              => $categories,
 			'suppress_filters' => false,
 			'no_found_rows'    => true,
 		);
