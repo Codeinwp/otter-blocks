@@ -317,6 +317,15 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 ## Changelog ##
 
+##### [Version 2.5.1](https://github.com/Codeinwp/otter-blocks/compare/v2.5.0...v2.5.1) (2023-11-18)
+
+### Bug Fixes
+- **Fixes Posts Block Query**: Fixed Posts Block category selection not working.
+- **Fixes Blocks Animation**: Fixed Blocks Animation module not working as a standalone plugin.
+
+
+
+
 #### [Version 2.5.0](https://github.com/Codeinwp/otter-blocks/compare/v2.4.1...v2.5.0) (2023-11-16)
 
 ### New Features
