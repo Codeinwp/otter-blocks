@@ -317,6 +317,30 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 ## Changelog ##
 
+#### [Version 2.5.0](https://github.com/Codeinwp/otter-blocks/compare/v2.4.1...v2.5.0) (2023-11-16)
+
+### New Features
+- **AI Patterns Layout Generator**: Introducing a new AI-driven utility for designing layouts with Otter Patterns.
+- **Block Management Page**: A new centralized page to manage all Otter blocks visibility.
+- **Pagination in Posts Block**: Adds pagination functionality for better navigation.
+- **Enhanced Block Animations**: Customizable delay/speed, animation offset, and hover controls for dynamic block animations.
+- **Export Option in Form Submission**: Facilitates exporting form submissions to CSV for easier data management.
+- **New Block Visibility Conditions**: Option to hide blocks depending on the device used.
+
+### Improvements
+- **Form Marketing Enhancements**: Improved Marketing Action explanations and email field detection.
+- **Advanced Heading Enhancements**: New Bottom Margin option added to the Advanced Heading block.
+
+### Bug Fixes
+- **Fix Maps Block Compatibility with Neve**: Resolved integration issues with Neve.
+- **Fix Live Search Styling**: Corrected CSS calculation problems in Live Search Popup.
+- **Fix RankMath Compatibility**: Addressed a recent regression affecting Otters functionality with RankMath.
+- **Fix Form Generating Error**: Removed outdated base64 checks in Form File validation.
+- **Fix Count Animation Settings**: Adjusted delay and speed settings for consistent Count Animation performance.
+
+
+
+
 ##### [Version 2.4.1](https://github.com/Codeinwp/otter-blocks/compare/v2.4.0...v2.4.1) (2023-10-25)
 
 ### New Features

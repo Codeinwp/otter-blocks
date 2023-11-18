@@ -29,6 +29,7 @@ import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 /**
  * Initiate the global id tracker with an empty list if it is the case.
  */
+window.themeisleGutenberg ??= {};
 window.themeisleGutenberg.blockIDs ??= [];
 
 /**
