@@ -29,6 +29,7 @@ import { useState } from '@wordpress/element';
  * @returns {[(optionName: string) => any, (option: string, value: any, success?: string, noticeId?: string, onSuccess: Function) => void, 'loading' | 'loaded' | 'error' | 'saving']} [ getOption, updateOption, status ]
  *
  */
+let updatedSettings = {};
 const useSettings = () => {
 	const { createNotice } = dispatch( 'core/notices' );
 
@@ -49,7 +50,7 @@ const useSettings = () => {
 			setStatus( 'loaded' );
 			setSettings( request );
 		}
-	}, []);
+	}, [ settings ]);
 
 	/**
 	 * Get the value of the given option.
@@ -58,7 +59,7 @@ const useSettings = () => {
 	 * @returns {any} Option value.
 	 */
 	const getOption = option => {
-		return settings?.[option];
+		return updatedSettings?.[option] || settings?.[option];
 	};
 
 	/**
@@ -105,6 +106,7 @@ const useSettings = () => {
 				);
 			}
 
+			updatedSettings = response;
 			setSettings( response );
 			onSuccess?.( response );
 		});
