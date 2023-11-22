@@ -9,9 +9,13 @@ import {
 	TextControl
 } from '@wordpress/components';
 
-import { useState } from '@wordpress/element';
+import {
+	useDispatch,
+	useSelect,
+	select
+} from '@wordpress/data';
 
-import { addFilter } from '@wordpress/hooks';
+import { useState } from '@wordpress/element';
 
 import { MediaUpload } from '@wordpress/media-utils';
 
@@ -19,28 +23,110 @@ const SiteInfo = () => {
 	const [ siteTitle, setSiteTitle ] = useState( '' );
 	const [ siteLogo, setSiteLogo ] = useState({});
 
-	const replaceMediaUpload = () => MediaUpload;
+	const { title } = useSelect( select => {
+		const { getEditedEntityRecord } = select( 'core' );
 
-	addFilter(
-		'editor.MediaUpload',
-		'themeisle-blocks/onboarding/replace-media-upload',
-		replaceMediaUpload()
-	);
+		const settings = getEditedEntityRecord( 'root', 'site' );
+
+		return {
+			title: settings?.title
+		};
+	}, []);
+
+	const { editEntityRecord } = useDispatch( 'core' );
+	const { replaceBlock } = useDispatch( 'core/block-editor' );
+	const { setEditedEntity } = useDispatch( 'core/edit-site' );
+
+	const setTitle = newTitle => {
+		editEntityRecord( 'root', 'site', undefined, {
+			title: newTitle
+		});
+	};
+
+	const findBlock = ( blocksAr, name ) => {
+		const foundBlock = blocksAr.find( block => block.name === name );
+
+		if ( foundBlock ) {
+			return foundBlock;
+		}
+
+		return blocksAr.reduce( ( found, block ) => {
+			if ( found ) {
+				return found;
+			}
+
+			if ( block.innerBlocks && Array.isArray( block.innerBlocks ) ) {
+				return findBlock( block.innerBlocks, name );
+			}
+
+			return undefined;
+		}, undefined );
+	};
+
+	const onOpenMedia = open => {
+		setEditedEntity( 'wp_template_part', 'raft//header', 'edit' );
+		open();
+	};
+
+	const setLogo = ( newLogo ) => {
+		const blocks = select( 'core/block-editor' ).getBlocks();
+
+		let siteLogoBlock = findBlock( blocks, 'core/site-logo' );
+
+		if ( ! siteLogoBlock ) {
+			const siteTitleBlock = findBlock( blocks, 'core/site-title' );
+
+			if ( siteTitleBlock ) {
+
+				replaceBlock( siteTitleBlock.clientId, wp.blocks.createBlock(
+					'core/site-logo',
+					{
+						attributes: {
+							...siteTitleBlock.attributes,
+							url: newLogo.url,
+							id: newLogo.id
+						}
+					}
+				) );
+			}
+		}
+
+		setSiteLogo( newLogo );
+	};
+
+	const removeLogo = () => {
+		const blocks = select( 'core/block-editor' ).getBlocks();
+
+		let siteLogoBlock = findBlock( blocks, 'core/site-logo' );
+
+		if ( siteLogoBlock ) {
+			replaceBlock( siteLogoBlock.clientId, wp.blocks.createBlock(
+				'core/site-title',
+				{
+					attributes: {
+						...siteLogoBlock.attributes
+					}
+				}
+			) );
+		}
+
+		setSiteLogo({});
+	};
 
 	return (
 		<div className="o-sidebar__controls">
 			<TextControl
 				label={ __( 'Site Title', 'otter-blocks' ) }
 				placeholder={ __( 'Acme Corporation', 'otter-blocks' ) }
-				value={ siteTitle }
-				onChange={ setSiteTitle }
+				value={ title }
+				onChange={ setTitle }
 			/>
 
 			<BaseControl
 				label={ __( 'Upload a Logo', 'otter-blocks' ) }
 			>
 				<MediaUpload
-					onSelect={ setSiteLogo }
+					onSelect={ setLogo }
 					allowedTypes={ [ 'image' ] }
 					value={ siteLogo?.id || '' }
 					render={ ({ open }) => (
@@ -48,7 +134,7 @@ const SiteInfo = () => {
 							{ ! siteLogo?.id && (
 								<div
 									className="o-logo__placeholder"
-									onClick={ open }
+									onClick={ () => onOpenMedia( open ) }
 								>
 									{  __( 'Select or upload image', 'otter-blocks' ) }
 								</div>
@@ -58,7 +144,7 @@ const SiteInfo = () => {
 								<>
 									<div
 										className="o-logo__image"
-										onClick={ open }
+										onClick={ () => onOpenMedia( open ) }
 									>
 										<img
 											src={ siteLogo?.url }
@@ -72,14 +158,14 @@ const SiteInfo = () => {
 									>
 										<Button
 											variant="secondary"
-											onClick={ () => setSiteLogo({}) }
+											onClick={ removeLogo }
 										>
 											{ __( 'Remove', 'otter-blocks' ) }
 										</Button>
 
 										<Button
 											variant="secondary"
-											onClick={ open }
+											onClick={ () => onOpenMedia( open ) }
 										>
 											{ __( 'Replace Logo', 'otter-blocks' ) }
 										</Button>

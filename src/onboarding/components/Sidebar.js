@@ -3,7 +3,11 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	Disabled,
+	Spinner
+} from '@wordpress/components';
 
 import {
 	useDispatch,
@@ -41,7 +45,7 @@ const STEP_DATA = {
 	}
 };
 
-const Sidebar = () => {
+const Sidebar = ({ isEditorLoading }) => {
 	const {
 		currentStep,
 		stepIndex
@@ -65,6 +69,14 @@ const Sidebar = () => {
 
 	return (
 		<div className="o-sidebar">
+			{ ( isEditorLoading ) && (
+				<div className="o-sidebar__loader">
+					<Disabled>
+						<Spinner />
+					</Disabled>
+				</div>
+			) }
+
 			<div className="o-sidebar__header">
 				<img
 					className="o-sidebar__logo"

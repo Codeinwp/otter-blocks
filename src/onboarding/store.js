@@ -1,10 +1,14 @@
 /**
  * WordPress dependencies.
  */
+import apiFetch from '@wordpress/api-fetch';
+
 import {
 	createReduxStore,
 	register
 } from '@wordpress/data';
+
+import { addQueryArgs } from '@wordpress/url';
 
 const STEPS = [
 	{
@@ -30,7 +34,9 @@ const STEPS = [
 ];
 
 const DEFAULT_STATE = {
-	step: 1
+	step: 1,
+	templates: {},
+	templateParts: {}
 };
 
 const actions = {
@@ -55,6 +61,24 @@ const actions = {
 
 			dispatch( actions.setStep( newStep ) );
 		};
+	},
+	setTemplate( template ) {
+		return {
+			type: 'SET_TEMPLATE',
+			template
+		};
+	},
+	setTemplatePart( templatePart ) {
+		return {
+			type: 'SET_TEMPLATE_PART',
+			templatePart
+		};
+	},
+	fetchFromAPI( path ) {
+		return {
+			type: 'FETCH_FROM_API',
+			path
+		};
 	}
 };
 
@@ -66,6 +90,24 @@ const store = createReduxStore( 'otter/onboarding', {
 				...state,
 				step: action.step
 			};
+
+		case 'SET_TEMPLATE':
+			return {
+				...state,
+				templates: {
+					...state.templates,
+					[action.template.slug]: action.template
+				}
+			};
+
+		case 'SET_TEMPLATE_PART':
+			return {
+				...state,
+				templateParts: {
+					...state.templateParts,
+					[action.templatePart.id]: action.templatePart
+				}
+			};
 		}
 
 		return state;
@@ -76,6 +118,31 @@ const store = createReduxStore( 'otter/onboarding', {
 	selectors: {
 		getStep( state ) {
 			return STEPS.find( step => step.value === state.step );
+		},
+		getTemplate( state, query ) {
+			return state.templates?.[ query?.slug ];
+		},
+		getTemplatePart( state, slug ) {
+			return state.templateParts?.[ slug ];
+		}
+	},
+
+	controls: {
+		FETCH_FROM_API( action ) {
+			return apiFetch({ path: action.path });
+		}
+	},
+
+	resolvers: {
+		*getTemplate( query ) {
+			const path = addQueryArgs( '/wp/v2/templates/lookup', query );
+			const value = yield actions.fetchFromAPI( path );
+			return actions.setTemplate( value );
+		},
+		*getTemplatePart( slug ) {
+			const path = `/wp/v2/template-parts/${ slug }` ;
+			const value = yield actions.fetchFromAPI( path );
+			return actions.setTemplatePart( value );
 		}
 	}
 });

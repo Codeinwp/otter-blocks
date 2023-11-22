@@ -34,6 +34,17 @@ div.error, div.notice {
 	flex-direction: column;
 	overflow: scroll;
 
+	&__loader {
+		height: 100vh;
+		position: absolute;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 25vw;
+		background: rgba(255, 255, 255, 0.5);
+		z-index: 9;
+	}
+
 	&__header {
 		padding: 2rem 2rem 0 2rem;
 		display: flex;
@@ -236,4 +247,16 @@ div.error, div.notice {
 	}
 }
 
-.o-main {}
+.o-main {
+	height: 100vh;
+	overflow: scroll;
+}
+
+.o-preview {
+	&__loader {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+	}
+}
