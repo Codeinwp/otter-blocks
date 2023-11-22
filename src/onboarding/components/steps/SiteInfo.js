@@ -15,21 +15,26 @@ import {
 	select
 } from '@wordpress/data';
 
-import { useState } from '@wordpress/element';
-
 import { MediaUpload } from '@wordpress/media-utils';
 
 const SiteInfo = () => {
-	const [ siteTitle, setSiteTitle ] = useState( '' );
-	const [ siteLogo, setSiteLogo ] = useState({});
-
-	const { title } = useSelect( select => {
-		const { getEditedEntityRecord } = select( 'core' );
+	const {
+		title,
+		siteLogo,
+		siteLogoURL
+	} = useSelect( select => {
+		const {
+			getEditedEntityRecord,
+			getMedia
+		} = select( 'core' );
 
 		const settings = getEditedEntityRecord( 'root', 'site' );
+		const siteLogoURL = settings?.site_logo ? getMedia( settings?.site_logo, { context: 'view' }) : null;
 
 		return {
-			title: settings?.title
+			title: settings?.title,
+			siteLogo: settings?.site_logo,
+			siteLogoURL: siteLogoURL?.source_url
 		};
 	}, []);
 
@@ -82,16 +87,16 @@ const SiteInfo = () => {
 					'core/site-logo',
 					{
 						attributes: {
-							...siteTitleBlock.attributes,
-							url: newLogo.url,
-							id: newLogo.id
+							...siteTitleBlock.attributes
 						}
 					}
 				) );
 			}
 		}
 
-		setSiteLogo( newLogo );
+		editEntityRecord( 'root', 'site', undefined, {
+			'site_logo': newLogo?.id
+		});
 	};
 
 	const removeLogo = () => {
@@ -110,7 +115,9 @@ const SiteInfo = () => {
 			) );
 		}
 
-		setSiteLogo({});
+		editEntityRecord( 'root', 'site', undefined, {
+			'site_logo': null
+		});
 	};
 
 	return (
@@ -128,10 +135,10 @@ const SiteInfo = () => {
 				<MediaUpload
 					onSelect={ setLogo }
 					allowedTypes={ [ 'image' ] }
-					value={ siteLogo?.id || '' }
+					value={ siteLogo || '' }
 					render={ ({ open }) => (
 						<>
-							{ ! siteLogo?.id && (
+							{ ! siteLogo && (
 								<div
 									className="o-logo__placeholder"
 									onClick={ () => onOpenMedia( open ) }
@@ -140,14 +147,14 @@ const SiteInfo = () => {
 								</div>
 							) }
 
-							{ siteLogo?.id && (
+							{ siteLogo && (
 								<>
 									<div
 										className="o-logo__image"
 										onClick={ () => onOpenMedia( open ) }
 									>
 										<img
-											src={ siteLogo?.url }
+											src={ siteLogoURL }
 											alt={ __( 'Site Logo', 'otter-blocks' ) }
 											title={ __( 'Click to replace', 'otter-blocks' ) }
 										/>

@@ -53,16 +53,6 @@ class FSE_Onboarding {
 
 		wp_set_script_translations( 'otter-onboarding-scripts', 'otter-blocks' );
 
-		$variations = \WP_Theme_JSON_Resolver::get_style_variations();
-
-		$theme_data = \WP_Theme_JSON_Resolver::get_merged_data( 'theme' );
-		$data       = $theme_data->get_data();
-
-		$default_variation = array(
-			'title'    => __( 'Default', 'otter-blocks' ),
-			'settings' => $data,
-		);
-
 		wp_localize_script(
 			'otter-onboarding-scripts',
 			'otterObj',
@@ -71,8 +61,6 @@ class FSE_Onboarding {
 				array(
 					'version'       => OTTER_BLOCKS_VERSION,
 					'assetsPath'    => OTTER_BLOCKS_URL . 'assets/',
-					'themeStyles'   => $variations,
-					'defaultStyles' => $default_variation,
 				)
 			)
 		);

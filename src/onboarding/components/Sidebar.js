@@ -24,11 +24,13 @@ const STEP_DATA = {
 	'site_info': {
 		title: __( 'Add your site\'s info', 'otter-blocks' ),
 		description: __( 'Add your site title and a logo. No logo yet? No worries, you can add one later.', 'otter-blocks' ),
+		hideSkip: true,
 		controls: SiteInfo
 	},
 	'appearance': {
 		title: __( 'Edit site\'s appearance', 'otter-blocks' ),
 		description: __( 'Change the appearance of your entire site in minutes, by choosing a theme style preset.', 'otter-blocks' ),
+		hideSkip: true,
 		controls: Appearance
 	},
 	'blog_template': {
@@ -80,7 +82,7 @@ const Sidebar = ({ isEditorLoading }) => {
 			<div className="o-sidebar__header">
 				<img
 					className="o-sidebar__logo"
-					src={ `${ window.otterObj.assetsPath }/images/logo-alt.png` }
+					src={ `${ window.otterObj.assetsPath }images/logo-alt.png` }
 				/>
 
 				{ 1 !== stepIndex ? (
@@ -117,12 +119,14 @@ const Sidebar = ({ isEditorLoading }) => {
 					{ __( 'Continue', 'otter-blocks' ) }
 				</Button>
 
-				<Button
-					variant="tertiary"
-					onClick={ nextStep }
-				>
-					{ __( 'Skip this step', 'otter-blocks' ) }
-				</Button>
+				{ ! STEP_DATA[ currentStep ]?.hideSkip && (
+					<Button
+						variant="tertiary"
+						onClick={ nextStep }
+					>
+						{ __( 'Skip this step', 'otter-blocks' ) }
+					</Button>
+				) }
 			</div>
 		</div>
 	);
