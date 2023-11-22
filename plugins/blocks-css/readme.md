@@ -1,7 +1,7 @@
 # Blocks CSS: CSS Editor for Gutenberg Blocks #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/)  
 **Tags:** gutenberg, block, css, css editor, blocks css  
-**Requires at least:** 5.9      
+**Requires at least:** 6.2      
 **Tested up to:** 6.4  
 **Requires PHP:** 5.4    
 **Stable tag:** trunk  
