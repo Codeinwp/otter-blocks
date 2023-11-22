@@ -1,7 +1,7 @@
 === Otter Blocks - Gutenberg Blocks, Page Builder for Gutenberg Editor & FSE ===
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: block, blocks, gutenberg, gutenberg blocks, wordPress blocks, editor, block Editor, page Builder, post blocks, post grids
-Requires at least: 5.9
+Requires at least: 6.2
 Tested up to: 6.4
 Requires PHP: 5.6
 Stable tag: trunk

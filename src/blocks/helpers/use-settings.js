@@ -5,15 +5,15 @@ import api from '@wordpress/api';
 
 import { __ } from '@wordpress/i18n';
 
-import { dispatch } from '@wordpress/data';
-
 import {
-	useEffect,
-	useState
-} from '@wordpress/element';
+	dispatch,
+	useSelect
+} from '@wordpress/data';
+
+import { useState } from '@wordpress/element';
 
 /**
- * useSettings Hook.
+ * useSettings Hook, modifed for Otter usage.
  *
  * useSettings hook to get/update WordPress' settings database.
  *
@@ -29,29 +29,28 @@ import {
  * @returns {[(optionName: string) => any, (option: string, value: any, success?: string, noticeId?: string, onSuccess: Function) => void, 'loading' | 'loaded' | 'error' | 'saving']} [ getOption, updateOption, status ]
  *
  */
+let updatedSettings = {};
 const useSettings = () => {
 	const { createNotice } = dispatch( 'core/notices' );
 
-	const [ settings, setSettings ] = useState({});
 	const [ status, setStatus ] = useState( 'loading' );
+	const [ settings, setSettings ] = useState({});
 
-	const getSettings = () => {
-		api.loadPromise.then( async() => {
-			try {
-				const settings = new api.models.Settings();
-				const response = await settings.fetch();
-				setSettings( response );
-			} catch ( error ) {
-				setStatus( 'error' );
-			} finally {
-				setStatus( 'loaded' );
-			}
-		});
-	};
+	useSelect( select => {
+		const { getEntityRecord } = select( 'core' );
 
-	useEffect( () => {
-		getSettings();
-	}, []);
+		// Bail out if settings are already loaded.
+		if ( Object.keys( settings ).length ) {
+			return;
+		}
+
+		const request = getEntityRecord( 'root', 'site' );
+
+		if ( request ) {
+			setStatus( 'loaded' );
+			setSettings( request );
+		}
+	}, [ settings ]);
 
 	/**
 	 * Get the value of the given option.
@@ -60,7 +59,7 @@ const useSettings = () => {
 	 * @returns {any} Option value.
 	 */
 	const getOption = option => {
-		return settings?.[option];
+		return updatedSettings?.[option] || settings?.[option];
 	};
 
 	/**
@@ -107,7 +106,8 @@ const useSettings = () => {
 				);
 			}
 
-			getSettings();
+			updatedSettings = response;
+			setSettings( response );
 			onSuccess?.( response );
 		});
 

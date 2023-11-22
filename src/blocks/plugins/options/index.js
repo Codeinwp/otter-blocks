@@ -89,7 +89,7 @@ export let NavigatorButton = ({
 	);
 };
 
-const Options = () => {
+const Sidebar = () => {
 	const { isOnboardingVisible, get } = useSelect( select => {
 		const { isOnboardingVisible } = select( 'themeisle-gutenberg/data' );
 		const get = select( 'core/preferences' )?.get;
@@ -273,13 +273,197 @@ const Options = () => {
 		Controls = globalControls.find( item => item.name === selectedBlock ).control;
 	}
 
-	const navigator = useNavigator();
-
 	const enabledModules = {
 		'css': Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ),
 		'animation': Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ),
 		'condition': Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) )
 	};
+
+	return (
+		<NavigatorProvider
+			initialPath="/"
+		>
+			<NavigatorScreen path="/">
+				<PanelBody className="o-options-general">
+					<PanelRow>
+						<Button
+							icon={ otterIconColored }
+							onClick={ () => showOnboarding( ! isOnboardingVisible ) }
+							className="o-onboarding-button"
+						>
+							{ __( 'Show Onboarding Modal', 'otter-blocks' ) }
+						</Button>
+					</PanelRow>
+				</PanelBody>
+
+				{
+					canUser && (
+						<Fragment>
+							<PanelBody
+								title={__( 'Block Tools Defaults', 'otter-blocks' )}
+								initialOpen={true}
+							>
+								<p>
+									{
+										__( 'Make those features to be shown by default in Block Tools.', 'otter-blocks' )
+									}
+								</p>
+
+								{
+									'loading' === status && (
+										<p>
+											<Spinner />
+											{ __( 'Checking optional module...', 'otter-blocks' ) }
+										</p>
+									)
+								}
+
+								{
+									enabledModules?.css && (
+										<PanelRow>
+											<ToggleControl
+												className="o-sidebar-toggle"
+												label={__( 'Custom CSS', 'otter-blocks' )}
+												checked={get?.( 'themeisle/otter-blocks', 'show-custom-css' )}
+												disabled={'loading' === preferenceStatus}
+												onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-custom-css', value ) )}
+											/>
+										</PanelRow>
+									)
+								}
+
+								{
+									enabledModules?.animation && (
+										<PanelRow>
+											<ToggleControl
+												className="o-sidebar-toggle"
+												label={__( 'Animation', 'otter-blocks' )}
+												checked={get?.( 'themeisle/otter-blocks', 'show-animations' ) ?? false}
+												disabled={'loading' === preferenceStatus}
+												onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-animations', value ) )}
+											/>
+										</PanelRow>
+									)
+								}
+
+								{
+									enabledModules?.condition && (
+										<PanelRow>
+											<ToggleControl
+												className="o-sidebar-toggle"
+												label={__( 'Visibility Condition', 'otter-blocks' )}
+												checked={get?.( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? false }
+												disabled={'loading' === preferenceStatus}
+												onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-block-conditions', value ) )}
+											/>
+										</PanelRow>
+									)
+								}
+							</PanelBody>
+
+							<NavigatorButton
+								path="/block-settings"
+								icon={ chevronRightSmall }
+								className="o-navi-button"
+							>
+								{ __( 'Block Settings', 'otter-blocks' ) }
+							</NavigatorButton>
+						</Fragment>
+					)
+				}
+
+				{ applyFilters( 'otter.feedback', '', 'otter-menu-editor', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
+			</NavigatorScreen>
+
+			<NavigatorScreen
+				path="/block-settings"
+				className="o-options-global-defaults"
+			>
+				<NavigatorButton
+					path="/"
+					icon={ chevronLeftSmall }
+					className="o-navi-button o-navi-button-back"
+				>
+					{ __( 'Settings', 'otter-blocks' ) }
+				</NavigatorButton>
+
+				<GlobalDefaults
+					isAPILoaded={ isAPILoaded }
+					globalControls={ globalControls }
+					blockDefaults={ blockDefaults }
+					setSelectedBlock={ setSelectedBlock}
+				/>
+			</NavigatorScreen>
+
+			<NavigatorScreen
+				path="/block-settings/global-defaults"
+				className="o-options-global-defaults-modal"
+			>
+				<NavigatorButton
+					path="/block-settings"
+					icon={ chevronLeftSmall }
+					className="o-navi-button o-navi-button-back"
+				>
+					{ __( 'Blocks', 'otter-blocks' ) }
+				</NavigatorButton>
+
+				{ selectedBlock && (
+					<Fragment>
+						<Controls
+							blockName={ selectedBlock }
+							defaults={ blockDefaults[ selectedBlock ] }
+							changeConfig={ changeConfig }
+						/>
+
+						<div className="o-options-global-defaults-actions">
+							<Button
+								isDestructive
+								onClick={ () => resetConfig( selectedBlock ) }
+							>
+								{ __( 'Reset', 'otter-blocks' ) }
+							</Button>
+
+							<Button
+								isBusy={ isLoading }
+								onClick={ async() => {
+									setLoading( true );
+									await saveConfig();
+									setLoading( false );
+								} }
+							>
+								{ __( 'Save', 'otter-blocks' ) }
+							</Button>
+						</div>
+					</Fragment>
+				)}
+			</NavigatorScreen>
+		</NavigatorProvider>
+	);
+};
+
+const Options = () => {
+	useEffect( () => {
+		let isMounted = true;
+
+		const fetchData = async() => {
+			const data = await apiFetch({ path: 'wp/v2/users/me?context=edit' });
+
+			if ( data.capabilities.manage_options && isMounted ) {
+				setCanUser( true );
+			} else {
+				setCanUser( false );
+				setAPILoaded( true );
+			}
+		};
+
+		fetchData();
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
+
+	const [ canUser, setCanUser ] = useState( false );
 
 	return (
 		<Fragment>
@@ -295,164 +479,7 @@ const Options = () => {
 				title={ __( 'Otter Options', 'otter-blocks' ) }
 				name="otter-options"
 			>
-				<NavigatorProvider
-					initialPath="/"
-				>
-					<NavigatorScreen path="/">
-						<PanelBody className="o-options-general">
-							<PanelRow>
-								<Button
-									icon={ otterIconColored }
-									onClick={ () => showOnboarding( ! isOnboardingVisible ) }
-									className="o-onboarding-button"
-								>
-									{ __( 'Show Onboarding Modal', 'otter-blocks' ) }
-								</Button>
-							</PanelRow>
-						</PanelBody>
-
-						{
-							canUser && (
-								<Fragment>
-									<PanelBody
-										title={__( 'Block Tools Defaults', 'otter-blocks' )}
-										initialOpen={true}
-									>
-										<p>
-											{
-												__( 'Make those features to be shown by default in Block Tools.', 'otter-blocks' )
-											}
-										</p>
-
-										{
-											'loading' === status && (
-												<p>
-													<Spinner />
-													{ __( 'Checking optional module...', 'otter-blocks' ) }
-												</p>
-											)
-										}
-
-										{
-											enabledModules?.css && (
-												<PanelRow>
-													<ToggleControl
-														className="o-sidebar-toggle"
-														label={__( 'Custom CSS', 'otter-blocks' )}
-														checked={get?.( 'themeisle/otter-blocks', 'show-custom-css' )}
-														disabled={'loading' === preferenceStatus}
-														onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-custom-css', value ) )}
-													/>
-												</PanelRow>
-											)
-										}
-
-										{
-											enabledModules?.animation && (
-												<PanelRow>
-													<ToggleControl
-														className="o-sidebar-toggle"
-														label={__( 'Animation', 'otter-blocks' )}
-														checked={get?.( 'themeisle/otter-blocks', 'show-animations' ) ?? false}
-														disabled={'loading' === preferenceStatus}
-														onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-animations', value ) )}
-													/>
-												</PanelRow>
-											)
-										}
-
-										{
-											enabledModules?.condition && (
-												<PanelRow>
-													<ToggleControl
-														className="o-sidebar-toggle"
-														label={__( 'Visibility Condition', 'otter-blocks' )}
-														checked={get?.( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? false }
-														disabled={'loading' === preferenceStatus}
-														onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-block-conditions', value ) )}
-													/>
-												</PanelRow>
-											)
-										}
-									</PanelBody>
-
-									<NavigatorButton
-										path="/block-settings"
-										icon={ chevronRightSmall }
-										className="o-navi-button"
-									>
-										{ __( 'Block Settings', 'otter-blocks' ) }
-									</NavigatorButton>
-								</Fragment>
-							)
-						}
-
-						{ applyFilters( 'otter.feedback', '', 'otter-menu-editor', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
-					</NavigatorScreen>
-
-					<NavigatorScreen
-						path="/block-settings"
-						className="o-options-global-defaults"
-					>
-						<NavigatorButton
-							path="/"
-							icon={ chevronLeftSmall }
-							className="o-navi-button o-navi-button-back"
-						>
-							{ __( 'Settings', 'otter-blocks' ) }
-						</NavigatorButton>
-
-						<GlobalDefaults
-							isAPILoaded={ isAPILoaded }
-							globalControls={ globalControls }
-							blockDefaults={ blockDefaults }
-							setSelectedBlock={ setSelectedBlock}
-						/>
-					</NavigatorScreen>
-
-					<NavigatorScreen
-						path="/block-settings/global-defaults"
-						className="o-options-global-defaults-modal"
-					>
-						<NavigatorButton
-							path="/block-settings"
-							icon={ chevronLeftSmall }
-							className="o-navi-button o-navi-button-back"
-						>
-							{ __( 'Blocks', 'otter-blocks' ) }
-						</NavigatorButton>
-
-						{ selectedBlock && (
-							<Fragment>
-								<Controls
-									blockName={ selectedBlock }
-									defaults={ blockDefaults[ selectedBlock ] }
-									changeConfig={ changeConfig }
-								/>
-
-								<div className="o-options-global-defaults-actions">
-									<Button
-										isDestructive
-										onClick={ () => resetConfig( selectedBlock ) }
-									>
-										{ __( 'Reset', 'otter-blocks' ) }
-									</Button>
-
-									<Button
-										isBusy={ isLoading }
-										onClick={ async() => {
-											setLoading( true );
-											await saveConfig();
-											setLoading( false );
-										} }
-									>
-										{ __( 'Save', 'otter-blocks' ) }
-									</Button>
-								</div>
-							</Fragment>
-						)}
-					</NavigatorScreen>
-				</NavigatorProvider>
+				<Sidebar />
 			</PluginSidebar>
 		</Fragment>
 	);
