@@ -1,7 +1,7 @@
 # Otter Blocks - Gutenberg Blocks, Page Builder for Gutenberg Editor & FSE #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
 **Tags:** block, blocks, gutenberg, gutenberg blocks, wordPress blocks, editor, block Editor, page Builder, post blocks, post grids  
-**Requires at least:** 5.9  
+**Requires at least:** 6.2  
 **Tested up to:** 6.4  
 **Requires PHP:** 5.6  
 **Stable tag:** trunk  
@@ -316,6 +316,14 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 ## Changelog ##
+
+##### [Version 2.5.2](https://github.com/Codeinwp/otter-blocks/compare/v2.5.1...v2.5.2) (2023-11-22)
+
+### Bug Fixes
+- **Fixes Performance Issue**: Fixes an issue with Otter making repeated calls to Rest API and slowing down the editor.
+
+
+
 
 ##### [Version 2.5.1](https://github.com/Codeinwp/otter-blocks/compare/v2.5.0...v2.5.1) (2023-11-18)
 
