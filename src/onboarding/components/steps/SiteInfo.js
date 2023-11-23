@@ -21,20 +21,25 @@ const SiteInfo = () => {
 	const {
 		title,
 		siteLogo,
-		siteLogoURL
+		siteLogoURL,
+		templateParts
 	} = useSelect( select => {
 		const {
 			getEditedEntityRecord,
 			getMedia
 		} = select( 'core' );
 
+		const { getCurrentTemplateTemplateParts } = select( 'core/edit-site' );
+
 		const settings = getEditedEntityRecord( 'root', 'site' );
 		const siteLogoURL = settings?.site_logo ? getMedia( settings?.site_logo, { context: 'view' }) : null;
+		const templateParts = getCurrentTemplateTemplateParts();
 
 		return {
 			title: settings?.title,
 			siteLogo: settings?.site_logo,
-			siteLogoURL: siteLogoURL?.source_url
+			siteLogoURL: siteLogoURL?.source_url,
+			templateParts
 		};
 	}, []);
 
@@ -69,7 +74,13 @@ const SiteInfo = () => {
 	};
 
 	const onOpenMedia = open => {
-		setEditedEntity( 'wp_template_part', 'raft//header', 'edit' );
+		const template = templateParts.find( part => 'header' === part.templatePart.slug )?.templatePart.id ?? templateParts.find( part => part.templatePart.slug?.includes( 'header' ) )?.templatePartid;
+		const editedEntity = select( 'core/edit-site' ).getEditedPostId();
+
+		if ( template && template !== editedEntity ) {
+			setEditedEntity( 'wp_template_part', template, 'edit' );
+		}
+
 		open();
 	};
 
@@ -100,24 +111,38 @@ const SiteInfo = () => {
 	};
 
 	const removeLogo = () => {
-		const blocks = select( 'core/block-editor' ).getBlocks();
+		const template = templateParts.find( part => 'header' === part.templatePart.slug )?.templatePart.id ?? templateParts.find( part => part.templatePart.slug?.includes( 'header' ) )?.templatePartid;
+		const editedEntity = select( 'core/edit-site' ).getEditedPostId();
 
-		let siteLogoBlock = findBlock( blocks, 'core/site-logo' );
-
-		if ( siteLogoBlock ) {
-			replaceBlock( siteLogoBlock.clientId, wp.blocks.createBlock(
-				'core/site-title',
-				{
-					attributes: {
-						...siteLogoBlock.attributes
-					}
-				}
-			) );
+		if ( template && template !== editedEntity ) {
+			setEditedEntity( 'wp_template_part', template, 'edit' );
 		}
 
-		editEntityRecord( 'root', 'site', undefined, {
-			'site_logo': null
-		});
+		setTimeout( () => {
+			if ( template && template !== editedEntity ) {
+				removeLogo();
+				return;
+			}
+
+			const blocks = select( 'core/block-editor' ).getBlocks();
+
+			let siteLogoBlock = findBlock( blocks, 'core/site-logo' );
+
+			if ( siteLogoBlock ) {
+				replaceBlock( siteLogoBlock.clientId, wp.blocks.createBlock(
+					'core/site-title',
+					{
+						attributes: {
+							...siteLogoBlock.attributes
+						}
+					}
+				) );
+			}
+
+			editEntityRecord( 'root', 'site', undefined, {
+				'site_logo': null
+			});
+		}, 1000 );
 	};
 
 	return (

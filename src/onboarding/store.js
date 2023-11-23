@@ -5,10 +5,16 @@ import apiFetch from '@wordpress/api-fetch';
 
 import {
 	createReduxStore,
-	register
+	dispatch,
+	register,
+	select
 } from '@wordpress/data';
 
 import { addQueryArgs } from '@wordpress/url';
+
+const { __experimentalGetDirtyEntityRecords } = select( 'core' );
+
+const { saveEditedEntityRecord } = dispatch( 'core' );
 
 const STEPS = [
 	{
@@ -36,7 +42,8 @@ const STEPS = [
 const DEFAULT_STATE = {
 	step: 1,
 	templates: {},
-	templateParts: {}
+	templateParts: {},
+	isSaving: false
 };
 
 const actions = {
@@ -62,6 +69,25 @@ const actions = {
 			dispatch( actions.setStep( newStep ) );
 		};
 	},
+	onContinue() {
+		return async({ dispatch, select }) => {
+			const step = select.getStep();
+
+			if ([ 'site_info', 'appearance' ].includes( step.id )  ) {
+				const edits = __experimentalGetDirtyEntityRecords();
+
+				dispatch( actions.setSaving( true ) );
+
+				await Promise.all( edits.map( async edit => {
+					await saveEditedEntityRecord( edit.kind, edit.name, edit?.key );
+				}) );
+
+				dispatch( actions.setSaving( false ) );
+			}
+
+			dispatch( actions.nextStep() );
+		};
+	},
 	setTemplate( template ) {
 		return {
 			type: 'SET_TEMPLATE',
@@ -72,6 +98,12 @@ const actions = {
 		return {
 			type: 'SET_TEMPLATE_PART',
 			templatePart
+		};
+	},
+	setSaving( isSaving ) {
+		return {
+			type: 'SET_SAVING',
+			isSaving
 		};
 	},
 	fetchFromAPI( path ) {
@@ -108,6 +140,11 @@ const store = createReduxStore( 'otter/onboarding', {
 					[action.templatePart.id]: action.templatePart
 				}
 			};
+		case 'SET_SAVING':
+			return {
+				...state,
+				isSaving: action.isSaving
+			};
 		}
 
 		return state;
@@ -124,6 +161,9 @@ const store = createReduxStore( 'otter/onboarding', {
 		},
 		getTemplatePart( state, slug ) {
 			return state.templateParts?.[ slug ];
+		},
+		isSaving( state ) {
+			return state.isSaving;
 		}
 	},
 

@@ -50,17 +50,26 @@ const STEP_DATA = {
 const Sidebar = ({ isEditorLoading }) => {
 	const {
 		currentStep,
-		stepIndex
+		stepIndex,
+		isSaving
 	} = useSelect( select => {
-		const { getStep } = select( 'otter/onboarding' );
+		const {
+			getStep,
+			isSaving
+		} = select( 'otter/onboarding' );
 
 		return {
 			currentStep: getStep()?.id,
-			stepIndex: getStep()?.value
+			stepIndex: getStep()?.value,
+			isSaving: isSaving()
 		};
 	});
 
-	const { nextStep, previousStep } = useDispatch( 'otter/onboarding' );
+	const {
+		nextStep,
+		previousStep,
+		onContinue
+	} = useDispatch( 'otter/onboarding' );
 
 	const Controls = STEP_DATA[ currentStep ]?.controls || null;
 
@@ -71,7 +80,7 @@ const Sidebar = ({ isEditorLoading }) => {
 
 	return (
 		<div className="o-sidebar">
-			{ ( isEditorLoading ) && (
+			{ ( isEditorLoading || isSaving ) && (
 				<div className="o-sidebar__loader">
 					<Disabled>
 						<Spinner />
@@ -114,7 +123,7 @@ const Sidebar = ({ isEditorLoading }) => {
 			<div className="o-sidebar__actions">
 				<Button
 					variant="primary"
-					onClick={ nextStep }
+					onClick={ onContinue }
 				>
 					{ __( 'Continue', 'otter-blocks' ) }
 				</Button>

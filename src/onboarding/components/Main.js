@@ -10,8 +10,6 @@ import { useSelect } from '@wordpress/data';
  */
 import Homepage from './steps/Homepage';
 
-import { useIsSiteEditorLoading } from '../hooks';
-
 const STEP_DATA = {
 	'site_info': {
 		controls: Homepage
