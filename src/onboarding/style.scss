@@ -2,6 +2,7 @@ $main-bg: #F4F4F4;
 $secondary-text: #848484;
 $main-color: #151414;
 $border-color: #E5E5E5;
+$primary: #0366D5;
 
 div.error, div.notice {
 	display: none;
@@ -249,6 +250,7 @@ div.error, div.notice {
 
 .o-main {
 	height: 100vh;
+	background: $main-bg;
 	overflow: scroll;
 }
 
@@ -258,5 +260,50 @@ div.error, div.notice {
 		justify-content: center;
 		align-items: center;
 		height: 100%;
+	}
+}
+
+.o-templates {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	padding: 4rem 6rem;
+	gap: 2rem;
+
+	&__item {
+		cursor: pointer;
+		position: relative;
+		overflow: hidden;
+
+		&__container {
+			border: 2px solid #E5E5E5;
+			border-radius: 12px;
+			overflow: hidden;
+
+			&.is-selected {
+				border: 3px solid var( --primary, #0366D5 ); 
+			}
+
+			.block-editor-block-preview__container {
+				aspect-ratio: 5/6;
+			}
+		}
+
+		&__title {
+			margin-top: 1rem;
+			text-align: center;
+		}
+
+		&__overlay {
+			position: absolute;
+			top: 0;
+			right: 0;
+			border-radius: 0 8px 0 12px;
+			padding: 0 2px;
+			background: var(--primary, #0366D5);
+
+			svg {
+				fill: #FFFFFF;
+			}
+		}
 	}
 }

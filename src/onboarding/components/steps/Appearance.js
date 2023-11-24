@@ -56,7 +56,7 @@ const Appearance = () => {
 		}
 
 		const foundStyle = themeStyles.find( style =>
-			fastDeepEqual( globalStyle?.styles, style?.styles ) &&
+			fastDeepEqual( globalStyle?.styles, style?.styles || {}) &&
             fastDeepEqual( globalStyle?.settings, style?.settings )
 		);
 

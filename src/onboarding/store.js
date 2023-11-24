@@ -14,7 +14,10 @@ import { addQueryArgs } from '@wordpress/url';
 
 const { __experimentalGetDirtyEntityRecords } = select( 'core' );
 
-const { saveEditedEntityRecord } = dispatch( 'core' );
+const {
+	editEntityRecord,
+	saveEditedEntityRecord
+} = dispatch( 'core' );
 
 const STEPS = [
 	{
@@ -26,7 +29,7 @@ const STEPS = [
 		value: 2
 	},
 	{
-		id: 'blog_template',
+		id: 'archive_template',
 		value: 3
 	},
 	{
@@ -42,7 +45,13 @@ const STEPS = [
 const DEFAULT_STATE = {
 	step: 1,
 	templates: {},
+	sourceTemplates: {},
 	templateParts: {},
+	library: {},
+	selectedTemplates: {
+		archive: 'default',
+		single: 'default'
+	},
 	isSaving: false
 };
 
@@ -72,19 +81,40 @@ const actions = {
 	onContinue() {
 		return async({ dispatch, select }) => {
 			const step = select.getStep();
+			const edits = __experimentalGetDirtyEntityRecords();
+			const selectedTemplate = select.getSelectedTemplate( 'archive' );
 
-			if ([ 'site_info', 'appearance' ].includes( step.id )  ) {
-				const edits = __experimentalGetDirtyEntityRecords();
+			dispatch( actions.setSaving( true ) );
 
-				dispatch( actions.setSaving( true ) );
+			if ( 'archive_template' === step.id && !! selectedTemplate ) {
+				const archive = select.getTemplate({ slug: 'archive' });
+				let content = '';
 
+				if ( 'default' === selectedTemplate ) {
+					const template = archive?.id && select.getSourceTemplate( archive );
+					content = template?.content?.raw ?? '';
+				} else {
+					const library = select.getLibrary( 'archive' );
+					content = library[selectedTemplate]?.content?.raw ?? '';
+				}
+
+				editEntityRecord( 'postType', 'wp_template', archive.id, {
+					'content': content
+				});
+
+				if ( ! edits.length ) {
+					dispatch( actions.onContinue() );
+					return;
+				}
+			}
+
+			if ([ 'site_info', 'appearance', 'archive_template' ].includes( step.id )  ) {
 				await Promise.all( edits.map( async edit => {
 					await saveEditedEntityRecord( edit.kind, edit.name, edit?.key );
 				}) );
-
-				dispatch( actions.setSaving( false ) );
 			}
 
+			dispatch( actions.setSaving( false ) );
 			dispatch( actions.nextStep() );
 		};
 	},
@@ -94,10 +124,29 @@ const actions = {
 			template
 		};
 	},
+	setSourceTemplate( template ) {
+		return {
+			type: 'SET_SOURCE_TEMPLATE',
+			template
+		};
+	},
 	setTemplatePart( templatePart ) {
 		return {
 			type: 'SET_TEMPLATE_PART',
 			templatePart
+		};
+	},
+	setLibrary( library ) {
+		return {
+			type: 'SET_LIBRARY',
+			library
+		};
+	},
+	setSelectedTemplate( slug, template ) {
+		return {
+			type: 'SET_SELECTED_TEMPLATE',
+			slug,
+			template
 		};
 	},
 	setSaving( isSaving ) {
@@ -122,7 +171,6 @@ const store = createReduxStore( 'otter/onboarding', {
 				...state,
 				step: action.step
 			};
-
 		case 'SET_TEMPLATE':
 			return {
 				...state,
@@ -131,13 +179,33 @@ const store = createReduxStore( 'otter/onboarding', {
 					[action.template.slug]: action.template
 				}
 			};
-
+		case 'SET_SOURCE_TEMPLATE':
+			return {
+				...state,
+				sourceTemplates: {
+					...state.sourceTemplates,
+					[action.template.slug]: action.template
+				}
+			};
 		case 'SET_TEMPLATE_PART':
 			return {
 				...state,
 				templateParts: {
 					...state.templateParts,
 					[action.templatePart.id]: action.templatePart
+				}
+			};
+		case 'SET_LIBRARY':
+			return {
+				...state,
+				library: action.library
+			};
+		case 'SET_SELECTED_TEMPLATE':
+			return {
+				...state,
+				selectedTemplates: {
+					...state.selectedTemplates,
+					[action.slug]: action.template
 				}
 			};
 		case 'SET_SAVING':
@@ -159,8 +227,21 @@ const store = createReduxStore( 'otter/onboarding', {
 		getTemplate( state, query ) {
 			return state.templates?.[ query?.slug ];
 		},
+		getSourceTemplate( state, query ) {
+			return state.sourceTemplates?.[ query?.slug ];
+		},
 		getTemplatePart( state, slug ) {
 			return state.templateParts?.[ slug ];
+		},
+		getLibrary( state, type ) {
+			if ( ! type ) {
+				return state.library;
+			}
+
+			return state.library[ type ] ?? {};
+		},
+		getSelectedTemplate( state, type ) {
+			return state.selectedTemplates[ type ];
 		},
 		isSaving( state ) {
 			return state.isSaving;
@@ -175,14 +256,35 @@ const store = createReduxStore( 'otter/onboarding', {
 
 	resolvers: {
 		*getTemplate( query ) {
-			const path = addQueryArgs( '/wp/v2/templates/lookup', query );
+			let path = addQueryArgs( '/wp/v2/templates/lookup', query );
 			const value = yield actions.fetchFromAPI( path );
 			return actions.setTemplate( value );
+		},
+		*getSourceTemplate( query ) {
+			const path = addQueryArgs(
+				`/wp/v2/templates/${ query?.id }`,
+				{
+					source: 'theme',
+					context: 'edit'
+				}
+			);
+			const value = yield actions.fetchFromAPI( path );
+			return actions.setSourceTemplate( value );
 		},
 		*getTemplatePart( slug ) {
 			const path = `/wp/v2/template-parts/${ slug }` ;
 			const value = yield actions.fetchFromAPI( path );
 			return actions.setTemplatePart( value );
+		},
+		*getLibrary() {
+			const path = '/otter/v1/onboarding/templates';
+			const value = yield actions.fetchFromAPI( path );
+
+			if ( ! value?.success ) {
+				return;
+			}
+
+			return actions.setLibrary( value.data );
 		}
 	}
 });

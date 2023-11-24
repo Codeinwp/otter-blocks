@@ -108,7 +108,7 @@ const Controls = ({
 
 			<ToolbarGroup>
 				<Dropdown
-					contentClassName="wp-themesiel-blocks-advanced-heading-popover-content"
+					contentClassName="wp-themeisle-blocks-advanced-heading-popover-content"
 					position="bottom center"
 					renderToggle={ ({ isOpen, onToggle }) => (
 						<Button

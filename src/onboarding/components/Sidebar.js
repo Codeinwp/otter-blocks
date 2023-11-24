@@ -33,7 +33,7 @@ const STEP_DATA = {
 		hideSkip: true,
 		controls: Appearance
 	},
-	'blog_template': {
+	'archive_template': {
 		title: __( 'Select a template for your Blog Page', 'otter-blocks' ),
 		description: __( 'Choose a layout for for how your blog posts appear in the blog page.', 'otter-blocks' )
 	},

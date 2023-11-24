@@ -9,6 +9,7 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies.
  */
 import Homepage from './steps/Homepage';
+import Archive from './steps/Archive';
 
 const STEP_DATA = {
 	'site_info': {
@@ -17,8 +18,8 @@ const STEP_DATA = {
 	'appearance': {
 		controls: Homepage
 	},
-	'blog_template': {
-		controls: Homepage
+	'archive_template': {
+		controls: Archive
 	},
 	'single_template': {
 		controls: Homepage
