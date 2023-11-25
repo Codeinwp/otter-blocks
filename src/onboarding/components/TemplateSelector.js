@@ -20,11 +20,12 @@ const TemplateSelector = ({
 	template,
 	label,
 	isSelected,
+	isParsed = false,
 	onClick
 }) => {
 	const ref = useRef();
 
-	const parsedTemplate = template?.content?.raw ? parse( template?.content?.raw ) : [];
+	const parsedTemplate = isParsed ? template : ( template?.content?.raw ? parse( template?.content?.raw ) : []);
 
 	return (
 		<div

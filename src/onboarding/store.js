@@ -50,7 +50,8 @@ const DEFAULT_STATE = {
 	library: {},
 	selectedTemplates: {
 		archive: '',
-		single: ''
+		single: '',
+		pageTemplates: []
 	},
 	isSaving: false
 };

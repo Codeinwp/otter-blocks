@@ -28,7 +28,7 @@ const Template = ({
 		editedEntity,
 		selectedTemplate,
 		isDefault
-	} = useSelect( ( select ) => {
+	} = useSelect( select => {
 		const { getEditedPostId } = select( 'core/edit-site' );
 
 		const {

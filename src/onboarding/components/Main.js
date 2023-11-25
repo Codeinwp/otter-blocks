@@ -12,6 +12,7 @@ import { useSelect } from '@wordpress/data';
  */
 import Homepage from './steps/Homepage';
 import Template from './steps/Template';
+import Pages from './steps/Pages';
 
 const STEP_DATA = {
 	'site_info': {
@@ -35,7 +36,7 @@ const STEP_DATA = {
 		}
 	},
 	'additional_templates': {
-		controls: Homepage
+		controls: Pages
 	}
 };
 

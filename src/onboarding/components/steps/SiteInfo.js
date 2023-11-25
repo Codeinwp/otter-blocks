@@ -17,6 +17,11 @@ import {
 
 import { MediaUpload } from '@wordpress/media-utils';
 
+/**
+ * Internal dependencies.
+ */
+import { findBlock } from '../../utils';
+
 const SiteInfo = () => {
 	const {
 		title,
@@ -51,26 +56,6 @@ const SiteInfo = () => {
 		editEntityRecord( 'root', 'site', undefined, {
 			title: newTitle
 		});
-	};
-
-	const findBlock = ( blocksAr, name ) => {
-		const foundBlock = blocksAr.find( block => block.name === name );
-
-		if ( foundBlock ) {
-			return foundBlock;
-		}
-
-		return blocksAr.reduce( ( found, block ) => {
-			if ( found ) {
-				return found;
-			}
-
-			if ( block.innerBlocks && Array.isArray( block.innerBlocks ) ) {
-				return findBlock( block.innerBlocks, name );
-			}
-
-			return undefined;
-		}, undefined );
 	};
 
 	const onOpenMedia = open => {

@@ -72,7 +72,7 @@ class FSE_Onboarding_Server {
 	public function get_templates( \WP_REST_Request $request ) {
         $support = get_theme_support( 'otter-onboarding' );
 
-        if ( false === $support && ! is_array( $support ) || ! isset( $support[0]['templates'] ) ) {
+        if ( false === $support && ! is_array( $support ) || ( ! isset( $support[0]['templates'] ) && ! isset( $support[0]['page_templates'] )  ) ) {
             return rest_ensure_response(
                 array(
                     'success' => false,
@@ -84,6 +84,10 @@ class FSE_Onboarding_Server {
         }
 
         $templates = $support[0]['templates'];
+
+		if ( $support[0]['page_templates'] ) {
+			$templates['page_templates'] = $support[0]['page_templates'];
+		}
 
         if ( ! $templates ) {
             return rest_ensure_response(
