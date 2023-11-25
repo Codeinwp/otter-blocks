@@ -49,8 +49,8 @@ const DEFAULT_STATE = {
 	templateParts: {},
 	library: {},
 	selectedTemplates: {
-		archive: 'default',
-		single: 'default'
+		archive: '',
+		single: ''
 	},
 	isSaving: false
 };
@@ -67,6 +67,7 @@ const actions = {
 			const step = select.getStep();
 			const newStep = STEPS.length < ( step.value + 1 ) ? STEPS.length : ( step.value + 1 );
 
+			dispatch( actions.setSaving( false ) );
 			dispatch( actions.setStep( newStep ) );
 		};
 	},
@@ -75,40 +76,45 @@ const actions = {
 			const step = select.getStep();
 			const newStep = 1 > ( step.value - 1 ) ? 1 : ( step.value - 1 );
 
+			dispatch( actions.setSaving( false ) );
 			dispatch( actions.setStep( newStep ) );
 		};
 	},
 	onContinue() {
 		return async({ dispatch, select }) => {
 			const step = select.getStep();
-			const edits = __experimentalGetDirtyEntityRecords();
-			const selectedTemplate = select.getSelectedTemplate( 'archive' );
 
 			dispatch( actions.setSaving( true ) );
 
-			if ( 'archive_template' === step.id && !! selectedTemplate ) {
-				const archive = select.getTemplate({ slug: 'archive' });
+			if ([ 'archive_template', 'single_template' ].includes( step.id ) ) {
+				const type = step.id.replace( '_template', '' );
+
+				const selectedTemplate = select.getSelectedTemplate( type );
+
+				if ( ! selectedTemplate ) {
+					dispatch( actions.nextStep() );
+					return;
+				}
+
+				const currentTemplate = select.getTemplate({ slug: type });
 				let content = '';
 
 				if ( 'default' === selectedTemplate ) {
-					const template = archive?.id && select.getSourceTemplate( archive );
+					const template = currentTemplate?.id && select.getSourceTemplate( currentTemplate );
 					content = template?.content?.raw ?? '';
 				} else {
-					const library = select.getLibrary( 'archive' );
+					const library = select.getLibrary( type );
 					content = library[selectedTemplate]?.content?.raw ?? '';
 				}
 
-				editEntityRecord( 'postType', 'wp_template', archive.id, {
+				editEntityRecord( 'postType', 'wp_template', currentTemplate.id, {
 					'content': content
 				});
-
-				if ( ! edits.length ) {
-					dispatch( actions.onContinue() );
-					return;
-				}
 			}
 
-			if ([ 'site_info', 'appearance', 'archive_template' ].includes( step.id )  ) {
+			if ([ 'site_info', 'appearance', 'archive_template', 'single_template' ].includes( step.id ) ) {
+				const edits = __experimentalGetDirtyEntityRecords();
+
 				await Promise.all( edits.map( async edit => {
 					await saveEditedEntityRecord( edit.kind, edit.name, edit?.key );
 				}) );

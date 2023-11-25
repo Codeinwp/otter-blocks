@@ -1,6 +1,8 @@
 /**
  * WordPress dependencies.
  */
+import { __ } from '@wordpress/i18n';
+
 import { Spinner } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -9,7 +11,7 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies.
  */
 import Homepage from './steps/Homepage';
-import Archive from './steps/Archive';
+import Template from './steps/Template';
 
 const STEP_DATA = {
 	'site_info': {
@@ -19,10 +21,18 @@ const STEP_DATA = {
 		controls: Homepage
 	},
 	'archive_template': {
-		controls: Archive
+		controls: Template,
+		props: {
+			type: 'archive',
+			label: __( 'Post Archive', 'otter-blocks' )
+		}
 	},
 	'single_template': {
-		controls: Homepage
+		controls: Template,
+		props: {
+			type: 'single',
+			label: __( 'Single Post', 'otter-blocks' )
+		}
 	},
 	'additional_templates': {
 		controls: Homepage
@@ -50,7 +60,9 @@ const Main = ({ isEditorLoading }) => {
 
 	return (
 		<div className="o-main">
-			<Controls/>
+			<Controls
+				{ ...STEP_DATA[ currentStep ]?.props }
+			/>
 		</div>
 	);
 };

@@ -18,12 +18,16 @@ import { useEffect } from '@wordpress/element';
  */
 import TemplateSelector from '../TemplateSelector';
 
-const Archive = () => {
+const Template = ({
+	type,
+	label
+}) => {
 	const {
 		template,
 		library,
 		editedEntity,
-		selectedTemplate
+		selectedTemplate,
+		isDefault
 	} = useSelect( ( select ) => {
 		const { getEditedPostId } = select( 'core/edit-site' );
 
@@ -36,18 +40,20 @@ const Archive = () => {
 
 		const editedEntity = getEditedPostId();
 
-		const archive = getTemplate({ slug: 'archive' });
-		const template = archive?.id && getSourceTemplate( archive );
-		const library = getLibrary( 'archive' );
-		const selectedTemplate = getSelectedTemplate( 'archive' );
+		const currentTemplate = getTemplate({ slug: type });
+		const template = currentTemplate?.id && getSourceTemplate( currentTemplate );
+		const library = getLibrary( type );
+		const selectedTemplate = getSelectedTemplate( type );
+		const isDefault = 'theme' === currentTemplate?.source;
 
 		return {
 			template,
 			library,
 			editedEntity,
-			selectedTemplate
+			selectedTemplate,
+			isDefault
 		};
-	}, []);
+	}, [ type ]);
 
 	const { setEditedEntity } = useDispatch( 'core/edit-site' );
 	const { setSelectedTemplate } = useDispatch( 'otter/onboarding' );
@@ -62,27 +68,29 @@ const Archive = () => {
 		<div className="o-templates">
 			<TemplateSelector
 				template={ template }
-				label={ __( 'Post Archive - Default', 'otter-blocks' ) }
-				isSelected={ 'default' === selectedTemplate }
-				onClick={ () => setSelectedTemplate( 'archive', 'default' ) }
+				label={
+					sprintf(
+
+						/* translators: %s: Template type. */
+						__( '%s - Default', 'otter-blocks' ),
+						label
+					)
+				}
+				isSelected={ 'default' === selectedTemplate || ( '' === selectedTemplate && isDefault ) }
+				onClick={ () => setSelectedTemplate( type, 'default' ) }
 			/>
 
 			{ Object.keys( library ).map( item => (
 				<TemplateSelector
 					key={ item }
 					template={ library[ item ] }
-					label={ sprintf(
-
-						/* translators: %s: Template name. */
-						__( 'Post Archive - %s', 'otter-blocks' ),
-						library[ item ]?.title
-					) }
+					label={ `${ label } - ${ library[ item ]?.title }` }
 					isSelected={ item === selectedTemplate }
-					onClick={ () => setSelectedTemplate( 'archive', item ) }
+					onClick={ () => setSelectedTemplate( type, item ) }
 				/>
 			) ) }
 		</div>
 	);
 };
 
-export default Archive;
+export default Template;

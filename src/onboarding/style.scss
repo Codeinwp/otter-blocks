@@ -280,7 +280,8 @@ div.error, div.notice {
 			overflow: hidden;
 
 			&.is-selected {
-				border: 3px solid var( --primary, #0366D5 ); 
+				border: 3px solid var( --primary, #0366D5 );
+				height: auto;
 			}
 
 			.block-editor-block-preview__container {
