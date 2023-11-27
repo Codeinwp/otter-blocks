@@ -12,6 +12,18 @@ import {
 
 import { addQueryArgs } from '@wordpress/url';
 
+/**
+ * Internal dependencies.
+ */
+import STEP_DATA from './steps';
+
+const STEPS = Object.keys( STEP_DATA )
+	.filter( i => !! STEP_DATA[i].isSupported )
+	.map( ( i, o ) => ({
+		id: i,
+		value: o
+	}) );
+
 const { __experimentalGetDirtyEntityRecords } = select( 'core' );
 
 const {
@@ -20,31 +32,8 @@ const {
 	saveEntityRecord
 } = dispatch( 'core' );
 
-const STEPS = [
-	{
-		id: 'site_info',
-		value: 1
-	},
-	{
-		id: 'appearance',
-		value: 2
-	},
-	{
-		id: 'archive_template',
-		value: 3
-	},
-	{
-		id: 'single_template',
-		value: 4
-	},
-	{
-		id: 'additional_templates',
-		value: 5
-	}
-];
-
 const DEFAULT_STATE = {
-	step: 1,
+	step: 0,
 	templates: {},
 	sourceTemplates: {},
 	templateParts: {},
@@ -69,21 +58,24 @@ const actions = {
 	nextStep() {
 		return ({ dispatch, select }) => {
 			const step = select.getStep();
-			const isLast = STEPS.length < ( step.value + 1 );
+			const isLast = STEPS.length === ( step.value + 1 );
 			const newStep = isLast ? STEPS.length : ( step.value + 1 );
 
 			dispatch( actions.setSaving( false ) );
-			dispatch( actions.setStep( newStep ) );
 
 			if ( isLast ) {
 				dispatch( actions.setFinished( true ) );
+				return;
 			}
+
+			dispatch( actions.setStep( newStep ) );
 		};
 	},
 	previousStep() {
 		return ({ dispatch, select }) => {
 			const step = select.getStep();
-			const newStep = 1 > ( step.value - 1 ) ? 1 : ( step.value - 1 );
+			const isFirst = 0 === step.value;
+			const newStep = isFirst ? 0 : ( step.value - 1 );
 
 			dispatch( actions.setSaving( false ) );
 			dispatch( actions.setStep( newStep ) );

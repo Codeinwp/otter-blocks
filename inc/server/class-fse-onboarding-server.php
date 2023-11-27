@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use ThemeIsle\GutenbergBlocks\Plugins\FSE_Onboarding;
+
 /**
  * Class FSE_Onboarding_Server
  */
@@ -70,24 +72,9 @@ class FSE_Onboarding_Server {
 	 * @access  public
 	 */
 	public function get_templates( \WP_REST_Request $request ) {
-        $support = get_theme_support( 'otter-onboarding' );
+		$fse_onboarding = FSE_Onboarding::instance();
 
-        if ( false === $support && ! is_array( $support ) || ( ! isset( $support[0]['templates'] ) && ! isset( $support[0]['page_templates'] )  ) ) {
-            return rest_ensure_response(
-                array(
-                    'success' => false,
-                    'data'    => array(
-                        'message' => __( 'Missing support', 'otter-blocks' ),
-                    ),
-                )
-            );
-        }
-
-        $templates = $support[0]['templates'];
-
-		if ( $support[0]['page_templates'] ) {
-			$templates['page_templates'] = $support[0]['page_templates'];
-		}
+		$templates = $fse_onboarding->get_templates();
 
         if ( ! $templates ) {
             return rest_ensure_response(
@@ -98,17 +85,6 @@ class FSE_Onboarding_Server {
                     ),
                 )
             );
-        }
-
-        foreach ( $templates as $key => $categories ) {
-            foreach ( $categories as $i => $template ) {
-                if ( file_exists( $template['file'] ) ) {
-                    $templates[ $key ][ $i ]['content']['raw'] = file_get_contents( $template['file'] );
-                    unset( $templates[ $key ][ $i ]['file'] );
-                } else {
-                    unset( $templates[ $key ][ $i ] );
-                }
-            }
         }
 
 		return rest_ensure_response(

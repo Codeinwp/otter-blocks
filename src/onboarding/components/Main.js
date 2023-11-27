@@ -10,35 +10,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies.
  */
-import Homepage from './steps/Homepage';
-import Template from './steps/Template';
-import Pages from './steps/Pages';
-
-const STEP_DATA = {
-	'site_info': {
-		controls: Homepage
-	},
-	'appearance': {
-		controls: Homepage
-	},
-	'archive_template': {
-		controls: Template,
-		props: {
-			type: 'archive',
-			label: __( 'Post Archive', 'otter-blocks' )
-		}
-	},
-	'single_template': {
-		controls: Template,
-		props: {
-			type: 'single',
-			label: __( 'Single Post', 'otter-blocks' )
-		}
-	},
-	'additional_templates': {
-		controls: Pages
-	}
-};
+import STEP_DATA from '../steps';
 
 const Main = ({ isEditorLoading }) => {
 	const { currentStep } = useSelect( select => {
@@ -49,7 +21,7 @@ const Main = ({ isEditorLoading }) => {
 		};
 	});
 
-	const Controls = STEP_DATA[ currentStep ]?.controls || null;
+	const Controls = STEP_DATA[ currentStep ]?.content || null;
 
 	if ( isEditorLoading ) {
 		return (

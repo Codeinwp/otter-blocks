@@ -28,6 +28,57 @@ class FSE_Onboarding {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_options_assets' ) );
 	}
 
+	/**
+	 * Get Theme Templates
+	 */
+	public function get_templates() {
+        $support = get_theme_support( 'otter-onboarding' );
+
+        if ( false === $support && ! is_array( $support ) || ( ! isset( $support[0]['templates'] ) && ! isset( $support[0]['page_templates'] )  ) ) {
+            return false;
+        }
+
+		$template = array();
+
+		if ( isset( $support[0]['templates'] ) ) {
+			$templates = $support[0]['templates'];
+		}
+
+		if ( isset( $support[0]['page_templates'] ) ) {
+			$templates['page_templates'] = $support[0]['page_templates'];
+		}
+
+        if ( ! $templates ) {
+            return false;
+        }
+
+        foreach ( $templates as $key => $categories ) {
+            foreach ( $categories as $i => $template ) {
+                if ( file_exists( $template['file'] ) ) {
+                    $templates[ $key ][ $i ]['content']['raw'] = file_get_contents( $template['file'] );
+                    unset( $templates[ $key ][ $i ]['file'] );
+                } else {
+                    unset( $templates[ $key ][ $i ] );
+                }
+            }
+        }
+
+		return $templates;
+	}
+
+	/**
+	 * Get Templates Types
+	 */
+	public function get_templates_types() {
+		$templates = $this->get_templates();
+
+		if ( ! $templates ) {
+			return array();
+		}
+
+		return array_keys( $templates );
+	}
+
     /**
      * Enqueue options assets.
      */
@@ -59,8 +110,9 @@ class FSE_Onboarding {
 			apply_filters(
 				'otter_onboarding_data',
 				array(
-					'version'       => OTTER_BLOCKS_VERSION,
-					'assetsPath'    => OTTER_BLOCKS_URL . 'assets/',
+					'version'        => OTTER_BLOCKS_VERSION,
+					'assetsPath'     => OTTER_BLOCKS_URL . 'assets/',
+					'supportedSteps' => $this->get_templates_types(),
 				)
 			)
 		);
