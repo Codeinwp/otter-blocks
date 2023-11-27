@@ -35,9 +35,19 @@ const STEP_DATA = {
 		controls: Appearance,
 		content: Homepage
 	},
+	'front-page_template': {
+		title: __( 'Select a template for your Homepage', 'otter-blocks' ),
+		description: __( 'Choose a layout for for website\'s homepage.', 'otter-blocks' ),
+		isSupported: isSupported( 'front-page' ),
+		content: Template,
+		props: {
+			type: 'front-page',
+			label: __( 'Homepage', 'otter-blocks' )
+		}
+	},
 	'archive_template': {
 		title: __( 'Select a template for your Blog Page', 'otter-blocks' ),
-		description: __( 'Choose a layout for for how your blog posts appear in the blog page.', 'otter-blocks' ),
+		description: __( 'Choose a layout for how your blog posts appear in the blog page.', 'otter-blocks' ),
 		isSupported: isSupported( 'archive' ),
 		content: Template,
 		props: {

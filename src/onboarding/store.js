@@ -93,7 +93,7 @@ const actions = {
 
 			dispatch( actions.setSaving( true ) );
 
-			if ([ 'archive_template', 'single_template' ].includes( step.id ) ) {
+			if ([ 'front-page_template', 'archive_template', 'single_template' ].includes( step.id ) ) {
 				const type = step.id.replace( '_template', '' );
 
 				const selectedTemplate = select.getSelectedTemplate( type );
@@ -119,7 +119,7 @@ const actions = {
 				});
 			}
 
-			if ([ 'site_info', 'appearance', 'archive_template', 'single_template' ].includes( step.id ) ) {
+			if ([ 'site_info', 'appearance', 'front-page_template', 'archive_template', 'single_template' ].includes( step.id ) ) {
 				const edits = __experimentalGetDirtyEntityRecords();
 
 				await Promise.all( edits.map( async edit => {
