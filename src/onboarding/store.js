@@ -16,7 +16,8 @@ const { __experimentalGetDirtyEntityRecords } = select( 'core' );
 
 const {
 	editEntityRecord,
-	saveEditedEntityRecord
+	saveEditedEntityRecord,
+	saveEntityRecord
 } = dispatch( 'core' );
 
 const STEPS = [
@@ -53,7 +54,9 @@ const DEFAULT_STATE = {
 		single: '',
 		pageTemplates: []
 	},
-	isSaving: false
+	importedTemplates: [],
+	isSaving: false,
+	isFinished: false
 };
 
 const actions = {
@@ -66,10 +69,15 @@ const actions = {
 	nextStep() {
 		return ({ dispatch, select }) => {
 			const step = select.getStep();
-			const newStep = STEPS.length < ( step.value + 1 ) ? STEPS.length : ( step.value + 1 );
+			const isLast = STEPS.length < ( step.value + 1 );
+			const newStep = isLast ? STEPS.length : ( step.value + 1 );
 
 			dispatch( actions.setSaving( false ) );
 			dispatch( actions.setStep( newStep ) );
+
+			if ( isLast ) {
+				dispatch( actions.setFinished( true ) );
+			}
 		};
 	},
 	previousStep() {
@@ -79,6 +87,12 @@ const actions = {
 
 			dispatch( actions.setSaving( false ) );
 			dispatch( actions.setStep( newStep ) );
+		};
+	},
+	setFinished( isFinished ) {
+		return {
+			type: 'SET_FINISHED',
+			isFinished
 		};
 	},
 	onContinue() {
@@ -121,6 +135,28 @@ const actions = {
 				}) );
 			}
 
+			if ( 'additional_templates' === step.id ) {
+				const selectedTemplates = select.getSelectedTemplate( 'pageTemplates' );
+				const pageTemplates = select.getLibrary( 'page_templates' );
+				const importedTemplates = select.getImportedTemplates(); // It will be array similar to selectedTemplates
+
+				await Promise.all(
+					selectedTemplates
+						.filter( template => ! importedTemplates.find( importedTemplate => importedTemplate === template ) )
+						.map( async template => {
+							const pageTemplate = pageTemplates[ template ];
+
+							await saveEntityRecord( 'postType', 'page', {
+								status: 'publish',
+								title: pageTemplate.title,
+								content: pageTemplate.content.raw,
+								template: pageTemplate.template
+							});
+
+							dispatch( actions.setImportedTemplate( template ) );
+						}) );
+			}
+
 			dispatch( actions.setSaving( false ) );
 			dispatch( actions.nextStep() );
 		};
@@ -156,6 +192,12 @@ const actions = {
 			template
 		};
 	},
+	setImportedTemplate( template ) {
+		return {
+			type: 'SET_IMPORTED_TEMPLATE',
+			template
+		};
+	},
 	setSaving( isSaving ) {
 		return {
 			type: 'SET_SAVING',
@@ -177,6 +219,11 @@ const store = createReduxStore( 'otter/onboarding', {
 			return {
 				...state,
 				step: action.step
+			};
+		case 'SET_FINISHED':
+			return {
+				...state,
+				isFinished: action.isFinished
 			};
 		case 'SET_TEMPLATE':
 			return {
@@ -215,6 +262,14 @@ const store = createReduxStore( 'otter/onboarding', {
 					[action.slug]: action.template
 				}
 			};
+		case 'SET_IMPORTED_TEMPLATE':
+			return {
+				...state,
+				importedTemplates: [
+					...state.importedTemplates,
+					action.template
+				]
+			};
 		case 'SET_SAVING':
 			return {
 				...state,
@@ -250,8 +305,14 @@ const store = createReduxStore( 'otter/onboarding', {
 		getSelectedTemplate( state, type ) {
 			return state.selectedTemplates[ type ];
 		},
+		getImportedTemplates( state ) {
+			return state.importedTemplates;
+		},
 		isSaving( state ) {
 			return state.isSaving;
+		},
+		isFinished( state ) {
+			return state.isFinished;
 		}
 	},
 

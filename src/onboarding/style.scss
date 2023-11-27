@@ -4,6 +4,18 @@ $main-color: #151414;
 $border-color: #E5E5E5;
 $primary: #0366D5;
 
+@mixin primary-button-styles {
+	padding: 16px 32px;
+	justify-content: center;
+	align-items: center;
+	gap: 32px;
+	border-radius: 5px;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 700;
+	height: auto;
+}
+
 div.error, div.notice {
 	display: none;
 }
@@ -26,6 +38,51 @@ div.error, div.notice {
 	height: 100vh;
 	font-family: Arial,sans-serif;
 	--wp-components-color-accent: #0366D5;
+}
+
+.o-finish {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+
+	&__container {
+		background: #fff;
+		border-radius: 32px;
+		padding: 5rem;
+		max-width: 980px;
+
+		h1 {
+			font-size: 40px;
+			font-style: normal;
+			font-weight: 700;
+			line-height: 1;
+		}
+
+		p {
+			font-size: 18px;
+			font-style: normal;
+			font-weight: 400;
+		}
+
+		.components-textarea-control__input {
+			border-radius: 6px;
+			border: 1px solid $border-color;
+			background: #FFF;
+			padding: 1rem;
+			resize: none;
+		}
+
+		.components-button.is-primary {
+			@include primary-button-styles;
+			margin-top: 1rem;
+		}
+	}
+
+	&__logo {
+		width: 120px;
+		height: 120px;
+	}
 }
 
 .o-sidebar {
@@ -124,22 +181,14 @@ div.error, div.notice {
 		padding: 2rem;
 
 		.components-button.is-primary {
-			padding: 16px 32px;
-			justify-content: center;
-			align-items: center;
-			gap: 32px;
-			border-radius: 5px; 
+			@include primary-button-styles;
 			width: 100%;
-			font-size: 18px;
-			font-style: normal;
-			font-weight: 700;
-			height: auto;
 		}
 
 		.components-button.is-tertiary {
 			font-size: 14px;
 			font-style: normal;
-			font-weight: 400; 
+			font-weight: 400;
 			--wp-components-color-accent: $secondary-text;
 		}
 	}

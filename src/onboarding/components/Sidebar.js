@@ -51,17 +51,23 @@ const Sidebar = ({ isEditorLoading }) => {
 	const {
 		currentStep,
 		stepIndex,
-		isSaving
+		isSaving,
+		siteURL
 	} = useSelect( select => {
+		const { getSite } = select( 'core' );
+
 		const {
 			getStep,
 			isSaving
 		} = select( 'otter/onboarding' );
 
+		const siteURL = getSite()?.url;
+
 		return {
 			currentStep: getStep()?.id,
 			stepIndex: getStep()?.value,
-			isSaving: isSaving()
+			isSaving: isSaving(),
+			siteURL
 		};
 	});
 
@@ -74,8 +80,7 @@ const Sidebar = ({ isEditorLoading }) => {
 	const Controls = STEP_DATA[ currentStep ]?.controls || null;
 
 	const onExit = () => {
-		const node = document.getElementById( 'otter-onboarding' );
-		node.remove();
+		window.open( siteURL, '_self' );
 	};
 
 	return (

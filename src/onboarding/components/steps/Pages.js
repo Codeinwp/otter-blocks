@@ -92,7 +92,7 @@ const Pages = () => {
 
 	const { setSelectedTemplate } = useDispatch( 'otter/onboarding' );
 
-	const onSelect = ( value ) => {
+	const onSelect = value => {
 		const isSelected = selectedTemplates.includes( value );
 
 		if ( isSelected ) {
