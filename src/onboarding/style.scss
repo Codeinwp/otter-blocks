@@ -336,6 +336,14 @@ div.error, div.notice {
 	height: 100vh;
 	background: $main-bg;
 	overflow: scroll;
+
+	.block-editor-block-preview__container {
+		.block-editor-block-preview__content,
+		iframe {
+			height: 100% !important;
+			max-height: none !important;
+		}
+	}
 }
 
 .o-preview {

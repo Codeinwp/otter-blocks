@@ -21,6 +21,7 @@ const Homepage = () => {
 
 	return (
 		<BlockPreview
+			viewportWidth={ 0 }
 			blocks={ template }
 		/>
 	);
