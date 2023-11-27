@@ -8,6 +8,12 @@ Integrate Otter Onboarding support in your Full Site Editing (FSE) theme by defi
 Add the following code to integrate Otter Onboarding:
 
 ```php
+add_theme_support( 'otter-onboarding' );
+```
+
+You can also define layout & page tempaltes to your theme using:
+
+```php
 add_theme_support(
     'otter-onboarding',
     array(

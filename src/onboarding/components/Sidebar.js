@@ -18,13 +18,15 @@ import {
  * Internal dependencies.
  */
 import STEP_DATA from '../steps';
+import Main from './Main';
 
 const Sidebar = ({ isEditorLoading }) => {
 	const {
 		currentStep,
 		stepIndex,
 		isSaving,
-		siteURL
+		siteURL,
+		isSmall
 	} = useSelect( select => {
 		const { getSite } = select( 'core' );
 
@@ -33,13 +35,18 @@ const Sidebar = ({ isEditorLoading }) => {
 			isSaving
 		} = select( 'otter/onboarding' );
 
+		const { isViewportMatch } = select( 'core/viewport' );
+
+		const isSmall = isViewportMatch( '< medium' );
+
 		const siteURL = getSite()?.url;
 
 		return {
 			currentStep: getStep()?.id,
 			stepIndex: getStep()?.value,
 			isSaving: isSaving(),
-			siteURL
+			siteURL,
+			isSmall
 		};
 	});
 
@@ -93,6 +100,12 @@ const Sidebar = ({ isEditorLoading }) => {
 					<h2>{ STEP_DATA[ currentStep ]?.title }</h2>
 					<p>{ STEP_DATA[ currentStep ]?.description }</p>
 				</div>
+
+				{ isSmall && (
+					<Main
+						isEditorLoading={ isEditorLoading }
+					/>
+				) }
 
 				{ Controls && <Controls /> }
 			</div>

@@ -16,11 +16,18 @@ import { useIsSiteEditorLoading } from '../hooks';
 const App = () => {
 	const isEditorLoading = useIsSiteEditorLoading();
 
-	const { isFinished } = useSelect( select => {
+	const {
+		isFinished,
+		isSmall
+	} = useSelect( select => {
 		const { isFinished } = select( 'otter/onboarding' );
+		const { isViewportMatch } = select( 'core/viewport' );
+
+		const isSmall = isViewportMatch( '< medium' );
 
 		return {
-			isFinished: isFinished()
+			isFinished: isFinished(),
+			isSmall
 		};
 	}, []);
 
@@ -39,9 +46,11 @@ const App = () => {
 					isEditorLoading={ isEditorLoading }
 				/>
 
-				<Main
-					isEditorLoading={ isEditorLoading }
-				/>
+				{ ! isSmall && (
+					<Main
+						isEditorLoading={ isEditorLoading }
+					/>
+				)}
 			</div>
 		</div>
 	);
