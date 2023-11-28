@@ -109,7 +109,7 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * When in REST API context, autoload widgets used so that all css data is updated.
 	 *
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request The request object.
 	 *
 	 * @return \WP_REST_Response | \WP_Error
 	 */
@@ -119,7 +119,7 @@ class CSS_Handler extends Base_CSS {
 		if ( empty( $widgets_used ) ) {
 			$sidebar_widgets = get_option( 'sidebars_widgets' );
 			foreach ( $sidebar_widgets as $sidebar => $widgets ) {
-				if ( $sidebar === 'wp_inactive_widgets' || ! is_array( $widgets ) ) {
+				if ( 'wp_inactive_widgets' === $sidebar || ! is_array( $widgets ) ) {
 					continue;
 				}
 				foreach ( $widgets as $widget ) {
