@@ -9,6 +9,7 @@ namespace ThemeIsle\GutenbergBlocks\CSS;
 
 use ThemeIsle\GutenbergBlocks\Base_CSS;
 
+use ThemeIsle\GutenbergBlocks\Registration;
 use tubalmartin\CssMin\Minifier as CSSmin;
 
 /**
@@ -96,13 +97,43 @@ class CSS_Handler extends Base_CSS {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'save_widgets_styles' ),
+					'callback'            => array( $this, 'save_widgets_styles_rest' ),
 					'permission_callback' => function () {
 						return current_user_can( 'edit_theme_options' );
 					},
 				),
 			)
 		);
+	}
+
+	/**
+	 * When in REST API context, autoload widgets used so that all css data is updated.
+	 *
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return \WP_REST_Response | \WP_Error
+	 */
+	public function save_widgets_styles_rest( \WP_REST_Request $request ) {
+		$registration = Registration::instance();
+		$widgets_used = $registration::$widget_used;
+		if ( empty( $widgets_used ) ) {
+			$sidebar_widgets = get_option( 'sidebars_widgets' );
+			foreach ( $sidebar_widgets as $sidebar => $widgets ) {
+				if ( $sidebar === 'wp_inactive_widgets' || ! is_array( $widgets ) ) {
+					continue;
+				}
+				foreach ( $widgets as $widget ) {
+					$widgets_used[] = $widget;
+				}
+			}
+			$registration::$widget_used = $widgets_used;
+		}
+
+		$response = $this->save_widgets_styles();
+		if ( is_null( $response ) ) {
+			$response = true;
+		}
+		return rest_ensure_response( $response );
 	}
 
 	/**
@@ -439,7 +470,7 @@ class CSS_Handler extends Base_CSS {
 
 	/**
 	 * Mark in post meta if the post has a review block.
-	 * 
+	 *
 	 * @param int $post_id Post ID.
 	 * @since 2.4.0
 	 * @access public

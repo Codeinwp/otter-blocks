@@ -536,7 +536,7 @@ class Block_Frontend extends Base_CSS {
 			}
 		}
 
-		if ( CSS_Handler::has_css_file( 'widgets' ) ) {
+		if ( ! CSS_Handler::has_css_file( 'widgets' ) ) {
 			if ( CSS_Handler::is_writable() ) {
 				CSS_Handler::save_widgets_styles();
 			}

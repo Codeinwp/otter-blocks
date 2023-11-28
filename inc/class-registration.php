@@ -244,7 +244,7 @@ class Registration {
 		}
 
 		global $wp_roles;
-		
+
 		wp_localize_script(
 			'otter-blocks',
 			'themeisleGutenberg',
@@ -329,7 +329,7 @@ class Registration {
 			return;
 		}
 
-		
+
 
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
@@ -362,7 +362,7 @@ class Registration {
 		}
 
 		if ( $has_widgets ) {
-			
+
 			add_filter(
 				'wp_footer',
 				function ( $content ) {
