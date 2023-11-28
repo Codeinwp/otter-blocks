@@ -13,7 +13,7 @@ import Template from './components/steps/Template';
 import Pages from './components/steps/Pages';
 
 const isSupported = step => {
-	const { supportedSteps } = window.otterObj;
+	const { supportedSteps } = window.otterOnboardingData;
 
 	return supportedSteps.includes( step );
 };

@@ -56,7 +56,7 @@ class FSE_Onboarding_Server {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_templates' ),
 					'permission_callback' => function () {
-                        return current_user_can( 'manage_options' );
+						return current_user_can( 'manage_options' );
 					},
 				),
 			)
@@ -76,40 +76,21 @@ class FSE_Onboarding_Server {
 
 		$templates = $fse_onboarding->get_templates();
 
-        if ( ! $templates ) {
-            return rest_ensure_response(
-                array(
-                    'success' => false,
-                    'data'    => array(
-                        'message' => __( 'Missing templates', 'otter-blocks' ),
-                    ),
-                )
-            );
-        }
+		if ( ! $templates ) {
+			return rest_ensure_response(
+				array(
+					'success' => false,
+					'data'    => array(
+						'message' => __( 'Missing templates', 'otter-blocks' ),
+					),
+				)
+			);
+		}
 
 		return rest_ensure_response(
 			array(
 				'success' => true,
 				'data'    => $templates,
-			)
-		);
-	}
-
-	/**
-	 * Get Product Pricing.
-	 *
-	 * @param \WP_REST_Request $request The request.
-	 * 
-	 * @return \WP_REST_Response
-	 * @access  public
-	 */
-	public function get_price( \WP_REST_Request $request ) {
-		return ( new Stripe_API() )->create_request(
-			'prices',
-			array(
-				'active'  => true,
-				'product' => $request->get_param( 'id' ),
-				'limit'   => 50,
 			)
 		);
 	}

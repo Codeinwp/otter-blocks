@@ -12,7 +12,7 @@ import { useSelect } from '@wordpress/data';
 
 import { useState } from '@wordpress/element';
 
-const { version } = window.otterObj;
+const { version } = window.otterOnboardingData;
 
 const Finish = () => {
 	const [ feedback, setFeedback ] = useState( '' );
@@ -74,7 +74,7 @@ const Finish = () => {
 			<div className="o-finish__container">
 				<img
 					className="o-finish__logo"
-					src={ `${ window.otterObj.assetsPath }images/logo-alt.png` }
+					src={ `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
 				/>
 
 				<h1>{ __( 'Your website is ready to go!', 'otter-blocks' ) }</h1>

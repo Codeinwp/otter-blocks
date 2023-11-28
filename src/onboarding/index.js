@@ -19,6 +19,14 @@ const Render = () => {
 	);
 };
 
-registerPlugin( 'otter-onboarding', {
-	render: Render
-});
+// Check the URL for the onboarding query string.
+const urlParams = new URLSearchParams( window.location.search );
+const onboarding = urlParams.get( 'onboarding' );
+console.log( onboarding );
+
+// If the onboarding query string is present, render the onboarding modal.
+if ( 'true' === onboarding ) {
+	registerPlugin( 'otter-onboarding', {
+		render: Render
+	});
+}
