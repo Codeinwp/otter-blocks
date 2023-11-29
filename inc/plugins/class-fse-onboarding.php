@@ -44,7 +44,7 @@ class FSE_Onboarding {
 		}
 
 		add_submenu_page(
-			'otter',
+			'themes.php',
 			esc_html__( 'FSE Onboarding', 'otter-blocks' ),
 			esc_html__( 'FSE Onboarding', 'otter-blocks' ),
 			'manage_options',
