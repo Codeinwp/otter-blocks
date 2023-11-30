@@ -14,6 +14,9 @@ use ThemeIsle\GutenbergBlocks\Pro;
  */
 class FSE_Onboarding {
 
+	const OPTION_KEY  = 'otter_onboarding_status';
+	const SUPPORT_KEY = 'otter-onboarding';
+
 	/**
 	 * The main instance var.
 	 *
@@ -37,7 +40,7 @@ class FSE_Onboarding {
 	 * @return void
 	 */
 	public function register_menu_page() {
-		$has_support = get_theme_support( 'otter-onboarding' );
+		$has_support = get_theme_support( self::SUPPORT_KEY );
 
 		if ( false === $has_support || ! current_user_can( 'manage_options' ) ) {
 			return;
@@ -71,13 +74,13 @@ class FSE_Onboarding {
 	 */
 	public function on_switch_theme() {
 		// Check if the theme has support for FSE.
-		$support = get_theme_support( 'otter-onboarding' );
+		$support = get_theme_support( self::SUPPORT_KEY );
 
 		if ( false === $support ) {
 			return;
 		}
 
-		$status = get_option( 'otter_onboarding_status', array() );
+		$status = get_option( self::OPTION_KEY, array() );
 		$slug   = get_stylesheet();
 
 		if ( ! empty( $status[ $slug ] ) ) {
@@ -85,16 +88,6 @@ class FSE_Onboarding {
 		}
 
 		// Run the onboarding.
-		self::run_onboarding();
-	}
-
-	/**
-	 * Run the onboarding.
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	public static function run_onboarding() {
 		$redirect = add_query_arg(
 			array(
 				'onboarding' => 'true',
@@ -102,15 +95,27 @@ class FSE_Onboarding {
 			admin_url( 'site-editor.php' )
 		);
 
-		// Set the onboarding ran option.
-		$status          = get_option( 'otter_onboarding_status', array() );
-		$slug            = get_stylesheet();
-		$status[ $slug ] = true;
-		update_option( 'otter_onboarding_status', $status );
-
 		// Redirect to the onboarding.
 		wp_safe_redirect( $redirect );
 		exit;
+	}
+
+	/**
+	 * Set Onboarding Status
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public static function set_onboarding_status() {
+		$status = get_option( self::OPTION_KEY, array() );
+		$slug   = get_stylesheet();
+
+		if ( ! empty( $status[ $slug ] ) ) {
+			return;
+		}
+
+		$status[ $slug ] = true;
+		update_option( self::OPTION_KEY, $status );
 	}
 
 	/**
@@ -120,7 +125,7 @@ class FSE_Onboarding {
 	 * @return array|false
 	 */
 	public function get_templates() {
-		$support = get_theme_support( 'otter-onboarding' );
+		$support = get_theme_support( self::SUPPORT_KEY );
 
 		if ( false === $support || ! is_array( $support ) || ( ! isset( $support[0]['templates'] ) && ! isset( $support[0]['page_templates'] ) ) ) {
 			return false;
@@ -151,7 +156,8 @@ class FSE_Onboarding {
 			}
 		}
 
-		return $templates;
+		return apply_filters( 'otter_fse_onboarding_templates', $templates );
+
 	}
 
 	/**
@@ -178,7 +184,7 @@ class FSE_Onboarding {
 	 */
 	public function enqueue_options_assets() {
 		$current_screen = get_current_screen();
-		$has_support    = get_theme_support( 'otter-onboarding' );
+		$has_support    = get_theme_support( self::SUPPORT_KEY );
 
 		if (
 			false === $has_support ||
@@ -188,6 +194,9 @@ class FSE_Onboarding {
 		) {
 			return;
 		}
+
+		// Flag onboarding status in case being run from a theme.
+		self::set_onboarding_status();
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/onboarding/index.asset.php';
 
