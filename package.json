@@ -75,7 +75,7 @@
 		"uuid": "^9.0.1"
 	},
 	"devDependencies": {
-		"@automattic/babel-plugin-replace-textdomain": "^1.0.26",
+		"@automattic/babel-plugin-replace-textdomain": "^1.0.31",
 		"@playwright/test": "^1.32.0",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/exec": "^6.0.3",
