@@ -27,7 +27,7 @@ async function globalSetup( config: FullConfig ) {
 
 	// Reset the test environment before running the tests.
 	await Promise.all([
-		requestUtils.activateTheme( 'twentytwentyone' ),
+		requestUtils.activateTheme( 'raft' ),
 
 		// Disable this test plugin as it's conflicting with some of the tests.
 		// We already have reduced motion enabled and Playwright will wait for most of the animations anyway.
