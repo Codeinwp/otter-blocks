@@ -31,7 +31,86 @@ class CSS_Handler extends Base_CSS {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 		add_action( 'rest_api_init', array( $this, 'autoload_block_classes' ) );
 		add_action( 'before_delete_post', array( __CLASS__, 'delete_css_file' ) );
-		add_action( 'customize_save_after', array( __CLASS__, 'save_widgets_styles' ) );
+		add_action( 'customize_save_after', array( $this, 'customize_save_after' ) );
+		add_filter( 'customize_dynamic_partial_args', array( $this, 'customize_dynamic_partial_args' ), 10, 2 );
+	}
+
+	/**
+	 * Method used to register actively used widgets.
+	 *
+	 * @return void
+	 */
+	private function register_used_widgets() {
+		$registration = Registration::instance();
+		$widgets_used = $registration::$widget_used;
+		if ( empty( $widgets_used ) ) {
+			$sidebar_widgets = get_option( 'sidebars_widgets' );
+			foreach ( $sidebar_widgets as $sidebar => $widgets ) {
+				if ( 'wp_inactive_widgets' === $sidebar || ! is_array( $widgets ) ) {
+					continue;
+				}
+				foreach ( $widgets as $widget ) {
+					$widgets_used[] = $widget;
+				}
+			}
+			$registration::$widget_used = $widgets_used;
+		}
+	}
+
+	/**
+	 * Method used to add a filter for widget rendering before the partial is rendered.
+	 *
+	 * @return array
+	 */
+	public function customize_dynamic_partial_args( $partial_args, $partial_id ) {
+		if ( preg_match( '/^widget\[(?P<widget_id>.+)\]$/', $partial_id, $matches ) ) {
+			add_filter( 'widget_block_content', array( $this, 'customize_widget_block_content' ), 10, 3 );
+		}
+
+		return $partial_args;
+	}
+
+	/**
+	 * Add inline styles for partially rendered block inside customizer.
+	 *
+	 * @param string $block_content The block content.
+	 * @param array $block The block data.
+	 * @param \WP_Widget $instance The widget instance.
+	 *
+	 * @return string
+	 */
+	public function customize_widget_block_content( $block_content, $block, $instance ) {
+		$widget_data    = get_option( 'widget_block', array() );
+		$partial_widget = (object) $widget_data[ $instance->number ];
+		if ( ! isset( $widget_data[ $instance->number ] ) ) {
+			return $block_content;
+		}
+		if ( ! $widget_data[ $instance->number ] ) {
+			return $block_content;
+		}
+
+		$content = $partial_widget->content;
+		$blocks  = parse_blocks( $content );
+
+		if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+			return $block_content;
+		}
+
+		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+		$css        = $this->cycle_through_static_blocks( $blocks, $animations );
+
+		return '<style>.customize-previewing ' . $css . '</style>' . $block_content;
+	}
+
+	/**
+	 * Method after the customizer save is done.
+	 *
+	 * @return void
+	 */
+	public function customize_save_after() {
+		$this->register_used_widgets();
+
+		$this->save_widgets_styles();
 	}
 
 	/**
@@ -114,20 +193,7 @@ class CSS_Handler extends Base_CSS {
 	 * @return \WP_REST_Response | \WP_Error
 	 */
 	public function save_widgets_styles_rest( \WP_REST_Request $request ) {
-		$registration = Registration::instance();
-		$widgets_used = $registration::$widget_used;
-		if ( empty( $widgets_used ) ) {
-			$sidebar_widgets = get_option( 'sidebars_widgets' );
-			foreach ( $sidebar_widgets as $sidebar => $widgets ) {
-				if ( 'wp_inactive_widgets' === $sidebar || ! is_array( $widgets ) ) {
-					continue;
-				}
-				foreach ( $widgets as $widget ) {
-					$widgets_used[] = $widget;
-				}
-			}
-			$registration::$widget_used = $widgets_used;
-		}
+		$this->register_used_widgets();
 
 		$response = $this->save_widgets_styles();
 		if ( is_null( $response ) ) {
