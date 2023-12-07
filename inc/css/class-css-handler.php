@@ -60,6 +60,9 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * Method used to add a filter for widget rendering before the partial is rendered.
 	 *
+	 * @param array  $partial_args Partial args.
+	 * @param string $partial_id Partial ID.
+	 *
 	 * @return array
 	 */
 	public function customize_dynamic_partial_args( $partial_args, $partial_id ) {
