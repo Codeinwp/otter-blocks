@@ -73,8 +73,8 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * Add inline styles for partially rendered block inside customizer.
 	 *
-	 * @param string $block_content The block content.
-	 * @param array $block The block data.
+	 * @param string     $block_content The block content.
+	 * @param array      $block The block data.
 	 * @param \WP_Widget $instance The widget instance.
 	 *
 	 * @return string
