@@ -27,7 +27,8 @@ const SiteInfo = () => {
 		title,
 		siteLogo,
 		siteLogoURL,
-		templateParts
+		templateParts,
+		changedData
 	} = useSelect( select => {
 		const {
 			getEditedEntityRecord,
@@ -36,25 +37,38 @@ const SiteInfo = () => {
 
 		const { getCurrentTemplateTemplateParts } = select( 'core/edit-site' );
 
+		const { getChangedData } = select( 'otter/onboarding' );
+
 		const settings = getEditedEntityRecord( 'root', 'site' );
 		const siteLogoURL = settings?.site_logo ? getMedia( settings?.site_logo, { context: 'view' }) : null;
 		const templateParts = getCurrentTemplateTemplateParts();
+		const changedData = getChangedData();
 
 		return {
 			title: settings?.title,
 			siteLogo: settings?.site_logo,
 			siteLogoURL: siteLogoURL?.source_url,
-			templateParts
+			templateParts,
+			changedData
 		};
 	}, []);
 
 	const { editEntityRecord } = useDispatch( 'core' );
 	const { replaceBlock } = useDispatch( 'core/block-editor' );
 	const { setEditedEntity } = useDispatch( 'core/edit-site' );
+	const { setChangedData } = useDispatch( 'otter/onboarding' );
 
 	const setTitle = newTitle => {
 		editEntityRecord( 'root', 'site', undefined, {
 			title: newTitle
+		});
+
+		setChangedData({
+			// eslint-disable-next-line camelcase
+			fields_filled: {
+				...changedData.fields_filled,
+				siteTitle: true
+			}
 		});
 	};
 
@@ -89,6 +103,14 @@ const SiteInfo = () => {
 				) );
 			}
 		}
+
+		setChangedData({
+			// eslint-disable-next-line camelcase
+			fields_filled: {
+				...changedData.fields_filled,
+				siteLogo: true
+			}
+		});
 
 		editEntityRecord( 'root', 'site', undefined, {
 			'site_logo': newLogo?.id

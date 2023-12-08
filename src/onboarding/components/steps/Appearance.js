@@ -50,6 +50,8 @@ const Appearance = () => {
 
 	const { editEntityRecord } = useDispatch( 'core' );
 
+	const { setChangedData } = useDispatch( 'otter/onboarding' );
+
 	const selectedStyle = useMemo( () => {
 		if ( ! Object.keys( globalStyle?.styles ).length && ! Object.keys( globalStyle?.settings ).length ) {
 			return 'default';
@@ -63,14 +65,30 @@ const Appearance = () => {
 		return foundStyle ? hash( foundStyle ) : false;
 	}, [ globalStyle, themeStyles ]);
 
-	const onSelect = ( style ) => {
+	const onSelect = style => {
 		if ( 'default' === style ) {
+			setChangedData({
+				// eslint-disable-next-line camelcase
+				design_choices: {
+					// eslint-disable-next-line camelcase
+					palette: 'default'
+				}
+			});
+
 			editEntityRecord( 'root', 'globalStyles', globalStyle.id, {
 				styles: {},
 				settings: {}
 			});
 			return;
 		}
+
+		setChangedData({
+			// eslint-disable-next-line camelcase
+			design_choices: {
+				// eslint-disable-next-line camelcase
+				palette: style.title
+			}
+		});
 
 		editEntityRecord( 'root', 'globalStyles', globalStyle.id, {
 			styles: style?.styles,

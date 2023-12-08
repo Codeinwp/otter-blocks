@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /**
  * WordPress dependencies.
  */
@@ -16,6 +17,7 @@ import { addQueryArgs } from '@wordpress/url';
  * Internal dependencies.
  */
 import STEP_DATA from './steps';
+import { recordEvent } from './utils';
 
 const STEPS = Object.keys( STEP_DATA )
 	.filter( i => !! STEP_DATA[i].isSupported )
@@ -44,8 +46,15 @@ const DEFAULT_STATE = {
 		pageTemplates: []
 	},
 	importedTemplates: [],
+	changedData: {
+		design_choices: {
+			palette: 'default'
+		},
+		fields_filled: {}
+	},
 	isSaving: false,
-	isFinished: false
+	isFinished: false,
+	sessionID: ''
 };
 
 const actions = {
@@ -55,7 +64,7 @@ const actions = {
 			step
 		};
 	},
-	nextStep() {
+	nextStep( isSkip = false ) {
 		return ({ dispatch, select }) => {
 			const step = select.getStep();
 			const isLast = STEPS.length === ( step.value + 1 );
@@ -64,8 +73,20 @@ const actions = {
 			dispatch( actions.setSaving( false ) );
 
 			if ( isLast ) {
+				recordEvent({
+					step_id: STEPS.length,
+					step_status: 'completed'
+				});
+
 				dispatch( actions.setFinished( true ) );
 				return;
+			}
+
+			if ( isSkip ) {
+				recordEvent({
+					step_id: step.value + 1,
+					step_status: 'skip'
+				});
 			}
 
 			dispatch( actions.setStep( newStep ) );
@@ -90,6 +111,13 @@ const actions = {
 	onContinue() {
 		return async({ dispatch, select }) => {
 			const step = select.getStep();
+			const changedData = select.getChangedData();
+
+			let event = {
+				type: step.id,
+				step_id: step.value + 1,
+				step_status: 'completed'
+			};
 
 			dispatch( actions.setSaving( true ) );
 
@@ -97,6 +125,8 @@ const actions = {
 				const type = step.id.replace( '_template', '' );
 
 				const selectedTemplate = select.getSelectedTemplate( type );
+
+				event.selected_template = selectedTemplate;
 
 				if ( ! selectedTemplate ) {
 					dispatch( actions.nextStep() );
@@ -127,10 +157,20 @@ const actions = {
 				}) );
 			}
 
+			if ( 'site_info' === step.id ) {
+				event.fields_filled = changedData.fields_filled;
+			}
+
+			if ( 'appearance' === step.id ) {
+				event.design_choices = changedData.design_choices;
+			}
+
 			if ( 'additional_templates' === step.id ) {
 				const selectedTemplates = select.getSelectedTemplate( 'pageTemplates' );
 				const pageTemplates = select.getLibrary( 'page_templates' );
-				const importedTemplates = select.getImportedTemplates(); // It will be array similar to selectedTemplates
+				const importedTemplates = select.getImportedTemplates();
+
+				event.imported_items = selectedTemplates;
 
 				await Promise.all(
 					selectedTemplates
@@ -148,6 +188,8 @@ const actions = {
 							dispatch( actions.setImportedTemplate( template ) );
 						}) );
 			}
+
+			recordEvent( event );
 
 			dispatch( actions.setSaving( false ) );
 			dispatch( actions.nextStep() );
@@ -194,6 +236,18 @@ const actions = {
 		return {
 			type: 'SET_SAVING',
 			isSaving
+		};
+	},
+	setSessionID( sessionID ) {
+		return {
+			type: 'SET_SESSION_ID',
+			sessionID
+		};
+	},
+	setChangedData( data ) {
+		return {
+			type: 'SET_CHANGED_DATA',
+			data
 		};
 	},
 	fetchFromAPI( path ) {
@@ -267,6 +321,19 @@ const store = createReduxStore( 'otter/onboarding', {
 				...state,
 				isSaving: action.isSaving
 			};
+		case 'SET_SESSION_ID':
+			return {
+				...state,
+				sessionID: action.sessionID
+			};
+		case 'SET_CHANGED_DATA':
+			return {
+				...state,
+				changedData: {
+					...state.changedData,
+					...action.data
+				}
+			};
 		}
 
 		return state;
@@ -305,6 +372,12 @@ const store = createReduxStore( 'otter/onboarding', {
 		},
 		isFinished( state ) {
 			return state.isFinished;
+		},
+		getSessionID( state ) {
+			return state.sessionID;
+		},
+		getChangedData( state ) {
+			return state.changedData;
 		}
 	},
 

@@ -228,6 +228,9 @@ class FSE_Onboarding {
 					'version'        => OTTER_BLOCKS_VERSION,
 					'assetsPath'     => OTTER_BLOCKS_URL . 'assets/',
 					'supportedSteps' => $this->get_templates_types(),
+					'license'		 => apply_filters( 'product_otter_license_key', 'free' ),
+					'rootUrl'        => get_site_url(),
+					'isDev'		     => defined( 'ENABLE_OTTER_PRO_DEV' )
 				)
 			)
 		);

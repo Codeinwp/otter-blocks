@@ -121,7 +121,7 @@ const Sidebar = ({ isEditorLoading }) => {
 				{ ! STEP_DATA[ currentStep ]?.hideSkip && (
 					<Button
 						variant="tertiary"
-						onClick={ nextStep }
+						onClick={ () => nextStep( true ) }
 					>
 						{ __( 'Skip this step', 'otter-blocks' ) }
 					</Button>
