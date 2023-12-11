@@ -11,6 +11,7 @@ import { useEffect } from '@wordpress/element';
  * Internal dependencies.
  */
 import Finish from './Finish';
+import Start from './Start';
 import Sidebar from './Sidebar';
 import Main from './Main';
 import { useIsSiteEditorLoading } from '../hooks';
@@ -21,15 +22,20 @@ const App = () => {
 
 	const {
 		isFinished,
+		isWelcomeScreen,
 		isSmall
 	} = useSelect( select => {
-		const { isFinished } = select( 'otter/onboarding' );
+		const {
+			isFinished,
+			isWelcomeScreen
+		} = select( 'otter/onboarding' );
 		const { isViewportMatch } = select( 'core/viewport' );
 
 		const isSmall = isViewportMatch( '< medium' );
 
 		return {
 			isFinished: isFinished(),
+			isWelcomeScreen: isWelcomeScreen(),
 			isSmall
 		};
 	}, []);
@@ -37,6 +43,14 @@ const App = () => {
 	useEffect( () => {
 		recordEvent();
 	}, []);
+
+	if ( isWelcomeScreen ) {
+		return (
+			<div id="otter-onboarding">
+				<Start/>
+			</div>
+		);
+	}
 
 	if ( isFinished ) {
 		return (

@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
-import path from 'path';
 
 test.describe( 'FSE Onboarding', () => {
 	test.beforeEach( async({ admin, page }) => {
@@ -20,6 +19,16 @@ test.describe( 'FSE Onboarding', () => {
 		}
 
 		await admin.visitAdminPage( 'site-editor.php?onboarding=true' );
+
+		const hasWelcomeNotice = async() => {
+			return await page.evaluate( () => {
+				return wp.data.select( 'otter/onboarding' ).isWelcomeScreen();
+			});
+		};
+
+		if ( hasWelcomeNotice ) {
+			await page.getByRole( 'button', { name: 'Set up my theme' }).click();
+		}
 
 		const checkSpinnerGone = async() => {
 			return await page.evaluate( () => {
@@ -186,5 +195,17 @@ test.describe( 'FSE Onboarding', () => {
 		});
 
 		expect( await getSelectedTemplates()?.length ).toBe( templates.length );
+
+		await next.click();
+
+		while ( ! await checkSpinnerGone() ) {
+			await page.waitForTimeout( 100 );
+		}
+
+		await page.waitForTimeout( 1000 );
+
+		const button = await page.getByRole( 'button', { name: 'Visit your website' });
+
+		expect( await button.isVisible() ).toBe( true );
 	});
 });

@@ -54,6 +54,7 @@ const DEFAULT_STATE = {
 	},
 	isSaving: false,
 	isFinished: false,
+	isWelcomeScreen: true,
 	sessionID: ''
 };
 
@@ -106,6 +107,12 @@ const actions = {
 		return {
 			type: 'SET_FINISHED',
 			isFinished
+		};
+	},
+	setWelcomeScreen( isWelcomeScreen ) {
+		return {
+			type: 'SET_WELCOME_SCREEN',
+			isWelcomeScreen
 		};
 	},
 	onContinue() {
@@ -271,6 +278,11 @@ const store = createReduxStore( 'otter/onboarding', {
 				...state,
 				isFinished: action.isFinished
 			};
+		case 'SET_WELCOME_SCREEN':
+			return {
+				...state,
+				isWelcomeScreen: action.isWelcomeScreen
+			};
 		case 'SET_TEMPLATE':
 			return {
 				...state,
@@ -372,6 +384,9 @@ const store = createReduxStore( 'otter/onboarding', {
 		},
 		isFinished( state ) {
 			return state.isFinished;
+		},
+		isWelcomeScreen( state ) {
+			return state.isWelcomeScreen;
 		},
 		getSessionID( state ) {
 			return state.sessionID;

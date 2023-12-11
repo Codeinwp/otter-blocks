@@ -230,6 +230,7 @@ class FSE_Onboarding {
 					'supportedSteps' => $this->get_templates_types(),
 					'license'		 => apply_filters( 'product_otter_license_key', 'free' ),
 					'rootUrl'        => get_site_url(),
+					'dashboardUrl'   => get_admin_url(),
 					'isDev'		     => defined( 'ENABLE_OTTER_PRO_DEV' )
 				)
 			)

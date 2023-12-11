@@ -29,6 +29,7 @@ div.error, div.notice {
 	z-index: 100000;
 	background: $main-bg;
 	overflow: auto;
+	--wp-components-color-accent: #0366D5;
 }
 
 .o-onboarding {
@@ -37,7 +38,6 @@ div.error, div.notice {
 	width: 100vw;
 	height: 100vh;
 	font-family: Arial,sans-serif;
-	--wp-components-color-accent: #0366D5;
 
 	@media ( max-width: 600px ) {
 		display: block;
@@ -52,6 +52,58 @@ div.error, div.notice {
 	}
 }
 
+.o-start {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	background: #fff;
+
+	&__container {
+		padding: 5rem;
+		max-width: 726px;
+
+		h1 {
+			font-size: 40px;
+			font-style: normal;
+			font-weight: 700;
+			line-height: 1;
+		}
+
+		p {
+			font-size: 18px;
+			font-style: normal;
+			font-weight: 400;
+		}
+
+		.components-button.is-primary {
+			@include primary-button-styles;
+			margin-top: 1rem;
+		}
+
+		.components-button.is-tertiary {
+			color: $secondary-text;
+			padding: 16px 32px;
+			margin-top: 1rem;
+			font-size: 18px;
+			font-style: normal;
+			font-weight: 700;
+			height: auto;
+		}
+	}
+
+	&__logo {
+		width: 120px;
+		height: 120px;
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+	}
+}
+
 .o-finish {
 	display: flex;
 	justify-content: center;
@@ -62,7 +114,7 @@ div.error, div.notice {
 		background: #fff;
 		border-radius: 32px;
 		padding: 5rem;
-		max-width: 980px;
+		max-width: 726px;
 
 		h1 {
 			font-size: 40px;
