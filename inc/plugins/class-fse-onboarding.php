@@ -148,7 +148,13 @@ class FSE_Onboarding {
 		foreach ( $templates as $key => $categories ) {
 			foreach ( $categories as $i => $template ) {
 				if ( file_exists( $template['file'] ) ) {
-					$templates[ $key ][ $i ]['content']['raw'] = file_get_contents( $template['file'] );
+					if ( 'php' === pathinfo( $template['file'], PATHINFO_EXTENSION ) ) {
+						$content                                   = include $template['file'];
+						$templates[ $key ][ $i ]['content']['raw'] = $content;
+					} else {
+						$templates[ $key ][ $i ]['content']['raw'] = file_get_contents( $template['file'] );
+					}
+
 					unset( $templates[ $key ][ $i ]['file'] );
 				} else {
 					unset( $templates[ $key ][ $i ] );

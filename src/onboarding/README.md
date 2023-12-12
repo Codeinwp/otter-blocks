@@ -82,5 +82,6 @@ Specify page templates for onboarding import.
 ## Notes
 
 - Modify file paths and titles to suit your theme's structure and branding.
+- File types can either be HTML or PHP. If they are PHP, they must return the template content. This allows us to use translatable strings & dynamic images.
 - Localize titles for translation readiness.
 - Adhere to the array structure for proper recognition and import by the onboarding process.
