@@ -71,11 +71,11 @@ const Finish = () => {
 					src={ `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
 				/>
 
-				<h1>{ __( 'Your website is ready to go!', 'otter-blocks' ) }</h1>
-				<p>{ __( 'Thanks for using Otter to setup your website. Otter is free and provides a number of useful blocks and features that enhance your FSE experience. We hope you will enjoy using it.', 'otter-blocks' ) }</p>
+				<h1>{ __( 'Your website is ready!', 'otter-blocks' ) }</h1>
+				<p>{ __( 'Thanks for using Otter to setup your theme. Otter adds a number of useful blocks and features to your site that enhance your FSE experience. We hope you will enjoy using it.', 'otter-blocks' ) }</p>
 
 				<TextareaControl
-					label={ __( 'What do you think about Otter Onboarding?', 'otter-blocks' ) }
+					label={ __( 'What do you think about the onboarding experience?', 'otter-blocks' ) }
 					placeholder={ __( 'Leave your feedback', 'otter-blocks' ) }
 					value={ feedback }
 					onChange={ setFeedback }
