@@ -78,7 +78,7 @@ const Finish = () => {
 				/>
 
 				<h1>{ __( 'Your website is ready!', 'otter-blocks' ) }</h1>
-				<p>{ __( 'Thanks for using Otter to setup your theme. Otter is brings a number of useful blocks and features that enhance your FSE experience. We hope you will enjoy using it.', 'otter-blocks' ) }</p>
+				<p>{ __( 'Thanks for using Otter to setup your theme. Otter adds a number of useful blocks and features to your site that enhance your FSE experience. We hope you will enjoy using it.', 'otter-blocks' ) }</p>
 
 				<TextareaControl
 					label={ __( 'What do you think about the onboarding experience?', 'otter-blocks' ) }
