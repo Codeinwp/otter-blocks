@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	ExternalLink
+} from '@wordpress/components';
 
 import { useDispatch } from '@wordpress/data';
 
@@ -19,9 +22,20 @@ const Start = () => {
 				/>
 
 				<h1>{ __( 'Welcome to FSE onboarding, by Otter.', 'otter-blocks' ) }</h1>
-				<p>{ __( 'This process will guide you through a basic setup of your theme, so you can enjoy your new site right away. You can trigger this wizard manually at any time, from Appearance Menu.', 'otter-blocks' ) } 
-    <a href="https://docs.themeisle.com/article/1975-fse-onboarding" target="_blank" rel="noopener noreferrer" aria-label="Learn more about onboarding">
-        { __( 'Learn more.', 'otter-blocks' ) }</a></p>
+				<p>
+					{ __( 'This process will guide you through a basic setup of your theme, so you can enjoy your new site right away. You can trigger this wizard manually at any time, from Appearance Menu.', 'otter-blocks' ) }
+
+					<ExternalLink
+						href="https://docs.themeisle.com/article/1975-fse-onboarding"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label={ __( 'Learn more about onboarding', 'otter-blocks' ) }
+						style={ { marginLeft: '0.5em' } }
+					>
+						{ __( 'Learn more.', 'otter-blocks' ) }
+					</ExternalLink>
+				</p>
+
 				<div className="o-start__actions">
 					<Button
 						variant="primary"
