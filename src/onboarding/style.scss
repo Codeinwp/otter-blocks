@@ -52,12 +52,12 @@ div.error, div.notice {
 	}
 }
 
-.o-start {
+.o-start,
+.o-finish {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	height: 100%;
-	background: #fff;
 
 	&__container {
 		padding: 5rem;
@@ -74,6 +74,14 @@ div.error, div.notice {
 			font-size: 18px;
 			font-style: normal;
 			font-weight: 400;
+		}
+
+		.components-textarea-control__input {
+			border-radius: 6px;
+			border: 1px solid $border-color;
+			background: #FFF;
+			padding: 1rem;
+			resize: none;
 		}
 
 		.components-button.is-primary {
@@ -104,48 +112,14 @@ div.error, div.notice {
 	}
 }
 
-.o-finish {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100%;
+.o-start {
+	background: #fff;
+}
 
+.o-finish {
 	&__container {
 		background: #fff;
 		border-radius: 32px;
-		padding: 5rem;
-		max-width: 726px;
-
-		h1 {
-			font-size: 40px;
-			font-style: normal;
-			font-weight: 700;
-			line-height: 1;
-		}
-
-		p {
-			font-size: 18px;
-			font-style: normal;
-			font-weight: 400;
-		}
-
-		.components-textarea-control__input {
-			border-radius: 6px;
-			border: 1px solid $border-color;
-			background: #FFF;
-			padding: 1rem;
-			resize: none;
-		}
-
-		.components-button.is-primary {
-			@include primary-button-styles;
-			margin-top: 1rem;
-		}
-	}
-
-	&__logo {
-		width: 120px;
-		height: 120px;
 	}
 }
 

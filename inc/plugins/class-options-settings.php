@@ -712,6 +712,17 @@ class Options_Settings {
 				),
 			)
 		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_onboarding_wizard',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Enable Onboarding Wizard.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
 	}
 
 	/**

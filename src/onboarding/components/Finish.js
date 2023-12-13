@@ -18,27 +18,21 @@ const Finish = () => {
 	const [ feedback, setFeedback ] = useState( '' );
 	const [ isLoading, setIsLoading ] = useState( false );
 
-	const {
-		theme,
-		siteURL
-	} = useSelect( select => {
-		const {
-			getCurrentTheme,
-			getSite
-		} = select( 'core' );
+	const { theme } = useSelect( select => {
+		const { getCurrentTheme } = select( 'core' );
 
 		const theme = getCurrentTheme()?.template || getCurrentTheme()?.stylesheet;
-		const siteURL = getSite()?.url;
 
 		return {
-			theme,
-			siteURL
+			theme
 		};
 	});
 
-	const onFinish = () => {
+	const onFinish = ({ redirect = 'site' }) => {
+		const url = 'site' === redirect ? window.otterOnboardingData.rootUrl : window.otterOnboardingData.dashboardUrl;
+
 		if ( ! feedback ) {
-			window.open( siteURL, '_self' );
+			window.open( url, '_self' );
 			return;
 		}
 
@@ -62,10 +56,10 @@ const Finish = () => {
 			})
 		}).then( r => {
 			setIsLoading( false );
-			window.open( siteURL, '_self' );
+			window.open( url, '_self' );
 		})?.catch( () => {
 			setIsLoading( false );
-			window.open( siteURL, '_self' );
+			window.open( url, '_self' );
 		});
 	};
 
@@ -88,13 +82,22 @@ const Finish = () => {
 					hideLabelFromVision
 				/>
 
-				<Button
-					variant="primary"
-					isBusy={ isLoading }
-					onClick={ onFinish }
-				>
-					{ __( 'Visit your website', 'otter-blocks' ) }
-				</Button>
+				<div className="o-finish__actions">
+					<Button
+						variant="primary"
+						isBusy={ isLoading }
+						onClick={ onFinish }
+					>
+						{ __( 'Visit your website', 'otter-blocks' ) }
+					</Button>
+
+					<Button
+						variant="tertiary"
+						onClick={ () => onFinish({ redirect: 'dashboard' }) }
+					>
+						{ __( 'Back to dashboard', 'otter-blocks' ) }
+					</Button>
+				</div>
 			</div>
 		</div>
 	);

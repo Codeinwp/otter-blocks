@@ -42,7 +42,7 @@ class FSE_Onboarding {
 	public function register_menu_page() {
 		$has_support = get_theme_support( self::SUPPORT_KEY );
 
-		if ( false === $has_support || ! current_user_can( 'manage_options' ) ) {
+		if ( false === $has_support || ! current_user_can( 'manage_options' ) || true !== boolval( get_option( 'themeisle_blocks_settings_onboarding_wizard', true ) ) ) {
 			return;
 		}
 
