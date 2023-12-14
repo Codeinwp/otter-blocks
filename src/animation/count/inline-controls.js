@@ -35,6 +35,9 @@ import { format as settings } from './index.js';
 
 import { updateAnimConfig } from '../editor.js';
 
+const delayListInline = delayList.filter( ( i ) => 'o-anim-custom-delay' !== i.value );
+const speedListInline = speedList.filter( ( i ) => 'o-anim-custom-speed' !== i.value );
+
 const InlineControls = ({
 	value,
 	contentRef
@@ -46,11 +49,11 @@ const InlineControls = ({
 			classes = attributes.className;
 			classes = classes.split( ' ' );
 
-			const countDelayClass = Array.from( delayList ).find( ( i ) => {
+			const countDelayClass = Array.from( delayListInline ).find( ( i ) => {
 				return classes.find( ( o ) => o === `o-count-${ i.value }` );
 			});
 
-			const countSpeedClass = Array.from( speedList ).find( ( i ) => {
+			const countSpeedClass = Array.from( speedListInline ).find( ( i ) => {
 				return classes.find( ( o ) => o === `o-count-${ i.value }` );
 			});
 
@@ -98,15 +101,15 @@ const InlineControls = ({
 			<SelectControl
 				label={ __( 'Delay', 'otter-blocks' ) }
 				value={ countDelay || 'none' }
-				options={ delayList }
-				onChange={ value => updateAnimConfig( 'count', countDelay, value, () => setCountDelay( value ) ), attributes, setAttributes }
+				options={ delayListInline }
+				onChange={ value => updateAnimConfig( 'count', countDelay, value, () => setCountDelay( value ), attributes, setAttributes ) }
 			/>
 
 			<SelectControl
 				label={ __( 'Speed', 'otter-blocks' ) }
 				value={ countSpeed || 'none' }
-				options={ speedList }
-				onChange={ value => updateAnimConfig( 'count', countSpeed, value, () => setTypingSpeed( value ) ), attributes, setAttributes }
+				options={ speedListInline }
+				onChange={ value => updateAnimConfig( 'count', countSpeed, value, () => setCountSpeed( value ), attributes, setAttributes ) }
 			/>
 
 			{ applyFilters( 'otter.poweredBy', '' ) }

@@ -2,12 +2,12 @@
 .o-typo-component {
 	.o-typo-header {
 		padding: 10px 0px 0px 0px;
-	
+
 		&> .components-heading {
 			margin: 0;
 		}
 	}
-	
+
 	.o-two-column-components {
 		gap: 10px;
 		justify-content: space-between;
@@ -16,10 +16,28 @@
 		justify-items: stretch;
 		grid-template-columns: 1fr 1fr;
 		max-height: 55px;
-	
+
+		&> div:first-child:last-child {
+			grid-column: 1 / 3;
+		}
+
 		&> div > .components-base-control {
 			margin: 8px 0px;
 		}
+
+		&~ .o-two-column-components {
+			margin-top: 10px;
+		}
+	}
+
+	.components-font-size-picker__controls .components-base-control {
+		margin: 0 0 8px 0;
+	}
+}
+
+.o-responsive-control ~ .o-typo-component {
+	.o-typo-header {
+		padding-top: 0;
 	}
 }
 
@@ -28,11 +46,11 @@
 }
 
 .block-editor-block-inspector, .o-options-global-defaults-modal {
-	.o-typo-component .components-base-control.o-no-margin {
-		margin: 0px;
-	
+	:is(.o-typo-component) :is(.components-base-control).o-no-margin {
+		margin: 0;
+
 		&> .components-base-control__field .components-base-control {
-			margin: 0px 0px 14px 0px;
+			margin: 0 0 14px 0;
 		}
 	}
 }

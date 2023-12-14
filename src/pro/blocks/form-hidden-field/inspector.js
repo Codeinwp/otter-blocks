@@ -84,6 +84,14 @@ const Inspector = ({
 				/>
 
 				<TextControl
+					label={ __( 'Default Value', 'otter-blocks' ) }
+					value={ attributes.defaultValue }
+					onChange={ defaultValue => setAttributes({ defaultValue }) }
+					placeholder={ __( 'e.g. medium', 'otter-blocks' ) }
+					disabled={! Boolean( window?.otterPro?.isActive )}
+				/>
+
+				<TextControl
 					label={ __( 'Mapped Name', 'otter-blocks' ) }
 					help={ mappedNameInfo }
 					value={ attributes.mappedName }

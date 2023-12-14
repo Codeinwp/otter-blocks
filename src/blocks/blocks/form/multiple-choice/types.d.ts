@@ -7,8 +7,8 @@ import { FormInputCommonProps } from '../common';
 type Attributes = FormInputCommonProps & {
 	type: string
 	inputWidth: number
-	options: string,
-	multipleSelection: boolean,
+	options: string | Array<{content: string, isDefault: boolean}>
+	multipleSelection: boolean
 }
 
 export type FormMultipleChoiceInputProps = BlockProps<Attributes>

@@ -150,9 +150,6 @@ const t = setInterval( () => {
 					}
 
 					if ( ! languageContent ) {
-
-						// If still nothing, default to English
-						// console.log("No lang found for", lang);
 						lang = 'en';
 						languageContent = LanguageContent[lang];
 					}

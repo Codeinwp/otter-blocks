@@ -9,7 +9,8 @@ const defaultsAttrs = {
 		features: []
 	},
 	'themeisle-blocks/form': {},
-	'themeisle-blocks/tabs': {}
+	'themeisle-blocks/tabs': {},
+	'themeisle-blocks/advanced-heading': {}
 };
 
 export default defaultsAttrs;

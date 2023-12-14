@@ -19,65 +19,21 @@ class Posts_Grid_Block {
 	 * the server side output of the block.
 	 *
 	 * @param array $attributes Blocks attrs.
-	 * @return mixed|string
+	 * @return string
 	 */
 	public function render( $attributes ) {
-		$categories = 0;
 
-		if ( isset( $attributes['categories'] ) ) {
-			$cats = array();
+		$has_pagination = isset( $attributes['hasPagination'] ) && $attributes['hasPagination'];
+		$page_number    = 1;
 
-			foreach ( $attributes['categories'] as $category ) {
-				array_push( $cats, $category['id'] );
+		if ( $has_pagination ) {
+			if ( ! empty( get_query_var( 'page' ) ) || ! empty( get_query_var( 'paged' ) ) ) {
+				$page_number = is_front_page() ? get_query_var( 'page' ) : get_query_var( 'paged' );
 			}
-
-			$categories = join( ', ', $cats );
 		}
 
-		$get_custom_post_types_posts = function ( $post_type ) use ( $attributes, $categories ) {
-
-			if ( 'product' === $post_type && isset( $attributes['categories'] ) ) {
-				$categories = array();
-				foreach ( $attributes['categories'] as $category ) {
-					if ( isset( $category['slug'] ) ) {
-						array_push( $categories, $category['slug'] );
-					}
-				}
-			}
-
-			return $this->get_posts(
-				apply_filters(
-					'themeisle_gutenberg_posts_block_query',
-					array(
-						'post_type'        => $post_type,
-						'numberposts'      => $attributes['postsToShow'],
-						'post_status'      => 'publish',
-						'order'            => $attributes['order'],
-						'orderby'          => $attributes['orderBy'],
-						'offset'           => $attributes['offset'],
-						'category'         => $categories,
-						'suppress_filters' => false,
-					),
-					$attributes
-				)
-			);
-		};
-
-		$recent_posts = ( isset( $attributes['postTypes'] ) && 0 < count( $attributes['postTypes'] ) ) ? array_merge( ...array_map( $get_custom_post_types_posts, $attributes['postTypes'] ) ) : $this->get_posts(
-			apply_filters(
-				'themeisle_gutenberg_posts_block_query',
-				array(
-					'numberposts'      => $attributes['postsToShow'],
-					'post_status'      => 'publish',
-					'order'            => $attributes['order'],
-					'orderby'          => $attributes['orderBy'],
-					'offset'           => $attributes['offset'],
-					'category'         => $categories,
-					'suppress_filters' => false,
-				),
-				$attributes
-			)
-		);
+		$total_posts  = 0;
+		$recent_posts = $this->retrieve_posts( $attributes, $has_pagination, $page_number, $total_posts );
 
 		if ( isset( $attributes['featuredPostOrder'] ) && 'sticky-first' === $attributes['featuredPostOrder'] ) {
 
@@ -159,12 +115,13 @@ class Posts_Grid_Block {
 		$wrapper_attributes = get_block_wrapper_attributes();
 
 		$block_content = sprintf(
-			'<div %1$s id="%2$s">%3$s<div class="%4$s">%5$s</div> </div>',
+			'<div %1$s id="%2$s">%3$s<div class="%4$s">%5$s</div> %6$s</div>',
 			$wrapper_attributes,
 			isset( $attributes['id'] ) ? $attributes['id'] : '',
 			isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? $this->render_featured_post( $recent_posts[0], $attributes ) : '',
 			trim( $class ),
-			$list_items_markup
+			$list_items_markup,
+			$has_pagination ? $this->render_pagination( $page_number, $total_posts ) : ''
 		);
 
 		return $block_content;
@@ -350,26 +307,105 @@ class Posts_Grid_Block {
 	/**
 	 * Get posts to display.
 	 *
-	 * @param array $args Query args.
-	 * @return array|array[]|int[]|null[]|\WP_Post[] Posts.
+	 * @param array $attributes Blocks attrs.
+	 * @param bool  $count_posts Enable post count.
+	 * @param int   $page_number Page number.
+	 * @param int   $total_posts Total posts.
+	 * @return array|int[]|null[]|\WP_Post[] Posts.
 	 */
-	protected function get_posts( $args ) {
-		if ( isset( $args['post_type'] ) && 'product' === $args['post_type'] && function_exists( 'wc_get_products' ) ) {
+	protected function retrieve_posts( $attributes, $count_posts, $page_number, &$total_posts ) {
 
-			// drop the post_type arg, as wc_get_products() doesn't support it.
-			unset( $args['post_type'] );
+		$offset = ! empty( $attributes['offset'] ) ? $attributes['offset'] : 0;
 
-			$products = wc_get_products( $args );
+		$categories = 0;
 
-			// convert to array of post objects since the rest of the code expects that.
-			return array_map(
-				function( $product ) {
-					return $product->get_id();
-				},
-				$products
-			);
+		if ( isset( $attributes['categories'] ) ) {
+			$cats = array();
+
+			foreach ( $attributes['categories'] as $category ) {
+				$cats[] = $category['id'];
+			}
+
+			$categories = join( ', ', $cats );
 		}
 
-		return get_posts( $args );
+		$args = array(
+			'post_type'        => $attributes['postTypes'],
+			'posts_per_page'   => $attributes['postsToShow'],
+			'post_status'      => 'publish',
+			'order'            => $attributes['order'],
+			'orderby'          => $attributes['orderBy'],
+			'offset'           => $offset,
+			'cat'              => $categories,
+			'suppress_filters' => false,
+			'no_found_rows'    => true,
+		);
+
+		if ( $count_posts ) {
+			$args['offset']        = $args['posts_per_page'] * ( $page_number - 1 ) + $args['offset'];
+			$args['no_found_rows'] = false;
+			$args['paged']         = $page_number;
+		}
+
+		// Handle the case when the post type is a WooCommerce product.
+		if ( isset( $args['post_type'] ) && in_array( 'product', $args['post_type'] ) && function_exists( 'wc_get_products' ) ) {
+
+			if ( isset( $attributes['categories'] ) ) {
+
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				$args['tax_query'] = array();
+				foreach ( $attributes['categories'] as $category ) {
+					if ( isset( $category['slug'] ) ) {
+						$args['tax_query'][] = array(
+							'taxonomy' => 'product_cat',
+							'field'    => 'slug',
+							'terms'    => $category['slug'],
+						);
+					}
+				}
+				$args['tax_query']['relation'] = 'OR';
+			}
+		}
+
+		$args = apply_filters(
+			'themeisle_gutenberg_posts_block_query',
+			$args,
+			$attributes
+		);
+
+		$query = new \WP_Query( $args );
+
+		if ( $count_posts ) {
+			$total_posts += $query->max_num_pages;
+		}
+
+		return $query->posts;
+	}
+
+	/**
+	 * Render the pagination.
+	 *
+	 * @param int $page_number The page number.
+	 * @param int $total_pages The total pages.
+	 * @return string
+	 */
+	protected function render_pagination( $page_number, $total_pages ) {
+		$big  = 9999999;
+		$base = str_replace( strval( $big ), '%#%', esc_url( get_pagenum_link( $big ) ) );
+
+		$output  = '<div class="o-posts-grid-pag">';
+		$output .= paginate_links(
+			array(
+				'base'      => $base,
+				'format'    => '?paged=%#%',
+				'current'   => $page_number,
+				'total'     => $total_pages,
+				'prev_text' => __( 'Prev', 'otter-blocks' ),
+				'next_text' => __( 'Next', 'otter-blocks' ),
+			)
+		);
+		$output .= '</div>';
+
+		return $output;
 	}
 }

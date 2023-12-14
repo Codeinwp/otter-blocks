@@ -54,10 +54,6 @@ test.describe( 'Section Block', () => {
 
 		let sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
 
-		const { clientId } = sectionBlock;
-
-		await page.click( `#block-${clientId}` );
-
 		const columnController = page.getByRole( 'spinbutton', { name: 'Columns' });
 
 		await columnController.click();
@@ -84,10 +80,6 @@ test.describe( 'Section Block', () => {
 		});
 
 		let sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
-
-		const { clientId } = sectionBlock;
-
-		await page.click( `#block-${clientId}` );
 
 		const columnController = page.getByRole( 'spinbutton', { name: 'Columns' });
 

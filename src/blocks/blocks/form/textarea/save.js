@@ -40,6 +40,9 @@ const Save = ({
 				rows={ 10 }
 				className="otter-form-textarea-input"
 			>
+				{
+					attributes.defaultValue
+				}
 			</textarea>
 			{
 				attributes.helpText && (

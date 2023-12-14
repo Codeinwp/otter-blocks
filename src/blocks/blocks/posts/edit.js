@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { debounce } from 'lodash';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -38,7 +43,7 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../helpers/block-utility.js';
-import Layout from './components/layout/index.js';
+import Layout, { PaginationPreview } from './components/layout/index.js';
 import {
 	_align,
 	_px,
@@ -52,6 +57,7 @@ import {
 } from '../../helpers/utility-hooks.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
+import { domReady } from '../../helpers/frontend-helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -65,6 +71,7 @@ const Edit = ({
 	setAttributes,
 	clientId
 }) => {
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -184,6 +191,16 @@ const Edit = ({
 			.map( taxonomy => select( 'core' ).getEntityRecords( 'taxonomy', taxonomy, { per_page: -1 }) ?? [])
 			.flat();
 
+		if ( window?.rankMathEditor ) {
+
+			/**
+			 * If RankMath is present on the page, we will refresh the RankMath editor analysis when the posts are updated.
+			 */
+			debounce( () => {
+				window?.rankMathEditor.refresh( 'content' );
+			}, 500 );
+		}
+
 		return {
 			posts,
 			categoriesList: categoriesList,
@@ -244,7 +261,22 @@ const Edit = ({
 		'--row-gap-mobile': attributes.rowGapMobile,
 		'--content-padding': responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]),
 		'--content-padding-tablet': attributes.paddingTablet,
-		'--content-padding-mobile': attributes.paddingMobile
+		'--content-padding-mobile': attributes.paddingMobile,
+		'--pag-color': attributes.pagColor,
+		'--pag-bg-color': attributes.pagBgColor,
+		'--pag-color-hover': attributes.pagColorHover,
+		'--pag-bg-color-hover': attributes.pagBgColorHover,
+		'--pag-color-active': attributes.pagColorActive,
+		'--pag-bg-color-active': attributes.pagBgColorActive,
+		'--pag-border-color': attributes.pagBorderColor,
+		'--pag-border-color-hover': attributes.pagBorderColorHover,
+		'--pag-border-color-active': attributes.pagBorderColorActive,
+		'--pag-border-radius': boxValues( attributes.pagBorderRadius ),
+		'--pag-border-width': boxValues( attributes.pagBorderWidth ),
+		'--pag-padding': boxValues( attributes.pagPadding, { top: '5px', right: '15px', bottom: '5px', left: '15px' }),
+		'--pag-gap': attributes.pagGap,
+		'--pag-size': attributes.pagSize,
+		'--pag-cont-margin': boxValues( attributes.pagContMargin, { top: '10px', bottom: '30px' })
 	};
 
 	const blockProps = useBlockProps();
@@ -296,7 +328,11 @@ const Edit = ({
 						categoriesList={ categoriesList }
 						authors={ authors }
 					/>
+
 				</Disabled>
+				{
+					attributes.hasPagination && <PaginationPreview />
+				}
 			</div>
 		);
 	};
@@ -328,5 +364,39 @@ const Edit = ({
 		</Fragment>
 	);
 };
+
+domReady( () => {
+
+	/**
+	 * If the RankMath plugin is present on the page, we will sent the content of the posts grid to RankMath for analysis.
+	 */
+	let maxTries = 10;
+
+	const init = () => {
+
+		window.wp.hooks.addFilter( 'rank_math_content', 'rank-math', ( content ) => {
+
+			/**
+			 * @type {NodeListOf<HTMLDivElement>} postsHtml - The HTML nodes which contain the relevent post content for RankMath.
+			 */
+			const postsHtml = document.querySelectorAll( '.o-posts-grid-post-body' );
+			return ( content ?? '' ) + ( Array.from( postsHtml )?.map( ( post ) => post.innerHTML )?.join( '' ) ?? '' );
+		});
+
+		window?.rankMathEditor?.refresh( 'content' );
+	};
+
+	const t = setInterval( () => {
+		if ( window?.rankMathEditor ) {
+			clearInterval( t );
+			init();
+		} else {
+			maxTries--;
+			if ( 0 === maxTries ) {
+				clearInterval( t );
+			}
+		}
+	}, 1000 );
+});
 
 export default Edit;

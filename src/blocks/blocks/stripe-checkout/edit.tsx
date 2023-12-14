@@ -231,7 +231,10 @@ const Edit = ({
 									<Button
 										isPrimary
 										type="submit"
-										onClick={ saveApiKey }
+										onClick={() => {
+											window.oTrk?.add({ feature: 'stripe', featureComponent: 'api-key' });
+											saveApiKey();
+										} }
 									>
 										{ __( 'Save', 'otter-blocks' ) }
 									</Button>
@@ -266,7 +269,10 @@ const Edit = ({
 											},
 											...productsList
 										] }
-										onChange={ ( product: string ) => setAttributes({ product: 'none' !== product ? product : undefined }) }
+										onChange={ ( product: string ) =>{
+											window.oTrk?.add({ feature: 'stripe-checkout', featureComponent: 'product-changed' });
+											setAttributes({ product: 'none' !== product ? product : undefined });
+										} }
 									/>
 								) }
 
@@ -281,7 +287,10 @@ const Edit = ({
 											},
 											...pricesList
 										] }
-										onChange={ ( price: string ) => setAttributes({ price: 'none' !== price ? price : undefined }) }
+										onChange={ ( price: string ) => {
+											window.oTrk?.add({ feature: 'stripe-checkout', featureComponent: 'price-changed' });
+											setAttributes({ price: 'none' !== price ? price : undefined });
+										} }
 									/>
 								) }
 

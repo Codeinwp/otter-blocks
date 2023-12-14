@@ -102,3 +102,5 @@ In this project, we do not have cases when the code must do a lot of things at a
 The challenge in this project is to extend the code to support more features. The more we have, the harder it will be to maintain the code. Fancy tricks without a good reason are not good.
 
 A piece code that is performant, easy to read and understand, and easy to maintain is the best. [But sometime you can not have it all](https://www.youtube.com/watch?v=hFDcoX7s6rE). So, you need to choose what is more important for your case.
+
+If you are using filters or HOC to add, for example, a Toolbar to all Blocks, it's recommended that you make useSelect or other requests inside child components to avoid them being triggered when they're not needed. An example of what type of issues it can cause: https://github.com/Codeinwp/otter-blocks/pull/1974

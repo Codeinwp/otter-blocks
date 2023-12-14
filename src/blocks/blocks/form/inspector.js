@@ -485,7 +485,8 @@ const Inspector = ({
 											/>,
 											formOptions,
 											setFormOption,
-											useContext( FormContext )
+											useContext( FormContext ),
+											attributes
 										) }
 									</Fragment>
 								)
@@ -500,13 +501,6 @@ const Inspector = ({
 
 							<br /> <br />
 
-							{ 'loading' === loadingState?.formIntegration && (
-								<div className="o-fetch-msg">
-									<Spinner />
-									{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
-								</div>
-							) }
-
 							<b>{ __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) }</b>
 
 							<SelectControl
@@ -518,6 +512,7 @@ const Inspector = ({
 									{ label: __( 'Sendinblue', 'otter-blocks' ), value: 'sendinblue' }
 								] }
 								onChange={ provider => {
+									window.oTrk?.add({ feature: 'marketing', featureComponent: 'provider', featureValue: provider, groupID: attributes.id });
 									setFormOption({ provider, listId: '', apiKey: '' });
 								} }
 							/>
@@ -553,6 +548,7 @@ const Inspector = ({
 										help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
 										value={ formOptions.apiKey ? `*************************${formOptions.apiKey.slice( -8 )}` : '' }
 										onChange={ apiKey => {
+											window.oTrk?.add({ feature: 'marketing', featureComponent: 'api-key', groupID: attributes.id });
 											setListIDOptions([]);
 											setFormOption({
 												listId: '',
@@ -593,7 +589,10 @@ const Inspector = ({
 												label={ __( 'Contact List', 'otter-blocks' ) }
 												value={ formOptions.listId }
 												options={ listIDOptions }
-												onChange={ listId => setFormOption({ listId }) }
+												onChange={ listId => {
+													window.oTrk?.set( `${attributes.id}_list`, { feature: 'marketing', featureComponent: 'contact-list', groupID: attributes.id });
+													setFormOption({ listId });
+												} }
 											/>
 
 											{ 1 >= listIDOptions?.length && <p> { __( 'No Contact list found. Please create a list in your provider interface or check if the API key is correct.', 'otter-blocks' ) } </p> }
@@ -601,26 +600,52 @@ const Inspector = ({
 											{ 2 <= listIDOptions?.length && formOptions.listId && (
 												<Fragment>
 													<SelectControl
-														label={ __( 'Action', 'otter-blocks' ) }
+														label={ __( 'Submit Action', 'otter-blocks' ) }
 														value={ formOptions.action }
 														options={ [
 															{ label: __( 'Default', 'otter-blocks' ), value: '' },
-															{ label: __( 'Subscribe', 'otter-blocks' ), value: 'subscribe' },
+															{ label: __( 'Subscribe Only', 'otter-blocks' ), value: 'subscribe' },
 															{ label: __( 'Submit & Subscribe', 'otter-blocks' ), value: 'submit-subscribe' }
 														] }
-														onChange={ action => setFormOption({ action }) }
+														onChange={ action => {
+															window.oTrk?.set( `${attributes.id}_action`, { feature: 'marketing', featureComponent: 'action', featureValue: action, groupID: attributes.id });
+															setFormOption({ action });
+														} }
 													/>
 
-													{ 'submit-subscribe' === formOptions.action && (
+													{ ( ! formOptions.action || 'submit-subscribe' === formOptions.action ) && (
 														<div style={{ marginBottom: '10px' }}>
-															{ __( 'This action will add the client to the contact list and send a separate email with the form data to administrator or to the email mentioned in \'Form to\' field. A checkbox for data-sharing consent with third-party will be added on form.', 'otter-blocks' ) }
+															{ __( 'Adds the client to your contact list and emails form data to the specified \'Form to\' address or the admin. Includes a checkbox for third-party data-sharing consent.', 'otter-blocks' ) }
 														</div>
 													) }
+
+													{ 'subscribe' === formOptions.action && (
+														<div style={{ marginBottom: '10px' }}>
+															{ __( 'Add users to the contact list and skip email alerts for each submission. Ideal for news letter sign-up forms.', 'otter-blocks' ) }
+														</div>
+													) }
+
+													{
+														'subscribe' === formOptions.action &&
+														( 'email' === formOptions.submissionsSaveLocation || ! Boolean( window?.otterPro?.isActive ) ) &&
+														(
+															<div style={{ marginBottom: '10px' }}>
+																{ __( 'By skipping the email alerts you will lose the data from other fields. If this is a problem, we recommend switching to Database saving or using Submit & Subscribe Action', 'otter-blocks' ) }
+															</div>
+														)
+													}
 												</Fragment>
 											) }
 										</Fragment>
 									) }
 								</Fragment>
+							) }
+
+							{ 'loading' === loadingState?.formIntegration && (
+								<div className="o-fetch-msg">
+									<Spinner />
+									{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
+								</div>
 							) }
 
 							<div

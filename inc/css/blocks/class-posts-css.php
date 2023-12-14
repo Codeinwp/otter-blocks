@@ -313,6 +313,84 @@ class Posts_CSS extends Base_CSS {
 						'property' => '--content-gap',
 						'value'    => 'contentGap',
 					),
+					array(
+						'property' => '--pag-gap',
+						'value'    => 'pagGap',
+					),
+					array(
+						'property' => '--pag-color',
+						'value'    => 'pagColor',
+					),
+					array(
+						'property' => '--pag-bg-color',
+						'value'    => 'pagBgColor',
+					),
+					array(
+						'property' => '--pag-color-hover',
+						'value'    => 'pagColorHover',
+					),
+					array(
+						'property' => '--pag-bg-color-hover',
+						'value'    => 'pagBgColorHover',
+					),
+					array(
+						'property' => '--pag-color-active',
+						'value'    => 'pagColorActive',
+					),
+					array(
+						'property' => '--pag-bg-color-active',
+						'value'    => 'pagBgColorActive',
+					),
+					array(
+						'property' => '--pag-border-color',
+						'value'    => 'pagBorderColor',
+					),
+					array(
+						'property' => '--pag-border-color-hover',
+						'value'    => 'pagBorderColorHover',
+					),
+					array(
+						'property' => '--pag-border-color-active',
+						'value'    => 'pagBorderColorActive',
+					),
+					array(
+						'property' => '--pag-size',
+						'value'    => 'pagSize',
+					),
+					array(
+						'property' => '--pag-border-radius',
+						'value'    => 'pagBorderRadius',
+						'format'   => function( $value, $attrs ) {
+							return CSS_Utility::box_values( $value );
+						},
+					),
+					array(
+						'property' => '--pag-border-width',
+						'value'    => 'pagBorderWidth',
+						'format'   => function( $value, $attrs ) {
+							return CSS_Utility::box_values( $value );
+						},
+					),
+					array(
+						'property' => '--pag-padding',
+						'value'    => 'pagPadding',
+						'format'   => function( $value, $attrs ) {
+							return CSS_Utility::box_values( $value );
+						},
+					),
+					array(
+						'property' => '--pag-cont-margin',
+						'value'    => 'pagContMargin',
+						'format'   => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'top'    => '10px',
+									'bottom' => '30px',
+								)
+							);
+						},
+					),
 				),
 			)
 		);

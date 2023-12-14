@@ -7,7 +7,7 @@
  * Plugin Name:       Otter – Page Builder Blocks & Extensions for Gutenberg
  * Plugin URI:        https://themeisle.com/plugins/otter-blocks
  * Description:       Create beautiful and attracting posts, pages, and landing pages with Otter – Page Builder Blocks & Extensions for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
- * Version:           2.4.0
+ * Version:           2.5.2
  * Author:            ThemeIsle
  * Author URI:        https://themeisle.com
  * License:           GPL-2.0+
@@ -26,7 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'OTTER_BLOCKS_BASEFILE', __FILE__ );
 define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
-define( 'OTTER_BLOCKS_VERSION', '2.4.0' );
+define( 'OTTER_BLOCKS_VERSION', '2.5.2' );
 define( 'OTTER_BLOCKS_PRO_SUPPORT', true );
 define( 'OTTER_BLOCKS_SHOW_NOTICES', false );
 
@@ -70,4 +70,35 @@ add_action(
 		);
 		return $links;
 	}
+);
+
+add_filter( 'themeisle_sdk_enable_telemetry', '__return_true' );
+
+add_filter(
+	'themeisle_sdk_telemetry_products',
+	function( $products ) {
+		$already_registered = false;
+
+		$license    = apply_filters( 'product_otter_license_key', 'free' );
+		$track_hash = 'free' === $license ? 'free' : wp_hash( $license );
+
+		foreach ( $products as &$product ) {
+			if ( strstr( $product['slug'], 'otter' ) !== false ) {
+				$already_registered   = true;
+				$product['trackHash'] = $track_hash;
+			}
+		}
+
+		if ( $already_registered ) {
+			return $products;
+		}
+	
+		// Add Otter Blocks to the list of products to track the usage of AI Block.
+		$products[] = array(
+			'slug'      => 'otter',
+			'consent'   => false,
+			'trackHash' => $track_hash,
+		);
+		return $products;
+	} 
 );

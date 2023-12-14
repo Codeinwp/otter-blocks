@@ -49,7 +49,11 @@ const Edit = ({
 						label={ __( 'Select Product', 'otter-blocks' ) }
 						hideLabelFromVision
 						value={ attributes.product || '' }
-						onChange={ product => setAttributes({ product: Number( product ) }) }
+						onChange={ product => {
+							window.oTrk?.add({ feature: 'add-to-cart', featureComponent: 'product-changed' });
+
+							setAttributes({ product: Number( product ) });
+						} }
 					/>
 				</Placeholder>
 			) }

@@ -20,11 +20,13 @@ import { FieldInputWidth, HideFieldLabelToggle, mappedNameInfo } from '../../../
 import { setSavedState } from '../../../blocks/helpers/helper-functions';
 import AutoresponderBodyModal from '../../components/autoresponder/index.js';
 import WebhookEditor from '../../components/webhook-editor';
+import attributes from '../../../blocks/blocks/lottie/attributes';
 
 // +-------------- Autoresponder --------------+
 
 const AutoresponderBody = ({ formOptions, setFormOption }) => {
 	const onChange = body => {
+		window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'body' });
 		setFormOption({ autoresponder: { ...formOptions.autoresponder, body }});
 	};
 
@@ -44,9 +46,10 @@ const helpMessages = {
  * @param {import('../../../blocks/blocks/form/type').FormOptions} formOptions The form options.
  * @param { (options: import('../../../blocks/blocks/form/type').FormOptions) => void } setFormOption The function to set the form options.
  * @param {any} config The form config.
+ * @param {import('../../../blocks/blocks/form/type').FormAttrs} attributes The form attributes.
  * @returns {JSX.Element}
  */
-const FormOptions = ( Options, formOptions, setFormOption, config ) => {
+const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) => {
 
 	return (
 		<>
@@ -62,7 +65,10 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 					<SelectControl
 						label={ __( 'Save Location', 'otter-blocks' ) }
 						value={ formOptions.submissionsSaveLocation ?? 'database-email' }
-						onChange={ submissionsSaveLocation => setFormOption({ submissionsSaveLocation }) }
+						onChange={ submissionsSaveLocation => {
+							window.oTrk?.set( `${attributes.id}_save`, { feature: 'form-storing', featureComponent: 'save-location', featureValue: submissionsSaveLocation, groupID: attributes.id });
+							setFormOption({ submissionsSaveLocation });
+						} }
 						options={
 							[
 								{ label: __( 'Database', 'otter-blocks' ), value: 'database' },
@@ -104,14 +110,15 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 								'otter-blocks'
 							)}
 							value={formOptions.autoresponder?.subject}
-							onChange={( subject ) =>
+							onChange={( subject ) => {
+								window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'subject', groupID: attributes.id });
 								setFormOption({
 									autoresponder: {
 										...formOptions.autoresponder,
 										subject
 									}
-								})
-							}
+								});
+							}}
 							help={__(
 								'Enter the subject of the autoresponder email.',
 								'otter-blocks'
@@ -150,7 +157,7 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 				)}
 			</ToolsPanelItem>
 			<ToolsPanelItem
-				hasValue={() => formOptions.webhookId }
+				hasValue={() => formOptions?.webhookId }
 				label={__( 'Webhook', 'otter-blocks' )}
 				onDeselect={() => setFormOption({ webhookId: undefined })}
 			>
@@ -159,6 +166,7 @@ const FormOptions = ( Options, formOptions, setFormOption, config ) => {
 						<WebhookEditor
 							webhookId={formOptions.webhookId}
 							onChange={( webhookId ) => {
+								window.oTrk?.add({ feature: 'form-webhook', featureComponent: 'webhook-set', groupID: attributes.id });
 								setFormOption({
 									webhookId: webhookId
 								});
@@ -273,6 +281,7 @@ const FormFileInspector = ( Template, {
 				type="number"
 				value={ ! isNaN( parseInt( attributes.maxFileSize ) ) ? attributes.maxFileSize : undefined }
 				onChange={ maxFileSize => {
+					window.oTrk?.set( `${attributes.id}_size`, { feature: 'form-file', featureComponent: 'file-size', featureValue: maxFileSize, groupID: attributes.id });
 					setSavedState( attributes.id, true );
 					setAttributes({ maxFileSize: maxFileSize ? maxFileSize?.toString() : undefined });
 				} }
@@ -283,6 +292,7 @@ const FormFileInspector = ( Template, {
 				label={ __( 'Allowed File Types', 'otter-blocks' ) }
 				value={ attributes.allowedFileTypes }
 				onChange={ allowedFileTypes => {
+					window.oTrk?.set( `${attributes.id}_type`, { feature: 'form-file', featureComponent: 'file-type', featureValue: allowedFileTypes, groupID: attributes.id });
 					setSavedState( attributes.id, true );
 					setAttributes({ allowedFileTypes: allowedFileTypes ? allowedFileTypes.map( replaceJPGWithJPEG ) : undefined });
 				} }
@@ -315,6 +325,7 @@ const FormFileInspector = ( Template, {
 				label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
 				checked={ Boolean( attributes.multipleFiles ) }
 				onChange={ multipleFiles => {
+					window.oTrk?.add({ feature: 'form-file', featureComponent: 'enable-multiple-file', groupID: attributes.id });
 					setSavedState( attributes.id, true );
 					setAttributes({ multipleFiles: multipleFiles ? multipleFiles : undefined });
 				} }
@@ -327,6 +338,7 @@ const FormFileInspector = ( Template, {
 						type="number"
 						value={ ! isNaN( parseInt( attributes.maxFilesNumber ) ) ? ( attributes.maxFilesNumber ) : undefined }
 						onChange={ maxFilesNumber => {
+							window.oTrk?.set( `${attributes.id}_num`, { feature: 'form-file', featureComponent: 'multiple-file', featureValue: maxFilesNumber, groupID: attributes.id });
 							setSavedState( attributes.id, true );
 							setAttributes({ maxFilesNumber: maxFilesNumber ? maxFilesNumber?.toString() : undefined });
 						} }
@@ -340,6 +352,7 @@ const FormFileInspector = ( Template, {
 				help={ __( 'If enabled, the files will be saved to Media Library instead of adding them as attachments to email.', 'otter-blocks' ) }
 				checked={ 'media-library' === attributes.saveFiles }
 				onChange={ value => {
+					window.oTrk?.add({ feature: 'form-file', featureComponent: 'enable-media-saving', groupID: attributes.id });
 					setSavedState( attributes.id, true );
 					setAttributes({ saveFiles: value ? 'media-library' : undefined });
 				} }

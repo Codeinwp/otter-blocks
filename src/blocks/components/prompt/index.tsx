@@ -14,8 +14,10 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
 
 import useSettings from '../../helpers/use-settings';
 import {
+	PromptConversation,
 	PromptsData,
 	injectActionIntoPrompt,
+	injectConversationIntoPrompt,
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
@@ -123,45 +125,15 @@ const PromptBlockEditor = (
 	);
 };
 
-const TrackingConsentToggle = ( props: {onToggle: ( value: boolean ) => void, value: boolean, onClose: () => void}) => {
-	return (
-		<div className="o-tracking-consent-toggle">
-			<div className="o-tracking-consent-toggle__toggle">
-				<input
-					type="checkbox"
-					checked={ props.value }
-					onChange={ ( event ) => {
-						props.onToggle( event.target.checked );
-					}}
-					name="o-tracking-consent-toggle"
-				/>
-			</div>
-			<label className="o-tracking-consent-toggle__label" htmlFor="o-tracking-consent-toggle">
-				{ __( 'Help us improve the AI block by allowing anonymous usage tracking.', 'otter-blocks' ) }
-			</label>
-			<div className="o-tracking-consent-toggle__close">
-				<Button
-					variant="tertiary"
-					onClick={ props.onClose }
-					icon={closeSmall}
-				/>
-			</div>
-		</div>
-	);
-};
-
 const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	const { title, value, onValueChange, promptID } = props;
 
 	const [ getOption, updateOption, status ] = useSettings();
 	const [ apiKey, setApiKey ] = useState<string | null>( null );
 
-	const [ showTrackingConsent, setShowTrackingConsent ] = useState<boolean>( false );
-	const [ trackingConsent, setTrackingConsent ] = useState<boolean>( false );
-
 	const [ generationStatus, setGenerationStatus ] = useState<'loading' | 'loaded' | 'error'>( 'loaded' );
 
-	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( 'checking' );
+	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( window.themeisleGutenberg?.hasOpenAiKey ? 'present' : 'checking' );
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
 	const [ result, setResult ] = useState<string | undefined>( undefined );
 
@@ -174,28 +146,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	const [ errorMessage, setErrorMessage ] = useState<string>( '' );
 	const [ tokenUsageDescription, setTokenUsageDescription ] = useState<string>( '' );
 
-	const onSuccessActions = {
-		clearHistory: () => {
-			setResult( undefined );
-			setResultHistory([]);
-			setResultHistoryIndex( 0 );
-		}
-	};
-
-	const onToggleTrackingConsent = ( value: boolean ) => {
-		updateOption( 'otter_blocks_logger_flag', value ? 'yes' : '', __( 'Tracking consent saved.', 'otter-blocks' ), 'o-tracking-consent', () => {
-			if ( value ) {
-				setShowTrackingConsent( false );
-			}
-		});
-
-		setTrackingConsent( value );
-	};
-
-	useEffect( () => {
-		setShowTrackingConsent( ! Boolean( localStorage.getItem( 'o-tracking-consent' ) ) );
-	}, []);
-
 	useEffect( () => {
 		const getEmbeddedPrompt = async() => {
 			retrieveEmbeddedPrompt( promptID ).then( ( promptServer ) => {
@@ -207,7 +157,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	}, []);
 
 	useEffect( () => {
-		if ( 'loading' === status ) {
+		if ( 'loading' === status || 'present' === apiKeyStatus ) {
 			return;
 		}
 
@@ -218,16 +168,12 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			} else {
 				setApiKeyStatus( 'missing' );
 			}
-			if ( 'yes' === getOption( 'otter_blocks_logger_flag' ) ) {
-				setTrackingConsent( true );
-				setShowTrackingConsent( false );
-			}
 		}
 
 		if ( 'error' === status ) {
 			setApiKeyStatus( 'error' );
 		}
-	}, [ status, getOption ]);
+	}, [ status, getOption, apiKeyStatus ]);
 
 	useEffect( () => {
 		setResultHistoryIndex( resultHistory.length - 1 );
@@ -253,7 +199,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		let embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
 
-		if ( ! embeddedPrompt ) {
+		if ( undefined === embeddedPrompt ) {
 			setShowError( true );
 			setErrorMessage( __( 'Prompt not found. Reload the page. If the error still persist the server might be down.', 'otter-blocks' ) );
 			return;
@@ -265,7 +211,19 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			embeddedPrompt = injectActionIntoPrompt( embeddedPrompt, action );
 		}
 
-		if ( ! apiKey ) {
+		if ( 'patternsPicker' === promptID && window.themeisleGutenberg?.hasPro ) {
+
+			// Add the Pro patterns to the prompt.
+			const addon: PromptConversation[] = embeddedPrompt?.['otter_pro_addon'] ?? [];
+
+			addon?.forEach( ( conversation ) => {
+				if ( embeddedPrompt ) {
+					embeddedPrompt = injectConversationIntoPrompt( embeddedPrompt, conversation );
+				}
+			});
+		}
+
+		if ( 'present' !== apiKeyStatus ) {
 			setShowError( true );
 			setErrorMessage( __( 'API Key not found. Please add your API Key in the settings page.', 'otter-blocks' ) );
 			return;
@@ -274,6 +232,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		setGenerationStatus( 'loading' );
 
 		const sendPrompt = regenerate ? sendPromptToOpenAIWithRegenerate : sendPromptToOpenAI;
+
+		window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'prompt', featureValue: value }, { consent: true });
 
 		sendPrompt?.( value, embeddedPrompt, {
 			'otter_used_action': 'textTransformation' === promptID ? 'textTransformation::otter_action_prompt' : ( promptID ?? '' ),
@@ -328,7 +288,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		return (
 			<Placeholder
 				className="prompt-placeholder"
-				label={__( 'OpenAI API Key', 'otter-blocks' )}
+				label={ __( 'OpenAI API Key', 'otter-blocks' ) }
 			>
 				{
 					'checking' === apiKeyStatus && (
@@ -400,7 +360,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	}
 
 	return (
-		<div>
+		<Fragment>
 			{
 				( 0 < resultHistory?.length ) ? (
 					<PromptBlockEditor
@@ -437,19 +397,6 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 							placeholder={ props.promptPlaceholder }
 						/>
 
-						{/*{*/}
-						{/*	showTrackingConsent && (*/}
-						{/*		<TrackingConsentToggle*/}
-						{/*			onToggle={ onToggleTrackingConsent }*/}
-						{/*			value={ trackingConsent }*/}
-						{/*			onClose={() => {*/}
-						{/*				setShowTrackingConsent( false );*/}
-						{/*				localStorage.setItem( 'o-tracking-consent', 'true' );*/}
-						{/*			}}*/}
-						{/*		/>*/}
-						{/*	)*/}
-						{/*}*/}
-
 						{props.children}
 					</PromptBlockEditor>
 				) : (
@@ -476,8 +423,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 					</Notice>
 				)
 			}
-		</div>
-
+		</Fragment>
 	);
 };
 

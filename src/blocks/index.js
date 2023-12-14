@@ -7,13 +7,15 @@ import { updateCategory } from '@wordpress/blocks';
 
 import { Icon } from '@wordpress/components';
 
-import { dispatch } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 
 import domReady from '@wordpress/dom-ready';
 
 import { render } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
+
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -88,7 +90,54 @@ if ( Boolean( window.themeisleGutenberg.should_show_upsell ) ) {
 	);
 }
 
+/**
+ * Hide blocks in inserter based on the `themeisle_disabled_blocks` setting.
+ */
+const hideBlocksInInserter = () => {
+
+	/**
+	 * Since some variations are based on core blocks, they need to be unregistered and registered again with an empty scope.
+	 */
+
+	const variationsMap = {
+		'themeisle-gutenberg/masonry': 'core/gallery',
+		'themeisle-gutenberg/live-search': 'core/search'
+	};
+
+	/**
+	 * Check if the block is a variation.
+	 * @param blockSlug The block slug.
+	 * @returns {boolean} True if the block is a variation.
+	 */
+	const isVariation = ( blockSlug ) => {
+		return variationsMap.hasOwnProperty( blockSlug );
+	};
+
+	const hiddenBlocks = select( 'core/preferences' )?.get( 'core/edit-post', 'hiddenBlockTypes' ) || [];
+
+	hiddenBlocks.forEach( blockName => {
+		if ( isVariation( blockName ) ) {
+			const parentBlockName = variationsMap[blockName];
+			const blockVariations = wp?.blocks?.getBlockVariations( parentBlockName );
+			const blockRegistration = blockVariations.find( block => block.name === blockName );
+
+			if ( ! blockRegistration ) {
+				return;
+			}
+
+			wp?.blocks?.unregisterBlockVariation( parentBlockName, blockName );
+			blockRegistration.scope = [];
+			wp?.blocks?.registerBlockVariation( parentBlockName, blockRegistration );
+		}
+	});
+};
+
 domReady( () => {
+
+	setTimeout( () => {
+		hideBlocksInInserter();
+	}, 500 );
+
 	if ( document.querySelector( 'svg.o-icon-gradient' ) ) {
 		return;
 	}

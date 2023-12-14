@@ -8,6 +8,7 @@ type Attributes = {
 	paramName: string
 	mappedName: string
 	type: string
+	defaultValue: string
 }
 
 export type FormHiddenFieldProps = BlockProps<Attributes>

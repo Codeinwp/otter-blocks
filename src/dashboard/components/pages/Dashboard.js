@@ -160,6 +160,7 @@ const Dashboard = () => {
 			}
 		);
 
+		window.tiTrk?.with( 'otter' ).add({ feature: 'dashboard', featureComponent: 'regenerate-style' });
 		setRegeneratedDisabled( true );
 		setOpen( false );
 	};

@@ -1,3 +1,49 @@
+type TrackingData = {
+    block?: string;
+    env?: string;
+    action?: 'block-created' | 'block-updated' | 'block-deleted';
+    feature?: string;
+    groupID?: string;
+    featureComponent?: string;
+    featureValue?: string;
+    hasOpenAIKey?: boolean;
+    usedTheme?: string;
+};
+
+type EventResponse = {
+    error?: string;
+    success?: boolean;
+    response?: any;
+};
+
+type EventOptions = {
+    directSave?: boolean;
+    consent?: boolean;
+    refreshTimer?: boolean;
+    sendNow?: boolean;
+    ignoreLimit?: boolean;
+};
+
+interface EventTrackingAccumulatorWithPlugin {
+	add: ( data: TrackingData, options?: EventOptions ) => string;
+	set: ( key: string, data: TrackingData, options?: EventOptions ) => void;
+	base: EventTrackingAccumulator;
+}
+
+interface EventTrackingAccumulator {
+	subscribe( callback: ( response: EventResponse ) => void ): () => void;
+	hasConsent(): boolean;
+	sendBulkTracking( payload: Array<TrackingData> ): Promise<Response>;
+	trkMetadata( data: TrackingData ): TrackingData;
+	with( pluginSlug: string ): EventTrackingAccumulatorWithPlugin;
+	uploadEvents(): Promise<void>;
+	sendIfLimitReached(): Promise<void> | undefined;
+	start(): void;
+	stop(): void;
+	refreshTimer(): void;
+	clone(): EventTrackingAccumulator;
+}
+
 declare global {
 	interface Window {
 		themeisleGutenberg?: {
@@ -41,6 +87,7 @@ declare global {
 			isAncestorTypeAvailable: boolean
 			highlightDynamicText: boolean
 			isPreview: boolean
+			hasOpenAiKey: boolean
 		}
 		otterPro?: Readonly<{
 			isActive: boolean
@@ -102,7 +149,9 @@ declare global {
 		},
 		oSavedStates?: {
 			[key: string]: any
-		}
+		},
+		oTrk?: EventTrackingAccumulatorWithPlugin
+		tiTrk?: EventTrackingAccumulator
 	}
 }
 

@@ -42,38 +42,78 @@ class Block_Conditions {
 	 */
 	public function render_blocks( $block_content, $block ) {
 		if ( ! is_admin() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) && isset( $block['attrs']['otterConditions'] ) ) {
-			$display = true;
-
-			foreach ( $block['attrs']['otterConditions'] as $group ) {
-				if ( 0 === count( $group ) ) {
-					continue;
-				}
-
-				$visibility = true;
-
-				foreach ( $group as $condition ) {
-					if ( ! $this->evaluate_condition( $condition ) ) {
-						$visibility = false;
-					}
-				}
-
-				if ( true === $visibility ) {
-					$display = true;
-					break;
-				}
-
-
-				if ( false === $visibility ) {
-					$display = false;
-				}
-			}
+			
+			$display = $this->evaluate_condition_collection( $block['attrs']['otterConditions'] );
 
 			if ( false === $display ) {
 				return;
 			}
+
+			$enhanced_content = $this->should_add_hide_css_class( $this->get_hide_css_condition( $block['attrs']['otterConditions'] ), $block_content );
+
+			if ( false !== $enhanced_content ) {
+				return $enhanced_content;
+			}
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * Evaluate conditions
+	 *
+	 * @param array<array> $collection The conditions collection to evaluate.
+	 * @return bool Whether the conditions are met.
+	 */
+	public function evaluate_condition_collection( $collection ) {
+		$display = true;
+
+		foreach ( $collection as $group ) {
+			if ( 0 === count( $group ) ) {
+				continue;
+			}
+
+			$visibility = true;
+
+			foreach ( $group as $condition ) {
+				if ( ! $this->evaluate_condition( $condition ) ) {
+					$visibility = false;
+				}
+			}
+
+			if ( true === $visibility ) {
+				$display = true;
+				break;
+			}
+
+			if ( false === $visibility ) {
+				$display = false;
+			}
+		}
+			
+		return $display;
+	}
+
+	/**
+	 * Get the hide CSS condition.
+	 * 
+	 * @param array<array> $collection The conditions collection to evaluate.
+	 * @return array|bool The hide CSS condition, or false if none is found.
+	 */
+	public function get_hide_css_condition( $collection ) {
+		foreach ( $collection as $group ) {
+			if ( 0 === count( $group ) ) {
+				continue;
+			}
+			
+			foreach ( $group as $condition ) {
+				if ( ! empty( $condition['type'] ) && ! empty( $condition['screen_sizes'] ) ) {
+					return $condition;
+				}
+			}
+		}
+			
+		return false;
 	}
 
 	/**
@@ -162,6 +202,10 @@ class Block_Conditions {
 					return ! $this->has_category( $condition['categories'] );
 				}
 			}
+		}
+
+		if ( 'screenSize' === $condition['type'] ) {
+			return true;
 		}
 
 		if ( 'stripePurchaseHistory' === $condition['type'] ) {
@@ -261,6 +305,71 @@ class Block_Conditions {
 	public function has_stripe_product( $product ) {
 		$stripe = new Stripe_API();
 		return $stripe->check_purchase( $product );
+	}
+
+	/**
+	 * If the block has a hide condition, add the appropriate CSS class.
+	 *
+	 * @param array  $condition Condition.
+	 * @param string $block_content Reference to block content.
+	 * @return string|bool
+	 */
+	public function should_add_hide_css_class( $condition, $block_content ) {
+
+		if ( empty( $condition['type'] ) || empty( $condition['screen_sizes'] ) ) {
+			return false;
+		}
+
+		$screen_sizes     = $condition['screen_sizes'];
+		$hide_css_classes = '';
+
+		if ( in_array( 'mobile', $screen_sizes ) ) {
+			$hide_css_classes .= ' o-hide-on-mobile';
+		}
+
+		if ( in_array( 'tablet', $screen_sizes ) ) {
+			$hide_css_classes .= ' o-hide-on-tablet';
+		}
+
+		if ( in_array( 'desktop', $screen_sizes ) ) {
+			$hide_css_classes .= ' o-hide-on-desktop';
+		}
+
+		if ( empty( $hide_css_classes ) ) {
+			return false;
+		}
+
+		// Get the parent node.
+		$html_nodes_matches = array();
+		preg_match( '/<[^>]+>/', $block_content, $html_nodes_matches, PREG_OFFSET_CAPTURE );
+
+		// If we have not match, then the content might not be a valid HTML element.
+		if ( empty( $html_nodes_matches ) ) {
+			return false;
+		}
+
+		$parent_node      = $html_nodes_matches[0][0];
+		$hide_css_classes = ltrim( $hide_css_classes, ' ' );
+
+		// If we have a class attribute, append the CSS class to it. Otherwise, add the class attribute.
+		if ( false !== strpos( $parent_node, 'class="' ) ) {
+			$before_class  = strstr( $block_content, 'class="', true );
+			$after_class   = strstr( $block_content, 'class="' );
+			$after_class   = substr( $after_class, strlen( 'class="' ) );
+			$block_content = $before_class . 'class="' . $hide_css_classes . ' ' . $after_class;
+		} elseif ( false !== strpos( $parent_node, "class='" ) ) {
+			// Special case with single quotes.
+			$before_class  = strstr( $block_content, "class='", true );
+			$after_class   = strstr( $block_content, "class='" );
+			$after_class   = substr( $after_class, strlen( "class='" ) );
+			$block_content = $before_class . "class='" . $hide_css_classes . ' ' . $after_class;
+		} else {
+			$class_attribute_string = ' class="' . $hide_css_classes . '"';
+			$enhanced_parent_node   = preg_replace( '/>$/', $class_attribute_string . '>', $parent_node );
+			$block_content          = str_replace( $parent_node, $enhanced_parent_node, $block_content );
+		}
+
+		return $block_content;
 	}
 
 	/**

@@ -124,6 +124,7 @@ const Inspector = ({
 							...productsList
 						] }
 						onChange={ product => {
+							window.oTrk?.add({ feature: 'stripe-field', featureComponent: 'product-changed' });
 							setAttributes({
 								product: 'none' !== product ? product : undefined,
 								price: undefined
@@ -144,6 +145,7 @@ const Inspector = ({
 							...pricesList
 						] }
 						onChange={ price => {
+							window.oTrk?.add({ feature: 'stripe-field', featureComponent: 'price-changed' });
 							setAttributes({ price: 'none' !== price ? price : undefined });
 						} }
 					/>
