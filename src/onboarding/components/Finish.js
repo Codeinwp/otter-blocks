@@ -79,7 +79,6 @@ const Finish = () => {
 					placeholder={ __( 'Leave your feedback', 'otter-blocks' ) }
 					value={ feedback }
 					onChange={ setFeedback }
-					hideLabelFromVision
 				/>
 
 				<div className="o-finish__actions">
