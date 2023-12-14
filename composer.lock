@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7478f8817a565a128a8751be2934b019",
+    "content-hash": "836b0bf38527860ede777b31da4e097b",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -168,16 +168,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v13.3.0",
+            "version": "v13.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "58d0e126670d43808ef4a814b40a2864bca788e5"
+                "reference": "a688c0ee7c0a2d162dee5c80b85d017cdd8d5e37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/58d0e126670d43808ef4a814b40a2864bca788e5",
-                "reference": "58d0e126670d43808ef4a814b40a2864bca788e5",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/a688c0ee7c0a2d162dee5c80b85d017cdd8d5e37",
+                "reference": "a688c0ee7c0a2d162dee5c80b85d017cdd8d5e37",
                 "shasum": ""
             },
             "require": {
@@ -221,9 +221,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v13.3.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v13.5.0"
             },
-            "time": "2023-11-09T21:21:22+00:00"
+            "time": "2023-11-30T18:11:45+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
@@ -792,16 +792,16 @@
         },
         {
             "name": "php-stubs/woocommerce-stubs",
-            "version": "v8.2.2",
+            "version": "v8.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/woocommerce-stubs.git",
-                "reference": "e183e3b9aa9c049b6d08f3bb48b48490a40e9145"
+                "reference": "bf594026d5d6ec043c42956a6cf465ec616cbba2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/e183e3b9aa9c049b6d08f3bb48b48490a40e9145",
-                "reference": "e183e3b9aa9c049b6d08f3bb48b48490a40e9145",
+                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/bf594026d5d6ec043c42956a6cf465ec616cbba2",
+                "reference": "bf594026d5d6ec043c42956a6cf465ec616cbba2",
                 "shasum": ""
             },
             "require": {
@@ -830,9 +830,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
-                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v8.2.2"
+                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v8.3.1"
             },
-            "time": "2023-11-08T20:23:29+00:00"
+            "time": "2023-11-21T21:16:40+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",
@@ -945,16 +945,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.41",
+            "version": "1.10.50",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "c6174523c2a69231df55bdc65b61655e72876d76"
+                "reference": "06a98513ac72c03e8366b5a0cb00750b487032e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c6174523c2a69231df55bdc65b61655e72876d76",
-                "reference": "c6174523c2a69231df55bdc65b61655e72876d76",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/06a98513ac72c03e8366b5a0cb00750b487032e4",
+                "reference": "06a98513ac72c03e8366b5a0cb00750b487032e4",
                 "shasum": ""
             },
             "require": {
@@ -1003,7 +1003,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-05T12:57:57+00:00"
+            "time": "2023-12-13T10:59:42+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

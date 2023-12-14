@@ -25,7 +25,7 @@ class TestPatterns extends WP_UnitTestCase {
 			 array(
 				 'site_url'   => get_site_url(),
 				 'license_id' => $array_data['key'],
-				 'cache'      => gmdate( 'u' ),
+				 'cache'      => time(),
 			 ),
 			 'https://api.themeisle.com/templates-cloud/otter-patterns'
 		 );
