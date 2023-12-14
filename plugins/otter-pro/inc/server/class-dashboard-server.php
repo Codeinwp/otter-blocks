@@ -60,7 +60,7 @@ class Dashboard_Server {
 					'key'        => apply_filters( 'product_otter_license_key', 'free' ),
 					'valid'      => apply_filters( 'product_otter_license_status', false ),
 					'expiration' => License::get_license_expiration_date(),
-					'type'	     => License::get_license_type(),
+					'type'       => License::get_license_type(),
 				),
 				'hasNevePro'         => defined( 'NEVE_PRO_VERSION' ),
 				'storeURL'           => 'https://store.themeisle.com/',
