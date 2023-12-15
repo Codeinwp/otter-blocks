@@ -21,7 +21,7 @@ const Start = () => {
 					src={ `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
 				/>
 
-				<h1>{ __( 'Welcome to FSE onboarding, by Otter.', 'otter-blocks' ) }</h1>
+				<h1>{ __( 'Welcome to Theme Onboarding, by Otter.', 'otter-blocks' ) }</h1>
 				<p>
 					{ __( 'This process will guide you through a basic setup of your theme, so you can enjoy your new site right away. You can trigger this wizard manually at any time, from Appearance Menu.', 'otter-blocks' ) }
 
