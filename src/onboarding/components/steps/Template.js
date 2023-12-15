@@ -11,7 +11,11 @@ import {
 	useSelect
 } from '@wordpress/data';
 
-import { useEffect } from '@wordpress/element';
+import {
+	useEffect,
+	useCallback,
+	memo
+} from '@wordpress/element';
 
 /**
  * Internal dependencies.
@@ -58,6 +62,10 @@ const Template = ({
 	const { setEditedEntity } = useDispatch( 'core/edit-site' );
 	const { setSelectedTemplate } = useDispatch( 'otter/onboarding' );
 
+	const handleSelectTemplate = useCallback( ( type, templateKey ) => {
+		setSelectedTemplate( type, templateKey );
+	}, [ setSelectedTemplate ]);
+
 	useEffect( () => {
 		if ( template?.id && template.id !== editedEntity ) {
 			setEditedEntity( 'wp_template', template.id, 'edit' );
@@ -77,7 +85,7 @@ const Template = ({
 					)
 				}
 				isSelected={ 'default' === selectedTemplate || ( '' === selectedTemplate && isDefault ) }
-				onClick={ () => setSelectedTemplate( type, 'default' ) }
+				onClick={() => handleSelectTemplate( type, 'default' )}
 			/>
 
 			{ Object.keys( library ).map( item => (
@@ -86,11 +94,11 @@ const Template = ({
 					template={ library[ item ] }
 					label={ `${ label } - ${ library[ item ]?.title }` }
 					isSelected={ item === selectedTemplate }
-					onClick={ () => setSelectedTemplate( type, item ) }
+					onClick={() => handleSelectTemplate( type, item )}
 				/>
 			) ) }
 		</div>
 	);
 };
 
-export default Template;
+export default memo( Template );

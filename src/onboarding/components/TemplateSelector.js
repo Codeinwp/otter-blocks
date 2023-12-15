@@ -14,7 +14,10 @@ import { BlockPreview } from '@wordpress/block-editor';
 
 import { Icon } from '@wordpress/components';
 
-import { useRef } from '@wordpress/element';
+import {
+	useRef,
+	useMemo
+} from '@wordpress/element';
 
 const TemplateSelector = ({
 	template,
@@ -25,7 +28,9 @@ const TemplateSelector = ({
 }) => {
 	const ref = useRef();
 
-	const parsedTemplate = isParsed ? template : ( template?.content?.raw ? parse( template?.content?.raw ) : []);
+	const parsedTemplate = useMemo( () => {
+		return isParsed ? template : ( template?.content?.raw ? parse( template?.content?.raw ) : []);
+	}, [ template, isParsed ]);
 
 	return (
 		<div
