@@ -252,8 +252,8 @@ const Dashboard = () => {
 
 				<PanelRow>
 					<ToggleControl
-						label={ __( 'Enable FSE Onboarding Wizard', 'otter-blocks' ) }
-						help={ __( 'Toggle the visibility of the Full Site Editing (FSE) onboarding link in the Appearance menu.', 'otter-blocks' ) }
+						label={ __( 'Enable Theme Setup Wizard', 'otter-blocks' ) }
+						help={ __( 'Toggle the visibility of the Theme Setup link in the Appearance menu.', 'otter-blocks' ) }
 						checked={ state.values.enableOnboardingWizard }
 						disabled={ 'saving' === state.status.enableOnboardingWizard }
 						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableOnboardingWizard', value }) }
