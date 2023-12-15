@@ -48,8 +48,8 @@ class FSE_Onboarding {
 
 		add_submenu_page(
 			'themes.php',
-			esc_html__( 'FSE Onboarding', 'otter-blocks' ),
-			esc_html__( 'FSE Onboarding', 'otter-blocks' ),
+			esc_html__( 'Theme Setup', 'otter-blocks' ),
+			esc_html__( 'Theme Setup', 'otter-blocks' ),
 			'manage_options',
 			'otter-onboarding',
 			function() {
@@ -238,6 +238,7 @@ class FSE_Onboarding {
 					'rootUrl'        => get_site_url(),
 					'dashboardUrl'   => get_admin_url(),
 					'isDev'          => defined( 'ENABLE_OTTER_PRO_DEV' ),
+					'userEmail'      => wp_get_current_user()->user_email,
 				)
 			)
 		);

@@ -77,12 +77,29 @@ div.error, div.notice {
 			line-height: 1.75;
 		}
 
-		.components-textarea-control__input {
+		.components-checkbox-control__label {
+			color: $main-color;
+			font-size: 12px;
+			font-style: normal;
+			font-weight: 700;
+			line-height: 140%;
+			text-transform: uppercase; 
+		}
+
+		.components-text-control__input {
 			border-radius: 6px;
 			border: 1px solid $border-color;
 			background: #FFF;
-			padding: 1rem;
-			resize: none;
+			padding: 0.8rem 1.2rem;
+			font-size: 16px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 170%;
+			max-width: 360px;
+
+			&::placeholder {
+				color: $secondary-text;
+			}
 		}
 
 		.components-button.is-primary {

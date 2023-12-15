@@ -5,40 +5,52 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	Button,
-	TextareaControl
+	CheckboxControl,
+	TextControl
 } from '@wordpress/components';
 
-import { useSelect } from '@wordpress/data';
+import {
+	useDispatch,
+	useSelect
+} from '@wordpress/data';
 
 import { useState } from '@wordpress/element';
 
-const { version } = window.otterOnboardingData;
+import { create } from '@wordpress/preferences-persistence';
 
 const Finish = () => {
-	const [ feedback, setFeedback ] = useState( '' );
+	const [ hasConsent, setConsent ] = useState( true );
+	const [ email, setEmail ] = useState( window.otterOnboardingData?.userEmail );
 	const [ isLoading, setIsLoading ] = useState( false );
 
-	const { theme } = useSelect( select => {
-		const { getCurrentTheme } = select( 'core' );
-
-		const theme = getCurrentTheme()?.template || getCurrentTheme()?.stylesheet;
+	const { hasUserOptedin } = useSelect( select => {
+		const { get } = select( 'core/preferences' );
 
 		return {
-			theme
+			hasUserOptedin: get( 'themeisle/otter-blocks', 'onboarding-optin' )
 		};
-	});
+	}, []);
+
+	const persistenceLayer = create();
+
+	const {
+		set,
+		setPersistenceLayer
+	} = useDispatch( 'core/preferences' );
+
+	setPersistenceLayer( persistenceLayer );
 
 	const onFinish = ({ redirect = 'site' }) => {
 		const url = 'site' === redirect ? window.otterOnboardingData.rootUrl : window.otterOnboardingData.dashboardUrl;
 
-		if ( ! feedback ) {
+		if ( ! email || ! hasConsent ) {
 			window.open( url, '_self' );
 			return;
 		}
 
 		setIsLoading( true );
 
-		fetch( 'https://api.themeisle.com/tracking/feedback', {
+		fetch( 'https://api.themeisle.com/tracking/subscribe', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -46,16 +58,13 @@ const Finish = () => {
 				'Cache-Control': 'no-cache'
 			},
 			body: JSON.stringify({
-				slug: 'otter-blocks',
-				version,
-				feedback,
-				data: {
-					'feedback-area': 'onboarding',
-					theme
-				}
+				slug: 'raft', // We need to see how we can make it work for any themes
+				site: window.otterOnboardingData.rootUrl,
+				email
 			})
 		}).then( r => {
 			setIsLoading( false );
+			set( 'themeisle/otter-blocks', 'onboarding-optin', true );
 			window.open( url, '_self' );
 		})?.catch( () => {
 			setIsLoading( false );
@@ -74,12 +83,23 @@ const Finish = () => {
 				<h1>{ __( 'Your website is ready!', 'otter-blocks' ) }</h1>
 				<p>{ __( 'Thanks for using Otter to setup your theme. Otter adds a number of useful blocks and features to your site that enhance your FSE experience. We hope you will enjoy using it.', 'otter-blocks' ) }</p>
 
-				<TextareaControl
-					label={ __( 'What do you think about the onboarding experience?', 'otter-blocks' ) }
-					placeholder={ __( 'Leave your feedback', 'otter-blocks' ) }
-					value={ feedback }
-					onChange={ setFeedback }
-				/>
+				{ ! hasUserOptedin && (
+					<>
+						<CheckboxControl
+							label={ __( 'Stay connected for news, Tips and updates', 'otter-blocks' ) }
+							checked={ hasConsent }
+							onChange={ setConsent }
+						/>
+
+						<TextControl
+							label={ __( 'Email', 'otter-blocks' ) }
+							placeholder={ __( 'Your email address', 'otter-blocks' ) }
+							hideLabelFromVision={ true }
+							value={ email }
+							onChange={ setEmail }
+						/>
+					</>
+				) }
 
 				<div className="o-finish__actions">
 					<Button
