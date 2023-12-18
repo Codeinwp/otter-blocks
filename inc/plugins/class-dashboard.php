@@ -195,6 +195,8 @@ class Dashboard {
 					'docsLink'           => Pro::get_docs_url(),
 					'showFeedbackNotice' => $this->should_show_feedback_notice(),
 					'deal'               => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
+					'days_since_install' => round( ( time() - get_option( 'otter_blocks_install', 0 ) ) / DAY_IN_SECONDS ),
+					'rootUrl'            => get_site_url(),
 				)
 			)
 		);
