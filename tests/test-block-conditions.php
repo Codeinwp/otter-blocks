@@ -5,6 +5,7 @@
  * @package gutenberg-blocks
  */
 
+use ThemeIsle\GutenbergBlocks\Registration;
 use ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertEqualsCanonicalizing;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertNotEqualsCanonicalizing;
@@ -590,5 +591,42 @@ class TestBlockConditions extends WP_UnitTestCase
 		$result = $this->block_conditions->get_hide_css_condition( $collection );
 		
 		$this->assertFalse( $result );
+	}
+
+	public function test_load_condition_hide_on_styles() {
+		$registration = new Registration();
+
+		$block_content = '<p>Hello!</p>';
+
+		$block = [
+			"name" => "core/paragraph",
+			"attrs" => [
+				"otterConditions" => [[]]
+			]
+		];
+
+		$result = $registration->load_condition_hide_on_styles( $block_content, $block );
+
+		// Make sure styles are not loaded.
+		$this->assertEquals( Registration::$scripts_loaded['condition_hide_on'], false );
+
+		$block = [
+			"name" => "core/paragraph",
+			"attrs" => [
+				"otterConditions" => [
+					[
+						[
+							"type" => "screenSize",
+							"screen_sizes" => ["mobile"]
+						]
+					]
+				]
+			]
+		];
+
+		$result = $registration->load_condition_hide_on_styles( $block_content, $block );
+
+		// Make sure styles are loaded.
+		$this->assertEquals( Registration::$scripts_loaded['condition_hide_on'], true );
 	}
 }
