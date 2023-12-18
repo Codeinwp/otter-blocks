@@ -35,7 +35,7 @@ const init = () => {
 						slider.appendChild( el.firstElementChild );
 					}
 
-					new window.Glide( `#${ slider.id }`, {
+					new window.Glide( slider, {
 						...slider.dataset,
 						type: 'carousel',
 						keyboard: true,
