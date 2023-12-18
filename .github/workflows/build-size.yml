@@ -111,6 +111,12 @@ jobs:
         with:
           base_path: './base/dashboard/stats.json'
           pr_path: './pr/dashboard/stats.json'
+      - name: Get Onboarding diff
+        id: get-onboarding-diff
+        uses: NejcZdovc/bundle-size-diff@v1
+        with:
+          base_path: './base/onboarding/stats.json'
+          pr_path: './pr/onboarding/stats.json'
       - name: Get Export Import diff
         id: get-export-import-diff
         uses: NejcZdovc/bundle-size-diff@v1
@@ -146,6 +152,10 @@ jobs:
           NEW_DASHBOARD: ${{ steps.get-dashboard-diff.outputs.pr_file_string }}
           DIFF_DASHBOARD: ${{ steps.get-dashboard-diff.outputs.diff_file_string }}
           DIFF_PERCENT_DASHBOARD: ${{ steps.get-dashboard-diff.outputs.percent }}
+          OLD_ONBOARDING: ${{ steps.get-onboarding-diff.outputs.base_file_string }}
+          NEW_ONBOARDING: ${{ steps.get-onboarding-diff.outputs.pr_file_string }}
+          DIFF_ONBOARDING: ${{ steps.get-onboarding-diff.outputs.diff_file_string }}
+          DIFF_PERCENT_ONBOARDING: ${{ steps.get-onboarding-diff.outputs.percent }}
           OLD_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.base_file_string }}
           NEW_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.pr_file_string }}
           DIFF_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.diff_file_string }}
