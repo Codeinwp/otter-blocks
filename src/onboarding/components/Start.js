@@ -21,9 +21,9 @@ const Start = () => {
 					src={ `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
 				/>
 
-				<h1>{ __( 'Welcome to Theme Onboarding, by Otter.', 'otter-blocks' ) }</h1>
+				<h1>{ __( 'Welcome to Theme Setup, by Otter.', 'otter-blocks' ) }</h1>
 				<p>
-					{ __( 'This process will guide you through a basic setup of your theme, so you can enjoy your new site right away. You can trigger this wizard manually at any time, from Appearance Menu.', 'otter-blocks' ) }
+					{ __( 'This process will guide you through a basic setup of your theme, helping you to launch your new site easily, with style. You can revisit this setup wizard anytime by navigating to "Appearance → Theme Setup" in your dashboard.', 'otter-blocks' ) }
 
 					<ExternalLink
 						href="https://docs.themeisle.com/article/1975-fse-onboarding"
