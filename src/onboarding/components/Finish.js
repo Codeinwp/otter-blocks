@@ -91,13 +91,15 @@ const Finish = () => {
 							onChange={ setConsent }
 						/>
 
-						<TextControl
-							label={ __( 'Email', 'otter-blocks' ) }
-							placeholder={ __( 'Your email address', 'otter-blocks' ) }
-							hideLabelFromVision={ true }
-							value={ email }
-							onChange={ setEmail }
-						/>
+						{ hasConsent && (
+							<TextControl
+								label={ __( 'Email', 'otter-blocks' ) }
+								placeholder={ __( 'Your email address', 'otter-blocks' ) }
+								hideLabelFromVision={ true }
+								value={ email }
+								onChange={ setEmail }
+							/>
+						) }
 					</>
 				) }
 
