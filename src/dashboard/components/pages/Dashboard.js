@@ -37,6 +37,7 @@ const optionMapping = {
 	enableCustomCss: 'themeisle_blocks_settings_css_module',
 	enableBlocksAnimation: 'themeisle_blocks_settings_blocks_animation',
 	enableBlockConditions: 'themeisle_blocks_settings_block_conditions',
+	enableOnboardingWizard: 'themeisle_blocks_settings_onboarding_wizard',
 	enableSectionDefaultBlock: 'themeisle_blocks_settings_default_block',
 	enableOptimizeAnimationsCss: 'themeisle_blocks_settings_optimize_animations_css',
 	enableRichSchema: 'themeisle_blocks_settings_disable_review_schema',
@@ -50,6 +51,7 @@ const initialState = {
 		enableCustomCss: false,
 		enableBlocksAnimation: false,
 		enableBlockConditions: false,
+		enableOnboardingWizard: false,
 		enableSectionDefaultBlock: false,
 		enableOptimizeAnimationsCss: false,
 		enableRichSchema: false,
@@ -61,6 +63,7 @@ const initialState = {
 		enableCustomCss: 'init',
 		enableBlocksAnimation: 'init',
 		enableBlockConditions: 'init',
+		enableOnboardingWizard: 'init',
 		enableSectionDefaultBlock: 'init',
 		enableOptimizeAnimationsCss: 'init',
 		enableRichSchema: 'init',
@@ -72,6 +75,7 @@ const initialState = {
 		enableCustomCss: false,
 		enableBlocksAnimation: false,
 		enableBlockConditions: false,
+		enableOnboardingWizard: false,
 		enableSectionDefaultBlock: false,
 		enableOptimizeAnimationsCss: false,
 		enableRichSchema: false,
@@ -243,6 +247,16 @@ const Dashboard = () => {
 						checked={ state.values.enableBlockConditions }
 						disabled={ 'saving' === state.status.enableBlockConditions }
 						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableBlockConditions', value }) }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
+						label={ __( 'Enable Theme Setup Wizard', 'otter-blocks' ) }
+						help={ __( 'Toggle the visibility of the Theme Setup link in the Appearance menu.', 'otter-blocks' ) }
+						checked={ state.values.enableOnboardingWizard }
+						disabled={ 'saving' === state.status.enableOnboardingWizard }
+						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableOnboardingWizard', value }) }
 					/>
 				</PanelRow>
 			</PanelBody>
