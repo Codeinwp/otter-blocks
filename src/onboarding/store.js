@@ -177,7 +177,10 @@ const actions = {
 				const pageTemplates = select.getLibrary( 'page_templates' );
 				const importedTemplates = select.getImportedTemplates();
 
-				event.imported_items = selectedTemplates;
+				event.imported_items = selectedTemplates.reduce( ( obj, item ) => {
+					obj[item] = true;
+					return obj;
+				}, {});
 
 				await Promise.all(
 					selectedTemplates
