@@ -114,7 +114,7 @@ const Finish = () => {
 						variant="tertiary"
 						onClick={ () => onFinish({ redirect: 'dashboard' }) }
 					>
-						{ __( 'Back to dashboard', 'otter-blocks' ) }
+						{ __( 'Go to dashboard', 'otter-blocks' ) }
 					</Button>
 				</div>
 			</div>
