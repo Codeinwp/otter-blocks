@@ -1005,7 +1005,7 @@ class Registration {
 
 		foreach ( $block['attrs']['otterConditions'] as $group ) {
 			foreach ( $group as $condition ) {
-				if ( 'screenSize' === $condition['type'] && isset( $condition['screen_sizes'] ) && is_array( $condition['screen_sizes'] ) ) {
+				if ( array_key_exists( 'type', $condition ) && 'screenSize' === $condition['type'] && isset( $condition['screen_sizes'] ) && is_array( $condition['screen_sizes'] ) ) {
 					$has_condition = true;
 					break;
 				}
