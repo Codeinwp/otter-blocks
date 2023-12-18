@@ -319,6 +319,20 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+#### [Version 2.6.0](https://github.com/Codeinwp/otter-blocks/compare/v2.5.2...v2.6.0) (2023-12-18)
+
+### New Features
+- **New Onboarding Wizard for Raft Theme**: Introduced a New Onboarding Wizard to enhance the setup experience for the Raft theme.
+
+### Bug Fixes
+- **Button Group Error on Nofollow Disable**: Resolved an issue where disabling Add Nofollow and refreshing the page caused errors in the Button group.
+- **Block Conditions PHP Array Issue**: Fixed a problem where block conditions were throwing a PHP array error.
+- **Styling Loss in Widgets Area with Elementor**: Addressed the issue where blocks added in the widgets area lost styling when Elementor was activated.
+- **Slider Images in Neves Header Not Rendering**: Fixed a bug where slider images were not being rendered if added in Neves header.
+
+
+
+
 ##### [Version 2.5.2](https://github.com/Codeinwp/otter-blocks/compare/v2.5.1...v2.5.2) (2023-11-22)
 
 ### Bug Fixes
