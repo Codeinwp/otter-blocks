@@ -265,6 +265,8 @@ Otter Blocks is an open-source project, and we welcome contributors to be part o
 - Interested in our other plugins? Take a look [here](https://themeisle.com/wordpress-plugins/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks).
 - Get the most out of Otter Blocks with our helpful [YouTube Tutorials Playlist](https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP).
 
+The plugin is relying on the service behind api.themeisle.com for accessing the patterns list, AI prompts and Onboarding. No account is required to access the service template collection and the privacy policy can be found [here](https://themeisle.com/privacy-policy/).
+
 == Screenshots ==
 
 1. Gutenberg Block Animations

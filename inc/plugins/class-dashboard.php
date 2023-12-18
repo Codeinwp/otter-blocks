@@ -8,6 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Pro;
+use ThemeIsle\GutenbergBlocks\Plugins\FSE_Onboarding;
 
 /**
  * Class Dashboard
@@ -195,6 +196,9 @@ class Dashboard {
 					'docsLink'           => Pro::get_docs_url(),
 					'showFeedbackNotice' => $this->should_show_feedback_notice(),
 					'deal'               => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
+					'hasOnboarding'      => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
+					'days_since_install' => round( ( time() - get_option( 'otter_blocks_install', 0 ) ) / DAY_IN_SECONDS ),
+					'rootUrl'            => get_site_url(),
 				)
 			)
 		);

@@ -12,13 +12,14 @@
 	--width: auto;
 
 	width: var( --width );
+	display: grid;
 
 	.glide__track {
 		border: var( --border-width ) solid var( --border-color );
 		border-radius: var( --border-radius );
 		overflow: hidden;
 	}
-	
+
 	.glide__slides {
 		height: var( --height );
 		animation: load 4s 3;

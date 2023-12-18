@@ -41,6 +41,26 @@ module.exports = [
 	},
 	{
 
+		// OTTER ONBOARDING
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			index: './src/onboarding/index.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/onboarding' )
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
+	},
+	{
+
 		// ANIMATION
 		...defaultConfig,
 		stats: 'minimal',
@@ -175,7 +195,9 @@ module.exports = [
 							'build/blocks/pro/',
 							'build/blocks/blocks/',
 							'build/pro/pro',
-							'build/pro/blocks'
+							'build/pro/blocks',
+							'build/onboarding/blocks/',
+							'build/onboarding/pro/'
 						]
 					}
 				},
