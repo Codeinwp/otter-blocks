@@ -11,6 +11,11 @@ import {
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
+import {
+	useDispatch,
+	useSelect
+} from '@wordpress/data';
+
 import { Fragment } from '@wordpress/element';
 
 import {
@@ -23,7 +28,6 @@ import {
  */
 import './editor.scss';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
-import { useSelect } from '@wordpress/data';
 import { openOtterSidebarMenu } from '../../helpers/block-utility';
 
 const FeaturePanel = ({ props }) => {
@@ -32,6 +36,8 @@ const FeaturePanel = ({ props }) => {
 	const _ = useSelect( ( select ) => {
 		select( 'core/preferences' );
 	}, []);
+
+	const { enableComplementaryArea } = useDispatch( 'core/interface' );
 
 	return (
 		<ToolsPanel
@@ -42,7 +48,7 @@ const FeaturePanel = ({ props }) => {
 			<ToolsPanelItem
 				hasValue={ () => false }
 				label={ __( 'Manage Default Tools', 'otter-blocks' ) }
-				onSelect={ openOtterSidebarMenu }
+				onSelect={ () => enableComplementaryArea( 'core/edit-post', 'themeisle-blocks/otter-options' ) }
 				isShownByDefault={ false }
 			/>
 		</ToolsPanel>

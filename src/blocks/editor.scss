@@ -1,3 +1,9 @@
+.components-tools-panel-item {
+	.components-base-control:not(.components-input-control) {
+		margin: 24px 0;
+	}
+}
+
 .otter-masonry {
 	.blocks-gallery-grid {
 		.blocks-gallery-item {
@@ -205,4 +211,8 @@ svg.o-block-icon {
 			display: block;
 		}
 	}
+}
+
+.w-full {
+	width: 100%;
 }
