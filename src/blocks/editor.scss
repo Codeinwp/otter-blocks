@@ -1,4 +1,4 @@
-.block-editor-block-inspector {
+.components-tools-panel-item {
 	.components-base-control:not(.components-input-control) {
 		margin: 24px 0;
 	}
@@ -211,4 +211,8 @@ svg.o-block-icon {
 			display: block;
 		}
 	}
+}
+
+.w-full {
+	width: 100%;
 }

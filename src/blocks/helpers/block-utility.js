@@ -472,13 +472,6 @@ export function pullReusableBlockContentById( id ) {
 }
 
 /**
- * Open the Otter sidebar menu.
- */
-export function openOtterSidebarMenu() {
-	document?.querySelector( '.interface-pinned-items button[aria-label~="Otter"]' )?.click();
-}
-
-/**
  * Insert a block below the given block.
  *
  * @param {string} clientId The client id of the reference block.
