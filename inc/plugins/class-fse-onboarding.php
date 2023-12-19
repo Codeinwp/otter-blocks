@@ -87,6 +87,9 @@ class FSE_Onboarding {
 			return;
 		}
 
+		// Flag onboarding status in case being run from a theme.
+		self::set_onboarding_status();
+
 		// Run the onboarding.
 		$redirect = add_query_arg(
 			array(

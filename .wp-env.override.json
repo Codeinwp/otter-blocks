@@ -13,7 +13,7 @@
     "development": {
       "themes": [ "./test/emptytheme" ],
         "mappings": {
-          "wp-content/themes/raft": "https://github.com/Codeinwp/raft/archive/refs/heads/onboarding.zip"
+          "wp-content/themes/raft": "https://downloads.wordpress.org/theme/raft.zip"
         }
     },
     "tests": {
@@ -29,9 +29,9 @@
           "wp-content/mu-plugins": "./packages/e2e-tests/mu-plugins",
           "wp-content/plugins/gutenberg-test-plugins": "./packages/e2e-tests/plugins",
           "wp-content/themes/gutenberg-test-themes": "./test/gutenberg-test-themes",
-          "wp-content/themes/gutenberg-test-themes/twentytwentyone": "https://downloads.wordpress.org/theme/twentytwentyone.1.7.zip",
-          "wp-content/themes/gutenberg-test-themes/twentytwentythree": "https://downloads.wordpress.org/theme/twentytwentythree.1.0.zip",
-          "wp-content/themes/raft": "https://github.com/Codeinwp/raft/archive/refs/heads/onboarding.zip"
+          "wp-content/themes/gutenberg-test-themes/twentytwentyone": "https://downloads.wordpress.org/theme/twentytwentyone.zip",
+          "wp-content/themes/gutenberg-test-themes/twentytwentythree": "https://downloads.wordpress.org/theme/twentytwentythree.zip",
+          "wp-content/themes/raft": "https://downloads.wordpress.org/theme/raft.zip"
         }
     }
   }

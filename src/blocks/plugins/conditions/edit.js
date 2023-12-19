@@ -466,7 +466,7 @@ const Edit = ({
 										<select
 											value={ condObj.type || '' }
 											onChange={ e => changeCondition( e.target.value, index, condIdx ) }
-											className="components-select-control__input"
+											className="components-select-control__input w-full"
 											id={ `o-conditions-${ index }-${ condIdx }` }
 										>
 											<option value="none">{ __( 'Select a condition', 'otter-blocks' ) }</option>
