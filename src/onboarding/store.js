@@ -137,6 +137,7 @@ const actions = {
 
 				if ( ! selectedTemplate ) {
 					dispatch( actions.nextStep() );
+					recordEvent( event );
 					return;
 				}
 
