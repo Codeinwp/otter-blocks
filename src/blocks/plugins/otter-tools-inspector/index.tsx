@@ -28,7 +28,6 @@ import {
  */
 import './editor.scss';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
-import { openOtterSidebarMenu } from '../../helpers/block-utility';
 
 const FeaturePanel = ({ props }) => {
 
