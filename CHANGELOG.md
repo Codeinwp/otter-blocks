@@ -1,3 +1,10 @@
+##### [Version 2.6.1](https://github.com/Codeinwp/otter-blocks/compare/v2.6.0...v2.6.1) (2023-12-19)
+
+### Bug Fixes
+- **Fixes infinite redirect loop**: Fixes an issue where activating Raft leads to an infinite loop.
+- **Fixes third-party style conflicts**: Fixes CSS messing up styles of some third-party plugins.
+- **Fixes Woo products conditions not working**: Fixes Woo conditions in the Block Conditions module not working correctly.
+
 #### [Version 2.6.0](https://github.com/Codeinwp/otter-blocks/compare/v2.5.2...v2.6.0) (2023-12-18)
 
 ### New Features
