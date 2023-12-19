@@ -265,6 +265,8 @@ Otter Blocks is an open-source project, and we welcome contributors to be part o
 - Interested in our other plugins? Take a look [here](https://themeisle.com/wordpress-plugins/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks).
 - Get the most out of Otter Blocks with our helpful [YouTube Tutorials Playlist](https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP).
 
+The plugin is relying on the service behind api.themeisle.com for accessing the patterns list, AI prompts and Onboarding. No account is required to access the service template collection and the privacy policy can be found [here](https://themeisle.com/privacy-policy/).
+
 ## Screenshots ##
 
 1. Gutenberg Block Animations
@@ -316,6 +318,20 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 ## Changelog ##
+
+#### [Version 2.6.0](https://github.com/Codeinwp/otter-blocks/compare/v2.5.2...v2.6.0) (2023-12-18)
+
+### New Features
+- **New Onboarding Wizard for Raft Theme**: Introduced a New Onboarding Wizard to enhance the setup experience for the Raft theme.
+
+### Bug Fixes
+- **Button Group Error on Nofollow Disable**: Resolved an issue where disabling Add Nofollow and refreshing the page caused errors in the Button group.
+- **Block Conditions PHP Array Issue**: Fixed a problem where block conditions were throwing a PHP array error.
+- **Styling Loss in Widgets Area with Elementor**: Addressed the issue where blocks added in the widgets area lost styling when Elementor was activated.
+- **Slider Images in Neves Header Not Rendering**: Fixed a bug where slider images were not being rendered if added in Neves header.
+
+
+
 
 ##### [Version 2.5.2](https://github.com/Codeinwp/otter-blocks/compare/v2.5.1...v2.5.2) (2023-11-22)
 

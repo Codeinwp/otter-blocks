@@ -718,7 +718,7 @@ class Options_Settings {
 			'themeisle_blocks_settings_onboarding_wizard',
 			array(
 				'type'         => 'boolean',
-				'description'  => __( 'Enable Onboarding Wizard.', 'otter-blocks' ),
+				'description'  => __( 'Enable FSE Onboarding Wizard.', 'otter-blocks' ),
 				'show_in_rest' => true,
 				'default'      => true,
 			)
