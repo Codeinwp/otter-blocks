@@ -1040,7 +1040,12 @@ const Edit = ({
 										className='wp-block-button__link'
 										placeholder={ __( 'Submit', 'otter-blocks' ) }
 										value={ attributes.submitLabel }
-										onChange={ submitLabel => setAttributes({ submitLabel }) }
+										onChange={ submitLabel => {
+											submitLabel = submitLabel.replace( /<br\s*\/?>/gi, ' ' );
+											setAttributes({ submitLabel });
+										} }
+										multiline={ false }
+										multiple={ false }
 										tagName="button"
 										type='submit'
 										onClick={ e => e.preventDefault() }
