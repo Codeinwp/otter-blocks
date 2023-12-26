@@ -284,8 +284,9 @@ const isElementInViewport = ( el ) => {
 	};
 
 	return (
-		( bounds.bottom >= viewport.top && bounds.bottom <= viewport.bottom ) ||
-		( bounds.top <= viewport.bottom && bounds.top >= viewport.top )
+		( bounds.bottom >= viewport.top && bounds.top <= viewport.bottom ) || // Element spans the viewport
+		( bounds.top <= viewport.bottom && bounds.bottom >= viewport.bottom ) || // Top part of the element is in the viewport
+		( bounds.bottom >= viewport.top && bounds.top <= viewport.top ) // Bottom part of the element is in the viewport
 	);
 };
 
