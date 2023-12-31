@@ -272,8 +272,8 @@ The plugin is relying on the service behind api.themeisle.com for accessing the 
 1. Gutenberg Block Animations
 2. Visibility Condition Rules
 3. Posts Block
-4. Google Map Block
-5. Section Block
+4. AI Form Generator
+5. AI Layout Generator
 
 == Installation ==
 
