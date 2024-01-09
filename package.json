@@ -63,7 +63,7 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
-		"@formbricks/js": "^1.2.7",
+		"@formbricks/js": "^1.4.1",
 		"@wordpress/icons": "^9.38.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.5.1",
@@ -82,7 +82,7 @@
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/exec": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
-		"@testing-library/jest-dom": "^6.1.5",
+		"@testing-library/jest-dom": "^6.1.6",
 		"@testing-library/react": "^14.0.0",
 		"@testing-library/user-event": "^14.4.3",
 		"@types/jest": "^29.5.1",
