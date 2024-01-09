@@ -272,8 +272,8 @@ The plugin is relying on the service behind api.themeisle.com for accessing the 
 1. Gutenberg Block Animations
 2. Visibility Condition Rules
 3. Posts Block
-4. Google Map Block
-5. Section Block
+4. AI Form Generator
+5. AI Layout Generator
 
 == Installation ==
 
@@ -318,6 +318,15 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 == Changelog ==
+
+##### [Version 2.6.2](https://github.com/Codeinwp/otter-blocks/compare/v2.6.1...v2.6.2) (2023-12-26)
+
+### Bug Fixes
+- **Fixes form submit button issue**: Fixes an issue when the form submit button accepts line-breaks in the editor.
+- **Fixes animation trigger for large elements**: Fixes an issue where animation does not trigger for large elements on the screen.
+
+
+
 
 ##### [Version 2.6.1](https://github.com/Codeinwp/otter-blocks/compare/v2.6.0...v2.6.1) (2023-12-19)
 
