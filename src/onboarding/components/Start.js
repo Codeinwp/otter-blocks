@@ -18,7 +18,7 @@ const Start = () => {
 			<div className="o-start__container">
 				<img
 					className="o-start__logo"
-					src={ `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
+					src={ window.otterOnboardingData?.logo || `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
 				/>
 
 				<h1>{ __( 'Welcome to Theme Setup, by Otter.', 'otter-blocks' ) }</h1>
