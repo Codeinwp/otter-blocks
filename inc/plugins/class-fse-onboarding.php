@@ -172,7 +172,7 @@ class FSE_Onboarding {
 	 * Get Theme Logo
 	 * 
 	 * @access public
-	 * @return array|false
+	 * @return string|false
 	 */
 	public function get_theme_logo() {
 		$support = get_theme_support( self::SUPPORT_KEY );
