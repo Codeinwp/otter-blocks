@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import { select } from '@wordpress/data';
 
-import { render } from '@wordpress/element';
+import { createRoot } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
@@ -154,12 +154,13 @@ jQuery( document ).ready( function( $ ) {
 			});
 		};
 
-		render(
+		const root = createRoot( element );
+
+		root.render(
 			<MediaContent
 				state={ state }
 				onSelectImage={ onSelectImage }
-			/>,
-			element
+			/>
 		);
 	};
 
