@@ -342,7 +342,7 @@ class Posts_Grid_Block {
 		);
 
 		if ( $count_posts ) {
-			$args['offset']        = $args['posts_per_page'] * ( $page_number - 1 ) + $args['offset'];
+			$args['offset']        = (int) $args['posts_per_page'] * ( (int) $page_number - 1 ) + (int) $args['offset'];
 			$args['no_found_rows'] = false;
 			$args['paged']         = $page_number;
 		}
