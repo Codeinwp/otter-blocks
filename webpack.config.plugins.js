@@ -1,4 +1,5 @@
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
+const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const path = require( 'path' );
 
@@ -35,6 +36,28 @@ const getConfig = textdomain => {
 	};
 };
 
+const plugins = {
+	plugins: [
+		...defaultConfig.plugins,
+		new FileManagerPlugin({
+			events: {
+				onEnd: {
+					delete: [
+						'build/animation/blocks/',
+						'build/animation/pro/',
+						'build/css/blocks/',
+						'build/css/pro/',
+						'build/export-import/blocks/',
+						'build/export-import/pro/'
+					]
+				}
+			},
+			runOnceInWatchMode: false,
+			runTasksInSeries: true
+		})
+	]
+};
+
 module.exports = [
 	{
 
@@ -51,7 +74,8 @@ module.exports = [
 		output: {
 			path: path.resolve( __dirname, './build/animation' )
 		},
-		module: { ...getConfig( 'blocks-animation' ) }
+		module: { ...getConfig( 'blocks-animation' ) },
+		...plugins
 	},
 	{
 
@@ -65,7 +89,8 @@ module.exports = [
 		output: {
 			path: path.resolve( __dirname, './build/css' )
 		},
-		module: { ...getConfig( 'blocks-css' ) }
+		module: { ...getConfig( 'blocks-css' ) },
+		...plugins
 	},
 	{
 
@@ -79,6 +104,7 @@ module.exports = [
 		output: {
 			path: path.resolve( __dirname, './build/export-import' )
 		},
-		module: { ...getConfig( 'blocks-export-import' ) }
+		module: { ...getConfig( 'blocks-export-import' ) },
+		...plugins
 	}
 ];
