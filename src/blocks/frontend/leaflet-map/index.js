@@ -74,6 +74,12 @@ const createLeafletMap = ( container, attributes ) => {
 	attributes.markers.map( ( markerProps ) => createMarker( markerProps ) ).forEach( ( marker ) => {
 		map.addLayer( marker );
 	});
+
+	const resizeObserver = new ResizeObserver( () => {
+		map.invalidateSize();
+	});
+
+	resizeObserver.observe( container );
 };
 
 domReady( () => {
