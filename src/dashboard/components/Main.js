@@ -84,9 +84,9 @@ const Main = ({
 	return (
 		<Fragment>
 			{
-				( window.otterObj?.deal?.active && window.otterObj.deal?.linkDashboard ) && (
+				( window.otterObj?.deal?.active && window.otterObj.deal?.bannerStoreUrl ) && (
 					<Deal
-						link={window.otterObj.deal.linkDashboard}
+						link={window.otterObj.deal.bannerStoreUrl}
 						image={window.otterObj.deal.bannerUrl}
 						alt={window.otterObj.deal.bannerAlt}
 						urgencyText={window.otterObj.deal.urgencyText}

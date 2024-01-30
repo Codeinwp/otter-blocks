@@ -114,10 +114,10 @@ class LimitedOffers {
 		$this->assets = array_merge(
 			$this->assets,
 			array(
-				'bannerUrl'     => OTTER_BLOCKS_URL . 'assets/images/black-friday-banner.png',
-				'bannerAlt'     => 'Otter Black Friday Sale',
-				'linkDashboard' => esc_url_raw( $data['otter_dashboard_url'] ),
-				'urgencyText'   => esc_html( $data['urgency_text'] ),
+				'bannerUrl'      => OTTER_BLOCKS_URL . 'assets/images/black-friday-banner.png',
+				'bannerAlt'      => 'Otter Black Friday Sale',
+				'bannerStoreUrl' => esc_url_raw( $data['otter_dashboard_url'] ),
+				'urgencyText'    => esc_html( $data['urgency_text'] ),
 			)
 		);
 	}
