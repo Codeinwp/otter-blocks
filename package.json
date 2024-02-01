@@ -92,7 +92,7 @@
 		"@typescript-eslint/parser": "^6.18.1",
 		"@wordpress/block-editor": "^12.16.0",
 		"@wordpress/components": "^25.9.0",
-		"@wordpress/compose": "^6.15.0",
+		"@wordpress/compose": "^6.27.0",
 		"@wordpress/data": "^9.17.0",
 		"@wordpress/dom-ready": "^3.48.0",
 		"@wordpress/e2e-test-utils": "^10.4.0",
