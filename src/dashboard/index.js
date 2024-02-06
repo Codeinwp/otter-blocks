@@ -8,7 +8,7 @@ import formbricks from '@formbricks/js';
  * WordPress dependencies.
  */
 import {
-	render,
+	createRoot,
 	Fragment,
 	useState
 } from '@wordpress/element';
@@ -84,7 +84,6 @@ const App = () => {
 	);
 };
 
-render(
-	<App />,
-	document.getElementById( 'otter' )
-);
+const root = createRoot( document.getElementById( 'otter' ) );
+
+root.render( <App /> );
