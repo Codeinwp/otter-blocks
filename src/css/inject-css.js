@@ -3,6 +3,7 @@
  * WordPress dependencies.
  */
 import {
+	debounce,
 	flattenDeep,
 	isEqual
 } from 'lodash';
@@ -106,11 +107,20 @@ export const onDeselect = () => {
 	addStyle( blocksStyle );
 };
 
-subscribe( () => {
-	const { getBlocks } = select( 'core/block-editor' );
+// Create a debounced version of the subscription callback
+const debouncedSubscription = debounce( () => {
+	const {
+		getBlocks,
+		isTyping
+	} = select( 'core/block-editor' );
 	const __experimentalGetPreviewDeviceType = select( 'core/edit-post' ) ? select( 'core/edit-post' ).__experimentalGetPreviewDeviceType() : false;
 	const blocks = getBlocks();
 	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block', { context: 'view' });
+	const isTypingNow = isTyping();
+
+	if ( isTypingNow ) {
+		return;
+	}
 
 	if ( ! isEqual( previousBlocks, blocks ) || previewView !== __experimentalGetPreviewDeviceType ) {
 		const blocksStyle = getCustomCssFromBlocks( blocks, reusableBlocks );
@@ -118,8 +128,6 @@ subscribe( () => {
 		if ( blocksStyle ) {
 			if ( previewView !== __experimentalGetPreviewDeviceType && 'Desktop' === previewView ) {
 				setTimeout( () => {
-
-					// A small delay for the iFrame to properly initialize.
 					addStyle( blocksStyle );
 				}, 500 );
 			} else {
@@ -130,4 +138,7 @@ subscribe( () => {
 		previousBlocks = blocks;
 		previewView = __experimentalGetPreviewDeviceType;
 	}
-});
+}, 300 ); // Adjust debounce time as necessary
+
+// Use the debounced function in your subscribe call
+subscribe( debouncedSubscription );
