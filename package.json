@@ -64,7 +64,7 @@
 	},
 	"dependencies": {
 		"@formbricks/js": "^1.4.1",
-		"@wordpress/icons": "^9.38.0",
+		"@wordpress/icons": "^9.41.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.5.1",
 		"currency-symbol-map": "^5.0.1",
