@@ -18,10 +18,10 @@ const Start = () => {
 			<div className="o-start__container">
 				<img
 					className="o-start__logo"
-					src={ `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
+					src={ window.otterOnboardingData?.logo || `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
 				/>
 
-				<h1>{ __( 'Welcome to Theme Setup, by Otter.', 'otter-blocks' ) }</h1>
+				<h1>{ __( 'Welcome to Theme Setup, by Raft.', 'otter-blocks' ) }</h1>
 				<p>
 					{ __( 'This process will guide you through a basic setup of your theme, helping you to launch your new site easily, with style. You can revisit this setup wizard anytime by navigating to "Appearance → Theme Setup" in your dashboard.', 'otter-blocks' ) }
 
