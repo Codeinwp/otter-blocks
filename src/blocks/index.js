@@ -11,11 +11,9 @@ import { dispatch, select } from '@wordpress/data';
 
 import domReady from '@wordpress/dom-ready';
 
-import { render } from '@wordpress/element';
+import { createRoot } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
-
-import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -147,7 +145,9 @@ domReady( () => {
 	gradient.setAttribute( 'aria-hidden', 'true' );
 	document.querySelector( 'body' ).appendChild( gradient );
 
-	render(
+	const root = createRoot( gradient );
+
+	root.render(
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			className="o-icon-gradient"
@@ -161,8 +161,7 @@ domReady( () => {
 					<stop offset="100%" stopColor="#F22B6C" stopOpacity="1" />
 				</linearGradient>
 			</defs>
-		</svg>,
-		gradient
+		</svg>
 	);
 });
 
