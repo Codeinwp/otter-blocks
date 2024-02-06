@@ -75,7 +75,7 @@ const Sidebar = ({ isEditorLoading }) => {
 			<div className="o-sidebar__header">
 				<img
 					className="o-sidebar__logo"
-					src={ `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
+					src={ window.otterOnboardingData?.logo || `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
 				/>
 
 				{ 0 !== stepIndex ? (
