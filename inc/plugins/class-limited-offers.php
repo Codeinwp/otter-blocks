@@ -31,16 +31,16 @@ class LimitedOffers {
 	public $wp_option_dismiss_notification_key_base = 'dismiss_themeisle_notice_event_';
 
 	/**
-	 * Offer Links
+	 * Metadata for announcements.
 	 *
-	 * @var array<string>
+	 * @var array
 	 */
 	public $assets = array();
 
 	/**
 	 * Timeline for the offers.
 	 *
-	 * @var array[]
+	 * @var array
 	 */
 	public $announcements = array();
 
