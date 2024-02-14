@@ -36,6 +36,7 @@ const WelcomeGuide = () => {
 
 	const [ email, setEmail ] = useState( '' );
 	const [ hasConsent, setConsent ] = useState( true );
+	const [ canTrack, setTrack ] = useState( false );
 
 	const {
 		currentUser,
@@ -66,8 +67,8 @@ const WelcomeGuide = () => {
 
 		localStorage?.setItem( 'o-show-onboarding', 'false' );
 
-		if ( Boolean( getOption( 'themeisle_blocks_settings_onboarding' ) ) ) {
-			updateOption( 'themeisle_blocks_settings_onboarding', false );
+		if ( canTrack ) {
+			updateOption( 'otter_blocks_logger_flag', 'yes' );
 		}
 
 		if ( ! hasConsent || ! Array.from( target.target.classList ).includes( 'components-guide__finish-button' ) ) {
@@ -192,6 +193,15 @@ const WelcomeGuide = () => {
 								onChange={ () => setConsent( ! hasConsent ) }
 								className="o-welcome-guide__input"
 							/>
+
+							{ 'yes' !== getOption( 'otter_blocks_logger_flag' ) && (
+								<CheckboxControl
+									label={ __( 'Become a contributor by opting in to our anonymous data tracking.', 'otter-blocks' ) }
+									checked={ canTrack }
+									onChange={ () => setTrack( ! canTrack )}
+									className="o-welcome-guide__input"
+								/>
+							) }
 						</Fragment>
 					)
 				}

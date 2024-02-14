@@ -166,7 +166,28 @@ class FSE_Onboarding {
 		}
 
 		return apply_filters( 'otter_fse_onboarding_templates', $templates );
+	}
 
+	/**
+	 * Get Theme Logo
+	 * 
+	 * @access public
+	 * @return string|false
+	 */
+	public function get_theme_logo() {
+		$support = get_theme_support( self::SUPPORT_KEY );
+
+		if ( false === $support || ! is_array( $support ) || ( ! isset( $support[0]['logo'] ) ) ) {
+			return false;
+		}
+
+		$logo = esc_url( $support[0]['logo'] );
+
+		if ( ! $logo ) {
+			return false;
+		}
+
+		return $logo;
 	}
 
 	/**
@@ -237,6 +258,7 @@ class FSE_Onboarding {
 					'version'        => OTTER_BLOCKS_VERSION,
 					'assetsPath'     => OTTER_BLOCKS_URL . 'assets/',
 					'supportedSteps' => $this->get_templates_types(),
+					'logo'           => $this->get_theme_logo(),
 					'license'        => apply_filters( 'product_otter_license_key', 'free' ),
 					'rootUrl'        => get_site_url(),
 					'dashboardUrl'   => get_admin_url(),

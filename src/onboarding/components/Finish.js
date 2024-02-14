@@ -77,7 +77,7 @@ const Finish = () => {
 			<div className="o-finish__container">
 				<img
 					className="o-finish__logo"
-					src={ `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
+					src={ window.otterOnboardingData?.logo || `${ window.otterOnboardingData.assetsPath }images/logo-alt.png` }
 				/>
 
 				<h1>{ __( 'Your website is ready!', 'otter-blocks' ) }</h1>

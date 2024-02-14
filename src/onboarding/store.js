@@ -41,6 +41,7 @@ const DEFAULT_STATE = {
 	templateParts: {},
 	library: {},
 	selectedTemplates: {
+		'front-page': '',
 		archive: '',
 		single: '',
 		pageTemplates: []
@@ -74,11 +75,6 @@ const actions = {
 			dispatch( actions.setSaving( false ) );
 
 			if ( isLast ) {
-				recordEvent({
-					step_id: STEPS.length,
-					step_status: 'completed'
-				});
-
 				dispatch( actions.setFinished( true ) );
 				return;
 			}

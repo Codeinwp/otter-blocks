@@ -116,11 +116,16 @@ div.error, div.notice {
 			font-weight: 700;
 			height: auto;
 		}
+
+		.components-external-link__icon {
+			display: inline;
+		}
 	}
 
 	&__logo {
-		width: 120px;
-		height: 120px;
+		width: 80px;
+		height: 80px;
+		margin-bottom: 1rem;
 	}
 
 	&__actions {

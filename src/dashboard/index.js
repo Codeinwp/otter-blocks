@@ -8,7 +8,7 @@ import formbricks from '@formbricks/js';
  * WordPress dependencies.
  */
 import {
-	render,
+	createRoot,
 	Fragment,
 	useState
 } from '@wordpress/element';
@@ -45,7 +45,7 @@ const convertToCategory = ( number, scale = 1 ) => {
 		return 30;
 	} else if ( 30 < normalizedNumber && 90 > normalizedNumber ) {
 		return 90;
-	} else if ( 90 > normalizedNumber ) {
+	} else if ( 90 < normalizedNumber ) {
 		return 91;
 	}
 };
@@ -84,7 +84,6 @@ const App = () => {
 	);
 };
 
-render(
-	<App />,
-	document.getElementById( 'otter' )
-);
+const root = createRoot( document.getElementById( 'otter' ) );
+
+root.render( <App /> );

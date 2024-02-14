@@ -190,12 +190,14 @@ class Posts_Grid_Block {
 					if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
 						$post_author = intval( get_post_field( 'post_author', $id ) );
 
-						$posted_on .= sprintf(
+						$posted_by = sprintf(
 							'%1$s <a href="%2$s">%3$s</a>',
 							__( 'by', 'otter-blocks' ),
 							esc_url( get_author_posts_url( $post_author ) ),
 							esc_html( get_the_author_meta( 'display_name', $post_author ) )
 						);
+
+						$posted_on .= apply_filters( 'otter_blocks_posts_author', $posted_by );
 					}
 
 					$meta[] = $posted_on;
@@ -342,7 +344,7 @@ class Posts_Grid_Block {
 		);
 
 		if ( $count_posts ) {
-			$args['offset']        = $args['posts_per_page'] * ( $page_number - 1 ) + $args['offset'];
+			$args['offset']        = (int) $args['posts_per_page'] * ( (int) $page_number - 1 ) + (int) $args['offset'];
 			$args['no_found_rows'] = false;
 			$args['paged']         = $page_number;
 		}
