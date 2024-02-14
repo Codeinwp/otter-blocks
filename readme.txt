@@ -319,6 +319,21 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+##### [Version 2.6.3](https://github.com/Codeinwp/otter-blocks/compare/v2.6.2...v2.6.3) (2024-02-14)
+
+### Improvements
+
+- **Blocks CSS Module Performance**: Enhanced the performance of the Blocks CSS module.
+- **New Hook Introduced**: Introduced the otter_blocks_posts_author hook for extending functionality.
+
+### Bug Fixes
+
+- **Maps Rendering in Tabs Block**: Corrected the issue where maps were not being rendered inside the Tabs block.
+- **Console Errors Due to Older React Methods**: Fixed console errors that were caused by the use of outdated React methods.
+
+
+
+
 ##### [Version 2.6.2](https://github.com/Codeinwp/otter-blocks/compare/v2.6.1...v2.6.2) (2023-12-26)
 
 ### Bug Fixes

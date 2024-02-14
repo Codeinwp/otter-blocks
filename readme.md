@@ -272,8 +272,8 @@ The plugin is relying on the service behind api.themeisle.com for accessing the 
 1. Gutenberg Block Animations
 2. Visibility Condition Rules
 3. Posts Block
-4. Google Map Block
-5. Section Block
+4. AI Form Generator
+5. AI Layout Generator
 
 ## Installation ##
 
@@ -318,6 +318,21 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 ## Changelog ##
+
+##### [Version 2.6.3](https://github.com/Codeinwp/otter-blocks/compare/v2.6.2...v2.6.3) (2024-02-14)
+
+### Improvements
+
+- **Blocks CSS Module Performance**: Enhanced the performance of the Blocks CSS module.
+- **New Hook Introduced**: Introduced the otter_blocks_posts_author hook for extending functionality.
+
+### Bug Fixes
+
+- **Maps Rendering in Tabs Block**: Corrected the issue where maps were not being rendered inside the Tabs block.
+- **Console Errors Due to Older React Methods**: Fixed console errors that were caused by the use of outdated React methods.
+
+
+
 
 ##### [Version 2.6.2](https://github.com/Codeinwp/otter-blocks/compare/v2.6.1...v2.6.2) (2023-12-26)
 
