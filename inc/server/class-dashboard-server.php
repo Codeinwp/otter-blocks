@@ -86,6 +86,11 @@ class Dashboard_Server {
 	 * @since 2.3
 	 */
 	public function regenerate_styles_on_theme_change( $new_name, $new_theme ) {
+		self::regenerate_styles();
+
+		if ( ! Tracker::has_consent() ) {
+			return;
+		}
 
 		Tracker::track(
 			array(
@@ -96,8 +101,6 @@ class Dashboard_Server {
 				),
 			)
 		);
-
-		self::regenerate_styles();
 	}
 
 	/**
