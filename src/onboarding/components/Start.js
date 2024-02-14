@@ -26,10 +26,10 @@ const Start = () => {
 					{ __( 'This process will guide you through a basic setup of your theme, helping you to launch your new site easily, with style. You can revisit this setup wizard anytime by navigating to "Appearance → Theme Setup" in your dashboard.', 'otter-blocks' ) }
 
 					<ExternalLink
-						href="https://docs.themeisle.com/article/1975-fse-onboarding"
+						href="https://wordpress.org/plugins/otter-blocks/"
 						target="_blank"
 						rel="noopener noreferrer"
-						aria-label={ __( 'Learn more about onboarding', 'otter-blocks' ) }
+						aria-label={ __( 'Learn more about Otter', 'otter-blocks' ) }
 						style={ { marginLeft: '0.5em' } }
 					>
 						{ __( 'Learn more.', 'otter-blocks' ) }
