@@ -307,14 +307,6 @@ export const tabsItemIcon = () => {
 	);
 };
 
-export const masonryIcon = () => {
-	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
-			<Path fillRule="evenodd" d="M14 3H3v4h11V3ZM3 2a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H3Zm6 9H3v10h6V11Zm-6-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V11a1 1 0 0 0-1-1H3Zm18-7h-3v4h3V3Zm-3-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-3Zm3 9h-8v3h8v-3Zm-8-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-8Zm8 8h-8v3h8v-3Zm-8-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-8Z" clipRule="evenodd"/>
-		</SVG>
-	);
-};
-
 export const searchIcon = () => {
 	return (
 		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">

@@ -37,7 +37,6 @@ import {
 	iconListIcon,
 	lottieIcon,
 	mapIcon,
-	masonryIcon,
 	popupIcon,
 	postsIcon,
 	progressIcon,
@@ -206,11 +205,6 @@ const otterBlocks = [
 		'isPro': true,
 		'icon': searchIcon,
 		'docLink': 'https://docs.themeisle.com/article/1747-the-live-search-feature-otter-features-library'
-	},
-	{
-		'slug': 'themeisle-gutenberg/masonry', // TODO: find why this can not be disabled.
-		'name': __( 'Masonry', 'otter-blocks' ),
-		'icon': masonryIcon
 	},
 	{
 		'slug': 'themeisle-blocks/content-generator',
