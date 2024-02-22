@@ -29,15 +29,19 @@ class Form_Hidden_Block {
 			return '';
 		}
 
-		$class_names   = 'wp-block-themeisle-blocks-form-hidden-field ' . ( isset( $attributes['className'] ) ? $attributes['className'] : '' );
-		$id            = isset( $attributes['id'] ) ? $attributes['id'] : '';
-		$label         = isset( $attributes['label'] ) ? $attributes['label'] : __( 'Hidden Field', 'otter-blocks' );
-		$param_name    = isset( $attributes['paramName'] ) ? $attributes['paramName'] : '';
-		$mapped_name   = isset( $attributes['mappedName'] ) ? $attributes['mappedName'] : 'field-' . $id;
-		$default_value = isset( $attributes['defaultValue'] ) ? $attributes['defaultValue'] : '';
+		$id            = isset( $attributes['id'] ) ? esc_attr( $attributes['id'] ) : '';
+		$label         = isset( $attributes['label'] ) ? esc_html( $attributes['label'] ) : __( 'Hidden Field', 'otter-blocks' );
+		$param_name    = isset( $attributes['paramName'] ) ? esc_attr( $attributes['paramName'] ) : '';
+		$mapped_name   = isset( $attributes['mappedName'] ) ? esc_attr( $attributes['mappedName'] ) : 'field-' . $id;
+		$default_value = isset( $attributes['defaultValue'] ) ? esc_attr( $attributes['defaultValue'] ) : '';
 
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id' => $id,
+			)
+		);
 
-		$output = '<div style="display: none;" class="' . $class_names . '" id="' . $id . '">';
+		$output = '<div style="display: none;" ' . $wrapper_attributes . '>';
 
 		$output .= '<label class="otter-form-input-label" for="' . $mapped_name . '">' . $label . '</label>';
 
@@ -52,6 +56,4 @@ class Form_Hidden_Block {
 
 		return $output;
 	}
-
-
 }

@@ -22,19 +22,23 @@ class Form_Multiple_Choice_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-
-		$class_names = 'wp-block-themeisle-blocks-form-multiple-choice ' . ( isset( $attributes['className'] ) ? $attributes['className'] : '' );
-		$id          = isset( $attributes['id'] ) ? $attributes['id'] : '';
-		$options     = isset( $attributes['options'] ) ? $attributes['options'] : array();
-		$field_type  = isset( $attributes['type'] ) ? $attributes['type'] : 'checkbox';
-		$label       = isset( $attributes['label'] ) ? $attributes['label'] : __( 'Select option', 'otter-blocks' );
-		$help_text   = isset( $attributes['helpText'] ) ? $attributes['helpText'] : '';
+		$id         = isset( $attributes['id'] ) ? esc_attr( $attributes['id'] ) : '';
+		$options    = isset( $attributes['options'] ) ? $attributes['options'] : array();
+		$field_type = isset( $attributes['type'] ) ? esc_attr( $attributes['type'] ) : 'checkbox';
+		$label      = isset( $attributes['label'] ) ? esc_html( $attributes['label'] ) : __( 'Select option', 'otter-blocks' );
+		$help_text  = isset( $attributes['helpText'] ) ? esc_html( $attributes['helpText'] ) : '';
 
 		$is_required            = isset( $attributes['isRequired'] ) ? boolval( $attributes['isRequired'] ) : false;
 		$has_multiple_selection = isset( $attributes['multipleSelection'] ) ? boolval( $attributes['multipleSelection'] ) : false;
-		$mapped_name            = isset( $attributes['mappedName'] ) ? $attributes['mappedName'] : $id;
+		$mapped_name            = isset( $attributes['mappedName'] ) ? esc_attr( $attributes['mappedName'] ) : $id;
 
-		$output = '<div class="' . $class_names . '" id="' . $id . '">';
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id' => $id,
+			)
+		);
+
+		$output = '<div ' . $wrapper_attributes . '>';
 
 		// Compatibility with the old version of the block.
 		if ( ! empty( $options ) && is_string( $options ) ) {
@@ -53,8 +57,8 @@ class Form_Multiple_Choice_Block {
 					continue;
 				}
 
-				$field_value = implode( '_', explode( ' ', sanitize_title( $choice['content'] ) ) );
-				$field_id    = 'field-' . $field_value;
+				$field_value = implode( '_', explode( ' ', esc_attr( $choice['content'] ) ) );
+				$field_id    = 'field-' . esc_attr( $field_value );
 				$checked     = isset( $choice['isDefault'] ) && $choice['isDefault'];
 
 				$output .= $this->render_field( $field_type, $choice['content'], $field_value, $mapped_name, $field_id, $checked, $is_required );
@@ -84,8 +88,8 @@ class Form_Multiple_Choice_Block {
 	public function render_field( $type, $label, $value, $name, $id, $checked = false, $is_required = false ) {
 		$output = '<div class="o-form-multiple-choice-field">';
 
-		$output .= '<input type="' . $type . '" name="' . $name . '" id="' . $id . '" value="' . $value . '" ' . ( $is_required ? 'required' : '' ) . ( $checked ? ' checked' : '' ) . ' />';
-		$output .= '<label for="' . $id . '" class="o-form-choice-label">' . $label . '</label>';
+		$output .= '<input type="' . esc_attr( $type ) . '" name="' . esc_attr( $name ) . '" id="' . esc_attr( $id ) . '" value="' . esc_attr( $value ) . '" ' . ( $is_required ? 'required' : '' ) . ( $checked ? ' checked' : '' ) . ' />';
+		$output .= '<label for="' . esc_attr( $id ) . '" class="o-form-choice-label">' . esc_html( $label ) . '</label>';
 
 		$output .= '</div>';
 
@@ -104,8 +108,8 @@ class Form_Multiple_Choice_Block {
 	 * @return string
 	 */
 	public function render_select_field( $label, $options_array, $id, $name, $is_multiple, $is_required ) {
-		$output  = '<label class="otter-form-input-label" for="' . $id . '" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
-		$output .= '<select id="' . $id . '" ' . ( $is_multiple ? ' multiple ' : '' ) . ( $is_required ? ' required ' : '' ) . ' name="' . $name . '">';
+		$output  = '<label class="otter-form-input-label" for="' . esc_attr( $id ) . '" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
+		$output .= '<select id="' . esc_attr( $id ) . '" ' . ( $is_multiple ? ' multiple ' : '' ) . ( $is_required ? ' required ' : '' ) . ' name="' . esc_attr( $name ) . '">';
 
 		foreach ( $options_array as $option ) {
 
@@ -116,7 +120,7 @@ class Form_Multiple_Choice_Block {
 			$is_selected = isset( $option['isDefault'] ) && $option['isDefault'];
 
 			$field_value = implode( '_', explode( ' ', sanitize_title( $option['content'] ) ) );
-			$output     .= '<option value="' . $field_value . '"' . ( $is_selected ? 'selected' : '' ) . '>' . $option['content'] . '</option>';
+			$output     .= '<option value="' . esc_attr( $field_value ) . '"' . ( $is_selected ? 'selected' : '' ) . '>' . esc_html( $option['content'] ) . '</option>';
 		}
 
 		$output .= '</select>';
