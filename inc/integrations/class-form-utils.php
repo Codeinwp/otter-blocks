@@ -106,9 +106,17 @@ class Form_Utils {
 			if ( 'svg' === pathinfo( $file_name, PATHINFO_EXTENSION ) ) {
 				$file_contents = file_get_contents( $file_data['tmp_name'] );
 
-				$sanitizer = new Sanitizer();
+				$sanitizer     = new Sanitizer();
 				$file_contents = $sanitizer->sanitize( $file_contents );
-				file_put_contents( $file_data['tmp_name'], $file_contents );
+
+				global $wp_filesystem;
+
+				if ( ! is_a( $wp_filesystem, 'WP_Filesystem_Base' ) ) {
+					$creds = request_filesystem_credentials( site_url() );
+					wp_filesystem( $creds );
+				}
+
+				$wp_filesystem->put_contents( $file_data['tmp_name'], $file_contents );
 			}
 
 			// Save file to uploads folder.
