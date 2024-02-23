@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+use enshrined\svgSanitize\Sanitizer;
+
 /**
  * Form Utils
  *
@@ -21,7 +23,6 @@ class Form_Utils {
 	 * @since 2.0.3
 	 */
 	public static function generate_test_email() {
-
 		$words = array(
 			'alfa',
 			'bravo',
@@ -50,7 +51,7 @@ class Form_Utils {
 		$name_1 = $words[ wp_rand( 0, count( $words ) - 1 ) ];
 		$name_2 = $words[ wp_rand( 2, count( $words ) ) - 1 ];
 
-		return "Otter-Form-successfully-connected.delete-on-confirmation.$name_1.$name_2@otter-blocks.com";
+		return "Otter-Form-successfully-connected.delete-on-confirmation.$name_1.$name_2@themeisle.com";
 	}
 
 	/**
@@ -92,7 +93,6 @@ class Form_Utils {
 			'error'     => null,
 		);
 
-
 		$file_name     = self::generate_file_name( $field['metadata']['name'] );
 		$file_data_key = $field['metadata']['data'];
 
@@ -102,6 +102,22 @@ class Form_Utils {
 
 		try {
 			$file_data = $files[ $file_data_key ];
+
+			if ( 'svg' === pathinfo( $file_name, PATHINFO_EXTENSION ) ) {
+				$file_contents = file_get_contents( $file_data['tmp_name'] );
+
+				$sanitizer     = new Sanitizer();
+				$file_contents = $sanitizer->sanitize( $file_contents );
+
+				global $wp_filesystem;
+
+				if ( ! is_a( $wp_filesystem, 'WP_Filesystem_Base' ) ) {
+					$creds = request_filesystem_credentials( site_url() );
+					wp_filesystem( $creds );
+				}
+
+				$wp_filesystem->put_contents( $file_data['tmp_name'], $file_contents );
+			}
 
 			// Save file to uploads folder.
 			require_once ABSPATH . 'wp-admin/includes/file.php';
