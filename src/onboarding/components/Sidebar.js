@@ -14,6 +14,11 @@ import {
 	useSelect
 } from '@wordpress/data';
 
+import {
+	useEffect,
+	useState
+} from '@wordpress/element';
+
 /**
  * Internal dependencies.
  */
@@ -56,7 +61,15 @@ const Sidebar = ({ isEditorLoading }) => {
 		onContinue
 	} = useDispatch( 'otter/onboarding' );
 
+	const [ isLoading, setIsLoading ] = useState( true );
+
 	const Controls = STEP_DATA[ currentStep ]?.controls || null;
+
+	useEffect( () => {
+		if ( ! isEditorLoading ) {
+			setIsLoading( false );
+		}
+	}, [ isEditorLoading ]);
 
 	const onExit = () => {
 		window.open( siteURL, '_self' );
@@ -64,7 +77,7 @@ const Sidebar = ({ isEditorLoading }) => {
 
 	return (
 		<div className="o-sidebar">
-			{ ( isEditorLoading || isSaving ) && (
+			{ ( isLoading || isSaving ) && (
 				<div className="o-sidebar__loader">
 					<Disabled>
 						<Spinner />
