@@ -1,8 +1,13 @@
 /**
  * WordPress dependencies
  */
-import { useEffect, useState } from '@wordpress/element';
+import {
+	useEffect,
+	useState
+} from '@wordpress/element';
+
 import { useSelect } from '@wordpress/data';
+
 import { decodeEntities } from '@wordpress/html-entities';
 
 const MAX_LOADING_TIME = 10000; // 10 seconds

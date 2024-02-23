@@ -7,6 +7,11 @@ import { Spinner } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
 
+import {
+	useEffect,
+	useState
+} from '@wordpress/element';
+
 /**
  * Internal dependencies.
  */
@@ -21,9 +26,17 @@ const Main = ({ isEditorLoading }) => {
 		};
 	});
 
+	const [ isLoading, setIsLoading ] = useState( true );
+
 	const Controls = STEP_DATA[ currentStep ]?.content || null;
 
-	if ( isEditorLoading ) {
+	useEffect( () => {
+		if ( ! isEditorLoading ) {
+			setIsLoading( false );
+		}
+	}, [ isEditorLoading ]);
+
+	if ( isLoading ) {
 		return (
 			<div className="o-preview__loader">
 				<Spinner />
