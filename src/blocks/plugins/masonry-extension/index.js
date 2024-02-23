@@ -5,8 +5,6 @@ import { __ } from '@wordpress/i18n';
 
 import { assign } from 'lodash';
 
-import { registerBlockVariation } from '@wordpress/blocks';
-
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 import { addFilter } from '@wordpress/hooks';
@@ -14,7 +12,6 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
-import { masonryIcon as icon } from '../../helpers/icons.js';
 import Edit from './edit.js';
 
 const addAttribute = ( props ) => {
@@ -35,7 +32,7 @@ const addAttribute = ( props ) => {
 
 const withMasonryExtension = createHigherOrderComponent( BlockEdit => {
 	return props => {
-		if ( 'core/gallery' !== props.name ) {
+		if ( 'core/gallery' !== props.name || ! props.attributes?.isMasonry ) {
 			return <BlockEdit { ...props } />;
 		}
 
@@ -50,14 +47,3 @@ const withMasonryExtension = createHigherOrderComponent( BlockEdit => {
 
 addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/masonry-extension-attributes', addAttribute );
 addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/masonry-extension', withMasonryExtension );
-
-registerBlockVariation( 'core/gallery', {
-	name: 'themeisle-gutenberg/masonry',
-	title: __( 'Masonry', 'otter-blocks' ),
-	description: __( 'Display multiple images in a rich masonry layout.', 'otter-blocks' ),
-	icon,
-	category: 'themeisle-blocks',
-	attributes: {
-		isMasonry: true
-	}
-});

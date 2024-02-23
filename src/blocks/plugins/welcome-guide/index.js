@@ -71,7 +71,7 @@ const WelcomeGuide = () => {
 			updateOption( 'otter_blocks_logger_flag', 'yes' );
 		}
 
-		if ( ! hasConsent || ! Array.from( target.target.classList ).includes( 'components-guide__finish-button' ) ) {
+		if ( ! target?.target || ! hasConsent || ! Array.from( target.target.classList ).includes( 'components-guide__finish-button' ) ) {
 			return;
 		}
 
