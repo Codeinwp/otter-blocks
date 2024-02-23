@@ -31,31 +31,45 @@ class LimitedOffers {
 	public $wp_option_dismiss_notification_key_base = 'dismiss_themeisle_notice_event_';
 
 	/**
-	 * Offer Links
+	 * Metadata for announcements.
 	 *
-	 * @var array<string>
+	 * @var array
 	 */
-	public $offer_metadata = array();
+	public $assets = array();
 
 	/**
 	 * Timeline for the offers.
 	 *
-	 * @var array[]
+	 * @var array
 	 */
-	public $timelines = array(
-		'bf' => array(
-			'start' => '2023-11-20 00:00:00',
-			'end'   => '2023-11-27 23:59:00',
-		),
-	);
+	public $announcements = array();
 
 	/**
 	 * LimitedOffers constructor.
 	 */
 	public function __construct() {
+		$this->announcements = apply_filters( 'themeisle_sdk_announcements', array() );
+
+		if ( empty( $this->announcements ) || ! is_array( $this->announcements ) ) {
+			return;
+		}
+	
 		try {
-			if ( $this->is_deal_active( 'bf' ) ) {
-				$this->activate_bff();
+			foreach ( $this->announcements as $announcement => $event_data ) {
+				if ( false !== strpos( $announcement, 'black_friday' ) ) {
+					if (
+						empty( $event_data ) ||
+						! is_array( $event_data ) ||
+						empty( $event_data['active'] ) ||
+						empty( $event_data['otter_dashboard_url'] ) ||
+						! isset( $event_data['urgency_text'] )
+					) {
+						continue;
+					}
+
+					$this->active = $announcement;
+					$this->prepare_black_friday_assets( $event_data );
+				}
 			}
 		} catch ( Exception $e ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -70,6 +84,11 @@ class LimitedOffers {
 	 * @return void
 	 */
 	public function load_dashboard_hooks() {
+
+		if ( empty( $this->assets['globalNoticeUrl'] ) ) {
+			return;
+		}
+
 		add_filter( 'themeisle_products_deal_priority', array( $this, 'add_priority' ) );
 		add_action( 'admin_notices', array( $this, 'render_notice' ) );
 		add_action( 'wp_ajax_dismiss_themeisle_event_notice_otter', array( $this, 'disable_notification_ajax' ) );
@@ -87,16 +106,19 @@ class LimitedOffers {
 	/**
 	 * Activate the Black Friday deal.
 	 *
+	 * @param array $data Event data.
+	 *
 	 * @return void
 	 */
-	public function activate_bff() {
-		$this->active = 'bf';
-
-		$this->offer_metadata = array(
-			'bannerUrl'     => OTTER_BLOCKS_URL . 'assets/images/black-friday-banner.png',
-			'bannerAlt'     => 'Otter Black Friday Sale',
-			'linkDashboard' => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday/', 'blackfridayltd23', 'dashboard' ),
-			'linkGlobal'    => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday/', 'blackfridayltd23', 'globalnotice' ),
+	public function prepare_black_friday_assets( $data ) {
+		$this->assets = array_merge(
+			$this->assets,
+			array(
+				'bannerUrl'      => OTTER_BLOCKS_URL . 'assets/images/black-friday-banner.png',
+				'bannerAlt'      => 'Otter Black Friday Sale',
+				'bannerStoreUrl' => esc_url_raw( $data['otter_dashboard_url'] ),
+				'urgencyText'    => esc_html( $data['urgency_text'] ),
+			)
 		);
 	}
 
@@ -110,77 +132,6 @@ class LimitedOffers {
 	}
 
 	/**
-	 * Check if the deal is active with the given slug.
-	 *
-	 * @param string $slug Slug of the deal.
-	 *
-	 * @throws Exception When date is invalid.
-	 */
-	public function is_deal_active( $slug ) {
-
-		if ( empty( $slug ) || ! array_key_exists( $slug, $this->timelines ) ) {
-			return false;
-		}
-
-		return $this->check_date_range( $this->timelines[ $slug ]['start'], $this->timelines[ $slug ]['end'] );
-	}
-
-	/**
-	 * Get the remaining time for the deal in a human readable format.
-	 *
-	 * @param string $slug Slug of the deal.
-	 * @return string Remaining time for the deal.
-	 */
-	public function get_remaining_time_for_deal( $slug ) {
-		if ( empty( $slug ) || ! array_key_exists( $slug, $this->timelines ) ) {
-			return '';
-		}
-
-		try {
-			$end_date     = new DateTime( $this->timelines[ $slug ]['end'], new DateTimeZone( 'GMT' ) );
-			$current_date = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
-			$diff         = $end_date->diff( $current_date );
-
-			if ( 0 < $diff->days ) {
-				return 1 === $diff->days ? $diff->format( '%a day' ) : $diff->format( '%a days' );
-			}
-
-			if ( 0 < $diff->h ) {
-				return 1 === $diff->h ? $diff->format( '%h hour' ) : $diff->format( '%h hours' );
-			}
-
-			if ( 0 < $diff->i ) {
-				return 1 === $diff->i ? $diff->format( '%i minute' ) : $diff->format( '%i minutes' );
-			}
-
-			return 1 === $diff->s ? $diff->format( '%s second' ) : $diff->format( '%s seconds' );
-		} catch ( Exception $e ) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( $e->getMessage() ); // phpcs:ignore
-			}
-		}
-
-		return '';
-	}
-
-	/**
-	 * Check if the current date is in the range of the offer.
-	 *
-	 * @param string $start Start date.
-	 * @param string $end   End date.
-	 *
-	 * @throws Exception When date is invalid.
-	 */
-	public function check_date_range( $start, $end ) {
-
-		$start_date   = new DateTime( $start, new DateTimeZone( 'GMT' ) );
-		$end_date     = new DateTime( $end, new DateTimeZone( 'GMT' ) );
-		$current_date = new DateTime( 'now', new DateTimeZone( 'GMT' ) );
-
-		return $start_date <= $current_date && $current_date <= $end_date;
-	}
-
-	/**
 	 * Get the localized data for the plugin.
 	 *
 	 * @return array Localized data.
@@ -188,12 +139,10 @@ class LimitedOffers {
 	public function get_localized_data() {
 		return array_merge(
 			array(
-				'active'        => $this->is_active(),
-				'dealSlug'      => $this->get_active_deal(),
-				'remainingTime' => $this->get_remaining_time_for_deal( $this->get_active_deal() ),
-				'urgencyText'   => 'Hurry Up! Only ' . $this->get_remaining_time_for_deal( $this->get_active_deal() ) . ' left',
+				'active'   => $this->is_active(),
+				'dealSlug' => $this->get_active_deal(),
 			),
-			$this->offer_metadata
+			$this->assets
 		);
 	}
 
@@ -262,7 +211,7 @@ class LimitedOffers {
 			</svg>
 			<span>
 				<?php echo wp_kses_post( $message ); ?>
-				<a href="<?php echo esc_url( ! empty( $this->offer_metadata['linkGlobal'] ) ? $this->offer_metadata['linkGlobal'] : '' ); ?>" target="_blank" rel="external noreferrer noopener">
+				<a href="<?php echo esc_url( ! empty( $this->assets['globalNoticeUrl'] ) ? $this->assets['globalNoticeUrl'] : '' ); ?>" target="_blank" rel="external noreferrer noopener">
 					<?php esc_html_e( 'Learn more', 'otter-blocks' ); ?>
 				</a>
 			</span>
