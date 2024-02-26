@@ -319,6 +319,19 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+##### [Version 2.6.4](https://github.com/Codeinwp/otter-blocks/compare/v2.6.3...v2.6.4) (2024-02-26)
+
+### Improvements
+- **Improved Re-Loading Behaviour Between FSE Onboarding Steps**: Enhances the user experience by streamlining transitions and re-loading behavior between steps in the Full Site Editing (FSE) onboarding process.
+
+### Bug Fixes
+- **Resolves Compatibility Issue with Blocks on WordPress.com**: Fixes a critical issue to ensure the plugin now works seamlessly on WordPress.com.
+- **Hardens Security in Form Block**: Enhances sanitization of SVG files uploaded through the Form Block to protect against security vulnerabilities.
+- **Hardens Security in Pro Form Blocks**: Improves sanitization processes in Pro Form Blocks to bolster security measures.
+
+
+
+
 ##### [Version 2.6.3](https://github.com/Codeinwp/otter-blocks/compare/v2.6.2...v2.6.3) (2024-02-14)
 
 ### Improvements
