@@ -45,7 +45,7 @@ const liveSearchUpsell = createHigherOrderComponent( BlockEdit => {
 							/>
 						</Disabled>
 						<Notice
-							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'search-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'search-block' ) }>{ __( 'Unlock this with Otter Pro\'s Agency Plan.', 'otter-blocks' ) }</ExternalLink> }
 							variant="upsell"
 						/>
 						<Button
