@@ -38,7 +38,7 @@ class Google_Map_Block {
 			return $output;
 		}
 
-		$id    = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-google-map-' . wp_rand( 10, 100 );
+		$id    = isset( $attributes['id'] ) ? esc_attr( $attributes['id'] ) : 'wp-block-themeisle-blocks-google-map-' . wp_rand( 10, 100 );
 		$class = '';
 		$style = '';
 
@@ -54,14 +54,14 @@ class Google_Map_Block {
 			array(
 				'class' => $class,
 				'style' => $style,
-			) 
+			)
 		);
 
 		$output  = '<div ' . $wrapper_attributes . ' id="' . esc_attr( $id ) . '"></div>' . "\n";
 		$output .= '<script type="text/javascript">' . "\n";
 		$output .= '	/* <![CDATA[ */' . "\n";
 		$output .= '		if ( ! window.themeisleGoogleMaps ) window.themeisleGoogleMaps =[];' . "\n";
-		$output .= '		window.themeisleGoogleMaps.push( { container: "' . $id . '", attributes: ' . wp_json_encode( $attributes ) . ' } );' . "\n";
+		$output .= '		window.themeisleGoogleMaps.push( { container: "' . esc_attr( $id ) . '", attributes: ' . wp_json_encode( $attributes ) . ' } );' . "\n";
 		$output .= '	/* ]]> */' . "\n";
 		$output .= '</script>' . "\n";
 
