@@ -1,3 +1,10 @@
+##### [Version 2.6.5](https://github.com/Codeinwp/otter-blocks/compare/v2.6.4...v2.6.5) (2024-03-13)
+
+### Bug Fixes
+
+- **Fix NPS Survey**: Fixed survey appearing instantly when theme installed programmatically.
+- **Fix Google Maps Block ID Escaping**: Fixes ID of Google Maps block not being escaped properly.
+
 ##### [Version 2.6.4](https://github.com/Codeinwp/otter-blocks/compare/v2.6.3...v2.6.4) (2024-02-26)
 
 ### Improvements
