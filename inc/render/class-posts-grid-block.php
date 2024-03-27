@@ -119,7 +119,7 @@ class Posts_Grid_Block {
 			$wrapper_attributes,
 			isset( $attributes['id'] ) ? $attributes['id'] : '',
 			isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? $this->render_featured_post( $recent_posts[0], $attributes ) : '',
-			trim( $class ),
+			esc_attr( trim( $class ) ),
 			$list_items_markup,
 			$has_pagination ? $this->render_pagination( $page_number, $total_posts ) : ''
 		);
