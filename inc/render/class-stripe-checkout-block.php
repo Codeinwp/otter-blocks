@@ -62,7 +62,7 @@ class Stripe_Checkout_Block {
 		$details_markup = '';
 
 		if ( 0 < count( $product['images'] ) ) {
-			$details_markup .= '<img src="' . $product['images'][0] . '" alt="' . $product['description'] . '" />';
+			$details_markup .= '<img src="' . esc_url( $product['images'][0] ) . '" alt="' . esc_attr( $product['description'] ) . '" />';
 		}
 
 		$price = $stripe->create_request( 'price', $attributes['price'] );
@@ -79,7 +79,7 @@ class Stripe_Checkout_Block {
 		$amount   = number_format( $price['unit_amount'] / 100, 2, '.', ' ' );
 
 		$details_markup .= '<div class="o-stripe-checkout-description">';
-		$details_markup .= '<h3>' . $product['name'] . '</h3>';
+		$details_markup .= '<h3>' . esc_html( $product['name'] ) . '</h3>';
 		$details_markup .= '<h5>' . $currency . $amount . '</h5>';
 		$details_markup .= '</div>';
 

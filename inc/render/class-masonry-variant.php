@@ -60,7 +60,7 @@ class Masonry_Variant {
 
 			wp_script_add_data( 'otter-masonry', 'defer', true );
 
-			$margin = isset( $block['attrs']['margin'] ) ? $block['attrs']['margin'] : 10;
+			$margin = isset( $block['attrs']['margin'] ) ? esc_attr( $block['attrs']['margin'] ) : 10;
 
 			$style = '<style type="text/css">.otter-masonry .blocks-gallery-grid .blocks-gallery-item img{ width:100% }</style>';
 

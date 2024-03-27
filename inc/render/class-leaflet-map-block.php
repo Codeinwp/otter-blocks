@@ -33,7 +33,7 @@ class Leaflet_Map_Block {
 		}
 
 		// Set the ID and the class name.
-		$id    = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-map-' . wp_rand( 10, 100 );
+		$id    = isset( $attributes['id'] ) ? esc_attr( $attributes['id'] ) : 'wp-block-themeisle-blocks-map-' . wp_rand( 10, 100 );
 		$class = '';
 		$style = '';
 
@@ -58,7 +58,7 @@ class Leaflet_Map_Block {
 		$output .= '<script type="text/javascript">' . "\n";
 		$output .= '	/* <![CDATA[ */' . "\n";
 		$output .= '		if ( ! window.themeisleLeafletMaps ) window.themeisleLeafletMaps =[];' . "\n";
-		$output .= '		window.themeisleLeafletMaps.push( { container: "' . $id . '", attributes: ' . wp_json_encode( $attributes ) . ' } );' . "\n";
+		$output .= '		window.themeisleLeafletMaps.push( { container: "' . esc_attr( $id ) . '", attributes: ' . wp_json_encode( $attributes ) . ' } );' . "\n";
 		$output .= '	/* ]]> */' . "\n";
 		$output .= '</script>' . "\n";
 
