@@ -319,6 +319,16 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+##### [Version 2.6.6](https://github.com/Codeinwp/otter-blocks/compare/v2.6.5...v2.6.6) (2024-03-27)
+
+### Bug Fixes
+- **Harden Security in SSR Blocks**: Improve SSR block sanitization to protect against security vulnerabilities.
+### Bug Fixes
+- **Harden Security in SSR Blocks**: Improve SSR block sanitization to protect against security vulnerabilities.
+
+
+
+
 ##### [Version 2.6.5](https://github.com/Codeinwp/otter-blocks/compare/v2.6.4...v2.6.5) (2024-03-13)
 
 ### Bug Fixes
