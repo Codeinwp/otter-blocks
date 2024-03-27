@@ -63,7 +63,7 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
-		"@formbricks/js": "^1.5.0",
+		"@formbricks/js": "^1.6.5",
 		"@wordpress/icons": "^9.43.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.5.1",
