@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a484c2a996766478dcb47035c56e873",
+    "content-hash": "0dcd37c8a4ecd36ac70a6b5e279be34d",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -805,24 +805,25 @@
         },
         {
             "name": "php-stubs/acf-pro-stubs",
-            "version": "v6.1.7",
+            "version": "v6.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/acf-pro-stubs.git",
-                "reference": "0e6c6da1c581b7a6fa555da1ccd90260b5bbc495"
+                "reference": "ec36332a1211f8c0231ae8221994f38033232fa0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/0e6c6da1c581b7a6fa555da1ccd90260b5bbc495",
-                "reference": "0e6c6da1c581b7a6fa555da1ccd90260b5bbc495",
+                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/ec36332a1211f8c0231ae8221994f38033232fa0",
+                "reference": "ec36332a1211f8c0231ae8221994f38033232fa0",
                 "shasum": ""
             },
             "require": {
                 "php-stubs/wordpress-stubs": "^4.7 || ^5.0 || ^6.0"
             },
             "require-dev": {
-                "php": "~7.1",
-                "php-stubs/generator": "^0.8"
+                "php": "~7.1 || ^8.0",
+                "php-stubs/generator": "^0.8",
+                "phpdocumentor/reflection-docblock": "^5.3"
             },
             "suggest": {
                 "symfony/polyfill-php73": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
@@ -843,9 +844,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/acf-pro-stubs/issues",
-                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v6.1.7"
+                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v6.2.7"
             },
-            "time": "2023-07-21T09:18:17+00:00"
+            "time": "2024-03-11T09:22:20+00:00"
         },
         {
             "name": "php-stubs/woocommerce-stubs",
