@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a484c2a996766478dcb47035c56e873",
+    "content-hash": "0dcd37c8a4ecd36ac70a6b5e279be34d",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -1002,16 +1002,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.60",
+            "version": "1.10.66",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "95dcea7d6c628a3f2f56d091d8a0219485a86bbe"
+                "reference": "94779c987e4ebd620025d9e5fdd23323903950bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/95dcea7d6c628a3f2f56d091d8a0219485a86bbe",
-                "reference": "95dcea7d6c628a3f2f56d091d8a0219485a86bbe",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/94779c987e4ebd620025d9e5fdd23323903950bd",
+                "reference": "94779c987e4ebd620025d9e5fdd23323903950bd",
                 "shasum": ""
             },
             "require": {
@@ -1060,7 +1060,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-07T13:30:19+00:00"
+            "time": "2024-03-28T16:17:31+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2666,16 +2666,16 @@
         },
         {
             "name": "szepeviktor/phpstan-wordpress",
-            "version": "v1.3.3",
+            "version": "v1.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/szepeviktor/phpstan-wordpress.git",
-                "reference": "f7ff091331bc00c5688fe4ce0c4d51d06fa61553"
+                "reference": "891d0767855a32c886a439efae090408cc1fa156"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/szepeviktor/phpstan-wordpress/zipball/f7ff091331bc00c5688fe4ce0c4d51d06fa61553",
-                "reference": "f7ff091331bc00c5688fe4ce0c4d51d06fa61553",
+                "url": "https://api.github.com/repos/szepeviktor/phpstan-wordpress/zipball/891d0767855a32c886a439efae090408cc1fa156",
+                "reference": "891d0767855a32c886a439efae090408cc1fa156",
                 "shasum": ""
             },
             "require": {
@@ -2722,9 +2722,9 @@
             ],
             "support": {
                 "issues": "https://github.com/szepeviktor/phpstan-wordpress/issues",
-                "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v1.3.3"
+                "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v1.3.4"
             },
-            "time": "2024-02-26T13:55:50+00:00"
+            "time": "2024-03-21T16:32:59+00:00"
         },
         {
             "name": "theseer/tokenizer",
