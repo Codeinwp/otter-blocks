@@ -2,7 +2,7 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
 **Tags:** block, blocks, gutenberg, gutenberg blocks, wordPress blocks, editor, block Editor, page Builder, post blocks, post grids  
 **Requires at least:** 6.2  
-**Tested up to:** 6.4  
+**Tested up to:** 6.5  
 **Requires PHP:** 5.6  
 **Stable tag:** trunk  
 **License:** GPLv3  
@@ -318,6 +318,14 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 ## Changelog ##
+
+##### [Version 2.6.7](https://github.com/Codeinwp/otter-blocks/compare/v2.6.6...v2.6.7) (2024-04-03)
+
+### Improvements
+- **Updated internal dependencies**: for enhanced performance and stability.
+
+
+
 
 ##### [Version 2.6.6](https://github.com/Codeinwp/otter-blocks/compare/v2.6.5...v2.6.6) (2024-03-27)
 
