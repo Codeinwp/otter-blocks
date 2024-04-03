@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: block, blocks, gutenberg, gutenberg blocks, wordPress blocks, editor, block Editor, page Builder, post blocks, post grids
 Requires at least: 6.2
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 5.6
 Stable tag: trunk
 License: GPLv3
@@ -318,6 +318,16 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 == Changelog ==
+
+##### [Version 2.6.6](https://github.com/Codeinwp/otter-blocks/compare/v2.6.5...v2.6.6) (2024-03-27)
+
+### Bug Fixes
+- **Harden Security in SSR Blocks**: Improve SSR block sanitization to protect against security vulnerabilities.
+### Bug Fixes
+- **Harden Security in SSR Blocks**: Improve SSR block sanitization to protect against security vulnerabilities.
+
+
+
 
 ##### [Version 2.6.5](https://github.com/Codeinwp/otter-blocks/compare/v2.6.4...v2.6.5) (2024-03-13)
 
