@@ -319,6 +319,14 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+##### [Version 2.6.7](https://github.com/Codeinwp/otter-blocks/compare/v2.6.6...v2.6.7) (2024-04-03)
+
+### Improvements
+- **Updated internal dependencies**: for enhanced performance and stability.
+
+
+
+
 ##### [Version 2.6.6](https://github.com/Codeinwp/otter-blocks/compare/v2.6.5...v2.6.6) (2024-03-27)
 
 ### Bug Fixes
