@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "2.6.7",
+	"version": "2.6.8",
 	"description": "Otter – Page Builder Blocks & Extensions for Gutenberg",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
@@ -90,7 +90,7 @@
 		"@types/wordpress__block-editor": "^11.5.9",
 		"@types/wordpress__components": "^23.0.11",
 		"@typescript-eslint/parser": "^7.2.0",
-		"@wordpress/block-editor": "^12.21.0",
+		"@wordpress/block-editor": "^12.23.0",
 		"@wordpress/components": "^27.3.0",
 		"@wordpress/compose": "^6.15.0",
 		"@wordpress/data": "^9.22.0",
