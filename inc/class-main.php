@@ -368,7 +368,7 @@ class Main {
 	 * @return mixed
 	 */
 	public function check_svg_and_sanitize( $file ) {
-		// Ensure we have a proper file path before processing
+		// Ensure we have a proper file path before processing.
 		if ( ! isset( $file['tmp_name'] ) ) {
 			return $file;
 		}
@@ -406,36 +406,38 @@ class Main {
 	 * @return bool|int
 	 */
 	protected function sanitize_svg( $file ) {
-		$dirty = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		// We can ignore the phpcs warning here as we're reading and writing to the Temp file.
+		$dirty = file_get_contents( $file ); // phpcs:ignore
 
-		// Is the SVG gzipped? If so we try and decode the string
+		// Is the SVG gzipped? If so we try and decode the string.
 		$is_zipped = $this->is_gzipped( $dirty );
-		if ( $is_zipped && ( ! function_exists( 'gzdecode' ) || ! function_exists( 'gzencode' ) ) ){
+		if ( $is_zipped && ( ! function_exists( 'gzdecode' ) || ! function_exists( 'gzencode' ) ) ) {
 			return false;
 		}
 
 		if ( $is_zipped ) {
 			$dirty = gzdecode( $dirty );
 
-			// If decoding fails, bail as we're not secure
+			// If decoding fails, bail as we're not secure.
 			if ( false === $dirty ) {
 				return false;
 			}
 		}
 
-		$sanitizer     = new Sanitizer();
-		$clean = $sanitizer->sanitize( $dirty );
+		$sanitizer = new Sanitizer();
+		$clean     = $sanitizer->sanitize( $dirty );
 
 		if ( false === $clean ) {
 			return false;
 		}
 
-		// If we were gzipped, we need to re-zip
+		// If we were gzipped, we need to re-zip.
 		if ( $is_zipped ) {
 			$clean = gzencode( $clean );
 		}
 
-		file_put_contents( $file, $clean ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
+		// We can ignore the phpcs warning here as we're reading and writing to the Temp file.
+		file_put_contents( $file, $clean ); // phpcs:ignore
 
 		return true;
 	}
