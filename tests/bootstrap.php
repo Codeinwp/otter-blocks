@@ -34,11 +34,6 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 }
 
 require dirname( dirname( __FILE__ ) ) . '/tests/stripe-http-client-mock.php';
-//require dirname( dirname( __FILE__ ) ) . '/inc/css/class-css-utility.php';
-//require dirname( dirname( __FILE__ ) ) . '/inc/plugins/class-block-conditions.php';
-//require dirname( dirname( __FILE__ ) ) . '/inc/plugins/class-dynamic-content.php';
-//require dirname( dirname( __FILE__ ) ) . '/plugins/otter-pro/inc/plugins/class-block-conditions.php';
-//require dirname( dirname( __FILE__ ) ) . '/plugins/otter-pro/inc/plugins/class-dynamic-content.php';
 
 activate_plugin( 'otter-blocks/otter-blocks.php' );
 global $current_user;
