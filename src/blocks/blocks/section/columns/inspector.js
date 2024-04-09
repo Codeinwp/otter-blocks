@@ -35,6 +35,7 @@ import {
  * Internal dependencies
  */
 import LayoutControl from './../components/layout-control/index.js';
+import metadata from './block.json';
 
 import {
 	isNullObject,
@@ -734,6 +735,7 @@ const Inspector = ({
 											max: 500
 										} }
 										onChange={ changePadding }
+										resetValues={ metadata.attributes.padding.default }
 									/>
 								</Disabled>
 
@@ -750,6 +752,7 @@ const Inspector = ({
 										} }
 										sides={ [ 'top', 'bottom' ] }
 										onChange={ changeMargin }
+										resetValues={ metadata.attributes.margin.default }
 									/>
 								</Disabled>
 							</ResponsiveControl>
