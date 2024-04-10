@@ -103,4 +103,34 @@ test.describe( 'Product Review Block', () => {
 		await expect( page.getByRole( 'link', { name: 'Buy Now', exact: true }) ).toHaveAttribute( 'target', '_blank' );
 
 	});
+
+	test( 'check description new lines preserved', async({ editor, page }) => {
+		await editor.insertBlock({ name: 'themeisle-blocks/review' });
+
+		const title = page.getByRole( 'textbox', { name: 'Name of your product…' });
+
+		await title.type( 'Test Product' );
+
+		// Check if the value is added in title
+		expect( await title.innerHTML() ).toBe( 'Test Product' );
+
+		// Add a multi line description
+		await page.getByLabel( 'Product description or a' ).click();
+		await page.getByLabel( 'Product description or a' ).fill( 'Product description' );
+		await page.keyboard.press( 'Enter' );
+		await page.keyboard.type( 'Line 1' );
+		await page.keyboard.press( 'Enter' );
+		await page.keyboard.type( 'Line 2' );
+
+		// Check if the value is added in description and is multiline
+		await expect( page.getByLabel( 'Product description or a' ) ).toContainText( 'Product description\nLine 1\nLine 2', { useInnerText: true });
+
+		// Publish the post and view the post
+		await page.getByRole( 'button', { name: 'Publish', exact: true }).click();
+		await page.getByLabel( 'Editor publish' ).getByRole( 'button', { name: 'Publish', exact: true }).click();
+		await page.getByLabel( 'Editor publish' ).getByRole( 'link', { name: 'View Post' }).click();
+
+		// Check if the value is added in description and multiline is preserved
+		await expect( page.locator( '.wp-block-themeisle-blocks-review .o-review__header_details' ) ).toContainText( 'Product description\nLine 1\nLine 2', { useInnerText: true });
+	});
 });

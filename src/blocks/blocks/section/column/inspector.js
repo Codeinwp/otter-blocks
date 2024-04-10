@@ -44,6 +44,7 @@ import {
 	ResponsiveControl,
 	SyncControlDropdown
 } from '../../../components/index.js';
+import metadata from './block.json';
 
 import {
 	isNullObject,
@@ -285,6 +286,7 @@ const Inspector = ({
 										max: 500
 									} }
 									onChange={ changePadding }
+									resetValues={ metadata.attributes.padding.default }
 								/>
 							</Disabled>
 
@@ -300,6 +302,7 @@ const Inspector = ({
 										max: 500
 									} }
 									onChange={ changeMargin }
+									resetValues={ metadata.attributes.margin.default }
 								/>
 							</Disabled>
 						</ResponsiveControl>

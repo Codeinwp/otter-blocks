@@ -103,6 +103,10 @@ jobs:
         run: |
           npm ci
 
+      - name: npm run build
+        run: |
+          npm run build
+
       - name: Setup WP Env
         run: |
           npm run test:unit:php:setup

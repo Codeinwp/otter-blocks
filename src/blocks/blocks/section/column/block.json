@@ -12,22 +12,58 @@
 			"type": "string"
 		},
 		"padding": {
-			"type": "object"
+			"type": "object",
+			"default": {
+				"top": "0px",
+				"right": "0px",
+				"bottom": "0px",
+				"left": "0px"
+			}
 		},
 		"paddingTablet": {
-			"type": "object"
+			"type": "object",
+			"default": {
+				"top": "0px",
+				"right": "0px",
+				"bottom": "0px",
+				"left": "0px"
+			}
 		},
 		"paddingMobile": {
-			"type": "object"
+			"type": "object",
+			"default": {
+				"top": "0px",
+				"right": "0px",
+				"bottom": "0px",
+				"left": "0px"
+			}
 		},
 		"margin": {
-			"type": "object"
+			"type": "object",
+			"default": {
+				"top": "0px",
+				"right": "0px",
+				"bottom": "0px",
+				"left": "0px"
+			}
 		},
 		"marginTablet": {
-			"type": "object"
+			"type": "object",
+			"default": {
+				"top": "0px",
+				"right": "0px",
+				"bottom": "0px",
+				"left": "0px"
+			}
 		},
 		"marginMobile": {
-			"type": "object"
+			"type": "object",
+			"default": {
+				"top": "0px",
+				"right": "0px",
+				"bottom": "0px",
+				"left": "0px"
+			}
 		},
 		"color": {
 			"type": "string"

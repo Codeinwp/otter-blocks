@@ -117,7 +117,7 @@ class Posts_Grid_Block {
 		$block_content = sprintf(
 			'<div %1$s id="%2$s">%3$s<div class="%4$s">%5$s</div> %6$s</div>',
 			$wrapper_attributes,
-			isset( $attributes['id'] ) ? $attributes['id'] : '',
+			isset( $attributes['id'] ) ? esc_attr( $attributes['id'] ) : '',
 			isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? $this->render_featured_post( $recent_posts[0], $attributes ) : '',
 			esc_attr( trim( $class ) ),
 			$list_items_markup,
