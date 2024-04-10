@@ -112,7 +112,7 @@ class Review_Block {
 			}
 
 			if ( isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) {
-				$html .= '	<p>' . esc_html( $attributes['description'] ) . '</p>';
+				$html .= '	<p>' . wp_kses( $attributes['description'], array( 'br' => array() ) ) . '</p>';
 			}
 			$html .= '	</div>';
 		}
