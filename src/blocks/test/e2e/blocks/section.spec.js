@@ -99,42 +99,42 @@ test.describe( 'Section Block', () => {
 		await page.click( 'role=button[name="Add default block"i]' );
 		await page.keyboard.type( '/section' );
 		await page.keyboard.press( 'Enter' );
-		await page.getByLabel('Single column').click();
-		await page.getByLabel('Add block').click();
-		await page.getByRole('option', { name: 'Paragraph' }).click();
-		await page.getByLabel('Empty block; start writing or').fill('Test');
-		await page.getByLabel('Document Overview').click();
-		await page.getByLabel('Section', { exact: true }).click();
+		await page.getByLabel( 'Single column' ).click();
+		await page.getByLabel( 'Add block' ).click();
+		await page.getByRole( 'option', { name: 'Paragraph' }).click();
+		await page.getByLabel( 'Empty block; start writing or' ).fill( 'Test' );
+		await page.getByLabel( 'Document Overview' ).click();
+		await page.getByLabel( 'Section', { exact: true }).click();
 
 		// Open Setting panel
-		await page.getByLabel('Settings', { exact: true }).click();
-		await page.getByRole('button', { name: 'Style' }).click();
+		await page.getByLabel( 'Settings', { exact: true }).click();
+		await page.getByRole( 'button', { name: 'Style' }).click();
 
 		// Check Default values for Section Block
-		await expect(page.getByLabel('Padding').getByRole('textbox', { name: 'All sides' })).toBeVisible();
-		await expect(page.getByLabel('Margin').getByRole('textbox', { name: 'All sides' })).toBeVisible();
-		await expect(page.getByLabel('Padding').getByRole('textbox', { name: 'All sides' })).toHaveValue('0');
-		await expect(page.getByLabel('Margin').getByRole('textbox', { name: 'All sides' })).toHaveValue('0');
+		await expect( page.getByLabel( 'Padding' ).getByRole( 'textbox', { name: 'All sides' }) ).toBeVisible();
+		await expect( page.getByLabel( 'Margin' ).getByRole( 'textbox', { name: 'All sides' }) ).toBeVisible();
+		await expect( page.getByLabel( 'Padding' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '0' );
+		await expect( page.getByLabel( 'Margin' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '0' );
 
 		// Set Padding and Margin values and check if they are set for the Section Block
-		await page.getByLabel('Padding').getByRole('slider', { name: 'All sides' }).fill('30');
-		await page.getByLabel('Margin').getByRole('slider', { name: 'All sides' }).fill('15');
-		await expect(page.getByLabel('Padding').getByRole('textbox', { name: 'All sides' })).toHaveValue('30');
-		await expect(page.getByLabel('Margin').getByRole('textbox', { name: 'All sides' })).toHaveValue('15');
+		await page.getByLabel( 'Padding' ).getByRole( 'slider', { name: 'All sides' }).fill( '30' );
+		await page.getByLabel( 'Margin' ).getByRole( 'slider', { name: 'All sides' }).fill( '15' );
+		await expect( page.getByLabel( 'Padding' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '30' );
+		await expect( page.getByLabel( 'Margin' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '15' );
 
 		// Check Default values for Section Column Block
-		await page.getByLabel('Section Column', { exact: true }).click();
-		await page.getByRole('button', { name: 'Style' }).click();
-		await expect(page.getByLabel('Padding').getByRole('textbox', { name: 'All sides' })).toHaveValue('0');
-		await expect(page.getByLabel('Margin').getByRole('textbox', { name: 'All sides' })).toHaveValue('0');
+		await page.getByLabel( 'Section Column', { exact: true }).click();
+		await page.getByRole( 'button', { name: 'Style' }).click();
+		await expect( page.getByLabel( 'Padding' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '0' );
+		await expect( page.getByLabel( 'Margin' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '0' );
 
 		// Set Padding and Margin values and check if they are set for the Section Column Block
-		await page.getByLabel('Padding').getByRole('slider', { name: 'All sides' }).fill('20');
-		await page.getByLabel('Margin').getByRole('slider', { name: 'All sides' }).fill('10');
-		await expect(page.getByLabel('Padding').getByRole('textbox', { name: 'All sides' })).toHaveValue('20');
-		await expect(page.getByLabel('Margin').getByRole('textbox', { name: 'All sides' })).toHaveValue('10');
+		await page.getByLabel( 'Padding' ).getByRole( 'slider', { name: 'All sides' }).fill( '20' );
+		await page.getByLabel( 'Margin' ).getByRole( 'slider', { name: 'All sides' }).fill( '10' );
+		await expect( page.getByLabel( 'Padding' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '20' );
+		await expect( page.getByLabel( 'Margin' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '10' );
 
 		// Close Setting panel to preserve the original state
-		await page.getByLabel('Settings', { exact: true }).click();
+		await page.getByLabel( 'Settings', { exact: true }).click();
 	});
 });
