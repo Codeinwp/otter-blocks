@@ -1,3 +1,8 @@
+##### [Version 2.6.9](https://github.com/Codeinwp/otter-blocks/compare/v2.6.8...v2.6.9) (2024-04-10)
+
+### Improvements
+**Updated internal dependencies​:** for enhanced performance and security
+
 ##### [Version 2.6.8](https://github.com/Codeinwp/otter-blocks/compare/v2.6.7...v2.6.8) (2024-04-05)
 
 ### Improvements
