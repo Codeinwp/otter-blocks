@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
+use enshrined\svgSanitize\Sanitizer;
 use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
 use ThemeIsle\GutenbergBlocks\Server\Dashboard_Server;
 
@@ -40,6 +41,7 @@ class Main {
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
 			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ), PHP_INT_MAX ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
+			add_filter( 'wp_handle_upload_prefilter', array( $this, 'check_svg_and_sanitize' ) );
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 3 );
 			add_filter( 'wp_generate_attachment_metadata', array( $this, 'generate_svg_attachment_metadata' ), PHP_INT_MAX, 2 );
 		}
@@ -356,6 +358,107 @@ class Main {
 		}
 
 		return $mimes;
+	}
+
+	/**
+	 * Check if the file is an SVG, if so handle appropriately
+	 *
+	 * @param array $file An array of data for a single file.
+	 *
+	 * @return mixed
+	 */
+	public function check_svg_and_sanitize( $file ) {
+		// Ensure we have a proper file path before processing.
+		if ( ! isset( $file['tmp_name'] ) ) {
+			return $file;
+		}
+
+		$file_name   = isset( $file['name'] ) ? $file['name'] : '';
+		$wp_filetype = wp_check_filetype_and_ext( $file['tmp_name'], $file_name );
+		$type        = ! empty( $wp_filetype['type'] ) ? $wp_filetype['type'] : '';
+
+		if ( 'image/svg+xml' === $type ) {
+			if ( ! current_user_can( 'upload_files' ) ) {
+				$file['error'] = __(
+					'Sorry, you are not allowed to upload files.',
+					'otter-blocks'
+				);
+
+				return $file;
+			}
+
+			if ( ! $this->sanitize_svg( $file['tmp_name'] ) ) {
+				$file['error'] = __(
+					"Sorry, this file couldn't be sanitized so for security reasons wasn't uploaded",
+					'otter-blocks'
+				);
+			}
+		}
+
+		return $file;
+	}
+
+	/**
+	 * Sanitize the SVG
+	 *
+	 * @param string $file Temp file path.
+	 *
+	 * @return bool|int
+	 */
+	protected function sanitize_svg( $file ) {
+		// We can ignore the phpcs warning here as we're reading and writing to the Temp file.
+		$dirty = file_get_contents( $file ); // phpcs:ignore
+
+		// Is the SVG gzipped? If so we try and decode the string.
+		$is_zipped = $this->is_gzipped( $dirty );
+		if ( $is_zipped && ( ! function_exists( 'gzdecode' ) || ! function_exists( 'gzencode' ) ) ) {
+			return false;
+		}
+
+		if ( $is_zipped ) {
+			$dirty = gzdecode( $dirty );
+
+			// If decoding fails, bail as we're not secure.
+			if ( false === $dirty ) {
+				return false;
+			}
+		}
+
+		$sanitizer = new Sanitizer();
+		$clean     = $sanitizer->sanitize( $dirty );
+
+		if ( false === $clean ) {
+			return false;
+		}
+
+		// If we were gzipped, we need to re-zip.
+		if ( $is_zipped ) {
+			$clean = gzencode( $clean );
+		}
+
+		// We can ignore the phpcs warning here as we're reading and writing to the Temp file.
+		file_put_contents( $file, $clean ); // phpcs:ignore
+
+		return true;
+	}
+
+	/**
+	 * Check if the contents are gzipped
+	 *
+	 * @see http://www.gzip.org/zlib/rfc-gzip.html#member-format
+	 *
+	 * @param string $contents Content to check.
+	 *
+	 * @return bool
+	 */
+	protected function is_gzipped( $contents ) {
+		// phpcs:disable Generic.Strings.UnnecessaryStringConcat.Found
+		if ( function_exists( 'mb_strpos' ) ) {
+			return 0 === mb_strpos( $contents, "\x1f" . "\x8b" . "\x08" );
+		} else {
+			return 0 === strpos( $contents, "\x1f" . "\x8b" . "\x08" );
+		}
+		// phpcs:enable
 	}
 
 	/**
