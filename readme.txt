@@ -126,10 +126,6 @@ Counting down to a big event? Show it by making use of these Gutenberg blocks. C
 
 Quickly and easily insert a contact form anywhere on the page. Optionally, turn the form into a lead-generating machine by integrating it with Brevo(Sendinblue) or Mailchimp. Plus, streamline data management with webhook integration and ensure enhanced security with hCaptcha integration. [Check live demo](https://demo.themeisle.com/otter-blocks/form/)
 
-#### Masonry Gallery Gutenberg Block [FREE]
-
-Add some pizzazz to your gallery by making it a Masonry layout Gallery instead. [Check live demo](https://demo.themeisle.com/otter-blocks/masonry-gallery/) 
-
 #### Posts Gutenberg Block [FREE]
 
 Use this block to insert items from posts, pages and custom post types into the current page being edited. The Posts block allows displaying a certain number of posts on different pages. Customizations available for this block cover areas such as styles, post types, settings, designs, and layout.
