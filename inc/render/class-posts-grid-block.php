@@ -153,12 +153,7 @@ class Posts_Grid_Block {
 
 			if ( 'title' === $element ) {
 				if ( isset( $attributes['displayTitle'] ) && $attributes['displayTitle'] ) {
-					$html .= sprintf(
-						'<%1$s class="o-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
-						esc_attr( $attributes['titleTag'] ),
-						esc_url( get_the_permalink( $id ) ),
-						esc_html( get_the_title( $id ) )
-					);
+					$html .= $this->render_post_title( $attributes['titleTag'], get_the_permalink( $id ), get_the_title( $id ) );
 				}
 			}
 
@@ -409,5 +404,23 @@ class Posts_Grid_Block {
 		$output .= '</div>';
 
 		return $output;
+	}
+
+	/**
+	 * Render the post title.
+	 * 
+	 * @param string $tag The html tag.
+	 * @param string $post_url The post URL.
+	 * @param string $post_title The post title.
+	 * 
+	 * @return string The rendered post title.
+	 */
+	public function render_post_title( $tag, $post_url, $post_title ) {
+		return sprintf(
+			'<%1$s class="o-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
+			sanitize_key( $tag ),
+			esc_url( $post_url ),
+			esc_html( $post_title )
+		);
 	}
 }
