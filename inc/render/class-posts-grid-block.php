@@ -416,9 +416,16 @@ class Posts_Grid_Block {
 	 * @return string The rendered post title.
 	 */
 	public function render_post_title( $tag, $post_url, $post_title ) {
+
+		$tag = sanitize_key( $tag );
+		
+		if ( ! in_array( $tag, array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ) {
+			$tag = 'h5';
+		}
+
 		return sprintf(
 			'<%1$s class="o-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
-			sanitize_key( $tag ),
+			$tag,
 			esc_url( $post_url ),
 			esc_html( $post_title )
 		);

@@ -97,8 +97,8 @@ class Test_Post_Grid_Block extends WP_UnitTestCase {
 	public function test_render_post_title() {
 		$this->post_grid_block = new Posts_Grid_Block();
 
-		$output = $this->post_grid_block->render_post_title( 'h5', 'www.example.com', 'Title' );
-		$expected = '<h5 class="o-posts-grid-post-title"><a href="http://www.example.com">Title</a></h5>';
+		$output = $this->post_grid_block->render_post_title( 'h3', 'www.example.com', 'Title' );
+		$expected = '<h3 class="o-posts-grid-post-title"><a href="http://www.example.com">Title</a></h3>';
 		$this->assertEquals( $expected, $output );
 	}
 
@@ -112,7 +112,7 @@ class Test_Post_Grid_Block extends WP_UnitTestCase {
 		
 		$malformed_attributes = unserialize(serialize($this->attributes));
 		$malformed_attributes['id'] = 'wp-block-themeisle-blocks-posts-grid-12345\\"onmouseover=alert(123) b=';
-		$malformed_attributes['titleTag'] = 'h5 onmouseover=alert(456)';
+		$malformed_attributes['titleTag'] = 'h3 onmouseover=alert(456)';
 
 		// We expect the id to be sanitized.
 		$expected = '<div class="wp-block-themeisle-blocks-posts-grid" id="wp-block-themeisle-blocks-posts-grid-12345\&quot;onmouseover=alert(123) b="><div class="is-grid o-posts-grid-columns-2"></div> </div>';
@@ -121,7 +121,7 @@ class Test_Post_Grid_Block extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $output );
 
 		// We expect the titleTag to be sanitized.
-		$expected = '<h5onmouseoveralert456 class="o-posts-grid-post-title"><a href="http://www.example.com">Title</a></h5onmouseoveralert456>';
+		$expected = '<h5 class="o-posts-grid-post-title"><a href="http://www.example.com">Title</a></h5>';
 		$output = $this->post_grid_block->render_post_title( $malformed_attributes['titleTag'], 'www.example.com', 'Title' );
 
 		$this->assertEquals( $expected, $output );
