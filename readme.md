@@ -126,10 +126,6 @@ Counting down to a big event? Show it by making use of these Gutenberg blocks. C
 
 Quickly and easily insert a contact form anywhere on the page. Optionally, turn the form into a lead-generating machine by integrating it with Brevo(Sendinblue) or Mailchimp. Plus, streamline data management with webhook integration and ensure enhanced security with hCaptcha integration. [Check live demo](https://demo.themeisle.com/otter-blocks/form/)
 
-#### Masonry Gallery Gutenberg Block [FREE]
-
-Add some pizzazz to your gallery by making it a Masonry layout Gallery instead. [Check live demo](https://demo.themeisle.com/otter-blocks/masonry-gallery/) 
-
 #### Posts Gutenberg Block [FREE]
 
 Use this block to insert items from posts, pages and custom post types into the current page being edited. The Posts block allows displaying a certain number of posts on different pages. Customizations available for this block cover areas such as styles, post types, settings, designs, and layout.
@@ -318,6 +314,14 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
 ## Changelog ##
+
+##### [Version 2.6.9](https://github.com/Codeinwp/otter-blocks/compare/v2.6.8...v2.6.9) (2024-04-10)
+
+### Improvements
+**Updated internal dependencies​:** for enhanced performance and security
+
+
+
 
 ##### [Version 2.6.8](https://github.com/Codeinwp/otter-blocks/compare/v2.6.7...v2.6.8) (2024-04-05)
 

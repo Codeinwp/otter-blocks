@@ -110,17 +110,20 @@ export const PostsCategory = ({ attributes, element, category, categoriesList })
 };
 
 export const PostsTitle = ({ attributes, element, post }) => {
-	const Tag = attributes.titleTag || 'h5';
-	if ( attributes.displayTitle ) {
-		return (
-			<Tag key={ element } className="o-posts-grid-post-title">
-				<a href={ post.link }>
-					{ unescapeHTML( post.title?.rendered ) }
-				</a>
-			</Tag>
-		);
+
+	if ( ! attributes.displayTitle ) {
+		return '';
 	}
-	return '';
+
+	const Tag = ! [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ].includes( attributes.titleTag ) ? 'h5' : attributes.titleTag;
+
+	return (
+		<Tag key={ element } className="o-posts-grid-post-title">
+			<a href={ post.link }>
+				{ unescapeHTML( post.title?.rendered ) }
+			</a>
+		</Tag>
+	);
 };
 
 export const PostsMeta = ({ attributes, element, post, author, categories }) => {
