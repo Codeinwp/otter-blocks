@@ -89,7 +89,28 @@ class Form_Multiple_Choice_Block {
 		$output = '<div class="o-form-multiple-choice-field">';
 
 		$output .= '<input type="' . esc_attr( $type ) . '" name="' . esc_attr( $name ) . '" id="' . esc_attr( $id ) . '" value="' . esc_attr( $value ) . '" ' . ( $is_required ? 'required' : '' ) . ( $checked ? ' checked' : '' ) . ' />';
-		$output .= '<label for="' . esc_attr( $id ) . '" class="o-form-choice-label">' . esc_html( $label ) . '</label>';
+		
+		$allowed_tags = array(
+			'a'      => array(
+				'href'   => true,
+				'target' => true,
+			),
+			'img'    => array(
+				'src'    => true,
+				'alt'    => true,
+				'width'  => true,
+				'height' => true,
+			),
+			'span'   => array(),
+			'em'     => array(),
+			'strong' => array(),
+			'i'      => array(),
+			'b'      => array(),
+		);
+		
+		$label = wp_kses( $label, $allowed_tags );
+
+		$output .= '<label for="' . esc_attr( $id ) . '" class="o-form-choice-label">' . $label . '</label>';
 
 		$output .= '</div>';
 
