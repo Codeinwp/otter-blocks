@@ -26,7 +26,7 @@ class Block_Conditions {
 	 */
 	public function init() {
 		if ( get_option( 'themeisle_blocks_settings_block_conditions', true ) ) {
-			add_action( 'render_block', array( $this, 'render_blocks' ), 999, 2 );
+			add_filter( 'render_block', array( $this, 'render_blocks' ), 999, 2 );
 			add_action( 'wp_loaded', array( $this, 'add_attributes_to_blocks' ), 999 );
 		}
 	}
@@ -36,6 +36,8 @@ class Block_Conditions {
 	 *
 	 * @param string $block_content Content of block.
 	 * @param array  $block Block Attributes.
+	 * 
+	 * @return string
 	 *
 	 * @since   1.7.0
 	 * @access  public
@@ -46,12 +48,12 @@ class Block_Conditions {
 			$display = $this->evaluate_condition_collection( $block['attrs']['otterConditions'] );
 
 			if ( false === $display ) {
-				return;
+				return '';
 			}
 
 			$enhanced_content = $this->should_add_hide_css_class( $this->get_hide_css_condition( $block['attrs']['otterConditions'] ), $block_content );
 
-			if ( false !== $enhanced_content ) {
+			if ( false !== $enhanced_content && is_string( $enhanced_content ) ) {
 				return $enhanced_content;
 			}
 		}
