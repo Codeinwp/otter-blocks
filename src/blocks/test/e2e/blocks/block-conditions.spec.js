@@ -10,6 +10,14 @@ test.describe( 'Block Conditions', () => {
 		await admin.createNewPost();
 	});
 
+	test.afterEach( async({ page }) => {
+
+		/**
+		 * Because some conditions require an user to be logged in, we need to log in the user after each test so that we do not break the next test.
+		 */
+		await tryLoginIn( page, 'admin', 'password' );
+	});
+
 	test( 'check logged out users', async({ editor, page, admin, requestUtils }) => {
 		await editor.insertBlock({
 			name: 'core/image',
@@ -27,14 +35,13 @@ test.describe( 'Block Conditions', () => {
 
 		const postId = await editor.publishPost();
 
+		// Check the block for logged in users.
 		await page.goto( `/?p=${postId}` );
-
 		await expect( page.locator( '#wp--skip-link--target img' ) ).toBeVisible();
 
+		// Check the block for logged out users.
 		await page.getByRole( 'menuitem', { name: 'Howdy, admin' }).hover();
-
 		await page.waitForTimeout( 200 );
-
 		await page.getByRole( 'menuitem', { name: 'Log Out' }).click();
 		await page.goto( `/?p=${postId}` );
 		await expect( page.locator( '#wp--skip-link--target img' ) ).toBeHidden();
