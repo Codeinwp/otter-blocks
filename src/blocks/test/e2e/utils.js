@@ -68,3 +68,10 @@ export function deleteFile( filePath ) {
 		unlinkSync( filePath );
 	}
 }
+
+export async function tryLoginIn( page, username, password ) {
+	await page.goto( '/wp-login.php' );
+	await page.fill( 'input[name="log"]', username );
+	await page.fill( 'input[name="pwd"]', password );
+	await page.click( 'input[name="wp-submit"]' );
+}
