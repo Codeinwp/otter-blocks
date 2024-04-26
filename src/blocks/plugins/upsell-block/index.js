@@ -30,9 +30,9 @@ const MONTH_IN_MS = 60 * 60 * 1000 * 24 * 30;
 const edit = props => {
 	const { removeBlock } = useDispatch( 'core/block-editor' );
 
-	const isEditor = null !== document.querySelector( `#o-upsell-${ props.clientId }` );
-
 	useEffect( () => {
+		const isEditor = Boolean( document.querySelector( `#o-upsell-${ props.clientId }` ) );
+
 		if ( isEditor && undefined === window.themeisleGutenberg.hasPatternUpsell ) {
 			window.themeisleGutenberg.hasPatternUpsell = props.clientId;
 		}
@@ -50,7 +50,7 @@ const edit = props => {
 				removeBlock( props.clientId );
 			}
 		}
-	}, [ isEditor ]);
+	}, []);
 
 	return (
 		<div
