@@ -1,3 +1,10 @@
+##### [Version 2.6.11](https://github.com/Codeinwp/otter-blocks/compare/v2.6.10...v2.6.11) (2024-04-26)
+
+- Fixed issue of HTML code appearing on the front-end by allowing partial HTML tag rendering for Multiple Choice Label
+- Fix fatal crash in Block Conditions when rendering condition is set to false 
+- Fixed issue with multiple instances of Pattern Upsell appearing on the same page
+- Updated internal dependencies
+
 ##### [Version 2.6.10](https://github.com/Codeinwp/otter-blocks/compare/v2.6.9...v2.6.10) (2024-04-16)
 
 ### Fixes
