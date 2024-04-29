@@ -135,12 +135,12 @@ class Live_Search_Server {
 	 * @since 2.0.3
 	 */
 	public function search( WP_REST_Request $request ) {
+
+		$query_post_types = sanitize_text_field( $request->get_param( 'post_type' ) );
+		$query_search     = sanitize_text_field( $request->get_param( 's' ) );
+
 		$query = new WP_Query(
-			array(
-				'posts_per_page' => 20,
-				'post_type'      => $request->get_param( 'post_type' ),
-				's'              => $request->get_param( 's' ),
-			)
+			$this->prepare_search_query( $query_search, $query_post_types )
 		);
 
 		return new WP_REST_Response(
@@ -155,7 +155,7 @@ class Live_Search_Server {
 							'type'   => $post->post_type,
 							'date'   => get_the_date( 'F d, Y', $post ),
 							'author' => get_the_author_meta( 'display_name', intval( $post->post_author ) ),
-							'parent' => get_post( $post->post_parent )->post_title,
+							'parent' => get_post( $post->post_parent ) ? get_post( $post->post_parent )->post_title : '',
 						);
 
 						if ( 'product' === $post->post_type && class_exists( 'WooCommerce' ) ) {
@@ -170,6 +170,45 @@ class Live_Search_Server {
 		);
 	}
 
+	/**
+	 * Prepare the search query. Remove the post types that are not searchable.
+	 * 
+	 * @param string $s Search query.
+	 * @param string $post_types Post type.
+	 * 
+	 * @return array
+	 */
+	public function prepare_search_query( $s, $post_types ) {
+
+		if ( ! empty( $post_types ) ) {
+			$searchable_post_types = get_post_types(
+				array(
+					'public'              => true,
+					'exclude_from_search' => false,
+				),
+				'names' 
+			);
+	
+			$needed_post_types = explode( ',', $post_types );
+
+			$valid_post_types = array_filter(
+				$searchable_post_types,
+				function( $post_type ) use ( $needed_post_types ) {
+					return in_array( $post_type, $needed_post_types, true );
+				}
+			);
+			
+			$post_types = implode( ',', array_keys( $valid_post_types ) );
+		}
+
+		return array(
+			'posts_per_page' => 20,
+			's'              => $s,
+			'post_status'    => 'publish',
+			'post_type'      => $post_types,
+		);
+	}
+		
 	/**
 	 * Throw error on object clone
 	 *
