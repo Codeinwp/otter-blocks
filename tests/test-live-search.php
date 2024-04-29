@@ -29,6 +29,12 @@ class TestLiveSearch extends WP_UnitTestCase
             'public' => true,
             'label'  => 'Shop Product',
         ) );
+
+        register_post_type( 'otter_page', array(
+            'public' => true,
+            'exclude_from_search' => true,
+            'label'  => 'Otter Page',
+        ) );
 	}
 
 	/**
@@ -37,6 +43,7 @@ class TestLiveSearch extends WP_UnitTestCase
 	public function tear_dow() {
         unregister_post_type( 'otter_shop_coupon' );
         unregister_post_type( 'otter_shop_product' );
+        unregister_post_type( 'otter_page' );
 		parent::tear_down();
 	}
 
@@ -52,14 +59,18 @@ class TestLiveSearch extends WP_UnitTestCase
 
         $search_query = $live_search->prepare_search_query( 'test', 'otter_shop_product' );
         $this->assertEquals( 'test', $search_query['s'] );
-        $this->assertEquals( 'otter_shop_product', $search_query['post_type'] );
+        $this->assertEquals( array('otter_shop_product'), $search_query['post_type'] );
 
         $search_query = $live_search->prepare_search_query( 'test', 'otter_shop_coupon' );
         $this->assertEquals( 'test', $search_query['s'] );
-        $this->assertEquals( '', $search_query['post_type'] ); // Non-public post type are filtered out.
+        $this->assertEquals( array(), $search_query['post_type'] ); // Non-public post type are filtered out.
 
-        $search_query = $live_search->prepare_search_query( 'test', 'otter_shop_product,otter_shop_coupon' );
+        $search_query = $live_search->prepare_search_query( 'test', 'otter_page' );
         $this->assertEquals( 'test', $search_query['s'] );
-        $this->assertEquals( 'otter_shop_product', $search_query['post_type'] ); // Keep only the public post type.
+        $this->assertEquals( array(), $search_query['post_type'] ); // Exclude from search post type are filtered out.
+
+        $search_query = $live_search->prepare_search_query( 'test', array('otter_shop_product', 'otter_shop_coupon', 'otter_page') );
+        $this->assertEquals( 'test', $search_query['s'] );
+        $this->assertEquals( array('otter_shop_product'), $search_query['post_type'] ); // Keep only the public post type.
     }
 }

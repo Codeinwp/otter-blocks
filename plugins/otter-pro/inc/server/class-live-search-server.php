@@ -135,12 +135,8 @@ class Live_Search_Server {
 	 * @since 2.0.3
 	 */
 	public function search( WP_REST_Request $request ) {
-
-		$query_post_types = sanitize_text_field( $request->get_param( 'post_type' ) );
-		$query_search     = sanitize_text_field( $request->get_param( 's' ) );
-
 		$query = new WP_Query(
-			$this->prepare_search_query( $query_search, $query_post_types )
+			$this->prepare_search_query( $request->get_param( 's' ), $request->get_param( 'post_type' ) )
 		);
 
 		return new WP_REST_Response(
@@ -173,12 +169,20 @@ class Live_Search_Server {
 	/**
 	 * Prepare the search query. Remove the post types that are not searchable.
 	 * 
-	 * @param string $s Search query.
-	 * @param string $post_types Post type.
+	 * @param string       $s Search query.
+	 * @param string|array $post_types Post type.
 	 * 
 	 * @return array
 	 */
 	public function prepare_search_query( $s, $post_types ) {
+
+		$s = sanitize_text_field( $s );
+
+		if ( is_array( $post_types ) ) {
+			$post_types = array_map( 'sanitize_text_field', $post_types );
+		} else {
+			$post_types = sanitize_text_field( $post_types );
+		}
 
 		if ( ! empty( $post_types ) ) {
 			$searchable_post_types = get_post_types(
@@ -189,16 +193,16 @@ class Live_Search_Server {
 				'names' 
 			);
 	
-			$needed_post_types = explode( ',', $post_types );
+			$needed_post_types = is_array( $post_types ) ? $post_types : explode( ',', $post_types );
 
-			$valid_post_types = array_filter(
-				$searchable_post_types,
-				function( $post_type ) use ( $needed_post_types ) {
-					return in_array( $post_type, $needed_post_types, true );
-				}
+			$post_types = array_values(
+				array_filter(
+					$searchable_post_types,
+					function( $post_type ) use ( $needed_post_types ) {
+						return in_array( $post_type, $needed_post_types, true );
+					}
+				) 
 			);
-			
-			$post_types = implode( ',', array_keys( $valid_post_types ) );
 		}
 
 		return array(
