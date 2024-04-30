@@ -267,7 +267,12 @@ class Registration {
 				'canTrack'                => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
 				'userRoles'               => $wp_roles->roles,
 				'isBlockEditor'           => 'post' === $current_screen->base,
-				'postTypes'               => get_post_types( [ 'public' => true ] ),
+				'postTypes'               => get_post_types(
+					[
+						'public'              => true,
+						'exclude_from_search' => false,
+					] 
+				),
 				'rootUrl'                 => get_site_url(),
 				'restRoot'                => get_rest_url( null, 'otter/v1' ),
 				'isPrettyPermalinks'      => boolval( get_option( 'permalink_structure' ) ),
