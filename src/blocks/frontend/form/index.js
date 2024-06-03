@@ -535,7 +535,7 @@ const renderConsentCheckbox = ( form ) => {
 	input.id = 'o-consent';
 
 	const label = document.createElement( 'label' );
-	label.innerHTML = window?.themeisleGutenbergForm?.messages?.privacy || 'I have read and agreed the privacy statement.';
+	label.innerHTML = window?.themeisleGutenbergForm?.messages?.privacy || 'I have read and agree to the privacy statement.';
 	label.htmlFor = 'o-consent';
 
 	inputContainer.appendChild( input );
