@@ -1,3 +1,7 @@
+##### [Version 2.6.12](https://github.com/Codeinwp/otter-blocks/compare/v2.6.11...v2.6.12) (2024-05-02)
+
+- Enhanced security
+
 ##### [Version 2.6.11](https://github.com/Codeinwp/otter-blocks/compare/v2.6.10...v2.6.11) (2024-04-26)
 
 - Fixed issue of HTML code appearing on the front-end by allowing partial HTML tag rendering for Multiple Choice Label
