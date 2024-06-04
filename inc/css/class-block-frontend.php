@@ -106,26 +106,30 @@ class Block_Frontend extends Base_CSS {
 
 		$post_id    = $post_id ? $post_id : get_the_ID();
 		$fonts_list = get_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', true );
-		$content    = get_post_field( 'post_content', $post_id );
-		$blocks     = parse_blocks( $content );
 
+		// Fonts from reusable blocks which are separated posts.
+		$content = get_post_field( 'post_content', $post_id );
+		$blocks  = parse_blocks( $content );
 		if ( is_array( $blocks ) ) {
 			$this->enqueue_reusable_fonts( $blocks );
 		}
 
 		if ( empty( $fonts_list ) ) {
 			$this->has_fonts = false;
-
 			return;
 		}
 
-		if ( count( $fonts_list ) > 0 ) {
-			$fonts = $this->get_fonts( $fonts_list );
-
-			if ( count( $fonts['fonts'] ) > 0 ) {
-				wp_enqueue_style( 'otter-google-fonts-' . $post_id, $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-			}
+		if ( 0 === count( $fonts_list ) ) {
+			return;
 		}
+
+		$fonts = $this->get_fonts_url( $fonts_list );
+
+		if ( 0 === count( $fonts['fonts'] ) ) {
+			return;
+		}
+
+		wp_enqueue_style( 'otter-google-fonts-' . $post_id, $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 	}
 
 	/**
@@ -139,13 +143,17 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
-		if ( count( self::$google_fonts ) > 0 ) {
-			$fonts = $this->get_fonts( self::$google_fonts );
-
-			if ( count( $fonts['fonts'] ) > 0 ) {
-				wp_enqueue_style( 'otter-google-fonts', $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-			}
+		if ( 0 === count( self::$google_fonts ) ) {
+			return;
 		}
+
+		$fonts = $this->get_fonts_url( self::$google_fonts );
+
+		if ( 0 === count( $fonts['fonts'] ) ) {
+			return;
+		}
+
+		wp_enqueue_style( 'otter-google-fonts', $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 	}
 
 	/**
@@ -156,7 +164,7 @@ class Block_Frontend extends Base_CSS {
 	 * @since   2.0.5
 	 * @access  public
 	 */
-	public function get_fonts( $fonts_list = array() ) {
+	public function get_fonts_url( $fonts_list = array() ) {
 		$fonts = array();
 
 		foreach ( $fonts_list as $font ) {
@@ -165,8 +173,11 @@ class Block_Frontend extends Base_CSS {
 			}
 
 			$item = str_replace( ' ', '+', $font['fontfamily'] );
+
+			// Append variants if exists.
 			if ( count( $font['fontvariant'] ) > 0 ) {
 				foreach ( $font['fontvariant'] as $key => $value ) {
+					// Use numbers to express the font weight.
 					if ( 'normal' === $value || 'regular' === $value ) {
 						$font['fontvariant'][ $key ] = 400;
 					}
@@ -177,9 +188,11 @@ class Block_Frontend extends Base_CSS {
 
 				$item .= ':wght@' . implode( ';', $font['fontvariant'] );
 			}
-			array_push( $fonts, $item );
+
+			$fonts[] = $item;
 		}
 
+		// Create URL for Google Fonts API.
 		$fonts_url = add_query_arg(
 			array(
 				'family'  => implode( '&family=', $fonts ),
@@ -190,12 +203,10 @@ class Block_Frontend extends Base_CSS {
 
 		$fonts_url = apply_filters( 'otter_blocks_google_fonts_url', $fonts_url );
 
-		$obj = array(
+		return array(
 			'fonts' => $fonts,
 			'url'   => esc_url_raw( $fonts_url ),
 		);
-
-		return $obj;
 	}
 
 	/**
@@ -212,7 +223,7 @@ class Block_Frontend extends Base_CSS {
 				$this->enqueue_google_fonts( $block['attrs']['ref'] );
 			}
 
-			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
 				$this->enqueue_reusable_fonts( $block['innerBlocks'] );
 			}
 		}
@@ -270,15 +281,18 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
-		if ( is_preview() ) {
+		// If we are in a preview, add the CSS to the footer. Same thing if the CSS file was not yet generated.
+		if ( is_preview() || ! CSS_Handler::has_css_file( $post_id ) ) {
 			add_action(
 				'wp_footer',
 				function () use ( $post_id ) {
-					return $this->get_post_css( $post_id );
+					$this->get_post_css( $post_id );
 				},
 				'the_content' === current_filter() ? PHP_INT_MAX : 10
 			);
+		}
 
+		if ( is_preview() ) {
 			return;
 		}
 
@@ -286,62 +300,61 @@ class Block_Frontend extends Base_CSS {
 			if ( CSS_Handler::is_writable() ) {
 				CSS_Handler::generate_css_file( $post_id );
 			}
-
-			add_action(
-				'wp_footer',
-				function () use ( $post_id ) {
-					return $this->get_post_css( $post_id );
-				},
-				'the_content' === current_filter() ? PHP_INT_MAX : 10
-			);
-
 			return;
 		}
 
+		// Get the cached CSS file.
 		$file_url = CSS_Handler::get_css_url( $post_id );
 
 		$file_name = basename( $file_url );
 
+		// Search for reusable blocks which are located in a different location.
 		$content = get_post_field( 'post_content', $post_id );
-
-		$blocks = parse_blocks( $content );
-
+		$blocks  = parse_blocks( $content );
 		if ( is_array( $blocks ) ) {
 			$this->enqueue_reusable_styles( $blocks );
 		}
 
+		// If the size is below a limit, is more efficient to just load it inside the page instead of using an URL.
 		$total_inline_limit = 20000;
 		$total_inline_limit = apply_filters( 'styles_inline_size_limit', 20000 );
 
-		$wp_upload_dir = wp_upload_dir( null, false );
-		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
-		$file_path     = $basedir . $file_name;
-		$file_size     = filesize( $file_path );
+		$wp_upload_dir      = wp_upload_dir( null, false );
+		$basedir            = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
+		$file_path          = $basedir . $file_name;
+		$file_size          = filesize( $file_path );
+		$can_inline         = $this->total_inline_size + $file_size < $total_inline_limit;
+		$inside_the_content = 'the_content' === current_filter();
 
-		if ( $this->total_inline_size + $file_size < $total_inline_limit ) {
+		if ( $can_inline || ! $inside_the_content ) {
+
 			add_action(
 				'wp_footer',
-				function () use ( $post_id ) {
-					return $this->get_post_css( $post_id );
+				function () use ( $post_id, $can_inline, $inside_the_content, $file_name, $file_url ) {
+					if ( $can_inline ) {
+						$this->get_post_css( $post_id );
+						return;
+					}
+					if ( $inside_the_content ) {
+						return;
+					}
+					wp_enqueue_style( 'otter-' . $file_name, $file_url, array(), OTTER_BLOCKS_VERSION );
 				},
-				'the_content' === current_filter() ? PHP_INT_MAX : 10
+				$can_inline ? PHP_INT_MAX : 10
 			);
 
-			$this->total_inline_size += (int) $file_size;
-			return;
-		}
+			if ( $can_inline ) {
 
-		if ( 'the_content' === current_filter() ) {
-			wp_enqueue_style( 'otter-' . $file_name, $file_url, array(), OTTER_BLOCKS_VERSION );
-			return;
-		}
-
-		add_action(
-			'wp_footer',
-			function () use ( $file_name, $file_url ) {
-				wp_enqueue_style( 'otter-' . $file_name, $file_url, array(), OTTER_BLOCKS_VERSION );
+				// Since this function also for other posts, we need to account for them.
+				// The ones that do not make the cut will be queued as files.
+				$this->total_inline_size += (int) $file_size;
 			}
-		);
+
+			return;
+		}
+
+		// If we are inside the loop of `the_content` and can not inline, enqueue the current processed post.
+		wp_enqueue_style( 'otter-' . $file_name, $file_url, array(), OTTER_BLOCKS_VERSION );
 	}
 
 	/**
@@ -358,7 +371,7 @@ class Block_Frontend extends Base_CSS {
 				$this->enqueue_styles( $block['attrs']['ref'] );
 			}
 
-			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
 				$this->enqueue_reusable_styles( $block['innerBlocks'] );
 			}
 		}
@@ -375,10 +388,10 @@ class Block_Frontend extends Base_CSS {
 	public function get_post_css( $post_id = null ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
 		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
-			$css = $this->get_page_css_meta( $post_id );
+			$css = $this->get_css_from_post_meta( $post_id );
 
 			if ( empty( $css ) || is_preview() ) {
-				$css = $this->get_page_css_inline( $post_id );
+				$css = $this->get_inline_css_from_post( $post_id );
 			}
 
 			if ( empty( $css ) ) {
@@ -394,7 +407,7 @@ class Block_Frontend extends Base_CSS {
 	}
 
 	/**
-	 * Get Blocks CSS from Meta
+	 * Get Blocks CSS saved in Post Meta.
 	 *
 	 * @param int $post_id Post id.
 	 *
@@ -402,7 +415,7 @@ class Block_Frontend extends Base_CSS {
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function get_page_css_meta( $post_id ) {
+	public function get_css_from_post_meta( $post_id ) {
 		$style = '';
 		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
 			$style .= get_post_meta( $post_id, '_themeisle_gutenberg_block_styles', true );
@@ -437,7 +450,7 @@ class Block_Frontend extends Base_CSS {
 				$style .= get_post_meta( $block['attrs']['ref'], '_themeisle_gutenberg_block_styles', true );
 			}
 
-			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
 				$style .= $this->get_reusable_block_meta( $block['innerBlocks'] );
 			}
 		}
@@ -458,10 +471,10 @@ class Block_Frontend extends Base_CSS {
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function get_page_css_inline( $post_id ) {
+	public function get_inline_css_from_post( $post_id ) {
 		global $post;
 
-		// Do an early return if the condition if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) { isn't met.
+		// Do not run for posts without blocks.
 		if ( ! function_exists( 'has_blocks' ) || ! has_blocks( $post_id ) ) {
 			return '';
 		}
@@ -478,9 +491,9 @@ class Block_Frontend extends Base_CSS {
 			return '';
 		}
 
-		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+		$has_animations = boolval( preg_match( '/\banimated\b/', $content ) );
 
-		$css = $this->cycle_through_blocks( $blocks, $animations );
+		$css = $this->cycle_through_blocks( $blocks, $has_animations );
 
 		return stripslashes( $css );
 	}
@@ -489,15 +502,14 @@ class Block_Frontend extends Base_CSS {
 	 * Cycle thorugh Blocks
 	 *
 	 * @param array $blocks List of blocks.
-	 * @param bool  $animations To check for animations or not.
+	 * @param bool  $check_animations To check for animations or not.
 	 *
 	 * @return string Block styles.
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function cycle_through_blocks( $blocks, $animations ) {
-		$style  = '';
-		$style .= $this->cycle_through_static_blocks( $blocks, $animations );
+	public function cycle_through_blocks( $blocks, $check_animations ) {
+		$style  = $this->cycle_through_static_blocks( $blocks, $check_animations );
 		$style .= $this->cycle_through_reusable_blocks( $blocks );
 
 		return $style;
@@ -514,7 +526,6 @@ class Block_Frontend extends Base_CSS {
 		global $wp_registered_sidebars;
 
 		$has_widgets = false;
-
 		foreach ( $wp_registered_sidebars as $key => $sidebar ) {
 			if ( is_active_sidebar( $key ) ) {
 				$has_widgets = true;
@@ -526,16 +537,18 @@ class Block_Frontend extends Base_CSS {
 			return $empty;
 		}
 
+		// Get the Google fonts inside the widgets.
 		$fonts_list = get_option( 'themeisle_blocks_widgets_fonts', array() );
 
 		if ( count( $fonts_list ) > 0 ) {
-			$fonts = $this->get_fonts( $fonts_list );
+			$fonts = $this->get_fonts_url( $fonts_list );
 
 			if ( count( $fonts['fonts'] ) > 0 ) {
 				wp_enqueue_style( 'otter-widgets-fonts', $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
 
+		// Generate the CSS files if the cached file is not present.
 		if ( ! CSS_Handler::has_css_file( 'widgets' ) ) {
 			if ( CSS_Handler::is_writable() ) {
 				CSS_Handler::save_widgets_styles();
@@ -558,6 +571,7 @@ class Block_Frontend extends Base_CSS {
 			return $empty;
 		}
 
+		// Upload the CSS file.
 		$file_url = CSS_Handler::get_css_url( 'widgets' );
 
 		$wp_upload_dir = wp_upload_dir( null, false );
@@ -578,47 +592,50 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function enqueue_fse_css() {
 		if ( ! ( function_exists( 'get_block_templates' ) && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) ) {
-			return;
-		}
-
-		global $_wp_current_template_content;
-
-		$content         = '';
-		$slugs           = array();
-		$template_blocks = parse_blocks( $_wp_current_template_content );
-
-		foreach ( $template_blocks as $template_block ) {
-			if ( 'core/template-part' === $template_block['blockName'] ) {
-				$slugs[] = $template_block['attrs']['slug'];
-			}
-		}
-
-		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
-
-		foreach ( $templates_parts as $templates_part ) {
-			if ( ! empty( $templates_part->content ) && ! empty( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {
-				$content .= $templates_part->content;
-			}
-		}
-
-		$content .= $_wp_current_template_content;
-
-		$blocks = parse_blocks( $content );
-
-		if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 			return '';
 		}
 
-		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+		// Process the current template and pull other templates present if they are present.
+		global $_wp_current_template_content;
 
-		$css = $this->cycle_through_blocks( $blocks, $animations );
+		$content               = '';
+		$inner_templates_slugs = array();
+		$blocks                = parse_blocks( $_wp_current_template_content );
+
+		// Check if we have inner templates.
+		foreach ( $blocks as $template_block ) {
+			if ( 'core/template-part' === $template_block['blockName'] ) {
+				$inner_templates_slugs[] = $template_block['attrs']['slug'];
+			}
+		}
+
+		if ( ! empty( $inner_templates_slugs ) ) {
+
+			// Process the content of the inner templates.
+			$templates_parts = get_block_templates( array( 'slugs__in' => $inner_templates_slugs ), 'wp_template_part' );
+			foreach ( $templates_parts as $templates_part ) {
+				if ( ! empty( $templates_part->content ) && ! empty( $templates_part->slug ) && in_array( $templates_part->slug, $inner_templates_slugs ) ) {
+					$content .= $templates_part->content;
+				}
+			}
+
+			$blocks = array_merge( $blocks, parse_blocks( $content ) );
+		}
+
+		if ( empty( $blocks ) ) {
+			return '';
+		}
+
+		$has_animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+		$css = $this->cycle_through_blocks( $blocks, $has_animations );
 
 		if ( empty( $css ) ) {
-			return;
+			return '';
 		}
 
 		if ( count( self::$google_fonts ) > 0 ) {
-			$fonts = $this->get_fonts( self::$google_fonts );
+			$fonts = $this->get_fonts_url( self::$google_fonts );
 
 			if ( count( $fonts['fonts'] ) > 0 ) {
 				wp_enqueue_style( 'otter-google-fonts', $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
@@ -630,6 +647,7 @@ class Block_Frontend extends Base_CSS {
 		$style .= "\n" . '</style>' . "\n";
 
 		echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		return '';
 	}
 
 	/**
@@ -661,12 +679,14 @@ class Block_Frontend extends Base_CSS {
 	public function enqueue_assets() {
 		$posts = apply_filters( 'themeisle_gutenberg_blocks_enqueue_assets', array() );
 
-		if ( 0 < count( $posts ) ) {
-			foreach ( $posts as $post ) {
-				$class = Registration::instance();
-				$class->enqueue_dependencies( $post );
-				$this->enqueue_styles( $post );
-			}
+		if ( 0 === count( $posts ) ) {
+			return;
+		}
+
+		foreach ( $posts as $post ) {
+			$class = Registration::instance();
+			$class->enqueue_dependencies( $post );
+			$this->enqueue_styles( $post );
 		}
 	}
 

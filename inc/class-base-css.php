@@ -219,9 +219,9 @@ class Base_CSS {
 			return;
 		}
 
-		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+		$has_animations = boolval( preg_match( '/\banimated\b/', $content ) );
 
-		return $this->cycle_through_static_blocks( $blocks, $animations );
+		return $this->cycle_through_static_blocks( $blocks, $has_animations );
 	}
 
 	/**
@@ -244,9 +244,9 @@ class Base_CSS {
 			return '';
 		}
 
-		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+		$has_animations = boolval( preg_match( '/\banimated\b/', $content ) );
 
-		return $this->cycle_through_static_blocks( $blocks, $animations );
+		return $this->cycle_through_static_blocks( $blocks, $has_animations );
 	}
 
 	/**
@@ -268,23 +268,23 @@ class Base_CSS {
 			return;
 		}
 
-		$blocks     = parse_blocks( $reusable_block->post_content );
-		$animations = boolval( preg_match( '/\banimated\b/', $reusable_block->post_content ) );
+		$blocks         = parse_blocks( $reusable_block->post_content );
+		$has_animations = boolval( preg_match( '/\banimated\b/', $reusable_block->post_content ) );
 
-		return $this->cycle_through_static_blocks( $blocks, $animations );
+		return $this->cycle_through_static_blocks( $blocks, $has_animations );
 	}
 
 	/**
 	 * Cycle thorugh Static Blocks
 	 *
 	 * @param array $blocks List of blocks.
-	 * @param bool  $animations To check for animations or not.
+	 * @param bool  $check_animations To check for animations or not.
 	 *
 	 * @return string Style.
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function cycle_through_static_blocks( $blocks, $animations = true ) {
+	public function cycle_through_static_blocks( $blocks, $check_animations = true ) {
 		$style = '';
 
 		foreach ( $blocks as $block ) {
@@ -304,12 +304,17 @@ class Base_CSS {
 				$style .= $custom_css;
 			}
 
-			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
 				$style .= $this->cycle_through_static_blocks( $block['innerBlocks'], false );
 			}
 		}
 
-		if ( true === $animations && class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) && get_option( 'themeisle_blocks_settings_optimize_animations_css', true ) ) {
+		if (
+			true === $check_animations &&
+			class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) &&
+			get_option( 'themeisle_blocks_settings_blocks_animation', true ) &&
+			get_option( 'themeisle_blocks_settings_optimize_animations_css', true )
+		) {
 			$style .= $this->get_animation_css( $blocks );
 		}
 
@@ -560,20 +565,18 @@ class Base_CSS {
 		);
 
 		foreach ( $blocks as $block ) {
-			if ( isset( $block['attrs']['className'] ) && ! empty( $block['attrs']['className'] ) ) {
+			if ( ! empty( $block['attrs']['className'] ) ) {
 				if ( preg_match( '/\banimated\b/', $block['attrs']['className'] ) ) {
 					$classes = array_merge( $classes, explode( ' ', trim( $block['attrs']['className'] ) ) );
 				}
 			}
 
-			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
 				$classes = array_merge( $classes, $this->get_animation_classes( $block['innerBlocks'] ) );
 			}
 		}
 
-		$classes = array_intersect( array_unique( $classes ), $allowed_classes );
-
-		return $classes;
+		return array_intersect( array_unique( $classes ), $allowed_classes );
 	}
 
 	/**
@@ -613,7 +616,7 @@ class Base_CSS {
 				$style .= $this->get_reusable_block_css( $block['attrs']['ref'] );
 			}
 
-			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
 				$style .= $this->cycle_through_reusable_blocks( $block['innerBlocks'] );
 			}
 		}
