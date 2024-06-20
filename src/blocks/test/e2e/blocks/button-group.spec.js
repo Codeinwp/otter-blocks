@@ -4,7 +4,7 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 test.describe( 'Button Group', () => {
-	test.beforeEach( async({ admin }) => {
+	test.beforeEach( async({ admin, page }) => {
 		await admin.createNewPost();
 	});
 
