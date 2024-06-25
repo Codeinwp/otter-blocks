@@ -271,7 +271,7 @@ class Registration {
 					[
 						'public'              => true,
 						'exclude_from_search' => false,
-					] 
+					]
 				),
 				'rootUrl'                 => get_site_url(),
 				'restRoot'                => get_rest_url( null, 'otter/v1' ),
@@ -532,7 +532,7 @@ class Registration {
 						'invalid-email'        => __( 'The email address is invalid!', 'otter-blocks' ),
 						'already-registered'   => __( 'The email was already registered!', 'otter-blocks' ),
 						'try-again'            => __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' ),
-						'privacy'              => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
+						'privacy'              => __( 'I have read and agree to the privacy statement.', 'otter-blocks' ),
 						'too-many-files'       => __( 'Too many files loaded. Maximum is: ', 'otter-blocks' ),
 						'big-file'             => __( 'File size is to big. The limit is: ', 'otter-blocks' ),
 						'invalid-file'         => __( 'Invalid files type. The submitted files could not be processed.', 'otter-blocks' ),
