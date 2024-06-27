@@ -412,11 +412,11 @@ const Inspector = ({
 										},
 										{
 											label: __( 'Appearance', 'otter-blocks' ),
-											value: 'fontVariant'
+											value: 'fontStyle'
 										},
 										{
 											label: __( 'Letter Case', 'otter-blocks' ),
-											value: 'fontStyle'
+											value: 'textTransform'
 										},
 										{
 											label: __( 'Line Height', 'otter-blocks' ),
@@ -438,8 +438,8 @@ const Inspector = ({
 										fontSize: attributes.fontSize,
 										fontFamily: attributes.fontFamily,
 										lineHeight: attributes.lineHeight,
-										appearance: attributes.fontVariant,
-										letterCase: attributes.fontStyle
+										appearance: attributes.fontStyle,
+										letterCase: attributes.textTransform
 									}}
 
 									onChange={ values => {
@@ -447,17 +447,17 @@ const Inspector = ({
 											fontSize: values.fontSize,
 											fontFamily: values.fontFamily,
 											lineHeight: values.lineHeight,
-											fontVariant: values.appearance,
-											fontStyle: values.letterCase
+											fontStyle: values.appearance,
+											textTransform: values.letterCase
 										});
 									} }
 
 									showAsDisable={{
 										fontSize: attributes.isSynced?.includes( 'fontSize' ),
 										fontFamily: attributes.isSynced?.includes( 'fontFamily' ),
-										appearance: attributes.isSynced?.includes( 'fontVariant' ),
+										appearance: attributes.isSynced?.includes( 'fontStyle' ),
 										lineHeight: attributes.isSynced?.includes( 'lineHeight' ),
-										letterCase: attributes.isSynced?.includes( 'fontStyle' )
+										letterCase: attributes.isSynced?.includes( 'textTransform' )
 									}}
 								/>
 							</PanelBody>
