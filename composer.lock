@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "065d07b9635a04adf752972d7b0b525f",
+    "content-hash": "2c61d9b188dba7551691749cf0c986b3",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -859,16 +859,16 @@
         },
         {
             "name": "php-stubs/woocommerce-stubs",
-            "version": "v8.7.0",
+            "version": "v9.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/woocommerce-stubs.git",
-                "reference": "1bab3a764a91ed037f420dc38124e2516b29e6b8"
+                "reference": "ccfc447c39a48886146fd3cef66d0e6f2db7fa2b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/1bab3a764a91ed037f420dc38124e2516b29e6b8",
-                "reference": "1bab3a764a91ed037f420dc38124e2516b29e6b8",
+                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/ccfc447c39a48886146fd3cef66d0e6f2db7fa2b",
+                "reference": "ccfc447c39a48886146fd3cef66d0e6f2db7fa2b",
                 "shasum": ""
             },
             "require": {
@@ -897,22 +897,22 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
-                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v8.7.0"
+                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v9.0.0"
             },
-            "time": "2024-03-19T16:55:16+00:00"
+            "time": "2024-06-18T15:46:13+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",
-            "version": "v6.4.3",
+            "version": "v6.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "6105bdab2f26c0204fe90ecc53d5684754550e8f"
+                "reference": "e611a83292d02055a25f83291a98fadd0c21e092"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/6105bdab2f26c0204fe90ecc53d5684754550e8f",
-                "reference": "6105bdab2f26c0204fe90ecc53d5684754550e8f",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/e611a83292d02055a25f83291a98fadd0c21e092",
+                "reference": "e611a83292d02055a25f83291a98fadd0c21e092",
                 "shasum": ""
             },
             "require-dev": {
@@ -920,7 +920,7 @@
                 "nikic/php-parser": "^4.13",
                 "php": "^7.4 || ~8.0.0",
                 "php-stubs/generator": "^0.8.3",
-                "phpdocumentor/reflection-docblock": "^5.3",
+                "phpdocumentor/reflection-docblock": "5.3",
                 "phpstan/phpstan": "^1.10.49",
                 "phpunit/phpunit": "^9.5",
                 "szepeviktor/phpcs-psr-12-neutron-hybrid-ruleset": "^0.11"
@@ -944,9 +944,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
-                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.4.3"
+                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.5.3"
             },
-            "time": "2024-02-11T18:56:19+00:00"
+            "time": "2024-05-08T02:12:31+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
