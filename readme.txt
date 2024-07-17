@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: block, blocks, gutenberg, gutenberg blocks, wordPress blocks, editor, block Editor, page Builder, post blocks, post grids
 Requires at least: 6.2
-Tested up to: 6.5
+Tested up to: 6.6
 Requires PHP: 5.6
 Stable tag: trunk
 License: GPLv3
@@ -1576,3 +1576,4 @@ Fix issue with Custom CSS module not working
 = 1.0.0 - 2018-10-17 =
 * Adds docker env.
 * Adds hash back.
+
