@@ -104,7 +104,7 @@ const Layout = ({
 
 export const PostsCategory = ({ attributes, element, category, categoriesList }) => {
 	if ( undefined !== category && ( attributes.displayCategory && categoriesList ) ) {
-		return <span key={ element } className="o-posts-grid-post-category">{ category.name }</span>;
+		return <span key={ element } className="o-posts-grid-post-category">{ unescapeHTML( category.name ) }</span>;
 	}
 	return '';
 };
