@@ -1576,3 +1576,4 @@ Fix issue with Custom CSS module not working
 = 1.0.0 - 2018-10-17 =
 * Adds docker env.
 * Adds hash back.
+
