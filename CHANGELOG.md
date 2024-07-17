@@ -1,3 +1,9 @@
+##### [Version 2.6.13](https://github.com/Codeinwp/otter-blocks/compare/v2.6.12...v2.6.13) (2024-07-17)
+
+- Fixed Button Group block - Appearance, Letter case, and Line height options are now working
+- Fixed issue where some characters were not supported in the category of the posts block
+- Fixed typo on the default label of the consent checkbox
+
 ##### [Version 2.6.12](https://github.com/Codeinwp/otter-blocks/compare/v2.6.11...v2.6.12) (2024-05-02)
 
 - Enhanced security
