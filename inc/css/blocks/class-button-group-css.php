@@ -157,7 +157,7 @@ class Button_Group_CSS extends Base_CSS {
 						'property' => 'line-height',
 						'value'    => 'lineHeight',
 						'format'   => function( $value, $attrs ) {
-							return is_numeric( $value ) ? $value . 'px' : $value;
+							return ! is_string( $value ) && is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'gr-btn-font-height',
 					),
@@ -188,7 +188,7 @@ class Button_Group_CSS extends Base_CSS {
 
 	/**
 	 * Generate Button Group Global CSS
-	 * 
+	 *
 	 * @return string|void
 	 * @since 2.2.3
 	 * @access public
