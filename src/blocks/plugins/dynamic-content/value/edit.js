@@ -121,6 +121,7 @@ const Edit = ({
 						onClick={ () => setOpen( true ) }
 						isDisabled={ isActive }
 						isActive={ isActive }
+						className="o-dynamic-button"
 					/>
 				</ToolbarGroup>
 			</BlockControls>

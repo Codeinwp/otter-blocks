@@ -1,7 +1,7 @@
 /**
  * External dependencies.
  */
-import { globe } from '@wordpress/icons';
+import { link } from '@wordpress/icons';
 
 /**
  * WordPress dependencies.
@@ -99,11 +99,12 @@ const Edit = ({
 			<BlockControls>
 				<ToolbarGroup>
 					<ToolbarButton
-						icon={ globe }
+						icon={ link }
 						title={ __( 'Dynamic Link', 'otter-blocks' ) }
 						onClick={ () => setOpen( true ) }
 						isDisabled={ isActive }
 						isActive={ isActive }
+						className="o-dynamic-button"
 					/>
 				</ToolbarGroup>
 			</BlockControls>
