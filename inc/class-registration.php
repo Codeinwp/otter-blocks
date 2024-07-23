@@ -624,7 +624,10 @@ class Registration {
 			wp_script_add_data( 'otter-tabs', 'defer', true );
 		}
 
-		if ( ! self::$scripts_loaded['popup'] && has_block( 'themeisle-blocks/popup', $post ) ) {
+		if (
+			! self::$scripts_loaded['popup'] && 
+			( has_block( 'themeisle-blocks/popup', $post ) || has_block( 'themeisle-blocks/modal', $post ) )
+		) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/popup.asset.php';
 			wp_register_script( 'otter-popup', OTTER_BLOCKS_URL . 'build/blocks/popup.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-popup', 'defer', true );
@@ -662,6 +665,11 @@ class Registration {
 		foreach ( self::$blocks as $block ) {
 			if ( in_array( $block, self::$styles_loaded ) || ! has_block( 'themeisle-blocks/' . $block, $post ) ) {
 				continue;
+			}
+
+			// Shared styles.
+			if ( 'modal' === $block ) {
+				$block = 'popup';
 			}
 
 			$block_path = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
@@ -751,6 +759,7 @@ class Registration {
 			'lottie',
 			'plugin-cards',
 			'popup',
+			'modal',
 			'posts-grid',
 			'pricing',
 			'progress-bar',

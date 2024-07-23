@@ -148,6 +148,9 @@
 			"popup/style.css": "blocks/blocks/popup/style.scss"
 		}
 	},
+	"modal": {
+		"block": "blocks/blocks/modal/block.json"
+	},
 	"posts-grid": {
 		"block": "blocks/blocks/posts/block.json",
 		"assets": {
