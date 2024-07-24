@@ -50,8 +50,10 @@ class Blocks_Animation {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
 		add_filter( 'render_block', array( $this, 'frontend_load' ), 800, 2 );
 		// Welcome notice.
-		add_action( 'admin_notices', array( $this, 'render_welcome_notice' ), 0 );
-		add_action( 'wp_ajax_otter_animation_dismiss_welcome_notice', array( $this, 'remove_welcome_notice' ) );
+		if ( ! defined( 'OTTER_BLOCKS_PATH' ) ) {
+			add_action( 'admin_notices', array( $this, 'render_welcome_notice' ), 0 );
+			add_action( 'wp_ajax_otter_animation_dismiss_welcome_notice', array( $this, 'remove_welcome_notice' ) );
+		}
 	}
 
 	/**
