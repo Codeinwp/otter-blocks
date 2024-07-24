@@ -288,7 +288,7 @@ class Blocks_Animation {
 
 		$notice_html .= '<h1 class="notice-title">';
 		/* translators: %s: Otter Blocks */
-		$notice_html .= sprintf( __( 'Power up your site with %1$s, %2$s, %3$s and more!', 'otter-blocks' ), '<span>Add-on Blocks</span>', '<span>Enhanced Animations</span>', '<span>Visibility Conditions</span>' );
+		$notice_html .= sprintf( __( 'Power Up Your Site with %1$s, %2$s, %3$s, and more!', 'otter-blocks' ), '<span>Add-on Blocks</span>', '<span>Enhanced Animations</span>', '<span>Visibility Conditions</span>' );
 
 		$notice_html .= '</h1>';
 
