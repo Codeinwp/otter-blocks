@@ -257,7 +257,7 @@ class Blocks_Animation {
 			'otter-animation-welcome-notice-scripts',
 			'otterAnimationWelcodeNoticeData',
 			array(
-				'nonce'         => wp_create_nonce( 'otter-animation-dismiss-welcome-notice' ),
+				'nonce'         => wp_create_nonce( 'otter_animation_dismiss_welcome_notice' ),
 				'ajaxUrl'       => esc_url( admin_url( 'admin-ajax.php' ) ),
 				'otterStatus'   => $otter_status,
 				'activationUrl' => esc_url(
@@ -349,7 +349,7 @@ class Blocks_Animation {
 		}
 
 		// Notice was dismissed.
-		if ( get_option( 'otter-animation-dismiss-welcome-notice', 'no' ) === 'yes' ) {
+		if ( get_option( 'otter_animation_dismiss_welcome_notice', false ) ) {
 			return false;
 		}
 
@@ -394,7 +394,7 @@ class Blocks_Animation {
 		}
 
 		if ( ! empty( $display_time ) && time() - intval( $display_time ) > WEEK_IN_SECONDS ) {
-			update_option( 'otter-animation-dismiss-welcome-notice', 'yes' );
+			update_option( 'otter_animation_dismiss_welcome_notice', true );
 
 			return false;
 		}
@@ -411,10 +411,10 @@ class Blocks_Animation {
 		if ( ! isset( $_POST['nonce'] ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'otter-animation-dismiss-welcome-notice' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'otter_animation_dismiss_welcome_notice' ) ) {
 			return;
 		}
-		update_option( 'otter-animation-dismiss-welcome-notice', 'yes' );
+		update_option( 'otter_animation_dismiss_welcome_notice', true );
 		wp_die();
 	}
 
