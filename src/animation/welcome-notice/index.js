@@ -24,6 +24,7 @@ function handleWelcomeNotice( $ ) {
 		notice.fadeTo( 100, 0, () => {
 			notice.slideUp( 100, () => {
 				notice.remove();
+				window.location.reload();
 			});
 		});
 	};
