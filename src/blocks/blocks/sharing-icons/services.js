@@ -47,6 +47,10 @@ const SERVICES = {
 	comments: {
 		label: __( 'Comment', 'otter-blocks' ),
 		icon: 'comment'
+	},
+	threads: {
+		label: __( 'Threads', 'otter-blocks' ),
+		icon: ''
 	}
 };
 

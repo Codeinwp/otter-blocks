@@ -778,7 +778,6 @@ class Registration {
 				'font-awesome-icons' => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'icon-list-item'     => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
-				'sharing-icons'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 			)
 		);
 
@@ -878,8 +877,7 @@ class Registration {
 
 		// always load for those.
 		static $always_load = [
-			'themeisle-blocks/sharing-icons' => true,
-			'themeisle-blocks/plugin-cards'  => true,
+			'themeisle-blocks/plugin-cards' => true,
 		];
 
 		if ( isset( $always_load[ $block['blockName'] ] ) ) {
