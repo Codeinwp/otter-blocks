@@ -53,6 +53,24 @@ test.describe( 'AI Block', () => {
 		await admin.createNewPost();
 	});
 
+	test( 'replace action', async({ editor, page }) => {
+		const aiBlock = await editor.insertBlock({
+			name: 'themeisle-blocks/content-generator',
+			attributes: {
+				promptID: 'textTransformation'
+			}
+		});
+
+		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await page.getByRole( 'button', { name: 'Generate' }).click();
+		await page.getByRole( 'button', { name: 'Replace' }).click();
+
+		const blocks = await editor.getBlocks();
+
+		expect( blocks.every( block => 'themeisle-blocks/content-generator' !== block.name ) ).toBe( true );
+		await expect( page.getByText( 'Discover the Next Frontier' ) ).toBeVisible();
+	});
+
 	test( 'replace target block', async({ editor, page }) => {
 
 		// Create target blocks.
@@ -86,5 +104,24 @@ test.describe( 'AI Block', () => {
 		await page.getByRole( 'button', { name: 'Replace' }).click();
 
 		await expect( page.getByText( 'Target Block.' ) ).toBeHidden();
+	});
+
+	test( 'insert below action', async({ editor, page }) => {
+		const aiBlock = await editor.insertBlock({
+			name: 'themeisle-blocks/content-generator',
+			attributes: {
+				promptID: 'textTransformation'
+			}
+		});
+
+		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await page.getByRole( 'button', { name: 'Generate' }).click();
+		await page.getByRole( 'button', { name: 'Insert below' }).click();
+
+		const blocks = await editor.getBlocks();
+
+		expect( blocks.some( block => 'themeisle-blocks/content-generator' === block.name ) ).toBe( true ); // The block is still present.
+		await expect( page.getByText( 'Discover the Next Frontier' ).nth( 0 ) ).toBeVisible(); // The header in the AI block content.
+		await expect( page.getByText( 'Discover the Next Frontier' ).nth( 1 ) ).toBeVisible(); // The header inserted below.
 	});
 });
