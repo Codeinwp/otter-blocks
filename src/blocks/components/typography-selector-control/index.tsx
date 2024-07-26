@@ -119,7 +119,7 @@ const defaultStates = {
 		lineHeight: __( 'Line Height', 'otter-blocks' ),
 		variant: __( 'Variant', 'otter-blocks' )
 	},
-	title: __( 'Font Size', 'otter-blocks' )
+	title: __( 'Typography', 'otter-blocks' )
 };
 
 type TypographySelectorControlProps = {
