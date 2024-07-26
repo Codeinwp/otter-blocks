@@ -114,26 +114,47 @@ const ContentGenerator = ({
 		}
 	};
 
-	const { hasInnerBlocks, getBlocks } = useSelect(
+	const { hasInnerBlocks, getBlock, getBlocks } = useSelect(
 		select => {
 
-			const { getBlocks } = select( 'core/block-editor' );
+			const { getBlock, getBlocks } = select( 'core/block-editor' );
 
 			return {
 				hasInnerBlocks: getBlocks?.( clientId ).length,
-				getBlocks
+				getBlocks,
+				getBlock
 			};
 		},
 		[ clientId ]
 	);
 
 	/**
+	 * Create a copy of the block and its inner blocks.
+	 *
+	 * When destroying the block, the original inner blocks are also destroyed, thus we need to make a copy of them when transferring them to another block.
+	 *
+	 * @param {import('../../helpers/blocks.js').BlockProps<unknown>} block The block to copy.
+	 * @returns {import('../../helpers/blocks.js').BlockProps<unknown>} The copied block.
+	 */
+	const makeBlockCopy = ( block ) => {
+		if ( undefined === block ) {
+			return;
+		}
+		return createBlock( block.name, block.attributes, block?.innerBlocks?.filter( b => b?.name && b?.attributes )?.map( makeBlockCopy ) );
+	};
+
+	/**
 	 * Replace the block with the blocks generated from the prompt response
 	 */
-	const selfReplaceWithContent = () => {
+	const replaceBlock = () => {
 		const blocks = getBlocks( clientId );
 
-		replaceBlocks( clientId, blocks );
+		if ( attributes.replaceTargetBlock?.clientId ) {
+			replaceBlocks( attributes.replaceTargetBlock?.clientId, blocks.map( makeBlockCopy ) );
+			removeBlock( clientId );
+		} else {
+			replaceBlocks( clientId, blocks );
+		}
 	};
 
 	/**
@@ -141,14 +162,6 @@ const ContentGenerator = ({
 	 */
 	const insertContentIntoPage = () => {
 		const blocks = getBlocks( clientId );
-
-		const makeBlockCopy = ( block ) => {
-			if ( undefined === block ) {
-				return;
-			}
-			return createBlock( block.name, block.attributes, block?.innerBlocks?.filter( b => b?.name && b?.attributes )?.map( makeBlockCopy ) );
-		};
-
 		insertBlockBelow( clientId, blocks.map( makeBlockCopy ) );
 	};
 
@@ -178,7 +191,7 @@ const ContentGenerator = ({
 					<Fragment>
 						<Button
 							variant="primary"
-							onClick={selfReplaceWithContent}
+							onClick={replaceBlock}
 							disabled={'loading' === props.status}
 						>
 							{__( 'Replace', 'otter-blocks' )}
@@ -202,7 +215,7 @@ const ContentGenerator = ({
 					<Fragment>
 						<Button
 							variant="primary"
-							onClick={selfReplaceWithContent}
+							onClick={replaceBlock}
 							disabled={'loading' === props.status}
 						>
 							{__( 'Replace', 'otter-blocks' )}
@@ -226,7 +239,7 @@ const ContentGenerator = ({
 					<Fragment>
 						<Button
 							variant="primary"
-							onClick={selfReplaceWithContent}
+							onClick={replaceBlock}
 							disabled={'loading' === props.status}
 						>
 							{__( 'Replace', 'otter-blocks' )}
@@ -243,6 +256,20 @@ const ContentGenerator = ({
 			}
 		}
 	};
+
+	useEffect( () => {
+		if ( ! Boolean( attributes.replaceTargetBlock ) ) {
+			return;
+		}
+
+		// Cleanup the replaceTargetBlock attribute if the block is not found.
+		const targetBlock = getBlock?.( attributes.replaceTargetBlock );
+		if ( targetBlock && attributes.replaceTargetBlock?.name !== targetBlock.name ) {
+			setAttributes({
+				replaceTargetBlock: undefined
+			});
+		}
+	}, [ attributes.replaceTargetBlock ]);
 
 	return (
 		<Fragment>
