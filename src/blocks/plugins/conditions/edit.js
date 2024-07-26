@@ -229,7 +229,7 @@ const AuthorsFieldToken = ( props ) => {
 	);
 };
 
-const CategoriesFieldToken = ( props ) => {
+export const CategoriesFieldToken = ( props ) => {
 	const {
 		postCategories,
 		isLoading

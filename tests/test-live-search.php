@@ -72,5 +72,8 @@ class TestLiveSearch extends WP_UnitTestCase
         $search_query = $live_search->prepare_search_query( 'test', array('otter_shop_product', 'otter_shop_coupon', 'otter_page') );
         $this->assertEquals( 'test', $search_query['s'] );
         $this->assertEquals( array('otter_shop_product'), $search_query['post_type'] ); // Keep only the public post type.
+
+        $search_query = $live_search->prepare_search_query( 'test', 'post', 'uncategorized' );
+        $this->assertEquals( 'uncategorized', $search_query['category_name'] );
     }
 }
