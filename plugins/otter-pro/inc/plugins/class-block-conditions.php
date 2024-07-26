@@ -149,6 +149,36 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'wooCategory' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+			if ( isset( $condition['categories'] ) ) {
+				if ( $visibility ) {
+					return $this->has_product_category( $condition['categories'] );
+				} else {
+					return ! $this->has_product_category( $condition['categories'] );
+				}
+			}
+		}
+
+		if ( 'wooTag' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+			if ( isset( $condition['tags'] ) ) {
+				if ( $visibility ) {
+					return $this->has_product_tag( $condition['tags'] );
+				} else {
+					return ! $this->has_product_tag( $condition['tags'] );
+				}
+			}
+		}
+
+		if ( 'wooAttribute' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+			if ( isset( $condition['attribute'] ) ) {
+				if ( $visibility ) {
+					return $this->has_product_attribute( $condition );
+				} else {
+					return ! $this->has_product_attribute( $condition );
+				}
+			}
+		}
+
 		if ( 'learnDashPurchaseHistory' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) ) {
 			if ( isset( $condition['on'] ) ) {
 				if ( $visibility ) {
@@ -564,6 +594,130 @@ class Block_Conditions {
 		}
 
 		return $bought;
+	}
+
+	/**
+	 * Check based on WooCommerce product category.
+	 *
+	 * @param array $categories IDs of Categories.
+	 *
+	 * @since  2.7.0
+	 * @access public
+	 */
+	public function has_product_category( $categories ) {
+		$in_category = false;
+
+		global $product;
+
+		if ( ! $product instanceof \WC_Product ) {
+			return false;
+		}
+
+		$terms = get_the_terms( $product->get_id(), 'product_cat' );
+
+		if ( gettype( $terms ) !== 'array' ) {
+			return false;
+		}
+
+		foreach ( $terms as $term ) {
+			if ( in_array( $term->term_id, $categories, true ) ) {
+				$in_category = true;
+				break;
+			}
+		}
+
+		return $in_category;
+	}
+
+	/**
+	 * Check based on WooCommerce product tags.
+	 * 
+	 * @param array $tags IDs of Tags.
+	 * 
+	 * @since  2.7.0
+	 * @access public
+	 */
+	public function has_product_tag( $tags ) {
+		$in_tag = false;
+
+		global $product;
+
+		if ( ! $product instanceof \WC_Product ) {
+			return false;
+		}
+
+		$terms = get_the_terms( $product->get_id(), 'product_tag' );
+
+		if ( gettype( $terms ) !== 'array' ) {
+			return false;
+		}
+
+		foreach ( $terms as $term ) {
+			if ( in_array( $term->term_id, $tags, true ) ) {
+				$in_tag = true;
+				break;
+			}
+		}
+
+		return $in_tag;
+	}
+
+	/**
+	 * Check based on WooCommerce product attribute.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.7.0
+	 * @access public
+	 */
+	public function has_product_attribute( $condition ) {
+		if ( ! isset( $condition['attribute'] ) ) {
+			return false;
+		}
+
+		$attribute     = $condition['attribute'];
+		$terms         = isset( $condition['terms'] ) ? $condition['terms'] : false;
+		$has_attribute = false;
+		$in_attribute  = false;
+
+		global $product;
+
+		if ( ! $product instanceof \WC_Product ) {
+			return false;
+		}
+
+		$attributes = $product->get_attributes();
+
+		foreach ( $attributes as $attr ) {
+			if ( $attr->get_id() === (int) $attribute ) {
+				$has_attribute = true;
+				$attribute     = $attr;
+				break;
+			}
+		}
+
+		if ( ! $has_attribute ) {
+			return false;
+		}
+
+		if ( ! $terms ) {
+			return true;
+		}
+
+		if ( ! method_exists( $attribute, 'get_terms' ) ) {
+			return false;
+		}
+
+		$attribute_terms = $attribute->get_terms();
+
+		foreach ( $attribute_terms as $term ) {
+			if ( in_array( $term->slug, $terms, true ) ) {
+				$in_attribute = true;
+				break;
+			}
+		}
+
+		return $in_attribute;
 	}
 
 	/**

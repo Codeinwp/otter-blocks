@@ -206,6 +206,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'postTag' === $condition['type'] ) {
+			if ( isset( $condition['tags'] ) ) {
+				if ( $visibility ) {
+					return has_tag( $condition['tags'] );
+				} else {
+					return ! has_tag( $condition['tags'] );
+				}
+			}
+		}
+
 		if ( 'screenSize' === $condition['type'] ) {
 			return true;
 		}
