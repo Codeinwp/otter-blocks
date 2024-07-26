@@ -194,7 +194,11 @@ const AIToolbar = ({
 							usedToken: response?.usage.total_tokens,
 							prompt: ''
 						}
-					}]
+					}],
+					replaceTargetBlock: {
+						clientId: props.clientId,
+						name: props.name
+					}
 				},
 				newBlocks
 			);
@@ -240,6 +244,13 @@ const AIToolbar = ({
 					</MenuGroup>
 				)
 			}
+			<MenuGroup>
+				<ExternalLink className='o-menu-item-alignment' href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions" target="_blank" rel="noopener noreferrer">
+					{
+						__( 'Edit Prompts', 'otter-blocks' )
+					}
+				</ExternalLink>
+			</MenuGroup>
 			<MenuGroup>
 				<span className="o-menu-item-header o-menu-item-alignment">{__( 'Writing', 'otter-blocks' )}</span>
 				<ActionMenuItem actionKey='otter_action_generate_title' callback={onClose}>
@@ -327,7 +338,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 					) &&
 					(
 						<BlockControls>
-							<Toolbar>
+							<Toolbar label={__( 'AI Block', 'otter-blocks' )}>
 								<DropdownMenu
 									icon={ aiGeneration }
 									label={ __( 'Otter AI Content' ) }
