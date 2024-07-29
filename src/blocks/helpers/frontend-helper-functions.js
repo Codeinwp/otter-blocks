@@ -185,3 +185,27 @@ export const rgb2hsl = ( color, asArray = true ) => {
 
 	return `hsl( ${h * 360}, ${s * 100}, ${l * 100} )`;
 };
+
+/**
+ *	Scrolls the element into view if it's not fully visible.
+ *
+ * @param {HTMLElement} element The element to scroll into view.
+ * @param {*} options The options for the scrollIntoView method.
+ */
+export const scrollIntoViewIfNeeded = ( element, options = {}) => {
+	if ( ! element ) {
+		return;
+	}
+
+	const rect = element.getBoundingClientRect();
+	const isFullyVisible = (
+		0 <= rect.top &&
+		0 <= rect.left &&
+		rect.bottom <= ( window.innerHeight || document.documentElement.clientHeight ) &&
+		rect.right <= ( window.innerWidth || document.documentElement.clientWidth )
+	);
+
+	if ( ! isFullyVisible ) {
+		element.scrollIntoView( options );
+	}
+};
