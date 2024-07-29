@@ -324,7 +324,7 @@ const Sidebar = () => {
 											<ToggleControl
 												className="o-sidebar-toggle"
 												label={__( 'Custom CSS', 'otter-blocks' )}
-												checked={get?.( 'themeisle/otter-blocks', 'show-custom-css' )}
+												checked={get?.( 'themeisle/otter-blocks', 'show-custom-css' ) ?? true }
 												disabled={'loading' === preferenceStatus}
 												onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-custom-css', value ) )}
 											/>
@@ -338,7 +338,7 @@ const Sidebar = () => {
 											<ToggleControl
 												className="o-sidebar-toggle"
 												label={__( 'Animation', 'otter-blocks' )}
-												checked={get?.( 'themeisle/otter-blocks', 'show-animations' ) ?? false}
+												checked={get?.( 'themeisle/otter-blocks', 'show-animations' ) ?? true }
 												disabled={'loading' === preferenceStatus}
 												onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-animations', value ) )}
 											/>
@@ -352,7 +352,7 @@ const Sidebar = () => {
 											<ToggleControl
 												className="o-sidebar-toggle"
 												label={__( 'Visibility Condition', 'otter-blocks' )}
-												checked={get?.( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? false }
+												checked={get?.( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? true }
 												disabled={'loading' === preferenceStatus}
 												onChange={( value ) => updatedWithStatus( dispatch( 'core/preferences' )?.set( 'themeisle/otter-blocks', 'show-block-conditions', value ) )}
 											/>

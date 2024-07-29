@@ -77,7 +77,7 @@ const Edit = ({
 
 const BlockCSSWrapper = ( el, props ) => {
 	if ( hasBlockSupport( props.name, 'customClassName', true ) ) {
-		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-custom-css' ) );
+		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-custom-css' ) ?? true );
 
 		return (
 			<Fragment>
