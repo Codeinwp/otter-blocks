@@ -35,22 +35,10 @@
 			}
 		},
 		"paddingTablet": {
-			"type": "object",
-			"default": {
-				"top": "0px",
-				"right": "0px",
-				"bottom": "0px",
-				"left": "0px"
-			}
+			"type": "object"
 		},
 		"paddingMobile": {
-			"type": "object",
-			"default": {
-				"top": "0px",
-				"right": "0px",
-				"bottom": "0px",
-				"left": "0px"
-			}
+			"type": "object"
 		},
 		"margin": {
 			"type": "object",
@@ -62,22 +50,10 @@
 			}
 		},
 		"marginTablet": {
-			"type": "object",
-			"default": {
-				"top": "0px",
-				"right": "0px",
-				"bottom": "0px",
-				"left": "0px"
-			}
+			"type": "object"
 		},
 		"marginMobile": {
-			"type": "object",
-			"default": {
-				"top": "0px",
-				"right": "0px",
-				"bottom": "0px",
-				"left": "0px"
-			}
+			"type": "object"
 		},
 		"columnsWidth": {
 			"type": [ "number", "string" ]
