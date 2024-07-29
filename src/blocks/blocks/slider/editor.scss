@@ -8,12 +8,13 @@
 	--border-radius: 0;
 	--width: auto;
 
-
 	.glide--carousel, &> div {
 		width: var( --width );
 		border: var( --border-width ) solid var( --border-color );
 		border-radius: var( --border-radius );
 		overflow: hidden;
+
+		display: grid;
 	}
 
 	.glide__slides {
