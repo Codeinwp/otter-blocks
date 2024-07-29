@@ -173,7 +173,7 @@ class Dashboard {
 		wp_enqueue_script(
 			'otter-blocks-scripts',
 			OTTER_BLOCKS_URL . 'build/dashboard/index.js',
-			$asset_file['dependencies'],
+			array_merge( $asset_file['dependencies'], [ 'updates' ] ),
 			$asset_file['version'],
 			true
 		);
@@ -199,6 +199,34 @@ class Dashboard {
 					'hasOnboarding'      => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
 					'days_since_install' => round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
 					'rootUrl'            => get_site_url(),
+					'neveThemePreviewUrl' => esc_url(
+						add_query_arg(
+							array(
+								'theme'  => 'neve',
+								'return' => admin_url( 'themes.php' )
+							),
+							admin_url( 'customize.php' )
+						)
+					),
+					'neveThemeActivationUrl' => esc_url(
+						add_query_arg(
+							array(
+								'action'     => 'activate',
+								'stylesheet' => 'neve',
+								'_wpnonce'   => wp_create_nonce( 'switch-theme_neve' ),
+							),
+							admin_url( 'themes.php' )
+						)
+					),
+					'neveDashboardUrl' => esc_url(
+						add_query_arg(
+							array(
+								'page' => 'neve-welcome'
+							),
+							admin_url( 'admin.php' )
+						)
+					),
+					'neveInstalled' => 'neve' === get_template(),
 				)
 			)
 		);
