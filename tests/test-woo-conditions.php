@@ -41,11 +41,13 @@ class TestWooConditions extends WP_UnitTestCase
 	 */
 	public function set_up() {
 		parent::set_up();
-		$this->block_conditions            = new Block_Conditions();
-		$this->otter_pro_blocks_conditions = new \ThemeIsle\OtterPro\Plugins\Block_Conditions();
-		$this->user_id                     = wp_create_user( 'test_user_deletion', 'userlogin', 'test@userrecover.com' );
+		$this->block_conditions = new Block_Conditions();
+		$this->pro_conditions   = new \ThemeIsle\OtterPro\Plugins\Block_Conditions();
+		$this->user_id          = wp_create_user( 'test_user_deletion', 'userlogin', 'test@userrecover.com' );
 
 		$this->block_conditions->init();
+
+		add_filter( 'otter_blocks_evaluate_condition', array( $this->pro_conditions, 'evaluate_condition' ), 10, 3 );
 
 		$this->category_id_1 = wp_insert_term( 'test-category-1', 'product_cat' );
 		$this->category_id_2 = wp_insert_term( 'test-category-2', 'product_cat' );
@@ -108,13 +110,11 @@ class TestWooConditions extends WP_UnitTestCase
 		);
 
 		$product = wc_get_product( $this->product_id_1 );
-		$result  = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
-
+		$result  = $this->block_conditions->evaluate_condition( $condition );
 		$this->assertTrue( $result );
 
 		$product = wc_get_product( $this->product_id_2 );
-		$result  = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
-
+		$result  = $this->block_conditions->evaluate_condition( $condition );
 		$this->assertFalse( $result );
 	}
 
@@ -130,13 +130,11 @@ class TestWooConditions extends WP_UnitTestCase
 		);
 
 		$product = wc_get_product( $this->product_id_1 );
-		$result  = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
-
+		$result  = $this->block_conditions->evaluate_condition( $condition );
 		$this->assertTrue( $result );
 
 		$product = wc_get_product( $this->product_id_2 );
-		$result  = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
-
+		$result  = $this->block_conditions->evaluate_condition( $condition );
 		$this->assertFalse( $result );
 
 		$condition['visibility'] = false;

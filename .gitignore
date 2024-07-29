@@ -15,5 +15,4 @@ license.json
 .phpunit.result.cache
 .fleet
 tests/assets/*_tmp
-wp-content
 .phpunit.result.cache

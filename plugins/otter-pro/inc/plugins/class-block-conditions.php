@@ -41,162 +41,76 @@ class Block_Conditions {
 	 * @return bool
 	 */
 	public function evaluate_condition( $bool, $condition, $visibility ) {
-		if ( 'loggedInUserMeta' === $condition['type'] ) {
-			if ( isset( $condition['meta_key'] ) ) {
-				if ( $visibility ) {
-					return $this->has_meta( $condition, 'user' );
-				} else {
-					return ! $this->has_meta( $condition, 'user' );
-				}
-			}
+		if ( ! isset( $condition['type'] ) ) {
+			return true;
 		}
 
-		if ( 'postMeta' === $condition['type'] ) {
-			if ( isset( $condition['meta_key'] ) ) {
-				if ( $visibility ) {
-					return $this->has_meta( $condition, 'post' );
-				} else {
-					return ! $this->has_meta( $condition, 'post' );
-				}
-			}
+		if ( 'loggedInUserMeta' === $condition['type'] && isset( $condition['meta_key'] ) ) {
+			return $visibility ? $this->has_meta( $condition, 'user' ) : ! $this->has_meta( $condition, 'user' );
 		}
 
-		if ( 'queryString' === $condition['type'] ) {
-			if ( isset( $condition['query_string'] ) && isset( $condition['match'] ) ) {
-				if ( $visibility ) {
-					return $this->has_query_string( $condition );
-				} else {
-					return ! $this->has_query_string( $condition );
-				}
-			}
+		if ( 'postMeta' === $condition['type'] && isset( $condition['meta_key'] ) ) {
+			return $visibility ? $this->has_meta( $condition, 'post' ) : ! $this->has_meta( $condition, 'post' );
 		}
 
-		if ( 'country' === $condition['type'] ) {
-			if ( isset( $condition['value'] ) ) {
-				if ( $visibility ) {
-					return $this->has_country( $condition );
-				} else {
-					return ! $this->has_country( $condition );
-				}
-			}
+		if ( 'queryString' === $condition['type'] && isset( $condition['query_string'] ) && isset( $condition['match'] ) ) {
+			return $visibility ? $this->has_query_string( $condition ) : ! $this->has_query_string( $condition );
 		}
 
-		if ( 'cookie' === $condition['type'] ) {
-			if ( isset( $condition['cookie_key'] ) ) {
-				if ( $visibility ) {
-					return $this->has_cookie( $condition );
-				} else {
-					return ! $this->has_cookie( $condition );
-				}
-			}
+		if ( 'country' === $condition['type'] && isset( $condition['value'] ) ) {
+			return $visibility ? $this->has_country( $condition ) : ! $this->has_country( $condition );
 		}
 
-		if ( 'dateRange' === $condition['type'] ) {
-			if ( isset( $condition['start_date'] ) ) {
-				return $this->has_date_range( $condition );
-			}
+		if ( 'cookie' === $condition['type'] && isset( $condition['cookie_key'] ) ) {
+			return $visibility ? $this->has_cookie( $condition ) : ! $this->has_cookie( $condition );
 		}
 
-		if ( 'dateRecurring' === $condition['type'] ) {
-			if ( isset( $condition['days'] ) ) {
-				return $this->has_date_recurring( $condition['days'] );
-			}
+		if ( 'dateRange' === $condition['type'] && isset( $condition['start_date'] ) ) {
+			return $this->has_date_range( $condition );
 		}
 
-		if ( 'timeRecurring' === $condition['type'] ) {
-			if ( isset( $condition['start_time'] ) ) {
-				return $this->has_time_recurring( $condition );
-			}
+		if ( 'dateRecurring' === $condition['type'] && isset( $condition['days'] ) ) {
+			return $this->has_date_recurring( $condition['days'] );
 		}
 
-		if ( 'wooProductsInCart' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
-			if ( isset( $condition['on'] ) ) {
-				if ( $visibility ) {
-					return $this->has_products_in_cart( $condition );
-				} else {
-					return ! $this->has_products_in_cart( $condition );
-				}
-			}
+		if ( 'timeRecurring' === $condition['type'] && isset( $condition['start_time'] ) ) {
+			return $this->has_time_recurring( $condition );
 		}
 
-		if ( 'wooTotalCartValue' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
-			if ( isset( $condition['value'] ) ) {
-				if ( 'greater_than' === $condition['compare'] ) {
-					return $this->has_total_cart_value( $condition['value'] );
-				} else {
-					return ! $this->has_total_cart_value( $condition['value'] );
-				}
-			}
+		if ( 'wooProductsInCart' === $condition['type'] && class_exists( 'WooCommerce' ) && isset( $condition['on'] ) ) {
+			return $visibility ? $this->has_products_in_cart( $condition ) : ! $this->has_products_in_cart( $condition );
 		}
 
-		if ( 'wooPurchaseHistory' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
-			if ( isset( $condition['products'] ) ) {
-				if ( $visibility ) {
-					return $this->has_products( $condition['products'] );
-				} else {
-					return ! $this->has_products( $condition['products'] );
-				}
-			}
+		if ( 'wooTotalCartValue' === $condition['type'] && class_exists( 'WooCommerce' ) && isset( $condition['value'] ) ) {
+			return 'greater_than' === $condition['compare'] ? $this->has_total_cart_value( $condition['value'] ) : ! $this->has_total_cart_value( $condition['value'] );
 		}
 
-		if ( 'wooTotalSpent' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
-			if ( isset( $condition['value'] ) ) {
-				if ( 'greater_than' === $condition['compare'] ) {
-					return $this->has_total_spent( $condition['value'] );
-				} else {
-					return ! $this->has_total_spent( $condition['value'] );
-				}
-			}
+		if ( 'wooPurchaseHistory' === $condition['type'] && class_exists( 'WooCommerce' ) && isset( $condition['products'] ) ) {
+			return $visibility ? $this->has_products( $condition['products'] ) : ! $this->has_products( $condition['products'] );
 		}
 
-		if ( 'wooCategory' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
-			if ( isset( $condition['categories'] ) ) {
-				if ( $visibility ) {
-					return $this->has_product_category( $condition['categories'] );
-				} else {
-					return ! $this->has_product_category( $condition['categories'] );
-				}
-			}
+		if ( 'wooTotalSpent' === $condition['type'] && class_exists( 'WooCommerce' ) && isset( $condition['value'] ) ) {
+			return 'greater_than' === $condition['compare'] ? $this->has_total_spent( $condition['value'] ) : ! $this->has_total_spent( $condition['value'] );
 		}
 
-		if ( 'wooTag' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
-			if ( isset( $condition['tags'] ) ) {
-				if ( $visibility ) {
-					return $this->has_product_tag( $condition['tags'] );
-				} else {
-					return ! $this->has_product_tag( $condition['tags'] );
-				}
-			}
+		if ( 'wooCategory' === $condition['type'] && class_exists( 'WooCommerce' ) && isset( $condition['categories'] ) ) {
+			return $visibility ? $this->has_product_category( $condition['categories'] ) : ! $this->has_product_category( $condition['categories'] );
 		}
 
-		if ( 'wooAttribute' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
-			if ( isset( $condition['attribute'] ) ) {
-				if ( $visibility ) {
-					return $this->has_product_attribute( $condition );
-				} else {
-					return ! $this->has_product_attribute( $condition );
-				}
-			}
+		if ( 'wooTag' === $condition['type'] && class_exists( 'WooCommerce' ) && isset( $condition['tags'] ) ) {
+			return $visibility ? $this->has_product_tag( $condition['tags'] ) : ! $this->has_product_tag( $condition['tags'] );
 		}
 
-		if ( 'learnDashPurchaseHistory' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) ) {
-			if ( isset( $condition['on'] ) ) {
-				if ( $visibility ) {
-					return $this->has_courses_or_groups( $condition );
-				} else {
-					return ! $this->has_courses_or_groups( $condition );
-				}
-			}
+		if ( 'wooAttribute' === $condition['type'] && class_exists( 'WooCommerce' ) && isset( $condition['attribute'] ) ) {
+			return $visibility ? $this->has_product_attribute( $condition ) : ! $this->has_product_attribute( $condition );
 		}
 
-		if ( 'learnDashCourseStatus' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) ) {
-			if ( isset( $condition['course'] ) ) {
-				if ( $visibility ) {
-					return $this->has_course_status( $condition );
-				} else {
-					return ! $this->has_course_status( $condition );
-				}
-			}
+		if ( 'learnDashPurchaseHistory' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) && isset( $condition['on'] ) ) {
+			return $visibility ? $this->has_courses_or_groups( $condition ) : ! $this->has_courses_or_groups( $condition );
+		}
+
+		if ( 'learnDashCourseStatus' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) && isset( $condition['course'] ) ) {
+			return $visibility ? $this->has_course_status( $condition ) : ! $this->has_course_status( $condition );
 		}
 
 		return $bool;
@@ -499,13 +413,10 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_products_in_cart( $condition ) {
-		$in_cart = false;
-
 		if ( 'products' === $condition['on'] && isset( $condition['products'] ) ) {
 			foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 				if ( in_array( $cart_item['product_id'], $condition['products'], true ) ) {
-					$in_cart = true;
-					break;
+					return true;
 				}
 			}
 		}
@@ -514,24 +425,19 @@ class Block_Conditions {
 			foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 				$terms = get_the_terms( $cart_item['product_id'], 'product_cat' );
 
-				if ( gettype( $terms ) !== 'array' ) {
+				if ( ! is_array( $terms ) ) {
 					continue;
 				}
 
 				foreach ( $terms as $term ) {
 					if ( in_array( $term->term_id, $condition['categories'], true ) ) {
-						$in_cart = true;
-						break;
+						return true;
 					}
-				}
-
-				if ( $in_cart ) {
-					break;
 				}
 			}
 		}
 
-		return $in_cart;
+		return false;
 	}
 
 	/**
@@ -583,17 +489,15 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_products( $products ) {
-		$bought       = false;
 		$current_user = wp_get_current_user();
 
 		foreach ( $products as $product ) {
 			if ( wc_customer_bought_product( $current_user->user_email, $current_user->ID, $product ) ) {
-				$bought = true;
-				break;
+				return true;
 			};
 		}
 
-		return $bought;
+		return false;
 	}
 
 	/**
@@ -605,8 +509,6 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_product_category( $categories ) {
-		$in_category = false;
-
 		global $product;
 
 		if ( ! $product instanceof \WC_Product ) {
@@ -615,18 +517,17 @@ class Block_Conditions {
 
 		$terms = get_the_terms( $product->get_id(), 'product_cat' );
 
-		if ( gettype( $terms ) !== 'array' ) {
+		if ( ! is_array( $terms ) ) {
 			return false;
 		}
 
 		foreach ( $terms as $term ) {
 			if ( in_array( $term->term_id, $categories, true ) ) {
-				$in_category = true;
-				break;
+				return true;
 			}
 		}
 
-		return $in_category;
+		return false;
 	}
 
 	/**
@@ -638,8 +539,6 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_product_tag( $tags ) {
-		$in_tag = false;
-
 		global $product;
 
 		if ( ! $product instanceof \WC_Product ) {
@@ -648,18 +547,17 @@ class Block_Conditions {
 
 		$terms = get_the_terms( $product->get_id(), 'product_tag' );
 
-		if ( gettype( $terms ) !== 'array' ) {
+		if ( ! is_array( $terms ) ) {
 			return false;
 		}
 
 		foreach ( $terms as $term ) {
 			if ( in_array( $term->term_id, $tags, true ) ) {
-				$in_tag = true;
-				break;
+				return true;
 			}
 		}
 
-		return $in_tag;
+		return false;
 	}
 
 	/**
@@ -678,7 +576,6 @@ class Block_Conditions {
 		$attribute     = $condition['attribute'];
 		$terms         = isset( $condition['terms'] ) ? $condition['terms'] : false;
 		$has_attribute = false;
-		$in_attribute  = false;
 
 		global $product;
 
@@ -712,12 +609,11 @@ class Block_Conditions {
 
 		foreach ( $attribute_terms as $term ) {
 			if ( in_array( $term->slug, $terms, true ) ) {
-				$in_attribute = true;
-				break;
+				return true;
 			}
 		}
 
-		return $in_attribute;
+		return false;
 	}
 
 	/**
@@ -729,14 +625,12 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_courses_or_groups( $condition ) {
-		$bought       = false;
 		$current_user = wp_get_current_user();
 
 		if ( 'courses' === $condition['on'] && isset( $condition['courses'] ) ) {
 			foreach ( $condition['courses'] as $course ) {
 				if ( ld_course_check_user_access( $course, $current_user->ID ) ) {
-					$bought = true;
-					break;
+					return true;
 				};
 			}
 		}
@@ -746,17 +640,12 @@ class Block_Conditions {
 				$users = learndash_get_groups_user_ids( $group );
 
 				if ( in_array( $current_user->ID, $users, true ) ) {
-					$bought = true;
-					break;
-				}
-
-				if ( $bought ) {
-					break;
+					return true;
 				}
 			}
 		}
 
-		return $bought;
+		return false;
 	}
 
 	/**

@@ -54,7 +54,7 @@
 	"extra": {
 		"installer-disable": "true",
 		"installer-paths": {
-			"tests/wp-content/plugins/{$name}/": ["type:wordpress-plugin"]
+			"vendor/wp-content/plugins/{$name}/": ["type:wordpress-plugin"]
 		}
 	},
 	"autoload": {
