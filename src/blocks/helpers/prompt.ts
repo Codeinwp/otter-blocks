@@ -286,3 +286,47 @@ export function injectConversationIntoPrompt( embeddedPrompt: PromptData, conver
 		]
 	};
 }
+
+/**
+ * Injects content into a template. If no match is found, adds the content at the end.
+ *
+ * @param template The template to inject into.
+ * @param content The content to inject.
+ * @returns The template with the content injected or appended.
+ */
+export function tryInjectIntoTemplate( template: string, content: string ): string {
+	if ( ! template ) {
+		return content;
+	}
+
+	const injected = template.replace( /{text_input}/gi, () => content || '{text_input}' );
+
+	return ( injected === template && content ) ? template + ' ' + content : injected;
+}
+
+/**
+ * Edits the last conversation in the prompt data.
+ *
+ * @param embeddedPrompt The existing prompt data.
+ * @param content The content to be injected.
+ * @returns The updated prompt data with the last conversation edited.
+ */
+export function editLastConversation( embeddedPrompt: PromptData, callback: ( currentContent?: string ) => string ): PromptData {
+	const { messages } = embeddedPrompt;
+	const lastUserMessageIndex = messages.map( ( message ) => message.role ).lastIndexOf( 'user' );
+
+	if ( -1 === lastUserMessageIndex ) {
+		return embeddedPrompt;
+	}
+
+	return {
+		...embeddedPrompt,
+		messages: [
+			...messages.slice( 0, lastUserMessageIndex ),
+			{
+				role: 'user',
+				content: callback( messages?.[ lastUserMessageIndex ]?.content )
+			}
+		]
+	};
+}

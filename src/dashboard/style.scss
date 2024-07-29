@@ -811,6 +811,24 @@
 	}
 }
 
+#otter .otter-ai-toolbar-actions {
+	:is( .components-panel__body ) {
+		margin: 10px 0;
+	}
+
+	.components-panel__body.is-opened .components-panel__body-title {
+		margin-bottom: 10px;
+	}
+}
+
+#otter .otter-main .otter-ai-toolbar-actions .components-panel__body:not(.is-opened) .components-panel__body-toggle {
+	border-bottom: unset;;
+}
+
+#otter .otter-main .otter-ai-toolbar-actions .components-panel__body .components-base-control .components-base-control__field {
+	margin-bottom: 0px;
+}
+
 @media(max-width: 480px) {
 	.otter-deal .o-urgency {
 		font-size: 7px;
