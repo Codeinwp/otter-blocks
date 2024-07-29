@@ -56,4 +56,6 @@ const initPatternsLibrary = () => {
 	});
 };
 
-domReady( initPatternsLibrary );
+if ( Boolean( window.themeisleGutenberg.hasModule.patternsLibrary ) ) {
+	domReady( initPatternsLibrary );
+}
