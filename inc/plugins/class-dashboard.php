@@ -188,22 +188,22 @@ class Dashboard {
 			apply_filters(
 				'otter_dashboard_data',
 				array(
-					'version'            => OTTER_BLOCKS_VERSION,
-					'assetsPath'         => OTTER_BLOCKS_URL . 'assets/',
-					'stylesExist'        => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
-					'hasPro'             => Pro::is_pro_installed(),
-					'upgradeLink'        => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
-					'docsLink'           => Pro::get_docs_url(),
-					'showFeedbackNotice' => $this->should_show_feedback_notice(),
-					'deal'               => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
-					'hasOnboarding'      => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
-					'days_since_install' => round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
-					'rootUrl'            => get_site_url(),
-					'neveThemePreviewUrl' => esc_url(
+					'version'                => OTTER_BLOCKS_VERSION,
+					'assetsPath'             => OTTER_BLOCKS_URL . 'assets/',
+					'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
+					'hasPro'                 => Pro::is_pro_installed(),
+					'upgradeLink'            => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
+					'docsLink'               => Pro::get_docs_url(),
+					'showFeedbackNotice'     => $this->should_show_feedback_notice(),
+					'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
+					'hasOnboarding'          => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
+					'days_since_install'     => round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
+					'rootUrl'                => get_site_url(),
+					'neveThemePreviewUrl'    => esc_url(
 						add_query_arg(
 							array(
 								'theme'  => 'neve',
-								'return' => admin_url( 'themes.php' )
+								'return' => admin_url( 'themes.php' ),
 							),
 							admin_url( 'customize.php' )
 						)
@@ -218,15 +218,15 @@ class Dashboard {
 							admin_url( 'themes.php' )
 						)
 					),
-					'neveDashboardUrl' => esc_url(
+					'neveDashboardUrl'       => esc_url(
 						add_query_arg(
 							array(
-								'page' => 'neve-welcome'
+								'page' => 'neve-welcome',
 							),
 							admin_url( 'admin.php' )
 						)
 					),
-					'neveInstalled' => 'neve' === get_template(),
+					'neveInstalled'          => 'neve' === get_template(),
 				)
 			)
 		);
