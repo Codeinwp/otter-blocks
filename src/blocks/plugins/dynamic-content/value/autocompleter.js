@@ -21,8 +21,6 @@ let autocompleteOptions = [];
 
 Object.keys( options ).forEach( option => autocompleteOptions.push( ...options[option].options ) );
 
-autocompleteOptions =  [ ...autocompleteOptions.filter( i => true !== i.isDisabled ), ...autocompleteOptions.filter( i => true === i.isDisabled ) ];
-
 const dynamicValue = {
 	name: 'dynamic-value',
 	triggerPrefix: '%',
