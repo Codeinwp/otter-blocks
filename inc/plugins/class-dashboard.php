@@ -202,10 +202,9 @@ class Dashboard {
 					'neveThemePreviewUrl'    => esc_url(
 						add_query_arg(
 							array(
-								'theme'  => 'neve',
-								'return' => admin_url( 'themes.php' ),
+								'theme' => 'neve',
 							),
-							admin_url( 'customize.php' )
+							admin_url( 'theme-install.php' )
 						)
 					),
 					'neveThemeActivationUrl' => esc_url(
