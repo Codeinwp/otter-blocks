@@ -72,8 +72,7 @@ const extractFormFields = async( form ) => {
 		const labelContainer = input.querySelector( '.otter-form-input-label' );
 		const labelElem = ( labelContainer ?? input ).querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' );
 
-		const fieldNumberLabel = `(Field ${index + 1})`;
-		let label = `${fieldNumberLabel} ${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
+		let label = `${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
 
 		let value = undefined;
 		let fieldType = undefined;
@@ -141,7 +140,7 @@ const extractFormFields = async( form ) => {
 			} else if ( stripeField ) {
 
 				// Find more proper selectors instead of h3 and h5
-				label = `${fieldNumberLabel} ${input.querySelector( '.o-stripe-checkout-description h3' )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
+				label = `${input.querySelector( '.o-stripe-checkout-description h3' )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
 				value = input.querySelector( '.o-stripe-checkout-description h5' )?.innerHTML?.replace( /<[^>]*>?/gm, '' );
 				fieldType = 'stripe-field';
 				mappedName = input.name;

@@ -86,6 +86,11 @@ do
 
   cd plugins/$BUILD_NAME
 
+  # We install dependencies only if composer.json exists.
+  if [ -f "composer.json" ]; then
+    composer install --no-dev
+  fi
+
   rsync -rc --exclude-from ".distignore" "./" "../../dist/$DIST_FOLDER"
 
   cd ../..

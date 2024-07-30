@@ -35,11 +35,11 @@ class Patterns {
 	 */
 	public function register_patterns() {
 		$block_pattern_categories = array(
-			'otter-blocks' => array( 'label' => __( 'Otter Blocks', 'otter-blocks' ) ),
-			'cta'          => array( 'label' => __( 'Call to Action', 'otter-blocks' ) ),
-			'team'         => array( 'label' => __( 'Team', 'otter-blocks' ) ),
-			'pricing'      => array( 'label' => __( 'Pricing', 'otter-blocks' ) ),
-			'testimonials' => array( 'label' => __( 'Testimonials', 'otter-blocks' ) ),
+			'otter-blocks'   => array( 'label' => __( 'Otter Blocks', 'otter-blocks' ) ),
+			'call-to-action' => array( 'label' => __( 'Call to Action', 'otter-blocks' ) ),
+			'team'           => array( 'label' => __( 'Team', 'otter-blocks' ) ),
+			'pricing'        => array( 'label' => __( 'Pricing', 'otter-blocks' ) ),
+			'testimonials'   => array( 'label' => __( 'Testimonials', 'otter-blocks' ) ),
 		);
 
 		$block_pattern_categories = apply_filters( 'otter_blocks_block_pattern_categories', $block_pattern_categories );
