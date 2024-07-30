@@ -82,6 +82,7 @@ declare global {
 				blockCSS: boolean
 				blockAnimations: boolean
 				blockConditions: boolean
+				aiToolbar: boolean
 			}
 			blocksIDs: string[]
 			isAncestorTypeAvailable: boolean
