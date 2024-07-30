@@ -176,7 +176,7 @@ const otterBlocks = [
 	},
 	{
 		'slug': 'themeisle-blocks/slider',
-		'name': __( 'Slider', 'otter-blocks' ),
+		'name': __( 'Image Slider', 'otter-blocks' ),
 		'icon': sliderIcon,
 		'docLink': 'https://docs.themeisle.com/article/1668-image-related-blocks#slider'
 	},
