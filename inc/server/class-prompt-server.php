@@ -52,7 +52,7 @@ class Prompt_Server {
 	 * 
 	 * @var string
 	 */
-	private static $base_url = 'https://api.openai.com/v1/chat/completions';
+	const BASE_URL = 'https://api.openai.com/v1/chat/completions';
 
 	/**
 	 * Initialize the class
@@ -120,19 +120,19 @@ class Prompt_Server {
 		$body = $request->get_body();
 		$body = json_decode( $body, true );
 
-		if ( ! isset( $body['api_key'] ) ) {
+		if ( ! is_array( $body ) && ! isset( $body['api_key'] ) ) {
 			return new \WP_Error( 'rest_invalid_json', __( 'API key is missing.', 'otter-blocks' ), array( 'status' => 400 ) );
 		}
 
 		$api_key = sanitize_text_field( $body['api_key'] );
 
 		if ( empty( $api_key ) ) {
-			update_option( 'themeisle_open_ai_api_key', $api_key );
+			delete_option( 'themeisle_open_ai_api_key' );
 			return new \WP_REST_Response( array( 'message' => __( 'API key saved.', 'otter-blocks' ) ), 200 );
 		}
 
 		$response = wp_remote_post(
-			self::$base_url,
+			self::BASE_URL,
 			array(
 				'method'  => 'POST',
 				'headers' => array(
@@ -165,16 +165,12 @@ class Prompt_Server {
 		$body = wp_remote_retrieve_body( $response );
 		$body = json_decode( $body );
 
-		if ( isset( $body->error ) ) {
-			if ( isset( $body->error->message ) ) {
-				return new \WP_Error( isset( $body->error->code ) ? $body->error->code : 'unknown_error', $body->error->message );
-			}
-
-			return new \WP_Error( 'unknown_error', __( 'An error occurred while processing the request.', 'otter-blocks' ) );
-		}
-
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
 			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 400 ) );
+		}
+
+		if ( isset( $body->error ) ) {
+			return isset( $body->error->message ) ? new \WP_Error( isset( $body->error->code ) ? $body->error->code : 'unknown_error', $body->error->message ) : new \WP_Error( 'unknown_error', __( 'An error occurred while processing the request.', 'otter-blocks' ) );
 		}
 
 		update_option( 'themeisle_open_ai_api_key', $api_key );
@@ -208,7 +204,7 @@ class Prompt_Server {
 		$body = array_diff_key( $body, $otter_data );
 
 		$response = wp_remote_post(
-			self::$base_url,
+			self::BASE_URL,
 			array(
 				'method'  => 'POST',
 				'headers' => array(
