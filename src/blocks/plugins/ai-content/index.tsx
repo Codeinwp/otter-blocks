@@ -206,7 +206,7 @@ const AIToolbar = ({
 						result: response?.choices?.[0]?.message.content ?? '',
 						meta: {
 							usedToken: response?.usage.total_tokens,
-							prompt: ''
+							prompt: embeddedPrompt.messages?.[ embeddedPrompt.messages.length - 1 ]?.content
 						}
 					}],
 					replaceTargetBlock: {
