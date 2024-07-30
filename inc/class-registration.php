@@ -1054,20 +1054,13 @@ class Registration {
 			return $content;
 		}
 
-		global $wp_registered_widgets;
 		$valid_widgets = array();
 		$widget_data   = get_option( 'widget_block', array() );
 
-		// Loop through all widgets, and add any that are active.
-		foreach ( $wp_registered_widgets as $widget_name => $widget ) {
-			if ( ! in_array( $widget['id'], self::$widget_used, true ) ) {
-				continue;
-			}
-
-			$key = $widget['params'][0]['number'];
-
-			if ( isset( $widget_data[ $key ] ) ) {
-				$valid_widgets[] = (object) $widget_data[ $key ];
+		foreach ( self::$widget_used as $widget_id ) {
+			$widget_id = str_replace( 'block-', '', $widget_id );
+			if ( isset( $widget_data[ $widget_id ] ) ) {
+				$valid_widgets[] = (object) $widget_data[ $widget_id ];
 			}
 		}
 
