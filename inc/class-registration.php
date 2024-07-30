@@ -282,6 +282,7 @@ class Registration {
 					'blockCSS'        => boolval( get_option( 'themeisle_blocks_settings_css_module', true ) ),
 					'blockAnimations' => boolval( get_option( 'themeisle_blocks_settings_blocks_animation', true ) ),
 					'blockConditions' => boolval( get_option( 'themeisle_blocks_settings_block_conditions', true ) ),
+					'aiToolbar'       => boolval( get_option( 'themeisle_blocks_settings_block_ai_toolbar_module', true ) ),
 				),
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
