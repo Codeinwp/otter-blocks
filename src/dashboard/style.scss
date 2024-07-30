@@ -818,6 +818,7 @@
 	border: 1px solid #e2e4e7;
 	border-radius: 10px;
 	display: flex;
+	align-items: center;
 	flex-wrap: wrap;
 	.otter-nv-sidebar-left{
 		width: calc(100% - 360px);
