@@ -165,7 +165,7 @@ class Prompt_Server {
 		$body = wp_remote_retrieve_body( $response );
 		$body = json_decode( $body );
 
-		if ( json_last_error() !== JSON_ERROR_NONE ) {
+		if ( json_last_error() !== JSON_ERROR_NONE && ! is_object( $body ) ) {
 			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 400 ) );
 		}
 
