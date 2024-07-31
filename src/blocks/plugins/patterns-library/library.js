@@ -77,20 +77,11 @@ const Library = ({
 			isResolving
 		} = select( 'core' );
 
-		let patterns = getBlockPatterns();
-		patterns = patterns.filter( pattern => pattern?.categories && pattern?.categories.includes( 'otter-blocks' ) );
+		const patterns = getBlockPatterns()?.filter( pattern => pattern?.categories && pattern?.categories.includes( 'otter-blocks' ) );
 
 		const allCategories = getBlockPatternCategories();
 
-		const patternCategories = patterns.reduce( ( accumulator, pattern ) => {
-			pattern.categories.forEach( category => {
-				if ( ! accumulator.includes( category ) ) {
-					accumulator.push( category );
-				}
-			});
-
-			return accumulator;
-		}, []);
+		const patternCategories = [ ...new Set( patterns.flatMap( pattern => pattern.categories ) ) ];
 
 		const categories = [ ...allCategories.filter( category => patternCategories.includes( category?.name ) ) ];
 
@@ -100,17 +91,7 @@ const Library = ({
 			}
 		});
 
-		categories.sort( ( a, b ) => {
-			if ( a.label < b.label ) {
-				return -1;
-			}
-
-			if ( a.label > b.label ) {
-				return 1;
-			}
-
-			return 0;
-		});
+		categories.sort( ( a, b ) => a.label.localeCompare( b.label ) );
 
 		return {
 			patterns: patterns.filter( pattern => pattern.categories.includes( 'otter-blocks' ) ),
@@ -126,13 +107,7 @@ const Library = ({
 	const [ bulkSelection, setBulkSelection ] = useState([]);
 
 	const filteredPatterns = useMemo( () => {
-		let currentCategory = [];
-
-		if ( 'favorites' === selectedCategory ) {
-			currentCategory = patterns.filter( pattern => getFavorites.includes( pattern.name ) );
-		} else {
-			currentCategory = patterns.filter( pattern => pattern.categories.includes( selectedCategory ) );
-		}
+		let currentCategory = 'favorites' === selectedCategory ? patterns.filter( pattern => getFavorites.includes( pattern.name ) ) : patterns.filter( pattern => pattern.categories.includes( selectedCategory ) );
 
 		if ( searchInput ) {
 			return currentCategory.filter( pattern => pattern.name.toLowerCase().includes( searchInput.toLowerCase() ) );
