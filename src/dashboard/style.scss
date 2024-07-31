@@ -598,7 +598,7 @@
 .o-blocks-header {
 	display: flex;
 	flex-direction: row;
-	margin: 20px 20px 0 20px;
+	margin: 20px 0 0 0;
 
 	.o-blocks-header__left {
 		display: flex;
@@ -646,7 +646,7 @@
 	display: grid;
 	flex-wrap: wrap;
 	gap: 20px;
-	margin: 10px 20px;
+	margin: 10px 0;
 
 	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 
@@ -916,6 +916,15 @@
 		.spin {
 			animation: otter-neve-rotation 2s infinite linear;
 		}
+	}
+}
+
+.otter-main {
+	&.is-upsell + .otter-nv-sidebar-upsell {
+		margin-top: 25px;
+	}
+	&.is-blocks + .otter-nv-sidebar-upsell {
+		margin-top: 25px;
 	}
 }
 
