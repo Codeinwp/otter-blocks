@@ -56,7 +56,7 @@ const Edit = ({
 }) => {
 
 	useEffect( () => {
-		googleFontsLoader.attach( );
+		googleFontsLoader.attach();
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
