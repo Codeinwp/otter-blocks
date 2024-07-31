@@ -8,11 +8,12 @@
 	margin: 10px 0;
 
 	&.is-upsell {
-		background: #ED6F57;
+		background: transparent;
 		font-size: 12px;
+		border: 1px solid #808080;
 
 		.components-external-link {
-			color: white;
+			color: #808080;
 		}
 	}
 
@@ -27,7 +28,7 @@
 		flex-direction: row-reverse;
 		text-decoration: unset;
 
-		svg {
+		.components-external-link__icon {
 			margin: 0 5px 0 0;
 		}
 	}

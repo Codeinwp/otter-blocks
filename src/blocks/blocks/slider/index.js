@@ -19,7 +19,7 @@ const { name } = metadata;
 
 registerBlockType( name, {
 	...metadata,
-	title: __( 'Slider', 'otter-blocks' ),
+	title: __( 'Image Slider', 'otter-blocks' ),
 	description: __( 'Minimal image slider to showcase beautiful images. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
