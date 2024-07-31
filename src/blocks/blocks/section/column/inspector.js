@@ -101,13 +101,14 @@ const Inspector = ({
 	};
 
 	const getPadding = () => {
+		const defaultValue = { ...metadata.attributes.padding.default };
 		switch ( getView ) {
 		case 'Desktop':
-			return getValue( 'padding' );
+			return merge( defaultValue, getValue( 'padding' ) );
 		case 'Tablet':
-			return merge({ ...getValue( 'padding' ) }, getValue( 'paddingTablet' ) );
+			return merge( defaultValue, { ...getValue( 'padding' ) }, getValue( 'paddingTablet' ) );
 		case 'Mobile':
-			return merge({ ...getValue( 'padding' ) }, getValue( 'paddingTablet' ), getValue( 'paddingMobile' ) );
+			return merge( defaultValue, { ...getValue( 'padding' ) }, getValue( 'paddingTablet' ), getValue( 'paddingMobile' ) );
 		default:
 			return undefined;
 		}
@@ -144,13 +145,14 @@ const Inspector = ({
 	};
 
 	const getMargin = () => {
+		const defaultValue = { ...metadata.attributes.margin.default };
 		switch ( getView ) {
 		case 'Desktop':
-			return getValue( 'margin' );
+			return merge( defaultValue, getValue( 'margin' ) );
 		case 'Tablet':
-			return merge({ ...getValue( 'margin' ) }, getValue( 'marginTablet' ) );
+			return merge( defaultValue, { ...getValue( 'margin' ) }, getValue( 'marginTablet' ) );
 		case 'Mobile':
-			return merge({ ...getValue( 'margin' ) }, getValue( 'marginTablet' ), getValue( 'marginMobile' ) );
+			return merge( defaultValue, { ...getValue( 'margin' ) }, getValue( 'marginTablet' ), getValue( 'marginMobile' ) );
 		default:
 			return undefined;
 		}
@@ -286,7 +288,6 @@ const Inspector = ({
 										max: 500
 									} }
 									onChange={ changePadding }
-									resetValues={ metadata.attributes.padding.default }
 								/>
 							</Disabled>
 
@@ -302,7 +303,6 @@ const Inspector = ({
 										max: 500
 									} }
 									onChange={ changeMargin }
-									resetValues={ metadata.attributes.margin.default }
 								/>
 							</Disabled>
 						</ResponsiveControl>
