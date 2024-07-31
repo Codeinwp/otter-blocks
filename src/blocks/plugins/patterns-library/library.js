@@ -78,7 +78,7 @@ const Library = ({
 		} = select( 'core' );
 
 		let patterns = getBlockPatterns();
-		patterns = patterns.filter( pattern => pattern.categories.includes( 'otter-blocks' ) );
+		patterns = patterns.filter( pattern => pattern?.categories && pattern?.categories.includes( 'otter-blocks' ) );
 
 		const allCategories = getBlockPatternCategories();
 
@@ -92,10 +92,10 @@ const Library = ({
 			return accumulator;
 		}, []);
 
-		const categories = [ ...allCategories.filter( category => patternCategories.includes( category.name ) ) ];
+		const categories = [ ...allCategories.filter( category => patternCategories.includes( category?.name ) ) ];
 
 		categories.forEach( category => {
-			if ( 'otter-blocks' === category.name ) {
+			if ( 'otter-blocks' === category?.name ) {
 				category.label = __( 'All', 'otter-blocks' );
 			}
 		});
@@ -196,6 +196,16 @@ const Library = ({
 						>
 							{ __( 'My Favorites', 'otter-blocks' ) }
 						</Button>
+
+						{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
+							<Button
+								icon="lock"
+								href="https://themeisle.com/plugins/otter-blocks/patterns/"
+								target="_blank"
+							>
+								{ __( 'Premium Designs', 'otter-blocks' ) }
+							</Button>
+						) }
 
 						<p className="o-library__modal__sidebar__heading">
 							{ __( 'Categories', 'otter-blocks' ) }
