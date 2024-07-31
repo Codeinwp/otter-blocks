@@ -37,7 +37,7 @@ const addAttribute = ( props ) => {
 };
 
 const BlockConditions = ( el, props ) => {
-	const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-block-conditions' ) );
+	const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-block-conditions' ) ?? true );
 
 	return (
 		<Fragment>

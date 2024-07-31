@@ -279,6 +279,7 @@ class Registration {
 				'showOnboarding'          => $this->show_onboarding(),
 				'ratingScale'             => get_option( 'themeisle_blocks_settings_review_scale', false ),
 				'hasModule'               => array(
+					'aiToolbar'       => boolval( get_option( 'themeisle_blocks_settings_block_ai_toolbar_module', true ) ),
 					'blockCSS'        => boolval( get_option( 'themeisle_blocks_settings_css_module', true ) ),
 					'blockAnimations' => boolval( get_option( 'themeisle_blocks_settings_blocks_animation', true ) ),
 					'blockConditions' => boolval( get_option( 'themeisle_blocks_settings_block_conditions', true ) ),
@@ -779,7 +780,6 @@ class Registration {
 				'font-awesome-icons' => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'icon-list-item'     => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
-				'sharing-icons'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 			)
 		);
 
@@ -879,8 +879,7 @@ class Registration {
 
 		// always load for those.
 		static $always_load = [
-			'themeisle-blocks/sharing-icons' => true,
-			'themeisle-blocks/plugin-cards'  => true,
+			'themeisle-blocks/plugin-cards' => true,
 		];
 
 		if ( isset( $always_load[ $block['blockName'] ] ) ) {
@@ -1055,20 +1054,13 @@ class Registration {
 			return $content;
 		}
 
-		global $wp_registered_widgets;
 		$valid_widgets = array();
 		$widget_data   = get_option( 'widget_block', array() );
 
-		// Loop through all widgets, and add any that are active.
-		foreach ( $wp_registered_widgets as $widget_name => $widget ) {
-			if ( ! in_array( $widget['id'], self::$widget_used, true ) ) {
-				continue;
-			}
-
-			$key = $widget['params'][0]['number'];
-
-			if ( isset( $widget_data[ $key ] ) ) {
-				$valid_widgets[] = (object) $widget_data[ $key ];
+		foreach ( self::$widget_used as $widget_id ) {
+			$widget_id = str_replace( 'block-', '', $widget_id );
+			if ( isset( $widget_data[ $widget_id ] ) ) {
+				$valid_widgets[] = (object) $widget_data[ $widget_id ];
 			}
 		}
 

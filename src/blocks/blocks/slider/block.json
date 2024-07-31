@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 2,
 	"name": "themeisle-blocks/slider",
-	"title": "Slider",
+	"title": "Image Slider",
 	"category": "themeisle-blocks",
 	"description": "Minimal image slider to showcase beautiful images. Powered by Otter.",
 	"keywords": [ "slider", "gallery", "carousel" ],

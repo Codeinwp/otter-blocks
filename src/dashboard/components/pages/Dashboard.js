@@ -44,7 +44,8 @@ const optionMapping = {
 	enableRichSchema: 'themeisle_blocks_settings_disable_review_schema',
 	enableReviewScale: 'themeisle_blocks_settings_review_scale',
 	enableHighlightDynamic: 'themeisle_blocks_settings_highlight_dynamic',
-	enableAnonymousDataTracking: 'otter_blocks_logger_flag'
+	enableAnonymousDataTracking: 'otter_blocks_logger_flag',
+	enableAIToolbar: 'themeisle_blocks_settings_block_ai_toolbar_module'
 };
 
 const initialState = {
@@ -59,7 +60,8 @@ const initialState = {
 		enableRichSchema: false,
 		enableReviewScale: false,
 		enableHighlightDynamic: false,
-		enableAnonymousDataTracking: 'no'
+		enableAnonymousDataTracking: 'no',
+		enableAIToolbar: false
 	},
 	status: {
 		enableCustomCss: 'init',
@@ -72,7 +74,8 @@ const initialState = {
 		enableRichSchema: 'init',
 		enableReviewScale: 'init',
 		enableHighlightDynamic: 'init',
-		enableAnonymousDataTracking: 'init'
+		enableAnonymousDataTracking: 'init',
+		enableAIToolbar: 'init'
 	},
 	dirty: {
 		enableCustomCss: false,
@@ -85,7 +88,8 @@ const initialState = {
 		enableRichSchema: false,
 		enableReviewScale: false,
 		enableHighlightDynamic: false,
-		enableAnonymousDataTracking: false
+		enableAnonymousDataTracking: false,
+		enableAIToolbar: false
 	},
 	old: {}
 };
@@ -230,6 +234,18 @@ const Dashboard = () => {
 						disabled={ 'saving' === state.status.enableCustomCss }
 						onChange={ ( value ) => {
 							applyAction({ type: 'update', name: 'enableCustomCss', value });
+						} }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
+						label={ __( 'Enable AI Block Toolbar Module', 'otter-blocks' ) }
+						help={ __( 'Display AI Block shortcut in Editor Blocks toolbar.', 'otter-blocks' ) }
+						checked={ state.values.enableAIToolbar }
+						disabled={ 'saving' === state.status.enableAIToolbar }
+						onChange={ ( value ) => {
+							applyAction({ type: 'update', name: 'enableAIToolbar', value });
 						} }
 					/>
 				</PanelRow>

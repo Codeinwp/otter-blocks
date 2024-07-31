@@ -147,6 +147,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_block_ai_toolbar_module',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Enable the AI Block Toolbar in Editor', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'otter_blocks_logger_flag',
 			array(
 				'type'         => 'string',

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { domReady } from '../../helpers/frontend-helper-functions.js';
+import { domReady, scrollIntoViewIfNeeded } from '../../helpers/frontend-helper-functions.js';
 
 domReady( () => {
 	const tabs = document.querySelectorAll( '.wp-block-themeisle-blocks-tabs' );
@@ -57,6 +57,10 @@ domReady( () => {
 					h.classList.toggle( 'hidden', idx !== index );
 					h.setAttribute( 'aria-selected', idx === index );
 				});
+
+				if ( idx === index && headerMobile ) {
+					scrollIntoViewIfNeeded( headerMobile );
+				}
 			};
 
 			headerItem.addEventListener( 'click', () => items.forEach( toggleTabs ) );
