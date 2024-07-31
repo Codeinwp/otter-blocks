@@ -30,6 +30,7 @@ import {
 } from '@wordpress/element';
 
 import {
+	createBlock,
 	createBlocksFromInnerBlocksTemplate
 } from '@wordpress/blocks';
 
@@ -38,7 +39,7 @@ import {
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
-import { blockInit, useCSSNode } from '../../../blocks/helpers/block-utility';
+import { blockInit, insertBlockBelow, useCSSNode } from '../../../blocks/helpers/block-utility';
 import { boxValues, _cssBlock, stringToBox } from '../../../blocks/helpers/helper-functions';
 import { useDarkBackground } from '../../../blocks/helpers/utility-hooks';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -62,13 +63,13 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, []);
 
-	const [ isEditing, setEditing ] = useState( false );
-
 	const {
 		replaceInnerBlocks,
-		selectBlock
+		selectBlock,
+		insertBlock
 	} = useDispatch( 'core/block-editor' );
 
+	const [ isEditing, setEditing ] = useState( false );
 	const { blockType, defaultVariation, variations } = useSelect(
 		select => {
 			const {
@@ -163,6 +164,30 @@ const Edit = ({
 		style: inlineStyles,
 		className: classnames( className, 'is-active', cssNode, { 'with-outside-button': 'outside' === attributes.closeButtonType })
 	});
+
+	useEffect( () => {
+		if ( attributes.id || attributes.anchor ) {
+			return;
+		}
+
+		// Auto-insert a connected Button Block at creation.
+		const modalAnchor = `modal-${ clientId.slice( 0, 8 ) }`;
+		const button = createBlock(
+			'core/buttons',
+			{},
+			[
+				createBlock(
+					'core/button',
+					{
+						text: __( 'Open Modal', 'otter-blocks' ),
+						anchor: modalAnchor
+					}
+				)
+			]
+		);
+		insertBlockBelow( clientId, button );
+		setAttributes({ anchor: modalAnchor });
+	}, [ attributes.id, attributes.anchor ]);
 
 	return (
 		<Fragment>
