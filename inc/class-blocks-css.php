@@ -82,7 +82,7 @@ class Blocks_CSS {
 						admin_url( 'update.php' )
 					),
 					'install-plugin_otter-blocks'
-				)
+				),
 			)
 		);
 
