@@ -30,7 +30,8 @@ import { toggleFormat } from '@wordpress/rich-text';
  */
 import {
 	format as settings,
-	name
+	name,
+	supportedBlocks
 } from './index.js';
 import Fields from './fields.js';
 import InlineControls from '../components/inline-controls.js';
@@ -42,7 +43,10 @@ const Edit = ({
 	activeAttributes,
 	contentRef
 }) => {
-	const { isQueryChild } = useSelect( select => {
+	const {
+		currentBlock,
+		isQueryChild
+	} = useSelect( select => {
 		const {
 			getSelectedBlock,
 			getBlockParentsByBlockName
@@ -51,6 +55,7 @@ const Edit = ({
 		const currentBlock = getSelectedBlock();
 
 		return {
+			currentBlock,
 			isQueryChild: 0 < getBlockParentsByBlockName( currentBlock?.clientId, 'core/query' ).length
 		};
 	}, []);
@@ -93,6 +98,11 @@ const Edit = ({
 
 		setOpen( false );
 	};
+
+	// We already have another mechanism for Button blocks so we don't need to show anoter dynamic link button.
+	if ( supportedBlocks[ currentBlock.name ]) {
+		return null;
+	}
 
 	return (
 		<Fragment>
