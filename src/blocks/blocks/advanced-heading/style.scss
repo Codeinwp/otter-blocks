@@ -2,7 +2,15 @@ span.wp-block-themeisle-blocks-advanced-heading {
 	display: block;
 }
 
-.wp-block-themeisle-blocks-advanced-heading {
+.wp-block-themeisle-blocks-advanced-heading,
+.is-layout-constrained > .wp-block-themeisle-blocks-advanced-heading:first-child, // We add these selectors to make sure the block is styled correctly. FSE themes not making things much easier.
+.is-layout-constrained > .wp-block-themeisle-blocks-advanced-heading,
+h1.wp-block-themeisle-blocks-advanced-heading,
+h2.wp-block-themeisle-blocks-advanced-heading,
+h3.wp-block-themeisle-blocks-advanced-heading,
+h4.wp-block-themeisle-blocks-advanced-heading,
+h5.wp-block-themeisle-blocks-advanced-heading,
+h6.wp-block-themeisle-blocks-advanced-heading {
 	--padding: 0px;
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);
