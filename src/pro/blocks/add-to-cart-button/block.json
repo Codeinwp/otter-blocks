@@ -10,7 +10,10 @@
     "attributes": {
         "product": {
             "type": "number"
-        }
+        },
+		"label": {
+			"type": "string"
+		}
     },
 	"styles": [
 		{
