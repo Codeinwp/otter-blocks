@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07bb7e396bb66a7583b618065991d993",
+    "content-hash": "b79a1419a8cd0329d649c8c1b895488a",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -225,16 +225,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v15.3.0",
+            "version": "v15.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "0ac234d3651ee7bd4c74c0bc867032742506d6dc"
+                "reference": "d20fbbf2557773106c0ec2198b1b16b40f5081bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/0ac234d3651ee7bd4c74c0bc867032742506d6dc",
-                "reference": "0ac234d3651ee7bd4c74c0bc867032742506d6dc",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/d20fbbf2557773106c0ec2198b1b16b40f5081bc",
+                "reference": "d20fbbf2557773106c0ec2198b1b16b40f5081bc",
                 "shasum": ""
             },
             "require": {
@@ -278,9 +278,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v15.3.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v15.5.0"
             },
-            "time": "2024-07-18T20:09:01+00:00"
+            "time": "2024-08-01T21:25:52+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
