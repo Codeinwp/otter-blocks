@@ -281,5 +281,15 @@
 	},
 	"content-generator": {
 		"block": "blocks/blocks/content-generator/block.json"
+	},
+	"timeline": {
+		"block": "blocks/blocks/timeline/group/block.json",
+		"assets": {
+			"timeline/editor.css": "blocks/blocks/timeline/editor.scss",
+			"timeline/style.css": "blocks/blocks/timeline/style.scss"
+		}
+	},
+	"timeline-item": {
+		"block": "blocks/blocks/timeline/item/block.json"
 	}
 }
