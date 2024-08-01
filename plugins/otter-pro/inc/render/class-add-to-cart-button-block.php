@@ -53,7 +53,7 @@ class Add_To_Cart_Button_Block {
 			'<a href="%s" %s>%s</a>',
 			esc_url( $product->add_to_cart_url() ),
 			wc_implode_html_attributes( $attrs ),
-			esc_html( isset( $attributes['label'] ) ? $attributes['label'] :$product->add_to_cart_text() )
+			esc_html( isset( $attributes['label'] ) ? $attributes['label'] : $product->add_to_cart_text() )
 		);
 
 		return sprintf(
