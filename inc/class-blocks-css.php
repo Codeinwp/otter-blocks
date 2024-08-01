@@ -72,7 +72,17 @@ class Blocks_CSS {
 			'otter-css',
 			'blocksCSS',
 			array(
-				'hasOtter' => defined( 'OTTER_BLOCKS_VERSION' ),
+				'hasOtter'     => defined( 'OTTER_BLOCKS_VERSION' ),
+				'installOtter' => wp_nonce_url(
+					add_query_arg(
+						array(
+							'action' => 'install-plugin',
+							'plugin' => 'otter-blocks',
+						),
+						admin_url( 'update.php' )
+					),
+					'install-plugin_otter-blocks'
+				),
 			)
 		);
 
