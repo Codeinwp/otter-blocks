@@ -359,7 +359,7 @@ const Inspector = ({
 					>
 						<SelectControl
 							label={ __( 'Title Tag', 'otter-blocks' ) }
-							value={ attributes.titleTag || 'h5' }
+							value={ attributes.titleTag || 'h4' }
 							options={ [
 								{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
 								{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },

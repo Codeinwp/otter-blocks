@@ -434,7 +434,7 @@ class Posts_Grid_Block {
 		$tag = sanitize_key( $tag );
 		
 		if ( ! in_array( $tag, array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ) {
-			$tag = 'h5';
+			$tag = 'h4';
 		}
 
 		return sprintf(

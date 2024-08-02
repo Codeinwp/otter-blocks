@@ -64,10 +64,11 @@
 	}
 
 	&.is-style-boxed {
-		--border-width: 3px;
+		--border-width: 1px;
 
 		.o-posts-grid-post-body {
 			padding: var( --content-padding, 20px );
+			background: rgb( 240, 245, 250);
 		}
 	}
 
