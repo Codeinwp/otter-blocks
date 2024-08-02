@@ -20,6 +20,7 @@ require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_plugin() {
 	require dirname( dirname( __FILE__ ) ) . '/otter-blocks.php';
+	require dirname( dirname( __FILE__ ) ) . '/vendor/wp-content/plugins/woocommerce/woocommerce.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
@@ -36,6 +37,8 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 require dirname( dirname( __FILE__ ) ) . '/tests/stripe-http-client-mock.php';
 
 activate_plugin( 'otter-blocks/otter-blocks.php' );
+activate_plugin( 'woocommerce/woocommerce.php' );
+
 global $current_user;
 $current_user = new WP_User( 1 );
 $current_user->set_role( 'administrator' );

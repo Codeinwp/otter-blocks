@@ -85,6 +85,12 @@ const defaultConditions = {
 				toogleVisibility: true
 			},
 			{
+				value: 'postTag',
+				label: __( 'Post Tag', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on selected post tags.' ),
+				toogleVisibility: true
+			},
+			{
 				value: 'postMeta',
 				label: __( 'Post Meta (Pro)', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on post meta condition.' ),
@@ -173,6 +179,29 @@ const defaultConditions = {
 			}
 		]
 	},
+	'woocommerceProduct': {
+		label: __( 'WooCommerce Product', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'wooCategory',
+				label: __( 'Product Category (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on the product category.' ),
+				isDisabled: true
+			},
+			{
+				value: 'wooTag',
+				label: __( 'Product Tag (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on the product tag.' ),
+				isDisabled: true
+			},
+			{
+				value: 'wooAttribute',
+				label: __( 'Product Attribute (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on the product attribute.' ),
+				isDisabled: true
+			}
+		]
+	},
 	'stripe': {
 		label: __( 'Stripe', 'otter-blocks' ),
 		conditions: [
@@ -250,6 +279,31 @@ const CategoriesFieldToken = ( props ) => {
 			suggestions={ postCategories }
 			__experimentalExpandOnFocus={ true }
 			__experimentalValidateInput={ newValue => postCategories.includes( newValue ) }
+		/>
+	);
+};
+
+const TagsFieldToken = ( props ) => {
+	const {
+		postTags,
+		isLoading
+	} = useSelect( select => {
+		const { getEntityRecords, isResolving } = select( 'core' );
+
+		return {
+			postTags: ( getEntityRecords( 'taxonomy', 'post_tag', { 'per_page': -1, context: 'view' }) ?? []).map( tag => tag.slug ),
+			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'post_tag', { 'per_page': -1, context: 'view' }])
+		};
+	}, [ ]);
+
+	return isLoading ? (
+		<Placeholder><Spinner /></Placeholder>
+	) : (
+		<FormTokenField
+			{ ...props }
+			suggestions={ postTags }
+			__experimentalExpandOnFocus={ true }
+			__experimentalValidateInput={ newValue => postTags.includes( newValue ) }
 		/>
 	);
 };
@@ -505,6 +559,14 @@ const Edit = ({
 											label={ __( 'Post Category', 'otter-blocks' ) }
 											value={ condObj.categories }
 											onChange={ categories => changeArrayValue( categories, index, condIdx, 'categories' ) }
+										/>
+									) }
+
+									{ 'postTag' === condObj.type && (
+										<TagsFieldToken
+											label={ __( 'Post Tag', 'otter-blocks' ) }
+											value={ condObj.tags }
+											onChange={ tags => changeArrayValue( tags, index, condIdx, 'tags' ) }
 										/>
 									) }
 

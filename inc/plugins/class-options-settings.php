@@ -92,6 +92,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_patterns_library',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Patterns Library module allows to add predefined patterns to your blocks.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_highlight_dynamic',
 			array(
 				'type'         => 'boolean',

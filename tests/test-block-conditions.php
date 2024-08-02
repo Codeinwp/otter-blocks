@@ -41,11 +41,13 @@ class TestBlockConditions extends WP_UnitTestCase
 	 */
 	public function set_up() {
 		parent::set_up();
-		$this->block_conditions            = new Block_Conditions();
-		$this->otter_pro_blocks_conditions = new \ThemeIsle\OtterPro\Plugins\Block_Conditions();
-		$this->user_id                     = wp_create_user( 'test_user_deletion', 'userlogin', 'test@userrecover.com' );
+		$this->block_conditions = new Block_Conditions();
+		$this->pro_conditions   = new \ThemeIsle\OtterPro\Plugins\Block_Conditions();
+		$this->user_id          = wp_create_user( 'test_user_deletion', 'userlogin', 'test@userrecover.com' );
 
 		$this->block_conditions->init();
+
+		add_filter( 'otter_blocks_evaluate_condition', array( $this->pro_conditions, 'evaluate_condition' ), 10, 3 );
 
 		/**
 		 * Create a test post.
@@ -256,7 +258,7 @@ class TestBlockConditions extends WP_UnitTestCase
 			'meta_compare' => 'is_true',
 		);
 
-		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+		$result = $this->block_conditions->evaluate_condition( $condition );
 
 		$this->assertTrue( $result );
 	}
@@ -273,7 +275,7 @@ class TestBlockConditions extends WP_UnitTestCase
 			'meta_compare' => 'is_true',
 		);
 
-		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+		$result = $this->block_conditions->evaluate_condition( $condition );
 
 		$this->assertFalse( $result );
 	}
@@ -290,7 +292,7 @@ class TestBlockConditions extends WP_UnitTestCase
 			'meta_compare' => 'is_true',
 		);
 
-		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+		$result = $this->block_conditions->evaluate_condition( $condition );
 
 		$this->assertTrue( $result );
 	}
@@ -307,7 +309,7 @@ class TestBlockConditions extends WP_UnitTestCase
 			'meta_compare' => 'is_true',
 		);
 
-		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+		$result = $this->block_conditions->evaluate_condition( $condition );
 
 		$this->assertFalse( $result );
 	}
@@ -323,7 +325,7 @@ class TestBlockConditions extends WP_UnitTestCase
 			'end_date'   => '2030-12-31',
 		);
 
-		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+		$result = $this->block_conditions->evaluate_condition( $condition );
 
 		$this->assertTrue( $result );
 	}
@@ -339,7 +341,7 @@ class TestBlockConditions extends WP_UnitTestCase
 			'end_date'   => '2020-12-31',
 		);
 
-		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+		$result = $this->block_conditions->evaluate_condition( $condition );
 
 		$this->assertFalse( $result );
 	}
@@ -353,7 +355,7 @@ class TestBlockConditions extends WP_UnitTestCase
 			'days' => array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' ),
 		);
 
-		$result = $this->otter_pro_blocks_conditions->evaluate_condition( true, $condition, true );
+		$result = $this->block_conditions->evaluate_condition( $condition );
 
 		$this->assertTrue( $result );
 	}
