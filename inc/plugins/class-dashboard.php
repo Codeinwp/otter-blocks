@@ -258,7 +258,7 @@ class Dashboard {
 							admin_url( 'admin.php' )
 						)
 					),
-					'neveInstalled'          => 'neve' === get_template(),
+					'neveInstalled'          => defined( 'NEVE_VERSION' ),
 				)
 			)
 		);
