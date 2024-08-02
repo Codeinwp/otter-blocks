@@ -23,9 +23,7 @@ import './galley-extension/index.js';
 import './masonry-extension/index.js';
 import './image-extension/index.js';
 import './menu-icons/index.js';
-
-// We disable the copy-paste plugin for now.
-// import './copy-paste/index.js';
+import './copy-paste/index.js';
 import './sticky/index.js';
 import './dynamic-content/index.js';
 import './welcome-guide/index.js';
@@ -34,7 +32,6 @@ import './otter-tools-inspector/index';
 import './live-search/index.js';
 import './upsell-block/index.js';
 import './ai-content/index.tsx';
-import './patterns-library/index.js';
 
 const icon = <Icon icon={ otterIcon } />;
 

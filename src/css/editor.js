@@ -16,8 +16,6 @@ import {
 	useState
 } from '@wordpress/element';
 
-import { select } from '@wordpress/data';
-
 let inputTimeout = null;
 
 window.otterCSSLintIgnored = [];
@@ -134,25 +132,6 @@ const CSSEditor = ({
 
 	return (
 		<Fragment>
-			{ ( ! Boolean( window?.blocksCSS?.hasOtter ) && !! select( 'core/edit-site' ) ) && (
-				<Notice
-					status="info"
-					isDismissible={ false }
-				>
-					{ __( 'Blocks CSS is not fully compatible with the Site Editor. We recommend installing Otter for Site Builder compatibility.', 'otter-blocks' ) }
-
-					<br/><br/>
-
-					<Button
-						variant="primary"
-						href={ window?.blocksCSS?.installOtter }
-						target="_blank"
-					>
-						{ __( 'Install Otter', 'otter-blocks' ) }
-					</Button>
-				</Notice>
-			) }
-
 			<p>{__( 'Add your custom CSS.', 'otter-blocks' )}</p>
 
 			<div id="o-css-editor" className="o-css-editor" />

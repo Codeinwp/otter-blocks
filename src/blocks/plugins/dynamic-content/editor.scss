@@ -33,17 +33,19 @@ o-dynamic-link {
 	cursor: pointer;
 }
 
-.o-dynamic-button {
-	opacity: 1;
+.components-toolbar {
+	.o-dynamic-button {
+		opacity: 1;
 
-	&.is-pressed {
-		&::before {
-			background: rgba(237, 111, 87, 0.1);
+		&.is-pressed {
+			&::before {
+				background: rgba(237, 111, 87, 0.1);
+			}
 		}
-	}
 	
-	svg {
-		fill: #ED6F57;
+		svg {
+			fill: #ED6F57;
+		}
 	}
 }
 

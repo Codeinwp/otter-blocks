@@ -88,3 +88,12 @@ export type BlockStyle = {
 	value: string
 	isDefault?: boolean
 }
+
+export type BorderSignalProperty = {
+	color: string
+	style: string
+	width: string
+}
+
+export type CoreBorderType = BorderSignalProperty | { top: BorderSignalProperty, right: BorderSignalProperty, bottom: BorderSignalProperty, left: BorderSignalProperty }
+export type CoreBorderRadiusType = { topLeft: string, topRight: string, bottomRight: string, bottomLeft: string } | string

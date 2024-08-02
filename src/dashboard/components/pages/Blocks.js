@@ -43,7 +43,9 @@ import {
 	reviewIcon,
 	searchIcon,
 	sharingIcon,
-	sliderIcon, tabsIcon
+	sliderIcon,
+	tabsIcon,
+	timelineIcon
 } from '../../../blocks/helpers/icons';
 
 /**
@@ -191,6 +193,12 @@ const otterBlocks = [
 		'name': __( 'Tabs', 'otter-blocks' ),
 		'icon': tabsIcon,
 		'docLink': 'https://docs.themeisle.com/article/1672-accessibility-blocks#tabs'
+	},
+	{
+		'slug': 'themeisle-blocks/timeline',
+		'name': __( 'Timeline', 'otter-blocks' ),
+		'icon': timelineIcon,
+		'docLink': 'https://docs.themeisle.com/article/2050-modal-block'
 	},
 	{
 		'slug': 'themeisle-blocks/woo-comparison',

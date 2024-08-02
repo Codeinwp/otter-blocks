@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import apiFetch from '@wordpress/api-fetch';
-
 import {
 	BaseControl,
 	Button,
@@ -21,8 +19,6 @@ import {
 	useEffect,
 	useState
 } from '@wordpress/element';
-
-import { useDispatch } from '@wordpress/data';
 
 import { applyFilters } from '@wordpress/hooks';
 
@@ -68,8 +64,6 @@ const Integrations = () => {
 	useEffect( () => {
 		setToolbarActions( getOption( 'themeisle_blocks_settings_prompt_actions' ) );
 	}, [ getOption( 'themeisle_blocks_settings_prompt_actions' ) ]);
-
-	const { createNotice } = useDispatch( 'core/notices' );
 
 	let ProModules = () => {
 		return (
@@ -261,49 +255,9 @@ const Integrations = () => {
 								variant="secondary"
 								isSecondary
 								disabled={ 'saving' === status }
-								onClick={ async() => {
-									try {
-										const response = await apiFetch({
-											path: 'otter/v1/openai/key',
-											method: 'POST',
-											data: {
-												'api_key': openAISecretKey
-											}
-										});
-
-										if ( ! response.success ) {
-											createNotice(
-												'error',
-												response.message ?? __( 'An unknown error occurred.', 'otter-blocks' ),
-												{
-													isDismissible: true,
-													type: 'snackbar'
-												}
-											);
-
-											return;
-										}
-
-										createNotice(
-											'success',
-											__( 'API Key saved successfully.', 'otter-blocks' ),
-											{
-												isDismissible: true,
-												type: 'snackbar'
-											}
-										);
-									} catch ( e ) {
-										createNotice(
-											'error',
-											e?.message ?? __( 'An unknown error occurred.', 'otter-blocks' ),
-											{
-												isDismissible: true,
-												type: 'snackbar'
-											}
-										);
-
-										return;
-									}
+								onClick={ () => {
+									window.tiTrk?.with( 'otter' ).add({ feature: 'dashboard-integration', featureComponent: 'open-ai' });
+									updateOption( 'themeisle_open_ai_api_key', openAISecretKey );
 								} }
 							>
 								{ __( 'Save', 'otter-blocks' ) }

@@ -37,7 +37,6 @@ const optionMapping = {
 	enableCustomCss: 'themeisle_blocks_settings_css_module',
 	enableBlocksAnimation: 'themeisle_blocks_settings_blocks_animation',
 	enableBlockConditions: 'themeisle_blocks_settings_block_conditions',
-	enablePatternsLibrary: 'themeisle_blocks_settings_patterns_library',
 	enableOnboardingWizard: 'themeisle_blocks_settings_onboarding_wizard',
 	enableSectionDefaultBlock: 'themeisle_blocks_settings_default_block',
 	enableOptimizeAnimationsCss: 'themeisle_blocks_settings_optimize_animations_css',
@@ -53,7 +52,6 @@ const initialState = {
 		enableCustomCss: false,
 		enableBlocksAnimation: false,
 		enableBlockConditions: false,
-		enablePatternsLibrary: false,
 		enableOnboardingWizard: false,
 		enableSectionDefaultBlock: false,
 		enableOptimizeAnimationsCss: false,
@@ -67,7 +65,6 @@ const initialState = {
 		enableCustomCss: 'init',
 		enableBlocksAnimation: 'init',
 		enableBlockConditions: 'init',
-		enablePatternsLibrary: 'init',
 		enableOnboardingWizard: 'init',
 		enableSectionDefaultBlock: 'init',
 		enableOptimizeAnimationsCss: 'init',
@@ -81,7 +78,6 @@ const initialState = {
 		enableCustomCss: false,
 		enableBlocksAnimation: false,
 		enableBlockConditions: false,
-		enablePatternsLibrary: false,
 		enableOnboardingWizard: false,
 		enableSectionDefaultBlock: false,
 		enableOptimizeAnimationsCss: false,
@@ -267,16 +263,6 @@ const Dashboard = () => {
 						checked={ state.values.enableBlockConditions }
 						disabled={ 'saving' === state.status.enableBlockConditions }
 						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableBlockConditions', value }) }
-					/>
-				</PanelRow>
-
-				<PanelRow>
-					<ToggleControl
-						label={ __( 'Enable Patterns Library', 'otter-blocks' ) }
-						help={ __( 'Toggle the visibility of the Patterns Library in the Block Editor.', 'otter-blocks' ) }
-						checked={ state.values.enablePatternsLibrary }
-						disabled={ 'saving' === state.status.enablePatternsLibrary }
-						onChange={ ( value ) => applyAction({ type: 'update', name: 'enablePatternsLibrary', value }) }
 					/>
 				</PanelRow>
 

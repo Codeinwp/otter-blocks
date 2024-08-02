@@ -123,7 +123,7 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 
 		try {
 			const response = await apiFetch({
-				path: addQueryArgs( '/otter/v1/openai/generate', {}),
+				path: addQueryArgs( '/otter/v1/generate', {}),
 				method: 'POST',
 				body: JSON.stringify({
 					...( metadata ?? {}),
@@ -231,7 +231,7 @@ export function parseFormPromptResponseToBlocks( promptResponse: string ) {
  */
 export function retrieveEmbeddedPrompt( promptName ?: string ) {
 	return apiFetch<PromptServerResponse>({
-		path: addQueryArgs( '/otter/v1/openai/prompt', {
+		path: addQueryArgs( '/otter/v1/prompt', {
 			name: promptName
 		}),
 		method: 'GET'

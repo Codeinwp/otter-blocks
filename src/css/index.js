@@ -16,8 +16,6 @@ import {
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
-import { select } from '@wordpress/data';
-
 import { Fragment } from '@wordpress/element';
 
 import {
@@ -35,6 +33,7 @@ import CSSEditor from './editor.js';
 import './inject-css.js';
 
 import { onDeselect } from './inject-css.js';
+import { select } from '@wordpress/data';
 
 const addAttribute = ( settings ) => {
 	if ( hasBlockSupport( settings, 'customClassName', true ) ) {

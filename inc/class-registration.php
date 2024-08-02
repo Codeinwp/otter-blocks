@@ -279,11 +279,10 @@ class Registration {
 				'showOnboarding'          => $this->show_onboarding(),
 				'ratingScale'             => get_option( 'themeisle_blocks_settings_review_scale', false ),
 				'hasModule'               => array(
-					'aiToolbar'       => boolval( get_option( 'themeisle_blocks_settings_block_ai_toolbar_module', true ) ),
 					'blockCSS'        => boolval( get_option( 'themeisle_blocks_settings_css_module', true ) ),
 					'blockAnimations' => boolval( get_option( 'themeisle_blocks_settings_blocks_animation', true ) ),
 					'blockConditions' => boolval( get_option( 'themeisle_blocks_settings_block_conditions', true ) ),
-					'patternsLibrary' => boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ),
+					'aiToolbar'       => boolval( get_option( 'themeisle_blocks_settings_block_ai_toolbar_module', true ) ),
 				),
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
@@ -762,6 +761,8 @@ class Registration {
 			'tabs',
 			'tabs-item',
 			'testimonials',
+			'timeline',
+			'timeline-item',
 		);
 
 		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
@@ -780,6 +781,7 @@ class Registration {
 				'font-awesome-icons' => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'icon-list-item'     => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'timeline-item'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 			)
 		);
 
@@ -942,6 +944,13 @@ class Registration {
 
 				return $block_content;
 			}
+		}
+
+		if ( 'themeisle-blocks/timeline-item' === $block['blockName'] &&
+			( isset( $block['innerHTML'] ) && false !== strpos( $block['innerHTML'], 'fa-' ) )
+		) {
+			self::$is_fa_loaded = true;
+			return $block_content;
 		}
 
 		return $block_content;

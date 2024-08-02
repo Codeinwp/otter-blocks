@@ -1,7 +1,7 @@
 /**
  * External dependencies.
  */
-import { link } from '@wordpress/icons';
+import { globe } from '@wordpress/icons';
 
 /**
  * WordPress dependencies.
@@ -58,7 +58,7 @@ export const format = {
 
 registerFormatType( name, format );
 
-export const supportedBlocks = {
+const supportedBlocks = {
 	'core/button': {
 		link: 'url'
 	},
@@ -139,11 +139,10 @@ const DynamicLinkControl = ({
 				<ToolbarGroup>
 					<ToolbarButton
 						name="dynamic-link"
-						icon={ link }
+						icon={ globe }
 						title={ __( 'Dynamic Link', 'otter-blocks' ) }
 						ref={ buttonRef }
 						onClick={ () => setOpen( ! isOpen ) }
-						className="o-dynamic-button"
 					/>
 				</ToolbarGroup>
 			</BlockControls>

@@ -112,7 +112,7 @@ const Multiselect = ({
 			label={ label }
 			value={ ( values && 'object' === typeof values ) ? values.map( id => {
 				const obj = items.find( item => Number( id ) === Number( item.value ) );
-				return `${ obj?.value }. ${ obj?.label }`;
+				return `${ obj.value }. ${ obj.label }`;
 			}) : undefined }
 			suggestions={ items.map( item => `${ item.value }. ${ item.label }` ) }
 			onChange={ onChange }
@@ -164,7 +164,7 @@ const ProductsMultiselect = ( props ) => {
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<Multiselect
-			{ ...props }
+			{...props}
 			items={ products }
 		/>
 	);
@@ -207,100 +207,8 @@ const CategoriesMultiselect = ( props ) => {
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<Multiselect
-			{ ...props }
+			{...props}
 			items={ categories }
-		/>
-	);
-};
-
-const TagsMultiselect = ( props ) => {
-	const {
-		tags,
-		isLoading
-	} = useSelect( select => {
-		if ( ! Boolean( window.otterPro.hasWooCommerce ) ) {
-			return {
-				tags: [],
-				isLoading: false
-			};
-		}
-
-		const { COLLECTIONS_STORE_KEY } = window?.wc?.wcBlocksData;
-		const {
-			getCollection,
-			getCollectionError,
-			isResolving
-		} = select( COLLECTIONS_STORE_KEY );
-
-		// eslint-disable-next-line camelcase
-		const tagsError = getCollectionError( '/wc/store', 'products/tags' );
-
-		const tags = tagsError ? [] : ( getCollection( '/wc/store', 'products/tags' ) ?? [])?.map( result => ({
-			value: result.id,
-			label: decodeEntities( result.name )
-		}) );
-
-		return {
-			tags,
-			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products/tags' ])
-		};
-	}, []);
-
-	return isLoading ? (
-		<Placeholder><Spinner /></Placeholder>
-	) : (
-		<Multiselect
-			{ ...props }
-			items={ tags }
-		/>
-	);
-};
-
-const WooAttributes = ( props ) => {
-	const {
-		attributes,
-		isLoading
-	} = useSelect( select => {
-		if ( ! Boolean( window.otterPro.hasWooCommerce ) ) {
-			return {
-				attributes: [],
-				isLoading: false
-			};
-		}
-
-		const { COLLECTIONS_STORE_KEY } = window?.wc?.wcBlocksData;
-		const {
-			getCollection,
-			getCollectionError,
-			isResolving
-		} = select( COLLECTIONS_STORE_KEY );
-
-		// eslint-disable-next-line camelcase
-		const attributesError = getCollectionError( '/wc/store', 'products/attributes' );
-
-		const attributes = attributesError ? [] : ( getCollection( '/wc/store', 'products/attributes' ) ?? [])?.map( result => ({
-			value: result.id,
-			label: decodeEntities( result.name )
-		}) );
-
-		return {
-			attributes,
-			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products/attributes' ])
-		};
-	}, []);
-
-	return isLoading ? (
-		<Placeholder><Spinner /></Placeholder>
-	) : (
-		<SelectControl
-			{ ...props }
-			options={ [
-				{
-					value: '',
-					label: __( 'Select an attribute', 'otter-blocks' )
-				},
-				...attributes
-			] }
 		/>
 	);
 };
@@ -328,7 +236,7 @@ const CoursesMultiselect = ( props ) => {
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<Multiselect
-			{ ...props }
+			{...props}
 			items={ courses }
 		/>
 	);
@@ -398,7 +306,7 @@ const GroupsMultiselect = ( props ) => {
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<Multiselect
-			{ ...props }
+			{...props}
 			items={ groups }
 		/>
 	);
@@ -412,11 +320,6 @@ const Edit = ({
 	setAttributes,
 	changeValue
 }) => {
-	const changeArrayValue = ( value, index, key, type ) => {
-		const otterConditions = [ ...conditions ];
-		otterConditions[ index ][ key ][ type ] = value;
-		setAttributes({ otterConditions });
-	};
 
 	const changeDays = ( value, groupIndex, key ) => {
 		const otterConditions = [ ...conditions ];
@@ -459,31 +362,6 @@ const Edit = ({
 
 		const otterConditions = [ ...conditions ];
 		otterConditions[ index ][ key ].categories = values;
-		setAttributes({ otterConditions });
-	};
-
-	const changeTags = ( values, index, key ) => {
-		const regex = /^([^.]+)/;
-
-		values.forEach( ( value, key ) => {
-			const m = regex.exec( value );
-			null !== m ? values[ key ] = Number( m[0]) : value;
-		});
-
-		const otterConditions = [ ...conditions ];
-		otterConditions[ index ][ key ].tags = values;
-		setAttributes({ otterConditions });
-	};
-
-	const changeAttribute = ( values, index, key ) => {
-		const otterConditions = [ ...conditions ];
-
-		if ( ! values ) {
-			delete otterConditions[ index ][ key ].attribute;
-		} else {
-			otterConditions[ index ][ key ].attribute = values;
-		}
-
 		setAttributes({ otterConditions });
 	};
 
@@ -917,40 +795,6 @@ const Edit = ({
 					/>
 				</Fragment>
 			) }
-
-			{ 'wooCategory' === item.type && (
-				<CategoriesMultiselect
-					label={ __( 'Categories', 'otter-blocks' ) }
-					values={ item.categories }
-					onChange={ values => changeCategories( values, groupIndex, itemIndex ) }
-				/>
-			) }
-			{ 'wooTag' === item.type && (
-				<TagsMultiselect
-					label={ __( 'Tags', 'otter-blocks' ) }
-					values={ item.tags }
-					onChange={ values => changeTags( values, groupIndex, itemIndex ) }
-				/>
-			)}
-
-			{ 'wooAttribute' === item.type && (
-				<Fragment>
-					<WooAttributes
-						label={ __( 'Attribute', 'otter-blocks' ) }
-						value={ item.attribute }
-						onChange={ values => changeAttribute( values, groupIndex, itemIndex ) }
-					/>
-
-					{ !! item.attribute && (
-						<FormTokenField
-							label={ __( 'Terms', 'otter-blocks' ) }
-							placeholder={ __( 'List the terms by their slug.', 'otter-blocks' ) }
-							value={ item.terms }
-							onChange={ terms => changeArrayValue( terms, groupIndex, itemIndex, 'terms' ) }
-						/>
-					) }
-				</Fragment>
-			)}
 
 			{ 'learnDashPurchaseHistory' === item.type && (
 				<Fragment>
