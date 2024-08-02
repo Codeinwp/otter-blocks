@@ -26,6 +26,10 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+if ( defined( 'OTTER_BLOCKS_PATH' ) ) {
+	return;
+}
+
 define( 'BLOCKS_ANIMATION_URL', plugins_url( '/', __FILE__ ) );
 define( 'BLOCKS_ANIMATION_PATH', dirname( __FILE__ ) );
 
