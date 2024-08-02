@@ -72,10 +72,10 @@ class Dashboard {
 
 		add_submenu_page(
 			'otter',
-			__( 'Form Submissions', 'otter-blocks' ),
+			__( 'Submissions', 'otter-blocks' ),
 			sprintf(
 				'<div class="o-menu-submissions">%s <span class="o-menu-badge">%s</span></div>',
-				esc_html__( 'Form Submissions', 'otter-blocks' ),
+				esc_html__( 'Submissions', 'otter-blocks' ),
 				esc_html__( 'Pro', 'otter-blocks' )
 			),
 			'manage_options',
