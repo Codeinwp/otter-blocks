@@ -121,7 +121,7 @@ class Test_Post_Grid_Block extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $output );
 
 		// We expect the titleTag to be sanitized.
-		$expected = '<h5 class="o-posts-grid-post-title"><a href="http://www.example.com">Title</a></h5>';
+		$expected = '<h4 class="o-posts-grid-post-title"><a href="http://www.example.com">Title</a></h4>';
 		$output = $this->post_grid_block->render_post_title( $malformed_attributes['titleTag'], 'www.example.com', 'Title' );
 
 		$this->assertEquals( $expected, $output );
