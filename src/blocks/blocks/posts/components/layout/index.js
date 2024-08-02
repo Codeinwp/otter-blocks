@@ -115,7 +115,7 @@ export const PostsTitle = ({ attributes, element, post }) => {
 		return '';
 	}
 
-	const Tag = ! [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ].includes( attributes.titleTag ) ? 'h5' : attributes.titleTag;
+	const Tag = ! [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ].includes( attributes.titleTag ) ? 'h4' : attributes.titleTag;
 
 	return (
 		<Tag key={ element } className="o-posts-grid-post-title">
