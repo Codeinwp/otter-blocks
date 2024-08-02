@@ -412,12 +412,18 @@ const mapViewToKey = {
 /**
  * Helper function to add proper utm.
  * @param {string} url Url to add utms.
- * @param {string} area Descriptive name of the link
+ * @param {string} linkArea Descriptive name of the link
+ * @param {string} content Content of the link
  * @returns {string}
  */
-export const setUtm = ( urlAdress, linkArea ) => {
+export const setUtm = ( urlAdress, linkArea, content ) => {
 	const urlLink = new URL( urlAdress );
 	urlLink.searchParams.set( 'utm_campaign', linkArea );
+
+	if ( content ) {
+		urlLink.searchParams.set( 'utm_content', content );
+	}
+
 	return urlLink.toString();
 };
 
