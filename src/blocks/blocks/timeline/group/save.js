@@ -13,7 +13,14 @@ const Save = ({
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className: classnames( className )
+		className: classnames(
+			className,
+			{
+				'is-reverse': 'reverse-alternative' === attributes.containersAlignment,
+				'is-right': 'right' === attributes.containersAlignment,
+				'is-left': 'left' === attributes.containersAlignment
+			}
+		)
 	});
 
 	return (

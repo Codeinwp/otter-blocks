@@ -30,7 +30,9 @@ import {
 import {
 	Fragment,
 	useEffect,
-	useState
+	useState,
+	useMemo,
+	useCallback
 } from '@wordpress/element';
 
 /**
@@ -38,12 +40,16 @@ import {
  */
 import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility';
+import themeisleIcons from '../../../helpers/themeisle-icons';
+import { boxToCSS } from '../../../helpers/helper-functions';
+import Inspector from './inspector';
 
 const { attributes: defaultAttributes } = metadata;
 
 /**
- * Posts component
- * @param {import('./types').PostProps} param0
+ * Timeline Item component.
+ *
+ * @param {import('../../types').TimelineItemProps} param
  * @returns
  */
 const Edit = ({
@@ -59,21 +65,68 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
+	const Icon = useMemo( () => {
+		return themeisleIcons.icons[ attributes.icon ];
+	}, [ attributes.icon ]);
+
+	const isURL = useMemo( () => {
+		if ( 'image' !== attributes.iconType || ! attributes.icon ) {
+			return false;
+		}
+
+		try {
+			return Boolean( new URL( attributes.icon ) );
+		} catch ( _ ) {
+			return false;
+		}
+	}, [ attributes.icon, attributes.iconType ]);
+
+	const inlineStyles = useMemo( () => {
+		return Object.fromEntries(
+			[
+				[ '--o-timeline-cnt-bg', attributes.containerBackgroundColor ],
+				[ '--o-timeline-cnt-br-w', boxToCSS( attributes.containerBorder ) ],
+				[ '--o-timeline-cnt-br-c', attributes.containerBorderColor ],
+				[ '--o-timeline-cnt-br-r', boxToCSS( attributes.containerRadius ) ],
+				[ '--o-timeline-i-color', attributes.iconColor ]
+			]
+				?.filter( pairs => pairs?.[2] ?? pairs?.[1])
+		);
+	}, [ attributes ]);
+
 	return (
 		<Fragment>
+			<Inspector attributes={ attributes } setAttributes={ setAttributes } />
 			<div { ...blockProps }>
-				<div class="container">
-					<div class="icon">
-						<i class="fas fa-circle"></i>
+				<div class="o-timeline-container" style={inlineStyles}>
+					<div class="o-timeline-icon">
+						{
+							attributes.hasIcon && (
+								'image' === attributes.iconType && isURL ? (
+									<img src={ attributes.icon } />
+								) : (
+									'themeisle-icons' === attributes.iconType && attributes.icon && Icon !== undefined ? (
+										<Icon/>
+									) : (
+										<i
+											className={
+												`${ attributes.iconPrefix } fa-${ attributes.icon }`
+											}
+										></i>
+									)
+								)
+							)
+						}
 					</div>
-					<div class="content">
+					<div class="o-timeline-content">
 						<InnerBlocks
-							template={[
-								[ 'core/heading', { placeholder: 'July 20, 2024', fontSize: 'small' }],
-								[ 'core/image', { url: 'https://via.placeholder.com/400x200', alt: 'Event Image' }],
-								[ 'core/heading', { placeholder: 'Event Name' }],
-								[ 'core/paragraph', { placeholder: 'Description' }]
-							]}
+							template={
+								[
+									[ 'core/paragraph', { content: 'January 15, 2024', fontSize: 'small' }],
+									[ 'core/heading', { content: 'Project Launch', level: 3 }],
+									[ 'core/paragraph', { content: 'Successfully initiated our new product development project, setting the stage for innovation and growth.' }]
+								]
+							}
 						/>
 					</div>
 				</div>

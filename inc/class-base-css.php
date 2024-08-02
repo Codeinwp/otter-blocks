@@ -97,6 +97,8 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Tabs_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Posts_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Sharing_Icons_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Timeline_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Timeline_Item_CSS',
 		);
 
 		self::$blocks_classes = apply_filters( 'otter_blocks_register_css', self::$blocks_classes );

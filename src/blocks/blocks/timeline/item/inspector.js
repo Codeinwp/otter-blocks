@@ -54,9 +54,9 @@ import { IconPickerControl, InspectorHeader, SyncColorPanel } from '../../../com
 import { stringToBox } from '../../../helpers/helper-functions.js';
 
 /**
- *	Timeline parent inspector component.
+ * Timeline item inspector component.
  *
- * @param {import('../../types.js').TimelineGroupInspectorProps} props
+ * @param {import('../../types.js').TimelineItemInspectorProps} props
  * @returns
  */
 const Inspector = ({
@@ -66,6 +66,29 @@ const Inspector = ({
 	setSide
 }) => {
 	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
+
+	const changeIcon = value => {
+		if ( 'image' === attributes.iconType && value?.url ) {
+			return setAttributes({ icon: value.url });
+		}
+
+		if ( 'object' === typeof value ) {
+			setAttributes({
+				icon: value.name,
+				iconPrefix: value.prefix
+			});
+		} else {
+			setAttributes({ icon: value });
+		}
+	};
+
+	const changeLibrary = value => {
+		setAttributes({
+			iconType: value,
+			icon: undefined,
+			iconPrefix: 'fab'
+		});
+	};
 
 	return (
 		<InspectorControls>
@@ -90,63 +113,37 @@ const Inspector = ({
 						<PanelBody
 							title={ __( 'Settings', 'otter-blocks' ) }
 						>
-							<SelectControl
-								label={ __( 'Timeline Alignment', 'otter-blocks' ) }
-								value={ attributes.containersAlignment }
-								options={[
-									{
-										label: __( 'Alternative', 'otter-blocks' ),
-										value: 'alternative'
-									},
-									{
-										label: __( 'Reverse Alternative', 'otter-blocks' ),
-										value: 'reverse-alternative'
-									},
-									{
-										label: __( 'Left Side', 'otter-blocks' ),
-										value: 'left'
-									},
-									{
-										label: __( 'Right Side', 'otter-blocks' ),
-										value: 'right'
-									}
-								]}
-								onChange={ ( value ) => setAttributes({ containersAlignment: value }) }
+							<ToggleControl
+								label={ __( 'Show Icon', 'otter-blocks' ) }
+								checked={ attributes.hasIcon }
+								onChange={ ( hasIcon ) => setAttributes({ hasIcon }) }
 							/>
+							{
+								attributes.hasIcon && (
+									<IconPickerControl
+										label={ __( 'Icon Picker', 'otter-blocks' ) }
+										library={ attributes.iconType }
+										prefix={ attributes.iconPrefix }
+										icon={ attributes.icon }
+										changeLibrary={ changeLibrary }
+										onChange={ changeIcon }
+										allowImage
+									/>
+								)
+							}
+
 						</PanelBody>
 					</Fragment>
 				) }
 
 				{ 'style' === tab && (
 					<Fragment>
-						<PanelBody
-							title={ __( 'Dimensions', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-							<UnitControl
-								label={ __( 'Icon Size', 'otter-blocks' ) }
-								value={ attributes.iconSize ?? '20px' }
-								onChange={ ( value ) => setAttributes({ iconSize: value }) }
-								max={ 100 }
-							/>
-							<UnitControl
-								label={ __( 'Vertical Line Width', 'otter-blocks' ) }
-								value={ attributes.verticalLineWidth ?? '6px' }
-								onChange={ ( value ) => setAttributes({ verticalLineWidth: value }) }
-								max={ 100 }
-							/>
-						</PanelBody>
 						<SyncColorPanel
 							label={ __( 'Colors', 'otter-blocks' ) }
 							isSynced={ attributes.isSynced ?? [] }
 							initialOpen={ false }
 							setAttributes={ setAttributes }
 							options={ [
-								{
-									value: attributes.verticalLineColor,
-									label: __( 'Vertical Line', 'otter-blocks' ),
-									slug: 'verticalLineColor'
-								},
 								{
 									value: attributes.iconColor,
 									label: __( 'Icon', 'otter-blocks' ),
@@ -168,11 +165,6 @@ const Inspector = ({
 							title={ __( 'Container', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
-							<BoxControl
-								label={ __( 'Padding', 'otter-blocks' ) }
-								values={ attributes.containerPadding ?? stringToBox( '20px' ) }
-								onChange={ ( value ) => setAttributes({ containerPadding: value }) }
-							/>
 							<BoxControl
 								label={ __( 'Border Width', 'otter-blocks' ) }
 								values={ attributes.containerBorder ?? stringToBox( '0px' ) }

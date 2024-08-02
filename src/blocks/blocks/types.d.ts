@@ -1,19 +1,34 @@
 import type {  BlockProps, BorderRadius, BoxType, CoreBorderRadiusType, CoreBorderType, InspectorProps  } from '../helpers/blocks';
 
-type Attributes = {
+type CommonAttributes = {
     id: string
     containerBackgroundColor: string
     containerBorder: CoreBorderType
+    containerBorderColor: string
+    containerRadius: BorderRadius
+    iconColor: string
+}
+
+type ItemAttributes = CommonAttributes & {
+    hasIcon: boolean
+    iconType: string
+    icon: string
+    iconPrefix: string
+}
+
+type GroupAttributes = CommonAttributes & {
     containerRadius: BorderRadius
     containerPadding: BorderRadius
-    iconColor: string
     iconSize: string
     verticalLineColor: string
     verticalLineWidth: string
     containersAlignment: string
-    hasIcon: boolean
 };
 
-export type TimelineGroupAttrs = Partial<Attributes>
-export type TimelineGroupProps = BlockProps<Attributes>
-export interface TimelineGroupInspectorProps extends InspectorProps<Attributes> {}
+export type TimelineGroupAttrs = Partial<GroupAttributes>
+export type TimelineGroupProps = BlockProps<GroupAttributes>
+export interface TimelineGroupInspectorProps extends InspectorProps<GroupAttributes> {}
+
+export type TimelineItemAttrs = Partial<ItemAttributes>
+export type TimelineItemProps = BlockProps<ItemAttributes>
+export interface TimelineItemInspectorProps extends InspectorProps<ItemAttributes> {}

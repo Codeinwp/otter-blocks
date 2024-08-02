@@ -11,30 +11,40 @@
 	"attributes": {
 		"id": {
 			"type": "string"
+		},
+		"containerBorder": {
+			"type": "object"
+		},
+		"containerRadius": {
+			"type": ["string", "object"]
+		},
+		"containerBackgroundColor": {
+			"type": "string"
+		},
+		"containerBorderColor": {
+			"type": "string"
+		},
+		"iconColor": {
+			"type": "string"
+		},
+		"hasIcon": {
+			"type": "boolean",
+			"default": true
+		},
+		"iconType": {
+			"type": "string",
+			"default": "fontawesome"
+		},
+		"iconPrefix": {
+			"type": "string",
+			"default": "fas"
+		},
+		"icon": {
+			"type": "string",
+			"default": "circle"
 		}
 	},
 	"supports": {
-		"align": [ "wide", "full" ],
-        "color": {
-			"gradients": true,
-			"text": false,
-			"__experimentalDefaultControls": {
-				"background": true
-			}
-		},
-        "__experimentalBorder": {
-			"color": true,
-			"radius": true,
-			"style": true,
-			"width": true,
-			"__experimentalDefaultControls": {
-				"color": true,
-				"radius": true,
-				"style": true,
-				"width": true
-			}
-		}
-	},
-	"editorStyle": "otter-timeline-item-editor",
-	"style": "otter-timeline-item-style"
+		"align": [ "wide", "full" ]
+	}
 }

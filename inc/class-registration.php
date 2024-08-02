@@ -762,7 +762,7 @@ class Registration {
 			'tabs-item',
 			'testimonials',
 			'timeline',
-			'timeline-item'
+			'timeline-item',
 		);
 
 		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
@@ -811,10 +811,6 @@ class Registration {
 			}
 
 			if ( file_exists( $editor_style_path ) && ! empty( $metadata['editorStyle'] ) ) {
-				if ( 'timeline' === $block ) {
-					trap([$block_path, $editor_style, $metadata['editorStyle']] );
-				}
-
 				wp_register_style(
 					$metadata['editorStyle'],
 					$editor_style,

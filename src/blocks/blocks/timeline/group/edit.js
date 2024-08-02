@@ -46,8 +46,9 @@ import { boxToCSS } from '../../../helpers/helper-functions';
 const { attributes: defaultAttributes } = metadata;
 
 /**
- * Posts component
- * @param {import('../../types').TimelineGroupProps} param0
+ * Timeline parent component
+ *
+ * @param {import('../../types').TimelineGroupProps} param
  * @returns
  */
 const Edit = ({
@@ -73,14 +74,16 @@ const Edit = ({
 		return Object.fromEntries(
 			[
 				[ '--o-timeline-cnt-bg', attributes.containerBackgroundColor ],
-				[ '--o-timeline-v-color', attributes.verticalLineColor ],
-				[ '--o-timeline-i-font-size', attributes.iconSize ],
+				[ '--o-timeline-cnt-br-w', boxToCSS( attributes.containerBorder ) ],
+				[ '--o-timeline-cnt-br-c', attributes.containerBorderColor ],
+				[ '--o-timeline-cnt-br-r', boxToCSS( attributes.containerRadius ) ],
 				[ '--o-timeline-cnt-pd', boxToCSS( attributes.containerPadding ) ],
-				[ '--o-timeline-cnt-br-r', attributes.containerRadius?.top ]
+				[ '--o-timeline-i-font-size', attributes.iconSize ],
+				[ '--o-timeline-i-color', attributes.iconColor ],
+				[ '--o-timeline-v-color', attributes.verticalLineColor ],
+				[ '--o-timeline-v-width', attributes.verticalLineWidth ]
 			]
 				?.filter( pairs => pairs?.[2] ?? pairs?.[1])
-
-				.map( ([ key, value ]) => [ key, value ])
 		);
 	}, [ attributes ]);
 
@@ -94,10 +97,42 @@ const Edit = ({
 			<div { ...blockProps }>
 				<div className="o-timeline-root" style={inlineStyles}>
 					<InnerBlocks template={[
-						[ 'themeisle-blocks/timeline-item', { }],
-						[ 'themeisle-blocks/timeline-item', { }],
-						[ 'themeisle-blocks/timeline-item', { }],
-						[ 'themeisle-blocks/timeline-item', { }]
+						[
+							'themeisle-blocks/timeline-item',
+							{ },
+							[
+								[ 'core/paragraph', { content: 'January 15, 2024', fontSize: 'small' }],
+								[ 'core/heading', { content: 'Project Launch', level: 3 }],
+								[ 'core/paragraph', { content: 'Successfully initiated our new product development project, setting the stage for innovation and growth.' }]
+							]
+						],
+						[
+							'themeisle-blocks/timeline-item',
+							{ },
+							[
+								[ 'core/paragraph', { content: 'March 1, 2024', fontSize: 'small' }],
+								[ 'core/heading', { content: 'Team Expansion', level: 3 }],
+								[ 'core/paragraph', { content: 'Welcomed five new talented members to our development team, bringing fresh perspectives and expertise.' }]
+							]
+						],
+						[
+							'themeisle-blocks/timeline-item',
+							{ },
+							[
+								[ 'core/paragraph', { content: 'April 20, 2024', fontSize: 'small' }],
+								[ 'core/heading', { content: 'Prototype Development', level: 3 }],
+								[ 'core/paragraph', { content: 'Completed the first working prototype of our product, marking a significant milestone in our project timeline.' }]
+							]
+						],
+						[
+							'themeisle-blocks/timeline-item',
+							{ },
+							[
+								[ 'core/paragraph', { content: 'June 5, 2024', fontSize: 'small' }],
+								[ 'core/heading', { content: 'Market Research', level: 3 }],
+								[ 'core/paragraph', { content: 'Conducted comprehensive market analysis to refine our product features and target audience strategy.' }]
+							]
+						]
 					]} />
 				</div>
 			</div>
