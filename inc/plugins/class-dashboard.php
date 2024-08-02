@@ -206,7 +206,7 @@ class Dashboard {
 		wp_enqueue_script(
 			'otter-blocks-scripts',
 			OTTER_BLOCKS_URL . 'build/dashboard/index.js',
-			$asset_file['dependencies'],
+			array_merge( $asset_file['dependencies'], [ 'updates' ] ),
 			$asset_file['version'],
 			true
 		);
@@ -221,17 +221,44 @@ class Dashboard {
 			apply_filters(
 				'otter_dashboard_data',
 				array(
-					'version'            => OTTER_BLOCKS_VERSION,
-					'assetsPath'         => OTTER_BLOCKS_URL . 'assets/',
-					'stylesExist'        => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
-					'hasPro'             => Pro::is_pro_installed(),
-					'upgradeLink'        => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
-					'docsLink'           => Pro::get_docs_url(),
-					'showFeedbackNotice' => $this->should_show_feedback_notice(),
-					'deal'               => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
-					'hasOnboarding'      => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
-					'days_since_install' => round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
-					'rootUrl'            => get_site_url(),
+					'version'                => OTTER_BLOCKS_VERSION,
+					'assetsPath'             => OTTER_BLOCKS_URL . 'assets/',
+					'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
+					'hasPro'                 => Pro::is_pro_installed(),
+					'upgradeLink'            => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
+					'docsLink'               => Pro::get_docs_url(),
+					'showFeedbackNotice'     => $this->should_show_feedback_notice(),
+					'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
+					'hasOnboarding'          => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
+					'days_since_install'     => round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
+					'rootUrl'                => get_site_url(),
+					'neveThemePreviewUrl'    => esc_url(
+						add_query_arg(
+							array(
+								'theme' => 'neve',
+							),
+							admin_url( 'theme-install.php' )
+						)
+					),
+					'neveThemeActivationUrl' => esc_url(
+						add_query_arg(
+							array(
+								'action'     => 'activate',
+								'stylesheet' => 'neve',
+								'_wpnonce'   => wp_create_nonce( 'switch-theme_neve' ),
+							),
+							admin_url( 'themes.php' )
+						)
+					),
+					'neveDashboardUrl'       => esc_url(
+						add_query_arg(
+							array(
+								'page' => 'neve-welcome',
+							),
+							admin_url( 'admin.php' )
+						)
+					),
+					'neveInstalled'          => defined( 'NEVE_VERSION' ),
 				)
 			)
 		);
