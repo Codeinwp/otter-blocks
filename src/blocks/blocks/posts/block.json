@@ -147,6 +147,9 @@
 		"backgroundColor": {
 			"type": "string"
 		},
+		"backgroundOverlay": {
+			"type": "string"
+		},
 		"borderColor": {
 			"type": "string"
 		},

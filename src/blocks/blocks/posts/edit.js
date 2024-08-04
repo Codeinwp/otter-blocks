@@ -59,18 +59,7 @@ import {
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 import { domReady } from '../../helpers/frontend-helper-functions';
-
-const styles = [
-	{
-		label: __( 'Default', 'otter-blocks' ),
-		value: 'default',
-		isDefault: true
-	},
-	{
-		label: __( 'Boxed', 'otter-blocks' ),
-		value: 'boxed'
-	}
-];
+import { styles } from './constants.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -261,11 +250,16 @@ const Edit = ({
 		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hex2rgba( imageBoxShadow.color, imageBoxShadow.colorOpacity ) }`,
 		'--border-width': _px( attributes.borderWidth ),
 		'--border-radius': boxValues( attributes.cardBorderRadius ),
+		'--border-radius-start-start': _px( attributes.cardBorderRadius?.top ),
+		'--border-radius-start-end': _px( attributes.cardBorderRadius?.right ),
+		'--border-radius-end-start': _px( attributes.cardBorderRadius?.bottom ),
+		'--border-radius-end-end': _px( attributes.cardBorderRadius?.left ),
 		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hex2rgba( boxShadow.color, boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
 		'--text-align': attributes.textAlign,
 		'--text-color': attributes.textColor,
 		'--background-color': attributes.backgroundColor,
+		'--background-overlay': attributes.backgroundOverlay || '#0000005e',
 		'--border-color': attributes.borderColor,
 		'--content-gap': attributes.contentGap,
 		'--img-width': responsiveGetAttributes([ _px( attributes.imageWidth ), attributes.imageWidthTablet, attributes.imageWidthMobile ]),
