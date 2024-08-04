@@ -49,17 +49,9 @@ const Layout = ({
 				'grid' === attributes.style ?
 					classnames(
 						'is-grid',
-						`o-posts-grid-columns-${ attributes.columns }`,
-						{
-							'o-crop-img': attributes.cropImage
-						}
+						`o-posts-grid-columns-${ attributes.columns }`
 					) :
-					classnames(
-						'is-list',
-						{
-							'o-crop-img': attributes.cropImage
-						}
-					)
+					'is-list'
 			}
 		>
 			{ postsToDisplay

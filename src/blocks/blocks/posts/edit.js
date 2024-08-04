@@ -248,6 +248,7 @@ const Edit = ({
 	const inlineStyles = {
 		'--img-border-radius': isObject( attributes.borderRadius ) ? boxValues( attributes.borderRadius ) : _px( attributes.borderRadius ),
 		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hex2rgba( imageBoxShadow.color, imageBoxShadow.colorOpacity ) }`,
+		'--image-ratio': attributes.imageRatio,
 		'--border-width': _px( attributes.borderWidth ),
 		'--border-radius': boxValues( attributes.cardBorderRadius ),
 		'--border-radius-start-start': _px( attributes.cardBorderRadius?.top ),

@@ -124,10 +124,6 @@ class Posts_Grid_Block {
 			$class .= ' o-posts-grid-columns-' . $attributes['columns'];
 		}
 
-		if ( isset( $attributes['cropImage'] ) && true === $attributes['cropImage'] ) {
-			$class .= ' o-crop-img';
-		}
-
 		$wrapper_attributes = get_block_wrapper_attributes();
 
 		$block_content = sprintf(

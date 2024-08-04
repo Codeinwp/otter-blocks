@@ -209,6 +209,10 @@ class Posts_CSS extends Base_CSS {
 						},
 					),
 					array(
+						'property' => '--image-ratio',
+						'value'    => 'imageRatio',
+					),
+					array(
 						'property' => '--border-width',
 						'value'    => 'borderWidth',
 					),
