@@ -718,11 +718,11 @@ export const aiGeneration = (
 
 export const formAiGeneration = (
 	<SVG width="20" height="21" viewBox="0 0 20 21" fill="none" style={{ color: 'transparent' }} xmlns="http://www.w3.org/2000/svg">
-		<Path d="M17.5044 8.5V20C17.5044 20.3 17.3044 20.5 17.0044 20.5H3.00439C2.70439 20.5 2.50439 20.3 2.50439 20V2C2.50439 1.7 2.70439 1.5 3.00439 1.5H12.8044" stroke="url(#paint0_linear_3726_618)" strokeLinecap="round"/>
-		<Path d="M5.00439 3.5H10.0044C10.3044 3.5 10.5044 3.7 10.5044 4V6C10.5044 6.3 10.3044 6.5 10.0044 6.5H5.00439C4.70439 6.5 4.50439 6.3 4.50439 6V4C4.50439 3.7 4.70439 3.5 5.00439 3.5Z" stroke="url(#paint1_linear_3726_618)"/>
-		<Path d="M5.00439 9.5H13.0044C13.3044 9.5 13.5044 9.7 13.5044 10V11C13.5044 11.3 13.3044 11.5 13.0044 11.5H5.00439C4.70439 11.5 4.50439 11.3 4.50439 11V10C4.50439 9.7 4.70439 9.5 5.00439 9.5Z" stroke="url(#paint2_linear_3726_618)"/>
-		<Path d="M5.00439 13.5H15.0044C15.3044 13.5 15.5044 13.7 15.5044 14V18C15.5044 18.3 15.3044 18.5 15.0044 18.5H5.00439C4.70439 18.5 4.50439 18.3 4.50439 18V14C4.50439 13.7 4.70439 13.5 5.00439 13.5Z" stroke="url(#paint3_linear_3726_618)"/>
-		<Path d="M16.0044 7C16.0044 5.3 17.3044 4 19.0044 4C17.3044 4 16.0044 2.7 16.0044 1C16.0044 2.7 14.7044 4 13.0044 4C13.8044 4 14.6044 4.3 15.1044 4.9C15.7044 5.4 16.0044 6.2 16.0044 7Z" stroke="url(#paint4_linear_3726_618)" strokeLinecap="round" strokeLinejoin="round"/>
+		<Path fill="none" d="M17.5044 8.5V20C17.5044 20.3 17.3044 20.5 17.0044 20.5H3.00439C2.70439 20.5 2.50439 20.3 2.50439 20V2C2.50439 1.7 2.70439 1.5 3.00439 1.5H12.8044" stroke="url(#paint0_linear_3726_618)" strokeLinecap="round"/>
+		<Path fill="none" d="M5.00439 3.5H10.0044C10.3044 3.5 10.5044 3.7 10.5044 4V6C10.5044 6.3 10.3044 6.5 10.0044 6.5H5.00439C4.70439 6.5 4.50439 6.3 4.50439 6V4C4.50439 3.7 4.70439 3.5 5.00439 3.5Z" stroke="url(#paint1_linear_3726_618)"/>
+		<Path fill="none" d="M5.00439 9.5H13.0044C13.3044 9.5 13.5044 9.7 13.5044 10V11C13.5044 11.3 13.3044 11.5 13.0044 11.5H5.00439C4.70439 11.5 4.50439 11.3 4.50439 11V10C4.50439 9.7 4.70439 9.5 5.00439 9.5Z" stroke="url(#paint2_linear_3726_618)"/>
+		<Path fill="none" d="M5.00439 13.5H15.0044C15.3044 13.5 15.5044 13.7 15.5044 14V18C15.5044 18.3 15.3044 18.5 15.0044 18.5H5.00439C4.70439 18.5 4.50439 18.3 4.50439 18V14C4.50439 13.7 4.70439 13.5 5.00439 13.5Z" stroke="url(#paint3_linear_3726_618)"/>
+		<Path fill="none" d="M16.0044 7C16.0044 5.3 17.3044 4 19.0044 4C17.3044 4 16.0044 2.7 16.0044 1C16.0044 2.7 14.7044 4 13.0044 4C13.8044 4 14.6044 4.3 15.1044 4.9C15.7044 5.4 16.0044 6.2 16.0044 7Z" stroke="url(#paint4_linear_3726_618)" strokeLinecap="round" strokeLinejoin="round"/>
 		<Defs>
 			<LinearGradient id="paint0_linear_3726_618" x1="10.0044" y1="1" x2="10.0044" y2="21" gradientUnits="userSpaceOnUse">
 				<stop stopColor="#ED6F57"/>
@@ -750,12 +750,12 @@ export const formAiGeneration = (
 
 export const contentAiGenerationIcon = ( props = {}) => (
 	<SVG width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: 'transparent' }} {...props}>
-		<Path d="M17.5044 8.49112V19.9911C17.5044 20.2911 17.3044 20.4911 17.0044 20.4911H3.00439C2.70439 20.4911 2.50439 20.2911 2.50439 19.9911V1.99112C2.50439 1.69112 2.70439 1.49112 3.00439 1.49112H12.8044" stroke="url(#paint0_linear_1006_2437)" strokeLinecap="round"/>
-		<Path d="M5.50439 4.49112H9.50439" stroke="url(#paint1_linear_1006_2437)" strokeLinecap="round"/>
-		<Path d="M5.50439 8.49112H13.5044" stroke="url(#paint2_linear_1006_2437)" strokeLinecap="round"/>
-		<Path d="M5.50439 12.4911H14.5044" stroke="url(#paint3_linear_1006_2437)" strokeLinecap="round"/>
-		<Path d="M5.50439 16.4911H14.5044" stroke="url(#paint4_linear_1006_2437)" strokeLinecap="round"/>
-		<Path d="M16.0044 6.99112C16.0044 5.29112 17.3044 3.99112 19.0044 3.99112C17.3044 3.99112 16.0044 2.69112 16.0044 0.991119C16.0044 2.69112 14.7044 3.99112 13.0044 3.99112C13.8044 3.99112 14.6044 4.29112 15.1044 4.89112C15.7044 5.39112 16.0044 6.19112 16.0044 6.99112Z" stroke="url(#paint5_linear_1006_2437)" strokeLinecap="round" strokeLinejoin="round"/>
+		<Path fill="none" d="M17.5044 8.49112V19.9911C17.5044 20.2911 17.3044 20.4911 17.0044 20.4911H3.00439C2.70439 20.4911 2.50439 20.2911 2.50439 19.9911V1.99112C2.50439 1.69112 2.70439 1.49112 3.00439 1.49112H12.8044" stroke="url(#paint0_linear_1006_2437)" strokeLinecap="round"/>
+		<Path fill="none" d="M5.50439 4.49112H9.50439" stroke="url(#paint1_linear_1006_2437)" strokeLinecap="round"/>
+		<Path fill="none" d="M5.50439 8.49112H13.5044" stroke="url(#paint2_linear_1006_2437)" strokeLinecap="round"/>
+		<Path fill="none" d="M5.50439 12.4911H14.5044" stroke="url(#paint3_linear_1006_2437)" strokeLinecap="round"/>
+		<Path fill="none" d="M5.50439 16.4911H14.5044" stroke="url(#paint4_linear_1006_2437)" strokeLinecap="round"/>
+		<Path fill="none" d="M16.0044 6.99112C16.0044 5.29112 17.3044 3.99112 19.0044 3.99112C17.3044 3.99112 16.0044 2.69112 16.0044 0.991119C16.0044 2.69112 14.7044 3.99112 13.0044 3.99112C13.8044 3.99112 14.6044 4.29112 15.1044 4.89112C15.7044 5.39112 16.0044 6.19112 16.0044 6.99112Z" stroke="url(#paint5_linear_1006_2437)" strokeLinecap="round" strokeLinejoin="round"/>
 		<Defs>
 			<LinearGradient id="paint0_linear_1006_2437" x1="10.0044" y1="1.49112" x2="10.0044" y2="20.4911" gradientUnits="userSpaceOnUse">
 				<stop stopColor="#ED6F57"/>
@@ -787,11 +787,11 @@ export const contentAiGenerationIcon = ( props = {}) => (
 
 export const aiLayoutGeneratorIcon = ( props = {}) => (
 	<SVG width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ color: 'transparent' }} {...props}>
-		<Path d="M19.5 8V19.5C19.5 19.8 19.3 20 19 20H1C0.7 20 0.5 19.8 0.5 19.5V1.5C0.5 1.2 0.7 1 1 1H12.8" stroke="url(#paint0_linear_1036_1071)" strokeLinecap="round"/>
-		<Path d="M17 6.5C17 4.8 18.3 3.5 20 3.5C18.3 3.5 17 2.2 17 0.5C17 2.2 15.7 3.5 14 3.5C14.8 3.5 15.6 3.8 16.1 4.4C16.7 4.9 17 5.7 17 6.5Z" stroke="url(#paint1_linear_1036_1071)" strokeLinecap="round" strokeLinejoin="round"/>
-		<Path d="M3 3H10C10.3 3 10.5 3.2 10.5 3.5V9.5C10.5 9.8 10.3 10 10 10H3C2.7 10 2.5 9.8 2.5 9.5V3.5C2.5 3.2 2.7 3 3 3Z" stroke="url(#paint2_linear_1036_1071)"/>
-		<Path d="M3 12H10C10.3 12 10.5 12.2 10.5 12.5V17.5C10.5 17.8 10.3 18 10 18H3C2.7 18 2.5 17.8 2.5 17.5V12.5C2.5 12.2 2.7 12 3 12Z" stroke="url(#paint3_linear_1036_1071)"/>
-		<Path d="M13 9H17C17.3 9 17.5 9.2 17.5 9.5V17.5C17.5 17.8 17.3 18 17 18H13C12.7 18 12.5 17.8 12.5 17.5V9.5C12.5 9.2 12.7 9 13 9Z" stroke="url(#paint4_linear_1036_1071)"/>
+		<Path fill="none" d="M19.5 8V19.5C19.5 19.8 19.3 20 19 20H1C0.7 20 0.5 19.8 0.5 19.5V1.5C0.5 1.2 0.7 1 1 1H12.8" stroke="url(#paint0_linear_1036_1071)" strokeLinecap="round"/>
+		<Path fill="none" d="M17 6.5C17 4.8 18.3 3.5 20 3.5C18.3 3.5 17 2.2 17 0.5C17 2.2 15.7 3.5 14 3.5C14.8 3.5 15.6 3.8 16.1 4.4C16.7 4.9 17 5.7 17 6.5Z" stroke="url(#paint1_linear_1036_1071)" strokeLinecap="round" strokeLinejoin="round"/>
+		<Path fill="none" d="M3 3H10C10.3 3 10.5 3.2 10.5 3.5V9.5C10.5 9.8 10.3 10 10 10H3C2.7 10 2.5 9.8 2.5 9.5V3.5C2.5 3.2 2.7 3 3 3Z" stroke="url(#paint2_linear_1036_1071)"/>
+		<Path fill="none" d="M3 12H10C10.3 12 10.5 12.2 10.5 12.5V17.5C10.5 17.8 10.3 18 10 18H3C2.7 18 2.5 17.8 2.5 17.5V12.5C2.5 12.2 2.7 12 3 12Z" stroke="url(#paint3_linear_1036_1071)"/>
+		<Path fill="none" d="M13 9H17C17.3 9 17.5 9.2 17.5 9.5V17.5C17.5 17.8 17.3 18 17 18H13C12.7 18 12.5 17.8 12.5 17.5V9.5C12.5 9.2 12.7 9 13 9Z" stroke="url(#paint4_linear_1036_1071)"/>
 		<Defs>
 			<LinearGradient id="paint0_linear_1036_1071" x1="10" y1="0.99" x2="10" y2="19.99" gradientUnits="userSpaceOnUse">
 				<stop stopColor="#ED6F57"/>

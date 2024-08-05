@@ -48,6 +48,7 @@ import {
 	_align,
 	_px,
 	boxValues,
+	changeActiveStyle,
 	getCustomPostTypeSlugs,
 	hex2rgba
 } from '../../helpers/helper-functions.js';
@@ -58,6 +59,18 @@ import {
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 import { domReady } from '../../helpers/frontend-helper-functions';
+
+const styles = [
+	{
+		label: __( 'Default', 'otter-blocks' ),
+		value: 'default',
+		isDefault: true
+	},
+	{
+		label: __( 'Boxed', 'otter-blocks' ),
+		value: 'boxed'
+	}
+];
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -212,8 +225,22 @@ const Edit = ({
 	const { responsiveGetAttributes } = useResponsiveAttributes();
 
 	useEffect( () => {
+		let isNew = false;
+		if ( undefined === attributes.id ) {
+			isNew = true;
+		}
+
 		const fetch = async() => {
 			setSlugs( await getCustomPostTypeSlugs() );
+
+			if ( isNew ) {
+
+				// We want to set the default style to boxed for new blocks.
+				// We keep it inside async function as keeping it outside was not updating the block style.
+				// Ref: https://github.com/Codeinwp/otter-internals/issues/220
+				const classes = changeActiveStyle( attributes?.className, styles, 'boxed' );
+				setAttributes({ className: classes });
+			}
 		};
 		fetch();
 	}, []);

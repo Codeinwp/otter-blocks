@@ -69,16 +69,23 @@ class Posts_Grid_Block {
 			}
 
 			$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
-			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $id ), $size );
+			$thumb_id  = get_post_thumbnail_id( $id );
+			$thumbnail = wp_get_attachment_image_src( $thumb_id, $size );
 
 			$list_items_markup .= '<div class="o-posts-grid-post-blog o-posts-grid-post-plain"><div class="o-posts-grid-post">';
 
 			if ( isset( $attributes['displayFeaturedImage'] ) && $attributes['displayFeaturedImage'] ) {
 				if ( $thumbnail ) {
+					$image_alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
+
+					if ( ! $image_alt ) {
+						$image_alt = get_the_title( $id );
+					}
+
 					$list_items_markup .= sprintf(
 						'<div class="o-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 						esc_url( get_the_permalink( $id ) ),
-						wp_get_attachment_image( get_post_thumbnail_id( $id ), $size )
+						wp_get_attachment_image( $thumb_id, $size, false, array( 'alt' => $image_alt ) )
 					);
 				}
 			}
@@ -284,7 +291,14 @@ class Posts_Grid_Block {
 		$html      = '';
 		$id        = $post instanceof \WP_Post ? $post->ID : $post;
 		$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
-		$thumbnail = wp_get_attachment_image( get_post_thumbnail_id( $id ), $size );
+		$thumb_id  = get_post_thumbnail_id( $id );
+		$image_alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
+
+		if ( ! $image_alt ) {
+			$image_alt = get_the_title( $id );
+		}
+
+		$thumbnail = wp_get_attachment_image( $thumb_id, $size, false, array( 'alt' => $image_alt ) );
 
 		if ( $thumbnail ) {
 			$html .= sprintf(
@@ -420,7 +434,7 @@ class Posts_Grid_Block {
 		$tag = sanitize_key( $tag );
 		
 		if ( ! in_array( $tag, array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ) {
-			$tag = 'h5';
+			$tag = 'h4';
 		}
 
 		return sprintf(

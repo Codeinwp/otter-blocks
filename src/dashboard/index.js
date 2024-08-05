@@ -23,6 +23,7 @@ import Header from './components/Header.js';
 import Main from './components/Main.js';
 import Footer from './components/Footer.js';
 import useSettings from '../blocks/helpers/use-settings.js';
+import NeveSidebarUpsell from './components/NeveSidebarUpsell.js';
 
 if ( undefined === window.otterUtils ) {
 	window.otterUtils = {};
@@ -78,7 +79,7 @@ const App = () => {
 				currentTab={ currentTab }
 				setTab={ setTab }
 			/>
-
+			<NeveSidebarUpsell />
 			<Footer />
 		</Fragment>
 	);
