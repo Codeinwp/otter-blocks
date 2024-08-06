@@ -146,7 +146,12 @@ class Form_Server {
 		 * Register utility actions that triggers after the main submit action. Actions that clean the data, generated files or auxiliary actions.
 		 */
 		add_action( 'otter_form_after_submit', array( $this, 'after_submit' ) );
-		add_action( 'otter_form_after_submit', array( $this, 'send_error_email_to_admin' ), 999 );
+
+		/**
+		 * Register utility actions for logging issues that occurred during the form submission.
+		 */
+		add_action( 'otter_form_issues_handler', array( $this, 'log_issues' ) );
+		add_action( 'otter_form_issues_handler', array( $this, 'send_error_email_to_admin' ) );
 
 		add_action( 'otter_form_on_submission_confirmed', array( $this, 'apply_main_provider' ) );
 		add_filter( 'otter_form_session_confirmation', array( $this, 'verify_confirmation_session' ) );
@@ -280,14 +285,22 @@ class Form_Server {
 		$form_data->set_form_options( $form_options );
 		$form_data = self::pull_fields_options_for_form( $form_data );
 
+		/**
+		 * The flow follows the railway programming pattern.
+		 * 
+		 * If one the steps fails, the next steps will not be executed.
+		 * 
+		 * For functions that are in the same hook, the order is important. E.g.: do not create a stripe session if some other validation fails.
+		 */
 		try {
-
-
-
 			// Check bot validation.
 			$form_data = apply_filters( 'otter_form_anti_spam_validation', $form_data );
 
-			// Prepare the form data.
+			/**
+			 * Apply additional actions before using the main handler function for submitting.
+			 *
+			 * @var Form_Data_Request $form_data
+			 */
 			$form_data = apply_filters( 'otter_form_data_preparation', $form_data );
 
 			// Check if $form_data has function get_error_code. Otherwise, it will throw an error.
@@ -298,6 +311,7 @@ class Form_Server {
 
 			if ( $res->has_error() || $form_data->has_error() ) {
 				$res->set_code( $form_data->get_error_code() );
+				do_action( 'otter_form_issues_handler', $form_data );
 			} else {
 
 				if ( ! empty( $form_options->get_redirect_link() ) ) {
@@ -325,10 +339,12 @@ class Form_Server {
 		} catch ( Exception $e ) {
 			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR )
 				->add_reason( $e->getMessage() );
-			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
-			$this->send_error_email( $form_data );
+			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$form_data->add_warning( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 		} finally {
 			$form_data->append_metadata( $res );
+
+			do_action( 'otter_form_issues_handler', $form_data );
 			return $res->build_response();
 		}
 	}
@@ -460,17 +476,12 @@ class Form_Server {
 			// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
 			$email_was_send = wp_mail( $to, $email_subject, $email_body, $headers, $attachments );
 			if ( ! $email_was_send ) {
-				$is_warning = Pro::is_pro_active() && strstr( $form_options->get_submissions_save_location(), 'database' );
-
-				if ( $is_warning ) {
-					$form_data->add_warning( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
-				} else {
-					$form_data->set_error( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
-				}
+				$form_data->add_warning( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
+				$form_data->set_error( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
 			}
 		} catch ( Exception  $e ) {
-			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
-			$this->send_error_email( $form_data );
+			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$form_data->add_warning( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 		}
 
 		return $form_data;
@@ -521,6 +532,38 @@ class Form_Server {
 			if ( $send_email ) {
 				$this->send_error_email( $form_data );
 			}
+		}
+	}
+
+	/**
+	 * Logs the issues that occurred during the form submission.
+	 *
+	 * @param Form_Data_Request|null $form_data The form request data.
+	 * @return void
+	 */
+	public function log_issues( $form_data ) {
+
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		if ( ! $form_data instanceof Form_Data_Request ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( '[Otter Blocks][Form Block] The Form data is not a valid instance of Form_Data_Request.' );
+			return;
+		}
+
+		if ( ! $form_data->has_warning() ) {
+			return;
+		}
+
+		foreach ( $form_data->get_warning_codes() as $warning ) {
+			$issue  = Form_Data_Response::get_error_code_message( $warning['code'] );
+			$issue .= ! empty( $warning['details'] ) ? '(' . $warning['details'] . ')' : '';
+			$issue .= '| Form data received: ' . wp_json_encode( $form_data->dump_data() );
+
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( '[Otter Blocks][Form Block] Issue: ' . $issue );
 		}
 	}
 
@@ -817,8 +860,8 @@ class Form_Server {
 				$form_data->set_error( $error_code );
 			}
 		} catch ( Exception $e ) {
-			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
-			$this->send_error_email( $form_data );
+			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$form_data->add_warning( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 		} finally {
 			return $form_data;
 		}
