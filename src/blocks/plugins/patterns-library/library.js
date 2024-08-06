@@ -89,9 +89,25 @@ const Library = ({
 			if ( 'otter-blocks' === category?.name ) {
 				category.label = __( 'All', 'otter-blocks' );
 			}
+
+			if ( 'header' === category?.name ) {
+				category.label = __( 'Hero', 'otter-blocks' );
+			}
 		});
 
 		categories.sort( ( a, b ) => a.label.localeCompare( b.label ) );
+
+		const footerCategory = categories.find( category => 'footer' === category.name );
+
+		if ( footerCategory ) {
+			categories.push( categories.splice( categories.indexOf( footerCategory ), 1 )[0]);
+		}
+
+		const featuredCategory = categories.find( category => 'featured' === category.name );
+
+		if ( featuredCategory ) {
+			categories.splice( categories.indexOf( featuredCategory ), 1 );
+		}
 
 		return {
 			patterns: patterns.filter( pattern => pattern.categories.includes( 'otter-blocks' ) ),
