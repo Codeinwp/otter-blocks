@@ -124,4 +124,16 @@ test.describe( 'AI Block', () => {
 		await expect( page.getByText( 'Discover the Next Frontier' ).nth( 0 ) ).toBeVisible(); // The header in the AI block content.
 		await expect( page.getByText( 'Discover the Next Frontier' ).nth( 1 ) ).toBeVisible(); // The header inserted below.
 	});
+
+	test( 'use last prompt on text transform actions from history list', async({ editor, page }) => {
+		const aiBlock = await editor.insertBlock({
+			name: 'themeisle-blocks/content-generator',
+			attributes: {
+				promptID: 'textTransformation',
+				resultHistory: [{ result: '\u003ch2\u003eUnlock the Power of Words\u003c/h2\u003e\n\u003cp\u003eAre you ready to captivate your audience and drive conversions like never before? Let me weave magic with words that resonate, inspire, and persuade. From attention-grabbing headlines to compelling calls-to-action, I\'ve got you covered. Let\'s elevate your content and unleash its full potential.\u003c/p\u003e', meta: { usedToken: 380, prompt: 'Expand or elaborate on the following: Make a nice text' }}]
+			}
+		});
+
+		await expect( page.getByText( 'Expand or elaborate on the following: Make a nice text' ) ).toBeVisible();
+	});
 });
