@@ -266,6 +266,14 @@ class Advanced_Column_CSS extends Base_CSS {
 				'query'      => '@media ( max-width: 960px )',
 				'properties' => array(
 					array(
+						'property' => 'flex-basis',
+						'value'    => 'columnWidthTablet',
+						'unit'     => '%',
+						'format'   => function( $value, $attrs ) {
+							return floatval( $value );
+						},
+					),
+					array(
 						'property'  => 'padding-top',
 						'value'     => 'paddingTablet',
 						'format'    => function( $value, $attrs ) {

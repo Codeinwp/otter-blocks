@@ -170,6 +170,7 @@ const Edit = ({
 	let background, overlayBackground, borderStyle, borderRadiusStyle, boxShadowStyle;
 
 	let	stylesheet = {
+		flexBasis: `${ getValue( 'columnWidth' ) }%`,
 		paddingTop: getValue( 'padding' )?.top,
 		paddingRight: getValue( 'padding' )?.right,
 		paddingBottom: getValue( 'padding' )?.bottom,
@@ -183,6 +184,7 @@ const Edit = ({
 
 	if ( isTablet || isMobile ) {
 		const tabletStyle = pickBy({
+			flexBasis: getValue( 'columnWidthTablet' ) ? `${ getValue( 'columnWidthTablet' ) }%` : '50%',
 			paddingTop: getValue( 'paddingTablet' )?.top,
 			paddingRight: getValue( 'paddingTablet' )?.right,
 			paddingBottom: getValue( 'paddingTablet' )?.bottom,
@@ -265,7 +267,6 @@ const Edit = ({
 	};
 
 	const style = {
-		flexBasis: `${ attributes.columnWidth }%`,
 		...stylesheet,
 		...background,
 		...borderStyle,

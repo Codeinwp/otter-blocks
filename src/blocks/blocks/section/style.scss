@@ -31,6 +31,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 .wp-block-themeisle-blocks-advanced-columns {
 	--background: transparent;
 	--columns-width: 100%;
+	--columns-width-tablet: 50%;
 	--horizontal-align: unset;
 
 	background: var( --background );
@@ -346,7 +347,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			display: flex;
 			flex-basis: 100%;
 			word-break: keep-all;
-			max-width: var( --columns-width );
+			max-width: var( --columns-width-tablet );
 
 			.wp-block-themeisle-blocks-advanced-column {
 				position: relative;

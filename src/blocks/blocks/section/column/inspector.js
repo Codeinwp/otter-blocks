@@ -76,14 +76,39 @@ const Inspector = ({
 
 	const [ tab, setTab ] = useTabSwitch( attributes.id, 'layout' );
 
+	const getWidthField = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return 'columnWidth';
+		case 'Tablet':
+			return 'columnWidthTablet';
+		default:
+			return undefined;
+		}
+	};
+
+	const getWidth = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return getValue( 'columnWidth' );
+		case 'Tablet':
+			return getValue( 'columnWidthTablet' ) ?? 50;
+		default:
+			return undefined;
+		}
+	};
+
 	const changeColumnWidth = value => {
 		const width = value || 10;
 		const nextWidth = ( Number( currentBlockWidth.current ) - width ) + Number( nextBlockWidth.current );
 		currentBlockWidth.current = width;
 		nextBlockWidth.current = nextWidth;
-		setAttributes({ columnWidth: width.toFixed( 2 ) });
+
+		const attributeTag = getWidthField();
+
+		setAttributes({ [attributeTag]: width.toFixed( 2 ) });
 		updateBlockAttributes( nextBlock.current, {
-			columnWidth: nextWidth.toFixed( 2 )
+			[attributeTag]: nextWidth.toFixed( 2 )
 		});
 	};
 
@@ -226,14 +251,19 @@ const Inspector = ({
 						title={ __( 'Column Structure', 'otter-blocks' ) }
 					>
 						{ ( 1 < parentBlock.innerBlocks.length ) && (
-							<RangeControl
-								label={ __( 'Column Width', 'otter-blocks' ) }
-								value={ Number( attributes.columnWidth ) }
-								onChange={ changeColumnWidth }
-								step={ 0.1 }
-								min={ 10 }
-								max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
-							/>
+							<ResponsiveControl
+								label={ __( 'Screen Type', 'otter-blocks' ) }
+							>
+								<RangeControl
+									label={ __( 'Column Width', 'otter-blocks' ) }
+									value={ Number( getWidth() ) }
+									onChange={ changeColumnWidth }
+									step={ 0.1 }
+									min={ 10 }
+									max={ 100 }
+									disabled={ 'Mobile' === getView }
+								/>
+							</ResponsiveControl>
 						) }
 
 						<SelectControl
