@@ -63,6 +63,10 @@ class Posts_CSS extends Base_CSS {
 						'value'    => 'backgroundColor',
 					),
 					array(
+						'property' => '--background-overlay',
+						'value'    => 'backgroundOverlay',
+					),
+					array(
 						'property' => '--border-color',
 						'value'    => 'borderColor',
 					),
@@ -203,6 +207,10 @@ class Posts_CSS extends Base_CSS {
 						'condition'      => function( $attrs ) {
 							return isset( $attrs['imageBoxShadow'] ) && true === $attrs['imageBoxShadow']['active'];
 						},
+					),
+					array(
+						'property' => '--image-ratio',
+						'value'    => 'imageRatio',
 					),
 					array(
 						'property' => '--border-width',
@@ -395,6 +403,38 @@ class Posts_CSS extends Base_CSS {
 			)
 		);
 
+		if ( isset( $block['attrs']['cardBorderRadius'] ) && is_array( $block['attrs']['cardBorderRadius'] ) ) {
+			$border_radius_properties = array(
+				'top'    => '--border-radius-start-start',
+				'right'  => '--border-radius-start-end',
+				'bottom' => '--border-radius-end-start',
+				'left'   => '--border-radius-end-end',
+			);
+		
+			$properties = array_map(
+				function( $position, $css_variable ) {
+					return array(
+						'property'  => $css_variable,
+						'value'     => 'cardBorderRadius',
+						'format'    => function( $value, $attrs ) use ( $position ) {
+							return $value[ $position ];
+						},
+						'condition' => function( $attrs ) {
+							// @phpstan-ignore-next-line
+							return isset( $attrs['className'] ) && strpos( $attrs['className'], 'is-style-tiled' ) !== false;
+						},
+					);
+				},
+				array_keys( $border_radius_properties ),
+				$border_radius_properties
+			);
+		
+			$css->add_item(
+				array(
+					'properties' => $properties,
+				)
+			);
+		}
 
 		$style = $css->generate();
 

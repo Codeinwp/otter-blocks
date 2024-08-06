@@ -51,18 +51,7 @@ import {
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { useTabSwitch } from '../../helpers/block-utility';
 import { makeBox } from '../../plugins/copy-paste/utils';
-
-const styles = [
-	{
-		label: __( 'Default', 'otter-blocks' ),
-		value: 'default',
-		isDefault: true
-	},
-	{
-		label: __( 'Boxed', 'otter-blocks' ),
-		value: 'boxed'
-	}
-];
+import { styles } from './constants.js';
 
 const defaultFontSizes = [
 	{
@@ -104,6 +93,7 @@ const Inspector = ({
 	isLoading
 }) => {
 	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
+	const style = getActiveStyle( styles, attributes?.className );
 
 	const {
 		slugs
@@ -443,6 +433,15 @@ const Inspector = ({
 								label: __( 'Border', 'otter-blocks' ),
 								isShownByDefault: false
 							},
+							...( 'tiled' === style ? [
+								{
+									value: attributes.backgroundOverlay,
+									onChange: backgroundOverlay => setAttributes({ backgroundOverlay }),
+									label: __( 'Background Overlay', 'otter-blocks' ),
+									enableAlpha: true,
+									isShownByDefault: false
+								}
+							] : []),
 							...( attributes.hasPagination ? [
 								{
 									value: attributes.pagColor,
@@ -644,6 +643,7 @@ const Inspector = ({
 							values={ attributes.cardBorderRadius ?? makeBox( '0px' )  }
 							onChange={ cardBorderRadius => setAttributes({ cardBorderRadius }) }
 							id="o-border-raduis-box"
+							allowReset={ false }
 						/>
 
 						{
