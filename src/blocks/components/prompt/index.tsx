@@ -156,6 +156,24 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		getEmbeddedPrompt();
 	}, []);
 
+	/**
+	 * Use the last conversation as the default prompt value for the text transformation actions.
+	 */
+	useEffect( () => {
+		if (
+			! props.promptID ||
+			'textTransformation' !== props.promptID ||
+			! props.resultHistory
+		) {
+			return;
+		}
+
+		const lastConversation = resultHistory?.[ resultHistory.length - 1 ]?.meta?.prompt;
+		if ( lastConversation ) {
+			onValueChange( lastConversation );
+		}
+	}, []);
+
 	useEffect( () => {
 		if ( 'loading' === status || 'present' === apiKeyStatus ) {
 			return;

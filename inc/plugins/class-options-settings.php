@@ -745,6 +745,63 @@ class Options_Settings {
 				'default'      => true,
 			)
 		);
+		
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_prompt_actions',
+			array(
+				'type'              => 'array',
+				'description'       => __( 'The prompt actions list of toolbar.', 'otter-blocks' ),
+				'sanitize_callback' => function( $array ) {
+					return array_map(
+						function( $item ) {
+							if ( isset( $item['title'] ) ) {
+								$item['title'] = sanitize_text_field( $item['title'] );
+							}
+							if ( isset( $item['prompt'] ) ) {
+								$item['prompt'] = sanitize_text_field( $item['prompt'] );
+							}
+							return $item;
+						},
+						$array
+					);
+				},
+				'default'           => array(
+					array(
+						'title'  => 'Fix Grammar',
+						'prompt' => 'Fix any grammatical errors in the following: {text_input}',
+					),
+					array(
+						'title'  => 'Rephrase',
+						'prompt' => 'Rephrase the following following: {text_input}',
+					),
+					array(
+						'title'  => 'Make Shorter',
+						'prompt' => 'Summarize or shorten the following: {text_input}',
+					),
+					array(
+						'title'  => 'Make Longer',
+						'prompt' => 'Expand or elaborate on the following: {text_input}',
+					),
+				),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'  => 'array',
+						'items' => array(
+							'type'       => 'object',
+							'properties' => array(
+								'title'  => array(
+									'type' => 'string',
+								),
+								'prompt' => array(
+									'type' => 'string',
+								),
+							),
+						),
+					),
+				),
+			)
+		);
 	}
 
 	/**

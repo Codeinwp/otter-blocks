@@ -29,7 +29,7 @@ import { BlockControls } from '@wordpress/block-editor';
  */
 import { aiGeneration } from '../../helpers/icons';
 import './editor.scss';
-import { PromptsData, injectActionIntoPrompt, retrieveEmbeddedPrompt, sendPromptToOpenAI } from '../../helpers/prompt';
+import { PromptsData, editLastConversation, injectActionIntoPrompt, retrieveEmbeddedPrompt, sendPromptToOpenAI, tryInjectIntoTemplate } from '../../helpers/prompt';
 import useSettings from '../../helpers/use-settings';
 import { openAiAPIKeyName } from '../../components/prompt';
 import { insertBlockBelow } from '../../helpers/block-utility';
@@ -79,6 +79,7 @@ const AIToolbar = ({
 	const [ hasAPIKey, setHasAPIKey ] = useState<boolean>( false );
 	const [ isProcessing, setIsProcessing ] = useState<Record<string, boolean>>({});
 	const [ displayError, setDisplayError ] = useState<string|undefined>( undefined );
+	const [ customActions, setCustomActions ] = useState<{title: string, prompt: string}[]>([]);
 
 	// Get the create notice function from the hooks api.
 	const { createNotice } = useDispatch( 'core/notices' );
@@ -103,6 +104,7 @@ const AIToolbar = ({
 		if ( 'loaded' === status && ! hasAPIKey ) {
 			const key = getOption( openAiAPIKeyName ) as string;
 			setHasAPIKey(  Boolean( key ) && 0 < key.length );
+			setCustomActions( getOption( 'themeisle_blocks_settings_prompt_actions' ) as {title: string, prompt: string}[]);
 		}
 	}, [ status, getOption ]);
 
@@ -123,7 +125,7 @@ const AIToolbar = ({
 		setDisplayError( undefined );
 	}, [ displayError ]);
 
-	const generateContent = async( content: string, actionKey: string, callback: Function = () =>{}) => {
+	const generateContent = async( content: string, actionKey: string, callback: Function = () =>{}, actionIndex: number = -1 ) => {
 
 		if ( ! content ) {
 			setDisplayError( __( 'No content detected in selected block.', 'otter-blocks' ) );
@@ -135,7 +137,7 @@ const AIToolbar = ({
 			embeddedPromptsCache = response?.prompts ?? [];
 		}
 
-		const embeddedPrompt = embeddedPromptsCache?.find( ( prompt ) => 'textTransformation' === prompt.otter_name );
+		let embeddedPrompt = embeddedPromptsCache?.find( ( prompt ) => 'textTransformation' === prompt.otter_name );
 
 		if ( ! embeddedPrompt ) {
 			setDisplayError( __( 'Something when wrong retrieving the prompts.', 'otter-blocks' ) );
@@ -157,6 +159,18 @@ const AIToolbar = ({
 		setIsProcessing( prevState => ({ ...prevState, [ actionKey ]: true }) );
 
 		window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'ai-toolbar', featureValue: actionKey }, { consent: true });
+
+		embeddedPrompt = injectActionIntoPrompt(
+			embeddedPrompt,
+			action
+		);
+
+		if ( -1 !== actionIndex && customActions?.[ actionIndex ]?.prompt ) {
+
+			// Overwrite the prompt with the custom action.
+			embeddedPrompt = editLastConversation( embeddedPrompt, ( _ ) => tryInjectIntoTemplate( customActions![ actionIndex ]!.prompt, content ) );
+			window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'ai-toolbar-custom-action', featureValue: customActions?.[ actionIndex ]?.title }, { consent: true });
+		}
 
 		sendPromptToOpenAI(
 			content,
@@ -192,7 +206,7 @@ const AIToolbar = ({
 						result: response?.choices?.[0]?.message.content ?? '',
 						meta: {
 							usedToken: response?.usage.total_tokens,
-							prompt: ''
+							prompt: embeddedPrompt.messages?.[ embeddedPrompt.messages.length - 1 ]?.content
 						}
 					}],
 					replaceTargetBlock: {
@@ -213,12 +227,12 @@ const AIToolbar = ({
 		});
 	};
 
-	const ActionMenuItem = ( args: { actionKey: string, children: React.ReactNode, callback: Function }) => {
+	const ActionMenuItem = ( args: { actionKey: string, children: React.ReactNode, callback: Function, actionIndex?: number }) => {
 		return (
 			<Disabled isDisabled={Object.values( isProcessing ).some( x => x )}>
 				<MenuItem
 					onClick={ () => {
-						generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), args.actionKey, () => args.callback?.( args.actionKey ) );
+						generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), args.actionKey, () => args.callback?.( args.actionKey ), args?.actionIndex );
 					}}
 				>
 					{ args.children }
@@ -245,53 +259,13 @@ const AIToolbar = ({
 				)
 			}
 			<MenuGroup>
-				<ExternalLink className='o-menu-item-alignment' href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions" target="_blank" rel="noopener noreferrer">
-					{
-						__( 'Edit Prompts', 'otter-blocks' )
-					}
-				</ExternalLink>
-			</MenuGroup>
-			<MenuGroup>
-				<span className="o-menu-item-header o-menu-item-alignment">{__( 'Writing', 'otter-blocks' )}</span>
-				<ActionMenuItem actionKey='otter_action_generate_title' callback={onClose}>
-					{ __( 'Generate a heading', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_continue_writing' callback={onClose}>
-					{ __( 'Continue writing', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_summarize' callback={onClose}>
-					{ __( 'Summarize it', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_make_shorter' callback={onClose}>
-					{ __( 'Make it shorter', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_make_longer' callback={onClose}>
-					{ __( 'Make it longer', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_make_descriptive' callback={onClose}>
-					{ __( 'Make it more descriptive', 'otter-blocks' ) }
-				</ActionMenuItem>
-			</MenuGroup>
-			<MenuGroup>
-				<span className="o-menu-item-header o-menu-item-alignment">{__( 'Tone', 'otter-blocks' )}</span>
-				<ActionMenuItem actionKey='otter_action_tone_professional' callback={onClose}>
-					{ __( 'Professional', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_tone_friendly' callback={onClose}>
-					{ __( 'Friendly', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_tone_humorous' callback={onClose}>
-					{ __( 'Humorous', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_tone_confident' callback={onClose}>
-					{ __( 'Confident', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_tone_persuasive' callback={onClose}>
-					{ __( 'Persuasive', 'otter-blocks' ) }
-				</ActionMenuItem>
-				<ActionMenuItem actionKey='otter_action_tone_casual' callback={onClose}>
-					{ __( 'Casual', 'otter-blocks' ) }
-				</ActionMenuItem>
+				{
+					customActions.map( ( action, index ) => (
+						<ActionMenuItem key={index} actionIndex={index} actionKey={'otter_action_prompt'} callback={onClose}>
+							{ action.title }
+						</ActionMenuItem>
+					) )
+				}
 			</MenuGroup>
 			<MenuGroup>
 				<ActionMenuItem actionKey='otter_action_prompt' callback={onClose}>
@@ -299,7 +273,14 @@ const AIToolbar = ({
 				</ActionMenuItem>
 			</MenuGroup>
 			<MenuGroup>
-				<ExternalLink className='o-menu-item-alignment' href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions" target="_blank" rel="noopener noreferrer">
+				<ExternalLink className='o-menu-item-alignment' href={`${window.themeisleGutenberg?.optionsPath}#integrations`} rel="noopener noreferrer">
+					{
+						__( 'Edit Custom Prompts', 'otter-blocks' )
+					}
+				</ExternalLink>
+			</MenuGroup>
+			<MenuGroup>
+				<ExternalLink className='o-menu-item-alignment' href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions"rel="noopener noreferrer">
 					{
 						__( 'Go to docs', 'otter-blocks' )
 					}
