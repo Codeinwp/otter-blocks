@@ -53,7 +53,6 @@ class Test_Post_Grid_Block extends WP_UnitTestCase {
 		'displayComments' => true,
 		'displayPostCategory' => false,
 		'displayReadMoreLink' => false,
-		'cropImage' => false,
 		'boxShadow' => array(
 			'active' => false,
 			'colorOpacity' => 50,

@@ -12,17 +12,18 @@ import { useSelect } from '@wordpress/data';
 
 import { isEmpty } from 'lodash';
 
-const Thumbnail = ({
-	id,
-	link,
-	alt,
-	size,
-	imgStyle
-}) => {
+export const useThumbnail = ( id, size, alt ) => {
 	const {
 		featuredImage,
 		altText
 	} = useSelect( select => {
+		if ( ! id ) {
+			return {
+				featuredImage: null,
+				altText: null
+			};
+		}
+
 		const image = select( 'core' ).getMedia( id, { context: 'view' });
 
 		const featuredImage = image ?
@@ -39,6 +40,20 @@ const Thumbnail = ({
 		};
 	}, [ size, id ]);
 
+	return {
+		featuredImage,
+		altText
+	};
+};
+
+export const Thumbnail = ({
+	id,
+	link,
+	alt,
+	size,
+	imgStyle
+}) => {
+	const { featuredImage, altText } = useThumbnail( id, size, alt );
 
 	if ( null === featuredImage ) {
 		return <Fragment />;
@@ -52,5 +67,3 @@ const Thumbnail = ({
 		</div>
 	);
 };
-
-export default Thumbnail;

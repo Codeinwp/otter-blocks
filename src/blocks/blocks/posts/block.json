@@ -110,9 +110,8 @@
 			"type": "boolean",
 			"default": false
 		},
-		"cropImage": {
-			"type": "boolean",
-			"default": false
+		"imageRatio": {
+			"type": "string"
 		},
 		"customTitleFontSize": {
 			"type": [ "string", "number" ]
@@ -145,6 +144,9 @@
 			"type": "string"
 		},
 		"backgroundColor": {
+			"type": "string"
+		},
+		"backgroundOverlay": {
 			"type": "string"
 		},
 		"borderColor": {
