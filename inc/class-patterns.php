@@ -287,10 +287,6 @@ class Patterns {
 				'minimum' => 5.8,
 			),
 			array(
-				'slug'    => 'fitness-blog',
-				'minimum' => 5.8,
-			),
-			array(
 				'slug'    => 'fitness-groups',
 				'minimum' => 5.8,
 			),

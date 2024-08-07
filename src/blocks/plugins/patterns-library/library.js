@@ -97,17 +97,33 @@ const Library = ({
 
 		categories.sort( ( a, b ) => a.label.localeCompare( b.label ) );
 
+		// Move footer category to the end.
 		const footerCategory = categories.find( category => 'footer' === category.name );
 
 		if ( footerCategory ) {
 			categories.push( categories.splice( categories.indexOf( footerCategory ), 1 )[0]);
 		}
 
+		// Remove featured category.
 		const featuredCategory = categories.find( category => 'featured' === category.name );
 
 		if ( featuredCategory ) {
 			categories.splice( categories.indexOf( featuredCategory ), 1 );
 		}
+
+		const packCategories = categories.filter( category => category.name.includes( '-pack' ) );
+
+		packCategories.forEach( packCategory => {
+			const index = categories.indexOf( packCategory );
+			if ( -1 < index ) {
+				categories.splice( index, 1 );
+			}
+		});
+
+		// Adding all the Template Packs to the top.
+		const allCategoryIndex = categories.findIndex( category => category.label === __( 'All', 'otter-blocks' ) );
+
+		categories.splice( allCategoryIndex + 1, 0, ...packCategories );
 
 		return {
 			patterns: patterns.filter( pattern => pattern.categories.includes( 'otter-blocks' ) ),
