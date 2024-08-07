@@ -25,7 +25,7 @@ const Save = ({
 				<div class="o-timeline-icon">
 					{
 						attributes.hasIcon && (
-							'image' === attributes.iconType && isURL ? (
+							'image' === attributes.iconType && attributes.icon ? (
 								<img src={ attributes.icon } />
 							) : (
 								'themeisle-icons' === attributes.iconType && attributes.icon && Icon !== undefined ? (
