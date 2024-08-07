@@ -343,6 +343,9 @@ class Form_Data_Response {
 	 * @since 2.1.7
 	 */
 	public function process_error_code() {
+		if ( ! $this->has_error() ) {
+			return;
+		}
 		$this->add_reason( self::get_error_code_message( $this->response['code'] ) );
 	}
 
