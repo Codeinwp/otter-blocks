@@ -24,3 +24,4 @@ import './stripe-checkout/index.js';
 import './tabs/index.js';
 import './deprecated/index.js';
 import './content-generator/index.js';
+import './timeline/index.js';
