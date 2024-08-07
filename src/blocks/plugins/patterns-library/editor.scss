@@ -79,6 +79,16 @@
 		}
 	}
 
+	&__preview {
+		.block-editor-block-preview__content {
+			max-height: none !important;
+
+			iframe {
+				max-height: none !important;
+			}
+		}
+	}
+
 	&__template {
 		border: 1px solid #e0e0e0;
 		box-shadow: 0 0 0 1px #e0e0e0;

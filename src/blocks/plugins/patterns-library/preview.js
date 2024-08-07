@@ -16,10 +16,13 @@ const Preview = ({
 }) => {
 	return (
 		<>
-			<div className="o-library___preview">
+			<div className="o-library__preview">
 				<BlockPreview
 					blocks={ parse( content ) }
 					viewportWidth={ 1400 }
+					additionalStyles={ [
+						{ css: ':root { --parent-vh: 850px; }' }
+					] }
 				/>
 			</div>
 
