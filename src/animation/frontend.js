@@ -220,6 +220,10 @@ const animateElements = () => {
 				element.style.animationName = animationName;
 			});
 		}
+
+		element.addEventListener( 'animationend', () => {
+			element.classList.remove( 'animated' );
+		});
 	}
 
 	/** @type {Array<HTMLDivElement>} */
