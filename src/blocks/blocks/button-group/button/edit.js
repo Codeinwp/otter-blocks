@@ -42,7 +42,6 @@ const { attributes: defaultAttributes } = metadata;
  * @returns
  */
 const Edit = ( props ) => {
-
 	const {
 		attributes,
 		setAttributes,
@@ -118,9 +117,7 @@ const Edit = ( props ) => {
 					}
 				</style>
 				{ 'none' !== attributes.iconType ? (
-					<a
-						className="wp-block-button__link"
-					>
+					<div className="wp-block-button__link">
 						{ ( 'left' === attributes.iconType || 'only' === attributes.iconType ) && (
 							'themeisle-icons' === attributes.library && attributes.icon ? (
 								<Icon
@@ -160,11 +157,9 @@ const Edit = ( props ) => {
 								<i className={ `${ attributes.prefix } fa-fw fa-${ attributes.icon } margin-left` }></i>
 							)
 						) }
-					</a>
+					</div>
 				) : (
-					<a
-						className="wp-block-button__link"
-					>
+					<div className="wp-block-button__link">
 						<RichText
 							placeholder={ __( 'Add text…', 'otter-blocks' ) }
 							value={ attributes.text }
@@ -172,7 +167,7 @@ const Edit = ( props ) => {
 							tagName="span"
 							withoutInteractiveFormatting
 						/>
-					</a>
+					</div>
 				) }
 			</div>
 		</Fragment>
