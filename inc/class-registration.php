@@ -762,6 +762,8 @@ class Registration {
 			'tabs',
 			'tabs-item',
 			'testimonials',
+			'timeline',
+			'timeline-item',
 		);
 
 		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
@@ -780,6 +782,7 @@ class Registration {
 				'font-awesome-icons' => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'icon-list-item'     => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'timeline-item'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 			)
 		);
 
@@ -942,6 +945,13 @@ class Registration {
 
 				return $block_content;
 			}
+		}
+
+		if ( 'themeisle-blocks/timeline-item' === $block['blockName'] &&
+			( isset( $block['innerHTML'] ) && false !== strpos( $block['innerHTML'], 'fa-' ) )
+		) {
+			self::$is_fa_loaded = true;
+			return $block_content;
 		}
 
 		return $block_content;
