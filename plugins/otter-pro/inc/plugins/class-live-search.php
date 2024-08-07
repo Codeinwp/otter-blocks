@@ -45,6 +45,10 @@ class Live_Search {
 		$post_types_data = '';
 		if ( isset( $block['attrs']['otterSearchQuery']['post_type'] ) ) {
 			$post_types_data = 'data-post-types=' . wp_json_encode( $block['attrs']['otterSearchQuery']['post_type'] );
+
+			if ( count( $block['attrs']['otterSearchQuery']['post_type'] ) === 1 && in_array( 'post', $block['attrs']['otterSearchQuery']['post_type'] ) ) {
+				$post_types_data .= ' data-cat="' . esc_attr( $block['attrs']['otterSearchQuery']['cat'] ) . '"';
+			}
 		}
 
 		// Insert hidden fields to filter core's search results.
@@ -54,7 +58,7 @@ class Live_Search {
 				$query_params_markup .= sprintf(
 					'<input type="hidden" name="o_%s" value="%s" />',
 					esc_attr( $param ),
-					esc_attr( implode( ',', $value ) )
+					esc_attr( is_array( $value ) ? implode( ',', $value ) : $value )
 				);
 			}
 		}
