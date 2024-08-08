@@ -629,7 +629,7 @@ const Inspector = ({
 					>
 						<UnitContol
 							label={ __( 'Width', 'otter-blocks' ) }
-							value={ attributes.borderWidth ?? '0px' }
+							value={ attributes.borderWidth }
 							onChange={ borderWidth => setAttributes({ borderWidth }) }
 						/>
 
