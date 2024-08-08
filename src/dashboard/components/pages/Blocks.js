@@ -128,6 +128,13 @@ const otterBlocks = [
 		'docLink': 'https://docs.themeisle.com/article/1675-location-blocks#maps'
 	},
 	{
+		'slug': 'themeisle-blocks/modal',
+		'name': __( 'Modal', 'otter-blocks' ),
+		'icon': popupIcon,
+		'docLink': 'https://docs.themeisle.com/article/2050-modal-block',
+		'isPro': true
+	},
+	{
 		'slug': 'themeisle-blocks/lottie',
 		'name': __( 'Lottie Animation', 'otter-blocks' ),
 		'icon': lottieIcon,
