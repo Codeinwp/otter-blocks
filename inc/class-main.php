@@ -525,8 +525,6 @@ class Main {
 	 * Disable canonical redirect to make Posts pagination feature work.
 	 * 
 	 * @param \WP_Query $request The query object.
-	 * 
-	 * @return \WP_Query
 	 */
 	public function pagination_support( $request ) {
 		if (
@@ -540,7 +538,6 @@ class Main {
 		) {
 			add_filter( 'redirect_canonical', '__return_false' );
 		}
-		return $request;
 	}
 
 
