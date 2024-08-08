@@ -361,7 +361,9 @@ const makeSpinner = ( anchor ) => {
 			anchor.appendChild( spinner );
 		},
 		hide: () => {
-			anchor.removeChild( spinner );
+			if ( anchor.contains( spinner ) ) {
+				anchor.removeChild( spinner );
+			}
 		}
 	};
 };
