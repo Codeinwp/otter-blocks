@@ -9,7 +9,7 @@ const SERVICES = {
 		icon: 'facebook-f'
 	},
 	twitter: {
-		label: __( 'Twitter', 'otter-blocks' ),
+		label: __( 'X', 'otter-blocks' ),
 		icon: 'twitter'
 	},
 	linkedin: {
