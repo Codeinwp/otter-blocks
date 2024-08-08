@@ -25,3 +25,4 @@ import './tabs/index.js';
 import './deprecated/index.js';
 import './content-generator/index.js';
 import './timeline/index.js';
+import './modal/index.js';

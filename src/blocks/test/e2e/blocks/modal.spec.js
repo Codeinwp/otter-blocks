@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
-test.describe( 'Popup', () => {
+test.describe( 'Modal', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
 	});
@@ -16,18 +16,17 @@ test.describe( 'Popup', () => {
 				{
 					name: 'core/button',
 					attributes: {
-						text: 'Open Popup',
-						anchor: 'popup-trigger'
+						text: 'Open Modal',
+						anchor: 'modal-trigger'
 					}
 				}
 			]
 		});
 
 		await editor.insertBlock({
-			name: 'themeisle-blocks/popup',
+			name: 'themeisle-blocks/modal',
 			attributes: {
-				anchor: 'popup-trigger',
-				trigger: 'onClick'
+				anchor: 'modal-trigger'
 			},
 			innerBlocks: [
 				{
@@ -42,7 +41,7 @@ test.describe( 'Popup', () => {
 		const postId = await editor.publishPost();
 		await page.goto( `/?p=${postId}` );
 
-		await page.locator( 'div' ).filter({ hasText: /^Open Popup$/ }).click();
+		await page.locator( 'div' ).filter({ hasText: /^Open Modal$/ }).click();
 
 		await expect( page.getByText( 'Popup Content Test' ) ).toBeVisible();
 	});
@@ -50,9 +49,23 @@ test.describe( 'Popup', () => {
 	test( 'close on escape', async({ editor, page }) => {
 
 		await editor.insertBlock({
-			name: 'themeisle-blocks/popup',
-			attributes: {
+			name: 'core/buttons',
+			attributes: {},
+			innerBlocks: [
+				{
+					name: 'core/button',
+					attributes: {
+						text: 'Open Modal',
+						anchor: 'modal-trigger'
+					}
+				}
+			]
+		});
 
+		await editor.insertBlock({
+			name: 'themeisle-blocks/modal',
+			attributes: {
+				anchor: 'modal-trigger'
 			},
 			innerBlocks: [
 				{
@@ -66,6 +79,8 @@ test.describe( 'Popup', () => {
 
 		const postId = await editor.publishPost();
 		await page.goto( `/?p=${postId}` );
+
+		await page.locator( 'div' ).filter({ hasText: /^Open Modal$/ }).click();
 
 		await expect( page.getByText( 'Popup Content Test' ) ).toBeVisible();
 		await page.keyboard.press( 'Escape' );
