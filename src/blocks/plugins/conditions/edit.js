@@ -373,7 +373,9 @@ const Edit = ({
 	useEffect( () => {
 		const c = applyFilters( 'otter.blockConditions.conditions', defaultConditions );
 
-		const flat = defaultConditionsKeys.map( i => c?.[i].conditions ).flat();
+		const conditionsKeys = Object.keys( c ).filter( key => defaultConditionsKeys.includes( key ) );
+		const flat = conditionsKeys.map( i => c?.[i].conditions ).flat();
+
 		flat.splice( 0, 0, {
 			value: 'none',
 			label: __( 'Select a condition', 'otter-blocks' ),
