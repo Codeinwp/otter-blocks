@@ -530,9 +530,9 @@ class Main {
 	 */
 	public function pagination_support( $request ) {
 		if (
-			$request->is_singular === true && 
-			$request->current_post === -1 && 
-			$request->is_paged === true &&
+			true === $request->is_singular && 
+			-1 === $request->current_post && 
+			true === $request->is_paged &&
 			(
 				! empty( $request->query_vars['page'] ) ||
 				! empty( $request->query_vars['paged'] )
