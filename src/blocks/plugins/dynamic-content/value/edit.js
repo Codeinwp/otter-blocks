@@ -113,18 +113,20 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<BlockControls>
-				<ToolbarGroup>
-					<ToolbarButton
-						icon={ globe }
-						title={ __( 'Dynamic Value', 'otter-blocks' ) }
-						onClick={ () => setOpen( true ) }
-						isDisabled={ isActive }
-						isActive={ isActive }
-						className="o-dynamic-button"
-					/>
-				</ToolbarGroup>
-			</BlockControls>
+			{ Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) && (
+				<BlockControls>
+					<ToolbarGroup>
+						<ToolbarButton
+							icon={ globe }
+							title={ __( 'Dynamic Value', 'otter-blocks' ) }
+							onClick={ () => setOpen( true ) }
+							isDisabled={ isActive }
+							isActive={ isActive }
+							className="o-dynamic-button"
+						/>
+					</ToolbarGroup>
+				</BlockControls>
+			) }
 
 			{ isOpen && (
 				<Modal

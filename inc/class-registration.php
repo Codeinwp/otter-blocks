@@ -284,6 +284,7 @@ class Registration {
 					'blockAnimations' => boolval( get_option( 'themeisle_blocks_settings_blocks_animation', true ) ),
 					'blockConditions' => boolval( get_option( 'themeisle_blocks_settings_block_conditions', true ) ),
 					'patternsLibrary' => boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ),
+					'dynamicContent'  => boolval( get_option( 'themeisle_blocks_settings_dynamic_content', true ) ),
 				),
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
