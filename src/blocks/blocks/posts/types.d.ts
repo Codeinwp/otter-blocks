@@ -26,7 +26,7 @@ type Attributes = {
 	displayComments: boolean
 	displayPostCategory: boolean
 	displayReadMoreLink: boolean
-	cropImage: boolean
+	imageRatio: string
 	customTitleFontSize: number
 	customTitleFontSizeTablet: number
 	customTitleFontSizeMobile: number

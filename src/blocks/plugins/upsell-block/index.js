@@ -59,11 +59,11 @@ const edit = props => {
 				'is-neve': Boolean( window.themeisleGutenberg.hasNeve )
 			}) }
 		>
-			<h3>{ __( 'Get more Patterns with Otter Pro.', 'otter-blocks' ) }</h3>
+			<h3>{ __( 'There are 30+ more patterns and full page designs available in Otter PRO.', 'otter-blocks' ) }</h3>
 
 			<div className="o-block-patterns-upsell__actions">
-				<a href={ setUtm( window.themeisleGutenberg.patternsLink, 'patterns' ) } target="_blank">
-					{ __( 'Get Otter Pro', 'otter-blocks' ) }
+				<a href={ setUtm( window.themeisleGutenberg.patternsLink, 'patterns', 'otter-blockspatternslibrary' ) } target="_blank">
+					{ __( 'View Demos', 'otter-blocks' ) }
 				</a>
 
 				<Button
@@ -103,9 +103,9 @@ const edit = props => {
 registerBlockType( 'themeisle-blocks/patterns-upsell', {
 	apiVersion: 2,
 	title: __( 'Pro Pattern Notice', 'otter-blocks' ),
-	description: __( 'Get more Patterns with Otter Pro.', 'otter-blocks' ),
+	description: __( 'There are 30+ more patterns and full page designs available in Otter PRO.', 'otter-blocks' ),
 	supports: {
-		inserter: false
+		inserter: true
 	},
 	edit,
 	save: () => null

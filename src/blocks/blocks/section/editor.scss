@@ -45,6 +45,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 				max-width: unset;
 				margin: inherit;
 				flex: 1;
+				overflow: hidden;
 
 				/* Add this to override Neve styles */
 				&[class*="has-dark-"] p, &[class*="has-light-"] p {
@@ -53,6 +54,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 				> .block-editor-inner-blocks {
 					flex: 1;
+					overflow: hidden;
 				}
 
 				.wp-block-themeisle-blocks-advanced-columns {
@@ -85,6 +87,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 		background: var( --background );
 		transition: 0.3s;
+		word-wrap: anywhere;
 
 		&:hover {
 			background: var( --background-color-hover );
@@ -92,6 +95,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 		> * {
 			position: relative;
+		}
+
+		* {
+			word-wrap: anywhere;
 		}
 
 		a:not( .wp-block-button__link ):not( .social-icon ) {
@@ -108,6 +115,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 		.wp-block-themeisle-blocks-slider {
 			display: block;
+
+			> div {
+				max-width: 100%;
+			}
 		}
 
 		.aligncenter {

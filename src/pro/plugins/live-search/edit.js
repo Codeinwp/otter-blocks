@@ -2,16 +2,23 @@
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
+
 import {
 	FormTokenField,
 	PanelBody,
 	ToggleControl
 } from '@wordpress/components';
+
 import { InspectorControls } from '@wordpress/block-editor';
+
 import { Fragment } from '@wordpress/element';
+
 import { applyFilters } from '@wordpress/hooks';
 
-const { Notice } = window.otterComponents;
+const {
+	CategoriesFieldToken,
+	Notice
+} = window.otterComponents;
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 const excludeTypes = [ 'attachment' ];
 const hasNecessaryPlan = [ 2, 3 ].includes( parseInt( window.otterPro.licenseType ) ) || window.otterPro.hasNeveLicense;
@@ -25,8 +32,15 @@ const Edit = ({
 		props.setAttributes({ otterIsLive });
 	};
 
-	const onPostTypeChange = types => {
-		props.setAttributes({ otterSearchQuery: { 'post_type': types }});
+	const onUpdateQuery = ( key, value ) => {
+		const query = { ...props.attributes.otterSearchQuery };
+		query[ key ] = value;
+
+		if ( 'post_type' === key && ( ! value.includes( 'post' ) || 1 !== value.length ) && query.cat ) {
+			delete query.cat;
+		}
+
+		props.setAttributes({ otterSearchQuery: query });
 	};
 
 	const Notices = () => {
@@ -89,20 +103,31 @@ const Edit = ({
 											label={ __( 'Search in', 'otter-blocks' ) }
 											value={ props.attributes.otterSearchQuery ? props.attributes.otterSearchQuery['post_type'] : [] }
 											suggestions={ postTypes.filter( type => ! excludeTypes.includes( type ) ) }
-											onChange={ types => onPostTypeChange( types ) }
+											onChange={ types => onUpdateQuery( 'post_type', types ) }
 											__experimentalExpandOnFocus={ true }
 											__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
 										/>
+
 										<Notice
-											notice={ __( 'Leave empty to search in all post types.', 'otter-blocks' ) }
+											notice={ __( 'Leave empty to search in all post types. Categories work only when searched exclusively in Posts.', 'otter-blocks' ) }
 											variant="help"
 										/>
+
+										{ props.attributes.otterSearchQuery && 1 === props.attributes.otterSearchQuery['post_type']?.length && props.attributes.otterSearchQuery['post_type'].includes( 'post' ) && (
+											<CategoriesFieldToken
+												label={ __( 'Post Category', 'otter-blocks' ) }
+												value={ props.attributes.otterSearchQuery?.cat ? props.attributes.otterSearchQuery?.cat?.split( ',' ) : [] }
+												onChange={ cat => onUpdateQuery( 'cat', cat.join( ',' ) ) }
+											/>
+										) }
 									</>
 								)}
 							</>
 						)
 					}
+
 					{ <Notices/> }
+
 					{ applyFilters( 'otter.poweredBy', '' ) }
 				</PanelBody>
 			</InspectorControls>

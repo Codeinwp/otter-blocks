@@ -105,6 +105,16 @@ const isSharedBlock = ( clientId ) => getBlockParents( clientId )?.some( id => {
 });
 
 /**
+ * Check if the ID is empty.
+ * @param {string} clientId The client id of the block.
+ * @returns {boolean}
+ */
+const isEmptyId = ( clientId ) => {
+	const { attributes } = getBlock( clientId ) ?? {};
+	return attributes?.id === undefined || '' === attributes?.id;
+};
+
+/**
  * Generate an Id based on the client id of the block. If the new id is also already used, create a new one using the `uuid`.
  * This might problem of duplicated new ids can be observed in the `Template Library` of the `Section` block when using Neve
  * Reference: https://github.com/Codeinwp/neve/blob/master/gutenberg/blocks/blog/template.json
@@ -185,35 +195,26 @@ export const addBlockId = ( args ) => {
 	// Check if the ID is already used. EXCLUDE the one that come from reusable blocks.
 	const idIsAlreadyUsed = Boolean( attributes.id && localIDs[name].has( attributes.id ) );
 
-	if ( attributes.id === undefined || idIsAlreadyUsed ) {
+	if ( ! attributes.id || idIsAlreadyUsed ) {
 
 		// Auto-generate idPrefix if not provided
 		const prefix = idPrefix || generatePrefix( name );
 		const instanceId = generateUniqIdInstance( prefix, clientId, localIDs[name]);
 
-		if ( attributes.id === undefined ) {
+		if ( undefined === attributes.id ) {
 
 			// If the id is undefined, then the block is newly created, and so we need to apply the Global Defaults
 			addGlobalDefaults( attributes, setAttributes, name, defaultAttributes );
-
-			// Save the id in all methods
-			localIDs[name].add( instanceId );
-			blockIDs.push( instanceId );
-			setAttributes({ id: instanceId });
-
-			return ( savedId ) => {
-				return ( savedId ) => {};
-			};
-
-		} else if ( idIsAlreadyUsed ) {
-
-			// The block must be a copy and its is already used
-			// Generate a new one and save it to `localIDs` to keep track of it in local mode.
-			localIDs[name].add( instanceId );
-			setAttributes({ id: instanceId });
-
-			return ( savedId ) => {};
 		}
+
+		// Save the id in all methods
+		localIDs[name].add( instanceId );
+		blockIDs.push( instanceId );
+		setAttributes({ id: instanceId });
+
+		return ( savedId ) => {
+			return ( savedId ) => {};
+		};
 	} else {
 
 		// No conflicts, save the current id only to keep track of it both in local and global mode.
@@ -280,7 +281,7 @@ const extractBlockData = ( clientId ) => {
  * }
  */
 export const blockInit = ( clientId, defaultAttributes ) => {
-	if ( undefined === idGenerationStatus[clientId]) {
+	if ( undefined === idGenerationStatus[clientId] || isEmptyId( clientId ) ) {
 		idGenerationStatus[clientId] = 'free';
 	}
 

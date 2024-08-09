@@ -1,0 +1,129 @@
+.wp-block-themeisle-blocks-timeline {
+    --o-timeline-cntr-bg: inherit;
+    --o-timeline-cntr-pd: 10px 40px;
+
+    --o-timeline-cnt-pd: 20px;
+    --o-timeline-cnt-bg: #ecf0f1;
+    --o-timeline-cnt-br-w: 0px;
+    --o-timeline-cnt-br-r: 8px;
+    --o-timeline-cnt-br-c: transparent;
+    --o-timeline-cnt-box-s: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    --o-timeline-i-color: var(--o-timeline-v-color);
+    --o-timeline-i-font-size: 20px;
+    --o-timeline-v-color: #e0e0e0;
+    --o-timeline-v-width: 6px;
+
+    .o-timeline-root {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+        --o-timeline-i-size: calc(var(--o-timeline-i-font-size) * 2);
+    }
+
+    /* Vertical Bar */
+    .o-timeline-root::after {
+        background-color: var(--o-timeline-v-color);
+        bottom: 0;
+        content: "";
+        left: 50%;
+        margin-left: calc(0px - var(--o-timeline-v-width) / 2);
+        position: absolute;
+        top: 0;
+        width: var(--o-timeline-v-width);
+    }
+
+
+    @media screen and (min-width: 601px) {
+       /* Right side of the line */
+       &:not(.is-left, .is-reverse, .is-right) .wp-block-themeisle-blocks-timeline-item:nth-child(even),
+       &.is-reverse .wp-block-themeisle-blocks-timeline-item:nth-child(odd),
+       &.is-right .wp-block-themeisle-blocks-timeline-item {
+           .o-timeline-container {
+               left: 50%;
+       
+               .o-timeline-icon {
+                   left: calc(0px - var(--o-timeline-i-size) / 2);
+               }
+           }
+       }
+    }
+     
+    /* Media queries - Responsive timeline on screens less than 600px wide */
+    @media screen and (max-width: 600px) {
+
+        /* Vertical Bar */
+        .o-timeline-root::after {
+            left: 5%;
+        }
+    }
+}
+
+.wp-block-themeisle-blocks-timeline-item {
+
+    /* Container around content */
+    .o-timeline-container {
+        padding: var(--o-timeline-cntr-pd);
+        position: relative;
+        background-color: var(--o-timeline-cntr-bg);
+        width: 50%;
+        box-sizing: border-box;
+    }
+
+    /* Item content */
+    .o-timeline-content {
+        background-color: var(--o-timeline-cnt-bg);
+        border-color: var(--o-timeline-cnt-br-c);
+        border-radius: var(--o-timeline-cnt-br-r);
+        border-style: solid;
+        border-width: var(--o-timeline-cnt-br-w);
+        box-shadow: var(--o-timeline-cnt-box-s);
+        padding: var(--o-timeline-cnt-pd);
+        position: relative;
+        transition: background-color 0.5s;
+    }
+
+    .o-timeline-icon {
+        align-items: center;
+        background-color: white;
+        border-radius: 50%;
+        border: 4px solid var(--o-timeline-v-color);
+        color: var(--o-timeline-i-color);
+        display: flex;
+        font-size: var(--o-timeline-i-font-size);
+        height: var(--o-timeline-i-size);
+        justify-content: center;
+        position: absolute;
+        right: calc(0px - var(--o-timeline-i-size) / 2);
+        top: 15px;
+        width: var(--o-timeline-i-size);
+        z-index: 2;
+        box-sizing: border-box;
+
+        :is( img, svg ) {
+            width: var(--o-timeline-i-font-size);
+            height: var(--o-timeline-i-font-size);
+            fill: var(--o-timeline-i-color);
+        }
+    }
+
+    /* Media queries - Responsive timeline on screens less than 600px wide */
+    @media screen and (max-width: 600px) {
+
+        /* Full-width containers */
+        .o-timeline-container {
+            padding-left: 70px;
+            padding-right: 25px;
+            width: 100%;
+        }
+
+        /* Make all right containers behave like the left ones */
+        .o-timeline-container {
+            left: 0%;
+
+            .o-timeline-icon {
+                left: calc(0px - var(--o-timeline-i-size) / 2 + 5%);
+            }
+        }
+    }
+}

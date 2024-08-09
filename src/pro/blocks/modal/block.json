@@ -1,0 +1,131 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/modal",
+	"title": "Modal",
+	"category": "themeisle-blocks",
+	"description": "Display your content in beautiful Modal with many customization options. Powered by Otter.",
+	"keywords": [ "modal", "lightbox" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"minWidth": {
+			"type": ["number", "string"]
+		},
+		"maxWidth": {
+			"type": ["number", "string"]
+		},
+		"anchor": {
+			"type": "string"
+		},
+		"showClose": {
+			"type": "boolean",
+			"default": true
+		},
+		"outsideClose": {
+			"type": "boolean",
+			"default": true
+		},
+		"anchorClose": {
+			"type": "boolean",
+			"default": false
+		},
+		"closeAnchor": {
+			"type": "string"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"closeColor": {
+			"type": "string"
+		},
+		"overlayColor": {
+			"type": "string"
+		},
+		"overlayOpacity": {
+			"type": "number"
+		},
+		"padding": {
+			"type": "object"
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
+		},
+		"borderWidth": {
+			"type": "object"
+		},
+		"borderRadius": {
+			"type": "object"
+		},
+		"borderColor": {
+			"type": "string"
+		},
+		"borderStyle": {
+			"type": "string"
+		},
+		"width": {
+			"type": "string"
+		},
+		"widthTablet": {
+			"type": "string"
+		},
+		"widthMobile": {
+			"type": "string"
+		},
+		"heightMode": {
+			"type": "string"
+		},
+		"height":{
+			"type": "string"
+		},
+		"heightTablet":{
+			"type": "string"
+		},
+		"heightMobile":{
+			"type": "string"
+		},
+		"verticalPosition": {
+			"type": "string"
+		},
+		"horizontalPosition": {
+			"type": "string"
+		},
+		"verticalPositionTablet": {
+			"type": "string"
+		},
+		"horizontalPositionTablet": {
+			"type": "string"
+		},
+		"verticalPositionMobile": {
+			"type": "string"
+		},
+		"horizontalPositionMobile": {
+			"type": "string"
+		},
+		"closeButtonType": {
+			"type": "string"
+		},
+		"boxShadow": {
+			"type": "object",
+			"default": {
+				"active": false,
+				"colorOpacity": 50,
+				"blur": 5,
+				"spread": 1,
+				"horizontal": 0,
+				"vertical": 0
+			}
+		},
+		"disableOn": {
+			"type": "string"
+		}
+	},
+	"editorStyle": "otter-popup-editor",
+	"style": "otter-popup-style",
+	"script": "otter-popup"
+}

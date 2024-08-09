@@ -1,0 +1,52 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "themeisle-blocks/timeline",
+    "allowedBlocks": [ "themeisle-blocks/timeline-item" ],
+	"title": "Timeline",
+	"category": "themeisle-blocks",
+	"description": "Organize your events in a timeline with the Timeline block. Powered by Otter.",
+	"keywords": [ "media", "timeline", "date" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"containerBorder": {
+			"type": "object"
+		},
+		"containerRadius": {
+			"type": ["string", "object"]
+		},
+		"containerPadding": {
+			"type": ["string", "object"]
+		},
+		"containerBackgroundColor": {
+			"type": "string"
+		},
+		"containerBorderColor": {
+			"type": "string"
+		},
+		"verticalLineColor": {
+			"type": "string"
+		},
+		"iconColor": {
+			"type": "string"
+		},
+		"iconSize": {
+			"type": "string"
+		},
+		"verticalLineWidth": {
+			"type": "string"
+		},
+		"containersAlignment": {
+			"type": "string",
+			"default": "alternative"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	},
+	"editorStyle": "otter-timeline-editor",
+	"style": "otter-timeline-style"
+}

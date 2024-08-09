@@ -21,8 +21,6 @@ let autocompleteOptions = [];
 
 Object.keys( options ).forEach( option => autocompleteOptions.push( ...options[option].options ) );
 
-autocompleteOptions =  [ ...autocompleteOptions.filter( i => true !== i.isDisabled ), ...autocompleteOptions.filter( i => true === i.isDisabled ) ];
-
 const dynamicValue = {
 	name: 'dynamic-value',
 	triggerPrefix: '%',
@@ -64,8 +62,10 @@ const dynamicValue = {
 
 const appenddDynamicValueCompleter = completers => [ ...completers, dynamicValue ];
 
-addFilter(
-	'editor.Autocomplete.completers',
-	'otter-pro/autocompleters/dynamic-value',
-	appenddDynamicValueCompleter
-);
+if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
+	addFilter(
+		'editor.Autocomplete.completers',
+		'otter-pro/autocompleters/dynamic-value',
+		appenddDynamicValueCompleter
+	);
+}

@@ -241,7 +241,7 @@ const Edit = ({
 			<div { ...blockProps }>
 				<Placeholder
 					labels={ {
-						title: __( 'Slider', 'otter-blocks' ),
+						title: __( 'Image Slider', 'otter-blocks' ),
 						instructions: __( 'Drag images, upload new ones or select files from your library.', 'otter-blocks' )
 					} }
 					icon="images-alt2"

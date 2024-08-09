@@ -31,7 +31,7 @@ const excludedBlocks = [ 'themeisle-blocks/popup' ];
 const BlockAnimation = ( el, props ) => {
 	if ( hasBlockSupport( props.name, 'customClassName', true ) && ! excludedBlocks.includes( props.name ) ) {
 
-		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-animations' ) );
+		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-animations' ) ?? true );
 
 		return (
 			<Fragment>

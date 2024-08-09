@@ -104,10 +104,10 @@ test.describe( 'Section Block', () => {
 		await page.getByRole( 'option', { name: 'Paragraph' }).click();
 		await page.getByLabel( 'Empty block; start writing or' ).fill( 'Test' );
 		await page.getByLabel( 'Document Overview' ).click();
-		await page.getByLabel( 'Section', { exact: true }).click();
+		await page.getByRole( 'link', { name: 'Section', exact: true }).click();
 
 		// Open Setting panel
-		await page.getByLabel( 'Settings', { exact: true }).click();
+		await page.getByRole( 'link', { name: 'Section', exact: true }).click;
 		await page.getByRole( 'button', { name: 'Style' }).click();
 
 		// Check Default values for Section Block
@@ -122,9 +122,13 @@ test.describe( 'Section Block', () => {
 		await expect( page.getByLabel( 'Padding' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '30' );
 		await expect( page.getByLabel( 'Margin' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '15' );
 
-		// Check Default values for Section Column Block
-		await page.getByLabel( 'Section Column', { exact: true }).click();
+		// Check Default values for Section Column Block after reset.
+		await page.getByRole( 'link', { name: 'Section', exact: true }).click();
 		await page.getByRole( 'button', { name: 'Style' }).click();
+
+		await page.getByLabel( 'Padding' ).getByRole( 'button', { name: 'Reset' }).click();
+		await page.getByLabel( 'Margin' ).getByRole( 'button', { name: 'Reset' }).click();
+
 		await expect( page.getByLabel( 'Padding' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '0' );
 		await expect( page.getByLabel( 'Margin' ).getByRole( 'textbox', { name: 'All sides' }) ).toHaveValue( '0' );
 

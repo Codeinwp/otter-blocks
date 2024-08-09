@@ -48,6 +48,7 @@ import {
 	_align,
 	_px,
 	boxValues,
+	changeActiveStyle,
 	getCustomPostTypeSlugs,
 	hex2rgba
 } from '../../helpers/helper-functions.js';
@@ -58,6 +59,7 @@ import {
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 import { domReady } from '../../helpers/frontend-helper-functions';
+import { styles } from './constants.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -212,8 +214,22 @@ const Edit = ({
 	const { responsiveGetAttributes } = useResponsiveAttributes();
 
 	useEffect( () => {
+		let isNew = false;
+		if ( undefined === attributes.id ) {
+			isNew = true;
+		}
+
 		const fetch = async() => {
 			setSlugs( await getCustomPostTypeSlugs() );
+
+			if ( isNew ) {
+
+				// We want to set the default style to boxed for new blocks.
+				// We keep it inside async function as keeping it outside was not updating the block style.
+				// Ref: https://github.com/Codeinwp/otter-internals/issues/220
+				const classes = changeActiveStyle( attributes?.className, styles, 'boxed' );
+				setAttributes({ className: classes });
+			}
 		};
 		fetch();
 	}, []);
@@ -232,13 +248,19 @@ const Edit = ({
 	const inlineStyles = {
 		'--img-border-radius': isObject( attributes.borderRadius ) ? boxValues( attributes.borderRadius ) : _px( attributes.borderRadius ),
 		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hex2rgba( imageBoxShadow.color, imageBoxShadow.colorOpacity ) }`,
+		'--image-ratio': attributes.imageRatio,
 		'--border-width': _px( attributes.borderWidth ),
 		'--border-radius': boxValues( attributes.cardBorderRadius ),
+		'--border-radius-start-start': _px( attributes.cardBorderRadius?.top ),
+		'--border-radius-start-end': _px( attributes.cardBorderRadius?.right ),
+		'--border-radius-end-start': _px( attributes.cardBorderRadius?.bottom ),
+		'--border-radius-end-end': _px( attributes.cardBorderRadius?.left ),
 		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hex2rgba( boxShadow.color, boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
 		'--text-align': attributes.textAlign,
 		'--text-color': attributes.textColor,
 		'--background-color': attributes.backgroundColor,
+		'--background-overlay': attributes.backgroundOverlay || '#0000005e',
 		'--border-color': attributes.borderColor,
 		'--content-gap': attributes.contentGap,
 		'--img-width': responsiveGetAttributes([ _px( attributes.imageWidth ), attributes.imageWidthTablet, attributes.imageWidthMobile ]),

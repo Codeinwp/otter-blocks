@@ -16,6 +16,8 @@ import {
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
+import { select } from '@wordpress/data';
+
 import { Fragment } from '@wordpress/element';
 
 import {
@@ -33,7 +35,6 @@ import CSSEditor from './editor.js';
 import './inject-css.js';
 
 import { onDeselect } from './inject-css.js';
-import { select } from '@wordpress/data';
 
 const addAttribute = ( settings ) => {
 	if ( hasBlockSupport( settings, 'customClassName', true ) ) {
@@ -77,7 +78,7 @@ const Edit = ({
 
 const BlockCSSWrapper = ( el, props ) => {
 	if ( hasBlockSupport( props.name, 'customClassName', true ) ) {
-		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-custom-css' ) );
+		const showAsDefault = Boolean( select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-custom-css' ) ?? true );
 
 		return (
 			<Fragment>

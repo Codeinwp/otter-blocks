@@ -179,7 +179,7 @@ class Flip_CSS extends Base_CSS {
 								},
 							),
 							'size'       => array(
-								'value'   => 'backgroundSize',
+								'value'   => 'frontBackgroundSize',
 								'default' => 'auto',
 							),
 						),
@@ -241,7 +241,7 @@ class Flip_CSS extends Base_CSS {
 								},
 							),
 							'size'       => array(
-								'value'   => 'backgroundSize',
+								'value'   => 'backBackgroundSize',
 								'default' => 'auto',
 							),
 						),

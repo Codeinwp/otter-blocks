@@ -1,0 +1,139 @@
+.o-library {
+	&__button {
+		gap: 1rem;
+	}
+
+	&__modal {
+		.components-modal__header {
+			border-bottom-color: #ddd;
+		}
+
+		&__sidebar {
+			bottom: 0;
+			left: 0;
+			overflow-x: visible;
+			overflow-y: scroll;
+			padding: 24px 32px 32px;
+			position: absolute;
+			top: 72px;
+			width: 280px;
+
+			&__heading {
+				text-transform: uppercase;
+				font-weight: bold;
+				font-size: 12px;
+				margin-top: 2em;
+			}
+
+			.components-button {
+				height: 48px;
+				text-align: left;
+				width: 100%;
+			}
+		}
+
+		&__content {
+			margin-left: 280px;
+			padding: 24px 0 32px;
+
+			&__actions {
+				display: flex;
+				justify-content: space-between;
+				background: #fff;
+				margin-left: -4px;
+				padding: 10px 0 10px 3px;
+				position: sticky;
+				top: -4px;
+				width: calc(100% + 6px);
+				z-index: 10;
+			}
+
+			&__grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr;
+				gap: 2rem;
+
+				&.is-2-column {
+					grid-template-columns: 1fr 1fr;
+				}
+
+				&.is-4-column {
+					grid-template-columns: 1fr 1fr 1fr 1fr;
+				}
+			}
+		}
+
+		&__footer {
+			bottom: 0;
+			overflow-x: visible;
+			position: absolute;
+			left: 0;
+			padding: 24px;
+			width: 100%;
+			background: #fff;
+			border: 1px solid #e0e0e0;
+			box-shadow: 0 0 0 1px #e0e0e0;
+			display: flex;
+			justify-content: flex-end;
+			z-index: 9;
+		}
+	}
+
+	&__preview {
+		.block-editor-block-preview__content {
+			max-height: none !important;
+
+			iframe {
+				max-height: none !important;
+			}
+		}
+	}
+
+	&__template {
+		border: 1px solid #e0e0e0;
+		box-shadow: 0 0 0 1px #e0e0e0;
+		border-radius: 4px;
+		overflow: hidden;
+		position: relative;
+		gap: 0px;
+		display: grid;
+		grid-template-rows: 1fr 48px;
+
+		&__preview {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			min-height: 200px;
+			cursor: pointer;
+		}
+
+		&__actions {
+			display: grid;
+			align-items: center;
+			padding: 6px 12px;
+			border-top: 2px solid #e0e0e0;
+			grid-template-columns: 30px 1fr 110px;
+
+			.components-base-control__field {
+				margin-bottom: 0;
+			}
+
+			&__title {
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			&__button {
+				display: flex;
+				gap: 12px;
+
+				.is-favorite {
+					svg {
+						fill: #ff8787;
+					}
+				}
+			}
+		}
+	}
+}

@@ -29,6 +29,7 @@ class Dashboard {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
 		add_action( 'admin_notices', array( $this, 'maybe_add_otter_banner' ), 30 );
+		add_action( 'admin_head', array( $this, 'add_inline_css' ) );
 
 		$form_options = get_option( 'themeisle_blocks_form_emails' );
 		if ( ! empty( $form_options ) ) {
@@ -71,8 +72,12 @@ class Dashboard {
 
 		add_submenu_page(
 			'otter',
-			__( 'Form Submissions', 'otter-blocks' ),
-			__( 'Form Submissions', 'otter-blocks' ),
+			__( 'Submissions', 'otter-blocks' ),
+			sprintf(
+				'<div class="o-menu-submissions">%s <span class="o-menu-badge">%s</span></div>',
+				esc_html__( 'Submissions', 'otter-blocks' ),
+				esc_html__( 'Pro', 'otter-blocks' )
+			),
 			'manage_options',
 			'form-submissions-free',
 			array( $this, 'form_submissions_callback' ),
@@ -90,6 +95,34 @@ class Dashboard {
 				<script>document.location.href = "/wp-admin/admin.php?page=otter#blocks";</script>';
 			}
 		);
+	}
+
+	/**
+	 * Add inline CSS.
+	 */
+	public function add_inline_css() {
+		?>
+		<style>
+			.o-menu-submissions {
+				display: flex;
+				align-items: center;
+			}
+
+			.o-menu-badge {
+				border: 1px solid;
+				border-radius: 16px;
+				color: inherit;
+				font-size: 10px;
+				font-weight: 600;
+				line-height: 8px;
+				margin: 0;
+				opacity: .8;
+				padding: 4px 6px;
+				text-transform: uppercase;
+			}
+		</style>
+		<?php
+	
 	}
 
 	/**
@@ -173,7 +206,7 @@ class Dashboard {
 		wp_enqueue_script(
 			'otter-blocks-scripts',
 			OTTER_BLOCKS_URL . 'build/dashboard/index.js',
-			$asset_file['dependencies'],
+			array_merge( $asset_file['dependencies'], [ 'updates' ] ),
 			$asset_file['version'],
 			true
 		);
@@ -188,17 +221,44 @@ class Dashboard {
 			apply_filters(
 				'otter_dashboard_data',
 				array(
-					'version'            => OTTER_BLOCKS_VERSION,
-					'assetsPath'         => OTTER_BLOCKS_URL . 'assets/',
-					'stylesExist'        => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
-					'hasPro'             => Pro::is_pro_installed(),
-					'upgradeLink'        => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
-					'docsLink'           => Pro::get_docs_url(),
-					'showFeedbackNotice' => $this->should_show_feedback_notice(),
-					'deal'               => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
-					'hasOnboarding'      => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
-					'days_since_install' => round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
-					'rootUrl'            => get_site_url(),
+					'version'                => OTTER_BLOCKS_VERSION,
+					'assetsPath'             => OTTER_BLOCKS_URL . 'assets/',
+					'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
+					'hasPro'                 => Pro::is_pro_installed(),
+					'upgradeLink'            => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
+					'docsLink'               => Pro::get_docs_url(),
+					'showFeedbackNotice'     => $this->should_show_feedback_notice(),
+					'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
+					'hasOnboarding'          => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
+					'days_since_install'     => round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
+					'rootUrl'                => get_site_url(),
+					'neveThemePreviewUrl'    => esc_url(
+						add_query_arg(
+							array(
+								'theme' => 'neve',
+							),
+							admin_url( 'theme-install.php' )
+						)
+					),
+					'neveThemeActivationUrl' => esc_url(
+						add_query_arg(
+							array(
+								'action'     => 'activate',
+								'stylesheet' => 'neve',
+								'_wpnonce'   => wp_create_nonce( 'switch-theme_neve' ),
+							),
+							admin_url( 'themes.php' )
+						)
+					),
+					'neveDashboardUrl'       => esc_url(
+						add_query_arg(
+							array(
+								'page' => 'neve-welcome',
+							),
+							admin_url( 'admin.php' )
+						)
+					),
+					'neveInstalled'          => defined( 'NEVE_VERSION' ),
 				)
 			)
 		);
@@ -300,12 +360,13 @@ class Dashboard {
 				<img src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ); ?>" alt="<?php esc_attr_e( 'Otter Blocks', 'otter-blocks' ); ?>" style="width: 90px">
 			</div>
 			<div class="otter-banner__content">
-				<h1 class="otter-banner__title" style="line-height: normal;"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?>
-					<sub class="otter-banner__version"><?php echo esc_html( 'v' . OTTER_BLOCKS_VERSION ); ?></sub>
-				</h1>
+				<h1 class="otter-banner__title" style="line-height: normal;"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
+
+				<?php if ( Pro::is_pro_active() ) : ?>
 				<button id="export-submissions" class="button">
 					<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
 				</button>
+				<?php endif; ?>
 			</div>
 		</div>
 		<script>

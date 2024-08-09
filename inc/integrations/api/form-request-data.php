@@ -96,6 +96,8 @@ class Form_Data_Request {
 
 	/**
 	 * A list of warning codes.
+	 * 
+	 * Those are used to inform the admin about some issues that happened during the form submission.
 	 *
 	 * @var array $warning_codes Warning codes.
 	 * @since 2.2.5

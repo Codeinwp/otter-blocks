@@ -14,7 +14,15 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies
  */
 
-import Thumbnail from './thumbnail.js';
+
+import {
+	Thumbnail,
+	useThumbnail
+} from './thumbnail.js';
+
+import { getActiveStyle } from '../../../../helpers/helper-functions.js';
+
+import { styles } from '../../constants.js';
 
 import {
 	PostsCategory,
@@ -29,16 +37,34 @@ const FeaturedPost = ({
 	author,
 	categoriesList
 }) => {
+	const activeStyle = getActiveStyle( styles, attributes?.className );
+	const isTiled = 'tiled' === activeStyle;
+	const { featuredImage } = useThumbnail( post?.featured_media, post.title?.rendered, attributes?.imageSize );
+
 	if ( ! post  ) {
 		return '';
 	}
 
 	const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
 
+	const hasFeaturedImage = 0 !== post.featured_media && attributes.displayFeaturedImage;
+
+	const css = {
+		backgroundPosition: 'center center',
+		backgroundSize: 'cover'
+	};
+
+	if ( hasFeaturedImage && isTiled ) {
+		css.backgroundImage = `url(${ featuredImage })`;
+	}
+
 	return (
 		<div className="o-featured-container">
-			<div className="o-featured-post">
-				{ attributes.displayFeaturedImage && (
+			<div
+				className="o-featured-post"
+				style={ css }
+			>
+				{ ( attributes.displayFeaturedImage && ! isTiled ) && (
 					<Thumbnail
 						id={ post.featured_media }
 						link={ post.link }

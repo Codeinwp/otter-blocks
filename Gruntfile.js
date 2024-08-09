@@ -50,7 +50,7 @@ module.exports = function( grunt ) {
 				options: {
 					flags: ''
 				},
-				src: [ 'package.json', 'composer.json', 'package-lock.json' ]
+				src: [ 'package.json', 'composer.json', 'package-lock.json', 'plugins/blocks-animation/composer.json' ]
 			},
 			metatag: {
 				options: {

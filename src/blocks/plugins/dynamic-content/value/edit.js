@@ -8,9 +8,13 @@ import { globe } from '@wordpress/icons';
  */
 import { __ } from '@wordpress/i18n';
 
-import { RichTextToolbarButton } from '@wordpress/block-editor';
+import { BlockControls } from '@wordpress/block-editor';
 
-import { Modal } from '@wordpress/components';
+import {
+	Modal,
+	ToolbarButton,
+	ToolbarGroup
+} from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
 
@@ -109,13 +113,20 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<RichTextToolbarButton
-				icon={ globe }
-				title={ __( 'Dynamic Value', 'otter-blocks' ) }
-				onClick={ () => setOpen( true ) }
-				isDisabled={ isActive }
-				isActive={ isActive }
-			/>
+			{ Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) && (
+				<BlockControls>
+					<ToolbarGroup>
+						<ToolbarButton
+							icon={ globe }
+							title={ __( 'Dynamic Value', 'otter-blocks' ) }
+							onClick={ () => setOpen( true ) }
+							isDisabled={ isActive }
+							isActive={ isActive }
+							className="o-dynamic-button"
+						/>
+					</ToolbarGroup>
+				</BlockControls>
+			) }
 
 			{ isOpen && (
 				<Modal

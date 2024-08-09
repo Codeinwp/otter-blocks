@@ -26,8 +26,27 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+if ( defined( 'OTTER_BLOCKS_PATH' ) ) {
+	return;
+}
+
 define( 'BLOCKS_ANIMATION_URL', plugins_url( '/', __FILE__ ) );
 define( 'BLOCKS_ANIMATION_PATH', dirname( __FILE__ ) );
+
+$vendor_file = BLOCKS_ANIMATION_PATH . '/vendor/autoload.php';
+
+if ( is_readable( $vendor_file ) ) {
+	require_once $vendor_file;
+}
+
+add_filter(
+	'themeisle_sdk_products',
+	function ( $products ) {
+		$products[] = __FILE__;
+
+		return $products;
+	}
+);
 
 add_action(
 	'plugins_loaded',

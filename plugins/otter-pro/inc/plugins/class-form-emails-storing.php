@@ -637,8 +637,8 @@ class Form_Emails_Storing {
 
 		add_submenu_page(
 			'otter',
-			__( 'Form Submissions', 'otter-blocks' ),
-			__( 'Form Submissions', 'otter-blocks' ),
+			__( 'Submissions', 'otter-blocks' ),
+			__( 'Submissions', 'otter-blocks' ),
 			'manage_options',
 			'edit.php?post_type=' . self::FORM_RECORD_TYPE
 		);

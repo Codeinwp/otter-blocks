@@ -251,14 +251,6 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 							}
 							help={ __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-blocks' ) }
 						/>
-
-						<div>
-							<Notice
-								notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'form-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
-								variant="upsell"
-							/>
-							<p className="description">{ __( 'Enhance your email process with our new feature. Store submissions in a database for easy access.', 'otter-blocks' ) }</p>
-						</div>
 					</ToolsPanelItem>
 					<ToolsPanelItem
 						hasValue={ () => false }
@@ -327,7 +319,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 						</Button>
 
 						< br />
-						<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation">
+						<ExternalLink href="https://docs.themeisle.com/article/1878-how-to-use-webhooks-in-otter-forms">
 							{ __( 'Learn more about webhooks.', 'otter-blocks' ) }
 						</ExternalLink>
 
@@ -509,7 +501,7 @@ const Inspector = ({
 								options={ [
 									{ label: __( 'None', 'otter-blocks' ), value: '' },
 									{ label: __( 'Mailchimp', 'otter-blocks' ), value: 'mailchimp' },
-									{ label: __( 'Sendinblue', 'otter-blocks' ), value: 'sendinblue' }
+									{ label: __( 'Brevo', 'otter-blocks' ), value: 'sendinblue' }
 								] }
 								onChange={ provider => {
 									window.oTrk?.add({ feature: 'marketing', featureComponent: 'provider', featureValue: provider, groupID: attributes.id });

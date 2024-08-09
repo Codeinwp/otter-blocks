@@ -15,6 +15,11 @@ type ResultsEntry = {
 	price?: string
 }
 
+type QueryData = {
+	postTypes: Array<string>,
+	cat: string
+};
+
 type ResultsContainer = Element | null | undefined;
 
 /**
@@ -70,10 +75,10 @@ domReady( () => {
 	 * Get the post search from our endpoint.
 	 *
 	 * @param search - The search query string.
-	 * @param postTypes - An array of post types to search in.
+	 * @param query  - The query data to send to the REST API.
 	 * @returns A Promise that resolves to the JSON response from the REST API.
 	 */
-	const requestData = async( search: string, postTypes: Array<string> ) => {
+	const requestData = async( search: string, queryData: QueryData ) => {
 		const options = {
 			method: 'GET',
 			headers: {
@@ -83,7 +88,13 @@ domReady( () => {
 			}
 		};
 
-		const params = postTypes.reduce( ( p, type ) => p + `&post_type[]=${type}`, `s=${search}` );
+		let query = `s=${search}`;
+
+		if ( queryData?.cat ) {
+			query = query + `&cat=${queryData.cat}`;
+		}
+
+		const params = queryData?.postTypes.reduce( ( p, type ) => p + `&post_type[]=${type}`, query );
 
 		// use '&' for plain permalinks
 		const symbol = 0 < window.liveSearchData.permalinkStructure.length ? '?' : '&';
@@ -110,8 +121,13 @@ domReady( () => {
 		// Create this variable to cache the results
 		let resultsContainer: ResultsContainer;
 
-		const { postTypes } = ( element as HTMLElement ).dataset;
+		const { postTypes, cat } = ( element as HTMLElement ).dataset;
 		const postTypesArray: Array<string> = postTypes ? JSON.parse( postTypes ) : [];
+
+		const queryData: QueryData = {
+			postTypes: postTypesArray,
+			cat: cat ? cat : ''
+		};
 
 		const inputStyle = getComputedStyle( inputElement );
 		const parentStyle = inputElement.parentElement ? getComputedStyle( inputElement.parentElement ) : null;
@@ -142,7 +158,7 @@ domReady( () => {
 		 */
 		const debouncedSearchRequest = debounce( ( searchValue: string ) => {
 			addLoadingIcon( resultsContainer );
-			requestData( searchValue, postTypesArray ).then( r => {
+			requestData( searchValue, queryData ).then( r => {
 				removeLoadingIcon( block );
 
 				if ( ! r.success ) {

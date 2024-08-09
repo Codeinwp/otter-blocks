@@ -11,14 +11,25 @@ import {
 	sprintf
 } from '@wordpress/i18n';
 
+import { Placeholder } from '@wordpress/components';
+
 import { applyFilters } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
  */
-import Thumbnail from './thumbnail.js';
-import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.js';
-import { Placeholder } from '@wordpress/components';
+import {
+	Thumbnail,
+	useThumbnail
+} from './thumbnail.js';
+
+import {
+	getActiveStyle,
+	unescapeHTML,
+	formatDate
+} from '../../../../helpers/helper-functions.js';
+
+import { styles } from '../../constants.js';
 
 const Layout = ({
 	attributes,
@@ -26,6 +37,8 @@ const Layout = ({
 	categoriesList,
 	authors
 }) => {
+	const activeStyle = getActiveStyle( styles, attributes?.className );
+	const isTiled = 'tiled' === activeStyle;
 
 	const postsToDisplay = posts
 		.filter( post => post );
@@ -36,68 +49,85 @@ const Layout = ({
 				'grid' === attributes.style ?
 					classnames(
 						'is-grid',
-						`o-posts-grid-columns-${ attributes.columns }`,
-						{
-							'o-crop-img': attributes.cropImage
-						}
+						`o-posts-grid-columns-${ attributes.columns }`
 					) :
-					classnames(
-						'is-list',
-						{
-							'o-crop-img': attributes.cropImage
-						}
-					)
+					'is-list'
 			}
 		>
 			{ postsToDisplay
 				.slice( attributes.enableFeaturedPost ? 1 : 0 )
 				.map( post => {
-					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
-					const categories = categoriesList && 0 < post?.categories?.length ? categoriesList.filter( item => post.categories.includes( item.id ) ) : [];
-					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
 					return (
-						<div
-							key={ post.link }
-							className="o-posts-grid-post-blog o-posts-grid-post-plain"
-						>
-							<div className={ classnames( 'o-posts-grid-post' ) }>
-								{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
-									<Thumbnail
-										id={ post.featured_media }
-										link={ post.link }
-										alt={ post.title?.rendered }
-										size={ attributes.imageSize }
-										imgStyle={{
-											borderRadius: attributes.borderRadius !== undefined ? attributes.borderRadius + 'px' : undefined
-										}}
-									/>
-								) }
-
-								<div
-									className={ classnames(
-										'o-posts-grid-post-body',
-										{ 'is-full': ! attributes.displayFeaturedImage }
-									) }
-								>
-									{ attributes.template.map( element => {
-										switch ( element ) {
-										case 'category':
-											return <PostsCategory key={ element } attributes={ attributes } element={ element } category={ category } categoriesList={ categoriesList }/>;
-										case 'title':
-											return <PostsTitle key={ element } attributes={ attributes } element={ element } post={ post } />;
-										case 'meta':
-											return <PostsMeta key={ element } attributes={ attributes } element={ element } post={ post } author={ author } categories={ categories } />;
-										case 'description':
-											return <PostsDescription key={ element } attributes={ attributes } element={ element } post={ post } />;
-										default:
-											return applyFilters( 'otter.postsBlock.templateLoop', '', element, attributes );
-										}
-									}) }
-								</div>
-							</div>
-						</div>
+						<PostBody
+							key={ post.id }
+							post={ post }
+							attributes={ attributes }
+							categoriesList={ categoriesList }
+							authors={ authors }
+							isTiled={ isTiled }
+						/>
 					);
 				}) }
+		</div>
+	);
+};
+
+const PostBody = ({ post, attributes, categoriesList, authors, isTiled }) => {
+	const { featuredImage } = useThumbnail( post?.featured_media, post.title?.rendered, attributes?.imageSize );
+	const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
+	const categories = categoriesList && 0 < post?.categories?.length ? categoriesList.filter( item => post.categories.includes( item.id ) ) : [];
+	const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
+	const hasFeaturedImage = 0 !== post.featured_media && attributes.displayFeaturedImage;
+	const css = {
+		backgroundPosition: 'center center',
+		backgroundSize: 'cover'
+	};
+
+	if ( hasFeaturedImage && isTiled ) {
+		css.backgroundImage = `url(${ featuredImage })`;
+	}
+
+	return (
+		<div
+			key={ post.link }
+			className="o-posts-grid-post-blog o-posts-grid-post-plain"
+			style={ css }
+		>
+			<div className={ classnames( 'o-posts-grid-post' ) }>
+				{ ( hasFeaturedImage && ! isTiled ) && (
+					<Thumbnail
+						id={ post.featured_media }
+						link={ post.link }
+						alt={ post.title?.rendered }
+						size={ attributes.imageSize }
+						imgStyle={{
+							borderRadius: attributes.borderRadius !== undefined ? attributes.borderRadius + 'px' : undefined
+						}}
+					/>
+				) }
+
+				<div
+					className={ classnames(
+						'o-posts-grid-post-body',
+						{ 'is-full': ! attributes.displayFeaturedImage }
+					) }
+				>
+					{ attributes.template.map( element => {
+						switch ( element ) {
+						case 'category':
+							return <PostsCategory key={ element } attributes={ attributes } element={ element } category={ category } categoriesList={ categoriesList }/>;
+						case 'title':
+							return <PostsTitle key={ element } attributes={ attributes } element={ element } post={ post } />;
+						case 'meta':
+							return <PostsMeta key={ element } attributes={ attributes } element={ element } post={ post } author={ author } categories={ categories } />;
+						case 'description':
+							return <PostsDescription key={ element } attributes={ attributes } element={ element } post={ post } />;
+						default:
+							return applyFilters( 'otter.postsBlock.templateLoop', '', element, attributes );
+						}
+					}) }
+				</div>
+			</div>
 		</div>
 	);
 };
@@ -115,7 +145,7 @@ export const PostsTitle = ({ attributes, element, post }) => {
 		return '';
 	}
 
-	const Tag = ! [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ].includes( attributes.titleTag ) ? 'h5' : attributes.titleTag;
+	const Tag = ! [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ].includes( attributes.titleTag ) ? 'h4' : attributes.titleTag;
 
 	return (
 		<Tag key={ element } className="o-posts-grid-post-title">

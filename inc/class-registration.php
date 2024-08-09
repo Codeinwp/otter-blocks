@@ -279,9 +279,12 @@ class Registration {
 				'showOnboarding'          => $this->show_onboarding(),
 				'ratingScale'             => get_option( 'themeisle_blocks_settings_review_scale', false ),
 				'hasModule'               => array(
+					'aiToolbar'       => boolval( get_option( 'themeisle_blocks_settings_block_ai_toolbar_module', true ) ),
 					'blockCSS'        => boolval( get_option( 'themeisle_blocks_settings_css_module', true ) ),
 					'blockAnimations' => boolval( get_option( 'themeisle_blocks_settings_blocks_animation', true ) ),
 					'blockConditions' => boolval( get_option( 'themeisle_blocks_settings_block_conditions', true ) ),
+					'patternsLibrary' => boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ),
+					'dynamicContent'  => boolval( get_option( 'themeisle_blocks_settings_dynamic_content', true ) ),
 				),
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
@@ -622,7 +625,10 @@ class Registration {
 			wp_script_add_data( 'otter-tabs', 'defer', true );
 		}
 
-		if ( ! self::$scripts_loaded['popup'] && has_block( 'themeisle-blocks/popup', $post ) ) {
+		if (
+			! self::$scripts_loaded['popup'] && 
+			( has_block( 'themeisle-blocks/popup', $post ) || has_block( 'themeisle-blocks/modal', $post ) )
+		) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/popup.asset.php';
 			wp_register_script( 'otter-popup', OTTER_BLOCKS_URL . 'build/blocks/popup.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-popup', 'defer', true );
@@ -660,6 +666,11 @@ class Registration {
 		foreach ( self::$blocks as $block ) {
 			if ( in_array( $block, self::$styles_loaded ) || ! has_block( 'themeisle-blocks/' . $block, $post ) ) {
 				continue;
+			}
+
+			// Shared styles.
+			if ( 'modal' === $block ) {
+				$block = 'popup';
 			}
 
 			$block_path = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
@@ -749,6 +760,7 @@ class Registration {
 			'lottie',
 			'plugin-cards',
 			'popup',
+			'modal',
 			'posts-grid',
 			'pricing',
 			'progress-bar',
@@ -760,6 +772,8 @@ class Registration {
 			'tabs',
 			'tabs-item',
 			'testimonials',
+			'timeline',
+			'timeline-item',
 		);
 
 		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
@@ -778,7 +792,7 @@ class Registration {
 				'font-awesome-icons' => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'icon-list-item'     => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
-				'sharing-icons'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'timeline-item'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 			)
 		);
 
@@ -878,8 +892,7 @@ class Registration {
 
 		// always load for those.
 		static $always_load = [
-			'themeisle-blocks/sharing-icons' => true,
-			'themeisle-blocks/plugin-cards'  => true,
+			'themeisle-blocks/plugin-cards' => true,
 		];
 
 		if ( isset( $always_load[ $block['blockName'] ] ) ) {
@@ -942,6 +955,13 @@ class Registration {
 
 				return $block_content;
 			}
+		}
+
+		if ( 'themeisle-blocks/timeline-item' === $block['blockName'] &&
+			( isset( $block['innerHTML'] ) && false !== strpos( $block['innerHTML'], 'fa-' ) )
+		) {
+			self::$is_fa_loaded = true;
+			return $block_content;
 		}
 
 		return $block_content;
@@ -1054,20 +1074,13 @@ class Registration {
 			return $content;
 		}
 
-		global $wp_registered_widgets;
 		$valid_widgets = array();
 		$widget_data   = get_option( 'widget_block', array() );
 
-		// Loop through all widgets, and add any that are active.
-		foreach ( $wp_registered_widgets as $widget_name => $widget ) {
-			if ( ! in_array( $widget['id'], self::$widget_used, true ) ) {
-				continue;
-			}
-
-			$key = $widget['params'][0]['number'];
-
-			if ( isset( $widget_data[ $key ] ) ) {
-				$valid_widgets[] = (object) $widget_data[ $key ];
+		foreach ( self::$widget_used as $widget_id ) {
+			$widget_id = str_replace( 'block-', '', $widget_id );
+			if ( isset( $widget_data[ $widget_id ] ) ) {
+				$valid_widgets[] = (object) $widget_data[ $widget_id ];
 			}
 		}
 

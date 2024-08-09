@@ -84,7 +84,7 @@ const Inspector = ({
 
 				<TextControl
 					label={ __( 'Mapped Name', 'otter-blocks' ) }
-					help={ __( 'Allow easy identification of the field with features like: webhooks', 'otter-blocks' ) }
+					help={ __( 'Allow easy identification of the field in features like Webhooks.', 'otter-blocks' ) }
 					value={ attributes.mappedName }
 					onChange={ mappedName => setAttributes({ mappedName }) }
 					placeholder={ __( 'product', 'otter-blocks' ) }

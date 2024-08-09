@@ -48,6 +48,13 @@ class Prompt_Server {
 	public $timeout_transient = 'otter_prompts_timeout';
 
 	/**
+	 * OpenAI Endpoint.
+	 * 
+	 * @var string
+	 */
+	const BASE_URL = 'https://api.openai.com/v1/chat/completions';
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -62,7 +69,21 @@ class Prompt_Server {
 
 		register_rest_route(
 			$namespace,
-			'/prompt',
+			'/openai/key',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'save_api_key' ),
+					'permission_callback' => function () {
+						return current_user_can( 'manage_options' );
+					},
+				),
+			)
+		);
+
+		register_rest_route(
+			$namespace,
+			'/openai/prompt',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
@@ -76,7 +97,7 @@ class Prompt_Server {
 
 		register_rest_route(
 			$namespace,
-			'/generate',
+			'/openai/generate',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
@@ -90,14 +111,80 @@ class Prompt_Server {
 	}
 
 	/**
+	 * Save the API key.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
+	 */
+	public function save_api_key( $request ) {
+		$body = $request->get_body();
+		$body = json_decode( $body, true );
+
+		if ( ! is_array( $body ) && ! isset( $body['api_key'] ) ) {
+			return new \WP_Error( 'rest_invalid_json', __( 'API key is missing.', 'otter-blocks' ), array( 'status' => 400 ) );
+		}
+
+		$api_key = sanitize_text_field( $body['api_key'] );
+
+		if ( empty( $api_key ) ) {
+			delete_option( 'themeisle_open_ai_api_key' );
+			return new \WP_REST_Response( array( 'message' => __( 'API key saved.', 'otter-blocks' ) ), 200 );
+		}
+
+		$response = wp_remote_post(
+			self::BASE_URL,
+			array(
+				'method'  => 'POST',
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $api_key,
+					'Content-Type'  => 'application/json',
+				),
+				'body'    => wp_json_encode(
+					array(
+						'model'    => 'gpt-3.5-turbo',
+						'messages' => array(
+							array(
+								'role'    => 'system',
+								'content' => 'You are a helpful assistant.',
+							),
+							array(
+								'role'    => 'user',
+								'content' => 'Hello!',
+							),
+						),
+					)
+				),
+				'timeout' => 2 * MINUTE_IN_SECONDS,
+			)
+		);
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		$body = json_decode( $body );
+
+		if ( json_last_error() !== JSON_ERROR_NONE && ! is_object( $body ) ) {
+			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 400 ) );
+		}
+
+		if ( isset( $body->error ) ) {
+			return isset( $body->error->message ) ? new \WP_Error( isset( $body->error->code ) ? $body->error->code : 'unknown_error', $body->error->message ) : new \WP_Error( 'unknown_error', __( 'An error occurred while processing the request.', 'otter-blocks' ) );
+		}
+
+		update_option( 'themeisle_open_ai_api_key', $api_key );
+
+		return new \WP_REST_Response( array( 'message' => __( 'API key saved.', 'otter-blocks' ) ), 200 );
+	}
+
+	/**
 	 * Forward the prompt to OpenAI API.
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 */
 	public function forward_prompt( $request ) {
-		$open_ai_endpoint = 'https://api.openai.com/v1/chat/completions';
-
 		// Get the body from request and decode it.
 		$body = $request->get_body();
 		$body = json_decode( $body, true );
@@ -117,7 +204,7 @@ class Prompt_Server {
 		$body = array_diff_key( $body, $otter_data );
 
 		$response = wp_remote_post(
-			$open_ai_endpoint,
+			self::BASE_URL,
 			array(
 				'method'  => 'POST',
 				'headers' => array(

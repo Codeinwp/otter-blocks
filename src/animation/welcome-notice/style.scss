@@ -1,0 +1,100 @@
+.otter-animation-welcome-notice {
+	position: relative;
+	padding-bottom: 0;
+
+	.notice-content {
+		display: flex;
+		width: 100%;
+		gap: 20px;
+
+		@media (max-width: 1200px) {
+			flex-direction: column-reverse;
+			text-align: center;
+			gap: 0;
+		}
+	}
+
+	.notice-copy {
+		padding: 30px 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+
+		@media (max-width: 1200px) {
+			padding: 20px 0;
+			align-items: center;
+		}
+	}
+
+	.notice-title {
+		line-height: 1.5;
+
+		span {
+			font-weight: 600;
+			color: #e57451;
+		}
+	}
+
+	.actions {
+		display: flex;
+		margin-top: 40px;
+		gap: 20px;
+		align-items: center;
+		flex-wrap: wrap;
+
+
+		@media (max-width: 1200px) {
+			margin-top: 20px;
+			gap: 10px;
+			justify-content: center;
+		}
+	}
+
+	.button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		justify-items: center;
+
+	}
+
+	.dashicons-update {
+		margin-right: 5px;
+		animation: rotation 2s infinite linear;
+	}
+
+	.dashicons-external {
+		margin-left: 5px;
+	}
+
+	p {
+		max-width: 700px;
+		font-size: 15px;
+		line-height: 1.6;
+	}
+
+
+	.otter-preview {
+		flex-shrink: 1;
+		width: auto;
+		align-self: flex-end;
+		display: block;
+		max-height: 300px;
+		max-width: 60%;
+
+		@media (max-width: 1200px) {
+			max-width: 80%;
+			margin: 0 auto;
+		}
+	}
+
+	.otter-logo {
+		bottom: 30px;
+		right: 30px;
+		opacity: 0.75;
+		max-width: 75px;
+		//position: absolute;
+	}
+}
+
+

@@ -33,3 +33,7 @@
 		padding: 5px;
 	}
 }
+
+.wp-block-themeisle-blocks-sharing-icons .social-icon:not( .wp-block-button__link ) {
+	color: var( --text-color, #fff );
+}

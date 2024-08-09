@@ -135,8 +135,10 @@ class Live_Search_Server {
 	 * @since 2.0.3
 	 */
 	public function search( WP_REST_Request $request ) {
+		$cat = $request->get_param( 'cat' ) ? sanitize_text_field( $request->get_param( 'cat' ) ) : '';
+
 		$query = new WP_Query(
-			$this->prepare_search_query( $request->get_param( 's' ), $request->get_param( 'post_type' ) )
+			$this->prepare_search_query( $request->get_param( 's' ), $request->get_param( 'post_type' ), $cat )
 		);
 
 		return new WP_REST_Response(
@@ -171,12 +173,13 @@ class Live_Search_Server {
 	 * 
 	 * @param string       $s Search query.
 	 * @param string|array $post_types Post type.
+	 * @param string       $cat Category.
 	 * 
 	 * @return array
 	 */
-	public function prepare_search_query( $s, $post_types ) {
-
-		$s = sanitize_text_field( $s );
+	public function prepare_search_query( $s, $post_types, $cat = '' ) {
+		$s   = sanitize_text_field( $s );
+		$cat = sanitize_text_field( $cat );
 
 		if ( is_array( $post_types ) ) {
 			$post_types = array_map( 'sanitize_text_field', $post_types );
@@ -205,12 +208,18 @@ class Live_Search_Server {
 			);
 		}
 
-		return array(
+		$params = array(
 			'posts_per_page' => 20,
 			's'              => $s,
 			'post_status'    => 'publish',
 			'post_type'      => $post_types,
 		);
+
+		if ( ! empty( $cat ) ) {
+			$params['category_name'] = $cat;
+		}
+
+		return $params;
 	}
 		
 	/**

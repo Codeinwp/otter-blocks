@@ -34,5 +34,8 @@
           "wp-content/themes/raft": "https://downloads.wordpress.org/theme/raft.zip"
         }
     }
+  },
+  "lifecycleScripts": {
+    "afterStart": "bash bin/e2e-tests.sh"
   }
 }

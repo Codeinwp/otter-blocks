@@ -51,18 +51,7 @@ import {
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { useTabSwitch } from '../../helpers/block-utility';
 import { makeBox } from '../../plugins/copy-paste/utils';
-
-const styles = [
-	{
-		label: __( 'Default', 'otter-blocks' ),
-		value: 'default',
-		isDefault: true
-	},
-	{
-		label: __( 'Boxed', 'otter-blocks' ),
-		value: 'boxed'
-	}
-];
+import { styles } from './constants.js';
 
 const defaultFontSizes = [
 	{
@@ -104,6 +93,7 @@ const Inspector = ({
 	isLoading
 }) => {
 	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
+	const style = getActiveStyle( styles, attributes?.className );
 
 	const {
 		slugs
@@ -359,7 +349,7 @@ const Inspector = ({
 					>
 						<SelectControl
 							label={ __( 'Title Tag', 'otter-blocks' ) }
-							value={ attributes.titleTag || 'h5' }
+							value={ attributes.titleTag || 'h4' }
 							options={ [
 								{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
 								{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
@@ -443,6 +433,15 @@ const Inspector = ({
 								label: __( 'Border', 'otter-blocks' ),
 								isShownByDefault: false
 							},
+							...( 'tiled' === style ? [
+								{
+									value: attributes.backgroundOverlay,
+									onChange: backgroundOverlay => setAttributes({ backgroundOverlay }),
+									label: __( 'Background Overlay', 'otter-blocks' ),
+									enableAlpha: true,
+									isShownByDefault: false
+								}
+							] : []),
 							...( attributes.hasPagination ? [
 								{
 									value: attributes.pagColor,
@@ -630,7 +629,7 @@ const Inspector = ({
 					>
 						<UnitContol
 							label={ __( 'Width', 'otter-blocks' ) }
-							value={ attributes.borderWidth ?? '0px' }
+							value={ attributes.borderWidth }
 							onChange={ borderWidth => setAttributes({ borderWidth }) }
 						/>
 
@@ -644,6 +643,7 @@ const Inspector = ({
 							values={ attributes.cardBorderRadius ?? makeBox( '0px' )  }
 							onChange={ cardBorderRadius => setAttributes({ cardBorderRadius }) }
 							id="o-border-raduis-box"
+							allowReset={ false }
 						/>
 
 						{

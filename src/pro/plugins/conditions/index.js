@@ -115,6 +115,32 @@ const applyProConditions = conditions => {
 				}
 			]
 		},
+		'woocommerceProduct': {
+			label: __( 'WooCommerce Product', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'wooCategory',
+					label: __( 'Product Categories', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the product categories.' ),
+					toogleVisibility: true,
+					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
+				},
+				{
+					value: 'wooTag',
+					label: __( 'Product Tags', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the product tags.' ),
+					toogleVisibility: true,
+					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
+				},
+				{
+					value: 'wooAttribute',
+					label: __( 'Product Attributes', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the product attribute.' ),
+					toogleVisibility: true,
+					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
+				}
+			]
+		},
 		'learndash': {
 			label: __( 'LearnDash', 'otter-blocks' ),
 			conditions: [

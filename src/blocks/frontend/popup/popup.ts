@@ -27,6 +27,7 @@ class PopupBlock {
 	init() {
 		this.bindOpen();
 		this.bindClose();
+		this.bindEscClose();
 	}
 
 	isDisabled() {
@@ -258,6 +259,14 @@ class PopupBlock {
 		if ( this.canLock ) {
 			document.body.classList.remove( 'o-lock-body' );
 		}
+	}
+
+	bindEscClose() {
+		document.addEventListener( 'keydown', ( event ) => {
+			if ( 'Escape' === event.key && this.happened ) {
+				this.closeModal();
+			}
+		});
 	}
 }
 

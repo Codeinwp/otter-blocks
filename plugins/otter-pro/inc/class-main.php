@@ -140,6 +140,7 @@ class Main {
 			'form-file'                 => '\ThemeIsle\OtterPro\Render\Form_File_Block',
 			'form-hidden-field'         => '\ThemeIsle\OtterPro\Render\Form_Hidden_Block',
 			'form-stripe-field'         => '\ThemeIsle\OtterPro\Render\Form_Stripe_Block',
+			'modal'                     => '\ThemeIsle\OtterPro\Render\Modal_Block',
 		);
 
 		$dynamic_blocks = array_merge( $dynamic_blocks, $blocks );
@@ -162,6 +163,7 @@ class Main {
 			'\ThemeIsle\OtterPro\CSS\Blocks\Review_Comparison_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Form_File_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Form_Stripe_Field_CSS',
+			'\ThemeIsle\OtterPro\CSS\Blocks\Modal_CSS',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );

@@ -3,7 +3,11 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { updateCategory } from '@wordpress/blocks';
+import {
+	getCategories,
+	setCategories,
+	updateCategory
+} from '@wordpress/blocks';
 
 import { Icon } from '@wordpress/components';
 
@@ -131,9 +135,25 @@ const hideBlocksInInserter = () => {
 };
 
 domReady( () => {
+	const addCategory = () => {
+		if ( ! getCategories() ) {
+			return;
+		}
+
+		const categories = getCategories();
+		const category = categories.find( category => 'themeisle-blocks' === category.slug );
+
+		if ( ! category ) {
+			return;
+		}
+
+		categories.unshift( categories.splice( categories.indexOf( category ), 1 )[0]);
+		setCategories( categories );
+	};
 
 	setTimeout( () => {
 		hideBlocksInInserter();
+		addCategory();
 	}, 500 );
 
 	if ( document.querySelector( 'svg.o-icon-gradient' ) ) {

@@ -151,73 +151,39 @@ class Block_Conditions {
 		$visibility = isset( $condition['visibility'] ) ? boolval( $condition['visibility'] ) : true;
 
 		if ( 'loggedInUser' === $condition['type'] ) {
-			if ( is_user_logged_in() ) {
-				return true;
-			} else {
-				return false;
-			}
+			return is_user_logged_in();
 		}
 
 		if ( 'loggedOutUser' === $condition['type'] ) {
-			if ( is_user_logged_in() ) {
-				return false;
-			} else {
-				return true;
-			}
+			return ! is_user_logged_in();
 		}
 
-		if ( 'userRoles' === $condition['type'] ) {
-			if ( isset( $condition['roles'] ) ) {
-				if ( $visibility ) {
-					return $this->has_user_roles( $condition['roles'] );
-				} else {
-					return ! $this->has_user_roles( $condition['roles'] );
-				}
-			}
+		if ( 'userRoles' === $condition['type'] && isset( $condition['roles'] ) ) {
+			return $visibility ? $this->has_user_roles( $condition['roles'] ) : ! $this->has_user_roles( $condition['roles'] );
 		}
 
-		if ( 'postAuthor' === $condition['type'] ) {
-			if ( isset( $condition['authors'] ) ) {
-				if ( $visibility ) {
-					return $this->has_author( $condition['authors'] );
-				} else {
-					return ! $this->has_author( $condition['authors'] );
-				}
-			}
+		if ( 'postAuthor' === $condition['type'] && isset( $condition['authors'] ) ) {
+			return $visibility ? $this->has_author( $condition['authors'] ) : ! $this->has_author( $condition['authors'] );
 		}
 
-		if ( 'postType' === $condition['type'] ) {
-			if ( isset( $condition['post_types'] ) ) {
-				if ( $visibility ) {
-					return $this->is_type( $condition['post_types'] );
-				} else {
-					return ! $this->is_type( $condition['post_types'] );
-				}
-			}
+		if ( 'postType' === $condition['type'] && isset( $condition['post_types'] ) ) {
+			return $visibility ? $this->is_type( $condition['post_types'] ) : ! $this->is_type( $condition['post_types'] );
 		}
 
-		if ( 'postCategory' === $condition['type'] ) {
-			if ( isset( $condition['categories'] ) ) {
-				if ( $visibility ) {
-					return $this->has_category( $condition['categories'] );
-				} else {
-					return ! $this->has_category( $condition['categories'] );
-				}
-			}
+		if ( 'postCategory' === $condition['type'] && isset( $condition['categories'] ) ) {
+			return $visibility ? $this->has_category( $condition['categories'] ) : ! $this->has_category( $condition['categories'] );
+		}
+
+		if ( 'postTag' === $condition['type'] && isset( $condition['tags'] ) ) {
+			return $visibility ? has_tag( $condition['tags'] ) : ! has_tag( $condition['tags'] );
 		}
 
 		if ( 'screenSize' === $condition['type'] ) {
 			return true;
 		}
 
-		if ( 'stripePurchaseHistory' === $condition['type'] ) {
-			if ( isset( $condition['product'] ) && Stripe_API::has_keys() ) {
-				if ( $visibility ) {
-					return $this->has_stripe_product( $condition['product'] );
-				} else {
-					return ! $this->has_stripe_product( $condition['product'] );
-				}
-			}
+		if ( 'stripePurchaseHistory' === $condition['type'] && isset( $condition['product'] ) && Stripe_API::has_keys() ) {
+			return $visibility ? $this->has_stripe_product( $condition['product'] ) : ! $this->has_stripe_product( $condition['product'] );
 		}
 
 		return apply_filters( 'otter_blocks_evaluate_condition', true, $condition, $visibility );

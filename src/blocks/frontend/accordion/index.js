@@ -1,11 +1,17 @@
 /**
  * Internal dependencies
  */
-import { domReady } from '../../helpers/frontend-helper-functions.js';
+import { domReady, scrollIntoViewIfNeeded } from '../../helpers/frontend-helper-functions.js';
 
 domReady( () => {
 	const accordions = document.querySelectorAll( '.wp-block-themeisle-blocks-accordion' );
 
+	/**
+	 *	Handle the opening of the accordion items.
+	 *
+	 * @param {HTMLDetailsElement} accordion The accordion root element.
+	 * @returns
+	 */
 	const handleItemOpening = accordion => {
 		if ( ! accordion.classList.contains( 'exclusive' ) ) {
 			return;
@@ -25,6 +31,9 @@ domReady( () => {
 				openSibling.forEach( sibling => {
 					sibling.removeAttribute( 'open' );
 				});
+
+				const title = item.querySelector( ':scope > .wp-block-themeisle-blocks-accordion-item__title' );
+				scrollIntoViewIfNeeded( title );
 			});
 		});
 	};

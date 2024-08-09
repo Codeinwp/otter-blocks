@@ -168,10 +168,38 @@ export const SortableItem = ({
 								onChange={ imageSize => setAttributes({ imageSize }) }
 							/>
 
-							<ToggleControl
-								label={ __( 'Crop Image to Fit', 'otter-blocks' ) }
-								checked={ attributes.cropImage }
-								onChange={ cropImage => setAttributes({ cropImage }) }
+							<SelectControl
+								label={ __( 'Image Ratio', 'otter-blocks' ) }
+								value={ attributes.imageRatio }
+								options={ [
+									{
+										label: __( 'Inherit', 'otter-blocks' ),
+										value: 'inherit'
+									},
+									{
+										label: '1:1',
+										value: '1/1'
+									},
+									{
+										label: '3:2',
+										value: '3/2'
+									},
+									{
+										label: '16:9',
+										value: '16/9'
+									},
+									{
+										label: '2:1',
+										value: '2/1'
+									}
+								] }
+								onChange={ imageRatio => {
+									if ( 'inherit' === imageRatio ) {
+										return setAttributes({ imageRatio: undefined });
+									}
+
+									setAttributes({ imageRatio });
+								} }
 							/>
 						</Fragment>
 					) }

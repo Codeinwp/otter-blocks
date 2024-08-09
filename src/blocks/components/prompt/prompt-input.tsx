@@ -52,8 +52,8 @@ const PromptInput = ( props: PromptInputProps ) => {
 					placeholder={ props.placeholder }
 					rows={1}
 					onKeyDown={ handleKeyDown }
+					value={ props.value }
 				>
-					{ props.value }
 				</textarea>
 				<div className="prompt-input__submit__container">
 					<Button

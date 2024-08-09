@@ -62,7 +62,7 @@ const HTMLAnchorControl = ({
 						icon={ isEditing ? 'yes' : 'edit' }
 						label={ isEditing ? __( 'Save', 'otter-blocks' ) : __( 'Edit', 'otter-blocks' ) }
 						showTooltip={ true }
-						disabled={ isInvalid ? true : false }
+						disabled={ isInvalid || ! ID }
 						className={ classnames(
 							'o-html-anchor-control-button',
 							{ 'is-saved': ! isEditing }
@@ -86,6 +86,16 @@ const HTMLAnchorControl = ({
 					className="o-html-anchor-control-notice"
 				>
 					{ __( 'This ID has already been used in this page. Please consider using a different ID to avoid conflict.', 'otter-blocks' ) }
+				</Notice>
+			) }
+
+			{ ! ID && (
+				<Notice
+					status="warning"
+					isDismissible={ false }
+					className="o-html-anchor-control-notice"
+				>
+					{ __( 'Please enter an ID to use as an anchor.', 'otter-blocks' ) }
 				</Notice>
 			) }
 		</InspectorAdvancedControls>

@@ -77,6 +77,12 @@
 				"active": false
 			}
 		},
+		"threads": {
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": false
+			}
+		},
 		"gap" : {
 			"type": "number"
 		},

@@ -10,7 +10,6 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	isEmpty,
-	isNumber,
 	pickBy
 } from 'lodash';
 
@@ -78,6 +77,13 @@ const Edit = ({
 				setAttributes({ borderRadiusBox, borderRadius: undefined, borderRadiusBottomLeft: undefined, borderRadiusTopRight: undefined, borderRadiusBottomRight: undefined, borderRadiusTopLeft: undefined, borderRadiusType: undefined });
 			}
 		}
+
+		/**
+		 * Set default time if no time is set.
+		 */
+		if ( 'timer' !== attributes.mode && ! attributes.date ) {
+			setAttributes({ date: moment().utc().add( 1, 'week' ).format( 'YYYY-MM-DDTHH:mm:ss' ) });
+		}
 	}, []);
 
 	/**
@@ -109,7 +115,6 @@ const Edit = ({
 			return unixTime;
 		}
 	};
-
 
 	const inlineStyles = {
 		'--border-radius': boxValues( attributes.borderRadiusBox ),

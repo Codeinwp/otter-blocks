@@ -4,12 +4,14 @@
 import { useInspectorSlot } from './inspector-slot-fill';
 import Notice from './notice/index.js';
 import SelectProducts from './select-products-control/index.js';
+import { CategoriesFieldToken } from '../plugins/conditions/edit.js';
 
 window.otterComponents = {};
 
 window.otterComponents.SelectProducts = SelectProducts;
 window.otterComponents.Notice = Notice;
 window.otterComponents.useInspectorSlot = useInspectorSlot;
+window.otterComponents.CategoriesFieldToken = CategoriesFieldToken;
 
 export { default as BackgroundOverlayControl } from './background-overlay-control/index.js';
 export { default as BackgroundSelectorControl } from './background-selector-control/index.js';
