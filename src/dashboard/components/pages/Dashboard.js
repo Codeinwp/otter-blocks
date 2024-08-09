@@ -38,6 +38,7 @@ const optionMapping = {
 	enableBlocksAnimation: 'themeisle_blocks_settings_blocks_animation',
 	enableBlockConditions: 'themeisle_blocks_settings_block_conditions',
 	enablePatternsLibrary: 'themeisle_blocks_settings_patterns_library',
+	enableDynamicContent: 'themeisle_blocks_settings_dynamic_content',
 	enableOnboardingWizard: 'themeisle_blocks_settings_onboarding_wizard',
 	enableSectionDefaultBlock: 'themeisle_blocks_settings_default_block',
 	enableOptimizeAnimationsCss: 'themeisle_blocks_settings_optimize_animations_css',
@@ -54,6 +55,7 @@ const initialState = {
 		enableBlocksAnimation: false,
 		enableBlockConditions: false,
 		enablePatternsLibrary: false,
+		enableDynamicContent: false,
 		enableOnboardingWizard: false,
 		enableSectionDefaultBlock: false,
 		enableOptimizeAnimationsCss: false,
@@ -68,6 +70,7 @@ const initialState = {
 		enableBlocksAnimation: 'init',
 		enableBlockConditions: 'init',
 		enablePatternsLibrary: 'init',
+		enableDynamicContent: 'init',
 		enableOnboardingWizard: 'init',
 		enableSectionDefaultBlock: 'init',
 		enableOptimizeAnimationsCss: 'init',
@@ -82,6 +85,7 @@ const initialState = {
 		enableBlocksAnimation: false,
 		enableBlockConditions: false,
 		enablePatternsLibrary: false,
+		enableDynamicContent: false,
 		enableOnboardingWizard: false,
 		enableSectionDefaultBlock: false,
 		enableOptimizeAnimationsCss: false,
@@ -277,6 +281,16 @@ const Dashboard = () => {
 						checked={ state.values.enablePatternsLibrary }
 						disabled={ 'saving' === state.status.enablePatternsLibrary }
 						onChange={ ( value ) => applyAction({ type: 'update', name: 'enablePatternsLibrary', value }) }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
+						label={ __( 'Enable Dynamic Content Module', 'otter-blocks' ) }
+						help={ __( 'Toggle the Dynamic Content Module that includes Dynamic Content, Link and Images.', 'otter-blocks' ) }
+						checked={ state.values.enableDynamicContent }
+						disabled={ 'saving' === state.status.enableDynamicContent }
+						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableDynamicContent', value }) }
 					/>
 				</PanelRow>
 

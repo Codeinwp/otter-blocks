@@ -103,6 +103,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_dynamic_content',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Dynamic Content allows you to display dynamic content, link and images in your content.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_highlight_dynamic',
 			array(
 				'type'         => 'boolean',

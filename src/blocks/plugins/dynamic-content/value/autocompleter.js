@@ -62,8 +62,10 @@ const dynamicValue = {
 
 const appenddDynamicValueCompleter = completers => [ ...completers, dynamicValue ];
 
-addFilter(
-	'editor.Autocomplete.completers',
-	'otter-pro/autocompleters/dynamic-value',
-	appenddDynamicValueCompleter
-);
+if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
+	addFilter(
+		'editor.Autocomplete.completers',
+		'otter-pro/autocompleters/dynamic-value',
+		appenddDynamicValueCompleter
+	);
+}
