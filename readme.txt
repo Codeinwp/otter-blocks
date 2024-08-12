@@ -8,7 +8,7 @@ Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
-Otter offers dynamic Gutenberg blocks for the WordPress block editor. Craft beautiful posts & pages using post blocks, post grids & WordPress blocks. Beyond a page builder, it provides essential Gutenberg extensions for an enhanced block editor experience.
+Otter offers 20+ Gutenberg blocks, patterns, & extensions for WordPress. Use these features to create posts, pages, and enhance your block editor experience.
 
 == Description ==
 
@@ -71,6 +71,9 @@ Want to show certain blocks only when a user is Logged in or Logged Out? How abo
 - WooCommerce Products in Cart
 - WooCommerce Total Spent
 - WooCommerce Cart Total
+- WooCommerce Categories
+- WooCommerce Tags
+- WooCommerce Attributes
 - Cookie-based
 - And more
 
@@ -316,6 +319,7 @@ The plugin is relying on the service behind api.themeisle.com for accessing the 
 3. Posts Block
 4. AI Form Generator
 5. AI Layout Generator
+6. Patterns & Full-page templates Library
 
 == Installation ==
 
