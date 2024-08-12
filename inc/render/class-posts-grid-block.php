@@ -25,6 +25,7 @@ class Posts_Grid_Block {
 
 		$has_pagination = isset( $attributes['hasPagination'] ) && $attributes['hasPagination'];
 		$page_number    = 1;
+		$is_tiled       = isset( $attributes['className'] ) && false !== strpos( $attributes['className'], 'is-style-tiled' );
 
 		if ( $has_pagination ) {
 			if ( ! empty( get_query_var( 'page' ) ) || ! empty( get_query_var( 'paged' ) ) ) {
@@ -69,16 +70,31 @@ class Posts_Grid_Block {
 			}
 
 			$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
-			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $id ), $size );
+			$thumb_id  = get_post_thumbnail_id( $id );
+			$thumbnail = wp_get_attachment_image_src( $thumb_id, $size );
+			$style     = '';
 
-			$list_items_markup .= '<div class="o-posts-grid-post-blog o-posts-grid-post-plain"><div class="o-posts-grid-post">';
+			if ( $is_tiled && $thumbnail ) {
+				$style = sprintf(
+					' style="background-image: url(%1$s); background-size: cover; background-position: center center;"',
+					esc_url( $thumbnail[0] )
+				);
+			}
 
-			if ( isset( $attributes['displayFeaturedImage'] ) && $attributes['displayFeaturedImage'] ) {
+			$list_items_markup .= '<div class="o-posts-grid-post-blog o-posts-grid-post-plain"' . $style . '><div class="o-posts-grid-post">';
+
+			if ( isset( $attributes['displayFeaturedImage'] ) && $attributes['displayFeaturedImage'] && ! $is_tiled ) {
 				if ( $thumbnail ) {
+					$image_alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
+
+					if ( ! $image_alt ) {
+						$image_alt = get_the_title( $id );
+					}
+
 					$list_items_markup .= sprintf(
 						'<div class="o-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 						esc_url( get_the_permalink( $id ) ),
-						wp_get_attachment_image( get_post_thumbnail_id( $id ), $size )
+						wp_get_attachment_image( $thumb_id, $size, false, array( 'alt' => $image_alt ) )
 					);
 				}
 			}
@@ -106,10 +122,6 @@ class Posts_Grid_Block {
 
 		if ( ( isset( $attributes['style'] ) && 'grid' === $attributes['style'] ) || ( isset( $attributes['grid'] ) && true === $attributes['grid'] ) ) {
 			$class .= ' o-posts-grid-columns-' . $attributes['columns'];
-		}
-
-		if ( isset( $attributes['cropImage'] ) && true === $attributes['cropImage'] ) {
-			$class .= ' o-crop-img';
 		}
 
 		$wrapper_attributes = get_block_wrapper_attributes();
@@ -284,9 +296,19 @@ class Posts_Grid_Block {
 		$html      = '';
 		$id        = $post instanceof \WP_Post ? $post->ID : $post;
 		$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
-		$thumbnail = wp_get_attachment_image( get_post_thumbnail_id( $id ), $size );
+		$thumb_id  = get_post_thumbnail_id( $id );
+		$image_alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
+		$style     = '';
+		$image_url = wp_get_attachment_image_src( $thumb_id, $size );
+		$is_tiled  = isset( $attributes['className'] ) && false !== strpos( $attributes['className'], 'is-style-tiled' );
 
-		if ( $thumbnail ) {
+		if ( ! $image_alt ) {
+			$image_alt = get_the_title( $id );
+		}
+
+		$thumbnail = wp_get_attachment_image( $thumb_id, $size, false, array( 'alt' => $image_alt ) );
+
+		if ( $image_url && ! $is_tiled ) {
 			$html .= sprintf(
 				'<div class="o-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 				esc_url( get_the_permalink( $id ) ),
@@ -294,11 +316,18 @@ class Posts_Grid_Block {
 			);
 		}
 
+		if ( $is_tiled && $image_url ) {
+			$style = sprintf(
+				' style="background-image: url(%1$s); background-size: cover; background-position: center center;"',
+				esc_url( $image_url[0] )
+			);
+		}
+
 		$html .= '<div class="o-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
 
 		$html .= $this->get_post_fields( $id, $attributes );
 		$html .= '</div>';
-		return sprintf( '<div class="o-featured-container"><div class="o-featured-post">%1$s</div></div>', $html );
+		return sprintf( '<div class="o-featured-container"><div class="o-featured-post"' . $style . '>%1$s</div></div>', $html );
 	}
 
 	/**
@@ -420,7 +449,7 @@ class Posts_Grid_Block {
 		$tag = sanitize_key( $tag );
 		
 		if ( ! in_array( $tag, array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ) {
-			$tag = 'h5';
+			$tag = 'h4';
 		}
 
 		return sprintf(

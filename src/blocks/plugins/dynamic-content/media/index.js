@@ -19,181 +19,183 @@ let activeFrameId = '';
 let activeFrame = false;
 let activeModal = '';
 
-const replaceMediaUpload = InitialMediaUpload => {
-	return class OtterMediaUpload extends InitialMediaUpload {
-		constructor( props ) {
-			super( props );
-			window.otterCurrentMediaProps = props;
-		}
+if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
+	const replaceMediaUpload = InitialMediaUpload => {
+		return class OtterMediaUpload extends InitialMediaUpload {
+			constructor( props ) {
+				super( props );
+				window.otterCurrentMediaProps = props;
+			}
+		};
 	};
-};
 
-addFilter(
-	'editor.MediaUpload',
-	'themeisle-blocks/dynamic-content/media-library',
-	replaceMediaUpload
-);
+	addFilter(
+		'editor.MediaUpload',
+		'themeisle-blocks/dynamic-content/media-library',
+		replaceMediaUpload
+	);
 
-jQuery( document ).ready( function( $ ) {
-	const oldMediaFrame = wp.media.view.MediaFrame.Select;
+	jQuery( document ).ready( function( $ ) {
+		const oldMediaFrame = wp.media.view.MediaFrame.Select;
 
-	// Extending the current media library frame to add a new tab
-	wp.media.view.MediaFrame.Select = oldMediaFrame.extend({
+		// Extending the current media library frame to add a new tab
+		wp.media.view.MediaFrame.Select = oldMediaFrame.extend({
 
-		/**
+			/**
 		 * overwrite router to
 		 *
 		 * @param {wp.media.view.Router} routerView
 		 */
-		browseRouter( routerView ) {
-			oldMediaFrame.prototype.browseRouter.apply( this, arguments );
-			const showDynamicMedia = select( 'core/block-editor' ).getSelectedBlock();
+			browseRouter( routerView ) {
+				oldMediaFrame.prototype.browseRouter.apply( this, arguments );
+				const showDynamicMedia = select( 'core/block-editor' ).getSelectedBlock();
 
-			if ( showDynamicMedia ) {
-				routerView.set({
-					otterDynamicImages: {
-						text: __( 'Dynamic Images', 'otter-blocks' ),
-						priority: 60
-					}
-				});
-			}
-		},
+				if ( showDynamicMedia ) {
+					routerView.set({
+						otterDynamicImages: {
+							text: __( 'Dynamic Images', 'otter-blocks' ),
+							priority: 60
+						}
+					});
+				}
+			},
 
-		/**
+			/**
 		 * Bind region mode event callbacks.
 		 *
 		 * @see media.controller.Region.render
 		 */
-		bindHandlers() {
-			oldMediaFrame.prototype.bindHandlers.apply( this, arguments );
-			const showDynamicMedia = wp.data.select( 'core/block-editor' ).getSelectedBlock();
+			bindHandlers() {
+				oldMediaFrame.prototype.bindHandlers.apply( this, arguments );
+				const showDynamicMedia = wp.data.select( 'core/block-editor' ).getSelectedBlock();
 
-			if ( showDynamicMedia ) {
-				this.on( 'content:create:otterDynamicImages', this.otterDynamicImages, this );
-			}
-		},
+				if ( showDynamicMedia ) {
+					this.on( 'content:create:otterDynamicImages', this.otterDynamicImages, this );
+				}
+			},
 
-		/**
+			/**
 		 * Render callback for the content region in the `browse` mode.
 		 *
 		 * @param {wp.media.controller.Region} contentRegion
 		 */
-		otterDynamicImages() {
-			const state = this.state();
+			otterDynamicImages() {
+				const state = this.state();
 
-			// Get active frame
-			if ( state ) {
-				activeFrameId = state.id;
-				activeFrame = state.frame.el;
+				// Get active frame
+				if ( state ) {
+					activeFrameId = state.id;
+					activeFrame = state.frame.el;
+				}
+
+				activeModal = this;
+				window.omodal = this;
+			},
+
+			getFrame( id ) {
+				return this.states.findWhere({ id });
+			}
+		});
+
+		// Render Otter Tab
+		const otterImagesMediaTab = () => {
+			const html = createWrapperHTML();
+
+			if ( ! activeFrame ) {
+				return false;
 			}
 
-			activeModal = this;
-			window.omodal = this;
-		},
-
-		getFrame( id ) {
-			return this.states.findWhere({ id });
-		}
-	});
-
-	// Render Otter Tab
-	const otterImagesMediaTab = () => {
-		const html = createWrapperHTML();
-
-		if ( ! activeFrame ) {
-			return false;
-		}
-
-		const modal = activeFrame.querySelector( '.media-frame-content' );
-		if ( ! modal ) {
-			return false;
-		}
-
-		modal.innerHTML = '';
-		modal.appendChild( html );
-
-		const element = modal.querySelector( '#otter-media-router-' + activeFrameId );
-		if ( ! element ) {
-			return false;
-		}
-
-		renderPhotoList( element );
-	};
-
-	const createWrapperHTML = () => {
-		const wrapper = document.createElement( 'div' );
-		wrapper.classList.add( 'o-media-container' );
-
-		const container = document.createElement( 'div' );
-		container.classList.add( 'media-frame-content', 'o-media-wrapper' );
-
-		const frame = document.createElement( 'div' );
-		frame.setAttribute( 'id', 'otter-media-router-' + activeFrameId );
-
-		container.appendChild( frame );
-		wrapper.appendChild( container );
-
-		return wrapper;
-	};
-
-	const renderPhotoList = element => {
-		const state = activeModal.state();
-		const selection = state.get( 'selection' );
-
-		const onSelectImage = ({ id, url }) => {
-			if ( selection?._single?.attributes?.url === url ) {
-				return selection.reset();
+			const modal = activeFrame.querySelector( '.media-frame-content' );
+			if ( ! modal ) {
+				return false;
 			}
 
-			selection.add({
-				id,
-				url,
-				alt: '',
-				'media_type': 'image',
-				width: 500
-			});
+			modal.innerHTML = '';
+			modal.appendChild( html );
+
+			const element = modal.querySelector( '#otter-media-router-' + activeFrameId );
+			if ( ! element ) {
+				return false;
+			}
+
+			renderPhotoList( element );
 		};
 
-		const root = createRoot( element );
+		const createWrapperHTML = () => {
+			const wrapper = document.createElement( 'div' );
+			wrapper.classList.add( 'o-media-container' );
 
-		root.render(
-			<MediaContent
-				state={ state }
-				onSelectImage={ onSelectImage }
-			/>
-		);
-	};
+			const container = document.createElement( 'div' );
+			container.classList.add( 'media-frame-content', 'o-media-wrapper' );
 
-	wp.media.view.Modal.prototype.on( 'open', () => {
-		if ( ! activeFrame ) {
-			return false;
-		}
+			const frame = document.createElement( 'div' );
+			frame.setAttribute( 'id', 'otter-media-router-' + activeFrameId );
 
-		let selectedTab = activeFrame.querySelector(
-			'.media-router button.media-menu-item.active'
-		);
+			container.appendChild( frame );
+			wrapper.appendChild( container );
 
-		if ( selectedTab && 'menu-item-otterDynamicImages' === selectedTab.id ) {
-			otterImagesMediaTab();
-		}
-	});
+			return wrapper;
+		};
 
-	// Click Handler
-	$( document ).on(
-		'click',
-		'.media-router button.media-menu-item',
-		() => {
+		const renderPhotoList = element => {
+			const state = activeModal.state();
+			const selection = state.get( 'selection' );
+
+			const onSelectImage = ({ id, url }) => {
+				if ( selection?._single?.attributes?.url === url ) {
+					return selection.reset();
+				}
+
+				selection.add({
+					id,
+					url,
+					alt: '',
+					'media_type': 'image',
+					width: 500
+				});
+			};
+
+			const root = createRoot( element );
+
+			root.render(
+				<MediaContent
+					state={ state }
+					onSelectImage={ onSelectImage }
+				/>
+			);
+		};
+
+		wp.media.view.Modal.prototype.on( 'open', () => {
 			if ( ! activeFrame ) {
-				return;
+				return false;
 			}
 
-			const selectedTab = activeFrame.querySelector(
+			let selectedTab = activeFrame.querySelector(
 				'.media-router button.media-menu-item.active'
 			);
 
 			if ( selectedTab && 'menu-item-otterDynamicImages' === selectedTab.id ) {
 				otterImagesMediaTab();
 			}
-		}
-	);
-});
+		});
+
+		// Click Handler
+		$( document ).on(
+			'click',
+			'.media-router button.media-menu-item',
+			() => {
+				if ( ! activeFrame ) {
+					return;
+				}
+
+				const selectedTab = activeFrame.querySelector(
+					'.media-router button.media-menu-item.active'
+				);
+
+				if ( selectedTab && 'menu-item-otterDynamicImages' === selectedTab.id ) {
+					otterImagesMediaTab();
+				}
+			}
+		);
+	});
+}

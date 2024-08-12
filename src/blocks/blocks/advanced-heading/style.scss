@@ -2,7 +2,9 @@ span.wp-block-themeisle-blocks-advanced-heading {
 	display: block;
 }
 
-.wp-block-themeisle-blocks-advanced-heading {
+.wp-block-themeisle-blocks-advanced-heading,
+.is-layout-constrained > :is( .wp-block-themeisle-blocks-advanced-heading, .wp-block-themeisle-blocks-advanced-heading:first-child ),  /* We add these selectors to make sure the block is styled correctly. FSE themes not making things much easier. */
+:is(h1, h2, h3, h4, h5, h6).wp-block-themeisle-blocks-advanced-heading {
 	--padding: 0px;
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);

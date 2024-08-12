@@ -47,7 +47,8 @@ class Main {
 		}
 
 		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
-
+		
+		add_action( 'parse_query', array( $this, 'pagination_support' ) );
 	}
 
 	/**
@@ -518,6 +519,25 @@ class Main {
 		$metadata['file']   = $filename;
 
 		return $metadata;
+	}
+
+	/**
+	 * Disable canonical redirect to make Posts pagination feature work.
+	 * 
+	 * @param \WP_Query $request The query object.
+	 */
+	public function pagination_support( $request ) {
+		if (
+			true === $request->is_singular && 
+			-1 === $request->current_post && 
+			true === $request->is_paged &&
+			(
+				! empty( $request->query_vars['page'] ) ||
+				! empty( $request->query_vars['paged'] )
+			)
+		) {
+			add_filter( 'redirect_canonical', '__return_false' );
+		}
 	}
 
 

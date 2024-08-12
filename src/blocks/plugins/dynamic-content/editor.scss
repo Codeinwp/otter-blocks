@@ -33,6 +33,20 @@ o-dynamic-link {
 	cursor: pointer;
 }
 
+.o-dynamic-button {
+	opacity: 1;
+
+	&.is-pressed {
+		&::before {
+			background: rgba(237, 111, 87, 0.1);
+		}
+	}
+	
+	svg {
+		fill: #ED6F57;
+	}
+}
+
 .wp-block.is-selected o-dynamic,
 .wp-block:not(.is-selected) o-dynamic:not([data-preview]),
 .wp-block:not(.is-selected) o-dynamic[data-preview=""] {

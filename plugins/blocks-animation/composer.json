@@ -1,0 +1,32 @@
+{
+	"name": "codeinwp/blocks-animation",
+	"description": "Blocks Animation: CSS Animations for Gutenberg Blocks",
+	"type": "wordpress-plugin",
+	"version": "2.6.13",
+	"license": "GPL-2.0+",
+	"authors": [
+		{
+			"name": "ThemeIsle Team",
+			"email": "friends@themeisle.com"
+		}
+	],
+	"prefer-stable": true,
+	"config": {
+		"optimize-autoloader": true,
+		"platform": {
+			"php": "7.4"
+		}
+	},
+	"extra": {
+		"installer-disable": "true"
+	},
+	"autoload": {
+		"files": [
+			"vendor/codeinwp/themeisle-sdk/load.php"
+		]
+	},
+	"minimum-stability": "dev",
+	"require": {
+		"codeinwp/themeisle-sdk": "^3.2"
+	}
+}

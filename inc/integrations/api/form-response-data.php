@@ -343,6 +343,9 @@ class Form_Data_Response {
 	 * @since 2.1.7
 	 */
 	public function process_error_code() {
+		if ( ! $this->has_error() ) {
+			return;
+		}
 		$this->add_reason( self::get_error_code_message( $this->response['code'] ) );
 	}
 
@@ -393,9 +396,15 @@ class Form_Data_Response {
 			self::ERROR_STRIPE_METADATA_RECORD_NOT_FOUND   => __( 'The metadata submission record was not found.', 'otter-blocks' ),
 			self::ERROR_RUNTIME_STRIPE_SESSION_VALIDATION  => __( 'The payment has been processed. You will be contacted by the support team.', 'otter-blocks' ),
 		);
+		
+		// Give more details to the admin.
+		if ( is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+			$error_messages[ self::ERROR_EMAIL_NOT_SEND ]      .= ' ' . __( 'The function `wp_mail` is not working properly. Please check the email provider settings.', 'otter-blocks' );
+			$error_messages[ self::ERROR_FILE_UPLOAD_TYPE_WP ] .= ' ' . __( 'The `wp_check_filetype` function could not validate the file type. Please check the server settings.', 'otter-blocks' );
+		}
 
 		if ( ! isset( $error_messages[ $error_code ] ) ) {
-			return 'Expected error whatever message';
+			return __( 'Unknown error.', 'otter-blocks' );
 		}
 
 		return $error_messages[ $error_code ];

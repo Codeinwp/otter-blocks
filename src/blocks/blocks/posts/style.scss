@@ -3,11 +3,17 @@
 	--vert-align: initial;
 	--img-border-radius: 0;
 	--img-box-shadow: none;
+	--image-ratio: inherit;
 	--border-width: 0;
 	--text-color: inherit;
 	--background-color: inherit;
+	--background-overlay: #0000005e;
 	--border-color: inherit;
 	--border-radius: 0;
+	--border-radius-start-start: 0;
+	--border-radius-start-end: 0;
+	--border-radius-end-start: 0;
+	--border-radius-end-end: 0;
 	--box-shadow: none;
 	--content-gap: 10px;
 
@@ -64,10 +70,71 @@
 	}
 
 	&.is-style-boxed {
-		--border-width: 3px;
+		--background-color: rgb( 240, 245, 250);
 
 		.o-posts-grid-post-body {
 			padding: var( --content-padding, 20px );
+		}
+	}
+
+	&.is-style-tiled {
+		.o-posts-grid-post-blog {
+			background-color: var( --background-color );
+			border-width: var( --border-width );
+			border-style: solid;
+			border-color: var( --border-color );
+			border-radius: var( --border-radius );
+			box-shadow: var( --box-shadow );
+		}
+
+		.o-featured-post {
+			background-color: var( --background-color );
+
+			.o-posts-grid-post-body {
+				background: var( --background-overlay );
+				border-radius: calc( var( --border-radius-start-start ) - var( --border-width) ) calc( var( --border-radius-start-end ) - var( --border-width) ) calc( var( --border-radius-end-start ) - var( --border-width) ) calc( var( --border-radius-end-end ) - var( --border-width) );
+			}
+		}
+
+		.o-posts-grid-post {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: end;
+			background: var( --background-overlay );
+			border-radius: calc( var( --border-radius-start-start ) - var( --border-width) ) calc( var( --border-radius-start-end ) - var( --border-width) ) calc( var( --border-radius-end-start ) - var( --border-width) ) calc( var( --border-radius-end-end ) - var( --border-width) );
+		}
+
+		.o-posts-grid-post,
+		.o-featured-post {
+			.o-posts-grid-post-body {
+				padding: var( --content-padding, 36px );
+				color: var( --text-color, #fff );
+
+				.o-posts-grid-post-title a {
+					color: var( --text-color, #fff );
+				}
+			}
+		}
+	}
+
+	&:not(.is-style-tiled) {
+		.o-posts-grid-post-blog {
+			.o-posts-grid-post {
+				background: var( --background-color );
+				border-width: var( --border-width );
+				border-style: solid;
+				border-color: var( --border-color );
+				border-radius: var( --border-radius );
+				box-shadow: var( --box-shadow );
+			}
+		}
+
+		.o-featured-container {
+			.o-featured-post {
+				background-color: var( --background-color );
+			}
 		}
 	}
 
@@ -115,7 +182,6 @@
 
 				img {
 					height: 100%;
-					object-fit: cover;
 				}
 			}
 
@@ -124,21 +190,6 @@
 
 				&.is-full {
 					flex-basis: 100%;
-				}
-			}
-		}
-	}
-
-	.o-crop-img {
-		.o-posts-grid-post-blog {
-			.o-posts-grid-post {
-				.o-posts-grid-post-image {
-					img {
-						width: 150px;
-						height: 150px;
-						object-fit: cover;
-						border-radius: var( --img-border-radius );
-					}
 				}
 			}
 		}
@@ -155,12 +206,6 @@
 
 		.o-posts-grid-post {
 			overflow: hidden;
-			border-width: var( --border-width );
-			border-style: solid;
-			border-color: var( --border-color );
-			border-radius: var( --border-radius );
-			background: var( --background-color );
-			box-shadow: var( --box-shadow );
 		}
 	}
 
@@ -183,6 +228,9 @@
 			border-radius: 5px;
 			border-radius: var( --img-border-radius );
 			box-shadow: var( --img-box-shadow );
+			object-fit: cover;
+			object-position: center center;
+			aspect-ratio: var( --image-ratio );
 		}
 	}
 
@@ -200,6 +248,11 @@
 			color: var( --text-color );
 			text-transform: capitalize;
 			margin: 0;
+
+			a {
+				font-size: var( --meta-text-size );
+				color: var( --text-color );
+			}
 		}
 
 		.o-posts-grid-post-title {
@@ -222,6 +275,11 @@
 			font-size: var( --meta-text-size );
 			color: var( --text-color );
 			margin: 0;
+
+			a {
+				font-size: var( --meta-text-size );
+				color: var( --text-color );
+			}
 		}
 
 		.o-posts-grid-post-description {
@@ -253,7 +311,6 @@
 			border-style: solid;
 			border-color: var( --border-color );
 			border-radius: var( --border-radius );
-			background-color: var( --background-color );
 			box-shadow: var( --box-shadow );
 			margin-bottom: var( --row-gap );
 
@@ -264,6 +321,8 @@
 					width: 100%;
 					height: 250px;
 					object-fit: cover;
+					object-position: center center;
+					aspect-ratio: var( --image-ratio );
 				}
 			}
 

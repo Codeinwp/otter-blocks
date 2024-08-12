@@ -1,16 +1,20 @@
 /**
  * External dependencies.
  */
-import { globe } from '@wordpress/icons';
+import { link } from '@wordpress/icons';
 
 /**
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
 
-import { RichTextToolbarButton } from '@wordpress/block-editor';
+import { BlockControls } from '@wordpress/block-editor';
 
-import { Modal } from '@wordpress/components';
+import {
+	Modal,
+	ToolbarButton,
+	ToolbarGroup
+} from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
 
@@ -26,7 +30,8 @@ import { toggleFormat } from '@wordpress/rich-text';
  */
 import {
 	format as settings,
-	name
+	name,
+	supportedBlocks
 } from './index.js';
 import Fields from './fields.js';
 import InlineControls from '../components/inline-controls.js';
@@ -38,7 +43,10 @@ const Edit = ({
 	activeAttributes,
 	contentRef
 }) => {
-	const { isQueryChild } = useSelect( select => {
+	const {
+		currentBlock,
+		isQueryChild
+	} = useSelect( select => {
 		const {
 			getSelectedBlock,
 			getBlockParentsByBlockName
@@ -47,6 +55,7 @@ const Edit = ({
 		const currentBlock = getSelectedBlock();
 
 		return {
+			currentBlock,
 			isQueryChild: 0 < getBlockParentsByBlockName( currentBlock?.clientId, 'core/query' ).length
 		};
 	}, []);
@@ -90,15 +99,27 @@ const Edit = ({
 		setOpen( false );
 	};
 
+	// We already have another mechanism for Button blocks so we don't need to show anoter dynamic link button.
+	if ( supportedBlocks[ currentBlock.name ]) {
+		return null;
+	}
+
 	return (
 		<Fragment>
-			<RichTextToolbarButton
-				icon={ globe }
-				title={ __( 'Dynamic Link', 'otter-blocks' ) }
-				onClick={ () => setOpen( true ) }
-				isDisabled={ isActive }
-				isActive={ isActive }
-			/>
+			{ Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) && (
+				<BlockControls>
+					<ToolbarGroup>
+						<ToolbarButton
+							icon={ link }
+							title={ __( 'Dynamic Link', 'otter-blocks' ) }
+							onClick={ () => setOpen( true ) }
+							isDisabled={ isActive }
+							isActive={ isActive }
+							className="o-dynamic-button"
+						/>
+					</ToolbarGroup>
+				</BlockControls>
+			) }
 
 			{ isOpen && (
 				<Modal

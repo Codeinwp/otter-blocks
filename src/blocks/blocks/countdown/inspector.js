@@ -76,36 +76,27 @@ const defaultFontSizes = [
 const fontWeights = [ '', '100', '200', '300', '400', '500', '600', '700', '800', '900' ].map( x => ({ label: x ? x : 'Default', value: x }) );
 
 const SettingsPanel = ({ attributes }) => (
-	<Fragment>
-		<SelectControl
-			label={ __( 'Countdown Type', 'otter-blocks' ) }
-			value={  attributes.mode }
-			options={[
-				{
-					label: __( 'Static', 'otter-blocks' ),
-					value: ''
-				},
-				{
-					label: __( 'Evergreen (Pro)', 'otter-blocks' ),
-					value: 'timer',
-					disabled: true
-				},
-				{
-					label: __( 'Interval (Pro)', 'otter-blocks' ),
-					value: 'interval',
-					disabled: true
-				}
-			]}
-			help={ __( 'An universal deadline for all visitors', 'otter-blocks' )}
-		/>
-
-		{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
-			<Notice
-				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'countdownfeature' ) }>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
-				variant="upsell"
-			/>
-		) }
-	</Fragment>
+	<SelectControl
+		label={ __( 'Countdown Type', 'otter-blocks' ) }
+		value={  attributes.mode }
+		options={[
+			{
+				label: __( 'Static', 'otter-blocks' ),
+				value: ''
+			},
+			{
+				label: __( 'Evergreen (Pro)', 'otter-blocks' ),
+				value: 'timer',
+				disabled: true
+			},
+			{
+				label: __( 'Interval (Pro)', 'otter-blocks' ),
+				value: 'interval',
+				disabled: true
+			}
+		]}
+		help={ __( 'An universal deadline for all visitors', 'otter-blocks' )}
+	/>
 );
 
 const EndActionPanel = () => (

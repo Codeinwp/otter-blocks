@@ -1,6 +1,6 @@
 $base-index: 99999 !default;
 
-.wp-block-themeisle-blocks-popup {
+:is( .wp-block-themeisle-blocks-modal, .wp-block-themeisle-blocks-popup ) {
 	--min-width: 400px;
 	--background-color: #fff;
 	--close-color: #000;
@@ -152,6 +152,10 @@ $base-index: 99999 !default;
 				border: none !important;
 				outline: none;
 			}
+
+			svg {
+				fill: currentColor;
+			}
 		}
 	}
 
@@ -200,7 +204,7 @@ $base-index: 99999 !default;
 }
 
 body:has(#wpadminbar) {
-	.wp-block-themeisle-blocks-popup {
+	:is( .wp-block-themeisle-blocks-modal, .wp-block-themeisle-blocks-popup ) {
 		.otter-popup__modal_content {
 			margin-top: 25px;
 		}
@@ -215,4 +219,8 @@ body:has(#wpadminbar) {
 	to {
 		opacity:1
 	}
+}
+
+.wp-block-themeisle-blocks-modal:not( .is-active ) {
+    display: none;
 }

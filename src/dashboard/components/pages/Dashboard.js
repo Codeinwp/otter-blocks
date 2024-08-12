@@ -37,13 +37,16 @@ const optionMapping = {
 	enableCustomCss: 'themeisle_blocks_settings_css_module',
 	enableBlocksAnimation: 'themeisle_blocks_settings_blocks_animation',
 	enableBlockConditions: 'themeisle_blocks_settings_block_conditions',
+	enablePatternsLibrary: 'themeisle_blocks_settings_patterns_library',
+	enableDynamicContent: 'themeisle_blocks_settings_dynamic_content',
 	enableOnboardingWizard: 'themeisle_blocks_settings_onboarding_wizard',
 	enableSectionDefaultBlock: 'themeisle_blocks_settings_default_block',
 	enableOptimizeAnimationsCss: 'themeisle_blocks_settings_optimize_animations_css',
 	enableRichSchema: 'themeisle_blocks_settings_disable_review_schema',
 	enableReviewScale: 'themeisle_blocks_settings_review_scale',
 	enableHighlightDynamic: 'themeisle_blocks_settings_highlight_dynamic',
-	enableAnonymousDataTracking: 'otter_blocks_logger_flag'
+	enableAnonymousDataTracking: 'otter_blocks_logger_flag',
+	enableAIToolbar: 'themeisle_blocks_settings_block_ai_toolbar_module'
 };
 
 const initialState = {
@@ -51,37 +54,46 @@ const initialState = {
 		enableCustomCss: false,
 		enableBlocksAnimation: false,
 		enableBlockConditions: false,
+		enablePatternsLibrary: false,
+		enableDynamicContent: false,
 		enableOnboardingWizard: false,
 		enableSectionDefaultBlock: false,
 		enableOptimizeAnimationsCss: false,
 		enableRichSchema: false,
 		enableReviewScale: false,
 		enableHighlightDynamic: false,
-		enableAnonymousDataTracking: 'no'
+		enableAnonymousDataTracking: 'no',
+		enableAIToolbar: false
 	},
 	status: {
 		enableCustomCss: 'init',
 		enableBlocksAnimation: 'init',
 		enableBlockConditions: 'init',
+		enablePatternsLibrary: 'init',
+		enableDynamicContent: 'init',
 		enableOnboardingWizard: 'init',
 		enableSectionDefaultBlock: 'init',
 		enableOptimizeAnimationsCss: 'init',
 		enableRichSchema: 'init',
 		enableReviewScale: 'init',
 		enableHighlightDynamic: 'init',
-		enableAnonymousDataTracking: 'init'
+		enableAnonymousDataTracking: 'init',
+		enableAIToolbar: 'init'
 	},
 	dirty: {
 		enableCustomCss: false,
 		enableBlocksAnimation: false,
 		enableBlockConditions: false,
+		enablePatternsLibrary: false,
+		enableDynamicContent: false,
 		enableOnboardingWizard: false,
 		enableSectionDefaultBlock: false,
 		enableOptimizeAnimationsCss: false,
 		enableRichSchema: false,
 		enableReviewScale: false,
 		enableHighlightDynamic: false,
-		enableAnonymousDataTracking: false
+		enableAnonymousDataTracking: false,
+		enableAIToolbar: false
 	},
 	old: {}
 };
@@ -232,6 +244,18 @@ const Dashboard = () => {
 
 				<PanelRow>
 					<ToggleControl
+						label={ __( 'Enable AI Block Toolbar Module', 'otter-blocks' ) }
+						help={ __( 'Display AI Block shortcut in Editor Blocks toolbar.', 'otter-blocks' ) }
+						checked={ state.values.enableAIToolbar }
+						disabled={ 'saving' === state.status.enableAIToolbar }
+						onChange={ ( value ) => {
+							applyAction({ type: 'update', name: 'enableAIToolbar', value });
+						} }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
 						label={ __( 'Enable Blocks Animation Module', 'otter-blocks' ) }
 						help={ __( 'Blocks Animation module allows to add CSS animations to each block in Block Editor.', 'otter-blocks' ) }
 						checked={ state.values.enableBlocksAnimation }
@@ -247,6 +271,26 @@ const Dashboard = () => {
 						checked={ state.values.enableBlockConditions }
 						disabled={ 'saving' === state.status.enableBlockConditions }
 						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableBlockConditions', value }) }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
+						label={ __( 'Enable Patterns Library', 'otter-blocks' ) }
+						help={ __( 'Toggle the visibility of the Patterns Library in the Block Editor.', 'otter-blocks' ) }
+						checked={ state.values.enablePatternsLibrary }
+						disabled={ 'saving' === state.status.enablePatternsLibrary }
+						onChange={ ( value ) => applyAction({ type: 'update', name: 'enablePatternsLibrary', value }) }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
+						label={ __( 'Enable Dynamic Content Module', 'otter-blocks' ) }
+						help={ __( 'Toggle the Dynamic Content Module that includes Dynamic Content, Link and Images.', 'otter-blocks' ) }
+						checked={ state.values.enableDynamicContent }
+						disabled={ 'saving' === state.status.enableDynamicContent }
+						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableDynamicContent', value }) }
 					/>
 				</PanelRow>
 

@@ -35,11 +35,18 @@ class Patterns {
 	 */
 	public function register_patterns() {
 		$block_pattern_categories = array(
-			'otter-blocks' => array( 'label' => __( 'Otter Blocks', 'otter-blocks' ) ),
-			'cta'          => array( 'label' => __( 'Call to Action', 'otter-blocks' ) ),
-			'team'         => array( 'label' => __( 'Team', 'otter-blocks' ) ),
-			'pricing'      => array( 'label' => __( 'Pricing', 'otter-blocks' ) ),
-			'testimonials' => array( 'label' => __( 'Testimonials', 'otter-blocks' ) ),
+			'otter-blocks'   => array( 'label' => __( 'Otter Blocks', 'otter-blocks' ) ),
+			'business-pack'  => array( 'label' => __( 'Business Pack (Pages)', 'otter-blocks' ) ),
+			'call-to-action' => array( 'label' => __( 'Call to Action', 'otter-blocks' ) ),
+			'creator-pack'   => array( 'label' => __( 'Creator Pack (Pages)', 'otter-blocks' ) ),
+			'fitness-pack'   => array( 'label' => __( 'Fitness Pack (Pages)', 'otter-blocks' ) ),
+			'features'       => array( 'label' => __( 'Features', 'otter-blocks' ) ),
+			'forms'          => array( 'label' => __( 'Forms', 'otter-blocks' ) ),
+			'team'           => array( 'label' => __( 'Team', 'otter-blocks' ) ),
+			'pages'          => array( 'label' => __( 'Pages', 'otter-blocks' ) ),
+			'pricing'        => array( 'label' => __( 'Pricing', 'otter-blocks' ) ),
+			'recipes-pack'   => array( 'label' => __( 'Recipes Pack (Pages)', 'otter-blocks' ) ),
+			'testimonials'   => array( 'label' => __( 'Testimonials', 'otter-blocks' ) ),
 		);
 
 		$block_pattern_categories = apply_filters( 'otter_blocks_block_pattern_categories', $block_pattern_categories );
@@ -76,7 +83,7 @@ class Patterns {
 				'minimum' => 5.8,
 			),
 			array(
-				'slug'    => 'call-to-action',
+				'slug'    => 'call-to-action-1',
 				'minimum' => 5.8,
 			),
 			array(
@@ -141,6 +148,154 @@ class Patterns {
 			),
 			array(
 				'slug'    => 'author-box',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'call-to-action-2',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'call-to-action-3',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'call-to-action-4',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'call-to-action-5',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'call-to-action-6',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'call-to-action-7',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'hero-1',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'hero-2',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'form-1',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'form-2',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'form-3',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'form-4',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'pricing',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'team-1',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'team-2',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'testimonials-1',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'testimonials-2',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'testimonials-3',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'features-1',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'features-2',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'features-3',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'features-4',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'features-5',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'industrial-homepage',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'industrial-about',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'industrial-services',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'industrial-service',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'business-homepage',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'business-about',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'business-services',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'business-service',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'business-contact',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'fitness-homepage',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'fitness-about',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'fitness-groups',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'fitness-group',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'fitness-contact',
 				'minimum' => 5.8,
 			),
 		);

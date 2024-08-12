@@ -1,5 +1,12 @@
 .o-menu-item-alignment {
     padding-left: 8px;
+    color: var(--wp-components-color-foreground, #1e1e1e);
+    text-decoration: none;
+    
+
+    :is(.components-external-link__contents) {
+        text-decoration: none;
+    }
 }
 
 .o-menu-item-header {

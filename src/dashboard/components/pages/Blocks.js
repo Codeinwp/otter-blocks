@@ -43,7 +43,9 @@ import {
 	reviewIcon,
 	searchIcon,
 	sharingIcon,
-	sliderIcon, tabsIcon
+	sliderIcon,
+	tabsIcon,
+	timelineIcon
 } from '../../../blocks/helpers/icons';
 
 /**
@@ -126,6 +128,13 @@ const otterBlocks = [
 		'docLink': 'https://docs.themeisle.com/article/1675-location-blocks#maps'
 	},
 	{
+		'slug': 'themeisle-blocks/modal',
+		'name': __( 'Modal', 'otter-blocks' ),
+		'icon': popupIcon,
+		'docLink': 'https://docs.themeisle.com/article/2050-modal-block',
+		'isPro': true
+	},
+	{
 		'slug': 'themeisle-blocks/lottie',
 		'name': __( 'Lottie Animation', 'otter-blocks' ),
 		'icon': lottieIcon,
@@ -176,7 +185,7 @@ const otterBlocks = [
 	},
 	{
 		'slug': 'themeisle-blocks/slider',
-		'name': __( 'Slider', 'otter-blocks' ),
+		'name': __( 'Image Slider', 'otter-blocks' ),
 		'icon': sliderIcon,
 		'docLink': 'https://docs.themeisle.com/article/1668-image-related-blocks#slider'
 	},
@@ -193,13 +202,6 @@ const otterBlocks = [
 		'docLink': 'https://docs.themeisle.com/article/1672-accessibility-blocks#tabs'
 	},
 	{
-		'slug': 'themeisle-blocks/woo-comparison',
-		'name': __( 'WooCommerce Comparison Table', 'otter-blocks' ),
-		'isPro': true,
-		'icon': comparisonTableIcon,
-		'docLink': 'https://docs.themeisle.com/article/1671-shop-related-blocks#product-comparison-table'
-	},
-	{
 		'slug': 'themeisle-gutenberg/live-search', // TODO: find why this can not be disabled.
 		'name': __( 'Live Search', 'otter-blocks' ),
 		'isPro': true,
@@ -211,6 +213,12 @@ const otterBlocks = [
 		'name': __( 'AI Block', 'otter-blocks' ),
 		'icon': () => aiGeneration,
 		'docLink': 'https://docs.themeisle.com/article/1917-the-ai-block-otter-blocks-library#content-generator'
+	},
+	{
+		'slug': 'themeisle-blocks/timeline',
+		'name': __( 'Timeline', 'otter-blocks' ),
+		'icon': timelineIcon,
+		'docLink': 'https://docs.themeisle.com/article/2051-timeline-block'
 	}
 ].sort( ( a, b ) => a.name.localeCompare( b.name ) );
 

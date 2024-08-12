@@ -19,6 +19,9 @@
 		"resultHistory": {
 			"type": "array",
 			"default": []
+		},
+		"replaceTargetBlock": {
+			"type": "object"
 		}
 	},
 	"supports": {
