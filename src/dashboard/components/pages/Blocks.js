@@ -202,13 +202,6 @@ const otterBlocks = [
 		'docLink': 'https://docs.themeisle.com/article/1672-accessibility-blocks#tabs'
 	},
 	{
-		'slug': 'themeisle-blocks/woo-comparison',
-		'name': __( 'WooCommerce Comparison Table', 'otter-blocks' ),
-		'isPro': true,
-		'icon': comparisonTableIcon,
-		'docLink': 'https://docs.themeisle.com/article/1671-shop-related-blocks#product-comparison-table'
-	},
-	{
 		'slug': 'themeisle-gutenberg/live-search', // TODO: find why this can not be disabled.
 		'name': __( 'Live Search', 'otter-blocks' ),
 		'isPro': true,
