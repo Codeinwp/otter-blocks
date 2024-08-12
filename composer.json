@@ -2,7 +2,7 @@
 	"name": "codeinwp/otter-blocks",
 	"description": "A set of awesome Gutenberg Blocks by ThemeIsle.",
 	"type": "wordpress-plugin",
-	"version": "2.6.13",
+	"version": "3.0.0",
     "repositories":[
         {
             "type":"composer",
