@@ -1149,7 +1149,3 @@ The Patterns have been designed to make it easier for you to build your site usi
 - Fix Widgets screen crashing if used alongside WooCommerce
 - Fix fatal error when FS mode isn't set to direct
 - Fix Overlay background not working in Section Block
-= 1.0.0 - 2018-10-17 =
-* Adds docker env.
-* Adds hash back.
-
