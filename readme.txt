@@ -8,7 +8,7 @@ Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
-Otter offers 20+ Gutenberg blocks, patterns, and extensions for WordPress. Use them to create posts, pages, and enhance your block editor experience.
+Quickly create WordPress pages with 20+ blocks, 100+ ready-to-import designs, and advanced editor extensions. It’s website building, Lego-style!
 
 == Description ==
 
