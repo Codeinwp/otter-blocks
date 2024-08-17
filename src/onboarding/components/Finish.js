@@ -23,11 +23,16 @@ const Finish = () => {
 	const [ email, setEmail ] = useState( window.otterOnboardingData?.userEmail );
 	const [ isLoading, setIsLoading ] = useState( false );
 
-	const { hasUserOptedin } = useSelect( select => {
+	const {
+		hasUserOptedin,
+		currentTheme
+	} = useSelect( select => {
 		const { get } = select( 'core/preferences' );
+		const { getCurrentTheme } = select( 'core' );
 
 		return {
-			hasUserOptedin: get( 'themeisle/otter-blocks', 'onboarding-optin' )
+			hasUserOptedin: get( 'themeisle/otter-blocks', 'onboarding-optin' ),
+			currentTheme: getCurrentTheme()?.template || getCurrentTheme()?.stylesheet
 		};
 	}, []);
 
@@ -58,7 +63,7 @@ const Finish = () => {
 				'Cache-Control': 'no-cache'
 			},
 			body: JSON.stringify({
-				slug: 'raft', // We need to see how we can make it work for any themes
+				slug: currentTheme,
 				site: window.otterOnboardingData.rootUrl,
 				email
 			})

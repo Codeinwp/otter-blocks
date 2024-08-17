@@ -45,7 +45,6 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 				max-width: unset;
 				margin: inherit;
 				flex: 1;
-				overflow: hidden;
 
 				/* Add this to override Neve styles */
 				&[class*="has-dark-"] p, &[class*="has-light-"] p {
@@ -54,7 +53,6 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 				> .block-editor-inner-blocks {
 					flex: 1;
-					overflow: hidden;
 				}
 
 				.wp-block-themeisle-blocks-advanced-columns {

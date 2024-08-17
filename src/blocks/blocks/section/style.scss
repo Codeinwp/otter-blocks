@@ -58,7 +58,6 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		background: var( --background );
 		transition: 0.3s;
 		word-wrap: anywhere;
-		overflow: hidden;
 
 		&:hover {
 			background: var( --background-color-hover );
