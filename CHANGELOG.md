@@ -1,3 +1,8 @@
+##### [Version 3.0.2](https://github.com/Codeinwp/otter-blocks/compare/v3.0.1...v3.0.2) (2024-08-19)
+
+### Bug Fixes
+- **Revert Slider Overflow**: Reverts a previous Slider fix that breaks overflow in Section Block.
+
 ##### [Version 3.0.1](https://github.com/Codeinwp/otter-blocks/compare/v3.0.0...v3.0.1) (2024-08-19)
 
 ### Bug Fixes
