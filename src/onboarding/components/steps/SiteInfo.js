@@ -133,9 +133,12 @@ const SiteInfo = () => {
 
 			const blocks = select( 'core/block-editor' ).getBlocks();
 
-			let siteLogoBlock = findBlock( blocks, 'core/site-logo' );
+			const siteLogoBlock = findBlock( blocks, 'core/site-logo' );
+			const siteTitleBlock = findBlock( blocks, 'core/site-title' );
 
-			if ( siteLogoBlock ) {
+			// We only want to replace site logo with site title if site title is not present.
+			// In themes like Neve FSE, we have both site title and site logo.
+			if ( siteLogoBlock && ! siteTitleBlock ) {
 				replaceBlock( siteLogoBlock.clientId, wp.blocks.createBlock(
 					'core/site-title',
 					{

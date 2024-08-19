@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b79a1419a8cd0329d649c8c1b895488a",
+    "content-hash": "18ed4dd0b06fec53cd1aff8cd42a1394",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.27",
+            "version": "3.3.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "ae9f1aae6e71677db5de1f579b2275be6fc838f4"
+                "reference": "cd35fd5356ba169b9a0419ba879764ffeb811b63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/ae9f1aae6e71677db5de1f579b2275be6fc838f4",
-                "reference": "ae9f1aae6e71677db5de1f579b2275be6fc838f4",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/cd35fd5356ba169b9a0419ba879764ffeb811b63",
+                "reference": "cd35fd5356ba169b9a0419ba879764ffeb811b63",
                 "shasum": ""
             },
             "require-dev": {
@@ -42,9 +42,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.27"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.28"
             },
-            "time": "2024-07-30T06:16:39+00:00"
+            "time": "2024-08-09T08:54:15+00:00"
         },
         {
             "name": "enshrined/svg-sanitize",
@@ -225,16 +225,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v15.5.0",
+            "version": "v15.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "d20fbbf2557773106c0ec2198b1b16b40f5081bc"
+                "reference": "4209ec90509656623c8976e70b31c80070e355da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/d20fbbf2557773106c0ec2198b1b16b40f5081bc",
-                "reference": "d20fbbf2557773106c0ec2198b1b16b40f5081bc",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/4209ec90509656623c8976e70b31c80070e355da",
+                "reference": "4209ec90509656623c8976e70b31c80070e355da",
                 "shasum": ""
             },
             "require": {
@@ -278,9 +278,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v15.5.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v15.6.0"
             },
-            "time": "2024-08-01T21:25:52+00:00"
+            "time": "2024-08-08T23:56:48+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
@@ -1159,16 +1159,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.11.9",
+            "version": "1.11.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "e370bcddadaede0c1716338b262346f40d296f82"
+                "reference": "640410b32995914bde3eed26fa89552f9c2c082f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e370bcddadaede0c1716338b262346f40d296f82",
-                "reference": "e370bcddadaede0c1716338b262346f40d296f82",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/640410b32995914bde3eed26fa89552f9c2c082f",
+                "reference": "640410b32995914bde3eed26fa89552f9c2c082f",
                 "shasum": ""
             },
             "require": {
@@ -1213,7 +1213,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-08-01T16:25:18+00:00"
+            "time": "2024-08-08T09:02:50+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
