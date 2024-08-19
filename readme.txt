@@ -365,6 +365,14 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
+##### [Version 3.0.1](https://github.com/Codeinwp/otter-blocks/compare/v3.0.0...v3.0.1) (2024-08-19)
+
+### Bug Fixes
+- **Fix items getting cut off in Section Block on Mobile**: Fixes the regression caused by the last release that makes some items hidden in mobile that are children of Section block.
+
+
+
+
 #### [Version 3.0.0](https://github.com/Codeinwp/otter-blocks/compare/v2.6.13...v3.0.0) (2024-08-12)
 
 ### New Features
