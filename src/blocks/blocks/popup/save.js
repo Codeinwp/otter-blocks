@@ -15,7 +15,7 @@ const Save = ({
 		id: attributes.id,
 		className: classnames( className, 'is-front', { 'with-outside-button': 'outside' === attributes.closeButtonType }),
 		'data-open': attributes.trigger,
-		'data-dismiss': attributes.recurringClose ? attributes.recurringTime : '',
+		'data-dismiss': attributes.recurringClose ? attributes.recurringTime || 0 : '',
 		'data-time': ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) ? ( attributes.wait || 0 ) : '',
 		'data-anchor': 'onClick' === attributes.trigger ? attributes.anchor : '',
 		'data-offset': 'onScroll' === attributes.trigger ? attributes.scroll : '',

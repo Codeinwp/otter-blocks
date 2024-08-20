@@ -81,12 +81,17 @@ class PopupBlock {
 
 	isItemDismissed() {
 		const { id } = this.element;
+		const { dismiss } = this.element.dataset;
 
 		const cache = JSON.parse( localStorage.getItem( this.storageKey ) ?? '[]' ) || [];
 		const inCache = cache.filter( ( entry: { modalID: string; }) => entry.modalID === id );
 
 		if ( 0 === inCache.length ) {
 			return false;
+		}
+
+		if ( 0 === parseInt( dismiss ) && 0 < inCache.length ) {
+			return true;
 		}
 
 		const item = inCache[ 0 ];
