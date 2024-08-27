@@ -12,7 +12,7 @@ class PopupBlock {
 
 		const { dismiss = 0, anchor } = element.dataset;
 
-		if ( this.isItemDismissed() && dismiss >= 0 && ! anchor && ! Boolean( window.themeisleGutenberg?.isPreview ) ) {
+		if ( this.isItemDismissed() && 0 <= dismiss && ! anchor && ! Boolean( window.themeisleGutenberg?.isPreview ) ) {
 			return;
 		}
 
