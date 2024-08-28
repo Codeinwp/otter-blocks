@@ -10,9 +10,9 @@ class PopupBlock {
 		this.happened = false;
 		this.storageKey = 'otter-popup-dismiss';
 
-		const { dismiss, anchor } = element.dataset;
+		const { dismiss = 0, anchor } = element.dataset;
 
-		if ( this.isItemDismissed() && dismiss && ! anchor && ! Boolean( window.themeisleGutenberg?.isPreview ) ) {
+		if ( this.isItemDismissed() && 0 <= dismiss && ! anchor && ! Boolean( window.themeisleGutenberg?.isPreview ) ) {
 			return;
 		}
 
@@ -50,11 +50,11 @@ class PopupBlock {
 	}
 
 	dismissModal() {
-		const { dismiss, anchor } = this.element.dataset;
+		const { dismiss = 0, anchor } = this.element.dataset;
 
 		const { id } = this.element;
 
-		if ( ! dismiss || ! id || anchor ) {
+		if ( 0 < dismiss || ! id || anchor ) {
 			return false;
 		}
 
@@ -81,12 +81,16 @@ class PopupBlock {
 
 	isItemDismissed() {
 		const { id } = this.element;
+		const { dismiss = 0 } = this.element.dataset;
 
 		const cache = JSON.parse( localStorage.getItem( this.storageKey ) ?? '[]' ) || [];
 		const inCache = cache.filter( ( entry: { modalID: string; }) => entry.modalID === id );
-
 		if ( 0 === inCache.length ) {
 			return false;
+		}
+
+		if ( 0 === parseInt( dismiss ) && 0 < inCache.length ) {
+			return true;
 		}
 
 		const item = inCache[ 0 ];
