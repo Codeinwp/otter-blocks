@@ -1,3 +1,10 @@
+##### [Version 3.0.3](https://github.com/Codeinwp/otter-blocks/compare/v3.0.2...v3.0.3) (2024-08-28)
+
+### Bug Fixes
+
+- **Fix WP Compatibility**: Fixed compatibility with versions of WordPress 6.5 or earlier.
+- **Fix Popup Block Recurring Dismission**: Fixed Popup Block not dismissing recurring visitors option.
+
 ##### [Version 3.0.2](https://github.com/Codeinwp/otter-blocks/compare/v3.0.1...v3.0.2) (2024-08-19)
 
 ### Bug Fixes
