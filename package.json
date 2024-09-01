@@ -98,7 +98,7 @@
 		"@wordpress/dom-ready": "^4.3.0",
 		"@wordpress/e2e-test-utils": "^10.4.0",
 		"@wordpress/e2e-test-utils-playwright": "^1.4.0",
-		"@wordpress/e2e-tests": "^8.4.0",
+		"@wordpress/e2e-tests": "^8.6.0",
 		"@wordpress/element": "^6.3.0",
 		"@wordpress/env": "^9.6.0",
 		"@wordpress/scripts": "27.9.0",
