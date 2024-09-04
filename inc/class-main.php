@@ -175,6 +175,10 @@ class Main {
 			'text-transform',
 			'transform',
 		);
+		// Return $props if $attr is not an array, addressing a specific edge case.
+		if ( ! is_array( $attr ) ) {
+			return $props;
+		}
 
 		$list = array_merge( $props, $attr );
 
