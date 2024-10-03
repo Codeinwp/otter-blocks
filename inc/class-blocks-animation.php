@@ -282,7 +282,7 @@ class Blocks_Animation {
 		$notice_html .= '<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>';
 		$notice_html .= '<div class="notice-content">';
 
-		$notice_html .= '<img class="otter-preview" src="' . esc_url( BLOCKS_ANIMATION_URL . '/assets/images/welcome-notice.png' ) . '" alt="' . esc_attr__( 'Otter Blocks preview', 'otter-blocks' ) . '"/>';
+		$notice_html .= '<img class="otter-preview" style="max-height: 300px;" src="' . esc_url( BLOCKS_ANIMATION_URL . '/assets/images/welcome-notice.png' ) . '" alt="' . esc_attr__( 'Otter Blocks preview', 'otter-blocks' ) . '"/>';
 
 		$notice_html .= '<div class="notice-copy">';
 
