@@ -21,6 +21,34 @@ const Save = ({
 }) => {
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
+	// Border radius
+	if ( ! isNaN( attributes?.borderRadius?.top ) ) {
+		attributes.borderRadius.top += 'px';
+	}
+	if ( ! isNaN( attributes?.borderRadius?.right ) ) {
+		attributes.borderRadius.right += 'px';
+	}
+	if ( ! isNaN( attributes?.borderRadius?.left ) ) {
+		attributes.borderRadius.left += 'px';
+	}
+	if ( ! isNaN( attributes?.borderRadius?.bottom ) ) {
+		attributes.borderRadius.bottom += 'px';
+	}
+
+	// border size
+	if ( ! isNaN( attributes?.borderSize?.top ) ) {
+		attributes.borderSize.top += 'px';
+	}
+	if ( ! isNaN( attributes?.borderSize?.right ) ) {
+		attributes.borderSize.right += 'px';
+	}
+	if ( ! isNaN( attributes?.borderSize?.left ) ) {
+		attributes.borderSize.left += 'px';
+	}
+	if ( ! isNaN( attributes?.borderSize?.bottom ) ) {
+		attributes.borderSize.bottom += 'px';
+	}
+
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		className: 'wp-block-button'
