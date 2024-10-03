@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
@@ -63,7 +63,7 @@ jobs:
       - name: Build files
         run: npm run analyzer
       - name: Upload base stats.json
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: pr
           path: ./build/**/stats.json
