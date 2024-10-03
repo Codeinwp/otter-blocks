@@ -32,7 +32,7 @@ jobs:
       - name: Build files
         run: npm run analyzer
       - name: Upload base stats.json
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: base
           path: ./build/**/stats.json
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source files
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
