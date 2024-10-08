@@ -327,6 +327,13 @@ class CSS_Utility {
 	 * @return string
 	 */
 	public static function box_values( $box, $box_default = array() ) {
+		$box = array_map(
+			function ( $value ) {
+				return is_numeric( $value ) ? $value . 'px' : $value;
+			},
+			$box
+		);
+
 		return self::render_box(
 			array_merge(
 				array(

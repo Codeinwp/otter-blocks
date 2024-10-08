@@ -2,7 +2,7 @@
 /**
  * External dependencies.
  */
-import formbricks from '@formbricks/js';
+import formbricks from '@formbricks/js/app';
 
 /**
  * WordPress dependencies.
