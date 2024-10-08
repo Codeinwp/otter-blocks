@@ -142,8 +142,8 @@ class CSS_Handler extends Base_CSS {
 							},
 						),
 					),
-					'permission_callback' => function () {
-						return current_user_can( 'publish_posts' );
+					'permission_callback' => function ( $request ) {
+						return current_user_can( 'edit_post', $request->get_param( 'id' ) );
 					},
 				),
 			)
@@ -166,8 +166,8 @@ class CSS_Handler extends Base_CSS {
 							},
 						),
 					),
-					'permission_callback' => function () {
-						return current_user_can( 'publish_posts' );
+					'permission_callback' => function ( $request ) {
+						return current_user_can( 'edit_post', $request->get_param( 'id' ) );
 					},
 				),
 			)
