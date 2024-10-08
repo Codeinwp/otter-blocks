@@ -1,3 +1,11 @@
+##### [Version 3.0.4](https://github.com/Codeinwp/otter-blocks/compare/v3.0.3...v3.0.4) (2024-10-08)
+
+- Fixed styling that was breaking Otters notice
+- Fixed PHP fatal error appearing in some edge cases
+- Fixed border width and border-radius not working for Button Group block
+- Enhanced security
+- Fixed an issue with the user survey display
+
 ##### [Version 3.0.3](https://github.com/Codeinwp/otter-blocks/compare/v3.0.2...v3.0.3) (2024-08-28)
 
 ### Bug Fixes
