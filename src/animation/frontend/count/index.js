@@ -19,10 +19,10 @@ const speedConfig = {
 /**
  * Get the configuration option from the element CSS classes.
  * @param {HTMLDivElement} elem
- * @returns Configuration options.
+ * @return Configuration options.
  */
 const getConfiguration = ( elem ) => {
-	let parent = elem.parentElement;
+	const parent = elem.parentElement;
 	for ( let i = 0; i < MAX_PARENT_SEARCH; ++i ) {
 		if ( Array.from( parent.classList ).some( o => o.includes( 'o-count-' ) ) ) {
 			const arr = Array.from( parent.classList );
@@ -52,7 +52,7 @@ const NUMBER_EXTRA_FORMAT = new Set( Array.from( ',' ) );
 /**
  * Extract the number, prefix, and suffix.
  * @param {string} text The selected text
- * @returns An object with the number, prefix and suffix
+ * @return An object with the number, prefix and suffix
  */
 const extract = ( text ) => {
 	const arr = Array.from( text );
@@ -64,7 +64,7 @@ const extract = ( text ) => {
 	let isPrefix = true;
 	let isSuffix = false;
 
-	for ( let x of arr ) {
+	for ( const x of arr ) {
 		if ( NUMERIC_FORMATS.has( x ) ) {
 			if ( isPrefix ) {
 				isPrefix = false;
@@ -76,15 +76,13 @@ const extract = ( text ) => {
 			} else {
 				number.push( x );
 			}
+		} else if ( isPrefix ) {
+			prefix.push( x );
 		} else {
-			if ( isPrefix ) {
-				prefix.push( x );
-			} else {
-				if ( ! isSuffix ) {
-					isSuffix = true;
-				}
-				suffix.push( x );
+			if ( ! isSuffix ) {
+				isSuffix = true;
 			}
+			suffix.push( x );
 		}
 	}
 

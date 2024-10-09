@@ -92,8 +92,11 @@ export const SortableItem = ({
 	const canEdit = templateLookUp[ template ] || customMeta?.display;
 	const icon = canEdit ? 'visibility' : 'hidden';
 
-	/* translators: %s Label */
-	let message = sprintf( __( 'Display %s', 'otter-blocks' ), label );
+	let message = sprintf( 
+		/* translators: %s Label */
+		__( 'Display %s', 'otter-blocks' ), 
+		label 
+	);
 	if ( canEdit ) {
 
 		/* translators: %s Label */
@@ -111,7 +114,7 @@ export const SortableItem = ({
 				className={ classnames(
 					'o-sortable-item',
 					{
-						'disabled': disabled,
+						disabled,
 						'hidden': ! canEdit,
 						'editable': canEdit
 					}

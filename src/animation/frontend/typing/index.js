@@ -22,10 +22,10 @@ const speedConfig = {
 /**
  * Get the configuration option from the element CSS classes.
  * @param {HTMLDivElement} elem
- * @returns Configuration options.
+ * @return Configuration options.
  */
 const getConfiguration = ( elem ) => {
-	let parent = elem.parentElement;
+	const parent = elem.parentElement;
 	for ( let i = 0; i < MAX_PARENT_SEARCH; ++i ) {
 		if ( Array.from( parent.classList ).some( o => o.includes( 'o-typing-' ) ) ) {
 			const arr = Array.from( parent.classList );

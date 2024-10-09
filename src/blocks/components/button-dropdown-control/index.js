@@ -4,8 +4,8 @@
 import classnames from 'classnames';
 
 /**
-  * WordPress dependencies
-  */
+ * WordPress dependencies
+ */
 import {
 	Button,
 	ColorIndicator,
@@ -13,8 +13,8 @@ import {
 } from '@wordpress/components';
 
 /**
-  * Internal dependencies
-  */
+ * Internal dependencies
+ */
 import './editor.scss';
 
 const ButtonDropdownControl = ({

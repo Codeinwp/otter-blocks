@@ -8,7 +8,7 @@ import { useEffect } from '@wordpress/element';
 /**
  * Form Nonce component
  * @param {import('./types').FormNonceProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	setAttributes,

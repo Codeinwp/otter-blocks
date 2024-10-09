@@ -26,8 +26,8 @@ import { addFilter } from '@wordpress/hooks';
 import { displayShortcut } from '@wordpress/keycodes';
 
 /**
-  * Internal dependencies.
-  */
+ * Internal dependencies.
+ */
 import { adaptors } from './adaptors';
 import CopyPaste from './copy-paste';
 import { extractThemeCSSVar } from './utils';
@@ -70,7 +70,7 @@ function copy() {
 
 	const { createNotice } = dispatch( 'core/notices' );
 
-	if ( 0 < copied?.filter( x => 'SUCCESS' == x )?.length ) {
+	if ( 0 < copied?.filter( x => 'SUCCESS' === x )?.length ) {
 		createNotice(
 			'info',
 			__( 'Copied the styles.', 'otter-blocks' ),
@@ -80,7 +80,7 @@ function copy() {
 				id: 'o-copied-success'
 			}
 		);
-	} else if ( 0 < copied?.filter( x => 'ERROR' == x )?.length ) {
+	} else if ( 0 < copied?.filter( x => 'ERROR' === x )?.length ) {
 		createNotice(
 			'error',
 			__( 'An error occurred when trying to copy the style.', 'otter-blocks' ),
@@ -133,7 +133,7 @@ const iconTextWrapper = ( text ) => (
 /**
  * Separate component to prevent multiple calls from filter.
  *
- * @returns
+ * @return
  */
 const CopyPasteComponent = ( ) => {
 	return (

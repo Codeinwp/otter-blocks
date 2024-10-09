@@ -7,22 +7,22 @@ import {
 	Button,
 	PanelBody,
 	SelectControl,
-	ToggleControl
+	ToggleControl,
+	__experimentalUnitControl as UnitControl
 } from '@wordpress/components';
 
 import {
 	Fragment,
 	useState,
-	useEffect
+	useEffect,
+	memo
 } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
 
-import { __experimentalUnitControl as UnitControl } from '@wordpress/components';
-
 /**
-  * Internal dependencies.
-  */
+ * Internal dependencies.
+ */
 import {
 	animationsList,
 	delayList,
@@ -44,17 +44,16 @@ const AnimationType = {
 	default: 'default'
 };
 
-import { memo } from '@wordpress/element';
 import { useCSSNode } from '../blocks/helpers/block-utility.js';
 
 /**
  * Update the animation config.
  *
- * @param {string} type The type of animation. (e.g. count, typing, default)
- * @param {string|undefined} oldValue The old value of the animation.
- * @param {string|undefined} newValue The new value of the animation.
- * @param {Function|undefined} callback The callback function which will be called after the animation is updated.
- * @param {Object} attributes The attributes of the block.
+ * @param {string}              type          The type of animation. (e.g. count, typing, default)
+ * @param {string|undefined}    oldValue      The old value of the animation.
+ * @param {string|undefined}    newValue      The new value of the animation.
+ * @param {Function|undefined}  callback      The callback function which will be called after the animation is updated.
+ * @param {Object}              attributes    The attributes of the block.
  * @param {(x: Object) => void} setAttributes The setAttributes function of the block.
  */
 export const updateAnimConfig = ( type, oldValue, newValue, callback, attributes, setAttributes ) => {
@@ -136,7 +135,7 @@ function AnimationControls({
 
 	const updateAnimation = ( e ) => {
 		let classes;
-		let animationValue = 'none' !== e ? e : '';
+		const animationValue = 'none' !== e ? e : '';
 
 		if ( attributes.className ) {
 			classes = attributes.className;
@@ -179,7 +178,7 @@ function AnimationControls({
 		setAnimation( e );
 		setAttributes({ className: classes });
 
-		let block = document.querySelector( `#block-${ clientId } .animated` ) || document.querySelector( `#block-${ clientId }.animated` );
+		const block = document.querySelector( `#block-${ clientId } .animated` ) || document.querySelector( `#block-${ clientId }.animated` );
 
 		if ( block ) {
 			outAnimation.forEach( ( i ) => {

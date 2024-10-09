@@ -21,8 +21,8 @@ const Save = ({
 
 	return (
 		<div { ...blockProps }>
-			<div class="o-timeline-container">
-				<div class="o-timeline-icon">
+			<div className="o-timeline-container">
+				<div className="o-timeline-icon">
 					{
 						attributes.hasIcon && (
 							'image' === attributes.iconType && attributes.icon ? (
@@ -41,7 +41,7 @@ const Save = ({
 						)
 					}
 				</div>
-				<div class="o-timeline-content">
+				<div className="o-timeline-content">
 					<InnerBlocks.Content />
 				</div>
 			</div>

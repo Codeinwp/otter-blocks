@@ -19,8 +19,6 @@ let isInitialCall = true;
 
 const addStyle = style => {
 	const iFrame = window.parent.document.querySelector( 'iframe[name="editor-canvas"]' )?.contentWindow;
-	let anchor = iFrame?.document.head || document.head;
-	let element = anchor.querySelector( '#o-css-editor-styles' );
 
 	if ( isInitialCall && iFrame ) {
 		iFrame.addEventListener( 'DOMContentLoaded', function() {
@@ -34,6 +32,9 @@ const addStyle = style => {
 		isInitialCall = false;
 		return;
 	}
+
+	const anchor = iFrame?.document.head || document.head;
+	let element = anchor.querySelector( '#o-css-editor-styles' );
 
 	if ( null === element ) {
 		element = document.createElement( 'style' );
@@ -113,14 +114,15 @@ const debouncedSubscription = debounce( () => {
 		getBlocks,
 		isTyping
 	} = select( 'core/block-editor' );
-	const __experimentalGetPreviewDeviceType = select( 'core/edit-post' ) ? select( 'core/edit-post' ).__experimentalGetPreviewDeviceType() : false;
-	const blocks = getBlocks();
-	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block', { context: 'view' });
 	const isTypingNow = isTyping();
-
+	
 	if ( isTypingNow ) {
 		return;
 	}
+	
+	const __experimentalGetPreviewDeviceType = select( 'core/edit-post' ) ? select( 'core/edit-post' ).__experimentalGetPreviewDeviceType() : false;
+	const blocks = getBlocks();
+	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block', { context: 'view' });
 
 	if ( ! isEqual( previousBlocks, blocks ) || previewView !== __experimentalGetPreviewDeviceType ) {
 		const blocksStyle = getCustomCssFromBlocks( blocks, reusableBlocks );

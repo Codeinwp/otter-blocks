@@ -134,7 +134,7 @@ const ContentGenerator = ({
 	 * When destroying the block, the original inner blocks are also destroyed, thus we need to make a copy of them when transferring them to another block.
 	 *
 	 * @param {import('../../helpers/blocks.js').BlockProps<unknown>} block The block to copy.
-	 * @returns {import('../../helpers/blocks.js').BlockProps<unknown>} The copied block.
+	 * @return {import('../../helpers/blocks.js').BlockProps<unknown>|void} The copied block.
 	 */
 	const makeBlockCopy = ( block ) => {
 		if ( undefined === block ) {
@@ -185,7 +185,7 @@ const ContentGenerator = ({
 	const PRESETS = {
 		form: {
 			title: __( 'AI Form generator', 'otter-blocks' ),
-			placeholder: __( 'Start describing what form you need...', 'otter-blocks' ),
+			placeholder: __( 'Start describing what form you need…', 'otter-blocks' ),
 			actions: ( props ) => {
 				return (
 					<Fragment>
@@ -209,7 +209,7 @@ const ContentGenerator = ({
 		},
 		textTransformation: {
 			title: __( 'AI Content generator', 'otter-blocks' ),
-			placeholder: __( 'Start describing what content you need...', 'otter-blocks' ),
+			placeholder: __( 'Start describing what content you need…', 'otter-blocks' ),
 			actions: ( props ) => {
 				return (
 					<Fragment>

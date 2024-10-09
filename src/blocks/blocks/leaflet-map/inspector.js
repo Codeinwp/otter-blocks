@@ -37,7 +37,7 @@ import { _px } from '../../helpers/helper-functions.js';
 /**
  *
  * @param {import('./type').LeafletMapInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

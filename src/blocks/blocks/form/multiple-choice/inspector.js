@@ -46,7 +46,7 @@ const styles = [
 /**
  *
  * @param {import('./types').FormMultipleChoiceInputInspectorProps} props
- * @returns {JSX.Element}
+ * @return {JSX.Element}
  */
 const Inspector = ({
 	attributes,
@@ -75,7 +75,7 @@ const Inspector = ({
 								tab={tab}
 								setAsDefault={() => {
 									const updatedOptions = options.map( ( item, i ) => {
-										let updatedItem = { ...item };
+										const updatedItem = { ...item };
 										if (
 											( 'select' === attributes.type || 'radio' === attributes.type ) &&
 											i !== index

@@ -30,7 +30,7 @@ const GlobalDefaults = ({
 		};
 	});
 
-	const blocks = getBlockTypes().filter( i => 'themeisle-blocks' === i.category && ( globalControls.find( o => o.name === i.name ) || ( undefined === i.parent && undefined == i.ancestor && ( undefined === i.supports.inserter || true === i.supports.inserter ) ) ) );
+	const blocks = getBlockTypes().filter( i => 'themeisle-blocks' === i.category && ( globalControls.find( o => o.name === i.name ) || ( undefined === i.parent && undefined === i.ancestor && ( undefined === i.supports.inserter || true === i.supports.inserter ) ) ) );
 
 	if ( ! isAPILoaded ) {
 		return (

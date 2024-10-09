@@ -86,7 +86,7 @@ const SiteInfo = () => {
 	const setLogo = ( newLogo ) => {
 		const blocks = select( 'core/block-editor' ).getBlocks();
 
-		let siteLogoBlock = findBlock( blocks, 'core/site-logo' );
+		const siteLogoBlock = findBlock( blocks, 'core/site-logo' );
 
 		if ( ! siteLogoBlock ) {
 			const siteTitleBlock = findBlock( blocks, 'core/site-title' );

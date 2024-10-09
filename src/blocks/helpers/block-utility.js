@@ -60,9 +60,9 @@ export const addGlobalDefaults = ( attributes, setAttributes, name, defaultAttri
 /**
  * Utiliy function for getting the default value of the attribute.
  *
- * @param {string}   name              The block's name provided by WordPress
- * @param {string}   field             Name of the value to be returned
- * @param {Object}   defaultAttributes The default attributes of the block.
+ * @param {string} name              The block's name provided by WordPress
+ * @param {string} field             Name of the value to be returned
+ * @param {Object} defaultAttributes The default attributes of the block.
  */
 export const getDefaultValue = ( name, field, defaultAttributes ) => {
 	const blockDefaults = window.themeisleGutenberg.globalDefaults?.[name];
@@ -74,10 +74,11 @@ export const getDefaultValue = ( name, field, defaultAttributes ) => {
 /**
  * Utiliy function for getting the default value of the attribute by value.
  *
- * @param {string}   name              The block's name provided by WordPress
- * @param {string}   field             Name of the value to be returned
- * @param {Object}   defaultAttributes The default attributes of the block.
- * @param {Object}   attributes        The attributes of the block.
+ * @param {Object} params                   - The parameters object.
+ * @param {string} params.name              The block's name provided by WordPress
+ * @param {string} params.field             Name of the value to be returned
+ * @param {Object} params.defaultAttributes The default attributes of the block.
+ * @param {Object} params.attributes        The attributes of the block.
  */
 export const getDefaultValueByField = ({ name, field, defaultAttributes, attributes }) => {
 	if ( attributes.isSynced?.includes( field ) ) {
@@ -97,7 +98,7 @@ const localIDs = {};
 /**
  * Check if the ID is inside a reusable block or a Query Loop.
  * @param {string} clientId The client id of the block.
- * @returns {boolean}
+ * @return {boolean}
  */
 const isSharedBlock = ( clientId ) => getBlockParents( clientId )?.some( id => {
 	const { attributes, name } = getBlock( id ) ?? {};
@@ -107,7 +108,7 @@ const isSharedBlock = ( clientId ) => getBlockParents( clientId )?.some( id => {
 /**
  * Check if the ID is empty.
  * @param {string} clientId The client id of the block.
- * @returns {boolean}
+ * @return {boolean}
  */
 const isEmptyId = ( clientId ) => {
 	const { attributes } = getBlock( clientId ) ?? {};
@@ -124,7 +125,7 @@ const isEmptyId = ( clientId ) => {
  * @param {string}       idPrefix The prefix used for generating the block id
  * @param {string}       clientId The block's client id provided by WordPress
  * @param {Set.<string>} idsList  The ids list for the current type of block
- * @returns An uniq id instance
+ * @return An uniq id instance
  */
 const generateUniqIdInstance = ( idPrefix, clientId, idsList ) => {
 
@@ -143,7 +144,7 @@ const generateUniqIdInstance = ( idPrefix, clientId, idsList ) => {
  * Generate the id prefix based on the name of the block
  *
  * @param {string} name Name of the block
- * @returns {string}
+ * @return {string}
  */
 const generatePrefix = ( name ) => {
 	return `wp-block-${ name.replace( '/', '-' ) }-`;
@@ -215,12 +216,12 @@ export const addBlockId = ( args ) => {
 		return ( savedId ) => {
 			return ( savedId ) => {};
 		};
-	} else {
+	} 
 
-		// No conflicts, save the current id only to keep track of it both in local and global mode.
-		localIDs[name].add( attributes.id );
-		blockIDs.push( attributes.id );
-	}
+	// No conflicts, save the current id only to keep track of it both in local and global mode.
+	localIDs[name].add( attributes.id );
+	blockIDs.push( attributes.id );
+	
 
 	return ( savedId ) => {
 		idGenerationStatus[clientId] = 'free';
@@ -237,7 +238,7 @@ const { getSelectedBlockClientId } = select( 'core/block-editor' );
  * Create the function that behaves like `setAttributes` using the client id
  *
  * @param {*} clientId The block's client id provided by WordPress
- * @returns {Function} Function that mimics `setAttributes`
+ * @return {Function} Function that mimics `setAttributes`
  */
 const updateAttrs = ( clientId ) => ( attr ) => {
 	updateBlockAttributes( clientId, attr );
@@ -256,7 +257,7 @@ const updateAttrs = ( clientId ) => ( attr ) => {
  * Extract the attributes, setAttributes, and the name of the block using the data api
  *
  * @param {string} clientId The block's client id provided by WordPress
- * @returns {BlockData}
+ * @return {BlockData}
  */
 const extractBlockData = ( clientId ) => {
 	const block = getBlock( clientId );
@@ -302,7 +303,7 @@ export const blockInit = ( clientId, defaultAttributes ) => {
  * Create a Style node for handling `head` Node change when working in a Tablet, Mobile mode or in FSE Editor.
  *
  * @param {import('./blocks.js').OtterNodeCSSOptions } options The options.
- * @returns {import('./blocks.js').OtterNodeCSSReturn} The name of the node and function handler.
+ * @return {import('./blocks.js').OtterNodeCSSReturn} The name of the node and function handler.
  */
 export const useCSSNode = ( options = {}) => {
 	const [ cssList, setCSSProps ] = useState({
@@ -319,7 +320,7 @@ export const useCSSNode = ( options = {}) => {
 	 *
 	 * The `css` and `media` have a 1-1 relationship.
 	 *
-	 * @param {string[]} css A list with CSS code.
+	 * @param {string[]} css   A list with CSS code.
 	 * @param {string[]} media A list CSS media options. One for each CSS item.
 	 *
 	 * @example Simple usage.
@@ -351,7 +352,6 @@ export const useCSSNode = ( options = {}) => {
 	 * 			'@media ( max-width: 600px )'
 	 * 		]
 	 * );
-	 *
 	 */
 	const setNodeCSS = ( css = [], media = []) => {
 		setCSSProps({
@@ -414,8 +414,8 @@ export const getEditorIframe = () => ( document.querySelector( 'iframe[name^="ed
 /**
  * Copy the JS node asset from main document to the iframe.
  *
- * @param {string} assetSelectorId The id of the asset.
- * @param {Function} callback The callback.
+ * @param {string}   assetSelectorId The id of the asset.
+ * @param {Function} callback        The callback.
  */
 export const copyScriptAssetToIframe = ( assetSelectorId, callback ) => {
 	const iframe = getEditorIframe();
@@ -454,7 +454,7 @@ export const buildGetSyncValue = ( name, attributes, defaultAttributes ) => {
  * Get the reusable block content by id.
  *
  * @param {string} id The id of the reusable block.
- * @returns {BlockInstance[]|*[]} The reusable block content.
+ * @return {BlockInstance[]|*[]} The reusable block content.
  */
 export function pullReusableBlockContentById( id ) {
 	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block' );
@@ -476,7 +476,7 @@ export function pullReusableBlockContentById( id ) {
  * Insert a block below the given block.
  *
  * @param {string} clientId The client id of the reference block.
- * @param {any} block The block to insert.
+ * @param {any}    block    The block to insert.
  * @see https://github.com/WordPress/gutenberg/blob/e448fa70163ce936eae9aec454ca99f5a6287f15/packages/block-editor/src/store/actions.js#L1604-L1622
  */
 export function insertBlockBelow( clientId, block ) {
@@ -517,8 +517,8 @@ export class GlobalStateMemory {
 	/**
 	 * Handle the message event.
 	 *
-     * @param {MessageEvent} event The message event.
-     */
+	 * @param {MessageEvent} event The message event.
+	 */
 	handleMessage( event ) {
 		if ( 'object' === typeof event.data && null !== event.data && 'otterMemoryState' in event.data ) {
 			const { key, value, location, action } = event.data.otterMemoryState;
@@ -547,10 +547,10 @@ export class GlobalStateMemory {
 
 	/**
 	 * Get the state value.
-     * @param {string} location The location of the state.
-     * @param {string} key The key of the state.
-     * @returns {undefined|*}
-     */
+	 * @param {string} location The location of the state.
+	 * @param {string} key      The key of the state.
+	 * @return {undefined|*}
+	 */
 	getState( location, key ) {
 		if ( this.states[location] === undefined ) {
 			return undefined;
@@ -562,9 +562,9 @@ export class GlobalStateMemory {
 /**
  * The global state memory.
  *
- * @param {string} key The key of the state.
- * @param {any} defaultValue The default value of the state.
- * @returns {unknown[]}
+ * @param {string} key          The key of the state.
+ * @param {any}    defaultValue The default value of the state.
+ * @return {unknown[]}
  */
 export function useTabSwitch( key, defaultValue ) {
 	const location = 'tab';
@@ -574,6 +574,7 @@ export function useTabSwitch( key, defaultValue ) {
 
 		/**
 		 * Retrieve the initial state from the parent via bi-directional communication.
+		 * @param event
 		 */
 		const listener = ( event ) => {
 			if ( 'object' === typeof event.data && null !== event.data && 'otterMemoryState' in event.data ) {
@@ -612,7 +613,7 @@ export function useTabSwitch( key, defaultValue ) {
 				otterMemoryState: {
 					key,
 					location,
-					value: value,
+					value,
 					action: 'set'
 				}
 			});
@@ -623,7 +624,7 @@ export function useTabSwitch( key, defaultValue ) {
 /**
  * Get all registered patterns.
  *
- * @returns {Array.<{name: string, title: string, content: string, categories: string[], source: string | undefined, blockTypes: string[]|undefined}>}
+ * @return {Array.<{name: string, title: string, content: string, categories: string[], source: string | undefined, blockTypes: string[]|undefined}>}
  */
 export function pullPatterns() {
 	return select( 'core' )?.getBlockPatterns() ?? [];
@@ -632,7 +633,7 @@ export function pullPatterns() {
 /**
  * Get all registered patterns that are part of the Otter Blocks category.
  *
- * @returns {{name: string, title: string, content: string, categories: string[], source: (string|undefined), blockTypes: (string[]|undefined)}[]}
+ * @return {{name: string, title: string, content: string, categories: string[], source: (string|undefined), blockTypes: (string[]|undefined)}[]}
  */
 export function pullOtterPatterns() {
 	return pullPatterns().filter( pattern => pattern?.name?.startsWith( 'otter-blocks/' ) || pattern?.name?.startsWith( 'otter-pro/' ) );

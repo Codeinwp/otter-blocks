@@ -1,6 +1,4 @@
 import {
-	startCase,
-	toLower,
 	mapValues
 } from 'lodash';
 
@@ -30,7 +28,6 @@ import './editor.scss';
 import { useInstanceId } from '@wordpress/compose';
 import googleFontsLoader from '../../helpers/google-fonts';
 import classNames from 'classnames';
-import { all } from 'deepmerge';
 
 const TwoItemOnRow = ({ children }) => {
 	return <div className='o-two-column-components'>
@@ -277,7 +274,7 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 									] as ( keyof IsEnabled )[])
 										.filter( o => {
 											return ! ( 'variant' === o && ! allowVariants );
-										}).map( ( component ) => {
+										}).map( ( component, index ) => {
 											if ( enableComponents?.[component]) {
 												return <MenuItem
 													key={ component }
@@ -299,7 +296,7 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 													{ defaultStates.componentNames?.[component] }
 												</MenuItem>;
 											}
-											return <Fragment></Fragment>;
+											return <Fragment key={index}></Fragment>;
 										})
 								}
 							</MenuGroup>
@@ -476,6 +473,8 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 																	</MenuItem>
 																);
 															}
+
+															return null;
 														}) }
 
 													</div>

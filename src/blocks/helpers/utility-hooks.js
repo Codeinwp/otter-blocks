@@ -30,10 +30,10 @@ export const useResponsiveAttributes = ( setAttributes = () => {}) => useSelect(
  * Utility hook to get/set dark background class.
  *
  * @param {string|false|undefined} backgroundColor - The background color.
- * @param {Object} attributes - The block attributes.
- * @param {Function} setAttributes - The setAttributes function from the block.
- * @param {string} darkClassName - The dark-bg class name to add/remove.
- * @param {string} lightClassName - The light-bg class name to add/remove.
+ * @param {Object}                 attributes      - The block attributes.
+ * @param {Function}               setAttributes   - The setAttributes function from the block.
+ * @param {string}                 darkClassName   - The dark-bg class name to add/remove.
+ * @param {string}                 lightClassName  - The light-bg class name to add/remove.
  */
 export const useDarkBackground = ( backgroundColor, attributes, setAttributes, darkClassName = 'has-dark-bg', lightClassName = 'has-light-bg' ) => {
 	useEffect( () => {

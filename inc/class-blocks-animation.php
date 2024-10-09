@@ -287,8 +287,13 @@ class Blocks_Animation {
 		$notice_html .= '<div class="notice-copy">';
 
 		$notice_html .= '<h1 class="notice-title">';
-		/* translators: %s: Otter Blocks */
-		$notice_html .= sprintf( __( 'Power Up Your Site with %1$s, %2$s, %3$s, and more!', 'otter-blocks' ), '<span>Add-on Blocks</span>', '<span>Enhanced Animations</span>', '<span>Visibility Conditions</span>' );
+		$notice_html .= sprintf(
+			/* translators: %1$s: Add-on Blocks, %2$s: Enhanced Animations, %3$s: Visibility Conditions */
+			__( 'Power Up Your Site with %1$s, %2$s, %3$s, and more!', 'otter-blocks' ), 
+			'<span>' . __( 'Add-on Blocks', 'otter-blocks' ) . '</span>', 
+			'<span>' . __( 'Enhanced Animations', 'otter-blocks' ) . '</span>', 
+			'<span>' . __( 'Visibility Conditions', 'otter-blocks' ) . '</span>' 
+		);
 
 		$notice_html .= '</h1>';
 

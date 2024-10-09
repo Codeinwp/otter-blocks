@@ -28,7 +28,7 @@ import { select } from '@wordpress/data';
 /**
  * Accordion Item component
  * @param {import('./types.js').AccordionItemProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	clientId,
@@ -50,7 +50,7 @@ const Edit = ({
 			const parentClientId = select( 'core/block-editor' ).getBlockParents( clientId ).at( -1 );
 			const parentBlock = select( 'core/block-editor' ).getBlock( parentClientId );
 
-			setAttributes({ title: __( 'Accordion item ', 'otter-blocks' ) + parentBlock.innerBlocks.length });
+			setAttributes({ title: __( 'Accordion item', 'otter-blocks' ) + parentBlock.innerBlocks.length });
 		}
 	}, []);
 

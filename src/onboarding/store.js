@@ -114,9 +114,7 @@ const actions = {
 	onContinue() {
 		return async({ dispatch, select }) => {
 			const step = select.getStep();
-			const changedData = select.getChangedData();
-
-			let event = {
+			const event = {
 				type: step.id,
 				step_id: step.value + 1,
 				step_status: 'completed'
@@ -149,7 +147,7 @@ const actions = {
 				}
 
 				editEntityRecord( 'postType', 'wp_template', currentTemplate.id, {
-					'content': content
+					content
 				});
 			}
 
@@ -160,6 +158,8 @@ const actions = {
 					await saveEditedEntityRecord( edit.kind, edit.name, edit?.key );
 				}) );
 			}
+
+			const changedData = select.getChangedData();
 
 			if ( 'site_info' === step.id ) {
 				event.fields_filled = changedData.fields_filled;
@@ -404,7 +404,7 @@ const store = createReduxStore( 'otter/onboarding', {
 
 	resolvers: {
 		*getTemplate( query ) {
-			let path = addQueryArgs( '/wp/v2/templates/lookup', query );
+			const path = addQueryArgs( '/wp/v2/templates/lookup', query );
 			const value = yield actions.fetchFromAPI( path );
 			return actions.setTemplate( value );
 		},

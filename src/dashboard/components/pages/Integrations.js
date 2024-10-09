@@ -302,7 +302,7 @@ const Integrations = () => {
 											}
 										);
 
-										return;
+										
 									}
 								} }
 							>

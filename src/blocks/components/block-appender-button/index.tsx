@@ -25,10 +25,11 @@ type BlockAppenderButtonProps = {
 /**
  * Button to append a block. Allows a single block type.
  *
- * @param buttonText The text to display in the button.
- * @param clientId Root client ID.
- * @param allowedBlock The allowed block type.
- * @param props Button props.
+ * @param {Object} params              - The parameters object.
+ * @param {string} params.buttonText   - The text to display in the button.
+ * @param {string} params.clientId     - Root client ID.
+ * @param {string} params.allowedBlock - The allowed block type.
+ * @param {Object} params.props        - Additional button props.
  */
 const BlockAppender = ({
 	buttonText = __( 'Add Item' ),

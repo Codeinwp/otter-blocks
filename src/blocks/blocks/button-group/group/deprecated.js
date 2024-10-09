@@ -161,7 +161,7 @@ const deprecated = [{
 							'wp-block-themeisle-blocks-button',
 							`wp-block-themeisle-blocks-button-${ i }`
 						) }
-						style={ buttonStyle }
+						style={ buttonStyle } rel="noreferrer"
 					>
 						{ ( 'left' === attributes.data[i].iconType || 'only' === attributes.data[i].iconType ) && (
 							<i className={ classnames(

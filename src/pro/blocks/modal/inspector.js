@@ -43,7 +43,7 @@ import { useTabSwitch } from '../../../blocks/helpers/block-utility.js';
 /**
  *
  * @param {import('./types').PopupInspectorProps} param0
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,
@@ -58,7 +58,7 @@ const Inspector = ({
 
 	const changeBoxShadow = data => {
 		const boxShadow = { ...attributes.boxShadow };
-		Object.entries( data ).map( ([ key, val ] = data ) => {
+		Object.entries( data ).forEach( ([ key, val ] = data ) => {
 			boxShadow[key] = val;
 		});
 

@@ -176,7 +176,7 @@ export const PostsMeta = ({ attributes, element, post, author, categories }) => 
 		if ( attributes.displayAuthor && undefined !== author ) {
 
 			/* translators: %s Author of the post */
-			postedOn += sprintf( __( ' by %s', 'otter-blocks' ), author.name );
+			postedOn += sprintf( __( 'by %s', 'otter-blocks' ), author.name );
 		}
 
 		meta.push( postedOn );
