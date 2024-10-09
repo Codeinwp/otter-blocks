@@ -103,7 +103,7 @@ const ProPreview = ({ attributes }) => {
 			</Disabled>
 			{ ! Boolean( window.themeisleGutenberg.hasPro ) && (
 				<Notice
-					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'formfileblock' )}>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'formfileblock' )}>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
 					variant="upsell"
 				/> ) }
 		</Fragment>
@@ -113,7 +113,7 @@ const ProPreview = ({ attributes }) => {
 /**
  *
  * @param {import('./types').FormFileInspectorProps} props
- * @returns {JSX.Element}
+ * @return {JSX.Element}
  */
 const Inspector = ({
 	attributes,

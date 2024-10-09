@@ -32,7 +32,7 @@ class GoogleFontsLoader {
 	/**
 	 * The the loader after is loaded.
 	 *
-	 * @returns {Promise<GoogleFontsLoader>}
+	 * @return {Promise<GoogleFontsLoader>}
 	 */
 	async afterLoading() {
 		await this.requestFonts();
@@ -43,7 +43,7 @@ class GoogleFontsLoader {
 	 * Get the font.
 	 *
 	 * @param {string} fontName The name of the font.
-	 * @returns {import('../components/google-fonts-control/types').GoogleFontItem}
+	 * @return {import('../components/google-fonts-control/types').GoogleFontItem}
 	 */
 	getFont( fontName ) {
 		return this.fonts.find( font => font.family === fontName );
@@ -53,7 +53,7 @@ class GoogleFontsLoader {
 	 * Get the variants of the font.
 	 *
 	 * @param {string} fontName The name of the font.
-	 * @returns {{label: string, value: string}[]}
+	 * @return {{label: string, value: string}[]}
 	 */
 	getVariants( fontName ) {
 		const font = this.getFont( fontName );
@@ -74,8 +74,8 @@ class GoogleFontsLoader {
 	 * Load the font to brower document. Can inject to an iframe.
 	 *
 	 * @param {string} fontName The name of the font.
-	 * @param {string} variant The font variant.
-	 * @returns {Promise<Error|import('../components/google-fonts-control/types').GoogleFontItem}
+	 * @param {string} variant  The font variant.
+	 * @return {Promise<Error|import('../components/google-fonts-control/types').GoogleFontItem>}
 	 */
 	async loadFontToBrowser( fontName, variant = 'regular' ) {
 		if ( ! fontName ) {
@@ -104,7 +104,7 @@ class GoogleFontsLoader {
 	 * Make a request to get the font list.
 	 *
 	 * @param {boolen} force Force the request to trigger again.
-	 * @returns {Promise<import('../components/google-fonts-control/types').GoogleFontItem[] | Promise<import('../components/google-fonts-control/types').GoogleFontItem[]>>} Return the result or the request that is in pending.
+	 * @return {Promise<import('../components/google-fonts-control/types').GoogleFontItem[] | Promise<import('../components/google-fonts-control/types').GoogleFontItem[]>>} Return the result or the request that is in pending.
 	 */
 	async requestFonts( force = false ) {
 		if ( 'done' === this.status ) {
@@ -184,8 +184,8 @@ class GoogleFontsLoader {
 	 * Add Google Font font link to the document.
 	 *
 	 * @param {string} fontName The name of the font.
-	 * @param {string} text The text to preview.
-	 * @returns
+	 * @param {string} text     The text to preview.
+	 * @return {void}
 	 */
 	addPreviewFont( fontName, text ) {
 

@@ -36,7 +36,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Icon List Item component
  * @param {import('./types').IconListItemProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -100,7 +100,7 @@ const Edit = ({
 			const parentClientId = select( 'core/block-editor' ).getBlockParents( clientId ).at( -1 );
 			const parentBlock = select( 'core/block-editor' ).getBlock( parentClientId );
 
-			setAttributes({ content: __( 'List item ', 'otter-blocks' ) + parentBlock.innerBlocks.length });
+			setAttributes({ content: __( 'List item', 'otter-blocks' ) + parentBlock.innerBlocks.length });
 		}
 	}, []);
 
@@ -126,7 +126,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				{ 'image' === attributes.library && isURL ? (
-					<img src={ attributes.icon } />
+					<img src={ attributes.icon } alt="" />
 				) : (
 					'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
 						<Icon

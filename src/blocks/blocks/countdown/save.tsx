@@ -18,7 +18,7 @@ import {
 } from '../../helpers/helper-functions.js';
 import { getIntervalFromUnix, timerSerialization } from './common';
 import { isEmpty } from 'lodash';
-import { CountdownProps } from './types.js';
+import type { CountdownProps } from './types.d.ts';
 
 const DisplayTimeComponent = ({
 	name,

@@ -174,7 +174,7 @@ const PanelItem = ({
 /**
  *
  * @param {import('./type.js').ReviewInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,
@@ -274,7 +274,7 @@ const Inspector = ({
 
 	const changeBoxShadow = data => {
 		const boxShadow = { ...attributes.boxShadow };
-		Object.entries( data ).map( ([ key, val ] = data ) => {
+		Object.entries( data ).forEach( ([ key, val ] = data ) => {
 			boxShadow[key] = val;
 		});
 
@@ -841,7 +841,7 @@ const Inspector = ({
 					initialOpen={ false }
 				>
 					<Upsell
-						notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'reviewblock' ) }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'reviewblock' ) }>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
 						variant="upsell"
 					/>
 				</PanelBody>

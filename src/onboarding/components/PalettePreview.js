@@ -79,7 +79,7 @@ const PalettePreview = ({
 			<motion.div
 				className="o-palette__area"
 				style={{
-					backgroundColor: backgroundColor
+					backgroundColor
 				}}
 				initial="start"
 				animate={ ( isHovered && ! disableMotion ) ? 'hover' : 'start' }

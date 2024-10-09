@@ -26,7 +26,7 @@ import { Fragment, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
-*/
+ */
 import { InspectorHeader } from '../../components';
 import { useTabSwitch } from '../../helpers/block-utility';
 
@@ -57,7 +57,7 @@ const defaultFontSizes = [
 /**
  *
  * @param {import('./types').ProgressBarInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

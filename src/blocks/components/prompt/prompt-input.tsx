@@ -4,7 +4,7 @@
 import { Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
-import { Fragment, useEffect, useRef } from '@wordpress/element';
+import { useRef } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -23,6 +23,7 @@ const PromptInput = ( props: PromptInputProps ) => {
 
 	/**
 	 * Handle keydown event.
+	 * @param e
 	 */
 	const handleKeyDown = ( e: React.KeyboardEvent<HTMLTextAreaElement> ) => {
 		if ( 'Enter' === e.key && ! e.shiftKey ) {

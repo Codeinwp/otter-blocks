@@ -20,7 +20,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Form Nonce component
  * @param {import('./types').FormHiddenFieldProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -44,7 +44,7 @@ const Edit = ({
 		className: 'wp-block wp-block-themeisle-blocks-form-input'
 	});
 
-	const placeholder = attributes.paramName ? __( 'Get the value of the URL param: ', 'otter-blocks' ) + attributes.paramName : '';
+	const placeholder = attributes.paramName ? __( 'Get the value of the URL param:', 'otter-blocks' ) + attributes.paramName : '';
 
 	return (
 		<Fragment>

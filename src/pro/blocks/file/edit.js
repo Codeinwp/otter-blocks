@@ -33,7 +33,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Form Input component
  * @param {import('./types').FormFileProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

@@ -53,7 +53,7 @@ export const ActionType = {
 /**
  * Leaflet Map component
  * @param {import('./type').LeafletMapProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	clientId,
@@ -157,7 +157,7 @@ const Edit = ({
 			});
 
 		default:
-			console.warn( __( 'The action for the leaflet block do not have a defined action in marker\'s reducer: ', 'otter-blocks' ) + action.type );
+			console.warn( __( 'The action for the leaflet block do not have a defined action in marker\'s reducer:', 'otter-blocks' ) + action.type );
 		}
 
 		return oldState;

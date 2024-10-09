@@ -27,7 +27,11 @@ import { applyFilters } from '@wordpress/hooks';
 import Blocks from './pages/Blocks';
 import Deal from './Deal';
 
-let daysLeft = sprintf( __( '%s Days', 'otter-blocks' ), Number( window.otterObj.daysLeft ) );
+let daysLeft = sprintf( 
+	// Translators: %s is the number of days left.
+	__( '%s Days', 'otter-blocks' ), 
+	Number( window.otterObj.daysLeft ) 
+);
 
 if ( 1 === Number( window.otterObj.daysLeft ) ) {
 	daysLeft = __( 'Less than 24 hours', 'otter-blocks' );
@@ -99,7 +103,7 @@ const Main = ({
 					<NoticeCard
 						slug="feedback"
 					>
-						<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' } style={ { maxWidth: '100%', objectFit: 'cover' } }/>
+						<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' } style={ { maxWidth: '100%', objectFit: 'cover' } } alt="" />
 						<div className="notice-text">
 							<h3>{ __( 'What\'s the one thing you need in Otter Blocks?', 'otter-blocks' ) }</h3>
 							<span>{ __( 'We\'re always looking for suggestions to further improve Otter Blocks and your feedback can help us do that.', 'otter-blocks' ) }</span>

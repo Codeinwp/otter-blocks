@@ -75,9 +75,9 @@ export const FeedbackModalComponent = ({
 /**
  * Displays a button that opens a modal for sending feedback
  *
- * @param {string} content
- * @param {string} source
- * @param {string} text
+ * @param {string}               content
+ * @param {string}               source
+ * @param {string}               text
  * @param {Button.ButtonVariant} variant
  */
 const FeedbackModal = (

@@ -272,7 +272,7 @@ const animateElements = () => {
 };
 
 const isElementInViewport = ( el ) => {
-	let scroll = window.scrollY || window.pageYOffset;
+	const scroll = window.scrollY || window.pageYOffset;
 	const offset = calculateOffset( getTriggerOffset( el ) );
 
 	const boundsTop = el.getBoundingClientRect().top + scroll + offset;

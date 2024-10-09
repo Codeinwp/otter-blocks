@@ -88,7 +88,7 @@ const formOptionsMap = {
 /**
  * Form component
  * @param {import('./type').FormProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -118,7 +118,7 @@ const Edit = ({
 	/**
 	 * Get global value if it is the case.
 	 * @param {import('../../common').SyncAttrs<import('./type').FormAttrs>} field
-	 * @returns
+	 * @return
 	 */
 	const getSyncValue = field => {
 		if ( attributes?.isSynced?.includes( field ) ) {
@@ -651,7 +651,7 @@ const Edit = ({
 			} else {
 				createNotice(
 					'error',
-					__( 'An error has occurred: ', 'otter-blocks' ) + ( res?.error || __( 'unknown', 'otter-blocks' ) ),
+					__( 'An error has occurred:', 'otter-blocks' ) + ( res?.error || __( 'unknown', 'otter-blocks' ) ),
 					{
 						isDismissible: true,
 						type: 'snackbar'
@@ -700,7 +700,7 @@ const Edit = ({
 			} else {
 				createNotice(
 					'error',
-					__( 'An error has occurred: ', 'otter-blocks' ) + ( res?.error || __( 'unknown', 'otter-blocks' ) + __( '. Check your provider for confirmation.', 'otter-blocks' ) ),
+					__( 'An error has occurred:', 'otter-blocks' ) + ( res?.error || __( 'unknown', 'otter-blocks' ) + __( '. Check your provider for confirmation.', 'otter-blocks' ) ),
 					{
 						isDismissible: true,
 						type: 'snackbar'

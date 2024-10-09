@@ -33,7 +33,7 @@ import { PromptsData, editLastConversation, injectActionIntoPrompt, retrieveEmbe
 import useSettings from '../../helpers/use-settings';
 import { openAiAPIKeyName } from '../../components/prompt';
 import { insertBlockBelow } from '../../helpers/block-utility';
-import { BlockProps } from '../../helpers/blocks';
+import type { BlockProps } from '../../helpers/blocks';
 
 const isValidBlock =  ( blockName: string|undefined ) => {
 	if ( ! blockName ) {

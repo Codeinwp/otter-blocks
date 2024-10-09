@@ -632,7 +632,7 @@ export const popupWithForm = (
 );
 
 export const popupWithImageAndText = (
-	<SVG width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" fill="none">
+	<SVG width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Circle cx="37.5" cy="21.5" r="2" stroke="#ED6F57" fill="none"/>
 		<Path d="M29 28.9V19.2261C29 19.1392 29.103 19.0937 29.1673 19.1521L34.5 24L39.8086 28.826C39.8762 28.8875 39.8327 29 39.7413 29H34.5H29.1C29.0448 29 29 28.9552 29 28.9Z" stroke="#ED6F57" fill="none"/>
 		<mask id="path-3-inside-1_3034_34948" fill="white">

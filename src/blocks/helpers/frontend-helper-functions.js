@@ -1,10 +1,10 @@
 /**
  * Create a list with numbers from interval [start, end].
  *
- * @param number start The start.
- * @param number end The end.
- * @param number step The step.
- * @returns {*[]}
+ * @param {number} start The start.
+ * @param {number} end   The end.
+ * @param {number} step  The step.
+ * @return {*[]}
  */
 export const range = ( start, end, step ) => {
 	const range = [];
@@ -21,7 +21,7 @@ export const range = ( start, end, step ) => {
 		throw TypeError( 'Start and end arguments must be of same type.' );
 	}
 
-	if ( undefined === typeof step ) {
+	if ( 'undefined' === typeof step ) {
 		step = 1;
 	}
 
@@ -59,7 +59,7 @@ export const range = ( start, end, step ) => {
  * Linear
  *
  * @param {number} x
- * @returns {number}
+ * @return {number}
  */
 export const linear = ( x ) => {
 	return x;
@@ -69,7 +69,7 @@ export const linear = ( x ) => {
  * Ease In Sine
  *
  * @param {number} x
- * @returns {number}
+ * @return {number}
  */
 export const easeInSine = ( x ) => {
 	return 1 - Math.cos( ( x * Math.PI ) / 2 );
@@ -79,7 +79,7 @@ export const easeInSine = ( x ) => {
  * Ease Out Sine
  *
  * @param {number} x
- * @returns {number}
+ * @return {number}
  */
 export const easeOutSine = ( x ) => {
 	return Math.sin( ( x * Math.PI ) / 2 );
@@ -88,7 +88,7 @@ export const easeOutSine = ( x ) => {
 /**
  * Ease In Out SSine
  * @param {number} x
- * @returns {number}
+ * @return {number}
  */
 export const easeInOutSine = ( x ) => {
 	return -( Math.cos( Math.PI * x ) - 1 ) / 2;
@@ -97,7 +97,7 @@ export const easeInOutSine = ( x ) => {
 /**
  * Ease Out Quad
  * @param {number} x
- * @returns {number}
+ * @return {number}
  */
 export const easeOutQuad = ( x ) => {
 	return 1 - ( 1 - x ) * ( 1 - x );
@@ -128,9 +128,9 @@ export const domReady = ( callback ) => {
 /**
  * Debounce function
  *
- * @param func The function to apply.
- * @param timeout
- * @returns {(function(...[*]): void)|*}
+ * @param  func    The function to apply.
+ * @param  timeout
+ * @return {(function(...[*]): void)|*}
  */
 export const debounce = ( func, timeout = 500 ) => {
 	let timer;
@@ -145,9 +145,9 @@ export const debounce = ( func, timeout = 500 ) => {
 /**
  * Converts HEX colors to HSL.
  *
- * @param color
- * @param asArray
- * @returns {string|array}
+ * @param  color
+ * @param  asArray
+ * @return {string | Array}
  */
 export const rgb2hsl = ( color, asArray = true ) => {
 	const rgb = color.substring( 4, color.length - 1 )
@@ -161,8 +161,8 @@ export const rgb2hsl = ( color, asArray = true ) => {
 	const max = Math.max( r, g, b );
 	const min = Math.min( r, g, b );
 
-	let h, s,
-		l = ( max + min ) / 2;
+	let h, s;
+	const l = ( max + min ) / 2;
 
 	if ( max === min ) {
 		h = s = 0; // achromatic
@@ -190,7 +190,7 @@ export const rgb2hsl = ( color, asArray = true ) => {
  *	Scrolls the element into view if it's not fully visible.
  *
  * @param {HTMLElement} element The element to scroll into view.
- * @param {*} options The options for the scrollIntoView method.
+ * @param {*}           options The options for the scrollIntoView method.
  */
 export const scrollIntoViewIfNeeded = ( element, options = {}) => {
 	if ( ! element ) {

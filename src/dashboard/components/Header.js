@@ -53,7 +53,13 @@ const Headers = ({
 					/>
 
 					<abbr
-						title={ sprintf( __( 'Version: %s', 'otter-blocks' ), window.otterObj.version ) }
+						title={
+							sprintf( 
+								// translators: %s: version number
+								__( 'Version: %s', 'otter-blocks' ),
+								 window.otterObj.version 
+							) 
+						}
 						className="version"
 					>
 						{ window.otterObj.version }

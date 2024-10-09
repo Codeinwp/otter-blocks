@@ -595,7 +595,7 @@ const Edit = ({
 			{ 'country' === item.type && (
 				<Fragment>
 					{ ! Boolean( window.otterPro.hasIPHubAPI ) && (
-						<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature. ', 'otter-blocks' ) }</ExternalLink>
+						<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature.', 'otter-blocks' ) }</ExternalLink>
 					) }
 
 					<TextControl
@@ -606,7 +606,7 @@ const Edit = ({
 						onChange={ e => changeValue( e, groupIndex, itemIndex, 'value' ) }
 					/>
 
-					<ExternalLink href="https://www.geoplugin.com/iso3166">{ __( 'A list of country codes. ', 'otter-blocks' ) }</ExternalLink>
+					<ExternalLink href="https://www.geoplugin.com/iso3166">{ __( 'A list of country codes.', 'otter-blocks' ) }</ExternalLink>
 				</Fragment>
 			) }
 
@@ -873,7 +873,13 @@ const Edit = ({
 			{ 'wooTotalCartValue' === item.type && (
 				<TextControl
 					label={ __( 'Total Cart Value', 'otter-blocks' ) }
-					help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
+					help={ 
+						sprintf( 
+							/* translators: %s the currency. */
+							__( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), 
+							window.wcSettings.currency.code 
+						) 
+					}
 					placeholder={ 9.99 }
 					value={ item.value }
 					onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), groupIndex, itemIndex, 'value' ) }
@@ -883,7 +889,13 @@ const Edit = ({
 			{ 'wooTotalSpent' === item.type && (
 				<TextControl
 					label={ __( 'Total Money Spent', 'otter-blocks' ) }
-					help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
+					help={ 
+						sprintf( 
+							/* translators: %s the currency. */
+							__( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), 
+							window.wcSettings.currency.code 
+						) 
+					}
 					placeholder={ 9.99 }
 					value={ item.value }
 					onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), groupIndex, itemIndex, 'value' ) }

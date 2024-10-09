@@ -19,7 +19,7 @@ async function makeSearchRequest( location ) {
 		return response.json();
 	}
 
-	return console.warn( __( 'An error has occured: ', 'otter-blocks' ) + response.status );
+	return console.warn( __( 'An error has occured:', 'otter-blocks' ) + response.status );
 }
 
 export async function getLocation( location ) {

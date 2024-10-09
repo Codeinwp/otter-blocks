@@ -94,7 +94,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 		for ( const webhook of webhooksToSave ) {
 			const check = checkWebhook( webhook );
 			if ( true !== check ) {
-				const msg = __( 'There was an error saving the webhook: ', 'otter-blocks' ) + webhook?.name + '\n';
+				const msg = __( 'There was an error saving the webhook:', 'otter-blocks' ) + webhook?.name + '\n';
 				setError( msg + check );
 				return;
 			}
@@ -280,7 +280,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 									{
 										webhooks?.map( ( webhook ) => {
 											return (
-												<div className="o-options-block-item">
+												<div key={webhook?.id} className="o-options-block-item">
 
 													<div className="o-options-block-item-label">
 														{ webhook.name }

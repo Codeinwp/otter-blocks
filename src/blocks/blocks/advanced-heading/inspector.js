@@ -65,7 +65,7 @@ const fieldMapping = {
 /**
  *
  * @param {import('./types.js').AdvancedHeadingInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

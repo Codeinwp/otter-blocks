@@ -12,7 +12,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { Button } from '@wordpress/components';
-import { type FormInputProps } from './input/types';
+import type { FormInputProps } from './input/types.d.ts';
 
 const DragHandle = SortableHandle( () => {
 	return (

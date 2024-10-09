@@ -37,7 +37,6 @@ import Inspector from './inspector.js';
 import Controls from './controls.js';
 import { blockInit, getDefaultValueByField } from '../../../helpers/block-utility.js';
 import { boxToCSS, objectOrNumberAsBox, _px } from '../../../helpers/helper-functions';
-import classNames from 'classnames';
 import BlockAppender from '../../../components/block-appender-button';
 import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
@@ -56,7 +55,7 @@ const TabHeader = ({
 			className={ classnames(
 				'wp-block-themeisle-blocks-tabs__header_item',
 				{
-					'active': active
+					active
 				}
 			) }
 			onClick={ onClick }
@@ -95,7 +94,7 @@ const AddTabHeader = ({
 /**
  *
  * @param {import('./types').TabsGroupProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -115,7 +114,7 @@ const Edit = ({
 	/**
 	 * Get global value if it is the case.
 	 * @param {import('../../../common').SyncAttrs<import('./types').TabsGroupAttrs>} field
-	 * @returns
+	 * @return
 	 */
 	const getSyncValue = field =>{
 		if ( attributes?.isSynced?.includes( field ) ) {
@@ -199,7 +198,7 @@ const Edit = ({
 
 	const addTab = () => {
 		const itemBlock = createBlock( 'themeisle-blocks/tabs-item', {
-			title: __( 'Tab ', 'otter-blocks' ) + ( ( children?.length ?? 0 ) + 1 )
+			title: __( 'Tab', 'otter-blocks' ) + ( ( children?.length ?? 0 ) + 1 )
 		});
 		insertBlock( itemBlock, ( children?.length ) || 0, clientId, false );
 	};

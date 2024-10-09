@@ -6,7 +6,7 @@ import DisplayFormMessage from './message.js';
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 let startTimeAntiBot = null;
-let METADATA_VERSION = 1;
+const METADATA_VERSION = 1;
 
 let saveMode = 'permanent';
 
@@ -32,7 +32,7 @@ const confirmRecord = async() => {
 /**
  * Get the form fields.
  * @param {HTMLDivElement} form The form.
- * @returns {HTMLDivElement[]} The form fields.
+ * @return {HTMLDivElement[]} The form fields.
  */
 const getFormFieldInputs = ( form ) => {
 
@@ -53,7 +53,7 @@ const getFormFieldInputs = ( form ) => {
  * Get the fields with their value from the form.
  *
  * @param {HTMLDivElement} form The form.
- * @returns {Promise<{formFieldsData: import('./types').FormFieldData[]}>}
+ * @return {Promise<{formFieldsData: import('./types').FormFieldData[]}>}
  */
 const extractFormFields = async( form ) => {
 
@@ -74,9 +74,9 @@ const extractFormFields = async( form ) => {
 
 		let label = `${( labelElem ?? labelContainer )?.innerHTML?.replace( /<[^>]*>?/gm, '' )}`;
 
-		let value = undefined;
-		let fieldType = undefined;
-		let mappedName = undefined;
+		let value;
+		let fieldType;
+		let mappedName;
 		let metadata = {};
 		const { id } = input;
 
@@ -89,7 +89,7 @@ const extractFormFields = async( form ) => {
 			const select = input.querySelector( 'select' );
 			mappedName = select?.name;
 
-			/** @type{HTMLInputElement} */
+			/** @type {HTMLInputElement} */
 			const fileInput = input.querySelector( 'input[type="file"]' );
 
 			const hiddenInput = input.querySelector( 'input[type="hidden"]' );
@@ -102,10 +102,10 @@ const extractFormFields = async( form ) => {
 
 				for ( let i = 0; i < files.length; i++ ) {
 					formFieldsData.push({
-						label: label,
+						label,
 						value: `${files[i].name} (${ ( files[i].size / ( 1024 * 1024 ) ).toFixed( 4 ) } MB)`,
 						type: fileInput.type,
-						id: id,
+						id,
 						metadata: {
 							version: METADATA_VERSION,
 							name: files[i].name,
@@ -113,7 +113,7 @@ const extractFormFields = async( form ) => {
 							file: files[i],
 							fieldOptionName: fileInput?.dataset?.fieldOptionName,
 							position: index + 1,
-							mappedName: mappedName
+							mappedName
 						}
 					});
 				}
@@ -160,14 +160,14 @@ const extractFormFields = async( form ) => {
 		if ( value ) {
 			formFieldsData.push({
 				label: label || '(No label)',
-				value: value,
+				value,
 				type: fieldType,
-				id: id,
+				id,
 				metadata: {
 					...metadata,
 					version: METADATA_VERSION,
 					position: index + 1,
-					mappedName: mappedName
+					mappedName
 				}
 			});
 		}
@@ -179,7 +179,7 @@ const extractFormFields = async( form ) => {
 /**
  * Get the nonce value from the form.
  * @param {HTMLDivElement} form The form.
- * @returns {string}
+ * @return {string}
  */
 function extractNonceValue( form ) {
 	const query = `.protection #${form.id || ''}_nonce_field`;
@@ -190,7 +190,7 @@ function extractNonceValue( form ) {
  * Validate the inputs from the form.
  *
  * @param {HTMLDivElement} form The form.
- * @returns
+ * @return
  */
 function validateInputs( form ) {
 	let result = true;
@@ -257,7 +257,7 @@ function validateInputs( form ) {
  * @param {import('./types').FormDataStructure} data
  */
 const createFormData = ( data ) => {
-	var formData = new FormData();
+	const formData = new FormData();
 
 	/**
 	 * For simple data, we will encode them as JSON in 'form_data' key.
@@ -266,7 +266,7 @@ const createFormData = ( data ) => {
 	 */
 	data?.payload?.formInputsData?.forEach( ( field, index ) => {
 		if ( 'file' === field.type ) {
-			let key = 'file__' + field.metadata.position + '_' + index;
+			const key = 'file__' + field.metadata.position + '_' + index;
 
 			formData.append( key, field.metadata.file );
 			data.payload.formInputsData[index].metadata.file = undefined;
@@ -281,7 +281,7 @@ const createFormData = ( data ) => {
 
 /**
  * Try to get the current post id from body class.
- * @returns {number}
+ * @return {number}
  */
 const getCurrentPostId = () => {
 	const body = document.querySelector( 'body' );
@@ -301,11 +301,11 @@ const getCurrentPostId = () => {
 /**
  * Handle the response after the form is submitted.
  *
- * @param {Promise<Response>} request
- * @param {DisplayFormMessage} displayMsg
+ * @param {Promise<Response>}                                                                     request
+ * @param {DisplayFormMessage}                                                                    displayMsg
  * @param {(response: import('./types.js').IFormResponse, displayMsg:DisplayFormMessage) => void} onSuccess
  * @param {(response: import('./types.js').IFormResponse, displayMsg:DisplayFormMessage) => void} onFail
- * @param {() => void} onCleanUp
+ * @param {() => void}                                                                            onCleanUp
  */
 const handleAfterSubmit = ( request, displayMsg, onSuccess, onFail, onCleanUp ) => {
 	request.then( r => r.json() ).then( response  => {
@@ -371,8 +371,8 @@ const makeSpinner = ( anchor ) => {
 /**
  * Send the date from the form to the server
  *
- * @param {HTMLDivElement}    form The element that contains all the inputs
- * @param {HTMLButtonElement}  btn  The submit button
+ * @param {HTMLDivElement}     form       The element that contains all the inputs
+ * @param {HTMLButtonElement}  btn        The submit button
  * @param {DisplayFormMessage} displayMsg The display message utility
  */
 const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
@@ -382,19 +382,17 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	// Get the data from the form fields.
 	const { formFieldsData } = await extractFormFields( form );
 	const formIsEmpty = 2 > formFieldsData?.length;
-	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
 	const hasValidToken = id && window.themeisleGutenberg?.tokens?.[id]?.token;
-
 	const spinner = makeSpinner( btn );
-
-
+	
 	if ( formIsEmpty ) {
 		btn.disabled = false;
 		spinner.hide();
 		return;
 	}
-
+	
+	const nonceFieldValue = extractNonceValue( form );
 	const isValidationSuccessful = validateInputs( form );
 
 	if ( hasCaptcha && ! hasValidToken ) {

@@ -10,7 +10,7 @@ domReady( () => {
 	 *	Handle the opening of the accordion items.
 	 *
 	 * @param {HTMLDetailsElement} accordion The accordion root element.
-	 * @returns
+	 * @return {void}
 	 */
 	const handleItemOpening = accordion => {
 		if ( ! accordion.classList.contains( 'exclusive' ) ) {
@@ -42,7 +42,7 @@ domReady( () => {
 	 * Generate FAQPage schema for the accordion.
 	 *
 	 * @param {HTMLDivElement} accordion The accordion root element.
-	 * @returns {void}
+	 * @return {void}
 	 */
 	const addFAQSchema = accordion => {
 		if ( ! accordion.dataset.hasSchema || 'false' === accordion.dataset.hasSchema ) {
@@ -72,7 +72,7 @@ domReady( () => {
 		const structuredData = {
 			'@context': 'https://schema.org',
 			'@type': 'FAQPage',
-			'mainEntity': mainEntity
+			mainEntity
 		};
 
 		// add the structured data to the page

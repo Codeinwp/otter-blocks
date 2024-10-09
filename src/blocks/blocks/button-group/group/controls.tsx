@@ -2,13 +2,13 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { AlignmentToolbar, BlockControls } from '@wordpress/block-editor';
+import { BlockControls } from '@wordpress/block-editor';
 import { DropdownMenu, ToolbarGroup } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { ButtonGroupInspectorProps } from './types';
+import type { ButtonGroupInspectorProps } from './types.d.ts';
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks';
 import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
 
