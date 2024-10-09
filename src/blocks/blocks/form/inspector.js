@@ -340,7 +340,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 /**
  *
  * @param {import('./type.js').FormInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,
@@ -454,7 +454,7 @@ const Inspector = ({
 							{ 'loading' === loadingState?.formOptions && (
 								<div className="o-fetch-msg">
 									<Spinner />
-									{ __( 'Loading the options. Please wait...', 'otter-blocks' ) }
+									{ __( 'Loading the options. Please wait…', 'otter-blocks' ) }
 								</div>
 							) }
 

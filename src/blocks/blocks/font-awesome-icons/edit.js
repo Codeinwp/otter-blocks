@@ -44,7 +44,7 @@ export const alignHandler = ( align ) => {
 /**
  * Icons Component
  * @param {import('./types').IconsProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	name,

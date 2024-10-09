@@ -194,7 +194,7 @@ const applyProDefaults = ( attrs, value ) => {
 		attrs.cookie_compare = 'is_true';
 	}
 
-	if ( 'wooProductsInCart' == value ) {
+	if ( 'wooProductsInCart' === value ) {
 		attrs.on = 'products';
 	}
 
@@ -202,11 +202,11 @@ const applyProDefaults = ( attrs, value ) => {
 		attrs.compare = 'greater_than';
 	}
 
-	if ( 'learnDashPurchaseHistory' == value ) {
+	if ( 'learnDashPurchaseHistory' === value ) {
 		attrs.on = 'courses';
 	}
 
-	if ( 'learnDashCourseStatus' == value ) {
+	if ( 'learnDashCourseStatus' === value ) {
 		attrs.status = 'not_started';
 	}
 

@@ -26,8 +26,7 @@ import { useState } from '@wordpress/element';
  * @see https://github.com/WordPress/gutenberg/blob/trunk/packages/editor/src/components/editor-snackbars/index.js
  * @author  Hardeep Asrani <hardeepasrani@gmail.com>
  * @version 1.1
- * @returns {[(optionName: string) => any, (option: string, value: any, success?: string, noticeId?: string, onSuccess: Function) => void, 'loading' | 'loaded' | 'error' | 'saving']} [ getOption, updateOption, status ]
- *
+ * @return {[(optionName: string) => any, (option: string, value: any, success?: string, noticeId?: string, onSuccess: Function) => void, 'loading' | 'loaded' | 'error' | 'saving']} [ getOption, updateOption, status ]
  */
 let updatedSettings = {};
 const useSettings = () => {
@@ -37,13 +36,13 @@ const useSettings = () => {
 	const [ settings, setSettings ] = useState({});
 
 	useSelect( select => {
-		const { getEntityRecord } = select( 'core' );
-
+		
 		// Bail out if settings are already loaded.
 		if ( Object.keys( settings ).length ) {
 			return;
 		}
-
+		
+		const { getEntityRecord } = select( 'core' );
 		const request = getEntityRecord( 'root', 'site' );
 
 		if ( request ) {
@@ -56,7 +55,7 @@ const useSettings = () => {
 	 * Get the value of the given option.
 	 *
 	 * @param {string} option Option name.
-	 * @returns {any} Option value.
+	 * @return {any} Option value.
 	 */
 	const getOption = option => {
 		return updatedSettings?.[option] || settings?.[option];
@@ -65,12 +64,12 @@ const useSettings = () => {
 	/**
 	 * Set the value of the given option. Also set the message to be displayed on success Notice.
 	 *
-	 * @param {string} option Option name.
-	 * @param {any} value Option value.
-	 * @param {string?} success Success message for Notice.
-	 * @param {string?} noticeId Notice ID.
-	 * @param {function?} onSuccess Callback function to be executed on success.
-	 * @param {function?} onError Callback function to be executed on error.
+	 * @param {string}    option    Option name.
+	 * @param {any}       value     Option value.
+	 * @param {string?}   success   Success message for Notice.
+	 * @param {string?}   noticeId  Notice ID.
+	 * @param {Function?} onSuccess Callback function to be executed on success.
+	 * @param {Function?} onError   Callback function to be executed on error.
 	 */
 	const updateOption = ( option, value, success = __( 'Settings saved.', 'otter-blocks' ), noticeId = undefined, onSuccess = () => {}, onError = () => {}) => {
 		setStatus( 'saving' );

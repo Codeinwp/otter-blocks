@@ -28,7 +28,7 @@ import { fieldTypesOptions, mappedNameInfo, switchFormFieldTo } from '../../../b
 /**
  *
  * @param {import('./types').FormHiddenFieldInspectorPros} props
- * @returns {JSX.Element}
+ * @return {JSX.Element}
  */
 const Inspector = ({
 	attributes,

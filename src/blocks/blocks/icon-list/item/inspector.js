@@ -19,7 +19,7 @@ import { IconPickerControl } from '../../../components/index.js';
 /**
  *
  * @param {import('./types.js').IconsListItemInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

@@ -61,7 +61,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  *
  * @param {import('./types').SectionProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -131,7 +131,7 @@ const Edit = ({
 	};
 
 	const updateColumnsWidth = ( columns, layout ) => {
-		( sectionBlock.innerBlocks ).map( ( innerBlock, i ) => {
+		( sectionBlock.innerBlocks ).forEach( ( innerBlock, i ) => {
 			updateBlockAttributes( innerBlock.clientId, {
 				columnWidth: layouts[columns][layout][i]
 			});

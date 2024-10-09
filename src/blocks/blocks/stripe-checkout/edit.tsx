@@ -26,17 +26,16 @@ import {
 	useState
 } from '@wordpress/element';
 
-import { useSelect } from '@wordpress/data';
+import { useSelect , dispatch } from '@wordpress/data';
 
 import { store } from '@wordpress/icons';
 
 /**
  * Internal dependencies.
  */
-import { StripeCheckoutProps } from './types';
+import type { StripeCheckoutProps } from './types.d.ts';
 import Inspector from './inspector';
 import useSettings from '../../helpers/use-settings';
-import { dispatch } from '@wordpress/data';
 
 type Product = {
 	id: string,
@@ -50,10 +49,12 @@ type Price = {
 };
 
 /**
-  * Stripe Checkout component
-  * @param props
-  * @returns
-  */
+ * Stripe Checkout component
+ * @param props
+ * @param props.attributes
+ * @param props.setAttributes
+ * @return
+ */
 const Edit = ({
 	attributes,
 	setAttributes
@@ -139,8 +140,8 @@ const Edit = ({
 	const [ meta, setMeta ] = useState<any>({});
 
 	useEffect( () => {
-		const product = products?.find( ( i: Product ) => attributes.product == i.id );
-		const price = prices?.find( ( i: Price ) => attributes.price == i.id );
+		const product = products?.find( ( i: Product ) => attributes.product === i.id );
+		const price = prices?.find( ( i: Price ) => attributes.price === i.id );
 
 		let unitAmount;
 
@@ -188,7 +189,7 @@ const Edit = ({
 						( 'loading' === status || 'saving' === status ) && (
 							<div style={{ width: '100%' }}>
 								<Spinner />
-								{ __( 'Checking the API Key...', 'otter-blocks' ) }
+								{ __( 'Checking the API Key…', 'otter-blocks' ) }
 								<br /><br />
 							</div>
 						)

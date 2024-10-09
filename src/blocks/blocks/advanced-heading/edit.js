@@ -45,7 +45,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Advanced Heading component
  * @param {import('./types').AdvancedHeadingProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

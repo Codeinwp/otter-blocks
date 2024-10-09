@@ -7,7 +7,7 @@ class DeferredWpOptionsSave {
 		/**
 		 * We will create a global variable to store the instance of this class.
 		 * This will prevent multiple instances of this class to be created.
-         */
+		 */
 		if ( window?.deferredWpOptionsSave ) {
 			return window?.deferredWpOptionsSave;
 		}
@@ -25,7 +25,7 @@ class DeferredWpOptionsSave {
 
 	/**
 	 * Create a new instance of the Settings model that can fetch the WP Options.
-	 * @returns {api.models.Settings}
+	 * @return {api.models.Settings}
 	 */
 	createSettings() {
 		return ( new api.models.Settings() );
@@ -33,9 +33,9 @@ class DeferredWpOptionsSave {
 
 	/**
 	 * Save the option to the server.
-	 * @param {string} optionType - The option type to save. Internal identifier.
-	 * @param {string|number|array|object|((currentValue: any) => any)} value - The value to save. It can be a function that receives the current value and returns the new value. If it does not exists, it will receive null.
-	 * @param {(options: Object, error: any|null) => void} callback - The callback to call after the save is done. It will receive the response from the server and the error if any.
+	 * @param {string}                                                          optionType - The option type to save. Internal identifier.
+	 * @param {string | number | Array | object | ((currentValue: any) => any)} value      - The value to save. It can be a function that receives the current value and returns the new value. If it does not exists, it will receive null.
+	 * @param {(options: Object, error: any|null) => void}                      callback   - The callback to call after the save is done. It will receive the response from the server and the error if any.
 	 */
 	save( optionType, value, callback = () => {}) {
 		this.changes.push({ optionType, value, callback });

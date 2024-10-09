@@ -52,7 +52,7 @@ let tableLinks = [];
 /**
  * Review Comparison component
  * @param {import('./types').ReviewComparisionProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -151,7 +151,7 @@ const Edit = ({
 				);
 			});
 
-			tableImages.push( <td>{ review.attrs.image && <img src={ review.attrs.image.url } /> }</td> );
+			tableImages.push( <td>{ review.attrs.image && <img src={ review.attrs.image.url } alt={ review.attrs.image?.alt } /> }</td> );
 			tableName.push( <td>{ review.attrs.title || __( 'Untitled review', 'otter-blocks' ) }</td> );
 			tablePrice.push( <td>{ review.attrs.discounted ? <Fragment><del>{ currency + review.attrs.price }</del> { currency + review.attrs.discounted }</Fragment> : ( review.attrs.price ? ( currency + review.attrs.price ) : '-' ) }</td> );
 			tableRating.push( <td><div className="o-review-comparison_ratings">{ getStars( overallRatings ) }</div></td> );

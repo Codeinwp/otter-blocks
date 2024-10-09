@@ -29,8 +29,8 @@ import { fieldTypesOptions, switchFormFieldTo } from '../common';
 
 /**
  *
- * @param {FormStripeFieldInspectorPros} props
- * @returns {JSX.Element}
+ * @param {import('../../../../pro/blocks/form-stripe-field/types').FormStripeFieldInspectorPros} props
+ * @return {JSX.Element}
  */
 const Inspector = ({
 	attributes,
@@ -67,7 +67,7 @@ const Inspector = ({
 				/>
 
 				<Notice
-					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'formfileblock' )}>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'formfileblock' )}>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
 					variant="upsell"
 				/>
 			</PanelBody>

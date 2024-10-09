@@ -32,8 +32,8 @@ import {
 } from '@wordpress/element';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import './editor.scss';
 import googleFontsLoader from '../../helpers/google-fonts';
 
@@ -197,6 +197,8 @@ const GoogleFontsControl = ({
 													</MenuItem>
 												);
 											}
+
+											return null;
 										}) }
 									</div>
 								</MenuGroup>

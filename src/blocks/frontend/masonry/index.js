@@ -29,9 +29,7 @@ domReady( () => {
 
 							let columns = Array.from( container.classList ).find( className => {
 								const res = pattern.exec( className );
-								if ( null !== res ) {
-									return true;
-								}
+								return null !== res;
 							});
 
 							columns = pattern.exec( columns );

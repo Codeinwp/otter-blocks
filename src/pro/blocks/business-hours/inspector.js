@@ -17,7 +17,7 @@ import {
 /**
  *
  * @param {import('./types').BusinessHoursInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

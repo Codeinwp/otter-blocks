@@ -30,6 +30,7 @@ if ( ! Boolean( window.themeisleGutenberg.hasPro ) ) {
 		],
 		edit: () => {
 			const instructions = sprintf(
+				// translators: %1$s is the title of the block that requires Otter Pro activation.
 				__( 'You need to activate your Otter Pro to use %1$s block.', 'otter-blocks' ),
 				metadata.title
 			);

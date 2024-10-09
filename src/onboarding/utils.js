@@ -31,13 +31,14 @@ export const recordEvent = async( data = {}) => {
 		return;
 	}
 
-	const { setSessionID } = dispatch( 'otter/onboarding' );
-	const { getSessionID } = select( 'otter/onboarding' );
-	const { getCurrentTheme } = select( 'core' );
-
-	const trackingId = getSessionID();
-
+	
 	try {
+		const { setSessionID } = dispatch( 'otter/onboarding' );
+		const { getSessionID } = select( 'otter/onboarding' );
+		const { getCurrentTheme } = select( 'core' );
+	
+		const trackingId = getSessionID();
+		
 		const response = await fetch(
 			'https://api.themeisle.com/tracking/onboarding',
 			{

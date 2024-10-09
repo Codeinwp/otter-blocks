@@ -1,8 +1,8 @@
 /**
  * Create utility functions for an interval timer.
- * @param {number} duration The duration, in seconds.
+ * @param {number} duration  The duration, in seconds.
  * @param {number} deltaTime The time between two time ticks, in seconds.
- * @returns Utility functions.
+ * @return Utility functions.
  */
 export const makeInterval = ( duration, deltaTime ) => {
 
@@ -21,7 +21,7 @@ export const makeInterval = ( duration, deltaTime ) => {
 
 	/**
 	 * Start the interval. Get a callback function that execute at every tick and the one that execute at the end.
-	 * @param {Function} callback Function that execute at every tick.
+	 * @param {Function} callback    Function that execute at every tick.
 	 * @param {Function} endCallback Function that execute at the end.
 	 */
 	const start = ( callback, endCallback ) => {
@@ -45,7 +45,7 @@ export const makeInterval = ( duration, deltaTime ) => {
 /**
  * Specify a function to execute when the DOM is fully loaded.
  *
- * @param {Callback} callback A function to execute after the DOM is ready.
+ * @param {()=>{}} callback A function to execute after the DOM is ready.
  * @return {void}
  */
 export const domReady = ( callback ) => {

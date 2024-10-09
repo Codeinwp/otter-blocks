@@ -45,9 +45,13 @@ const Controls = ({
 					return (
 						<Tooltip
 							key={ item }
-
-							/* translators: %s Social Website */
-							text={ sprintf( __( 'Display %s', 'otter-blocks' ), socialList[ item ].label ) }
+							text={ 
+								sprintf( 
+									/* translators: %s Label */
+									__( 'Display %s', 'otter-blocks' ), 
+									socialList[ item ].label 
+								) 
+							}
 						>
 							<Button
 								className={ classnames(

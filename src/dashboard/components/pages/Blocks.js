@@ -229,7 +229,7 @@ const otterBlocks = [
 const BlockCard = ({ block, isLoading, onToggle }) => {
 	return (
 		<div className="o-block-card">
-			<div className="o-block-card__icon" className={classNames( 'o-block-card__icon', { 'is-disabled': block?.isPro && ! otterObj?.hasPro })}>
+			<div className={classNames( 'o-block-card__icon', { 'is-disabled': block?.isPro && ! otterObj?.hasPro })}>
 				{ isString( block.icon ) ? <span className={ `dashicons dashicons-${ block.icon }` } /> : block.icon?.() }
 			</div>
 			<div className="o-block-card__description">
@@ -440,7 +440,7 @@ const Blocks = () => {
 				{
 					blocksStatus.map( block => {
 						return (
-							<BlockCard block={ block } isLoading={isLoading} onToggle={() => toggleBlock( block.slug )} />
+							<BlockCard key={block.slug} block={ block } isLoading={isLoading} onToggle={() => toggleBlock( block.slug )} />
 						);
 					})
 				}

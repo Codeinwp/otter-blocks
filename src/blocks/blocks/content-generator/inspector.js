@@ -8,7 +8,7 @@ import {
 /**
  *
  * @param {import('./types').ContentGeneratorInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

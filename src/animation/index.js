@@ -18,8 +18,8 @@ import { addFilter } from '@wordpress/hooks';
 import { select } from '@wordpress/data';
 
 /**
-  * Internal dependencies.
-  */
+ * Internal dependencies.
+ */
 import './editor.scss';
 
 import Edit from './editor.js';

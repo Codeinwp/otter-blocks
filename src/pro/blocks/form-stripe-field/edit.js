@@ -28,7 +28,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Stripe Field component
  * @param {import('./types').FormStripeFieldProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -265,7 +265,7 @@ const Edit = ({
 						( 'loading' === status || 'saving' === status ) && (
 							<div style={{ width: '100%' }}>
 								<Spinner />
-								{ __( 'Checking the API Key...', 'otter-blocks' ) }
+								{ __( 'Checking the API Key…', 'otter-blocks' ) }
 								<br /><br />
 							</div>
 						)
