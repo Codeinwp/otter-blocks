@@ -72,7 +72,7 @@ const gapCompatibility = {
 /**
  *
  * @param {import('./types.js').AccordionGroupInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	clientId,
@@ -137,7 +137,7 @@ const Inspector = ({
 
 	const changeBoxShadow = data => {
 		const boxShadow = { ...attributes.boxShadow };
-		Object.entries( data ).map( ([ key, val ] = data ) => {
+		Object.entries( data ).forEach( ([ key, val ] = data ) => {
 			boxShadow[key] = val;
 		});
 

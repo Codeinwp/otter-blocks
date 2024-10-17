@@ -34,7 +34,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Business Hours component
  * @param {import('./types').BusinessHoursProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

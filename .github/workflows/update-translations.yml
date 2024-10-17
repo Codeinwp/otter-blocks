@@ -1,0 +1,58 @@
+name: Dispatch Update to translations.themeisle.com
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  makepot:
+    name: Build, make pot file and upload to S3
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source files
+        uses: actions/checkout@v4
+      - name: Setup node 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - name: Install composer deps
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          composer install --no-dev --prefer-dist --no-progress
+      - name: Install NPM deps
+        run: npm ci
+      - name: Build files
+        run: npm run build
+      - name: Build pot
+        run: npm run build:makepot
+      - name: Upload Latest Version to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_DEV_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.S3_AWS_KEY_ARTIFACTS }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_AWS_SECRET_ARTIFACTS }}
+          SOURCE_DIR: languages/
+          DEST_DIR: ${{ github.event.repository.name }}-translations/
+
+  dispatch-workflow:
+    runs-on: ubuntu-latest
+    needs: makepot
+
+    steps:
+      - name: Dispatch workflow
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          repository: Codeinwp/themeisle-translations
+          event-type: update-potfile
+          client-payload: |
+            {
+              "ref": "${{ github.ref }}",
+              "potfile": "https://verti-artifacts.s3.amazonaws.com/${{ github.event.repository.name }}-translations/otter-pro.pot",
+              "slug": "otter-pro"
+            }

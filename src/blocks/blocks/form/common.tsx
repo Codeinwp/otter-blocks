@@ -12,7 +12,7 @@ import { omit } from 'lodash';
 import { createBlock } from '@wordpress/blocks';
 import { dispatch } from '@wordpress/data';
 
-import { BlockProps } from '../../helpers/blocks';
+import type { BlockProps } from '../../helpers/blocks';
 import { changeActiveStyle, getActiveStyle, getChoice } from '../../helpers/helper-functions';
 import { Fragment } from '@wordpress/element';
 import { SortableElement, SortableHandle } from 'react-sortable-hoc';
@@ -160,7 +160,7 @@ export const switchFormFieldTo = ( type?: string, clientId ?:string, attributes?
 
 
 	const newBlock = createBlock( `themeisle-blocks/${ blockName }`,
-		omit({ ...attributes, type: type }, 'form-textarea' === blockName ? [ 'multipleSelection', 'options', 'type' ] : [ 'multipleSelection', 'options' ])
+		omit({ ...attributes, type }, 'form-textarea' === blockName ? [ 'multipleSelection', 'options', 'type' ] : [ 'multipleSelection', 'options' ])
 	);
 
 	replaceBlock( clientId, newBlock );

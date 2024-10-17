@@ -42,7 +42,7 @@ const PREFIX_TO_FAMILY = {
 /**
  * Accordion Group component
  * @param {import('./types').AccordionGroupProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	name,

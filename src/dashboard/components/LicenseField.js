@@ -113,7 +113,13 @@ const LicenseField = () => {
 				<div className="otter-license-footer">
 					<p>
 						<Icon icon="yes" />
-						{ sprintf( __( 'Valid - Expires %s', 'otter-blocks' ), license.expiration ) }
+						{ 
+							sprintf(
+								// translators: %s: expiration date
+								__( 'Valid - Expires %s', 'otter-blocks' ), 
+								license.expiration 
+							) 
+						}
 					</p>
 				</div>
 			)}

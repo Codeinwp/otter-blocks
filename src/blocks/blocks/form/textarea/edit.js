@@ -26,7 +26,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Form Textarea component
  * @param {import('./types').FormTextareaProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

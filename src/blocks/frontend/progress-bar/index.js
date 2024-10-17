@@ -59,6 +59,7 @@ domReady( () => {
 				threshold: [ 0.6 ]
 			};
 
+			let interval;
 			const observer = new IntersectionObserver( entries => {
 				entries.forEach( entry => {
 					if ( entry.isIntersecting ) {
@@ -77,8 +78,6 @@ domReady( () => {
 							observer.unobserve( bar );
 							return;
 						}
-
-						let interval;
 
 						if ( interval ) {
 							clearInterval( interval );

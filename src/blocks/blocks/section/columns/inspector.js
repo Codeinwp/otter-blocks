@@ -64,7 +64,7 @@ import { useTabSwitch } from '../../../helpers/block-utility';
 /**
  *
  * @param {import('../column/types.js').SectionColumnInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,
@@ -303,9 +303,9 @@ const Inspector = ({
 	};
 
 	const getDividerType = () => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			return attributes.dividerTopType;
-		} else if ( 'bottom' == dividerViewType ) {
+		} else if ( 'bottom' === dividerViewType ) {
 			return attributes.dividerBottomType;
 		}
 
@@ -315,17 +315,17 @@ const Inspector = ({
 	const dividerType = getDividerType();
 
 	const changeDividerType = value => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			setAttributes({ dividerTopType: value });
-		} else if ( 'bottom' == dividerViewType ) {
+		} else if ( 'bottom' === dividerViewType ) {
 			setAttributes({ dividerBottomType: value });
 		}
 	};
 
 	const getDividerColor = () => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			return attributes.dividerTopColor;
-		} else if ( 'bottom' == dividerViewType ) {
+		} else if ( 'bottom' === dividerViewType ) {
 			return attributes.dividerBottomColor;
 		}
 
@@ -333,15 +333,15 @@ const Inspector = ({
 	};
 
 	const changeDividerColor = value => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			setAttributes({ dividerTopColor: value });
-		} else if ( 'bottom' == dividerViewType ) {
+		} else if ( 'bottom' === dividerViewType ) {
 			setAttributes({ dividerBottomColor: value });
 		}
 	};
 
 	const getDividerWidth = () => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
 				return attributes.dividerTopWidth ?? 100;
@@ -350,7 +350,7 @@ const Inspector = ({
 			case 'Mobile':
 				return attributes.dividerTopWidthMobile ?? attributes.dividerTopWidthTablet ?? attributes.dividerTopWidth ?? 100;
 			}
-		} else if ( 'bottom' == dividerViewType ) {
+		} else if ( 'bottom' === dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
 				return attributes.dividerBottomWidth ?? 100;
@@ -365,7 +365,7 @@ const Inspector = ({
 	};
 
 	const changeDividerWidth = value => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
 				setAttributes({ dividerTopWidth: value });
@@ -377,7 +377,7 @@ const Inspector = ({
 				setAttributes({ dividerTopWidthMobile: value });
 				break;
 			}
-		} else if ( 'bottom' == dividerViewType ) {
+		} else if ( 'bottom' === dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
 				setAttributes({ dividerBottomWidth: value });
@@ -393,7 +393,7 @@ const Inspector = ({
 	};
 
 	const getDividerHeight = () => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
 				return attributes.dividerTopHeight;
@@ -402,7 +402,7 @@ const Inspector = ({
 			case 'Mobile':
 				return attributes.dividerTopHeightMobile;
 			}
-		} else if ( 'bottom' == dividerViewType ) {
+		} else if ( 'bottom' === dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
 				return  attributes.dividerBottomHeight;
@@ -417,7 +417,7 @@ const Inspector = ({
 	};
 
 	const changeDividerHeight = value => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
 				setAttributes({ dividerTopHeight: value });
@@ -429,7 +429,7 @@ const Inspector = ({
 				setAttributes({ dividerTopHeightMobile: value });
 				break;
 			}
-		} else if ( 'bottom' == dividerViewType ) {
+		} else if ( 'bottom' === dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
 				setAttributes({ dividerBottomHeight: value });

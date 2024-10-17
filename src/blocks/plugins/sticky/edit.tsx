@@ -33,7 +33,7 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import Notice from '../../components/notice/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
-import { BlockProps, OtterBlock } from '../../helpers/blocks.js';
+import type { BlockProps, OtterBlock } from '../../helpers/blocks.js';
 
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',

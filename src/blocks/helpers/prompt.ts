@@ -113,7 +113,7 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 		};
 
 		function removeOtterKeys( obj ) {
-			for ( let key in obj ) {
+			for ( const key in obj ) {
 				if ( key.startsWith( 'otter_' ) ) {
 					delete obj[key];
 				}
@@ -180,12 +180,12 @@ const fieldMapping = {
  * Small helper to try to parse a prompt response without throwing an error.
  *
  * @param promptResponse - The prompt response to parse.
- * @returns - The parsed response or undefined.
+ * @return - The parsed response or undefined.
  */
 export function tryParseResponse( promptResponse: string ) {
 	try {
 		return JSON.parse( promptResponse );
-	} catch ( e ) {
+	} catch {
 		return undefined;
 	}
 }
@@ -194,7 +194,7 @@ export function tryParseResponse( promptResponse: string ) {
  * Create a block from a form prompt response.
  *
  * @param promptResponse - The prompt response to parse.
- * @returns - An array of blocks Form field blocks.
+ * @return - An array of blocks Form field blocks.
  */
 export function parseFormPromptResponseToBlocks( promptResponse: string ) {
 	if ( ! promptResponse ) {
@@ -227,7 +227,7 @@ export function parseFormPromptResponseToBlocks( promptResponse: string ) {
  * Retrieves an embedded prompt from the server.
  *
  * @param promptName - The name of the prompt to retrieve. If not provided, the default prompt is retrieved.
- * @returns - A promise that resolves to the server's response.
+ * @return - A promise that resolves to the server's response.
  */
 export function retrieveEmbeddedPrompt( promptName ?: string ) {
 	return apiFetch<PromptServerResponse>({
@@ -242,8 +242,8 @@ export function retrieveEmbeddedPrompt( promptName ?: string ) {
  * This function injects an action into an existing prompt.
  *
  * @param embeddedPrompt - The existing prompt data.
- * @param actionPrompt - The action to be injected.
- * @returns - The updated prompt data with the action injected.
+ * @param actionPrompt   - The action to be injected.
+ * @return - The updated prompt data with the action injected.
  */
 export function injectActionIntoPrompt( embeddedPrompt: PromptData, actionPrompt: string ): PromptData {
 	return {
@@ -265,8 +265,8 @@ export function injectActionIntoPrompt( embeddedPrompt: PromptData, actionPrompt
  * This function injects a conversation into an existing prompt.
  *
  * @param embeddedPrompt - The existing prompt data.
- * @param conversation - The conversation to be injected.
- * @returns - The updated prompt data with the conversation injected.
+ * @param conversation   - The conversation to be injected.
+ * @return - The updated prompt data with the conversation injected.
  */
 export function injectConversationIntoPrompt( embeddedPrompt: PromptData, conversation: PromptConversation ): PromptData {
 
@@ -291,8 +291,8 @@ export function injectConversationIntoPrompt( embeddedPrompt: PromptData, conver
  * Injects content into a template. If no match is found, adds the content at the end.
  *
  * @param template The template to inject into.
- * @param content The content to inject.
- * @returns The template with the content injected or appended.
+ * @param content  The content to inject.
+ * @return The template with the content injected or appended.
  */
 export function tryInjectIntoTemplate( template: string, content: string ): string {
 	if ( ! template ) {
@@ -308,8 +308,8 @@ export function tryInjectIntoTemplate( template: string, content: string ): stri
  * Edits the last conversation in the prompt data.
  *
  * @param embeddedPrompt The existing prompt data.
- * @param content The content to be injected.
- * @returns The updated prompt data with the last conversation edited.
+ * @param callback       The callback that returns the content to be injected.
+ * @return The updated prompt data with the last conversation edited.
  */
 export function editLastConversation( embeddedPrompt: PromptData, callback: ( currentContent?: string ) => string ): PromptData {
 	const { messages } = embeddedPrompt;

@@ -147,7 +147,7 @@ const Fields = ({
 
 				{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 					<Notice
-						notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'dynamictext' ) }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'dynamictext' ) }>{ __( 'Unlock more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
 						variant="upsell"
 					/>
 				) }

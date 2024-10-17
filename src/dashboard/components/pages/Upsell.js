@@ -27,7 +27,7 @@ const FEATURES = [
 	},
 	{
 		label: __( 'Extended Visibility Conditions & Sticky Blocks functionality', 'otter-blocks' ),
-		description: __( 'The Visibility Conditions feature allows you to set which conditions should be met for your chosen blocks to be displayed on the page. While the Sticky feature lets you set a Block as sticky, so that it sticks to its parent. ', 'otter-blocks' )
+		description: __( 'The Visibility Conditions feature allows you to set which conditions should be met for your chosen blocks to be displayed on the page. While the Sticky feature lets you set a Block as sticky, so that it sticks to its parent.', 'otter-blocks' )
 	},
 	{
 		label: __( 'Dynamic Values', 'otter-blocks' ),

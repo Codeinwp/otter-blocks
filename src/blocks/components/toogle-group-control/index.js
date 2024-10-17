@@ -20,7 +20,7 @@ import './editor.scss';
  *	A group of buttons that actions as a toggle
  *
  * @param {import('./type').ToggleGroupControlProps} props
- * @returns {JSX.Element}
+ * @return {JSX.Element}
  */
 const ToogleGroupControl = ({
 	value,
@@ -45,8 +45,8 @@ const ToogleGroupControl = ({
 					>
 						<Button
 							key={ option?.value }
-							isPrimary={ value == option?.value }
-							variant={ value == option?.value ? 'primary' : 'secondary' }
+							isPrimary={ value === option?.value }
+							variant={ value === option?.value ? 'primary' : 'secondary' }
 							icon={ option?.icon }
 							label={ option?.label }
 							onClick={ () => onChange( option?.value )}

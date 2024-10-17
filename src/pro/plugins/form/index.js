@@ -42,12 +42,12 @@ const helpMessages = {
 /**
  * Form Options
  *
- * @param {React.ReactNode} Options The children of the FormOptions component.
- * @param {import('../../../blocks/blocks/form/type').FormOptions} formOptions The form options.
+ * @param {React.ReactNode}                                                             Options       The children of the FormOptions component.
+ * @param {import('../../../blocks/blocks/form/type').FormOptions}                      formOptions   The form options.
  * @param { (options: import('../../../blocks/blocks/form/type').FormOptions) => void } setFormOption The function to set the form options.
- * @param {any} config The form config.
- * @param {import('../../../blocks/blocks/form/type').FormAttrs} attributes The form attributes.
- * @returns {JSX.Element}
+ * @param {any}                                                                         config        The form config.
+ * @param {import('../../../blocks/blocks/form/type').FormAttrs}                        attributes    The form attributes.
+ * @return {JSX.Element}
  */
 const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) => {
 
@@ -168,7 +168,7 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 							onChange={( webhookId ) => {
 								window.oTrk?.add({ feature: 'form-webhook', featureComponent: 'webhook-set', groupID: attributes.id });
 								setFormOption({
-									webhookId: webhookId
+									webhookId
 								});
 							}}
 						/>

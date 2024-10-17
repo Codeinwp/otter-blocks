@@ -17,9 +17,9 @@ window.debugSticky = false;
 /**
  * Check if the element can be a sticky container.
  *
- * @param parent The parent element to check.
+ * @param parent     The parent element to check.
  * @param cssClasses The CSS classes to check.
- * @returns
+ * @return
  */
 const isParentContainerValid = ( parent: Element, cssClasses: string[]): boolean => {
 	return cssClasses.some( c => parent.classList.contains( c ) );
@@ -27,7 +27,8 @@ const isParentContainerValid = ( parent: Element, cssClasses: string[]): boolean
 
 /**
  * Get the container for the given element
- * @param elem The sticky element
+ * @param elem  The sticky element
+ * @param scope
  * @return The parent container. Return `body` as default
  */
 const getStickyContainer = ( elem: Element, scope: `o-sticky-scope-${string}` ): HTMLElement => {
@@ -165,10 +166,10 @@ class StickyData {
 	/**
 	 * Create the sticky data container for the element.
 	 *
-	 * @param selector The selector for the sticky data container.
-	 * @param config The configuration for the sticky data container.
+	 * @param selector          The selector for the sticky data container.
+	 * @param config            The configuration for the sticky data container.
 	 * @param containerSelector The container selector for the sticky data container.
-	 * @returns
+	 * @return
 	 */
 	constructor( selector: HTMLDivElement | string, config: Config, containerSelector: HTMLDivElement | string ) {
 
@@ -542,9 +543,9 @@ class StickyRunner {
 	/**
 	 * Get the sticky element current position.
 	 *
-	 * @param sticky The sticky element.
+	 * @param sticky          The sticky element.
 	 * @param earlyActivation Add on offset to activate early in case of multiple sticky elements.
-	 * @returns
+	 * @return
 	 */
 	getCurrentPosition( sticky: StickyData, earlyActivation: number = 0 ): typeof positions[Position] {
 		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -608,7 +609,7 @@ class StickyRunner {
 	 * Calculate the gap between the sticky element and other before him that are active.
 	 *
 	 * @param sticky The sticky element.
-	 * @returns
+	 * @return
 	 */
 	calculateEarlyActivation( sticky: StickyData ): number {
 		let gap = 0;
@@ -628,7 +629,7 @@ class StickyRunner {
 	 * Calculate the opacity for the fade effect.
 	 *
 	 * @param sticky The sticky element to calculate the opacity.
-	 * @returns
+	 * @return
 	 */
 	calculateOpacity( sticky: StickyData ): number {
 		let opacity = 1;
@@ -689,7 +690,7 @@ class StickyRunner {
 	/**
 	 * Get the active sticky elements.
 	 *
-	 * @returns
+	 * @return
 	 */
 	get active(): StickyData[] {
 		return this.items.filter( stickyElem => 'active' === stickyElem.status );
@@ -698,7 +699,7 @@ class StickyRunner {
 	/**
 	 * Get the dormant sticky elements.
 	 *
-	 * @returns
+	 * @return
 	 */
 	get dormant(): StickyData[] {
 		return this.items.filter( stickyElem => 'dormant' === stickyElem.status );

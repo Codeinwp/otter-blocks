@@ -95,7 +95,7 @@ const defaultFontSizes = [
 /**
  *
  * @param {import('./types.js').FlipInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

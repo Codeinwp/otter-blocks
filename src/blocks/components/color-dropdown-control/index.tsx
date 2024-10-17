@@ -34,8 +34,14 @@ type ColorDropdownControlProps = {
 
 /**
  * Add a single color picker component. To append a component to one another use "is-list" as className in both component. Use "is-first" to mark which is the first.
- * @param props The props.
- * @returns A color picker component.
+ * @param props                  The props.
+ * @param props.label
+ * @param props.colorValue
+ * @param props.gradientValue
+ * @param props.onColorChange
+ * @param props.onGradientChange
+ * @param props.className
+ * @return A color picker component.
  */
 const ColorDropdownControl = ({
 	label,
