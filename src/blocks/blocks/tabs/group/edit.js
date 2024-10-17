@@ -226,7 +226,7 @@ const Edit = ({
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style: inlineStyles,
-		className: classNames(
+		className: classnames(
 			attributes.className,
 			{ 'has-pos-left': 'left' === attributes.tabsPosition  },
 			`is-align-${ attributes.titleAlignment }`
