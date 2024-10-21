@@ -18,8 +18,14 @@ async function makeSearchRequest( location ) {
 	if ( response.ok && 200 === response.status ) {
 		return response.json();
 	}
-
-	return console.warn( __( 'An error has occured:', 'otter-blocks' ) + response.status );
+	
+	return console.warn(  
+		sprintf( 
+			// translators: %s: HTTP status code
+			__( 'An error has occurred: %s', 'otter-blocks' ), 
+			response.status 
+		) 
+	);
 }
 
 export async function getLocation( location ) {

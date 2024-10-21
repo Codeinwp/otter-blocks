@@ -222,23 +222,23 @@ domReady( () => {
 
 			const keyEvent = event as KeyboardEvent;
 			const keys = [ 'ArrowDown', 'ArrowUp', 'Escape' ];
-			
+
 			if ( ! keys.includes( keyEvent.key ) ) {
 				return;
 			}
-			
+
 			if ( 'Escape' === keyEvent.key ) {
 				inputElement.blur();
 				resultsContainer = removeResultsContainer( block, resultsContainer );
 				return;
 			}
-			
+
 			const highlighted = resultsContainer?.querySelector( '.highlight' );
 			if ( ! highlighted ) {
 				highlight( resultsContainer.children[0] as HTMLElement, inputElement );
 				return;
 			}
-			
+
 			const containerDimensions = resultsContainer.parentElement.getBoundingClientRect();
 
 			if ( 'ArrowDown' === keyEvent.key && highlighted.nextElementSibling ) {

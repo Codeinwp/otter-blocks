@@ -103,7 +103,8 @@ const Main = ({
 					<NoticeCard
 						slug="feedback"
 					>
-						<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' } style={ { maxWidth: '100%', objectFit: 'cover' } } alt="" />
+						{/* eslint-disable-next-line jsx-a11y/alt-text */}
+						<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' } style={ { maxWidth: '100%', objectFit: 'cover' } } />
 						<div className="notice-text">
 							<h3>{ __( 'What\'s the one thing you need in Otter Blocks?', 'otter-blocks' ) }</h3>
 							<span>{ __( 'We\'re always looking for suggestions to further improve Otter Blocks and your feedback can help us do that.', 'otter-blocks' ) }</span>

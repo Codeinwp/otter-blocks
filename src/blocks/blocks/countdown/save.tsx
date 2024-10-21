@@ -62,7 +62,7 @@ const DisplayTime = ({
 			</div>
 		</div>
 	) : (
-		<Fragment></Fragment>
+		<></>
 	);
 };
 

@@ -271,7 +271,7 @@ const IconPickerControl = ({
 				renderContent={ ({ onToggle }) => {
 
 					if ( 'image' === library ) {
-						return <Fragment></Fragment>;
+						return <></>;
 					}
 
 					return (

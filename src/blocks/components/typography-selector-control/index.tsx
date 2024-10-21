@@ -296,7 +296,7 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 													{ defaultStates.componentNames?.[component] }
 												</MenuItem>;
 											}
-											return <Fragment key={index}></Fragment>;
+											return <></>;
 										})
 								}
 							</MenuGroup>

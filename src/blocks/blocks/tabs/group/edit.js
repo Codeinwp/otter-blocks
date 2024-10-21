@@ -6,7 +6,7 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies.
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { createBlock } from '@wordpress/blocks';
 
@@ -198,7 +198,11 @@ const Edit = ({
 
 	const addTab = () => {
 		const itemBlock = createBlock( 'themeisle-blocks/tabs-item', {
-			title: __( 'Tab', 'otter-blocks' ) + ( ( children?.length ?? 0 ) + 1 )
+			title: sprintf(
+				// Translators: %d is the tab number.
+				__( 'Tab %d', 'otter-blocks' ),
+				( children?.length ?? 0 ) + 1
+			)
 		});
 		insertBlock( itemBlock, ( children?.length ) || 0, clientId, false );
 	};

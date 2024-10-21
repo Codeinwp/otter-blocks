@@ -110,32 +110,35 @@ const deprecated = [{
 							height: `${ attributes.height }px`
 						} }
 					>
-						{ attributes.images.map( image => {
-							return (
-								<div
-									key={ image.id }
-									className="wp-block-themeisle-blocks-slider-item-wrapper glide__slide"
-									tabIndex="0"
-								>
-									<figure>
-										<img
-											className="wp-block-themeisle-blocks-slider-item"
-											src={ image.url }
-											alt={ image.alt }
-											title={ image.alt }
-											data-id={ image.id }
-										/>
-
-										{ ! RichText.isEmpty( image.caption ) && (
-											<RichText.Content
-												tagName="figcaption"
-												value={ image.caption }
+						{
+							attributes.images.map( image => {
+								return (
+									// eslint-disable-next-line react/jsx-key
+									<div
+										className="wp-block-themeisle-blocks-slider-item-wrapper glide__slide"
+										tabIndex="0"
+									>
+										<figure>
+											<img
+												key={ image.id }
+												className="wp-block-themeisle-blocks-slider-item"
+												src={ image.url }
+												alt={ image.alt }
+												title={ image.alt }
+												data-id={ image.id }
 											/>
-										) }
-									</figure>
-								</div>
-							);
-						}) }
+
+											{ ! RichText.isEmpty( image.caption ) && (
+												<RichText.Content
+													tagName="figcaption"
+													value={ image.caption }
+												/>
+											) }
+										</figure>
+									</div>
+								);
+							})
+						}
 					</div>
 
 					<SliderControls attributes={ attributes } />
@@ -191,13 +194,14 @@ const deprecated = [{
 					<div className="glide__slides">
 						{ attributes.images.map( image => {
 							return (
+								// eslint-disable-next-line react/jsx-key
 								<div
-									key={ image.id }
 									className="wp-block-themeisle-blocks-slider-item-wrapper glide__slide"
 									tabIndex="0"
 								>
 									<figure>
 										<img
+											key={ image.id }
 											className="wp-block-themeisle-blocks-slider-item"
 											src={ image.url }
 											alt={ image.alt }

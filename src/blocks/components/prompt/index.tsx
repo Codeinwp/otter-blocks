@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall, redo, undo } from '@wordpress/icons';
 import { ReactNode } from 'react';
 import { Button, ExternalLink, Notice, Placeholder, Spinner, TextControl } from '@wordpress/components';
@@ -204,7 +204,13 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			return;
 		}
 		
-		setTokenUsageDescription( __( 'Used tokens:', 'otter-blocks' ) + resultHistory[ resultHistoryIndex ].meta.usedToken );
+		setTokenUsageDescription(
+			sprintf(
+				// translators: %d: number of used tokens
+				__( 'Used tokens: %d', 'otter-blocks' ),
+				resultHistory[ resultHistoryIndex ].meta.usedToken 
+			)
+		);
 		props.onPreview?.( resultHistory[ resultHistoryIndex ].result );
 
 	}, [ resultHistoryIndex, resultHistory ]);

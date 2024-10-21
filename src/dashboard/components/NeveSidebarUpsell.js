@@ -100,7 +100,8 @@ const NeveSidebarUpsell = () => {
 				<div className="otter-nv-sidebar-upsell">
 					<div className="otter-nv-sidebar-left">
 						<div className="otter-nv-sidebar-heading">
-							<img src={ window.otterObj.assetsPath + 'images/neve-logo.png' } alt=""/>
+							{/* eslint-disable-next-line jsx-a11y/alt-text */}
+							<img src={ window.otterObj.assetsPath + 'images/neve-logo.png' }/>
 							<h2>{ __( '- Experience lightning fast performance!', 'otter-blocks' ) }</h2>
 						</div>
 						<div className="otter-nv-sidebar-text">
@@ -115,7 +116,8 @@ const NeveSidebarUpsell = () => {
 							</div>
 							<div>
 								<span>1050+</span>
-								<img src={ window.otterObj.assetsPath + 'images/star.png' } width = '57' alt=""/>
+								{/* eslint-disable-next-line jsx-a11y/alt-text */}
+								<img src={ window.otterObj.assetsPath + 'images/star.png' } width = '57'/>
 							</div>
 						</div>
 						<div className="otter-nv-sidebar-action">
@@ -128,7 +130,8 @@ const NeveSidebarUpsell = () => {
 						</div>
 					</div>
 					<div className="otter-nv-sidebar-right">
-						<img src={ window.otterObj.assetsPath + 'images/neve-upsell-img.png' } alt=""/>
+						{/* eslint-disable-next-line jsx-a11y/alt-text */}
+						<img src={ window.otterObj.assetsPath + 'images/neve-upsell-img.png' } />
 					</div>
 				</div>
 			)}

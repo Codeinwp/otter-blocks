@@ -152,6 +152,7 @@ const deprecated = [{
 				padding: `${ attributes.data[i].paddingTopBottom }px ${ attributes.data[i].paddingLeftRight }px`
 			};
 
+			/* eslint-disable react/jsx-no-target-blank */
 			return (
 				<Fragment>
 					<a
@@ -161,7 +162,7 @@ const deprecated = [{
 							'wp-block-themeisle-blocks-button',
 							`wp-block-themeisle-blocks-button-${ i }`
 						) }
-						style={ buttonStyle } rel="noreferrer"
+						style={ buttonStyle }
 					>
 						{ ( 'left' === attributes.data[i].iconType || 'only' === attributes.data[i].iconType ) && (
 							<i className={ classnames(
@@ -186,6 +187,7 @@ const deprecated = [{
 					</a>
 				</Fragment>
 			);
+			/* eslint-enable react/jsx-no-target-blank */
 		};
 
 		return (

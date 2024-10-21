@@ -100,12 +100,12 @@ if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
 			if ( ! activeFrame ) {
 				return false;
 			}
-			
+
 			const modal = activeFrame.querySelector( '.media-frame-content' );
 			if ( ! modal ) {
 				return false;
 			}
-			
+
 			modal.innerHTML = '';
 			modal.appendChild( createWrapperHTML() );
 

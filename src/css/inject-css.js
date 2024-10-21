@@ -115,7 +115,7 @@ const debouncedSubscription = debounce( () => {
 		isTyping
 	} = select( 'core/block-editor' );
 	const isTypingNow = isTyping();
-	
+
 	if ( isTypingNow ) {
 		return;
 	}

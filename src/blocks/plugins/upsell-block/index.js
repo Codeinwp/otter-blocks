@@ -62,7 +62,8 @@ const edit = props => {
 			<h3>{ __( 'There are 30+ more patterns and full page designs available in Otter PRO.', 'otter-blocks' ) }</h3>
 
 			<div className="o-block-patterns-upsell__actions">
-				<a href={ setUtm( window.themeisleGutenberg.patternsLink, 'patterns', 'otter-blockspatternslibrary' ) } target="_blank" rel="noreferrer">
+				{/* eslint-disable-next-line  react/jsx-no-target-blank */}
+				<a href={ setUtm( window.themeisleGutenberg.patternsLink, 'patterns', 'otter-blockspatternslibrary' ) } target="_blank">
 					{ __( 'View Demos', 'otter-blocks' ) }
 				</a>
 
