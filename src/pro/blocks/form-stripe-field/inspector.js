@@ -33,7 +33,7 @@ import { objectOrNumberAsBox } from '../../../blocks/helpers/helper-functions';
 /**
  *
  * @param {import('./types').FormStripeFieldInspectorPros} props
- * @returns {JSX.Element}
+ * @return {JSX.Element}
  */
 const Inspector = ({
 	attributes,

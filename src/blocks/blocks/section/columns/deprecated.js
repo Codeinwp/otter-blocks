@@ -1870,7 +1870,11 @@ const deprecated = [{
 			'borderRadiusLeft'
 		];
 
-		const isEligible = oldAttributes.some( attr => ! isUndefined( attributes[ attr ]) && ( 'number' === typeof attributes[ attr ] || null === typeof attributes[ attr ]) ) || ( undefined !== attributes.backgroundImageURL && undefined !== attributes.backgroundImageID ) || ( undefined !== attributes.backgroundOverlayImageURL && undefined !== attributes.backgroundOverlayImageID ) || ( undefined !== attributes.backgroundPosition && 'object' !== typeof attributes.backgroundPosition ) || ( undefined !== attributes.backgroundOverlayPosition && 'object' !== typeof attributes.backgroundOverlayPosition ) || undefined !== attributes.columnsGap;
+		const isEligible = oldAttributes.some( attr => ! isUndefined( attributes[ attr ]) && ( 'number' === typeof attributes[ attr ] || null === attributes[ attr ]) ) || 
+			( undefined !== attributes.backgroundImageURL && undefined !== attributes.backgroundImageID ) || 
+			( undefined !== attributes.backgroundOverlayImageURL && undefined !== attributes.backgroundOverlayImageID ) || ( undefined !== attributes.backgroundPosition && 'object' !== typeof attributes.backgroundPosition ) || 
+			( undefined !== attributes.backgroundOverlayPosition && 'object' !== typeof attributes.backgroundOverlayPosition ) 
+			|| undefined !== attributes.columnsGap;
 
 		return isEligible;
 	},

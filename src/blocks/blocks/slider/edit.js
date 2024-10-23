@@ -47,15 +47,15 @@ const options = {
 /**
  * Get the maximum number of allowed slides per view.
  *
- * @param {Number} imagesLength The number of images in the slider.
- * @returns {Number} The maximum number of slides per view.
+ * @param {number} imagesLength The number of images in the slider.
+ * @return {number} The maximum number of slides per view.
  */
 export const getMaxPerView = ( imagesLength ) => max([ Math.round( ( imagesLength ?? 0 ) / 2 ), 1 ]);
 
 /**
  * Slider component
  * @param {import('./types').SliderProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

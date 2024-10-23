@@ -1,6 +1,6 @@
 /**
-  * WordPress dependencies.
-  */
+ * WordPress dependencies.
+ */
 import { filter } from 'lodash';
 
 import { SnackbarList } from '@wordpress/components';

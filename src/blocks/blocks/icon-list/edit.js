@@ -28,7 +28,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Icon List component
  * @param {import('./types').IconListProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

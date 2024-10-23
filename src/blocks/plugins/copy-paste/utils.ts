@@ -1,20 +1,19 @@
-import { color } from '@wordpress/icons/build-types';
 import { isNumber, isString } from 'lodash';
-import { BoxType } from '../../helpers/blocks';
+import type { BoxType } from '../../helpers/blocks';
 
 /**
  * Add unit to the given value if it is defined.
- * @param x The value.
+ * @param x    The value.
  * @param unit The unit.
- * @returns
+ * @return
  */
 export const addUnit = ( x?: number, unit?: string ): string | undefined => x !== undefined ? `${x}${unit}` : undefined;
 
 /**
  * Extract the number from a given string.
- * @param s The number in string.
+ * @param s            The number in string.
  * @param defaultValue Default value.
- * @returns
+ * @return
  */
 export const getInt = ( s?: string, defaultValue?: number ): number | undefined => {
 
@@ -36,7 +35,7 @@ export const getInt = ( s?: string, defaultValue?: number ): number | undefined 
 /**
  * Wrapt the given value in a box type.
  * @param x The value.
- * @returns
+ * @return
  */
 export const makeBox = ( x?: string ): BoxType => {
 	return {
@@ -50,7 +49,7 @@ export const makeBox = ( x?: string ): BoxType => {
 /**
  * Extract a single value from the box. Non-zero values have priority.
  * @param box The box.
- * @returns
+ * @return
  */
 export const getSingleValueFromBox = ( box?: BoxType ) => {
 	if ( box === undefined ) {
@@ -62,9 +61,9 @@ export const getSingleValueFromBox = ( box?: BoxType ) => {
 
 /**
  * Extract the CSS var name from the given string source.
- * @param source The text source with the CSS styles.
+ * @param source    The text source with the CSS styles.
  * @param colorName The string that is contained in the desired CSS var.
- * @returns
+ * @return
  */
 const extractCSSColorVar = ( source: string, colorName: string ) => {
 	const initPosition = source.indexOf( colorName );
@@ -97,8 +96,8 @@ type ThemeSettings = {
 
 /**
  * Extract the styles from Settings and saved it to global value `window.oThemeStyles`
- * @param settings The WP settings.
- * @returns
+ * @param  settings The WP settings.
+ * @return {void}
  */
 export const extractThemeCSSVar = ( settings: ThemeSettings ) => {
 
@@ -128,9 +127,9 @@ export const extractThemeCSSVar = ( settings: ThemeSettings ) => {
 
 /**
  * Retrieve the desired color from the global object `window.oThemeStyles` that containts the CSS color values and vars for the current theme.
- * @param type The type of the color.
+ * @param type      The type of the color.
  * @param colorName The string that is contained in the desired CSS var.
- * @returns
+ * @return
  */
 const selectColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'any', colorName: string ) => {
 	if ( 'undefined' === typeof window ) {
@@ -176,9 +175,9 @@ const selectColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'a
 
 /**
  * Get the value of the given color name from current theme. This is a wrapper around `selectColorFromThemeStyles`.
- * @param type The type of the color.
+ * @param type      The type of the color.
  * @param colorName The string that is contained in the desired CSS var.
- * @returns
+ * @return
  */
 export const getColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'any', colorName: string ) => {
 	const color = selectColorFromThemeStyles( type, colorName );

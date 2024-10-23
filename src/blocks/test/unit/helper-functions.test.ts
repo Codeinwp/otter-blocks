@@ -57,7 +57,7 @@ describe( 'Build Get Responsive Attributes Function', () => {
 describe( 'Build Get Responsive Set Attributes', () => {
 
 	let attributes: any = {};
-	let setAttributes = ( attrs: any ) => {
+	const setAttributes = ( attrs: any ) => {
 		attributes = { ...attributes, ...attrs };
 	};
 

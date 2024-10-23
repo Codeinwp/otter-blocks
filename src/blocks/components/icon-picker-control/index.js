@@ -271,7 +271,7 @@ const IconPickerControl = ({
 				renderContent={ ({ onToggle }) => {
 
 					if ( 'image' === library ) {
-						return <Fragment></Fragment>;
+						return <></>;
 					}
 
 					return (
@@ -311,6 +311,8 @@ const IconPickerControl = ({
 											/>
 										);
 									}
+
+									return null;
 								}) }
 							</div>
 							<div style={{ display: 'flex', justifyContent: 'flex-end', position: 'absolute', top: '11px', right: '5px' }}>
@@ -463,10 +465,11 @@ export const IconPickerToolbarControl = ({
 								</MenuItem>
 							) }
 
-							{ icons.map( i => {
+							{ icons.map( (i, index) => {
 								if ( ! search || i.name.match( search.toLowerCase() ) || i.label.toLowerCase().match( search.toLowerCase() ) ) {
 									return (
 										<FontAwesomeIconsList
+											key={index}
 											i={ i }
 											icon={ icon }
 											prefix={ prefix }
@@ -474,6 +477,8 @@ export const IconPickerToolbarControl = ({
 										/>
 									);
 								}
+
+								return null;
 							}) }
 						</div>
 					</MenuGroup>

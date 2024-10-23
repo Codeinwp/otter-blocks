@@ -451,10 +451,10 @@ const Edit = ({
 	/**
 	 * Change the value of the condition in the nested array.
 	 *
-	 * @param {any} value The value to set.
+	 * @param {any}    value The value to set.
 	 * @param {number} index The index of the group.
-	 * @param {number} key The index of the condition.
-	 * @param {string} type The type of the condition.
+	 * @param {number} key   The index of the condition.
+	 * @param {string} type  The type of the condition.
 	 */
 	const changeArrayValue = ( value, index, key, type ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
@@ -481,10 +481,10 @@ const Edit = ({
 	/**
 	 * Toggle the value of the condition in the nested array.
 	 *
-	 * @param {any} value The value to set.
+	 * @param {any}    value The value to set.
 	 * @param {number} index The index of the group.
-	 * @param {number} key The index of the condition.
-	 * @param {string} type The type of the condition.
+	 * @param {number} key   The index of the condition.
+	 * @param {string} type  The type of the condition.
 	 */
 	const toggleValueInArray = ( value, index, key, type ) => {
 		const otterConditions = [ ...attributes.otterConditions ];

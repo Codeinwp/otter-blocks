@@ -24,8 +24,8 @@ import { useDispatch } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
 
 /**
-  * Internal dependencies.
-  */
+ * Internal dependencies.
+ */
 import './editor.scss';
 
 const noop = () => {};
@@ -38,8 +38,11 @@ type SyncControlDropdownProps = {
 
 /**
  * A dropdown that let you select which of the given attrs to sync with global defaults.
- * @param props The props.
- * @returns
+ * @param props               The props.
+ * @param props.isSynced
+ * @param props.options
+ * @param props.setAttributes
+ * @return
  */
 const SyncControlDropdown = ({
 	isSynced = [],
@@ -75,7 +78,7 @@ const SyncControlDropdown = ({
 	};
 
 	const applyAll = () => {
-		let fields = [ ...( isSynced || []) ];
+		const fields = [ ...( isSynced || []) ];
 
 		options.forEach( option => {
 			if ( ! isSynced?.includes( option.value ) ) {

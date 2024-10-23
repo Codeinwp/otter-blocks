@@ -36,7 +36,7 @@ import {
 } from '../../helpers/block-utility.js';
 import { boxToCSS, getChoice, mergeBoxDefaultValues, stringToBox, _px } from '../../helpers/helper-functions.js';
 import { isNumber } from 'lodash';
-import { type FlipProps } from './types';
+import type { FlipProps } from './types.d.ts';
 import {
 	useDarkBackground,
 	useResponsiveAttributes
@@ -47,7 +47,11 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Flip component
  * @param props
- * @returns
+ * @param props.attributes
+ * @param props.setAttributes
+ * @param props.clientId
+ * @param props.isSelected
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -162,8 +166,7 @@ const Edit = ({
 				currentSide={ currentSide }
 				setSide={ setSide }
 			/>
-
-			{/** @ts-ignore */}
+			
 			<div { ...blockProps }>
 				<div
 					className={
@@ -179,6 +182,7 @@ const Edit = ({
 								<img
 									className="o-img"
 									srcSet={ attributes.frontMedia?.url }
+									alt={ attributes.frontMedia?.alt }
 								/>
 							) }
 

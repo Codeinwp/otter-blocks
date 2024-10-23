@@ -94,7 +94,7 @@ test.describe( 'AI Block', () => {
 				promptID: 'textTransformation',
 				replaceTargetBlock: {
 					name: 'core/paragraph',
-					clientId: clientId
+					clientId
 				}
 			}
 		});

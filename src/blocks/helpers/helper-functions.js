@@ -1,10 +1,7 @@
 import { isEmpty, merge, set, unset, without, omitBy, isObjectLike, isString, isNumber, isNil, cloneDeep } from 'lodash';
 
-import { sprintf } from '@wordpress/i18n';
-
+import { __, sprintf } from '@wordpress/i18n';
 import { __experimentalGetSettings } from '@wordpress/date';
-
-import { __ } from '@wordpress/i18n';
 import { makeBox } from '../plugins/copy-paste/utils';
 
 // Post types to exclude
@@ -67,7 +64,7 @@ const excludedTypes = [
  * HTML to Plaintext
  *
  * @param {HTMLElement} value
- * @returns {*}
+ * @return {*}
  */
 export const unescapeHTML = value => {
 	const htmlNode = document.createElement( 'div' );
@@ -80,8 +77,8 @@ export const unescapeHTML = value => {
 
 /**
  * Decode HTML entities.
- * @param value
- * @returns {string}
+ * @param  value
+ * @return {string}
  */
 export const decodeHTMLEntities = value => {
 	const textArea = document.createElement( 'textarea' );
@@ -94,7 +91,7 @@ export const decodeHTMLEntities = value => {
  * Format the date.
  *
  * @param {Date} date
- * @returns {string}
+ * @return {string}
  */
 export const formatDate = date => {
 	const monthNames = [
@@ -114,7 +111,7 @@ export const formatDate = date => {
 /**
  * Get the custom post types from the post.
  *
- * @returns {Promise<undefined|*>}
+ * @return {Promise<undefined|*>}
  */
 export const getCustomPostTypeSlugs = async() => {
 	const dataTypes = window.themeisleGutenberg.postTypes;
@@ -131,7 +128,7 @@ export const getCustomPostTypeSlugs = async() => {
  * Convert a word to title case.
  *
  * @param {string} word
- * @returns {string}
+ * @return {string}
  */
 export const convertToTitleCase = ( word ) => {
 	if ( 'string' === typeof word || word instanceof String ) {
@@ -145,7 +142,7 @@ export const convertToTitleCase = ( word ) => {
  *
  * @param {Array} arr
  * @param {any}   item
- * @returns An array with the given item inserted between initial elements
+ * @return An array with the given item inserted between initial elements
  */
 export const insertBetweenItems = ( arr, item ) => {
 	const _arr = [];
@@ -163,30 +160,30 @@ export const insertBetweenItems = ( arr, item ) => {
 /**
  * Get site's timezone.
  *
- * @returns {*}
+ * @return {*}
  */
 export const getTimezone = () => {
 	const settings = __experimentalGetSettings();
 	const offset   = 60 * settings.timezone.offset;
 	const sign     = 0 > offset ? '-' : '+';
 	const absmin   = Math.abs( offset );
-	const timezone = sprintf( '%s%02d:%02d', sign, absmin / 60, absmin % 60 );
+	const timezone = sprintf( '%1$s%2$02d:%3$02d', sign, absmin / 60, absmin % 60 );
 	return timezone;
 };
 
 /**
  * Check if object has only null values.
  *
- * @param obj
- * @returns {boolean}
+ * @param  obj
+ * @return {boolean}
  */
 export const isNullObject = obj => ! Object.keys( obj ).some( k => null !== obj[ k ]);
 
 /**
  * Check if object has only undefined values.
  *
- * @param obj
- * @returns {this is unknown[]}
+ * @param  obj
+ * @return {this is unknown[]}
  */
 export const isUndefinedObject = obj => Object.values( obj ).every( l => l === undefined );
 
@@ -199,7 +196,7 @@ export const isUndefinedObject = obj => Object.values( obj ).every( l => l === u
  *
  * @param {number} value
  * @param {string} unit
- * @returns {string|undefined}
+ * @return {string|undefined}
  */
 export const _unit = ( value, unit ) => ( isNumber( value ) ? value + unit : value );
 
@@ -207,7 +204,7 @@ export const _unit = ( value, unit ) => ( isNumber( value ) ? value + unit : val
  * Format the value into a `px` unit.
  *
  * @param {any} value The value.
- * @returns {string|undefined}
+ * @return {string|undefined}
  */
 export const _px = value => _unit( value, 'px' );
 
@@ -215,7 +212,7 @@ export const _px = value => _unit( value, 'px' );
  * Format the value into a `em` unit.
  *
  * @param {any} value The value.
- * @returns {string|undefined}
+ * @return {string|undefined}
  */
 export const _em = value => _unit( value, 'em' );
 
@@ -223,15 +220,15 @@ export const _em = value => _unit( value, 'em' );
  * Format the value into a `%` unit.
  *
  * @param {any} value The value.
- * @returns {string|undefined}
+ * @return {string|undefined}
  */
 export const _percent = value => _unit( value, '%' );
 
 /**
  * Make a box type from a number or an object with Box like props.
- * @param {Object|number|undefined} value
+ * @param {Object|number|undefined}     value
  * @param {import('./blocks').BoxType?} defaultValue
- * @returns {import('./blocks').BoxType}
+ * @return {import('./blocks').BoxType}
  */
 export const objectOrNumberAsBox = ( value, defaultValue = undefined ) => {
 	if ( isNumber( value ) ) {
@@ -262,7 +259,7 @@ const verticalMapping = {
  * Get the CSS value for the given value position.
  *
  * @param {string} value The position type.
- * @returns {string|undefined}
+ * @return {string|undefined}
  */
 export const _align = value =>{
 	return verticalMapping[value];
@@ -270,6 +267,7 @@ export const _align = value =>{
 
 /**
  * Get parameter from the URL.
+ * @param queryString
  */
 export const getObjectFromQueryString = queryString => {
 	if ( -1 < queryString.indexOf( '?' ) ) {
@@ -291,6 +289,7 @@ export const getObjectFromQueryString = queryString => {
 
 /**
  * Object to Query String.
+ * @param params
  */
 export const getQueryStringFromObject = params => Object.keys( params ).map( key => key + '=' + params[key]).join( '&' );
 
@@ -298,7 +297,7 @@ export const getQueryStringFromObject = params => Object.keys( params ).map( key
  * Return the value of pair [condition, value] which has the first true condition.
  *
  * @param {([bool, any]|[any])[]} arr
- * @returns {*}
+ * @return {*}
  */
 export const getChoice = arr => {
 	const r = arr?.filter( x => x?.[0])?.[0];
@@ -308,9 +307,9 @@ export const getChoice = arr => {
 /**
  * Converts HEX colors to RGBA.
  *
- * @param color
- * @param alpha
- * @returns {string}
+ * @param  color
+ * @param  alpha
+ * @return {string}
  */
 export const hex2rgba = ( color, alpha = 100 ) => {
 	if ( ! color ) {
@@ -328,8 +327,8 @@ export const hex2rgba = ( color, alpha = 100 ) => {
 /**
  * Check if color is a dark.
  *
- * @param color
- * @returns {string|boolean}
+ * @param  color
+ * @return {string|boolean}
  */
 export const lightnessFromColor = color => {
 	if ( ! color ) {
@@ -411,13 +410,13 @@ const mapViewToKey = {
 
 /**
  * Helper function to add proper utm.
- * @param {string} url Url to add utms.
- * @param {string} linkArea Descriptive name of the link
- * @param {string} content Content of the link
- * @returns {string}
+ * @param {string} urlAddress Url to add utms.
+ * @param {string} linkArea   Descriptive name of the link
+ * @param {string} content    Content of the link
+ * @return {string}
  */
-export const setUtm = ( urlAdress, linkArea, content ) => {
-	const urlLink = new URL( urlAdress );
+export const setUtm = ( urlAddress, linkArea, content ) => {
+	const urlLink = new URL( urlAddress );
 	urlLink.searchParams.set( 'utm_campaign', linkArea );
 
 	if ( content ) {
@@ -430,10 +429,10 @@ export const setUtm = ( urlAdress, linkArea, content ) => {
 /**
  * Build a responsive wrapper around `setAttributes`
  *
- * @param {Function} setAttributes The function that set the attributes.
- * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
+ * @param {Function}                    setAttributes The function that set the attributes.
+ * @param {'Desktop'|'Tablet'|'Mobile'} currentView   The current view.
  * @template T
- * @returns {(value: T, keys: string[], oldAttr: Object) => void}) => void}
+ * @return {(value: T, keys: string[], oldAttr: Object) => void}) => void}
  */
 export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
 	return ( value, keys, oldAttr = {}) => {
@@ -452,9 +451,9 @@ export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
  *
  * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
  * @param {'Desktop'|'Tablet'|'Mobile'} defaultView If the value of the current view is undefined or null, fallback to this view.
- * @param {boolean} cascade Inherit from previous view. Mobile from Tablet, Tablet from Desktop.
+ * @param {boolean}                     cascade     Inherit from previous view. Mobile from Tablet, Tablet from Desktop.
  * @template T
- * @returns { (values: T[]) => T}
+ * @return { (values: T[]) => T}
  */
 export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Desktop', cascade = true ) => {
 	return values => {
@@ -469,9 +468,9 @@ export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Deskto
  * Get Active Style Name.
  *
  * @param { import('./blocks').BlockStyle[] } styles    Block styles.
- * @param { string | undefined }  className Classes of the block.
+ * @param { string | undefined }              className Classes of the block.
  *
- * @returns { string }
+ * @return { string }
  */
 export const getActiveStyle = ( styles, className ) => {
 	const classes = className?.split( ' ' ) || [];
@@ -497,7 +496,7 @@ export const getActiveStyle = ( styles, className ) => {
  * Replaces the active style in the block's className.
  *
  * @param { string | undefined } className Class name.
- * @param { Object } styles    Block styles.
+ * @param { Object }             styles    Block styles.
  * @param { string | undefined } newStyle  The replacing style.
  *
  * @return { string } The updated className.
@@ -520,17 +519,17 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 
 /**
  * Create a CSS property declaration.
- * @param {string} prop The name of the property.
- * @param {string | undefined | null} value The value.
+ * @param {string}                                        prop      The name of the property.
+ * @param {string | undefined | null}                     value     The value.
  * @param { ((c: any) => boolean) | boolean | undefined } condition The condition.
- * @returns
+ * @return
  */
 export const _cssProp = ( prop, value, condition = undefined ) => value !== undefined && null !== value && ( condition === undefined || ( 'function' === typeof condition ? condition( value ) : condition ) ) ? `${prop}: ${value};` : undefined;
 
 /**
  * Create a CSS block declaration.
  * @param {[string, string, ((c: any) => boolean | boolean | undefined) | undefined][]} propsPairs The properties grouped in pairs
- * @returns
+ * @return
  */
 export const _cssBlock = ( propsPairs ) => `{\n${
 	propsPairs
@@ -542,7 +541,7 @@ export const _cssBlock = ( propsPairs ) => `{\n${
 /**
  * Wrap a given string in a box object.
  * @param {string|any} s The value.
- * @returns {import('./blocks').BoxType|any}
+ * @return {import('./blocks').BoxType|any}
  */
 export const stringToBox = ( s ) => {
 	if ( ! isString( s ) ) {
@@ -560,7 +559,7 @@ export const stringToBox = ( s ) => {
 /**
  * Make a box intro a CSS string. If it is a string, wrap it into a box.
  * @param {string|import('./blocks').BoxType | undefined} box The box.
- * @returns
+ * @return
  */
 export const boxToCSS = ( box ) => {
 	if ( box === undefined ) {
@@ -574,7 +573,7 @@ export const boxToCSS = ( box ) => {
 /**
  * Print the given value then return it. Usefull for debugging.
  * @param {any} x
- * @returns
+ * @return
  */
 export const _i = x => {
 	console.log( x );
@@ -584,7 +583,7 @@ export const _i = x => {
 /**
  * Helper function to remove empty props objects recursivly in a distructive way.
  * @param {Object} o The object.
- * @returns {Object | undefined}
+ * @return {Object | undefined}
  */
 export const _compactObject = ( o ) => {
 	if ( ! isObjectLike( o ) ) {
@@ -610,7 +609,7 @@ export const _compactObject = ( o ) => {
 /**
  * Remove empty props objects recursivly.
  * @param {Object} o The object.
- * @returns {Object | undefined}
+ * @return {Object | undefined}
  */
 export const compactObject = ( o ) => {
 	return _compactObject( cloneDeep( o ) );
@@ -618,9 +617,9 @@ export const compactObject = ( o ) => {
 
 /**
  * Utility function for rendering to CSS legacy value that were numbers before converting it to a box value type.
- * @param {string|import('./blocks').BoxType | number | undefined} box The box to render.
- * @param {string} unit The unit to add if the box is a number.
- * @returns
+ * @param {string|import('./blocks').BoxType | number | undefined} box  The box to render.
+ * @param {string}                                                 unit The unit to add if the box is a number.
+ * @return
  */
 export const renderBoxOrNumWithUnit = ( box, unit ) => {
 	if ( isNumber( box ) ) {
@@ -632,9 +631,9 @@ export const renderBoxOrNumWithUnit = ( box, unit ) => {
 /**
  * If the given value is a number, transform it into a Box Value with the given unit. Otherwise, return the value.
  *
- * @param {number | any} n The number to convert.
- * @param {string?} unit The unit to add.
- * @returns {import('./blocks').BoxType | any} The box value or given value.
+ * @param {number | any} x    The number to convert.
+ * @param {string?}      unit The unit to add.
+ * @return {import('./blocks').BoxType | any} The box value or given value.
  */
 export const numberToBox = ( x, unit = 'px' ) => isNumber( x ) ? stringToBox( _unit( x, unit ) ) : x;
 
@@ -666,7 +665,7 @@ export function isAppleOS( _window = null ) {
  * Check if a box value is empty.
  *
  * @param {import('./blocks').BoxType | undefined} box The box.
- * @returns {boolean}
+ * @return {boolean}
  */
 export const isEmptyBox = ( box ) => {
 	return ! ( box?.top !== undefined && box?.right !== undefined && box?.bottom !== undefined && box?.left !== undefined );
@@ -676,8 +675,8 @@ export const isEmptyBox = ( box ) => {
  * Get the saved state for the given key from global scope (window).
  *
  * @param {string} key
- * @param {any} defaultValue
- * @returns
+ * @param {any}    defaultValue
+ * @return
  */
 export const pullSavedState = ( key, defaultValue ) => {
 	if ( key === undefined ) {
@@ -691,8 +690,8 @@ export const pullSavedState = ( key, defaultValue ) => {
  * Save a value in global scope (window) for the given key.
  *
  * @param {string} key
- * @param {any} value
- * @returns
+ * @param {any}    value
+ * @return {void}
  */
 export const setSavedState = ( key, value ) => {
 	if ( key === undefined ) {
@@ -706,10 +705,10 @@ export const setSavedState = ( key, value ) => {
 /**
  * Find the blocks that match the given condition.
  *
- * @param {import('./blocks').OtterBlock<unknown>[]} innerBlocks The inner blocks.
- * @param {(block: import('./blocks').OtterBlock<unknown>) => boolean} condition The condition.
+ * @param {import('./blocks').OtterBlock<unknown>[]}                   innerBlocks      The inner blocks.
+ * @param {(block: import('./blocks').OtterBlock<unknown>) => boolean} condition        The condition.
  * @param {(block: import('./blocks').OtterBlock<unknown>) => boolean} nestingCondition The condition that allow to go deeper in the tree.
- * @returns {import('./blocks').OtterBlock<unknown>[]} The blocks that match the condition.
+ * @return {import('./blocks').OtterBlock<unknown>[]} The blocks that match the condition.
  */
 export const findInnerBlocks = ( innerBlocks, condition, nestingCondition = x => x ) => {
 	if ( innerBlocks === undefined || condition === undefined ) {

@@ -262,27 +262,34 @@ class Form_Email {
 	 */
 	public function build_test_email( $form_data ) {
 		return sprintf(
-			"
+			'
 		<!doctype html>
-		<html xmlns=\"http://www.w3.org/1999/xhtml\">
+		<html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
-			<meta http-equiv=\"Content-Type\" content=\"text/html;\" charset=\"utf-8\"/>
+			<meta http-equiv="Content-Type" content="text/html;" charset="utf-8"/>
 			<!-- view port meta tag -->
-			<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-			<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"/>
-			<title>%s%s</title>
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+			<title>%s</title>
 		</head>
 		<body>
 		%s
 		<br><br>
-		Location: <a href='%s'>link</a>.
+		%s
 		</body>
 		</html>
-		",
-			esc_html__( 'Mail From: ', 'otter-blocks' ),
-			sanitize_email( get_site_option( 'admin_email' ) ),
-			esc_html( __( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks' ) ),
-			$form_data->get_data_from_payload( 'site' )
+		',
+			sprintf(
+				// translators: %s is the admin email address.
+				__( 'Mail From: %s', 'otter-blocks' ), 
+				sanitize_email( get_site_option( 'admin_email' ) ) 
+			),
+			esc_html__( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks' ),
+			sprintf( 
+				// translators: %s is the URL of the site from which the email was sent.
+				__( 'Location: %s', 'otter-blocks' ),
+				'<a href="' . $form_data->get_data_from_payload( 'site' ) . '">' . esc_html__( 'link', 'otter-blocks' ) . '</a>'
+			)
 		);
 	}
 

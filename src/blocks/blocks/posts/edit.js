@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import { debounce } from 'lodash';
+import {
+	isObject,
+	isUndefined,
+	pickBy,
+	debounce
+} from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
-import {
-	isObject,
-	isUndefined,
-	pickBy
-} from 'lodash';
 
 import {
 	Disabled,
@@ -66,7 +66,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Posts component
  * @param {import('./types').PostProps} param0
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -205,7 +205,7 @@ const Edit = ({
 
 		return {
 			posts,
-			categoriesList: categoriesList,
+			categoriesList,
 			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' }),
 			isLoading
 		};

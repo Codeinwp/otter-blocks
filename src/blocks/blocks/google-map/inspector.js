@@ -47,7 +47,7 @@ const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 /**
  *
  * @param {import('./type.js').GoogleMapInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

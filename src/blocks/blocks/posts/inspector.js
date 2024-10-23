@@ -84,7 +84,7 @@ const defaultFontSizes = [
 /**
  *
  * @param {import('./types.js').PostInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,
@@ -146,6 +146,8 @@ const Inspector = ({
 							slug: category?.slug ?? ''
 						};
 					}
+
+					return undefined;
 				}).filter( e => undefined !== e );
 			}
 		} else if ( '' !== value ) {
@@ -166,7 +168,7 @@ const Inspector = ({
 
 	const changeBoxShadow = ( type, data ) => {
 		const boxShadow = { ...attributes[ type ] };
-		Object.entries( data ).map( ([ key, val ] = data ) => {
+		Object.entries( data ).forEach( ([ key, val ] = data ) => {
 			boxShadow[key] = val;
 		});
 

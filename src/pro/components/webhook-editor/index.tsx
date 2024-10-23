@@ -16,7 +16,7 @@ import {
 	Spinner,
 	TextControl
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState, Fragment } from '@wordpress/element';
 import { arrowRight, closeSmall } from '@wordpress/icons';
 
@@ -94,7 +94,11 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 		for ( const webhook of webhooksToSave ) {
 			const check = checkWebhook( webhook );
 			if ( true !== check ) {
-				const msg = __( 'There was an error saving the webhook: ', 'otter-blocks' ) + webhook?.name + '\n';
+				const msg = sprintf(
+					/* translators: %s: webhook name */
+					__( 'There was an error saving the webhook: %s', 'otter-blocks' ),
+					webhook?.name
+				) + '\n';
 				setError( msg + check );
 				return;
 			}
@@ -280,7 +284,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 									{
 										webhooks?.map( ( webhook ) => {
 											return (
-												<div className="o-options-block-item">
+												<div key={webhook?.id} className="o-options-block-item">
 
 													<div className="o-options-block-item-label">
 														{ webhook.name }

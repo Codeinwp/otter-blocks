@@ -17,8 +17,8 @@ import { useInstanceId } from '@wordpress/compose';
 import { Fragment, useState } from '@wordpress/element';
 
 /**
-  * Internal dependencies.
-  */
+ * Internal dependencies.
+ */
 import { categories } from '../data.js';
 
 function AnimationPopover({
@@ -97,14 +97,14 @@ function AnimationPopover({
 						/>
 
 						<div className="components-popover__items">
-							{ animationsList.map( ( animation ) => {
+							{ animationsList.map( ( animation, index ) => {
 								return (
-									<Fragment>
+									<Fragment key={ index }>
 										{ '' === currentInput &&
-											categories.map( ( category ) => {
+											categories.map( ( category, catIndex ) => {
 												return category.value ===
 													animation.value ? (
-														<div className="o-animations-control__category">
+														<div key={ catIndex } className="o-animations-control__category">
 															{ category.label }
 														</div>
 													) : (

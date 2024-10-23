@@ -108,8 +108,8 @@ const hideBlocksInInserter = () => {
 
 	/**
 	 * Check if the block is a variation.
-	 * @param blockSlug The block slug.
-	 * @returns {boolean} True if the block is a variation.
+	 * @param  blockSlug The block slug.
+	 * @return {boolean} True if the block is a variation.
 	 */
 	const isVariation = ( blockSlug ) => {
 		return variationsMap.hasOwnProperty( blockSlug );

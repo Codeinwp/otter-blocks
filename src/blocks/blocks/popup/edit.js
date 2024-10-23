@@ -5,12 +5,8 @@ import {
 	closeSmall,
 	external
 } from '@wordpress/icons';
-
 import classnames from 'classnames';
-
-import { get } from 'lodash';
-
-import { merge } from 'lodash';
+import { get, merge } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -51,7 +47,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Popup component
  * @param {import('./types').PopupPros} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

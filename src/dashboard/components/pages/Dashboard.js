@@ -100,9 +100,9 @@ const initialState = {
 
 /**
  * Reducer.
- * @param {Object} state The current state.
+ * @param {Object} state  The current state.
  * @param {Object} action The action to be performed.
- * @returns {*}
+ * @return {*}
  */
 const reducer = ( state, action ) => {
 	switch ( action.type ) {
@@ -162,7 +162,7 @@ const Dashboard = () => {
 
 	/**
 	 * Regenerate styles.
-	 * @returns {Promise<void>}
+	 * @return {Promise<void>}
 	 */
 	const regenerateStyles = async() => {
 		const data = await apiFetch({ path: 'otter/v1/regenerate', method: 'DELETE' });
@@ -340,8 +340,8 @@ const Dashboard = () => {
 
 				<PanelRow>
 					<ToggleControl
-						label={ __( 'Use 1-5 Scale for Review Block', 'otter-blocks' ) }
-						help={ __( 'Use 1-5 rating scale instead of the default 1-10.', 'otter-blocks' ) }
+						label={ __( 'Use 1–5 Scale for Review Block', 'otter-blocks' ) }
+						help={ __( 'Use 1–5 rating scale instead of the default 1–10.', 'otter-blocks' ) }
 						checked={ state.values.enableReviewScale }
 						disabled={ 'saving' === state.status.enableReviewScale }
 						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableReviewScale', value }) }

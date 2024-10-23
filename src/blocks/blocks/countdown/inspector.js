@@ -143,7 +143,7 @@ const EndActionPanel = () => (
 /**
  *
  * @param {import('./types.js').CountdownInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,
@@ -193,7 +193,7 @@ const Inspector = ({
 					<PanelBody
 						title={ __( 'Time Settings', 'otter-blocks' ) }
 					>
-						{ applyFilters( 'otter.countdown.controls.settings', <SettingsPanel attributes={ attributes }/>, { attributes: attributes, setAttributes: setAttributes }) }
+						{ applyFilters( 'otter.countdown.controls.settings', <SettingsPanel attributes={ attributes }/>, { attributes, setAttributes }) }
 
 						{ attributes.mode === undefined && (
 							<Dropdown
@@ -274,7 +274,7 @@ const Inspector = ({
 						title={ __( 'End Action', 'otter-blocks' ) }
 						initialOpen={false}
 					>
-						{ applyFilters( 'otter.countdown.controls.end', <EndActionPanel />, { attributes: attributes, setAttributes: setAttributes }) }
+						{ applyFilters( 'otter.countdown.controls.end', <EndActionPanel />, { attributes, setAttributes }) }
 					</PanelBody>
 
 					<InspectorExtensions/>

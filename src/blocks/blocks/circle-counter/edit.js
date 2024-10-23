@@ -37,7 +37,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  *
  * @param {import('./types').CircleCounterPros} param0
- * @returns
+ * @return
  */
 const CircularProgressBarBlock = ({
 	clientId,

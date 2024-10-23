@@ -17,7 +17,7 @@ import { select } from '@wordpress/data';
  */
 import options from './options.js';
 
-let autocompleteOptions = [];
+const autocompleteOptions = [];
 
 Object.keys( options ).forEach( option => autocompleteOptions.push( ...options[option].options ) );
 
