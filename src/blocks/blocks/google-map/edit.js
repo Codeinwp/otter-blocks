@@ -38,7 +38,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Google Map component
  * @param {import('./type').GoogleMapProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

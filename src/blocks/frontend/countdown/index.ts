@@ -6,7 +6,7 @@ import { domReady } from '../../helpers/frontend-helper-functions';
 /**
  * Simple base64 encoding. This is used to hash the url to prevent reusable blocks from accessing and changing the same data --> making them unique per page.
  * @param str The string.
- * @returns
+ * @return
  */
 const toBase64 = ( str: string ) => {
 	return window.btoa( unescape( encodeURIComponent( str ) ) );
@@ -150,7 +150,7 @@ class CountdownData {
 				! lastVisitTimeRecord ||
 				( 0 > ( parseInt( lastVisitTimeRecord ) + parseInt( this.timer ) - Date.now() ) ) ||
 				timerValueRecorded !== this.timer ||
-				timezoneRecorded != ( new Date() ).getTimezoneOffset().toString()
+				timezoneRecorded !== ( new Date() ).getTimezoneOffset().toString()
 			) {
 
 				// Record the current visit and timer time. Set a new deadline.
@@ -241,7 +241,7 @@ class CountdownData {
 
 	/**
 	 * Activate the actions of the countdown when it ends.
-	 * @returns void
+	 * @return {void}
 	 */
 	activateActions() {
 
@@ -408,7 +408,7 @@ class CountdownRunner {
 
 	/**
 	 * Update the countdown based on the given time.
-	 * @param countdown The countdown.
+	 * @param countdown   The countdown.
 	 * @param currentTime The time that needs to be displayed,
 	 */
 	updateCountdown( countdown: CountdownData, currentTime: number ) {

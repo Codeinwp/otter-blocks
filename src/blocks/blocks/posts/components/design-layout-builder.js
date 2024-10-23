@@ -44,7 +44,7 @@ const ProFeatures = () => {
 			<br />
 
 			<Notice
-				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'customfield' ) }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'customfield' ) }>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
 				variant="upsell"
 			/>
 		</Fragment>

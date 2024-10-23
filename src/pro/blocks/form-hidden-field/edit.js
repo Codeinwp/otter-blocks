@@ -2,8 +2,8 @@
  * WordPress dependencies
  */
 
-import { Fragment, useContext, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { Fragment, useEffect } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { RichText, useBlockProps } from '@wordpress/block-editor';
 
 /**
@@ -20,7 +20,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Form Nonce component
  * @param {import('./types').FormHiddenFieldProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -44,7 +44,11 @@ const Edit = ({
 		className: 'wp-block wp-block-themeisle-blocks-form-input'
 	});
 
-	const placeholder = attributes.paramName ? __( 'Get the value of the URL param: ', 'otter-blocks' ) + attributes.paramName : '';
+	const placeholder = attributes.paramName ? sprintf(
+		/* translators: %s: URL parameter name */
+		__( 'Get the value of the URL param: %s', 'otter-blocks' ),
+		attributes.paramName
+	) : '';
 
 	return (
 		<Fragment>

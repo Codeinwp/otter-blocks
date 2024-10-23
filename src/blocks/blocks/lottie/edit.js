@@ -30,7 +30,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Lottie component
  * @param {import('./types').LottieProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

@@ -2,11 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-
-import { registerBlockType } from '@wordpress/blocks';
-
-import { createBlock } from '@wordpress/blocks';
-
+import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { omit } from 'lodash';
 
 /**
@@ -31,7 +27,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-checkbox',
 			description: __( 'Insert a checkbox list field', 'otter-blocks' ),
-			icon: icon,
+			icon,
 			title: __( 'Checkbox Field', 'otter-blocks' ),
 			attributes: {
 				type: 'checkbox'
@@ -40,7 +36,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-radio',
 			description: __( 'Insert a radio list field', 'otter-blocks' ),
-			icon: icon,
+			icon,
 			title: __( 'Radio Field', 'otter-blocks' ),
 			attributes: {
 				type: 'radio'
@@ -49,7 +45,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-select',
 			description: __( 'Insert a select field', 'otter-blocks' ),
-			icon: icon,
+			icon,
 			title: __( 'Select Field', 'otter-blocks' ),
 			attributes: {
 				type: 'select'

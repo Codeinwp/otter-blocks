@@ -11,7 +11,7 @@ import {
 	merge
 } from 'lodash';
 
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { useBlockProps } from '@wordpress/block-editor';
 
@@ -53,7 +53,7 @@ export const ActionType = {
 /**
  * Leaflet Map component
  * @param {import('./type').LeafletMapProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	clientId,
@@ -157,7 +157,8 @@ const Edit = ({
 			});
 
 		default:
-			console.warn( __( 'The action for the leaflet block do not have a defined action in marker\'s reducer: ', 'otter-blocks' ) + action.type );
+			// translators: %s is the action type that is not defined in the marker's reducer
+			console.warn( sprintf( __( 'The action for the leaflet block do not have a defined action in marker\'s reducer: %s', 'otter-blocks' ), action.type ) );
 		}
 
 		return oldState;

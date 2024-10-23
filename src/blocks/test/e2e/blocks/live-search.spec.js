@@ -48,7 +48,7 @@ test.describe( 'Live Search Block', () => {
 
 		// If the width is 0, it means the results are not rendered properly.
 		const container = page.locator( '.o-live-search .container-wrap' );
-		let width = await container.evaluate( node => node.offsetWidth );
+		const width = await container.evaluate( node => node.offsetWidth );
 		expect( width ).toBeGreaterThan( 0 );
 	});
 });

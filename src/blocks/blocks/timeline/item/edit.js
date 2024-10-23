@@ -26,7 +26,7 @@ const { attributes: defaultAttributes } = metadata;
  * Timeline Item component.
  *
  * @param {import('../types').TimelineItemProps} param
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

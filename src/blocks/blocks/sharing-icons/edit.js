@@ -28,7 +28,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Sharing Icon component
  * @param {import('./types.js').SharingIconsProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

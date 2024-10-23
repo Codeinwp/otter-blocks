@@ -73,7 +73,7 @@ const ButtonBlock = ({
 						<ColorDropdownControl
 							label={ __( 'Background', 'otter-blocks' ) }
 							colorValue={ attributes.background }
-							onColorChange={ background => setAttributes({ background: background })}
+							onColorChange={ background => setAttributes({ background })}
 							className="is-list"
 						/>
 

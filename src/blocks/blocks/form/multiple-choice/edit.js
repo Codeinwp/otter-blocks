@@ -36,7 +36,7 @@ const Field = ({ fieldType, label, position, attributes, checked, onChange }) =>
 			<Disabled>
 				<input type={fieldType} id={id} name={attributes.mappedName} value={value} checked={checked} />
 			</Disabled>
-			<label for={id}>
+			<label htmlFor={id}>
 				<RichText
 					placeholder={ __( 'Type here…', 'otter-blocks' ) }
 					className="o-form-choice-label"
@@ -70,7 +70,7 @@ const SelectField = ({ attributes, options }) => {
 /**
  * Form Input component
  * @param {import('./types').FormMultipleChoiceInputProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

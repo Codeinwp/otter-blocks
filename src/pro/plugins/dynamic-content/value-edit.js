@@ -330,7 +330,7 @@ const Edit = ({
 			) }
 
 			{ ( 'country' === attributes.type && ! Boolean( window.otterPro.hasIPHubAPI ) ) && (
-				<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature. ', 'otter-blocks' ) }</ExternalLink>
+				<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature.', 'otter-blocks' ) }</ExternalLink>
 			) }
 		</Fragment>
 	);

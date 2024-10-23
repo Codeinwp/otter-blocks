@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "3.0.3",
+	"version": "3.0.4",
 	"description": "Otter – Page Builder Blocks & Extensions for Gutenberg",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
@@ -41,7 +41,8 @@
 		"test:php:watch": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' tests-cli composer run-script test:watch",
 		"lint:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script lint",
 		"format:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script format",
-		"wp-env": "wp-env"
+		"wp-env": "wp-env",
+		"build:makepot": "docker run --user root --rm --volume \"$(pwd):/var/www/html/otter-blocks\" wordpress:cli bash -c 'php -d memory_limit=512M \"$(which wp)\" --version --allow-root && wp i18n make-pot otter-blocks ./otter-blocks/languages/otter-pro.pot --include=src/pro,otter-pro,build/pro --allow-root --headers={\\\"Last-Translator\\\":\\\"friends@themeisle.com\\\"\\,\\\"Report-Msgid-Bugs-To\\\":\\\"https://github.com/Codeinwp/otter-blocks/issues\\\"\\,\\\"Project-Id-Version\\\":\\\"Otter-Blocks\\\"\\,\\\"POT-Creation-Date\\\":\\\"\\\"}'"
 	},
 	"repository": {
 		"type": "git",
@@ -79,7 +80,7 @@
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-replace-textdomain": "^1.0.35",
-		"@playwright/test": "^1.45.3",
+		"@playwright/test": "^1.48.1",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/exec": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
@@ -90,6 +91,7 @@
 		"@types/object-hash": "^3.0.6",
 		"@types/wordpress__block-editor": "^11.5.9",
 		"@types/wordpress__components": "^23.0.11",
+		"@typescript-eslint/eslint-plugin": "^8.8.1",
 		"@typescript-eslint/parser": "^8.0.0",
 		"@wordpress/block-editor": "^13.3.0",
 		"@wordpress/components": "^28.3.0",
@@ -97,10 +99,11 @@
 		"@wordpress/data": "^10.8.0",
 		"@wordpress/dom-ready": "^4.9.0",
 		"@wordpress/e2e-test-utils": "^10.4.0",
-		"@wordpress/e2e-test-utils-playwright": "^1.4.0",
+		"@wordpress/e2e-test-utils-playwright": "^1.10.0",
 		"@wordpress/e2e-tests": "^8.9.0",
 		"@wordpress/element": "^6.9.0",
 		"@wordpress/env": "^9.6.0",
+		"@wordpress/eslint-plugin": "^21.2.0",
 		"@wordpress/scripts": "27.9.0",
 		"conventional-changelog-simple-preset": "^1.0.24",
 		"eslint-config-wordpress": "^2.0.0",

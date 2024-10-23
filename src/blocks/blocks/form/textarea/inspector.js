@@ -24,7 +24,7 @@ import { HTMLAnchorControl } from '../../../components';
 /**
  *
  * @param {import('./types').FormTextareaProps} props
- * @returns {JSX.Element}
+ * @return {JSX.Element}
  */
 const Inspector = ({
 	attributes,

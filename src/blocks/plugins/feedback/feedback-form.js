@@ -44,7 +44,7 @@ const helpTextByStatus = {
  * Displays a button that opens a modal for sending feedback
  *
  * @param {import('./type').FeedbackFormProps} props
- * @returns
+ * @return
  */
 const FeedbackForm = ({
 	source,
@@ -80,7 +80,7 @@ const FeedbackForm = ({
 				},
 				body: JSON.stringify({
 					slug: 'otter-blocks',
-					version: version,
+					version,
 					feedback: trimmedFeedback,
 					data: {
 						'feedback-area': source

@@ -42,10 +42,10 @@ if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
 		wp.media.view.MediaFrame.Select = oldMediaFrame.extend({
 
 			/**
-		 * overwrite router to
-		 *
-		 * @param {wp.media.view.Router} routerView
-		 */
+			 * overwrite router to
+			 *
+			 * @param {wp.media.view.Router} routerView
+			 */
 			browseRouter( routerView ) {
 				oldMediaFrame.prototype.browseRouter.apply( this, arguments );
 				const showDynamicMedia = select( 'core/block-editor' ).getSelectedBlock();
@@ -61,10 +61,10 @@ if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
 			},
 
 			/**
-		 * Bind region mode event callbacks.
-		 *
-		 * @see media.controller.Region.render
-		 */
+			 * Bind region mode event callbacks.
+			 *
+			 * @see media.controller.Region.render
+			 */
 			bindHandlers() {
 				oldMediaFrame.prototype.bindHandlers.apply( this, arguments );
 				const showDynamicMedia = wp.data.select( 'core/block-editor' ).getSelectedBlock();
@@ -75,10 +75,8 @@ if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
 			},
 
 			/**
-		 * Render callback for the content region in the `browse` mode.
-		 *
-		 * @param {wp.media.controller.Region} contentRegion
-		 */
+			 * Render callback for the content region in the `browse` mode.
+			 */
 			otterDynamicImages() {
 				const state = this.state();
 
@@ -99,8 +97,6 @@ if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
 
 		// Render Otter Tab
 		const otterImagesMediaTab = () => {
-			const html = createWrapperHTML();
-
 			if ( ! activeFrame ) {
 				return false;
 			}
@@ -111,7 +107,7 @@ if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
 			}
 
 			modal.innerHTML = '';
-			modal.appendChild( html );
+			modal.appendChild( createWrapperHTML() );
 
 			const element = modal.querySelector( '#otter-media-router-' + activeFrameId );
 			if ( ! element ) {
@@ -170,7 +166,7 @@ if ( Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) ) {
 				return false;
 			}
 
-			let selectedTab = activeFrame.querySelector(
+			const selectedTab = activeFrame.querySelector(
 				'.media-router button.media-menu-item.active'
 			);
 

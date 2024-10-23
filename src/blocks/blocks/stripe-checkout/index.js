@@ -13,8 +13,8 @@ import {
 } from '@wordpress/components';
 
 /**
-  * Internal dependencies
-  */
+ * Internal dependencies
+ */
 import metadata from './block.json';
 import { cartIcon as icon } from '../../helpers/icons.js';
 import edit from './edit';

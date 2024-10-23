@@ -45,7 +45,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Section Column component
  * @param {import('./types').SectionColumnProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	name,
