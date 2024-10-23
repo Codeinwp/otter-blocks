@@ -39,7 +39,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Button component
  * @param {import('./types').ButtonGroupButtonProps} props
- * @returns
+ * @return
  */
 const Edit = ( props ) => {
 	const {

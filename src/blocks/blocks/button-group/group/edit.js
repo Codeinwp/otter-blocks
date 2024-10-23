@@ -32,7 +32,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Button Group Props
  * @param {import('./types').ButtonGroupProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

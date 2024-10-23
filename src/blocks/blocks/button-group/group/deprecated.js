@@ -152,6 +152,7 @@ const deprecated = [{
 				padding: `${ attributes.data[i].paddingTopBottom }px ${ attributes.data[i].paddingLeftRight }px`
 			};
 
+			/* eslint-disable react/jsx-no-target-blank */
 			return (
 				<Fragment>
 					<a
@@ -186,6 +187,7 @@ const deprecated = [{
 					</a>
 				</Fragment>
 			);
+			/* eslint-enable react/jsx-no-target-blank */
 		};
 
 		return (

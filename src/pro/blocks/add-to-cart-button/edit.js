@@ -24,7 +24,7 @@ import Inspector from './inspector.js';
 /**
  * Add To Card Button component
  * @param {import('./types.js').AddToCartButtonProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

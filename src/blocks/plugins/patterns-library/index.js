@@ -16,7 +16,7 @@ import domReady from '@wordpress/dom-ready';
 
 /**
  * Internal dependencies.
-*/
+ */
 import './editor.scss';
 import { otterIconColored } from '../../helpers/icons.js';
 import Library from './library.js';

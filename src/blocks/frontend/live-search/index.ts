@@ -25,7 +25,7 @@ type ResultsContainer = Element | null | undefined;
 /**
  * Returns an icon component based on the post type.
  * @param type - The post type.
- * @returns The icon component.
+ * @return The icon component.
  */
 const getPostIcon = ( type: string ) => {
 	switch ( type ) {
@@ -39,7 +39,7 @@ const getPostIcon = ( type: string ) => {
 /**
  * Returns a div element containing meta information for a given ResultsEntry object.
  * @param entry - The ResultsEntry object to generate meta information for.
- * @returns A div element containing the meta information.
+ * @return A div element containing the meta information.
  */
 const getMeta = ( entry: ResultsEntry ) => {
 	const meta = document.createElement( 'div' );
@@ -74,9 +74,9 @@ domReady( () => {
 	/**
 	 * Get the post search from our endpoint.
 	 *
-	 * @param search - The search query string.
-	 * @param query  - The query data to send to the REST API.
-	 * @returns A Promise that resolves to the JSON response from the REST API.
+	 * @param search    - The search query string.
+	 * @param queryData - The query data to send to the REST API.
+	 * @return A Promise that resolves to the JSON response from the REST API.
 	 */
 	const requestData = async( search: string, queryData: QueryData ) => {
 		const options = {
@@ -221,7 +221,6 @@ domReady( () => {
 			}
 
 			const keyEvent = event as KeyboardEvent;
-			const containerDimensions = resultsContainer.parentElement.getBoundingClientRect();
 			const keys = [ 'ArrowDown', 'ArrowUp', 'Escape' ];
 
 			if ( ! keys.includes( keyEvent.key ) ) {
@@ -239,6 +238,8 @@ domReady( () => {
 				highlight( resultsContainer.children[0] as HTMLElement, inputElement );
 				return;
 			}
+
+			const containerDimensions = resultsContainer.parentElement.getBoundingClientRect();
 
 			if ( 'ArrowDown' === keyEvent.key && highlighted.nextElementSibling ) {
 				removeHighlight( highlighted );
@@ -274,7 +275,7 @@ domReady( () => {
 	};
 
 	// Initialize the live search for each block on the page when it becomes visible.
-	let observer = new IntersectionObserver( ( entries, observer ) => {
+	const observer = new IntersectionObserver( ( entries, observer ) => {
 		entries.forEach( entry => {
 			if ( entry.isIntersecting ) {
 				initializeLiveSearch( entry.target );
@@ -289,11 +290,11 @@ domReady( () => {
 	 * Creates a container for search results and appends it to the provided wrap element.
 	 * If a resultsContainer is provided and a search_results element is not found in the block, the resultsContainer is appended to the wrap element.
 	 * Otherwise, a new container is created and appended to the wrap element.
-	 * @param wrap - The element to which the results container will be appended.
+	 * @param wrap             - The element to which the results container will be appended.
 	 * @param resultsContainer - The pre-existing results container to be appended to the wrap element if a search_results element is not found in the block.
-	 * @param block - The block element to which the wrap element will be appended.
-	 * @param inputStyle - The CSSStyleDeclaration object containing the style properties of the input element.
-	 * @returns The created results container.
+	 * @param block            - The block element to which the wrap element will be appended.
+	 * @param inputStyle       - The CSSStyleDeclaration object containing the style properties of the input element.
+	 * @return The created results container.
 	 */
 	const createResultsContainer = ( wrap: Element, resultsContainer: ResultsContainer, block: Element | null, inputStyle: CSSStyleDeclaration ) => {
 		wrap.innerHTML = '';
@@ -322,10 +323,10 @@ domReady( () => {
 	/**
 	 * Removes the results container from the given block element.
 	 *
-	 * @param block - The block element to remove the results container from.
+	 * @param block            - The block element to remove the results container from.
 	 * @param resultsContainer - The results container to remove.
-	 * @param cache - Whether to cache the removed container for later use.
-	 * @returns The removed container if `cache` is `true`, otherwise `null`.
+	 * @param cache            - Whether to cache the removed container for later use.
+	 * @return The removed container if `cache` is `true`, otherwise `null`.
 	 */
 	const removeResultsContainer = ( block: Element | null, resultsContainer: ResultsContainer, cache = true ) => {
 		const tmpResultsContainer = block?.querySelector( '.container-wrap' );
@@ -345,9 +346,9 @@ domReady( () => {
 	/**
 	 * Updates the search results in the specified block with the given search value and results.
 	 *
-	 * @param searchValue - The search value to use for filtering the results.
-	 * @param block - The block element to update the results in.
-	 * @param results - The array of results to display.
+	 * @param searchValue  - The search value to use for filtering the results.
+	 * @param block        - The block element to update the results in.
+	 * @param results      - The array of results to display.
 	 * @param inputElement - The input element used for the search.
 	 */
 	const updateResults = ( searchValue: string, block: Element | null, results: Array<ResultsEntry>, inputElement: Element ) => {
@@ -423,7 +424,7 @@ domReady( () => {
 	/**
 	 * Highlights the given element with a background color based on the input element's background color.
 	 * @param element - The element to highlight.
-	 * @param input - The input element to get the background color from.
+	 * @param input   - The input element to get the background color from.
 	 */
 	const highlight = ( element: HTMLElement, input: Element ) => {
 
@@ -447,10 +448,10 @@ domReady( () => {
 
 	/**
 	 * Returns a DOM element representing a search result.
-	 * @param entry - The search result entry.
-	 * @param index - The index of the search result.
+	 * @param entry        - The search result entry.
+	 * @param index        - The index of the search result.
 	 * @param inputElement - The input element used for the search.
-	 * @returns A DOM element representing the search result.
+	 * @return A DOM element representing the search result.
 	 */
 	const getResultElement = ( entry: ResultsEntry, index: number, inputElement: Element ) => {
 		const optionWrap = document.createElement( 'div' );

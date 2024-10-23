@@ -152,7 +152,7 @@ const PostsCustomMeta = ({ customFieldData }) => {
 	}, []);
 
 	if ( ! customFieldData || ( ! customFieldData.display ) ) {
-		return <Fragment></Fragment>;
+		return <></>;
 	}
 
 	const meta = fields[ customFieldData.field ];

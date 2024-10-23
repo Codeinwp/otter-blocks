@@ -70,7 +70,7 @@ const Inspector = ({
 								isShownByDefault: true,
 
 								/* translators: %s Social Website */
-								label: sprintf( __( ' %s Background Color', 'otter-blocks' ), socialList[icon].label )
+								label: sprintf( __( '%s Background Color', 'otter-blocks' ), socialList[icon].label )
 							},
 							{
 								value: attributes[icon].textColor,
@@ -78,7 +78,7 @@ const Inspector = ({
 								isShownByDefault: true,
 
 								/* translators: %s Social Website */
-								label: sprintf( __( ' %s Text Color', 'otter-blocks' ), socialList[icon]?.label )
+								label: sprintf( __( '%s Text Color', 'otter-blocks' ), socialList[icon]?.label )
 							}
 						];
 					}, [])

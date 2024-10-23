@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall, redo, undo } from '@wordpress/icons';
 import { ReactNode } from 'react';
 import { Button, ExternalLink, Notice, Placeholder, Spinner, TextControl } from '@wordpress/components';
@@ -126,7 +126,7 @@ const PromptBlockEditor = (
 };
 
 const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
-	const { title, value, onValueChange, promptID } = props;
+	const { value, onValueChange, promptID } = props;
 
 	const [ getOption, updateOption, status ] = useSettings();
 	const [ apiKey, setApiKey ] = useState<string | null>( null );
@@ -135,13 +135,10 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( window.themeisleGutenberg?.hasOpenAiKey ? 'present' : 'checking' );
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
-	const [ result, setResult ] = useState<string | undefined>( undefined );
 
 	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number, prompt: string }}[]>( props.resultHistory ?? []);
 	const [ resultHistoryIndex, setResultHistoryIndex ] = useState<number>( 0 );
-
-	const [ showResultArea, setShowResultArea ] = useState<boolean>( false );
-
+	
 	const [ showError, setShowError ] = useState<boolean>( false );
 	const [ errorMessage, setErrorMessage ] = useState<string>( '' );
 	const [ tokenUsageDescription, setTokenUsageDescription ] = useState<string>( '' );
@@ -206,9 +203,14 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 		if ( resultHistoryIndex > resultHistory.length - 1 ) {
 			return;
 		}
-
-		setResult( resultHistory?.[ resultHistoryIndex ].result );
-		setTokenUsageDescription( __( 'Used tokens: ', 'otter-blocks' ) + resultHistory[ resultHistoryIndex ].meta.usedToken );
+		
+		setTokenUsageDescription(
+			sprintf(
+				// translators: %d: number of used tokens
+				__( 'Used tokens: %d', 'otter-blocks' ),
+				resultHistory[ resultHistoryIndex ].meta.usedToken 
+			)
+		);
 		props.onPreview?.( resultHistory[ resultHistoryIndex ].result );
 
 	}, [ resultHistoryIndex, resultHistory ]);
@@ -273,8 +275,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				setErrorMessage( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
 				return;
 			}
-
-			setResult( result );
+			
 			if ( regenerate ) {
 				const newResultHistory = [ ...resultHistory ];
 				newResultHistory[ resultHistoryIndex ] = {
@@ -296,8 +297,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				setResultHistoryIndex( resultHistory.length );
 
 			}
-			setShowResultArea( true );
-			setTokenUsageDescription( __( 'Token used: ', 'otter-blocks' ) + data.usage.total_tokens );
+			
+			setTokenUsageDescription( __( 'Token used:', 'otter-blocks' ) + data.usage.total_tokens );
 			props.onPreview?.( result );
 		});
 	}
@@ -312,7 +313,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 					'checking' === apiKeyStatus && (
 						<div style={{ display: 'flex', flexDirection: 'row' }}>
 							<Spinner />
-							<span>{ __( 'Checking the api key...', 'otter-blocks' ) }</span>
+							<span>{ __( 'Checking the api key…', 'otter-blocks' ) }</span>
 						</div>
 					)
 				}

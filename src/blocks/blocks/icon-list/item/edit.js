@@ -6,7 +6,7 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import {
 	RichText,
@@ -36,7 +36,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Icon List Item component
  * @param {import('./types').IconListItemProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -100,7 +100,8 @@ const Edit = ({
 			const parentClientId = select( 'core/block-editor' ).getBlockParents( clientId ).at( -1 );
 			const parentBlock = select( 'core/block-editor' ).getBlock( parentClientId );
 
-			setAttributes({ content: __( 'List item ', 'otter-blocks' ) + parentBlock.innerBlocks.length });
+			// translators: %d: the number of List item blocks.
+			setAttributes({ content: sprintf( __( 'List item %d', 'otter-blocks' ), parentBlock.innerBlocks.length ) });
 		}
 	}, []);
 
@@ -126,6 +127,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				{ 'image' === attributes.library && isURL ? (
+					/* eslint-disable-next-line jsx-a11y/alt-text */
 					<img src={ attributes.icon } />
 				) : (
 					'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (

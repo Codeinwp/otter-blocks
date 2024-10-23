@@ -64,7 +64,7 @@ const defaultFontSizes = [
 /**
  *
  * @param {import('./types.js').IconInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

@@ -10,7 +10,7 @@ import hash from 'object-hash';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import api from '@wordpress/api';
 
@@ -88,7 +88,7 @@ const formOptionsMap = {
 /**
  * Form component
  * @param {import('./type').FormProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,
@@ -118,7 +118,7 @@ const Edit = ({
 	/**
 	 * Get global value if it is the case.
 	 * @param {import('../../common').SyncAttrs<import('./type').FormAttrs>} field
-	 * @returns
+	 * @return
 	 */
 	const getSyncValue = field => {
 		if ( attributes?.isSynced?.includes( field ) ) {
@@ -651,7 +651,11 @@ const Edit = ({
 			} else {
 				createNotice(
 					'error',
-					__( 'An error has occurred: ', 'otter-blocks' ) + ( res?.error || __( 'unknown', 'otter-blocks' ) ),
+					sprintf(
+						// translators: %1$s the error message of the test email
+						__( 'An error has occurred: %1$s', 'otter-blocks' ),
+						res?.error || __( 'unknown', 'otter-blocks' )
+					),
 					{
 						isDismissible: true,
 						type: 'snackbar'
@@ -700,7 +704,11 @@ const Edit = ({
 			} else {
 				createNotice(
 					'error',
-					__( 'An error has occurred: ', 'otter-blocks' ) + ( res?.error || __( 'unknown', 'otter-blocks' ) + __( '. Check your provider for confirmation.', 'otter-blocks' ) ),
+					sprintf(
+						// translators: %s is the error message from the email provider.
+						__( 'An error has occurred: %s. Check your provider for confirmation.', 'otter-blocks' ),
+						res?.error || __( 'unknown', 'otter-blocks' )
+					),
 					{
 						isDismissible: true,
 						type: 'snackbar'

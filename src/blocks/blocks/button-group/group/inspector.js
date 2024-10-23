@@ -42,7 +42,7 @@ import { useTabSwitch } from '../../../helpers/block-utility';
 /**
  *
  * @param {import('./types.js').ButtonGroupInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

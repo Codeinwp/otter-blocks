@@ -39,11 +39,6 @@ import { removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.j
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { useTabSwitch } from '../../helpers/block-utility';
 
-/**
- *
- * @param {import('./types').PopupInspectorProps} props
- * @returns
- */
 const ProFeatures = () => {
 	return (
 		<Fragment>
@@ -64,7 +59,7 @@ const ProFeatures = () => {
 			</Disabled>
 
 			<Notice
-				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'popupblock' )}>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'popupblock' )}>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
 				variant="upsell"
 			/>
 		</Fragment>
@@ -74,7 +69,7 @@ const ProFeatures = () => {
 /**
  *
  * @param {import('./types').PopupInspectorProps} param0
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,
@@ -113,7 +108,7 @@ const Inspector = ({
 
 	const changeBoxShadow = data => {
 		const boxShadow = { ...attributes.boxShadow };
-		Object.entries( data ).map( ([ key, val ] = data ) => {
+		Object.entries( data ).forEach( ([ key, val ] = data ) => {
 			boxShadow[key] = val;
 		});
 

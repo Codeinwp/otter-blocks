@@ -56,7 +56,7 @@ const styles = [
 /**
  *
  * @param {import('./types.js').TabsGroupInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

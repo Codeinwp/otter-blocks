@@ -1,7 +1,7 @@
 import { merge, pick } from 'lodash';
-import { BoxType } from '../../helpers/blocks';
+import type { BoxType } from '../../helpers/blocks';
 import { getChoice } from '../../helpers/helper-functions';
-import { Storage } from './models';
+import type { Storage } from './models';
 import { addUnit, getColorFromThemeStyles, getInt, getSingleValueFromBox, makeBox } from './utils';
 
 const radiusExtract = ( radius: { topLeft: string; topRight: string; bottomRight: string; bottomLeft: string; }) => {
@@ -108,8 +108,9 @@ export const coreAdaptors = {
 	'core/columns': {
 
 		/**
-         * https://github.com/WordPress/gutenberg/blob/0d60dbc6e1deb575ceced1b8ecaf50e295d8543a/packages/block-library/src/columns/block.json#L4
-         */
+		 * https://github.com/WordPress/gutenberg/blob/0d60dbc6e1deb575ceced1b8ecaf50e295d8543a/packages/block-library/src/columns/block.json#L4
+		 * @param attrs
+		 */
 		copy( attrs: any ): Storage<unknown> {
 			return merge( commonExtractor( attrs ),
 				{
@@ -126,8 +127,9 @@ export const coreAdaptors = {
 	'core/column': {
 
 		/**
-         * https://github.com/WordPress/gutenberg/blob/0d60dbc6e1deb575ceced1b8ecaf50e295d8543a/packages/block-library/src/column/block.json#
-         */
+		 * https://github.com/WordPress/gutenberg/blob/0d60dbc6e1deb575ceced1b8ecaf50e295d8543a/packages/block-library/src/column/block.json#
+		 * @param attrs
+		 */
 		copy( attrs: any ): Storage<unknown> {
 			return merge( commonExtractor( attrs ),
 				{
@@ -150,8 +152,9 @@ export const coreAdaptors = {
 	'core/group': {
 
 		/**
-         *  https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/group/block.json
-        */
+		 *  https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/group/block.json
+		 * @param attrs
+		 */
 		copy( attrs: any ): Storage<unknown> {
 			return merge( commonExtractor( attrs ),
 				{
@@ -174,8 +177,9 @@ export const coreAdaptors = {
 	'core/paragraph': {
 
 		/**
-         *  https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/group/block.json
-        */
+		 *  https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/group/block.json
+		 * @param attrs
+		 */
 		copy( attrs: any ): Storage<unknown> {
 			return merge( commonExtractor( attrs ),
 				{

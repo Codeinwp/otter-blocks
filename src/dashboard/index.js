@@ -2,6 +2,7 @@
 /**
  * External dependencies.
  */
+/* eslint-disable import/no-unresolved */
 import formbricks from '@formbricks/js/app';
 
 /**

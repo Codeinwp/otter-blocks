@@ -27,7 +27,7 @@ test.describe( 'Accordion Block', () => {
 			name: 'themeisle-blocks/accordion'
 		});
 
-		let accordionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/accordion' === block.name );
+		const accordionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/accordion' === block.name );
 
 		expect( accordionBlock.innerBlocks.length ).toBeGreaterThan( 0 );
 	});
@@ -54,7 +54,7 @@ test.describe( 'Accordion Block', () => {
 			name: 'themeisle-blocks/accordion'
 		});
 
-		let accordionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/accordion' === block.name );
+		const accordionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/accordion' === block.name );
 
 		expect( accordionBlock.innerBlocks.length ).toBeGreaterThan( 0 );
 

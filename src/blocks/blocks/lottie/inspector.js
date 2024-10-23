@@ -24,7 +24,7 @@ import { _px } from '../../helpers/helper-functions';
 /**
  *
  * @param {import('./types').LottieInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

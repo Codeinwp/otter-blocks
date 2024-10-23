@@ -43,7 +43,7 @@ import {
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time';
 import { fromInterval, toTimer } from './common';
-import { CountdownProps } from './types';
+import type { CountdownProps } from './types.d.ts';
 
 const { attributes: defaultAttributes } = metadata;
 
