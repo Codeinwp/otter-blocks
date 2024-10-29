@@ -142,7 +142,7 @@ const Library = ({
 		const currentCategory = 'favorites' === selectedCategory ? patterns.filter( pattern => getFavorites.includes( pattern.name ) ) : patterns.filter( pattern => pattern.categories.includes( selectedCategory ) );
 
 		if ( searchInput ) {
-			return currentCategory.filter( pattern => pattern.name.toLowerCase().includes( searchInput.toLowerCase() ) );
+			return currentCategory.filter( pattern => pattern.title.toLowerCase().includes( searchInput.toLowerCase() ) );
 		}
 
 		return currentCategory;

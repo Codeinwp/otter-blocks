@@ -91,7 +91,7 @@ class Patterns {
 		} else {
 			$response = wp_remote_get( esc_url_raw( $url ) ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 		}
-		
+
 		$response = wp_remote_retrieve_body( $response );
 		$response = json_decode( $response, true );
 
