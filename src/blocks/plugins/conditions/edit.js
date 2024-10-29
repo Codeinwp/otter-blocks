@@ -42,23 +42,23 @@ const defaultConditions = {
 			{
 				value: 'loggedInUser',
 				label: __( 'Logged In Users', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible to logged-in users.' )
+				help: __( 'The selected block will only be visible to logged-in users.', 'otter-blocks'  )
 			},
 			{
 				value: 'loggedOutUser',
 				label: __( 'Logged Out Users', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible to logged-out users.' )
+				help: __( 'The selected block will only be visible to logged-out users.', 'otter-blocks'  )
 			},
 			{
 				value: 'userRoles',
 				label: __( 'User Roles', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user roles.' ),
+				help: __( 'The selected block will be visible based on user roles.', 'otter-blocks'  ),
 				toogleVisibility: true
 			},
 			{
 				value: 'loggedInUserMeta',
 				label: __( 'Logged-in User Meta (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on meta of the logged-in user condition.' ),
+				help: __( 'The selected block will be visible based on meta of the logged-in user condition.', 'otter-blocks'  ),
 				isDisabled: true
 			}
 		]
@@ -69,31 +69,31 @@ const defaultConditions = {
 			{
 				value: 'postAuthor',
 				label: __( 'Post Author', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on post author.' ),
+				help: __( 'The selected block will be visible based on post author.', 'otter-blocks'  ),
 				toogleVisibility: true
 			},
 			{
 				value: 'postType',
 				label: __( 'Post Type', 'otter-blocks' ),
-				help: __( 'The selected block will be visible if post becomes to one of the selected post types.' ),
+				help: __( 'The selected block will be visible if post becomes to one of the selected post types.', 'otter-blocks'  ),
 				toogleVisibility: true
 			},
 			{
 				value: 'postCategory',
 				label: __( 'Post Category', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on selected post categories.' ),
+				help: __( 'The selected block will be visible based on selected post categories.', 'otter-blocks'  ),
 				toogleVisibility: true
 			},
 			{
 				value: 'postTag',
 				label: __( 'Post Tag', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on selected post tags.' ),
+				help: __( 'The selected block will be visible based on selected post tags.', 'otter-blocks'  ),
 				toogleVisibility: true
 			},
 			{
 				value: 'postMeta',
 				label: __( 'Post Meta (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on post meta condition.' ),
+				help: __( 'The selected block will be visible based on post meta condition.', 'otter-blocks'  ),
 				isDisabled: true
 			}
 		]
@@ -104,19 +104,19 @@ const defaultConditions = {
 			{
 				value: 'dateRange',
 				label: __( 'Date Range (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' ),
+				help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'dateRecurring',
 				label: __( 'Date Recurring (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' ),
+				help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'timeRecurring',
 				label: __( 'Time Recurring (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' ),
+				help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.', 'otter-blocks'  ),
 				isDisabled: true
 			}
 		]
@@ -127,25 +127,25 @@ const defaultConditions = {
 			{
 				value: 'screenSize',
 				label: __( 'Screen Size', 'otter-blocks' ),
-				help: __( 'The selected block will be invisible based on the screen size.' ),
+				help: __( 'The selected block will be invisible based on the screen size.', 'otter-blocks'  ),
 				toggleVisibility: true
 			},
 			{
 				value: 'queryString',
 				label: __( 'Query String (Pro)', 'otter-blocks' ),
-				help: __( 'The condition will be met if the URL contains specified parameters.' ),
+				help: __( 'The condition will be met if the URL contains specified parameters.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'country',
 				label: __( 'Country (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
+				help: __( 'The selected block will be visible based on user\'s country based on the IP address.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'cookie',
 				label: __( 'Cookie (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on PHP cookies.' ),
+				help: __( 'The selected block will be visible based on PHP cookies.', 'otter-blocks'  ),
 				isDisabled: true
 			}
 		]
@@ -156,25 +156,25 @@ const defaultConditions = {
 			{
 				value: 'wooProductsInCart',
 				label: __( 'Products in Cart (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' ),
+				help: __( 'The selected block will be visible based on the products added to WooCommerce cart.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'wooTotalCartValue',
 				label: __( 'Total Cart Value (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' ),
+				help: __( 'The selected block will be visible based on the total value of WooCommerce cart.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'wooPurchaseHistory',
 				label: __( 'Purchase History (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' ),
+				help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'wooTotalSpent',
 				label: __( 'Total Spent (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on how much the user spent during lifetime.' ),
+				help: __( 'The selected block will be visible based on how much the user spent during lifetime.', 'otter-blocks'  ),
 				isDisabled: true
 			}
 		]
@@ -185,19 +185,19 @@ const defaultConditions = {
 			{
 				value: 'wooCategory',
 				label: __( 'Product Category (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the product category.' ),
+				help: __( 'The selected block will be visible based on the product category.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'wooTag',
 				label: __( 'Product Tag (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the product tag.' ),
+				help: __( 'The selected block will be visible based on the product tag.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'wooAttribute',
 				label: __( 'Product Attribute (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the product attribute.' ),
+				help: __( 'The selected block will be visible based on the product attribute.', 'otter-blocks'  ),
 				isDisabled: true
 			}
 		]
@@ -208,7 +208,7 @@ const defaultConditions = {
 			{
 				value: 'stripePurchaseHistory',
 				label: __( 'Purchase History', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s Stripe purchase history.' ),
+				help: __( 'The selected block will be visible based on user\'s Stripe purchase history.', 'otter-blocks'  ),
 				toogleVisibility: true
 			}
 		]
@@ -219,13 +219,13 @@ const defaultConditions = {
 			{
 				value: 'learnDashPurchaseHistory',
 				label: __( 'Purchase History (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' ),
+				help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.', 'otter-blocks'  ),
 				isDisabled: true
 			},
 			{
 				value: 'learnDashCourseStatus',
 				label: __( 'Course Status (Pro)', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s LearnDash course status.' ),
+				help: __( 'The selected block will be visible based on user\'s LearnDash course status.', 'otter-blocks'  ),
 				isDisabled: true
 			}
 		]
