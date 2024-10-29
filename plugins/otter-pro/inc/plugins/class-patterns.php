@@ -21,6 +21,30 @@ class Patterns {
 	protected static $instance = null;
 
 	/**
+	 * URL is used to retrieve pattern templates from the Themeisle API.
+	 * 
+	 * @var string PATTERNS_ENDPOINT The endpoint URL for Otter patterns.
+	 */
+	const PATTERNS_ENDPOINT = 'https://api.themeisle.com/templates-cloud/otter-patterns';
+
+	/**
+	 * Prefix used for translated titles.
+	 *
+	 * @var string
+	 */
+	const TRANSLATED_TITLE_PREFIX = 'title_';
+
+	/**
+	 * Array mapping WordPress locale codes to available language codes provided by store.
+	 *
+	 * @var array
+	 */
+	const AVAILABLE_LANGUAGES = [
+		'de_DE'        => 'de',
+		'de_DE_formal' => 'de',
+	];
+
+	/**
 	 * Method to define hooks needed.
 	 *
 	 * @since   1.0.0
@@ -57,7 +81,7 @@ class Patterns {
 				'license_id' => apply_filters( 'product_otter_license_key', 'free' ),
 				'cache'      => gmdate( 'u' ),
 			),
-			'https://api.themeisle.com/templates-cloud/otter-patterns'
+			self::PATTERNS_ENDPOINT
 		);
 
 		$response = '';
@@ -67,7 +91,7 @@ class Patterns {
 		} else {
 			$response = wp_remote_get( esc_url_raw( $url ) ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 		}
-
+		
 		$response = wp_remote_retrieve_body( $response );
 		$response = json_decode( $response, true );
 
@@ -110,13 +134,42 @@ class Patterns {
 			return;
 		}
 
+		$user_language = get_user_locale();
+
 		foreach ( $block_patterns as $block_pattern ) {
 			if ( ! version_compare( get_bloginfo( 'version' ), $block_pattern['minimum'], '>=' ) ) {
 				continue;
 			}
 
-			register_block_pattern( 'otter-pro/' . $block_pattern['slug'], $block_pattern );
+			register_block_pattern( 'otter-pro/' . $block_pattern['slug'], $this->prepare_block_pattern( $block_pattern, $user_language ) );
 		}
+	}
+
+	/**
+	 * Prepare the block pattern for registration. Apply translation if possible.
+	 * 
+	 * @param array  $block_pattern The block pattern.
+	 * @param string $lang_locale The user locale language code.
+	 * 
+	 * @return array The block pattern.
+	 */
+	public function prepare_block_pattern( $block_pattern, $lang_locale = '' ) {
+		if ( isset( self::AVAILABLE_LANGUAGES[ $lang_locale ] ) ) {
+			$translated_title = self::TRANSLATED_TITLE_PREFIX . self::AVAILABLE_LANGUAGES[ $lang_locale ];
+			if ( isset( $block_pattern[ $translated_title ] ) ) {
+				$block_pattern['title'] = $block_pattern[ $translated_title ];
+			}
+		}
+
+		foreach ( array_keys( $block_pattern ) as $pattern_key ) {
+			if ( false === strpos( $pattern_key, self::TRANSLATED_TITLE_PREFIX ) ) {
+				continue;
+			}
+
+			unset( $block_pattern[ $pattern_key ] );
+		}
+
+		return $block_pattern;
 	}
 
 	/**
