@@ -4,24 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cecd1e21bbd782bb8338e86244ef7ad5",
+    "content-hash": "b22fd93aceb17c6451620051662dcbb4",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.30",
+            "version": "3.3.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "801a07604a297f02de3067948176f91b4c84bd8a"
+                "reference": "2c525df1b692acff0c968faf67f5adf6f1263c7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/801a07604a297f02de3067948176f91b4c84bd8a",
-                "reference": "801a07604a297f02de3067948176f91b4c84bd8a",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/2c525df1b692acff0c968faf67f5adf6f1263c7a",
+                "reference": "2c525df1b692acff0c968faf67f5adf6f1263c7a",
                 "shasum": ""
             },
             "require-dev": {
-                "codeinwp/phpcs-ruleset": "dev-main"
+                "codeinwp/phpcs-ruleset": "dev-main",
+                "yoast/phpunit-polyfills": "^2.0"
             },
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
@@ -42,9 +43,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.30"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.34"
             },
-            "time": "2024-09-10T23:53:07+00:00"
+            "time": "2024-10-25T07:28:34+00:00"
         },
         {
             "name": "enshrined/svg-sanitize",
