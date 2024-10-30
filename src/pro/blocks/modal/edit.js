@@ -49,7 +49,7 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Popup component
  * @param {import('./types').PopupPros} props
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

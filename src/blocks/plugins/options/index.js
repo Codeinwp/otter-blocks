@@ -66,7 +66,7 @@ import { otterIconColored } from '../../helpers/icons.js';
 import Tabs from './global-defaults/controls/tabs';
 import useSettings from '../../helpers/use-settings';
 
-export let NavigatorButton = ({
+export const NavigatorButton = ({
 	path,
 	isBack = false,
 	onClickAction = () => {},
@@ -96,7 +96,7 @@ const Sidebar = () => {
 
 		return {
 			isOnboardingVisible: isOnboardingVisible?.(),
-			get: get
+			get
 		};
 	}, []);
 
@@ -313,7 +313,7 @@ const Sidebar = () => {
 									'loading' === status && (
 										<p>
 											<Spinner />
-											{ __( 'Checking optional module...', 'otter-blocks' ) }
+											{ __( 'Checking optional module…', 'otter-blocks' ) }
 										</p>
 									)
 								}

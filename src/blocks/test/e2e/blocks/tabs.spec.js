@@ -27,7 +27,7 @@ test.describe( 'Tabs Block', () => {
 			name: 'themeisle-blocks/tabs'
 		});
 
-		let tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );
+		const tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );
 
 		expect( tabBlock.innerBlocks.length ).toBeGreaterThan( 0 );
 	});
@@ -54,7 +54,7 @@ test.describe( 'Tabs Block', () => {
 			name: 'themeisle-blocks/tabs'
 		});
 
-		let tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );
+		const tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );
 
 		expect( tabBlock.innerBlocks.length ).toBeGreaterThan( 0 );
 

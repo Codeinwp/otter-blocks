@@ -1,8 +1,8 @@
 import { isNil, pickBy } from 'lodash';
-import { OtterBlock } from '../../helpers/blocks';
+import type { OtterBlock } from '../../helpers/blocks';
 import { compactObject } from '../../helpers/helper-functions';
 import { adaptors } from './adaptors';
-import { CopyPasteStorage, Storage } from './models';
+import type { CopyPasteStorage, Storage } from './models';
 import { copyAnimations, pasteAnimations } from './plugins';
 
 
@@ -59,7 +59,7 @@ class CopyPaste {
 	}
 
 	paste( block: OtterBlock<unknown> ) {
-		let pasted = undefined;
+		let pasted;
 		try {
 			if ( ! ( adaptors as Adaptors )?.[block.name]) {
 				return undefined;

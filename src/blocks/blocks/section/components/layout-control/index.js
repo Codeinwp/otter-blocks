@@ -103,7 +103,7 @@ const LayoutControl = ({
 						</Button>
 					</Tooltip>
 
-					{ ( 'Mobile' == getView || 'Tablet' == getView ) && (
+					{ ( 'Mobile' === getView || 'Tablet' === getView ) && (
 						<Tooltip text={ __( 'Collapsed Rows', 'otter-blocks' ) } >
 							<Button
 								className={ classnames(
@@ -179,7 +179,7 @@ const LayoutControl = ({
 						</Button>
 					</Tooltip>
 
-					{ ( 'Mobile' == getView || 'Tablet' == getView ) && (
+					{ ( 'Mobile' === getView || 'Tablet' === getView ) && (
 						<Tooltip text={ __( 'Collapsed Rows', 'otter-blocks' ) } >
 							<Button
 								className={ classnames(
@@ -207,7 +207,7 @@ const LayoutControl = ({
 						</Button>
 					</Tooltip>
 
-					{ ( 'Mobile' == getView || 'Tablet' == getView ) && (
+					{ ( 'Mobile' === getView || 'Tablet' === getView ) && (
 						<Fragment>
 							<Tooltip text={ __( 'Two Column Grid', 'otter-blocks' ) } >
 								<Button
@@ -249,7 +249,7 @@ const LayoutControl = ({
 						</Button>
 					</Tooltip>
 
-					{ ( 'Mobile' == getView || 'Tablet' == getView ) && (
+					{ ( 'Mobile' === getView || 'Tablet' === getView ) && (
 						<Tooltip text={ __( 'Collapsed Rows', 'otter-blocks' ) } >
 							<Button
 								className={ classnames(
@@ -277,7 +277,7 @@ const LayoutControl = ({
 						</Button>
 					</Tooltip>
 
-					{ ( 'Mobile' == getView || 'Tablet' == getView ) && (
+					{ ( 'Mobile' === getView || 'Tablet' === getView ) && (
 						<Fragment>
 							<Tooltip text={ __( 'Two Column Grid', 'otter-blocks' ) } >
 								<Button

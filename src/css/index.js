@@ -32,6 +32,7 @@ import './editor.scss';
 
 import CSSEditor from './editor.js';
 
+/* eslint-disable no-duplicate-imports */
 import './inject-css.js';
 
 import { onDeselect } from './inject-css.js';

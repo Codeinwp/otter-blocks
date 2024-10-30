@@ -26,7 +26,7 @@ test.describe( 'Countdown Block', () => {
 			name: 'themeisle-blocks/countdown'
 		});
 
-		let countdownBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/countdown' === block.name );
+		const countdownBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/countdown' === block.name );
 		const otterId = countdownBlock.attributes.id;
 
 		await page.getByRole( 'button', { name: 'Select Date' }).click();

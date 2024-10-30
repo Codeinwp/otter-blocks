@@ -54,7 +54,7 @@ const styles = [
 /**
  *
  * @param {import('./types.js').ButtonGroupButtonInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,
@@ -301,7 +301,7 @@ const Inspector = ({
 												label={ __( 'Background', 'otter-blocks' ) }
 												colorValue={ attributes.background }
 												gradientValue={ attributes.backgroundGradient }
-												onColorChange={ background => setAttributes({ background: background })}
+												onColorChange={ background => setAttributes({ background })}
 												onGradientChange={ backgroundGradient => setAttributes({ backgroundGradient })}
 												className="is-list"
 											/>

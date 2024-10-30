@@ -12,7 +12,7 @@ import {
 /**
  *
  * @param {import('./types').ReviewComparisionInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

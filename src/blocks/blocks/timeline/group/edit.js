@@ -37,7 +37,7 @@ const { attributes: defaultAttributes } = metadata;
  * Timeline parent component
  *
  * @param {import('../types').TimelineGroupProps} param
- * @returns
+ * @return
  */
 const Edit = ({
 	attributes,

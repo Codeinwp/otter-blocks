@@ -80,7 +80,7 @@ test.describe( 'Slider Block', () => {
 		await editor.insertBlock({
 			name: 'themeisle-blocks/slider',
 			attributes: {
-				images: images
+				images
 			}
 		});
 
@@ -110,7 +110,7 @@ test.describe( 'Slider Block', () => {
 		await editor.insertBlock({
 			name: 'themeisle-blocks/slider',
 			attributes: {
-				images: images
+				images
 			}
 		});
 

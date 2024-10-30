@@ -25,8 +25,8 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
-import { CountdownInspectorProps } from '../../../blocks/blocks/countdown/types';
 import { objectCleaner } from '../../helpers/helper-functions';
+import type { CountdownInspectorProps } from '../../../blocks/blocks/countdown/types';
 
 const { Notice } = window.otterComponents;
 

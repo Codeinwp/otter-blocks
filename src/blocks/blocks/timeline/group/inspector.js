@@ -21,7 +21,7 @@ import {
 
 /**
  * Internal dependencies
-*/
+ */
 import { useTabSwitch } from '../../../helpers/block-utility.js';
 import { InspectorHeader } from '../../../components/index.js';
 import { stringToBox } from '../../../helpers/helper-functions.js';
@@ -30,7 +30,7 @@ import { stringToBox } from '../../../helpers/helper-functions.js';
  *	Timeline parent inspector component.
  *
  * @param {import('../types').TimelineGroupInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

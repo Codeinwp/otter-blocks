@@ -20,7 +20,7 @@ import {
 
 /**
  * Internal dependencies
-*/
+ */
 import { useTabSwitch } from '../../../helpers/block-utility.js';
 import { IconPickerControl, InspectorHeader } from '../../../components/index.js';
 import { stringToBox } from '../../../helpers/helper-functions.js';
@@ -29,7 +29,7 @@ import { stringToBox } from '../../../helpers/helper-functions.js';
  * Timeline item inspector component.
  *
  * @param {import('../types.js').TimelineItemInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

@@ -1,4 +1,4 @@
-import { CountdownTimer } from './types';
+import type { CountdownTimer } from './types.d.ts';
 import { __ } from '@wordpress/i18n';
 
 const _MS_PER_SECONDS = 1000;
@@ -10,7 +10,7 @@ const _MS_PER_DAY = _MS_PER_HOURS * 24;
  *	Get the time from a timer structure
  *
  * @param timer The timer data strcture.
- * @returns The time in miliseconds
+ * @return The time in miliseconds
  */
 export const toTimer = ( timer: CountdownTimer = {}): number => {
 	return ( parseInt( timer?.days || '0' ) * _MS_PER_DAY + parseInt( timer?.hours || '0' ) * _MS_PER_HOURS + parseInt( timer?.minutes || '0' ) * _MS_PER_MINUTES + parseInt( timer?.seconds || '0' ) * _MS_PER_SECONDS ) ?? 0;
@@ -20,8 +20,8 @@ export const toTimer = ( timer: CountdownTimer = {}): number => {
  * Get the time interval from two dates.
  *
  * @param start The start date.
- * @param end The end date.
- * @returns
+ * @param end   The end date.
+ * @return
  */
 export const fromInterval = ( start?: string, end?: string ): number => {
 	if ( ! start || ! end ) {
@@ -36,9 +36,11 @@ export const fromInterval = ( start?: string, end?: string ): number => {
 /**
  * Get the time interval from the unix time
  *
- * @param unixTime Time as UNIX
- * @param settings Options to keep a components or/and allow negative time
- * @returns An object with the values for days, hours, minutes, seconds
+ * @param unixTime         Time as UNIX
+ * @param settings         Options to keep a components or/and allow negative time
+ * @param settings.exclude
+ * @param settings.keepNeg
+ * @return An object with the values for days, hours, minutes, seconds
  */
 export const getIntervalFromUnix = ( unixTime: number, settings: { exclude?: string[], keepNeg?: boolean }) => {
 	unixTime ??= 0; // Check for null/undefined

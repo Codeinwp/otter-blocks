@@ -275,7 +275,7 @@ test.describe( 'Form Block', () => {
 
 		await editor.insertBlock({ name: 'themeisle-blocks/form' });
 
-		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+		const formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
 
 		expect( formBlock ).toBeTruthy();
 
@@ -326,7 +326,7 @@ test.describe( 'Form Block', () => {
 
 		await editor.insertBlock({ name: 'themeisle-blocks/form' });
 
-		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+		const formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
 
 		expect( formBlock ).toBeTruthy();
 
@@ -351,7 +351,7 @@ test.describe( 'Form Block', () => {
 
 		await editor.insertBlock({ name: 'themeisle-blocks/form' });
 
-		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+		const formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
 
 		expect( formBlock ).toBeTruthy();
 

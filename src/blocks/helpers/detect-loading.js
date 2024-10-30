@@ -1,15 +1,15 @@
 
 /**
  * Trigger a function after loading the elements mentioned in the plugins.
- * @param {Function} onLoaded The callback function.
- * @param {string[]} plugins The plugins.
- * @param {number} timeLimit The time limit to do the detection.
+ * @param {Function} onLoaded  The callback function.
+ * @param {string[]} plugins   The plugins.
+ * @param {number}   timeLimit The time limit to do the detection.
  */
 export const detectLoading = ( onLoaded, plugins, timeLimit = 50 ) => {
 	let loaded = 0;
 	let trigger = true;
 
-	if ( 0 == plugins.length ) {
+	if ( 0 === plugins.length ) {
 		onLoaded?.();
 		return;
 	}
@@ -41,7 +41,7 @@ export const detectLoading = ( onLoaded, plugins, timeLimit = 50 ) => {
 const detectLottieLoading = ( onLoaded ) => {
 	const lottiePlayers = document.querySelectorAll( 'lottie-player' );
 
-	if ( 0 == lottiePlayers.length ) {
+	if ( 0 === lottiePlayers.length ) {
 		onLoaded?.();
 		return;
 	}

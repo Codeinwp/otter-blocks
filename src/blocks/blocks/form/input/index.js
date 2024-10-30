@@ -2,11 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-
-import { registerBlockType } from '@wordpress/blocks';
-
-import { createBlock } from '@wordpress/blocks';
-
+import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { omit } from 'lodash';
 
 /**
@@ -39,7 +35,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-email',
 			description: __( 'Insert an email field', 'otter-blocks' ),
-			icon: icon,
+			icon,
 			title: __( 'Email Field', 'otter-blocks' ),
 			attributes: {
 				type: 'email'
@@ -48,7 +44,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-date',
 			description: __( 'Insert a date field', 'otter-blocks' ),
-			icon: icon,
+			icon,
 			title: __( 'Date Field', 'otter-blocks' ),
 			attributes: {
 				type: 'date'
@@ -57,7 +53,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-number',
 			description: __( 'Insert a number field', 'otter-blocks' ),
-			icon: icon,
+			icon,
 			title: __( 'Number Field', 'otter-blocks' ),
 			attributes: {
 				type: 'number'
@@ -66,7 +62,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-url',
 			description: __( 'Insert an URL field', 'otter-blocks' ),
-			icon: icon,
+			icon,
 			title: __( 'URL Field', 'otter-blocks' ),
 			attributes: {
 				type: 'url',

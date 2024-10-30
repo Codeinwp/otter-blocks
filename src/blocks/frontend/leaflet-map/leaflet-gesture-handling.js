@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /*
 * * Leaflet Gesture Handling **
 * * Version 1.1.8
@@ -20,7 +22,7 @@ const t = setInterval( () => {
 		let draggingMap = false;
 
 		GestureHandling = L.Handler.extend({
-			addHooks: function() {
+			addHooks() {
 				this._handleTouch = this._handleTouch.bind( this );
 
 				this._setupPluginOptions();
@@ -50,7 +52,7 @@ const t = setInterval( () => {
 				L.DomEvent.on( this._map, 'moveend', this._handleDragging, this );
 			},
 
-			removeHooks: function() {
+			removeHooks() {
 				this._enableInteractions();
 
 				this._map._container.removeEventListener(
@@ -82,7 +84,7 @@ const t = setInterval( () => {
 				L.DomEvent.off( this._map, 'moveend', this._handleDragging, this );
 			},
 
-			_handleDragging: function( e ) {
+			_handleDragging( e ) {
 				if ( 'movestart' === e.type || 'move' === e.type ) {
 					draggingMap = true;
 				} else if ( 'moveend' === e.type ) {
@@ -90,7 +92,7 @@ const t = setInterval( () => {
 				}
 			},
 
-			_disableInteractions: function() {
+			_disableInteractions() {
 				this._map.dragging.disable();
 				this._map.scrollWheelZoom.disable();
 				if ( this._map.tap ) {
@@ -98,7 +100,7 @@ const t = setInterval( () => {
 				}
 			},
 
-			_enableInteractions: function() {
+			_enableInteractions() {
 				this._map.dragging.enable();
 				this._map.scrollWheelZoom.enable();
 				if ( this._map.tap ) {
@@ -106,7 +108,7 @@ const t = setInterval( () => {
 				}
 			},
 
-			_setupPluginOptions: function() {
+			_setupPluginOptions() {
 
 				//For backwards compatibility, merge gestureHandlingText into the new options object
 				if ( this._map.options.gestureHandlingText ) {
@@ -114,8 +116,8 @@ const t = setInterval( () => {
 				}
 			},
 
-			_setLanguageContent: function() {
-				var languageContent;
+			_setLanguageContent() {
+				let languageContent;
 
 				//If user has supplied custom language, use that
 				if (
@@ -179,17 +181,17 @@ const t = setInterval( () => {
 				);
 			},
 
-			_getUserLanguage: function() {
-				var lang = navigator.languages ?
+			_getUserLanguage() {
+				const lang = navigator.languages ?
 					navigator.languages[0] :
 					navigator.language || navigator.userLanguage;
 				return lang;
 			},
 
-			_handleTouch: function( e ) {
+			_handleTouch( e ) {
 
 				//Disregard touch events on the minimap if present
-				var ignoreList = [
+				const ignoreList = [
 					'leaflet-control-minimap',
 					'leaflet-interactive',
 					'leaflet-popup-content',
@@ -199,7 +201,7 @@ const t = setInterval( () => {
 					'leaflet-control-zoom-out'
 				];
 
-				var ignoreElement = false;
+				let ignoreElement = false;
 				for ( let i = 0; i < ignoreList.length; i++ ) {
 					if ( L.DomUtil.hasClass( e.target, ignoreList[i]) ) {
 						ignoreElement = true;
@@ -247,7 +249,7 @@ const t = setInterval( () => {
 
 			_isScrolling: false,
 
-			_handleScroll: function( e ) {
+			_handleScroll( e ) {
 				if ( e.metaKey || e.ctrlKey ) {
 					e.preventDefault();
 					L.DomUtil.removeClass( this._map._container,
@@ -266,7 +268,7 @@ const t = setInterval( () => {
 					this._isScrolling = setTimeout( function() {
 
 						// Run the callback
-						var warnings = document.getElementsByClassName(
+						const warnings = document.getElementsByClassName(
 							'leaflet-gesture-handling-scroll-warning'
 						);
 						for ( let i = 0; i < warnings.length; i++ ) {
@@ -278,11 +280,11 @@ const t = setInterval( () => {
 				}
 			},
 
-			_handleMouseOver: function( e ) {
+			_handleMouseOver( e ) {
 				this._enableInteractions();
 			},
 
-			_handleMouseOut: function( e ) {
+			_handleMouseOut( e ) {
 				if ( ! draggingMap ) {
 					this._disableInteractions();
 				}

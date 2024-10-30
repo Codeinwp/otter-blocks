@@ -125,3 +125,5 @@ add_filter(
 		return $compatibilities;
 	}
 );
+
+add_filter( 'otter-pro_sdk_enable_private_translations', '__return_true' );

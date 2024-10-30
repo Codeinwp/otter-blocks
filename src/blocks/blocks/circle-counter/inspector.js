@@ -27,14 +27,14 @@ import { Fragment, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
-*/
+ */
 import { InspectorHeader } from '../../components';
 import { useTabSwitch } from '../../helpers/block-utility';
 
 /**
  *
  * @param {import('./types').CircleCounterInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

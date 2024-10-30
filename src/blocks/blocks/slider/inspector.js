@@ -45,7 +45,7 @@ import { useTabSwitch } from '../../helpers/block-utility';
 /**
  *
  * @param {import('./types.js').SliderInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

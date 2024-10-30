@@ -55,7 +55,7 @@ import { useTabSwitch } from '../../../helpers/block-utility';
 /**
  *
  * @param {import('./types.js').SectionColumnInspectorProps} props
- * @returns
+ * @return
  */
 const Inspector = ({
 	attributes,

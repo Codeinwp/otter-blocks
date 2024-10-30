@@ -77,7 +77,7 @@ const Stars = ({ rating }) => {
 /**
  * Review component
  * @param {import('./type').ReviewProps} props
- * @returns
+ * @return
  */
 const Edit = ({
 	name,
@@ -94,7 +94,7 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const { image } = useSelect( select => {
-		let image = undefined;
+		let image;
 		const size = attributes.imageSize || 'medium';
 
 		if ( attributes.image?.id || productAttributes.image?.id ) {
@@ -278,7 +278,15 @@ const Edit = ({
 							</div>
 
 							<span>
-								{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( overallRatings / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
+								{
+									sprintf(
+
+										/** translators: %1$f: Rating score, %2$f: Maximum possible score. */
+										__( '%1$f out of %2$f', 'otter-blocks' ),
+										Math.max( Math.abs( overallRatings / divide ).toFixed( 1 ) || 0, 1 ),
+										10 / divide
+									)
+								}
 							</span>
 						</div>
 
@@ -349,13 +357,20 @@ const Edit = ({
 											<Stars rating={ Math.max( feature.rating, 1 ) } />
 										</div>
 										<span className="o-review__left_feature_num">
-											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
+											{
+												sprintf( 
+													/** translators: %1$f: Rating score, %2$f: Maximum possible score. */ 
+													__( '%1$f out of %2$f', 'otter-blocks' ), 
+													Math.max( Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 1 ), 
+													10 / divide 
+												) 
+											}
 										</span>
 									</div>
 
 									{ ( isSelected || feature.description ) && (
 										<RichText
-											placeholder={ __( 'Feature Description...', 'otter-blocks' ) }
+											placeholder={ __( 'Feature Description…', 'otter-blocks' ) }
 											value={ feature.description }
 											className="o-review__left_feature_description"
 											onChange={ description => changeFeature( index, { description }) }
