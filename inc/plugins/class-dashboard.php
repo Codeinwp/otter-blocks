@@ -192,9 +192,7 @@ class Dashboard {
 	 * @access  public
 	 */
 	public function enqueue_options_assets() {
-		$wp_upload_dir = wp_upload_dir( null, false );
-		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
-		$asset_file    = include OTTER_BLOCKS_PATH . '/build/dashboard/index.asset.php';
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/dashboard/index.asset.php';
 
 		wp_enqueue_style(
 			'otter-blocks-styles',
@@ -212,8 +210,6 @@ class Dashboard {
 		);
 
 		wp_set_script_translations( 'otter-blocks-scripts', 'otter-blocks' );
-
-		$offer = new LimitedOffers();
 
 		wp_localize_script(
 			'otter-blocks-scripts',
@@ -275,7 +271,7 @@ class Dashboard {
 			'neveInstalled'          => defined( 'NEVE_VERSION' ),
 		);
 
-		$this->load_survey();
+		return apply_filters( 'otter_dashboard_data', $global_data );
 	}
 
 	/**
