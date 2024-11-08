@@ -9,7 +9,7 @@ plugins:
   - - "@semantic-release/release-notes-generator"
     - preset: simple-preset
   - - "@semantic-release/exec"
-    - prepareCmd: "replace-in-file \"== Changelog ==\" \"== Changelog ==\n\n${nextRelease.notes}\" readme.txt"
+    - prepareCmd: 'export nextReleaseNotes="${nextRelease.notes}" && node bin/update-changelog.mjs'
   - - "@semantic-release/exec"
     - prepareCmd: grunt version::${nextRelease.version} && grunt wp_readme_to_markdown
   - - "semantic-release-slack-bot"
@@ -43,4 +43,3 @@ plugins:
         - plugins/blocks-export-import/readme.txt
       message: "chore(release): ${nextRelease.version} \n\n${nextRelease.notes}"
   - - "@semantic-release/github"
-
