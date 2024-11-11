@@ -1044,9 +1044,8 @@ const Edit = ({
 											submitLabel = submitLabel.replace( /<br\s*\/?>/gi, ' ' );
 											setAttributes({ submitLabel });
 										} }
-										multiline={ false }
 										multiple={ false }
-										tagName="button"
+										tagName="span"
 										type='submit'
 										onClick={ e => e.preventDefault() }
 									/>
