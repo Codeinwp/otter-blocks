@@ -1,3 +1,8 @@
+##### [Version 3.0.6](https://github.com/Codeinwp/otter-blocks/compare/v3.0.5...v3.0.6) (2024-11-12)
+
+- Fixed issue where spaces couldnt be typed directly in the Form blocks Submit button
+- Updated dependencies
+
 ##### [Version 3.0.5](https://github.com/Codeinwp/otter-blocks/compare/v3.0.4...v3.0.5) (2024-10-30)
 
 - Improve strings structure for translation workflow
