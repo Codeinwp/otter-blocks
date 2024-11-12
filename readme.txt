@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: block, blocks, gutenberg, gutenberg blocks, page builder
 Requires at least: 6.2
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.6
 Stable tag: trunk
 License: GPLv3
