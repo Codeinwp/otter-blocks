@@ -59,6 +59,7 @@ add_filter(
 );
 
 add_filter( 'otter_pro_hide_license_field', '__return_true' );
+add_filter( 'themeisle_sdk_ran_promos', '__return_false' );
 
 if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 	add_action(
