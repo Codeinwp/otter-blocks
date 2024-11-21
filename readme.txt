@@ -365,10 +365,12 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
-##### [Version 3.0.5](https://github.com/Codeinwp/otter-blocks/compare/v3.0.4...v3.0.5) (2024-10-30)
+##### [Version 3.0.6](https://github.com/Codeinwp/otter-blocks/compare/v3.0.5...v3.0.6) (2024-11-12)
 
-- Improve strings structure for translation workflow
-- Enhanced security
-- Update internal dependencies
+- Fixed issue where spaces couldnt be typed directly in the Form blocks Submit button
+- Updated dependencies
+
+
+
 
 [See changelog for all versions](https://github.com/Codeinwp/otter-blocks/blob/master/CHANGELOG.md).
