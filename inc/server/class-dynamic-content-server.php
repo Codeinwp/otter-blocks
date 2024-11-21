@@ -167,6 +167,7 @@ class Dynamic_Content_Server {
 
 			$fallback           = sanitize_text_field( $fallback );
 			$feedback_full_path = realpath( $fallback );
+			$feedback_full_path = str_contains( $feedback_full_path, WP_CONTENT_DIR );
 
 			if ( false !== $feedback_full_path && @getimagesize( $fallback ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 				$path = $feedback_full_path;
