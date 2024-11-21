@@ -56,7 +56,7 @@ add_filter(
 			'is_enabled' => ! defined( 'OTTER_PRO_VERSION' ),
 			'pro_name'   => __( 'Otter Blocks Pro', 'otter-blocks' ),
 			'logo'       => OTTER_BLOCKS_URL . '/assets/images/logo-alt.png',
-			'cta_link'   => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/?discount=LOYALUSER583&dvalue=60#pricing', 'otter-welcome', 'notice' ),
+			'cta_link'   => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/?discount=LOYALUSER583&dvalue=60#pricing', 'otter-welcome', 'notice' ) ),
 		];
 	}
 );

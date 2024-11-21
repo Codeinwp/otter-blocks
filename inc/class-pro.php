@@ -250,7 +250,7 @@ class Pro {
 					<li><?php _e( 'Priority Support', 'otter-blocks' ); ?></li>
 				</ul>
 
-				<a href="<?php echo esc_url_raw( tsdk_utmify( self::get_url(), 'woobuilder', 'wooproducteditor' ) ); ?>" target="_blank" class="button button-primary">
+				<a href="<?php echo esc_url_raw( tsdk_translate_link( tsdk_utmify( self::get_url(), 'woobuilder', 'wooproducteditor' ) ) ); ?>" target="_blank" class="button button-primary">
 					<?php _e( 'Discover Otter Pro', 'otter-blocks' ); ?>
 				</a>
 			</div>
