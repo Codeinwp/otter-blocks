@@ -7,6 +7,9 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server;
+use ThemeIsle\GutenbergBlocks\Template_Cloud;
+
 /**
  * Class Options_Settings
  */
@@ -756,7 +759,7 @@ class Options_Settings {
 				'default'      => true,
 			)
 		);
-		
+
 		register_setting(
 			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_prompt_actions',
@@ -811,6 +814,37 @@ class Options_Settings {
 						),
 					),
 				),
+			)
+		);
+
+
+		register_setting(
+			'themeisle_blocks_settings',
+			Template_Cloud::SOURCES_SETTING_KEY,
+			array(
+				'type'              => 'array',
+				'description'       => __( 'The template cloud sources from which patterns will be loaded.', 'otter-blocks' ),
+				'sanitize_callback' => [ Template_Cloud_Server::class, 'sanitize_template_cloud_sources' ],
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'  => 'array',
+						'items' => array(
+							'type'       => 'object',
+							'properties' => array(
+								'key'  => array(
+									'type' => 'string',
+								),
+								'url'  => array(
+									'type' => 'string',
+								),
+								'name' => array(
+									'type' => 'string',
+								),
+							),
+						),
+					),
+				),
+				'default'           => [],
 			)
 		);
 	}
