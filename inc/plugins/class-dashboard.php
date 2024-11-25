@@ -179,7 +179,7 @@ class Dashboard {
 				<img style="max-width: 100%" src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/form-submissions-upsell.svg' ); ?>" alt="Otter Form Submissions Upsell" />
 				<h2 style="line-height: 1"><?php esc_html_e( 'Collect Your Form Submissions', 'otter-blocks' ); ?></h2>
 				<p><?php esc_html_e( 'Store, manage and analyze your form submissions with ease – all in one place. With Otter powerful features, managing submissions has never been simpler.', 'otter-blocks' ); ?></p>
-				<a href="<?php echo esc_url( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions', 'admin' ) ); ?>" class="button button-primary" target="_blank"><?php esc_html_e( 'Explore Otter PRO', 'otter-blocks' ); ?></a>
+				<a href="<?php echo esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions', 'admin' ) ) ); ?>" class="button button-primary" target="_blank"><?php esc_html_e( 'Explore Otter PRO', 'otter-blocks' ); ?></a>
 			</div>
 		</div>
 		<?php
@@ -192,9 +192,7 @@ class Dashboard {
 	 * @access  public
 	 */
 	public function enqueue_options_assets() {
-		$wp_upload_dir = wp_upload_dir( null, false );
-		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
-		$asset_file    = include OTTER_BLOCKS_PATH . '/build/dashboard/index.asset.php';
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/dashboard/index.asset.php';
 
 		wp_enqueue_style(
 			'otter-blocks-styles',
@@ -213,58 +211,70 @@ class Dashboard {
 
 		wp_set_script_translations( 'otter-blocks-scripts', 'otter-blocks' );
 
-		$offer = new LimitedOffers();
-
 		wp_localize_script(
 			'otter-blocks-scripts',
 			'otterObj',
-			apply_filters(
-				'otter_dashboard_data',
-				array(
-					'version'                => OTTER_BLOCKS_VERSION,
-					'assetsPath'             => OTTER_BLOCKS_URL . 'assets/',
-					'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
-					'hasPro'                 => Pro::is_pro_installed(),
-					'upgradeLink'            => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
-					'upgradeLinkFromTc'      => tsdk_utmify( Pro::get_url(), 'templatecloud' ),
-					'tcUpgradeLink'          => tsdk_utmify( 'https://themeisle.com/plugins/templates-cloud/', 'templatecloud', 'otter-blocks' ),
-					'tcDocs'                 => 'https://docs.themeisle.com/article/2191-templates-cloud-collections',
-					'docsLink'               => Pro::get_docs_url(),
-					'showFeedbackNotice'     => $this->should_show_feedback_notice(),
-					'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
-					'hasOnboarding'          => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
-					'days_since_install'     => round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
-					'rootUrl'                => get_site_url(),
-					'neveThemePreviewUrl'    => esc_url(
-						add_query_arg(
-							array(
-								'theme' => 'neve',
-							),
-							admin_url( 'theme-install.php' )
-						)
-					),
-					'neveThemeActivationUrl' => esc_url(
-						add_query_arg(
-							array(
-								'action'     => 'activate',
-								'stylesheet' => 'neve',
-								'_wpnonce'   => wp_create_nonce( 'switch-theme_neve' ),
-							),
-							admin_url( 'themes.php' )
-						)
-					),
-					'neveDashboardUrl'       => esc_url(
-						add_query_arg(
-							array(
-								'page' => 'neve-welcome',
-							),
-							admin_url( 'admin.php' )
-						)
-					),
-					'neveInstalled'          => defined( 'NEVE_VERSION' ),
-				)
-			)
+			$this->get_dashboard_data()
 		);
+
+		$this->load_survey();
+	}
+
+	/**
+	 * Get the dashboard data to store in global object.
+	 *
+	 * @return array
+	 */
+	public function get_dashboard_data() {
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
+		$offer         = new LimitedOffers();
+
+		$global_data = array(
+			'version'                => OTTER_BLOCKS_VERSION,
+			'assetsPath'             => OTTER_BLOCKS_URL . 'assets/',
+			'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
+			'hasPro'                 => Pro::is_pro_installed(),
+			'upgradeLink'            => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ) ),
+			'upgradeLinkFromTc'      => tsdk_utmify( Pro::get_url(), 'templatecloud' ),
+			'tcUpgradeLink'          => tsdk_utmify( 'https://themeisle.com/plugins/templates-cloud/', 'templatecloud', 'otter-blocks' ),
+			'tcDocs'                 => 'https://docs.themeisle.com/article/2191-templates-cloud-collections',
+			'docsLink'               => Pro::get_docs_url(),
+			'showFeedbackNotice'     => $this->should_show_feedback_notice(),
+			'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
+			'hasOnboarding'          => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
+			'days_since_install'     => (int) round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
+			'rootUrl'                => get_site_url(),
+			'neveThemePreviewUrl'    => esc_url(
+				add_query_arg(
+					array(
+						'theme' => 'neve',
+					),
+					admin_url( 'theme-install.php' )
+				)
+			),
+			'neveThemeActivationUrl' => esc_url(
+				add_query_arg(
+					array(
+						'action'     => 'activate',
+						'stylesheet' => 'neve',
+						'_wpnonce'   => wp_create_nonce( 'switch-theme_neve' ),
+					),
+					admin_url( 'themes.php' )
+				)
+			),
+			'neveDashboardUrl'       => esc_url(
+				add_query_arg(
+					array(
+						'page' => 'neve-welcome',
+					),
+					admin_url( 'admin.php' )
+				)
+			),
+			'neveInstalled'          => defined( 'NEVE_VERSION' ),
+		);
+
+		return apply_filters( 'otter_dashboard_data', $global_data );
 	}
 
 	/**
@@ -721,6 +731,18 @@ class Dashboard {
 
 		</div>
 		<?php
+	}
+
+	/**
+	 * Load the Formbricks deps from SDK to initiate the survey.
+	 */
+	private function load_survey() {
+		$survey_handler = apply_filters( 'themeisle_sdk_dependency_script_handler', 'survey' );
+		if ( empty( $survey_handler ) ) {
+			return;
+		}
+
+		do_action( 'themeisle_sdk_dependency_enqueue_script', 'survey' );
 	}
 
 	/**

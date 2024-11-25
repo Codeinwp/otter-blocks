@@ -69,6 +69,7 @@
 				border: 0px;
 				transition: background-color 0.15s linear;
 				max-width: max-content;
+				white-space: normal !important;
 
 				@media ( min-width:640px ) and ( max-width: 1024px ) {
 					padding: var(--btn-pad-tablet);

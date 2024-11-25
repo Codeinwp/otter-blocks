@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: block, blocks, gutenberg, gutenberg blocks, page builder
 Requires at least: 6.2
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.6
 Stable tag: trunk
 License: GPLv3
@@ -365,10 +365,11 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
-##### [Version 3.0.5](https://github.com/Codeinwp/otter-blocks/compare/v3.0.4...v3.0.5) (2024-10-30)
+##### [Version 3.0.7](https://github.com/Codeinwp/otter-blocks/compare/v3.0.6...v3.0.7) (2024-11-21)
 
-- Improve strings structure for translation workflow
 - Enhanced security
-- Update internal dependencies
+
+
+
 
 [See changelog for all versions](https://github.com/Codeinwp/otter-blocks/blob/master/CHANGELOG.md).

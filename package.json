@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "3.0.5",
+	"version": "3.0.7",
 	"description": "Otter – Page Builder Blocks & Extensions for Gutenberg",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
@@ -64,7 +64,6 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
-		"@formbricks/js": "^2.2.0",
 		"@wordpress/icons": "^9.46.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.5.1",
@@ -80,7 +79,7 @@
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-replace-textdomain": "^1.0.35",
-		"@playwright/test": "^1.48.1",
+		"@playwright/test": "^1.48.2",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/exec": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
