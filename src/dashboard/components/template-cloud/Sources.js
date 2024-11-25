@@ -10,7 +10,8 @@ const Sources = ({ sourcesData, setSources, isSyncing }) => {
 	const [ error, setError ] = useState('');
 
 	const deleteSource = (key) => {
-		const confirm = window.confirm(__('Are you sure you want to delete this source?', 'otter-blocks'));
+		// eslint-disable-next-line no-alert
+		const confirm = confirm(__('Are you sure you want to delete this source?', 'otter-blocks'));
 
 		if (!confirm) {
 			return;
