@@ -54,7 +54,7 @@ const AddSourceForm = ({ setSources, onCancel }) => {
 				type="text"
 				label={__('API URL', 'otter-blocks')}
 				value={apiURL}
-				placeholder={'https://example.com/wp-json'}
+				placeholder="https://example.com/wp-json"
 				disabled={isSaving}
 				onChange={value => setApiURL(value)}
 			/>
