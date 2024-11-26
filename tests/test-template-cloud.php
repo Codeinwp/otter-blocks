@@ -2,7 +2,7 @@
 
 
 use ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server;
-use ThemeIsle\GutenbergBlocks\Template_Cloud;
+use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 
 class Test_Template_Cloud extends WP_UnitTestCase {
 	private $template_cloud;

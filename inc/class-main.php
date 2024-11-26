@@ -83,7 +83,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Email',
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Prompt_Server',
-			'\ThemeIsle\GutenbergBlocks\Template_Cloud',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud',
 			'\ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server',
 		);
 

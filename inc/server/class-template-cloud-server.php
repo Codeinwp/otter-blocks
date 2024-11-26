@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
-use ThemeIsle\GutenbergBlocks\Template_Cloud;
+use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 use WP_REST_Request;
 use WP_REST_Response;
 

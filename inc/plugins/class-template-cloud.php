@@ -5,7 +5,7 @@
  * @package ThemeIsle
  */
 
-namespace ThemeIsle\GutenbergBlocks;
+namespace ThemeIsle\GutenbergBlocks\Plugins;
 
 /**
  * Class Template Cloud

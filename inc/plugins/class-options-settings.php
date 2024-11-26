@@ -8,7 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server;
-use ThemeIsle\GutenbergBlocks\Template_Cloud;
+use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 
 /**
  * Class Options_Settings
