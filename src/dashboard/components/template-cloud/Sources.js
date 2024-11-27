@@ -11,7 +11,7 @@ const Sources = ({ sourcesData, setSources, isSyncing }) => {
 
 	const deleteSource = (key) => {
 		// eslint-disable-next-line no-alert
-		const confirm = confirm(__('Are you sure you want to delete this source?', 'otter-blocks'));
+		const confirm = window.confirm(__('Are you sure you want to delete this source?', 'otter-blocks'));
 
 		if (!confirm) {
 			return;
