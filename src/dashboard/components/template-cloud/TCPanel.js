@@ -1,5 +1,5 @@
 import { Button, ExternalLink, Notice, PanelBody } from '@wordpress/components';
-import { useEffect, useState, createInterpolateElement } from '@wordpress/element';
+import { useEffect, useState, createInterpolateElement, useRef } from '@wordpress/element';
 import { plus, rotateRight } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
@@ -16,12 +16,27 @@ const TCPanel = () => {
 	const [ isAdding, setIsAdding ] = useState(false);
 	const [ status, setStatus ] = useState(STATUSES.NONE);
 	const [ syncErrors, setSyncErrors ] = useState([]);
-
+	const [ shouldOpen, setShouldOpen ] = useState(false);
+	const panelRef = useRef();
 	const { createNotice } = useDispatch('core/notices');
 
 	useEffect(() => {
 		setSources(getOption('themeisle_template_cloud_sources'));
 	}, [ getOption('themeisle_template_cloud_sources') ]);
+
+
+	useEffect(() => {
+		const hasURLParam = new URLSearchParams(window.location.search).get('scrollTo') === 'tc';
+
+		if (hasURLParam) {
+			setShouldOpen(true);
+
+			if (panelRef.current) {
+				panelRef.current.scrollIntoView({ behavior: 'smooth' });
+			}
+		}
+
+	}, [ panelRef.current ]);
 
 	const syncSources = () => {
 		setStatus(STATUSES.SYNCING);
@@ -65,8 +80,9 @@ const TCPanel = () => {
 
 	return <>
 		<PanelBody
+			ref={panelRef}
 			title={__('Template Cloud', 'otter-blocks')}
-			initialOpen={false}
+			initialOpen={shouldOpen}
 		>
 			<div className="tc-panel-content-wrap">
 				{sources.length < 1 && !isAdding && (

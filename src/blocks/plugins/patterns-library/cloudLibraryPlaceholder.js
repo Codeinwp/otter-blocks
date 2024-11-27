@@ -16,7 +16,7 @@ export default () => (
 		<br/>
 
 		<Button
-			href={`${window.themeisleGutenberg.optionsPath}#integrations`}
+			href={`${window.themeisleGutenberg.optionsPath}&scrollTo=tc#integrations`}
 			variant='link'
 		>
 			{__('Go to settings to add sources', 'otter-blocks')}
