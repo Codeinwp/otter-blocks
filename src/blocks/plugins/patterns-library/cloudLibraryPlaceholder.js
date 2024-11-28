@@ -9,7 +9,7 @@ export default () => (
 		<h2>{__('Add External Sources', 'otter-blocks')}</h2>
 
 		<div>
-			<p>{__('Import templates from any site using Templates Cloud.', 'otter-blocks')}</p>
+			<p>{__('Import templates from any site using Templates Cloud. Free Sources included.', 'otter-blocks')}</p>
 			<p>{__('Share patterns between your own sites.', 'otter-blocks')}</p>
 		</div>
 
