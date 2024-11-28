@@ -947,6 +947,62 @@
 	}
 }
 
+.tc-panel-content-wrap {
+	padding: 20px 10px 10px;
+
+	.description {
+		color: #757575;
+		font-size: 12px;
+		margin: 15px 0 0;
+	}
+}
+
+.tc-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 25px;
+
+	thead {
+		font-weight: 500;
+		font-size: 14px;
+	}
+
+	tr {
+		border-bottom: 1px solid #e2e4e7;
+	}
+
+	td {
+		padding: 5px 10px;
+
+		&:last-child {
+			text-align: right;
+			padding-right: 0;
+		}
+
+		&:first-child {
+			padding-left: 0;
+		}
+	}
+
+	button.is-destructive {
+		--wp-components-color-accent: #f84848;
+		--wp-components-color-accent-darker-10: #d93838;
+	}
+}
+
+.tc-sources-empty {
+	text-align: center;
+	padding: 20px;
+	width: 100%;
+	border: 2px dashed #e2e4e7;
+	border-radius: 5px;
+
+	h4 {
+		margin-top: 15px;
+		font-size: 20px;
+	}
+}
+
 @keyframes otter-neve-rotation {
 	0% {
 		transform: rotate(0deg);

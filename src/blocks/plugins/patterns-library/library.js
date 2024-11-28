@@ -28,7 +28,7 @@ import {
 	useState
 } from '@wordpress/element';
 
-import { grid } from '@wordpress/icons';
+import { external, grid, Icon } from '@wordpress/icons';
 
 /**
  * Internal dependencies.
@@ -36,6 +36,9 @@ import { grid } from '@wordpress/icons';
 import { insertBlockBelow } from '../../helpers/block-utility';
 import Template from './template';
 import Preview from './preview';
+import CloudLibraryPlaceholder from './cloudLibraryPlaceholder';
+
+const CLOUD_EMPTY_CATEGORY = 'cloud-empty';
 
 const Library = ({
 	onClose
@@ -69,6 +72,7 @@ const Library = ({
 	const {
 		patterns,
 		categories,
+		tcCategories,
 		isResolvingPatterns
 	} = useSelect( ( select ) => {
 		const {
@@ -81,9 +85,13 @@ const Library = ({
 
 		const allCategories = getBlockPatternCategories();
 
-		const patternCategories = [ ...new Set( patterns.flatMap( pattern => pattern.categories ) ) ];
+		const patternCategories = [ ...new Set( patterns.flatMap( pattern => pattern.categories.filter( category => {
+			return ! category.startsWith( 'ti-tc-' );
+		} ) ) ) ];
+		const tcPatternCategories = [ ...new Set( patterns.flatMap( pattern => pattern.categories.filter( category => { return category.startsWith( 'ti-tc-' ); } ) ) ) ];
 
 		const categories = [ ...allCategories.filter( category => patternCategories.includes( category?.name ) ) ];
+		const tcCategories = [ ...allCategories.filter( category => tcPatternCategories.includes( category?.name ) ) ];
 
 		categories.forEach( category => {
 			if ( 'otter-blocks' === category?.name ) {
@@ -126,7 +134,8 @@ const Library = ({
 		categories.splice( allCategoryIndex + 1, 0, ...packCategories );
 
 		return {
-			patterns: patterns.filter( pattern => pattern.categories.includes( 'otter-blocks' ) ),
+			patterns,
+			tcCategories,
 			categories,
 			isResolvingPatterns: isResolving( 'core', 'getBlockPatterns' ) || isResolving( 'core', 'getBlockPatternCategories' )
 		};
@@ -204,6 +213,16 @@ const Library = ({
 							{ __( 'My Favorites', 'otter-blocks' ) }
 						</Button>
 
+						{tcCategories.length < 1 && (
+							<Button
+								icon="open-folder"
+								isPressed={ 'cloud-empty' === selectedCategory }
+								onClick={ () => setSelectedCategory( CLOUD_EMPTY_CATEGORY ) }
+							>
+								{ __( 'Cloud Libraries', 'otter-blocks' ) }
+							</Button>
+						) }
+
 						{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 							<Button
 								icon="lock"
@@ -211,8 +230,31 @@ const Library = ({
 								target="_blank"
 							>
 								{ __( 'Premium Designs', 'otter-blocks' ) }
+								<Icon icon={external} size={15} />
 							</Button>
 						) }
+
+
+						{tcCategories.length > 0 && (
+							<>
+								<p className="o-library__modal__sidebar__heading">
+									{__('Cloud Libraries', 'otter-blocks')}
+								</p>
+
+								<ul className="o-library__modal__categories">
+									{tcCategories.map(category => (
+										<li key={category.name}>
+											<Button
+												isPressed={selectedCategory === category.name}
+												onClick={() => setSelectedCategory(category.name)}
+											>
+												{category.label}
+											</Button>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
 
 						<p className="o-library__modal__sidebar__heading">
 							{ __( 'Categories', 'otter-blocks' ) }
@@ -233,93 +275,98 @@ const Library = ({
 					</div>
 
 					<div className="o-library__modal__content">
-						<div className="o-library__modal__content__actions">
-							<SearchControl
-								__nextHasNoMarginBottom
-								hideLabelFromVision
-								label={ __( 'Search', 'otter-blocks' ) }
-								value={ searchInput }
-								onChange={ setSearchInput }
-							/>
+						{selectedCategory === CLOUD_EMPTY_CATEGORY && <CloudLibraryPlaceholder />}
+						{selectedCategory !== CLOUD_EMPTY_CATEGORY && (
+							<>
+								<div className="o-library__modal__content__actions">
+									<SearchControl
+										__nextHasNoMarginBottom
+										hideLabelFromVision
+										label={__('Search', 'otter-blocks')}
+										value={searchInput}
+										onChange={setSearchInput}
+									/>
 
-							<DropdownMenu
-								icon={ grid }
-								label={ __( 'Layout', 'otter-blocks' ) }
-								controls={ [
-									{
-										title: __( '2 Column', 'otter-blocks' ),
-										onClick: () => setLayout( 2 )
-									},
-									{
-										title: __( '3 Column', 'otter-blocks' ),
-										onClick: () => setLayout( 3 )
-									},
-									{
-										title: __( '4 Column', 'otter-blocks' ),
-										onClick: () => setLayout( 4 )
+									<DropdownMenu
+										icon={grid}
+										label={__('Layout', 'otter-blocks')}
+										controls={[
+											{
+												title: __('2 Column', 'otter-blocks'),
+												onClick: () => setLayout(2)
+											},
+											{
+												title: __('3 Column', 'otter-blocks'),
+												onClick: () => setLayout(3)
+											},
+											{
+												title: __('4 Column', 'otter-blocks'),
+												onClick: () => setLayout(4)
+											}
+										]}
+									/>
+								</div>
+
+								<div
+									className={
+										classnames(
+											'o-library__modal__content__grid',
+											{
+												[`is-${layout}-column`]: layout
+											}
+										)
 									}
-								] }
-							/>
-						</div>
+								>
+									{!filteredPatterns.length && (
+										<p className="o-library__modal__content__grid__empty">
+											{__('No patterns found.', 'otter-blocks')}
+										</p>
+									)}
 
-						<div
-							className={
-								classnames(
-									'o-library__modal__content__grid',
-									{
-										[`is-${ layout }-column`]: layout
-									}
-								)
-							}
-						>
-							{ ! filteredPatterns.length && (
-								<p className="o-library__modal__content__grid__empty">
-									{ __( 'No patterns found.', 'otter-blocks' ) }
-								</p>
-							) }
-
-							{ filteredPatterns.map( pattern => (
-								<Template
-									key={ pattern.name }
-									onInsert={ () => insertPattern( pattern.content ) }
-									isSelected={ bulkSelection.includes( pattern.name ) }
-									isFavorite={ getFavorites.includes( pattern.name ) }
-									onPreview={ () => setSelectedTemplate( pattern ) }
-									onSelect={ () => onBulkSelection( pattern.name ) }
-									onFavorite={ () => toggleFavorite( pattern.name ) }
-									{ ...pattern }
-								/>
-							) ) }
-						</div>
+									{filteredPatterns.map(pattern => (
+										<Template
+											key={pattern.name}
+											onInsert={() => insertPattern(pattern.content)}
+											isSelected={bulkSelection.includes(pattern.name)}
+											isFavorite={getFavorites.includes(pattern.name)}
+											onPreview={() => setSelectedTemplate(pattern)}
+											onSelect={() => onBulkSelection(pattern.name)}
+											onFavorite={() => toggleFavorite(pattern.name)}
+											{...pattern}
+										/>
+									))}
+								</div>
+							</>
+						)}
 					</div>
 
-					{ !! bulkSelection.length && (
+					{!!bulkSelection.length && (
 						<div className="o-library__modal__footer">
 							<Button
 								variant="tertiary"
-								onClick={ () => setBulkSelection([]) }
+								onClick={() => setBulkSelection([])}
 							>
-								{ __( 'Cancel', 'otter-blocks' ) }
+								{__('Cancel', 'otter-blocks')}
 							</Button>
 
 							<Button
 								variant="primary"
-								onClick={ onBulkInsertion }
+								onClick={onBulkInsertion}
 							>
-								{ __( 'Insert', 'otter-blocks' ) }
+								{__('Insert', 'otter-blocks')}
 							</Button>
 						</div>
-					) }
+					)}
 				</>
-			) }
+			)}
 
-			{ selectedTemplate && (
+			{selectedTemplate && (
 				<Preview
-					onBack={ () => setSelectedTemplate( null ) }
-					onInsert={ () => insertPattern( selectedTemplate.content ) }
-					{ ...selectedTemplate }
+					onBack={() => setSelectedTemplate(null)}
+					onInsert={() => insertPattern(selectedTemplate.content)}
+					{...selectedTemplate}
 				/>
-			) }
+			)}
 		</Modal>
 	);
 };
