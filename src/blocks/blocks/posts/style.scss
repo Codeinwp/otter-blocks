@@ -64,6 +64,7 @@
 	--pag-cont-margin: 10px 0 0 0;
 
 	border: none;
+	max-width: inherit !important;
 
 	&.has-dark-bg {
 		--text-color: #fff;
@@ -230,7 +231,6 @@
 			box-shadow: var( --img-box-shadow );
 			object-fit: cover;
 			object-position: center center;
-			aspect-ratio: var( --image-ratio );
 		}
 	}
 
