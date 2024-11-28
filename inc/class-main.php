@@ -48,7 +48,7 @@ class Main {
 		}
 
 		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
-		
+
 		add_action( 'parse_query', array( $this, 'pagination_support' ) );
 	}
 
@@ -83,6 +83,8 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Email',
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Prompt_Server',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud',
+			'\ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server',
 		);
 
 		$classnames = apply_filters( 'otter_blocks_autoloader', $classnames );
@@ -532,13 +534,13 @@ class Main {
 
 	/**
 	 * Disable canonical redirect to make Posts pagination feature work.
-	 * 
+	 *
 	 * @param \WP_Query $request The query object.
 	 */
 	public function pagination_support( $request ) {
 		if (
-			true === $request->is_singular && 
-			-1 === $request->current_post && 
+			true === $request->is_singular &&
+			-1 === $request->current_post &&
 			true === $request->is_paged &&
 			(
 				! empty( $request->query_vars['page'] ) ||

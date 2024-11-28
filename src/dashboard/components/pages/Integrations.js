@@ -30,6 +30,7 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import useSettings from '../../../blocks/helpers/use-settings.js';
+import TCPanel from '../template-cloud/TCPanel';
 
 const Integrations = () => {
 	const [ getOption, updateOption, status ] = useSettings();
@@ -302,7 +303,7 @@ const Integrations = () => {
 											}
 										);
 
-										
+
 									}
 								} }
 							>
@@ -395,6 +396,8 @@ const Integrations = () => {
 					)
 				}
 			</PanelBody>
+
+			<TCPanel/>
 		</Fragment>
 	);
 };

@@ -114,6 +114,9 @@ declare global {
 			storeURL: string
 			styleExist: string
 			upgradeLink: string
+			upgradeLinkFromTc: string
+			tcUpgradeLink: string
+			tcDocs: string
 			version: string
 		}>>
 		themeisleGutenbergCountdown: {
