@@ -60,7 +60,7 @@ class Dashboard {
 		/**
 		 * Add shortcut to the Blocks tab in Dashboard.
 		 */
-		
+
 
 		add_submenu_page(
 			'otter',
@@ -122,7 +122,7 @@ class Dashboard {
 			}
 		</style>
 		<?php
-	
+
 	}
 
 	/**
@@ -222,7 +222,7 @@ class Dashboard {
 
 	/**
 	 * Get the dashboard data to store in global object.
-	 * 
+	 *
 	 * @return array
 	 */
 	public function get_dashboard_data() {
@@ -236,6 +236,9 @@ class Dashboard {
 			'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
 			'hasPro'                 => Pro::is_pro_installed(),
 			'upgradeLink'            => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ) ),
+			'upgradeLinkFromTc'      => tsdk_utmify( Pro::get_url(), 'templatecloud' ),
+			'tcUpgradeLink'          => tsdk_utmify( 'https://themeisle.com/plugins/templates-cloud/', 'templatecloud', 'otter-blocks' ),
+			'tcDocs'                 => 'https://docs.themeisle.com/article/2191-templates-cloud-collections',
 			'docsLink'               => Pro::get_docs_url(),
 			'showFeedbackNotice'     => $this->should_show_feedback_notice(),
 			'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),

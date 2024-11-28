@@ -1,3 +1,7 @@
+##### [Version 3.0.7](https://github.com/Codeinwp/otter-blocks/compare/v3.0.6...v3.0.7) (2024-11-21)
+
+- Enhanced security
+
 ##### [Version 3.0.6](https://github.com/Codeinwp/otter-blocks/compare/v3.0.5...v3.0.6) (2024-11-12)
 
 - Fixed issue where spaces couldnt be typed directly in the Form blocks Submit button
