@@ -231,6 +231,7 @@
 			box-shadow: var( --img-box-shadow );
 			object-fit: cover;
 			object-position: center center;
+			aspect-ratio: var( --image-ratio );
 		}
 	}
 
