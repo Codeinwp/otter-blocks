@@ -28,7 +28,7 @@ import {
 	useState
 } from '@wordpress/element';
 
-import { grid } from '@wordpress/icons';
+import { external, grid, Icon } from '@wordpress/icons';
 
 /**
  * Internal dependencies.
@@ -213,6 +213,16 @@ const Library = ({
 							{ __( 'My Favorites', 'otter-blocks' ) }
 						</Button>
 
+						{tcCategories.length < 1 && (
+							<Button
+								icon="open-folder"
+								isPressed={ 'cloud-empty' === selectedCategory }
+								onClick={ () => setSelectedCategory( CLOUD_EMPTY_CATEGORY ) }
+							>
+								{ __( 'Cloud Libraries', 'otter-blocks' ) }
+							</Button>
+						) }
+
 						{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 							<Button
 								icon="lock"
@@ -220,6 +230,7 @@ const Library = ({
 								target="_blank"
 							>
 								{ __( 'Premium Designs', 'otter-blocks' ) }
+								<Icon icon={external} size={15} />
 							</Button>
 						) }
 
@@ -244,15 +255,6 @@ const Library = ({
 								</ul>
 							</>
 						)}
-						{tcCategories.length < 1 && (
-							<Button
-								icon="lock"
-								isPressed={ 'cloud-empty' === selectedCategory }
-								onClick={ () => setSelectedCategory( CLOUD_EMPTY_CATEGORY ) }
-							>
-								{ __( 'Cloud Libraries', 'otter-blocks' ) }
-							</Button>
-						) }
 
 						<p className="o-library__modal__sidebar__heading">
 							{ __( 'Categories', 'otter-blocks' ) }
