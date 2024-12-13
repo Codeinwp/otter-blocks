@@ -50,7 +50,7 @@ class WooCommerce_Builder {
 
 		add_meta_box(
 			'otter_woo_builder',
-			__( 'WooCommerce Builder by Otter', 'otter-blocks' ),
+			__( 'WooCommerce Builder by Otter', 'otter-pro' ),
 			array( $this, 'render_metabox' ),
 			'product',
 			'side',
@@ -72,20 +72,20 @@ class WooCommerce_Builder {
 		if ( boolval( $woo_builder_enabled ) ) {
 			?>
 			<div class="clear">
-				<p><?php _e( 'You can go back to the regular editor from this option.', 'otter-blocks' ); ?></p>
+				<p><?php _e( 'You can go back to the regular editor from this option.', 'otter-pro' ); ?></p>
 
 				<a href="<?php echo esc_url( add_query_arg( 'otter-woo-builder', 0 ) ); ?>" class="button button-primary" id="otter-woo-builder">
-					<?php _e( 'Disable WooCommerce Builder', 'otter-blocks' ); ?>
+					<?php _e( 'Disable WooCommerce Builder', 'otter-pro' ); ?>
 				</a>
 			</div>
 			<?php
 		} else {
 			?>
 			<div class="clear">
-				<p><?php _e( 'Use WooCommerce Builder by Otter to build a custom page for your WooCommerce products.', 'otter-blocks' ); ?></p>
+				<p><?php _e( 'Use WooCommerce Builder by Otter to build a custom page for your WooCommerce products.', 'otter-pro' ); ?></p>
 
 				<a href="<?php echo esc_url( add_query_arg( 'otter-woo-builder', 1 ) ); ?>" class="button button-primary" id="otter-woo-builder">
-					<?php _e( 'Enable WooCommerce Builder', 'otter-blocks' ); ?>
+					<?php _e( 'Enable WooCommerce Builder', 'otter-pro' ); ?>
 				</a>
 			</div>
 			<?php
@@ -221,7 +221,7 @@ class WooCommerce_Builder {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 
 	/**
@@ -233,6 +233,6 @@ class WooCommerce_Builder {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 }

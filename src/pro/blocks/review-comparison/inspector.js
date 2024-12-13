@@ -21,19 +21,19 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Color', 'otter-pro' ) }
 				initialOpen={ false }
 				colorSettings={ [
 					{
 						value: attributes.buttonColor,
 						onChange: value => setAttributes({ buttonColor: value }),
-						label: __( 'Button', 'otter-blocks' ),
+						label: __( 'Button', 'otter-pro' ),
 						isShownByDefault: true
 					},
 					{
 						value: attributes.buttonText,
 						onChange: value => setAttributes({ buttonText: value }),
-						label: __( 'Button text', 'otter-blocks' ),
+						label: __( 'Button text', 'otter-pro' ),
 						isShownByDefault: true
 					}
 				] }

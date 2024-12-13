@@ -34,8 +34,8 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 
 registerBlockType( name, {
 	...metadata,
-	title: __( 'Stripe Field', 'otter-blocks' ),
-	description: __( 'A field used for adding Stripe products to the form.', 'otter-blocks' ),
+	title: __( 'Stripe Field', 'otter-pro' ),
+	description: __( 'A field used for adding Stripe products to the form.', 'otter-pro' ),
 	icon,
 	edit,
 	save: () => null,

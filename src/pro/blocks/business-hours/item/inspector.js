@@ -16,25 +16,25 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Color', 'otter-pro' ) }
 				initialOpen={ false }
 				colorSettings={ [
 					{
 						value: attributes.backgroundColor,
 						onChange: backgroundColor => setAttributes({ backgroundColor }),
-						label: __( 'Background', 'otter-blocks' ),
+						label: __( 'Background', 'otter-pro' ),
 						isShownByDefault: true
 					},
 					{
 						value: attributes.labelColor,
 						onChange: labelColor => setAttributes({ labelColor }),
-						label: __( 'Label', 'otter-blocks' ),
+						label: __( 'Label', 'otter-pro' ),
 						isShownByDefault: true
 					},
 					{
 						value: attributes.timeColor,
 						onChange: timeColor => setAttributes({ timeColor }),
-						label: __( 'Time', 'otter-blocks' ),
+						label: __( 'Time', 'otter-pro' ),
 						isShownByDefault: true
 					}
 				] }

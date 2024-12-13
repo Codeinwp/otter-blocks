@@ -36,7 +36,7 @@ const collectedInfo = [
 ];
 
 const helpTextByStatus = {
-	error: __( 'There has been an error. Your feedback couldn\'t be sent.' ),
+	error: __( 'There has been an error. Your feedback couldn\'t be sent.', 'otter-blocks' ),
 	emptyFeedback: __( 'Please provide a feedback before submitting the form.', 'otter-blocks' )
 };
 

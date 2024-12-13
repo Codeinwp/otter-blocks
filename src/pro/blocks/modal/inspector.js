@@ -69,13 +69,13 @@ const Inspector = ({
 		return (
 			<Fragment>
 				<ToggleControl
-					label={ __( 'Show Close Button', 'otter-blocks' ) }
+					label={ __( 'Show Close Button', 'otter-pro' ) }
 					checked={ attributes.showClose }
 					onChange={ () => setAttributes({ showClose: ! attributes.showClose }) }
 				/>
 
 				<ToggleControl
-					label={ __( 'Close on Click Outside', 'otter-blocks' ) }
+					label={ __( 'Close on Click Outside', 'otter-pro' ) }
 					checked={ attributes.outsideClose }
 					onChange={ () => setAttributes({ outsideClose: ! attributes.outsideClose }) }
 				/>
@@ -85,17 +85,17 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			{ applyFilters( 'otter.feedback', '', 'popup-block', __( 'Help us improve this block', 'otter-blocks' ) ) }
+			{ applyFilters( 'otter.feedback', '', 'popup-block', __( 'Help us improve this block', 'otter-pro' ) ) }
 
 			<InspectorHeader
 				value={ tab }
 				options={[
 					{
-						label: __( 'Settings', 'otter-blocks' ),
+						label: __( 'Settings', 'otter-pro' ),
 						value: 'settings'
 					},
 					{
-						label: __( 'Style', 'otter-blocks' ),
+						label: __( 'Style', 'otter-pro' ),
 						value: 'style'
 					}
 				]}
@@ -106,25 +106,25 @@ const Inspector = ({
 				{ 'settings' === tab && (
 					<Fragment>
 						<PanelBody
-							title={ __( 'Modal Settings', 'otter-blocks' )}
+							title={ __( 'Modal Settings', 'otter-pro' )}
 							initialOpen={ true }
 						>
 							<TextControl
-								label={ __( 'Anchor', 'otter-blocks' ) }
-								help={ __( 'You can use this anchor as an anchor link anywhere on the page to open the popup.', 'otter-blocks' ) }
+								label={ __( 'Anchor', 'otter-pro' ) }
+								help={ __( 'You can use this anchor as an anchor link anywhere on the page to open the popup.', 'otter-pro' ) }
 								value={ attributes.anchor }
 								onChange={ anchor => setAttributes({ anchor }) }
 							/>
 							<ToggleControl
-								label={ __( 'Close On Anchor Click', 'otter-blocks' ) }
+								label={ __( 'Close On Anchor Click', 'otter-pro' ) }
 								checked={ attributes.anchorClose }
 								onChange={ () => setAttributes({ anchorClose: ! attributes.anchorClose }) }
 							/>
 
 							{ attributes.anchorClose && (
 								<TextControl
-									label={ __( 'Close Anchor', 'otter-blocks' ) }
-									help={ __( 'You can use this anchor as an anchor link anywhere on the page to close the popup.', 'otter-blocks' ) }
+									label={ __( 'Close Anchor', 'otter-pro' ) }
+									help={ __( 'You can use this anchor as an anchor link anywhere on the page to close the popup.', 'otter-pro' ) }
 									value={ attributes.closeAnchor }
 									onChange={ closeAnchor => setAttributes({ closeAnchor }) }
 								/>
@@ -132,11 +132,11 @@ const Inspector = ({
 						</PanelBody>
 
 						<PanelBody
-							title={ __( 'Modal Position', 'otter-blocks' )}
+							title={ __( 'Modal Position', 'otter-pro' )}
 							initialOpen={ false }
 						>
 							<ResponsiveControl
-								label={ __( 'Screen Type', 'otter-blocks' ) }
+								label={ __( 'Screen Type', 'otter-pro' ) }
 							>
 								<div className="o-position-picker">
 									<AlignmentMatrixControl
@@ -162,10 +162,10 @@ const Inspector = ({
 				{ 'style' === tab && (
 					<Fragment>
 						<PanelBody
-							title={ __( 'Dimensions', 'otter-blocks' ) }
+							title={ __( 'Dimensions', 'otter-pro' ) }
 						>
 							<ResponsiveControl
-								label={ __( 'Width', 'otter-blocks' ) }
+								label={ __( 'Width', 'otter-pro' ) }
 							>
 								<UnitControl
 
@@ -181,14 +181,14 @@ const Inspector = ({
 							</ResponsiveControl>
 
 							<SelectControl
-								label={ __( 'Height', 'otter-blocks' ) }
+								label={ __( 'Height', 'otter-pro' ) }
 								options={ [
 									{
-										label: __( 'Fit Content', 'otter-blocks' ),
+										label: __( 'Fit Content', 'otter-pro' ),
 										value: 'none'
 									},
 									{
-										label: __( 'Custom', 'otter-blocks' ),
+										label: __( 'Custom', 'otter-pro' ),
 										value: 'custom'
 									}
 								] }
@@ -199,7 +199,7 @@ const Inspector = ({
 							{
 								'custom' === attributes.heightMode && (
 									<ResponsiveControl
-										label={ __( 'Custom Height', 'otter-blocks' ) }
+										label={ __( 'Custom Height', 'otter-pro' ) }
 									>
 										<UnitControl
 											value={ responsiveGetAttributes([
@@ -217,7 +217,7 @@ const Inspector = ({
 
 							<ResponsiveControl>
 								<BoxControl
-									label={ __( 'Padding', 'otter-blocks' ) }
+									label={ __( 'Padding', 'otter-pro' ) }
 									values={ responsiveGetAttributes([
 										attributes.padding,
 										attributes.paddingTablet,
@@ -234,41 +234,41 @@ const Inspector = ({
 						</PanelBody>
 
 						<PanelColorSettings
-							title={ __( 'Color', 'otter-blocks' ) }
+							title={ __( 'Color', 'otter-pro' ) }
 							initialOpen={ false }
 							colorSettings={ [
 								{
 									value: attributes.backgroundColor,
 									onChange: backgroundColor => setAttributes({ backgroundColor }),
-									label: __( 'Background', 'otter-blocks' ),
+									label: __( 'Background', 'otter-pro' ),
 									isShownByDefault: false
 								},
 								{
 									value: attributes.closeColor,
 									onChange: closeColor => setAttributes({ closeColor }),
-									label: __( 'Close Button', 'otter-blocks' ),
+									label: __( 'Close Button', 'otter-pro' ),
 									isShownByDefault: false
 								},
 								{
 									value: attributes.overlayColor,
 									onChange: overlayColor => setAttributes({ overlayColor }),
-									label: __( 'Overlay', 'otter-blocks' ),
+									label: __( 'Overlay', 'otter-pro' ),
 									isShownByDefault: false
 								},
 								{
 									value: attributes.borderColor,
 									onChange: borderColor => setAttributes({ borderColor }),
-									label: __( 'Border', 'otter-blocks' ),
+									label: __( 'Border', 'otter-pro' ),
 									isShownByDefault: false
 								}
 							] }
 						/>
 						<PanelBody
-							title={ __( 'Overlay', 'otter-blocks' ) }
+							title={ __( 'Overlay', 'otter-pro' ) }
 							initialOpen={ false }
 						>
 							<RangeControl
-								label={ __( 'Overlay Opacity', 'otter-blocks' ) }
+								label={ __( 'Overlay Opacity', 'otter-pro' ) }
 								value={ attributes.overlayOpacity }
 								initialPosition={ 100 }
 								onChange={ value => setAttributes({ overlayOpacity: value !== undefined ? Number( value ) : undefined }) }
@@ -277,23 +277,23 @@ const Inspector = ({
 						</PanelBody>
 
 						<PanelBody
-							title={ __( 'Close Button', 'otter-blocks' ) }
+							title={ __( 'Close Button', 'otter-pro' ) }
 							initialOpen={ false }
 						>
 							<ToggleControl
-								label={ __( 'Show Close Button', 'otter-blocks' ) }
+								label={ __( 'Show Close Button', 'otter-pro' ) }
 								checked={ attributes.showClose }
 								onChange={ () => setAttributes({ showClose: ! attributes.showClose }) }
 							/>
 							<SelectControl
-								label={ __( 'Position', 'otter-blocks' ) }
+								label={ __( 'Position', 'otter-pro' ) }
 								options={ [
 									{
-										label: __( 'Inside', 'otter-blocks' ),
+										label: __( 'Inside', 'otter-pro' ),
 										value: 'none'
 									},
 									{
-										label: __( 'Outside', 'otter-blocks' ),
+										label: __( 'Outside', 'otter-pro' ),
 										value: 'outside'
 									}
 								] }
@@ -303,11 +303,11 @@ const Inspector = ({
 						</PanelBody>
 
 						<PanelBody
-							title={ __( 'Border', 'otter-blocks' ) }
+							title={ __( 'Border', 'otter-pro' ) }
 							initialOpen={ false }
 						>
 							<BoxControl
-								label={ __( 'Width', 'otter-blocks' ) }
+								label={ __( 'Width', 'otter-pro' ) }
 								values={ attributes.borderWidth ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
 								onChange={ value => {
 									setAttributes({
@@ -318,7 +318,7 @@ const Inspector = ({
 
 							<BoxControl
 								id="o-border-raduis-box"
-								label={ __( 'Radius', 'otter-blocks' ) }
+								label={ __( 'Radius', 'otter-pro' ) }
 								values={ attributes.borderRadius ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
 								onChange={ value => {
 									setAttributes({

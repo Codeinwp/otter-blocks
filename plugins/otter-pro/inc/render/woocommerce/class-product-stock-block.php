@@ -34,7 +34,7 @@ class Product_Stock_Block {
 		$output = wc_get_stock_html( $product );
 
 		if ( empty( $output ) ) {
-			$output = __( 'Your product stock will display here.', 'otter-blocks' );
+			$output = __( 'Your product stock will display here.', 'otter-pro' );
 		}
 		return $output;
 	}

@@ -30,7 +30,7 @@ class Form_Hidden_Block {
 		}
 
 		$id            = isset( $attributes['id'] ) ? esc_attr( $attributes['id'] ) : '';
-		$label         = isset( $attributes['label'] ) ? esc_html( $attributes['label'] ) : __( 'Hidden Field', 'otter-blocks' );
+		$label         = isset( $attributes['label'] ) ? esc_html( $attributes['label'] ) : __( 'Hidden Field', 'otter-pro' );
 		$param_name    = isset( $attributes['paramName'] ) ? esc_attr( $attributes['paramName'] ) : '';
 		$mapped_name   = isset( $attributes['mappedName'] ) ? esc_attr( $attributes['mappedName'] ) : 'field-' . $id;
 		$default_value = isset( $attributes['defaultValue'] ) ? esc_attr( $attributes['defaultValue'] ) : '';

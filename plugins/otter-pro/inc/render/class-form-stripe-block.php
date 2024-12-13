@@ -43,7 +43,7 @@ class Form_Stripe_Block {
 			return sprintf(
 				'<div %1$s><div class="o-stripe-checkout">%2$s</div></div>',
 				get_block_wrapper_attributes(),
-				__( 'An error occurred! Could not retrieve product information!', 'otter-blocks' ) . $this->format_error( $product )
+				__( 'An error occurred! Could not retrieve product information!', 'otter-pro' ) . $this->format_error( $product )
 			);
 		}
 
@@ -59,7 +59,7 @@ class Form_Stripe_Block {
 			return sprintf(
 				'<div %1$s><div class="o-stripe-checkout">%2$s</div></div>',
 				get_block_wrapper_attributes(),
-				__( 'An error occurred! Could not retrieve the price of the product!', 'otter-blocks' ) . $this->format_error( $price )
+				__( 'An error occurred! Could not retrieve the price of the product!', 'otter-pro' ) . $this->format_error( $price )
 			);
 		}
 
@@ -90,7 +90,7 @@ class Form_Stripe_Block {
 	 */
 	private function format_error( $error ) {
 		return defined( 'WP_DEBUG' ) && WP_DEBUG ? (
-			'<span><strong>' . __( 'Error message: ', 'otter-blocks' ) . '</strong> ' . $error->get_error_message() . '</span>'
+			'<span><strong>' . __( 'Error message: ', 'otter-pro' ) . '</strong> ' . $error->get_error_message() . '</span>'
 		) : '';
 	}
 }

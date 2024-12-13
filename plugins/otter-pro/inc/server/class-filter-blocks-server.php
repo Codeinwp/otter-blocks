@@ -57,7 +57,7 @@ class Filter_Blocks_Server {
 						'block' => array(
 							'type'        => 'string',
 							'required'    => true,
-							'description' => __( 'Block namespace.', 'otter-blocks' ),
+							'description' => __( 'Block namespace.', 'otter-pro' ),
 						),
 					),
 					'permission_callback' => function () {
@@ -161,7 +161,7 @@ class Filter_Blocks_Server {
 
 						$post_block['attrs']['links'] = array(
 							array(
-								'label'       => __( 'Buy Now', 'otter-blocks' ),
+								'label'       => __( 'Buy Now', 'otter-pro' ),
 								'href'        => method_exists( $product, 'get_product_url' ) ? $product->get_product_url() : $product->get_permalink(),
 								'isSponsored' => method_exists( $product, 'get_product_url' ),
 							),
@@ -216,7 +216,7 @@ class Filter_Blocks_Server {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 
 	/**
@@ -228,6 +228,6 @@ class Filter_Blocks_Server {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 }

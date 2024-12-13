@@ -26,10 +26,10 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Settings', 'otter-pro' ) }
 			>
 				<RangeControl
-					label={ __( 'Gap', 'otter-blocks' ) }
+					label={ __( 'Gap', 'otter-pro' ) }
 					value={ attributes.gap }
 					onChange={ value => setAttributes({ gap: Number( value ) }) }
 					min={ 0 }
@@ -37,7 +37,7 @@ const Inspector = ({
 				/>
 
 				<RangeControl
-					label={ __( 'Title Font Size', 'otter-blocks' ) }
+					label={ __( 'Title Font Size', 'otter-pro' ) }
 					value={ attributes.titleFontSize }
 					onChange={ value => setAttributes({ titleFontSize: Number( value ) }) }
 					step={ 0.1 }
@@ -46,7 +46,7 @@ const Inspector = ({
 				/>
 
 				<RangeControl
-					label={ __( 'Items Font Size', 'otter-blocks' ) }
+					label={ __( 'Items Font Size', 'otter-pro' ) }
 					value={ attributes.itemsFontSize }
 					onChange={ value => setAttributes({ itemsFontSize: Number( value ) }) }
 					step={ 0.1 }
@@ -55,7 +55,7 @@ const Inspector = ({
 				/>
 
 				<RangeControl
-					label={ __( 'Border Radius', 'otter-blocks' ) }
+					label={ __( 'Border Radius', 'otter-pro' ) }
 					value={ attributes.borderRadius }
 					onChange={ value => setAttributes({ borderRadius: Number( value ) }) }
 					step={ 0.1 }
@@ -64,7 +64,7 @@ const Inspector = ({
 				/>
 
 				<RangeControl
-					label={ __( 'Border Width', 'otter-blocks' ) }
+					label={ __( 'Border Width', 'otter-pro' ) }
 					value={ attributes.borderWidth }
 					onChange={ value => setAttributes({ borderWidth: Number( value ) }) }
 					step={ 0.1 }
@@ -74,25 +74,25 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Color', 'otter-pro' ) }
 				initialOpen={ false }
 				colorSettings={ [
 					{
 						value: attributes.titleColor,
 						onChange: titleColor => setAttributes({ titleColor }),
-						label: __( 'Title', 'otter-blocks' ),
+						label: __( 'Title', 'otter-pro' ),
 						isShownByDefault: true
 					},
 					{
 						value: attributes.backgroundColor,
 						onChange: backgroundColor => setAttributes({ backgroundColor }),
-						label: __( 'Background', 'otter-blocks' ),
+						label: __( 'Background', 'otter-pro' ),
 						isShownByDefault: true
 					},
 					{
 						value: attributes.borderColor,
 						onChange: borderColor => setAttributes({ borderColor }),
-						label: __( 'Border', 'otter-blocks' ),
+						label: __( 'Border', 'otter-pro' ),
 						isShownByDefault: true
 					}
 				] }

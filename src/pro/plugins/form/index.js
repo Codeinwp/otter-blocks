@@ -34,9 +34,9 @@ const AutoresponderBody = ({ formOptions, setFormOption }) => {
 };
 
 const helpMessages = {
-	'database': __( 'Save form submissions to the database. You can see the submissions in Otter Blocks > Form Submissions on Dashboard Panel', 'otter-blocks' ),
-	'email': __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-blocks' ),
-	'database-email': __( 'Save the submissions to the database and notify also via email.', 'otter-blocks' )
+	'database': __( 'Save form submissions to the database. You can see the submissions in Otter Blocks > Form Submissions on Dashboard Panel', 'otter-pro' ),
+	'email': __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-pro' ),
+	'database-email': __( 'Save the submissions to the database and notify also via email.', 'otter-pro' )
 };
 
 /**
@@ -57,13 +57,13 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 
 			<ToolsPanelItem
 				hasValue={ () => undefined !== formOptions.submissionsSaveLocation }
-				label={ __( 'Submissions', 'otter-blocks' ) }
+				label={ __( 'Submissions', 'otter-pro' ) }
 				onDeselect={ () => setFormOption({ submissionsSaveLocation: undefined }) }
 				isShownByDefault={ true }
 			>
 				{Boolean( window.otterPro.isActive ) ? (
 					<SelectControl
-						label={ __( 'Save Location', 'otter-blocks' ) }
+						label={ __( 'Save Location', 'otter-pro' ) }
 						value={ formOptions.submissionsSaveLocation ?? 'database-email' }
 						onChange={ submissionsSaveLocation => {
 							window.oTrk?.set( `${attributes.id}_save`, { feature: 'form-storing', featureComponent: 'save-location', featureValue: submissionsSaveLocation, groupID: attributes.id });
@@ -71,9 +71,9 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 						} }
 						options={
 							[
-								{ label: __( 'Database', 'otter-blocks' ), value: 'database' },
-								{ label: __( 'Email Only', 'otter-blocks' ), value: 'email' },
-								{ label: __( 'Database and Email', 'otter-blocks' ), value: 'database-email' }
+								{ label: __( 'Database', 'otter-pro' ), value: 'database' },
+								{ label: __( 'Email Only', 'otter-pro' ), value: 'email' },
+								{ label: __( 'Database and Email', 'otter-pro' ), value: 'database-email' }
 							]
 						}
 						help={ helpMessages?.[formOptions?.submissionsSaveLocation] ?? helpMessages.database }
@@ -82,11 +82,11 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 						<OtterNotice
 							notice={__(
 								'You need to activate Otter Pro.',
-								'otter-blocks'
+								'otter-pro'
 							)}
 							instructions={__(
 								'You need to activate your Otter Pro license to use Pro features of Form Block.',
-								'otter-blocks'
+								'otter-pro'
 							)}
 						/>
 					</div>
@@ -98,16 +98,16 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 					undefined !== formOptions.autoresponder?.subject ||
 					undefined !== formOptions.autoresponder?.body
 				}
-				label={__( 'Autoresponder', 'otter-blocks' )}
+				label={__( 'Autoresponder', 'otter-pro' )}
 				onDeselect={() => setFormOption({ autoresponder: undefined })}
 			>
 				{Boolean( window.otterPro.isActive ) ? (
 					<>
 						<TextControl
-							label={__( 'Autoresponder Subject', 'otter-blocks' )}
+							label={__( 'Autoresponder Subject', 'otter-pro' )}
 							placeholder={__(
 								'Confirmation of your subscription',
-								'otter-blocks'
+								'otter-pro'
 							)}
 							value={formOptions.autoresponder?.subject}
 							onChange={( subject ) => {
@@ -121,7 +121,7 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 							}}
 							help={__(
 								'Enter the subject of the autoresponder email.',
-								'otter-blocks'
+								'otter-pro'
 							)}
 						/>
 
@@ -134,7 +134,7 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 							config?.showAutoResponderNotice && (
 								<Notice isDismissible={false} status={'info'}>
 									{
-										__( 'In order for Autoresponder to work, you need to have at least one Email field in Form.', 'otter-blocks' )
+										__( 'In order for Autoresponder to work, you need to have at least one Email field in Form.', 'otter-pro' )
 									}
 								</Notice>
 							)
@@ -146,11 +146,11 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 						<OtterNotice
 							notice={__(
 								'You need to activate Otter Pro.',
-								'otter-blocks'
+								'otter-pro'
 							)}
 							instructions={__(
 								'You need to activate your Otter Pro license to use Pro features of Form Block.',
-								'otter-blocks'
+								'otter-pro'
 							)}
 						/>
 					</div>
@@ -158,7 +158,7 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 			</ToolsPanelItem>
 			<ToolsPanelItem
 				hasValue={() => formOptions?.webhookId }
-				label={__( 'Webhook', 'otter-blocks' )}
+				label={__( 'Webhook', 'otter-pro' )}
 				onDeselect={() => setFormOption({ webhookId: undefined })}
 			>
 				{Boolean( window.otterPro.isActive ) ? (
@@ -178,11 +178,11 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 						<OtterNotice
 							notice={__(
 								'You need to activate Otter Pro.',
-								'otter-blocks'
+								'otter-pro'
 							)}
 							instructions={__(
 								'You need to activate your Otter Pro license to use Pro features of Form Block.',
-								'otter-blocks'
+								'otter-pro'
 							)}
 						/>
 					</div>
@@ -257,8 +257,8 @@ const FormFileInspector = ( Template, {
 			<Fragment>
 				{ Template }
 				<OtterNotice
-					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
+					notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
+					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-pro' ) }
 				/>
 			</Fragment>
 		);
@@ -267,7 +267,7 @@ const FormFileInspector = ( Template, {
 	return (
 		<Fragment>
 			<TextControl
-				label={ __( 'Label', 'otter-blocks' ) }
+				label={ __( 'Label', 'otter-pro' ) }
 				value={ attributes.label }
 				onChange={ label => setAttributes({ label }) }
 			/>
@@ -277,7 +277,7 @@ const FormFileInspector = ( Template, {
 			<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
 
 			<TextControl
-				label={ __( 'Max File Size in MB', 'otter-blocks' ) }
+				label={ __( 'Max File Size in MB', 'otter-pro' ) }
 				type="number"
 				value={ ! isNaN( parseInt( attributes.maxFileSize ) ) ? attributes.maxFileSize : undefined }
 				onChange={ maxFileSize => {
@@ -285,44 +285,44 @@ const FormFileInspector = ( Template, {
 					setSavedState( attributes.id, true );
 					setAttributes({ maxFileSize: maxFileSize ? maxFileSize?.toString() : undefined });
 				} }
-				help={ __( 'You may need to contact your hosting provider to increase file sizes.', 'otter-blocks' ) }
+				help={ __( 'You may need to contact your hosting provider to increase file sizes.', 'otter-pro' ) }
 			/>
 
 			<FormTokenField
-				label={ __( 'Allowed File Types', 'otter-blocks' ) }
+				label={ __( 'Allowed File Types', 'otter-pro' ) }
 				value={ attributes.allowedFileTypes }
 				onChange={ allowedFileTypes => {
 					window.oTrk?.set( `${attributes.id}_type`, { feature: 'form-file', featureComponent: 'file-type', featureValue: allowedFileTypes, groupID: attributes.id });
 					setSavedState( attributes.id, true );
 					setAttributes({ allowedFileTypes: allowedFileTypes ? allowedFileTypes.map( replaceJPGWithJPEG ) : undefined });
 				} }
-				help={ __( 'Add the allowed files types that can be loaded. E.g.: .png, .mp4, .jpeg, .zip, .pdf. Attention: The host provider might not allow to saving of all type of files.', 'otter-blocks' ) }
+				help={ __( 'Add the allowed files types that can be loaded. E.g.: .png, .mp4, .jpeg, .zip, .pdf. Attention: The host provider might not allow to saving of all type of files.', 'otter-pro' ) }
 				suggestions={ fileTypeSuggestions }
 			/>
 
 			<TextControl
-				label={ __( 'Help Text', 'otter-blocks' ) }
+				label={ __( 'Help Text', 'otter-pro' ) }
 				value={ attributes.helpText }
 				onChange={ helpText => setAttributes({ helpText }) }
 			/>
 
 			<ToggleControl
-				label={ __( 'Required', 'otter-blocks' ) }
-				help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
+				label={ __( 'Required', 'otter-pro' ) }
+				help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-pro' ) }
 				checked={ attributes.isRequired }
 				onChange={ isRequired => setAttributes({ isRequired }) }
 			/>
 
 			<TextControl
-				label={ __( 'Mapped Name', 'otter-blocks' ) }
+				label={ __( 'Mapped Name', 'otter-pro' ) }
 				help={ mappedNameInfo }
 				value={ attributes.mappedName }
 				onChange={ mappedName => setAttributes({ mappedName }) }
-				placeholder={ __( 'photos', 'otter-blocks' ) }
+				placeholder={ __( 'photos', 'otter-pro' ) }
 			/>
 
 			<ToggleControl
-				label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
+				label={ __( 'Allow multiple file uploads', 'otter-pro' ) }
 				checked={ Boolean( attributes.multipleFiles ) }
 				onChange={ multipleFiles => {
 					window.oTrk?.add({ feature: 'form-file', featureComponent: 'enable-multiple-file', groupID: attributes.id });
@@ -334,7 +334,7 @@ const FormFileInspector = ( Template, {
 			{
 				attributes.multipleFiles && (
 					<TextControl
-						label={ __( 'Maximum number of files', 'otter-blocks' ) }
+						label={ __( 'Maximum number of files', 'otter-pro' ) }
 						type="number"
 						value={ ! isNaN( parseInt( attributes.maxFilesNumber ) ) ? ( attributes.maxFilesNumber ) : undefined }
 						onChange={ maxFilesNumber => {
@@ -342,14 +342,14 @@ const FormFileInspector = ( Template, {
 							setSavedState( attributes.id, true );
 							setAttributes({ maxFilesNumber: maxFilesNumber ? maxFilesNumber?.toString() : undefined });
 						} }
-						help={ __( 'By default, only 10 files are allowed to load.', 'otter-blocks' )}
+						help={ __( 'By default, only 10 files are allowed to load.', 'otter-pro' )}
 					/>
 				)
 			}
 
 			<ToggleControl
-				label={ __( 'Save to Media Library', 'otter-blocks' ) }
-				help={ __( 'If enabled, the files will be saved to Media Library instead of adding them as attachments to email.', 'otter-blocks' ) }
+				label={ __( 'Save to Media Library', 'otter-pro' ) }
+				help={ __( 'If enabled, the files will be saved to Media Library instead of adding them as attachments to email.', 'otter-pro' ) }
 				checked={ 'media-library' === attributes.saveFiles }
 				onChange={ value => {
 					window.oTrk?.add({ feature: 'form-file', featureComponent: 'enable-media-saving', groupID: attributes.id });

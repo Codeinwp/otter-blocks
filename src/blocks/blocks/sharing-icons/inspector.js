@@ -53,7 +53,7 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelColorSettings
-				title={ __( 'Color Settings' ) }
+				title={ __( 'Color Settings', 'otter-blocks' ) }
 				className='ott-color-controls'
 				initialOpen={ false }
 				colorSettings={

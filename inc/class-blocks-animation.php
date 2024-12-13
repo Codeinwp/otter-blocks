@@ -251,7 +251,7 @@ class Blocks_Animation {
 			true
 		);
 
-		wp_set_script_translations( 'otter-animation-welcome-notice-scripts', 'otter-blocks' );
+		wp_set_script_translations( 'otter-animation-welcome-notice-scripts', 'blocks-animation' );
 
 		wp_localize_script(
 			'otter-animation-welcome-notice-scripts',
@@ -272,9 +272,9 @@ class Blocks_Animation {
 						admin_url( 'plugins.php' )
 					)
 				),
-				'activating'    => __( 'Activating', 'otter-blocks' ) . '&hellip;',
-				'installing'    => __( 'Installing', 'otter-blocks' ) . '&hellip;',
-				'done'          => __( 'Done', 'otter-blocks' ),
+				'activating'    => __( 'Activating', 'blocks-animation' ) . '&hellip;',
+				'installing'    => __( 'Installing', 'blocks-animation' ) . '&hellip;',
+				'done'          => __( 'Done', 'blocks-animation' ),
 			)
 		);
 
@@ -290,14 +290,14 @@ class Blocks_Animation {
 		$notice_html .= sprintf(
 			/* translators: %1$s: Add-on Blocks, %2$s: Enhanced Animations, %3$s: Visibility Conditions */
 			__( 'Power Up Your Site with %1$s, %2$s, %3$s, and more!', 'otter-blocks' ), 
-			'<span>' . __( 'Add-on Blocks', 'otter-blocks' ) . '</span>', 
-			'<span>' . __( 'Enhanced Animations', 'otter-blocks' ) . '</span>', 
-			'<span>' . __( 'Visibility Conditions', 'otter-blocks' ) . '</span>' 
+			'<span>' . __( 'Add-on Blocks', 'blocks-animation' ) . '</span>', 
+			'<span>' . __( 'Enhanced Animations', 'blocks-animation' ) . '</span>', 
+			'<span>' . __( 'Visibility Conditions', 'blocks-animation' ) . '</span>' 
 		);
 
 		$notice_html .= '</h1>';
 
-		$notice_html .= '<p class="description">' . __( 'Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor (also known as Gutenberg) for a better page building experience without the need for traditional page builders.', 'otter-blocks' ) . '</p>';
+		$notice_html .= '<p class="description">' . __( 'Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor (also known as Gutenberg) for a better page building experience without the need for traditional page builders.', 'blocks-animation' ) . '</p>';
 
 		$notice_html .= '<div class="actions">';
 
@@ -307,14 +307,14 @@ class Blocks_Animation {
 		$notice_html .= '<span class="text">';
 		$notice_html .= 'installed' === $otter_status ?
 			/* translators: %s: Otter Blocks */
-			sprintf( __( 'Activate %s', 'otter-blocks' ), 'Otter Blocks' ) :
+			sprintf( __( 'Activate %s', 'blocks-animation' ), 'Otter Blocks' ) :
 			/* translators: %s: Otter Blocks */
-			sprintf( __( 'Install & Activate %s', 'otter-blocks' ), 'Otter Blocks' );
+			sprintf( __( 'Install & Activate %s', 'blocks-animation' ), 'Otter Blocks' );
 		$notice_html .= '</span>';
 		$notice_html .= '</button>';
 
 		$notice_html .= '<a href="https://wordpress.org/plugins/otter-blocks/" target="_blank" class="button button-secondary button-hero">';
-		$notice_html .= '<span>' . __( 'Learn More', 'otter-blocks' ) . '</span>';
+		$notice_html .= '<span>' . __( 'blocks-animation', 'otter-blocks' ) . '</span>';
 		$notice_html .= '<span class="dashicons dashicons-external"></span>';
 		$notice_html .= '</a>';
 

@@ -96,15 +96,15 @@ const Edit = ({
 			{ [ 'postDate' ].includes( attributes.type ) && (
 				<Fragment>
 					<SelectControl
-						label={ __( 'Type', 'otter-blocks' ) }
+						label={ __( 'Type', 'otter-pro' ) }
 						value={ attributes.dateType || 'published' }
 						options={ [
 							{
-								label: __( 'Post Published', 'otter-blocks' ),
+								label: __( 'Post Published', 'otter-pro' ),
 								value: 'published'
 							},
 							{
-								label: __( 'Post Modified', 'otter-blocks' ),
+								label: __( 'Post Modified', 'otter-pro' ),
 								value: 'modified'
 							}
 						] }
@@ -112,11 +112,11 @@ const Edit = ({
 					/>
 
 					<SelectControl
-						label={ __( 'Format', 'otter-blocks' ) }
+						label={ __( 'Format', 'otter-pro' ) }
 						value={ attributes.dateFormat || 'default' }
 						options={ [
 							{
-								label: __( 'Default', 'otter-blocks' ),
+								label: __( 'Default', 'otter-pro' ),
 								value: 'default'
 							},
 							...Object.keys( dateFormats ).map( key => ({
@@ -124,7 +124,7 @@ const Edit = ({
 								value: key
 							}) ),
 							{
-								label: __( 'Custom', 'otter-blocks' ),
+								label: __( 'Custom', 'otter-pro' ),
 								value: 'custom'
 							}
 						] }
@@ -133,8 +133,8 @@ const Edit = ({
 
 					{ 'custom' === attributes.dateFormat && (
 						<TextControl
-							label={ __( 'Custom Format', 'otter-blocks' ) }
-							help={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-blocks' ) }</ExternalLink> }
+							label={ __( 'Custom Format', 'otter-pro' ) }
+							help={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-pro' ) }</ExternalLink> }
 							type="text"
 							value={ attributes.dateCustom || '' }
 							onChange={ dateCustom => changeAttributes({ dateCustom }) }
@@ -146,15 +146,15 @@ const Edit = ({
 			{ [ 'postTime' ].includes( attributes.type ) && (
 				<Fragment>
 					<SelectControl
-						label={ __( 'Type', 'otter-blocks' ) }
+						label={ __( 'Type', 'otter-pro' ) }
 						value={ attributes.timeType || 'published' }
 						options={ [
 							{
-								label: __( 'Post Published', 'otter-blocks' ),
+								label: __( 'Post Published', 'otter-pro' ),
 								value: 'published'
 							},
 							{
-								label: __( 'Post Modified', 'otter-blocks' ),
+								label: __( 'Post Modified', 'otter-pro' ),
 								value: 'modified'
 							}
 						] }
@@ -162,11 +162,11 @@ const Edit = ({
 					/>
 
 					<SelectControl
-						label={ __( 'Format', 'otter-blocks' ) }
+						label={ __( 'Format', 'otter-pro' ) }
 						value={ attributes.timeFormat || 'default' }
 						options={ [
 							{
-								label: __( 'Default', 'otter-blocks' ),
+								label: __( 'Default', 'otter-pro' ),
 								value: 'default'
 							},
 							...Object.keys( timeFormats ).map( key => ({
@@ -174,7 +174,7 @@ const Edit = ({
 								value: key
 							}) ),
 							{
-								label: __( 'Custom', 'otter-blocks' ),
+								label: __( 'Custom', 'otter-pro' ),
 								value: 'custom'
 							}
 						] }
@@ -183,8 +183,8 @@ const Edit = ({
 
 					{ 'custom' === attributes.timeFormat && (
 						<TextControl
-							label={ __( 'Custom Format', 'otter-blocks' ) }
-							help={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-blocks' ) }</ExternalLink> }
+							label={ __( 'Custom Format', 'otter-pro' ) }
+							help={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-pro' ) }</ExternalLink> }
 							type="text"
 							value={ attributes.timeCustom || '' }
 							onChange={ timeCustom => changeAttributes({ timeCustom }) }
@@ -196,19 +196,19 @@ const Edit = ({
 			{ 'postTerms' === attributes.type && (
 				<Fragment>
 					<SelectControl
-						label={ __( 'Type', 'otter-blocks' ) }
+						label={ __( 'Type', 'otter-pro' ) }
 						value={ attributes.termType || 'categories' }
 						options={ [
 							{
-								label: __( 'Categories', 'otter-blocks' ),
+								label: __( 'Categories', 'otter-pro' ),
 								value: 'categories'
 							},
 							{
-								label: __( 'Tags', 'otter-blocks' ),
+								label: __( 'Tags', 'otter-pro' ),
 								value: 'tags'
 							},
 							{
-								label: __( 'Custom', 'otter-blocks' ),
+								label: __( 'Custom', 'otter-pro' ),
 								value: 'custom'
 							}
 						] }
@@ -218,9 +218,9 @@ const Edit = ({
 					{
 						'custom' === attributes.termType && (
 							<TextControl
-								label={ __( 'Taxonomy', 'otter-blocks' ) }
+								label={ __( 'Taxonomy', 'otter-pro' ) }
 								type="text"
-								placeholder={ __( 'Enter taxonomy slug', 'otter-blocks' ) }
+								placeholder={ __( 'Enter taxonomy slug', 'otter-pro' ) }
 								value={ attributes.taxonomy }
 								onChange={ taxonomy => changeAttributes({ taxonomy }) }
 							/>
@@ -228,7 +228,7 @@ const Edit = ({
 					}
 
 					<TextControl
-						label={ __( 'Separator', 'otter-blocks' ) }
+						label={ __( 'Separator', 'otter-pro' ) }
 						type="text"
 						value={ attributes.termSeparator || ', ' }
 						onChange={ termSeparator => changeAttributes({ termSeparator }) }
@@ -239,7 +239,7 @@ const Edit = ({
 
 			{ ( 'acf' === attributes.type && Boolean( window.otterPro.hasACF ) ) && (
 				<BaseControl
-					label={ __( 'Meta Key', 'otter-blocks' ) }
+					label={ __( 'Meta Key', 'otter-pro' ) }
 				>
 					{ isLoaded ? (
 						<select
@@ -247,7 +247,7 @@ const Edit = ({
 							onChange={ event => changeAttributes({ metaKey: event.target.value  }) }
 							className="components-select-control__input"
 						>
-							<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
+							<option value="none">{ __( 'Select a field', 'otter-pro' ) }</option>
 
 							{ groups.map( group => {
 								return (
@@ -274,13 +274,13 @@ const Edit = ({
 			) }
 
 			{ ( 'acf' === attributes.type && ! Boolean( window.otterPro.hasACF ) ) && (
-				<p>{ __( 'You need to have Advanced Custom Fields plugin installed to use this feature.', 'otter-blocks' ) }</p>
+				<p>{ __( 'You need to have Advanced Custom Fields plugin installed to use this feature.', 'otter-pro' ) }</p>
 			) }
 
 			{ ([ 'postMeta', 'authorMeta', 'loggedInUserMeta' ].includes( attributes.type ) ) && (
 				<Fragment>
 					<FormTokenField
-						label={ __( 'Custom Meta Key', 'otter-blocks' ) }
+						label={ __( 'Custom Meta Key', 'otter-pro' ) }
 						value={ attributes.metaKey ? [ attributes.metaKey ] : [] }
 						maxLength={ 1 }
 						suggestions={ autocompleteData[ attributes.type ] }
@@ -289,38 +289,38 @@ const Edit = ({
 						__experimentalShowHowTo={ false }
 					/>
 
-					<p>{ __( 'Type your own or select a pre-defined value. Press Enter to confirm.', 'otter-blocks' ) }</p>
+					<p>{ __( 'Type your own or select a pre-defined value. Press Enter to confirm.', 'otter-pro' ) }</p>
 				</Fragment>
 			) }
 
 			{ ([ 'queryString' ].includes( attributes.type ) ) && (
 				<Fragment>
 					<TextControl
-						label={ __( 'Parameter', 'otter-blocks' ) }
-						placeholder={ __( 'A query string parameter from your URL, ie utm_source.', 'otter-blocks' ) }
+						label={ __( 'Parameter', 'otter-pro' ) }
+						placeholder={ __( 'A query string parameter from your URL, ie utm_source.', 'otter-pro' ) }
 						type="text"
 						value={ attributes.parameter }
 						onChange={ parameter => changeAttributes({ parameter }) }
 					/>
 
 					<SelectControl
-						label={ __( 'Format', 'otter-blocks' ) }
+						label={ __( 'Format', 'otter-pro' ) }
 						value={ attributes.format || 'default' }
 						options={ [
 							{
-								label: __( 'Default', 'otter-blocks' ),
+								label: __( 'Default', 'otter-pro' ),
 								value: 'default'
 							},
 							{
-								label: __( 'Capitalize', 'otter-blocks' ),
+								label: __( 'Capitalize', 'otter-pro' ),
 								value: 'capitalize'
 							},
 							{
-								label: __( 'Uppercase', 'otter-blocks' ),
+								label: __( 'Uppercase', 'otter-pro' ),
 								value: 'uppercase'
 							},
 							{
-								label: __( 'Lowercase', 'otter-blocks' ),
+								label: __( 'Lowercase', 'otter-pro' ),
 								value: 'lowercase'
 							}
 						] }
@@ -330,7 +330,7 @@ const Edit = ({
 			) }
 
 			{ ( 'country' === attributes.type && ! Boolean( window.otterPro.hasIPHubAPI ) ) && (
-				<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature.', 'otter-blocks' ) }</ExternalLink>
+				<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature.', 'otter-pro' ) }</ExternalLink>
 			) }
 		</Fragment>
 	);

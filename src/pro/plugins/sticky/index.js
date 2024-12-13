@@ -28,8 +28,8 @@ const StickyControls = (
 				{ Controls }
 
 				<Notice
-					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
+					notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
+					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-pro' ) }
 				/>
 			</Fragment>
 		);
@@ -53,22 +53,22 @@ const StickyControls = (
 		<Fragment>
 			{ Boolean( window.otterPro.isExpired ) && (
 				<Notice
-					notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
-					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Sticky Extension.', 'otter-blocks' ) }
+					notice={ __( 'Otter Pro license has expired.', 'otter-pro' ) }
+					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Sticky Extension.', 'otter-pro' ) }
 				/>
 			) }
 
 			<SelectControl
-				label={ __( 'Position', 'otter-blocks' ) }
-				help={ __( 'Position of the block in relation to the screen.', 'otter-blocks' ) }
+				label={ __( 'Position', 'otter-pro' ) }
+				help={ __( 'Position of the block in relation to the screen.', 'otter-pro' ) }
 				value={ position }
 				options={ [
 					{
-						label: __( 'Top', 'otter-blocks' ),
+						label: __( 'Top', 'otter-pro' ),
 						value: 'o-sticky-pos-top'
 					},
 					{
-						label: __( 'Bottom', 'otter-blocks' ),
+						label: __( 'Bottom', 'otter-pro' ),
 						value: 'o-sticky-pos-bottom'
 					}
 				] }
@@ -76,8 +76,8 @@ const StickyControls = (
 			/>
 
 			<RangeControl
-				label={ __( 'Offset', 'otter-blocks' ) }
-				help={ __( 'Distance from the block to the screen.', 'otter-blocks' ) }
+				label={ __( 'Offset', 'otter-pro' ) }
+				help={ __( 'Distance from the block to the screen.', 'otter-pro' ) }
 				value={ getOffsetValue() }
 				min={ 0 }
 				max={ 500 }
@@ -85,20 +85,20 @@ const StickyControls = (
 			/>
 
 			<SelectControl
-				label={ __( 'Behaviour', 'otter-blocks' ) }
-				help={ __( 'Behaviour when multiple sticky blocks with the same movement limit collide.', 'otter-blocks' ) }
+				label={ __( 'Behaviour', 'otter-pro' ) }
+				help={ __( 'Behaviour when multiple sticky blocks with the same movement limit collide.', 'otter-pro' ) }
 				value={ behaviour }
 				options={ [
 					{
-						label: __( 'Collapse', 'otter-blocks' ),
+						label: __( 'Collapse', 'otter-pro' ),
 						value: 'o-sticky-bhvr-keep'
 					},
 					{
-						label: __( 'Fade', 'otter-blocks' ),
+						label: __( 'Fade', 'otter-pro' ),
 						value: 'o-sticky-bhvr-hide'
 					},
 					{
-						label: __( 'Stack', 'otter-blocks' ),
+						label: __( 'Stack', 'otter-pro' ),
 						value: 'o-sticky-bhvr-stack'
 					}
 				] }
@@ -114,13 +114,13 @@ const StickyControls = (
 						textAlign: 'justify'
 					} }
 				>
-					{ __( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' ) }
+					{ __( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behavior. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-pro' ) }
 				</div>
 			) }
 
 			<ToggleControl
-				label={ __( 'Enable on Mobile', 'otter-blocks' ) }
-				help={ __( 'Make the sticky mode active for mobile users.' ) }
+				label={ __( 'Enable on Mobile', 'otter-pro' ) }
+				help={ __( 'Make the sticky mode active for mobile users.', 'otter-pro'  ) }
 				checked={ useOnMobile }
 				onChange={ ( value ) => addOption( value ? 'o-sticky-use-mobile' : undefined, FILTER_OPTIONS.usage ) }
 			/>
@@ -128,16 +128,16 @@ const StickyControls = (
 			{
 				isActive && (
 					<BaseControl
-						label={ __( 'Closing the Sticky', 'otter-blocks' ) }
+						label={ __( 'Closing the Sticky', 'otter-pro' ) }
 					>
 						<p>
-							{ __( 'You can make another block that is inside the sticky element to behave like a closing button by adding the following CSS class.' )}
+							{ __( 'You can make another block that is inside the sticky element to behave like a closing button by adding the following CSS class.', 'otter-pro'  )}
 						</p>
 						<code style={{ display: 'block', padding: '10px', marginBottom: '5px' }}>
 							{ 'o-sticky-close' }
 						</code>
 						<p>
-							{ __( 'You can transform a Button into a Close button by inserting the following anchor.', 'otter-blocks' )}
+							{ __( 'You can transform a Button into a Close button by inserting the following anchor.', 'otter-pro' )}
 						</p>
 						<code style={{ display: 'block', padding: '10px' }}>
 							{ '#o-sticky-close' }

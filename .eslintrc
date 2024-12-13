@@ -86,6 +86,9 @@
 		"jsx-a11y/alt-text": "warn",
 		"jsx-a11y/anchor-is-valid": "warn",
 		"jsx-a11y/no-noninteractive-element-interactions": "warn",
-		"jsx-a11y/no-autofocus": "warn"
+		"jsx-a11y/no-autofocus": "warn",
+		"@wordpress/i18n-text-domain": ["error", {
+			"allowedTextDomain": ["otter-blocks", "otter-pro", "blocks-export-import", "blocks-css", "blocks-animation"]
+		}]
 	}
 }

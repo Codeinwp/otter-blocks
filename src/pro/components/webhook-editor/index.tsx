@@ -72,17 +72,17 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 
 	const checkWebhook = ( webhook: Webhook ) => {
 		if ( ! webhook.name ) {
-			return  __( 'Please enter a webhook name.', 'otter-blocks' );
+			return  __( 'Please enter a webhook name.', 'otter-pro' );
 		}
 
 		if ( ! webhook.url ) {
-			return __( 'Please enter a webhook URL.', 'otter-blocks' );
+			return __( 'Please enter a webhook URL.', 'otter-pro' );
 		}
 
 		if ( 0 < webhook.headers.length ) {
 			for ( const header of webhook.headers ) {
 				if ( ! header.key || ! header.value ) {
-					return __( 'Please enter a key and value for all headers.', 'otter-blocks' );
+					return __( 'Please enter a key and value for all headers.', 'otter-pro' );
 				}
 			}
 		}
@@ -96,7 +96,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 			if ( true !== check ) {
 				const msg = sprintf(
 					/* translators: %s: webhook name */
-					__( 'There was an error saving the webhook: %s', 'otter-blocks' ),
+					__( 'There was an error saving the webhook: %s', 'otter-pro' ),
 					webhook?.name
 				) + '\n';
 				setError( msg + check );
@@ -105,7 +105,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 		}
 
 		// Save to wp options
-		setOption?.( 'themeisle_webhooks_options', [ ...webhooksToSave ], __( 'Webhooks saved.', 'otter-blocks' ), 'webhook', ( response ) => {
+		setOption?.( 'themeisle_webhooks_options', [ ...webhooksToSave ], __( 'Webhooks saved.', 'otter-pro' ), 'webhook', ( response ) => {
 			setWebhooks( response?.['themeisle_webhooks_options'] ?? []);
 			window.oTrk?.add({ feature: 'webhook', featureComponent: 'saving' });
 		});
@@ -128,7 +128,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 		<Fragment>
 			{ isOpen && (
 				<Modal
-					title={ id ?  __( 'Webhook Editor' ) : __( 'Webhook List' ) }
+					title={ id ?  __( 'Webhook Editor', 'otter-pro'  ) : __( 'Webhook List', 'otter-pro'  ) }
 					onRequestClose={() => setOpen( false )}
 					shouldCloseOnClickOutside={ false }
 				>
@@ -136,21 +136,21 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 						id ? (
 							<Fragment>
 								<TextControl
-									label={ __( 'Webhook Name', 'otter-blocks' ) }
-									help={ __( 'Enter the URL to send the data to.', 'otter-blocks' )}
+									label={ __( 'Webhook Name', 'otter-pro' ) }
+									help={ __( 'Enter the URL to send the data to.', 'otter-pro' )}
 									value={name}
 									onChange={setName}
-									placeholder={ __( 'My Webhook', 'otter-blocks' )}
+									placeholder={ __( 'My Webhook', 'otter-pro' )}
 								/>
 								<TextControl
-									label={ __( 'URL', 'otter-blocks' ) }
-									help={ __( 'Enter the URL to send the data to.', 'otter-blocks' )}
+									label={ __( 'URL', 'otter-pro' ) }
+									help={ __( 'Enter the URL to send the data to.', 'otter-pro' )}
 									value={url}
 									onChange={setUrl}
-									placeholder={ __( 'https://example.com', 'otter-blocks' )}
+									placeholder={ __( 'https://example.com', 'otter-pro' )}
 								/>
 								<SelectControl
-									label={ __( 'Method', 'otter-blocks' ) }
+									label={ __( 'Method', 'otter-pro' ) }
 									value={method}
 									onChange={setMethod}
 									options={[
@@ -161,8 +161,8 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 								/>
 								<BaseControl
 									id="otter-blocks-webhook-headers"
-									label={ __( 'Headers', 'otter-blocks' ) }
-									help={ __( 'Enter the HTTP headers to send with the request.', 'otter-blocks' )}
+									label={ __( 'Headers', 'otter-pro' ) }
+									help={ __( 'Enter the HTTP headers to send with the request.', 'otter-pro' )}
 								>
 									<div className="o-webhook-headers">
 										{
@@ -171,7 +171,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 													<div className="o-webhook-header" key={index}>
 														<TextControl
 															value={header?.key ?? ''}
-															placeholder={ __( 'Content-Type', 'otter-blocks' )}
+															placeholder={ __( 'Content-Type', 'otter-pro' )}
 															onChange={( value ) => {
 																const newHeaders = [ ...headers ];
 																newHeaders[ index ] = {
@@ -183,7 +183,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 														/>
 														<TextControl
 															value={header?.value ?? ''}
-															placeholder={ __( 'application/json', 'otter-blocks' )}
+															placeholder={ __( 'application/json', 'otter-pro' )}
 															onChange={( value ) => {
 																const newHeaders = [ ...headers ];
 																newHeaders[ index ] = {
@@ -216,7 +216,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 												]);
 											}}
 										>
-											{ __( 'Add New Header', 'otter-blocks' ) }
+											{ __( 'Add New Header', 'otter-pro' ) }
 										</Button>
 									</div>
 								</BaseControl>
@@ -228,7 +228,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 												setId( '' );
 											}}
 										>
-											{ __( 'Back', 'otter-blocks' ) }
+											{ __( 'Back', 'otter-pro' ) }
 										</Button>
 										<Button
 											variant={ 'tertiary' }
@@ -238,7 +238,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 												setId( '' );
 											}}
 										>
-											{ __( 'Delete', 'otter-blocks' ) }
+											{ __( 'Delete', 'otter-pro' ) }
 										</Button>
 									</div>
 
@@ -274,7 +274,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 											saveWebhooks( newWebhooks );
 										}}
 									>
-										{ __( 'Save', 'otter-blocks' ) }
+										{ __( 'Save', 'otter-pro' ) }
 									</Button>
 								</div>
 							</Fragment>
@@ -318,7 +318,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 											setMethod( 'POST' );
 											setHeaders([]);
 										}}>
-										{ __( 'Add New Webhook', 'otter-blocks' ) }
+										{ __( 'Add New Webhook', 'otter-pro' ) }
 									</Button>
 								</div>
 							</div>
@@ -347,19 +347,19 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 						<br/>
 						<span>
 							<Spinner />
-							{ __( 'Loading Webhooks', 'otter-blocks' ) }
+							{ __( 'Loading Webhooks', 'otter-pro' ) }
 						</span>
 					</Fragment>
 				)
 			}
 
 			<SelectControl
-				label={ __( 'Webhook', 'otter-blocks' ) }
+				label={ __( 'Webhook', 'otter-pro' ) }
 				value={ props.webhookId }
 				options={
 					[
 						{
-							label: __( 'Select Webhook', 'otter-blocks' ),
+							label: __( 'Select Webhook', 'otter-pro' ),
 							value: ''
 						},
 						...(
@@ -381,11 +381,11 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 				onClick={() => setOpen( true )}
 				className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
 			>
-				{ __( 'Edit Webhooks', 'otter-blocks' ) }
+				{ __( 'Edit Webhooks', 'otter-pro' ) }
 			</Button>
 			< br />
 			<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation">
-				{ __( 'Learn more about webhooks.', 'otter-blocks' ) }
+				{ __( 'Learn more about webhooks.', 'otter-pro' ) }
 			</ExternalLink>
 		</Fragment>
 	);

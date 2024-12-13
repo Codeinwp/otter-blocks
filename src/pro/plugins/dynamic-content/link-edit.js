@@ -39,7 +39,7 @@ const Edit = ({
 		<Fragment>
 			{ ( 'acfURL' === attributes.type && Boolean( window.otterPro.hasACF ) ) && (
 				<BaseControl
-					label={ __( 'Meta Key', 'otter-blocks' ) }
+					label={ __( 'Meta Key', 'otter-pro' ) }
 				>
 					{ isLoaded ? (
 						<select
@@ -47,7 +47,7 @@ const Edit = ({
 							onChange={ event => changeAttributes({ metaKey: event.target.value  }) }
 							className="components-select-control__input"
 						>
-							<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
+							<option value="none">{ __( 'Select a field', 'otter-pro' ) }</option>
 
 							{ groups.map( group => {
 								return (
@@ -74,12 +74,12 @@ const Edit = ({
 			) }
 
 			{ ( 'acfURL' === attributes.type && ! Boolean( window.otterPro.hasACF ) ) && (
-				<p>{ __( 'You need to have Advanced Custom Fields plugin installed to use this feature.', 'otter-blocks' ) }</p>
+				<p>{ __( 'You need to have Advanced Custom Fields plugin installed to use this feature.', 'otter-pro' ) }</p>
 			) }
 
 			{ 'postMetaURL' === attributes.type && (
 				<TextControl
-					label={ __( 'Custom Meta Key', 'otter-blocks' ) }
+					label={ __( 'Custom Meta Key', 'otter-pro' ) }
 					value={ attributes.metaKey }
 					onChange={ metaKey => changeAttributes({ metaKey }) }
 				/>

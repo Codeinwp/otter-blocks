@@ -333,7 +333,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 							<Toolbar label={__( 'AI Block', 'otter-blocks' )}>
 								<DropdownMenu
 									icon={ aiGeneration }
-									label={ __( 'Otter AI Content' ) }
+									label={ __( 'Otter AI Content', 'otter-blocks' ) }
 								>
 									{
 										({ onClose }) => (

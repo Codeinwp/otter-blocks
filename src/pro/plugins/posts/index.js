@@ -70,7 +70,7 @@ const AddFields = (
 				href="https://wordpress.org/plugins/advanced-custom-fields/"
 				target="_blank"
 			>
-				{ __( 'Activate Advanced Custom Fields to add more fields.', 'otter-blocks' ) }
+				{ __( 'Activate Advanced Custom Fields to add more fields.', 'otter-pro' ) }
 			</ExternalLink>
 		);
 	}
@@ -120,20 +120,20 @@ const AddFields = (
 					});
 				} }
 			>
-				{ __( 'Add Custom Field', 'otter-blocks' ) }
+				{ __( 'Add Custom Field', 'otter-pro' ) }
 			</Button>
 
 			{ Boolean( window.otterPro.isExpired ) && (
 				<Notice
-					notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
-					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Posts Block.', 'otter-blocks' ) }
+					notice={ __( 'Otter Pro license has expired.', 'otter-pro' ) }
+					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Posts Block.', 'otter-pro' ) }
 				/>
 			) }
 
 			{ ! Boolean( window.otterPro.isActive ) && (
 				<Notice
-					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Posts Block.', 'otter-blocks' ) }
+					notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
+					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Posts Block.', 'otter-pro' ) }
 				/>
 			) }
 		</Fragment>
@@ -206,7 +206,7 @@ const Controls = (
 	if ( ! Boolean( window.otterPro.isActive ) ) {
 		return (
 			<Notice
-				notice={ __( 'You need to activate Otter Pro to edit this field.', 'otter-blocks' ) }
+				notice={ __( 'You need to activate Otter Pro to edit this field.', 'otter-pro' ) }
 			/>
 		);
 	}
@@ -215,7 +215,7 @@ const Controls = (
 		<Fragment>
 			{ ! isEmpty( groups ) && (
 				<BaseControl
-					label={ __( 'Fields', 'otter-blocks' ) }
+					label={ __( 'Fields', 'otter-pro' ) }
 				>
 					<select
 						value={ fields[ customMeta.field ] ? customMeta.field : 'none' }
@@ -223,7 +223,7 @@ const Controls = (
 						className="components-select-control__input"
 						disabled={ Boolean( window.otterPro.isExpired ) }
 					>
-						<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
+						<option value="none">{ __( 'Select a field', 'otter-pro' ) }</option>
 
 						{ groups.map( group => {
 							return (
@@ -252,7 +252,7 @@ const Controls = (
 				<Fragment>
 					{ ( fields[ customMeta.field ][ 'default_value' ]) && (
 						<TextControl
-							label={ __( 'Default Value', 'otter-blocks' ) }
+							label={ __( 'Default Value', 'otter-pro' ) }
 							value={ fields[ customMeta.field ][ 'default_value' ]  }
 							disabled
 						/>
@@ -260,7 +260,7 @@ const Controls = (
 
 					{ ( fields[ customMeta.field ].prepend ) && (
 						<TextControl
-							label={ __( 'Before', 'otter-blocks' ) }
+							label={ __( 'Before', 'otter-pro' ) }
 							value={ fields[ customMeta.field ].prepend }
 							disabled
 						/>
@@ -268,7 +268,7 @@ const Controls = (
 
 					{ ( fields[ customMeta.field ].append ) && (
 						<TextControl
-							label={ __( 'After', 'otter-blocks' ) }
+							label={ __( 'After', 'otter-pro' ) }
 							value={ fields[ customMeta.field ].append }
 							disabled
 						/>
@@ -282,7 +282,7 @@ const Controls = (
 						href={ fields[ customMeta.field ]?.urlLocation }
 						target='_blank'
 					>
-						{ __( 'Edit in ACF', 'otter-blocks' ) }
+						{ __( 'Edit in ACF', 'otter-pro' ) }
 					</ExternalLink>
 					<br/>
 				</Fragment>
@@ -293,10 +293,10 @@ const Controls = (
 					href={ `${ window.otterPro.rootUrl || '' }/wp-admin/edit.php?post_type=acf-field-group` }
 					target='_blank'
 				>
-					{ __( 'There are no ACF fields. You can use this option after you add some.', 'otter-blocks' ) }
+					{ __( 'There are no ACF fields. You can use this option after you add some.', 'otter-pro' ) }
 				</ExternalLink>
 			) : ! fields[ customMeta.field ] &&  (
-				__( 'The selected field does not longer exists. Please select another field.', 'otter-blocks' )
+				__( 'The selected field does not longer exists. Please select another field.', 'otter-pro' )
 			) }
 
 			<Button
@@ -306,7 +306,7 @@ const Controls = (
 				isDestructive
 				className="o-conditions__add"
 			>
-				{ __( 'Delete', 'otter-blocks' ) }
+				{ __( 'Delete', 'otter-pro' ) }
 			</Button>
 		</Fragment>
 	);
@@ -324,7 +324,7 @@ const changeTabLabel = (
 		};
 	}, []);
 
-	return startCase( toLower( fields[ customMeta.field ]?.label || __( 'Custom Type', 'otter-blocks' ) ) );
+	return startCase( toLower( fields[ customMeta.field ]?.label || __( 'Custom Type', 'otter-pro' ) ) );
 };
 
 addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/posts-acf-extension-attributes', addAttribute );

@@ -102,13 +102,13 @@ const Edit = ({
 				}
 			}, ( res, error ) => {
 				if ( error ) {
-					createNotice( 'error', __( 'Error saving File Field settings.', 'otter-blocks' ), {
+					createNotice( 'error', __( 'Error saving File Field settings.', 'otter-pro' ), {
 						isDismissible: true,
 						type: 'snackbar',
 						id: 'file-field-option-error'
 					});
 				} else {
-					createNotice( 'info', __( 'File Field settings saved.', 'otter-blocks' ), {
+					createNotice( 'info', __( 'File Field settings saved.', 'otter-pro' ), {
 						isDismissible: true,
 						type: 'snackbar',
 						id: 'file-field-option-success'
@@ -141,7 +141,7 @@ const Edit = ({
 					className="otter-form-input-label"
 				>
 					<RichText
-						placeholder={ __( 'Type here…', 'otter-blocks' ) }
+						placeholder={ __( 'Type here…', 'otter-pro' ) }
 						className="otter-form-input-label__label"
 						value={ attributes.label }
 						onChange={ label => setAttributes({ label }) }
