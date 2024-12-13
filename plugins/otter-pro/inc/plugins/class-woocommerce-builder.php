@@ -150,6 +150,8 @@ class WooCommerce_Builder {
 
 			if ( has_block( 'themeisle-blocks/product-image', get_the_ID() ) ) {
 				wp_enqueue_script( 'wc-single-product' );
+
+				wp_set_script_translations( 'wc-single-product', 'otter-pro' );
 			}
 
 			if ( class_exists( '\Neve\Views\Product_Layout' ) && class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Views\Single_Product' ) ) {
