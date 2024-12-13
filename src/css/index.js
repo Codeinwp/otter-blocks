@@ -60,7 +60,7 @@ const Edit = ({
 }) => {
 	return (
 		<PanelBody
-			title={ __( 'Custom CSS', 'otter-blocks' ) }
+			title={ __( 'Custom CSS', 'blocks-css' ) }
 			initialOpen={ false }
 		>
 			<CSSEditor
@@ -87,7 +87,7 @@ const BlockCSSWrapper = ( el, props ) => {
 
 				<ToolsPanelItem
 					hasValue={ () => Boolean( props.attributes?.hasCustomCSS ) }
-					label={ __( 'Custom CSS', 'otter-blocks' ) }
+					label={ __( 'Custom CSS', 'blocks-css' ) }
 					onDeselect={ () => {
 						props.setAttributes({
 							hasCustomCSS: false,

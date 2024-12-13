@@ -417,7 +417,7 @@ class Form_Pro_Features {
 					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 						// TODO: use logger.
 						// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-						error_log( __( '[Otter Webhook]', 'otter-blocks' ) . $response->get_error_message() );
+						error_log( __( '[Otter Webhook]', 'otter-pro' ) . $response->get_error_message() );
 					}
 				}
 			}
@@ -707,7 +707,7 @@ class Form_Pro_Features {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 
 	/**
@@ -719,6 +719,6 @@ class Form_Pro_Features {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 }

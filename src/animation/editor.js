@@ -122,7 +122,7 @@ function AnimationControls({
 	const [ animation, setAnimation ] = useState( 'none' );
 	const [ delay, setDelay ] = useState( 'none' );
 	const [ speed, setSpeed ] = useState( 'none' );
-	const [ currentAnimationLabel, setCurrentAnimationLabel ] = useState( __( 'None', 'otter-blocks' ) );
+	const [ currentAnimationLabel, setCurrentAnimationLabel ] = useState( __( 'None', 'blocks-animation' ) );
 	const [ customDelayValue, setCustomDelayValue ] = useState( 0 );
 	const [ customSpeedValue, setCustomSpeedValue ] = useState( 0 );
 	const [ playOnHover, setPlayOnHover ] = useState( false );
@@ -315,7 +315,7 @@ function AnimationControls({
 
 	return (
 		<PanelBody
-			title={ __( 'Animations', 'otter-blocks' ) }
+			title={ __( 'Animations', 'blocks-animation' ) }
 			initialOpen={ false }
 		>
 			<div className="o-animations-control">
@@ -329,7 +329,7 @@ function AnimationControls({
 				{ 'none' !== animation && (
 					<Fragment>
 						<SelectControl
-							label={ __( 'Delay', 'otter-blocks' ) }
+							label={ __( 'Delay', 'blocks-animation' ) }
 							value={ delay || 'none' }
 							options={ delayList }
 							onChange={  value => updateAnimConfig( AnimationType.default, delay, value, () => setDelay( value ), attributes, setAttributes ) }
@@ -338,7 +338,7 @@ function AnimationControls({
 						{
 							'o-anim-custom-delay' === delay && (
 								<UnitControl
-									label={ __( 'Value', 'otter-blocks' ) }
+									label={ __( 'Value', 'blocks-animation' ) }
 									value={ customDelayValue }
 									onChange={ value => updateAnimConfig( AnimationType.default, 'o-anim-value-delay-', value ? `o-anim-value-delay-${value}` : undefined, () => setCustomDelayValue( value ), attributes, setAttributes ) }
 									min={ 0 }
@@ -347,11 +347,11 @@ function AnimationControls({
 									units={
 										[
 											{
-												label: __( 'S', 'otter-blocks' ),
+												label: __( 'S', 'blocks-animation' ),
 												value: 's'
 											},
 											{
-												label: __( 'MS', 'otter-blocks' ),
+												label: __( 'MS', 'blocks-animation' ),
 												value: 'ms'
 											}
 										]
@@ -361,7 +361,7 @@ function AnimationControls({
 						}
 
 						<SelectControl
-							label={ __( 'Speed', 'otter-blocks' ) }
+							label={ __( 'Speed', 'blocks-animation' ) }
 							value={ speed || 'none' }
 							options={ speedList }
 							onChange={ value => updateAnimConfig( AnimationType.default, speed, value, () => setSpeed( value ), attributes, setAttributes ) }
@@ -370,7 +370,7 @@ function AnimationControls({
 						{
 							'o-anim-custom-speed' === speed && (
 								<UnitControl
-									label={ __( 'Value', 'otter-blocks' ) }
+									label={ __( 'Value', 'blocks-animation' ) }
 									value={ customSpeedValue }
 									onChange={ value => updateAnimConfig( AnimationType.default, 'o-anim-value-speed-', `o-anim-value-speed-${value}`, () => setCustomSpeedValue( value ), attributes, setAttributes ) }
 									min={ 0 }
@@ -379,11 +379,11 @@ function AnimationControls({
 									units={
 										[
 											{
-												label: __( 'S', 'otter-blocks' ),
+												label: __( 'S', 'blocks-animation' ),
 												value: 's'
 											},
 											{
-												label: __( 'MS', 'otter-blocks' ),
+												label: __( 'MS', 'blocks-animation' ),
 												value: 'ms'
 											}
 										]
@@ -393,14 +393,14 @@ function AnimationControls({
 						}
 
 						<ToggleControl
-							label={ __( 'Play on Hover', 'otter-blocks' ) }
+							label={ __( 'Play on Hover', 'blocks-animation' ) }
 							checked={ playOnHover }
 							onChange={ value  => updateAnimConfig( AnimationType.default, 'o-anim-hover', value ? 'o-anim-hover' : '', () => setPlayOnHover( value ), attributes, setAttributes ) }
 
 						/>
 
 						<ToggleControl
-							label={ __( 'Trigger Offset', 'otter-blocks' ) }
+							label={ __( 'Trigger Offset', 'blocks-animation' ) }
 							checked={ Boolean( triggerOffset ) }
 							onChange={
 								value  => updateAnimConfig(
@@ -414,13 +414,13 @@ function AnimationControls({
 									setAttributes
 								)
 							}
-							help={ __( 'This will offset the trigger of animation relative to the screen.', 'otter-blocks' ) }
+							help={ __( 'This will offset the trigger of animation relative to the screen.', 'blocks-animation' ) }
 						/>
 
 						{
 							Boolean( triggerOffset ) && (
 								<UnitControl
-									label={ __( 'Height Trigger Offset', 'otter-blocks' ) }
+									label={ __( 'Height Trigger Offset', 'blocks-animation' ) }
 									value={ triggerOffsetValue }
 									onChange={ setTriggerOffsetValue }
 									step={ 0.1 }
@@ -428,16 +428,16 @@ function AnimationControls({
 									units={
 										[
 											{
-												label: __( 'px', 'otter-blocks' ),
+												label: __( 'px', 'blocks-animation' ),
 												value: 'px'
 											},
 											{
-												label: __( '%', 'otter-blocks' ),
+												label: __( '%', 'blocks-animation' ),
 												value: '%'
 											}
 										]
 									}
-									help={ triggerOffsetValue?.endsWith( '%' ) ? __( 'Is the percentage of the screen height. E.g: with 50% the animation will trigger after passing the middle of screen.', 'otter-blocks' ) : '' }
+									help={ triggerOffsetValue?.endsWith( '%' ) ? __( 'Is the percentage of the screen height. E.g: with 50% the animation will trigger after passing the middle of screen.', 'blocks-animation' ) : '' }
 								/>
 							)
 						}
@@ -446,36 +446,36 @@ function AnimationControls({
 							variant="secondary"
 							onClick={ replayAnimation }
 						>
-							{ __( 'Replay Animation', 'otter-blocks' ) }
+							{ __( 'Replay Animation', 'blocks-animation' ) }
 						</Button>
 					</Fragment>
 				) }
 			</div>
 
 			<ControlPanelControl
-				label={ __( 'Count Animations', 'otter-blocks' ) }
+				label={ __( 'Count Animations', 'blocks-animation' ) }
 			>
 				<img
 					src={ typingPlaceholder }
-					alt={ _( 'Using Count Animation in the Block Editor', 'otter-blocks' ) }
+					alt={ _( 'Using Count Animation in the Block Editor', 'blocks-animation' ) }
 					className="otter-animations-count-image"
 				/>
 
-				<p>{ __( 'You can add counting animation from the format toolbar of this block.', 'otter-blocks' ) }</p>
-				<p>{ __( 'Note: This feature is not available in all the blocks.', 'otter-blocks' ) }</p>
+				<p>{ __( 'You can add counting animation from the format toolbar of this block.', 'blocks-animation' ) }</p>
+				<p>{ __( 'Note: This feature is not available in all the blocks.', 'blocks-animation' ) }</p>
 			</ControlPanelControl>
 
 			<ControlPanelControl
-				label={ __( 'Typing Animations', 'otter-blocks' ) }
+				label={ __( 'Typing Animations', 'blocks-animation' ) }
 			>
 				<img
 					src={ countPlaceholder }
-					alt={ _( 'Using Typing Animation in the Block Editor', 'otter-blocks' ) }
+					alt={ _( 'Using Typing Animation in the Block Editor', 'blocks-animation' ) }
 					className="otter-animations-count-image"
 				/>
 
-				<p>{ __( 'You can add typing animation from the format toolbar of this block.', 'otter-blocks' ) }</p>
-				<p>{ __( 'Note: This feature is not available in all the blocks.', 'otter-blocks' ) }</p>
+				<p>{ __( 'You can add typing animation from the format toolbar of this block.', 'blocks-animation' ) }</p>
+				<p>{ __( 'Note: This feature is not available in all the blocks.', 'blocks-animation' ) }</p>
 			</ControlPanelControl>
 
 			<div className="o-fp-wrap">

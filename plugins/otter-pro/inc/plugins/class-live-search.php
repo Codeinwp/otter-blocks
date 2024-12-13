@@ -99,8 +99,8 @@ class Live_Search {
 				'permalinkStructure' => get_option( 'permalink_structure' ),
 				'strings'            => array(
 					/* translators: This is followed by the search string */
-					'noResults' => __( 'No results for', 'otter-blocks' ),
-					'noTitle'   => sprintf( '(%s)', __( 'no title', 'otter-blocks' ) ),
+					'noResults' => __( 'No results for', 'otter-pro' ),
+					'noTitle'   => sprintf( '(%s)', __( 'no title', 'otter-pro' ) ),
 				),
 			)
 		);
@@ -139,7 +139,7 @@ class Live_Search {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 
 	/**
@@ -151,6 +151,6 @@ class Live_Search {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 }

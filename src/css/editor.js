@@ -139,7 +139,7 @@ const CSSEditor = ({
 					status="info"
 					isDismissible={ false }
 				>
-					{ __( 'Blocks CSS is not fully compatible with the Site Editor. We recommend installing Otter for Site Builder compatibility.', 'otter-blocks' ) }
+					{ __( 'Blocks CSS is not fully compatible with the Site Editor. We recommend installing Otter for Site Builder compatibility.', 'blocks-css' ) }
 
 					<br/><br/>
 
@@ -148,12 +148,12 @@ const CSSEditor = ({
 						href={ window?.blocksCSS?.installOtter }
 						target="_blank"
 					>
-						{ __( 'Install Otter', 'otter-blocks' ) }
+						{ __( 'Install Otter', 'blocks-css' ) }
 					</Button>
 				</Notice>
 			) }
 
-			<p>{__( 'Add your custom CSS.', 'otter-blocks' )}</p>
+			<p>{__( 'Add your custom CSS.', 'blocks-css' )}</p>
 
 			<div id="o-css-editor" className="o-css-editor" />
 
@@ -163,7 +163,7 @@ const CSSEditor = ({
 						status="error"
 						isDismissible={ false }
 					>
-						{ __( 'Attention needed! We found following errors with your code:', 'otter-blocks' ) }
+						{ __( 'Attention needed! We found following errors with your code:', 'blocks-css' ) }
 					</Notice>
 
 					<pre>
@@ -183,20 +183,20 @@ const CSSEditor = ({
 						onClick={() => checkInput( editorRef.current, true )}
 						style={{ width: 'max-content', marginBottom: '20px' }}
 					>
-						{ __( 'Override', 'otter-blocks' ) }
+						{ __( 'Override', 'blocks-css' ) }
 					</Button>
 				</div>
 			) }
 
-			<p>{__( 'Use', 'otter-blocks' )} <code>selector</code> {__( 'to target block wrapper.', 'otter-blocks' )}</p>
+			<p>{__( 'Use', 'blocks-css' )} <code>selector</code> {__( 'to target block wrapper.', 'blocks-css' )}</p>
 			<br />
-			<p>{__( 'Example:', 'otter-blocks' )}</p>
+			<p>{__( 'Example:', 'blocks-css' )}</p>
 
 			<pre className="o-css-editor-help">
 				{'selector {\n    background: #000;\n}\n\nselector img {\n    border-radius: 100%;\n}'}
 			</pre>
 
-			<p>{__( 'You can also use other CSS syntax here, such as media queries.', 'otter-blocks' )}</p>
+			<p>{__( 'You can also use other CSS syntax here, such as media queries.', 'blocks-css' )}</p>
 		</Fragment>
 	);
 };

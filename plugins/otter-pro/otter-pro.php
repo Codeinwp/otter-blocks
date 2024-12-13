@@ -65,7 +65,7 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 	add_action(
 		'admin_notices',
 		function() {
-			$message = __( 'You need to install Otter – Page Builder Blocks & Extensions for Gutenberg plugin to use Otter Pro.', 'otter-blocks' );
+			$message = __( 'You need to install Otter – Page Builder Blocks & Extensions for Gutenberg plugin to use Otter Pro.', 'otter-pro' );
 			$link    = wp_nonce_url(
 				add_query_arg(
 					array(
@@ -81,7 +81,7 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 				'<div class="error"><p>%1$s <a href="%2$s">%3$s</a></p></div>',
 				esc_html( $message ),
 				esc_url( $link ),
-				esc_html__( 'Install', 'otter-blocks' )
+				esc_html__( 'Install', 'otter-pro' )
 			);
 		}
 	);
@@ -91,7 +91,7 @@ if ( defined( 'OTTER_BLOCKS_VERSION' ) && ! defined( 'OTTER_BLOCKS_PRO_SUPPORT' 
 	add_action(
 		'admin_notices',
 		function() {
-			$message = __( 'You need to update Otter – Page Builder Blocks & Extensions for Gutenberg to the latest version to use Otter Pro.', 'otter-blocks' );
+			$message = __( 'You need to update Otter – Page Builder Blocks & Extensions for Gutenberg to the latest version to use Otter Pro.', 'otter-pro' );
 
 			printf(
 				'<div class="error"><p>%1$s</p></div>',

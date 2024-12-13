@@ -52,7 +52,7 @@ const BlocksImporter = ({
 				': ',
 				__(
 					'Sorry, only JSON files are supported here.',
-					'otter-blocks'
+					'blocks-export-import'
 				)
 			];
 			noticeOperations.removeAllNotices();
@@ -70,7 +70,7 @@ const BlocksImporter = ({
 			} catch ( error ) {
 				noticeOperations.removeAllNotices();
 				noticeOperations.createErrorNotice(
-					__( 'Invalid JSON file', 'otter-blocks' )
+					__( 'Invalid JSON file', 'blocks-export-import' )
 				);
 				setLoading( false );
 				return;
@@ -92,7 +92,7 @@ const BlocksImporter = ({
 							data.title ||
 							__(
 								'Untitled Reusable Block',
-								'otter-blocks'
+								'blocks-export-import'
 							),
 						content: data.content,
 						status: 'publish'
@@ -105,7 +105,7 @@ const BlocksImporter = ({
 					noticeOperations.createErrorNotice(
 						__(
 							'Invalid Reusable Block JSON file',
-							'otter-blocks'
+							'blocks-export-import'
 						)
 					);
 					setLoading( false );
@@ -138,10 +138,10 @@ const BlocksImporter = ({
 	return (
 		<div { ...blockProps }>
 			<Placeholder
-				label={ __( 'Import Blocks from JSON', 'otter-blocks' ) }
+				label={ __( 'Import Blocks from JSON', 'blocks-export-import' ) }
 				instructions={ __(
 					'Upload JSON file from your device.',
-					'otter-blocks'
+					'blocks-export-import'
 				) }
 				icon="category"
 				notices={ noticeUI }
@@ -151,11 +151,11 @@ const BlocksImporter = ({
 					onChange={ ( e ) => uploadImport( e.target.files ) }
 					isSecondary
 				>
-					{ __( 'Upload' ) }
+					{ __( 'Upload', 'blocks-export-import' ) }
 				</FormFileUpload>
 
 				<DropZone
-					label={ __( 'Import from JSON', 'otter-blocks' ) }
+					label={ __( 'Import from JSON', 'blocks-export-import' ) }
 					onFilesDrop={ uploadImport }
 				/>
 			</Placeholder>

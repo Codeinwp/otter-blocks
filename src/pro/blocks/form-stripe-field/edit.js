@@ -167,7 +167,7 @@ const Edit = ({
 
 	const saveApiKey = () => {
 		setCanRetrieveProducts( false );
-		updateOption( 'themeisle_stripe_api_key', apiKey?.replace?.( /\s/g, '' ), __( 'Stripe API Key saved!', 'otter-blocks' ), 'stripe-api-key', reset );
+		updateOption( 'themeisle_stripe_api_key', apiKey?.replace?.( /\s/g, '' ), __( 'Stripe API Key saved!', 'otter-pro' ), 'stripe-api-key', reset );
 	};
 
 
@@ -188,7 +188,7 @@ const Edit = ({
 				if ( error ) {
 					createNotice(
 						'info',
-						__( 'Error saving Stripe product on Form.', 'otter-blocks' ),
+						__( 'Error saving Stripe product on Form.', 'otter-pro' ),
 						{
 							type: 'snackbar',
 							isDismissible: true,
@@ -198,7 +198,7 @@ const Edit = ({
 				} else {
 					createNotice(
 						'success',
-						__( 'Form Stripe product saved.', 'otter-blocks' ),
+						__( 'Form Stripe product saved.', 'otter-pro' ),
 						{
 							type: 'snackbar',
 							isDismissible: true,
@@ -259,13 +259,13 @@ const Edit = ({
 
 				<Placeholder
 					icon={ store }
-					label={ __( 'Stripe Checkout', 'otter-blocks' ) }
+					label={ __( 'Stripe Checkout', 'otter-pro' ) }
 				>
 					{
 						( 'loading' === status || 'saving' === status ) && (
 							<div style={{ width: '100%' }}>
 								<Spinner />
-								{ __( 'Checking the API Key…', 'otter-blocks' ) }
+								{ __( 'Checking the API Key…', 'otter-pro' ) }
 								<br /><br />
 							</div>
 						)
@@ -295,9 +295,9 @@ const Edit = ({
 							<div style={{ display: 'flex', flexDirection: 'column' }}>
 
 								<TextControl
-									label={ __( 'Stripe API Key', 'otter-blocks' ) }
+									label={ __( 'Stripe API Key', 'otter-pro' ) }
 									type="text"
-									placeholder={ __( 'Type here the Stripe API Key', 'otter-blocks' ) }
+									placeholder={ __( 'Type here the Stripe API Key', 'otter-pro' ) }
 									value={ apiKey }
 									className="components-placeholder__input"
 									onChange={ setAPIKey }
@@ -310,13 +310,13 @@ const Edit = ({
 										type="submit"
 										onClick={ saveApiKey }
 									>
-										{ __( 'Save', 'otter-blocks' ) }
+										{ __( 'Save', 'otter-pro' ) }
 									</Button>
 								</div>
 
 								<br />
 
-								<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'You can also set it from Dashboard', 'otter-blocks' ) }</ExternalLink>
+								<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'You can also set it from Dashboard', 'otter-pro' ) }</ExternalLink>
 							</div>
 						)
 					}
@@ -324,7 +324,7 @@ const Edit = ({
 					{
 						'error' === status && (
 							<Fragment>
-								{__( 'An error occurred during API Key checking.', 'otter-blocks' )}
+								{__( 'An error occurred during API Key checking.', 'otter-pro' )}
 							</Fragment>
 						)
 					}
@@ -334,11 +334,11 @@ const Edit = ({
 							<Fragment>
 								{ ! isLoadingProducts && (
 									<SelectControl
-										label={ __( 'Select a product to display.', 'otter-blocks' ) }
+										label={ __( 'Select a product to display.', 'otter-pro' ) }
 										value={ attributes.product }
 										options={ [
 											{
-												label: __( 'Select a product', 'otter-blocks' ),
+												label: __( 'Select a product', 'otter-pro' ),
 												value: 'none'
 											},
 											...productsList
@@ -351,11 +351,11 @@ const Edit = ({
 
 								{ ( ! isLoadingPrices && attributes.product ) && (
 									<SelectControl
-										label={ __( 'Select the price you want to display.', 'otter-blocks' ) }
+										label={ __( 'Select the price you want to display.', 'otter-pro' ) }
 										value={ attributes.price }
 										options={ [
 											{
-												label: __( 'Select a price', 'otter-blocks' ),
+												label: __( 'Select a price', 'otter-pro' ),
 												value: 'none'
 											},
 											...pricesList
@@ -419,8 +419,8 @@ const Edit = ({
 					</Fragment>
 				)}
 
-				{ 'success' === view && ( attributes.successMessage || __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' ) ) }
-				{ 'cancel' === view && ( attributes.cancelMessage || __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' ) ) }
+				{ 'success' === view && ( attributes.successMessage || __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-pro' ) ) }
+				{ 'cancel' === view && ( attributes.cancelMessage || __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-pro' ) ) }
 			</div>
 		</Fragment>
 	);

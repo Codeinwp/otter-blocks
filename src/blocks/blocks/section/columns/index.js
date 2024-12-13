@@ -46,9 +46,8 @@ registerBlockType( name, {
 					{
 						name: 'core/paragraph',
 						attributes: {
-							content: __(
-								'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et eros eu felis.'
-							)
+							content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent et eros eu felis.',
+							
 						}
 					},
 					{
@@ -60,9 +59,7 @@ registerBlockType( name, {
 					{
 						name: 'core/paragraph',
 						attributes: {
-							content: __(
-								'Suspendisse commodo neque lacus, a dictum orci interdum et.'
-							)
+							content: 'Suspendisse commodo neque lacus, a dictum orci interdum et.'
 						}
 					}
 				]
@@ -78,17 +75,13 @@ registerBlockType( name, {
 					{
 						name: 'core/paragraph',
 						attributes: {
-							content: __(
-								'Etiam et egestas lorem. Vivamus sagittis sit amet dolor quis lobortis. Integer sed fermentum arcu, id vulputate lacus. Etiam fermentum sem eu quam hendrerit.'
-							)
+							content: 'Etiam et egestas lorem. Vivamus sagittis sit amet dolor quis lobortis. Integer sed fermentum arcu, id vulputate lacus. Etiam fermentum sem eu quam hendrerit.'
 						}
 					},
 					{
 						name: 'core/paragraph',
 						attributes: {
-							content: __(
-								'Nam risus massa, ullamcorper consectetur eros fermentum, porta aliquet ligula. Sed vel mauris nec enim.'
-							)
+							content: 'Nam risus massa, ullamcorper consectetur eros fermentum, porta aliquet ligula. Sed vel mauris nec enim.'
 						}
 					}
 				]

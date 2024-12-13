@@ -9,23 +9,28 @@
 
     <rule ref="WordPress-Extra">
         <!-- Forget about file names -->
-        <exclude name="WordPress.Files.FileName"/>
+        <exclude name="WordPress.Files.FileName" />
     </rule>
 
 
-    <config name="testVersion" value="5.6-"/>
+    <config name="testVersion" value="5.6-" />
 
     <rule ref="PHPCompatibility" />
     <rule ref="WordPress.WP.I18n">
         <properties>
-            <property name="text_domain" value="otter-blocks" />
+            <property name="text_domain" type="array">
+                <element value="otter-blocks" />
+                <element value="blocks-animation" />
+                <element value="blocks-import-export" />
+                <element value="otter-pro" />
+                <element value="blocks-css" />
+            </property>
         </properties>
-
     </rule>
 
 
-    <arg name="extensions" value="php"/>
-    <arg value="s"/>
+    <arg name="extensions" value="php" />
+    <arg value="s" />
 
     <file>.</file>
     <exclude-pattern>node_modules/*</exclude-pattern>
