@@ -104,6 +104,7 @@ class Blocks_Animation {
 		);
 
 		wp_script_add_data( 'otter-count', 'defer', true );
+		wp_set_script_translations( 'otter-count', 'blocks-animation' );
 
 		wp_enqueue_script(
 			'otter-typing',
@@ -114,6 +115,7 @@ class Blocks_Animation {
 		);
 
 		wp_script_add_data( 'otter-typing', 'defer', true );
+		wp_set_script_translations( 'otter-typing', 'blocks-animation' );
 	}
 
 	/**
