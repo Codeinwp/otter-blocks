@@ -67,6 +67,7 @@ class Blocks_CSS {
 			$asset_file['version'],
 			true
 		);
+		wp_set_script_translations( 'otter-css', 'blocks-css' );
 
 		wp_localize_script(
 			'otter-css',
