@@ -221,6 +221,8 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+
+			wp_set_script_translations( 'otter-blocks-woocommerce', 'otter-pro' );
 		}
 	}
 
@@ -243,6 +245,8 @@ class Main {
 			$asset_file['version'],
 			true
 		);
+
+		wp_set_script_translations( 'otter-dashboard-scripts', 'otter-pro' );
 	}
 
 	/**

@@ -90,6 +90,7 @@ class Live_Search {
 			$asset_file['version'],
 			true
 		);
+		
 		wp_localize_script(
 			'otter-live-search',
 			'liveSearchData',
@@ -104,6 +105,8 @@ class Live_Search {
 				),
 			)
 		);
+
+		wp_set_script_translations( 'otter-live-search', 'otter-pro' );
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/live-search-style.asset.php';
 		wp_enqueue_style( 'otter-live-search-style', OTTER_BLOCKS_URL . 'build/blocks/live-search-style.css', $asset_file['dependencies'], $asset_file['version'] );
