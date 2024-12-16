@@ -23,10 +23,10 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Settings', 'otter-pro' ) }
 			>
 				<SelectProducts
-					label={ __( 'Select Product', 'otter-blocks' ) }
+					label={ __( 'Select Product', 'otter-pro' ) }
 					hideLabelFromVision
 					value={ attributes.product }
 					onChange={ product => {
@@ -36,8 +36,8 @@ const Inspector = ({
 				/>
 
 				<TextControl
-					label={ __( 'Button Label', 'otter-blocks' ) }
-					help={ __( 'This overrides the default WooCommerce button label.', 'otter-blocks' ) }
+					label={ __( 'Button Label', 'otter-pro' ) }
+					help={ __( 'This overrides the default WooCommerce button label.', 'otter-pro' ) }
 					value={ attributes.label }
 					onChange={ label => setAttributes({ label }) }
 				/>

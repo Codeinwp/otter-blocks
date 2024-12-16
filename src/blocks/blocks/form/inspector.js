@@ -448,7 +448,7 @@ const Inspector = ({
 						) }
 
 						<ToolsPanel
-							label={ __( 'Form Options' ) }
+							label={ __( 'Form Options', 'otter-blocks' ) }
 							className="o-form-options"
 						>
 							{ 'loading' === loadingState?.formOptions && (
@@ -709,7 +709,7 @@ const Inspector = ({
 								placeholder={ __( 'Error. Please try again.', 'otter-blocks' ) }
 								value={ formOptions.errorMessage }
 								onChange={ errorMessage =>  setFormOption({ errorMessage })  }
-								help={ __( 'This message will be displayed when there is a problem with the server.' ) }
+								help={ __( 'This message will be displayed when there is a problem with the server.', 'otter-blocks' ) }
 							/>
 						</PanelBody>
 

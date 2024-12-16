@@ -18,11 +18,11 @@ import Edit from './link-edit.js';
 const applyProContent = options => {
 	const proOptions = [
 		{
-			label: __( 'Post Custom Field', 'otter-blocks' ),
+			label: __( 'Post Custom Field', 'otter-pro' ),
 			value: 'postMetaURL'
 		},
 		{
-			label: __( 'Advanced Custom Fields', 'otter-blocks' ),
+			label: __( 'Advanced Custom Fields', 'otter-pro' ),
 			value: 'acfURL'
 		}
 	];

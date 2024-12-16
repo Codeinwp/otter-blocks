@@ -49,7 +49,7 @@ const ACFImageSelect = ({
 			value={ value }
 			options={ [
 				{
-					label: __( 'Select a field', 'otter-blocks' ),
+					label: __( 'Select a field', 'otter-pro' ),
 					value: 'none'
 				},
 				...fields

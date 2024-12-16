@@ -37,7 +37,7 @@ const ProPreview = ({ attributes }) => {
 			<Disabled>
 
 				<TextControl
-					label={ __( 'Label', 'otter-blocks' ) }
+					label={ __( 'Label', 'otter-pro' ) }
 					value={ attributes.label }
 					onChange={ () => {} }
 				/>
@@ -45,51 +45,51 @@ const ProPreview = ({ attributes }) => {
 				<HideFieldLabelToggle attributes={ attributes } setAttributes={ () => {} } />
 
 				<TextControl
-					label={ __( 'Max File Size in MB', 'otter-blocks' ) }
+					label={ __( 'Max File Size in MB', 'otter-pro' ) }
 					type="number"
 					value={ attributes.maxFileSize }
 					onChange={ () => {} }
-					help={ __( 'You may need to contact your hosting provider to increase file sizes.', 'otter-blocks' ) }
+					help={ __( 'You may need to contact your hosting provider to increase file sizes.', 'otter-pro' ) }
 				/>
 
 				<FormTokenField
-					label={ __( 'Allowed File Types', 'otter-blocks' ) }
+					label={ __( 'Allowed File Types', 'otter-pro' ) }
 					value={ attributes.allowedFileTypes }
 					onChange={ () => {}  }
-					help={ __( 'Add the allowed files types that can be loaded. E.g.: jpg, zip, pdf.', 'otter-blocks' ) }
+					help={ __( 'Add the allowed files types that can be loaded. E.g.: jpg, zip, pdf.', 'otter-pro' ) }
 				/>
 
 				<TextControl
-					label={ __( 'Help Text', 'otter-blocks' ) }
+					label={ __( 'Help Text', 'otter-pro' ) }
 					value={ attributes.helpText }
 					onChange={ () => {} }
 				/>
 
 				<ToggleControl
-					label={ __( 'Required', 'otter-blocks' ) }
-					help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
+					label={ __( 'Required', 'otter-pro' ) }
+					help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-pro' ) }
 					checked={ attributes.isRequired }
 					onChange={ () => {} }
 				/>
 
 				<ToggleControl
-					label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
+					label={ __( 'Allow multiple file uploads', 'otter-pro' ) }
 					checked={ attributes.multipleFiles }
 					onChange={ () => {} }
 				/>
 
 				<TextControl
-					label={ __( 'Mapped Name', 'otter-blocks' ) }
+					label={ __( 'Mapped Name', 'otter-pro' ) }
 					help={ mappedNameInfo }
 					value={ attributes.mappedName }
 					onChange={ () => {} }
-					placeholder={ __( 'photos', 'otter-blocks' ) }
+					placeholder={ __( 'photos', 'otter-pro' ) }
 				/>
 
 				{
 					attributes.multipleFiles && (
 						<TextControl
-							label={ __( 'Maximum number of files', 'otter-blocks' ) }
+							label={ __( 'Maximum number of files', 'otter-pro' ) }
 							type="number"
 							value={ attributes.maxFilesNumber ?? 10 }
 							onChange={ () => {} }
@@ -98,8 +98,8 @@ const ProPreview = ({ attributes }) => {
 				}
 
 				<ToggleControl
-					label={ __( 'Save to Media Library', 'otter-blocks' ) }
-					help={ __( 'If enabled, the files will be saved to Media Library instead of adding them as attachments to email.', 'otter-blocks' ) }
+					label={ __( 'Save to Media Library', 'otter-pro' ) }
+					help={ __( 'If enabled, the files will be saved to Media Library instead of adding them as attachments to email.', 'otter-pro' ) }
 					checked={ 'media-library' === attributes.saveFiles }
 					onChange={ () => {} }
 				/>
@@ -107,7 +107,7 @@ const ProPreview = ({ attributes }) => {
 			</Disabled>
 			{ ! Boolean( window.themeisleGutenberg.hasPro ) && (
 				<Notice
-					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'formfileblock' )}>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'formfileblock' )}>{ __( 'Get more options with Otter Pro.', 'otter-pro' ) }</ExternalLink> }
 					variant="upsell"
 				/> ) }
 		</Fragment>
@@ -134,18 +134,18 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Field Settings', 'otter-blocks' ) }
+				title={ __( 'Field Settings', 'otter-pro' ) }
 			>
 				<Button
 					isSecondary
 					variant="secondary"
 					onClick={ () => selectForm?.() }
 				>
-					{ __( 'Back to the Form', 'otter-blocks' ) }
+					{ __( 'Back to the Form', 'otter-pro' ) }
 				</Button>
 
 				<SelectControl
-					label={ __( 'Field Type', 'otter-blocks' ) }
+					label={ __( 'Field Type', 'otter-pro' ) }
 					value={ attributes.type }
 					options={ fieldTypesOptions() }
 					onChange={ type => {
@@ -168,13 +168,13 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Color', 'otter-pro' ) }
 				initialOpen={ false }
 				colorSettings={ [
 					{
 						value: attributes.labelColor,
 						onChange: labelColor => setAttributes({ labelColor }),
-						label: __( 'Label Color', 'otter-blocks' )
+						label: __( 'Label Color', 'otter-pro' )
 					}
 				] }
 			/>

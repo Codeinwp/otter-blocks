@@ -80,7 +80,7 @@ const ResponsiveControl = ({
 						<ButtonGroup>
 							<Button
 								icon={ desktop }
-								label={ __( 'Desktop' ) }
+								label={ __( 'Desktop', 'otter-blocks' ) }
 								onClick={ () => setView( 'Desktop' ) }
 								className={ classnames({
 									'is-selected': 'Desktop' === getView
@@ -88,7 +88,7 @@ const ResponsiveControl = ({
 							/>
 							<Button
 								icon={ tablet }
-								label={ __( 'Tablet' ) }
+								label={ __( 'Tablet', 'otter-blocks' ) }
 								onClick={ () => setView( 'Tablet' ) }
 								className={ classnames({
 									'is-selected': 'Tablet' === getView
@@ -96,7 +96,7 @@ const ResponsiveControl = ({
 							/>
 							<Button
 								icon={ mobile }
-								label={ __( 'Mobile' ) }
+								label={ __( 'Mobile', 'otter-blocks' ) }
 								onClick={ () => setView( 'Mobile' ) }
 								className={ classnames({
 									'is-selected': 'Mobile' === getView

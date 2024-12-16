@@ -18,8 +18,8 @@ const Notices = el => {
 	if ( Boolean( window.otterPro.isExpired ) ) {
 		return (
 			<Notice
-				notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
-				instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Dynamic Content.', 'otter-blocks' ) }
+				notice={ __( 'Otter Pro license has expired.', 'otter-pro' ) }
+				instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Dynamic Content.', 'otter-pro' ) }
 			/>
 		);
 	}
@@ -27,8 +27,8 @@ const Notices = el => {
 	if ( ! Boolean( window.otterPro.isActive ) ) {
 		return (
 			<Notice
-				notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Dynamic Content.', 'otter-blocks' ) }
+				notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
+				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Dynamic Content.', 'otter-pro' ) }
 			/>
 		);
 	}

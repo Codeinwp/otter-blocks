@@ -125,7 +125,7 @@ class Dashboard_Server {
 		if ( ! isset( $fields['key'] ) || ! isset( $fields['action'] ) ) {
 			return new \WP_REST_Response(
 				array(
-					'message' => __( 'Invalid Action. Please refresh the page and try again.', 'otter-blocks' ),
+					'message' => __( 'Invalid Action. Please refresh the page and try again.', 'otter-pro' ),
 					'success' => false,
 				)
 			);
@@ -145,7 +145,7 @@ class Dashboard_Server {
 		return new \WP_REST_Response(
 			array(
 				'success' => true,
-				'message' => 'activate' === $fields['action'] ? __( 'Activated.', 'otter-blocks' ) : __( 'Deactivated', 'otter-blocks' ),
+				'message' => 'activate' === $fields['action'] ? __( 'Activated.', 'otter-pro' ) : __( 'Deactivated', 'otter-pro' ),
 				'license' => array(
 					'key'        => apply_filters( 'product_otter_license_key', 'free' ),
 					'valid'      => apply_filters( 'product_otter_license_status', false ),
@@ -185,7 +185,7 @@ class Dashboard_Server {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 
 	/**
@@ -197,6 +197,6 @@ class Dashboard_Server {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 }

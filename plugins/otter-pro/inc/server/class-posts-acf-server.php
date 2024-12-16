@@ -76,7 +76,7 @@ class Posts_ACF_Server {
 		);
 
 		if ( ! ( function_exists( 'acf_get_field_groups' ) && function_exists( 'acf_get_fields' ) ) ) {
-			$return['error']     = esc_html__( 'ACF is not installed!', 'otter-blocks' );
+			$return['error']     = esc_html__( 'ACF is not installed!', 'otter-pro' );
 			$return['eror_code'] = 1;
 			return rest_ensure_response( $return );
 		}
@@ -132,7 +132,7 @@ class Posts_ACF_Server {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 
 	/**
@@ -144,6 +144,6 @@ class Posts_ACF_Server {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 }

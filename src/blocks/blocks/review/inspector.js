@@ -483,7 +483,7 @@ const Inspector = ({
 
 								<TextareaControl
 									label={ __( 'Description', 'otter-blocks' ) }
-									placeholder={ __( 'Feature Description' ) }
+									placeholder={ __( 'Feature Description', 'otter-blocks' ) }
 									value={ feature.description }
 									onChange={ description =>  onChangeFeature({ action: 'update', index, value: { description }}) }
 								/>

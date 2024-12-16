@@ -28,14 +28,14 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 		blockProps={ useBlockProps() }
 	/>;
 } else {
-	edit = () => <div { ...useBlockProps() }><Placeholder>{ __( 'Tabs will be displayed here on the product page.', 'otter-blocks' ) }</Placeholder></div>;
+	edit = () => <div { ...useBlockProps() }><Placeholder>{ __( 'Tabs will be displayed here on the product page.', 'otter-pro' ) }</Placeholder></div>;
 }
 
 if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 	registerBlockType( name, {
 		...metadata,
-		title: __( 'Product Tabs', 'otter-blocks' ),
-		description: __( 'Display the tabs for your WooCommerce product.', 'otter-blocks' ),
+		title: __( 'Product Tabs', 'otter-pro' ),
+		description: __( 'Display the tabs for your WooCommerce product.', 'otter-pro' ),
 		icon,
 		keywords: [
 			'woocommerce',

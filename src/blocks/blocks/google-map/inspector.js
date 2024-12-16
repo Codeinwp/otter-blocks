@@ -174,7 +174,7 @@ const Inspector = ({
 						title={ __( 'Location', 'otter-blocks' ) }
 					>
 						<BaseControl
-							label={ __( 'Location' ) }
+							label={ __( 'Location', 'otter-blocks' ) }
 							id="wp-block-themeisle-blocks-google-map-search"
 						>
 							<input

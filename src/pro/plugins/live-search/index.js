@@ -50,13 +50,13 @@ if ( ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpir
 
 	registerBlockVariation( 'core/search', {
 		name: 'themeisle-gutenberg/live-search',
-		title: __( 'Live Search', 'otter-blocks' ),
-		description: __( 'this is a temporary description.', 'otter-blocks' ),
+		title: __( 'Live Search', 'otter-pro' ),
+		description: __( 'this is a temporary description.', 'otter-pro' ),
 		icon,
 		category: 'themeisle-blocks',
 		attributes: {
-			buttonText: __( 'Search' ),
-			label: __( 'Search' ),
+			buttonText: __( 'Search', 'otter-pro'  ),
+			label: __( 'Search', 'otter-pro'  ),
 			otterIsLive: true
 		}
 	});

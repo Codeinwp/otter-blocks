@@ -179,7 +179,7 @@ const Edit = ({
 				createBlock(
 					'core/button',
 					{
-						text: __( 'Open Modal', 'otter-blocks' ),
+						text: __( 'Open Modal', 'otter-pro' ),
 						anchor: modalAnchor
 					}
 				)
@@ -204,7 +204,7 @@ const Edit = ({
 						icon={ external }
 						onClick={ () => setEditing( true ) }
 					>
-						{ __( 'Edit Modal', 'otter-blocks' ) }
+						{ __( 'Edit Modal', 'otter-pro' ) }
 					</Button>
 
 					{ isEditing && (
@@ -242,8 +242,8 @@ const Edit = ({
 											},
 											[
 												[ 'core/image', { height: '150px' }],
-												[ 'core/heading', { placeholder: __( 'Modal Title' ) }],
-												[ 'core/paragraph', { placeholder: __( 'Modal Content' ) }]
+												[ 'core/heading', { placeholder: __( 'Modal Title', 'otter-pro'  ) }],
+												[ 'core/paragraph', { placeholder: __( 'Modal Content', 'otter-pro'  ) }]
 											]
 										]
 									]} />

@@ -90,6 +90,7 @@ class Live_Search {
 			$asset_file['version'],
 			true
 		);
+		
 		wp_localize_script(
 			'otter-live-search',
 			'liveSearchData',
@@ -99,11 +100,13 @@ class Live_Search {
 				'permalinkStructure' => get_option( 'permalink_structure' ),
 				'strings'            => array(
 					/* translators: This is followed by the search string */
-					'noResults' => __( 'No results for', 'otter-blocks' ),
-					'noTitle'   => sprintf( '(%s)', __( 'no title', 'otter-blocks' ) ),
+					'noResults' => __( 'No results for', 'otter-pro' ),
+					'noTitle'   => sprintf( '(%s)', __( 'no title', 'otter-pro' ) ),
 				),
 			)
 		);
+
+		wp_set_script_translations( 'otter-live-search', 'otter-pro' );
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/live-search-style.asset.php';
 		wp_enqueue_style( 'otter-live-search-style', OTTER_BLOCKS_URL . 'build/blocks/live-search-style.css', $asset_file['dependencies'], $asset_file['version'] );
@@ -139,7 +142,7 @@ class Live_Search {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 
 	/**
@@ -151,6 +154,6 @@ class Live_Search {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 }

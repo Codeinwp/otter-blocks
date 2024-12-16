@@ -50,11 +50,11 @@ const Edit = ({
 				) : (
 					<Placeholder
 						icon={ store }
-						label={ __( 'Add to Cart Button', 'otter-blocks' ) }
-						instructions={ __( 'Select a WooCommerce product for the Add to Cart button.', 'otter-blocks' ) }
+						label={ __( 'Add to Cart Button', 'otter-pro' ) }
+						instructions={ __( 'Select a WooCommerce product for the Add to Cart button.', 'otter-pro' ) }
 					>
 						<SelectProducts
-							label={ __( 'Select Product', 'otter-blocks' ) }
+							label={ __( 'Select Product', 'otter-pro' ) }
 							hideLabelFromVision
 							value={ attributes.product || '' }
 							onChange={ product => {

@@ -28,8 +28,8 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 
 registerBlockType( name, {
 	...metadata,
-	title: __( 'Modal', 'otter-blocks' ),
-	description: __( 'Display your content in beautiful Modal with many customization options. Powered by Otter.', 'otter-blocks' ),
+	title: __( 'Modal', 'otter-pro' ),
+	description: __( 'Display your content in beautiful Modal with many customization options. Powered by Otter.', 'otter-pro' ),
 	icon,
 	keywords: [
 		'modal',

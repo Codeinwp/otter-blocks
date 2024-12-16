@@ -65,7 +65,7 @@ const Edit = ({
 					} }
 				>
 					<RichText
-						placeholder={ __( 'Day', 'otter-blocks' ) }
+						placeholder={ __( 'Day', 'otter-pro' ) }
 						value={ attributes.label }
 						onChange={ label => {
 							setAttributes({ label });
@@ -81,7 +81,7 @@ const Edit = ({
 					} }
 				>
 					<RichText
-						placeholder={ __( 'Opening Hours', 'otter-blocks' ) }
+						placeholder={ __( 'Opening Hours', 'otter-pro' ) }
 						value={ attributes.time }
 						onChange={ time => {
 							setAttributes({ time });

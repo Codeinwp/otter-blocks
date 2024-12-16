@@ -16,3 +16,4 @@ license.json
 .fleet
 tests/assets/*_tmp
 .phpunit.result.cache
+languages

@@ -32,7 +32,7 @@ type BlockAppenderButtonProps = {
  * @param {Object} params.props        - Additional button props.
  */
 const BlockAppender = ({
-	buttonText = __( 'Add Item' ),
+	buttonText = __( 'Add Item', 'otter-blocks' ),
 	clientId,
 	allowedBlock,
 	...props

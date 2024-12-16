@@ -28,14 +28,14 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 		blockProps={ useBlockProps() }
 	/>;
 } else {
-	edit = () => <div { ...useBlockProps() }><Placeholder>{ __( 'Related products will be displayed here on the product page.', 'otter-blocks' ) }</Placeholder></div>;
+	edit = () => <div { ...useBlockProps() }><Placeholder>{ __( 'Related products will be displayed here on the product page.', 'otter-pro' ) }</Placeholder></div>;
 }
 
 if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 	registerBlockType( name, {
 		...metadata,
-		title: __( 'Product Related Products', 'otter-blocks' ),
-		description: __( 'Display related products for your WooCommerce product.', 'otter-blocks' ),
+		title: __( 'Product Related Products', 'otter-pro' ),
+		description: __( 'Display related products for your WooCommerce product.', 'otter-pro' ),
 		icon,
 		keywords: [
 			'woocommerce',

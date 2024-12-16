@@ -22,7 +22,7 @@ const Controls = ({
 		<BlockControls>
 			<ToolbarGroup>
 				<ToolbarButton
-					label={ __( 'Edit', 'otter-blocks' ) }
+					label={ __( 'Edit', 'otter-pro' ) }
 					icon={ edit }
 					onClick={ onEdit }
 				/>
