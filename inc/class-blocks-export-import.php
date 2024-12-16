@@ -47,8 +47,12 @@ class Blocks_Export_Import {
 			$asset_file['version'],
 			true
 		);
-	
-		wp_set_script_translations( 'blocks-export-import', 'blocks-export-import' );
+
+		if ( ! defined( 'BLOCKS_EXPORT_IMPORT_URL' ) ) {
+			wp_set_script_translations( 'blocks-export-import', 'otter-blocks' );
+		} else {
+			wp_set_script_translations( 'blocks-export-import', 'blocks-export-import' );
+		}
 	}
 
 	/**
