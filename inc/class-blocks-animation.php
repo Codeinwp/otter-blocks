@@ -281,17 +281,17 @@ class Blocks_Animation {
 		);
 
 		$notice_html  = '<div class="notice notice-info otter-animation-welcome-notice">';
-		$notice_html .= '<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>';
+		$notice_html .= '<button type="button" class="notice-dismiss"><span class="screen-reader-text">' . esc_html__( 'Dismiss this notice.', 'blocks-animation' ) . '</span></button>';
 		$notice_html .= '<div class="notice-content">';
 
-		$notice_html .= '<img class="otter-preview" style="max-height: 300px;" src="' . esc_url( BLOCKS_ANIMATION_URL . '/assets/images/welcome-notice.png' ) . '" alt="' . esc_attr__( 'Otter Blocks preview', 'otter-blocks' ) . '"/>';
+		$notice_html .= '<img class="otter-preview" style="max-height: 300px;" src="' . esc_url( BLOCKS_ANIMATION_URL . '/assets/images/welcome-notice.png' ) . '" alt="' . esc_attr__( 'Otter Blocks preview', 'blocks-animation' ) . '"/>';
 
 		$notice_html .= '<div class="notice-copy">';
 
 		$notice_html .= '<h1 class="notice-title">';
 		$notice_html .= sprintf(
 			/* translators: %1$s: Add-on Blocks, %2$s: Enhanced Animations, %3$s: Visibility Conditions */
-			__( 'Power Up Your Site with %1$s, %2$s, %3$s, and more!', 'otter-blocks' ), 
+			__( 'Power Up Your Site with %1$s, %2$s, %3$s, and more!', 'blocks-animation' ), 
 			'<span>' . __( 'Add-on Blocks', 'blocks-animation' ) . '</span>', 
 			'<span>' . __( 'Enhanced Animations', 'blocks-animation' ) . '</span>', 
 			'<span>' . __( 'Visibility Conditions', 'blocks-animation' ) . '</span>' 
@@ -316,7 +316,7 @@ class Blocks_Animation {
 		$notice_html .= '</button>';
 
 		$notice_html .= '<a href="https://wordpress.org/plugins/otter-blocks/" target="_blank" class="button button-secondary button-hero">';
-		$notice_html .= '<span>' . __( 'blocks-animation', 'otter-blocks' ) . '</span>';
+		$notice_html .= '<span>' . __( 'Learn More', 'blocks-animation' ) . '</span>';
 		$notice_html .= '<span class="dashicons dashicons-external"></span>';
 		$notice_html .= '</a>';
 
