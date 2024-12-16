@@ -9,6 +9,7 @@
     "FS_METHOD": "direct",
     "WP_DEFAULT_THEME": "twentytwentythree"
   },
+  "phpVersion": "7.4",
   "env": {
     "development": {
       "themes": [ "./test/emptytheme" ],
