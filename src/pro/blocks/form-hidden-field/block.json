@@ -6,7 +6,7 @@
 	"category": "themeisle-blocks",
 	"description": "A field used for adding extra metadata to the Form via URL params.",
 	"keywords": [ "metadata", "hidden", "field" ],
-	"textdomain": "otter-blocks",
+	"textdomain": "otter-pro",
 	"ancestor": [ "themeisle-blocks/form" ],
 	"attributes": {
 		"id": {

@@ -6,7 +6,7 @@
 	"category": "themeisle-blocks",
     "description": "Display an Add to Cart button for your WooCommerce products. Powered by Otter.",
     "keywords": [ "woocommerce", "add to cart", "products" ],
-	"textdomain": "otter-blocks",
+	"textdomain": "otter-pro",
     "attributes": {
         "product": {
             "type": "number"
