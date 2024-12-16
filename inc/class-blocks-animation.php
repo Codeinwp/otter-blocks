@@ -92,7 +92,11 @@ class Blocks_Animation {
 			)
 		);
 
-		wp_set_script_translations( 'otter-animation', 'blocks-animation' );
+		if ( ! defined( 'BLOCKS_ANIMATION_URL' ) ) {
+			wp_set_script_translations( 'otter-animation', 'otter-blocks' );
+		} else {
+			wp_set_script_translations( 'otter-animation', 'blocks-animation' );
+		}
 
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-count.asset.php';
 		wp_enqueue_script(
@@ -104,7 +108,12 @@ class Blocks_Animation {
 		);
 
 		wp_script_add_data( 'otter-count', 'defer', true );
-		wp_set_script_translations( 'otter-count', 'blocks-animation' );
+
+		if ( ! defined( 'BLOCKS_ANIMATION_URL' ) ) {
+			wp_set_script_translations( 'otter-count', 'otter-blocks' );
+		} else {
+			wp_set_script_translations( 'otter-count', 'blocks-animation' );
+		}
 
 		wp_enqueue_script(
 			'otter-typing',
@@ -115,7 +124,12 @@ class Blocks_Animation {
 		);
 
 		wp_script_add_data( 'otter-typing', 'defer', true );
-		wp_set_script_translations( 'otter-typing', 'blocks-animation' );
+
+		if ( ! defined( 'BLOCKS_ANIMATION_URL' ) ) {
+			wp_set_script_translations( 'otter-typing', 'otter-blocks' );
+		} else {
+			wp_set_script_translations( 'otter-typing', 'blocks-animation' );
+		}
 	}
 
 	/**
@@ -253,7 +267,11 @@ class Blocks_Animation {
 			true
 		);
 
-		wp_set_script_translations( 'otter-animation-welcome-notice-scripts', 'blocks-animation' );
+		if ( ! defined( 'BLOCKS_ANIMATION_URL' ) ) {
+			wp_set_script_translations( 'otter-animation-welcome-notice-scripts', 'otter-blocks' );
+		} else {
+			wp_set_script_translations( 'otter-animation-welcome-notice-scripts', 'blocks-animation' );
+		}
 
 		wp_localize_script(
 			'otter-animation-welcome-notice-scripts',

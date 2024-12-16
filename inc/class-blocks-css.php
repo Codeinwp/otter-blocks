@@ -67,7 +67,6 @@ class Blocks_CSS {
 			$asset_file['version'],
 			true
 		);
-		wp_set_script_translations( 'otter-css', 'blocks-css' );
 
 		wp_localize_script(
 			'otter-css',
@@ -87,7 +86,11 @@ class Blocks_CSS {
 			)
 		);
 
-		wp_set_script_translations( 'otter-css', 'blocks-css' );
+		if ( ! defined( 'BLOCKS_CSS_URL' ) ) {
+			wp_set_script_translations( 'otter-css', 'otter-blocks' );
+		} else {
+			wp_set_script_translations( 'otter-css', 'blocks-css' );
+		}
 
 		wp_enqueue_style(
 			'otter-css',
