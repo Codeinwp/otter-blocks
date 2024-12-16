@@ -6,7 +6,7 @@
 	"category": "themeisle-blocks",
 	"description": "A way to compare different product reviews made on the website. Powered by Otter.",
 	"keywords": [ "product", "review", "comparison" ],
-	"textdomain": "otter-blocks",
+	"textdomain": "otter-pro",
 	"attributes": {
 		"id": {
 			"type": "string"
