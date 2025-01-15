@@ -1,3 +1,7 @@
+##### [Version 3.0.8](https://github.com/Codeinwp/otter-blocks/compare/v3.0.7...v3.0.8) (2024-11-28)
+
+- Adds Template Cloud integration
+
 ##### [Version 3.0.7](https://github.com/Codeinwp/otter-blocks/compare/v3.0.6...v3.0.7) (2024-11-21)
 
 - Enhanced security
