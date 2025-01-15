@@ -23,6 +23,7 @@ class Posts_Grid_Block {
 	 */
 	public function render( $attributes ) {
 
+		add_filter( 'wp_img_tag_add_auto_sizes', '__return_false' );
 		$has_pagination = isset( $attributes['hasPagination'] ) && $attributes['hasPagination'];
 		$page_number    = 1;
 		$is_tiled       = isset( $attributes['className'] ) && false !== strpos( $attributes['className'], 'is-style-tiled' );
