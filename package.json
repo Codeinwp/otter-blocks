@@ -7,6 +7,7 @@
 		"prod:lite": "wp-scripts build --config webpack.config.js",
 		"prod:pro": "wp-scripts build --config webpack.config.pro.js",
 		"prod:grunt": "grunt build",
+		"grunt:version": "grunt version",
 		"start": "rm -rf build && npm-run-all --parallel dev:*",
 		"dev:lite": "wp-scripts start --config webpack.config.js",
 		"dev:pro": "wp-scripts start --config webpack.config.pro.js",

@@ -39,7 +39,7 @@
 		"format": "phpcbf",
 		"phpunit": "phpunit",
 		"phpstan": "phpstan analyse --memory-limit 2G",
-		"format-dist": "phpcbf --standard=phpcs.export.xml $1"
+		"format-dist": "phpcbf --standard=phpcs.export.xml"
 	},
 	"prefer-stable": true,
 	"config": {

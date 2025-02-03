@@ -54,8 +54,11 @@ const BlockPlaceholder = ({
 
 			<Button
 
-				/* translators: %s Label */
-				label={ sprintf( __( 'Remove %s', 'otter-pro' ), label ) }
+				label={ sprintf( 
+					// translators: %s label.
+					__( 'Remove %s', 'otter-pro' ),
+					label
+				) }
 				icon="dismiss"
 				onClick={ () => toggleReview( value ) }
 			/>

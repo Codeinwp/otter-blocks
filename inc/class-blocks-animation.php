@@ -44,6 +44,7 @@ class Blocks_Animation {
 		if ( ! defined( 'BLOCKS_ANIMATION_URL' ) ) {
 			define( 'BLOCKS_ANIMATION_URL', OTTER_BLOCKS_URL );
 			define( 'BLOCKS_ANIMATION_PATH', OTTER_BLOCKS_PATH );
+			define( 'BLOCKS_ANIMATION_OTTER', true );
 		}
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
@@ -63,7 +64,8 @@ class Blocks_Animation {
 	 * @access  public
 	 */
 	public function enqueue_editor_assets() {
-		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/index.asset.php';
+		$asset_file           = include BLOCKS_ANIMATION_PATH . '/build/animation/index.asset.php';
+		$is_using_otter_files = defined( 'BLOCKS_ANIMATION_OTTER' );
 
 		wp_enqueue_style(
 			'otter-animation',
@@ -92,11 +94,7 @@ class Blocks_Animation {
 			)
 		);
 
-		if ( ! defined( 'BLOCKS_ANIMATION_URL' ) ) {
-			wp_set_script_translations( 'otter-animation', 'otter-blocks' );
-		} else {
-			wp_set_script_translations( 'otter-animation', 'blocks-animation' );
-		}
+		wp_set_script_translations( 'otter-animation', $is_using_otter_files ? 'otter-blocks' : 'blocks-animation' );
 
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-count.asset.php';
 		wp_enqueue_script(
@@ -109,11 +107,7 @@ class Blocks_Animation {
 
 		wp_script_add_data( 'otter-count', 'defer', true );
 
-		if ( ! defined( 'BLOCKS_ANIMATION_URL' ) ) {
-			wp_set_script_translations( 'otter-count', 'otter-blocks' );
-		} else {
-			wp_set_script_translations( 'otter-count', 'blocks-animation' );
-		}
+		wp_set_script_translations( 'otter-count', $is_using_otter_files ? 'otter-blocks' : 'blocks-animation' );
 
 		wp_enqueue_script(
 			'otter-typing',
@@ -125,11 +119,7 @@ class Blocks_Animation {
 
 		wp_script_add_data( 'otter-typing', 'defer', true );
 
-		if ( ! defined( 'BLOCKS_ANIMATION_URL' ) ) {
-			wp_set_script_translations( 'otter-typing', 'otter-blocks' );
-		} else {
-			wp_set_script_translations( 'otter-typing', 'blocks-animation' );
-		}
+		wp_set_script_translations( 'otter-typing', $is_using_otter_files ? 'otter-blocks' : 'blocks-animation' );
 	}
 
 	/**
@@ -267,11 +257,10 @@ class Blocks_Animation {
 			true
 		);
 
-		if ( ! defined( 'BLOCKS_ANIMATION_URL' ) ) {
-			wp_set_script_translations( 'otter-animation-welcome-notice-scripts', 'otter-blocks' );
-		} else {
-			wp_set_script_translations( 'otter-animation-welcome-notice-scripts', 'blocks-animation' );
-		}
+		wp_set_script_translations( 
+			'otter-animation-welcome-notice-scripts', 
+			defined( 'BLOCKS_ANIMATION_OTTER' ) ? 'otter-blocks' : 'blocks-animation' 
+		);
 
 		wp_localize_script(
 			'otter-animation-welcome-notice-scripts',

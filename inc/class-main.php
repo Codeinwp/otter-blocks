@@ -582,7 +582,7 @@ class Main {
 			'logo'             => esc_url_raw( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ),
 			'has_upgrade_menu' => ! DEFINED( 'OTTER_PRO_VERSION' ),
 			'upgrade_link'     => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ) ),
-			'upgrade_text'     => __( 'Get Otter Pro', 'blocks-animation' ),
+			'upgrade_text'     => __( 'Get Otter Pro', 'otter-blocks' ),
 		);
 	}
 

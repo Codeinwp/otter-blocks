@@ -85,7 +85,18 @@ module.exports = function( grunt ) {
 					flags: ''
 				},
 				src: [ 'plugins/otter-pro/otter-pro.php' ]
-			}
+			},
+			readmetxt: {
+				options: {
+					prefix: 'Stable tag:\\s*'
+				},
+				src: [
+					'readme.txt',
+					'plugins/blocks-animation/readme.txt',
+					'plugins/blocks-css/readme.txt',
+					'plugins/blocks-export-import/readme.txt',
+				]
+			},
 		},
 		wp_readme_to_markdown: {
 			plugin: {

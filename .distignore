@@ -5,6 +5,7 @@
 .jshintrc
 Gruntfile.js
 phpcs.xml
+phpcs.export.xml
 phpstan.neon
 .eslintrc
 .gitattributes

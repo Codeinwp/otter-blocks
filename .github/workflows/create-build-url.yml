@@ -2,7 +2,7 @@ name: Build and publish the ZIP build file
 
 on:
   pull_request:
-    types: [ opened, synchronize, ready_for_review ]
+    types: [opened, synchronize, ready_for_review]
     branches-ignore:
       - "update_dependencies"
 jobs:
@@ -31,6 +31,8 @@ jobs:
         run: composer install --no-dev --prefer-dist --no-progress --no-suggest
       - name: Install npm deps
         run: npm ci
+      - name: Set version to Stable Tag
+        run: npm run grunt:version
       - name: Build files
         run: npm run build
       - name: Create zip
