@@ -5,6 +5,32 @@ const path = require( 'path' );
 
 defaultConfig.plugins.splice( 1, 1 ); // We need to remove Core's Copy Files plugin.
 
+const changeTextDomain = textdomain => {
+	return {
+		test: /\.(j|t)sx?$/,
+		exclude: /node_modules/,
+		use: [
+			{
+				loader: require.resolve( 'babel-loader' ),
+				options: {
+					cacheDirectory:
+					process.env.BABEL_CACHE_DIRECTORY || true,
+					babelrc: false,
+					configFile: false,
+					presets: [
+						require.resolve(
+							'@wordpress/babel-preset-default'
+						)
+					],
+					plugins: [
+						[ '@automattic/babel-plugin-replace-textdomain', { textdomain }]
+					]
+				}
+			}
+		]
+	};
+};
+
 const plugins = {
 	plugins: [
 		...defaultConfig.plugins,
@@ -44,6 +70,12 @@ module.exports = [
 		output: {
 			path: path.resolve( __dirname, './build/animation' )
 		},
+		module: {
+			rules: [
+				changeTextDomain('blocks-animation'),
+				...defaultConfig.module.rules
+			]
+		},
 		...plugins
 	},
 	{
@@ -58,6 +90,12 @@ module.exports = [
 		output: {
 			path: path.resolve( __dirname, './build/css' )
 		},
+		module: {
+			rules: [
+				changeTextDomain('blocks-css'),
+				...defaultConfig.module.rules
+			]
+		},
 		...plugins
 	},
 	{
@@ -71,6 +109,12 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/export-import' )
+		},
+		module: {
+			rules: [
+				changeTextDomain('blocks-export-import'),
+				...defaultConfig.module.rules
+			]
 		},
 		...plugins
 	}
