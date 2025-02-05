@@ -46,7 +46,7 @@ const Edit = ({
 
 	const placeholder = attributes.paramName ? sprintf(
 		/* translators: %s: URL parameter name */
-		__( 'Get the value of the URL param: %s', 'otter-blocks' ),
+		__( 'Get the value of the URL param: %s', 'otter-pro' ),
 		attributes.paramName
 	) : '';
 
@@ -71,10 +71,10 @@ const Edit = ({
 					className="otter-form-input-label"
 				>
 					<span className="o-hidden-field-mark">
-						{ __( 'Hidden Field', 'otter-blocks' ) }
+						{ __( 'Hidden Field', 'otter-pro' ) }
 					</span>
 					<RichText
-						placeholder={ __( 'Type here…', 'otter-blocks' ) }
+						placeholder={ __( 'Type here…', 'otter-pro' ) }
 						className="otter-form-input-label__label"
 						value={ attributes.label }
 						onChange={ label  => setAttributes({ label }) }

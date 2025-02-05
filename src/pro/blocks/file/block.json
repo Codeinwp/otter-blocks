@@ -7,7 +7,7 @@
 	"description": "Display a contact form for your clients.",
 	"keywords": [ "input", "file", "field" ],
 	"ancestor": [ "themeisle-blocks/form" ],
-	"textdomain": "otter-blocks",
+	"textdomain": "otter-pro",
 	"attributes": {
 		"id": {
 			"type": "string"

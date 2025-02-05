@@ -42,7 +42,7 @@ const Edit = ({
 					results: {},
 					status: {
 						isError: true,
-						message: error.message || __( 'Unknown error', 'otter-blocks' )
+						message: error.message || __( 'Unknown error', 'otter-pro' )
 					}
 				};
 			}
@@ -72,13 +72,13 @@ const Edit = ({
 
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Sync with WooCommerce', 'otter-blocks' ) }
+					title={ __( 'Sync with WooCommerce', 'otter-pro' ) }
 					initialOpen={ false }
 				>
-					<p>{ __( 'By selecting a product, the current review information will sync with the selected WooCommerce product.', 'otter-blocks' ) }</p>
+					<p>{ __( 'By selecting a product, the current review information will sync with the selected WooCommerce product.', 'otter-pro' ) }</p>
 
 					<SelectProducts
-						label={ __( 'Select Product', 'otter-blocks' ) }
+						label={ __( 'Select Product', 'otter-pro' ) }
 						value={ props.attributes.product }
 						disabled={ ! Boolean( window.otterPro.isActive ) || Boolean( window.otterPro.isExpired ) }
 						onChange={ product => props.setAttributes({ product: 0 === product ? undefined : product }) }
@@ -86,15 +86,15 @@ const Edit = ({
 
 					{ Boolean( window.otterPro.isExpired ) && (
 						<Notice
-							notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
-							instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Review Block.', 'otter-blocks' ) }
+							notice={ __( 'Otter Pro license has expired.', 'otter-pro' ) }
+							instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Review Block.', 'otter-pro' ) }
 						/>
 					) }
 
 					{ ! Boolean( window.otterPro.isActive ) && (
 						<Notice
-							notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Review Block.', 'otter-blocks' ) }
+							notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
+							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Review Block.', 'otter-pro' ) }
 						/>
 					) }
 				</PanelBody>

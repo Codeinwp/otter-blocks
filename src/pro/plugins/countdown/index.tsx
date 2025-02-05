@@ -33,24 +33,24 @@ const { Notice } = window.otterComponents;
 const countdownMoveHelpMsgCountdown = ( mode: any ) => {
 	switch ( mode ) {
 	case 'timer':
-		return __( 'A fixed amount of time for each browser session (Evergreen Countdown)', 'otter-blocks' );
+		return __( 'A fixed amount of time for each browser session (Evergreen Countdown)', 'otter-pro' );
 	case 'interval':
-		return __( 'The countdown will be active only between the Start Date and the End Date', 'otter-blocks' );
+		return __( 'The countdown will be active only between the Start Date and the End Date', 'otter-pro' );
 	default:
-		return __( 'An universal deadline for all visitors', 'otter-blocks' );
+		return __( 'An universal deadline for all visitors', 'otter-pro' );
 	}
 };
 
 const onExpireHelpMsgCountdown = ( behaviour: any ) => {
 	switch ( behaviour ) {
 	case 'redirectLink':
-		return __( 'Redirect the user to another URL, when the countdown reaches 0', 'otter-blocks' );
+		return __( 'Redirect the user to another URL, when the countdown reaches 0', 'otter-pro' );
 	case 'hide':
-		return __( 'Hide when the countdown reaches 0', 'otter-blocks' );
+		return __( 'Hide when the countdown reaches 0', 'otter-pro' );
 	case 'restart':
 		return 'The Countdown will restart when it reaches 0 and the page is refreshed';
 	default:
-		return __( 'The countdown remains visible when it reaches 0', 'otter-blocks' );
+		return __( 'The countdown remains visible when it reaches 0', 'otter-pro' );
 	}
 };
 
@@ -68,7 +68,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 	return (
 		<Fragment>
 			<SelectControl
-				label={ __( 'Countdown Type', 'otter-blocks' ) }
+				label={ __( 'Countdown Type', 'otter-pro' ) }
 				value={  attributes.mode }
 				onChange={ value => {
 					const attrs: any = {
@@ -98,15 +98,15 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 				}
 				options={[
 					{
-						label: __( 'Static', 'otter-blocks' ),
+						label: __( 'Static', 'otter-pro' ),
 						value: ''
 					},
 					{
-						label: __( 'Evergreen', 'otter-blocks' ),
+						label: __( 'Evergreen', 'otter-pro' ),
 						value: 'timer'
 					},
 					{
-						label: __( 'Interval', 'otter-blocks' ),
+						label: __( 'Interval', 'otter-pro' ),
 						value: 'interval'
 					}
 				]}
@@ -117,7 +117,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 				<Fragment>
 					<TextControl
 						type="number"
-						label={__( 'Days', 'otter-blocks' )}
+						label={__( 'Days', 'otter-pro' )}
 						value={ attributes?.timer?.days ?? '' }
 						onChange={ ( days ) => {
 							setAttributes({
@@ -127,7 +127,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 					/>
 					<TextControl
 						type="number"
-						label={__( 'Hours', 'otter-blocks' )}
+						label={__( 'Hours', 'otter-pro' )}
 						value={ attributes?.timer?.hours ?? '' }
 						onChange={ ( hours ) => {
 							setAttributes({
@@ -137,7 +137,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 					/>
 					<TextControl
 						type="number"
-						label={__( 'Minutes', 'otter-blocks' )}
+						label={__( 'Minutes', 'otter-pro' )}
 						value={ attributes?.timer?.minutes ?? '' }
 						onChange={ ( minutes ) => {
 							setAttributes({
@@ -147,7 +147,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 					/>
 					<TextControl
 						type="number"
-						label={__( 'Seconds', 'otter-blocks' )}
+						label={__( 'Seconds', 'otter-pro' )}
 						value={ attributes?.timer?.seconds ?? '' }
 						onChange={ ( seconds ) => {
 							setAttributes({
@@ -161,11 +161,11 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 			{ 'interval' === attributes.mode && (
 				<Fragment>
 					<BaseControl
-						label={ __( 'Start Date', 'otter-blocks' ) }
+						label={ __( 'Start Date', 'otter-pro' ) }
 					>
 						<Dropdown
 							position="bottom left"
-							headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+							headerTitle={ __( 'Select the date for the deadline', 'otter-pro' ) }
 							renderToggle={ ({ onToggle, isOpen }) => (
 								<>
 									<Button
@@ -174,7 +174,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 										aria-expanded={ isOpen }
 										className="o-extend-btn"
 									>
-										{ attributes.startInterval ? format( settings.formats.datetime, attributes.startInterval ) : __( 'Select Start Date', 'otter-blocks' ) }
+										{ attributes.startInterval ? format( settings.formats.datetime, attributes.startInterval ) : __( 'Select Start Date', 'otter-pro' ) }
 									</Button>
 								</>
 							) }
@@ -189,11 +189,11 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 					</BaseControl>
 
 					<BaseControl
-						label={ __( 'End Date', 'otter-blocks' ) }
+						label={ __( 'End Date', 'otter-pro' ) }
 					>
 						<Dropdown
 							position="bottom left"
-							headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+							headerTitle={ __( 'Select the date for the deadline', 'otter-pro' ) }
 							renderToggle={ ({ onToggle, isOpen }) => (
 								<>
 									<Button
@@ -202,7 +202,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 										aria-expanded={ isOpen }
 										className="o-extend-btn"
 									>
-										{ attributes.endInterval ? format( settings.formats.datetime, attributes.endInterval ) : __( 'Select End Date', 'otter-blocks' ) }
+										{ attributes.endInterval ? format( settings.formats.datetime, attributes.endInterval ) : __( 'Select End Date', 'otter-pro' ) }
 									</Button>
 								</>
 							) }
@@ -231,8 +231,8 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 			<Fragment>
 				{ Template }
 				<Notice
-					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
+					notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
+					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-pro' ) }
 				/>
 			</Fragment>
 		);
@@ -241,7 +241,7 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 	return (
 		<Fragment>
 			<SelectControl
-				label={ __( 'On Expire', 'otter-blocks' ) }
+				label={ __( 'On Expire', 'otter-pro' ) }
 				value={ attributes.behaviour }
 				onChange={ behaviour => {
 					window.oTrk?.set( `${attributes.id}_beh`, { feature: 'countdown', featureComponent: 'countdown-behaviour', featureValue: behaviour, groupID: attributes.id });
@@ -253,19 +253,19 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 				}}
 				options={[
 					{
-						label: __( 'No action', 'otter-blocks' ),
+						label: __( 'No action', 'otter-pro' ),
 						value: ''
 					},
 					{
-						label: __( 'Hide the Countdown', 'otter-blocks' ),
+						label: __( 'Hide the Countdown', 'otter-pro' ),
 						value: 'hide'
 					},
 					...( 'timer' === attributes.mode ? [{
-						label: __( 'Restart the Countdown', 'otter-blocks' ),
+						label: __( 'Restart the Countdown', 'otter-pro' ),
 						value: 'restart'
 					}] : []),
 					{
-						label: __( 'Redirect to link', 'otter-blocks' ),
+						label: __( 'Redirect to link', 'otter-pro' ),
 						value: 'redirectLink'
 					}
 				]}
@@ -274,15 +274,15 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 
 			{ 'redirectLink' === attributes.behaviour && (
 				<TextControl
-					label={ __( 'Redirect Link', 'otter-blocks' ) }
+					label={ __( 'Redirect Link', 'otter-pro' ) }
 					value={ attributes.redirectLink ?? ''}
 					onChange={ redirectLink => setAttributes({ redirectLink })}
 				/>
 			) }
 
 			<ToggleControl
-				label={ __( 'Hide/Show Blocks When the Countdown Ends', 'otter-blocks' ) }
-				help={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
+				label={ __( 'Hide/Show Blocks When the Countdown Ends', 'otter-pro' ) }
+				help={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-pro' ) }
 				checked={ attributes.onEndAction !== undefined }
 				onChange={ value => {
 					window.oTrk?.set( `${attributes.id}_hide`, { feature: 'countdown', featureComponent: 'countdown-hide', featureValue: value ? 'all' : 'none', groupID: attributes.id });
@@ -297,13 +297,13 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 			{ attributes?.onEndAction && (
 				<Fragment>
 					<p>
-						{ __( 'Paste the following code in the block that you want to show up or hide (in the same page) when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
+						{ __( 'Paste the following code in the block that you want to show up or hide (in the same page) when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-pro' ) }
 					</p>
-					<p style={{ marginTop: '10px', marginBottom: '5px' }}>{ __( 'Show trigger', 'otter-blocks' ) }</p>
+					<p style={{ marginTop: '10px', marginBottom: '5px' }}>{ __( 'Show trigger', 'otter-pro' ) }</p>
 					<code style={{ display: 'block', padding: '10px' }}>
 						{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-show` }
 					</code>
-					<p style={{ marginTop: '10px', marginBottom: '5px' }}>{ __( 'Hide trigger', 'otter-blocks' ) }</p>
+					<p style={{ marginTop: '10px', marginBottom: '5px' }}>{ __( 'Hide trigger', 'otter-pro' ) }</p>
 					<code style={{ display: 'block', padding: '10px' }}>
 						{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-hide` }
 					</code>

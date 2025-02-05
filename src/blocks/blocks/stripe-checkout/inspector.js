@@ -167,7 +167,7 @@ const Inspector = ({
 
 				{ isOpen && (
 					<Modal
-						title={ __( 'Stripe Messages' ) }
+						title={ __( 'Stripe Messages', 'otter-blocks' ) }
 						onRequestClose={() => setOpen( false )}
 						shouldCloseOnClickOutside={ false }
 					>

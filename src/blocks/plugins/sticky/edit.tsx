@@ -105,7 +105,7 @@ const ProFeatures = () => {
 
 			<ToggleControl
 				label={ __( 'Enable on Mobile', 'otter-blocks' ) }
-				help={ __( 'Make the sticky mode active for mobile users.' ) }
+				help={ __( 'Make the sticky mode active for mobile users.', 'otter-blocks' ) }
 
 				// @ts-ignore
 				disabled={ true }

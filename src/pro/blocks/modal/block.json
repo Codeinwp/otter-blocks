@@ -6,7 +6,7 @@
 	"category": "themeisle-blocks",
 	"description": "Display your content in beautiful Modal with many customization options. Powered by Otter.",
 	"keywords": [ "modal", "lightbox" ],
-	"textdomain": "otter-blocks",
+	"textdomain": "otter-pro",
 	"attributes": {
 		"id": {
 			"type": "string"

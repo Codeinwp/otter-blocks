@@ -11,14 +11,14 @@ const AutoresponderBodyModal = ({ value, onChange, area, addExtraMargin }) => {
 		<>
 			{ isOpen && (
 				<Modal
-					title={ __( 'Autoresponder Body' ) }
+					title={ __( 'Autoresponder Body', 'otter-pro'  ) }
 					onRequestClose={() => setOpen( false )}
 					shouldCloseOnClickOutside={ false }
 				>
 					<RichTextEditor
 						value={ value }
 						onChange={ onChange }
-						help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
+						help={ __( 'Enter the body of the autoresponder email.', 'otter-pro' ) }
 						allowRawHTML
 						area={ area }
 					/>
@@ -29,7 +29,7 @@ const AutoresponderBodyModal = ({ value, onChange, area, addExtraMargin }) => {
 				onClick={() => setOpen( true )}
 				className={ classNames({ 'o-autoresponder-margin': Boolean( addExtraMargin ) }) }
 			>
-				{ __( 'Add Autoresponder Body', 'otter-blocks' ) }
+				{ __( 'Add Autoresponder Body', 'otter-pro' ) }
 			</Button>
 		</>
 	);

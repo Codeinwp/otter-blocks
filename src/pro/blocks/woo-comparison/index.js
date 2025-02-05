@@ -53,15 +53,15 @@ const edit = ({
 
 	return (
 		<div { ...useBlockProps() }>
-			<Placeholder>{ __( 'You need to install the latest version of Neve with Sparks for WooCommerce to use WooCommerce Comparison Table.', 'otter-blocks' ) }</Placeholder>
+			<Placeholder>{ __( 'You need to install the latest version of Neve with Sparks for WooCommerce to use WooCommerce Comparison Table.', 'otter-pro' ) }</Placeholder>
 		</div>
 	);
 };
 
 registerBlockType( name, {
 	...metadata,
-	title: __( 'WooCommerce Comparison Table', 'otter-blocks' ),
-	description: __( 'A way to compare different WooCommerce products made on the website.', 'otter-blocks' ),
+	title: __( 'WooCommerce Comparison Table', 'otter-pro' ),
+	description: __( 'A way to compare different WooCommerce products made on the website.', 'otter-pro' ),
 	icon: 'editor-table',
 	keywords: [
 		'woocommerce',

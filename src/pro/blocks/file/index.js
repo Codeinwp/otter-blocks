@@ -30,8 +30,8 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 
 registerBlockType( name, {
 	...metadata,
-	title: __( 'File Field', 'otter-blocks' ),
-	description: __( 'Display a file field for uploading.', 'otter-blocks' ),
+	title: __( 'File Field', 'otter-pro' ),
+	description: __( 'Display a file field for uploading.', 'otter-pro' ),
 	icon,
 	keywords: [
 		'input',

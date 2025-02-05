@@ -39,7 +39,7 @@ const BlockAnimation = ( el, props ) => {
 
 				<ToolsPanelItem
 					hasValue={ () => Boolean( props?.attributes?.className?.includes( 'animated' ) ) }
-					label={ __( 'Animations', 'otter-blocks' ) }
+					label={ __( 'Animations', 'blocks-animation' ) }
 					onDeselect={ () => window?.blocksAnimation?.removeAnimation() }
 					isShownByDefault={ showAsDefault }
 				>

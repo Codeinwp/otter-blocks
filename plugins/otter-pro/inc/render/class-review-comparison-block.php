@@ -73,7 +73,7 @@ class Review_Comparison_Block {
 
 				$block['attrs']['links'] = array(
 					array(
-						'label'       => __( 'Buy Now', 'otter-blocks' ),
+						'label'       => __( 'Buy Now', 'otter-pro' ),
 						'href'        => method_exists( $product, 'get_product_url' ) ? $product->get_product_url() : $product->get_permalink(),
 						'isSponsored' => method_exists( $product, 'get_product_url' ),
 					),
@@ -82,19 +82,19 @@ class Review_Comparison_Block {
 
 			$features = array(
 				array(
-					'title'  => __( 'Stability', 'otter-blocks' ),
+					'title'  => __( 'Stability', 'otter-pro' ),
 					'rating' => 9,
 				),
 				array(
-					'title'  => __( 'Ease of Use', 'otter-blocks' ),
+					'title'  => __( 'Ease of Use', 'otter-pro' ),
 					'rating' => 4,
 				),
 				array(
-					'title'  => __( 'Look & Feel', 'otter-blocks' ),
+					'title'  => __( 'Look & Feel', 'otter-pro' ),
 					'rating' => 9,
 				),
 				array(
-					'title'  => __( 'Price', 'otter-blocks' ),
+					'title'  => __( 'Price', 'otter-pro' ),
 					'rating' => 7,
 				),
 			);
@@ -112,7 +112,7 @@ class Review_Comparison_Block {
 			$table_title .= '<td>';
 			if ( isset( $block['attrs']['title'] ) ) {
 				$table_title .= '<a href="' . get_the_permalink( intval( $id[0] ) ) . '" target="_blank">';
-				$table_title .= $block['attrs']['title'] ? $block['attrs']['title'] : __( 'Untitled review', 'otter-blocks' );
+				$table_title .= $block['attrs']['title'] ? $block['attrs']['title'] : __( 'Untitled review', 'otter-pro' );
 				$table_title .= '</a>';
 			}
 			$table_title .= '</td>';
@@ -150,12 +150,12 @@ class Review_Comparison_Block {
 
 			$links = array(
 				array(
-					'label'       => __( 'Buy on Amazon', 'otter-blocks' ),
+					'label'       => __( 'Buy on Amazon', 'otter-pro' ),
 					'href'        => '',
 					'isSponsored' => false,
 				),
 				array(
-					'label'       => __( 'Buy on eBay', 'otter-blocks' ),
+					'label'       => __( 'Buy on eBay', 'otter-pro' ),
 					'href'        => '',
 					'isSponsored' => false,
 				),
@@ -195,32 +195,32 @@ class Review_Comparison_Block {
 
 		$html .= '	<tbody>';
 		$html .= '		<tr>';
-		$html .= '			<th>' . __( 'Name', 'otter-blocks' ) . '</th>';
+		$html .= '			<th>' . __( 'Name', 'otter-pro' ) . '</th>';
 		$html .= $table_title;
 		$html .= '		</tr>';
 
 		$html .= '		<tr>';
-		$html .= '			<th>' . __( 'Price', 'otter-blocks' ) . '</th>';
+		$html .= '			<th>' . __( 'Price', 'otter-pro' ) . '</th>';
 		$html .= $table_price;
 		$html .= '		</tr>';
 
 		$html .= '		<tr>';
-		$html .= '			<th>' . __( 'Rating', 'otter-blocks' ) . '</th>';
+		$html .= '			<th>' . __( 'Rating', 'otter-pro' ) . '</th>';
 		$html .= $table_ratings;
 		$html .= '		</tr>';
 
 		$html .= '		<tr>';
-		$html .= '			<th>' . __( 'Description', 'otter-blocks' ) . '</th>';
+		$html .= '			<th>' . __( 'Description', 'otter-pro' ) . '</th>';
 		$html .= $table_description;
 		$html .= '		</tr>';
 
 		$html .= '		<tr>';
-		$html .= '			<th>' . __( 'Statistics', 'otter-blocks' ) . '</th>';
+		$html .= '			<th>' . __( 'Statistics', 'otter-pro' ) . '</th>';
 		$html .= $table_features;
 		$html .= '		</tr>';
 
 		$html .= '		<tr>';
-		$html .= '			<th>' . __( 'Buy this product', 'otter-blocks' ) . '</th>';
+		$html .= '			<th>' . __( 'Buy this product', 'otter-pro' ) . '</th>';
 		$html .= $table_links;
 		$html .= '		</tr>';
 		$html .= '	</tbody>';

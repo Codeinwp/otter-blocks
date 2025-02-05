@@ -365,9 +365,9 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 ## Changelog ##
 
-##### [Version 3.0.8](https://github.com/Codeinwp/otter-blocks/compare/v3.0.7...v3.0.8) (2024-11-28)
+##### [Version 3.0.9](https://github.com/Codeinwp/otter-blocks/compare/v3.0.8...v3.0.9) (2025-01-16)
 
-- Adds Template Cloud integration
+- Fixed compatibility with WordPress 6.7, causing images to display incorrectly in the front-end
 
 
 
