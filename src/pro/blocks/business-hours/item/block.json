@@ -7,7 +7,7 @@
 	"description": "Item used by Business Hours block to display the time. Powered by Otter.",
 	"keywords": [ "business", "schedule", "time" ],
 	"parent": [ "themeisle-blocks/business-hours" ],
-	"textdomain": "otter-blocks",
+	"textdomain": "otter-pro",
 	"attributes": {
 		"id": {
 			"type": "string"
