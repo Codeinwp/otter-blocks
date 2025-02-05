@@ -37,7 +37,7 @@ class Product_Rating_Block {
 		$output = ob_get_clean();
 
 		if ( empty( $output ) ) {
-			$output = __( 'Your product ratings will display here.', 'otter-blocks' );
+			$output = __( 'Your product ratings will display here.', 'otter-pro' );
 		}
 		return $output;
 	}

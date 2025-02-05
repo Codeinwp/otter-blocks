@@ -18,6 +18,32 @@ const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block 
 
 const blockFolders = Object.keys( blocks ).filter( block => true !== blocks[ block ]?.isPro ).map( block => `build/blocks/${ block }` );
 
+const changeTextDomain = textdomain => {
+	return {
+		test: /\.(j|t)sx?$/,
+		exclude: /node_modules/,
+		use: [
+			{
+				loader: require.resolve( 'babel-loader' ),
+				options: {
+					cacheDirectory:
+					process.env.BABEL_CACHE_DIRECTORY || true,
+					babelrc: false,
+					configFile: false,
+					presets: [
+						require.resolve(
+							'@wordpress/babel-preset-default'
+						)
+					],
+					plugins: [
+						[ '@automattic/babel-plugin-replace-textdomain', { textdomain }]
+					]
+				}
+			}
+		]
+	};
+};
+
 module.exports = [
 	{
 
@@ -74,6 +100,12 @@ module.exports = [
 		output: {
 			path: path.resolve( __dirname, './build/animation' )
 		},
+		module: {
+			rules: [
+				changeTextDomain('otter-blocks'),
+				...defaultConfig.module.rules
+			]
+		},
 		plugins: [
 			...defaultConfig.plugins,
 			new BundleAnalyzerPlugin({
@@ -94,6 +126,12 @@ module.exports = [
 		output: {
 			path: path.resolve( __dirname, './build/css' )
 		},
+		module: {
+			rules: [
+				changeTextDomain('otter-blocks'),
+				...defaultConfig.module.rules
+			]
+		},
 		plugins: [
 			...defaultConfig.plugins,
 			new BundleAnalyzerPlugin({
@@ -113,6 +151,12 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/export-import' )
+		},
+		module: {
+			rules: [
+				changeTextDomain('otter-blocks'),
+				...defaultConfig.module.rules
+			]
 		},
 		plugins: [
 			...defaultConfig.plugins,

@@ -59,18 +59,18 @@ const Inspector = ({
 		<InspectorControls>
 
 			<PanelBody
-				title={ __( 'Field Settings', 'otter-blocks' ) }
+				title={ __( 'Field Settings', 'otter-pro' ) }
 			>
 				<Button
 					isSecondary
 					variant="secondary"
 					onClick={ () => selectForm?.() }
 				>
-					{ __( 'Back to the Form', 'otter-blocks' ) }
+					{ __( 'Back to the Form', 'otter-pro' ) }
 				</Button>
 
 				<SelectControl
-					label={ __( 'Field Type', 'otter-blocks' ) }
+					label={ __( 'Field Type', 'otter-pro' ) }
 					value={ attributes.type ?? 'stripe' }
 					options={ fieldTypesOptions() }
 					onChange={ type => {
@@ -83,18 +83,18 @@ const Inspector = ({
 				<FieldInputWidth attributes={ attributes } setAttributes={ setAttributes } />
 
 				<TextControl
-					label={ __( 'Mapped Name', 'otter-blocks' ) }
-					help={ __( 'Allow easy identification of the field in features like Webhooks.', 'otter-blocks' ) }
+					label={ __( 'Mapped Name', 'otter-pro' ) }
+					help={ __( 'Allow easy identification of the field in features like Webhooks.', 'otter-pro' ) }
 					value={ attributes.mappedName }
 					onChange={ mappedName => setAttributes({ mappedName }) }
-					placeholder={ __( 'product', 'otter-blocks' ) }
+					placeholder={ __( 'product', 'otter-pro' ) }
 				/>
 
 				{ ! Boolean( window?.otterPro?.isActive ) && (
 					<Fragment>
 						<OtterNotice
-							notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Form Block.', 'otter-blocks' ) }
+							notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
+							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Form Block.', 'otter-pro' ) }
 						/>
 					</Fragment>
 				)
@@ -110,15 +110,15 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Stripe Product', 'otter-blocks' ) }
+				title={ __( 'Stripe Product', 'otter-pro' ) }
 			>
 				{ ! isLoadingProducts && (
 					<SelectControl
-						label={ __( 'Select a product to display.', 'otter-blocks' ) }
+						label={ __( 'Select a product to display.', 'otter-pro' ) }
 						value={ attributes.product }
 						options={ [
 							{
-								label: __( 'Select a product', 'otter-blocks' ),
+								label: __( 'Select a product', 'otter-pro' ),
 								value: 'none'
 							},
 							...productsList
@@ -135,11 +135,11 @@ const Inspector = ({
 
 				{ ( ! isLoadingPrices && attributes.product ) && (
 					<SelectControl
-						label={ __( 'Select the price you want to display.', 'otter-blocks' ) }
+						label={ __( 'Select the price you want to display.', 'otter-pro' ) }
 						value={ attributes.price }
 						options={ [
 							{
-								label: __( 'Select a price', 'otter-blocks' ),
+								label: __( 'Select a price', 'otter-pro' ),
 								value: 'none'
 							},
 							...pricesList
@@ -156,51 +156,51 @@ const Inspector = ({
 
 
 			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Color', 'otter-pro' ) }
 				initialOpen={ false }
 				colorSettings={ [
 					{
 						value: attributes.labelColor,
 						onChange: labelColor => setAttributes({ labelColor }),
-						label: __( 'Label Color', 'otter-blocks' )
+						label: __( 'Label Color', 'otter-pro' )
 					},
 					{
 						value: attributes.borderColor,
 						onChange: borderColor => setAttributes({ borderColor }),
-						label: __( 'Border Color', 'otter-blocks' )
+						label: __( 'Border Color', 'otter-pro' )
 					}
 				] }
 			/>
 			<PanelBody
-				title={ __( 'Border', 'otter-blocks' ) }
+				title={ __( 'Border', 'otter-pro' ) }
 				initialOpen={ false }
 			>
 				<BoxControl
-					label={ __( 'Border Width', 'otter-blocks' ) }
+					label={ __( 'Border Width', 'otter-pro' ) }
 					values={ attributes.borderWidth }
 					onChange={ borderWidth => setAttributes({ borderWidth }) }
 				/>
 
 				<BoxControl
-					label={ __( 'Border Radius', 'otter-blocks' ) }
+					label={ __( 'Border Radius', 'otter-pro' ) }
 					values={ attributes.borderRadius }
 					onChange={ borderRadius => setAttributes({ borderRadius }) }
 				/>
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Global Settings', 'otter-blocks' ) }
+				title={ __( 'Global Settings', 'otter-pro' ) }
 				initialOpen={ false }
 			>
 				<TextControl
-					label={ __( 'Change Stripe API Key', 'otter-blocks' ) }
+					label={ __( 'Change Stripe API Key', 'otter-pro' ) }
 					type="text"
-					placeholder={ __( 'Type a new Stripe API Key', 'otter-blocks' ) }
+					placeholder={ __( 'Type a new Stripe API Key', 'otter-pro' ) }
 					value={ apiKey }
 					className="components-placeholder__input"
 					autoComplete='off'
 					onChange={ setAPIKey }
-					help={ __( 'Changing the API key effects all Stripe Checkout blocks. You will have to refresh the page after changing your API keys.', 'otter-blocks' ) }
+					help={ __( 'Changing the API key effects all Stripe Checkout blocks. You will have to refresh the page after changing your API keys.', 'otter-pro' ) }
 				/>
 
 				<Button
@@ -209,7 +209,7 @@ const Inspector = ({
 					onClick={ saveApiKey }
 					isBusy={ 'loading' === status }
 				>
-					{ __( 'Save API Key', 'otter-blocks' ) }
+					{ __( 'Save API Key', 'otter-pro' ) }
 				</Button>
 			</PanelBody>
 

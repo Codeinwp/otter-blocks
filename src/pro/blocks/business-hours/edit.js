@@ -107,7 +107,7 @@ const Edit = ({
 						className="otter-business-hour__title"
 					>
 						<RichText
-							placeholder={ __( 'Opening Hours', 'otter-blocks' ) }
+							placeholder={ __( 'Opening Hours', 'otter-pro' ) }
 							value={ attributes.title }
 							onChange={ title => {
 								setAttributes({ title });
@@ -126,51 +126,51 @@ const Edit = ({
 								[
 									'themeisle-blocks/business-hours-item',
 									{
-										label: __( 'Monday', 'otter-blocks' ),
-										time: __( '09:00 AM - 05:00 PM', 'otter-blocks' )
+										label: __( 'Monday', 'otter-pro' ),
+										time: __( '09:00 AM - 05:00 PM', 'otter-pro' )
 									}
 								],
 								[
 									'themeisle-blocks/business-hours-item',
 									{
-										label: __( 'Tuesday', 'otter-blocks' ),
-										time: __( '09:00 AM - 05:00 PM', 'otter-blocks' )
+										label: __( 'Tuesday', 'otter-pro' ),
+										time: __( '09:00 AM - 05:00 PM', 'otter-pro' )
 									}
 								],
 								[
 									'themeisle-blocks/business-hours-item',
 									{
-										label: __( 'Wednesday', 'otter-blocks' ),
-										time: __( '09:00 AM - 05:00 PM', 'otter-blocks' )
+										label: __( 'Wednesday', 'otter-pro' ),
+										time: __( '09:00 AM - 05:00 PM', 'otter-pro' )
 									}
 								],
 								[
 									'themeisle-blocks/business-hours-item',
 									{
-										label: __( 'Thursday', 'otter-blocks' ),
-										time: __( '09:00 AM - 05:00 PM', 'otter-blocks' )
+										label: __( 'Thursday', 'otter-pro' ),
+										time: __( '09:00 AM - 05:00 PM', 'otter-pro' )
 									}
 								],
 								[
 									'themeisle-blocks/business-hours-item',
 									{
-										label: __( 'Friday', 'otter-blocks' ),
-										time: __( '09:00 AM - 05:00 PM', 'otter-blocks' )
+										label: __( 'Friday', 'otter-pro' ),
+										time: __( '09:00 AM - 05:00 PM', 'otter-pro' )
 									}
 								],
 								[
 									'themeisle-blocks/business-hours-item',
 									{
-										label: __( 'Saturday', 'otter-blocks' ),
-										time: __( 'Closed', 'otter-blocks' ),
+										label: __( 'Saturday', 'otter-pro' ),
+										time: __( 'Closed', 'otter-pro' ),
 										timeColor: '#F8002A'
 									}
 								],
 								[
 									'themeisle-blocks/business-hours-item',
 									{
-										label: __( 'Sunday', 'otter-blocks' ),
-										time: __( 'Closed', 'otter-blocks' ),
+										label: __( 'Sunday', 'otter-pro' ),
+										time: __( 'Closed', 'otter-pro' ),
 										timeColor: '#F8002A'
 									}
 								]

@@ -30,9 +30,9 @@ if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 	}
 
 	registerBlockType( name, {
-		title: __( 'Add to Cart Button', 'otter-blocks' ),
+		title: __( 'Add to Cart Button', 'otter-pro' ),
 		...metadata,
-		description: __( 'Display an Add to Cart button for your WooCommerce products. Powered by Otter.', 'otter-blocks' ),
+		description: __( 'Display an Add to Cart button for your WooCommerce products. Powered by Otter.', 'otter-pro' ),
 		icon,
 		keywords: [
 			'woocommerce',
@@ -45,16 +45,16 @@ if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 		styles: [
 			{
 				name: 'default',
-				label: __( 'Default', 'otter-blocks' ),
+				label: __( 'Default', 'otter-pro' ),
 				isDefault: true
 			},
 			{
 				name: 'primary',
-				label: __( 'Primary', 'otter-blocks' )
+				label: __( 'Primary', 'otter-pro' )
 			},
 			{
 				name: 'secondary',
-				label: __( 'Secondary', 'otter-blocks' )
+				label: __( 'Secondary', 'otter-pro' )
 			}
 		],
 		edit,
@@ -63,8 +63,8 @@ if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 } else {
 	registerBlockType( name, {
 		...metadata,
-		title: __( 'Add to Cart Button', 'otter-blocks' ),
-		description: __( 'Display an Add to Cart button for your WooCommerce products. Powered by Otter.', 'otter-blocks' ),
+		title: __( 'Add to Cart Button', 'otter-pro' ),
+		description: __( 'Display an Add to Cart button for your WooCommerce products. Powered by Otter.', 'otter-pro' ),
 		icon,
 		keywords: [
 			'woocommerce',
@@ -74,7 +74,7 @@ if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 		supports: {
 			inserter: false
 		},
-		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'You need to have WooCommerce installed to edit Add to Cart Button block.', 'otter-blocks' ) }</Placeholder></div>,
+		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'You need to have WooCommerce installed to edit Add to Cart Button block.', 'otter-pro' ) }</Placeholder></div>,
 		save: () => null
 	});
 }

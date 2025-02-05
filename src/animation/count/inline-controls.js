@@ -96,17 +96,17 @@ const InlineControls = ({
 			focusOnMount={ false }
 			className="o-animation-popover"
 		>
-			<Heading level={ 4 }>{ __( 'Count Animation', 'otter-blocks' ) }</Heading>
+			<Heading level={ 4 }>{ __( 'Count Animation', 'blocks-animation' ) }</Heading>
 
 			<SelectControl
-				label={ __( 'Delay', 'otter-blocks' ) }
+				label={ __( 'Delay', 'blocks-animation' ) }
 				value={ countDelay || 'none' }
 				options={ delayListInline }
 				onChange={ value => updateAnimConfig( 'count', countDelay, value, () => setCountDelay( value ), attributes, setAttributes ) }
 			/>
 
 			<SelectControl
-				label={ __( 'Speed', 'otter-blocks' ) }
+				label={ __( 'Speed', 'blocks-animation' ) }
 				value={ countSpeed || 'none' }
 				options={ speedListInline }
 				onChange={ value => updateAnimConfig( 'count', countSpeed, value, () => setCountSpeed( value ), attributes, setAttributes ) }

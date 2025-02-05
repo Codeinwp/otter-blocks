@@ -96,17 +96,17 @@ const InlineControls = ({
 			focusOnMount={ false }
 			className="o-animation-popover"
 		>
-			<Heading level={ 4 }>{ __( 'Typing Animation', 'otter-blocks' ) }</Heading>
+			<Heading level={ 4 }>{ __( 'Typing Animation', 'blocks-animation' ) }</Heading>
 
 			<SelectControl
-				label={ __( 'Delay', 'otter-blocks' ) }
+				label={ __( 'Delay', 'blocks-animation' ) }
 				value={ typingDelay || 'none' }
 				options={ delayListInline }
 				onChange={ value => updateAnimConfig( 'typing', typingDelay, value, () => setTypingDelay( value ), attributes, setAttributes ) }
 			/>
 
 			<SelectControl
-				label={ __( 'Speed', 'otter-blocks' ) }
+				label={ __( 'Speed', 'blocks-animation' ) }
 				value={ typingSpeed || 'none' }
 				options={ speedListInline }
 				onChange={ value => updateAnimConfig( 'typing', typingSpeed, value, () => setTypingSpeed( value ), attributes, setAttributes ) }

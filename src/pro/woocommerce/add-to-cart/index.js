@@ -29,8 +29,8 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 	registerBlockType( name, {
 		...metadata,
-		title: __( 'Product Add to Cart', 'otter-blocks' ),
-		description: __( 'Display the add to cart section of your WooCommerce product.', 'otter-blocks' ),
+		title: __( 'Product Add to Cart', 'otter-pro' ),
+		description: __( 'Display the add to cart section of your WooCommerce product.', 'otter-pro' ),
 		icon,
 		keywords: [
 			'woocommerce',

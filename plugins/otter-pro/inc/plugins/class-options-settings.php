@@ -38,7 +38,7 @@ class Options_Settings {
 			'otter_inherited_autoactivate',
 			array(
 				'type'         => 'boolean',
-				'description'  => __( 'Inherit license from Neve Pro.', 'otter-blocks' ),
+				'description'  => __( 'Inherit license from Neve Pro.', 'otter-pro' ),
 				'show_in_rest' => true,
 				'default'      => false,
 			)
@@ -49,7 +49,7 @@ class Options_Settings {
 			'otter_offload_fonts',
 			array(
 				'type'         => 'boolean',
-				'description'  => __( 'Store Google Fonts Offline.', 'otter-blocks' ),
+				'description'  => __( 'Store Google Fonts Offline.', 'otter-pro' ),
 				'show_in_rest' => true,
 				'default'      => true === boolval( get_option( 'nv_pro_enable_local_fonts', false ) ) ? true : false,
 			)
@@ -60,7 +60,7 @@ class Options_Settings {
 			'otter_iphub_api_key',
 			array(
 				'type'              => 'string',
-				'description'       => __( 'IPHub API Key.', 'otter-blocks' ),
+				'description'       => __( 'IPHub API Key.', 'otter-pro' ),
 				'sanitize_callback' => 'sanitize_text_field',
 				'show_in_rest'      => true,
 				'default'           => '',
@@ -98,7 +98,7 @@ class Options_Settings {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 
 	/**
@@ -110,6 +110,6 @@ class Options_Settings {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 }

@@ -152,7 +152,7 @@ const Edit = ({
 			});
 
 			tableImages.push( <td>{ review.attrs.image && <img src={ review.attrs.image.url } alt={ review.attrs.image?.alt } /> }</td> );
-			tableName.push( <td>{ review.attrs.title || __( 'Untitled review', 'otter-blocks' ) }</td> );
+			tableName.push( <td>{ review.attrs.title || __( 'Untitled review', 'otter-pro' ) }</td> );
 			tablePrice.push( <td>{ review.attrs.discounted ? <Fragment><del>{ currency + review.attrs.price }</del> { currency + review.attrs.discounted }</Fragment> : ( review.attrs.price ? ( currency + review.attrs.price ) : '-' ) }</td> );
 			tableRating.push( <td><div className="o-review-comparison_ratings">{ getStars( overallRatings ) }</div></td> );
 			tableDescription.push( <td dangerouslySetInnerHTML={ { __html: review.attrs.description } }></td> );
@@ -234,32 +234,32 @@ const Edit = ({
 
 				<tbody>
 					<tr>
-						<th>{ __( 'Name', 'otter-blocks' ) }</th>
+						<th>{ __( 'Name', 'otter-pro' ) }</th>
 						{ tableName }
 					</tr>
 
 					<tr>
-						<th>{ __( 'Price', 'otter-blocks' ) }</th>
+						<th>{ __( 'Price', 'otter-pro' ) }</th>
 						{ tablePrice }
 					</tr>
 
 					<tr>
-						<th>{ __( 'Rating', 'otter-blocks' ) }</th>
+						<th>{ __( 'Rating', 'otter-pro' ) }</th>
 						{ tableRating }
 					</tr>
 
 					<tr>
-						<th>{ __( 'Description', 'otter-blocks' ) }</th>
+						<th>{ __( 'Description', 'otter-pro' ) }</th>
 						{ tableDescription }
 					</tr>
 
 					<tr>
-						<th>{ __( 'Statistics', 'otter-blocks' ) }</th>
+						<th>{ __( 'Statistics', 'otter-pro' ) }</th>
 						{ tableStatistics }
 					</tr>
 
 					<tr className={ cssNodeName }>
-						<th>{ __( 'Buy this product', 'otter-blocks' ) }</th>
+						<th>{ __( 'Buy this product', 'otter-pro' ) }</th>
 						{ tableLinks }
 					</tr>
 				</tbody>

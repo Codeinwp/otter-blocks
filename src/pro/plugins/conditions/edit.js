@@ -35,31 +35,31 @@ import { decodeEntities } from '@wordpress/html-entities';
 const week = [
 	{
 		value: 'monday',
-		label: __( 'Monday', 'otter-blocks' )
+		label: __( 'Monday', 'otter-pro' )
 	},
 	{
 		value: 'tuesday',
-		label: __( 'Tuesday', 'otter-blocks' )
+		label: __( 'Tuesday', 'otter-pro' )
 	},
 	{
 		value: 'wednesday',
-		label: __( 'Wednesday', 'otter-blocks' )
+		label: __( 'Wednesday', 'otter-pro' )
 	},
 	{
 		value: 'thursday',
-		label: __( 'Thursday', 'otter-blocks' )
+		label: __( 'Thursday', 'otter-pro' )
 	},
 	{
 		value: 'friday',
-		label: __( 'Friday', 'otter-blocks' )
+		label: __( 'Friday', 'otter-pro' )
 	},
 	{
 		value: 'saturday',
-		label: __( 'Saturday', 'otter-blocks' )
+		label: __( 'Saturday', 'otter-pro' )
 	},
 	{
 		value: 'sunday',
-		label: __( 'Sunday', 'otter-blocks' )
+		label: __( 'Sunday', 'otter-pro' )
 	}
 ];
 
@@ -86,7 +86,7 @@ const DateRange = ({
 							isSecondary
 							aria-expanded={ isOpen }
 						>
-							{ value ? format( settings.formats.datetime, value ) : __( 'Select Date', 'otter-blocks' ) }
+							{ value ? format( settings.formats.datetime, value ) : __( 'Select Date', 'otter-pro' ) }
 						</Button>
 					</>
 				) }
@@ -297,7 +297,7 @@ const WooAttributes = ( props ) => {
 			options={ [
 				{
 					value: '',
-					label: __( 'Select an attribute', 'otter-blocks' )
+					label: __( 'Select an attribute', 'otter-pro' )
 				},
 				...attributes
 			] }
@@ -363,7 +363,7 @@ const CoursesSelect = ( props ) => {
 							options={ courses }
 						/>
 					) : (
-						<p>{ __( 'No courses available.', 'otter-blocks' ) }</p>
+						<p>{ __( 'No courses available.', 'otter-pro' ) }</p>
 					) }
 
 					{ props.children }
@@ -518,35 +518,35 @@ const Edit = ({
 			{ [ 'postMeta', 'loggedInUserMeta' ].includes( item.type ) && (
 				<Fragment>
 					<TextControl
-						label={ __( 'Meta Key', 'otter-blocks' ) }
-						help={ __( 'Key of the meta you want to compare.', 'otter-blocks' ) }
-						placeholder={ __( '_meta_key', 'otter-blocks' ) }
+						label={ __( 'Meta Key', 'otter-pro' ) }
+						help={ __( 'Key of the meta you want to compare.', 'otter-pro' ) }
+						placeholder={ __( '_meta_key', 'otter-pro' ) }
 						value={ item.meta_key }
 						onChange={ e => changeValue( e, groupIndex, itemIndex, 'meta_key' ) }
 					/>
 
 					<SelectControl
-						label={ __( 'Compare Operator', 'otter-blocks' ) }
+						label={ __( 'Compare Operator', 'otter-pro' ) }
 						options={ [
 							{
 								value: 'is_true',
-								label: __( 'Is True', 'otter-blocks' )
+								label: __( 'Is True', 'otter-pro' )
 							},
 							{
 								value: 'is_false',
-								label: __( 'Is False', 'otter-blocks' )
+								label: __( 'Is False', 'otter-pro' )
 							},
 							{
 								value: 'is_empty',
-								label: __( 'Is Empty', 'otter-blocks' )
+								label: __( 'Is Empty', 'otter-pro' )
 							},
 							{
 								value: 'if_equals',
-								label: __( 'If Equals', 'otter-blocks' )
+								label: __( 'If Equals', 'otter-pro' )
 							},
 							{
 								value: 'if_contains',
-								label: __( 'If Contains', 'otter-blocks' )
+								label: __( 'If Contains', 'otter-pro' )
 							}
 						] }
 						value={ item.meta_compare }
@@ -555,8 +555,8 @@ const Edit = ({
 
 					{ ( 'if_equals' === item.meta_compare || 'if_contains' === item.meta_compare ) && (
 						<TextControl
-							label={ __( 'Meta Value', 'otter-blocks' ) }
-							help={ __( 'Value of the meta to compare.', 'otter-blocks' ) }
+							label={ __( 'Meta Value', 'otter-pro' ) }
+							help={ __( 'Value of the meta to compare.', 'otter-pro' ) }
 							value={ item.meta_value }
 							onChange={ e => changeValue( e, groupIndex, itemIndex, 'meta_value' ) }
 						/>
@@ -567,23 +567,23 @@ const Edit = ({
 			{ 'queryString' === item.type && (
 				<Fragment>
 					<TextareaControl
-						label={ __( 'Query String', 'otter-blocks' ) }
-						help={ __( 'Write a key-value pair for each parameter, one per line.', 'otter-blocks' ) }
+						label={ __( 'Query String', 'otter-pro' ) }
+						help={ __( 'Write a key-value pair for each parameter, one per line.', 'otter-pro' ) }
 						placeholder="eg. utm_source=facebook"
 						value={ item.query_string }
 						onChange={ e => changeValue( e.replaceAll( '\itemIndex', '&' ), groupIndex, itemIndex, 'query_string' ) }
 					/>
 
 					<SelectControl
-						label={ __( 'Match if URL contains', 'otter-blocks' ) }
+						label={ __( 'Match if URL contains', 'otter-pro' ) }
 						options={ [
 							{
 								value: 'any',
-								label: __( 'Any of the parameters', 'otter-blocks' )
+								label: __( 'Any of the parameters', 'otter-pro' )
 							},
 							{
 								value: 'all',
-								label: __( 'All the parameters', 'otter-blocks' )
+								label: __( 'All the parameters', 'otter-pro' )
 							}
 						] }
 						value={ item.compare }
@@ -595,52 +595,52 @@ const Edit = ({
 			{ 'country' === item.type && (
 				<Fragment>
 					{ ! Boolean( window.otterPro.hasIPHubAPI ) && (
-						<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature.', 'otter-blocks' ) }</ExternalLink>
+						<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature.', 'otter-pro' ) }</ExternalLink>
 					) }
 
 					<TextControl
-						label={ __( 'Country Code(s)', 'otter-blocks' ) }
+						label={ __( 'Country Code(s)', 'otter-pro' ) }
 						placeholder="US, CA, GB"
-						help={ __( 'A comma separated list of country codes', 'otter-blocks' ) }
+						help={ __( 'A comma separated list of country codes', 'otter-pro' ) }
 						value={ item.value }
 						onChange={ e => changeValue( e, groupIndex, itemIndex, 'value' ) }
 					/>
 
-					<ExternalLink href="https://www.geoplugin.com/iso3166">{ __( 'A list of country codes.', 'otter-blocks' ) }</ExternalLink>
+					<ExternalLink href="https://www.geoplugin.com/iso3166">{ __( 'A list of country codes.', 'otter-pro' ) }</ExternalLink>
 				</Fragment>
 			) }
 
 			{ 'cookie' === item.type && (
 				<Fragment>
 					<TextControl
-						label={ __( 'Cookie', 'otter-blocks' ) }
-						help={ __( 'Key of the cookie you want to compare.', 'otter-blocks' ) }
+						label={ __( 'Cookie', 'otter-pro' ) }
+						help={ __( 'Key of the cookie you want to compare.', 'otter-pro' ) }
 						value={ item.cookie_key }
 						onChange={ e => changeValue( e, groupIndex, itemIndex, 'cookie_key' ) }
 					/>
 
 					<SelectControl
-						label={ __( 'Compare Operator', 'otter-blocks' ) }
+						label={ __( 'Compare Operator', 'otter-pro' ) }
 						options={ [
 							{
 								value: 'is_true',
-								label: __( 'Is True', 'otter-blocks' )
+								label: __( 'Is True', 'otter-pro' )
 							},
 							{
 								value: 'is_false',
-								label: __( 'Is False', 'otter-blocks' )
+								label: __( 'Is False', 'otter-pro' )
 							},
 							{
 								value: 'is_empty',
-								label: __( 'Is Empty', 'otter-blocks' )
+								label: __( 'Is Empty', 'otter-pro' )
 							},
 							{
 								value: 'if_equals',
-								label: __( 'If Equals', 'otter-blocks' )
+								label: __( 'If Equals', 'otter-pro' )
 							},
 							{
 								value: 'if_contains',
-								label: __( 'If Contains', 'otter-blocks' )
+								label: __( 'If Contains', 'otter-pro' )
 							}
 						] }
 						value={ item.cookie_compare }
@@ -649,8 +649,8 @@ const Edit = ({
 
 					{ ( 'if_equals' === item.cookie_compare || 'if_contains' === item.cookie_compare ) && (
 						<TextControl
-							label={ __( 'Cookie Value', 'otter-blocks' ) }
-							help={ __( 'Value of the cookie to compare.', 'otter-blocks' ) }
+							label={ __( 'Cookie Value', 'otter-pro' ) }
+							help={ __( 'Value of the cookie to compare.', 'otter-pro' ) }
 							value={ item.cookie_value }
 							onChange={ e => changeValue( e, groupIndex, itemIndex, 'cookie_value' ) }
 						/>
@@ -661,14 +661,14 @@ const Edit = ({
 			{ 'dateRange' === item.type && (
 				<Fragment>
 					<DateRange
-						label={ __( 'Start Date', 'otter-blocks' ) }
+						label={ __( 'Start Date', 'otter-pro' ) }
 						id={ `o-conditions-date-start${ groupIndex }-${ itemIndex }` }
 						value={ item.start_date }
 						onChange={ e => changeValue( e, groupIndex, itemIndex, 'start_date' ) }
 					/>
 
 					<DateRange
-						label={ __( 'End Date (Optional)', 'otter-blocks' ) }
+						label={ __( 'End Date (Optional)', 'otter-pro' ) }
 						id={ `o-conditions-date-end${ groupIndex }-${ itemIndex }` }
 						value={ item.end_date }
 						onChange={ e => changeValue( e, groupIndex, itemIndex, 'end_date' ) }
@@ -678,8 +678,8 @@ const Edit = ({
 
 			{ 'dateRecurring' === item.type && (
 				<BaseControl
-					label={ __( 'Recurring Days', 'otter-blocks' ) }
-					help={ __( 'You can use this in combination with other Date Time conditions to make more complex conditions.', 'otter-blocks' ) }
+					label={ __( 'Recurring Days', 'otter-pro' ) }
+					help={ __( 'You can use this in combination with other Date Time conditions to make more complex conditions.', 'otter-pro' ) }
 				>
 					{ week.map( ({ label, value }) => (
 						<CheckboxControl
@@ -695,11 +695,11 @@ const Edit = ({
 			{ 'timeRecurring' === item.type && (
 				<Fragment>
 					<BaseControl
-						label={ __( 'Start Time', 'otter-blocks' ) }
+						label={ __( 'Start Time', 'otter-pro' ) }
 					>
 						<div className="o-conditions">
 							<input
-								aria-label={ __( 'Hours', 'otter-blocks' ) }
+								aria-label={ __( 'Hours', 'otter-pro' ) }
 								className="components-datetime__time-field-hours-input"
 								type="number"
 								step="1"
@@ -724,7 +724,7 @@ const Edit = ({
 							{ ' : ' }
 
 							<input
-								aria-label={ __( 'Minutes', 'otter-blocks' ) }
+								aria-label={ __( 'Minutes', 'otter-pro' ) }
 								className="components-datetime__time-field-hours-input"
 								type="number"
 								step="1"
@@ -756,17 +756,17 @@ const Edit = ({
 									setAttributes({ otterConditions });
 								} }
 							>
-								{ __( 'Reset', 'otter-blocks' ) }
+								{ __( 'Reset', 'otter-pro' ) }
 							</Button>
 						</div>
 					</BaseControl>
 
 					<BaseControl
-						label={ __( 'End Time', 'otter-blocks' ) }
+						label={ __( 'End Time', 'otter-pro' ) }
 					>
 						<div className="o-conditions">
 							<input
-								aria-label={ __( 'Hours', 'otter-blocks' ) }
+								aria-label={ __( 'Hours', 'otter-pro' ) }
 								className="components-datetime__time-field-hours-input"
 								type="number"
 								step="1"
@@ -791,7 +791,7 @@ const Edit = ({
 							{ ' : ' }
 
 							<input
-								aria-label={ __( 'Minutes', 'otter-blocks' ) }
+								aria-label={ __( 'Minutes', 'otter-pro' ) }
 								className="components-datetime__time-field-hours-input"
 								type="number"
 								step="1"
@@ -823,7 +823,7 @@ const Edit = ({
 									setAttributes({ otterConditions });
 								} }
 							>
-								{ __( 'Reset', 'otter-blocks' ) }
+								{ __( 'Reset', 'otter-pro' ) }
 							</Button>
 						</div>
 					</BaseControl>
@@ -833,15 +833,15 @@ const Edit = ({
 			{ 'wooProductsInCart' === item.type && (
 				<Fragment>
 					<SelectControl
-						label={ __( 'Based on', 'otter-blocks' ) }
+						label={ __( 'Based on', 'otter-pro' ) }
 						options={ [
 							{
 								value: 'products',
-								label: __( 'Products', 'otter-blocks' )
+								label: __( 'Products', 'otter-pro' )
 							},
 							{
 								value: 'categories',
-								label: __( 'Categories', 'otter-blocks' )
+								label: __( 'Categories', 'otter-pro' )
 							}
 						] }
 						value={ item.on }
@@ -851,7 +851,7 @@ const Edit = ({
 					{ 'products' === item.on && (
 						<Fragment>
 							<ProductsMultiselect
-								label={ __( 'Products', 'otter-blocks' ) }
+								label={ __( 'Products', 'otter-pro' ) }
 								values={ item.products }
 								onChange={ values => changeProducts( values, groupIndex, itemIndex ) }
 							/>
@@ -861,7 +861,7 @@ const Edit = ({
 					{ 'categories' === item.on && (
 						<Fragment>
 							<CategoriesMultiselect
-								label={ __( 'Categories', 'otter-blocks' ) }
+								label={ __( 'Categories', 'otter-pro' ) }
 								values={ item.categories }
 								onChange={ values => changeCategories( values, groupIndex, itemIndex ) }
 							/>
@@ -872,11 +872,11 @@ const Edit = ({
 
 			{ 'wooTotalCartValue' === item.type && (
 				<TextControl
-					label={ __( 'Total Cart Value', 'otter-blocks' ) }
+					label={ __( 'Total Cart Value', 'otter-pro' ) }
 					help={ 
 						sprintf( 
 							/* translators: %s the currency. */
-							__( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), 
+							__( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-pro' ), 
 							window.wcSettings.currency.code 
 						) 
 					}
@@ -888,11 +888,11 @@ const Edit = ({
 
 			{ 'wooTotalSpent' === item.type && (
 				<TextControl
-					label={ __( 'Total Money Spent', 'otter-blocks' ) }
+					label={ __( 'Total Money Spent', 'otter-pro' ) }
 					help={ 
 						sprintf( 
 							/* translators: %s the currency. */
-							__( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), 
+							__( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-pro' ), 
 							window.wcSettings.currency.code 
 						) 
 					}
@@ -904,15 +904,15 @@ const Edit = ({
 
 			{ ( 'wooTotalCartValue' === item.type || 'wooTotalSpent' === item.type ) && (
 				<SelectControl
-					label={ __( 'Compare Operator', 'otter-blocks' ) }
+					label={ __( 'Compare Operator', 'otter-pro' ) }
 					options={ [
 						{
 							value: 'greater_than',
-							label: __( 'Greater Than (>)', 'otter-blocks' )
+							label: __( 'Greater Than (>)', 'otter-pro' )
 						},
 						{
 							value: 'less_than',
-							label: __( 'Less Than (<)', 'otter-blocks' )
+							label: __( 'Less Than (<)', 'otter-pro' )
 						}
 					] }
 					value={ item.compare }
@@ -923,7 +923,7 @@ const Edit = ({
 			{ 'wooPurchaseHistory' === item.type && (
 				<Fragment>
 					<ProductsMultiselect
-						label={ __( 'Products', 'otter-blocks' ) }
+						label={ __( 'Products', 'otter-pro' ) }
 						values={ item.products }
 						onChange={ values => changeProducts( values, groupIndex, itemIndex ) }
 					/>
@@ -932,14 +932,14 @@ const Edit = ({
 
 			{ 'wooCategory' === item.type && (
 				<CategoriesMultiselect
-					label={ __( 'Categories', 'otter-blocks' ) }
+					label={ __( 'Categories', 'otter-pro' ) }
 					values={ item.categories }
 					onChange={ values => changeCategories( values, groupIndex, itemIndex ) }
 				/>
 			) }
 			{ 'wooTag' === item.type && (
 				<TagsMultiselect
-					label={ __( 'Tags', 'otter-blocks' ) }
+					label={ __( 'Tags', 'otter-pro' ) }
 					values={ item.tags }
 					onChange={ values => changeTags( values, groupIndex, itemIndex ) }
 				/>
@@ -948,15 +948,15 @@ const Edit = ({
 			{ 'wooAttribute' === item.type && (
 				<Fragment>
 					<WooAttributes
-						label={ __( 'Attribute', 'otter-blocks' ) }
+						label={ __( 'Attribute', 'otter-pro' ) }
 						value={ item.attribute }
 						onChange={ values => changeAttribute( values, groupIndex, itemIndex ) }
 					/>
 
 					{ !! item.attribute && (
 						<FormTokenField
-							label={ __( 'Terms', 'otter-blocks' ) }
-							placeholder={ __( 'List the terms by their slug.', 'otter-blocks' ) }
+							label={ __( 'Terms', 'otter-pro' ) }
+							placeholder={ __( 'List the terms by their slug.', 'otter-pro' ) }
 							value={ item.terms }
 							onChange={ terms => changeArrayValue( terms, groupIndex, itemIndex, 'terms' ) }
 						/>
@@ -967,15 +967,15 @@ const Edit = ({
 			{ 'learnDashPurchaseHistory' === item.type && (
 				<Fragment>
 					<SelectControl
-						label={ __( 'Based on', 'otter-blocks' ) }
+						label={ __( 'Based on', 'otter-pro' ) }
 						options={ [
 							{
 								value: 'courses',
-								label: __( 'Courses', 'otter-blocks' )
+								label: __( 'Courses', 'otter-pro' )
 							},
 							{
 								value: 'groups',
-								label: __( 'Groups', 'otter-blocks' )
+								label: __( 'Groups', 'otter-pro' )
 							}
 						] }
 						value={ item.on }
@@ -985,7 +985,7 @@ const Edit = ({
 					{ 'courses' === item.on && (
 						<Fragment>
 							<CoursesMultiselect
-								label={ __( 'Courses', 'otter-blocks' ) }
+								label={ __( 'Courses', 'otter-pro' ) }
 								values={ item.courses }
 								onChange={ values => changeCourses( values, groupIndex, itemIndex ) }
 							/>
@@ -995,7 +995,7 @@ const Edit = ({
 					{ 'groups' === item.on && (
 						<Fragment>
 							<GroupsMultiselect
-								label={ __( 'Groups', 'otter-blocks' ) }
+								label={ __( 'Groups', 'otter-pro' ) }
 								values={ item.groups }
 								onChange={ values => changeGroups( values, groupIndex, itemIndex ) }
 							/>
@@ -1007,24 +1007,24 @@ const Edit = ({
 			{ 'learnDashCourseStatus' === item.type && (
 				<Fragment>
 					<CoursesSelect
-						label={ __( 'Course', 'otter-blocks' ) }
+						label={ __( 'Course', 'otter-pro' ) }
 						value={ item.course }
 						onChange={ e => changeValue( Number( e ), groupIndex, itemIndex, 'course' ) }
 					>
 						<SelectControl
-							label={ __( 'Status', 'otter-blocks' ) }
+							label={ __( 'Status', 'otter-pro' ) }
 							options={ [
 								{
 									value: 'not_started',
-									label: __( 'Not Started', 'otter-blocks' )
+									label: __( 'Not Started', 'otter-pro' )
 								},
 								{
 									value: 'in_progress',
-									label: __( 'In Progress', 'otter-blocks' )
+									label: __( 'In Progress', 'otter-pro' )
 								},
 								{
 									value: 'completed',
-									label: __( 'Completed', 'otter-blocks' )
+									label: __( 'Completed', 'otter-pro' )
 								}
 							] }
 							value={ item.status }

@@ -20,141 +20,141 @@ const { Notice } = window.otterComponents;
 const applyProConditions = conditions => {
 	const proConditions = {
 		'users': {
-			label: __( 'Users', 'otter-blocks' ),
+			label: __( 'Users', 'otter-pro' ),
 			conditions: [
 				{
 					value: 'loggedInUserMeta',
-					label: __( 'Logged-in User Meta', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on meta of the logged-in user condition.' ),
+					label: __( 'Logged-in User Meta', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on meta of the logged-in user condition.', 'otter-pro' ),
 					toogleVisibility: true
 				}
 			]
 		},
 		'posts': {
-			label: __( 'Posts', 'otter-blocks' ),
+			label: __( 'Posts', 'otter-pro' ),
 			conditions: [
 				{
 					value: 'postMeta',
-					label: __( 'Post Meta', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on post meta condition.' ),
+					label: __( 'Post Meta', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on post meta condition.', 'otter-pro'  ),
 					toogleVisibility: true
 				}
 			]
 		},
 		'dateAndTime': {
-			label: __( 'Date & Time', 'otter-blocks' ),
+			label: __( 'Date & Time', 'otter-pro' ),
 			conditions: [
 				{
 					value: 'dateRange',
-					label: __( 'Date Range', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' )
+					label: __( 'Date Range', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.', 'otter-pro'  )
 				},
 				{
 					value: 'dateRecurring',
-					label: __( 'Date Recurring', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' )
+					label: __( 'Date Recurring', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.', 'otter-pro'  )
 				},
 				{
 					value: 'timeRecurring',
-					label: __( 'Time Recurring', 'otter-blocks' ),
-					help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' )
+					label: __( 'Time Recurring', 'otter-pro' ),
+					help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.', 'otter-pro'  )
 				}
 			]
 		},
 		'advance': {
-			label: __( 'Advance', 'otter-blocks' ),
+			label: __( 'Advance', 'otter-pro' ),
 			conditions: [
 				{
 					value: 'queryString',
-					label: __( 'Query String', 'otter-blocks' ),
-					help: __( 'The condition will be met if the URL contains specified parameters.' ),
+					label: __( 'Query String', 'otter-pro' ),
+					help: __( 'The condition will be met if the URL contains specified parameters.', 'otter-pro'  ),
 					toogleVisibility: true
 				},
 				{
 					value: 'country',
-					label: __( 'Country', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
+					label: __( 'Country', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on user\'s country based on the IP address.', 'otter-pro'  ),
 					toogleVisibility: true
 				},
 				{
 					value: 'cookie',
-					label: __( 'Cookie', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on PHP cookies.' ),
+					label: __( 'Cookie', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on PHP cookies.', 'otter-pro'  ),
 					toogleVisibility: true
 				}
 			]
 		},
 		'woocommerce': {
-			label: __( 'WooCommerce', 'otter-blocks' ),
+			label: __( 'WooCommerce', 'otter-pro' ),
 			conditions: [
 				{
 					value: 'wooProductsInCart',
-					label: __( 'Products in Cart', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' ),
+					label: __( 'Products in Cart', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on the products added to WooCommerce cart.', 'otter-pro'  ),
 					toogleVisibility: true,
 					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
 				},
 				{
 					value: 'wooTotalCartValue',
-					label: __( 'Total Cart Value', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' ),
+					label: __( 'Total Cart Value', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on the total value of WooCommerce cart.', 'otter-pro'  ),
 					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
 				},
 				{
 					value: 'wooPurchaseHistory',
-					label: __( 'Purchase History', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' ),
+					label: __( 'Purchase History', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.', 'otter-pro'  ),
 					toogleVisibility: true,
 					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
 				},
 				{
 					value: 'wooTotalSpent',
-					label: __( 'Total Spent', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on how much the user spent during lifetime.' ),
+					label: __( 'Total Spent', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on how much the user spent during lifetime.', 'otter-pro'  ),
 					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
 				}
 			]
 		},
 		'woocommerceProduct': {
-			label: __( 'WooCommerce Product', 'otter-blocks' ),
+			label: __( 'WooCommerce Product', 'otter-pro' ),
 			conditions: [
 				{
 					value: 'wooCategory',
-					label: __( 'Product Categories', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the product categories.' ),
+					label: __( 'Product Categories', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on the product categories.', 'otter-pro'  ),
 					toogleVisibility: true,
 					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
 				},
 				{
 					value: 'wooTag',
-					label: __( 'Product Tags', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the product tags.' ),
+					label: __( 'Product Tags', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on the product tags.', 'otter-pro'  ),
 					toogleVisibility: true,
 					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
 				},
 				{
 					value: 'wooAttribute',
-					label: __( 'Product Attributes', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the product attribute.' ),
+					label: __( 'Product Attributes', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on the product attribute.', 'otter-pro'  ),
 					toogleVisibility: true,
 					isDisabled: ! Boolean( window.otterPro.hasWooCommerce )
 				}
 			]
 		},
 		'learndash': {
-			label: __( 'LearnDash', 'otter-blocks' ),
+			label: __( 'LearnDash', 'otter-pro' ),
 			conditions: [
 				{
 					value: 'learnDashPurchaseHistory',
-					label: __( 'Purchase History', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' ),
+					label: __( 'Purchase History', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.', 'otter-pro'  ),
 					toogleVisibility: true,
 					isDisabled: ! Boolean( window.otterPro.hasLearnDash )
 				},
 				{
 					value: 'learnDashCourseStatus',
-					label: __( 'Course Status', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on user\'s LearnDash course status.' ),
+					label: __( 'Course Status', 'otter-pro' ),
+					help: __( 'The selected block will be visible based on user\'s LearnDash course status.', 'otter-pro'  ),
 					toogleVisibility: true,
 					isDisabled: ! Boolean( window.otterPro.hasLearnDash )
 				}
@@ -238,8 +238,8 @@ const Notices = el => {
 	if ( Boolean( window.otterPro.isExpired ) ) {
 		return (
 			<Notice
-				notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
-				instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Block Conditions.', 'otter-blocks' ) }
+				notice={ __( 'Otter Pro license has expired.', 'otter-pro' ) }
+				instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Block Conditions.', 'otter-pro' ) }
 			/>
 		);
 	}
@@ -247,8 +247,8 @@ const Notices = el => {
 	if ( ! Boolean( window.otterPro.isActive ) ) {
 		return (
 			<Notice
-				notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Block Conditions.', 'otter-blocks' ) }
+				notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
+				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Block Conditions.', 'otter-pro' ) }
 			/>
 		);
 	}

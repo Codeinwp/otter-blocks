@@ -92,20 +92,20 @@ class Form_Emails_Storing {
 			self::FORM_RECORD_TYPE,
 			array(
 				'labels'          => array(
-					'name'               => esc_html_x( 'Form Submissions', '', 'otter-blocks' ),
-					'singular_name'      => esc_html_x( 'Form Submission', '', 'otter-blocks' ),
-					'search_items'       => esc_html__( 'Search Submissions', 'otter-blocks' ),
-					'all_items'          => esc_html__( 'Form Submissions', 'otter-blocks' ),
-					'view_item'          => esc_html__( 'View Submission', 'otter-blocks' ),
-					'update_item'        => esc_html__( 'Update Submission', 'otter-blocks' ),
-					'not_found'          => esc_html__( 'No submissions found', 'otter-blocks' ),
-					'not_found_in_trash' => esc_html__( 'No submissions found in the Trash', 'otter-blocks' ),
+					'name'               => esc_html_x( 'Form Submissions', '', 'otter-pro' ),
+					'singular_name'      => esc_html_x( 'Form Submission', '', 'otter-pro' ),
+					'search_items'       => esc_html__( 'Search Submissions', 'otter-pro' ),
+					'all_items'          => esc_html__( 'Form Submissions', 'otter-pro' ),
+					'view_item'          => esc_html__( 'View Submission', 'otter-pro' ),
+					'update_item'        => esc_html__( 'Update Submission', 'otter-pro' ),
+					'not_found'          => esc_html__( 'No submissions found', 'otter-pro' ),
+					'not_found_in_trash' => esc_html__( 'No submissions found in the Trash', 'otter-pro' ),
 				),
 				'capability_type' => self::FORM_RECORD_TYPE,
 				'capabilities'    => array(
 					'create_posts' => 'create_otter_form_records',
 				),
-				'description'     => __( 'Holds the data from the form submissions', 'otter-blocks' ),
+				'description'     => __( 'Holds the data from the form submissions', 'otter-pro' ),
 				'public'          => false,
 				'show_ui'         => true,
 				'show_in_rest'    => false,
@@ -116,7 +116,7 @@ class Form_Emails_Storing {
 		register_post_status(
 			'read',
 			array(
-				'label'                     => _x( 'Read', 'otter-form-record', 'otter-blocks' ),
+				'label'                     => _x( 'Read', 'otter-form-record', 'otter-pro' ),
 				'public'                    => true,
 				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => true,
@@ -125,7 +125,7 @@ class Form_Emails_Storing {
 				'label_count'               => _n_noop(
 					'Read <span class="count">(%s)</span>',
 					'Read <span class="count">(%s)</span>',
-					'otter-blocks'
+					'otter-pro'
 				),
 			)
 		);
@@ -133,7 +133,7 @@ class Form_Emails_Storing {
 		register_post_status(
 			'unread',
 			array(
-				'label'                     => _x( 'Unread', 'otter-form-record', 'otter-blocks' ),
+				'label'                     => _x( 'Unread', 'otter-form-record', 'otter-pro' ),
 				'public'                    => true,
 				'exclude_from_search'       => false,
 				'show_in_admin_all_list'    => true,
@@ -142,7 +142,7 @@ class Form_Emails_Storing {
 				'label_count'               => _n_noop(
 					'Unread <span class="count">(%s)</span>',
 					'Unread <span class="count">(%s)</span>',
-					'otter-blocks'
+					'otter-pro'
 				),
 			)
 		);
@@ -213,7 +213,7 @@ class Form_Emails_Storing {
 			array(
 				'ID'         => $post_id,
 				/* translators: %s the ID of the submission */
-				'post_title' => sprintf( __( 'Submission #%s', 'otter-blocks' ), $post_id ),
+				'post_title' => sprintf( __( 'Submission #%s', 'otter-pro' ), $post_id ),
 			)
 		);
 
@@ -223,19 +223,19 @@ class Form_Emails_Storing {
 
 		$meta = array(
 			'form'     => array(
-				'label' => __( 'Form', 'otter-blocks' ),
+				'label' => __( 'Form', 'otter-pro' ),
 				'value' => $form_data->get_data_from_payload( 'formId' ),
 			),
 			'post_url' => array(
-				'label' => __( 'Post URL', 'otter-blocks' ),
+				'label' => __( 'Post URL', 'otter-pro' ),
 				'value' => $form_data->get_data_from_payload( 'postUrl' ),
 			),
 			'post_id'  => array(
-				'label' => __( 'Post ID', 'otter-blocks' ),
+				'label' => __( 'Post ID', 'otter-pro' ),
 				'value' => $form_data->get_data_from_payload( 'postId' ),
 			),
 			'dump'     => array(
-				'label' => __( 'Dumped data', 'otter-blocks' ),
+				'label' => __( 'Dumped data', 'otter-pro' ),
 				'value' => $form_data->is_temporary() ? $form_data->dump_data() : array(),
 			),
 		);
@@ -326,11 +326,11 @@ class Form_Emails_Storing {
 	public function form_record_columns() {
 		return array(
 			'cb'              => '<input type="checkbox" />',
-			'title'           => __( 'Title', 'otter-blocks' ),
-			'form'            => __( 'Form ID', 'otter-blocks' ),
-			'post_url'        => __( 'Post', 'otter-blocks' ),
-			'ID'              => __( 'ID', 'otter-blocks' ),
-			'submission_date' => __( 'Submission Date', 'otter-blocks' ),
+			'title'           => __( 'Title', 'otter-pro' ),
+			'form'            => __( 'Form ID', 'otter-pro' ),
+			'post_url'        => __( 'Post', 'otter-pro' ),
+			'ID'              => __( 'ID', 'otter-pro' ),
+			'submission_date' => __( 'Submission Date', 'otter-pro' ),
 		);
 	}
 
@@ -341,9 +341,9 @@ class Form_Emails_Storing {
 	 */
 	public function form_record_sortable_columns() {
 		return array(
-			'title'           => __( 'Title', 'otter-blocks' ),
-			'ID'              => __( 'ID', 'otter-blocks' ),
-			'submission_date' => __( 'Submission Date', 'otter-blocks' ),
+			'title'           => __( 'Title', 'otter-pro' ),
+			'ID'              => __( 'ID', 'otter-pro' ),
+			'submission_date' => __( 'Submission Date', 'otter-pro' ),
 		);
 	}
 
@@ -357,18 +357,18 @@ class Form_Emails_Storing {
 		$bulk_actions = array();
 
 		if ( 'trash' !== $status ) {
-			$bulk_actions['trash'] = __( 'Move to Trash', 'otter-blocks' );
+			$bulk_actions['trash'] = __( 'Move to Trash', 'otter-pro' );
 
 			if ( 'unread' !== $status ) {
-				$bulk_actions['unread'] = __( 'Mark as Unread', 'otter-blocks' );
+				$bulk_actions['unread'] = __( 'Mark as Unread', 'otter-pro' );
 			}
 
 			if ( 'read' !== $status ) {
-				$bulk_actions['read'] = __( 'Mark as Read', 'otter-blocks' );
+				$bulk_actions['read'] = __( 'Mark as Read', 'otter-pro' );
 			}
 		} else {
-			$bulk_actions['untrash'] = __( 'Restore', 'otter-blocks' );
-			$bulk_actions['delete']  = __( 'Delete Permanently', 'otter-blocks' );
+			$bulk_actions['untrash'] = __( 'Restore', 'otter-pro' );
+			$bulk_actions['delete']  = __( 'Delete Permanently', 'otter-pro' );
 		}
 
 		return $bulk_actions;
@@ -395,7 +395,7 @@ class Form_Emails_Storing {
 			$actions['view'] = sprintf(
 				'<a href="%s">%s</a>',
 				get_edit_post_link( $post->ID ),
-				__( 'View', 'otter-blocks' )
+				__( 'View', 'otter-pro' )
 			);
 		}
 
@@ -405,7 +405,7 @@ class Form_Emails_Storing {
 				'row-read',
 				$post->ID,
 				wp_create_nonce( 'read-' . self::FORM_RECORD_TYPE . '_' . $post->ID ),
-				__( 'Mark as Read', 'otter-blocks' )
+				__( 'Mark as Read', 'otter-pro' )
 			);
 		} elseif ( 'trash' !== $status ) {
 			$actions['unread'] = sprintf(
@@ -413,7 +413,7 @@ class Form_Emails_Storing {
 				'row-unread',
 				$post->ID,
 				wp_create_nonce( 'unread-' . self::FORM_RECORD_TYPE . '_' . $post->ID ),
-				__( 'Mark as Unread', 'otter-blocks' )
+				__( 'Mark as Unread', 'otter-pro' )
 			);
 		}
 
@@ -637,8 +637,8 @@ class Form_Emails_Storing {
 
 		add_submenu_page(
 			'otter',
-			__( 'Submissions', 'otter-blocks' ),
-			__( 'Submissions', 'otter-blocks' ),
+			__( 'Submissions', 'otter-pro' ),
+			__( 'Submissions', 'otter-pro' ),
 			'manage_options',
 			'edit.php?post_type=' . self::FORM_RECORD_TYPE
 		);
@@ -652,7 +652,7 @@ class Form_Emails_Storing {
 	public function add_form_record_meta_box() {
 		add_meta_box(
 			'field_values_meta_box',
-			esc_html__( 'Submission Data', 'otter-blocks' ),
+			esc_html__( 'Submission Data', 'otter-pro' ),
 			array( $this, 'fields_meta_box_markup' ),
 			self::FORM_RECORD_TYPE
 		);
@@ -660,7 +660,7 @@ class Form_Emails_Storing {
 		// this will replace the default publish box, that's why it's using its id.
 		add_meta_box(
 			'submitpost',
-			esc_html__( 'Update', 'otter-blocks' ),
+			esc_html__( 'Update', 'otter-pro' ),
 			array( $this, 'update_meta_box_markup' ),
 			self::FORM_RECORD_TYPE,
 			'side'
@@ -689,11 +689,11 @@ class Form_Emails_Storing {
 		}
 
 		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['_wpnonce'] ) ), 'update-post_' . $post->ID ) ) {
-			wp_die( esc_html__( 'Nonce not verified.', 'otter-blocks' ) );
+			wp_die( esc_html__( 'Nonce not verified.', 'otter-pro' ) );
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			wp_die( esc_html__( 'User cannot edit this post.', 'otter-blocks' ) );
+			wp_die( esc_html__( 'User cannot edit this post.', 'otter-pro' ) );
 		}
 
 		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
@@ -868,12 +868,12 @@ class Form_Emails_Storing {
 				</div>
 				<div>
 					<span class="dashicons dashicons-admin-page"></span>
-					<?php echo esc_html__( 'Post', 'otter-blocks' ); ?>:
-					<a href="<?php echo esc_url( $meta['post_url']['value'] ); ?>"><?php echo esc_html__( 'View', 'otter-blocks' ); ?></a>
+					<?php echo esc_html__( 'Post', 'otter-pro' ); ?>:
+					<a href="<?php echo esc_url( $meta['post_url']['value'] ); ?>"><?php echo esc_html__( 'View', 'otter-pro' ); ?></a>
 				</div>
 				<div>
 					<span class="dashicons dashicons-calendar"></span>
-					<?php echo esc_html__( 'Submitted on', 'otter-blocks' ); ?>:
+					<?php echo esc_html__( 'Submitted on', 'otter-pro' ); ?>:
 					<span><strong><?php echo esc_html( get_the_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $post ) ); ?></strong></span>
 				</div>
 			</div>
@@ -885,7 +885,7 @@ class Form_Emails_Storing {
 						'trash',
 						intval( $post->ID ),
 						esc_attr( wp_create_nonce( 'trash-post_' . $post->ID ) ),
-						esc_html__( 'Move to Trash', 'otter-blocks' )
+						esc_html__( 'Move to Trash', 'otter-pro' )
 					);
 					?>
 				</div>
@@ -894,7 +894,7 @@ class Form_Emails_Storing {
 					<?php
 					echo sprintf(
 						'<input type="submit" class="button button-primary button-large" value="%s"/>',
-						esc_html__( 'Update', 'otter-blocks' )
+						esc_html__( 'Update', 'otter-pro' )
 					);
 					?>
 				</div>
@@ -956,19 +956,19 @@ class Form_Emails_Storing {
 		$post = get_post( $id );
 
 		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ), $action . '-' . self::FORM_RECORD_TYPE . '_' . $id ) ) {
-			wp_die( esc_html__( 'Security check failed', 'otter-blocks' ) );
+			wp_die( esc_html__( 'Security check failed', 'otter-pro' ) );
 		}
 
 		if ( ! isset( $_REQUEST[ self::FORM_RECORD_TYPE ] ) ) {
-			wp_die( esc_html__( 'Post ID is required', 'otter-blocks' ) );
+			wp_die( esc_html__( 'Post ID is required', 'otter-pro' ) );
 		}
 
 		if ( ! $post ) {
-			wp_die( esc_html__( 'Invalid post ID', 'otter-blocks' ) );
+			wp_die( esc_html__( 'Invalid post ID', 'otter-pro' ) );
 		}
 
 		if ( self::FORM_RECORD_TYPE !== $post->post_type ) {
-			wp_die( esc_html__( 'Invalid post type', 'otter-blocks' ) );
+			wp_die( esc_html__( 'Invalid post type', 'otter-pro' ) );
 		}
 
 		return $id;
@@ -1079,7 +1079,7 @@ class Form_Emails_Storing {
 		?>
 		<label for="filter-by-form"></label>
 		<select name="form" id="filter-by-form">
-			<option value=""><?php esc_html_e( 'All Forms', 'otter-blocks' ); ?></option>
+			<option value=""><?php esc_html_e( 'All Forms', 'otter-pro' ); ?></option>
 			<?php foreach ( $forms as $form_id => $form_name ) : ?>
 				<option value="<?php echo esc_attr( $form_id ); ?>" <?php selected( $form, $form_id ); ?>><?php echo esc_html( $form_name ); ?></option>
 			<?php endforeach; ?>
@@ -1105,7 +1105,7 @@ class Form_Emails_Storing {
 		?>
 		<label for="filter-by-post"></label>
 		<select name="post" id="filter-by-post">
-			<option value=""><?php esc_html_e( 'All Posts', 'otter-blocks' ); ?></option>
+			<option value=""><?php esc_html_e( 'All Posts', 'otter-pro' ); ?></option>
 			<?php foreach ( $posts as $post_id => $post_title ) : ?>
 				<option value="<?php echo esc_attr( $post_id ); ?>" <?php selected( $post, $post_id ); ?>><?php echo esc_html( $post_title ); ?></option>
 			<?php endforeach; ?>
@@ -1333,7 +1333,7 @@ class Form_Emails_Storing {
 	public function export_submissions() {
 		$nonce = isset( $_POST['_nonce'] ) ? sanitize_text_field( $_POST['_nonce'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 		if ( ! wp_verify_nonce( $nonce, 'otter_form_export_submissions' ) ) {
-			wp_die( esc_html( __( 'Invalid nonce.', 'otter-blocks' ) ) );
+			wp_die( esc_html( __( 'Invalid nonce.', 'otter-pro' ) ) );
 		}
 
 		// Export submissions.
@@ -1374,7 +1374,7 @@ class Form_Emails_Storing {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 
 	/**
@@ -1385,6 +1385,6 @@ class Form_Emails_Storing {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-pro' ), '1.0.0' );
 	}
 }

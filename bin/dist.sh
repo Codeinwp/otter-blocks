@@ -22,8 +22,14 @@ else
   DIST_FOLDER=$BUILD_NAME
 fi
 
+
 # Take all the files, filter the dev ones (e.g. node_modules, src), and save the result to './dist'
 rsync -rc --exclude-from ".distignore" "./" "dist/$DIST_FOLDER"
+
+# Change the individual sub-text-domain for the included sub-plugins in the main one.
+composer install --prefer-dist --no-progress --no-suggest
+composer run format-dist -- "./dist/$DIST_FOLDER"
+composer install --no-dev --prefer-dist --no-progress --no-suggest
 
 cd dist
 

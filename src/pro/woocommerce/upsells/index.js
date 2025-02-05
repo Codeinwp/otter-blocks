@@ -28,14 +28,14 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 		blockProps={ useBlockProps() }
 	/>;
 } else {
-	edit = () => <div { ...useBlockProps() }><Placeholder>{ __( 'Upsell products will be displayed here on the product page.', 'otter-blocks' ) }</Placeholder></div>;
+	edit = () => <div { ...useBlockProps() }><Placeholder>{ __( 'Upsell products will be displayed here on the product page.', 'otter-pro' ) }</Placeholder></div>;
 }
 
 if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 	registerBlockType( name, {
 		...metadata,
-		title: __( 'Product Upsells', 'otter-blocks' ),
-		description: __( 'Display upsells for your WooCommerce product.', 'otter-blocks' ),
+		title: __( 'Product Upsells', 'otter-pro' ),
+		description: __( 'Display upsells for your WooCommerce product.', 'otter-pro' ),
 		icon,
 		keywords: [
 			'woocommerce',

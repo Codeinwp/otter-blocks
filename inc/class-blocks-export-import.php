@@ -26,6 +26,7 @@ class Blocks_Export_Import {
 		if ( ! defined( 'BLOCKS_EXPORT_IMPORT_URL' ) ) {
 			define( 'BLOCKS_EXPORT_IMPORT_URL', OTTER_BLOCKS_URL );
 			define( 'BLOCKS_EXPORT_IMPORT_PATH', OTTER_BLOCKS_PATH );
+			define( 'BLOCKS_EXPORT_OTTER', true );
 		}
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ), 1 );
@@ -47,8 +48,8 @@ class Blocks_Export_Import {
 			$asset_file['version'],
 			true
 		);
-	
-		wp_set_script_translations( 'blocks-export-import', 'blocks-export-import' );
+
+		wp_set_script_translations( 'blocks-export-import', defined( 'BLOCKS_EXPORT_OTTER' ) ? 'otter-blocks' : 'blocks-export-import' );
 	}
 
 	/**

@@ -110,7 +110,7 @@ const BlocksExporter = () => {
 
 		createNotice(
 			'success',
-			__( 'Blocks exported.', 'otter-blocks' ),
+			__( 'Blocks exported.', 'blocks-export-import' ),
 			{
 				type: 'snackbar'
 			}
@@ -126,7 +126,7 @@ const BlocksExporter = () => {
 					icon={ external }
 					onClick={ exportBlocks }
 				>
-					{ __( 'Export as JSON', 'otter-blocks' ) }
+					{ __( 'Export as JSON', 'blocks-export-import' ) }
 				</MenuItem>
 			) }
 		</BlockSettingsMenuControls>

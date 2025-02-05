@@ -45,18 +45,18 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Field Settings', 'otter-blocks' ) }
+				title={ __( 'Field Settings', 'otter-pro' ) }
 			>
 				<Button
 					isSecondary
 					variant="secondary"
 					onClick={ () => selectForm?.() }
 				>
-					{ __( 'Back to the Form', 'otter-blocks' ) }
+					{ __( 'Back to the Form', 'otter-pro' ) }
 				</Button>
 
 				<SelectControl
-					label={ __( 'Field Type', 'otter-blocks' ) }
+					label={ __( 'Field Type', 'otter-pro' ) }
 					value={ attributes.type ?? 'hidden' }
 					options={ fieldTypesOptions() }
 					onChange={ type => {
@@ -67,44 +67,44 @@ const Inspector = ({
 				/>
 
 				<TextControl
-					label={ __( 'Label', 'otter-blocks' ) }
+					label={ __( 'Label', 'otter-pro' ) }
 					value={ attributes.label }
 					onChange={ label => setAttributes({ label }) }
-					help={ __( 'The label will be used as the field name.', 'otter-blocks' ) }
+					help={ __( 'The label will be used as the field name.', 'otter-pro' ) }
 					disabled={! Boolean( window?.otterPro?.isActive )}
 				/>
 
 				<TextControl
-					label={ __( 'Query Param', 'otter-blocks' ) }
+					label={ __( 'Query Param', 'otter-pro' ) }
 					value={ attributes.paramName }
 					onChange={ paramName => setAttributes({ paramName }) }
-					help={ __( 'The query parameter name that is used in URL. If the param is present, its value will be extracted and send with the Form.', 'otter-blocks' ) }
-					placeholder={ __( 'e.g. utm_source', 'otter-blocks' ) }
+					help={ __( 'The query parameter name that is used in URL. If the param is present, its value will be extracted and send with the Form.', 'otter-pro' ) }
+					placeholder={ __( 'e.g. utm_source', 'otter-pro' ) }
 					disabled={! Boolean( window?.otterPro?.isActive )}
 				/>
 
 				<TextControl
-					label={ __( 'Default Value', 'otter-blocks' ) }
+					label={ __( 'Default Value', 'otter-pro' ) }
 					value={ attributes.defaultValue }
 					onChange={ defaultValue => setAttributes({ defaultValue }) }
-					placeholder={ __( 'e.g. medium', 'otter-blocks' ) }
+					placeholder={ __( 'e.g. medium', 'otter-pro' ) }
 					disabled={! Boolean( window?.otterPro?.isActive )}
 				/>
 
 				<TextControl
-					label={ __( 'Mapped Name', 'otter-blocks' ) }
+					label={ __( 'Mapped Name', 'otter-pro' ) }
 					help={ mappedNameInfo }
 					value={ attributes.mappedName }
 					onChange={ mappedName => setAttributes({ mappedName }) }
-					placeholder={ __( 'car_type', 'otter-blocks' ) }
+					placeholder={ __( 'car_type', 'otter-pro' ) }
 					disabled={! Boolean( window?.otterPro?.isActive )}
 				/>
 
 				{ ! Boolean( window?.otterPro?.isActive ) && (
 					<Fragment>
 						<OtterNotice
-							notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
+							notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
+							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-pro' ) }
 						/>
 					</Fragment>
 				)
