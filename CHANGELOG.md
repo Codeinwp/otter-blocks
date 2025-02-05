@@ -1,3 +1,7 @@
+##### [Version 3.0.10](https://github.com/Codeinwp/otter-blocks/compare/v3.0.9...v3.0.10) (2025-02-05)
+
+- Fix language pack loading
+
 ##### [Version 3.0.9](https://github.com/Codeinwp/otter-blocks/compare/v3.0.8...v3.0.9) (2025-01-16)
 
 - Fixed compatibility with WordPress 6.7, causing images to display incorrectly in the front-end
