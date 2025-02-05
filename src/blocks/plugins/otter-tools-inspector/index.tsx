@@ -40,7 +40,7 @@ const FeaturePanel = ({ props }) => {
 
 	return (
 		<ToolsPanel
-			label={ __( 'Block Tools' ) }
+			label={ __( 'Block Tools', 'otter-blocks' ) }
 			className="o-block-tools"
 		>
 			{ applyFilters( 'otter.blockTools', '', props ) }

@@ -26,7 +26,7 @@ const name = 'themeisle-blocks/count-animation';
 
 export const format = {
 	name,
-	title: __( 'Count Animation', 'otter-blocks' ),
+	title: __( 'Count Animation', 'blocks-animation' ),
 	tagName: 'o-anim-count',
 	className: null,
 
@@ -48,7 +48,7 @@ export const format = {
 			<Fragment>
 				<RichTextToolbarButton
 					icon={ brush }
-					title={ __( 'Count Animation', 'otter-blocks' ) }
+					title={ __( 'Count Animation', 'blocks-animation' ) }
 					isDisabled={ ! isActive && null === regex.exec( value.text.substring( value.start, value.end ) ) }
 					onClick={ onToggle }
 					isActive={ isActive }

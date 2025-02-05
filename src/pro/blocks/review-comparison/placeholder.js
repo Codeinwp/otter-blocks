@@ -54,8 +54,11 @@ const BlockPlaceholder = ({
 
 			<Button
 
-				/* translators: %s Label */
-				label={ sprintf( __( 'Remove %s', 'otter-blocks' ), label ) }
+				label={ sprintf( 
+					// translators: %s label.
+					__( 'Remove %s', 'otter-pro' ),
+					label
+				) }
 				icon="dismiss"
 				onClick={ () => toggleReview( value ) }
 			/>
@@ -68,7 +71,7 @@ const BlockPlaceholder = ({
 	}).map( value => {
 		const values = value.split( '-' );
 		const review = data.find( review => review.ID === Number( values[0]) && review.attrs.id.slice( review.attrs.id.length - 8 ) === values[1]);
-		const label = review.attrs.title || __( 'Untitled review', 'otter-blocks' );
+		const label = review.attrs.title || __( 'Untitled review', 'otter-pro' );
 
 		return {
 			label,
@@ -78,17 +81,17 @@ const BlockPlaceholder = ({
 
 	return (
 		<Placeholder
-			label={ __( 'Product Review Comparison', 'otter-blocks' ) }
-			instructions={ __( 'Display a selection of product reviews in a comparison table. You need to have some pre-existing reviews to use this block.', 'otter-blocks' ) }
+			label={ __( 'Product Review Comparison', 'otter-pro' ) }
+			instructions={ __( 'Display a selection of product reviews in a comparison table. You need to have some pre-existing reviews to use this block.', 'otter-pro' ) }
 			icon={ icon }
 			isColumnLayout={ true }
 			className="o-review-comparison__placeholder"
 		>
 			{ isLoading && <Spinner /> }
 
-			{ isError && __( 'There seems to have been an error.', 'otter-blocks' ) }
+			{ isError && __( 'There seems to have been an error.', 'otter-pro' ) }
 
-			{ ( isComplete && ! Boolean( data.length ) ) && __( 'No reviews found.', 'otter-blocks' ) }
+			{ ( isComplete && ! Boolean( data.length ) ) && __( 'No reviews found.', 'otter-pro' ) }
 
 			{ ( isComplete && Boolean( data.length ) ) && (
 				<div className="o-review-comparison__placeholder__container">
@@ -97,7 +100,7 @@ const BlockPlaceholder = ({
 							{
 
 								/* translators: %s Number of selected reviews. */
-								sprintf( __( '%s reviews selected', 'otter-blocks' ), attributes.reviews.length )
+								sprintf( __( '%s reviews selected', 'otter-pro' ), attributes.reviews.length )
 							}
 						</div>
 
@@ -111,19 +114,19 @@ const BlockPlaceholder = ({
 					</div>
 
 					<TextControl
-						label={ __( 'Search for review to display', 'otter-blocks' ) }
+						label={ __( 'Search for review to display', 'otter-pro' ) }
 						value={ query }
 						onChange={ setQuery }
 					/>
 
 					<MenuGroup>
-						{ data.filter( review => ( review.attrs.title || __( 'Untitled review', 'otter-blocks' ) ).toLowerCase().includes( query.toLowerCase() ) ).map( review => {
+						{ data.filter( review => ( review.attrs.title || __( 'Untitled review', 'otter-pro' ) ).toLowerCase().includes( query.toLowerCase() ) ).map( review => {
 							const ID = review.ID + '-' + review.attrs.id.slice( review.attrs.id.length - 8 );
 
 							return (
 								<CheckboxControl
 									key={ ID }
-									label={ review.attrs.title || __( 'Untitled review', 'otter-blocks' ) }
+									label={ review.attrs.title || __( 'Untitled review', 'otter-pro' ) }
 									checked={ attributes.reviews.includes( ID ) }
 									onChange={ () => toggleReview( ID ) }
 								/>
@@ -135,7 +138,7 @@ const BlockPlaceholder = ({
 						isPrimary
 						onClick={ onComplete }
 					>
-						{ __( 'Done', 'otter-blocks' ) }
+						{ __( 'Done', 'otter-pro' ) }
 					</Button>
 				</div>
 			) }

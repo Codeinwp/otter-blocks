@@ -26,6 +26,7 @@ class Blocks_CSS {
 		if ( ! defined( 'BLOCKS_CSS_URL' ) ) {
 			define( 'BLOCKS_CSS_URL', OTTER_BLOCKS_URL );
 			define( 'BLOCKS_CSS_PATH', OTTER_BLOCKS_PATH );
+			define( 'BLOCKS_CSS_OTTER', true );
 		}
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ), 1 );
@@ -86,7 +87,7 @@ class Blocks_CSS {
 			)
 		);
 
-		wp_set_script_translations( 'otter-css', 'blocks-css' );
+		wp_set_script_translations( 'otter-css', defined( 'BLOCKS_CSS_OTTER' ) ? 'otter-blocks' : 'blocks-css' );
 
 		wp_enqueue_style(
 			'otter-css',

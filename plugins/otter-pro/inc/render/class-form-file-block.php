@@ -30,7 +30,7 @@ class Form_File_Block {
 		}
 
 		$id                 = isset( $attributes['id'] ) ? esc_attr( $attributes['id'] ) : '';
-		$label              = isset( $attributes['label'] ) ? esc_html( $attributes['label'] ) : __( 'Select option', 'otter-blocks' );
+		$label              = isset( $attributes['label'] ) ? esc_html( $attributes['label'] ) : __( 'Select option', 'otter-pro' );
 		$help_text          = isset( $attributes['helpText'] ) ? esc_html( $attributes['helpText'] ) : '';
 		$is_required        = isset( $attributes['isRequired'] ) && boolval( $attributes['isRequired'] );
 		$has_multiple_files = isset( $attributes['multipleFiles'] ) && boolval( $attributes['multipleFiles'] ) && ( ! isset( $attributes['maxFilesNumber'] ) || intval( $attributes['maxFilesNumber'] ) > 1 );

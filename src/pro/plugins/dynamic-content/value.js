@@ -18,57 +18,57 @@ import Edit from './value-edit.js';
 const applyProContent = options => {
 	const proOptions = {
 		'posts': {
-			label: __( 'Posts', 'otter-blocks' ),
+			label: __( 'Posts', 'otter-pro' ),
 			options: [
 				{
-					label: __( 'Post Date', 'otter-blocks' ),
+					label: __( 'Post Date', 'otter-pro' ),
 					value: 'postDate'
 				},
 				{
-					label: __( 'Post Time', 'otter-blocks' ),
+					label: __( 'Post Time', 'otter-pro' ),
 					value: 'postTime'
 				},
 				{
-					label: __( 'Post Terms', 'otter-blocks' ),
+					label: __( 'Post Terms', 'otter-pro' ),
 					value: 'postTerms'
 				},
 				{
-					label: __( 'Post Custom Field', 'otter-blocks' ),
+					label: __( 'Post Custom Field', 'otter-pro' ),
 					value: 'postMeta'
 				},
 				{
-					label: __( 'Advanced Custom Field', 'otter-blocks' ),
+					label: __( 'Advanced Custom Field', 'otter-pro' ),
 					value: 'acf'
 				}
 			]
 		},
 		'author': {
-			label: __( 'Author', 'otter-blocks' ),
+			label: __( 'Author', 'otter-pro' ),
 			options: [
 				{
-					label: __( 'Author Meta', 'otter-blocks' ),
+					label: __( 'Author Meta', 'otter-pro' ),
 					value: 'authorMeta'
 				}
 			]
 		},
 		'loggedInUser': {
-			label: __( 'Logged-in User', 'otter-blocks' ),
+			label: __( 'Logged-in User', 'otter-pro' ),
 			options: [
 				{
-					label: __( 'Logged-in User Meta', 'otter-blocks' ),
+					label: __( 'Logged-in User Meta', 'otter-pro' ),
 					value: 'loggedInUserMeta'
 				}
 			]
 		},
 		'misc': {
-			label: __( 'Miscellaneous', 'otter-blocks' ),
+			label: __( 'Miscellaneous', 'otter-pro' ),
 			options: [
 				{
-					label: __( 'URL Parameter', 'otter-blocks' ),
+					label: __( 'URL Parameter', 'otter-pro' ),
 					value: 'queryString'
 				},
 				{
-					label: __( 'Country', 'otter-blocks' ),
+					label: __( 'Country', 'otter-pro' ),
 					value: 'country'
 				}
 			]

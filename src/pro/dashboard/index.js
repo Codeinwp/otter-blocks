@@ -37,13 +37,13 @@ const Integrations = props => {
 	return (
 		<Fragment>
 			<PanelBody
-				title={ __( 'Fonts Module', 'otter-blocks' ) }
+				title={ __( 'Fonts Module', 'otter-pro' ) }
 				className="is-pro"
 			>
 				<PanelRow>
 					<ToggleControl
-						label={ __( 'Save Google Fonts Locally', 'otter-blocks' ) }
-						help={ __( 'Enable this option to save Google Fonts locally to make your website faster', 'otter-blocks' ) }
+						label={ __( 'Save Google Fonts Locally', 'otter-pro' ) }
+						help={ __( 'Enable this option to save Google Fonts locally to make your website faster', 'otter-pro' ) }
 						checked={ Boolean( getOption( 'otter_offload_fonts' ) ) }
 						disabled={ 'saving' === status }
 						onChange={ () => {
@@ -55,14 +55,14 @@ const Integrations = props => {
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'IPHub API Key', 'otter-blocks' ) }
+				title={ __( 'IPHub API Key', 'otter-pro' ) }
 				initialOpen={ false }
 				className="is-pro"
 			>
 				<PanelRow>
 					<BaseControl
-						label={ __( 'IPHub API Key', 'otter-blocks' ) }
-						help={ __( 'In order to use IP-based locations, you need to use IPHub API.', 'otter-blocks' ) }
+						label={ __( 'IPHub API Key', 'otter-pro' ) }
+						help={ __( 'In order to use IP-based locations, you need to use IPHub API.', 'otter-pro' ) }
 						id="otter-options-iphub-api"
 						className="otter-button-field"
 					>
@@ -70,7 +70,7 @@ const Integrations = props => {
 							type="password"
 							id="otter-options-iphub-api"
 							value={ IPHubAPI }
-							placeholder={ __( 'IPHub API Key', 'otter-blocks' ) }
+							placeholder={ __( 'IPHub API Key', 'otter-pro' ) }
 							disabled={ 'saving' === status }
 							onChange={ e => setIPHubAPI( e.target.value ) }
 						/>
@@ -85,13 +85,13 @@ const Integrations = props => {
 									updateOption( 'otter_iphub_api_key', IPHubAPI );
 								} }
 							>
-								{ __( 'Save', 'otter-blocks' ) }
+								{ __( 'Save', 'otter-pro' ) }
 							</Button>
 
 							<ExternalLink
 								href="https://iphub.info/api"
 							>
-								{ __( 'Get API Key', 'otter-blocks' ) }
+								{ __( 'Get API Key', 'otter-pro' ) }
 							</ExternalLink>
 						</div>
 					</BaseControl>

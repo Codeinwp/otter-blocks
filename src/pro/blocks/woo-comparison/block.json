@@ -6,7 +6,7 @@
 	"category": "themeisle-blocks",
 	"description": "A way to compare different WooCommerce products made on the website. Powered by Otter.",
 	"keywords": [ "woocommerce", "comparison", "table" ],
-	"textdomain": "otter-blocks",
+	"textdomain": "otter-pro",
 	"attributes": {
 		"id": {
 			"type": "string"

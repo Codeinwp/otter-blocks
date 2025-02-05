@@ -6,7 +6,7 @@
 	"category": "themeisle-blocks",
 	"description": "Display your business schedule on your website. Powered by Otter.",
 	"keywords": [ "business", "schedule", "time" ],
-	"textdomain": "otter-blocks",
+	"textdomain": "otter-pro",
 	"attributes": {
 		"id": {
 			"type": "string"

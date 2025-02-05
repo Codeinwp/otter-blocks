@@ -25,18 +25,18 @@ const applyProContent = options => {
 	const proOptions = [
 		{
 			type: 'postMeta',
-			label: __( 'Post Meta', 'otter-blocks' ),
+			label: __( 'Post Meta', 'otter-pro' ),
 			icon: window.themeisleGutenberg.assetsPath + '/icons/meta.svg'
 		},
 		{
 			type: 'product',
-			label: __( 'Woo Product', 'otter-blocks' ),
+			label: __( 'Woo Product', 'otter-pro' ),
 			icon: window.themeisleGutenberg.assetsPath + '/icons/woo.svg',
 			isAvailable: Boolean( window.otterPro.hasWooCommerce )
 		},
 		{
 			type: 'acf',
-			label: __( 'ACF Image', 'otter-blocks' ),
+			label: __( 'ACF Image', 'otter-pro' ),
 			icon: window.themeisleGutenberg.assetsPath + '/icons/acf.svg',
 			isAvailable: Boolean( window.otterPro.hasACF )
 		}
@@ -58,7 +58,7 @@ const DynamicContent = (
 		<Fragment>
 			{ 'postMeta' === attributes?.type && (
 				<TextControl
-					label={ __( 'Meta Key', 'otter-blocks' ) }
+					label={ __( 'Meta Key', 'otter-pro' ) }
 					value={ attributes.meta || '' }
 					onChange={ meta => changeAttributes({ meta }) }
 				/>
@@ -66,7 +66,7 @@ const DynamicContent = (
 
 			{ 'product' === attributes?.type && (
 				<SelectProducts
-					label={ __( 'Select Product', 'otter-blocks' ) }
+					label={ __( 'Select Product', 'otter-pro' ) }
 					value={ attributes.id || '' }
 					onChange={ product => changeAttributes({ id: 0 === product ? undefined : product }) }
 				/>
@@ -74,7 +74,7 @@ const DynamicContent = (
 
 			{ 'acf' === attributes?.type && (
 				<ACFImageSelect
-					label={ __( 'Select Field', 'otter-blocks' ) }
+					label={ __( 'Select Field', 'otter-pro' ) }
 					value={ attributes.meta || '' }
 					onChange={ meta => changeAttributes({ meta }) }
 				/>

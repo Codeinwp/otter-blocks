@@ -18,6 +18,32 @@ const blockFilesPro = Object.keys( blocks ).filter( block => blocks[ block ].blo
 
 const blockFoldersPro = Object.keys( blocks ).filter( block => true === blocks[ block ]?.isPro ).map( block => `build/pro/${ block }` );
 
+const changeTextDomain = textdomain => {
+	return {
+		test: /\.(j|t)sx?$/,
+		exclude: /node_modules/,
+		use: [
+			{
+				loader: require.resolve( 'babel-loader' ),
+				options: {
+					cacheDirectory:
+					process.env.BABEL_CACHE_DIRECTORY || true,
+					babelrc: false,
+					configFile: false,
+					presets: [
+						require.resolve(
+							'@wordpress/babel-preset-default'
+						)
+					],
+					plugins: [
+						[ '@automattic/babel-plugin-replace-textdomain', { textdomain }]
+					]
+				}
+			}
+		]
+	};
+};
+
 module.exports = [
 	{
 
@@ -38,6 +64,12 @@ module.exports = [
 			path: path.resolve( __dirname, './build/pro' ),
 			filename: '[name].js',
 			chunkFilename: 'chunk-[name].js'
+		},
+		module: {
+			rules: [
+				changeTextDomain('otter-pro'),
+				...defaultConfig.module.rules
+			]
 		},
 		plugins: [
 			...defaultConfig.plugins,

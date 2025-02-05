@@ -30,8 +30,8 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 
 registerBlockType( name, {
 	...metadata,
-	title: __( 'Business Hours', 'otter-blocks' ),
-	description: __( 'Display your business schedule on your website. Powered by Otter.', 'otter-blocks' ),
+	title: __( 'Business Hours', 'otter-pro' ),
+	description: __( 'Display your business schedule on your website. Powered by Otter.', 'otter-pro' ),
 	icon,
 	keywords: [
 		'business',
@@ -45,12 +45,12 @@ registerBlockType( name, {
 	styles: [
 		{
 			name: 'default',
-			label: __( 'Default', 'otter-blocks' ),
+			label: __( 'Default', 'otter-pro' ),
 			isDefault: true
 		},
 		{
 			name: 'black-white',
-			label: __( 'Black & White', 'otter-blocks' )
+			label: __( 'Black & White', 'otter-pro' )
 		}
 	],
 	edit,
