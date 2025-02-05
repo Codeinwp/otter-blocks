@@ -962,16 +962,16 @@
         },
         {
             "name": "php-stubs/acf-pro-stubs",
-            "version": "v6.2.7",
+            "version": "v6.3.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/acf-pro-stubs.git",
-                "reference": "ec36332a1211f8c0231ae8221994f38033232fa0"
+                "reference": "49a1766f214c8a8484b0b3c2de2a8188ce4fc354"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/ec36332a1211f8c0231ae8221994f38033232fa0",
-                "reference": "ec36332a1211f8c0231ae8221994f38033232fa0",
+                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/49a1766f214c8a8484b0b3c2de2a8188ce4fc354",
+                "reference": "49a1766f214c8a8484b0b3c2de2a8188ce4fc354",
                 "shasum": ""
             },
             "require": {
@@ -987,9 +987,16 @@
                 "szepeviktor/phpstan-wordpress": "WordPress extensions for PHPStan"
             },
             "type": "library",
+            "extra": {
+                "installer-paths": {
+                    "source/{$name}/": [
+                        "type:wordpress-plugin"
+                    ]
+                }
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-2.0-or-later"
+                "MIT"
             ],
             "description": "Advanced Custom Fields PRO stubs for static analysis.",
             "homepage": "https://github.com/php-stubs/acf-pro-stubs",
@@ -1001,9 +1008,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/acf-pro-stubs/issues",
-                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v6.2.7"
+                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v6.3.10"
             },
-            "time": "2024-03-11T09:22:20+00:00"
+            "time": "2024-11-06T12:26:27+00:00"
         },
         {
             "name": "php-stubs/woocommerce-stubs",
