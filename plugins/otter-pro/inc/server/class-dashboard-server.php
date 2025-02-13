@@ -65,6 +65,7 @@ class Dashboard_Server {
 				'hasNevePro'         => defined( 'NEVE_PRO_VERSION' ),
 				'storeURL'           => 'https://store.themeisle.com/',
 				'purchaseHistoryURL' => 'https://store.themeisle.com/purchase-history',
+				'proVersion'         => OTTER_PRO_VERSION,
 			)
 		);
 	}
