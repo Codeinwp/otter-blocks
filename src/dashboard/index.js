@@ -75,20 +75,3 @@ const App = () => {
 const root = createRoot( document.getElementById( 'otter' ) );
 
 root.render( <App /> );
-
-/**
- * Initialize the formbricks survey.
- *
- * @see https://github.com/formbricks/setup-examples/tree/main/html
- */
-window.addEventListener('themeisle:survey:loaded', function () {
-	window?.tsdk_formbricks?.init?.({
-		environmentId: 'clp9hqm8c1osfdl2ixwd0k0iz',
-		apiHost: 'https://app.formbricks.com',
-		userId: 'otter_' + ( undefined !== window.otterObj?.license?.key ? window.otterObj.license.key : window.otterObj.rootUrl.replace( /[^\w\d]*/g, '' ) ),
-		attributes: {
-			plan: undefined !== window.otterObj?.license?.type ? window.otterObj.license.type : 'free',
-			days_since_install: convertToCategory( window.otterObj.days_since_install )
-		}
-	});
-});   

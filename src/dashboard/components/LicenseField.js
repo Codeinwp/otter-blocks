@@ -87,7 +87,7 @@ const LicenseField = () => {
 
 			<input
 				type="text"
-				value={ isValid ? '******************************' + licenseKey.slice( -5 ) : licenseKey }
+				value={ licenseKey }
 				placeholder={ __( 'Enter license key', 'otter-blocks' ) }
 				disabled={ isLoading || isValid }
 				onChange={ e => setLicenseKey( e.target.value ) }
