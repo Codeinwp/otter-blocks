@@ -217,7 +217,8 @@ class Dashboard {
 			$this->get_dashboard_data()
 		);
 
-		$this->load_survey();
+		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( $this, 'register_survey' ), 10, 2 );
+		do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'dashboard' );
 	}
 
 	/**
@@ -273,6 +274,10 @@ class Dashboard {
 			),
 			'neveInstalled'          => defined( 'NEVE_VERSION' ),
 		);
+		
+		if ( isset( $global_data['license'], $global_data['license']['key'] ) && 'free' !== $global_data['license']['key'] ) {
+			$global_data['license']['key'] = str_repeat( '*', 26 ) . substr( $global_data['license']['key'], -6 );
+		}
 
 		return apply_filters( 'otter_dashboard_data', $global_data );
 	}
@@ -734,15 +739,47 @@ class Dashboard {
 	}
 
 	/**
-	 * Load the Formbricks deps from SDK to initiate the survey.
+	 * Register survey.
 	 */
-	private function load_survey() {
-		$survey_handler = apply_filters( 'themeisle_sdk_dependency_script_handler', 'survey' );
-		if ( empty( $survey_handler ) ) {
-			return;
+	public function register_survey( $data, $page_slug ) {
+		$dash_data = $this->get_dashboard_data();
+
+		$install_category    = 0;
+		$install_days_number = $dash_data['days_since_install'];
+
+		if ( is_numeric( $install_days_number ) ) {
+			if ( 0 === $install_days_number || 1 === $install_days_number ) {
+				$install_category = 0;
+			} elseif ( 1 < $install_days_number && 8 > $install_days_number ) {
+				$install_category = 7;
+			} elseif ( 8 <= $install_days_number && 31 > $install_days_number ) {
+				$install_category = 30;
+			} elseif ( 30 < $install_days_number && 90 > $install_days_number ) {
+				$install_category = 90;
+			} elseif ( 90 <= $install_days_number ) {
+				$install_category = 91;
+			}
 		}
 
-		do_action( 'themeisle_sdk_dependency_enqueue_script', 'survey' );
+		$data = array(
+			'environmentId' => 'clp9hqm8c1osfdl2ixwd0k0iz',
+			'attributes'    => array(
+				'days_since_install'  => $install_category,
+				'install_days_number' => $install_days_number,
+				'plan'                => isset( $dash_data['license'], $dash_data['license']['type'] ) ? $dash_data['license']['type'] : 'free',
+				'freeVersion'         => $dash_data['version'],
+			),
+		);
+
+		if ( isset( $dash_data['license'], $dash_data['license']['key'] ) ) {
+			$data['attributes']['license_key'] = apply_filters( 'themeisle_sdk_secret_masking', apply_filters( 'product_otter_license_key', '' ) );
+		}
+
+		if ( isset( $dash_data['proVersion'] ) ) {
+			$data['attributes']['proVersion'] = $dash_data['proVersion'];
+		}
+
+		return $data;
 	}
 
 	/**
