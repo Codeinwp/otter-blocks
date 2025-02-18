@@ -757,24 +757,12 @@ class Dashboard {
 	 */
 	public function get_survey_metadata( $data, $page_slug ) {
 		$dash_data = $this->get_dashboard_data();
-
-		$install_category    = 0;
-		$install_days_number = $dash_data['days_since_install'];
 		
-		if ( 1 < $install_days_number && 8 > $install_days_number ) {
-			$install_category = 7;
-		} elseif ( 8 <= $install_days_number && 31 > $install_days_number ) {
-			$install_category = 30;
-		} elseif ( 30 < $install_days_number && 90 > $install_days_number ) {
-			$install_category = 90;
-		} elseif ( 90 <= $install_days_number ) {
-			$install_category = 91;
-		}
+		$install_days_number = $dash_data['days_since_install'];
 
 		$data = array(
 			'environmentId' => 'clp9hqm8c1osfdl2ixwd0k0iz',
 			'attributes'    => array(
-				'days_since_install'  => $install_category,
 				'install_days_number' => $install_days_number,
 				'plan'                => isset( $dash_data['license'], $dash_data['license']['type'] ) ? $dash_data['license']['type'] : 'free',
 				'freeVersion'         => $dash_data['version'],
