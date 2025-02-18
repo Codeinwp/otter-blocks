@@ -100,10 +100,12 @@ const LicenseField = () => {
 					isSecondary={ isValid }
 					isBusy={ isLoading }
 					disabled={ isLoading }
-					onClick={ () => onSaveLicense({
-						action: isValid ? 'deactivate' : 'activate',
-						key: licenseKey
-					}) }
+					onClick={ () => {
+						onSaveLicense({
+							action: isValid ? 'deactivate' : 'activate',
+							key: isValid ? undefined : licenseKey
+						});
+					} }
 				>
 					{ isValid ? __( 'Deactivate', 'otter-blocks' ) : __( 'Activate', 'otter-blocks' ) }
 				</Button>

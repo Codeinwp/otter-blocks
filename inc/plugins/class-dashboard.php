@@ -275,16 +275,18 @@ class Dashboard {
 			),
 			'neveInstalled'          => defined( 'NEVE_VERSION' ),
 		);
+
+		$global_data = apply_filters( 'otter_dashboard_data', $global_data );
 		
 		if (
 			isset( $global_data['license'], $global_data['license']['key'] )
 			&& 'free' !== $global_data['license']['key']
-			&& 6 >= strlen( $global_data['license']['key'] )
+			&& 6 <= strlen( $global_data['license']['key'] )
 		) {
 			$global_data['license']['key'] = str_repeat( '*', 26 ) . substr( $global_data['license']['key'], -6 );
 		}
 
-		return apply_filters( 'otter_dashboard_data', $global_data );
+		return $global_data;
 	}
 
 	/**
