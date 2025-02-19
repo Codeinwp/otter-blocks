@@ -4,7 +4,7 @@ Tags: gutenberg, block, block editor, editor, animation, animations, animate, st
 Requires at least: 6.2
 Tested up to: 6.7
 Requires PHP: 5.4
-Stable tag: trunk
+Stable tag: 3.0.10
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
