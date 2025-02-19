@@ -2,48 +2,41 @@ name: Sync with staging
 
 on:
   pull_request:
-    types: [ opened, synchronize, ready_for_review ]
+    types: [opened, synchronize, ready_for_review]
     branches: [master]
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
-        if: ${{ github.repository_owner == 'Codeinwp' }} # Disable on forks
-        env:
-            SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
-            SSH_KEY: ${{ secrets.SSH_KEY }}
-            SSH_PORT: ${{ secrets.SSH_PORT }}
-            SSH_HOST: ${{ secrets.SSH_HOST }}
-            SSH_PATH: ${{ secrets.SSH_PATH }}
-        steps:
-            - name: Check out source files
-              uses: actions/checkout@v2
-            - name: Get Composer Cache Directory
-              id: composer-cache
-              run: |
-                echo "::set-output name=dir::$(composer config cache-files-dir)"
-            - name: Configure Composer cache
-              uses: actions/cache@v1
-              with:
-                path: ${{ steps.composer-cache.outputs.dir }}
-                key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-                restore-keys: |
-                  ${{ runner.os }}-composer-
-            - name: Install composer deps
-              run: composer install --no-dev --prefer-dist --no-progress --no-suggest
-            - name: Install npm deps
-              run: npm ci
-            - name: Set version to Stable Tag
-              run: npm run grunt:version
-            - name: Build files
-              run: npm run build
-            - name: Zip files
-              run: npm run dist
-            - name: Add SSH Key
-              run: |
-                mkdir $HOME/.ssh
-                echo "$SSH_KEY" > "$HOME/.ssh/key"
-                chmod 600 "$HOME/.ssh/key"
-            - name: Deploy to server
-              run: |
-                rsync -rc --exclude-from="$GITHUB_WORKSPACE/.distignore" -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no -p $SSH_PORT" "$GITHUB_WORKSPACE/dist/otter-blocks" "$GITHUB_WORKSPACE/dist/otter-pro" $SSH_USERNAME@$SSH_HOST:$SSH_PATH
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'Codeinwp' }} # Disable on forks
+    env:
+      SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_PATH: ${{ secrets.SSH_PATH }}
+    steps:
+      - name: Check out source files
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+      - name: Install composer deps
+        run: composer install --no-dev --prefer-dist --no-progress --no-suggest
+      - name: Install npm deps
+        run: npm ci
+      - name: Set version to Stable Tag
+        run: npm run grunt:version
+      - name: Build files
+        run: npm run build
+      - name: Zip files
+        run: npm run dist
+      - name: Add SSH Key
+        run: |
+          mkdir $HOME/.ssh
+          echo "$SSH_KEY" > "$HOME/.ssh/key"
+          chmod 600 "$HOME/.ssh/key"
+      - name: Deploy to server
+        run: |
+          rsync -rc --exclude-from="$GITHUB_WORKSPACE/.distignore" -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no -p $SSH_PORT" "$GITHUB_WORKSPACE/dist/otter-blocks" "$GITHUB_WORKSPACE/dist/otter-pro" $SSH_USERNAME@$SSH_HOST:$SSH_PATH
