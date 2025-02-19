@@ -32,7 +32,7 @@ class Test_SVG_Upload extends WP_UnitTestCase {
 		}
 	}
 
-	public function test_svg_upload() {
+	public function test_svg_upload_sanitization() {
 		// Set the user as the current user.
 		wp_set_current_user( 1 );
 
@@ -53,7 +53,7 @@ class Test_SVG_Upload extends WP_UnitTestCase {
 		$this->assertTrue( strpos( $contents, '<script>' ) === false );
 	}
 
-	public function test_non_svg_upload() {
+	public function test_non_svg_upload_sanitization() {
 		// Set the user as the current user.
 		wp_set_current_user( 1 );
 
