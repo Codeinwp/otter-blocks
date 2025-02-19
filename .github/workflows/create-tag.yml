@@ -16,9 +16,10 @@ jobs:
         with:
           persist-credentials: false
       - name: Build files using ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: "npm"
       - name: Release new version
         id: release
         run: |

@@ -2,7 +2,7 @@ name: Test PHP
 
 on:
   pull_request:
-    types: [ opened, synchronize, ready_for_review ]
+    types: [opened, synchronize, ready_for_review]
 
 jobs:
   phplint:
@@ -13,21 +13,10 @@ jobs:
       - name: Setup PHP version
         uses: shivammathur/setup-php@v1
         with:
-          php-version: '7.2'
+          php-version: "7.2"
           extensions: simplexml
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Setup Composer cache
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+        uses: actions/checkout@v4
       - name: Install composer
         run: composer install --prefer-dist --no-progress --no-suggest
       - name: Run PHPCS
@@ -41,21 +30,10 @@ jobs:
       - name: Setup PHP version
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: "7.4"
           extensions: simplexml, mysql
       - name: Checkout source code
-        uses: actions/checkout@v2
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Setup Composer cache
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+        uses: actions/checkout@v4
       - name: Install composer
         run: composer install --prefer-dist --no-progress --no-suggest
       - name: PHPStan Static Analysis
@@ -67,21 +45,11 @@ jobs:
     if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      # setup the composer cache (vendor) with github actions cache and the cache dir defined in the previous step
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
+          node-version: 18
+          cache: "npm"
       # run composer install
       - name: Install composer
         run: composer install --prefer-dist --no-progress --no-suggest
