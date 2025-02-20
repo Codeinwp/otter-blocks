@@ -28,13 +28,15 @@ class Dashboard {
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
-		add_action( 'admin_notices', array( $this, 'maybe_add_otter_banner' ), 30 );
+		add_action( 'admin_notices', array( $this, 'form_submission_elements' ), 30 );
 		add_action( 'admin_head', array( $this, 'add_inline_css' ) );
 
 		$form_options = get_option( 'themeisle_blocks_form_emails' );
 		if ( ! empty( $form_options ) ) {
 			add_action( 'wp_dashboard_setup', array( $this, 'form_submissions_widget' ) );
 		}
+
+		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( $this, 'get_survey_metadata' ), 10, 2 );
 	}
 
 	/**
@@ -217,7 +219,7 @@ class Dashboard {
 			$this->get_dashboard_data()
 		);
 
-		$this->load_survey();
+		do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'dashboard' );
 	}
 
 	/**
@@ -243,7 +245,7 @@ class Dashboard {
 			'showFeedbackNotice'     => $this->should_show_feedback_notice(),
 			'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
 			'hasOnboarding'          => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
-			'days_since_install'     => (int) round( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
+			'days_since_install'     => intval( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS ),
 			'rootUrl'                => get_site_url(),
 			'neveThemePreviewUrl'    => esc_url(
 				add_query_arg(
@@ -274,7 +276,17 @@ class Dashboard {
 			'neveInstalled'          => defined( 'NEVE_VERSION' ),
 		);
 
-		return apply_filters( 'otter_dashboard_data', $global_data );
+		$global_data = apply_filters( 'otter_dashboard_data', $global_data );
+		
+		if (
+			isset( $global_data['license'], $global_data['license']['key'] )
+			&& 'free' !== $global_data['license']['key']
+			&& 6 <= strlen( $global_data['license']['key'] )
+		) {
+			$global_data['license']['key'] = str_repeat( '*', 26 ) . substr( $global_data['license']['key'], -6 );
+		}
+
+		return $global_data;
 	}
 
 	/**
@@ -302,14 +314,18 @@ class Dashboard {
 	}
 
 	/**
-	 * Add the Otter banner on the 'edit-otter_form_record' page.
+	 * Add elements for Form Block submission page.
 	 *
 	 * @return void
 	 */
-	public function maybe_add_otter_banner() {
+	public function form_submission_elements() {
 		$screen = get_current_screen();
 		if ( 'edit-otter_form_record' === $screen->id || 'otter-blocks_page_form-submissions-free' === $screen->id ) {
 			$this->the_otter_banner();
+		}
+		
+		if ( 'edit-otter_form_record' === $screen->id ) {
+			do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'form-submissions' );
 		}
 	}
 
@@ -734,15 +750,36 @@ class Dashboard {
 	}
 
 	/**
-	 * Load the Formbricks deps from SDK to initiate the survey.
+	 * Register survey.
+	 * 
+	 * @param array  $data The data in Formbricks format.
+	 * @param string $page_slug The page slug.
+	 * 
+	 * @return array The data in Frombricks format.
 	 */
-	private function load_survey() {
-		$survey_handler = apply_filters( 'themeisle_sdk_dependency_script_handler', 'survey' );
-		if ( empty( $survey_handler ) ) {
-			return;
+	public function get_survey_metadata( $data, $page_slug ) {
+		$dash_data = $this->get_dashboard_data();
+		
+		$install_days_number = $dash_data['days_since_install'];
+
+		$data = array(
+			'environmentId' => 'clp9hqm8c1osfdl2ixwd0k0iz',
+			'attributes'    => array(
+				'install_days_number' => $install_days_number,
+				'plan'                => isset( $dash_data['license'], $dash_data['license']['type'] ) ? $dash_data['license']['type'] : 'free',
+				'freeVersion'         => $dash_data['version'],
+			),
+		);
+
+		if ( isset( $dash_data['license'], $dash_data['license']['key'] ) ) {
+			$data['attributes']['license_key'] = apply_filters( 'themeisle_sdk_secret_masking', apply_filters( 'product_otter_license_key', '' ) );
 		}
 
-		do_action( 'themeisle_sdk_dependency_enqueue_script', 'survey' );
+		if ( isset( $dash_data['proVersion'] ) ) {
+			$data['attributes']['proVersion'] = $dash_data['proVersion'];
+		}
+
+		return $data;
 	}
 
 	/**

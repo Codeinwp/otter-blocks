@@ -29,6 +29,7 @@ define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
 define( 'OTTER_BLOCKS_VERSION', '3.0.10' );
 define( 'OTTER_BLOCKS_PRO_SUPPORT', true );
 define( 'OTTER_BLOCKS_SHOW_NOTICES', false );
+define( 'OTTER_PRODUCT_SLUG', basename( OTTER_BLOCKS_PATH ) );
 
 $vendor_file = OTTER_BLOCKS_PATH . '/vendor/autoload.php';
 
