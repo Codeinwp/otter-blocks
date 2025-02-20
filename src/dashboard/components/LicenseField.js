@@ -87,7 +87,7 @@ const LicenseField = () => {
 
 			<input
 				type="text"
-				value={ isValid ? '******************************' + licenseKey.slice( -5 ) : licenseKey }
+				value={ licenseKey }
 				placeholder={ __( 'Enter license key', 'otter-blocks' ) }
 				disabled={ isLoading || isValid }
 				onChange={ e => setLicenseKey( e.target.value ) }
@@ -100,10 +100,12 @@ const LicenseField = () => {
 					isSecondary={ isValid }
 					isBusy={ isLoading }
 					disabled={ isLoading }
-					onClick={ () => onSaveLicense({
-						action: isValid ? 'deactivate' : 'activate',
-						key: licenseKey
-					}) }
+					onClick={ () => {
+						onSaveLicense({
+							action: isValid ? 'deactivate' : 'activate',
+							key: isValid ? undefined : licenseKey
+						});
+					} }
 				>
 					{ isValid ? __( 'Deactivate', 'otter-blocks' ) : __( 'Activate', 'otter-blocks' ) }
 				</Button>
