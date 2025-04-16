@@ -2,9 +2,9 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
 **Tags:** block, blocks, gutenberg, gutenberg blocks, page builder  
 **Requires at least:** 6.2  
-**Tested up to:** 6.7  
+**Tested up to:** 6.8  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.0.10  
+**Stable tag:** 3.0.11  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
@@ -365,9 +365,9 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 ## Changelog ##
 
-##### [Version 3.0.10](https://github.com/Codeinwp/otter-blocks/compare/v3.0.9...v3.0.10) (2025-02-05)
+##### [Version 3.0.11](https://github.com/Codeinwp/otter-blocks/compare/v3.0.10...v3.0.11) (2025-04-16)
 
-- Fix language pack loading
+- Updated dependencies
 
 
 
