@@ -342,16 +342,16 @@
         },
         {
             "name": "wptt/webfont-loader",
-            "version": "v1.1.2",
+            "version": "v1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WPTT/webfont-loader.git",
-                "reference": "780e564bf0554c419ef447c2b5b768b497ecee40"
+                "reference": "d5a7150f4e1a90c566e2e64aeae0876743be48b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WPTT/webfont-loader/zipball/780e564bf0554c419ef447c2b5b768b497ecee40",
-                "reference": "780e564bf0554c419ef447c2b5b768b497ecee40",
+                "url": "https://api.github.com/repos/WPTT/webfont-loader/zipball/d5a7150f4e1a90c566e2e64aeae0876743be48b9",
+                "reference": "d5a7150f4e1a90c566e2e64aeae0876743be48b9",
                 "shasum": ""
             },
             "require": {
@@ -383,7 +383,7 @@
                 "issues": "https://github.com/WPTT/font-loader/issues",
                 "source": "https://github.com/WPTT/font-loader"
             },
-            "time": "2022-06-17T10:41:00+00:00"
+            "time": "2024-10-14T05:00:02+00:00"
         }
     ],
     "packages-dev": [
