@@ -1,9 +1,8 @@
 name: Test JS
 
-
 on:
   pull_request:
-    types: [ opened, synchronize, ready_for_review ]
+    types: [opened, synchronize, ready_for_review]
 
 jobs:
   run:
@@ -18,9 +17,10 @@ jobs:
         with:
           persist-credentials: false
       - name: Build files using ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: "npm"
       - name: Lint js files
         run: |
           npm ci

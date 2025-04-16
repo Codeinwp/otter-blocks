@@ -13,35 +13,16 @@ jobs:
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      # setup the composer cache (vendor) with github actions cache and the cache dir defined in the previous step
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
+          node-version: 18
+          cache: "npm"
       # run composer install
       - name: Install composer
         run: composer install --prefer-dist --no-progress --no-suggest
 
-      # setup the node cache (node_modules) with github actions cache
-      - name: Cache Node - npm
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-cache-
-
-      - name: npm ci
+      - name: Install NPM deps
         run: |
           npm ci
 
