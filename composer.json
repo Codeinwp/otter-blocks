@@ -77,7 +77,7 @@
 		"tubalmartin/cssmin": "^4.1",
 		"wptt/webfont-loader": "^1.1",
 		"sabberworm/php-css-parser": "^8.4",
-		"stripe/stripe-php": "^15.3",
+		"stripe/stripe-php": "^17.2",
 		"enshrined/svg-sanitize": "^0.19.0"
 	}
 }
