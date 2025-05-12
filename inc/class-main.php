@@ -48,6 +48,7 @@ class Main {
 		}
 
 		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
+		$this->register_black_friday();
 
 		add_action( 'parse_query', array( $this, 'pagination_support' ) );
 	}
@@ -583,6 +584,71 @@ class Main {
 			'has_upgrade_menu' => ! DEFINED( 'OTTER_PRO_VERSION' ),
 			'upgrade_link'     => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ) ),
 			'upgrade_text'     => __( 'Get Otter Pro', 'otter-blocks' ),
+		);
+	}
+
+	/**
+	 * Set Black Friday data.
+	 *
+	 * @param array $config Configuration array.
+	 *
+	 * @return array
+	 */
+	public function set_black_friday_data( $config ) {
+		$product_label = __( 'Otter Blocks', 'otter-blocks' );
+		$discount      = '70%';
+
+		// translators: %1$s - discount, %2$s - product label.
+		$config['message'] = sprintf( __( 'Our biggest sale of the year: <strong>%1$s OFF</strong> on <strong>%2$s</strong>! Don\'t miss this limited-time offer.', 'otter-blocks' ), $discount, $product_label );
+
+		$is_pro      = defined( 'OTTER_PRO_PATH' );
+		$license_key = '';
+
+		if ( $is_pro ) {
+			$product_label = __( 'Otter Pro', 'otter-blocks' );
+			$discount      = '30%';
+
+			// translators: %1$s - discount, %2$s - product label.
+			$config['message'] = sprintf( __( 'Get <strong>%1$s off</strong> when you upgrade your <strong>%2$s</strong> plan or renew early.', 'otter-blocks' ), $discount, $product_label );
+
+			if ( current_user_can( 'manage_options' ) ) {
+				$license_key = apply_filters( 'product_otter_license_key', '' );
+			}
+		}
+
+		$url_params = array(
+			'utm_term' => $is_pro ? 'plan-' . apply_filters( 'product_otter_license_plan', 0 ) : 'free',
+		);
+
+		if ( ! empty( $license_key ) ) {
+			$url_params['lkey'] = $license_key;
+		}
+
+		$config['sale_url'] = add_query_arg(
+			$url_params,
+			tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'bfcm', 'otter' ) )
+		);
+
+		return $config;
+	}
+
+	/**
+	 * Register Black Friday.
+	 */
+	public function register_black_friday() {
+		add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'set_black_friday_data' ) );
+
+		add_action(
+			'themeisle_internal_page',
+			function( $plugin, $page_slug ) {
+				if ( OTTER_PRODUCT_SLUG !== $plugin ) {
+					return;
+				}
+
+				add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'set_black_friday_data' ), 99 );
+			},
+			10,
+			2 
 		);
 	}
 

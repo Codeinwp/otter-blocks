@@ -97,6 +97,7 @@ const Main = ({
 					/>
 				)
 			}
+			<div id="tsdk_banner" className="otter-banner"></div>
 			<div className={ `otter-main is-${ currentTab }`}>
 
 				{ 'dashboard' === currentTab && window.otterObj.showFeedbackNotice && (

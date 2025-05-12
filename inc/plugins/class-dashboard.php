@@ -28,7 +28,7 @@ class Dashboard {
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
-		add_action( 'admin_notices', array( $this, 'form_submission_elements' ), 30 );
+		add_action( 'admin_head', array( $this, 'form_submission_elements' ) );
 		add_action( 'admin_head', array( $this, 'add_inline_css' ) );
 
 		$form_options = get_option( 'themeisle_blocks_form_emails' );
@@ -121,6 +121,10 @@ class Dashboard {
 				opacity: .8;
 				padding: 4px 6px;
 				text-transform: uppercase;
+			}
+
+			.notice.themeisle-sale {
+				margin-top: 40px;
 			}
 		</style>
 		<?php
@@ -320,10 +324,6 @@ class Dashboard {
 	 */
 	public function form_submission_elements() {
 		$screen = get_current_screen();
-		if ( 'edit-otter_form_record' === $screen->id || 'otter-blocks_page_form-submissions-free' === $screen->id ) {
-			$this->the_otter_banner();
-		}
-		
 		if ( 'edit-otter_form_record' === $screen->id ) {
 			do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'form-submissions' );
 		}
