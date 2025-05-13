@@ -598,10 +598,10 @@ class Main {
 		$product_label = __( 'Otter Blocks', 'otter-blocks' );
 		$discount      = '70%';
 
-		$config = $configs['default'];
-
 		// translators: %1$s - discount, %2$s - product label.
-		$config['message'] = sprintf( __( 'Our biggest sale of the year: <strong>%1$s OFF</strong> on <strong>%2$s</strong>! Don\'t miss this limited-time offer.', 'otter-blocks' ), $discount, $product_label );
+		$message_template = __( 'Our biggest sale of the year: %1$s off on %2$s! Don\'t miss this limited-time offer.', 'otter-blocks' );
+
+		$config = $configs['default'];
 
 		$is_pro      = defined( 'OTTER_PRO_PATH' );
 		$license_key = '';
@@ -609,16 +609,19 @@ class Main {
 		if ( $is_pro ) {
 			$product_label = __( 'Otter Pro', 'otter-blocks' );
 			$discount      = '30%';
-
+			
 			// translators: %1$s - discount, %2$s - product label.
-			$config['message'] = sprintf( __( 'Get <strong>%1$s off</strong> when you upgrade your <strong>%2$s</strong> plan or renew early.', 'otter-blocks' ), $discount, $product_label );
+			$message_template = __( 'Get %1$s off when you upgrade your %2$s plan or renew early.', 'otter-blocks' );
 
 			if ( current_user_can( 'manage_options' ) ) {
 				$license_key = apply_filters( 'product_otter_license_key', '' );
 			}
 		}
 
-		$url_params = array(
+		$discount          = sprintf( '<strong>%s</strong>', $discount );
+		$product_label     = sprintf( '<strong>%s</strong>', $product_label );
+		$config['message'] = sprintf( $message_template, $discount, $product_label );
+		$url_params        = array(
 			'utm_term' => $is_pro ? 'plan-' . apply_filters( 'product_otter_license_plan', 0 ) : 'free',
 		);
 
