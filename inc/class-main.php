@@ -48,7 +48,7 @@ class Main {
 		}
 
 		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
-		$this->register_black_friday();
+		add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'add_black_friday_data' ) );
 
 		add_action( 'parse_query', array( $this, 'pagination_support' ) );
 	}
@@ -590,13 +590,15 @@ class Main {
 	/**
 	 * Set Black Friday data.
 	 *
-	 * @param array $config Configuration array.
+	 * @param array $configs The configuration array for the loaded products.
 	 *
 	 * @return array
 	 */
-	public function set_black_friday_data( $config ) {
+	public function add_black_friday_data( $configs ) {
 		$product_label = __( 'Otter Blocks', 'otter-blocks' );
 		$discount      = '70%';
+
+		$config = $configs['default'];
 
 		// translators: %1$s - discount, %2$s - product label.
 		$config['message'] = sprintf( __( 'Our biggest sale of the year: <strong>%1$s OFF</strong> on <strong>%2$s</strong>! Don\'t miss this limited-time offer.', 'otter-blocks' ), $discount, $product_label );
@@ -629,27 +631,9 @@ class Main {
 			tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'bfcm', 'otter' ) )
 		);
 
-		return $config;
-	}
+		$configs[ OTTER_PRODUCT_SLUG ] = $config;
 
-	/**
-	 * Register Black Friday.
-	 */
-	public function register_black_friday() {
-		add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'set_black_friday_data' ) );
-
-		add_action(
-			'themeisle_internal_page',
-			function( $plugin, $page_slug ) {
-				if ( OTTER_PRODUCT_SLUG !== $plugin ) {
-					return;
-				}
-
-				add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'set_black_friday_data' ), 99 );
-			},
-			10,
-			2 
-		);
+		return $configs;
 	}
 
 	/**
