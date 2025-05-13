@@ -597,33 +597,27 @@ class Main {
 	public function add_black_friday_data( $configs ) {
 		$config = $configs['default'];
 
-		$product_label = __( 'Otter Blocks', 'otter-blocks' );
-		$discount      = '70%';
-
 		// translators: %1$s - discount, %2$s - product label.
 		$message_template = __( 'Our biggest sale of the year: %1$s off on %2$s! Don\'t miss this limited-time offer.', 'otter-blocks' );
+		$product_label    = __( 'Otter Blocks', 'otter-blocks' );
+		$discount         = '70%';
 
-		$plan        = apply_filters( 'product_otter_license_plan', 0 );
-		$license_key = apply_filters( 'product_otter_license_key', '' );
-		$is_pro      = 0 < $plan;
+		$plan   = apply_filters( 'product_otter_license_plan', 0 );
+		$is_pro = 0 < $plan;
 
 		if ( $is_pro ) {
-			$product_label = __( 'Otter Pro', 'otter-blocks' );
-			$discount      = '30%';
-			
 			// translators: %1$s - discount, %2$s - product label.
 			$message_template = __( 'Get %1$s off when you upgrade your %2$s plan or renew early.', 'otter-blocks' );
+			$product_label    = __( 'Otter Pro', 'otter-blocks' );
+			$discount         = '30%';
 		}
 
 		$discount      = sprintf( '<strong>%s</strong>', $discount );
 		$product_label = sprintf( '<strong>%s</strong>', $product_label );
 		$url_params    = array(
 			'utm_term' => $is_pro ? 'plan-' . $plan : 'free',
+			'lkey'     => apply_filters( 'product_otter_license_key', false ),
 		);
-		
-		if ( ! empty( $license_key ) ) {
-			$url_params['lkey'] = $license_key;
-		}
 		
 		$config['message']  = sprintf( $message_template, $discount, $product_label );
 		$config['sale_url'] = add_query_arg(
