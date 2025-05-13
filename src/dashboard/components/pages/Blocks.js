@@ -402,6 +402,11 @@ const Blocks = () => {
 		canShowNoticeSet( true );
 	};
 
+	useEffect( () => {
+		if ( window.tsdk_reposition_notice ) {
+			window.tsdk_reposition_notice();
+		}
+	}, []);
 
 	/**
 	 * Initiate the blocks' status.
