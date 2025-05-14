@@ -602,8 +602,9 @@ class Main {
 		$product_label    = 'Otter Blocks';
 		$discount         = '70%';
 
-		$plan   = apply_filters( 'product_otter_license_plan', 0 );
-		$is_pro = 0 < $plan;
+		$plan    = apply_filters( 'product_otter_license_plan', 0 );
+		$license = apply_filters( 'product_otter_license_key', false );
+		$is_pro  = 0 < $plan;
 
 		if ( $is_pro ) {
 			// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
@@ -615,7 +616,7 @@ class Main {
 		$product_label = sprintf( '<strong>%s</strong>', $product_label );
 		$url_params    = array(
 			'utm_term' => $is_pro ? 'plan-' . $plan : 'free',
-			'lkey'     => apply_filters( 'product_otter_license_key', false ),
+			'lkey'     => ! empty( $license ) ? $license : false,
 		);
 		
 		$config['message']  = sprintf( $message_template, '<strong>', $discount, '</strong>', $product_label );
