@@ -597,32 +597,31 @@ class Main {
 	public function add_black_friday_data( $configs ) {
 		$config = $configs['default'];
 
-		// translators: %1$s - discount, %2$s - product label.
-		$message_template = __( 'Our biggest sale of the year: %1$s off on %2$s! Don\'t miss this limited-time offer.', 'otter-blocks' );
-		$product_label    = __( 'Otter Blocks', 'otter-blocks' );
+		// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
+		$message_template = __( 'Our biggest sale of the year: %1$sup to %2$s OFF%3$s on %4$s. Don\'t miss this limited-time offer.', 'otter-blocks' );
+		$product_label    = 'Otter Blocks';
 		$discount         = '70%';
 
 		$plan   = apply_filters( 'product_otter_license_plan', 0 );
 		$is_pro = 0 < $plan;
 
 		if ( $is_pro ) {
-			// translators: %1$s - discount, %2$s - product label.
-			$message_template = __( 'Get %1$s off when you upgrade your %2$s plan or renew early.', 'otter-blocks' );
-			$product_label    = __( 'Otter Pro', 'otter-blocks' );
+			// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
+			$message_template = __( 'Get %1$sup to %2$s off%3$s when you upgrade your %4$s plan or renew early.', 'otter-blocks' );
+			$product_label    = 'Otter Pro';
 			$discount         = '30%';
 		}
-
-		$discount      = sprintf( '<strong>%s</strong>', $discount );
+		
 		$product_label = sprintf( '<strong>%s</strong>', $product_label );
 		$url_params    = array(
 			'utm_term' => $is_pro ? 'plan-' . $plan : 'free',
 			'lkey'     => apply_filters( 'product_otter_license_key', false ),
 		);
 		
-		$config['message']  = sprintf( $message_template, $discount, $product_label );
+		$config['message']  = sprintf( $message_template, '<strong>', $discount, '</strong>', $product_label );
 		$config['sale_url'] = add_query_arg(
 			$url_params,
-			tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/blackfriday', 'bfcm', 'otter' ) )
+			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/otter-bf', 'bfcm', 'otter' ) )
 		);
 
 		$configs[ OTTER_PRODUCT_SLUG ] = $config;
