@@ -1,3 +1,7 @@
+##### [Version 3.0.11](https://github.com/Codeinwp/otter-blocks/compare/v3.0.10...v3.0.11) (2025-04-16)
+
+- Updated dependencies
+
 ##### [Version 3.0.10](https://github.com/Codeinwp/otter-blocks/compare/v3.0.9...v3.0.10) (2025-02-05)
 
 - Fix language pack loading
