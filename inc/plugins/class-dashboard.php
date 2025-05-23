@@ -324,6 +324,10 @@ class Dashboard {
 	 */
 	public function form_submission_elements() {
 		$screen = get_current_screen();
+		if ( 'edit-otter_form_record' === $screen->id || 'otter-blocks_page_form-submissions-free' === $screen->id ) {
+			$this->the_otter_banner();
+		}
+		
 		if ( 'edit-otter_form_record' === $screen->id ) {
 			do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'form-submissions' );
 		}
