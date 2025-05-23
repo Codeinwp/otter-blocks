@@ -13,10 +13,10 @@ jobs:
     steps:
       - name: Check out source files
         uses: actions/checkout@v4
-      - name: Setup node 18
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20
           cache: "npm"
       - name: Install composer deps
         env:

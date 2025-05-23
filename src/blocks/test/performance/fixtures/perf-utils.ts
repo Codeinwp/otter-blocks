@@ -22,7 +22,7 @@ type PerfUtilsConstructorProps = {
 export class PerfUtils {
 	page: Page;
 
-	constructor({ page }: PerfUtilsConstructorProps ) {
+	constructor( { page }: PerfUtilsConstructorProps ) {
 		this.page = page;
 	}
 
@@ -30,29 +30,23 @@ export class PerfUtils {
 	 * Returns the locator for the editor canvas element. This supports both the
 	 * legacy and the iframed canvas.
 	 *
+	 * @param canvasLocator
 	 * @return Locator for the editor canvas element.
 	 */
-	async getCanvas() {
-		return await Promise.any([
-			( async() => {
-				const legacyCanvasLocator = this.page.locator(
-					'.wp-block-post-content'
-				);
-				await legacyCanvasLocator.waitFor({
-					timeout: 120_000
-				});
-				return legacyCanvasLocator;
-			})(),
-			( async() => {
-				const iframedCanvasLocator = this.page.frameLocator(
-					'[name=editor-canvas]'
-				);
-				await iframedCanvasLocator
-					.locator( 'body' )
-					.waitFor({ timeout: 120_000 });
-				return iframedCanvasLocator;
-			})()
-		]);
+	async getCanvas(
+		canvasLocator = this.page.locator(
+			'.wp-block-post-content, iframe[name=editor-canvas]'
+		)
+	) {
+		const isFramed = await canvasLocator.evaluate(
+			( node ) => node.tagName === 'IFRAME'
+		);
+
+		if ( isFramed ) {
+			return canvasLocator.frameLocator( ':scope' );
+		}
+
+		return canvasLocator;
 	}
 
 	/**
@@ -61,34 +55,30 @@ export class PerfUtils {
 	 * @return URL of the saved draft.
 	 */
 	async saveDraft() {
-		await this.page
-			.getByRole( 'button', { name: 'Save draft' })
-			.click({ timeout: 60_000 });
+		await this.page.getByRole( 'button', { name: 'Save draft' } ).click();
 		await expect(
-			this.page.getByRole( 'button', { name: 'Saved' })
+			this.page.getByRole( 'button', { name: 'Saved' } )
 		).toBeDisabled();
 
-		return this.page.url();
+		const postId = new URL( this.page.url() ).searchParams.get( 'post' );
+
+		return postId;
 	}
 
 	/**
 	 * Disables the editor autosave function.
 	 */
 	async disableAutosave() {
+		await this.page.waitForFunction( () => window?.wp?.data );
+
 		await this.page.evaluate( () => {
 			return window.wp.data
 				.dispatch( 'core/editor' )
-				.updateEditorSettings({
+				.updateEditorSettings( {
 					autosaveInterval: 100000000000,
-					localAutosaveInterval: 100000000000
-				});
-		});
-
-		const { autosaveInterval } = await this.page.evaluate( () => {
-			return window.wp.data.select( 'core/editor' ).getEditorSettings();
-		});
-
-		expect( autosaveInterval ).toBe( 100000000000 );
+					localAutosaveInterval: 100000000000,
+				} );
+		} );
 	}
 
 	/**
@@ -101,10 +91,30 @@ export class PerfUtils {
 
 		await canvas.locator( 'body' ).click();
 		await canvas
-			.getByRole( 'document', { name: /Block:( Post)? Content/ })
+			.getByRole( 'document', { name: /Block:( Post)? Content/ } )
 			.click();
 
 		return canvas;
+	}
+
+	/**
+	 * Change the rendering mode of the editor.
+	 *
+	 * Setting the rendering mode to something other than the default is sometimes
+	 * needed when for example we want to update the contents of the editor from a
+	 * HTML file. Calling the resetBlocks method of the core/block-editor store will
+	 * replace the contents of the template if the rendering mode is not post-only.
+	 * So this should always be called before the resetBlocks method is used.
+	 *
+	 * @param newRenderingMode Rendering mode to set
+	 *
+	 * @return Promise<void>
+	 */
+	async setRenderingMode( newRenderingMode: string ) {
+		await this.page.evaluate( ( _newRenderingMode ) => {
+			const { dispatch } = window.wp.data;
+			dispatch( 'core/editor' ).setRenderingMode( _newRenderingMode );
+		}, newRenderingMode );
 	}
 
 	/**
@@ -130,6 +140,15 @@ export class PerfUtils {
 	}
 
 	/**
+	 * Loads the content of the large post fixture.
+	 */
+	async loadContentForLargePost() {
+		return readFile(
+			path.join( process.env.ASSETS_PATH!, 'large-post.html' )
+		);
+	}
+
+	/**
 	 * Loads blocks from an HTML fixture with given path into the editor canvas.
 	 *
 	 * @param filepath Path to the HTML fixture.
@@ -139,42 +158,49 @@ export class PerfUtils {
 			throw new Error( `File not found: ${ filepath }` );
 		}
 
+		await this.page.waitForFunction(
+			() => window?.wp?.blocks && window?.wp?.data
+		);
+
 		return await this.page.evaluate( ( html: string ) => {
 			const { parse } = window.wp.blocks;
 			const { dispatch } = window.wp.data;
 			const blocks = parse( html );
 
 			blocks.forEach( ( block: any ) => {
-				if ( 'core/image' === block.name ) {
+				if ( block.name === 'core/image' ) {
 					delete block.attributes.id;
 					delete block.attributes.url;
 				}
-			});
+			} );
 
 			dispatch( 'core/block-editor' ).resetBlocks( blocks );
 		}, readFile( filepath ) );
 	}
 
 	/**
-	 * Generates and loads a 1000 empty paragraphs into the editor canvas.
+	 * Generates and loads a 1000 paragraphs into the editor canvas.
 	 */
 	async load1000Paragraphs() {
+		await this.page.waitForFunction(
+			() => window?.wp?.blocks && window?.wp?.data
+		);
+
 		await this.page.evaluate( () => {
 			const { createBlock } = window.wp.blocks;
 			const { dispatch } = window.wp.data;
-			const blocks = Array.from({ length: 1000 }).map( () =>
-				createBlock( 'core/paragraph' )
+			const blocks = Array.from( { length: 1000 } ).map( () =>
+				createBlock( 'core/paragraph', { content: 'paragraph' } )
 			);
 			dispatch( 'core/block-editor' ).resetBlocks( blocks );
-		});
+		} );
 	}
 
 	async expectExpandedState( locator: Locator, state: 'true' | 'false' ) {
-		return await Promise.any([
+		return await Promise.any( [
 			expect( locator ).toHaveAttribute( 'aria-expanded', state ),
-
 			// Legacy selector.
-			expect( locator ).toHaveAttribute( 'aria-pressed', state )
-		]);
+			expect( locator ).toHaveAttribute( 'aria-pressed', state ),
+		] );
 	}
 }
