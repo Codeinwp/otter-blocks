@@ -13,7 +13,7 @@ const speedConfig = {
 	'o-count-slower': 3,
 	'o-count-slow': 2,
 	'o-count-fast': 1.5,
-	'o-count-fastest': 1
+	'o-count-faster': 1
 };
 
 /**
@@ -36,7 +36,7 @@ const getConfiguration = ( elem ) => {
 
 			return {
 				speed: speedConfig[speed],
-				delay: number * ( isMS ? 0 : 1000 )
+				delay: number * ( isMS ? 1 : 1000 )
 			};
 		}
 	}
