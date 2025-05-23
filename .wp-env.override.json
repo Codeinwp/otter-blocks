@@ -20,7 +20,8 @@
     "tests": {
       "config": {
         "WP_DEBUG": false,
-        "WP_DEBUG_DISPLAY": false
+        "WP_DEBUG_DISPLAY": false,
+        "ENABLE_OTTER_PRO_DEV": true
       },
       "plugins": [
         "."
