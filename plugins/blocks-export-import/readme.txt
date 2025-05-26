@@ -14,6 +14,8 @@ Blocks Export Import allows to Export and Import blocks as JSON in Gutenberg Blo
 
 Blocks Export Import plugin allows you to import and export blocks as JSON in Gutenberg Block Editor.
 
+All the code and sources for this plugin are publicly available on [GitHub/blocks-export-import](https://github.com/Codeinwp/otter-blocks/tree/master/plugins/blocks-export-import).
+
 == Installation ==
 Activating this plugin is just like any other plugin. If you’ve uploaded the plugin package to your server already, skip to step 5 below:
 
