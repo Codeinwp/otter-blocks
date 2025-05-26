@@ -17,7 +17,7 @@ Blocks Animation allows you to add CSS Animations to all of your Gutenberg block
 
 The UI for Blocks Animation feels so native and intuitive, you won't even notice it's installed. Just install, and you will see animation settings in all the blocks, right in the Block Settings Sidebar.
 
-All the code and sources for this plugin are publicly available on [GitHub/blocks-animation](https://github.com/Codeinwp/otter-blocks/tree/master/plugins/blocks-animation).
+All the code and sources for this plugin are publicly available as part of https://github.com/Codeinwp/otter-blocks.
 
 ## Screenshots
 
