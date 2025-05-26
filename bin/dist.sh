@@ -105,13 +105,7 @@ do
     mkdir "dist/$DIST_FOLDER/build"
   fi
 
-  if [ ! -d "dist/$DIST_FOLDER/src" ]; then
-    mkdir "dist/$DIST_FOLDER/src"
-  fi
-
   cp -r inc/class-blocks-$i.php build/$i dist/$DIST_FOLDER
-  cp -r src/$i dist/$DIST_FOLDER/src/
-  cp LICENSE "dist/$DIST_FOLDER/LICENSE"
 
   cd dist
 
