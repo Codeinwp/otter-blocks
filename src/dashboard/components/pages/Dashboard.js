@@ -149,6 +149,9 @@ const Dashboard = () => {
 		if ( ! Boolean( window.otterObj.stylesExist ) ) {
 			setRegeneratedDisabled( true );
 		}
+		if ( window.tsdk_reposition_notice ) {
+			window.tsdk_reposition_notice();
+		}
 	}, []);
 
 	const [ getOption, updateOption, status  ] = useSettings();

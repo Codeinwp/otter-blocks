@@ -32,6 +32,7 @@ if ( defined( 'OTTER_BLOCKS_PATH' ) ) {
 
 define( 'BLOCKS_ANIMATION_URL', plugins_url( '/', __FILE__ ) );
 define( 'BLOCKS_ANIMATION_PATH', dirname( __FILE__ ) );
+define( 'BLOCKS_ANIMATION_PRODUCT_SLUG', basename( BLOCKS_ANIMATION_PATH ) );
 
 $vendor_file = BLOCKS_ANIMATION_PATH . '/vendor/autoload.php';
 
@@ -60,4 +61,30 @@ add_action(
 			}
 		}
 	}
+);
+
+add_filter(
+	'themeisle_sdk_blackfriday_data',
+	function ( $configs ) {
+		if ( defined( 'OTTER_BLOCKS_PATH' ) ) {
+			return $configs;
+		}
+
+		$config = $configs['default'];
+
+		// translators: %1$s - plugin name, %2$s - plugin name, %3$s - discount.
+		$message_template = __( 'Extend %1$s with %2$s – up to %3$s OFF in our biggest sale of the year. Limited time only.', 'blocks-animation' );
+	
+		$config['message']  = sprintf( $message_template, 'Block Animation', 'Otter Pro Blocks', '70%' );
+		$config['sale_url'] = add_query_arg(
+			array(
+				'utm_term' => 'free',
+			),
+			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/otter-bf', 'bfcm', 'blocks-animation' ) )
+		);
+
+		$configs[ BLOCKS_ANIMATION_PRODUCT_SLUG ] = $config;
+
+		return $configs;
+	} 
 );

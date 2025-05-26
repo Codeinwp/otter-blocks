@@ -28,7 +28,7 @@ class Dashboard {
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
-		add_action( 'admin_notices', array( $this, 'form_submission_elements' ), 30 );
+		add_action( 'admin_head', array( $this, 'form_submission_elements' ) );
 		add_action( 'admin_head', array( $this, 'add_inline_css' ) );
 
 		$form_options = get_option( 'themeisle_blocks_form_emails' );
@@ -121,6 +121,10 @@ class Dashboard {
 				opacity: .8;
 				padding: 4px 6px;
 				text-transform: uppercase;
+			}
+
+			.notice.themeisle-sale {
+				margin-top: 40px;
 			}
 		</style>
 		<?php
