@@ -48,6 +48,7 @@ class Main {
 		}
 
 		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
+		add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'add_black_friday_data' ) );
 
 		add_action( 'parse_query', array( $this, 'pagination_support' ) );
 	}
@@ -584,6 +585,49 @@ class Main {
 			'upgrade_link'     => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ) ),
 			'upgrade_text'     => __( 'Get Otter Pro', 'otter-blocks' ),
 		);
+	}
+
+	/**
+	 * Set Black Friday data.
+	 *
+	 * @param array $configs The configuration array for the loaded products.
+	 *
+	 * @return array
+	 */
+	public function add_black_friday_data( $configs ) {
+		$config = $configs['default'];
+
+		// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
+		$message_template = __( 'Our biggest sale of the year: %1$sup to %2$s OFF%3$s on %4$s. Don\'t miss this limited-time offer.', 'otter-blocks' );
+		$product_label    = 'Otter Blocks';
+		$discount         = '70%';
+
+		$plan    = apply_filters( 'product_otter_license_plan', 0 );
+		$license = apply_filters( 'product_otter_license_key', false );
+		$is_pro  = 0 < $plan;
+
+		if ( $is_pro ) {
+			// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
+			$message_template = __( 'Get %1$sup to %2$s off%3$s when you upgrade your %4$s plan or renew early.', 'otter-blocks' );
+			$product_label    = 'Otter Pro';
+			$discount         = '30%';
+		}
+		
+		$product_label = sprintf( '<strong>%s</strong>', $product_label );
+		$url_params    = array(
+			'utm_term' => $is_pro ? 'plan-' . $plan : 'free',
+			'lkey'     => ! empty( $license ) ? $license : false,
+		);
+		
+		$config['message']  = sprintf( $message_template, '<strong>', $discount, '</strong>', $product_label );
+		$config['sale_url'] = add_query_arg(
+			$url_params,
+			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/otter-bf', 'bfcm', 'otter' ) )
+		);
+
+		$configs[ OTTER_PRODUCT_SLUG ] = $config;
+
+		return $configs;
 	}
 
 	/**

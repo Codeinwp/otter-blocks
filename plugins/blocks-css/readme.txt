@@ -16,6 +16,8 @@ Blocks CSS allows you add custom CSS to your Blocks straight from the Block Edit
 
 It adds a syntax-highlighted CSS Editor where you can add additional CSS to your Gutenberg Blocks to style them the way you want.
 
+All the code and sources for this plugin are publicly available as part of https://github.com/Codeinwp/otter-blocks.
+
 == Screenshots ==
 
 1. CSS Editor
