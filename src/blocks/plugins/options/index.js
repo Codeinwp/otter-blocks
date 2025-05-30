@@ -442,6 +442,8 @@ const Sidebar = () => {
 };
 
 const Options = () => {
+	const [ canUser, setCanUser ] = useState( false );
+
 	useEffect( () => {
 		let isMounted = true;
 
@@ -452,7 +454,6 @@ const Options = () => {
 				setCanUser( true );
 			} else {
 				setCanUser( false );
-				setAPILoaded( true );
 			}
 		};
 
@@ -462,8 +463,6 @@ const Options = () => {
 			isMounted = false;
 		};
 	}, []);
-
-	const [ canUser, setCanUser ] = useState( false );
 
 	return (
 		<Fragment>
