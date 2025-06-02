@@ -22,7 +22,10 @@ const speedConfig = {
  * @return Configuration options.
  */
 const getConfiguration = ( elem ) => {
-	const parent = elem.parentElement;
+	let parent = elem.parentElement;
+	if (parent && (['STRONG', 'B'].includes(parent.tagName))) {
+		parent = parent.parentElement;
+	}
 	for ( let i = 0; i < MAX_PARENT_SEARCH; ++i ) {
 		if ( Array.from( parent.classList ).some( o => o.includes( 'o-count-' ) ) ) {
 			const arr = Array.from( parent.classList );
