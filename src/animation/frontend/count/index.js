@@ -23,7 +23,9 @@ const speedConfig = {
  */
 const getConfiguration = ( elem ) => {
 	let parent = elem.parentElement;
-	if (parent && (['STRONG', 'B'].includes(parent.tagName))) {
+	const formattingTags = ['STRONG', 'B', 'EM', 'I', 'U', 'SPAN', 'CODE', 'MARK', 'SMALL', 'S', 'DEL', 'INS', 'SUP', 'SUB'];
+
+	while (parent && (formattingTags.includes(parent.tagName))) {
 		parent = parent.parentElement;
 	}
 	for ( let i = 0; i < MAX_PARENT_SEARCH; ++i ) {
