@@ -13,7 +13,7 @@ const speedConfig = {
 	'o-count-slower': 3,
 	'o-count-slow': 2,
 	'o-count-fast': 1.5,
-	'o-count-fastest': 1
+	'o-count-faster': 1
 };
 
 /**
@@ -22,7 +22,12 @@ const speedConfig = {
  * @return Configuration options.
  */
 const getConfiguration = ( elem ) => {
-	const parent = elem.parentElement;
+	let parent = elem.parentElement;
+	const formattingTags = ['STRONG', 'B', 'EM', 'I', 'U', 'SPAN', 'CODE', 'MARK', 'SMALL', 'S', 'DEL', 'INS', 'SUP', 'SUB'];
+
+	while (parent && (formattingTags.includes(parent.tagName))) {
+		parent = parent.parentElement;
+	}
 	for ( let i = 0; i < MAX_PARENT_SEARCH; ++i ) {
 		if ( Array.from( parent.classList ).some( o => o.includes( 'o-count-' ) ) ) {
 			const arr = Array.from( parent.classList );
@@ -36,7 +41,7 @@ const getConfiguration = ( elem ) => {
 
 			return {
 				speed: speedConfig[speed],
-				delay: number * ( isMS ? 0 : 1000 )
+				delay: number * ( isMS ? 1 : 1000 )
 			};
 		}
 	}
