@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "571a200f701652495c906beba4ebba9d",
+    "content-hash": "c3ba0def25397ff0f84e2bbc4524e0b9",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -226,16 +226,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v15.7.0",
+            "version": "v17.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "3e8161c1d7d1e9fb79751a693cd6123550f6ce21"
+                "reference": "cfe8244f7e5f910b7fdb5c2cf77428c0acbb9f7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/3e8161c1d7d1e9fb79751a693cd6123550f6ce21",
-                "reference": "3e8161c1d7d1e9fb79751a693cd6123550f6ce21",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/cfe8244f7e5f910b7fdb5c2cf77428c0acbb9f7c",
+                "reference": "cfe8244f7e5f910b7fdb5c2cf77428c0acbb9f7c",
                 "shasum": ""
             },
             "require": {
@@ -245,7 +245,7 @@
                 "php": ">=5.6.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "3.5.0",
+                "friendsofphp/php-cs-fixer": "3.72.0",
                 "phpstan/phpstan": "^1.2",
                 "phpunit/phpunit": "^5.7 || ^9.0"
             },
@@ -279,9 +279,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v15.7.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v17.3.0"
             },
-            "time": "2024-08-15T21:17:26+00:00"
+            "time": "2025-05-28T18:59:29+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
