@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "3.0.11",
+	"version": "3.0.12",
 	"description": "Otter – Page Builder Blocks & Extensions for Gutenberg",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
@@ -65,7 +65,7 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
-		"@wordpress/icons": "^9.46.0",
+		"@wordpress/icons": "^10.24.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.5.1",
 		"currency-symbol-map": "^5.0.1",
