@@ -10,7 +10,7 @@
  * Plugin Name:       Blocks CSS: CSS Editor for Gutenberg Blocks
  * Plugin URI:        https://github.com/Codeinwp/otter-blocks
  * Description:       Blocks CSS allows you add custom CSS to your Blocks straight from the Block Editor (Gutenberg).
- * Version:           3.0.10
+ * Version:           3.0.12
  * Author:            ThemeIsle
  * Author URI:        https://themeisle.com
  * License:           GPL-3.0+
@@ -28,6 +28,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( 'BLOCKS_CSS_URL', plugins_url( '/', __FILE__ ) );
 define( 'BLOCKS_CSS_PATH', dirname( __FILE__ ) );
+define( 'BLOCKS_CSS_PRODUCT_SLUG', basename( BLOCKS_CSS_PATH ) );
 
 add_action(
 	'plugins_loaded',
@@ -41,4 +42,30 @@ add_action(
 			}
 		}
 	}
+);
+
+add_filter(
+	'themeisle_sdk_blackfriday_data',
+	function ( $configs ) {
+		if ( defined( 'OTTER_BLOCKS_PATH' ) ) {
+			return $configs;
+		}
+
+		$config = $configs['default'];
+
+		// translators: %1$s - plugin name, %2$s - plugin name, %3$s - discount.
+		$message_template = __( 'Extend %1$s with %2$s – up to %3$s OFF in our biggest sale of the year. Limited time only.', 'blocks-css' );
+	
+		$config['message']  = sprintf( $message_template, 'Blocks CSS', 'Otter Pro Blocks', '70%' );
+		$config['sale_url'] = add_query_arg(
+			array(
+				'utm_term' => 'free',
+			),
+			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/otter-bf', 'bfcm', 'blocks-css' ) )
+		);
+
+		$configs[ BLOCKS_CSS_PRODUCT_SLUG ] = $config;
+
+		return $configs;
+	} 
 );

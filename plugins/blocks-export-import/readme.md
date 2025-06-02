@@ -2,9 +2,9 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/)  
 **Tags:** gutenberg, block, blocks, export, import, exporter, importer, block exporter, block export, block import, block importer  
 **Requires at least:** 6.2      
-**Tested up to:** 6.7  
+**Tested up to:** 6.8  
 **Requires PHP:** 5.4    
-**Stable tag:** 3.0.10  
+**Stable tag:** 3.0.12  
 **License:** GPLv3    
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html    
 
@@ -13,6 +13,8 @@ Blocks Export Import allows to Export and Import blocks as JSON in Gutenberg Blo
 ## Description ##
 
 Blocks Export Import plugin allows you to import and export blocks as JSON in Gutenberg Block Editor.
+
+All the code and sources for this plugin are publicly available as part of https://github.com/Codeinwp/otter-blocks.
 
 ## Installation ##
 Activating this plugin is just like any other plugin. If you’ve uploaded the plugin package to your server already, skip to step 5 below:

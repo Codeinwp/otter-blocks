@@ -65,6 +65,7 @@ class Dashboard_Server {
 				'hasNevePro'         => defined( 'NEVE_PRO_VERSION' ),
 				'storeURL'           => 'https://store.themeisle.com/',
 				'purchaseHistoryURL' => 'https://store.themeisle.com/purchase-history',
+				'proVersion'         => OTTER_PRO_VERSION,
 			)
 		);
 	}
@@ -85,6 +86,7 @@ class Dashboard_Server {
 					'args'                => array(
 						'key'    => array(
 							'type'              => 'string',
+							'required'          => false,
 							'sanitize_callback' => function ( $key ) {
 								return (string) esc_attr( $key );
 							},
@@ -122,13 +124,20 @@ class Dashboard_Server {
 	public function toggle_license( $request ) {
 		$fields = $request->get_json_params();
 
-		if ( ! isset( $fields['key'] ) || ! isset( $fields['action'] ) ) {
+		if (
+			! isset( $fields['action'] )
+			|| ( 'activate' === $fields['action'] && ! isset( $fields['key'] ) )
+		) {
 			return new \WP_REST_Response(
 				array(
 					'message' => __( 'Invalid Action. Please refresh the page and try again.', 'otter-pro' ),
 					'success' => false,
 				)
 			);
+		}
+	
+		if ( 'deactivate' === $fields['action'] ) {
+			$fields['key'] = apply_filters( 'product_otter_license_key', 'free' );
 		}
 
 		$response = apply_filters( 'themeisle_sdk_license_process_otter', $fields['key'], $fields['action'] );

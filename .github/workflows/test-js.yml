@@ -8,18 +8,15 @@ jobs:
   run:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
-    strategy:
-      matrix:
-        node-version: [18.x]
     name: JS Test
     steps:
       - uses: actions/checkout@master
         with:
           persist-credentials: false
-      - name: Build files using ${{ matrix.node-version }}
+      - name: Build files using 20
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: "npm"
       - name: Lint js files
         run: |
