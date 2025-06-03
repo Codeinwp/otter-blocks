@@ -329,7 +329,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 						)
 					) &&
 					(
-						<BlockControls>
+						<BlockControls group="other">
 							<ToolbarGroup>
 								<DropdownMenu
 									icon={ aiGeneration }
