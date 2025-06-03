@@ -97,7 +97,12 @@ const Fields = ({
 	return (
 		<Fragment>
 			<PanelBody>
-				<p>{ __( 'Bind page elements with dynamic data from your website database.', 'otter-blocks' ) }</p>
+				<p>
+					{
+						// eslint-disable-next-line @wordpress/i18n-translator-comments
+						__( 'Bind page elements with dynamic data from your website database. You can use %% shortcodes to access dynamic data directly in the editor.', 'otter-blocks' )
+					}
+				</p>
 
 				<ExternalLink
 					target="_blank"
