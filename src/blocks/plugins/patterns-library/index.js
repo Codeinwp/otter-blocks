@@ -18,7 +18,7 @@ import domReady from '@wordpress/dom-ready';
  * Internal dependencies.
  */
 import './editor.scss';
-import { otterIconColored } from '../../helpers/icons.js';
+import { otterIcon } from '../../helpers/icons.js';
 import Library from './library.js';
 
 const ModalButton = () => {
@@ -29,8 +29,8 @@ const ModalButton = () => {
 			{ isOpen && <Library onClose={ () => setOpen( false ) } /> }
 
 			<Button
-				variant="primary"
-				icon={ otterIconColored }
+				variant="secondary"
+				icon={ otterIcon }
 				className="o-library__button"
 				onClick={ () => setOpen( true ) }
 			>
