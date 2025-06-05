@@ -280,7 +280,7 @@ const Dashboard = () => {
 				<PanelRow>
 					<ToggleControl
 						label={ __( 'Enable Patterns Library', 'otter-blocks' ) }
-						help={ __( 'Toggle the visibility of the Patterns Library in the Block Editor.', 'otter-blocks' ) }
+						help={ __( 'Toggle the visibility of the Patterns Library in the Block Editor. Patterns will still be visible in the Block Editor.', 'otter-blocks' ) }
 						checked={ state.values.enablePatternsLibrary }
 						disabled={ 'saving' === state.status.enablePatternsLibrary }
 						onChange={ ( value ) => applyAction({ type: 'update', name: 'enablePatternsLibrary', value }) }
