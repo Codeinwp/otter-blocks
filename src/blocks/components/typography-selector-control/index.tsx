@@ -17,6 +17,7 @@ import {
 	TextControl,
 	__experimentalUnitControl as UnitControl,
 	__experimentalHStack as HStack,
+	__experimentalSpacer as Spacer,
 	DropdownMenu,
 	Disabled,
 	Spinner
@@ -28,12 +29,6 @@ import './editor.scss';
 import { useInstanceId } from '@wordpress/compose';
 import googleFontsLoader from '../../helpers/google-fonts';
 import classNames from 'classnames';
-
-const TwoItemOnRow = ({ children }) => {
-	return <div className='o-two-column-components'>
-		{ children }
-	</div>;
-};
 
 interface IsEnabled {
 	fontSize: boolean
@@ -326,22 +321,22 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 				</DropdownMenu>
 			</HStack>
 
-
 			<Disabled
 
 				// @ts-ignore
 				isDisabled={ Boolean( showAsDisable?.fontSize ) }
 			>
-				<FontSizePicker
+				<Spacer>
+					<FontSizePicker
 
-					/*@ts-ignore */
-					value={ componentsValue?.fontSize ?? componentsDefaultValue?.fontSize }
+						/*@ts-ignore */
+						value={ componentsValue?.fontSize ?? componentsDefaultValue?.fontSize }
 
-					/*@ts-ignore */
-					fontSizes={ props.fontSizes ?? defaultStates.fontSizes }
-					onChange={ fontSize => onChangeValue( 'fontSize', fontSize?.toString() ) }
-					__nextHasNoMarginBottom={ true }
-				/>
+						/*@ts-ignore */
+						fontSizes={ props.fontSizes ?? defaultStates.fontSizes }
+						onChange={ fontSize => onChangeValue( 'fontSize', fontSize?.toString() ) }
+					/>
+				</Spacer>
 			</Disabled>
 
 
@@ -496,7 +491,7 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 
 			{
 				( ( allowVariants && showComponent?.variant ) || showComponent?.lineHeight ) && (
-					<TwoItemOnRow>
+					<Fragment>
 						{
 							allowVariants && showComponent?.variant && (
 								<Disabled
@@ -520,43 +515,45 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 									// @ts-ignore
 									isDisabled={ Boolean( showAsDisable?.lineHeight ) }
 								>
-									<UnitControl
-										label={ __( 'Line Height', 'otter-blocks' ) }
+									<Spacer>
+										<UnitControl
+											label={ __( 'Line Height', 'otter-blocks' ) }
 
-										/*@ts-ignore */
-										value={ componentsValue?.lineHeight ?? componentsDefaultValue?.lineHeight }
-										onChange={ ( lineHeight: string ) => onChangeValue( 'lineHeight', lineHeight ) }
-										units={[
-											{
-												a11yLabel: 'Unitless (-)',
-												label: '-',
-												step: 0.1,
-												value: ''
-											},
-											{
-												a11yLabel: 'Pixels (px)',
-												label: 'px',
-												step: 0.1,
-												value: 'px'
-											},
-											{
-												a11yLabel: 'Percentage (%)',
-												label: '%',
-												step: 1,
-												value: '%'
-											}
-										]}
-									/>
+											/*@ts-ignore */
+											value={ componentsValue?.lineHeight ?? componentsDefaultValue?.lineHeight }
+											onChange={ ( lineHeight: string ) => onChangeValue( 'lineHeight', lineHeight ) }
+											units={[
+												{
+													a11yLabel: 'Unitless (-)',
+													label: '-',
+													step: 0.1,
+													value: ''
+												},
+												{
+													a11yLabel: 'Pixels (px)',
+													label: 'px',
+													step: 0.1,
+													value: 'px'
+												},
+												{
+													a11yLabel: 'Percentage (%)',
+													label: '%',
+													step: 1,
+													value: '%'
+												}
+											]}
+										/>
+									</Spacer>
 								</Disabled>
 							)
 						}
-					</TwoItemOnRow>
+					</Fragment>
 				)
 			}
 
 			{
 				( showComponent?.appearance || showComponent?.spacing ) && (
-					<TwoItemOnRow>
+					<Fragment>
 						{
 							showComponent?.appearance && (
 								<Disabled
@@ -598,7 +595,7 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 								</Disabled>
 							)
 						}
-					</TwoItemOnRow>
+					</Fragment>
 				)
 			}
 
