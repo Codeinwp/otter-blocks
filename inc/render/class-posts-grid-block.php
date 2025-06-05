@@ -360,7 +360,7 @@ class Posts_Grid_Block {
 			'post_type'        => $attributes['postTypes'],
 			'posts_per_page'   => $attributes['postsToShow'],
 			'post_status'      => 'publish',
-			'order'            => $attributes['order'],
+			'order'            => $attributes['order'] || 'DESC',
 			'orderby'          => $attributes['orderBy'],
 			'offset'           => $offset,
 			'cat'              => $categories,
