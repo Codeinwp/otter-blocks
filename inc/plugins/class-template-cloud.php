@@ -175,6 +175,17 @@ class Template_Cloud {
 	}
 
 	/**
+	 * Check if sources exist, even if user has used the feature in past.
+	 * 
+	 * @return bool
+	 */
+	public static function has_used_pattern_sources() {
+		$sources = get_option( self::SOURCES_SETTING_KEY, null );
+		// @phpstan-ignore-next-line
+		return is_array( $sources );
+	}
+
+	/**
 	 * Save the pattern sources.
 	 *
 	 * @param array $new_sources The new sources.
