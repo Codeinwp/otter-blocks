@@ -272,6 +272,28 @@ const Inspector = ({
 						<QueryControls
 							order={ attributes.order }
 							orderBy={ attributes.orderBy }
+							orderByOptions={ [
+								{
+									label: __( 'Newest to oldest', 'otter-blocks' ),
+									value: 'date/desc',
+								},
+								{
+									label: __( 'Oldest to newest', 'otter-blocks' ),
+									value: 'date/asc',
+								},
+								{
+									label: __( 'A → Z', 'otter-blocks' ),
+									value: 'title/asc',
+								},
+								{
+									label: __( 'Z → A', 'otter-blocks' ),
+									value: 'title/desc',
+								},
+								{
+									label: __( 'Random', 'otter-blocks' ),
+									value: 'rand',
+								}
+							] }
 							onOrderChange={ value => setAttributes({ order: value }) }
 							onOrderByChange={ value => setAttributes({ orderBy: value }) }
 							numberOfItems={ attributes.postsToShow }

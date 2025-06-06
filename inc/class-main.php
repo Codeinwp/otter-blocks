@@ -51,6 +51,7 @@ class Main {
 		add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'add_black_friday_data' ) );
 
 		add_action( 'parse_query', array( $this, 'pagination_support' ) );
+		add_filter( 'rest_post_collection_params', array( $this, 'add_random_orderby_param' ) );
 	}
 
 	/**
@@ -628,6 +629,21 @@ class Main {
 		$configs[ OTTER_PRODUCT_SLUG ] = $config;
 
 		return $configs;
+	}
+
+	/**
+	 * Add random orderby parameter to REST API.
+	 *
+	 * @param array $params REST API parameters.
+	 *
+	 * @return array Modified parameters.
+	 */
+	public function add_random_orderby_param( $params ) {
+		if ( isset( $params['orderby'] ) ) {
+			$params['orderby']['enum'][] = 'rand';
+		}
+
+		return $params;
 	}
 
 	/**

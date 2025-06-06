@@ -15,9 +15,10 @@ import './editor.scss';
 const PanelTab = ({
 	label,
 	onDelete,
-	children
+	children,
+	initialOpen = false
 }) => {
-	const [ isOpen, setOpen ] = useState( false );
+	const [ isOpen, setOpen ] = useState( initialOpen );
 
 	return (
 		<div className="o-panel-tab">

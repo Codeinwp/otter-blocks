@@ -328,6 +328,7 @@ const Edit = ({
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
 	const [ toggleVisibility, setToggleVisibility ] = useState([]);
+	const [ openTabs, setOpenTabs ] = useState(new Set()); // State to track open tabs
 
 	const setAttributes = ( attrs ) => {
 
@@ -351,7 +352,7 @@ const Edit = ({
 	 * Use an intermediary buffer to add the real attributes to the block.
 	 */
 	useEffect( () => {
-		if ( buffer &&  window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
+		if ( buffer && window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
 			_setAttributes( buffer );
 		}
 	}, [ buffer ]);
@@ -389,8 +390,10 @@ const Edit = ({
 
 	const addGroup = () => {
 		const otterConditions = [ ...( attributes.otterConditions || []) ];
+		const newGroupIndex = otterConditions.length; // Use the index of the new group
 		otterConditions.push([{}]);
 		setAttributes({ otterConditions });
+		setOpenTabs(prev => new Set(prev).add(newGroupIndex));
 	};
 
 	const removeGroup = n => {
@@ -511,6 +514,7 @@ const Edit = ({
 						<PanelTab
 							label={ __( 'Rule Group', 'otter-blocks' ) }
 							onDelete={ () => removeGroup( index ) }
+							initialOpen={ openTabs.has(index) }
 						>
 							{ group && group.map( ( condObj, condIdx ) => (
 								<Fragment key={ `${ index }_${ condIdx }` }>
