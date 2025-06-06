@@ -184,6 +184,21 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
+				hasValue={ () => Boolean( formOptions.fromEmail ) }
+				label={ __( 'From Email', 'otter-blocks' ) }
+				onDeselect={ () => setFormOption({ fromEmail: '' }) }
+				isShownByDefault={ false }
+			>
+				<TextControl
+					label={ __( 'From Email', 'otter-blocks' ) }
+					type="email"
+					onChange={ fromEmail => setFormOption({ fromEmail }) }
+					value={ formOptions.fromEmail }
+					help={ __( 'Set the email of the sender. Some SMTP plugins might override this value.', 'otter-blocks' ) }
+				/>
+			</ToolsPanelItem>
+
+			<ToolsPanelItem
 				hasValue={ () => Boolean( formOptions.redirectLink ) }
 				label={ __( 'Redirect on Submit', 'otter-blocks' ) }
 				onDeselect={ () => setFormOption({ redirectLink: '' }) }

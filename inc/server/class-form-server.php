@@ -444,9 +444,15 @@ class Form_Server {
 				if ( empty( $to ) ) {
 					$to = sanitize_email( get_site_option( 'admin_email' ) );
 				}
+
+				$from_email = $to;
+
+				if ( $form_options->has_from_email() && '' !== $form_options->get_from_email() ) {
+					$from_email = sanitize_email( $form_options->get_from_email() );
+				}
 			}
 
-			$headers = array( 'Content-Type: text/html', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : get_bloginfo( 'name', 'display' ) ) . ' <' . $to . '>' );
+			$headers = array( 'Content-Type: text/html', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : get_bloginfo( 'name', 'display' ) ) . ' <' . $from_email . '>' );
 
 			if ( ! empty( $form_options->get_cc() ) ) {
 				$arr = explode( ',', $form_options->get_cc() );
