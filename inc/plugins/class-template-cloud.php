@@ -182,7 +182,7 @@ class Template_Cloud {
 	public static function has_used_pattern_sources() {
 		$sources = get_option( self::SOURCES_SETTING_KEY, null );
 		// @phpstan-ignore-next-line
-		return ( is_array( $sources ) && ( ! empty( $sources ) || [] === $sources ) );
+		return is_array( $sources );
 	}
 
 	/**
