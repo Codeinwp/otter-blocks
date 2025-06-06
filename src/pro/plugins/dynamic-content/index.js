@@ -24,15 +24,6 @@ const Notices = el => {
 		);
 	}
 
-	if ( ! Boolean( window.otterPro.isActive ) ) {
-		return (
-			<Notice
-				notice={ __( 'You need to activate Otter Pro.', 'otter-pro' ) }
-				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Dynamic Content.', 'otter-pro' ) }
-			/>
-		);
-	}
-
 	return el;
 };
 

@@ -41,7 +41,11 @@ o-dynamic-link {
 			background: rgba(237, 111, 87, 0.1);
 		}
 	}
-	
+
+	.dashicon:before {
+		color: #ED6F57;
+	}
+
 	svg {
 		fill: #ED6F57;
 	}
@@ -97,6 +101,10 @@ o-dynamic-link {
 		background: #ffffff;
 		padding: 0 24px;
 		margin: 0;
+
+		@media (min-width: 600px) {
+			position: relative;
+		}
 	}
 
 	&__preview {

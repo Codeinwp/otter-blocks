@@ -10,7 +10,8 @@ const options = [
 	},
 	{
 		label: __( 'Site URL', 'otter-blocks' ),
-		value: 'siteURL'
+		value: 'siteURL',
+		isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 	},
 	{
 		label: __( 'Featured Image URL', 'otter-blocks' ),

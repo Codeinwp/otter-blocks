@@ -8,12 +8,9 @@ import { globe } from '@wordpress/icons';
  */
 import { __ } from '@wordpress/i18n';
 
-import { BlockControls } from '@wordpress/block-editor';
-
 import {
 	Modal,
-	ToolbarButton,
-	ToolbarGroup
+	MenuItem
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -34,6 +31,7 @@ import {
 	format as settings,
 	name
 } from './index.js';
+import { OtterDynamicContentFill } from '../index.js';
 import options from './options.js';
 import Fields from './fields.js';
 import InlineControls from '../components/inline-controls.js';
@@ -114,18 +112,20 @@ const Edit = ({
 	return (
 		<Fragment>
 			{ Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) && (
-				<BlockControls>
-					<ToolbarGroup>
-						<ToolbarButton
+				<OtterDynamicContentFill>
+					{ ({ onClose }) => (
+						<MenuItem
 							icon={ globe }
-							title={ __( 'Dynamic Value', 'otter-blocks' ) }
-							onClick={ () => setOpen( true ) }
-							isDisabled={ isActive }
-							isActive={ isActive }
+							onClick={ () => {
+								setOpen( true );
+								if ( onClose ) { onClose(); }
+							} }
 							className="o-dynamic-button"
-						/>
-					</ToolbarGroup>
-				</BlockControls>
+						>
+							{ __( 'Dynamic Value', 'otter-blocks' ) }
+						</MenuItem>
+					)}
+				</OtterDynamicContentFill>
 			) }
 
 			{ isOpen && (

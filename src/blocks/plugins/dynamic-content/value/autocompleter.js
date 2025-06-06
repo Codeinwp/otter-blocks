@@ -23,7 +23,7 @@ Object.keys( options ).forEach( option => autocompleteOptions.push( ...options[o
 
 const dynamicValue = {
 	name: 'dynamic-value',
-	triggerPrefix: '%',
+	triggerPrefix: '%%',
 	options: autocompleteOptions,
 	className: 'o-dynamic',
 	getOptionKeywords({ label, value }) {

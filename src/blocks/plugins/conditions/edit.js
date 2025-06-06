@@ -40,6 +40,12 @@ const defaultConditions = {
 		label: __( 'Users', 'otter-blocks' ),
 		conditions: [
 			{
+				value: 'screenSize',
+				label: __( 'Screen Size', 'otter-blocks' ),
+				help: __( 'The selected block will be invisible based on the screen size.', 'otter-blocks'  ),
+				toggleVisibility: true
+			},
+			{
 				value: 'loggedInUser',
 				label: __( 'Logged In Users', 'otter-blocks' ),
 				help: __( 'The selected block will only be visible to logged-in users.', 'otter-blocks'  )
@@ -124,12 +130,6 @@ const defaultConditions = {
 	'advance': {
 		label: __( 'Advance', 'otter-blocks' ),
 		conditions: [
-			{
-				value: 'screenSize',
-				label: __( 'Screen Size', 'otter-blocks' ),
-				help: __( 'The selected block will be invisible based on the screen size.', 'otter-blocks'  ),
-				toggleVisibility: true
-			},
 			{
 				value: 'queryString',
 				label: __( 'Query String (Pro)', 'otter-blocks' ),
