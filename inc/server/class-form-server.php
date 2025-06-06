@@ -404,7 +404,6 @@ class Form_Server {
 	 * @since 2.0.3
 	 */
 	public function send_default_email( $form_data ) {
-
 		if ( ! isset( $form_data ) ) {
 			return $form_data;
 		}
@@ -423,6 +422,7 @@ class Form_Server {
 			}
 
 			$email_subject = $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+			$email_subject = apply_filters( 'otter_form_email_build_subject', $email_subject, $form_data );
 
 			$email_message = Form_Email::instance()->build_email( $form_data );
 			$email_body    = apply_filters( 'otter_form_email_build_body', $email_message );
