@@ -157,7 +157,7 @@ class Live_Search_Server {
 						);
 
 						if ( 'product' === $post->post_type && class_exists( 'WooCommerce' ) ) {
-							$data['price'] = wc_get_product( $post->ID )->get_price() . get_woocommerce_currency_symbol();
+							$data['price'] = wc_get_product( $post->ID )->get_price_html();
 						}
 
 						return $data;
