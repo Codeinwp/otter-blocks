@@ -428,7 +428,8 @@ class Form_Server {
 			$email_body    = apply_filters( 'otter_form_email_build_body', $email_message );
 
 			// Sent the form date to the admin site as a default behavior.
-			$to = sanitize_email( get_site_option( 'admin_email' ) );
+			$to         = sanitize_email( get_site_option( 'admin_email' ) );
+			$from_email = $to;
 
 			// Check if we need to send it to another user email.
 			if ( $form_data->payload_has( 'formOption' ) ) {
@@ -444,8 +445,6 @@ class Form_Server {
 				if ( empty( $to ) ) {
 					$to = sanitize_email( get_site_option( 'admin_email' ) );
 				}
-
-				$from_email = $to;
 
 				if ( $form_options->has_from_email() && '' !== $form_options->get_from_email() ) {
 					$from_email = sanitize_email( $form_options->get_from_email() );
