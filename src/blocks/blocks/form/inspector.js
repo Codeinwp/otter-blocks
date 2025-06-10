@@ -191,6 +191,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 			>
 				<TextControl
 					label={ __( 'From Email', 'otter-blocks' ) }
+					placeholder={ __( 'e.g. noreply@example.com', 'otter-blocks' ) }
 					type="email"
 					onChange={ fromEmail => setFormOption({ fromEmail }) }
 					value={ formOptions.fromEmail }
