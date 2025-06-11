@@ -33,7 +33,7 @@ class Circle_Counter_Block {
 	 * @return mixed|string
 	 */
 	public function render_blocks( $block_content, $block ) {
-		if ( 'themeisle-blocks/circle-counter' === $block['blockName'] && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+		if ( 'themeisle-blocks/circle-counter' === $block['blockName'] && did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) {
 			$id            = $block['attrs']['id'];
 			$block_content = '<div id="' . $id . '" class="wp-block-themeisle-blocks-circle-counter">';
 

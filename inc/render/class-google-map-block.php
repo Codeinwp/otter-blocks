@@ -23,7 +23,7 @@ class Google_Map_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+		if ( did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) {
 			$apikey = get_option( 'themeisle_google_map_block_api_key' );
 
 			// Don't output anything if there is no API key.
