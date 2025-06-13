@@ -104,7 +104,7 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 				'<div class="error"><p>%1$s <a href="%2$s">%3$s</a></p></div>',
 				esc_html( $message ),
 				esc_url( $link ),
-				$button_text
+				esc_html( $button_text )
 			);
 		}
 	);
