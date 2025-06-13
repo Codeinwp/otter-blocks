@@ -94,6 +94,13 @@ class Form_Settings_Data {
 	private $from_name;
 
 	/**
+	 * The email of the sender.
+	 *
+	 * @var string|null
+	 */
+	private $from_email;
+
+	/**
 	 * The CC recipients.
 	 *
 	 * @var string
@@ -232,6 +239,9 @@ class Form_Settings_Data {
 				}
 				if ( isset( $form['fromName'] ) ) {
 					$integration->set_from_name( $form['fromName'] );
+				}
+				if ( isset( $form['fromEmail'] ) ) {
+					$integration->set_from_email( $form['fromEmail'] );
 				}
 				if ( isset( $form['cc'] ) ) {
 					$integration->set_cc( $form['cc'] );
@@ -417,6 +427,16 @@ class Form_Settings_Data {
 	 */
 	public function has_from_name() {
 		return isset( $this->from_name ) && '' !== $this->from_name;
+	}
+
+	/**
+	 * Check if it has the from_email set.
+	 *
+	 * @return bool
+	 * @since 2.0.3
+	 */
+	public function has_from_email() {
+		return isset( $this->from_email ) && '' !== $this->from_email && filter_var( $this->from_email, FILTER_VALIDATE_EMAIL ) !== false;
 	}
 
 	/**
@@ -612,6 +632,30 @@ class Form_Settings_Data {
 	public function set_from_name( $from_name ) {
 		$this->from_name = $from_name;
 
+		return $this;
+	}
+
+	/**
+	 * Get the email of the sender.
+	 *
+	 * @return string
+	 */
+	public function get_from_email() {
+		return $this->from_email;
+	}
+
+	/**
+	 * Set the email of the sender.
+	 *
+	 * @param string $from_email The email of the sender.
+	 * @return Form_Settings_Data
+	 */
+	public function set_from_email( $from_email ) {
+		if ( filter_var( $from_email, FILTER_VALIDATE_EMAIL ) !== false ) {
+			$this->from_email = $from_email;
+		} else {
+			$this->from_email = '';
+		}
 		return $this;
 	}
 
