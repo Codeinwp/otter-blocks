@@ -397,7 +397,7 @@ const Integrations = () => {
 				}
 			</PanelBody>
 
-			<TCPanel/>
+			{ Boolean( window?.otterObj?.hasPatternSources ) && <TCPanel/> }
 		</Fragment>
 	);
 };
