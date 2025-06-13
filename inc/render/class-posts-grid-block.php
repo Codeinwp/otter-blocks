@@ -455,12 +455,15 @@ class Posts_Grid_Block {
 
 		// Allow specific HTML tags in the post title if the post type is 'product'.
 		if ( 'product' === $post_type ) {
-			$post_title = wp_kses( $post_title, array(
-				'em' => array(),
-				'i' => array(),
-				'strong' => array(),
-				'b' => array(),
-			) );
+			$post_title = wp_kses(
+				$post_title,
+				array(
+					'em'     => array(),
+					'i'      => array(),
+					'strong' => array(),
+					'b'      => array(),
+				)
+			);
 		} else {
 			$post_title = esc_html( $post_title );
 		}
