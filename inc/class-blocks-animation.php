@@ -129,7 +129,7 @@ class Blocks_Animation {
 	 * @access  public
 	 */
 	public function enqueue_block_frontend_assets() {
-		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+		if ( did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) {
 			self::$can_load_frontend = false;
 		}
 

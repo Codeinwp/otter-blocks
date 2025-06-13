@@ -35,7 +35,7 @@ class Slider_Block {
 	 * @return mixed|string
 	 */
 	public function render_blocks( $block_content, $block ) {
-		if ( 'themeisle-blocks/slider' === $block['blockName'] && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+		if ( 'themeisle-blocks/slider' === $block['blockName'] && did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) {
 			$html5         = new HTML5();
 			$dom           = $html5->loadHTML( $block['innerHTML'] );
 			$id            = $block['attrs']['id'];

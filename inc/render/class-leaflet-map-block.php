@@ -22,7 +22,7 @@ class Leaflet_Map_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+		if ( did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) {
 			$link = 'https://www.openstreetmap.org/export/embed.html?bbox=' . stripslashes( esc_attr( $attributes['bbox'] ) ) . '&amp;layer=mapnik';
 
 			$output  = '<amp-iframe width="400" height="' . intval( $attributes['height'] ) . '" sandbox="allow-scripts allow-same-origin" layout="responsive" src="' . stripslashes( $link ) . '" style="border: 1px solid black">';
