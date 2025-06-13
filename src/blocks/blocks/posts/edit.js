@@ -91,7 +91,7 @@ const Edit = ({
 
 		const latestPostsQuery = pickBy({
 			categories: catIds,
-			order: attributes.order,
+			order: attributes.order || 'desc',
 			orderby: attributes.orderBy,
 			per_page: attributes.postsToShow, // eslint-disable-line camelcase
 			offset: attributes.offset,
