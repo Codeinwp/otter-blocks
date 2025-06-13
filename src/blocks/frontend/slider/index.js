@@ -3,7 +3,10 @@
  */
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
-const SliderArrows = '<div class="glide__arrows" data-glide-el="controls"><button class="glide__arrow glide__arrow--left" data-glide-dir="<"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 100 100" role="img" aria-hidden="true"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"></path></svg></button><button class="glide__arrow glide__arrow--right" data-glide-dir="&gt;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 100 100" role="img" aria-hidden="true"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"></path></svg></button></div>';
+const leftLabel = window.themeisleGutenbergSlider.isRTL ? window.themeisleGutenbergSlider.next : window.themeisleGutenbergSlider.prev;
+const rightLabel = window.themeisleGutenbergSlider.isRTL ? window.themeisleGutenbergSlider.prev : window.themeisleGutenbergSlider.next;
+
+const SliderArrows = '<div class="glide__arrows" data-glide-el="controls"><button class="glide__arrow glide__arrow--left" data-glide-dir="<" aria-label="' + leftLabel + '"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 100 100" role="img" aria-hidden="true"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"></path></svg></button><button class="glide__arrow glide__arrow--right" data-glide-dir="&gt;" aria-label="' + rightLabel + '"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 100 100" role="img" aria-hidden="true"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"></path></svg></button></div>';
 
 const init = () => {
 	const sliders = document.querySelectorAll( '.wp-block-themeisle-blocks-slider' );
