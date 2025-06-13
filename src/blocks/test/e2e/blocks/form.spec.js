@@ -127,6 +127,76 @@ test.describe( 'Form Block', () => {
 		expect( savedEmail?.cc ).toBe( ccValue );
 	});
 
+
+	test( 'add a value to From Email field and save', async({ editor, page }) => {
+		const fromEmail = 'otter@test-form.com';
+
+		/*
+		 * Create a form block and insert the From Email value using the Inspector Controls.
+		 */
+
+		await editor.insertBlock({ name: 'themeisle-blocks/form' });
+
+		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+
+		expect( formBlock ).toBeTruthy();
+
+		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
+
+		// Open the options panel
+		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+
+		// activate the option
+		await page.getByRole( 'menuitemcheckbox', { name: 'Show From Email' }).click();
+
+		// Close the options panel
+		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+
+		const from = page.getByPlaceholder( 'e.g. noreply@example.com' );
+
+		await from.fill( fromEmail );
+
+		expect( await from.inputValue() ).toBe( fromEmail );
+
+		await editor.publishPost();
+
+		await page.waitForTimeout( 1000 );
+
+		// Check if the notice is visible
+		const msg = page.getByRole( 'button', { name: 'Dismiss this notice' }).filter({
+			hasText: 'Form options have been saved.'
+		});
+
+		await page.waitForTimeout( 1500 );
+
+		expect( await msg.isVisible() ).toBeTruthy();
+
+		/*
+		 * Check if the value is saved in the database.
+		 */
+
+		formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+
+		expect( formBlock ).toBeTruthy();
+		expect( formBlock.attributes.optionName ).toBeTruthy();
+
+		const databaseEmails = await page.evaluate( async() => {
+			// eslint-disable-next-line camelcase
+			const { themeisle_blocks_form_emails } = await ( new wp.api.models.Settings() ).fetch();
+
+			// eslint-disable-next-line camelcase
+			return themeisle_blocks_form_emails;
+		});
+
+		expect( databaseEmails ).toBeTruthy();
+		expect( databaseEmails.length ).toBeGreaterThan( 0 );
+
+		const savedEmail = databaseEmails.find( email => email?.form === formBlock.attributes.optionName );
+
+		expect( savedEmail ).toBeTruthy();
+		expect( savedEmail?.fromEmail ).toBe( fromEmail );
+	});
+
 	test( 'check if the form is rendered in frontend', async({ page, editor }) => {
 		await editor.insertBlock({ name: 'themeisle-blocks/form' });
 

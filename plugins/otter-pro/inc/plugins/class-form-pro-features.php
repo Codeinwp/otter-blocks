@@ -332,8 +332,14 @@ class Form_Pro_Features {
 		}
 
 		try {
+			$from_email = sanitize_email( get_site_option( 'admin_email' ) );
+
+			if ( $form_data->get_wp_options()->has_from_email() && '' !== $form_data->get_wp_options()->get_from_email() ) {
+				$from_email = sanitize_email( $form_data->get_wp_options()->get_from_email() );
+			}
+
 			$headers[] = 'Content-Type: text/html';
-			$headers[] = 'From: ' . ( $form_data->get_wp_options()->has_from_name() ? sanitize_text_field( $form_data->get_wp_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
+			$headers[] = 'From: ' . ( $form_data->get_wp_options()->has_from_name() ? sanitize_text_field( $form_data->get_wp_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) ) . ' <' . $from_email . '>';
 
 			$autoresponder = $form_data->get_wp_options()->get_autoresponder();
 			$body          = $this->replace_magic_tags( $autoresponder['body'], $form_data->get_fields() );
