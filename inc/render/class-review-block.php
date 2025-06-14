@@ -44,7 +44,7 @@ class Review_Block {
 			add_action(
 				'wp_footer',
 				function() use ( $attributes, $post_id ) {
-					$added_schemas = &self::$added_schemas; // Reference the static property.
+					$added_schemas = &Review_Block::$added_schemas; // Reference the static property explicitly.
 
 					if ( ! isset( $added_schemas[ $post_id ] ) ) {
 						echo '<script type="application/ld+json">' . wp_json_encode( $this->get_json_ld( $attributes, $post_id ) ) . '</script>';
