@@ -525,7 +525,7 @@ class Dynamic_Content {
 		$description = get_the_archive_description();
 
 		if ( empty( $description ) ) {
-			$description     = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+			$description = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		}
 
 		return wp_strip_all_tags( $description );

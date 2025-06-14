@@ -572,9 +572,9 @@ class CSS_Handler extends Base_CSS {
 	/**
 	 * Action to run after inserting a pattern.
 	 * 
-	 * @param \WP_Post $post The post object.
+	 * @param \WP_Post         $post The post object.
 	 * @param \WP_REST_Request $request The request object.
-	 * @param bool $creating Whether the post is being created.
+	 * @param bool             $creating Whether the post is being created.
 	 * @access public
 	 */
 	public function insert_pattern( $post, $request, $creating ) {
