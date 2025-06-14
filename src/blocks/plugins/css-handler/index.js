@@ -12,7 +12,6 @@ import {
 	select,
 	subscribe
 } from '@wordpress/data';
-import { pullReusableBlockContentById } from '../../helpers/block-utility';
 
 let isSavingCSS = false;
 
