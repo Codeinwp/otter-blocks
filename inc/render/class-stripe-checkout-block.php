@@ -61,8 +61,7 @@ class Stripe_Checkout_Block {
 
 		if ( empty( $product_id ) || empty( $price_id ) || empty( $url ) ) {
 			return sprintf(
-				'<div %1$s><div class="o-stripe-checkout">%2$s</div></div>',
-				get_block_wrapper_attributes(),
+				'<div class="wp-block-themeisle-blocks-stripe-checkout"><div class="o-stripe-checkout">%s</div></div>',
 				__( 'An error occurred! Could not retrieve the product information!', 'otter-blocks' )
 			);
 		}
@@ -92,8 +91,7 @@ class Stripe_Checkout_Block {
 
 		if ( is_wp_error( $session ) ) {
 			return sprintf(
-				'<div %1$s><div class="o-stripe-checkout">%2$s</div></div>',
-				get_block_wrapper_attributes(),
+				'<div class="wp-block-themeisle-blocks-stripe-checkout"><div class="o-stripe-checkout">%s</div></div>',
 				__( 'An error occurred! Could not create the request!', 'otter-blocks' ) . $this->format_error( $session )
 			);
 		}

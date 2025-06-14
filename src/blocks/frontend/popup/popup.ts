@@ -122,6 +122,9 @@ class PopupBlock {
 		case 'onExit':
 			this.bindExitIntent();
 			break;
+		case 'none':
+			// Do nothing
+			break;
 		default:
 		case 'onLoad':
 			this.bindOnLoad();

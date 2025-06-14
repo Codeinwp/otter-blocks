@@ -20,7 +20,7 @@ import {
 	__experimentalAlignmentMatrixControl as AlignmentMatrixControl
 } from '@wordpress/components';
 
-import { Fragment, useState } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
 
@@ -101,6 +101,10 @@ const Inspector = ({
 			label: __( 'On Exit (Pro)', 'otter-blocks' ),
 			value: 'onExit',
 			disabled: true
+		},
+		{
+			label: __( 'Disable', 'otter-blocks' ),
+			value: 'none'
 		}
 	];
 
@@ -177,6 +181,13 @@ const Inspector = ({
 									value={ attributes.wait ?? 0 }
 									onChange={ value => setAttributes({ wait: Number( value ) }) }
 									allowReset
+								/>
+							) }
+
+							{ 'none' === attributes.trigger && (
+								<Notice
+									notice={ __( 'This popup will not be triggered. You can use this option to temporarily disable the popup without removing it.', 'otter-blocks' ) }
+									variant="info"
 								/>
 							) }
 

@@ -106,7 +106,7 @@ registerBlockType( 'themeisle-blocks/patterns-upsell', {
 	title: __( 'Pro Pattern Notice', 'otter-blocks' ),
 	description: __( 'There are 30+ more patterns and full page designs available in Otter PRO.', 'otter-blocks' ),
 	supports: {
-		inserter: true
+		inserter: false
 	},
 	edit,
 	save: () => null
