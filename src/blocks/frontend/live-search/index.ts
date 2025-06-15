@@ -453,7 +453,7 @@ domReady( () => {
 	 * @param inputElement - The input element used for the search.
 	 * @return A DOM element representing the search result.
 	 */
-	const getResultElement = ( entry: ResultsEntry, index: number, inputElement: Element ) => {
+	const getResultElement = ( entry: ResultsEntry & { featured_image?: string | false }, index: number, inputElement: Element ) => {
 		const optionWrap = document.createElement( 'div' );
 		const option = document.createElement( 'a' );
 
@@ -463,7 +463,16 @@ domReady( () => {
 
 		const icon = document.createElement( 'div' );
 		icon.classList.add( `${CONTAINER_CLASS}__row-left` );
-		icon.innerHTML = getPostIcon( entry.type );
+
+		if ( entry?.featured_image ) {
+			const img = document.createElement( 'img' );
+			img.src = entry.featured_image;
+			img.alt = entry.title;
+			img.title = entry.title;
+			icon.appendChild( img );
+		} else {
+			icon.innerHTML = getPostIcon( entry.type );
+		}
 
 		const data = document.createElement( 'div' );
 		data.classList.add( `${CONTAINER_CLASS}__row-right` );

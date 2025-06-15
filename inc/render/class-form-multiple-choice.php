@@ -22,10 +22,22 @@ class Form_Multiple_Choice_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
+		$allowed_tags = array(
+			'a'      => array(
+				'href'   => true,
+				'target' => true,
+			),
+			'span'   => array(),
+			'em'     => array(),
+			'strong' => array(),
+			'i'      => array(),
+			'b'      => array(),
+		);
+
 		$id         = isset( $attributes['id'] ) ? esc_attr( $attributes['id'] ) : '';
 		$options    = isset( $attributes['options'] ) ? $attributes['options'] : array();
 		$field_type = isset( $attributes['type'] ) ? esc_attr( $attributes['type'] ) : 'checkbox';
-		$label      = isset( $attributes['label'] ) ? esc_html( $attributes['label'] ) : __( 'Select option', 'otter-blocks' );
+		$label      = isset( $attributes['label'] ) ? wp_kses( $attributes['label'], $allowed_tags ) : __( 'Select option', 'otter-blocks' );
 		$help_text  = isset( $attributes['helpText'] ) ? esc_html( $attributes['helpText'] ) : '';
 
 		$is_required            = isset( $attributes['isRequired'] ) ? boolval( $attributes['isRequired'] ) : false;
@@ -89,7 +101,7 @@ class Form_Multiple_Choice_Block {
 		$output = '<div class="o-form-multiple-choice-field">';
 
 		$output .= '<input type="' . esc_attr( $type ) . '" name="' . esc_attr( $name ) . '" id="' . esc_attr( $id ) . '" value="' . esc_attr( $value ) . '" ' . ( $is_required ? 'required' : '' ) . ( $checked ? ' checked' : '' ) . ' />';
-		
+
 		$allowed_tags = array(
 			'a'      => array(
 				'href'   => true,
