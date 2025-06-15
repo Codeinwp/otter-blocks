@@ -336,23 +336,28 @@ const createCustomAnimationNode = ( elements ) => {
 	if ( 0 < customDelays.length || 0 < customSpeeds.length ) {
 		const customValuesNode = document.createElement( 'style' );
 		customValuesNode.id = 'o-anim-custom-values';
+		// Helper to escape CSS class names (e.g., 2.3 -> 2\.3)
+		const escapeCssClass = className => className.replace(/([!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~])/g, '\\$1');
+
 		customValuesNode.innerHTML = customDelays.reduce(
 			( accumulator, cssClass ) => {
 				const delayValue = cssClass.replace( 'o-anim-value-delay-', '' );
+				const escapedClass = escapeCssClass( cssClass );
 
 				return (
 					accumulator +
-					`.animated.${ cssClass } { animation-delay: ${ delayValue }; -webkit-animation-delay: ${ delayValue }; }`
+					`.animated.${escapedClass} { animation-delay: ${delayValue}; -webkit-animation-delay: ${delayValue}; }`
 				);
 			},
 			''
 		) + '\n' + customSpeeds.reduce(
 			( accumulator, cssClass ) => {
 				const speedValue = cssClass.replace( 'o-anim-value-speed-', '' );
+				const escapedClass = escapeCssClass( cssClass );
 
 				return (
 					accumulator +
-					`.animated.${ cssClass } { animation-duration: ${ speedValue }; -webkit-animation-duration: ${ speedValue }; }`
+					`.animated.${escapedClass} { animation-duration: ${speedValue}; -webkit-animation-duration: ${speedValue}; }`
 				);
 			},
 			''
