@@ -237,7 +237,7 @@ const BlockCard = ({ block, isLoading, onToggle }) => {
 					{ block.name }
 				</h3>
 				<a href={block?.docLink ?? 'https://docs.themeisle.com/category/1611-blocks-library'} target="_blank" rel="noopener noreferrer">
-					Learn More
+					{ __( 'Learn More', 'otter-blocks' ) }
 				</a>
 				{
 					( block?.isPro && ! otterObj?.hasPro ) && (
