@@ -241,11 +241,13 @@ class Dashboard {
 			'assetsPath'             => OTTER_BLOCKS_URL . 'assets/',
 			'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
 			'hasPro'                 => Pro::is_pro_installed(),
+			'otterPage'              => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/', 'welcome', 'admin' ) ),
 			'upgradeLink'            => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ) ),
 			'upgradeLinkFromTc'      => tsdk_utmify( Pro::get_url(), 'templatecloud' ),
 			'tcUpgradeLink'          => tsdk_utmify( 'https://themeisle.com/plugins/templates-cloud/', 'templatecloud', 'otter-blocks' ),
 			'tcDocs'                 => 'https://docs.themeisle.com/article/2191-templates-cloud-collections',
 			'docsLink'               => Pro::get_docs_url(),
+			'newPageUrl'             => esc_url( admin_url( 'post-new.php?post_type=page' ) ),
 			'showFeedbackNotice'     => $this->should_show_feedback_notice(),
 			'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
 			'hasOnboarding'          => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
@@ -313,7 +315,7 @@ class Dashboard {
 		}
 
 		update_option( 'themeisle_blocks_settings_redirect', false );
-		wp_safe_redirect( admin_url( 'admin.php?page=otter' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=otter&welcome=true' ) );
 		exit;
 	}
 
