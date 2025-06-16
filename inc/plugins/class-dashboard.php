@@ -36,7 +36,7 @@ class Dashboard {
 			add_action( 'wp_dashboard_setup', array( $this, 'form_submissions_widget' ) );
 		}
 
-		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( $this, 'get_survey_metadata' ), 10, 2 );
+		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( __CLASS__, 'get_survey_metadata' ), 10, 2 );
 	}
 
 	/**
@@ -761,17 +761,16 @@ class Dashboard {
 	 * 
 	 * @return array The data in Frombricks format.
 	 */
-	public function get_survey_metadata( $data, $page_slug ) {
-		$dash_data = $this->get_dashboard_data();
-		
-		$install_days_number = $dash_data['days_since_install'];
+	public static function get_survey_metadata( $data, $page_slug ) {
+		$dash_data           = apply_filters( 'otter_dashboard_data', array() );
+		$install_days_number = intval( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS );
 
 		$data = array(
 			'environmentId' => 'clp9hqm8c1osfdl2ixwd0k0iz',
 			'attributes'    => array(
 				'install_days_number' => $install_days_number,
 				'plan'                => isset( $dash_data['license'], $dash_data['license']['type'] ) ? $dash_data['license']['type'] : 'free',
-				'freeVersion'         => $dash_data['version'],
+				'freeVersion'         => OTTER_BLOCKS_VERSION,
 			),
 		);
 
