@@ -9,6 +9,7 @@ namespace ThemeIsle\GutenbergBlocks;
 
 use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
+use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 
 /**
  * Class Registration.
@@ -292,6 +293,7 @@ class Registration {
 				'isRTL'                   => is_rtl(),
 				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true ),
 				'hasOpenAiKey'            => ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
+				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
 			)
 		);
 
