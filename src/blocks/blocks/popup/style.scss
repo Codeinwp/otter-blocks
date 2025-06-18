@@ -112,12 +112,6 @@ $base-index: 99999 !default;
 		&::-webkit-scrollbar {
 			display: none;
 		}
-
-
-	}
-
-	.otter-popup__modal_header + .otter-popup__modal_body {
-		margin-top: -40px;
 	}
 
 	.otter-popup__modal_body > * {
@@ -125,9 +119,8 @@ $base-index: 99999 !default;
 	}
 
 	.otter-popup__modal_header {
-		display: flex;
-		justify-content: flex-end;
-		padding-bottom: 20px;
+		position: absolute;
+		right: var( --padding );
 
 		@media (max-width: 600px) {
 			padding-bottom: 0px;
@@ -162,6 +155,7 @@ $base-index: 99999 !default;
 
 	&.with-outside-button {
 		.otter-popup__modal_header {
+			position: initial;
 			padding-bottom: 0px;
 
 			button {

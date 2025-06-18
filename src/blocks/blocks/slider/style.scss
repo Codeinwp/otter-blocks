@@ -22,16 +22,6 @@
 
 	.glide__slides {
 		height: var( --height );
-		animation: load 4s 3;
-
-		@keyframes load {
-			0%, 100% {
-				background-color: inherit;
-			}
-			50% {
-				background-color: #d8d8d8;
-			}
-		}
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
 			height: var( --height-tablet ) !important;

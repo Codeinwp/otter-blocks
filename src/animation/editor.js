@@ -253,7 +253,7 @@ function AnimationControls({
 				customDelay = customDelay.replace( 'o-anim-value-delay-', '' );
 
 				// The string must start with a number and end with s or ms.
-				if ( ! customDelay.match( /^[0-9]+(ms|s)$/ ) ) {
+				if ( ! customDelay.match( /^[0-9]*\.?[0-9]+(ms|s)$/ ) ) {
 					customDelay = undefined;
 				}
 			}
@@ -263,7 +263,7 @@ function AnimationControls({
 				customSpeed = customSpeed.replace( 'o-anim-value-speed-', '' );
 
 				// The string must start with a number and end with s or ms.
-				if ( ! customSpeed.match( /^[0-9]+(ms|s)$/ ) ) {
+				if ( ! customSpeed.match( /^[0-9]*\.?[0-9]+(ms|s)$/ ) ) {
 					customSpeed = undefined;
 				}
 			}

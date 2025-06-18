@@ -617,6 +617,8 @@ class Registration {
 				'themeisleGutenbergSlider',
 				array(
 					'isRTL' => is_rtl(),
+					'next'  => __( 'Next Slide', 'otter-blocks' ),
+					'prev'  => __( 'Previous Slide', 'otter-blocks' ),
 				)
 			);
 		}
