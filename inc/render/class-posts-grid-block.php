@@ -421,7 +421,7 @@ class Posts_Grid_Block {
 		$output  = '<div class="o-posts-grid-pag">';
 		$output .= paginate_links(
 			array(
-				'format'    => is_front_page() ? '?page=%#%' : '?paged=%#%',
+				'format'    => ( is_front_page() && ! is_singular() ) ? '?page=%#%' : '?paged=%#%',
 				'current'   => $page_number,
 				'total'     => $total_pages,
 				'prev_text' => __( 'Prev', 'otter-blocks' ),
