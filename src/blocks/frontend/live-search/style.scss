@@ -41,15 +41,24 @@
 			&-left {
 				svg {
 					margin: 1px;
+					width: 45px;
+					height: 45px;
+					opacity: .24;
 
 					path {
 						fill: currentColor;
 					}
 				}
 
+				img {
+					margin: 1px;
+					width: 45px;
+					height: 45px;
+					object-fit: cover;
+				}
+
 				display: flex;
 				align-items: center;
-				opacity: .24;
 			}
 
 			&-right {
