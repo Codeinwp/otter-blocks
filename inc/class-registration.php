@@ -8,6 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks;
 
 use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
+use ThemeIsle\GutenbergBlocks\Plugins\Dashboard;
 use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
 use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 
@@ -298,6 +299,9 @@ class Registration {
 		);
 
 		wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
+
+		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( Dashboard::class, 'get_survey_metadata' ), 10, 2 );
+		do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'editor' );
 	}
 
 	/**

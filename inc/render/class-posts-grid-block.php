@@ -417,14 +417,11 @@ class Posts_Grid_Block {
 	 * @return string
 	 */
 	protected function render_pagination( $page_number, $total_pages ) {
-		$big  = 9999999;
-		$base = str_replace( strval( $big ), '%#%', esc_url( get_pagenum_link( $big ) ) );
-
+		$big     = 9999999;
 		$output  = '<div class="o-posts-grid-pag">';
 		$output .= paginate_links(
 			array(
-				'base'      => $base,
-				'format'    => '?paged=%#%',
+				'format'    => ( is_front_page() && ! is_singular() ) ? '?page=%#%' : '?paged=%#%',
 				'current'   => $page_number,
 				'total'     => $total_pages,
 				'prev_text' => __( 'Prev', 'otter-blocks' ),
