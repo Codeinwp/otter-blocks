@@ -188,7 +188,7 @@ const Inspector = ({
 					colorSettings={ [
 						{
 							value: attributes.labelColor,
-							onChange: () => {},
+							onChange: labelColor => setAttributes({ labelColor }),
 							label: __( 'Label Color', 'otter-blocks' )
 						}
 					] }
