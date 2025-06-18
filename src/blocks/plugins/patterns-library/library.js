@@ -213,7 +213,7 @@ const Library = ({
 							{ __( 'My Favorites', 'otter-blocks' ) }
 						</Button>
 
-						{tcCategories.length < 1 && (
+						{( tcCategories.length < 1 && Boolean( window?.themeisleGutenberg?.hasPatternSources ) ) && (
 							<Button
 								icon="open-folder"
 								isPressed={ 'cloud-empty' === selectedCategory }
@@ -275,7 +275,7 @@ const Library = ({
 					</div>
 
 					<div className="o-library__modal__content">
-						{selectedCategory === CLOUD_EMPTY_CATEGORY && <CloudLibraryPlaceholder />}
+						{( selectedCategory === CLOUD_EMPTY_CATEGORY && Boolean( window?.themeisleGutenberg?.hasPatternSources ) ) && <CloudLibraryPlaceholder />}
 						{selectedCategory !== CLOUD_EMPTY_CATEGORY && (
 							<>
 								<div className="o-library__modal__content__actions">

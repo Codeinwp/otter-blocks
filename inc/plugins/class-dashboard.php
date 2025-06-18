@@ -9,6 +9,7 @@ namespace ThemeIsle\GutenbergBlocks\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Pro;
 use ThemeIsle\GutenbergBlocks\Plugins\FSE_Onboarding;
+use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 
 /**
  * Class Dashboard
@@ -280,6 +281,7 @@ class Dashboard {
 				)
 			),
 			'neveInstalled'          => defined( 'NEVE_VERSION' ),
+			'hasPatternSources'      => Template_Cloud::has_used_pattern_sources(),
 		);
 
 		$global_data = apply_filters( 'otter_dashboard_data', $global_data );
