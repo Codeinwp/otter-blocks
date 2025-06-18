@@ -41,7 +41,10 @@ const ALLOWED_ACF_TYPES = [
 	'number',
 	'url',
 	'email',
-	'password'
+	'password',
+	'date_picker',
+	'date_time_picker',
+	'time_picker',
 ];
 
 const addAttribute = ( props ) => {
