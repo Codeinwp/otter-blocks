@@ -16,5 +16,8 @@
 			"type": "boolean",
 			"default": false
 		}
+	},
+	"supports": {
+        "anchor": true
 	}
 }

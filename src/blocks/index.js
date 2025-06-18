@@ -11,7 +11,7 @@ import {
 
 import { Icon } from '@wordpress/components';
 
-import { dispatch, select } from '@wordpress/data';
+import { dispatch, select, subscribe } from '@wordpress/data';
 
 import domReady from '@wordpress/dom-ready';
 
@@ -135,13 +135,14 @@ const hideBlocksInInserter = () => {
 };
 
 domReady( () => {
+
 	const addCategory = () => {
 		if ( ! getCategories() ) {
 			return;
 		}
 
 		const categories = getCategories();
-		const category = categories.find( category => 'themeisle-blocks' === category.slug );
+		const category = categories.find( cat => 'themeisle-blocks' === cat.slug );
 
 		if ( ! category ) {
 			return;
@@ -186,3 +187,59 @@ domReady( () => {
 });
 
 window.otterStateMemory = new GlobalStateMemory();
+
+/**
+ * Handle special cases for survey initialization.
+ */
+const configureSurveyTabListener = () => {
+	let hasTriggered = false;
+	let unsubscribe = null;
+	let lastCheck = 0;
+	const THROTTLE_MS = 2000;
+
+	window.dispatchEvent( new CustomEvent( 'themeisle:survey:trigger:cancel' ) );
+
+	const checkBlocks = () => {
+		const now = Date.now();
+
+		if ( now - lastCheck < THROTTLE_MS ) {
+			return;
+		}
+
+		lastCheck = now;
+
+		if ( hasTriggered ) {
+			return;
+		}
+
+		const blocks = select('core/block-editor').getBlocks();
+
+		if ( ! blocks || blocks.length === 0 ) {
+			return;
+		}
+
+		const hasThemeisleBlocks = ( blocksList ) => {
+			for ( const block of blocksList ) {
+				if ( block.name.includes( 'themeisle-blocks' ) ) {
+					return true;
+				}
+				if ( block.innerBlocks && block.innerBlocks.length > 0 && hasThemeisleBlocks( block.innerBlocks ) ) {
+					return true;
+				}
+			}
+			return false;
+		};
+
+		if ( !hasThemeisleBlocks( blocks ) ) {
+			return;
+		}
+
+		hasTriggered = true;
+		window.tsdk_formbricks?.init({});
+		unsubscribe();
+	};
+
+	unsubscribe = wp.data.subscribe( checkBlocks );
+};
+
+window.addEventListener( 'themeisle:survey:loaded', configureSurveyTabListener );

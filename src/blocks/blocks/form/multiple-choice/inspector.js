@@ -13,7 +13,6 @@ import {
 	Button,
 	PanelBody,
 	SelectControl,
-	TextareaControl,
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
@@ -22,17 +21,16 @@ import { Fragment, useContext } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { getActiveStyle, changeActiveStyle, buildResponsiveSetAttributes } from '../../../helpers/helper-functions.js';
+import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
 import {
 	fieldTypesOptions,
 	HideFieldLabelToggle,
 	mappedNameInfo, SortableChoiceItem,
-	SortableChoiceList,
 	switchFormFieldTo
 } from '../common';
 import { FormContext } from '../edit.js';
 import { HTMLAnchorControl } from '../../../components';
-import { debounce, isString } from 'lodash';
+import { isString } from 'lodash';
 import { SortableContainer } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
 
@@ -46,7 +44,7 @@ const styles = [
 /**
  *
  * @param {import('./types').FormMultipleChoiceInputInspectorProps} props
- * @return {JSX.Element}
+ * @return {JSX.Element} The Inspector component for managing multiple-choice form fields.
  */
 const Inspector = ({
 	attributes,
@@ -59,54 +57,6 @@ const Inspector = ({
 	} = useContext( FormContext );
 
 	const options = ( isString( attributes.options ) ? attributes.options?.split( '\n' )?.map( x => ({ isDefault: false, content: x }) ) : attributes.options ) ?? [];
-
-	// Without debouncing, the RichText will lose focus on every keypress.
-	const debouncedSet = debounce( setAttributes, 800 );
-
-	const ChoiceList = SortableContainer( ( props ) => {
-		return (
-			<div>
-				{
-					props.options?.map(
-						( tab, index ) => (
-							<SortableChoiceItem
-								key={tab?.content}
-								index={index}
-								tab={tab}
-								setAsDefault={() => {
-									const updatedOptions = options.map( ( item, i ) => {
-										const updatedItem = { ...item };
-										if (
-											( 'select' === attributes.type || 'radio' === attributes.type ) &&
-											i !== index
-										) {
-											updatedItem.isDefault = false;
-										}
-										if ( i === index ) {
-											updatedItem.isDefault = ! Boolean( item.isDefault );
-										}
-										return updatedItem;
-									});
-
-									setAttributes({ options: updatedOptions });
-								}}
-								deleteTab={() => {
-									const o = [ ...options ];
-									o.splice( index, 1 );
-									setAttributes({ options: o });
-								}}
-								onLabelChange={( value ) => {
-									const o = [ ...options ];
-									o[index] = { ...o[index], content: value };
-									debouncedSet({ options: o });
-								}}
-								useRadio={'select' === attributes.type || 'radio' === attributes.type}
-							/>
-						) )
-				}
-			</div>
-		);
-	});
 
 	return (
 		<Fragment>
@@ -159,6 +109,8 @@ const Inspector = ({
 					>
 						<ChoiceList
 							options={ options }
+							attributes={ attributes }
+							setAttributes={ setAttributes }
 							useDragHandle
 							axis="y"
 							lockAxis="y"
@@ -236,7 +188,7 @@ const Inspector = ({
 					colorSettings={ [
 						{
 							value: attributes.labelColor,
-							onChange: () => {},
+							onChange: labelColor => setAttributes({ labelColor }),
 							label: __( 'Label Color', 'otter-blocks' )
 						}
 					] }
@@ -249,5 +201,51 @@ const Inspector = ({
 		</Fragment>
 	);
 };
+
+// Move ChoiceList outside of the Inspector component
+const ChoiceList = SortableContainer( ( { options, attributes, setAttributes } ) => {
+	return (
+		<div>
+			{
+				options?.map(
+					( tab, index ) => (
+						<SortableChoiceItem
+							key={index}
+							index={index}
+							tab={tab}
+							setAsDefault={() => {
+								const updatedOptions = options.map( ( item, i ) => {
+									const updatedItem = { ...item };
+									if (
+										( 'select' === attributes.type || 'radio' === attributes.type ) &&
+										i !== index
+									) {
+										updatedItem.isDefault = false;
+									}
+									if ( i === index ) {
+										updatedItem.isDefault = ! Boolean( item.isDefault );
+									}
+									return updatedItem;
+								});
+
+								setAttributes({ options: updatedOptions });
+							}}
+							deleteTab={() => {
+								const o = [ ...options ];
+								o.splice( index, 1 );
+								setAttributes({ options: o });
+							}}
+							onLabelChange={( value ) => {
+								const o = [ ...options ];
+								o[index] = { ...o[index], content: value };
+								setAttributes({ options: o });
+							}}
+							useRadio={'select' === attributes.type || 'radio' === attributes.type}
+						/>
+					) )
+			}
+		</div>
+	);
+});
 
 export default Inspector;
