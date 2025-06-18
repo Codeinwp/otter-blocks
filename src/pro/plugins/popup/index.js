@@ -35,6 +35,10 @@ const applyTriggerOptions = () => {
 			label: __( 'On Exit', 'otter-pro' ),
 			value: 'onExit',
 			disabled: ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) )
+		},
+		{
+			label: __( 'Disable', 'otter-pro' ),
+			value: 'none'
 		}
 	];
 };
