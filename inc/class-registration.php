@@ -443,7 +443,7 @@ class Registration {
 			}
 		}
 
-		if ( ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) || is_admin() ) {
+		if ( ( did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) || is_admin() ) {
 			return;
 		}
 
@@ -980,7 +980,7 @@ class Registration {
 	 * @since 2.0.5
 	 */
 	public function load_sticky( $block_content, $block ) {
-		if ( ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) || self::$scripts_loaded['sticky'] ) {
+		if ( ( did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) || self::$scripts_loaded['sticky'] ) {
 			return $block_content;
 		}
 
