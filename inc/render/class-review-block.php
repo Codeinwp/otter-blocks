@@ -15,6 +15,15 @@ use ThemeIsle\GutenbergBlocks\Pro;
 class Review_Block {
 
 	/**
+	 * Static variable to track if the schema has already been added.
+	 *
+	 * This is used to prevent adding the same schema multiple times on the same page.
+	 *
+	 * @var array
+	 */
+	private static $added_schemas = array();
+
+	/**
 	 * Block render function for server-side.
 	 *
 	 * This method will pe passed to the render_callback parameter and it will output
@@ -28,13 +37,19 @@ class Review_Block {
 			$attributes = apply_filters( 'otter_blocks_review_block_woocommerce', $attributes );
 		}
 
+		// Add a static variable to track if the schema has already been added.
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) && isset( $attributes['features'] ) && count( $attributes['features'] ) > 0 && get_option( 'themeisle_blocks_settings_disable_review_schema', true ) ) {
 			$post_id = get_the_ID();
 
 			add_action(
 				'wp_footer',
 				function() use ( $attributes, $post_id ) {
-					echo '<script type="application/ld+json">' . wp_json_encode( $this->get_json_ld( $attributes, $post_id ) ) . '</script>';
+					$added_schemas = &Review_Block::$added_schemas; // Reference the static property explicitly.
+
+					if ( ! isset( $added_schemas[ $post_id ] ) ) {
+						echo '<script type="application/ld+json">' . wp_json_encode( $this->get_json_ld( $attributes, $post_id ) ) . '</script>';
+						$added_schemas[ $post_id ] = true; // Mark schema as added for this post ID.
+					}
 				}
 			);
 		}

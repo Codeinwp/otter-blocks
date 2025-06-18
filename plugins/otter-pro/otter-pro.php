@@ -65,23 +65,46 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 	add_action(
 		'admin_notices',
 		function() {
-			$message = __( 'You need to install Otter – Page Builder Blocks & Extensions for Gutenberg plugin to use Otter Pro.', 'otter-pro' );
-			$link    = wp_nonce_url(
-				add_query_arg(
-					array(
-						'action' => 'install-plugin',
-						'plugin' => 'otter-blocks',
+			$plugin_file = ABSPATH . 'wp-content/plugins/otter-blocks/otter-blocks.php';
+			$message     = __( 'You need Otter – Page Builder Blocks & Extensions for Gutenberg plugin to use Otter Pro.', 'otter-pro' );
+			$button_text = esc_html__( 'Install', 'otter-pro' );
+			$link        = '';
+
+			if ( file_exists( $plugin_file ) ) {
+				// Otter is installed but not active.
+				$link = wp_nonce_url(
+					add_query_arg(
+						array(
+							'action' => 'activate',
+							'plugin' => 'otter-blocks/otter-blocks.php',
+						),
+						admin_url( 'plugins.php' )
 					),
-					admin_url( 'update.php' )
-				),
-				'install-plugin_otter-blocks'
-			);
+					'activate-plugin_otter-blocks/otter-blocks.php'
+				);
+
+				$button_text = esc_html__( 'Activate', 'otter-pro' );
+			} else {
+				// Otter is not installed.
+				$link = wp_nonce_url(
+					add_query_arg(
+						array(
+							'action' => 'install-plugin',
+							'plugin' => 'otter-blocks',
+						),
+						admin_url( 'update.php' )
+					),
+					'install-plugin_otter-blocks'
+				);
+
+				$button_text = esc_html__( 'Install', 'otter-pro' );
+			}
 
 			printf(
 				'<div class="error"><p>%1$s <a href="%2$s">%3$s</a></p></div>',
 				esc_html( $message ),
 				esc_url( $link ),
-				esc_html__( 'Install', 'otter-pro' )
+				esc_html( $button_text )
 			);
 		}
 	);
