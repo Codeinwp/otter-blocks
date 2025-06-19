@@ -191,7 +191,7 @@ const Library = ({
 
 	return (
 		<Modal
-			title={ __( 'Otter Patterns', 'otter-blocks' ) }
+			title={ __( 'Design Library', 'otter-blocks' ) }
 			onRequestClose={ onClose }
 			size="fill"
 			className="o-library__modal"
