@@ -205,13 +205,15 @@ const Library = ({
 					) }
 
 					<div className="o-library__modal__sidebar">
-						<Button
-							icon="heart"
-							isPressed={ 'favorites' === selectedCategory }
-							onClick={ () => setSelectedCategory( 'favorites' ) }
-						>
-							{ __( 'My Favorites', 'otter-blocks' ) }
-						</Button>
+						{ getFavorites?.length > 0 && (
+							<Button
+								icon="heart"
+								isPressed={ 'favorites' === selectedCategory }
+								onClick={ () => setSelectedCategory( 'favorites' ) }
+							>
+								{ __( 'My Favorites', 'otter-blocks' ) }
+							</Button>
+						)}
 
 						{( tcCategories.length < 1 && Boolean( window?.themeisleGutenberg?.hasPatternSources ) ) && (
 							<Button
