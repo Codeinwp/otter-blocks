@@ -34,7 +34,7 @@ const ModalButton = () => {
 				className="o-library__button"
 				onClick={ () => setOpen( true ) }
 			>
-				{ __( 'Otter Patterns', 'otter-blocks' ) }
+				{ __( 'Design Library', 'otter-blocks' ) }
 			</Button>
 		</>
 	);
