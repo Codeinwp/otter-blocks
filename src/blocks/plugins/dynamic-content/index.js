@@ -33,7 +33,7 @@ export const withDynamicContentSlot = createHigherOrderComponent( ( BlockEdit ) 
 	return ( props ) => {
 		return (
 			<Fragment>
-				<BlockControls>
+				<BlockControls group="other">
 					<ToolbarGroup>
 						<DropdownMenu
 							icon="database"
