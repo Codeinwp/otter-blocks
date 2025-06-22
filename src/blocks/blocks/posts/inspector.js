@@ -291,7 +291,7 @@ const Inspector = ({
 								},
 								{
 									label: __( 'Random', 'otter-blocks' ),
-									value: 'rand',
+									value: 'rand/desc',
 								}
 							] }
 							onOrderChange={ value => setAttributes({ order: value }) }
