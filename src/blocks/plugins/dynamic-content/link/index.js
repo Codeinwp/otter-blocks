@@ -13,8 +13,9 @@ import { BlockControls } from '@wordpress/block-editor';
 import { registerFormatType } from '@wordpress/rich-text';
 
 import {
+	MenuItem,
+	DropdownMenu,
 	Popover,
-	ToolbarButton,
 	ToolbarGroup
 } from '@wordpress/components';
 
@@ -39,6 +40,7 @@ import {
 	getObjectFromQueryString,
 	getQueryStringFromObject
 } from '../../../helpers/helper-functions.js';
+import { OtterDynamicContentSlot } from '../index.js';
 
 export const name = 'themeisle-blocks/dynamic-link';
 
@@ -134,17 +136,31 @@ const DynamicLinkControl = ({
 	return (
 		<Fragment>
 			{ children }
-
-			<BlockControls>
+			<BlockControls group="other">
 				<ToolbarGroup>
-					<ToolbarButton
-						name="dynamic-link"
-						icon={ link }
-						title={ __( 'Dynamic Link', 'otter-blocks' ) }
-						ref={ buttonRef }
-						onClick={ () => setOpen( ! isOpen ) }
+					<DropdownMenu
+						icon="database"
+						label={ __( 'Dynamic Content', 'otter-blocks' ) }
 						className="o-dynamic-button"
-					/>
+						ref={ buttonRef }
+					>
+						{ ( { onClose } ) => (
+							<>
+								<OtterDynamicContentSlot fillProps={ { onClose } } />
+			
+								<MenuItem
+									icon={ link }
+									onClick={ () => {
+										setOpen( true );
+										if ( onClose ) { onClose(); }
+									} }
+									className="o-dynamic-button"
+								>
+									{ __( 'Dynamic Link', 'otter-blocks' ) }
+								</MenuItem>
+							</>
+						) }
+					</DropdownMenu>
 				</ToolbarGroup>
 			</BlockControls>
 

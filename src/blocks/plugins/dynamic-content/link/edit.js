@@ -8,10 +8,13 @@ import { link } from '@wordpress/icons';
  */
 import { __ } from '@wordpress/i18n';
 
+import { BlockControls } from '@wordpress/block-editor';
 
 import {
 	Modal,
-	MenuItem
+	MenuItem,
+	DropdownMenu,
+	ToolbarGroup
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -31,9 +34,9 @@ import {
 	name,
 	supportedBlocks
 } from './index.js';
-import { OtterDynamicContentFill } from '../index.js';
 import Fields from './fields.js';
 import InlineControls from '../components/inline-controls.js';
+import { OtterDynamicContentSlot } from '../index.js';
 
 const Edit = ({
 	isActive,
@@ -106,20 +109,31 @@ const Edit = ({
 	return (
 		<Fragment>
 			{ Boolean( window.themeisleGutenberg.hasModule.dynamicContent ) && (
-				<OtterDynamicContentFill>
-					{ ({ onClose }) => (
-						<MenuItem
-							icon={ link }
-							onClick={ () => {
-								setOpen( true );
-								if ( onClose ) { onClose(); }
-							} }
-							className="o-dynamic-button"
-						>
-							{ __( 'Dynamic Link', 'otter-blocks' ) }
-						</MenuItem>
-					)}
-				</OtterDynamicContentFill>
+				<BlockControls group="other">
+					<ToolbarGroup>
+						<DropdownMenu
+							icon="database"
+							label={ __( 'Dynamic Content', 'otter-blocks' ) }
+							className="o-dynamic-button">
+							{ ( { onClose } ) => (
+								<>
+									<OtterDynamicContentSlot fillProps={ { onClose } } />
+
+									<MenuItem
+										icon={ link }
+										onClick={ () => {
+											setOpen( true );
+											if ( onClose ) { onClose(); }
+										} }
+										className="o-dynamic-button"
+									>
+										{ __( 'Dynamic Link', 'otter-blocks' ) }
+									</MenuItem>
+								</>
+							) }
+						</DropdownMenu>
+					</ToolbarGroup>
+				</BlockControls>
 			) }
 
 			{ isOpen && (
