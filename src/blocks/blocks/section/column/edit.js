@@ -150,16 +150,15 @@ const Edit = ({
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
 	}
+	const { layout, layoutTablet, layoutMobile } = parentBlock.attributes;
+	const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
+	let { columns } = parentBlock.attributes;
+
+	if ( 6 < columns ) {
+		columns = 6;
+	}
 
 	if ( attributes.columnWidth === undefined ) {
-		const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
-		let { columns } = parentBlock.attributes;
-		const { layout } = parentBlock.attributes;
-
-		if ( 6 < columns ) {
-			columns = 6;
-		}
-
 		updateBlockAttributes( clientId, {
 			columnWidth: layouts[columns][layout][index]
 		});
@@ -180,9 +179,18 @@ const Edit = ({
 		marginLeft: getValue( 'margin' )?.left
 	};
 
+	if ( isDesktop ) {
+		const desktopStyle = pickBy({
+			flexBasis: `${ attributes.columnWidth }%`,
+		}, ( value ) => value );
+		stylesheet = merge( stylesheet, desktopStyle );
+	}
 
 	if ( isTablet || isMobile ) {
+		const flexBasis = layouts[columns][layoutTablet][index];
+
 		const tabletStyle = pickBy({
+			flexBasis: `${ flexBasis }%`,
 			paddingTop: getValue( 'paddingTablet' )?.top,
 			paddingRight: getValue( 'paddingTablet' )?.right,
 			paddingBottom: getValue( 'paddingTablet' )?.bottom,
@@ -196,7 +204,10 @@ const Edit = ({
 	}
 
 	if ( isMobile ) {
+		const flexBasis = layouts[columns][layoutMobile][index];
+
 		const mobileStyle = pickBy({
+			flexBasis: `${ flexBasis }%`,
 			paddingTop: getValue( 'paddingMobile' )?.top,
 			paddingRight: getValue( 'paddingMobile' )?.right,
 			paddingBottom: getValue( 'paddingMobile' )?.bottom,
@@ -265,7 +276,6 @@ const Edit = ({
 	};
 
 	const style = {
-		flexBasis: `${ attributes.columnWidth }%`,
 		...stylesheet,
 		...background,
 		...borderStyle,
