@@ -525,11 +525,10 @@ class Dynamic_Content {
 		$description = get_the_archive_description();
 
 		if ( empty( $description ) ) {
-			$default     = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-			$description = $default;
+			$description = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		}
 
-		return $description;
+		return wp_strip_all_tags( $description );
 	}
 
 	/**
@@ -630,7 +629,7 @@ class Dynamic_Content {
 			'<a href="%s" %s>%s</a>',
 			esc_url( $link ),
 			$attrs,
-			esc_html( $data['text'] )
+			wp_kses_post( $data['text'] )
 		);
 
 		return $value;

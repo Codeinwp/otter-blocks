@@ -5,6 +5,7 @@ import { domReady, scrollIntoViewIfNeeded } from '../../helpers/frontend-helper-
 
 domReady( () => {
 	const tabs = document.querySelectorAll( '.wp-block-themeisle-blocks-tabs' );
+	const hash = window.location.hash.substring(1);
 
 	tabs.forEach( tab => {
 		const items = Array.from( tab.querySelectorAll( ':scope > .wp-block-themeisle-blocks-tabs__content > .wp-block-themeisle-blocks-tabs-item' ) );
@@ -30,6 +31,10 @@ domReady( () => {
 			tabTitle.classList.remove( 'wp-block-themeisle-blocks-tabs-item__header' );
 			headerItem.appendChild( tabTitle );
 
+			if ( item?.id ) {
+				headerItem.setAttribute( 'for', item.id );
+			}
+
 			if ( 'true' === item.dataset.defaultOpen && ! openedTab ) {
 				headerItem.classList.add( 'active' );
 				content.classList.add( 'active' );
@@ -39,27 +44,27 @@ domReady( () => {
 				closedTabs.push({ headerItem, content, headerMobile });
 			}
 
-			const toggleTabs = ( i, idx ) => {
-				const content = i.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
-				const headerMobile = i.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__header' );
+			const toggleTabs = ( tabItem, tabIndex ) => {
+				const tabContent = tabItem.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
+				const tabHeaderMobile = tabItem.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__header' );
 
-				content.classList.toggle( 'active', idx === index );
-				content.classList.toggle( 'hidden', idx !== index );
+				tabContent.classList.toggle( 'active', tabIndex === index );
+				tabContent.classList.toggle( 'hidden', tabIndex !== index );
 
-				headerMobile.classList.toggle( 'active', idx === index );
-				headerMobile.classList.toggle( 'hidden', idx !== index );
-				headerMobile.setAttribute( 'aria-selected', idx === index );
+				tabHeaderMobile.classList.toggle( 'active', tabIndex === index );
+				tabHeaderMobile.classList.toggle( 'hidden', tabIndex !== index );
+				tabHeaderMobile.setAttribute( 'aria-selected', tabIndex === index );
 
 				const headerItems = Array.from( header.childNodes );
 
-				headerItems.forEach( ( h, idx ) => {
-					h.classList.toggle( 'active', idx === index );
-					h.classList.toggle( 'hidden', idx !== index );
-					h.setAttribute( 'aria-selected', idx === index );
+				headerItems.forEach( ( headerElement, headerIndex ) => {
+					headerElement.classList.toggle( 'active', headerIndex === index );
+					headerElement.classList.toggle( 'hidden', headerIndex !== index );
+					headerElement.setAttribute( 'aria-selected', headerIndex === index );
 				});
 
-				if ( idx === index && headerMobile ) {
-					scrollIntoViewIfNeeded( headerMobile );
+				if ( tabIndex === index && tabHeaderMobile ) {
+					scrollIntoViewIfNeeded( tabHeaderMobile );
 				}
 			};
 
@@ -80,6 +85,17 @@ domReady( () => {
 			});
 
 			header.appendChild( headerItem );
+
+
+			if ( hash ) {
+				const targetTab = item.id === hash;
+
+				if ( targetTab ) {
+					toggleTabs( item, index );
+					openedTab = true;
+					scrollIntoViewIfNeeded( headerItem );
+				}
+			}
 		});
 
 		/**

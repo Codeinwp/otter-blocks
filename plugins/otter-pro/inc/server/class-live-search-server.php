@@ -147,17 +147,18 @@ class Live_Search_Server {
 				'results' => array_map(
 					function( $post ) {
 						$data = array(
-							'id'     => $post->ID,
-							'link'   => get_permalink( $post->ID ),
-							'title'  => $post->post_title,
-							'type'   => $post->post_type,
-							'date'   => get_the_date( 'F d, Y', $post ),
-							'author' => get_the_author_meta( 'display_name', intval( $post->post_author ) ),
-							'parent' => get_post( $post->post_parent ) ? get_post( $post->post_parent )->post_title : '',
+							'id'             => $post->ID,
+							'link'           => get_permalink( $post->ID ),
+							'title'          => $post->post_title,
+							'type'           => $post->post_type,
+							'date'           => get_the_date( 'F d, Y', $post ),
+							'author'         => get_the_author_meta( 'display_name', intval( $post->post_author ) ),
+							'parent'         => get_post( $post->post_parent ) ? get_post( $post->post_parent )->post_title : '',
+							'featured_image' => get_the_post_thumbnail_url( $post->ID, 'thumbnail' ),
 						);
 
 						if ( 'product' === $post->post_type && class_exists( 'WooCommerce' ) ) {
-							$data['price'] = wc_get_product( $post->ID )->get_price() . get_woocommerce_currency_symbol();
+							$data['price'] = wc_get_product( $post->ID )->get_price_html();
 						}
 
 						return $data;

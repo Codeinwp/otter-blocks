@@ -9,6 +9,7 @@ namespace ThemeIsle\GutenbergBlocks\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Pro;
 use ThemeIsle\GutenbergBlocks\Plugins\FSE_Onboarding;
+use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 
 /**
  * Class Dashboard
@@ -28,7 +29,8 @@ class Dashboard {
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
-		add_action( 'admin_head', array( $this, 'form_submission_elements' ) );
+		add_action( 'admin_head', array( $this, 'survey_elements' ) );
+		add_action( 'admin_notices', array( $this, 'form_submission_elements' ), 30 );
 		add_action( 'admin_head', array( $this, 'add_inline_css' ) );
 
 		$form_options = get_option( 'themeisle_blocks_form_emails' );
@@ -36,7 +38,7 @@ class Dashboard {
 			add_action( 'wp_dashboard_setup', array( $this, 'form_submissions_widget' ) );
 		}
 
-		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( $this, 'get_survey_metadata' ), 10, 2 );
+		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( __CLASS__, 'get_survey_metadata' ), 10, 2 );
 	}
 
 	/**
@@ -241,11 +243,13 @@ class Dashboard {
 			'assetsPath'             => OTTER_BLOCKS_URL . 'assets/',
 			'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
 			'hasPro'                 => Pro::is_pro_installed(),
+			'otterPage'              => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/', 'welcome', 'admin' ) ),
 			'upgradeLink'            => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ) ),
 			'upgradeLinkFromTc'      => tsdk_utmify( Pro::get_url(), 'templatecloud' ),
 			'tcUpgradeLink'          => tsdk_utmify( 'https://themeisle.com/plugins/templates-cloud/', 'templatecloud', 'otter-blocks' ),
 			'tcDocs'                 => 'https://docs.themeisle.com/article/2191-templates-cloud-collections',
 			'docsLink'               => Pro::get_docs_url(),
+			'newPageUrl'             => esc_url( admin_url( 'post-new.php?post_type=page' ) ),
 			'showFeedbackNotice'     => $this->should_show_feedback_notice(),
 			'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),
 			'hasOnboarding'          => false !== get_theme_support( FSE_Onboarding::SUPPORT_KEY ),
@@ -278,6 +282,7 @@ class Dashboard {
 				)
 			),
 			'neveInstalled'          => defined( 'NEVE_VERSION' ),
+			'hasPatternSources'      => Template_Cloud::has_used_pattern_sources(),
 		);
 
 		$global_data = apply_filters( 'otter_dashboard_data', $global_data );
@@ -313,8 +318,21 @@ class Dashboard {
 		}
 
 		update_option( 'themeisle_blocks_settings_redirect', false );
-		wp_safe_redirect( admin_url( 'admin.php?page=otter' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=otter&welcome=true' ) );
 		exit;
+	}
+
+	/**
+	 * Add elements for the survey.
+	 *
+	 * @return void
+	 */
+	public function survey_elements() {
+		$screen = get_current_screen();
+
+		if ( 'edit-otter_form_record' === $screen->id ) {
+			do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'form-submissions' );
+		}
 	}
 
 	/**
@@ -324,12 +342,9 @@ class Dashboard {
 	 */
 	public function form_submission_elements() {
 		$screen = get_current_screen();
+
 		if ( 'edit-otter_form_record' === $screen->id || 'otter-blocks_page_form-submissions-free' === $screen->id ) {
 			$this->the_otter_banner();
-		}
-		
-		if ( 'edit-otter_form_record' === $screen->id ) {
-			do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'form-submissions' );
 		}
 	}
 
@@ -761,17 +776,16 @@ class Dashboard {
 	 * 
 	 * @return array The data in Frombricks format.
 	 */
-	public function get_survey_metadata( $data, $page_slug ) {
-		$dash_data = $this->get_dashboard_data();
-		
-		$install_days_number = $dash_data['days_since_install'];
+	public static function get_survey_metadata( $data, $page_slug ) {
+		$dash_data           = apply_filters( 'otter_dashboard_data', array() );
+		$install_days_number = intval( ( time() - get_option( 'otter_blocks_install', time() ) ) / DAY_IN_SECONDS );
 
 		$data = array(
 			'environmentId' => 'clp9hqm8c1osfdl2ixwd0k0iz',
 			'attributes'    => array(
 				'install_days_number' => $install_days_number,
 				'plan'                => isset( $dash_data['license'], $dash_data['license']['type'] ) ? $dash_data['license']['type'] : 'free',
-				'freeVersion'         => $dash_data['version'],
+				'freeVersion'         => OTTER_BLOCKS_VERSION,
 			),
 		);
 

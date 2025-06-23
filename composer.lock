@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "154808594f290274804a6ce877f194db",
+    "content-hash": "571a200f701652495c906beba4ebba9d",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -49,25 +49,25 @@
         },
         {
             "name": "enshrined/svg-sanitize",
-            "version": "0.19.0",
+            "version": "0.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/darylldoyle/svg-sanitizer.git",
-                "reference": "e95cd17be68e45f523cbfb0fe50cdd891b0cf20e"
+                "reference": "5e477468fac5c5ce933dce53af3e8e4e58dcccc9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/e95cd17be68e45f523cbfb0fe50cdd891b0cf20e",
-                "reference": "e95cd17be68e45f523cbfb0fe50cdd891b0cf20e",
+                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/5e477468fac5c5ce933dce53af3e8e4e58dcccc9",
+                "reference": "5e477468fac5c5ce933dce53af3e8e4e58dcccc9",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
-                "php": "^5.6 || ^7.0 || ^8.0"
+                "php": "^7.1 || ^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.7 || ^6.5 || ^8.5"
+                "phpunit/phpunit": "^6.5 || ^8.5"
             },
             "type": "library",
             "autoload": {
@@ -88,9 +88,9 @@
             "description": "An SVG sanitizer for PHP",
             "support": {
                 "issues": "https://github.com/darylldoyle/svg-sanitizer/issues",
-                "source": "https://github.com/darylldoyle/svg-sanitizer/tree/0.19.0"
+                "source": "https://github.com/darylldoyle/svg-sanitizer/tree/0.21.0"
             },
-            "time": "2024-06-18T10:27:15+00:00"
+            "time": "2025-01-13T09:32:25+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -161,24 +161,24 @@
         },
         {
             "name": "sabberworm/php-css-parser",
-            "version": "v8.6.0",
+            "version": "v8.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MyIntervals/PHP-CSS-Parser.git",
-                "reference": "d2fb94a9641be84d79c7548c6d39bbebba6e9a70"
+                "reference": "3de493bdddfd1f051249af725c7e0d2c38fed740"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MyIntervals/PHP-CSS-Parser/zipball/d2fb94a9641be84d79c7548c6d39bbebba6e9a70",
-                "reference": "d2fb94a9641be84d79c7548c6d39bbebba6e9a70",
+                "url": "https://api.github.com/repos/MyIntervals/PHP-CSS-Parser/zipball/3de493bdddfd1f051249af725c7e0d2c38fed740",
+                "reference": "3de493bdddfd1f051249af725c7e0d2c38fed740",
                 "shasum": ""
             },
             "require": {
                 "ext-iconv": "*",
-                "php": ">=5.6.20"
+                "php": "^5.6.20 || ^7.0.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^5.7.27"
+                "phpunit/phpunit": "5.7.27 || 6.5.14 || 7.5.20 || 8.5.41"
             },
             "suggest": {
                 "ext-mbstring": "for parsing UTF-8 CSS"
@@ -220,9 +220,9 @@
             ],
             "support": {
                 "issues": "https://github.com/MyIntervals/PHP-CSS-Parser/issues",
-                "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.6.0"
+                "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.8.0"
             },
-            "time": "2024-07-01T07:33:21+00:00"
+            "time": "2025-03-23T17:59:05+00:00"
         },
         {
             "name": "stripe/stripe-php",
@@ -342,16 +342,16 @@
         },
         {
             "name": "wptt/webfont-loader",
-            "version": "v1.1.2",
+            "version": "v1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WPTT/webfont-loader.git",
-                "reference": "780e564bf0554c419ef447c2b5b768b497ecee40"
+                "reference": "d5a7150f4e1a90c566e2e64aeae0876743be48b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WPTT/webfont-loader/zipball/780e564bf0554c419ef447c2b5b768b497ecee40",
-                "reference": "780e564bf0554c419ef447c2b5b768b497ecee40",
+                "url": "https://api.github.com/repos/WPTT/webfont-loader/zipball/d5a7150f4e1a90c566e2e64aeae0876743be48b9",
+                "reference": "d5a7150f4e1a90c566e2e64aeae0876743be48b9",
                 "shasum": ""
             },
             "require": {
@@ -383,7 +383,7 @@
                 "issues": "https://github.com/WPTT/font-loader/issues",
                 "source": "https://github.com/WPTT/font-loader"
             },
-            "time": "2022-06-17T10:41:00+00:00"
+            "time": "2024-10-14T05:00:02+00:00"
         }
     ],
     "packages-dev": [
@@ -726,16 +726,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.12.0",
+            "version": "1.13.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "3a6b9a42cd8f8771bd4295d13e1423fa7f3d942c"
+                "reference": "1720ddd719e16cf0db4eb1c6eca108031636d46c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/3a6b9a42cd8f8771bd4295d13e1423fa7f3d942c",
-                "reference": "3a6b9a42cd8f8771bd4295d13e1423fa7f3d942c",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/1720ddd719e16cf0db4eb1c6eca108031636d46c",
+                "reference": "1720ddd719e16cf0db4eb1c6eca108031636d46c",
                 "shasum": ""
             },
             "require": {
@@ -774,7 +774,7 @@
             ],
             "support": {
                 "issues": "https://github.com/myclabs/DeepCopy/issues",
-                "source": "https://github.com/myclabs/DeepCopy/tree/1.12.0"
+                "source": "https://github.com/myclabs/DeepCopy/tree/1.13.1"
             },
             "funding": [
                 {
@@ -782,20 +782,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-06-12T14:39:25+00:00"
+            "time": "2025-04-29T12:36:36+00:00"
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.3.0",
+            "version": "v5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "3abf7425cd284141dc5d8d14a9ee444de3345d1a"
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/3abf7425cd284141dc5d8d14a9ee444de3345d1a",
-                "reference": "3abf7425cd284141dc5d8d14a9ee444de3345d1a",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/ae59794362fe85e051a58ad36b289443f57be7a9",
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9",
                 "shasum": ""
             },
             "require": {
@@ -838,9 +838,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.3.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.5.0"
             },
-            "time": "2024-09-29T13:56:26+00:00"
+            "time": "2025-05-31T08:24:38+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1014,16 +1014,16 @@
         },
         {
             "name": "php-stubs/woocommerce-stubs",
-            "version": "v9.5.0",
+            "version": "v9.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/woocommerce-stubs.git",
-                "reference": "813f3cad9892bd3b6ffae9334a4ccaa73692b439"
+                "reference": "3e8464d5471332cd56d595fde61ce8821236674f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/813f3cad9892bd3b6ffae9334a4ccaa73692b439",
-                "reference": "813f3cad9892bd3b6ffae9334a4ccaa73692b439",
+                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/3e8464d5471332cd56d595fde61ce8821236674f",
+                "reference": "3e8464d5471332cd56d595fde61ce8821236674f",
                 "shasum": ""
             },
             "require": {
@@ -1052,31 +1052,34 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
-                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v9.5.0"
+                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v9.8.2"
             },
-            "time": "2024-12-17T03:31:31+00:00"
+            "time": "2025-04-23T03:16:52+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",
-            "version": "v6.7.1",
+            "version": "v6.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "83448e918bf06d1ed3d67ceb6a985fc266a02fd1"
+                "reference": "92e444847d94f7c30f88c60004648f507688acd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/83448e918bf06d1ed3d67ceb6a985fc266a02fd1",
-                "reference": "83448e918bf06d1ed3d67ceb6a985fc266a02fd1",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/92e444847d94f7c30f88c60004648f507688acd5",
+                "reference": "92e444847d94f7c30f88c60004648f507688acd5",
                 "shasum": ""
+            },
+            "conflict": {
+                "phpdocumentor/reflection-docblock": "5.6.1"
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-                "nikic/php-parser": "^4.13",
+                "nikic/php-parser": "^5.4",
                 "php": "^7.4 || ^8.0",
                 "php-stubs/generator": "^0.8.3",
                 "phpdocumentor/reflection-docblock": "^5.4.1",
-                "phpstan/phpstan": "^1.11",
+                "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^9.5",
                 "szepeviktor/phpcs-psr-12-neutron-hybrid-ruleset": "^1.1.1",
                 "wp-coding-standards/wpcs": "3.1.0 as 2.3.0"
@@ -1100,9 +1103,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
-                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.7.1"
+                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.8.1"
             },
-            "time": "2024-11-24T03:57:09+00:00"
+            "time": "2025-05-02T12:33:34+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
@@ -2672,16 +2675,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.10.3",
+            "version": "3.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "62d32998e820bddc40f99f8251958aed187a5c9c"
+                "reference": "65ff2489553b83b4597e89c3b8b721487011d186"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/62d32998e820bddc40f99f8251958aed187a5c9c",
-                "reference": "62d32998e820bddc40f99f8251958aed187a5c9c",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/65ff2489553b83b4597e89c3b8b721487011d186",
+                "reference": "65ff2489553b83b4597e89c3b8b721487011d186",
                 "shasum": ""
             },
             "require": {
@@ -2746,9 +2749,13 @@
                 {
                     "url": "https://opencollective.com/php_codesniffer",
                     "type": "open_collective"
+                },
+                {
+                    "url": "https://thanks.dev/u/gh/phpcsstandards",
+                    "type": "thanks_dev"
                 }
             ],
-            "time": "2024-09-18T10:38:58+00:00"
+            "time": "2025-05-11T03:36:00+00:00"
         },
         {
             "name": "symfony/polyfill-php73",
@@ -2989,15 +2996,15 @@
         },
         {
             "name": "wpackagist-plugin/woocommerce",
-            "version": "9.3.3",
+            "version": "9.8.5",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/woocommerce/",
-                "reference": "tags/9.3.3"
+                "reference": "tags/9.8.5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/woocommerce.9.3.3.zip"
+                "url": "https://downloads.wordpress.org/plugin/woocommerce.9.8.5.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -3007,21 +3014,21 @@
         },
         {
             "name": "yoast/phpunit-polyfills",
-            "version": "3.0.0",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Yoast/PHPUnit-Polyfills.git",
-                "reference": "19e6d5fb8aad31f731f774f9646a10c64a8843d2"
+                "reference": "134921bfca9b02d8f374c48381451da1d98402f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/19e6d5fb8aad31f731f774f9646a10c64a8843d2",
-                "reference": "19e6d5fb8aad31f731f774f9646a10c64a8843d2",
+                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/134921bfca9b02d8f374c48381451da1d98402f9",
+                "reference": "134921bfca9b02d8f374c48381451da1d98402f9",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0",
-                "phpunit/phpunit": "^6.4.4 || ^7.0 || ^8.0 || ^9.0 || ^11.0"
+                "php": ">=7.1",
+                "phpunit/phpunit": "^7.5 || ^8.0 || ^9.0 || ^11.0 || ^12.0"
             },
             "require-dev": {
                 "php-parallel-lint/php-console-highlighter": "^1.0.0",
@@ -3031,7 +3038,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "3.x-dev"
+                    "dev-main": "4.x-dev"
                 }
             },
             "autoload": {
@@ -3066,7 +3073,7 @@
                 "security": "https://github.com/Yoast/PHPUnit-Polyfills/security/policy",
                 "source": "https://github.com/Yoast/PHPUnit-Polyfills"
             },
-            "time": "2024-09-07T00:24:25+00:00"
+            "time": "2025-02-09T18:58:54+00:00"
         }
     ],
     "aliases": [],

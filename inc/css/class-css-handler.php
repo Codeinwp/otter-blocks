@@ -32,6 +32,7 @@ class CSS_Handler extends Base_CSS {
 		add_action( 'rest_api_init', array( $this, 'autoload_block_classes' ) );
 		add_action( 'before_delete_post', array( __CLASS__, 'delete_css_file' ) );
 		add_action( 'customize_save_after', array( $this, 'customize_save_after' ) );
+		add_action( 'rest_after_insert_wp_block', array( $this, 'insert_pattern' ), 10, 3 );
 		add_filter( 'customize_dynamic_partial_args', array( $this, 'customize_dynamic_partial_args' ), 10, 2 );
 	}
 
@@ -566,6 +567,22 @@ class CSS_Handler extends Base_CSS {
 		if ( $has_review !== $saved_value ) {
 			update_post_meta( $post_id, '_themeisle_gutenberg_block_has_review', $has_review );
 		}
+	}
+
+	/**
+	 * Action to run after inserting a pattern.
+	 * 
+	 * @param \WP_Post         $post The post object.
+	 * @param \WP_REST_Request $request The request object.
+	 * @param bool             $creating Whether the post is being created.
+	 * @access public
+	 */
+	public function insert_pattern( $post, $request, $creating ) {
+		// Generate CSS for the inserted pattern.
+		self::generate_css_file( $post->ID );
+
+		// Mark the post as having a review block if applicable.
+		self::mark_review_block_metadata( $post->ID );
 	}
 
 	/**

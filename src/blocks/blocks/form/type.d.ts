@@ -53,6 +53,7 @@ export type FormOptions = {
 	hasCaptcha?: boolean
 	email?: string
 	fromName?: string
+	fromEmail?: string
 	redirectLink?: string
 	emailSubject?: string
 	submitMessage?: string

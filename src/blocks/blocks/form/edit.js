@@ -77,6 +77,7 @@ const formOptionsMap = {
 	submitMessage: 'submitMessage',
 	errorMessage: 'errorMessage',
 	fromName: 'fromName',
+	fromEmail: 'fromEmail',
 	cc: 'cc',
 	bcc: 'bcc',
 	autoresponder: 'autoresponder',
@@ -133,6 +134,7 @@ const Edit = ({
 		provider: undefined,
 		redirectLink: undefined,
 		fromName: undefined,
+		fromEmail: undefined,
 		emailTo: undefined,
 		subject: undefined,
 		email: undefined,
@@ -358,6 +360,7 @@ const Edit = ({
 		setFormOptions({
 			emailTo: wpOptions?.email,
 			fromName: wpOptions?.fromName,
+			fromEmail: wpOptions?.fromEmail,
 			redirectLink: wpOptions?.redirectLink,
 			subject: wpOptions?.emailSubject,
 			cc: wpOptions?.cc,

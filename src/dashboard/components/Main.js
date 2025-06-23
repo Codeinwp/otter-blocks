@@ -1,10 +1,7 @@
 /**
  * WordPress dependencies.
  */
-import {
-	__,
-	sprintf
-} from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 import {
 	Placeholder,
@@ -26,15 +23,13 @@ import NoticeCard from './NoticeCard';
 import { applyFilters } from '@wordpress/hooks';
 import Blocks from './pages/Blocks';
 import Deal from './Deal';
+import WelcomeNotice from './WelcomeNotice.js';
 
-let daysLeft = sprintf( 
-	// Translators: %s is the number of days left.
-	__( '%s Days', 'otter-blocks' ), 
-	Number( window.otterObj.daysLeft ) 
-);
+let isWelcomePage = false;
 
-if ( 1 === Number( window.otterObj.daysLeft ) ) {
-	daysLeft = __( 'Less than 24 hours', 'otter-blocks' );
+if ( typeof window !== 'undefined' && window.location ) {
+	const urlParams = new URLSearchParams( window.location.search );
+	isWelcomePage = urlParams.get('welcome') === 'true';
 }
 
 const Main = ({
@@ -98,8 +93,12 @@ const Main = ({
 				)
 			}
 			<div id="tsdk_banner" className="otter-banner"></div>
-			<div className={ `otter-main is-${ currentTab }`}>
 
+			{ isWelcomePage && (
+				<WelcomeNotice />
+			) }
+
+			<div className={ `otter-main is-${ currentTab }`}>
 				{ 'dashboard' === currentTab && window.otterObj.showFeedbackNotice && (
 					<NoticeCard
 						slug="feedback"

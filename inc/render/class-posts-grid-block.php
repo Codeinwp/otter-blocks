@@ -166,7 +166,7 @@ class Posts_Grid_Block {
 
 			if ( 'title' === $element ) {
 				if ( isset( $attributes['displayTitle'] ) && $attributes['displayTitle'] ) {
-					$html .= $this->render_post_title( $attributes['titleTag'], get_the_permalink( $id ), get_the_title( $id ) );
+					$html .= $this->render_post_title( $attributes['titleTag'], get_the_permalink( $id ), get_the_title( $id ), $post->post_type );
 				}
 			}
 
@@ -360,7 +360,7 @@ class Posts_Grid_Block {
 			'post_type'        => $attributes['postTypes'],
 			'posts_per_page'   => $attributes['postsToShow'],
 			'post_status'      => 'publish',
-			'order'            => $attributes['order'],
+			'order'            => isset( $attributes['order'] ) ? $attributes['order'] : 'DESC',
 			'orderby'          => $attributes['orderBy'],
 			'offset'           => $offset,
 			'cat'              => $categories,
@@ -417,14 +417,11 @@ class Posts_Grid_Block {
 	 * @return string
 	 */
 	protected function render_pagination( $page_number, $total_pages ) {
-		$big  = 9999999;
-		$base = str_replace( strval( $big ), '%#%', esc_url( get_pagenum_link( $big ) ) );
-
+		$big     = 9999999;
 		$output  = '<div class="o-posts-grid-pag">';
 		$output .= paginate_links(
 			array(
-				'base'      => $base,
-				'format'    => '?paged=%#%',
+				'format'    => ( is_front_page() && ! is_singular() ) ? '?page=%#%' : '?paged=%#%',
 				'current'   => $page_number,
 				'total'     => $total_pages,
 				'prev_text' => __( 'Prev', 'otter-blocks' ),
@@ -442,22 +439,37 @@ class Posts_Grid_Block {
 	 * @param string $tag The html tag.
 	 * @param string $post_url The post URL.
 	 * @param string $post_title The post title.
+	 * @param string $post_type The post type.
 	 * 
 	 * @return string The rendered post title.
 	 */
-	public function render_post_title( $tag, $post_url, $post_title ) {
-
+	public function render_post_title( $tag, $post_url, $post_title, $post_type = '' ) {
 		$tag = sanitize_key( $tag );
-		
+
 		if ( ! in_array( $tag, array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ) {
 			$tag = 'h4';
+		}
+
+		// Allow specific HTML tags in the post title if the post type is 'product'.
+		if ( 'product' === $post_type ) {
+			$post_title = wp_kses(
+				$post_title,
+				array(
+					'em'     => array(),
+					'i'      => array(),
+					'strong' => array(),
+					'b'      => array(),
+				)
+			);
+		} else {
+			$post_title = esc_html( $post_title );
 		}
 
 		return sprintf(
 			'<%1$s class="o-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
 			$tag,
 			esc_url( $post_url ),
-			esc_html( $post_title )
+			$post_title
 		);
 	}
 }

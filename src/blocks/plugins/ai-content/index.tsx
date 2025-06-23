@@ -8,7 +8,7 @@ import {
 	DropdownMenu,
 	MenuGroup,
 	MenuItem,
-	Toolbar,
+	ToolbarGroup,
 	Spinner,
 	ExternalLink,
 	Disabled
@@ -329,8 +329,8 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 						)
 					) &&
 					(
-						<BlockControls>
-							<Toolbar label={__( 'AI Block', 'otter-blocks' )}>
+						<BlockControls group="other">
+							<ToolbarGroup>
 								<DropdownMenu
 									icon={ aiGeneration }
 									label={ __( 'Otter AI Content', 'otter-blocks' ) }
@@ -341,7 +341,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 										)
 									}
 								</DropdownMenu>
-							</Toolbar>
+							</ToolbarGroup>
 						</BlockControls>
 					) }
 			</Fragment>

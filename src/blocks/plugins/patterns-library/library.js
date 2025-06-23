@@ -191,7 +191,7 @@ const Library = ({
 
 	return (
 		<Modal
-			title={ __( 'Otter Patterns', 'otter-blocks' ) }
+			title={ __( 'Design Library', 'otter-blocks' ) }
 			onRequestClose={ onClose }
 			size="fill"
 			className="o-library__modal"
@@ -205,15 +205,17 @@ const Library = ({
 					) }
 
 					<div className="o-library__modal__sidebar">
-						<Button
-							icon="heart"
-							isPressed={ 'favorites' === selectedCategory }
-							onClick={ () => setSelectedCategory( 'favorites' ) }
-						>
-							{ __( 'My Favorites', 'otter-blocks' ) }
-						</Button>
+						{ getFavorites?.length > 0 && (
+							<Button
+								icon="heart"
+								isPressed={ 'favorites' === selectedCategory }
+								onClick={ () => setSelectedCategory( 'favorites' ) }
+							>
+								{ __( 'My Favorites', 'otter-blocks' ) }
+							</Button>
+						)}
 
-						{tcCategories.length < 1 && (
+						{( tcCategories.length < 1 && Boolean( window?.themeisleGutenberg?.hasPatternSources ) ) && (
 							<Button
 								icon="open-folder"
 								isPressed={ 'cloud-empty' === selectedCategory }
@@ -275,7 +277,7 @@ const Library = ({
 					</div>
 
 					<div className="o-library__modal__content">
-						{selectedCategory === CLOUD_EMPTY_CATEGORY && <CloudLibraryPlaceholder />}
+						{( selectedCategory === CLOUD_EMPTY_CATEGORY && Boolean( window?.themeisleGutenberg?.hasPatternSources ) ) && <CloudLibraryPlaceholder />}
 						{selectedCategory !== CLOUD_EMPTY_CATEGORY && (
 							<>
 								<div className="o-library__modal__content__actions">

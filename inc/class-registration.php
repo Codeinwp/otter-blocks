@@ -8,7 +8,9 @@
 namespace ThemeIsle\GutenbergBlocks;
 
 use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
+use ThemeIsle\GutenbergBlocks\Plugins\Dashboard;
 use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
+use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 
 /**
  * Class Registration.
@@ -292,10 +294,14 @@ class Registration {
 				'isRTL'                   => is_rtl(),
 				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true ),
 				'hasOpenAiKey'            => ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
+				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
 			)
 		);
 
 		wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
+
+		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( Dashboard::class, 'get_survey_metadata' ), 10, 2 );
+		do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'editor' );
 	}
 
 	/**
@@ -441,7 +447,7 @@ class Registration {
 			}
 		}
 
-		if ( ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) || is_admin() ) {
+		if ( ( did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) || is_admin() ) {
 			return;
 		}
 
@@ -615,6 +621,8 @@ class Registration {
 				'themeisleGutenbergSlider',
 				array(
 					'isRTL' => is_rtl(),
+					'next'  => __( 'Next Slide', 'otter-blocks' ),
+					'prev'  => __( 'Previous Slide', 'otter-blocks' ),
 				)
 			);
 		}
@@ -942,7 +950,7 @@ class Registration {
 				self::$is_fa_loaded = true;
 
 				// See the src/blocks/plugins/menu-icons/inline.css file for where this comes from.
-				$styles = '.fab.wp-block-navigation-item,.far.wp-block-navigation-item,.fas.wp-block-navigation-item{-moz-osx-font-smoothing:inherit;-webkit-font-smoothing:inherit;font-weight:inherit}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before,.fas.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Free;margin-right:5px}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before{font-weight:400;padding-right:5px}.fas.wp-block-navigation-item:before{font-weight:900;padding-right:5px}.fab.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Brands}';
+				$styles = '.fab.wp-block-navigation-item,.far.wp-block-navigation-item,.fas.wp-block-navigation-item{-moz-osx-font-smoothing:inherit;-webkit-font-smoothing:inherit;font-weight:inherit;font-family: inherit}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before,.fas.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Free;margin-right:5px}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before{font-weight:400;padding-right:5px}.fas.wp-block-navigation-item:before{font-weight:900;padding-right:5px}.fab.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Brands}';
 
 				wp_add_inline_style( 'font-awesome-5', $styles );
 				return $block_content;
@@ -976,7 +984,7 @@ class Registration {
 	 * @since 2.0.5
 	 */
 	public function load_sticky( $block_content, $block ) {
-		if ( ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) || self::$scripts_loaded['sticky'] ) {
+		if ( ( did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) || self::$scripts_loaded['sticky'] ) {
 			return $block_content;
 		}
 

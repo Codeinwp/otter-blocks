@@ -54,7 +54,7 @@ class PopupBlock {
 
 		const { id } = this.element;
 
-		if ( 0 < dismiss || ! id || anchor ) {
+		if ( dismiss <= 0 || ! id || anchor ) {
 			return false;
 		}
 
@@ -121,6 +121,9 @@ class PopupBlock {
 			break;
 		case 'onExit':
 			this.bindExitIntent();
+			break;
+		case 'none':
+			// Do nothing
 			break;
 		default:
 		case 'onLoad':

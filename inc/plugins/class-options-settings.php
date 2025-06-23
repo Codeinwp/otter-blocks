@@ -324,6 +324,9 @@ class Options_Settings {
 							if ( isset( $item['fromName'] ) ) {
 								$item['fromName'] = sanitize_text_field( $item['fromName'] );
 							}
+							if ( isset( $item['fromEmail'] ) ) {
+								$item['fromEmail'] = sanitize_email( $item['fromEmail'] );
+							}
 							if ( isset( $item['cc'] ) ) {
 								$item['cc'] = sanitize_text_field( $item['cc'] );
 							}
@@ -387,6 +390,9 @@ class Options_Settings {
 									'type' => 'string',
 								),
 								'fromName'                => array(
+									'type' => 'string',
+								),
+								'fromEmail'               => array(
 									'type' => 'string',
 								),
 								'redirectLink'            => array(

@@ -40,6 +40,12 @@ const defaultConditions = {
 		label: __( 'Users', 'otter-blocks' ),
 		conditions: [
 			{
+				value: 'screenSize',
+				label: __( 'Screen Size', 'otter-blocks' ),
+				help: __( 'The selected block will be invisible based on the screen size.', 'otter-blocks'  ),
+				toggleVisibility: true
+			},
+			{
 				value: 'loggedInUser',
 				label: __( 'Logged In Users', 'otter-blocks' ),
 				help: __( 'The selected block will only be visible to logged-in users.', 'otter-blocks'  )
@@ -124,12 +130,6 @@ const defaultConditions = {
 	'advance': {
 		label: __( 'Advance', 'otter-blocks' ),
 		conditions: [
-			{
-				value: 'screenSize',
-				label: __( 'Screen Size', 'otter-blocks' ),
-				help: __( 'The selected block will be invisible based on the screen size.', 'otter-blocks'  ),
-				toggleVisibility: true
-			},
 			{
 				value: 'queryString',
 				label: __( 'Query String (Pro)', 'otter-blocks' ),
@@ -328,6 +328,7 @@ const Edit = ({
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
 	const [ toggleVisibility, setToggleVisibility ] = useState([]);
+	const [ openTabs, setOpenTabs ] = useState(new Set()); // State to track open tabs
 
 	const setAttributes = ( attrs ) => {
 
@@ -351,7 +352,7 @@ const Edit = ({
 	 * Use an intermediary buffer to add the real attributes to the block.
 	 */
 	useEffect( () => {
-		if ( buffer &&  window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
+		if ( buffer && window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
 			_setAttributes( buffer );
 		}
 	}, [ buffer ]);
@@ -389,8 +390,10 @@ const Edit = ({
 
 	const addGroup = () => {
 		const otterConditions = [ ...( attributes.otterConditions || []) ];
+		const newGroupIndex = otterConditions.length; // Use the index of the new group
 		otterConditions.push([{}]);
 		setAttributes({ otterConditions });
+		setOpenTabs(prev => new Set(prev).add(newGroupIndex));
 	};
 
 	const removeGroup = n => {
@@ -511,6 +514,7 @@ const Edit = ({
 						<PanelTab
 							label={ __( 'Rule Group', 'otter-blocks' ) }
 							onDelete={ () => removeGroup( index ) }
+							initialOpen={ openTabs.has(index) }
 						>
 							{ group && group.map( ( condObj, condIdx ) => (
 								<Fragment key={ `${ index }_${ condIdx }` }>

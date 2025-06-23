@@ -18,6 +18,10 @@ import Edit from './link-edit.js';
 const applyProContent = options => {
 	const proOptions = [
 		{
+			label: __( 'Site URL', 'otter-blocks' ),
+			value: 'siteURL',
+		},
+		{
 			label: __( 'Post Custom Field', 'otter-pro' ),
 			value: 'postMetaURL'
 		},
