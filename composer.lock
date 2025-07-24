@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "571a200f701652495c906beba4ebba9d",
+    "content-hash": "9acc55e79cc7b3416ecd51d46ee8612b",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.46",
+            "version": "3.3.47",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "af2e7360bbe3af6a1bd2c3779fc33b7765104461"
+                "reference": "59499ba103c0369c98b9e0d878826939e3e8e408"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/af2e7360bbe3af6a1bd2c3779fc33b7765104461",
-                "reference": "af2e7360bbe3af6a1bd2c3779fc33b7765104461",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/59499ba103c0369c98b9e0d878826939e3e8e408",
+                "reference": "59499ba103c0369c98b9e0d878826939e3e8e408",
                 "shasum": ""
             },
             "require-dev": {
@@ -43,9 +43,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.46"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.47"
             },
-            "time": "2025-05-16T15:38:02+00:00"
+            "time": "2025-07-21T14:06:29+00:00"
         },
         {
             "name": "enshrined/svg-sanitize",
@@ -3078,13 +3078,13 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
