@@ -125,7 +125,7 @@ class Dynamic_Content_Server {
 						),
 					),
 					'permission_callback' => function () {
-						return true;
+						return $this->check_permission( $_GET['context'] );
 					},
 				),
 			)
@@ -141,11 +141,36 @@ class Dynamic_Content_Server {
 						return Dynamic_Content::instance()->apply_data( $request->get_params() );
 					},
 					'permission_callback' => function () {
-						return true;
+						return $this->check_permission( $_GET['context'] );
 					},
 				),
 			)
 		);
+	}
+
+	/**
+	 * Check permission to perform the request.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return bool
+	 */
+	public function check_permission( $post_id = 0 ) {
+		if ( empty( $post_id ) ) {
+			return false;
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			return false;
+		}
+
+		// Allow only if the post is published or the user has permission to view it.
+		if ( 'publish' === $post->post_status || current_user_can( 'edit_post', $post_id ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
