@@ -124,8 +124,8 @@ class Dynamic_Content_Server {
 							},
 						),
 					),
-					'permission_callback' => function () {
-						return $this->check_permission( $_GET['context'] );
+					'permission_callback' => function ( $request ) {
+						return $this->check_permission( $request->get_param( 'context' ) );
 					},
 				),
 			)
@@ -140,8 +140,8 @@ class Dynamic_Content_Server {
 					'callback'            => function( $request ) {
 						return Dynamic_Content::instance()->apply_data( $request->get_params() );
 					},
-					'permission_callback' => function () {
-						return $this->check_permission( $_GET['context'] );
+					'permission_callback' => function ( $request ) {
+						return $this->check_permission( $request->get_param( 'context' ) );
 					},
 				),
 			)
