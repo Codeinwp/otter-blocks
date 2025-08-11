@@ -4,7 +4,7 @@
 **Requires at least:** 6.2  
 **Tested up to:** 6.8  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.1.0  
+**Stable tag:** 3.1.1  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
@@ -365,37 +365,10 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 ## Changelog ##
 
-#### [Version 3.1.0](https://github.com/Codeinwp/otter-blocks/compare/v3.0.12...v3.1.0) (2025-06-23)
+##### [Version 3.1.1](https://github.com/Codeinwp/otter-blocks/compare/v3.1.0...v3.1.1) (2025-08-11)
 
-### New Features
-- Add “Random” Sort Option to Otter Posts Block  
-- Add from setting for the Forms block  
-- Ability to modify form subject dynamically  
-- Allow tabs to have IDs so they can be linked and opened from an anchor  
-- Allow disabling the Popup block  
-- Display thumbnails in Live Search results  
-
-### Improvements
-- Otter Patterns Modal Improvements  
-- Move AI icon to the end of the toolbar to avoid interfering with core functionality  
-- Responsive settings — add 600 px and 960 px breakpoints  
-- Make Dynamic Content less intrusive  
-- A11y improvements in Sharing Icons Block  
-- Add new ACF types support to the Posts Block  
-- New User Experience Improvements  
-
-### Bug Fixes
-- Review block generating double schema markup  
-- Popup block bypasses the Display Interval feature  
-- Disabling Patterns Library doesn’t hide patterns  
-- Letter-case overlap in the sidebar  
-- Live Search shows incorrect prices for products  
-- Popup template with form not rendering top padding correctly  
-- General accessibility issues  
-- Product Review block inside a Pattern not visible in the Review Comparison Table block  
-- Menu Icons break the font of menu items  
-- Select-field options not editable in Otter Blocks Form  
-- Pagination with Posts block not working on the home page
+- Fixed media upload UI in modal view
+- Enhanced security
 
 
 
