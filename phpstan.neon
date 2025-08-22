@@ -1,5 +1,5 @@
 parameters:
-	level: 5
+	level: 6
 	paths:
 		- %currentWorkingDirectory%/inc
 		- %currentWorkingDirectory%/plugins
@@ -19,3 +19,4 @@ parameters:
 includes:
 	- %currentWorkingDirectory%/vendor/szepeviktor/phpstan-wordpress/extension.neon
 	- %currentWorkingDirectory%/vendor/spaze/phpstan-stripe/extension.neon
+	- %currentWorkingDirectory%/phpstan-baseline.neon

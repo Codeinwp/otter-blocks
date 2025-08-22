@@ -20,12 +20,12 @@
 		"automattic/vipwpcs": "^1.0.0",
 		"phpunit/phpunit": "9.6.5",
 		"yoast/phpunit-polyfills": "^4.0",
-		"phpstan/phpstan": "^1.10",
-		"szepeviktor/phpstan-wordpress": "^1.3",
-		"php-stubs/woocommerce-stubs": "^9.1",
-		"php-stubs/acf-pro-stubs": "^6.0",
-		"spaze/phpstan-stripe": "^2.4",
-		"wpackagist-plugin/woocommerce": "*"
+		"phpstan/phpstan": "^2.1",
+		"wpackagist-plugin/woocommerce": "*",
+		"spaze/phpstan-stripe": "^1.0",
+		"php-stubs/acf-pro-stubs": "^6.4",
+		"php-stubs/woocommerce-stubs": "^10.1",
+		"szepeviktor/phpstan-wordpress": "^2.0"
 	},
 	"license": "GPL-2.0+",
 	"authors": [
@@ -39,6 +39,7 @@
 		"format": "phpcbf",
 		"phpunit": "phpunit",
 		"phpstan": "phpstan analyse --memory-limit 2G",
+		"phpstan:generate:baseline": "phpstan analyse --generate-baseline --memory-limit 2G",
 		"format-dist": "phpcbf --standard=phpcs.export.xml"
 	},
 	"prefer-stable": true,
