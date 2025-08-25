@@ -14,17 +14,17 @@
     ],
 	"require-dev": {
 		"squizlabs/php_codesniffer": "^3.3",
-		"wp-coding-standards/wpcs": "^1",
+		"wp-coding-standards/wpcs": "^3.2",
 		"phpcompatibility/php-compatibility": "^9",
 		"dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
-		"automattic/vipwpcs": "^1.0.0",
 		"phpunit/phpunit": "9.6.5",
 		"yoast/phpunit-polyfills": "^4.0",
 		"phpstan/phpstan": "^2.1",
 		"php-stubs/woocommerce-stubs": "^9.1",
 		"php-stubs/acf-pro-stubs": "^6.0",
 		"wpackagist-plugin/woocommerce": "*",
-		"szepeviktor/phpstan-wordpress": "^2.0"
+		"szepeviktor/phpstan-wordpress": "^2.0",
+		"automattic/vipwpcs": "^3.0"
 	},
 	"license": "GPL-2.0+",
 	"authors": [
@@ -39,7 +39,7 @@
 		"phpunit": "phpunit",
 		"phpstan": "phpstan analyse --memory-limit 2G",
 		"phpstan:generate:baseline": "phpstan analyse --memory-limit 2G --generate-baseline",
-		"format-dist": "phpcbf --standard=phpcs.export.xml"
+		"format-dist": "phpcbf --standard=phpcs.xml.dist"
 	},
 	"prefer-stable": true,
 	"config": {
