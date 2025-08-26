@@ -78,7 +78,10 @@ class Shared_CSS {
 					),
 				),
 				'condition'      => function ( $attrs ) {
-					return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && ( isset( $attrs['backgroundImageURL'] ) && Base_CSS::is_image_url( $attrs['backgroundImageURL'] ) || isset( $attrs['backgroundImage'] ) && Base_CSS::is_image_url( $attrs['backgroundImage']['url'] ) );
+					return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && (
+						( isset( $attrs['backgroundImageURL'] ) && Base_CSS::is_image_url( $attrs['backgroundImageURL'] ) ) ||
+						( isset( $attrs['backgroundImage'] ) && Base_CSS::is_image_url( $attrs['backgroundImage']['url'] ) )
+					);
 				},
 			),
 			array(
@@ -357,7 +360,10 @@ class Shared_CSS {
 					),
 				),
 				'condition'      => function ( $attrs ) {
-					return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && ( isset( $attrs['backgroundOverlayImageURL'] ) && Base_CSS::is_image_url( $attrs['backgroundOverlayImageURL'] ) || isset( $attrs['backgroundOverlayImage'] ) && Base_CSS::is_image_url( $attrs['backgroundOverlayImage']['url'] ) );
+					return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && (
+						( isset( $attrs['backgroundOverlayImageURL'] ) && Base_CSS::is_image_url( $attrs['backgroundOverlayImageURL'] ) ) ||
+						( isset( $attrs['backgroundOverlayImage'] ) && Base_CSS::is_image_url( $attrs['backgroundOverlayImage']['url'] ) )
+					);
 				},
 			),
 			array(
