@@ -353,7 +353,7 @@ class Form_Emails_Storing {
 	 * @return array
 	 */
 	public function form_record_bulk_actions() {
-		$status       = isset( $_GET['post_status'] ) ? sanitize_text_field( wp_unslash( $_GET['post_status'] ) ) : 'all'; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$status       = isset( $_GET['post_status'] ) ? sanitize_text_field( wp_unslash( $_GET['post_status'] ) ) : 'all'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$bulk_actions = array();
 
 		if ( 'trash' !== $status ) {
@@ -684,7 +684,7 @@ class Form_Emails_Storing {
 			return;
 		}
 
-		if ( empty( $_POST['action'] ) || 'editpost' !== $_POST['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		if ( empty( $_POST['action'] ) || 'editpost' !== $_POST['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
@@ -794,7 +794,7 @@ class Form_Emails_Storing {
 					id="<?php echo intval( $id ); ?>"
 					type="text"
 					class="otter_form_record_meta__value"
-					value="<?php echo esc_html( $field['value'] ); ?>"
+					value="<?php echo esc_attr( $field['value'] ); ?>"
 				/>
 				<?php
 				break;
@@ -832,7 +832,7 @@ class Form_Emails_Storing {
 					id="<?php echo intval( $id ); ?>"
 					type="text"
 					class="otter_form_record_meta__value"
-					value="<?php echo esc_html( $field['value'] ); ?>"
+					value="<?php echo esc_attr( $field['value'] ); ?>"
 				/>
 				<?php
 				break;
@@ -844,7 +844,7 @@ class Form_Emails_Storing {
 					id="<?php echo intval( $id ); ?>"
 					type="<?php echo isset( $field['type'] ) ? esc_attr( $field['type'] ) : ''; ?>"
 					class="otter_form_record_meta__value"
-					value="<?php echo esc_html( $field['value'] ); ?>"
+					value="<?php echo esc_attr( $field['value'] ); ?>"
 				/>
 				<?php
 		}
@@ -880,7 +880,7 @@ class Form_Emails_Storing {
 			<div id="major-publishing-actions">
 				<div id="delete-action">
 					<?php
-					echo sprintf(
+					printf(
 						'<a href="?action=%s&post=%s&_wpnonce=%s" class="submitdelete">%s</a>',
 						'trash',
 						intval( $post->ID ),
@@ -892,7 +892,7 @@ class Form_Emails_Storing {
 
 				<div id="updating-action" style="text-align: right">
 					<?php
-					echo sprintf(
+					printf(
 						'<input type="submit" class="button button-primary button-large" value="%s"/>',
 						esc_html__( 'Update', 'otter-pro' )
 					);
@@ -924,11 +924,11 @@ class Form_Emails_Storing {
 	 * @return void
 	 */
 	public function mark_read_on_edit() {
-		if ( ! isset( $_REQUEST['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		if ( ! isset( $_REQUEST['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
-		$post = intval( wp_unslash( $_REQUEST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$post = intval( wp_unslash( $_REQUEST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! get_post( $post ) || self::FORM_RECORD_TYPE !== get_post_type( $post ) ) {
 			return;
 		}
@@ -952,7 +952,7 @@ class Form_Emails_Storing {
 	 * @return string The post ID.
 	 */
 	public function check_posts( $action ) {
-		$id   = ! empty( $_REQUEST[ self::FORM_RECORD_TYPE ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ self::FORM_RECORD_TYPE ] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$id   = ! empty( $_REQUEST[ self::FORM_RECORD_TYPE ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ self::FORM_RECORD_TYPE ] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$post = get_post( $id );
 
 		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ), $action . '-' . self::FORM_RECORD_TYPE . '_' . $id ) ) {
@@ -1073,7 +1073,7 @@ class Form_Emails_Storing {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$form = isset( $_GET['form'] ) ? sanitize_text_field( wp_unslash( $_GET['form'] ) ) : '';
 
 		?>
@@ -1099,7 +1099,7 @@ class Form_Emails_Storing {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$post = isset( $_GET['post'] ) ? sanitize_text_field( wp_unslash( $_GET['post'] ) ) : '';
 
 		?>
@@ -1257,7 +1257,7 @@ class Form_Emails_Storing {
 		$now = current_time( 'mysql' );
 
 		// Calculate the time 15 minutes ago.
-		$time_15_minutes_ago = date( 'Y-m-d H:i:s', strtotime( '-15 minutes', strtotime( $now ) ) );
+		$time_15_minutes_ago = gmdate( 'Y-m-d H:i:s', strtotime( '-15 minutes', strtotime( $now ) ) );
 
 		$args = array(
 			'post_type'      => self::FORM_RECORD_TYPE,
@@ -1331,7 +1331,7 @@ class Form_Emails_Storing {
 	 * Export submissions with ajax.
 	 */
 	public function export_submissions() {
-		$nonce = isset( $_POST['_nonce'] ) ? sanitize_text_field( $_POST['_nonce'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$nonce = isset( $_POST['_nonce'] ) ? sanitize_text_field( $_POST['_nonce'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! wp_verify_nonce( $nonce, 'otter_form_export_submissions' ) ) {
 			wp_die( esc_html( __( 'Invalid nonce.', 'otter-pro' ) ) );
 		}

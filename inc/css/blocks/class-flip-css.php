@@ -47,14 +47,14 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--width',
 						'value'     => 'width',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['width'] ) && is_numeric( $attrs['width'] );
 						},
 					),
 					array(
 						'property'  => '--width',
 						'value'     => 'width',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['width'] ) && is_string( $attrs['width'] );
 						},
 					),
@@ -72,14 +72,14 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--height',
 						'value'     => 'height',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['height'] ) && is_numeric( $attrs['height'] );
 						},
 					),
 					array(
 						'property'  => '--height',
 						'value'     => 'height',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['height'] ) && is_string( $attrs['height'] );
 						},
 					),
@@ -101,17 +101,17 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--border-width',
 						'value'     => 'borderWidth',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderWidth'] ) && is_numeric( $attrs['borderWidth'] );
 						},
 					),
 					array(
 						'property'  => '--border-width',
 						'value'     => 'borderWidth',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderWidth'] ) && is_array( $attrs['borderWidth'] );
 						},
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '3px' ) );
 						},
 					),
@@ -119,31 +119,31 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--border-radius',
 						'value'     => 'borderRadius',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius'] );
 						},
 					),
 					array(
 						'property'  => '--border-radius',
 						'value'     => 'borderRadius',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
 						},
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '10px' ) );
 						},
 					),
 					array(
 						'property'  => '--front-background',
 						'value'     => 'frontBackgroundColor',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return ! isset( $attrs['frontBackgroundType'] );
 						},
 					),
 					array(
 						'property'  => '--front-background',
 						'value'     => 'frontBackgroundGradient',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['frontBackgroundType'] ) && 'gradient' === $attrs['frontBackgroundType'];
 						},
 					),
@@ -153,7 +153,7 @@ class Flip_CSS extends Base_CSS {
 						'pattern_values' => array(
 							'imageURL'   => array(
 								'value'  => 'frontBackgroundImage',
-								'format' => function( $value, $attrs ) {
+								'format' => function ( $value, $attrs ) {
 									return apply_filters( 'otter_apply_dynamic_image', $value['url'] );
 								},
 							),
@@ -171,7 +171,7 @@ class Flip_CSS extends Base_CSS {
 									'x' => 0.5,
 									'y' => 0.5,
 								),
-								'format'  => function( $value, $attrs ) {
+								'format'  => function ( $value, $attrs ) {
 									if ( isset( $value['x'] ) && isset( $value['y'] ) ) {
 										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 									}
@@ -183,7 +183,7 @@ class Flip_CSS extends Base_CSS {
 								'default' => 'auto',
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'] && isset( $attrs['frontBackgroundImage'] ) && isset( $attrs['frontBackgroundImage']['url'] );
 						},
 					),
@@ -198,14 +198,14 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property'  => '--back-background',
 						'value'     => 'backBackgroundColor',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return ! isset( $attrs['backBackgroundType'] );
 						},
 					),
 					array(
 						'property'  => '--back-background',
 						'value'     => 'backBackgroundGradient',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['backBackgroundType'] ) && 'gradient' === $attrs['backBackgroundType'];
 						},
 					),
@@ -215,7 +215,7 @@ class Flip_CSS extends Base_CSS {
 						'pattern_values' => array(
 							'imageURL'   => array(
 								'value'  => 'backBackgroundImage',
-								'format' => function( $value, $attrs ) {
+								'format' => function ( $value, $attrs ) {
 									return apply_filters( 'otter_apply_dynamic_image', $value['url'] );
 								},
 							),
@@ -233,7 +233,7 @@ class Flip_CSS extends Base_CSS {
 									'x' => 0.5,
 									'y' => 0.5,
 								),
-								'format'  => function( $value, $attrs ) {
+								'format'  => function ( $value, $attrs ) {
 									if ( isset( $value['x'] ) && isset( $value['y'] ) ) {
 										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 									}
@@ -245,7 +245,7 @@ class Flip_CSS extends Base_CSS {
 								'default' => 'auto',
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'] && isset( $attrs['backBackgroundImage'] ) && isset( $attrs['backBackgroundImage']['url'] );
 						},
 					),
@@ -257,24 +257,24 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--padding',
 						'value'     => 'padding',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['padding'] ) && is_numeric( $attrs['padding'] );
 						},
 					),
 					array(
 						'property'  => '--padding',
 						'value'     => 'padding',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['padding'] ) && is_array( $attrs['padding'] );
 						},
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
 						},
 					),
 					array(
 						'property' => '--padding',
 						'value'    => 'paddingTablet',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::render_box(
 								CSS_Utility::merge_views(
 									CSS_Utility::make_box( '20px' ),
@@ -288,7 +288,7 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => '--padding',
 						'value'    => 'paddingMobile',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::render_box(
 								CSS_Utility::merge_views(
 									CSS_Utility::make_box( '20px' ),
@@ -322,13 +322,13 @@ class Flip_CSS extends Base_CSS {
 							'color'      => array(
 								'value'   => 'boxShadowColor',
 								'default' => '#000',
-								'format'  => function( $value, $attrs ) {
+								'format'  => function ( $value, $attrs ) {
 									$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 );
 									return ( strpos( $value, '#' ) !== false && $opacity < 100 ) ? Base_CSS::hex2rgba( $value, $opacity / 100 ) : $value;
 								},
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['boxShadow'] );
 						},
 					),
@@ -336,7 +336,7 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--front-media-width',
 						'value'     => 'frontMediaWidth',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['--front-media-width'] ) && is_numeric( $attrs['--front-media-width'] );
 						},
 					),
@@ -344,21 +344,21 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--front-media-height',
 						'value'     => 'frontMediaHeight',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['--front-media-height'] ) && is_numeric( $attrs['--front-media-height'] );
 						},
 					),
 					array(
 						'property'  => '--front-media-width',
 						'value'     => 'frontMediaWidth',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['frontMediaWidth'] ) && is_string( $attrs['frontMediaWidth'] );
 						},
 					),
 					array(
 						'property'  => '--front-media-height',
 						'value'     => 'frontMediaHeight',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['frontMediaHeight'] ) && is_string( $attrs['frontMediaHeight'] );
 						},
 					),
@@ -377,7 +377,7 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => 'font-size',
 						'value'    => 'titleFontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
@@ -396,7 +396,7 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => 'font-size',
 						'value'    => 'descriptionFontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),

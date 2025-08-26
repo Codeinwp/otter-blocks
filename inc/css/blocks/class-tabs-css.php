@@ -41,7 +41,7 @@ class Tabs_CSS extends Base_CSS {
 						'property'  => '--border-width',
 						'value'     => 'borderWidth',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderWidth'] ) && is_numeric( $attrs['borderWidth'] );
 						},
 					),
@@ -92,7 +92,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--title-border-width',
 						'value'    => 'titleBorderWidth',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -108,7 +108,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property'  => '--border-width',
 						'value'     => 'borderWidth',
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -119,7 +119,7 @@ class Tabs_CSS extends Base_CSS {
 								)
 							);
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderWidth'] ) && is_array( $attrs['borderWidth'] );
 						},
 						'hasSync'   => 'tabs-border-width',
@@ -127,7 +127,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--title-padding',
 						'value'    => 'titlePadding',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -143,7 +143,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--content-padding',
 						'value'    => 'contentPadding',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -159,7 +159,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--border-side-width',
 						'value'    => 'borderWidth',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 
 							if ( isset( $attrs['tabsPosition'] ) ) {
 								if ( 'left' === $attrs['tabsPosition'] ) {
@@ -261,7 +261,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--tabs-title-border-width',
 						'value'    => 'titleBorderWidth',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -276,7 +276,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--tabs-border-width',
 						'value'    => 'borderWidth',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -291,7 +291,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--tabs-title-padding',
 						'value'    => 'titlePadding',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -306,7 +306,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--tabs-content-padding',
 						'value'    => 'contentPadding',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -321,7 +321,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--tabs-border-side-width',
 						'value'    => 'borderWidth',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 
 							if ( isset( $attrs['tabsPosition'] ) ) {
 								if ( 'left' === $attrs['tabsPosition'] ) {

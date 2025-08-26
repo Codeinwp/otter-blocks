@@ -306,7 +306,7 @@ class Options_Settings {
 			array(
 				'type'              => 'array',
 				'description'       => __( 'Email used in the Form block.', 'otter-blocks' ),
-				'sanitize_callback' => function ( $array ) {
+				'sanitize_callback' => function ( $email_settings ) {
 					return array_map(
 						function ( $item ) {
 							if ( isset( $item['form'] ) ) {
@@ -371,7 +371,7 @@ class Options_Settings {
 
 							return $item;
 						},
-						$array
+						$email_settings
 					);
 				},
 				'show_in_rest'      => array(
@@ -467,7 +467,7 @@ class Options_Settings {
 			array(
 				'type'              => 'array',
 				'description'       => __( 'Form Fields used in the Form block.', 'otter-blocks' ),
-				'sanitize_callback' => function ( $array ) {
+				'sanitize_callback' => function ( $fields ) {
 					return array_map(
 						function ( $item ) {
 							if ( isset( $item['fieldOptionName'] ) ) {
@@ -506,7 +506,7 @@ class Options_Settings {
 
 							return $item;
 						},
-						$array
+						$fields
 					);
 				},
 				'show_in_rest'      => array(
@@ -572,7 +572,7 @@ class Options_Settings {
 			array(
 				'type'              => 'object',
 				'description'       => __( 'Notifications Logs.', 'otter-blocks' ),
-				'sanitize_callback' => function ( $array ) {
+				'sanitize_callback' => function ( $notifications ) {
 					return array_map(
 						function ( $item ) {
 							if ( isset( $item['editor_upsell'] ) ) {
@@ -580,7 +580,7 @@ class Options_Settings {
 							}
 							return $item;
 						},
-						$array
+						$notifications
 					);
 				},
 				'show_in_rest'      => array(
@@ -605,7 +605,7 @@ class Options_Settings {
 			array(
 				'type'              => 'array',
 				'description'       => __( 'Otter Registered Webhooks.', 'otter-blocks' ),
-				'sanitize_callback' => function ( $array ) {
+				'sanitize_callback' => function ( $webhooks ) {
 					return array_map(
 						function ( $item ) {
 							if ( isset( $item['id'] ) ) {
@@ -630,7 +630,7 @@ class Options_Settings {
 							}
 							return $item;
 						},
-						$array
+						$webhooks
 					);
 				},
 				'show_in_rest'      => array(
@@ -740,8 +740,8 @@ class Options_Settings {
 			array(
 				'type'              => 'array',
 				'description'       => __( 'The disabled blocks that will no longer be shown in Inserter.', 'otter-blocks' ),
-				'sanitize_callback' => function( $array ) {
-					return array_map( 'sanitize_text_field', $array );
+				'sanitize_callback' => function ( $disabled_blocks ) {
+					return array_map( 'sanitize_text_field', $disabled_blocks );
 				},
 				'default'           => array(),
 				'show_in_rest'      => array(
@@ -772,9 +772,9 @@ class Options_Settings {
 			array(
 				'type'              => 'array',
 				'description'       => __( 'The prompt actions list of toolbar.', 'otter-blocks' ),
-				'sanitize_callback' => function( $array ) {
+				'sanitize_callback' => function ( $prompts ) {
 					return array_map(
-						function( $item ) {
+						function ( $item ) {
 							if ( isset( $item['title'] ) ) {
 								$item['title'] = sanitize_text_field( $item['title'] );
 							}
@@ -783,7 +783,7 @@ class Options_Settings {
 							}
 							return $item;
 						},
-						$array
+						$prompts
 					);
 				},
 				'default'           => array(
@@ -870,7 +870,7 @@ class Options_Settings {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'boolean',
-				'auth_callback' => function() {
+				'auth_callback' => function () {
 					return current_user_can( 'edit_posts' );
 				},
 			)

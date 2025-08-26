@@ -180,7 +180,7 @@ class CSS_Utility {
 	public function filter_out_media_queries( $selector, $properties ) {
 		$query_items = array_filter(
 			$properties,
-			function( $ar ) {
+			function ( $ar ) {
 				return isset( $ar['media'] );
 			}
 		);
@@ -376,7 +376,7 @@ class CSS_Utility {
 
 		$valid = array_filter(
 			$views,
-			function( $view ) {
+			function ( $view ) {
 				return isset( $view ) && is_array( $view );
 			}
 		);

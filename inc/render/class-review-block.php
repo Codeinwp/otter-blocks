@@ -43,7 +43,7 @@ class Review_Block {
 
 			add_action(
 				'wp_footer',
-				function() use ( $attributes, $post_id ) {
+				function () use ( $attributes, $post_id ) {
 					$added_schemas = &Review_Block::$added_schemas; // Reference the static property explicitly.
 
 					if ( ! isset( $added_schemas[ $post_id ] ) ) {
@@ -240,7 +240,7 @@ class Review_Block {
 
 		$rating = array_reduce(
 			$features,
-			function( $carry, $feature ) {
+			function ( $carry, $feature ) {
 				$carry += $feature['rating'];
 				return $carry;
 			},
@@ -323,7 +323,7 @@ class Review_Block {
 					'name'     => esc_html( $pro ),
 				);
 
-				$count++;
+				++$count;
 
 				array_push( $items, $item );
 			}
@@ -345,7 +345,7 @@ class Review_Block {
 					'name'     => esc_html( $con ),
 				);
 
-				$count++;
+				++$count;
 
 				array_push( $items, $item );
 			}

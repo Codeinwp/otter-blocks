@@ -32,7 +32,7 @@ class Product_Price_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 		woocommerce_template_single_price();
 		$output = ob_get_clean();
 		return $output;

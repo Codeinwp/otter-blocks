@@ -94,7 +94,7 @@ class Dashboard {
 			__( 'Blocks', 'otter-blocks' ),
 			'manage_options',
 			'otter-blocks-toggle',
-			function() {
+			function () {
 				echo '<p>Redirecting...</p>
 				<script>document.location.href = "/wp-admin/admin.php?page=otter#blocks";</script>';
 			}
@@ -130,7 +130,6 @@ class Dashboard {
 			}
 		</style>
 		<?php
-
 	}
 
 	/**
@@ -313,7 +312,7 @@ class Dashboard {
 			return;
 		}
 
-		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected,WordPress.Security.NonceVerification.NoNonceVerification
+		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected,WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 

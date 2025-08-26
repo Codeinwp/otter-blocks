@@ -52,7 +52,7 @@ class FSE_Onboarding {
 			esc_html__( 'Theme Setup', 'otter-blocks' ),
 			'manage_options',
 			'otter-onboarding',
-			function() {
+			function () {
 				$redirect = add_query_arg(
 					array(
 						'onboarding' => 'true',

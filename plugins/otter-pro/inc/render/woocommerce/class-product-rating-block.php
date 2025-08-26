@@ -32,7 +32,7 @@ class Product_Rating_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 		woocommerce_template_single_rating();
 		$output = ob_get_clean();
 

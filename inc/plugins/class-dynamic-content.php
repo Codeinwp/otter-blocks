@@ -549,7 +549,7 @@ class Dynamic_Content {
 			$format = esc_html( $data['dateCustom'] );
 		}
 
-		$date = date( $format );
+		$date = gmdate( $format );
 
 		return $date;
 	}
@@ -572,7 +572,7 @@ class Dynamic_Content {
 			$format = esc_html( $data['timeCustom'] );
 		}
 
-		$time = date( $format );
+		$time = gmdate( $format );
 
 		return $time;
 	}

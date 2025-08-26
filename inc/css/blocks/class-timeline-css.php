@@ -64,7 +64,7 @@ class Timeline_CSS extends Base_CSS {
 					array(
 						'property' => '--o-timeline-cnt-br-w',
 						'value'    => 'containerBorder',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -79,7 +79,7 @@ class Timeline_CSS extends Base_CSS {
 					array(
 						'property' => '--o-timeline-cnt-br-r',
 						'value'    => 'containerRadius',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -94,7 +94,7 @@ class Timeline_CSS extends Base_CSS {
 					array(
 						'property' => '--o-timeline-cnt-pd',
 						'value'    => 'containerPadding',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(

@@ -73,8 +73,8 @@ class Stripe_API {
 	 * @access public
 	 */
 	public function init() {
-		if ( isset( $_GET['stripe_session_id'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-			$session_id = esc_attr( $_GET['stripe_session_id'] );// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( isset( $_GET['stripe_session_id'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$session_id = esc_attr( $_GET['stripe_session_id'] );// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$session    = $this->create_request( 'get_session', $session_id );
 
 			if ( isset( $session['status'] ) && 'complete' === $session['status'] ) {
@@ -291,7 +291,7 @@ class Stripe_API {
 
 		$possible_values = array_filter(
 			$data,
-			function( $item ) use ( $product ) {
+			function ( $item ) use ( $product ) {
 				return $product === $item['product_id'];
 			}
 		);
