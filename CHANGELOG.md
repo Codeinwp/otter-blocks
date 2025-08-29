@@ -1,3 +1,8 @@
+##### [Version 3.1.1](https://github.com/Codeinwp/otter-blocks/compare/v3.1.0...v3.1.1) (2025-08-11)
+
+- Fixed media upload UI in modal view
+- Enhanced security
+
 #### [Version 3.1.0](https://github.com/Codeinwp/otter-blocks/compare/v3.0.12...v3.1.0) (2025-06-23)
 
 ### New Features
