@@ -103,7 +103,7 @@
 		"@wordpress/e2e-tests": "^8.24.0",
 		"@wordpress/element": "^6.9.0",
 		"@wordpress/env": "^10.24.0",
-		"@wordpress/eslint-plugin": "^21.2.0",
+		"@wordpress/eslint-plugin": "^22.15.0",
 		"@wordpress/scripts": "30.17.0",
 		"conventional-changelog-simple-preset": "^1.0.24",
 		"eslint-config-wordpress": "^2.0.0",
