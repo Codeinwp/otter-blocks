@@ -2857,15 +2857,15 @@
         },
         {
             "name": "wpackagist-plugin/woocommerce",
-            "version": "9.8.5",
+            "version": "10.1.2",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/woocommerce/",
-                "reference": "tags/9.8.5"
+                "reference": "tags/10.1.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/woocommerce.9.8.5.zip"
+                "url": "https://downloads.wordpress.org/plugin/woocommerce.10.1.2.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
