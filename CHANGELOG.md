@@ -1,3 +1,8 @@
+##### [Version 3.1.2](https://github.com/Codeinwp/otter-blocks/compare/v3.1.1...v3.1.2) (2025-09-04)
+
+- Updated dependencies
+- Fixed onboarding issue
+
 ##### [Version 3.1.1](https://github.com/Codeinwp/otter-blocks/compare/v3.1.0...v3.1.1) (2025-08-11)
 
 - Fixed media upload UI in modal view
