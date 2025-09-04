@@ -145,7 +145,7 @@ class Live_Search_Server {
 			array(
 				'success' => true,
 				'results' => array_map(
-					function( $post ) {
+					function ( $post ) {
 						$data = array(
 							'id'             => $post->ID,
 							'link'           => get_permalink( $post->ID ),
@@ -202,7 +202,7 @@ class Live_Search_Server {
 			$post_types = array_values(
 				array_filter(
 					$searchable_post_types,
-					function( $post_type ) use ( $needed_post_types ) {
+					function ( $post_type ) use ( $needed_post_types ) {
 						return in_array( $post_type, $needed_post_types, true );
 					}
 				) 

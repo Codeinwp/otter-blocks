@@ -32,7 +32,7 @@ class Product_Images_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 
 		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );

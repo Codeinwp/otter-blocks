@@ -50,7 +50,7 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--vert-align',
 						'value'    => 'verticalAlign',
-						'format'   => function( $value, $attrs ) use ( $vertical_value_mapping ) {
+						'format'   => function ( $value, $attrs ) use ( $vertical_value_mapping ) {
 							return $vertical_value_mapping[ $value ];
 						},
 					),
@@ -73,42 +73,42 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--title-text-size',
 						'value'    => 'customTitleFontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--title-text-size-tablet',
 						'value'    => 'customTitleFontSizeTablet',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--title-text-size-mobile',
 						'value'    => 'customTitleFontSizeMobile',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--description-text-size',
 						'value'    => 'customDescriptionFontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--description-text-size-tablet',
 						'value'    => 'customDescriptionFontSizeTablet',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--description-text-size-mobile',
 						'value'    => 'customDescriptionFontSizeMobile',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
@@ -127,7 +127,7 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--img-width',
 						'value'    => 'imageWidth',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
@@ -142,7 +142,7 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--img-border-radius',
 						'value'    => 'borderRadius',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							if ( is_numeric( $value ) ) {
 								return $value . 'px';
 							}
@@ -166,7 +166,7 @@ class Posts_CSS extends Base_CSS {
 								'value'   => 'imageBoxShadow',
 								'unit'    => 'px',
 								'default' => 0,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['horizontal'];
 								},
 							),
@@ -174,7 +174,7 @@ class Posts_CSS extends Base_CSS {
 								'value'   => 'imageBoxShadow',
 								'unit'    => 'px',
 								'default' => 0,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['vertical'];
 								},
 							),
@@ -182,7 +182,7 @@ class Posts_CSS extends Base_CSS {
 								'value'   => 'imageBoxShadow',
 								'unit'    => 'px',
 								'default' => 5,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['blur'];
 								},
 							),
@@ -190,21 +190,21 @@ class Posts_CSS extends Base_CSS {
 								'value'   => 'imageBoxShadow',
 								'unit'    => 'px',
 								'default' => 1,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['spread'];
 								},
 							),
 							'color'      => array(
 								'value'   => 'imageBoxShadow',
 								'default' => '#000',
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									$opacity = $value['colorOpacity'];
 									$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
 									return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? Base_CSS::hex2rgba( $color, $opacity / 100 ) : $color;
 								},
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['imageBoxShadow'] ) && true === $attrs['imageBoxShadow']['active'];
 						},
 					),
@@ -219,7 +219,7 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--border-radius',
 						'value'    => 'cardBorderRadius',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -239,7 +239,7 @@ class Posts_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 0,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['horizontal'];
 								},
 							),
@@ -247,7 +247,7 @@ class Posts_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 0,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['vertical'];
 								},
 							),
@@ -255,7 +255,7 @@ class Posts_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 5,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['blur'];
 								},
 							),
@@ -263,21 +263,21 @@ class Posts_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 1,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['spread'];
 								},
 							),
 							'color'      => array(
 								'value'   => 'boxShadow',
 								'default' => '#000',
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									$opacity = $value['colorOpacity'];
 									$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
 									return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? Base_CSS::hex2rgba( $color, $opacity / 100 ) : $color;
 								},
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
 						},
 					),
@@ -368,28 +368,28 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--pag-border-radius',
 						'value'    => 'pagBorderRadius',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
 						'property' => '--pag-border-width',
 						'value'    => 'pagBorderWidth',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
 						'property' => '--pag-padding',
 						'value'    => 'pagPadding',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
 						'property' => '--pag-cont-margin',
 						'value'    => 'pagContMargin',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -412,14 +412,14 @@ class Posts_CSS extends Base_CSS {
 			);
 		
 			$properties = array_map(
-				function( $position, $css_variable ) {
+				function ( $position, $css_variable ) {
 					return array(
 						'property'  => $css_variable,
 						'value'     => 'cardBorderRadius',
-						'format'    => function( $value, $attrs ) use ( $position ) {
+						'format'    => function ( $value, $attrs ) use ( $position ) {
 							return $value[ $position ];
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							// @phpstan-ignore-next-line
 							return isset( $attrs['className'] ) && strpos( $attrs['className'], 'is-style-tiled' ) !== false;
 						},

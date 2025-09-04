@@ -48,5 +48,4 @@ class Form_File_CSS extends Base_CSS {
 
 		return $style;
 	}
-
 }

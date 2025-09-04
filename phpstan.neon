@@ -1,9 +1,13 @@
 parameters:
-	level: 5
+	level: 6
 	paths:
 		- %currentWorkingDirectory%/inc
-		- %currentWorkingDirectory%/plugins
-	scanFiles:
+		- %currentWorkingDirectory%/plugins/otter-pro
+		- %currentWorkingDirectory%/plugins/blocks-css/blocks-css.php
+		- %currentWorkingDirectory%/plugins/blocks-export-import/blocks-export-import.php
+		- %currentWorkingDirectory%/plugins/blocks-animation/blocks-animation.php
+	scanDirectories:
+		- %currentWorkingDirectory%/vendor/stripe/stripe-php
 	bootstrapFiles:
 		- %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
 		- %currentWorkingDirectory%/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
@@ -16,6 +20,11 @@ parameters:
 		- COOKIE_DOMAIN
 		- OTTER_BLOCKS_PRO_SUPPORT
 		- OTTER_BLOCKS_SHOW_NOTICES
+	ignoreErrors:
+		-
+			identifiers:
+				- include.fileNotFound
+				- requireOnce.fileNotFound
 includes:
 	- %currentWorkingDirectory%/vendor/szepeviktor/phpstan-wordpress/extension.neon
-	- %currentWorkingDirectory%/vendor/spaze/phpstan-stripe/extension.neon
+	- %currentWorkingDirectory%/phpstan-baseline.neon

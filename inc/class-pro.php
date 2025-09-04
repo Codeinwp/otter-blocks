@@ -384,7 +384,7 @@ class Pro {
 	 */
 	public function schedule_cron_events() {
 		if ( ! wp_next_scheduled( 'otter_montly_scheduled_events' ) ) {
-			wp_schedule_event( current_time( 'timestamp', true ), 'monthly', 'otter_montly_scheduled_events' );
+			wp_schedule_event( time(), 'monthly', 'otter_montly_scheduled_events' );
 		}
 	}
 

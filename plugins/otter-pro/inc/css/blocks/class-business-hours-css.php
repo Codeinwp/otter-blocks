@@ -58,7 +58,7 @@ class Business_Hours_CSS extends Base_CSS {
 					array(
 						'property'  => 'border-style',
 						'default'   => 'solid',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderWidth'] ) && ! empty( $attrs['borderWidth'] );
 						},
 					),

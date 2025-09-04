@@ -290,14 +290,14 @@ class Form_Data_Request {
 	/**
 	 * Sanitize the given array.
 	 *
-	 * @param array|string $array The array with the values.
+	 * @param array<string, string|array<string,string>>|string $value The array with the values.
 	 * @return array|string
 	 * @since 2.0.3
 	 */
-	public static function sanitize_array_map_deep( $array ) {
+	public static function sanitize_array_map_deep( $value ) {
 		$new = array();
-		if ( is_array( $array ) ) {
-			foreach ( $array as $key => $val ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $key => $val ) {
 				if ( is_array( $val ) ) {
 					$new[ $key ] = self::sanitize_array_map_deep( $val );
 				} else {
@@ -305,7 +305,7 @@ class Form_Data_Request {
 				}
 			}
 		} else {
-			$new = sanitize_text_field( $array );
+			$new = sanitize_text_field( $value );
 		}
 		return $new;
 	}

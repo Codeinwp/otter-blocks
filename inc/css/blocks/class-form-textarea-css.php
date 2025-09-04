@@ -52,5 +52,4 @@ class Form_Textarea_CSS extends Base_CSS {
 
 		return $style;
 	}
-
 }

@@ -57,7 +57,7 @@ const Appearance = () => {
 			return 'default';
 		}
 
-		const foundStyle = themeStyles.find( style =>
+		const foundStyle = themeStyles?.find( style =>
 			fastDeepEqual( globalStyle?.styles, style?.styles || {}) &&
             fastDeepEqual( globalStyle?.settings, style?.settings )
 		);
@@ -110,7 +110,7 @@ const Appearance = () => {
 					onSelect={ () => onSelect( 'default' ) }
 				/>
 
-				{ themeStyles.map( ( style, index ) => (
+				{ themeStyles?.map( ( style, index ) => (
 					<PalettePreview
 						key={ index }
 						title={ style.title }

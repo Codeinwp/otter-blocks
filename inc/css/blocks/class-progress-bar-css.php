@@ -51,28 +51,28 @@ class Progress_Bar_CSS extends Base_CSS {
 					array(
 						'property'  => '--percentage-color',
 						'value'     => 'percentageColor',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return ! isset( $attrs['percentagePosition'] );
 						},
 					),
 					array(
 						'property'  => '--percentage-color-outer',
 						'value'     => 'percentageColor',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['percentagePosition'] ) && 'outer' === $attrs['percentagePosition'];
 						},
 					),
 					array(
 						'property'  => '--percentage-color-tooltip',
 						'value'     => 'percentageColor',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['percentagePosition'] ) && 'tooltip' === $attrs['percentagePosition'];
 						},
 					),
 					array(
 						'property'  => '--percentage-color-append',
 						'value'     => 'percentageColor',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['percentagePosition'] ) && 'append' === $attrs['percentagePosition'];
 						},
 					),

@@ -32,7 +32,7 @@ class Product_Short_Description_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 		woocommerce_template_single_excerpt();
 		$output = ob_get_clean();
 		return $output;

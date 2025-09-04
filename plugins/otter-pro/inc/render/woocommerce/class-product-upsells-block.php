@@ -32,7 +32,7 @@ class Product_Upsells_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 		woocommerce_upsell_display();
 		$output = ob_get_clean();
 		return $output;

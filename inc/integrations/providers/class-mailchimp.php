@@ -47,7 +47,6 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * The default constructor.
 	 */
 	public function __construct() {
-
 	}
 
 	/**
@@ -99,7 +98,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		} else {
 			$return['success'] = true;
 			$return['list_id'] = array_map(
-				function( $item ) {
+				function ( $item ) {
 					return array(
 						'id'   => $item['id'],
 						'name' => $item['name'],
@@ -165,12 +164,10 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
 			if ( ! empty( $body['detail'] ) && strpos( $body['detail'], 'fake' ) !== false ) {
 				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL );
-			} else {
-				if ( $this->is_credential_error( $body['status'] ) ) {
+			} elseif ( $this->is_credential_error( $body['status'] ) ) {
 					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR );
-				} else {
-					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR, $body['detail'] );
-				}
+			} else {
+				$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR, $body['detail'] );
 			}
 		}
 
@@ -338,7 +335,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
 		return array_filter(
 			$body['merge_fields'],
-			function( $item ) {
+			function ( $item ) {
 				return ! empty( $item['tag'] );
 			}
 		);

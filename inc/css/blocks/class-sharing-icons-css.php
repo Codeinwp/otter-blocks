@@ -42,20 +42,20 @@ class Sharing_Icons_CSS extends Base_CSS {
 						array(
 							'property'  => '--icon-bg-color',
 							'value'     => $icon,
-							'format'    => function( $value, $attrs ) {
+							'format'    => function ( $value, $attrs ) {
 								return $value['backgroundColor'];
 							},
-							'condition' => function( $attrs ) use ( $icon ) {
+							'condition' => function ( $attrs ) use ( $icon ) {
 								return isset( $attrs[ $icon ]['backgroundColor'] );
 							},
 						),
 						array(
 							'property'  => '--text-color',
 							'value'     => $icon,
-							'format'    => function( $value, $attrs ) {
+							'format'    => function ( $value, $attrs ) {
 								return $value['textColor'];
 							},
-							'condition' => function( $attrs ) use ( $icon ) {
+							'condition' => function ( $attrs ) use ( $icon ) {
 								return isset( $attrs[ $icon ]['textColor'] );
 							},
 						),

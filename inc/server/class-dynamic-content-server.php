@@ -137,7 +137,7 @@ class Dynamic_Content_Server {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => function( $request ) {
+					'callback'            => function ( $request ) {
 						return Dynamic_Content::instance()->apply_data( $request->get_params() );
 					},
 					'permission_callback' => function ( $request ) {

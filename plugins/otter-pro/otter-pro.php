@@ -25,14 +25,14 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( 'OTTER_PRO_BASEFILE', __FILE__ );
 define( 'OTTER_PRO_URL', plugins_url( '/', __FILE__ ) );
-define( 'OTTER_PRO_PATH', dirname( __FILE__ ) );
+define( 'OTTER_PRO_PATH', __DIR__ );
 define( 'OTTER_PRO_BUILD_URL', plugins_url( '/', __FILE__ ) . 'build/pro/' );
-define( 'OTTER_PRO_BUILD_PATH', dirname( __FILE__ ) . '/build/pro/' );
+define( 'OTTER_PRO_BUILD_PATH', __DIR__ . '/build/pro/' );
 define( 'OTTER_PRO_VERSION', '3.1.1' );
 
-require_once dirname( __FILE__ ) . '/autoloader.php';
+require_once __DIR__ . '/autoloader.php';
 $autoloader = new \ThemeIsle\OtterPro\Autoloader();
-$autoloader->add_namespace( '\ThemeIsle\OtterPro', dirname( __FILE__ ) . '/inc/' );
+$autoloader->add_namespace( '\ThemeIsle\OtterPro', __DIR__ . '/inc/' );
 $autoloader->register();
 
 add_filter(
@@ -64,7 +64,7 @@ add_filter( 'themeisle_sdk_ran_promos', '__return_true' );
 if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 	add_action(
 		'admin_notices',
-		function() {
+		function () {
 			$plugin_file = ABSPATH . 'wp-content/plugins/otter-blocks/otter-blocks.php';
 			$message     = __( 'You need Otter – Page Builder Blocks & Extensions for Gutenberg plugin to use Otter Pro.', 'otter-pro' );
 			$button_text = esc_html__( 'Install', 'otter-pro' );
@@ -113,7 +113,7 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 if ( defined( 'OTTER_BLOCKS_VERSION' ) && ! defined( 'OTTER_BLOCKS_PRO_SUPPORT' ) ) {
 	add_action(
 		'admin_notices',
-		function() {
+		function () {
 			$message = __( 'You need to update Otter – Page Builder Blocks & Extensions for Gutenberg to the latest version to use Otter Pro.', 'otter-pro' );
 
 			printf(
@@ -129,7 +129,7 @@ add_action(
 	function () {
 		// call this only if Gutenberg is active.
 		if ( function_exists( 'register_block_type' ) && defined( 'OTTER_BLOCKS_VERSION' ) && defined( 'OTTER_BLOCKS_PRO_SUPPORT' ) ) {
-			require_once dirname( __FILE__ ) . '/inc/class-main.php';
+			require_once __DIR__ . '/inc/class-main.php';
 
 			if ( class_exists( '\ThemeIsle\OtterPro\Main' ) ) {
 				\ThemeIsle\OtterPro\Main::instance();

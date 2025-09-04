@@ -32,7 +32,7 @@ class Product_Related_Products_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 		woocommerce_output_related_products();
 		$output = ob_get_clean();
 		return $output;

@@ -39,7 +39,7 @@ class Leaflet_Map_CSS extends Base_CSS {
 					array(
 						'property' => '--height',
 						'value'    => 'height',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 
 							// Check if the value is a number.
 							if ( is_numeric( $value ) ) {

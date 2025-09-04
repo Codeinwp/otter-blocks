@@ -353,10 +353,8 @@ class CSS_Handler extends Base_CSS {
 
 		if ( count( self::$google_fonts ) > 0 ) {
 			update_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', self::$google_fonts );
-		} else {
-			if ( get_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', true ) ) {
+		} elseif ( get_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', true ) ) {
 				delete_post_meta( $post_id, '_themeisle_gutenberg_block_fonts' );
-			}
 		}
 
 		if ( self::is_writable() ) {
@@ -447,10 +445,8 @@ class CSS_Handler extends Base_CSS {
 
 		if ( count( self::$google_fonts ) > 0 ) {
 			update_option( 'themeisle_blocks_widgets_fonts', self::$google_fonts );
-		} else {
-			if ( get_option( 'themeisle_blocks_widgets_fonts' ) ) {
+		} elseif ( get_option( 'themeisle_blocks_widgets_fonts' ) ) {
 				delete_option( 'themeisle_blocks_widgets_fonts' );
-			}
 		}
 
 		$file_name     = 'widgets-' . time();

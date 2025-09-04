@@ -1,0 +1,3259 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Tracker\:\:track\(\) has parameter \$events with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/Tracker.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Tracker\:\:track\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/Tracker.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<int\|string, array\{blockName\: string, attrs\: array, innerBlocks\: array\<array\>, innerHTML\: string, innerContent\: array\}\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:autoload_block_classes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:cycle_through_reusable_blocks\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:cycle_through_static_blocks\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:get_animation_classes\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:get_animation_classes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:get_animation_css\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:get_google_fonts\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:get_google_fonts\(\) has parameter \$attr with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:\$blocks_classes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Base_CSS\:\:\$google_fonts type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between 0 and ''''\|''0'' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: inc/class-base-css.php
+
+		-
+			message: '#^Found usage of constant DOING_AJAX\. Use wp_doing_ajax\(\) instead\.$#'
+			identifier: phpstanWP.wpConstant.fetch
+			count: 1
+			path: inc/class-blocks-animation.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_Animation\:\:add_frontend_anim_inline_style\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-animation.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_Animation\:\:enqueue_block_frontend_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-animation.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_Animation\:\:enqueue_editor_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-animation.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_Animation\:\:frontend_load\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-blocks-animation.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_Animation\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-animation.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Blocks_Animation\:\:\$scripts_loaded type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-blocks-animation.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<int\|string, array\{blockName\: string, attrs\: array, innerBlocks\: array\<array\>, innerHTML\: string, innerContent\: array\}\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/class-blocks-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_CSS\:\:add_attributes_to_blocks\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_CSS\:\:add_css_to_otter\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_CSS\:\:add_css_to_otter\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-blocks-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_CSS\:\:cycle_through_blocks\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_CSS\:\:cycle_through_blocks\(\) has parameter \$inner_blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-blocks-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_CSS\:\:enqueue_editor_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_CSS\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_CSS\:\:render_server_side_css\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_Export_Import\:\:enqueue_editor_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-export-import.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Blocks_Export_Import\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-blocks-export-import.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:about_page\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:add_black_friday_data\(\) has parameter \$configs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:add_black_friday_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:add_random_orderby_param\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:add_random_orderby_param\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:after_update_migration\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:allow_meme_types\(\) has parameter \$mimes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:allow_meme_types\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:autoload_classes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:check_svg_and_sanitize\(\) has parameter \$file with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:fix_mime_type_json_svg\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:fix_mime_type_json_svg\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:generate_svg_attachment_metadata\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:generate_svg_attachment_metadata\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:get_global_defaults\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:pagination_support\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:used_css_properties\(\) has parameter \$attr with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:used_css_properties\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:used_html_properties\(\) has parameter \$tags with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Main\:\:used_html_properties\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Patterns\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-patterns.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Patterns\:\:register_patterns\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-patterns.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:add_cron_schedules\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:add_cron_schedules\(\) has parameter \$schedules with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:add_pro_link\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:add_pro_link\(\) has parameter \$links with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:dashboard_upsell_notice\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:dismiss_dashboard_notice\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:init_upsells\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:old_neve_notice\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:register_metabox\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:render_metabox_upsell\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:reset_dashboard_notice\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:schedule_cron_events\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Pro\:\:should_show_dashboard_upsell\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-pro.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Circle_Counter_Block\|ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Lottie_Block\|ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Slider_Block and ''instance'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:block_categories\(\) has parameter \$categories with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:condition_hide_on_style\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:enqueue_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:enqueue_block_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:enqueue_block_editor_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:enqueue_block_styles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:enqueue_dependencies\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:init_amp_blocks\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:load_condition_hide_on_styles\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:load_sticky\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:register_blocks\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:show_onboarding\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:sticky_style\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:subscribe_fa\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Registration\:\:watch_used_widgets\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Registration\:\:\$block_dependencies type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Registration\:\:\$blocks type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Registration\:\:\$scripts_loaded type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Registration\:\:\$styles_loaded type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/class-registration.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Advanced_Column_CSS\:\:merge_old_attributes\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/blocks/class-advanced-column-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Advanced_Column_CSS\:\:merge_old_attributes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/blocks/class-advanced-column-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Advanced_Columns_CSS\:\:merge_old_attributes\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/blocks/class-advanced-columns-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Advanced_Columns_CSS\:\:merge_old_attributes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/blocks/class-advanced-columns-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Shared_CSS\:\:section_overlay\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/blocks/class-shared-css.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Shared_CSS\:\:section_shared\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/blocks/class-shared-css.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<int\|string, array\{blockName\: string, attrs\: array, innerBlocks\: array\<array\>, innerHTML\: string, innerContent\: array\}\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 5
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:cycle_through_blocks\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_fse_css\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_global_styles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_google_fonts\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_google_fonts_backward\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_reusable_fonts\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_reusable_fonts\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_reusable_styles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_reusable_styles\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_styles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:enqueue_widgets_css\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:get_fonts\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:get_fonts\(\) has parameter \$fonts_list with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:get_post_css\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:get_reusable_block_meta\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Block_Frontend\:\:render_post_css\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-block-frontend.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<int\|string, array\{blockName\: string, attrs\: array, innerBlocks\: array\<array\>, innerHTML\: string, innerContent\: array\}\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:customize_dynamic_partial_args\(\) has parameter \$partial_args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:customize_dynamic_partial_args\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:customize_widget_block_content\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:customize_widget_block_content\(\) has parameter \$instance with generic class WP_Widget but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:delete_css_file\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:generate_css_file\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:insert_pattern\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:insert_pattern\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:mark_review_block_metadata\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:save_block_meta\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:save_css_file\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:save_post_meta\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:save_widgets_styles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Handler\:\:save_widgets_styles_rest\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Path in include_once\(\) "\./wp\-admin/includes/file\.php" is not a file or it does not exist\.$#'
+			identifier: includeOnce.fileNotFound
+			count: 1
+			path: inc/css/class-css-handler.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:__construct\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:__construct\(\) has parameter \$media_queries with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:add_item\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:add_item\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:box_values\(\) has parameter \$box with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:box_values\(\) has parameter \$box_default with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:filter_out_media_queries\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:filter_out_media_queries\(\) has parameter \$properties with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:generate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:get_media_query\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:process_media_items\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:render_box\(\) has parameter \$box with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:set_id\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:\$block type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:\$css_array type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:\$media_items type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\CSS\\CSS_Utility\:\:\$media_queries type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/css/class-css-utility.php
+
+		-
+			message: '#^Call to function is_a\(\) with WP_REST_Request and ''WP_REST_Request'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Instanceof between ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data and ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:__construct\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:are_payload_data_set\(\) has parameter \$keys with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:are_root_data_set\(\) has parameter \$keys with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:create_from_dump\(\) has parameter \$dumped_data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:dump_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:get_files_loaded_to_media_library\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:get_request\(\) return type with generic class WP_REST_Request does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:get_uploaded_files_path\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:get_warning_codes\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:has_warning_codes\(\) has parameter \$codes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:sanitize_array_map_deep\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:sanitize_request_data\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:sanitize_request_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:set_uploaded_files_path\(\) has parameter \$uploaded_files_path with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:\$files_loaded_to_media_library type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:\$metadata type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:\$request with generic class WP_REST_Request does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:\$request_data type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:\$uploaded_files_path type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:\$warning_codes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-request-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response\:\:add_reason\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/api/form-response-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response\:\:add_values\(\) has parameter \$values with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-response-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response\:\:set_code\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/api/form-response-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response\:\:set_display_error\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/api/form-response-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response\:\:set_error\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/api/form-response-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response\:\:set_reasons\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/api/form-response-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response\:\:set_response\(\) has parameter \$response with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-response-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response\:\:set_success_message\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/api/form-response-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Response\:\:\$response type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/api/form-response-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Email\:\:build_error_body\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/class-form-email.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Email\:\:build_head\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/class-form-email.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data\:\:get_options\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data\:\:get_stripe_product_info\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data\:\:set_name\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data\:\:set_options\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data\:\:set_options\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data\:\:set_stripe_product_info\(\) has parameter \$stripe_product_info with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data\:\:set_type\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data\:\:\$options type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Field_WP_Option_Data\:\:\$stripe_product_info type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-field-wp-option-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Providers\:\:get_provider_handlers\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-providers.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Providers\:\:provider_has_handler\(\) has parameter \$provider with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-providers.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Providers\:\:register_providers\(\) has parameter \$new_providers with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-providers.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Providers\:\:select_provider_from_form_options\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-providers.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Providers\:\:\$providers type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-providers.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:__construct\(\) has parameter \$integration_data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:extract_integration_data\(\) has parameter \$integration_data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:get_autoresponder\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:get_meta\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:get_required_fields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:get_submit_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:has_credentials\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:set_autoresponder\(\) has parameter \$autoresponder with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:set_meta\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:set_required_fields\(\) has parameter \$required_fields with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(bool\.\)\: Unexpected token "\.", expected TOKEN_HORIZONTAL_WS at offset 77 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:\$autoresponder type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:\$meta type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Integration\\Form_Settings_Data\:\:\$required_fields type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-settings-data.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Utils\:\:is_file_field\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-utils.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Utils\:\:is_file_field_valid\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-utils.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Utils\:\:save_file_from_field\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-utils.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Utils\:\:save_file_from_field\(\) has parameter \$files with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-utils.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Utils\:\:save_file_from_field\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/class-form-utils.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\FormSubscribeServiceInterface\:\:make_subscribe_request\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/interfaces/interface-form-subscribe-service.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Mailchimp_Integration\:\:get_linked_merge_fields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/providers/class-mailchimp.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Mailchimp_Integration\:\:get_merge_fields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/providers/class-mailchimp.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Mailchimp_Integration\:\:make_subscribe_request\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/providers/class-mailchimp.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Mailchimp_Integration\:\:set_api_key\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/providers/class-mailchimp.php
+
+		-
+			message: '#^Offset 1 on array\{string, string\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: inc/integrations/providers/class-mailchimp.php
+
+		-
+			message: '''
+				#^PHPDoc tag @return has invalid value \(array\[
+				 'validate' \=\> boolean,
+				 'reason' \=\> string,
+				 'code' \=\> string
+				\]\)\: Unexpected token "\[", expected TOKEN_HORIZONTAL_WS at offset 113 on line 5$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: inc/integrations/providers/class-mailchimp.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Sendinblue_Integration\:\:make_subscribe_request\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/integrations/providers/class-sendinblue.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Sendinblue_Integration\:\:set_api_key\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/integrations/providers/class-sendinblue.php
+
+		-
+			message: '''
+				#^PHPDoc tag @return has invalid value \(array\[
+				 'validate' \=\> boolean,
+				 'reason' \=\> string,
+				 'code' \=\> string
+				\]\)\: Unexpected token "\[", expected TOKEN_HORIZONTAL_WS at offset 112 on line 5$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: inc/integrations/providers/class-sendinblue.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:add_attributes_to_blocks\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:evaluate_condition\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:evaluate_condition_collection\(\) has parameter \$collection with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:get_hide_css_condition\(\) has parameter \$collection with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:get_hide_css_condition\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:has_author\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:has_author\(\) has parameter \$authors with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:has_category\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:has_category\(\) has parameter \$categories with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:has_stripe_product\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:has_user_roles\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:has_user_roles\(\) has parameter \$roles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:is_type\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:is_type\(\) has parameter \$types with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:render_blocks\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Block_Conditions\:\:should_add_hide_css_class\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between false and false will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Found usage of constant DOING_AJAX\. Use wp_doing_ajax\(\) instead\.$#'
+			identifier: phpstanWP.wpConstant.fetch
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:add_inline_css\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:enqueue_options_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:form_submissions_callback\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:get_dashboard_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:get_survey_metadata\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:get_survey_metadata\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:maybe_redirect\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:menu_callback\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dashboard\:\:register_menu_page\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-dashboard.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:apply_data\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:apply_formatting\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:apply_images\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:apply_link\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:apply_link_button\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:apply_magic_tags\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_archive_description\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_content\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_current_date\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_current_time\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_data\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_exception_key\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_excerpt\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_image\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_link\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_loggedin_description\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_loggedin_email\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:get_loggedin_name\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:mark_exceptions\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:mark_exceptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:parse_dynamic_content_query\(\) has parameter \$matches with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Dynamic_Content\:\:query_string_to_array\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\FSE_Onboarding\:\:get_templates\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-fse-onboarding.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\FSE_Onboarding\:\:get_templates_types\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-fse-onboarding.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\FSE_Onboarding\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-fse-onboarding.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\LimitedOffers\:\:add_priority\(\) has parameter \$products with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-limited-offers.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\LimitedOffers\:\:add_priority\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-limited-offers.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\LimitedOffers\:\:get_localized_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-limited-offers.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\LimitedOffers\:\:prepare_black_friday_assets\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-limited-offers.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Plugins\\LimitedOffers\:\:\$announcements type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-limited-offers.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Plugins\\LimitedOffers\:\:\$assets type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-limited-offers.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Options_Settings\:\:default_block\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-options-settings.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Options_Settings\:\:get_allowed_mail_html\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-options-settings.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Options_Settings\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-options-settings.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Options_Settings\:\:register_meta\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-options-settings.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Options_Settings\:\:register_settings\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-options-settings.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Stripe_API\:\:create_request\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-stripe-api.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Stripe_API\:\:get_customer_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-stripe-api.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Stripe_API\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-stripe-api.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Stripe_API\:\:save_customer_data\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-stripe-api.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/plugins/class-template-cloud.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Template_Cloud\:\:get_cloud_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-template-cloud.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Template_Cloud\:\:get_pattern_sources\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-template-cloud.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Template_Cloud\:\:get_patterns_for_key\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-template-cloud.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Template_Cloud\:\:save_pattern_sources\(\) has parameter \$new_sources with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-template-cloud.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Template_Cloud\:\:save_patterns_for_key\(\) has parameter \$patterns with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-template-cloud.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Plugins\\Template_Cloud\:\:sync_sources\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-template-cloud.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Circle_Counter_Block\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/render/amp/class-circle-counter-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Circle_Counter_Block\:\:render_blocks\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/amp/class-circle-counter-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Circle_Counter_Block\:\:render_blocks\(\) has parameter \$block_content with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/amp/class-circle-counter-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Lottie_Block\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/render/amp/class-lottie.block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Lottie_Block\:\:render_blocks\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/amp/class-lottie.block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Lottie_Block\:\:render_blocks\(\) has parameter \$block_content with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/amp/class-lottie.block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Slider_Block\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/render/amp/class-slider-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Slider_Block\:\:render_blocks\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/amp/class-slider-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\AMP\\Slider_Block\:\:render_blocks\(\) has parameter \$block_content with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/amp/class-slider-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\About_Author_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-about-author-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Form_Multiple_Choice_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-form-multiple-choice.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Form_Multiple_Choice_Block\:\:render_select_field\(\) has parameter \$options_array with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-form-multiple-choice.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Form_Nonce_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-form-nonce-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Google_Map_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-google-map-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Leaflet_Map_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-leaflet-map-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Masonry_Variant\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/render/class-masonry-variant.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Masonry_Variant\:\:render_blocks\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-masonry-variant.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Plugin_Card_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-plugin-card-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Posts_Grid_Block\:\:get_post_fields\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-posts-grid-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Posts_Grid_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-posts-grid-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Posts_Grid_Block\:\:render_featured_post\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-posts-grid-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Posts_Grid_Block\:\:retrieve_posts\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-posts-grid-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Review_Block\:\:get_json_ld\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-review-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Review_Block\:\:get_json_ld\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-review-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Review_Block\:\:get_overall_ratings\(\) has parameter \$features with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-review-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Review_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-review-block.php
+
+		-
+			message: '#^Property ThemeIsle\\GutenbergBlocks\\Render\\Review_Block\:\:\$added_schemas type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-review-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Sharing_Icons_Block\:\:get_social_profiles\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-sharing-icons-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Sharing_Icons_Block\:\:is_active\(\) has parameter \$icon with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-sharing-icons-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Sharing_Icons_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-sharing-icons-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Stripe_Checkout_Block\:\:add_allowed_redirect_hosts\(\) has parameter \$hosts with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-stripe-checkout-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Stripe_Checkout_Block\:\:add_allowed_redirect_hosts\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-stripe-checkout-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Stripe_Checkout_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/render/class-stripe-checkout-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Render\\Stripe_Checkout_Block\:\:watch_checkout\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/render/class-stripe-checkout-block.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Dashboard_Server\:\:delete_files\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-dashboard-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Dashboard_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-dashboard-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Dashboard_Server\:\:regenerate_styles_on_theme_change\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-dashboard-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Dashboard_Server\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-dashboard-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Dashboard_Server\:\:rest_regenerate_styles\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-dashboard-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Dynamic_Content_Server\:\:get\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-dynamic-content-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Dynamic_Content_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-dynamic-content-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Dynamic_Content_Server\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-dynamic-content-server.php
+
+		-
+			message: '#^Call to function is_string\(\) with non\-falsy\-string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/server/class-form-server.php
+
+		-
+			message: '#^Instanceof between ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request and ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 5
+			path: inc/server/class-form-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Form_Server\:\:confirm_form_submission\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-form-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Form_Server\:\:editor\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-form-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Form_Server\:\:frontend\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-form-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Form_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-form-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Form_Server\:\:pull_fields_options_for_form\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-form-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Form_Server\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-form-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Form_Server\:\:send_error_email_to_admin\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-form-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\FSE_Onboarding_Server\:\:get_templates\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-fse-onboarding-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\FSE_Onboarding_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-fse-onboarding-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\FSE_Onboarding_Server\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-fse-onboarding-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Prompt_Server\:\:forward_prompt\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-prompt-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Prompt_Server\:\:get_prompts\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-prompt-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Prompt_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-prompt-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Prompt_Server\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-prompt-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Prompt_Server\:\:retrieve_prompts_from_server\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/server/class-prompt-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Prompt_Server\:\:save_api_key\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-prompt-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Stripe_Server\:\:get_price\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-stripe-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Stripe_Server\:\:get_products\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-stripe-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Stripe_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-stripe-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Stripe_Server\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: inc/server/class-stripe-server.php
+
+		-
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/server/class-template-cloud-server.php
+
+		-
+			message: '#^Call to function is_string\(\) with non\-falsy\-string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/server/class-template-cloud-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Template_Cloud_Server\:\:add_source\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-template-cloud-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Template_Cloud_Server\:\:remove_source\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: inc/server/class-template-cloud-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Template_Cloud_Server\:\:sanitize_template_cloud_sources\(\) has parameter \$value with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/server/class-template-cloud-server.php
+
+		-
+			message: '#^Method ThemeIsle\\GutenbergBlocks\\Server\\Template_Cloud_Server\:\:sanitize_template_cloud_sources\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/server/class-template-cloud-server.php
+
+		-
+			message: '#^Property ThemeIsle\\OtterPro\\Autoloader\:\:\$prefixes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/autoloader.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:autoload_classes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:autoload_classes\(\) has parameter \$classnames with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:enqueue_block_editor_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:enqueue_options_assets\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:register_blocks\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:register_blocks\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:register_blocks_css\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:register_blocks_css\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:register_dynamic_blocks\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Main\:\:register_dynamic_blocks\(\) has parameter \$dynamic_blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/class-main.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:evaluate_condition\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:get_timezone\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_cookie\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_cookie\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_country\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_country\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_course_status\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_course_status\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_courses_or_groups\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_courses_or_groups\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_date_range\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_date_range\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_date_recurring\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_date_recurring\(\) has parameter \$days with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_meta\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_meta\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_product_attribute\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_product_attribute\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_product_category\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_product_category\(\) has parameter \$categories with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_product_tag\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_product_tag\(\) has parameter \$tags with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_products\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_products\(\) has parameter \$products with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_products_in_cart\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_products_in_cart\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_query_string\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_query_string\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_time_recurring\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_time_recurring\(\) has parameter \$condition with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_total_cart_value\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_total_cart_value\(\) has parameter \$value with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_total_spent\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:has_total_spent\(\) has parameter \$value with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Block_Conditions\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-block-conditions.php
+
+		-
+			message: '#^Call to function is_string\(\) with non\-falsy\-string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:evaluate_content\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:evaluate_content_link\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:evaluate_content_media_content\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:evaluate_content_media_server\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:get_acf\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:get_author_meta\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:get_country\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:get_date\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:get_loggedin_meta\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:get_post_meta\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:get_query_string\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:get_terms\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:get_time\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Dynamic_Content\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Fonts_Module\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-fonts-module.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Fonts_Module\:\:register_webfont_loader\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-fonts-module.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Fonts_Module\:\:toggle_neve_option\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-fonts-module.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Fonts_Module\:\:toggle_otter_option\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-fonts-module.php
+
+		-
+			message: '#^Call to function method_exists\(\) with WP_Role and ''add_cap'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Instanceof between ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request and ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:apply_hooks_on_draft_transition\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:confirm_submission\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:export_submissions\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:form_record_bulk_actions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:form_record_columns\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:form_record_row_actions\(\) has parameter \$actions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:form_record_row_actions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:form_record_sortable_columns\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:format_based_on_status\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:get_filter\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:handle_form_record_bulk_actions\(\) has parameter \$object_ids with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:move_old_stripe_draft_sessions_to_unread\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:render_field\(\) has parameter \$field with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:store_form_record\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:transition_draft_to_read\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Emails_Storing\:\:update_submission_dump_data\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+
+		-
+			message: '#^Instanceof between ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request and ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 7
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Pro_Features\:\:clean_files_from_uploads\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Pro_Features\:\:create_stripe_session\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Pro_Features\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Pro_Features\:\:mark_request_with_stripe_as_temp\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Pro_Features\:\:replace_magic_tags\(\) has parameter \$form_inputs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Pro_Features\:\:send_autoresponder\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Form_Pro_Features\:\:trigger_webhook\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\License\:\:inherit_license_from_neve\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-license.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\License\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-license.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Live_Search\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-live-search.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Live_Search\:\:render_blocks\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-live-search.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Options_Settings\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-options-settings.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Options_Settings\:\:register_settings\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-options-settings.php
+
+		-
+			message: '#^Constant ThemeIsle\\OtterPro\\Plugins\\Patterns\:\:AVAILABLE_LANGUAGES type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-patterns.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Patterns\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-patterns.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Patterns\:\:maybe_sync_patterns\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-patterns.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Patterns\:\:prepare_block_pattern\(\) has parameter \$block_pattern with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-patterns.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Patterns\:\:prepare_block_pattern\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-patterns.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Patterns\:\:register_patterns\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-patterns.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Patterns\:\:sync_patterns\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-patterns.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Posts_ACF_Integration\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-posts-acf-integration.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Posts_ACF_Integration\:\:render_acf_fields\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-posts-acf-integration.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Posts_ACF_Integration\:\:render_acf_fields\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-posts-acf-integration.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Review_Woo_Integration\:\:apply_woo_data\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-review-woo-integration.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Review_Woo_Integration\:\:apply_woo_data\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-review-woo-integration.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Review_Woo_Integration\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-review-woo-integration.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Stripe_Pro_Features\:\:autoresponder\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-stripe-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\Stripe_Pro_Features\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-stripe-pro-features.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\WooCommerce_Builder\:\:add_body_class\(\) has parameter \$classes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-woocommerce-builder.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\WooCommerce_Builder\:\:add_body_class\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-woocommerce-builder.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\WooCommerce_Builder\:\:enable_block_editor\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-woocommerce-builder.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\WooCommerce_Builder\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-woocommerce-builder.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\WooCommerce_Builder\:\:register_metabox\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-woocommerce-builder.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\WooCommerce_Builder\:\:render_metabox\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-woocommerce-builder.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Plugins\\WooCommerce_Builder\:\:wc_get_template_part\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/plugins/class-woocommerce-builder.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Add_To_Cart_Button_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-add-to-cart-button-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Form_File_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-form-file-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Form_Hidden_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-form-hidden-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Form_Stripe_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-form-stripe-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Modal_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-modal-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Modal_Block\:\:render\(\) has parameter \$content with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-modal-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Review_Comparison_Block\:\:get_overall_ratings\(\) has parameter \$features with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-review-comparison-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Review_Comparison_Block\:\:get_review_block\(\) has parameter \$block with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-review-comparison-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Review_Comparison_Block\:\:get_review_block\(\) has parameter \$id with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-review-comparison-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Review_Comparison_Block\:\:get_review_block\(\) has parameter \$post_blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-review-comparison-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Review_Comparison_Block\:\:get_review_block\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-review-comparison-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\Review_Comparison_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/class-review-comparison-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Add_To_Cart_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-add-to-cart-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Images_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-images-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Meta_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-meta-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Price_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-price-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Rating_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-rating-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Related_Products_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-related-products-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Short_Description_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-short-description-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Stock_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-stock-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Tabs_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-tabs-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Title_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-title-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Render\\WooCommerce\\Product_Upsells_Block\:\:render\(\) has parameter \$attributes with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/render/woocommerce/class-product-upsells-block.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Dashboard_Server\:\:apply_dashboard_data\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/server/class-dashboard-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Dashboard_Server\:\:apply_dashboard_data\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/server/class-dashboard-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Dashboard_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/server/class-dashboard-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Dashboard_Server\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/server/class-dashboard-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Filter_Blocks_Server\:\:get_review_blocks\(\) has parameter \$blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/server/class-filter-blocks-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Filter_Blocks_Server\:\:get_review_blocks\(\) has parameter \$post_blocks with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/server/class-filter-blocks-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Filter_Blocks_Server\:\:get_review_blocks\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/server/class-filter-blocks-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Filter_Blocks_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/server/class-filter-blocks-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Filter_Blocks_Server\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/server/class-filter-blocks-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Live_Search_Server\:\:add_query_vars\(\) has parameter \$query_vars with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/server/class-live-search-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Live_Search_Server\:\:add_query_vars\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/server/class-live-search-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Live_Search_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/server/class-live-search-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Live_Search_Server\:\:parse_query\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/server/class-live-search-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Live_Search_Server\:\:prepare_search_query\(\) has parameter \$post_types with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/server/class-live-search-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Live_Search_Server\:\:prepare_search_query\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: plugins/otter-pro/inc/server/class-live-search-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Live_Search_Server\:\:search\(\) has parameter \$request with generic class WP_REST_Request but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: plugins/otter-pro/inc/server/class-live-search-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Posts_ACF_Server\:\:init\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/server/class-posts-acf-server.php
+
+		-
+			message: '#^Method ThemeIsle\\OtterPro\\Server\\Posts_ACF_Server\:\:register_routes\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: plugins/otter-pro/inc/server/class-posts-acf-server.php

@@ -2,21 +2,7 @@
 <ruleset name="">
     <description>ThemeIsle ruleset</description>
 
-    <rule ref="WordPress-VIP-Go" />
-
-    <rule ref="WordPress-Core" />
-
-    <rule ref="WordPress-Docs" />
-
-    <rule ref="WordPress-Extra">
-        <!-- Forget about file names -->
-        <exclude name="WordPress.Files.FileName" />
-    </rule>
-
-
-    <config name="testVersion" value="5.6-" />
-
-    <rule ref="PHPCompatibility" />
+    <rule ref="WordPress" />
 
     <rule ref="WordPress.WP.I18n">
         <properties>
@@ -28,12 +14,17 @@
 
     <rule ref="WordPress.Utils.I18nTextDomainFixer">
         <properties>
-            <property name="old_text_domain"
-                value="blocks-animation,blocks-import-export,otter-pro,blocks-css" />
+            <property name="old_text_domain" type="array">
+                <element value="blocks-animation" />
+                <element value="blocks-import-export" />
+                <element value="otter-pro" />
+                <element value="blocks-css" />
+            </property>
             <property name="new_text_domain" value="otter-blocks" />
         </properties>
     </rule>
 
     <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>assets/*</exclude-pattern>
     <exclude-pattern>build/*</exclude-pattern>
 </ruleset>

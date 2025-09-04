@@ -77,7 +77,7 @@ class Form_Pro_Features {
 					if ( ! isset( $counts_files[ $name ] ) ) {
 						$counts_files[ $name ] = 1;
 					} else {
-						$counts_files[ $name ]++;
+						++$counts_files[ $name ];
 
 						if (
 							$form_data->get_field_option( $name )->has_option( 'maxFilesNumber' ) &&
