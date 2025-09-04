@@ -553,12 +553,6 @@ parameters:
 			path: inc/class-registration.php
 
 		-
-			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Advanced_Column_CSS\:\:array_any\(\) has parameter \$array with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: inc/css/blocks/class-advanced-column-css.php
-
-		-
 			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Advanced_Column_CSS\:\:merge_old_attributes\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -569,12 +563,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: inc/css/blocks/class-advanced-column-css.php
-
-		-
-			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Advanced_Columns_CSS\:\:array_any\(\) has parameter \$array with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: inc/css/blocks/class-advanced-columns-css.php
 
 		-
 			message: '#^Method ThemeIsle\\GutenbergBlocks\\CSS\\Blocks\\Advanced_Columns_CSS\:\:merge_old_attributes\(\) has parameter \$attrs with no value type specified in iterable type array\.$#'
@@ -1004,12 +992,6 @@ parameters:
 
 		-
 			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:has_warning_codes\(\) has parameter \$codes with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: inc/integrations/api/form-request-data.php
-
-		-
-			message: '#^Method ThemeIsle\\GutenbergBlocks\\Integration\\Form_Data_Request\:\:sanitize_array_map_deep\(\) has parameter \$array with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: inc/integrations/api/form-request-data.php
