@@ -290,7 +290,7 @@ class Form_Data_Request {
 	/**
 	 * Sanitize the given array.
 	 *
-	 * @param array|string $value The array with the values.
+	 * @param array<string, string|array<string,string>>|string $value The array with the values.
 	 * @return array|string
 	 * @since 2.0.3
 	 */
