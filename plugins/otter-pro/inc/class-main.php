@@ -211,7 +211,7 @@ class Main {
 
 		global $pagenow;
 
-		if ( class_exists( 'WooCommerce' ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( intval( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		if ( class_exists( 'WooCommerce' ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( intval( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$asset_file = include OTTER_PRO_BUILD_PATH . 'woocommerce.asset.php';
 
 			wp_enqueue_script(

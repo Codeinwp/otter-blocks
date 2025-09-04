@@ -33,14 +33,14 @@ class Block_Conditions {
 	/**
 	 * Evaluate single condition
 	 *
-	 * @param bool  $bool a default true value.
+	 * @param bool  $default_value a default true value.
 	 * @param array $condition condition.
 	 * @param bool  $visibility visibility.
 	 *
 	 * @since 2.0.1
 	 * @return bool
 	 */
-	public function evaluate_condition( $bool, $condition, $visibility ) {
+	public function evaluate_condition( $default_value, $condition, $visibility ) {
 		if ( ! isset( $condition['type'] ) ) {
 			return true;
 		}
@@ -113,7 +113,7 @@ class Block_Conditions {
 			return $visibility ? $this->has_course_status( $condition ) : ! $this->has_course_status( $condition );
 		}
 
-		return $bool;
+		return $default_value;
 	}
 
 	/**
@@ -215,10 +215,8 @@ class Block_Conditions {
 						if ( $key === $cond_param['key'] && ( ! isset( $cond_param['value'] ) || in_array( $cond_param['value'], $value ) ) ) {
 							return true;
 						}
-					} else {
-						if ( $key === $cond_param['key'] && ( ! isset( $cond_param['value'] ) || $value === $cond_param['value'] ) ) {
+					} elseif ( $key === $cond_param['key'] && ( ! isset( $cond_param['value'] ) || $value === $cond_param['value'] ) ) {
 							return true;
-						}
 					}
 				}
 			}
@@ -235,10 +233,8 @@ class Block_Conditions {
 				}
 			} elseif ( ! isset( $cond_param['value'] ) ) {
 				return false;
-			} else {
-				if ( $params[ $cond_param['key'] ] !== $cond_param['value'] ) {
+			} elseif ( $params[ $cond_param['key'] ] !== $cond_param['value'] ) {
 					return false;
-				}
 			}
 		}
 
@@ -494,7 +490,7 @@ class Block_Conditions {
 		foreach ( $products as $product ) {
 			if ( wc_customer_bought_product( $current_user->user_email, $current_user->ID, $product ) ) {
 				return true;
-			};
+			}
 		}
 
 		return false;
@@ -631,7 +627,7 @@ class Block_Conditions {
 			foreach ( $condition['courses'] as $course ) {
 				if ( ld_course_check_user_access( $course, $current_user->ID ) ) {
 					return true;
-				};
+				}
 			}
 		}
 

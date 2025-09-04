@@ -27,7 +27,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 define( 'BLOCKS_CSS_URL', plugins_url( '/', __FILE__ ) );
-define( 'BLOCKS_CSS_PATH', dirname( __FILE__ ) );
+define( 'BLOCKS_CSS_PATH', __DIR__ );
 define( 'BLOCKS_CSS_PRODUCT_SLUG', basename( BLOCKS_CSS_PATH ) );
 
 add_action(
@@ -35,7 +35,7 @@ add_action(
 	function () {
 		// call this only if Gutenberg is active.
 		if ( function_exists( 'register_block_type' ) ) {
-			require_once dirname( __FILE__ ) . '/class-blocks-css.php';
+			require_once __DIR__ . '/class-blocks-css.php';
 
 			if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_CSS' ) ) {
 				\ThemeIsle\GutenbergBlocks\Blocks_CSS::instance();

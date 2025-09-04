@@ -107,31 +107,31 @@ class Base_CSS {
 	/**
 	 * Check if string is empty without accepting zero
 	 *
-	 * @param string $var Var to check.
+	 * @param string $value Var to check.
 	 *
 	 * @return bool
 	 * @since   1.3.1
 	 * @access  public
 	 */
-	public function is_empty( $var ) {
-		return empty( $var ) && 0 !== $var;
+	public function is_empty( $value ) {
+		return empty( $value ) && 0 !== $value;
 	}
 
 	/**
 	 * Get block attribute value with default
 	 *
 	 * @param mixed $attr Attributes.
-	 * @param mixed $default Default value.
+	 * @param mixed $default_value Default value.
 	 *
 	 * @return mixed
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function get_attr_value( $attr, $default = 'unset' ) {
+	public function get_attr_value( $attr, $default_value = 'unset' ) {
 		if ( ! $this->is_empty( $attr ) ) {
 			return $attr;
 		} else {
-			return $default;
+			return $default_value;
 		}
 	}
 
@@ -150,10 +150,8 @@ class Base_CSS {
 					'fontfamily'  => $attr['fontFamily'],
 					'fontvariant' => ( isset( $attr['fontVariant'] ) && ! empty( $attr['fontVariant'] ) ? array( $attr['fontVariant'] ) : array() ),
 				);
-			} else {
-				if ( ! in_array( $attr['fontVariant'], self::$google_fonts[ $attr['fontFamily'] ]['fontvariant'], true ) ) {
+			} elseif ( ! in_array( $attr['fontVariant'], self::$google_fonts[ $attr['fontFamily'] ]['fontvariant'], true ) ) {
 					array_push( self::$google_fonts[ $attr['fontFamily'] ]['fontvariant'], ( isset( $attr['fontStyle'] ) && 'italic' === $attr['fontStyle'] ) ? $attr['fontVariant'] . ':i' : $attr['fontVariant'] );
-				}
 			}
 		}
 	}
@@ -644,7 +642,7 @@ class Base_CSS {
 	 * @access  protected
 	 */
 	protected function get_dir() {
-		return dirname( __FILE__ );
+		return __DIR__;
 	}
 
 	/**

@@ -64,10 +64,10 @@ class Accordion_CSS extends Base_CSS {
 					array(
 						'property'  => '--border-width',
 						'value'     => 'borderWidth',
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return $value;
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderWidth'] );
 						},
 					),
@@ -79,7 +79,7 @@ class Accordion_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 0,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['horizontal'];
 								},
 							),
@@ -87,7 +87,7 @@ class Accordion_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 0,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['vertical'];
 								},
 							),
@@ -95,7 +95,7 @@ class Accordion_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 5,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['blur'];
 								},
 							),
@@ -103,35 +103,35 @@ class Accordion_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 1,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['spread'];
 								},
 							),
 							'color'      => array(
 								'value'   => 'boxShadow',
 								'default' => '#000',
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									$opacity = $value['colorOpacity'];
 									$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
 									return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? Base_CSS::hex2rgba( $color, $opacity / 100 ) : $color;
 								},
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
 						},
 					),
 					array(
 						'property' => '--gap',
 						'value'    => 'gap',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return $value . 'px';
 						},
 					),
 					array(
 						'property' => '--padding',
 						'value'    => 'padding',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -146,7 +146,7 @@ class Accordion_CSS extends Base_CSS {
 					array(
 						'property' => '--padding-tablet',
 						'value'    => 'paddingTablet',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -161,7 +161,7 @@ class Accordion_CSS extends Base_CSS {
 					array(
 						'property' => '--padding-mobile',
 						'value'    => 'paddingMobile',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -263,30 +263,30 @@ class Accordion_CSS extends Base_CSS {
 					array(
 						'property'  => 'content',
 						'value'     => 'icon',
-						'format'    => function( $value ) use ( $fa_icons ) {
+						'format'    => function ( $value ) use ( $fa_icons ) {
 							return '"\\\\' . $fa_icons[ $value['name'] ]['unicode'] . '"';
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['icon'] );
 						},
 					),
 					array(
 						'property'  => 'font-weight',
 						'value'     => 'icon',
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return 'fas' !== $value['prefix'] ? 400 : 900;
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['icon'] );
 						},
 					),
 					array(
 						'property'  => 'font-family',
 						'value'     => 'icon',
-						'format'    => function( $value ) use ( $prefix_to_family ) {
+						'format'    => function ( $value ) use ( $prefix_to_family ) {
 							return '"' . $prefix_to_family[ $value['prefix'] ] . '"';
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['icon'] );
 						},
 					),
@@ -301,30 +301,30 @@ class Accordion_CSS extends Base_CSS {
 					array(
 						'property'  => 'content',
 						'value'     => 'openItemIcon',
-						'format'    => function( $value ) use ( $fa_icons ) {
+						'format'    => function ( $value ) use ( $fa_icons ) {
 							return '"\\\\' . $fa_icons[ $value['name'] ]['unicode'] . '"';
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['openItemIcon'] );
 						},
 					),
 					array(
 						'property'  => 'font-weight',
 						'value'     => 'openItemIcon',
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return 'fas' !== $value['prefix'] ? 400 : 900;
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['openItemIcon'] );
 						},
 					),
 					array(
 						'property'  => 'font-family',
 						'value'     => 'openItemIcon',
-						'format'    => function( $value ) use ( $prefix_to_family ) {
+						'format'    => function ( $value ) use ( $prefix_to_family ) {
 							return '"' . $prefix_to_family[ $value['prefix'] ] . '"';
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['openItemIcon'] );
 						},
 					),

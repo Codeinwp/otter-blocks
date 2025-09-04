@@ -347,13 +347,11 @@ class Registration {
 
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
-		} else {
-			if ( ! is_null( $wp_query->posts ) && 0 < count( $wp_query->posts ) ) {
+		} elseif ( ! is_null( $wp_query->posts ) && 0 < count( $wp_query->posts ) ) {
 				$posts = wp_list_pluck( $wp_query->posts, 'ID' );
 
-				foreach ( $posts as $post ) {
-					$this->enqueue_dependencies( $post );
-				}
+			foreach ( $posts as $post ) {
+				$this->enqueue_dependencies( $post );
 			}
 		}
 
@@ -437,7 +435,7 @@ class Registration {
 			$blocks = parse_blocks( $content );
 			$blocks = array_filter(
 				$blocks,
-				function( $block ) {
+				function ( $block ) {
 					return 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] );
 				}
 			);
@@ -490,7 +488,7 @@ class Registration {
 
 			add_action(
 				'wp_head',
-				function() {
+				function () {
 					echo '
 						<style type="text/css" data-source="otter-blocks">
 							[class*="o-countdown-trigger-on-end-"] {

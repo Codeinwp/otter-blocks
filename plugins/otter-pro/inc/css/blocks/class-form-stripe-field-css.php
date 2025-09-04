@@ -47,14 +47,14 @@ class Form_Stripe_Field_CSS extends Base_CSS {
 					array(
 						'property' => '--stripe-border-radius',
 						'value'    => 'borderRadius',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return CSS_Utility::render_box( $value );
 						},
 					),
 					array(
 						'property' => '--stripe-border-width',
 						'value'    => 'borderWidth',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return CSS_Utility::render_box( $value );
 						},
 					),
@@ -66,5 +66,4 @@ class Form_Stripe_Field_CSS extends Base_CSS {
 
 		return $style;
 	}
-
 }

@@ -46,40 +46,40 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property'  => '--align',
 						'value'     => 'align',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['align'] ) && is_string( $attrs['align'] );
 						},
-						'format'    => function( $value, $attrs ) use ( $align_map ) {
+						'format'    => function ( $value, $attrs ) use ( $align_map ) {
 							return $align_map[ $value ];
 						},
 					),
 					array(
 						'property'  => '--align',
 						'value'     => 'align',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['align'] ) && isset( $attrs['align']['desktop'] );
 						},
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return $value['desktop'];
 						},
 					),
 					array(
 						'property'  => '--align-tablet',
 						'value'     => 'align',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['align'] ) && isset( $attrs['align']['tablet'] );
 						},
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return $value['tablet'];
 						},
 					),
 					array(
 						'property'  => '--align-mobile',
 						'value'     => 'align',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['align'] ) && isset( $attrs['align']['mobile'] );
 						},
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return $value['mobile'];
 						},
 					),
@@ -100,7 +100,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--margin',
 						'value'    => 'margin',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							if ( is_numeric( $value ) ) {
 								return $value . 'px';
 							}
@@ -120,7 +120,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--padding',
 						'value'    => 'padding',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							if ( is_numeric( $value ) ) {
 								return $value . 'px';
 							}
@@ -140,7 +140,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--font-size',
 						'value'    => 'fontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'icon-font-size',
@@ -174,7 +174,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property'  => 'color',
 						'value'     => 'textColorHover',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return ! ( isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' ) );
 						},
 						'hasSync'   => 'icon-text-color-hover',
@@ -200,7 +200,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property'  => 'color',
 						'value'     => 'textColor',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return ! ( isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' ) );
 						},
 						'hasSync'   => 'icon-text-color',
@@ -216,7 +216,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property'  => 'fill',
 						'value'     => 'textColor',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
 						},
 						'hasSync'   => 'icon-text-color',
@@ -232,7 +232,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property'  => 'fill',
 						'value'     => 'textColorHover',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
 						},
 						'hasSync'   => 'icon-text-color-hover',
@@ -280,7 +280,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--icon-font-size',
 						'value'    => 'fontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),

@@ -34,7 +34,7 @@ class Shared_CSS {
 			array(
 				'property'  => '--background',
 				'value'     => 'backgroundColor',
-				'condition' => function( $attrs ) {
+				'condition' => function ( $attrs ) {
 					return ! ( isset( $attrs['backgroundType'] ) && 'color' !== $attrs['backgroundType'] );
 				},
 			),
@@ -45,7 +45,7 @@ class Shared_CSS {
 					'imageURL'   => array(
 						'value'   => 'backgroundImage',
 						'default' => 'none',
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							if ( isset( $attrs['backgroundImageURL'] ) ) {
 								return apply_filters( 'otter_apply_dynamic_image', $attrs['backgroundImageURL'] );
 							}
@@ -64,7 +64,7 @@ class Shared_CSS {
 					'position'   => array(
 						'value'   => 'backgroundPosition',
 						'default' => '50% 50%',
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							if ( is_array( $value ) && isset( $value['x'] ) ) {
 								return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 							}
@@ -77,15 +77,18 @@ class Shared_CSS {
 						'default' => 'auto',
 					),
 				),
-				'condition'      => function( $attrs ) {
-					return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && ( isset( $attrs['backgroundImageURL'] ) && Base_CSS::is_image_url( $attrs['backgroundImageURL'] ) || isset( $attrs['backgroundImage'] ) && Base_CSS::is_image_url( $attrs['backgroundImage']['url'] ) );
+				'condition'      => function ( $attrs ) {
+					return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && (
+						( isset( $attrs['backgroundImageURL'] ) && Base_CSS::is_image_url( $attrs['backgroundImageURL'] ) ) ||
+						( isset( $attrs['backgroundImage'] ) && Base_CSS::is_image_url( $attrs['backgroundImage']['url'] ) )
+					);
 				},
 			),
 			array(
 				'property'  => '--background',
 				'value'     => 'backgroundGradient',
 				'default'   => 'linear-gradient(90deg,rgba(54,209,220,1) 0%,rgba(91,134,229,1) 100%)',
-				'condition' => function( $attrs ) {
+				'condition' => function ( $attrs ) {
 					return isset( $attrs['backgroundType'] ) && 'gradient' === $attrs['backgroundType'] && isset( $attrs['backgroundGradient'] );
 				},
 			),
@@ -117,7 +120,7 @@ class Shared_CSS {
 						'default' => 100,
 					),
 				),
-				'condition'      => function( $attrs ) {
+				'condition'      => function ( $attrs ) {
 					return isset( $attrs['backgroundType'] ) && 'gradient' === $attrs['backgroundType'] && ! isset( $attrs['backgroundGradient'] );
 				},
 			),
@@ -148,14 +151,14 @@ class Shared_CSS {
 						'default' => 100,
 					),
 				),
-				'condition'      => function( $attrs ) {
+				'condition'      => function ( $attrs ) {
 					return isset( $attrs['backgroundType'] ) && 'gradient' === $attrs['backgroundType'] && isset( $attrs['backgroundGradientType'] ) && 'radial' === $attrs['backgroundGradientType'];
 				},
 			),
 			array(
 				'property'  => 'color',
 				'default'   => 'var( --text-color )',
-				'condition' => function( $attrs ) {
+				'condition' => function ( $attrs ) {
 					return isset( $attrs['color'] );
 				},
 			),
@@ -166,47 +169,47 @@ class Shared_CSS {
 					'top'    => array(
 						'value'   => 'border',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['top'] ) ? $value['top'] : 0;
 						},
 					),
 					'right'  => array(
 						'value'   => 'border',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['right'] ) ? $value['right'] : 0;
 						},
 					),
 					'bottom' => array(
 						'value'   => 'border',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['bottom'] ) ? $value['bottom'] : 0;
 						},
 					),
 					'left'   => array(
 						'value'   => 'border',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['left'] ) ? $value['left'] : 0;
 						},
 					),
 				),
-				'condition'      => function( $attrs ) {
+				'condition'      => function ( $attrs ) {
 					return isset( $attrs['border'] ) && is_array( $attrs['border'] );
 				},
 			),
 			array(
 				'property'  => 'border-style',
 				'default'   => 'solid',
-				'condition' => function( $attrs ) {
+				'condition' => function ( $attrs ) {
 					return isset( $attrs['border'] ) && is_array( $attrs['border'] );
 				},
 			),
 			array(
 				'property'  => 'border-color',
 				'value'     => 'borderColor',
-				'condition' => function( $attrs ) {
+				'condition' => function ( $attrs ) {
 					return isset( $attrs['border'] ) && is_array( $attrs['border'] );
 				},
 			),
@@ -217,33 +220,33 @@ class Shared_CSS {
 					'top-left'     => array(
 						'value'   => 'borderRadius',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['top'] ) ? $value['top'] : 0;
 						},
 					),
 					'top-right'    => array(
 						'value'   => 'borderRadius',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['right'] ) ? $value['right'] : 0;
 						},
 					),
 					'bottom-right' => array(
 						'value'   => 'borderRadius',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['bottom'] ) ? $value['bottom'] : 0;
 						},
 					),
 					'bottom-left'  => array(
 						'value'   => 'borderRadius',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['left'] ) ? $value['left'] : 0;
 						},
 					),
 				),
-				'condition'      => function( $attrs ) {
+				'condition'      => function ( $attrs ) {
 					return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
 				},
 			),
@@ -274,7 +277,7 @@ class Shared_CSS {
 					'color'      => array(
 						'value'   => 'boxShadowColor',
 						'default' => '#000',
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							if ( ! isset( $attrs['boxShadowColorOpacity'] ) ) {
 								return $value;
 							}
@@ -288,7 +291,7 @@ class Shared_CSS {
 						},
 					),
 				),
-				'condition'      => function( $attrs ) {
+				'condition'      => function ( $attrs ) {
 					return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow'];
 				},
 			),
@@ -305,7 +308,7 @@ class Shared_CSS {
 			array(
 				'property'  => 'background',
 				'value'     => 'backgroundOverlayColor',
-				'condition' => function( $attrs ) {
+				'condition' => function ( $attrs ) {
 					return ! ( isset( $attrs['backgroundOverlayType'] ) && 'color' !== $attrs['backgroundOverlayType'] );
 				},
 			),
@@ -313,7 +316,7 @@ class Shared_CSS {
 				'property' => 'opacity',
 				'value'    => 'backgroundOverlayOpacity',
 				'default'  => 50,
-				'format'   => function( $value, $attrs ) {
+				'format'   => function ( $value, $attrs ) {
 					return $value / 100;
 				},
 			),
@@ -324,7 +327,7 @@ class Shared_CSS {
 					'imageURL'   => array(
 						'value'   => 'backgroundOverlayImage',
 						'default' => 'none',
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							if ( isset( $attrs['backgroundOverlayImageURL'] ) ) {
 								return apply_filters( 'otter_apply_dynamic_image', $attrs['backgroundOverlayImageURL'] );
 							}
@@ -343,7 +346,7 @@ class Shared_CSS {
 					'position'   => array(
 						'value'   => 'backgroundOverlayPosition',
 						'default' => '50% 50%',
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							if ( is_array( $value ) && isset( $value['x'] ) ) {
 								return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 							}
@@ -356,15 +359,18 @@ class Shared_CSS {
 						'default' => 'auto',
 					),
 				),
-				'condition'      => function( $attrs ) {
-					return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && ( isset( $attrs['backgroundOverlayImageURL'] ) && Base_CSS::is_image_url( $attrs['backgroundOverlayImageURL'] ) || isset( $attrs['backgroundOverlayImage'] ) && Base_CSS::is_image_url( $attrs['backgroundOverlayImage']['url'] ) );
+				'condition'      => function ( $attrs ) {
+					return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && (
+						( isset( $attrs['backgroundOverlayImageURL'] ) && Base_CSS::is_image_url( $attrs['backgroundOverlayImageURL'] ) ) ||
+						( isset( $attrs['backgroundOverlayImage'] ) && Base_CSS::is_image_url( $attrs['backgroundOverlayImage']['url'] ) )
+					);
 				},
 			),
 			array(
 				'property'  => 'background',
 				'value'     => 'backgroundOverlayGradient',
 				'default'   => 'linear-gradient(90deg,rgba(54,209,220,1) 0%,rgba(91,134,229,1) 100%)',
-				'condition' => function( $attrs ) {
+				'condition' => function ( $attrs ) {
 					return isset( $attrs['backgroundOverlayType'] ) && 'gradient' === $attrs['backgroundOverlayType'] && isset( $attrs['backgroundOverlayGradient'] );
 				},
 			),
@@ -396,7 +402,7 @@ class Shared_CSS {
 						'default' => 100,
 					),
 				),
-				'condition'      => function( $attrs ) {
+				'condition'      => function ( $attrs ) {
 					return isset( $attrs['backgroundOverlayType'] ) && 'gradient' === $attrs['backgroundOverlayType'] && ! isset( $attrs['backgroundOverlayGradient'] );
 				},
 			),
@@ -427,7 +433,7 @@ class Shared_CSS {
 						'default' => 100,
 					),
 				),
-				'condition'      => function( $attrs ) {
+				'condition'      => function ( $attrs ) {
 					return isset( $attrs['backgroundOverlayType'] ) && 'gradient' === $attrs['backgroundOverlayType'] && isset( $attrs['backgroundOverlayGradientType'] ) && 'radial' === $attrs['backgroundOverlayGradientType'];
 				},
 			),
@@ -439,28 +445,28 @@ class Shared_CSS {
 						'value'   => 'backgroundOverlayFilterBlur',
 						'unit'    => 'px',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return $value / 10;
 						},
 					),
 					'filterBrightness' => array(
 						'value'   => 'backgroundOverlayFilterBrightness',
 						'default' => 10,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return $value / 10;
 						},
 					),
 					'filterContrast'   => array(
 						'value'   => 'backgroundOverlayFilterContrast',
 						'default' => 10,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return $value / 10;
 						},
 					),
 					'filterGrayscale'  => array(
 						'value'   => 'backgroundOverlayFilterGrayscale',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return $value / 100;
 						},
 					),
@@ -472,12 +478,12 @@ class Shared_CSS {
 					'filterSaturate'   => array(
 						'value'   => 'backgroundOverlayFilterSaturate',
 						'default' => 10,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return $value / 10;
 						},
 					),
 				),
-				'condition'      => function( $attrs ) {
+				'condition'      => function ( $attrs ) {
 					return isset( $attrs['backgroundOverlayFilterBlur'] );
 				},
 			),
@@ -493,33 +499,33 @@ class Shared_CSS {
 					'top-left'     => array(
 						'value'   => 'borderRadius',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['top'] ) ? $value['top'] : 0;
 						},
 					),
 					'top-right'    => array(
 						'value'   => 'borderRadius',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['right'] ) ? $value['right'] : 0;
 						},
 					),
 					'bottom-right' => array(
 						'value'   => 'borderRadius',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['bottom'] ) ? $value['bottom'] : 0;
 						},
 					),
 					'bottom-left'  => array(
 						'value'   => 'borderRadius',
 						'default' => 0,
-						'format'  => function( $value, $attrs ) {
+						'format'  => function ( $value, $attrs ) {
 							return isset( $value['left'] ) ? $value['left'] : 0;
 						},
 					),
 				),
-				'condition'      => function( $attrs ) {
+				'condition'      => function ( $attrs ) {
 					return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
 				},
 			),

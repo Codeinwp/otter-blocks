@@ -202,12 +202,12 @@ class Form_Server {
 					},
 					'args'                => array(
 						'record_id' => array(
-							'validate_callback' => function( $param, $request, $key ) {
+							'validate_callback' => function ( $param, $request, $key ) {
 								return is_numeric( $param );
 							},
 						),
 						'session'   => array(
-							'validate_callback' => function( $param, $request, $key ) {
+							'validate_callback' => function ( $param, $request, $key ) {
 								return is_string( $param );
 							},
 						),

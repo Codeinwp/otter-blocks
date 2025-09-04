@@ -32,7 +32,7 @@ class Product_Add_To_Cart_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 		woocommerce_template_single_add_to_cart();
 		$output = ob_get_clean();
 		return $output;

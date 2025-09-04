@@ -91,7 +91,6 @@ class Plugin_Card_Block {
 
 			return $markup;
 		}
-
 	}
 
 	/**

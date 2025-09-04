@@ -41,21 +41,21 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property'  => 'display',
 						'default'   => 'inline-flex',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $attrs['library'];
 						},
 					),
 					array(
 						'property'  => 'align-items',
 						'default'   => 'center',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $attrs['library'];
 						},
 					),
 					array(
 						'property'  => 'justify-content',
 						'default'   => 'center',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $attrs['library'];
 						},
 					),
@@ -63,7 +63,7 @@ class Button_CSS extends Base_CSS {
 						'property'  => 'border-width',
 						'value'     => 'borderSize',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderSize'] ) && is_numeric( $attrs['borderSize'] );
 						},
 						'hasSync'   => 'gr-btn-border-width',
@@ -71,7 +71,7 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property'  => 'border-width',
 						'value'     => 'borderSize',
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -82,7 +82,7 @@ class Button_CSS extends Base_CSS {
 								)
 							);
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderSize'] ) && is_array( $attrs['borderSize'] );
 						},
 						'hasSync'   => 'gr-btn-border-size',
@@ -91,7 +91,7 @@ class Button_CSS extends Base_CSS {
 						'property'  => 'border-style',
 						'default'   => 'solid',
 						'hasSync'   => 'gr-btn-border-style',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['border'] ) && ! empty( $attrs['border'] );
 						},
 					),
@@ -99,7 +99,7 @@ class Button_CSS extends Base_CSS {
 						'property'  => 'border-radius',
 						'value'     => 'borderRadius',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius'] );
 						},
 						'hasSync'   => 'gr-btn-border-radius',
@@ -107,7 +107,7 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property'  => 'border-radius',
 						'value'     => 'borderRadius',
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -118,7 +118,7 @@ class Button_CSS extends Base_CSS {
 								)
 							);
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
 						},
 						'hasSync'   => 'gr-btn-border-radius',
@@ -178,13 +178,13 @@ class Button_CSS extends Base_CSS {
 							'color'      => array(
 								'value'   => 'boxShadowColor',
 								'default' => '#000',
-								'format'  => function( $value, $attrs ) {
+								'format'  => function ( $value, $attrs ) {
 									$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 ) / 100;
 									return Base_CSS::hex2rgba( $value, $opacity );
 								},
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow'];
 						},
 						'hasSync'        => 'gr-btn-shadow',
@@ -244,13 +244,13 @@ class Button_CSS extends Base_CSS {
 							'color'      => array(
 								'value'   => 'hoverBoxShadowColor',
 								'default' => '#000',
-								'format'  => function( $value, $attrs ) {
+								'format'  => function ( $value, $attrs ) {
 									$opacity = ( isset( $attrs['hoverBoxShadowColorOpacity'] ) ? $attrs['hoverBoxShadowColorOpacity'] : 50 ) / 100;
 									return Base_CSS::hex2rgba( $value, $opacity );
 								},
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow'];
 						},
 						'hasSync'        => 'gr-btn-shadow-hover',
@@ -311,14 +311,14 @@ class Button_CSS extends Base_CSS {
 						'property'  => '--gr-btn-border-size',
 						'value'     => 'borderSize',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderSize'] ) && is_numeric( $attrs['borderSize'] );
 						},
 					),
 					array(
 						'property'  => '--gr-btn-border-size',
 						'value'     => 'borderSize',
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -329,21 +329,21 @@ class Button_CSS extends Base_CSS {
 								)
 							);
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderSize'] ) && is_array( $attrs['borderSize'] );
 						},
 					),
 					array(
 						'property'  => '--gr-btn-border-color',
 						'value'     => 'border',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['border'] ) && ! empty( $attrs['border'] );
 						},
 					),
 					array(
 						'property'  => '--gr-btn-border-style',
 						'default'   => 'solid',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['border'] ) && ! empty( $attrs['border'] );
 						},
 					),
@@ -351,14 +351,14 @@ class Button_CSS extends Base_CSS {
 						'property'  => '--gr-btn-border-radius',
 						'value'     => 'borderRadius',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius'] );
 						},
 					),
 					array(
 						'property'  => '--gr-btn-border-radius',
 						'value'     => 'borderRadius',
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -369,7 +369,7 @@ class Button_CSS extends Base_CSS {
 								)
 							);
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
 						},
 					),
@@ -400,13 +400,13 @@ class Button_CSS extends Base_CSS {
 							'color'      => array(
 								'value'   => 'boxShadowColor',
 								'default' => '#000',
-								'format'  => function( $value, $attrs ) {
+								'format'  => function ( $value, $attrs ) {
 									$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 ) / 100;
 									return Base_CSS::hex2rgba( $value, $opacity );
 								},
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow'];
 						},
 					),
@@ -461,13 +461,13 @@ class Button_CSS extends Base_CSS {
 							'color'      => array(
 								'value'   => 'hoverBoxShadowColor',
 								'default' => '#000',
-								'format'  => function( $value, $attrs ) {
+								'format'  => function ( $value, $attrs ) {
 									$opacity = ( isset( $attrs['hoverBoxShadowColorOpacity'] ) ? $attrs['hoverBoxShadowColorOpacity'] : 50 ) / 100;
 									return Base_CSS::hex2rgba( $value, $opacity );
 								},
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow'];
 						},
 					),

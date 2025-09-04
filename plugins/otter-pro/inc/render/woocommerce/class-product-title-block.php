@@ -32,7 +32,7 @@ class Product_Title_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 		woocommerce_template_single_title();
 		$output = ob_get_clean();
 		return $output;

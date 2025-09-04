@@ -30,7 +30,7 @@ class Product_Stock_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 		$output = wc_get_stock_html( $product );
 
 		if ( empty( $output ) ) {

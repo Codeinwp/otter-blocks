@@ -61,10 +61,10 @@ class Review_CSS extends Base_CSS {
 					array(
 						'property'  => $item['prefix'] . $side,
 						'value'     => $key,
-						'format'    => function( $value, $attrs ) use ( $side ) {
+						'format'    => function ( $value, $attrs ) use ( $side ) {
 							return $value[ $side ];
 						},
-						'condition' => function( $attrs ) use ( $key, $side ) {
+						'condition' => function ( $attrs ) use ( $key, $side ) {
 							return isset( $attrs[ $key ] ) && isset( $attrs[ $key ][ $side ] );
 						},
 					)
@@ -138,7 +138,7 @@ class Review_CSS extends Base_CSS {
 									'value'   => 'boxShadow',
 									'unit'    => 'px',
 									'default' => 0,
-									'format'  => function( $value ) {
+									'format'  => function ( $value ) {
 										return $value['horizontal'];
 									},
 								),
@@ -146,7 +146,7 @@ class Review_CSS extends Base_CSS {
 									'value'   => 'boxShadow',
 									'unit'    => 'px',
 									'default' => 0,
-									'format'  => function( $value ) {
+									'format'  => function ( $value ) {
 										return $value['vertical'];
 									},
 								),
@@ -154,7 +154,7 @@ class Review_CSS extends Base_CSS {
 									'value'   => 'boxShadow',
 									'unit'    => 'px',
 									'default' => 5,
-									'format'  => function( $value ) {
+									'format'  => function ( $value ) {
 										return $value['blur'];
 									},
 								),
@@ -162,21 +162,21 @@ class Review_CSS extends Base_CSS {
 									'value'   => 'boxShadow',
 									'unit'    => 'px',
 									'default' => 1,
-									'format'  => function( $value ) {
+									'format'  => function ( $value ) {
 										return $value['spread'];
 									},
 								),
 								'color'      => array(
 									'value'   => 'boxShadow',
 									'default' => '#000',
-									'format'  => function( $value ) {
+									'format'  => function ( $value ) {
 										$opacity = $value['colorOpacity'];
 										$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
 										return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? Base_CSS::hex2rgba( $color, $opacity / 100 ) : $color;
 									},
 								),
 							),
-							'condition'      => function( $attrs ) {
+							'condition'      => function ( $attrs ) {
 								return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
 							},
 						),

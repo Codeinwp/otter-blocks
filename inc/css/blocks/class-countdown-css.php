@@ -42,7 +42,7 @@ class Countdown_CSS extends Base_CSS {
 						'value'     => 'borderRadius',
 						'unit'      => '%',
 						'default'   => 0,
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return ( ! isset( $attrs['borderRadiusBox'] ) ) && ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) && isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius'] );
 						},
 					),
@@ -71,7 +71,7 @@ class Countdown_CSS extends Base_CSS {
 								'default' => 0,
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return ( ! isset( $attrs['borderRadiusBox'] ) ) && isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] && isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius'] );
 						},
 					),
@@ -90,7 +90,7 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => '--border-radius',
 						'value'    => 'borderRadiusBox',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -166,42 +166,42 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => '--value-font-size',
 						'value'    => 'valueFontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--value-font-size-tablet',
 						'value'    => 'valueFontSizeTablet',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--value-font-size-mobile',
 						'value'    => 'valueFontSizeMobile',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--label-font-size',
 						'value'    => 'labelFontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--label-font-size-tablet',
 						'value'    => 'labelFontSizeTablet',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--label-font-size-mobile',
 						'value'    => 'labelFontSizeMobile',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
@@ -216,7 +216,7 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => '--padding',
 						'value'    => 'padding',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -231,7 +231,7 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => '--padding-tablet',
 						'value'    => 'paddingTablet',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -246,7 +246,7 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => '--padding-mobile',
 						'value'    => 'paddingMobile',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -261,10 +261,10 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property'  => 'display',
 						'value'     => 'exclude',
-						'format'    => function( $value, $attrs ) {
+						'format'    => function ( $value, $attrs ) {
 							return 'none';
 						},
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['exclude'] ) && is_array( $attrs['exclude'] ) && 4 === count( $attrs['exclude'] );
 						}, 
 					),
@@ -315,7 +315,7 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property'  => 'display',
 						'default'   => 'none',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['separatorAlignment'] ) && 'center' === $attrs['separatorAlignment'];
 						},
 					),

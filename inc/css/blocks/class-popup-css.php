@@ -68,21 +68,21 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property' => '--overlay-opacity',
 						'value'    => 'overlayOpacity',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return $value / 100;
 						},
 					),
 					array(
 						'property' => '--brd-width',
 						'value'    => 'borderWidth',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
 						'property' => '--brd-radius',
 						'value'    => 'borderRadius',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return CSS_Utility::box_values( $value );
 						},
 					),
@@ -130,21 +130,21 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property' => '--padding',
 						'value'    => 'padding',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
 						'property' => '--padding-tablet',
 						'value'    => 'paddingTablet',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
 						'property' => '--padding-mobile',
 						'value'    => 'paddingMobile',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return CSS_Utility::box_values( $value );
 						},
 					),
@@ -159,50 +159,50 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property'  => 'top',
 						'value'     => 'verticalPosition',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['verticalPosition'] ) && 'top' === $attrs['verticalPosition'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '30px';
 						},
 					),
 					array(
 						'property'  => 'bottom',
 						'value'     => 'verticalPosition',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['verticalPosition'] ) && 'bottom' === $attrs['verticalPosition'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '30px';
 						},
 					),
 					array(
 						'property'  => 'right',
 						'value'     => 'horizontalPosition',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['horizontalPosition'] ) && 'right' === $attrs['horizontalPosition'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '30px';
 						},
 					),
 					array(
 						'property'  => 'left',
 						'value'     => 'horizontalPosition',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['horizontalPosition'] ) && 'left' === $attrs['horizontalPosition'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '30px';
 						},
 					),
 					array(
 						'property'  => 'top',
 						'value'     => 'verticalPositionTablet',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['verticalPositionTablet'] ) && 'top' === $attrs['verticalPositionTablet'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '15px';
 						},
 						'media'     => 'tablet',
@@ -210,10 +210,10 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property'  => 'bottom',
 						'value'     => 'verticalPositionTablet',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['verticalPositionTablet'] ) && 'bottom' === $attrs['verticalPositionTablet'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '15px';
 						},
 						'media'     => 'tablet',
@@ -221,10 +221,10 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property'  => 'right',
 						'value'     => 'horizontalPositionTablet',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['horizontalPositionTablet'] ) && 'right' === $attrs['horizontalPositionTablet'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '15px';
 						},
 						'media'     => 'tablet',
@@ -232,10 +232,10 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property'  => 'left',
 						'value'     => 'horizontalPositionTablet',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['horizontalPositionTablet'] ) && 'left' === $attrs['horizontalPositionTablet'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '15px';
 						},
 						'media'     => 'tablet',
@@ -243,10 +243,10 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property'  => 'top',
 						'value'     => 'verticalPositionMobile',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['verticalPositionMobile'] ) && 'top' === $attrs['verticalPositionMobile'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '10px';
 						},
 						'media'     => 'mobile',
@@ -254,10 +254,10 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property'  => 'bottom',
 						'value'     => 'verticalPositionMobile',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['verticalPositionMobile'] ) && 'bottom' === $attrs['verticalPositionMobile'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '10px';
 						},
 						'media'     => 'mobile',
@@ -265,10 +265,10 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property'  => 'right',
 						'value'     => 'horizontalPositionMobile',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['horizontalPositionMobile'] ) && 'right' === $attrs['horizontalPositionMobile'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '10px';
 						},
 						'media'     => 'mobile',
@@ -276,10 +276,10 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property'  => 'left',
 						'value'     => 'horizontalPositionMobile',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['horizontalPositionMobile'] ) && 'left' === $attrs['horizontalPositionMobile'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '10px';
 						},
 						'media'     => 'mobile',
@@ -292,7 +292,7 @@ class Popup_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 0,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['horizontal'];
 								},
 							),
@@ -300,7 +300,7 @@ class Popup_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 0,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['vertical'];
 								},
 							),
@@ -308,7 +308,7 @@ class Popup_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 5,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['blur'];
 								},
 							),
@@ -316,21 +316,21 @@ class Popup_CSS extends Base_CSS {
 								'value'   => 'boxShadow',
 								'unit'    => 'px',
 								'default' => 1,
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									return $value['spread'];
 								},
 							),
 							'color'      => array(
 								'value'   => 'boxShadow',
 								'default' => '#000',
-								'format'  => function( $value ) {
+								'format'  => function ( $value ) {
 									$opacity = $value['colorOpacity'];
 									$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
 									return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? Base_CSS::hex2rgba( $color, $opacity / 100 ) : $color;
 								},
 							),
 						),
-						'condition'      => function( $attrs ) {
+						'condition'      => function ( $attrs ) {
 							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
 						},
 					),

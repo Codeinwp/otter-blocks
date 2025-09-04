@@ -44,7 +44,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => '--spacing',
 						'value'    => 'spacing',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'gr-btn-spacing',
@@ -52,7 +52,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => '--font-size',
 						'value'    => 'fontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'gr-btn-font-size',
@@ -60,7 +60,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => '--padding-tablet',
 						'value'    => 'paddingTablet',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -76,7 +76,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => '--padding-mobile',
 						'value'    => 'paddingMobile',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -100,7 +100,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => 'padding-top',
 						'value'    => 'paddingTopBottom',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'gr-btn-padding-vertical',
@@ -108,7 +108,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => 'padding-bottom',
 						'value'    => 'paddingTopBottom',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'gr-btn-padding-vertical',
@@ -116,7 +116,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => 'padding-left',
 						'value'    => 'paddingLeftRight',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'gr-btn-padding-horizontal',
@@ -124,7 +124,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => 'padding-right',
 						'value'    => 'paddingLeftRight',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'gr-btn-padding-horizontal',
@@ -137,7 +137,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => 'font-weight',
 						'value'    => 'fontVariant',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return 'regular' === $value ? 'normal' : $value;
 						},
 						'hasSync'  => 'gr-btn-font-variant',
@@ -156,7 +156,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => 'line-height',
 						'value'    => 'lineHeight',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return ! is_string( $value ) && is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'gr-btn-font-height',
@@ -172,7 +172,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => 'width',
 						'value'    => 'fontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 						'hasSync'  => 'gr-btn-font-size',
@@ -220,21 +220,21 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => '--gr-btn-spacing',
 						'value'    => 'spacing',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--gr-btn-font-size',
 						'value'    => 'fontSize',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--gr-btn-padding-tablet',
 						'value'    => 'paddingTablet',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -249,7 +249,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => '--gr-btn-padding-mobile',
 						'value'    => 'paddingMobile',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -272,14 +272,14 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => '--gr-btn-padding-vertical',
 						'value'    => 'paddingTopBottom',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
 						'property' => '--gr-btn-padding-horizontal',
 						'value'    => 'paddingLeftRight',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
@@ -290,7 +290,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => '--gr-btn-font-variant',
 						'value'    => 'fontVariant',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return 'regular' === $value ? 'normal' : $value;
 						},
 					),
@@ -306,7 +306,7 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => '--gr-btn-font-height',
 						'value'    => 'lineHeight',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),

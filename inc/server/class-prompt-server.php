@@ -396,7 +396,7 @@ class Prompt_Server {
 
 		foreach ( $usage['usage_count'] as &$u ) {
 			if ( isset( $u['key'] ) && $u['key'] === $action ) {
-				$u['value']++;
+				++$u['value'];
 				$is_missing = false;
 			}
 		}

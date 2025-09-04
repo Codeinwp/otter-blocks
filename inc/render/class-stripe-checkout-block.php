@@ -50,14 +50,14 @@ class Stripe_Checkout_Block {
 	 * Watch for the checkout.
 	 */
 	public function watch_checkout() {
-		if ( ! isset( $_GET['action'] ) || 'buy_stripe' !== $_GET['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		if ( ! isset( $_GET['action'] ) || 'buy_stripe' !== $_GET['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
-		$product_id = isset( $_GET['product_id'] ) ? sanitize_text_field( wp_unslash( $_GET['product_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-		$price_id   = isset( $_GET['price_id'] ) ? sanitize_text_field( wp_unslash( $_GET['price_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-		$url        = isset( $_GET['url'] ) ? sanitize_text_field( wp_unslash( $_GET['url'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-		$mode       = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : 'payment'; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		$product_id = isset( $_GET['product_id'] ) ? sanitize_text_field( wp_unslash( $_GET['product_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$price_id   = isset( $_GET['price_id'] ) ? sanitize_text_field( wp_unslash( $_GET['price_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$url        = isset( $_GET['url'] ) ? sanitize_text_field( wp_unslash( $_GET['url'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$mode       = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : 'payment'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( empty( $product_id ) || empty( $price_id ) || empty( $url ) ) {
 			return sprintf(
@@ -114,9 +114,9 @@ class Stripe_Checkout_Block {
 			return '';
 		}
 
-		if ( isset( $_GET['stripe_session_id'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-			$session_id = esc_attr( $_GET['stripe_session_id'] );// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			$status     = $this->stripe_api->get_status_for_price_id( $session_id, esc_attr( $attributes['price'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		if ( isset( $_GET['stripe_session_id'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$session_id = esc_attr( $_GET['stripe_session_id'] );// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$status     = $this->stripe_api->get_status_for_price_id( $session_id, esc_attr( $attributes['price'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			if ( false !== $status ) {
 				if ( 'success' === $status ) {
