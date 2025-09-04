@@ -53,5 +53,4 @@ class Form_Input_CSS extends Base_CSS {
 
 		return $style;
 	}
-
 }

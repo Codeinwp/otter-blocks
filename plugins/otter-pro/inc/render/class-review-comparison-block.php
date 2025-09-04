@@ -243,7 +243,7 @@ class Review_Comparison_Block {
 
 		$rating = array_reduce(
 			$features,
-			function( $carry, $feature ) {
+			function ( $carry, $feature ) {
 				$carry += $feature['rating'];
 				return $carry;
 			},

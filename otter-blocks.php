@@ -25,7 +25,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( 'OTTER_BLOCKS_BASEFILE', __FILE__ );
 define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
-define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
+define( 'OTTER_BLOCKS_PATH', __DIR__ );
 define( 'OTTER_BLOCKS_VERSION', '3.1.1' );
 define( 'OTTER_BLOCKS_PRO_SUPPORT', true );
 define( 'OTTER_BLOCKS_SHOW_NOTICES', false );
@@ -52,7 +52,7 @@ add_filter(
 
 add_filter(
 	'otter_blocks_welcome_metadata',
-	function() {
+	function () {
 		return [
 			'is_enabled' => ! defined( 'OTTER_PRO_VERSION' ),
 			'pro_name'   => __( 'Otter Blocks Pro', 'otter-blocks' ),
@@ -76,7 +76,7 @@ add_filter(
 
 add_action(
 	'plugin_action_links_' . plugin_basename( __FILE__ ),
-	function( $links ) {
+	function ( $links ) {
 		array_unshift(
 			$links,
 			sprintf( '<a href="%s">%s</a>', admin_url( 'admin.php?page=otter' ), __( 'Settings', 'otter-blocks' ) )
@@ -89,7 +89,7 @@ add_filter( 'themeisle_sdk_enable_telemetry', '__return_true' );
 
 add_filter(
 	'themeisle_sdk_telemetry_products',
-	function( $products ) {
+	function ( $products ) {
 		$already_registered = false;
 
 		$license    = apply_filters( 'product_otter_license_key', 'free' );

@@ -53,14 +53,14 @@ class Icon_List_CSS extends Base_CSS {
 						'property'  => '--gap',
 						'value'     => 'gap',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['gap'] ) && is_numeric( $attrs['gap'] );
 						},
 					),
 					array(
 						'property'  => '--gap',
 						'value'     => 'gap',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['gap'] ) && is_string( $attrs['gap'] );
 						},
 					),
@@ -80,14 +80,14 @@ class Icon_List_CSS extends Base_CSS {
 						'property'  => '--font-size',
 						'value'     => 'defaultSize',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['defaultSize'] ) && is_numeric( $attrs['defaultSize'] );
 						},
 					),
 					array(
 						'property'  => '--font-size',
 						'value'     => 'defaultSize',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['defaultSize'] ) && is_string( $attrs['defaultSize'] );
 						},
 					),
@@ -98,7 +98,7 @@ class Icon_List_CSS extends Base_CSS {
 					array(
 						'property' => '--label-visibility',
 						'value'    => 'hideLabels',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return $value ? 'none' : '';
 						},
 					),
@@ -117,51 +117,51 @@ class Icon_List_CSS extends Base_CSS {
 					array(
 						'property' => '--divider-margin-left',
 						'value'    => 'horizontalAlign',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return 'auto';
 						},
 					),
 					array(
 						'property' => '--divider-margin-left-tablet',
 						'value'    => 'alignmentTablet',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return 'auto';
 						},
 					),
 					array(
 						'property' => '--divider-margin-left-mobile',
 						'value'    => 'alignmentMobile',
-						'format'   => function( $value ) {
+						'format'   => function ( $value ) {
 							return 'auto';
 						},
 					),
 					array(
 						'property'  => '--divider-margin-right',
 						'value'     => 'horizontalAlign',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['horizontalAlign'] ) && 'flex-end' === $attrs['horizontalAlign'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '0';
 						},
 					),
 					array(
 						'property'  => '--divider-margin-right-tablet',
 						'value'     => 'alignmentTablet',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['alignmentTablet'] ) && 'flex-end' === $attrs['alignmentTablet'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '0';
 						},
 					),
 					array(
 						'property'  => '--divider-margin-right-mobile',
 						'value'     => 'alignmentMobile',
-						'condition' => function( $attrs ) {
+						'condition' => function ( $attrs ) {
 							return isset( $attrs['alignmentMobile'] ) && 'flex-end' === $attrs['alignmentMobile'];
 						},
-						'format'    => function( $value ) {
+						'format'    => function ( $value ) {
 							return '0';
 						},
 					),

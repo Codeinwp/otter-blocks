@@ -32,11 +32,11 @@ class Product_Tabs_Block {
 
 		if ( ! $product ) {
 			return;
-		};
+		}
 
 		add_filter(
 			'woocommerce_product_tabs',
-			function( $tabs ) {
+			function ( $tabs ) {
 				unset( $tabs['description'] );
 				return $tabs;
 			} 

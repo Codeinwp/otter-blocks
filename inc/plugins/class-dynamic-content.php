@@ -213,7 +213,7 @@ class Dynamic_Content {
 
 		global $post;
 
-		$id = ( defined( 'REST_REQUEST' ) && REST_REQUEST || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
+		$id = ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
 
 		if ( isset( $data['context'] ) && ( 0 === $data['context'] || 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
 			$data['context'] = $id;
@@ -549,7 +549,7 @@ class Dynamic_Content {
 			$format = esc_html( $data['dateCustom'] );
 		}
 
-		$date = date( $format );
+		$date = gmdate( $format );
 
 		return $date;
 	}
@@ -572,7 +572,7 @@ class Dynamic_Content {
 			$format = esc_html( $data['timeCustom'] );
 		}
 
-		$time = date( $format );
+		$time = gmdate( $format );
 
 		return $time;
 	}

@@ -77,7 +77,7 @@ class Form_Providers {
 	public function register_providers( $new_providers ) {
 		foreach ( $new_providers as $name => $handlers ) {
 			if ( array_key_exists( $name, $this->providers ) ) {
-				throw new Exception( 'Provider ' . $name . ' is already registered.' ); // phpcs:ignore Squiz.Commenting.FunctionComment.EmptyThrows
+				throw new Exception( 'Provider ' . esc_html( $name ) . ' is already registered.' ); // phpcs:ignore Squiz.Commenting.FunctionComment.EmptyThrows
 			}
 		}
 

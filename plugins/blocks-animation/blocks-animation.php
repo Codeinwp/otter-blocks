@@ -31,7 +31,7 @@ if ( defined( 'OTTER_BLOCKS_PATH' ) ) {
 }
 
 define( 'BLOCKS_ANIMATION_URL', plugins_url( '/', __FILE__ ) );
-define( 'BLOCKS_ANIMATION_PATH', dirname( __FILE__ ) );
+define( 'BLOCKS_ANIMATION_PATH', __DIR__ );
 define( 'BLOCKS_ANIMATION_PRODUCT_SLUG', basename( BLOCKS_ANIMATION_PATH ) );
 
 $vendor_file = BLOCKS_ANIMATION_PATH . '/vendor/autoload.php';
@@ -54,7 +54,7 @@ add_action(
 	function () {
 		// call this only if Gutenberg is active.
 		if ( function_exists( 'register_block_type' ) ) {
-			require_once dirname( __FILE__ ) . '/class-blocks-animation.php';
+			require_once __DIR__ . '/class-blocks-animation.php';
 
 			if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) ) {
 				\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();

@@ -40,7 +40,7 @@ class Slider_CSS extends Base_CSS {
 					array(
 						'property' => '--height',
 						'value'    => 'height',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),

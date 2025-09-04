@@ -102,9 +102,9 @@ class WooCommerce_Builder {
 	 * @access  public
 	 */
 	public function enable_block_editor( $can_edit, $post_type ) {
-		if ( isset( $_GET['otter-woo-builder'] ) && 'product' === $post_type ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-			if ( ! boolval( $_GET['otter-woo-builder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				$_GET['toggle-woobuilder'] = 0; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+		if ( isset( $_GET['otter-woo-builder'] ) && 'product' === $post_type ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( ! boolval( $_GET['otter-woo-builder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$_GET['toggle-woobuilder'] = 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$post_id                   = get_the_ID();
 
 				if ( has_blocks( $post_id ) ) {
@@ -118,10 +118,10 @@ class WooCommerce_Builder {
 
 				delete_post_meta( $post_id, '_themeisle_gutenberg_woo_builder' );
 			} else {
-				update_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', rest_sanitize_boolean( $_GET['otter-woo-builder'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				update_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', rest_sanitize_boolean( $_GET['otter-woo-builder'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			}
 
-			return rest_sanitize_boolean( $_GET['otter-woo-builder'] ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			return rest_sanitize_boolean( $_GET['otter-woo-builder'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
 		$woo_builder_enabled = get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true );

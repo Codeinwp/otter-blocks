@@ -296,26 +296,26 @@ class Dynamic_Content {
 	/**
 	 * Format String.
 	 *
-	 * @param string $string String.
+	 * @param string $value String.
 	 * @param string $format String Format Type.
 	 *
 	 * @return string
 	 */
-	public function format_string( $string, $format = 'default' ) {
-		$value = $string;
+	public function format_string( $value, $format = 'default' ) {
+		$value = $value;
 
 		switch ( $format ) {
 			case 'capitalize':
-				$value = ucfirst( $string );
+				$value = ucfirst( $value );
 				break;
 			case 'uppercase':
-				$value = strtoupper( $string );
+				$value = strtoupper( $value );
 				break;
 			case 'lowercase':
-				$value = strtolower( $string );
+				$value = strtolower( $value );
 				break;
 			default:
-				$value = $string;
+				$value = $value;
 		}
 
 		return $value;

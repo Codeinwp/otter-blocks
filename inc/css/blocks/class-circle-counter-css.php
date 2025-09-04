@@ -63,7 +63,7 @@ class Circle_Counter_CSS extends Base_CSS {
 					array(
 						'property' => '--background-color',
 						'value'    => 'backgroundColor',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							$percentage = isset( $attrs['percentage'] ) ? $attrs['percentage'] : 50;
 
 							if ( 50 > $percentage ) {
@@ -76,7 +76,7 @@ class Circle_Counter_CSS extends Base_CSS {
 					array(
 						'property' => '--progress-color',
 						'value'    => 'progressColor',
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							$percentage = isset( $attrs['percentage'] ) ? $attrs['percentage'] : 50;
 
 							if ( 50 > $percentage ) {
@@ -101,7 +101,7 @@ class Circle_Counter_CSS extends Base_CSS {
 						'property' => '--percentage-start',
 						'value'    => 'percentage',
 						'default'  => 50,
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							if ( 50 > $value ) {
 								return 'rotate( ' . ( $this->degree( $value ) + 180 ) . 'deg )';
 							}
@@ -113,7 +113,7 @@ class Circle_Counter_CSS extends Base_CSS {
 						'property' => '--percentage-end',
 						'value'    => 'percentage',
 						'default'  => 50,
-						'format'   => function( $value, $attrs ) {
+						'format'   => function ( $value, $attrs ) {
 							if ( 50 > $value ) {
 								return 'rotate( 360deg )';
 							}
