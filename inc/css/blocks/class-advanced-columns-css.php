@@ -1031,7 +1031,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 	/**
 	 * A port of array.some for PHP.
 	 *
-	 * @param array    $items Haystack.
+	 * @param mixed[]  $items Haystack.
 	 * @param callable $callback Callback function.
 	 * @return boolean
 	 * @since   2.0.0
