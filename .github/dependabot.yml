@@ -103,3 +103,9 @@ updates:
       interval: monthly
     open-pull-requests-limit: 10
     target-branch: development
+  - package-ecosystem: composer
+    directory: "/plugins/blocks-css"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 10
+    target-branch: development
