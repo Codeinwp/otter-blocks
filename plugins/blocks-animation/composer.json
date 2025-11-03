@@ -27,6 +27,6 @@
 	},
 	"minimum-stability": "dev",
 	"require": {
-		"codeinwp/themeisle-sdk": "^3.2"
+		"codeinwp/themeisle-sdk": "^3.3"
 	}
 }
