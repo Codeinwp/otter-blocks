@@ -1,6 +1,6 @@
 {
-	"name": "codeinwp/blocks-animation",
-	"description": "Blocks Animation: CSS Animations for Gutenberg Blocks",
+	"name": "codeinwp/blocks-css",
+	"description": "Blocks CSS: It allows you add custom CSS to your Blocks straight from the Block Editor (Gutenberg)",
 	"type": "wordpress-plugin",
 	"version": "2.6.13",
 	"license": "GPL-2.0+",
