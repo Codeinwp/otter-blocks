@@ -43,7 +43,8 @@
 		"lint:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script lint",
 		"format:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script format",
 		"wp-env": "wp-env",
-		"build:makepot": "docker run --user root --rm --volume \"$(pwd):/var/www/html/otter-blocks\" wordpress:cli bash -c 'php -d memory_limit=512M \"$(which wp)\" --version --allow-root && wp i18n make-pot otter-blocks ./otter-blocks/languages/otter-pro.pot --include=\"otter-pro,build/pro,inc\" --allow-root --domain=otter-pro --headers={\\\"Last-Translator\\\":\\\"friends@themeisle.com\\\"\\,\\\"Report-Msgid-Bugs-To\\\":\\\"https://github.com/Codeinwp/otter-blocks/issues\\\"\\,\\\"Project-Id-Version\\\":\\\"Otter-Blocks\\\"\\,\\\"POT-Creation-Date\\\":\\\"\\\"}'"
+		"build:makepot": "docker run --user root --rm --volume \"$(pwd):/var/www/html/otter-blocks\" wordpress:cli bash -c 'php -d memory_limit=512M \"$(which wp)\" --version --allow-root && wp i18n make-pot otter-blocks ./otter-blocks/languages/otter-pro.pot --include=\"otter-pro,build/pro,inc\" --allow-root --domain=otter-pro --headers={\\\"Last-Translator\\\":\\\"friends@themeisle.com\\\"\\,\\\"Report-Msgid-Bugs-To\\\":\\\"https://github.com/Codeinwp/otter-blocks/issues\\\"\\,\\\"Project-Id-Version\\\":\\\"Otter-Blocks\\\"\\,\\\"POT-Creation-Date\\\":\\\"\\\"}'",
+		"plugins:sdk:update": "composer require codeinwp/themeisle-sdk --update-with-dependencies --no-install --working-dir=./plugins/blocks-animation && composer require codeinwp/themeisle-sdk --update-with-dependencies --no-install --working-dir=./plugins/blocks-css"
 	},
 	"repository": {
 		"type": "git",
@@ -80,7 +81,7 @@
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-replace-textdomain": "^1.0.35",
-		"@playwright/test": "^1.52.0",
+		"@playwright/test": "^1.55.1",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/exec": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
@@ -99,10 +100,10 @@
 		"@wordpress/data": "^10.8.0",
 		"@wordpress/dom-ready": "^4.9.0",
 		"@wordpress/e2e-test-utils": "^10.4.0",
-		"@wordpress/e2e-test-utils-playwright": "^1.23.0",
+		"@wordpress/e2e-test-utils-playwright": "^1.32.0",
 		"@wordpress/e2e-tests": "^8.24.0",
 		"@wordpress/element": "^6.9.0",
-		"@wordpress/env": "^10.24.0",
+		"@wordpress/env": "^10.32.0",
 		"@wordpress/eslint-plugin": "^21.2.0",
 		"@wordpress/scripts": "30.17.0",
 		"conventional-changelog-simple-preset": "^1.0.24",
