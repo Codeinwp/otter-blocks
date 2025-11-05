@@ -43,7 +43,8 @@
 		"lint:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script lint",
 		"format:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script format",
 		"wp-env": "wp-env",
-		"build:makepot": "docker run --user root --rm --volume \"$(pwd):/var/www/html/otter-blocks\" wordpress:cli bash -c 'php -d memory_limit=512M \"$(which wp)\" --version --allow-root && wp i18n make-pot otter-blocks ./otter-blocks/languages/otter-pro.pot --include=\"otter-pro,build/pro,inc\" --allow-root --domain=otter-pro --headers={\\\"Last-Translator\\\":\\\"friends@themeisle.com\\\"\\,\\\"Report-Msgid-Bugs-To\\\":\\\"https://github.com/Codeinwp/otter-blocks/issues\\\"\\,\\\"Project-Id-Version\\\":\\\"Otter-Blocks\\\"\\,\\\"POT-Creation-Date\\\":\\\"\\\"}'"
+		"build:makepot": "docker run --user root --rm --volume \"$(pwd):/var/www/html/otter-blocks\" wordpress:cli bash -c 'php -d memory_limit=512M \"$(which wp)\" --version --allow-root && wp i18n make-pot otter-blocks ./otter-blocks/languages/otter-pro.pot --include=\"otter-pro,build/pro,inc\" --allow-root --domain=otter-pro --headers={\\\"Last-Translator\\\":\\\"friends@themeisle.com\\\"\\,\\\"Report-Msgid-Bugs-To\\\":\\\"https://github.com/Codeinwp/otter-blocks/issues\\\"\\,\\\"Project-Id-Version\\\":\\\"Otter-Blocks\\\"\\,\\\"POT-Creation-Date\\\":\\\"\\\"}'",
+		"plugins:sdk:update": "composer require codeinwp/themeisle-sdk --update-with-dependencies --no-install --working-dir=./plugins/blocks-animation && composer require codeinwp/themeisle-sdk --update-with-dependencies --no-install --working-dir=./plugins/blocks-css"
 	},
 	"repository": {
 		"type": "git",
