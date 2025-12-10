@@ -2,9 +2,9 @@
 Contributors: themeisle, hardeepasrani, mariamunteanu1
 Tags: gutenberg, block, block editor, editor, animation, animations, animate, styles, block animations
 Requires at least: 6.2
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 5.4
-Stable tag: 3.1.2
+Stable tag: 3.1.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
