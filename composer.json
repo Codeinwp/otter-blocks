@@ -20,7 +20,7 @@
 		"phpunit/phpunit": "9.6.5",
 		"yoast/phpunit-polyfills": "^4.0",
 		"phpstan/phpstan": "^2.1",
-		"php-stubs/woocommerce-stubs": "^9.1",
+		"php-stubs/woocommerce-stubs": "^10.4",
 		"php-stubs/acf-pro-stubs": "^6.0",
 		"wpackagist-plugin/woocommerce": "*",
 		"szepeviktor/phpstan-wordpress": "^2.0",
