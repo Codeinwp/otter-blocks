@@ -1,3 +1,7 @@
+##### [Version 3.1.4](https://github.com/Codeinwp/otter-blocks/compare/v3.1.3...v3.1.4) (2025-12-12)
+
+- Updated dependencies
+
 ##### [Version 3.1.3](https://github.com/Codeinwp/otter-blocks/compare/v3.1.2...v3.1.3) (2025-11-05)
 
 - Updated dependencies
