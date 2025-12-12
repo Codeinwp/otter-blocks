@@ -4,7 +4,7 @@ Tags: block, blocks, gutenberg, gutenberg blocks, page builder
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 3.1.3
+Stable tag: 3.1.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
@@ -365,7 +365,7 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
-##### [Version 3.1.3](https://github.com/Codeinwp/otter-blocks/compare/v3.1.2...v3.1.3) (2025-11-05)
+##### [Version 3.1.4](https://github.com/Codeinwp/otter-blocks/compare/v3.1.3...v3.1.4) (2025-12-12)
 
 - Updated dependencies
 
