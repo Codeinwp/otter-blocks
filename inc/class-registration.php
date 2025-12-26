@@ -386,7 +386,7 @@ class Registration {
 
 		}
 
-		if ( function_exists( 'get_block_templates' ) && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) {
+		if ( function_exists( 'get_block_templates' ) && ( current_theme_supports( 'block-templates' ) || current_theme_supports( 'block-template-parts' ) ) ) {
 			$this->enqueue_dependencies( 'block-templates' );
 		}
 	}
