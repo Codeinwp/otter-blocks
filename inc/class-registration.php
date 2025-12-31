@@ -1065,7 +1065,7 @@ class Registration {
 	 * @access public
 	 */
 	public static function condition_hide_on_style() {
-		echo '<style id="o-condition-hide-inline-css">@media (max-width:768px){.o-hide-on-mobile{display:none!important}}@media (min-width:767px) and (max-width:1024px){.o-hide-on-tablet{display:none!important}}@media (min-width:1023px){.o-hide-on-desktop{display:none!important}}</style>';
+		echo '<style id="o-condition-hide-inline-css">@media (max-width:768px){.o-hide-on-mobile{display:none!important}}@media (min-width:769px) and (max-width:1024px){.o-hide-on-tablet{display:none!important}}@media (min-width:1025px){.o-hide-on-desktop{display:none!important}}</style>';
 	}
 
 	/**
