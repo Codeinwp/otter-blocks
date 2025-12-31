@@ -487,10 +487,10 @@ test.describe( 'Post Editor Performance', () => {
 					name: 'Block Inserter',
 				} );
 			const paragraphBlockItem = page.locator(
-				'.block-editor-inserter__menu .editor-block-list-item-paragraph'
+				'.block-editor-inserter__menu .editor-block-list-item-paragraph\\/paragraph'
 			);
 			const headingBlockItem = page.locator(
-				'.block-editor-inserter__menu .editor-block-list-item-heading'
+				'.block-editor-inserter__menu .editor-block-list-item-heading\\/heading'
 			);
 
 			// Open Inserter.
