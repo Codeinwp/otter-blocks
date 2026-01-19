@@ -577,31 +577,46 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function enqueue_fse_css() {
-		if ( ! ( function_exists( 'get_block_templates' ) && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) ) {
+		if ( ! ( function_exists( 'get_block_templates' ) && ( current_theme_supports( 'block-templates' ) || current_theme_supports( 'block-template-parts' ) ) ) ) {
 			return;
 		}
 
 		global $_wp_current_template_content;
 
-		$content         = '';
-		$slugs           = array();
-		$template_blocks = parse_blocks( $_wp_current_template_content );
+		$content = '';
+		$slugs   = array();
 
-		foreach ( $template_blocks as $template_block ) {
-			if ( 'core/template-part' === $template_block['blockName'] ) {
-				$slugs[] = $template_block['attrs']['slug'];
+		// If we have template content (full block templates), extract template part slugs.
+		if ( ! empty( $_wp_current_template_content ) ) {
+			$template_blocks = parse_blocks( $_wp_current_template_content );
+			
+			foreach ( $template_blocks as $template_block ) {
+				if ( 'core/template-part' === $template_block['blockName'] && isset( $template_block['attrs']['slug'] ) ) {
+					$slugs[] = $template_block['attrs']['slug'];
+				}
+			}
+			
+			// Get the specific template parts referenced in the template.
+			$templates_parts = get_block_templates( array( 'slug__in' => $slugs ), 'wp_template_part' );
+			
+			foreach ( $templates_parts as $templates_part ) {
+				if ( ! empty( $templates_part->content ) && ! empty( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {
+					$content .= $templates_part->content;
+				}
+			}
+			
+			$content .= $_wp_current_template_content;
+		} else {
+			// Fallback for classic themes with block-template-parts only.
+			// Get all template parts since we can't determine which ones are used.
+			$templates_parts = get_block_templates( array(), 'wp_template_part' );
+			
+			foreach ( $templates_parts as $templates_part ) {
+				if ( ! empty( $templates_part->content ) ) {
+					$content .= $templates_part->content;
+				}
 			}
 		}
-
-		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
-
-		foreach ( $templates_parts as $templates_part ) {
-			if ( ! empty( $templates_part->content ) && ! empty( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {
-				$content .= $templates_part->content;
-			}
-		}
-
-		$content .= $_wp_current_template_content;
 
 		$blocks = parse_blocks( $content );
 
