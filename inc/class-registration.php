@@ -414,7 +414,7 @@ class Registration {
 				$template_blocks = parse_blocks( $_wp_current_template_content );
 				
 				foreach ( $template_blocks as $template_block ) {
-					if ( 'core/template-part' === $template_block['blockName'] ) {
+					if ( 'core/template-part' === $template_block['blockName'] && isset( $template_block['attrs'] ) && isset( $template_block['attrs']['slug'] ) ) {
 						$slugs[] = $template_block['attrs']['slug'];
 					}
 				}
