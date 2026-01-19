@@ -586,7 +586,7 @@ class Block_Frontend extends Base_CSS {
 		$content = '';
 		$slugs   = array();
 
-		// If we have template content (full block templates), extract template part slugs
+		// If we have template content (full block templates), extract template part slugs.
 		if ( ! empty( $_wp_current_template_content ) ) {
 			$template_blocks = parse_blocks( $_wp_current_template_content );
 			
@@ -596,7 +596,7 @@ class Block_Frontend extends Base_CSS {
 				}
 			}
 			
-			// Get the specific template parts referenced in the template
+			// Get the specific template parts referenced in the template.
 			$templates_parts = get_block_templates( array( 'slug__in' => $slugs ), 'wp_template_part' );
 			
 			foreach ( $templates_parts as $templates_part ) {
@@ -607,8 +607,8 @@ class Block_Frontend extends Base_CSS {
 			
 			$content .= $_wp_current_template_content;
 		} else {
-			// Fallback for classic themes with block-template-parts only
-			// Get all template parts since we can't determine which ones are used
+			// Fallback for classic themes with block-template-parts only.
+			// Get all template parts since we can't determine which ones are used.
 			$templates_parts = get_block_templates( array(), 'wp_template_part' );
 			
 			foreach ( $templates_parts as $templates_part ) {
