@@ -11,12 +11,13 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    if: "! contains(github.event.head_commit.message, 'chore(release)')"
+    if: "! contains(github.event.head_commit.message, 'chore(release)') && ! contains(github.event.head_commit.message, 'release:')"
     name: Push assets to wporg
     steps:
         - uses: actions/checkout@master
         - name: WordPress.org plugin asset/readme update
-          uses: selul/action-wordpress-plugin-asset-update@develop
+          uses: 10up/action-wordpress-plugin-asset-update@stable
           env:
-            SVN_PASSWORD: ${{ secrets.SVN_THEMEISLE_PASSWORD }}
-            SVN_USERNAME: ${{ secrets.SVN_THEMEISLE_USERNAME }}
+            SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+            IGNORE_OTHER_FILES: true
+            SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
