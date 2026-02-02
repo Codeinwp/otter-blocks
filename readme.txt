@@ -370,5 +370,4 @@ The Patterns have been designed to make it easier for you to build your site usi
 - Updated dependencies
 
 
-
 [See changelog for all versions](https://github.com/Codeinwp/otter-blocks/blob/master/CHANGELOG.md).
