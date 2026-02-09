@@ -402,4 +402,13 @@ const calculateOffset = ( offset ) => {
 	return offset;
 };
 
+// Re-animate elements when a lightbox is opened, as the content might be different.
+const lightboxes = document.querySelectorAll('.wp-lightbox-container');
+lightboxes.forEach((container) => {
+	container.addEventListener('click', () => {
+		animateElements();
+	});
+});
+
+
 window.addEventListener( 'load', animateElements );
