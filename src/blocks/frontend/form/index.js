@@ -387,7 +387,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	const spinner = makeSpinner( btn );
 	const isValidationSuccessful = validateInputs( form );
 
-	if ( formIsEmpty ) {
+	if ( formIsEmpty || ! isValidationSuccessful) {
 		btn.disabled = false;
 		spinner.hide();
 		return;
