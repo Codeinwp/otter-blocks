@@ -203,6 +203,59 @@ class Base_CSS {
 	}
 
 	/**
+	 * Resolve a color value which may be a slug from the theme color palette.
+	 * If the value is a slug (doesn't start with # or rgb/hsl/var), attempts to resolve it from the palette.
+	 * Otherwise, returns the value as-is.
+	 *
+	 * @param string|null $value The color value or slug.
+	 * @return string|null The resolved color value.
+	 * @since   3.1.5
+	 * @access  public
+	 */
+	public static function resolve_color_value( $value ) {
+		if ( empty( $value ) ) {
+			return $value;
+		}
+
+		// If it's already a color value (hex, rgb, hsl, var), return as-is.
+		if (
+			strpos( $value, '#' ) === 0 ||
+			strpos( $value, 'rgb' ) === 0 ||
+			strpos( $value, 'hsl' ) === 0 ||
+			strpos( $value, 'var(' ) === 0
+		) {
+			return $value;
+		}
+
+		// Try to get the color palette from theme.json.
+		if ( function_exists( 'wp_get_global_settings' ) ) {
+			$global_settings = wp_get_global_settings();
+			
+			// Get colors from different sources (theme, default, custom).
+			$palettes = array();
+			if ( isset( $global_settings['color']['palette']['theme'] ) ) {
+				$palettes = array_merge( $palettes, $global_settings['color']['palette']['theme'] );
+			}
+			if ( isset( $global_settings['color']['palette']['default'] ) ) {
+				$palettes = array_merge( $palettes, $global_settings['color']['palette']['default'] );
+			}
+			if ( isset( $global_settings['color']['palette']['custom'] ) ) {
+				$palettes = array_merge( $palettes, $global_settings['color']['palette']['custom'] );
+			}
+
+			// Try to find the color by slug.
+			foreach ( $palettes as $color_obj ) {
+				if ( isset( $color_obj['slug'] ) && $color_obj['slug'] === $value ) {
+					return $color_obj['color'];
+				}
+			}
+		}
+
+		// If we couldn't resolve it, return the original value.
+		return $value;
+	}
+
+	/**
 	 * Get Blocks CSS
 	 *
 	 * @param int $post_id Post id.

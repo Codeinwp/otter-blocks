@@ -361,6 +361,42 @@ export const lightnessFromColor = color => {
 };
 
 /**
+ * Resolve a color value which may be a slug from the color palette.
+ * If the value is a slug (doesn't start with # or rgb/hsl/var), attempts to resolve it from the palette.
+ * Otherwise, returns the value as-is.
+ *
+ * @param {string|undefined} value The color value or slug
+ * @param {Array} palette Optional color palette array from useSetting('color.palette')
+ * @return {string|undefined} The resolved color value
+ */
+export const resolveColorValue = ( value, palette = null ) => {
+	if ( ! value ) {
+		return value;
+	}
+
+	// If it's already a color value (hex, rgb, hsl, var), return as-is
+	if (
+		value.startsWith( '#' ) ||
+		value.startsWith( 'rgb' ) ||
+		value.startsWith( 'hsl' ) ||
+		value.startsWith( 'var(' )
+	) {
+		return value;
+	}
+
+	// If no palette provided, we can't resolve, so return the value
+	if ( ! palette || ! Array.isArray( palette ) ) {
+		return value;
+	}
+
+	// Try to find the color in the palette by slug
+	const colorObject = palette.find( color => color.slug === value );
+	
+	// Return the color value if found, otherwise return original value
+	return colorObject?.color || value;
+};
+
+/**
  * Return the values from a box type.
  *
  * @param {import('./blocks').BoxType?} box
