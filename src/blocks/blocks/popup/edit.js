@@ -39,7 +39,7 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import { blockInit, useCSSNode } from '../../helpers/block-utility';
 import { boxValues, _cssBlock, stringToBox } from '../../helpers/helper-functions';
-import { useDarkBackground } from '../../helpers/utility-hooks.js';
+import { useDarkBackground, useColorResolver } from '../../helpers/utility-hooks.js';
 import { useDispatch, useSelect } from '@wordpress/data';
 
 const { attributes: defaultAttributes } = metadata;
@@ -60,6 +60,8 @@ const Edit = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, []);
+
+	const resolveColor = useColorResolver();
 
 	const [ isEditing, setEditing ] = useState( false );
 
@@ -100,13 +102,13 @@ const Edit = ({
 	const inlineStyles = {
 		'--min-width': attributes.minWidth ? attributes.minWidth + 'px' : '400px',
 		'--max-width': attributes.maxWidth ? attributes.maxWidth + 'px' : undefined,
-		'--background-color': attributes.backgroundColor,
-		'--close-color': attributes.closeColor,
-		'--overlay-color': attributes.overlayColor,
+		'--background-color': resolveColor( attributes.backgroundColor ),
+		'--close-color': resolveColor( attributes.closeColor ),
+		'--overlay-color': resolveColor( attributes.overlayColor ),
 		'--overlay-opacity': attributes.overlayOpacity !== undefined ? attributes.overlayOpacity / 100 : 1,
 		'--brd-width': boxValues( attributes.borderWidth ),
 		'--brd-radius': boxValues( attributes.borderRadius ),
-		'--brd-color': attributes.borderColor,
+		'--brd-color': resolveColor( attributes.borderColor ),
 		'--brd-style': attributes.borderStyle,
 
 		// Responsive

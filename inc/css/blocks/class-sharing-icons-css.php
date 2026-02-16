@@ -43,7 +43,7 @@ class Sharing_Icons_CSS extends Base_CSS {
 							'property'  => '--icon-bg-color',
 							'value'     => $icon,
 							'format'    => function ( $value, $attrs ) {
-								return $value['backgroundColor'];
+								return Base_CSS::resolve_color_value( $value['backgroundColor'] );
 							},
 							'condition' => function ( $attrs ) use ( $icon ) {
 								return isset( $attrs[ $icon ]['backgroundColor'] );
@@ -53,7 +53,7 @@ class Sharing_Icons_CSS extends Base_CSS {
 							'property'  => '--text-color',
 							'value'     => $icon,
 							'format'    => function ( $value, $attrs ) {
-								return $value['textColor'];
+								return Base_CSS::resolve_color_value( $value['textColor'] );
 							},
 							'condition' => function ( $attrs ) use ( $icon ) {
 								return isset( $attrs[ $icon ]['textColor'] );

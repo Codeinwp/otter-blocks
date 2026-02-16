@@ -31,6 +31,7 @@ import Inspector from './inspector.js';
 import CircularProgressBar from './components/circular-progress-bar.js';
 import { blockInit } from '../../helpers/block-utility.js';
 import { _px } from '../../helpers/helper-functions';
+import { useColorResolver } from '../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -51,6 +52,8 @@ const CircularProgressBarBlock = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	const resolveColor = useColorResolver();
 
 	const progressRef = useRef( null );
 	const valueRef = useRef( null );
@@ -142,7 +145,7 @@ const CircularProgressBarBlock = ({
 							onChange={ title => setAttributes({ title }) }
 							multiline={ false }
 							style={ {
-								color: attributes.titleColor
+								color: resolveColor( attributes.titleColor )
 							} }
 						/>
 					</div>
@@ -174,6 +177,7 @@ const CircularProgressBarBlock = ({
 						attributes={ attributes }
 						progressRef={ progressRef }
 						valueRef={ valueRef }
+						resolveColor={ resolveColor }
 					/>
 				</ResizableBox>
 
@@ -188,7 +192,7 @@ const CircularProgressBarBlock = ({
 							onChange={ title => setAttributes({ title }) }
 							multiline={ false }
 							style={ {
-								color: attributes.titleColor
+								color: resolveColor( attributes.titleColor )
 							} }
 						/>
 					</div>
