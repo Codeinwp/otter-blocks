@@ -391,7 +391,7 @@ export const resolveColorValue = ( value, palette = null ) => {
 
 	// Try to find the color in the palette by slug
 	const colorObject = palette.find( color => color.slug === value );
-	
+
 	// Return the color value if found, otherwise return original value
 	return colorObject?.color || value;
 };
