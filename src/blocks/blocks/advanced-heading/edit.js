@@ -17,8 +17,7 @@ import {
 
 import {
 	RichText,
-	useBlockProps,
-	useSetting
+	useBlockProps
 } from '@wordpress/block-editor';
 
 import {
@@ -34,11 +33,12 @@ import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import googleFontsLoader from '../../helpers/google-fonts.js';
-import { boxValues, _cssBlock, _px, resolveColorValue } from '../../helpers/helper-functions';
+import { boxValues, _cssBlock, _px } from '../../helpers/helper-functions';
 import { makeBox } from '../../plugins/copy-paste/utils';
 import {
 	useDarkBackground,
-	useResponsiveAttributes
+	useResponsiveAttributes,
+	useColorResolver
 } from '../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
@@ -64,8 +64,8 @@ const Edit = ({
 
 	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
-	// Get the color palette from theme.json or block settings
-	const colorPalette = useSetting( 'color.palette' ) || [];
+	// Get color resolver to handle theme color slugs
+	const resolveColor = useColorResolver();
 
 	const changeContent = value => {
 		setAttributes({ content: value });
@@ -157,14 +157,14 @@ const Edit = ({
 			attributes.fontSizeTablet,
 			attributes.fontSizeMobile
 		]),
-		color: resolveColorValue( attributes.headingColor, colorPalette ),
+		color: resolveColor( attributes.headingColor ),
 		fontFamily: attributes.fontFamily || undefined,
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
 		fontStyle: attributes.fontStyle || undefined,
 		textTransform: attributes.textTransform || undefined,
 		lineHeight: ( ( ! isString( attributes.lineHeight ) &&  3 < attributes.lineHeight ) ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
 		letterSpacing: _px( attributes.letterSpacing ),
-		background: resolveColorValue( attributes.backgroundColor, colorPalette ),
+		background: resolveColor( attributes.backgroundColor ),
 		...textShadowStyle,
 		...inlineStyle
 	}, x => x?.includes?.( 'undefined' ) );
@@ -186,18 +186,18 @@ const Edit = ({
 			<style>
 				{
 					`#block-${ clientId } mark, #block-${ clientId } .highlight ` + _cssBlock([
-						[ 'color', resolveColorValue( attributes.highlightColor, colorPalette ) ],
-						[ 'background', resolveColorValue( attributes.highlightBackground, colorPalette ) ]
+						[ 'color', resolveColor( attributes.highlightColor ) ],
+						[ 'background', resolveColor( attributes.highlightBackground ) ]
 					])
 				}
 				{
 					`#block-${ clientId } a` + _cssBlock([
-						[ 'color', resolveColorValue( attributes.linkColor, colorPalette )  ]
+						[ 'color', resolveColor( attributes.linkColor )  ]
 					])
 				}
 				{
 					`#block-${ clientId } a:hover` + _cssBlock([
-						[ 'color', resolveColorValue( attributes.linkHoverColor, colorPalette )  ]
+						[ 'color', resolveColor( attributes.linkHoverColor )  ]
 					])
 				}
 			</style>

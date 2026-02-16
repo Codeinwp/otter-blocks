@@ -5,10 +5,12 @@ import { useSelect } from '@wordpress/data';
 
 import { useEffect } from '@wordpress/element';
 
+import { useSetting } from '@wordpress/block-editor';
+
 /**
  * Internal dependencies
  */
-import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFromColor } from './helper-functions.js';
+import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFromColor, resolveColorValue } from './helper-functions.js';
 
 /**
  * Utiliy hook to get/set responsive attributes.
@@ -66,4 +68,16 @@ export const useDarkBackground = ( backgroundColor, attributes, setAttributes, d
 
 		setAttributes({ className: classes });
 	}, [ backgroundColor ]);
+};
+
+/**
+ * Utility hook to resolve color slugs from the theme palette.
+ * Returns a function that can resolve a color value (which may be a slug) to its actual color.
+ *
+ * @return {Function} A function that resolves color values/slugs.
+ */
+export const useColorResolver = () => {
+	const colorPalette = useSetting( 'color.palette' ) || [];
+	
+	return ( colorValue ) => resolveColorValue( colorValue, colorPalette );
 };
