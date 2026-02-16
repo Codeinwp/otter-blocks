@@ -57,10 +57,16 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--text-color',
 						'value'    => 'textColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--background-color',
 						'value'    => 'backgroundColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--background-overlay',
@@ -69,6 +75,9 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--border-color',
 						'value'    => 'borderColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--title-text-size',

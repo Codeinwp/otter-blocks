@@ -33,6 +33,7 @@ import {
 	buildGetSyncValue
 } from '../../../helpers/block-utility.js';
 import { boxToCSS, objectOrNumberAsBox, _cssBlock, _px } from '../../../helpers/helper-functions';
+import { useColorResolver } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -51,6 +52,9 @@ const Edit = ( props ) => {
 	} = props;
 
 	const getSyncValue = buildGetSyncValue( name, attributes, defaultAttributes );
+
+	// Get color resolver to handle theme color slugs
+	const resolveColor = useColorResolver();
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -80,40 +84,41 @@ const Edit = ( props ) => {
 			<div { ...blockProps }>
 				<style>
 					{
-						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button :is(div, a, span).wp-block-button__link` + _cssBlock([
-							[ 'border-color', getSyncValue( 'border' ) ],
-							[ 'border-width', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderSize' ) ) ), Boolean( getSyncValue( 'borderSize' ) ) ],
-							[ 'border-radius', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ), Boolean( getSyncValue( 'borderRadius' ) ) ],
-							[ 'border-style', 'solid', Boolean( getSyncValue( 'borderSize' ) ) ]
-						])
-					}
-					{
-						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button :is(div, a, span).wp-block-button__link:not(:hover)` + _cssBlock([
-							[ 'background', getSyncValue( 'background' ) ],
-							[ 'background', getSyncValue( 'backgroundGradient' ) ],
-							[ 'box-shadow', `${ getSyncValue( 'boxShadowHorizontal' ) }px ${ getSyncValue( 'boxShadowVertical' ) }px ${ getSyncValue( 'boxShadowBlur' ) }px ${ getSyncValue( 'boxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'boxShadowColor' ) ? getSyncValue( 'boxShadowColor' ) : '#000000' ), getSyncValue( 'boxShadowColorOpacity' ) ) }`, Boolean(  getSyncValue( 'boxShadow' ) ) ],
-							[ 'color', getSyncValue( 'color' ) ]
-						])
-					}
-					{
-						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link:hover` + _cssBlock([
-							[ 'background', getSyncValue( 'hoverBackground' ) ],
-							[ 'background', getSyncValue( 'hoverBackgroundGradient' ) ],
-							[ 'border-color', getSyncValue( 'hoverBorder' ) ],
-							[ 'box-shadow', `${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ getSyncValue( 'hoverBoxShadowBlur' ) }px ${ getSyncValue( 'hoverBoxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'hoverBoxShadowColor' ) ? getSyncValue( 'hoverBoxShadowColor' ) : '#000000' ), Boolean( getSyncValue( 'hoverBoxShadowColorOpacity' ) ) ) }`, Boolean( getSyncValue( 'boxShadow' ) ) ],
-							[ 'color', getSyncValue( 'hoverColor' ) ]
-						])
-					}
-					{
-						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link :is(svg, i, div)` + _cssBlock([
-							[ 'color', getSyncValue( 'color' ) ],
-							[ 'fill', getSyncValue( 'color' ) ]
-						])
-					}
-					{
-						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link:hover :is(svg, i, div, a)` + _cssBlock([
-							[ 'fill', getSyncValue( 'hoverColor' ) ]
-						])
+						(() => {
+							const boxShadowColor = resolveColor( getSyncValue( 'boxShadowColor' ) );
+							const hoverBoxShadowColor = resolveColor( getSyncValue( 'hoverBoxShadowColor' ) );
+							
+							return (
+								<>
+									{`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button :is(div, a, span).wp-block-button__link` + _cssBlock([
+										[ 'border-color', resolveColor( getSyncValue( 'border' ) ) ],
+										[ 'border-width', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderSize' ) ) ), Boolean( getSyncValue( 'borderSize' ) ) ],
+										[ 'border-radius', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ), Boolean( getSyncValue( 'borderRadius' ) ) ],
+										[ 'border-style', 'solid', Boolean( getSyncValue( 'borderSize' ) ) ]
+									])}
+									{`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button :is(div, a, span).wp-block-button__link:not(:hover)` + _cssBlock([
+										[ 'background', resolveColor( getSyncValue( 'background' ) ) ],
+										[ 'background', getSyncValue( 'backgroundGradient' ) ],
+										[ 'box-shadow', `${ getSyncValue( 'boxShadowHorizontal' ) }px ${ getSyncValue( 'boxShadowVertical' ) }px ${ getSyncValue( 'boxShadowBlur' ) }px ${ getSyncValue( 'boxShadowSpread' ) }px ${ hexToRgba( ( boxShadowColor || '#000000' ), getSyncValue( 'boxShadowColorOpacity' ) ) }`, Boolean(  getSyncValue( 'boxShadow' ) ) ],
+										[ 'color', resolveColor( getSyncValue( 'color' ) ) ]
+									])}
+									{`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link:hover` + _cssBlock([
+										[ 'background', resolveColor( getSyncValue( 'hoverBackground' ) ) ],
+										[ 'background', getSyncValue( 'hoverBackgroundGradient' ) ],
+										[ 'border-color', resolveColor( getSyncValue( 'hoverBorder' ) ) ],
+										[ 'box-shadow', `${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ getSyncValue( 'hoverBoxShadowBlur' ) }px ${ getSyncValue( 'hoverBoxShadowSpread' ) }px ${ hexToRgba( ( hoverBoxShadowColor || '#000000' ), Boolean( getSyncValue( 'hoverBoxShadowColorOpacity' ) ) ) }`, Boolean( getSyncValue( 'boxShadow' ) ) ],
+										[ 'color', resolveColor( getSyncValue( 'hoverColor' ) ) ]
+									])}
+									{`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link :is(svg, i, div)` + _cssBlock([
+										[ 'color', resolveColor( getSyncValue( 'color' ) ) ],
+										[ 'fill', resolveColor( getSyncValue( 'color' ) ) ]
+									])}
+									{`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link:hover :is(svg, i, div, a)` + _cssBlock([
+										[ 'fill', resolveColor( getSyncValue( 'hoverColor' ) ) ]
+									])}
+								</>
+							);
+						})()
 					}
 				</style>
 				{ 'none' !== attributes.iconType ? (

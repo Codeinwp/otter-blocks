@@ -26,6 +26,7 @@ import {
 import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
+import { useColorResolver } from '../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -45,6 +46,9 @@ const ProgressBar = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	// Get color resolver to handle theme color slugs
+	const resolveColor = useColorResolver();
 
 	const blockRef = useRef( null );
 
@@ -86,15 +90,15 @@ const ProgressBar = ({
 	}, [ attributes.percentage, attributes.duration ]);
 
 	const inlineStyles = {
-		'--title-color': attributes.titleColor,
-		'--percentage-color': attributes.percentageColor,
-		'--percentage-color-outer': attributes.percentageColor,
-		'--percentage-color-tooltip': attributes.percentageColor,
-		'--percentage-color-append': attributes.percentageColor,
-		'--background-color': attributes.backgroundColor,
+		'--title-color': resolveColor( attributes.titleColor ),
+		'--percentage-color': resolveColor( attributes.percentageColor ),
+		'--percentage-color-outer': resolveColor( attributes.percentageColor ),
+		'--percentage-color-tooltip': resolveColor( attributes.percentageColor ),
+		'--percentage-color-append': resolveColor( attributes.percentageColor ),
+		'--background-color': resolveColor( attributes.backgroundColor ),
 		'--border-radius': attributes.borderRadius !== undefined && ( attributes.borderRadius + 'px' ),
 		'--height': attributes.height !== undefined && ( attributes.height + 'px' ),
-		'--bar-background': attributes.barBackgroundColor,
+		'--bar-background': resolveColor( attributes.barBackgroundColor ),
 		'--title-font-size': attributes.titleFontSize
 	};
 

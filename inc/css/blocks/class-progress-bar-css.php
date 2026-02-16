@@ -47,10 +47,16 @@ class Progress_Bar_CSS extends Base_CSS {
 					array(
 						'property' => '--title-color',
 						'value'    => 'titleColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property'  => '--percentage-color',
 						'value'     => 'percentageColor',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return ! isset( $attrs['percentagePosition'] );
 						},
@@ -58,6 +64,9 @@ class Progress_Bar_CSS extends Base_CSS {
 					array(
 						'property'  => '--percentage-color-outer',
 						'value'     => 'percentageColor',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return isset( $attrs['percentagePosition'] ) && 'outer' === $attrs['percentagePosition'];
 						},
@@ -65,6 +74,9 @@ class Progress_Bar_CSS extends Base_CSS {
 					array(
 						'property'  => '--percentage-color-tooltip',
 						'value'     => 'percentageColor',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return isset( $attrs['percentagePosition'] ) && 'tooltip' === $attrs['percentagePosition'];
 						},
@@ -72,6 +84,9 @@ class Progress_Bar_CSS extends Base_CSS {
 					array(
 						'property'  => '--percentage-color-append',
 						'value'     => 'percentageColor',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return isset( $attrs['percentagePosition'] ) && 'append' === $attrs['percentagePosition'];
 						},
@@ -79,6 +94,9 @@ class Progress_Bar_CSS extends Base_CSS {
 					array(
 						'property' => '--background-color',
 						'value'    => 'backgroundColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--border-radius',
@@ -93,6 +111,9 @@ class Progress_Bar_CSS extends Base_CSS {
 					array(
 						'property' => '--bar-background',
 						'value'    => 'barBackgroundColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--title-font-size',
