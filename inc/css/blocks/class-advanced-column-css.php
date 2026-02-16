@@ -188,6 +188,9 @@ class Advanced_Column_CSS extends Base_CSS {
 						array(
 							'property' => '--background-color-hover',
 							'value'    => 'backgroundColorHover',
+							'format'   => function ( $value ) {
+								return Base_CSS::resolve_color_value( $value );
+							},
 						),
 						array(
 							'property' => 'align-self',

@@ -135,11 +135,17 @@ class Button_CSS extends Base_CSS {
 						'property' => 'color',
 						'value'    => 'color',
 						'hasSync'  => 'gr-btn-color',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => 'background',
 						'value'    => 'background',
 						'hasSync'  => 'gr-btn-background',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => 'background',
@@ -150,6 +156,9 @@ class Button_CSS extends Base_CSS {
 						'property' => 'border-color',
 						'value'    => 'border',
 						'hasSync'  => 'gr-btn-border-color',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property'       => 'box-shadow',
@@ -201,11 +210,17 @@ class Button_CSS extends Base_CSS {
 						'property' => 'color',
 						'value'    => 'hoverColor',
 						'hasSync'  => 'gr-btn-color-hover',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => 'background',
 						'value'    => 'hoverBackground',
 						'hasSync'  => 'gr-btn-background-hover',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => 'background',
@@ -216,6 +231,9 @@ class Button_CSS extends Base_CSS {
 						'property' => 'border-color',
 						'value'    => 'hoverBorder',
 						'hasSync'  => 'gr-btn-border-color-hover',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property'       => 'box-shadow',
@@ -298,10 +316,16 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property' => '--gr-btn-color',
 						'value'    => 'color',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--gr-btn-background',
 						'value'    => 'background',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--gr-btn-background',
@@ -336,6 +360,9 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property'  => '--gr-btn-border-color',
 						'value'     => 'border',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return isset( $attrs['border'] ) && ! empty( $attrs['border'] );
 						},
@@ -421,10 +448,16 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property' => '--gr-btn-color-hover',
 						'value'    => 'hoverColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--gr-btn-background-hover',
 						'value'    => 'hoverBackground',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--gr-btn-background-hover',
@@ -433,6 +466,9 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property' => '--gr-btn-border-color-hover',
 						'value'    => 'hoverBorder',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property'       => '--gr-btn-shadow-hover',

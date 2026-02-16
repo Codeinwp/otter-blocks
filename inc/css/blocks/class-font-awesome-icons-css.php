@@ -86,6 +86,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--border-color',
 						'value'    => 'borderColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--border-size',
@@ -156,11 +159,17 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'textColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'hasSync'  => 'icon-text-color',
 					),
 					array(
 						'property' => 'background',
 						'value'    => 'backgroundColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'hasSync'  => 'icon-background-color',
 					),
 				),
@@ -174,6 +183,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property'  => 'color',
 						'value'     => 'textColorHover',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return ! ( isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' ) );
 						},
@@ -182,11 +194,17 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => 'background',
 						'value'    => 'backgroundColorHover',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'hasSync'  => 'icon-background-color-hover',
 					),
 					array(
 						'property' => 'border-color',
 						'value'    => 'borderColorHover',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'hasSync'  => 'iconBorderColorHover',
 					),
 				),
@@ -200,6 +218,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property'  => 'color',
 						'value'     => 'textColor',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return ! ( isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' ) );
 						},
@@ -216,6 +237,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property'  => 'fill',
 						'value'     => 'textColor',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
 						},
@@ -232,6 +256,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property'  => 'fill',
 						'value'     => 'textColorHover',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
 						},
@@ -297,18 +324,30 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--icon-text-color-hover',
 						'value'    => 'textColorHover',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--icon-background-color-hover',
 						'value'    => 'backgroundColorHover',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--icon-text-color',
 						'value'    => 'textColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--icon-background-color',
 						'value'    => 'backgroundColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 				),
 			)
