@@ -78,6 +78,6 @@ export const useDarkBackground = ( backgroundColor, attributes, setAttributes, d
  */
 export const useColorResolver = () => {
 	const colorPalette = useSetting( 'color.palette' ) || [];
-	
+
 	return ( colorValue ) => resolveColorValue( colorValue, colorPalette );
 };

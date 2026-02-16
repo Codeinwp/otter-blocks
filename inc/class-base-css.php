@@ -227,7 +227,7 @@ class Base_CSS {
 		// Try to get the color palette from theme.json.
 		if ( function_exists( 'wp_get_global_settings' ) ) {
 			$global_settings = wp_get_global_settings();
-			
+
 			// Get colors from different sources (theme, default, custom).
 			$palettes = array();
 			if ( isset( $global_settings['color']['palette']['theme'] ) ) {
