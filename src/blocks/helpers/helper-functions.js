@@ -361,39 +361,44 @@ export const lightnessFromColor = color => {
 };
 
 /**
+ * Convert a color slug to a CSS variable reference.
+ * WordPress generates CSS variables in the format: --wp--preset--color--{slug}
+ *
+ * @param {string|undefined} slug The color slug
+ * @return {string|undefined} The CSS variable reference
+ */
+export const getColorCSSVariable = ( slug ) => {
+	if ( ! slug ) {
+		return slug;
+	}
+
+	// If it's already a color value or CSS variable, return as-is
+	if (
+		slug.startsWith( '#' ) ||
+		slug.startsWith( 'rgb' ) ||
+		slug.startsWith( 'hsl' ) ||
+		slug.startsWith( 'var(' )
+	) {
+		return slug;
+	}
+
+	// Convert slug to CSS variable
+	return `var(--wp--preset--color--${ slug })`;
+};
+
+/**
  * Resolve a color value which may be a slug from the color palette.
- * If the value is a slug (doesn't start with # or rgb/hsl/var), attempts to resolve it from the palette.
- * Otherwise, returns the value as-is.
+ * This function converts slugs to CSS variables to preserve the connection to theme.json.
+ * If the value is a slug, it returns a CSS variable reference.
+ * Otherwise, returns the value as-is (for hex, rgb, hsl values).
  *
  * @param {string|undefined} value The color value or slug
- * @param {Array} palette Optional color palette array from useSetting('color.palette')
- * @return {string|undefined} The resolved color value
+ * @param {Array} palette Optional color palette array (for backwards compatibility, not used)
+ * @return {string|undefined} The CSS variable or color value
  */
 export const resolveColorValue = ( value, palette = null ) => {
-	if ( ! value ) {
-		return value;
-	}
-
-	// If it's already a color value (hex, rgb, hsl, var), return as-is
-	if (
-		value.startsWith( '#' ) ||
-		value.startsWith( 'rgb' ) ||
-		value.startsWith( 'hsl' ) ||
-		value.startsWith( 'var(' )
-	) {
-		return value;
-	}
-
-	// If no palette provided, we can't resolve, so return the value
-	if ( ! palette || ! Array.isArray( palette ) ) {
-		return value;
-	}
-
-	// Try to find the color in the palette by slug
-	const colorObject = palette.find( color => color.slug === value );
-
-	// Return the color value if found, otherwise return original value
-	return colorObject?.color || value;
+	// Use CSS variable conversion for slugs
+	return getColorCSSVariable( value );
 };
 
 /**
