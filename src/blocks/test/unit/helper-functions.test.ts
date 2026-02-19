@@ -1,4 +1,4 @@
-import { boxToCSS, boxValues, buildResponsiveGetAttributes, buildResponsiveSetAttributes, compactObject, getChoice, mergeBoxDefaultValues, removeBoxDefaultValues, stringToBox } from '../../helpers/helper-functions.js';
+import { boxToCSS, boxValues, buildResponsiveGetAttributes, buildResponsiveSetAttributes, compactObject, getChoice, getColorCSSVariable, mergeBoxDefaultValues, removeBoxDefaultValues, resolveColorValue, stringToBox } from '../../helpers/helper-functions.js';
 
 describe( 'Box Values Function', () => {
 
@@ -237,5 +237,82 @@ describe( 'Compact Object Function', () => {
 
 	it( 'should return undefined if the object is composed from undefined and empty objects.', () => {
 		expect( compactObject({ a: {}, b: {}}) ).toBeUndefined();
+	});
+});
+
+describe( 'Get Color CSS Variable Function', () => {
+	it( 'should convert a color slug to a CSS variable', () => {
+		expect( getColorCSSVariable( 'primary' ) ).toEqual( 'var(--wp--preset--color--primary)' );
+		expect( getColorCSSVariable( 'base' ) ).toEqual( 'var(--wp--preset--color--base)' );
+		expect( getColorCSSVariable( 'contrast' ) ).toEqual( 'var(--wp--preset--color--contrast)' );
+	});
+
+	it( 'should pass through hex color values unchanged', () => {
+		expect( getColorCSSVariable( '#ff0000' ) ).toEqual( '#ff0000' );
+		expect( getColorCSSVariable( '#0073aa' ) ).toEqual( '#0073aa' );
+		expect( getColorCSSVariable( '#000' ) ).toEqual( '#000' );
+	});
+
+	it( 'should pass through rgb color values unchanged', () => {
+		expect( getColorCSSVariable( 'rgb(255, 0, 0)' ) ).toEqual( 'rgb(255, 0, 0)' );
+		expect( getColorCSSVariable( 'rgba(255, 0, 0, 0.5)' ) ).toEqual( 'rgba(255, 0, 0, 0.5)' );
+	});
+
+	it( 'should pass through hsl color values unchanged', () => {
+		expect( getColorCSSVariable( 'hsl(0, 100%, 50%)' ) ).toEqual( 'hsl(0, 100%, 50%)' );
+		expect( getColorCSSVariable( 'hsla(0, 100%, 50%, 0.5)' ) ).toEqual( 'hsla(0, 100%, 50%, 0.5)' );
+	});
+
+	it( 'should pass through existing CSS variables unchanged', () => {
+		expect( getColorCSSVariable( 'var(--custom-color)' ) ).toEqual( 'var(--custom-color)' );
+		expect( getColorCSSVariable( 'var(--my-brand-color)' ) ).toEqual( 'var(--my-brand-color)' );
+	});
+
+	it( 'should sanitize color slugs to prevent CSS injection', () => {
+		expect( getColorCSSVariable( 'Primary-Color' ) ).toEqual( 'var(--wp--preset--color--primary-color)' );
+		expect( getColorCSSVariable( 'test@color!' ) ).toEqual( 'var(--wp--preset--color--testcolor)' );
+		expect( getColorCSSVariable( 'my_special_color' ) ).toEqual( 'var(--wp--preset--color--myspecialcolor)' );
+		expect( getColorCSSVariable( 'Color123' ) ).toEqual( 'var(--wp--preset--color--color123)' );
+	});
+
+	it( 'should handle undefined and empty values', () => {
+		expect( getColorCSSVariable( undefined ) ).toBeUndefined();
+		expect( getColorCSSVariable( '' ) ).toEqual( '' );
+	});
+
+	it( 'should preserve hyphens in slugs', () => {
+		expect( getColorCSSVariable( 'primary-blue' ) ).toEqual( 'var(--wp--preset--color--primary-blue)' );
+		expect( getColorCSSVariable( 'dark-gray-100' ) ).toEqual( 'var(--wp--preset--color--dark-gray-100)' );
+	});
+});
+
+describe( 'Resolve Color Value Function', () => {
+	it( 'should convert color slugs to CSS variables', () => {
+		expect( resolveColorValue( 'primary' ) ).toEqual( 'var(--wp--preset--color--primary)' );
+		expect( resolveColorValue( 'base' ) ).toEqual( 'var(--wp--preset--color--base)' );
+	});
+
+	it( 'should pass through hex values unchanged', () => {
+		expect( resolveColorValue( '#ff0000' ) ).toEqual( '#ff0000' );
+		expect( resolveColorValue( '#0073aa' ) ).toEqual( '#0073aa' );
+	});
+
+	it( 'should pass through rgb values unchanged', () => {
+		expect( resolveColorValue( 'rgb(255, 0, 0)' ) ).toEqual( 'rgb(255, 0, 0)' );
+	});
+
+	it( 'should work with deprecated palette parameter (ignored)', () => {
+		const palette = [
+			{ slug: 'primary', color: '#0073aa', name: 'Primary' },
+			{ slug: 'base', color: '#000000', name: 'Base' }
+		];
+		
+		// Palette parameter is now ignored, should still convert to CSS variable
+		expect( resolveColorValue( 'primary', palette ) ).toEqual( 'var(--wp--preset--color--primary)' );
+		expect( resolveColorValue( 'base', palette ) ).toEqual( 'var(--wp--preset--color--base)' );
+	});
+
+	it( 'should handle undefined values', () => {
+		expect( resolveColorValue( undefined ) ).toBeUndefined();
 	});
 });
