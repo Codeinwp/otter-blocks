@@ -271,7 +271,7 @@ describe( 'Get Color CSS Variable Function', () => {
 	it( 'should sanitize color slugs to prevent CSS injection', () => {
 		expect( getColorCSSVariable( 'Primary-Color' ) ).toEqual( 'var(--wp--preset--color--primary-color)' );
 		expect( getColorCSSVariable( 'test@color!' ) ).toEqual( 'var(--wp--preset--color--testcolor)' );
-		expect( getColorCSSVariable( 'my_special_color' ) ).toEqual( 'var(--wp--preset--color--myspecialcolor)' );
+		expect( getColorCSSVariable( 'my_special_color' ) ).toEqual( 'var(--wp--preset--color--my_special_color)' );
 		expect( getColorCSSVariable( 'Color123' ) ).toEqual( 'var(--wp--preset--color--color123)' );
 	});
 
@@ -280,9 +280,11 @@ describe( 'Get Color CSS Variable Function', () => {
 		expect( getColorCSSVariable( '' ) ).toEqual( '' );
 	});
 
-	it( 'should preserve hyphens in slugs', () => {
+	it( 'should preserve hyphens and underscores in slugs', () => {
 		expect( getColorCSSVariable( 'primary-blue' ) ).toEqual( 'var(--wp--preset--color--primary-blue)' );
 		expect( getColorCSSVariable( 'dark-gray-100' ) ).toEqual( 'var(--wp--preset--color--dark-gray-100)' );
+		expect( getColorCSSVariable( 'secondary_dark' ) ).toEqual( 'var(--wp--preset--color--secondary_dark)' );
+		expect( getColorCSSVariable( 'accent_1' ) ).toEqual( 'var(--wp--preset--color--accent_1)' );
 	});
 });
 

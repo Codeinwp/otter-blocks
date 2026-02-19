@@ -226,9 +226,9 @@ class Base_CSS {
 			return $slug;
 		}
 
-		// Sanitize slug: WordPress slugs should only contain lowercase alphanumeric and hyphens.
+		// Sanitize slug: WordPress slugs should only contain lowercase alphanumeric, hyphens, and underscores.
 		// This prevents potential CSS injection if slug comes from untrusted sources.
-		$sanitized_slug = strtolower( preg_replace( '/[^a-z0-9-]/', '', $slug ) );
+		$sanitized_slug = strtolower( preg_replace( '/[^a-z0-9-_]/', '', $slug ) );
 
 		// Convert slug to CSS variable.
 		return 'var(--wp--preset--color--' . $sanitized_slug . ')';

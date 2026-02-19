@@ -382,9 +382,9 @@ export const getColorCSSVariable = ( slug ) => {
 		return slug;
 	}
 
-	// Sanitize slug: WordPress slugs should only contain lowercase alphanumeric and hyphens
+	// Sanitize slug: WordPress slugs should only contain lowercase alphanumeric, hyphens, and underscores
 	// This prevents potential CSS injection if slug comes from untrusted sources
-	const sanitizedSlug = slug.toLowerCase().replace( /[^a-z0-9-]/g, '' );
+	const sanitizedSlug = slug.toLowerCase().replace( /[^a-z0-9-_]/g, '' );
 
 	// Convert slug to CSS variable
 	return `var(--wp--preset--color--${ sanitizedSlug })`;
