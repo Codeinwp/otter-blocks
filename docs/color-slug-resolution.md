@@ -2,13 +2,33 @@
 
 ## Problem
 
-WordPress themes define color palettes in `theme.json` using color slugs (e.g., "primary", "base", "contrast"). Core WordPress blocks can reference these colors by slug, and they are automatically resolved to the actual color values.
+WordPress themes define color palettes in `theme.json` using color slugs (e.g., "primary", "base", "contrast"). Core WordPress blocks can reference these colors by slug, and they automatically update when theme colors change.
 
-However, Otter Blocks were not resolving these color slugs, causing them to revert to defaults when a slug was used instead of a hex/rgb value.
+Otter Blocks were not properly handling color slugs - they were converting slugs to hex values at render time, which broke the connection to theme.json. When theme colors changed, blocks didn't update.
 
 ## Solution
 
-We've added color slug resolution utilities that work on both the JavaScript (editor) and PHP (frontend) sides.
+We've implemented the same approach as WordPress core blocks: **using CSS variables to preserve the connection to theme.json**.
+
+### How It Works
+
+WordPress automatically generates CSS variables from `theme.json` color palette:
+```css
+/* WordPress generates these automatically */
+:root {
+  --wp--preset--color--primary: #0073aa;
+  --wp--preset--color--base: #000000;
+  --wp--preset--color--contrast: #ffffff;
+}
+```
+
+When you use a color slug in Otter blocks, it's converted to a CSS variable reference:
+```javascript
+// Input: slug "primary"
+// Output: "var(--wp--preset--color--primary)"
+```
+
+**Key Benefit:** When theme.json changes, the CSS variable value updates automatically, and all blocks using that slug instantly reflect the new color - no block re-save needed!
 
 ### JavaScript Solution
 
@@ -21,7 +41,9 @@ const Edit = ({ attributes, setAttributes }) => {
     // Get the color resolver function
     const resolveColor = useColorResolver();
     
-    // Use it to resolve any color attribute
+    // Converts slugs to CSS variables
+    // "primary" → "var(--wp--preset--color--primary)"
+    // "#ff0000" → "#ff0000" (hex values passed through)
     const resolvedBackgroundColor = resolveColor(attributes.backgroundColor);
     const resolvedTextColor = resolveColor(attributes.textColor);
     
@@ -35,20 +57,23 @@ const Edit = ({ attributes, setAttributes }) => {
 };
 ```
 
-#### Option 2: Use `resolveColorValue` Directly
+#### Option 2: Use `resolveColorValue` or `getColorCSSVariable` Directly
 
 ```javascript
-import { useSetting } from '@wordpress/block-editor';
-import { resolveColorValue } from '../../helpers/helper-functions';
+import { resolveColorValue, getColorCSSVariable } from '../../helpers/helper-functions';
 
 const Edit = ({ attributes, setAttributes }) => {
-    // Get the color palette
-    const colorPalette = useSetting('color.palette') || [];
+    // Both functions do the same thing - convert slug to CSS variable
+    const colorVar1 = resolveColorValue(attributes.backgroundColor);
+    const colorVar2 = getColorCSSVariable(attributes.textColor);
     
-    // Resolve colors
-    const resolvedColor = resolveColorValue(attributes.backgroundColor, colorPalette);
+    // "primary" → "var(--wp--preset--color--primary)"
+    // "#ff0000" → "#ff0000"
     
-    return <div style={{ backgroundColor: resolvedColor }}>...</div>;
+    return <div style={{ 
+        backgroundColor: colorVar1,
+        color: colorVar2 
+    }}>...</div>;
 };
 ```
 
@@ -79,21 +104,50 @@ $css->add_item(
 );
 ```
 
+**Result:**
+- Input slug: `"primary"`
+- Output CSS: `background-color: var(--wp--preset--color--primary);`
+- Input hex: `"#ff0000"`
+- Output CSS: `background-color: #ff0000;`
+
 ## How It Works
 
 ### Color Resolution Logic
 
-The resolver:
+The resolver converts color slugs to CSS variables:
 1. Checks if the value is already a color (starts with `#`, `rgb`, `hsl`, or `var(`)
-2. If not, looks up the slug in the theme color palette
-3. Returns the resolved color value, or the original value if not found
+2. If it's a hex/rgb/hsl value, returns it unchanged
+3. If it's a slug (anything else), converts to CSS variable: `var(--wp--preset--color--{slug})`
 
-### Theme Palette Sources
+**No palette lookup needed!** WordPress handles the CSS variable definitions automatically.
 
-The resolver checks colors from:
-- Theme palette (`theme.json` colors)
-- Default WordPress colors
-- Custom colors added by the user
+### WordPress CSS Variable Generation
+
+WordPress reads `theme.json` and automatically generates CSS variables:
+
+```json
+// theme.json
+{
+  "settings": {
+    "color": {
+      "palette": [
+        { "slug": "primary", "color": "#0073aa", "name": "Primary" },
+        { "slug": "base", "color": "#000000", "name": "Base" }
+      ]
+    }
+  }
+}
+```
+
+WordPress outputs:
+```css
+:root {
+  --wp--preset--color--primary: #0073aa;
+  --wp--preset--color--base: #000000;
+}
+```
+
+When you change colors in `theme.json`, WordPress updates the CSS variables, and all blocks automatically reflect the change!
 
 ## Example: Advanced Heading Block
 
@@ -101,7 +155,7 @@ The advanced-heading block has been updated as a reference implementation. See:
 - JavaScript: `/src/blocks/blocks/advanced-heading/edit.js`
 - PHP: `/inc/css/blocks/class-advanced-heading-css.php`
 
-## Blocks That Need This Fix
+## Blocks Updated
 
 Based on analysis, these blocks have color attributes and should be updated:
 
