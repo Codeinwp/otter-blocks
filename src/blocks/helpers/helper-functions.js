@@ -331,14 +331,22 @@ export const hex2rgba = ( color, alpha = 100 ) => {
  * @return {string|boolean}
  */
 export const lightnessFromColor = color => {
-	if ( ! color ) {
+	// Handle falsy values and non-string types
+	if ( ! color || typeof color !== 'string' ) {
 		return false;
 	}
 
 	let value = color;
 
+	// Handle CSS variables
 	if ( color.startsWith( 'var(' ) ) {
-		value = getComputedStyle( document.documentElement ).getPropertyValue( color.slice( 4, -1 ) ).trim();
+		// Check if we're in a browser environment
+		if ( typeof document !== 'undefined' && document.documentElement ) {
+			value = getComputedStyle( document.documentElement ).getPropertyValue( color.slice( 4, -1 ) ).trim();
+		} else {
+			// In test/non-browser environment, can't resolve CSS variables
+			return false;
+		}
 	}
 
 	// Convert hex to RGB if necessary
@@ -351,7 +359,13 @@ export const lightnessFromColor = color => {
 	}
 
 	// Extract the red, green, and blue values
-	const [ r, g, b ] = value.match( /\d+/g ).map( Number );
+	const matches = value.match( /\d+/g );
+	if ( ! matches || matches.length < 3 ) {
+		// Invalid color format
+		return false;
+	}
+	
+	const [ r, g, b ] = matches.map( Number );
 
 	// Calculate the brightness value
 	const brightness = ( 0.299 * r ) + ( 0.587 * g ) + ( 0.114 * b );
@@ -368,7 +382,8 @@ export const lightnessFromColor = color => {
  * @return {string|undefined} The CSS variable reference
  */
 export const getColorCSSVariable = ( slug ) => {
-	if ( ! slug ) {
+	// Handle all falsy values and non-string types
+	if ( ! slug || typeof slug !== 'string' ) {
 		return slug;
 	}
 
