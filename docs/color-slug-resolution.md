@@ -57,25 +57,23 @@ const Edit = ({ attributes, setAttributes }) => {
 };
 ```
 
-#### Option 2: Use `resolveColorValue` or `getColorCSSVariable` Directly
+#### Option 2: Use `getColorCSSVariable` Directly (Recommended for New Code)
 
 ```javascript
-import { resolveColorValue, getColorCSSVariable } from '../../helpers/helper-functions';
+import { getColorCSSVariable } from '../../helpers/helper-functions';
 
 const Edit = ({ attributes, setAttributes }) => {
-    // Both functions do the same thing - convert slug to CSS variable
-    const colorVar1 = resolveColorValue(attributes.backgroundColor);
-    const colorVar2 = getColorCSSVariable(attributes.textColor);
+    // Direct conversion of slug to CSS variable
+    const colorVar = getColorCSSVariable(attributes.backgroundColor);
     
     // "primary" → "var(--wp--preset--color--primary)"
     // "#ff0000" → "#ff0000"
     
-    return <div style={{ 
-        backgroundColor: colorVar1,
-        color: colorVar2 
-    }}>...</div>;
+    return <div style={{ backgroundColor: colorVar }}>...</div>;
 };
 ```
+
+**Note:** `resolveColorValue()` is also available as a wrapper for backward compatibility, but `getColorCSSVariable()` is recommended for new code as it's more explicit about its purpose.
 
 ### PHP Solution
 
