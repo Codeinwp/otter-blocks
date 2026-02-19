@@ -396,10 +396,10 @@ export const getColorCSSVariable = ( slug ) => {
  * If the value is a slug, it returns a CSS variable reference.
  * Otherwise, returns the value as-is (for hex, rgb, hsl values).
  *
- * @param {string|undefined} value The color value or slug
- * @param {Array} palette Optional color palette array (deprecated, no longer used)
- * @return {string|undefined} The CSS variable or color value
  * @deprecated The palette parameter is deprecated and no longer used. Use getColorCSSVariable() directly.
+ * @param {string|undefined} value   The color value or slug
+ * @param {Array}            palette Optional color palette array (deprecated, no longer used)
+ * @return {string|undefined} The CSS variable or color value
  */
 export const resolveColorValue = ( value, palette = null ) => {
 	// Use CSS variable conversion for slugs
