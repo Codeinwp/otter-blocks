@@ -382,8 +382,12 @@ export const getColorCSSVariable = ( slug ) => {
 		return slug;
 	}
 
+	// Sanitize slug: WordPress slugs should only contain lowercase alphanumeric and hyphens
+	// This prevents potential CSS injection if slug comes from untrusted sources
+	const sanitizedSlug = slug.toLowerCase().replace( /[^a-z0-9-]/g, '' );
+
 	// Convert slug to CSS variable
-	return `var(--wp--preset--color--${ slug })`;
+	return `var(--wp--preset--color--${ sanitizedSlug })`;
 };
 
 /**
@@ -393,8 +397,9 @@ export const getColorCSSVariable = ( slug ) => {
  * Otherwise, returns the value as-is (for hex, rgb, hsl values).
  *
  * @param {string|undefined} value The color value or slug
- * @param {Array} palette Optional color palette array (for backwards compatibility, not used)
+ * @param {Array} palette Optional color palette array (deprecated, no longer used)
  * @return {string|undefined} The CSS variable or color value
+ * @deprecated The palette parameter is deprecated and no longer used. Use getColorCSSVariable() directly.
  */
 export const resolveColorValue = ( value, palette = null ) => {
 	// Use CSS variable conversion for slugs
