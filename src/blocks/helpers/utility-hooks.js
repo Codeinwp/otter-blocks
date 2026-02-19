@@ -10,7 +10,7 @@ import { useSetting } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
-import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFromColor, resolveColorValue } from './helper-functions.js';
+import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFromColor, resolveColorValue, getColorCSSVariable } from './helper-functions.js';
 
 /**
  * Utiliy hook to get/set responsive attributes.
@@ -39,8 +39,10 @@ export const useResponsiveAttributes = ( setAttributes = () => {}) => useSelect(
  */
 export const useDarkBackground = ( backgroundColor, attributes, setAttributes, darkClassName = 'has-dark-bg', lightClassName = 'has-light-bg' ) => {
 	useEffect( () => {
-		const isDark = 'dark' === lightnessFromColor( backgroundColor );
-		const isLight = 'light' === lightnessFromColor( backgroundColor );
+		// Resolve color slugs to CSS variables before checking lightness
+		const resolvedColor = getColorCSSVariable( backgroundColor );
+		const isDark = 'dark' === lightnessFromColor( resolvedColor );
+		const isLight = 'light' === lightnessFromColor( resolvedColor );
 
 		let classes = attributes.className || '';
 
