@@ -8,7 +8,7 @@ import googleFontsLoader from '../../../helpers/google-fonts.js';
  * WordPress dependencies.
  */
 import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
-import { Fragment, useEffect } from '@wordpress/element';
+import { Fragment, useEffect, useCallback } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
@@ -69,7 +69,7 @@ const Edit = ({
 		}
 	}, []);
 
-	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+	const getValue = useCallback( field => getDefaultValueByField({ name, field, defaultAttributes, attributes }), [ name, defaultAttributes, attributes ] );
 	const resolveColor = useColorResolver();
 
 	const inlineStyles = {
@@ -131,7 +131,7 @@ const Edit = ({
 				--title-background: ${ activeTitleBackground };
 			}` ] : [])
 		]);
-	}, [ attributes.activeTitleColor, attributes.activeTitleBackground ]);
+	}, [ attributes.activeTitleColor, attributes.activeTitleBackground, getValue, resolveColor, setActiveNodeCSS ]);
 
 	useEffect( () => {
 		if ( attributes.fontFamily ) {
