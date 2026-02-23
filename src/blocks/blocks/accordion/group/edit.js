@@ -69,7 +69,7 @@ const Edit = ({
 		}
 	}, []);
 
-	const getValue = useCallback( field => getDefaultValueByField({ name, field, defaultAttributes, attributes }), [ name, defaultAttributes, attributes ] );
+	const getValue = useCallback( field => getDefaultValueByField({ name, field, defaultAttributes, attributes }), [ name, attributes ] );
 	const resolveColor = useColorResolver();
 
 	const inlineStyles = {
