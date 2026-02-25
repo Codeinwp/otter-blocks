@@ -42,3 +42,4 @@ tsconfig.json
 /plugins
 /docs
 /build/pro/
+AGENTS.md
