@@ -52,7 +52,6 @@ domReady( () => {
 				tabContent.classList.toggle( 'hidden', tabIndex !== index );
 
 				tabHeaderMobile.classList.toggle( 'active', tabIndex === index );
-				tabHeaderMobile.classList.toggle( 'hidden', tabIndex !== index );
 				tabHeaderMobile.setAttribute( 'aria-selected', tabIndex === index );
 
 				const headerItems = Array.from( header.childNodes );
