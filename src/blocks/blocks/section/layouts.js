@@ -1,6 +1,7 @@
 const layouts = {
 	1: {
-		equal: [ '100' ]
+		equal: [ '100' ],
+		collapsedRows: [ '100' ]
 	},
 	2: {
 		equal: [ '50', '50' ],
