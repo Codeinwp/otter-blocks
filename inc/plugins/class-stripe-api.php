@@ -241,8 +241,9 @@ class Stripe_API {
 		if ( defined( 'COOKIEPATH' ) && defined( 'COOKIE_DOMAIN' ) && ! headers_sent() && ! $user_id ) {
 			$data      = wp_json_encode( $data );
 			$hmac_data = hash_hmac( 'sha256', $data, wp_salt() );
-			setcookie( 'o_stripe_data', $data, strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, false ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
-			setcookie( 'o_stripe_hmac_data', $hmac_data, strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, false ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
+			$secure    = function_exists( 'is_ssl' ) ? is_ssl() : ( ! empty( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) !== 'off' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			setcookie( 'o_stripe_data', $data, strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, $secure, true ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
+			setcookie( 'o_stripe_hmac_data', $hmac_data, strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, $secure, true ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
 			return;
 		}
 
