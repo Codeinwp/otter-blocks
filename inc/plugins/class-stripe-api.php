@@ -239,7 +239,11 @@ class Stripe_API {
 		array_push( $data, $object );
 
 		if ( defined( 'COOKIEPATH' ) && defined( 'COOKIE_DOMAIN' ) && ! headers_sent() && ! $user_id ) {
-			setcookie( 'o_stripe_data', wp_json_encode( $data ), strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, false ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
+			$data      = wp_json_encode( $data );
+			$hmac_data = hash_hmac( 'sha256', $data, wp_salt() );
+			$secure    = function_exists( 'is_ssl' ) ? is_ssl() : ( ! empty( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) !== 'off' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			setcookie( 'o_stripe_data', $data, strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, $secure, true ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
+			setcookie( 'o_stripe_hmac_data', $hmac_data, strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, $secure, true ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
 			return;
 		}
 
@@ -258,8 +262,13 @@ class Stripe_API {
 		$user_id = get_current_user_id();
 
 		if ( ! $user_id ) {
-			if ( isset( $_COOKIE['o_stripe_data'] ) && ! empty( $_COOKIE['o_stripe_data'] ) ) { // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
-				$data = json_decode( stripcslashes( $_COOKIE['o_stripe_data'] ), true ); // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			if ( isset( $_COOKIE['o_stripe_data'] ) && ! empty( $_COOKIE['o_stripe_data'] ) && isset( $_COOKIE['o_stripe_hmac_data'] ) && ! empty( $_COOKIE['o_stripe_hmac_data'] ) ) { // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
+				$data_raw  = stripcslashes( $_COOKIE['o_stripe_data'] ); // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				$hmac_data = sanitize_text_field( $_COOKIE['o_stripe_hmac_data'] ); // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
+
+				if ( hash_equals( hash_hmac( 'sha256', $data_raw, wp_salt() ), $hmac_data ) ) {
+					$data = json_decode( $data_raw, true );
+				}
 			}
 
 			return $data;
