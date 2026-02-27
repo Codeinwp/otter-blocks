@@ -156,86 +156,91 @@ const delay = [
 
 const speed = [ 'none', 'slow', 'slower', 'fast', 'faster' ];
 
-const animateElements = () => {
-	const elements = document.querySelectorAll( '.animated' );
+/** @type {Array<{element: HTMLElement, triggerOffset: number|string}>} */
+const elementsScroll = [];
+let scrollListenerAttached = false;
 
-	createCustomAnimationNode( elements );
+const processElement = ( element ) => {
+	// Skip if already processed
+	if ( element.classList.contains( 'o-anim-ready' ) ) {
+		return;
+	}
 
-	for ( const element of elements ) {
-		classes = element.classList;
-		element.animationClasses = [];
+	const classes = element.classList;
+	element.animationClasses = [];
 
-		if ( ! isElementInViewport( element ) ) {
-			const animationClass = animations.find( ( i ) => {
-				return Array.from( classes ).find( ( o ) => o === i );
-			});
-
-			const delayClass = delay.find( ( i ) => {
-				return Array.from( classes ).find( ( o ) => o === i );
-			});
-
-			const speedClass = speed.find( ( i ) => {
-				return Array.from( classes ).find( ( o ) => o === i );
-			});
-
-			if ( animationClass ) {
-				element.animationClasses.push( animationClass );
-				element.classList.remove( animationClass );
-			}
-
-			if ( delayClass ) {
-				element.animationClasses.push( delayClass );
-				element.classList.remove( delayClass );
-			}
-
-			if ( speedClass ) {
-				element.animationClasses.push( speedClass );
-				element.classList.remove( speedClass );
-			}
-
-			element.classList.add( 'hidden-animated' );
-		}
-
-		classes.add( 'o-anim-ready' );
-
-		outAnimation.forEach( ( i ) => {
-			const isOut = element.className.includes( i );
-
-			if ( isOut ) {
-				element.addEventListener( 'animationend', () => {
-					element.classList.remove( i );
-				});
-			}
+	if ( ! isElementInViewport( element ) ) {
+		const animationClass = animations.find( ( i ) => {
+			return Array.from( classes ).find( ( o ) => o === i );
 		});
 
-		if ( classes.contains( 'o-anim-hover' ) ) {
-			element.classList.remove( 'hidden-animated' ); // We asume that elements with hover animation are visible by default.
-			element.classList.remove( 'animated' );
+		const delayClass = delay.find( ( i ) => {
+			return Array.from( classes ).find( ( o ) => o === i );
+		});
 
-			const { animationName } = element.style;
-			element.style.animationName = 'none';
+		const speedClass = speed.find( ( i ) => {
+			return Array.from( classes ).find( ( o ) => o === i );
+		});
 
-			element.addEventListener( 'mouseenter', () => {
-				element.classList.add( 'animated' );
-				element.style.animationName = animationName;
-			});
+		if ( animationClass ) {
+			element.animationClasses.push( animationClass );
+			element.classList.remove( animationClass );
 		}
 
-		element.addEventListener( 'animationend', () => {
-			element.classList.remove( 'animated' );
+		if ( delayClass ) {
+			element.animationClasses.push( delayClass );
+			element.classList.remove( delayClass );
+		}
+
+		if ( speedClass ) {
+			element.animationClasses.push( speedClass );
+			element.classList.remove( speedClass );
+		}
+
+		element.classList.add( 'hidden-animated' );
+	}
+
+	classes.add( 'o-anim-ready' );
+
+	outAnimation.forEach( ( i ) => {
+		const isOut = element.className.includes( i );
+
+		if ( isOut ) {
+			element.addEventListener( 'animationend', () => {
+				element.classList.remove( i );
+			}, { once: true });
+		}
+	});
+
+	if ( classes.contains( 'o-anim-hover' ) ) {
+		element.classList.remove( 'hidden-animated' ); // We assume that elements with hover animation are visible by default.
+		element.classList.remove( 'animated' );
+
+		const { animationName } = element.style;
+		element.style.animationName = 'none';
+
+		element.addEventListener( 'mouseenter', () => {
+			element.classList.add( 'animated' );
+			element.style.animationName = animationName;
 		});
 	}
 
-	/** @type {Array<HTMLDivElement>} */
-	const elementsScroll = [];
+	element.addEventListener( 'animationend', () => {
+		element.classList.remove( 'animated' );
+	});
 
-	for ( const element of elements ) {
-		if (
-			element.animationClasses &&
-			0 < element.animationClasses.length
-		) {
-			elementsScroll.push({ element, triggerOffset: getTriggerOffset( element ) });
-		}
+	// Add to scroll tracking if needed
+	if (
+		element.animationClasses &&
+		0 < element.animationClasses.length
+	) {
+		elementsScroll.push({ element, triggerOffset: getTriggerOffset( element ) });
+	}
+};
+
+const attachScrollListener = () => {
+	if ( scrollListenerAttached ) {
+		return;
 	}
 
 	window.addEventListener( 'scroll', () => {
@@ -269,6 +274,35 @@ const animateElements = () => {
 			});
 		});
 	});
+
+	scrollListenerAttached = true;
+};
+
+const animateElements = () => {
+	const elements = document.querySelectorAll( '.animated' );
+
+	createCustomAnimationNode( elements );
+
+	for ( const element of elements ) {
+		processElement( element );
+	}
+
+	attachScrollListener();
+};
+
+const refreshLightboxAnimations = () => {
+	// Only process new, animated elements that haven't been initialized yet
+	const elements = document.querySelectorAll( '.animated:not(.o-anim-ready)' );
+	
+	if ( elements.length === 0 ) {
+		return;
+	}
+
+	createCustomAnimationNode( elements );
+
+	for ( const element of elements ) {
+		processElement( element );
+	}
 };
 
 const isElementInViewport = ( el ) => {
@@ -401,5 +435,14 @@ const calculateOffset = ( offset ) => {
 
 	return offset;
 };
+
+// Re-animate elements when a lightbox is opened, as the content might be different.
+const lightboxes = document.querySelectorAll('.wp-lightbox-container');
+lightboxes.forEach((container) => {
+	container.addEventListener('click', () => {
+		refreshLightboxAnimations();
+	});
+});
+
 
 window.addEventListener( 'load', animateElements );

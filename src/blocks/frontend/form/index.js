@@ -385,15 +385,15 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
 	const hasValidToken = id && window.themeisleGutenberg?.tokens?.[id]?.token;
 	const spinner = makeSpinner( btn );
-	
-	if ( formIsEmpty ) {
+	const isValidationSuccessful = validateInputs( form );
+
+	if ( formIsEmpty || ! isValidationSuccessful) {
 		btn.disabled = false;
 		spinner.hide();
 		return;
 	}
-	
+
 	const nonceFieldValue = extractNonceValue( form );
-	const isValidationSuccessful = validateInputs( form );
 
 	if ( hasCaptcha && ! hasValidToken ) {
 		const msg = ! window.hasOwnProperty( 'grecaptcha' ) ?
@@ -407,7 +407,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 
 	if ( ! isValidationSuccessful || ( hasCaptcha && ! hasValidToken ) ) {
 		btn.disabled = false;
-		btn.removeChild( spinner );
+		spinner.hide();
 	} else {
 		payload.formInputsData = formFieldsData;
 		if ( hasValidToken ) {
