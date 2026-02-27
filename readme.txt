@@ -4,7 +4,7 @@ Tags: block, blocks, gutenberg, gutenberg blocks, page builder
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 3.1.4
+Stable tag: 3.1.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
@@ -365,9 +365,18 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 == Changelog ==
 
-##### [Version 3.1.4](https://github.com/Codeinwp/otter-blocks/compare/v3.1.3...v3.1.4) (2025-12-12)
+##### [Version 3.1.5](https://github.com/Codeinwp/otter-blocks/compare/v3.1.4...v3.1.5) (2026-02-27)
 
-- Updated dependencies
+- Added title for Close button from the Popup block
+- Fixed issue when form validation was not appearing when you click on the Submit button
+- Fixed issue with Team Members Pattern having errors in the mobile preview
+- Fixed issue with assets not being enqueued for block template parts
+- Fixed issue where WP Enlarge on click option was not working when using Otters animations
+- Fixed Visibility conditions that were not applied to 767px and 768px screens
+- Fixed tabs broken on mobile view
+- Enhanced security
+
+
 
 
 [See changelog for all versions](https://github.com/Codeinwp/otter-blocks/blob/master/CHANGELOG.md).

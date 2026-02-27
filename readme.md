@@ -4,7 +4,7 @@
 **Requires at least:** 6.2  
 **Tested up to:** 6.9  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.1.4  
+**Stable tag:** 3.1.5  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
@@ -16,10 +16,10 @@ Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to
 
 ## Quick Links 🔗
 
-- Do you want to see Otter blocks in action before installing? [SEE OTTER BLOCKS DEMO](https://demo.themeisle.com/otter-blocks/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks)
+- Do you want to see Otter blocks in action before installing? [SEE OTTER BLOCKS DEMO](https://demo.themeisle.com/otter-blocks/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=otter-blocks)
 - New to the Gutenberg Blocks ecosystem? Check out our article on [GUTENBERG EXPLAINED](https://themeisle.com/blog/gutenberg-blocks-explained/)
 - Need any help with setup? Checkout our [DOCUMENTATION](https://docs.themeisle.com/article/1478-otter-blocks-documentation)
-- Interested in Otter Pro? Here are more details about [OTTER PRO](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks)
+- Interested in Otter Pro? Here are more details about [OTTER PRO](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=otter-blocks)
 
 ## With Otter Blocks, You Get Access To
 
@@ -245,7 +245,7 @@ Drive conversions with compelling call-to-action sections, designed to grab atte
 
 Build custom Single Product Pages using WooCommerce Builder Blocks by Otter. All the new features are designed to maximize your conversion rate and bring more improvements. 
 
-With [Otter Pro](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks), you get a lot more features, including:
+With [Otter Pro](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=otter-blocks), you get a lot more features, including:
 
 - Add to Cart Block
 - Business Hours Block
@@ -258,7 +258,7 @@ With [Otter Pro](https://themeisle.com/plugins/otter-blocks/upgrade/?utm_source=
 - More Patterns & Full-page templates
 - and more!
 
-You can try a live demo of Otter Blocks - no setup required. [Click here](https://themeisle.com/plugins/otter-blocks/try-otter/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks) to try it out.
+You can try a live demo of Otter Blocks - no setup required. [Click here](https://themeisle.com/plugins/otter-blocks/try-otter/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=otter-blocks) to try it out.
 
 ## Who is Otter For? 👀
 
@@ -307,7 +307,7 @@ Otter Blocks is an open-source project, and we welcome contributors to be part o
 ### Useful Resources 📌
 
 - Read more about WordPress on our [blog](https://themeisle.com/blog/).
-- Interested in our other plugins? Take a look [here](https://themeisle.com/wordpress-plugins/?utm_source=wpadmin&utm_medium=readme&utm_campaign=otter-blocks).
+- Interested in our other plugins? Take a look [here](https://themeisle.com/wordpress-plugins/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=otter-blocks).
 - Get the most out of Otter Blocks with our helpful [YouTube Tutorials Playlist](https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP).
 
 The plugin is relying on the service behind api.themeisle.com for accessing the patterns list, AI prompts and Onboarding. No account is required to access the service template collection and the privacy policy can be found [here](https://themeisle.com/privacy-policy/).
@@ -365,9 +365,16 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 ## Changelog ##
 
-##### [Version 3.1.4](https://github.com/Codeinwp/otter-blocks/compare/v3.1.3...v3.1.4) (2025-12-12)
+##### [Version 3.1.5](https://github.com/Codeinwp/otter-blocks/compare/v3.1.4...v3.1.5) (2026-02-27)
 
-- Updated dependencies
+- Added title for Close button from the Popup block
+- Fixed issue when form validation was not appearing when you click on the Submit button
+- Fixed issue with Team Members Pattern having errors in the mobile preview
+- Fixed issue with assets not being enqueued for block template parts
+- Fixed issue where WP Enlarge on click option was not working when using Otters animations
+- Fixed Visibility conditions that were not applied to 767px and 768px screens
+- Fixed tabs broken on mobile view
+- Enhanced security
 
 
 
