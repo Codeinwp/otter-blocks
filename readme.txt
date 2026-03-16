@@ -363,6 +363,12 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customized according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
+= How to report a security issue? =
+ 
+Plugin security is a core priority for us. If you identify a potential vulnerability, we ask that you disclose it responsibly.
+
+Please follow the reporting protocols outlined on our [Security Page](https://themeisle.com/security/).
+
 == Changelog ==
 
 ##### [Version 3.1.5](https://github.com/Codeinwp/otter-blocks/compare/v3.1.4...v3.1.5) (2026-02-27)
