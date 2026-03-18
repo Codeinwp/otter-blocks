@@ -46,7 +46,8 @@ const optionMapping = {
 	enableReviewScale: 'themeisle_blocks_settings_review_scale',
 	enableHighlightDynamic: 'themeisle_blocks_settings_highlight_dynamic',
 	enableAnonymousDataTracking: 'otter_blocks_logger_flag',
-	enableAIToolbar: 'themeisle_blocks_settings_block_ai_toolbar_module'
+	enableAIToolbar: 'themeisle_blocks_settings_block_ai_toolbar_module',
+	enableAtomicWindBlocks: 'themeisle_blocks_settings_atomic_wind_blocks'
 };
 
 const initialState = {
@@ -63,7 +64,8 @@ const initialState = {
 		enableReviewScale: false,
 		enableHighlightDynamic: false,
 		enableAnonymousDataTracking: 'no',
-		enableAIToolbar: false
+		enableAIToolbar: false,
+		enableAtomicWindBlocks: false
 	},
 	status: {
 		enableCustomCss: 'init',
@@ -78,7 +80,8 @@ const initialState = {
 		enableReviewScale: 'init',
 		enableHighlightDynamic: 'init',
 		enableAnonymousDataTracking: 'init',
-		enableAIToolbar: 'init'
+		enableAIToolbar: 'init',
+		enableAtomicWindBlocks: 'init'
 	},
 	dirty: {
 		enableCustomCss: false,
@@ -93,7 +96,8 @@ const initialState = {
 		enableReviewScale: false,
 		enableHighlightDynamic: false,
 		enableAnonymousDataTracking: false,
-		enableAIToolbar: false
+		enableAIToolbar: false,
+		enableAtomicWindBlocks: false
 	},
 	old: {}
 };
@@ -306,6 +310,18 @@ const Dashboard = () => {
 						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableOnboardingWizard', value }) }
 					/>
 				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
+						label={ __( 'Enable Atomic Wind Blocks', 'otter-blocks' ) }
+						help={ __( 'Enables 5 primitive, unstyled blocks: Box, Text, Image, Link, and Icon dedicated to be used with Tailwind CSS.', 'otter-blocks' ) }
+						checked={ state.values.enableAtomicWindBlocks }
+						disabled={ 'saving' === state.status.enableAtomicWindBlocks }
+						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableAtomicWindBlocks', value }) }
+					/>
+				</PanelRow>
+
+				
 			</PanelBody>
 
 			<PanelBody
