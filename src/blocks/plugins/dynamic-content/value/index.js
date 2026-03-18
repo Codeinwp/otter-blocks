@@ -81,14 +81,22 @@ const withDynamicConditions = createHigherOrderComponent( BlockEdit => {
 			}
 
 			elements.forEach( element => {
-				const context = select( 'core/editor' ).getCurrentPostId();
+				// Safely check if core/editor store is available (it might not be in BlockPreview context)
+				const editorStore = select( 'core/editor' );
+				const context = editorStore?.getCurrentPostId?.() || null;
 				const attrs = pick( Object.assign({ context }, element.dataset ), [ 'type', 'context', 'before', 'after', 'length', 'dateType', 'dateFormat', 'dateCustom', 'timeType', 'timeFormat', 'timeCustom', 'termType', 'termSeparator', 'metaKey', 'taxonomy' ]);
 
 				if ( 'postContent' === attrs.type ) {
 					return;
 				}
 
-				let value = select( 'themeisle-gutenberg/data' ).getDynamicData( attrs );
+				// Safely check if themeisle-gutenberg/data store is available
+				const dataStore = select( 'themeisle-gutenberg/data' );
+				if ( ! dataStore?.getDynamicData ) {
+					return;
+				}
+
+				let value = dataStore.getDynamicData( attrs );
 				if ( undefined !== value ) {
 					displayData( element, value );
 				} else {
@@ -98,7 +106,14 @@ const withDynamicConditions = createHigherOrderComponent( BlockEdit => {
 						displayWaitlist[ attrsHash ] = [ element ];
 
 						const interval = setInterval( () => {
-							value = select( 'themeisle-gutenberg/data' ).getDynamicData( attrs );
+							const store = select( 'themeisle-gutenberg/data' );
+							if ( ! store?.getDynamicData ) {
+								clearInterval( interval );
+								delete displayWaitlist[ attrsHash ];
+								return;
+							}
+
+							value = store.getDynamicData( attrs );
 
 							if ( undefined !== value ) {
 								clearInterval( interval );
@@ -120,7 +135,8 @@ const withDynamicConditions = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withStickyExtension' );
 
-if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
+// Register the filter only in block editor context, not in BlockPreview contexts
+if ( Boolean( window.themeisleGutenberg?.isBlockEditor ) ) {
 	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/dynamic-conditions/preview', withDynamicConditions );
 }
 
