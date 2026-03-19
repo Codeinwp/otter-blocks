@@ -438,7 +438,9 @@ class Dynamic_Content {
 			$key  = $this->get_exception_key( $data, $post->ID );
 
 			if ( ! isset( $data[ $key ] ) ) {
+				remove_filter( 'render_block', array( $this, 'apply_dynamic_content' ), 10 );
 				$excerpt = wp_trim_excerpt( '', $post );
+				add_filter( 'render_block', array( $this, 'apply_dynamic_content' ), 10 );
 			}
 		}
 
