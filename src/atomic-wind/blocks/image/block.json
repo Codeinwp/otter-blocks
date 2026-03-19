@@ -23,6 +23,10 @@
 			"selector": "img",
 			"attribute": "alt",
 			"default": ""
+		},
+		"className": {
+			"type": "string",
+			"default": "w-full"
 		}
 	},
 	"supports": {

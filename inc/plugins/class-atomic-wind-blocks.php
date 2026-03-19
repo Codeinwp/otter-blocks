@@ -16,6 +16,13 @@ namespace ThemeIsle\GutenbergBlocks\Plugins;
 class Atomic_Wind_Blocks {
 
 	/**
+	 * Whether we are currently inside a query loop render.
+	 *
+	 * @var bool
+	 */
+	private static $in_query = false;
+
+	/**
 	 * Initialize the module.
 	 *
 	 * @return void
@@ -267,26 +274,13 @@ class Atomic_Wind_Blocks {
 	public function register_rest_routes() {
 		register_rest_route( 'otter/v1', '/atomic-wind/style', array(
 			'methods'             => 'POST',
-			'callback'            => function ( \WP_REST_Request $request ) {
-				$post_id = absint( $request->get_param( 'postId' ) );
-				$css     = $request->get_param( 'css' );
-
-				$success = update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $css ) );
-
-				return new \WP_REST_Response( array( 'success' => $success ), 200 );
-			},
-			'permission_callback' => function ( \WP_REST_Request $request ) {
-				$post_id = absint( $request->get_param( 'postId' ) );
-
-				return current_user_can( 'edit_post', $post_id );
-			},
+			'callback'            => array( $this, 'rest_save_style' ),
+			'permission_callback' => array( $this, 'rest_save_style_permissions' ),
 			'args'                => array(
 				'css'    => array(
 					'type'              => 'string',
 					'required'          => true,
-					'sanitize_callback' => function ( $value ) {
-						return wp_strip_all_tags( $value );
-					},
+					'sanitize_callback' => 'wp_strip_all_tags',
 				),
 				'postId' => array(
 					'type'     => 'integer',
@@ -294,6 +288,33 @@ class Atomic_Wind_Blocks {
 				),
 			),
 		) );
+	}
+
+	/**
+	 * REST callback: save generated Tailwind CSS to post meta.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return \WP_REST_Response
+	 */
+	public function rest_save_style( \WP_REST_Request $request ) {
+		$post_id = absint( $request->get_param( 'postId' ) );
+		$css     = $request->get_param( 'css' );
+
+		$success = update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $css ) );
+
+		return new \WP_REST_Response( array( 'success' => $success ), 200 );
+	}
+
+	/**
+	 * REST permission callback for the style endpoint.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return bool
+	 */
+	public function rest_save_style_permissions( \WP_REST_Request $request ) {
+		$post_id = absint( $request->get_param( 'postId' ) );
+
+		return current_user_can( 'edit_post', $post_id );
 	}
 
 	/**
@@ -357,11 +378,12 @@ class Atomic_Wind_Blocks {
 	 * @return string
 	 */
 	public function render_query_loop( $block_content, $block ) {
-		if ( ( $block['blockName'] ?? '' ) !== 'atomic-wind/box' ) {
+		$block_name = isset( $block['blockName'] ) ? $block['blockName'] : '';
+		if ( 'atomic-wind/box' !== $block_name ) {
 			return $block_content;
 		}
 
-		$post_type = $block['attrs']['queryPostType'] ?? '';
+		$post_type = isset( $block['attrs']['queryPostType'] ) ? $block['attrs']['queryPostType'] : '';
 		if ( ! $post_type ) {
 			return $block_content;
 		}
@@ -371,14 +393,14 @@ class Atomic_Wind_Blocks {
 
 		$args = array(
 			'post_type'      => sanitize_key( $post_type ),
-			'posts_per_page' => absint( $block['attrs']['queryCount'] ?? 3 ),
-			'orderby'        => sanitize_key( $block['attrs']['queryOrderBy'] ?? 'date' ),
-			'order'          => strtoupper( $block['attrs']['queryOrder'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC',
+			'posts_per_page' => isset( $block['attrs']['queryCount'] ) ? absint( $block['attrs']['queryCount'] ) : 3,
+			'orderby'        => isset( $block['attrs']['queryOrderBy'] ) ? sanitize_key( $block['attrs']['queryOrderBy'] ) : sanitize_key( 'date' ),
+			'order'          => isset( $block['attrs']['queryOrder'] ) && strtoupper( $block['attrs']['queryOrder'] ) === 'ASC' ? 'ASC' : 'DESC',
 			'no_found_rows'  => true,
 		);
 
-		$taxonomy_filter = $block['attrs']['queryTaxonomy'] ?? '';
-		if ( $taxonomy_filter && str_contains( $taxonomy_filter, ':' ) ) {
+		$taxonomy_filter = isset($block['attrs']['queryTaxonomy']) ? sanitize_key( $block['attrs']['queryTaxonomy'] ) : '';
+		if ( $taxonomy_filter && strpos( $taxonomy_filter, ':' ) !== false ) {
 			$parts = explode( ':', $taxonomy_filter, 2 );
 			$tax   = sanitize_key( $parts[0] );
 			$term  = sanitize_key( $parts[1] );
@@ -391,7 +413,7 @@ class Atomic_Wind_Blocks {
 			$args['post__not_in'] = array( $saved_post->ID );
 		}
 
-		$sticky = $block['attrs']['querySticky'] ?? '';
+		$sticky = isset($block['attrs']['querySticky']) ? sanitize_key( $block['attrs']['querySticky'] ) : '';
 		if ( 'exclude' === $sticky ) {
 			$args['ignore_sticky_posts'] = true;
 		} elseif ( 'only' === $sticky ) {
@@ -414,11 +436,11 @@ class Atomic_Wind_Blocks {
 
 		preg_match( '/^\s*(<[^>]+>)/s', $block_content, $open_match );
 		preg_match( '/(<\/[a-zA-Z0-9]+>)\s*$/s', $block_content, $close_match );
-		$opening_tag = $open_match[1] ?? '';
-		$closing_tag = $close_match[1] ?? '';
+		$opening_tag = isset( $open_match[1] ) ? $open_match[1] : '';
+		$closing_tag = isset( $close_match[1] ) ? $close_match[1] : '';
 
 		$loop_output = '';
-		$GLOBALS['atomic_wind_in_query'] = true;
+		self::$in_query = true;
 
 		while ( $query->have_posts() ) {
 			$query->the_post();
@@ -427,7 +449,7 @@ class Atomic_Wind_Blocks {
 			}
 		}
 
-		unset( $GLOBALS['atomic_wind_in_query'] );
+		self::$in_query = false;
 		wp_reset_postdata();
 		$post = $saved_post; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
@@ -442,12 +464,13 @@ class Atomic_Wind_Blocks {
 	 * @return string
 	 */
 	public function render_post_fields( $block_content, $block ) {
-		if ( ! str_starts_with( $block['blockName'] ?? '', 'atomic-wind/' ) ) {
+		$block_name = isset( $block['blockName'] ) ? $block['blockName'] : '';
+		if ( ! str_starts_with( $block_name, 'atomic-wind/' ) ) {
 			return $block_content;
 		}
 
-		$post_field = $block['attrs']['postField'] ?? '';
-		if ( ! $post_field || empty( $GLOBALS['atomic_wind_in_query'] ) ) {
+		$post_field = isset( $block['attrs']['postField'] ) ? $block['attrs']['postField'] : '';
+		if ( ! $post_field || ! self::$in_query ) {
 			return $block_content;
 		}
 
@@ -460,7 +483,7 @@ class Atomic_Wind_Blocks {
 					$value = get_the_title();
 					break;
 			case 'excerpt':
-				$length = absint( $block['attrs']['excerptLength'] ?? 25 );
+				$length = isset( $block['attrs']['excerptLength'] ) ? absint( $block['attrs']['excerptLength'] ) : 25;
 				$raw    = get_the_excerpt();
 				$value  = wp_trim_words( wp_strip_all_tags( $raw ), $length, '&hellip;' );
 				break;
@@ -496,7 +519,7 @@ class Atomic_Wind_Blocks {
 				$value = sprintf( _n( '%d min read', '%d min read', $minutes, 'otter-blocks' ), $minutes );
 				break;
 			case 'custom_field':
-				$meta_key = sanitize_text_field( $block['attrs']['customFieldKey'] ?? '' );
+				$meta_key = isset( $block['attrs']['customFieldKey'] ) ? sanitize_text_field( $block['attrs']['customFieldKey'] ) : '';
 				if ( $meta_key ) {
 					$value = '';
 					if ( function_exists( 'get_field' ) ) {
@@ -574,7 +597,7 @@ class Atomic_Wind_Blocks {
 				$block_content = preg_replace( '/src="[^"]*"/', 'src="' . esc_url( $src ) . '"', $block_content );
 				$block_content = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $alt ) . '"', $block_content );
 			} elseif ( 'author_avatar' === $post_field ) {
-				$avatar_url = get_avatar_url( get_the_author_meta( 'ID' ), array( 'size' => 96 ) );
+				$avatar_url = get_avatar_url( get_the_author_meta( 'ID' ), array( 'size' => 256 ) );
 				if ( $avatar_url ) {
 					$alt           = get_the_author();
 					$block_content = preg_replace( '/src="[^"]*"/', 'src="' . esc_url( $avatar_url ) . '"', $block_content );
@@ -594,11 +617,12 @@ class Atomic_Wind_Blocks {
 	 * @return string
 	 */
 	public function render_animation_attrs( $block_content, $block ) {
-		if ( ! str_starts_with( $block['blockName'] ?? '', 'atomic-wind/' ) ) {
+		$block_name = isset( $block['blockName'] ) ? $block['blockName'] : '';
+		if ( ! str_starts_with( $block_name, 'atomic-wind/' ) ) {
 			return $block_content;
 		}
 
-		$animation = $block['attrs']['animation'] ?? '';
+		$animation = isset( $block['attrs']['animation'] ) ? $block['attrs']['animation'] : '';
 
 		if ( ! $animation || str_contains( $block_content, 'data-animation' ) ) {
 			return $block_content;
@@ -606,7 +630,7 @@ class Atomic_Wind_Blocks {
 
 		$attrs = ' data-animation="' . esc_attr( $animation ) . '"';
 
-		$delay = $block['attrs']['animationDelay'] ?? '';
+		$delay = isset( $block['attrs']['animationDelay'] ) ? $block['attrs']['animationDelay'] : '';
 		if ( $delay && '0' !== $delay ) {
 			$attrs .= ' data-animation-delay="' . esc_attr( $delay ) . '"';
 		}
@@ -622,16 +646,17 @@ class Atomic_Wind_Blocks {
 	 * @return string
 	 */
 	public function render_state_attrs( $block_content, $block ) {
-		if ( ! str_starts_with( $block['blockName'] ?? '', 'atomic-wind/' ) ) {
+		$block_name = isset( $block['blockName'] ) ? $block['blockName'] : '';
+		if ( ! str_starts_with( $block_name, 'atomic-wind/' ) ) {
 			return $block_content;
 		}
 
 		$attrs   = '';
-		$show_if = $block['attrs']['showIf'] ?? '';
+		$show_if = isset( $block['attrs']['showIf'] ) ? $block['attrs']['showIf'] : '';
 		if ( $show_if ) {
 			$attrs .= ' data-show-if="' . esc_attr( $show_if ) . '"';
 		}
-		$hide_if = $block['attrs']['hideIf'] ?? '';
+		$hide_if = isset( $block['attrs']['hideIf'] ) ? $block['attrs']['hideIf'] : '';
 		if ( $hide_if ) {
 			$attrs .= ' data-hide-if="' . esc_attr( $hide_if ) . '"';
 		}

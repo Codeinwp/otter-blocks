@@ -22,13 +22,30 @@ function getFeaturedImageUrl( post ) {
 	return '';
 }
 
+function getAuthorAvatarUrl( post ) {
+	if ( ! post ) {
+		return '';
+	}
+	const authors = post._embedded?.author;
+	if ( authors && authors.length > 0 ) {
+		const urls = authors[ 0 ]?.avatar_urls;
+		return urls?.[ '256' ] || urls?.[ '96' ] || urls?.[ '48' ] || urls?.[ '24' ] || '';
+	}
+	return '';
+}
+
 export default function Edit( { attributes, setAttributes, clientId } ) {
 	const { id, url, alt, postField } = attributes;
 	const blockProps = useBlockProps();
 	const { isActive, post } = useQueryPreview( clientId, postField );
 
 	if ( isActive ) {
-		const previewUrl = getFeaturedImageUrl( post );
+		const previewUrl = postField === 'author_avatar'
+			? getAuthorAvatarUrl( post )
+			: getFeaturedImageUrl( post );
+		const placeholderLabel = postField === 'author_avatar'
+			? __( 'Author Avatar', 'atomic-wind' )
+			: __( 'Featured Image', 'atomic-wind' );
 
 		if ( previewUrl ) {
 			return <img { ...blockProps } src={ previewUrl } alt="" />;
@@ -44,7 +61,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 				color: '#757575',
 				fontSize: '13px',
 			} }>
-				{ __( 'Featured Image', 'atomic-wind' ) }
+				{ placeholderLabel }
 			</div>
 		);
 	}
