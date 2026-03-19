@@ -28,7 +28,6 @@ class Atomic_Wind_Blocks {
 	 * @return void
 	 */
 	public function instance() {
-		// die();
 		$this->run();
 	}
 
@@ -48,10 +47,10 @@ class Atomic_Wind_Blocks {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_base_css' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_icons_data' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
-		add_action( 'wp_head', array( $this, 'output_cached_css' ), 5 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'output_cached_css' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_animations' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_states' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_animations' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_states' ) );
 		add_filter( 'render_block', array( $this, 'render_query_loop' ), 5, 2 );
 		add_filter( 'render_block', array( $this, 'render_post_fields' ), 20, 2 );
 		add_filter( 'render_block', array( $this, 'render_animation_attrs' ), 10, 2 );
@@ -134,7 +133,8 @@ class Atomic_Wind_Blocks {
 			'atomic-wind-tailwind-generator',
 			$this->plugin_url( 'build/atomic-wind/tailwind-generator.js' ),
 			$asset['dependencies'],
-			$asset['version']
+			$asset['version'],
+			true
 		);
 	}
 
@@ -144,7 +144,7 @@ class Atomic_Wind_Blocks {
 	 * @return void
 	 */
 	public function enqueue_base_css() {
-		wp_register_style( 'atomic-wind-base', false );
+		wp_register_style( 'atomic-wind-base', false, [], OTTER_BLOCKS_VERSION );
 		wp_enqueue_style( 'atomic-wind-base' );
 		$css = '[class*="wp-block-atomic-wind-"]{margin:0;max-width:unset;}[class*="wp-block-atomic-wind-"] p{margin:0;}';
 		if ( is_admin() ) {
@@ -159,9 +159,12 @@ class Atomic_Wind_Blocks {
 	 * @return void
 	 */
 	public function enqueue_icons_data() {
+		$files = glob( $this->base_path() . '/assets/atomic-wind/icons/*.svg' );
 		$icons = array_map(
-			fn( $f ) => basename( $f, '.svg' ),
-			glob( $this->base_path() . '/assets/atomic-wind/icons/*.svg' ) ?: array()
+			function ( $f ) {
+				return basename( $f, '.svg' );
+			},
+			$files ? $files : array()
 		);
 
 		wp_add_inline_script(
@@ -200,7 +203,8 @@ class Atomic_Wind_Blocks {
 			'atomic-wind-editor',
 			$this->plugin_url( 'build/atomic-wind/editor.js' ),
 			array_merge( $asset['dependencies'], array( 'wp-blocks', 'wp-hooks' ) ),
-			$asset['version']
+			$asset['version'],
+			true
 		);
 
 		wp_enqueue_style(
@@ -227,7 +231,9 @@ class Atomic_Wind_Blocks {
 		$cached_css = get_post_meta( $post->ID, '_atomic_wind_css', true );
 
 		if ( $cached_css ) {
-			echo '<style id="atomic-wind-tailwind">' . $cached_css . '</style>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			wp_register_style( 'atomic-wind-tailwind', false, [], OTTER_BLOCKS_VERSION );
+			wp_enqueue_style( 'atomic-wind-tailwind' );
+			wp_add_inline_style( 'atomic-wind-tailwind', $cached_css );
 			return;
 		}
 
@@ -242,7 +248,8 @@ class Atomic_Wind_Blocks {
 			'atomic-wind-tailwind-generator',
 			$this->plugin_url( 'build/atomic-wind/tailwind-generator.js' ),
 			$gen['dependencies'],
-			$gen['version']
+			$gen['version'],
+			true
 		);
 
 		if ( is_user_logged_in() && current_user_can( 'edit_post', $post->ID ) ) {
@@ -254,14 +261,19 @@ class Atomic_Wind_Blocks {
 					'atomic-wind-style-builder',
 					$this->plugin_url( 'build/atomic-wind/style-builder.js' ),
 					$sb['dependencies'],
-					$sb['version']
+					$sb['version'],
+					true
 				);
 
-				wp_localize_script( 'atomic-wind-style-builder', 'atomicWindStyleBuilder', array(
-					'postId'  => $post->ID,
-					'restUrl' => rest_url( 'otter/v1/atomic-wind' ),
-					'nonce'   => wp_create_nonce( 'wp_rest' ),
-				) );
+				wp_localize_script(
+					'atomic-wind-style-builder',
+					'atomicWindStyleBuilder',
+					array(
+						'postId'  => $post->ID,
+						'restUrl' => rest_url( 'otter/v1/atomic-wind' ),
+						'nonce'   => wp_create_nonce( 'wp_rest' ),
+					) 
+				);
 			}
 		}
 	}
@@ -272,22 +284,26 @@ class Atomic_Wind_Blocks {
 	 * @return void
 	 */
 	public function register_rest_routes() {
-		register_rest_route( 'otter/v1', '/atomic-wind/style', array(
-			'methods'             => 'POST',
-			'callback'            => array( $this, 'rest_save_style' ),
-			'permission_callback' => array( $this, 'rest_save_style_permissions' ),
-			'args'                => array(
-				'css'    => array(
-					'type'              => 'string',
-					'required'          => true,
-					'sanitize_callback' => 'wp_strip_all_tags',
+		register_rest_route(
+			'otter/v1',
+			'/atomic-wind/style',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'rest_save_style' ),
+				'permission_callback' => array( $this, 'rest_save_style_permissions' ),
+				'args'                => array(
+					'css'    => array(
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => 'wp_strip_all_tags',
+					),
+					'postId' => array(
+						'type'     => 'integer',
+						'required' => true,
+					),
 				),
-				'postId' => array(
-					'type'     => 'integer',
-					'required' => true,
-				),
-			),
-		) );
+			) 
+		);
 	}
 
 	/**
@@ -318,11 +334,11 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * Enqueue animations frontend CSS and JS.
+	 * Register animations frontend CSS and JS for conditional enqueue.
 	 *
 	 * @return void
 	 */
-	public function enqueue_frontend_animations() {
+	public function register_frontend_animations() {
 		$asset_file = $this->build_path() . '/animations-frontend.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
@@ -331,14 +347,14 @@ class Atomic_Wind_Blocks {
 
 		$asset = include $asset_file;
 
-		wp_enqueue_style(
+		wp_register_style(
 			'atomic-wind-animations',
 			$this->plugin_url( 'build/atomic-wind/style-animations-frontend.css' ),
 			array(),
 			$asset['version']
 		);
 
-		wp_enqueue_script(
+		wp_register_script(
 			'atomic-wind-animations-frontend',
 			$this->plugin_url( 'build/atomic-wind/animations-frontend.js' ),
 			$asset['dependencies'],
@@ -348,11 +364,11 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * Enqueue states frontend JS.
+	 * Register states frontend JS for conditional enqueue.
 	 *
 	 * @return void
 	 */
-	public function enqueue_frontend_states() {
+	public function register_frontend_states() {
 		$asset_file = $this->build_path() . '/states-frontend.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
@@ -361,7 +377,7 @@ class Atomic_Wind_Blocks {
 
 		$asset = include $asset_file;
 
-		wp_enqueue_script(
+		wp_register_script(
 			'atomic-wind-states-frontend',
 			$this->plugin_url( 'build/atomic-wind/states-frontend.js' ),
 			$asset['dependencies'],
@@ -393,27 +409,33 @@ class Atomic_Wind_Blocks {
 
 		$args = array(
 			'post_type'      => sanitize_key( $post_type ),
-			'posts_per_page' => isset( $block['attrs']['queryCount'] ) ? absint( $block['attrs']['queryCount'] ) : 3,
+			'posts_per_page' => isset( $block['attrs']['queryCount'] ) ? min( absint( $block['attrs']['queryCount'] ), 100 ) : 3,
 			'orderby'        => isset( $block['attrs']['queryOrderBy'] ) ? sanitize_key( $block['attrs']['queryOrderBy'] ) : sanitize_key( 'date' ),
 			'order'          => isset( $block['attrs']['queryOrder'] ) && strtoupper( $block['attrs']['queryOrder'] ) === 'ASC' ? 'ASC' : 'DESC',
 			'no_found_rows'  => true,
 		);
 
-		$taxonomy_filter = isset($block['attrs']['queryTaxonomy']) ? sanitize_key( $block['attrs']['queryTaxonomy'] ) : '';
-		if ( $taxonomy_filter && strpos( $taxonomy_filter, ':' ) !== false ) {
+		$taxonomy_filter = isset( $block['attrs']['queryTaxonomy'] ) ? sanitize_key( $block['attrs']['queryTaxonomy'] ) : '';
+		if ( $taxonomy_filter && false !== strpos( $taxonomy_filter, ':' ) ) {
 			$parts = explode( ':', $taxonomy_filter, 2 );
 			$tax   = sanitize_key( $parts[0] );
 			$term  = sanitize_key( $parts[1] );
 			if ( $tax && $term ) {
-				$args['tax_query'] = array( array( 'taxonomy' => $tax, 'field' => 'slug', 'terms' => array( $term ) ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				$args['tax_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					array(
+						'taxonomy' => $tax,
+						'field'    => 'slug',
+						'terms'    => array( $term ),
+					),
+				);
 			}
 		}
 
 		if ( ! empty( $block['attrs']['queryExcludeCurrent'] ) && $saved_post ) {
-			$args['post__not_in'] = array( $saved_post->ID );
+			$args['post__not_in'] = array( $saved_post->ID ); // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in
 		}
 
-		$sticky = isset($block['attrs']['querySticky']) ? sanitize_key( $block['attrs']['querySticky'] ) : '';
+		$sticky = isset( $block['attrs']['querySticky'] ) ? sanitize_key( $block['attrs']['querySticky'] ) : '';
 		if ( 'exclude' === $sticky ) {
 			$args['ignore_sticky_posts'] = true;
 		} elseif ( 'only' === $sticky ) {
@@ -439,7 +461,7 @@ class Atomic_Wind_Blocks {
 		$opening_tag = isset( $open_match[1] ) ? $open_match[1] : '';
 		$closing_tag = isset( $close_match[1] ) ? $close_match[1] : '';
 
-		$loop_output = '';
+		$loop_output    = '';
 		self::$in_query = true;
 
 		while ( $query->have_posts() ) {
@@ -465,7 +487,7 @@ class Atomic_Wind_Blocks {
 	 */
 	public function render_post_fields( $block_content, $block ) {
 		$block_name = isset( $block['blockName'] ) ? $block['blockName'] : '';
-		if ( ! str_starts_with( $block_name, 'atomic-wind/' ) ) {
+		if ( 0 !== strpos( $block_name, 'atomic-wind/' ) ) {
 			return $block_content;
 		}
 
@@ -482,11 +504,11 @@ class Atomic_Wind_Blocks {
 				case 'title':
 					$value = get_the_title();
 					break;
-			case 'excerpt':
-				$length = isset( $block['attrs']['excerptLength'] ) ? absint( $block['attrs']['excerptLength'] ) : 25;
-				$raw    = get_the_excerpt();
-				$value  = wp_trim_words( wp_strip_all_tags( $raw ), $length, '&hellip;' );
-				break;
+				case 'excerpt':
+					$length = isset( $block['attrs']['excerptLength'] ) ? absint( $block['attrs']['excerptLength'] ) : 25;
+					$raw    = get_the_excerpt();
+					$value  = wp_trim_words( wp_strip_all_tags( $raw ), $length, '&hellip;' );
+					break;
 				case 'date':
 					$value = get_the_date();
 					break;
@@ -508,34 +530,34 @@ class Atomic_Wind_Blocks {
 				case 'modified_date':
 					$value = get_the_modified_date();
 					break;
-			case 'comment_count':
-				$value = (string) get_comments_number();
-				break;
-			case 'reading_time':
-				$content    = get_the_content();
-				$word_count = str_word_count( wp_strip_all_tags( $content ) );
-				$minutes    = max( 1, (int) ceil( $word_count / 200 ) );
-				/* translators: %d: number of minutes */
-				$value = sprintf( _n( '%d min read', '%d min read', $minutes, 'otter-blocks' ), $minutes );
-				break;
-			case 'custom_field':
-				$meta_key = isset( $block['attrs']['customFieldKey'] ) ? sanitize_text_field( $block['attrs']['customFieldKey'] ) : '';
-				if ( $meta_key ) {
-					$value = '';
-					if ( function_exists( 'get_field' ) ) {
-						$acf = get_field( $meta_key, get_the_ID() );
-						if ( is_string( $acf ) ) {
-							$value = $acf;
+				case 'comment_count':
+					$value = (string) get_comments_number();
+					break;
+				case 'reading_time':
+					$content    = get_the_content();
+					$word_count = str_word_count( wp_strip_all_tags( $content ) );
+					$minutes    = max( 1, (int) ceil( $word_count / 200 ) );
+					/* translators: %d: number of minutes */
+					$value = sprintf( _n( '%d min read', '%d min read', $minutes, 'otter-blocks' ), $minutes );
+					break;
+				case 'custom_field':
+					$meta_key = isset( $block['attrs']['customFieldKey'] ) ? sanitize_text_field( $block['attrs']['customFieldKey'] ) : '';
+					if ( $meta_key ) {
+						$value = '';
+						if ( function_exists( 'get_field' ) ) {
+							$acf = get_field( $meta_key, get_the_ID() );
+							if ( is_string( $acf ) ) {
+								$value = $acf;
+							}
+						}
+						if ( ! $value ) {
+							$raw = get_post_meta( get_the_ID(), $meta_key, true );
+							if ( is_string( $raw ) ) {
+								$value = $raw;
+							}
 						}
 					}
-					if ( ! $value ) {
-						$raw = get_post_meta( get_the_ID(), $meta_key, true );
-						if ( is_string( $raw ) ) {
-							$value = $raw;
-						}
-					}
-				}
-				break;
+					break;
 			}
 			if ( $value ) {
 				$escaped       = esc_html( $value );
@@ -556,28 +578,28 @@ class Atomic_Wind_Blocks {
 				case 'author_posts_url':
 					$url = get_author_posts_url( get_the_author_meta( 'ID' ) );
 					break;
-			case 'category_link':
-				$cats = get_the_category();
-				if ( $cats && ! empty( $cats[0] ) ) {
-					$url = get_category_link( $cats[0]->term_id );
-				}
-				break;
-			case 'tag_link':
-				$tags = get_the_tags();
-				if ( $tags && ! empty( $tags[0] ) ) {
-					$url = get_tag_link( $tags[0]->term_id );
-				}
-				break;
-			case 'date_archive':
-				$url = get_month_link( get_the_date( 'Y' ), get_the_date( 'n' ) );
-				break;
-			case 'author_archive':
-				$url = get_author_posts_url( get_the_author_meta( 'ID' ) );
-				break;
+				case 'category_link':
+					$cats = get_the_category();
+					if ( $cats && ! empty( $cats[0] ) ) {
+						$url = get_category_link( $cats[0]->term_id );
+					}
+					break;
+				case 'tag_link':
+					$tags = get_the_tags();
+					if ( $tags && ! empty( $tags[0] ) ) {
+						$url = get_tag_link( $tags[0]->term_id );
+					}
+					break;
+				case 'date_archive':
+					$url = get_month_link( get_the_date( 'Y' ), get_the_date( 'n' ) );
+					break;
+				case 'author_archive':
+					$url = get_author_posts_url( get_the_author_meta( 'ID' ) );
+					break;
 			}
 			if ( $url ) {
 				$href = 'href="' . esc_url( $url ) . '"';
-				if ( str_contains( $block_content, 'href="' ) ) {
+				if ( false !== strpos( $block_content, 'href="' ) ) {
 					$block_content = preg_replace( '/href="[^"]*"/', $href, $block_content );
 				} else {
 					$block_content = preg_replace( '/^(\s*<a\b)/', '$1 ' . $href, $block_content );
@@ -618,13 +640,20 @@ class Atomic_Wind_Blocks {
 	 */
 	public function render_animation_attrs( $block_content, $block ) {
 		$block_name = isset( $block['blockName'] ) ? $block['blockName'] : '';
-		if ( ! str_starts_with( $block_name, 'atomic-wind/' ) ) {
+		if ( 0 !== strpos( $block_name, 'atomic-wind/' ) ) {
 			return $block_content;
 		}
 
 		$animation = isset( $block['attrs']['animation'] ) ? $block['attrs']['animation'] : '';
 
-		if ( ! $animation || str_contains( $block_content, 'data-animation' ) ) {
+		if ( ! $animation ) {
+			return $block_content;
+		}
+
+		wp_enqueue_style( 'atomic-wind-animations' );
+		wp_enqueue_script( 'atomic-wind-animations-frontend' );
+
+		if ( false !== strpos( $block_content, 'data-animation' ) ) {
 			return $block_content;
 		}
 
@@ -647,21 +676,35 @@ class Atomic_Wind_Blocks {
 	 */
 	public function render_state_attrs( $block_content, $block ) {
 		$block_name = isset( $block['blockName'] ) ? $block['blockName'] : '';
-		if ( ! str_starts_with( $block_name, 'atomic-wind/' ) ) {
+		if ( 0 !== strpos( $block_name, 'atomic-wind/' ) ) {
 			return $block_content;
 		}
 
-		$attrs   = '';
+		$has_state = false;
+
 		$show_if = isset( $block['attrs']['showIf'] ) ? $block['attrs']['showIf'] : '';
+		$hide_if = isset( $block['attrs']['hideIf'] ) ? $block['attrs']['hideIf'] : '';
+		$trigger = isset( $block['attrs']['stateTrigger'] ) ? $block['attrs']['stateTrigger'] : '';
+
+		if ( $show_if || $hide_if || $trigger ) {
+			$has_state = true;
+		}
+
+		if ( ! $has_state ) {
+			return $block_content;
+		}
+
+		wp_enqueue_script( 'atomic-wind-states-frontend' );
+
+		$attrs = '';
 		if ( $show_if ) {
 			$attrs .= ' data-show-if="' . esc_attr( $show_if ) . '"';
 		}
-		$hide_if = isset( $block['attrs']['hideIf'] ) ? $block['attrs']['hideIf'] : '';
 		if ( $hide_if ) {
 			$attrs .= ' data-hide-if="' . esc_attr( $hide_if ) . '"';
 		}
 
-		if ( ! $attrs || str_contains( $block_content, 'data-show-if' ) || str_contains( $block_content, 'data-hide-if' ) ) {
+		if ( ! $attrs || false !== strpos( $block_content, 'data-show-if' ) || false !== strpos( $block_content, 'data-hide-if' ) ) {
 			return $block_content;
 		}
 
@@ -675,10 +718,13 @@ class Atomic_Wind_Blocks {
 	 * @return array
 	 */
 	public function register_category( $categories ) {
-		array_unshift( $categories, array(
-			'slug'  => 'atomic-wind',
-			'title' => __( 'Atomic Wind', 'otter-blocks' ),
-		) );
+		array_unshift(
+			$categories,
+			array(
+				'slug'  => 'atomic-wind',
+				'title' => __( 'Atomic Wind', 'otter-blocks' ),
+			) 
+		);
 
 		return $categories;
 	}
