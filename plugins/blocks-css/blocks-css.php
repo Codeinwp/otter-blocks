@@ -67,11 +67,8 @@ add_filter(
 		}
 
 		$config = $configs['default'];
-
-		// translators: %1$s - plugin name, %2$s - plugin name, %3$s - discount.
-		$message_template = __( 'Extend %1$s with %2$s – up to %3$s OFF in our biggest sale of the year. Limited time only.', 'blocks-css' );
 	
-		$config['message']  = sprintf( $message_template, 'Blocks CSS', 'Otter Pro Blocks', '70%' );
+		$config['message']  = __( 'You use Blocks CSS. Otter Pro includes custom CSS per block, plus advanced blocks and WooCommerce integration. Built by the same team.', 'blocks-css' );
 		$config['sale_url'] = add_query_arg(
 			array(
 				'utm_term' => 'free',

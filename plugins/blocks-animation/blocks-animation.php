@@ -72,10 +72,7 @@ add_filter(
 
 		$config = $configs['default'];
 
-		// translators: %1$s - plugin name, %2$s - plugin name, %3$s - discount.
-		$message_template = __( 'Extend %1$s with %2$s – up to %3$s OFF in our biggest sale of the year. Limited time only.', 'blocks-animation' );
-	
-		$config['message']  = sprintf( $message_template, 'Block Animation', 'Otter Pro Blocks', '70%' );
+		$config['message']  = __( 'You use Blocks Animation. Sites like yours get more from Otter Pro: advanced blocks, custom CSS, animations and more. Built by the same team.', 'blocks-animation' );
 		$config['sale_url'] = add_query_arg(
 			array(
 				'utm_term' => 'free',
