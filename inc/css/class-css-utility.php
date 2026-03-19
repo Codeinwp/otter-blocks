@@ -322,11 +322,15 @@ class CSS_Utility {
 	/**
 	 * Get the CSS string for padding, margin that comes from BoxControl.
 	 *
-	 * @param array $box The box.
-	 * @param array $box_default The default box.
+	 * @param array|string $box The box.
+	 * @param array        $box_default The default box.
 	 * @return string
 	 */
 	public static function box_values( $box, $box_default = array() ) {
+		if ( ! is_array( $box ) ) {
+			return $box;
+		}
+
 		$box = array_map(
 			function ( $value ) {
 				return is_numeric( $value ) ? $value . 'px' : $value;
