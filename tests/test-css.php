@@ -200,6 +200,15 @@ class TestCSS extends TestCase {
 	}
 
 	/**
+	 * Test box_values with a string input.
+	 */
+	public function test_box_values_string_input() {
+		$this->assertEqualsCanonicalizing( '10px', CSS_Utility::box_values( '10px' ) );
+		$this->assertEqualsCanonicalizing( 'auto', CSS_Utility::box_values( 'auto' ) );
+		$this->assertEqualsCanonicalizing( '10px 20px', CSS_Utility::box_values( '10px 20px' ) );
+	}
+
+	/**
 	 * Test box to string transformation.
 	 */
 	public function test_render_box() {
