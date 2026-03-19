@@ -459,9 +459,11 @@ class Atomic_Wind_Blocks {
 				case 'title':
 					$value = get_the_title();
 					break;
-				case 'excerpt':
-					$value = get_the_excerpt();
-					break;
+			case 'excerpt':
+				$length = absint( $block['attrs']['excerptLength'] ?? 25 );
+				$raw    = get_the_excerpt();
+				$value  = wp_trim_words( wp_strip_all_tags( $raw ), $length, '&hellip;' );
+				break;
 				case 'date':
 					$value = get_the_date();
 					break;
@@ -483,9 +485,34 @@ class Atomic_Wind_Blocks {
 				case 'modified_date':
 					$value = get_the_modified_date();
 					break;
-				case 'comment_count':
-					$value = (string) get_comments_number();
-					break;
+			case 'comment_count':
+				$value = (string) get_comments_number();
+				break;
+			case 'reading_time':
+				$content    = get_the_content();
+				$word_count = str_word_count( wp_strip_all_tags( $content ) );
+				$minutes    = max( 1, (int) ceil( $word_count / 200 ) );
+				/* translators: %d: number of minutes */
+				$value = sprintf( _n( '%d min read', '%d min read', $minutes, 'otter-blocks' ), $minutes );
+				break;
+			case 'custom_field':
+				$meta_key = sanitize_text_field( $block['attrs']['customFieldKey'] ?? '' );
+				if ( $meta_key ) {
+					$value = '';
+					if ( function_exists( 'get_field' ) ) {
+						$acf = get_field( $meta_key, get_the_ID() );
+						if ( is_string( $acf ) ) {
+							$value = $acf;
+						}
+					}
+					if ( ! $value ) {
+						$raw = get_post_meta( get_the_ID(), $meta_key, true );
+						if ( is_string( $raw ) ) {
+							$value = $raw;
+						}
+					}
+				}
+				break;
 			}
 			if ( $value ) {
 				$escaped       = esc_html( $value );
@@ -506,12 +533,24 @@ class Atomic_Wind_Blocks {
 				case 'author_posts_url':
 					$url = get_author_posts_url( get_the_author_meta( 'ID' ) );
 					break;
-				case 'category_link':
-					$cats = get_the_category();
-					if ( $cats && ! empty( $cats[0] ) ) {
-						$url = get_category_link( $cats[0]->term_id );
-					}
-					break;
+			case 'category_link':
+				$cats = get_the_category();
+				if ( $cats && ! empty( $cats[0] ) ) {
+					$url = get_category_link( $cats[0]->term_id );
+				}
+				break;
+			case 'tag_link':
+				$tags = get_the_tags();
+				if ( $tags && ! empty( $tags[0] ) ) {
+					$url = get_tag_link( $tags[0]->term_id );
+				}
+				break;
+			case 'date_archive':
+				$url = get_month_link( get_the_date( 'Y' ), get_the_date( 'n' ) );
+				break;
+			case 'author_archive':
+				$url = get_author_posts_url( get_the_author_meta( 'ID' ) );
+				break;
 			}
 			if ( $url ) {
 				$href = 'href="' . esc_url( $url ) . '"';
@@ -534,6 +573,13 @@ class Atomic_Wind_Blocks {
 				}
 				$block_content = preg_replace( '/src="[^"]*"/', 'src="' . esc_url( $src ) . '"', $block_content );
 				$block_content = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $alt ) . '"', $block_content );
+			} elseif ( 'author_avatar' === $post_field ) {
+				$avatar_url = get_avatar_url( get_the_author_meta( 'ID' ), array( 'size' => 96 ) );
+				if ( $avatar_url ) {
+					$alt           = get_the_author();
+					$block_content = preg_replace( '/src="[^"]*"/', 'src="' . esc_url( $avatar_url ) . '"', $block_content );
+					$block_content = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $alt ) . '"', $block_content );
+				}
 			}
 		}
 

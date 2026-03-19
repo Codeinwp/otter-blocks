@@ -1,7 +1,7 @@
 import { addFilter } from '@wordpress/hooks';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl, RangeControl, ToggleControl } from '@wordpress/components';
+import { PanelBody, SelectControl, RangeControl, ToggleControl, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 
@@ -17,16 +17,22 @@ const POST_FIELD_OPTIONS = {
 		{ label: __( 'Tags', 'atomic-wind' ), value: 'tags' },
 		{ label: __( 'Modified Date', 'atomic-wind' ), value: 'modified_date' },
 		{ label: __( 'Comment Count', 'atomic-wind' ), value: 'comment_count' },
+		{ label: __( 'Reading Time', 'atomic-wind' ), value: 'reading_time' },
+		{ label: __( 'Custom Field', 'atomic-wind' ), value: 'custom_field' },
 	],
 	'atomic-wind/link': [
 		{ label: __( 'None', 'atomic-wind' ), value: '' },
 		{ label: __( 'Permalink', 'atomic-wind' ), value: 'permalink' },
 		{ label: __( 'Author Posts URL', 'atomic-wind' ), value: 'author_posts_url' },
 		{ label: __( 'Category Link', 'atomic-wind' ), value: 'category_link' },
+		{ label: __( 'Tag Link', 'atomic-wind' ), value: 'tag_link' },
+		{ label: __( 'Date Archive', 'atomic-wind' ), value: 'date_archive' },
+		{ label: __( 'Author Archive', 'atomic-wind' ), value: 'author_archive' },
 	],
 	'atomic-wind/image': [
 		{ label: __( 'None', 'atomic-wind' ), value: '' },
 		{ label: __( 'Featured Image', 'atomic-wind' ), value: 'featured_image' },
+		{ label: __( 'Author Avatar', 'atomic-wind' ), value: 'author_avatar' },
 	],
 };
 
@@ -53,6 +59,14 @@ addFilter(
 
 		const extraAttributes = {
 			postField: {
+				type: 'string',
+				default: '',
+			},
+			excerptLength: {
+				type: 'number',
+				default: 25,
+			},
+			customFieldKey: {
 				type: 'string',
 				default: '',
 			},
@@ -266,20 +280,41 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 							title={ __( 'Post Data', 'atomic-wind' ) }
 							initialOpen={ false }
 						>
-							<SelectControl
-								label={ __( 'Post Field', 'atomic-wind' ) }
-								value={ attributes.postField || '' }
-								options={ POST_FIELD_OPTIONS[ props.name ] }
+						<SelectControl
+							label={ __( 'Post Field', 'atomic-wind' ) }
+							value={ attributes.postField || '' }
+							options={ POST_FIELD_OPTIONS[ props.name ] }
+							onChange={ ( value ) =>
+								setAttributes( { postField: value } )
+							}
+							help={
+								attributes.postField
+									? __( 'Content will be replaced with post data on the frontend.', 'atomic-wind' )
+									: undefined
+							}
+						/>
+						{ attributes.postField === 'excerpt' && props.name === 'atomic-wind/text' && (
+							<RangeControl
+								label={ __( 'Excerpt Length (words)', 'atomic-wind' ) }
+								value={ attributes.excerptLength || 25 }
 								onChange={ ( value ) =>
-									setAttributes( { postField: value } )
+									setAttributes( { excerptLength: value } )
 								}
-								help={
-									attributes.postField
-										? __( 'Content will be replaced with post data on the frontend.', 'atomic-wind' )
-										: undefined
-								}
+								min={ 1 }
+								max={ 100 }
 							/>
-						</PanelBody>
+						) }
+						{ attributes.postField === 'custom_field' && props.name === 'atomic-wind/text' && (
+							<TextControl
+								label={ __( 'Meta Key', 'atomic-wind' ) }
+								value={ attributes.customFieldKey || '' }
+								onChange={ ( value ) =>
+									setAttributes( { customFieldKey: value } )
+								}
+								help={ __( 'Enter the post meta key or ACF field name.', 'atomic-wind' ) }
+							/>
+						) }
+					</PanelBody>
 					) }
 				</InspectorControls>
 			</>

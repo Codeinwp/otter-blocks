@@ -14,12 +14,24 @@ import {
 } from '@wordpress/components';
 import { link as linkIcon, button as buttonIcon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 
-export default function Edit( { attributes, setAttributes } ) {
+export default function Edit( { attributes, setAttributes, clientId } ) {
 	const { url, text, opensInNewTab, rel, mode } = attributes;
 	const [ isLinkOpen, setIsLinkOpen ] = useState( false );
 	const blockProps = useBlockProps();
+
+	const innerBlockCount = useSelect(
+		( select ) => select( 'core/block-editor' ).getBlock( clientId )?.innerBlocks?.length || 0,
+		[ clientId ]
+	);
+
+	useEffect( () => {
+		if ( innerBlockCount > 0 && mode !== 'inner-blocks' ) {
+			setAttributes( { mode: 'inner-blocks' } );
+		}
+	}, [ innerBlockCount ] );
 	const innerBlocksProps = useInnerBlocksProps( blockProps );
 
 	return (
