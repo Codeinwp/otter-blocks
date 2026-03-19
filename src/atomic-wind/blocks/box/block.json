@@ -1,0 +1,25 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "atomic-wind/box",
+	"title": "Box",
+	"category": "atomic-wind",
+	"description": "A generic wrapper element with tag selection and inner blocks. Supports details and summary tags for native disclosure widgets.",
+	"keywords": [ "box", "container", "wrapper", "div", "section", "details", "summary" ],
+	"textdomain": "atomic-wind",
+	"attributes": {
+		"tagName": {
+			"type": "string",
+			"default": "div"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ],
+		"anchor": true,
+		"html": false,
+		"color": false,
+		"typography": false,
+		"spacing": false
+	},
+	"editorScript": "file:./index.js"
+}

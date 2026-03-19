@@ -250,6 +250,77 @@ module.exports = [
 			}),
 			new BundleAnalyzerPlugin({
 				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER,
+			})
+		]
+	},
+	{
+
+		// ATOMIC WIND
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			'blocks/box/index': './src/atomic-wind/blocks/box/index.js',
+			'blocks/text/index': './src/atomic-wind/blocks/text/index.js',
+			'blocks/image/index': './src/atomic-wind/blocks/image/index.js',
+			'blocks/link/index': './src/atomic-wind/blocks/link/index.js',
+			'blocks/icon/index': './src/atomic-wind/blocks/icon/index.js',
+			'tailwind-generator': './src/atomic-wind/tailwind/generator.js',
+			'style-builder': './src/atomic-wind/style-builder/index.js',
+			editor: './src/atomic-wind/editor.js',
+			'animations-frontend': './src/atomic-wind/animations/frontend.js',
+			'states-frontend': './src/atomic-wind/states/frontend.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/atomic-wind' )
+		},
+		module: {
+			...defaultConfig.module,
+			rules: [
+				{
+					test: /\/(index|preflight|theme|utilities)\.css$/,
+					include: /tailwindcss/,
+					type: 'asset/source'
+				},
+				...defaultConfig.module.rules.map( ( rule ) => {
+					if ( rule.test && rule.test.toString().includes( '\\.css' ) ) {
+						return {
+							...rule,
+							exclude: [
+								...( Array.isArray( rule.exclude )
+									? rule.exclude
+									: rule.exclude
+										? [ rule.exclude ]
+										: [] ),
+								/tailwindcss\/(index|preflight|theme|utilities)\.css$/
+							]
+						};
+					}
+					return rule;
+				} )
+			]
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new FileManagerPlugin({
+				events: {
+					onEnd: {
+						copy: [
+							{ source: 'src/atomic-wind/blocks/box/block.json', destination: 'build/atomic-wind/blocks/box/block.json' },
+							{ source: 'src/atomic-wind/blocks/text/block.json', destination: 'build/atomic-wind/blocks/text/block.json' },
+							{ source: 'src/atomic-wind/blocks/image/block.json', destination: 'build/atomic-wind/blocks/image/block.json' },
+							{ source: 'src/atomic-wind/blocks/link/block.json', destination: 'build/atomic-wind/blocks/link/block.json' },
+							{ source: 'src/atomic-wind/blocks/icon/block.json', destination: 'build/atomic-wind/blocks/icon/block.json' },
+							{ source: 'src/atomic-wind/blocks/icon/render.php', destination: 'build/atomic-wind/blocks/icon/render.php' }
+						]
+					}
+				},
+				runOnceInWatchMode: false,
+				runTasksInSeries: false
+			}),
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
 				generateStatsFile: ANALYZER
 			})
 		]

@@ -1,0 +1,36 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "atomic-wind/image",
+	"title": "Image",
+	"category": "atomic-wind",
+	"description": "A simple image element. Set via media library or direct URL.",
+	"keywords": [ "image", "img", "photo" ],
+	"textdomain": "atomic-wind",
+	"attributes": {
+		"id": {
+			"type": "number"
+		},
+		"url": {
+			"type": "string",
+			"source": "attribute",
+			"selector": "img",
+			"attribute": "src"
+		},
+		"alt": {
+			"type": "string",
+			"source": "attribute",
+			"selector": "img",
+			"attribute": "alt",
+			"default": ""
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"html": false,
+		"color": false,
+		"typography": false,
+		"spacing": false
+	},
+	"editorScript": "file:./index.js"
+}
