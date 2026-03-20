@@ -55,6 +55,7 @@ class Atomic_Wind_Blocks {
 		add_filter( 'render_block', array( $this, 'render_post_fields' ), 20, 2 );
 		add_filter( 'render_block', array( $this, 'render_animation_attrs' ), 10, 2 );
 		add_filter( 'render_block', array( $this, 'render_state_attrs' ), 10, 2 );
+		add_action( 'save_post', array( $this, 'clear_cached_css' ) );
 		add_filter( 'block_categories_all', array( $this, 'register_category' ) );
 	}
 
@@ -333,6 +334,18 @@ class Atomic_Wind_Blocks {
 		$post_id = absint( $request->get_param( 'postId' ) );
 
 		return current_user_can( 'edit_post', $post_id );
+	}
+
+	/**
+	 * Clear cached Tailwind CSS when a post is saved.
+	 *
+	 * Forces the frontend to regenerate CSS on the next page load.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	public function clear_cached_css( $post_id ) {
+		delete_post_meta( $post_id, '_atomic_wind_css' );
 	}
 
 	/**
