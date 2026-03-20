@@ -627,6 +627,14 @@ class Main {
 			'expired'  => $is_expired ? '1' : false,
 		);
 
+		if ( $is_pro || $is_expired ) {
+			// translators: %s is the discount percentage.
+			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - up to %s off', 'otter-blocks' ), '30%' );
+		} else {
+			// translators: %s is the discount percentage.
+			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - %s off', 'otter-blocks' ), '60%' );
+		}
+
 		$config['cta_label'] = $cta_label;
 		$config['message']   = $message;
 		$config['sale_url']  = add_query_arg(

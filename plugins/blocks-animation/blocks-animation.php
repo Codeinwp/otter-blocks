@@ -73,6 +73,7 @@ add_filter(
 		$config = $configs['default'];
 
 		$config['message']  = __( 'You use Blocks Animation. Sites like yours get more from Otter Pro: advanced blocks, custom CSS, animations and more. Built by the same team.', 'blocks-animation' );
+		$config['plugin_meta_message'] = __( 'Black Friday Sale - Get Otter Pro free', 'blocks-animation' );
 		$config['sale_url'] = add_query_arg(
 			array(
 				'utm_term' => 'free',
