@@ -295,7 +295,7 @@ class Atomic_Wind_Blocks {
 					'css'    => array(
 						'type'              => 'string',
 						'required'          => true,
-						'sanitize_callback' => 'wp_strip_all_tags',
+						'sanitize_callback' => array( $this, 'sanitize_css' ),
 					),
 					'postId' => array(
 						'type'     => 'integer',
@@ -333,6 +333,25 @@ class Atomic_Wind_Blocks {
 		$post_id = absint( $request->get_param( 'postId' ) );
 
 		return current_user_can( 'edit_post', $post_id );
+	}
+
+	/**
+	 * Sanitize CSS for storage without stripping @property syntax descriptors.
+	 *
+	 * Strpping with wp_strip_all_tags destroys valid CSS like syntax: "<color>" because it
+	 * looks like an HTML tag. This method only removes patterns that could
+	 * break out of a <style> context.
+	 *
+	 * @param string $css Raw CSS string.
+	 * @return string Sanitized CSS.
+	 */
+	public function sanitize_css( $css ) {
+		$css = wp_check_invalid_utf8( $css );
+		$css = preg_replace( '/<\/?style\b[^>]*>/i', '', $css );
+		$css = preg_replace( '/<\/?script\b[^>]*>/i', '', $css );
+		$css = preg_replace( '/<!--.*?-->/s', '', $css );
+
+		return $css;
 	}
 
 	/**

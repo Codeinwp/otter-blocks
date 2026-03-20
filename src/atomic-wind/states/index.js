@@ -8,7 +8,7 @@ addFilter(
 	'blocks.registerBlockType',
 	'atomic-wind/state-attributes',
 	( settings ) => {
-		if ( settings.category !== 'otter-blocks' ) {
+		if ( settings.category !== 'atomic-wind' ) {
 			return settings;
 		}
 

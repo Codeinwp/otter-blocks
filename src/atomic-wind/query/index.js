@@ -53,7 +53,7 @@ addFilter(
 	'blocks.registerBlockType',
 	'atomic-wind/query-attributes',
 	( settings ) => {
-		if ( settings.category !== 'otter-blocks' ) {
+		if ( settings.category !== 'atomic-wind' ) {
 			return settings;
 		}
 
