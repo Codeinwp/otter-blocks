@@ -44,8 +44,8 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 			? getAuthorAvatarUrl( post )
 			: getFeaturedImageUrl( post );
 		const placeholderLabel = postField === 'author_avatar'
-			? __( 'Author Avatar', 'atomic-wind' )
-			: __( 'Featured Image', 'atomic-wind' );
+			? __( 'Author Avatar', 'otter-blocks' )
+			: __( 'Featured Image', 'otter-blocks' );
 
 		if ( previewUrl ) {
 			return <img { ...blockProps } src={ previewUrl } alt="" />;
@@ -79,17 +79,17 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					}
 					allowedTypes={ [ 'image' ] }
 					labels={ {
-						title: __( 'Image', 'atomic-wind' ),
+						title: __( 'Image', 'otter-blocks' ),
 						instructions: __(
 							'Upload or select an image, or enter a URL.',
-							'atomic-wind'
+							'otter-blocks'
 						),
 					} }
 				/>
 				<InspectorControls>
-					<PanelBody title={ __( 'Settings', 'atomic-wind' ) }>
+					<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
 						<TextControl
-							label={ __( 'Image URL', 'atomic-wind' ) }
+							label={ __( 'Image URL', 'otter-blocks' ) }
 							value={ url || '' }
 							onChange={ ( value ) =>
 								setAttributes( { url: value, id: undefined } )
@@ -118,16 +118,16 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 				/>
 			</BlockControls>
 			<InspectorControls>
-				<PanelBody title={ __( 'Settings', 'atomic-wind' ) }>
+				<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
 					<TextControl
-						label={ __( 'Image URL', 'atomic-wind' ) }
+						label={ __( 'Image URL', 'otter-blocks' ) }
 						value={ url }
 						onChange={ ( value ) =>
 							setAttributes( { url: value, id: undefined } )
 						}
 					/>
 					<TextControl
-						label={ __( 'Alt Text', 'atomic-wind' ) }
+						label={ __( 'Alt Text', 'otter-blocks' ) }
 						value={ alt }
 						onChange={ ( value ) =>
 							setAttributes( { alt: value } )

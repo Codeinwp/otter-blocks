@@ -39,14 +39,14 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 			<BlockControls>
 				<ToolbarButton
 					icon={ linkIcon }
-					label={ __( 'Edit Link', 'atomic-wind' ) }
+					label={ __( 'Edit Link', 'otter-blocks' ) }
 					onClick={ () => setIsLinkOpen( ! isLinkOpen ) }
 					isActive={ !! url }
 				/>
 				<ToolbarGroup>
 					<ToolbarButton
 						icon={ buttonIcon }
-						label={ __( 'Switch to inner blocks mode', 'atomic-wind' ) }
+						label={ __( 'Switch to inner blocks mode', 'otter-blocks' ) }
 						onClick={ () =>
 							setAttributes( {
 								mode: mode === 'inner-blocks' ? 'text' : 'inner-blocks',
@@ -57,14 +57,15 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 				</ToolbarGroup>
 			</BlockControls>
 			<InspectorControls>
-				<PanelBody title={ __( 'Link Settings', 'atomic-wind' ) }>
+				<PanelBody title={ __( 'Link Settings', 'otter-blocks' ) }>
 					<p>
-						{ __( 'URL: ', 'atomic-wind' ) }
-						{ url || __( 'Not set', 'atomic-wind' ) }
+						{ __( 'URL:', 'otter-blocks' ) }
+						{ url || __( 'Not set', 'otter-blocks' ) }
 					</p>
 				</PanelBody>
 			</InspectorControls>
 			{ mode === 'inner-blocks' ? (
+				// eslint-disable-next-line jsx-a11y/anchor-has-content
 				<a { ...innerBlocksProps } />
 			) : (
 				<RichText
@@ -74,7 +75,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					onChange={ ( value ) =>
 						setAttributes( { text: value } )
 					}
-					placeholder={ __( 'Link text…', 'atomic-wind' ) }
+					placeholder={ __( 'Link text…', 'otter-blocks' ) }
 				/>
 			) }
 			{ isLinkOpen && (

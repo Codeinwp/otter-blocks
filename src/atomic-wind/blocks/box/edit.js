@@ -47,97 +47,97 @@ function renderBlockPreview( block, post ) {
 	}
 
 	switch ( name ) {
-		case 'atomic-wind/box': {
-			const tag = attributes.tagName || 'div';
-			return `<${ tag } class="${ cls }">${ inner }</${ tag }>`;
-		}
-		case 'atomic-wind/text': {
-			const tag = attributes.tagName || 'p';
-			let content = attributes.content || '';
-			if ( postField && post ) {
-				switch ( postField ) {
-					case 'title':
-						content = post.title?.rendered || content;
-						break;
-					case 'excerpt': {
-						const tmp = document.createElement( 'div' );
-						tmp.innerHTML = post.excerpt?.rendered || '';
-						const text = tmp.textContent;
-						content = text
-							? escapeHtml( text )
-							: content;
-						break;
-					}
-					case 'date': {
-						const d = post.date
-							? new Date( post.date ).toLocaleDateString()
-							: '';
-						content = d ? escapeHtml( d ) : content;
-						break;
-					}
-					case 'author': {
-						const authorName =
+	case 'atomic-wind/box': {
+		const tag = attributes.tagName || 'div';
+		return `<${ tag } class="${ cls }">${ inner }</${ tag }>`;
+	}
+	case 'atomic-wind/text': {
+		const tag = attributes.tagName || 'p';
+		let content = attributes.content || '';
+		if ( postField && post ) {
+			switch ( postField ) {
+			case 'title':
+				content = post.title?.rendered || content;
+				break;
+			case 'excerpt': {
+				const tmp = document.createElement( 'div' );
+				tmp.innerHTML = post.excerpt?.rendered || '';
+				const text = tmp.textContent;
+				content = text
+					? escapeHtml( text )
+					: content;
+				break;
+			}
+			case 'date': {
+				const d = post.date
+					? new Date( post.date ).toLocaleDateString()
+					: '';
+				content = d ? escapeHtml( d ) : content;
+				break;
+			}
+			case 'author': {
+				const authorName =
 							post._embedded?.author?.[ 0 ]?.name || '';
-						content = authorName
-							? escapeHtml( authorName )
-							: content;
-						break;
-					}
-					case 'categories': {
-						const cats = post._embedded?.[ 'wp:term' ]?.[ 0 ];
-						if ( cats ) {
-							content = escapeHtml( cats.map( ( c ) => c.name ).join( ', ' ) );
-						}
-						break;
-					}
-					case 'tags': {
-						const tagsList = post._embedded?.[ 'wp:term' ]?.[ 1 ];
-						if ( tagsList ) {
-							content = escapeHtml( tagsList.map( ( t ) => t.name ).join( ', ' ) );
-						}
-						break;
-					}
-					case 'modified_date': {
-						const md = post.modified
-							? new Date( post.modified ).toLocaleDateString()
-							: '';
-						content = md ? escapeHtml( md ) : content;
-						break;
-					}
-					case 'comment_count': {
-						content = escapeHtml( String( post.comment_count ?? 0 ) );
-						break;
-					}
-				}
+				content = authorName
+					? escapeHtml( authorName )
+					: content;
+				break;
 			}
-			return `<${ tag } class="${ cls }" data-rich-text="">${ content }</${ tag }>`;
+			case 'categories': {
+				const cats = post._embedded?.[ 'wp:term' ]?.[ 0 ];
+				if ( cats ) {
+					content = escapeHtml( cats.map( ( c ) => c.name ).join( ', ' ) );
+				}
+				break;
+			}
+			case 'tags': {
+				const tagsList = post._embedded?.[ 'wp:term' ]?.[ 1 ];
+				if ( tagsList ) {
+					content = escapeHtml( tagsList.map( ( t ) => t.name ).join( ', ' ) );
+				}
+				break;
+			}
+			case 'modified_date': {
+				const md = post.modified
+					? new Date( post.modified ).toLocaleDateString()
+					: '';
+				content = md ? escapeHtml( md ) : content;
+				break;
+			}
+			case 'comment_count': {
+				content = escapeHtml( String( post.comment_count ?? 0 ) );
+				break;
+			}
+			}
 		}
-		case 'atomic-wind/image': {
-			let src = attributes.url || '';
-			let alt = attributes.alt || '';
-			if ( postField === 'featured_image' && post ) {
-				const media =
+		return `<${ tag } class="${ cls }" data-rich-text="">${ content }</${ tag }>`;
+	}
+	case 'atomic-wind/image': {
+		let src = attributes.url || '';
+		let alt = attributes.alt || '';
+		if ( postField === 'featured_image' && post ) {
+			const media =
 					post._embedded?.[ 'wp:featuredmedia' ]?.[ 0 ];
-				if ( media ) {
-					src = media.source_url || src;
-					alt = media.alt_text || post.title?.rendered || alt;
-				} else {
-					return '';
-				}
-			}
-			if ( ! src ) {
+			if ( media ) {
+				src = media.source_url || src;
+				alt = media.alt_text || post.title?.rendered || alt;
+			} else {
 				return '';
 			}
-			return `<img class="${ cls }" src="${ src }" alt="${ escapeHtml( alt ) }"/>`;
 		}
-		case 'atomic-wind/link': {
-			const text = attributes.text || '';
-			return `<a class="${ cls }">${ inner || text }</a>`;
+		if ( ! src ) {
+			return '';
 		}
-		default:
-			return serialize( [ block ] )
-				.replace( /<!--\s+\/?wp:[\s\S]*?-->/g, '' )
-				.replace( / href="[^"]*"/g, '' );
+		return `<img class="${ cls }" src="${ src }" alt="${ escapeHtml( alt ) }"/>`;
+	}
+	case 'atomic-wind/link': {
+		const text = attributes.text || '';
+		return `<a class="${ cls }">${ inner || text }</a>`;
+	}
+	default:
+		return serialize( [ block ] )
+			.replace( /<!--\s+\/?wp:[\s\S]*?-->/g, '' )
+			.replace( / href="[^"]*"/g, '' );
 	}
 }
 
@@ -212,9 +212,9 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Settings', 'atomic-wind' ) }>
+				<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
 					<SelectControl
-						label={ __( 'HTML Tag', 'atomic-wind' ) }
+						label={ __( 'HTML Tag', 'otter-blocks' ) }
 						value={ tagName }
 						options={ TAG_OPTIONS }
 						onChange={ ( value ) =>

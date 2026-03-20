@@ -30,9 +30,9 @@ function getTextPreview( block ) {
 }
 
 const TABS = [
-	{ id: 'classname', label: __( 'Classname', 'atomic-wind' ) },
-	{ id: 'state', label: __( 'State', 'atomic-wind' ) },
-	{ id: 'animation', label: __( 'Animation', 'atomic-wind' ) },
+	{ id: 'classname', label: __( 'Classname', 'otter-blocks' ) },
+	{ id: 'state', label: __( 'State', 'otter-blocks' ) },
+	{ id: 'animation', label: __( 'Animation', 'otter-blocks' ) },
 ];
 
 const TreeNode = memo( ( { block, depth, selectedId, onSelect, collapsed, onToggle } ) => {
@@ -119,7 +119,7 @@ const Panel = ( { onClose } ) => {
 	const selectedId = useSelect( ( select ) => select( blockEditorStore ).getSelectedBlockClientId(), [] );
 	const selectedClassName = useSelect(
 		( select ) => {
-			if ( ! selectedId ) return '';
+			if ( ! selectedId ) {return '';}
 			const attrs = select( blockEditorStore ).getBlockAttributes( selectedId );
 			return attrs?.className || '';
 		},
@@ -127,9 +127,9 @@ const Panel = ( { onClose } ) => {
 	);
 	const { selectedTitle, selectedPreview, selectedAttributes } = useSelect(
 		( select ) => {
-			if ( ! selectedId ) return { selectedTitle: '', selectedPreview: '', selectedAttributes: {} };
+			if ( ! selectedId ) {return { selectedTitle: '', selectedPreview: '', selectedAttributes: {}};}
 			const block = select( blockEditorStore ).getBlock( selectedId );
-			if ( ! block ) return { selectedTitle: '', selectedPreview: '', selectedAttributes: {} };
+			if ( ! block ) {return { selectedTitle: '', selectedPreview: '', selectedAttributes: {}};}
 			const type = select( blocksStore ).getBlockType( block.name );
 			return {
 				selectedTitle: type ? type.title : block.name,
@@ -152,7 +152,7 @@ const Panel = ( { onClose } ) => {
 
 	const handleClassChange = useCallback(
 		( e ) => {
-			if ( ! selectedId ) return;
+			if ( ! selectedId ) {return;}
 			const value = e.target.value.replace( /\n/g, ' ' );
 			updateBlockAttributes( selectedId, { className: value } );
 		},
@@ -166,7 +166,7 @@ const Panel = ( { onClose } ) => {
 	}, [] );
 
 	const handleCopy = useCallback( () => {
-		if ( ! selectedClassName ) return;
+		if ( ! selectedClassName ) {return;}
 		setClipboard( selectedClassName );
 		navigator.clipboard?.writeText( selectedClassName );
 		setCopied( true );
@@ -174,20 +174,20 @@ const Panel = ( { onClose } ) => {
 	}, [ selectedClassName ] );
 
 	const handlePaste = useCallback( () => {
-		if ( ! selectedId || ! clipboard ) return;
+		if ( ! selectedId || ! clipboard ) {return;}
 		setPrePaste( { clientId: selectedId, className: selectedClassName } );
 		updateBlockAttributes( selectedId, { className: clipboard } );
 	}, [ selectedId, clipboard, selectedClassName, updateBlockAttributes ] );
 
 	const handleUndoPaste = useCallback( () => {
-		if ( ! prePaste ) return;
+		if ( ! prePaste ) {return;}
 		updateBlockAttributes( prePaste.clientId, { className: prePaste.className } );
 		setPrePaste( null );
 	}, [ prePaste, updateBlockAttributes ] );
 
 	const handleSetAttributes = useCallback(
 		( attrs ) => {
-			if ( ! selectedId ) return;
+			if ( ! selectedId ) {return;}
 			updateBlockAttributes( selectedId, attrs );
 		},
 		[ selectedId, updateBlockAttributes ]
@@ -200,7 +200,7 @@ const Panel = ( { onClose } ) => {
 
 	// Scroll tree to selected block
 	useEffect( () => {
-		if ( ! selectedId || ! treeRef.current || ! treeVisible ) return;
+		if ( ! selectedId || ! treeRef.current || ! treeVisible ) {return;}
 		const node = treeRef.current.querySelector( `[data-block-id="${ selectedId }"]` );
 		if ( node ) {
 			node.scrollIntoView( { block: 'nearest', behavior: 'smooth' } );
@@ -210,17 +210,17 @@ const Panel = ( { onClose } ) => {
 	// Panel dragging
 	useEffect( () => {
 		const el = dragRef.current;
-		if ( ! el ) return;
+		if ( ! el ) {return;}
 
 		let dragging = false;
 		let offsetX = 0;
 		let offsetY = 0;
 
 		const onMouseMove = ( e ) => {
-			if ( ! dragging ) return;
+			if ( ! dragging ) {return;}
 			e.preventDefault();
 			const panel = panelRef.current;
-			if ( ! panel ) return;
+			if ( ! panel ) {return;}
 
 			const rect = panel.getBoundingClientRect();
 			let newLeft = e.clientX - offsetX;
@@ -241,7 +241,7 @@ const Panel = ( { onClose } ) => {
 		};
 
 		const onMouseDown = ( e ) => {
-			if ( e.target.closest( 'button' ) ) return;
+			if ( e.target.closest( 'button' ) ) {return;}
 			dragging = true;
 			offsetX = e.clientX - posRef.current.left;
 			offsetY = e.clientY - posRef.current.top;
@@ -260,13 +260,13 @@ const Panel = ( { onClose } ) => {
 	// Panel resize (bottom-right corner)
 	useEffect( () => {
 		const panel = panelRef.current;
-		if ( ! panel ) return;
+		if ( ! panel ) {return;}
 
 		let resizing = false;
 		let startX, startY, startW, startH;
 
 		const onMouseMove = ( e ) => {
-			if ( ! resizing ) return;
+			if ( ! resizing ) {return;}
 			e.preventDefault();
 			const newW = Math.max( MIN_PANEL_W, startW + ( e.clientX - startX ) );
 			const newH = Math.max( MIN_PANEL_H, startH + ( e.clientY - startY ) );
@@ -288,7 +288,7 @@ const Panel = ( { onClose } ) => {
 			const inCorner =
 				e.clientX >= rect.right - 18 &&
 				e.clientY >= rect.bottom - 18;
-			if ( ! inCorner ) return;
+			if ( ! inCorner ) {return;}
 
 			e.preventDefault();
 			resizing = true;
@@ -313,16 +313,16 @@ const Panel = ( { onClose } ) => {
 	// Tree sidebar resize — re-bind when tree is toggled (new DOM element)
 	useEffect( () => {
 		const handle = treeResizeRef.current;
-		if ( ! handle ) return;
+		if ( ! handle ) {return;}
 
 		let resizing = false;
 		let startX, startW;
 
 		const onMouseMove = ( e ) => {
-			if ( ! resizing ) return;
+			if ( ! resizing ) {return;}
 			e.preventDefault();
 			const tree = treeRef.current;
-			if ( ! tree ) return;
+			if ( ! tree ) {return;}
 			const newW = Math.max( MIN_TREE_W, Math.min( MAX_TREE_W, startW + ( e.clientX - startX ) ) );
 			treeWidthRef.current = newW;
 			tree.style.width = newW + 'px';
@@ -359,37 +359,37 @@ const Panel = ( { onClose } ) => {
 		if ( ! selectedId ) {
 			return (
 				<p className="aw-ce-classname-placeholder">
-					{ __( 'Select a block to edit.', 'atomic-wind' ) }
+					{ __( 'Select a block to edit.', 'otter-blocks' ) }
 				</p>
 			);
 		}
 
 		switch ( activeTab ) {
-			case 'state':
-				return (
-					<StateControls
-						attributes={ selectedAttributes }
-						setAttributes={ handleSetAttributes }
-					/>
-				);
-			case 'animation':
-				return (
-					<AnimationControls
-						attributes={ selectedAttributes }
-						setAttributes={ handleSetAttributes }
-					/>
-				);
-			case 'classname':
-			default:
-				return (
-					<textarea
-						className="aw-ce-classname-input"
-						value={ selectedClassName }
-						onChange={ handleClassChange }
-						onKeyDown={ handleKeyDown }
-						placeholder={ __( 'Add Tailwind classes…', 'atomic-wind' ) }
-					/>
-				);
+		case 'state':
+			return (
+				<StateControls
+					attributes={ selectedAttributes }
+					setAttributes={ handleSetAttributes }
+				/>
+			);
+		case 'animation':
+			return (
+				<AnimationControls
+					attributes={ selectedAttributes }
+					setAttributes={ handleSetAttributes }
+				/>
+			);
+		case 'classname':
+		default:
+			return (
+				<textarea
+					className="aw-ce-classname-input"
+					value={ selectedClassName }
+					onChange={ handleClassChange }
+					onKeyDown={ handleKeyDown }
+					placeholder={ __( 'Add Tailwind classes…', 'otter-blocks' ) }
+				/>
+			);
 		}
 	};
 
@@ -408,12 +408,12 @@ const Panel = ( { onClose } ) => {
 				<div className="aw-ce-header-left">
 					<span className="aw-ce-header-icon">{ blockIcon }</span>
 					<span className="aw-ce-header-title">
-						{ __( 'Atomic Wind', 'atomic-wind' ) }
+						{ __( 'Atomic Wind', 'otter-blocks' ) }
 					</span>
 				</div>
 				<Button
 					icon={ close }
-					label={ __( 'Close', 'atomic-wind' ) }
+					label={ __( 'Close', 'otter-blocks' ) }
 					onClick={ onClose }
 					size="compact"
 					className="aw-ce-header-close"
@@ -446,7 +446,7 @@ const Panel = ( { onClose } ) => {
 					<div className="aw-ce-classname-header">
 						<Button
 							icon={ treeVisible ? chevronLeft : chevronRight }
-							label={ treeVisible ? __( 'Hide tree', 'atomic-wind' ) : __( 'Show tree', 'atomic-wind' ) }
+							label={ treeVisible ? __( 'Hide tree', 'otter-blocks' ) : __( 'Show tree', 'otter-blocks' ) }
 							onClick={ () => setTreeVisible( ! treeVisible ) }
 							size="compact"
 							className="aw-ce-sm-btn"
@@ -465,7 +465,7 @@ const Panel = ( { onClose } ) => {
 							<div className="aw-ce-classname-actions">
 								<Button
 									icon={ copy }
-									label={ copied ? __( 'Copied!', 'atomic-wind' ) : __( 'Copy classes', 'atomic-wind' ) }
+									label={ copied ? __( 'Copied!', 'otter-blocks' ) : __( 'Copy classes', 'otter-blocks' ) }
 									onClick={ handleCopy }
 									size="compact"
 									className={ `aw-ce-sm-btn${ copied ? ' is-copied' : '' }` }
@@ -473,7 +473,7 @@ const Panel = ( { onClose } ) => {
 								/>
 								<Button
 									icon={ upload }
-									label={ __( 'Paste classes', 'atomic-wind' ) }
+									label={ __( 'Paste classes', 'otter-blocks' ) }
 									onClick={ handlePaste }
 									size="compact"
 									className="aw-ce-sm-btn"
@@ -482,7 +482,7 @@ const Panel = ( { onClose } ) => {
 								{ prePaste && (
 									<Button
 										icon={ undo }
-										label={ __( 'Undo paste', 'atomic-wind' ) }
+										label={ __( 'Undo paste', 'otter-blocks' ) }
 										onClick={ handleUndoPaste }
 										size="compact"
 										className="aw-ce-sm-btn is-undo"

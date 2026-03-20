@@ -310,6 +310,7 @@ class Atomic_Wind_Blocks {
 	 * REST callback: save generated Tailwind CSS to post meta.
 	 *
 	 * @param \WP_REST_Request $request Request object.
+	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
 	 * @return \WP_REST_Response
 	 */
 	public function rest_save_style( \WP_REST_Request $request ) {
@@ -325,6 +326,7 @@ class Atomic_Wind_Blocks {
 	 * REST permission callback for the style endpoint.
 	 *
 	 * @param \WP_REST_Request $request Request object.
+	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
 	 * @return bool
 	 */
 	public function rest_save_style_permissions( \WP_REST_Request $request ) {
@@ -389,8 +391,8 @@ class Atomic_Wind_Blocks {
 	/**
 	 * Render query loop for box blocks with queryPostType.
 	 *
-	 * @param string $block_content Block content.
-	 * @param array  $block         Block data.
+	 * @param string               $block_content Block content.
+	 * @param array<string, mixed> $block         Block data.
 	 * @return string
 	 */
 	public function render_query_loop( $block_content, $block ) {
@@ -481,8 +483,8 @@ class Atomic_Wind_Blocks {
 	/**
 	 * Replace block content with post field data inside query loops.
 	 *
-	 * @param string $block_content Block content.
-	 * @param array  $block         Block data.
+	 * @param string               $block_content Block content.
+	 * @param array<string, mixed> $block         Block data.
 	 * @return string
 	 */
 	public function render_post_fields( $block_content, $block ) {
@@ -576,7 +578,7 @@ class Atomic_Wind_Blocks {
 					$url = get_the_permalink();
 					break;
 				case 'author_posts_url':
-					$url = get_author_posts_url( get_the_author_meta( 'ID' ) );
+					$url = get_author_posts_url( (int) get_the_author_meta( 'ID' ) );
 					break;
 				case 'category_link':
 					$cats = get_the_category();
@@ -594,7 +596,7 @@ class Atomic_Wind_Blocks {
 					$url = get_month_link( get_the_date( 'Y' ), get_the_date( 'n' ) );
 					break;
 				case 'author_archive':
-					$url = get_author_posts_url( get_the_author_meta( 'ID' ) );
+					$url = get_author_posts_url( (int) get_the_author_meta( 'ID' ) );
 					break;
 			}
 			if ( $url ) {
@@ -634,8 +636,8 @@ class Atomic_Wind_Blocks {
 	/**
 	 * Inject data-animation attributes into server-rendered blocks.
 	 *
-	 * @param string $block_content Block content.
-	 * @param array  $block         Block data.
+	 * @param string               $block_content Block content.
+	 * @param array<string, mixed> $block         Block data.
 	 * @return string
 	 */
 	public function render_animation_attrs( $block_content, $block ) {
@@ -659,8 +661,8 @@ class Atomic_Wind_Blocks {
 
 		$attrs = ' data-animation="' . esc_attr( $animation ) . '"';
 
-		$delay = isset( $block['attrs']['animationDelay'] ) ? $block['attrs']['animationDelay'] : '';
-		if ( $delay && '0' !== $delay ) {
+		$delay = isset( $block['attrs']['animationDelay'] ) ? (string) $block['attrs']['animationDelay'] : '';
+		if ( '' !== $delay && '0' !== $delay ) {
 			$attrs .= ' data-animation-delay="' . esc_attr( $delay ) . '"';
 		}
 
@@ -670,8 +672,8 @@ class Atomic_Wind_Blocks {
 	/**
 	 * Inject data-show-if / data-hide-if attributes into server-rendered blocks.
 	 *
-	 * @param string $block_content Block content.
-	 * @param array  $block         Block data.
+	 * @param string               $block_content Block content.
+	 * @param array<string, mixed> $block         Block data.
 	 * @return string
 	 */
 	public function render_state_attrs( $block_content, $block ) {
@@ -714,8 +716,8 @@ class Atomic_Wind_Blocks {
 	/**
 	 * Prepend the atomic-wind block category.
 	 *
-	 * @param array $categories Existing categories.
-	 * @return array
+	 * @param array<int, array<string, string>> $categories Existing categories.
+	 * @return array<int, array<string, string>>
 	 */
 	public function register_category( $categories ) {
 		array_unshift(

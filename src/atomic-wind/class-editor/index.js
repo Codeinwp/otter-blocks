@@ -36,7 +36,7 @@ const ClassEditorPlugin = () => {
 	return (
 		<>
 			<PluginMoreMenuItem icon={ icon } onClick={ () => toggle( ! isOpen ) }>
-				{ __( 'Atomic Wind', 'atomic-wind' ) }
+				{ __( 'Atomic Wind', 'otter-blocks' ) }
 			</PluginMoreMenuItem>
 			{ isOpen && <Panel onClose={ () => toggle( false ) } /> }
 		</>
@@ -64,20 +64,20 @@ const withClassEditorToggle = createHigherOrderComponent( ( BlockEdit ) => {
 							onClick={ () => toggle( ! isOpen ) }
 							className={ `aw-ce-inspector-btn${ isOpen ? ' is-active' : '' }` }
 						>
-							{ __( 'Atomic Wind', 'atomic-wind' ) }
+							{ __( 'Atomic Wind', 'otter-blocks' ) }
 						</Button>
 					</div>
 				</InspectorControls>
 				<BlockEdit { ...props } />
 				<InspectorControls>
 					<PanelBody
-						title={ __( 'State & Visibility', 'atomic-wind' ) }
+						title={ __( 'State & Visibility', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
 						<StateControls attributes={ attributes } setAttributes={ setAttributes } />
 					</PanelBody>
 					<PanelBody
-						title={ __( 'Animation', 'atomic-wind' ) }
+						title={ __( 'Animation', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
 						<AnimationControls attributes={ attributes } setAttributes={ setAttributes } />

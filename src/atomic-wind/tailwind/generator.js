@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import * as tailwindcss from 'tailwindcss';
 import indexCSS from 'tailwindcss/index.css';
 import preflightCSS from 'tailwindcss/preflight.css';

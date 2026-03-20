@@ -9,7 +9,7 @@ function IconPreview( { name, size, isSelected, onClick } ) {
 	const [ svgInner, setSvgInner ] = useState( '' );
 
 	useEffect( () => {
-		if ( ! name ) return;
+		if ( ! name ) {return;}
 		fetch( assetsUrl + name + '.svg' )
 			.then( ( r ) => r.text() )
 			.then( ( text ) => {
@@ -82,19 +82,19 @@ export default function Edit( { attributes, setAttributes } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Icon', 'atomic-wind' ) }>
+				<PanelBody title={ __( 'Icon', 'otter-blocks' ) }>
 					<p style={ { margin: '0 0 8px', fontSize: '12px', color: '#757575' } }>
-					{ __( 'Icons by ', 'atomic-wind' ) }
-					<a
-						href="https://lucide.dev"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
+						{ __( 'Icons by', 'otter-blocks' ) }
+						<a
+							href="https://lucide.dev"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 						Lucide
-					</a>
-				</p>
-				<SearchControl
-						label={ __( 'Search icons', 'atomic-wind' ) }
+						</a>
+					</p>
+					<SearchControl
+						label={ __( 'Search icons', 'otter-blocks' ) }
 						value={ search }
 						onChange={ setSearch }
 					/>
@@ -120,16 +120,16 @@ export default function Edit( { attributes, setAttributes } ) {
 					</div>
 					{ search && filtered.length > 120 && (
 						<p style={ { fontSize: '11px', color: '#757575', marginTop: '4px' } }>
-							{ __( 'Showing first 120 results — refine your search.', 'atomic-wind' ) }
+							{ __( 'Showing first 120 results — refine your search.', 'otter-blocks' ) }
 						</p>
 					) }
 				</PanelBody>
 			</InspectorControls>
 
 			{ icon && svgInner ? (
-			<svg
-				{ ...blockProps }
-				viewBox="0 0 24 24"
+				<svg
+					{ ...blockProps }
+					viewBox="0 0 24 24"
 					fill="none"
 					stroke="currentColor"
 					strokeWidth="2"
@@ -139,7 +139,7 @@ export default function Edit( { attributes, setAttributes } ) {
 				/>
 			) : (
 				<div { ...blockProps } style={ { ...blockProps.style, opacity: 0.4, fontSize: '12px' } }>
-					{ __( 'Select an icon in the sidebar.', 'atomic-wind' ) }
+					{ __( 'Select an icon in the sidebar.', 'otter-blocks' ) }
 				</div>
 			) }
 		</>

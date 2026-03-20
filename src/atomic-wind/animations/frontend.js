@@ -5,11 +5,11 @@ const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce
 function initCountUp( el, delay ) {
 	const raw = el.textContent;
 	const match = raw.match( /^([^\d-]*)([-]?[\d,]+\.?\d*)(.*)$/ );
-
+	
 	if ( ! match ) {
 		return;
 	}
-
+	
 	const prefix = match[ 1 ];
 	const numberStr = match[ 2 ].replace( /,/g, '' );
 	const suffix = match[ 3 ];
@@ -18,18 +18,18 @@ function initCountUp( el, delay ) {
 	if ( isNaN( target ) ) {
 		return;
 	}
-
-	const hasCommas = match[ 2 ].includes( ',' );
+	
 	const decimals = numberStr.includes( '.' )
 		? numberStr.split( '.' )[ 1 ].length
 		: 0;
-
+	
 	if ( prefersReducedMotion ) {
 		return;
 	}
-
+	
 	const duration = 1500;
 	const delayMs = delay && delay !== '0' ? parseInt( delay, 10 ) : 0;
+	const hasCommas = match[ 2 ].includes( ',' );
 
 	function formatNumber( n ) {
 		const fixed = n.toFixed( decimals );

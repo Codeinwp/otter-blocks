@@ -42,8 +42,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	function updateVisibility() {
 		targets.forEach( ( el ) => {
-			const showIf = el.dataset.showIf;
-			const hideIf = el.dataset.hideIf;
+			const { showIf } = el.dataset;
+			const { hideIf } = el.dataset;
 
 			if ( showIf ) {
 				el.hidden = ! testCondition( showIf );

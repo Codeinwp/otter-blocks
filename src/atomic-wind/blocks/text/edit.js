@@ -23,28 +23,28 @@ function getPreviewText( post, postField ) {
 		return '';
 	}
 	switch ( postField ) {
-		case 'title':
-			return post.title?.rendered || '';
-		case 'excerpt':
-			return ( post.excerpt?.rendered || '' ).replace( /<[^>]+>/g, '' ).trim();
-		case 'date':
-			return post.date ? new Date( post.date ).toLocaleDateString() : '';
-		case 'author':
-			return post._embedded?.author?.[ 0 ]?.name || '';
-		case 'categories': {
-			const cats = post._embedded?.[ 'wp:term' ]?.[ 0 ];
-			return cats ? cats.map( ( c ) => c.name ).join( ', ' ) : '';
-		}
-		case 'tags': {
-			const tags = post._embedded?.[ 'wp:term' ]?.[ 1 ];
-			return tags ? tags.map( ( t ) => t.name ).join( ', ' ) : '';
-		}
-		case 'modified_date':
-			return post.modified ? new Date( post.modified ).toLocaleDateString() : '';
-		case 'comment_count':
-			return String( post.comment_count ?? 0 );
-		default:
-			return '';
+	case 'title':
+		return post.title?.rendered || '';
+	case 'excerpt':
+		return ( post.excerpt?.rendered || '' ).replace( /<[^>]+>/g, '' ).trim();
+	case 'date':
+		return post.date ? new Date( post.date ).toLocaleDateString() : '';
+	case 'author':
+		return post._embedded?.author?.[ 0 ]?.name || '';
+	case 'categories': {
+		const cats = post._embedded?.[ 'wp:term' ]?.[ 0 ];
+		return cats ? cats.map( ( c ) => c.name ).join( ', ' ) : '';
+	}
+	case 'tags': {
+		const tags = post._embedded?.[ 'wp:term' ]?.[ 1 ];
+		return tags ? tags.map( ( t ) => t.name ).join( ', ' ) : '';
+	}
+	case 'modified_date':
+		return post.modified ? new Date( post.modified ).toLocaleDateString() : '';
+	case 'comment_count':
+		return String( post.comment_count ?? 0 );
+	default:
+		return '';
 	}
 }
 
@@ -60,9 +60,9 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 		return (
 			<>
 				<InspectorControls>
-					<PanelBody title={ __( 'Settings', 'atomic-wind' ) }>
+					<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
 						<SelectControl
-							label={ __( 'HTML Tag', 'atomic-wind' ) }
+							label={ __( 'HTML Tag', 'otter-blocks' ) }
 							value={ tagName }
 							options={ TAG_OPTIONS }
 							onChange={ ( value ) =>
@@ -72,7 +72,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					</PanelBody>
 				</InspectorControls>
 				<TagName { ...blockProps }>
-					{ previewText || __( 'No data', 'atomic-wind' ) }
+					{ previewText || __( 'No data', 'otter-blocks' ) }
 				</TagName>
 			</>
 		);
@@ -81,9 +81,9 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Settings', 'atomic-wind' ) }>
+				<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
 					<SelectControl
-						label={ __( 'HTML Tag', 'atomic-wind' ) }
+						label={ __( 'HTML Tag', 'otter-blocks' ) }
 						value={ tagName }
 						options={ TAG_OPTIONS }
 						onChange={ ( value ) =>
@@ -97,7 +97,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 				tagName={ tagName }
 				value={ content }
 				onChange={ ( value ) => setAttributes( { content: value } ) }
-				placeholder={ __( 'Write text…', 'atomic-wind' ) }
+				placeholder={ __( 'Write text…', 'otter-blocks' ) }
 				data-rich-text=""
 			/>
 		</>

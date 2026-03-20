@@ -14,6 +14,7 @@ export default function save( { attributes } ) {
 			rel: relValue,
 		} );
 
+		// eslint-disable-next-line jsx-a11y/anchor-has-content
 		return <a { ...innerBlocksProps } />;
 	}
 

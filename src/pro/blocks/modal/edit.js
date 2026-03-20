@@ -241,7 +241,7 @@ const Edit = ({
 												}
 											},
 											[
-												[ 'core/image'],
+												[ 'core/image' ],
 												[ 'core/heading', { placeholder: __( 'Modal Title', 'otter-pro'  ) }],
 												[ 'core/paragraph', { placeholder: __( 'Modal Content', 'otter-pro'  ) }]
 											]

@@ -8,52 +8,52 @@ import { useSelect } from '@wordpress/data';
 
 const POST_FIELD_OPTIONS = {
 	'atomic-wind/text': [
-		{ label: __( 'None', 'atomic-wind' ), value: '' },
-		{ label: __( 'Title', 'atomic-wind' ), value: 'title' },
-		{ label: __( 'Excerpt', 'atomic-wind' ), value: 'excerpt' },
-		{ label: __( 'Date', 'atomic-wind' ), value: 'date' },
-		{ label: __( 'Author', 'atomic-wind' ), value: 'author' },
-		{ label: __( 'Categories', 'atomic-wind' ), value: 'categories' },
-		{ label: __( 'Tags', 'atomic-wind' ), value: 'tags' },
-		{ label: __( 'Modified Date', 'atomic-wind' ), value: 'modified_date' },
-		{ label: __( 'Comment Count', 'atomic-wind' ), value: 'comment_count' },
-		{ label: __( 'Reading Time', 'atomic-wind' ), value: 'reading_time' },
-		{ label: __( 'Custom Field', 'atomic-wind' ), value: 'custom_field' },
+		{ label: __( 'None', 'otter-blocks' ), value: '' },
+		{ label: __( 'Title', 'otter-blocks' ), value: 'title' },
+		{ label: __( 'Excerpt', 'otter-blocks' ), value: 'excerpt' },
+		{ label: __( 'Date', 'otter-blocks' ), value: 'date' },
+		{ label: __( 'Author', 'otter-blocks' ), value: 'author' },
+		{ label: __( 'Categories', 'otter-blocks' ), value: 'categories' },
+		{ label: __( 'Tags', 'otter-blocks' ), value: 'tags' },
+		{ label: __( 'Modified Date', 'otter-blocks' ), value: 'modified_date' },
+		{ label: __( 'Comment Count', 'otter-blocks' ), value: 'comment_count' },
+		{ label: __( 'Reading Time', 'otter-blocks' ), value: 'reading_time' },
+		{ label: __( 'Custom Field', 'otter-blocks' ), value: 'custom_field' },
 	],
 	'atomic-wind/link': [
-		{ label: __( 'None', 'atomic-wind' ), value: '' },
-		{ label: __( 'Permalink', 'atomic-wind' ), value: 'permalink' },
-		{ label: __( 'Author Posts URL', 'atomic-wind' ), value: 'author_posts_url' },
-		{ label: __( 'Category Link', 'atomic-wind' ), value: 'category_link' },
-		{ label: __( 'Tag Link', 'atomic-wind' ), value: 'tag_link' },
-		{ label: __( 'Date Archive', 'atomic-wind' ), value: 'date_archive' },
-		{ label: __( 'Author Archive', 'atomic-wind' ), value: 'author_archive' },
+		{ label: __( 'None', 'otter-blocks' ), value: '' },
+		{ label: __( 'Permalink', 'otter-blocks' ), value: 'permalink' },
+		{ label: __( 'Author Posts URL', 'otter-blocks' ), value: 'author_posts_url' },
+		{ label: __( 'Category Link', 'otter-blocks' ), value: 'category_link' },
+		{ label: __( 'Tag Link', 'otter-blocks' ), value: 'tag_link' },
+		{ label: __( 'Date Archive', 'otter-blocks' ), value: 'date_archive' },
+		{ label: __( 'Author Archive', 'otter-blocks' ), value: 'author_archive' },
 	],
 	'atomic-wind/image': [
-		{ label: __( 'None', 'atomic-wind' ), value: '' },
-		{ label: __( 'Featured Image', 'atomic-wind' ), value: 'featured_image' },
-		{ label: __( 'Author Avatar', 'atomic-wind' ), value: 'author_avatar' },
+		{ label: __( 'None', 'otter-blocks' ), value: '' },
+		{ label: __( 'Featured Image', 'otter-blocks' ), value: 'featured_image' },
+		{ label: __( 'Author Avatar', 'otter-blocks' ), value: 'author_avatar' },
 	],
 };
 
 const ORDER_BY_OPTIONS = [
-	{ label: __( 'Date', 'atomic-wind' ), value: 'date' },
-	{ label: __( 'Title', 'atomic-wind' ), value: 'title' },
-	{ label: __( 'Modified', 'atomic-wind' ), value: 'modified' },
-	{ label: __( 'Random', 'atomic-wind' ), value: 'rand' },
-	{ label: __( 'Menu Order', 'atomic-wind' ), value: 'menu_order' },
+	{ label: __( 'Date', 'otter-blocks' ), value: 'date' },
+	{ label: __( 'Title', 'otter-blocks' ), value: 'title' },
+	{ label: __( 'Modified', 'otter-blocks' ), value: 'modified' },
+	{ label: __( 'Random', 'otter-blocks' ), value: 'rand' },
+	{ label: __( 'Menu Order', 'otter-blocks' ), value: 'menu_order' },
 ];
 
 const ORDER_OPTIONS = [
-	{ label: __( 'DESC', 'atomic-wind' ), value: 'DESC' },
-	{ label: __( 'ASC', 'atomic-wind' ), value: 'ASC' },
+	{ label: __( 'DESC', 'otter-blocks' ), value: 'DESC' },
+	{ label: __( 'ASC', 'otter-blocks' ), value: 'ASC' },
 ];
 
 addFilter(
 	'blocks.registerBlockType',
 	'atomic-wind/query-attributes',
 	( settings ) => {
-		if ( settings.category !== 'atomic-wind' ) {
+		if ( settings.category !== 'otter-blocks' ) {
 			return settings;
 		}
 
@@ -178,14 +178,14 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 				<InspectorControls>
 					{ isBox && (
 						<PanelBody
-							title={ __( 'Query', 'atomic-wind' ) }
+							title={ __( 'Query', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
 							<SelectControl
-								label={ __( 'Post Type', 'atomic-wind' ) }
+								label={ __( 'Post Type', 'otter-blocks' ) }
 								value={ attributes.queryPostType || '' }
 								options={ [
-									{ label: __( 'None', 'atomic-wind' ), value: '' },
+									{ label: __( 'None', 'otter-blocks' ), value: '' },
 									...postTypes,
 								] }
 								onChange={ ( value ) =>
@@ -195,7 +195,7 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 							{ attributes.queryPostType && (
 								<>
 									<RangeControl
-										label={ __( 'Posts Per Page', 'atomic-wind' ) }
+										label={ __( 'Posts Per Page', 'otter-blocks' ) }
 										value={ attributes.queryCount || 3 }
 										onChange={ ( value ) =>
 											setAttributes( { queryCount: value } )
@@ -204,7 +204,7 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 										max={ 50 }
 									/>
 									<SelectControl
-										label={ __( 'Order By', 'atomic-wind' ) }
+										label={ __( 'Order By', 'otter-blocks' ) }
 										value={ attributes.queryOrderBy || 'date' }
 										options={ ORDER_BY_OPTIONS }
 										onChange={ ( value ) =>
@@ -212,7 +212,7 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 										}
 									/>
 									<SelectControl
-										label={ __( 'Order', 'atomic-wind' ) }
+										label={ __( 'Order', 'otter-blocks' ) }
 										value={ attributes.queryOrder || 'DESC' }
 										options={ ORDER_OPTIONS }
 										onChange={ ( value ) =>
@@ -220,10 +220,10 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 										}
 									/>
 									<SelectControl
-										label={ __( 'Taxonomy', 'atomic-wind' ) }
+										label={ __( 'Taxonomy', 'otter-blocks' ) }
 										value={ taxSlug || '' }
 										options={ [
-											{ label: __( 'None', 'atomic-wind' ), value: '' },
+											{ label: __( 'None', 'otter-blocks' ), value: '' },
 											...taxonomies.map( ( tax ) => ( {
 												label: tax.name,
 												value: tax.slug,
@@ -235,10 +235,10 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 									/>
 									{ taxSlug && (
 										<SelectControl
-											label={ __( 'Term', 'atomic-wind' ) }
+											label={ __( 'Term', 'otter-blocks' ) }
 											value={ termSlug || '' }
 											options={ [
-												{ label: __( 'All', 'atomic-wind' ), value: '' },
+												{ label: __( 'All', 'otter-blocks' ), value: '' },
 												...terms.map( ( term ) => ( {
 													label: term.name,
 													value: term.slug,
@@ -250,26 +250,26 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 										/>
 									) }
 									<ToggleControl
-										label={ __( 'Exclude Current Post', 'atomic-wind' ) }
+										label={ __( 'Exclude Current Post', 'otter-blocks' ) }
 										checked={ !! attributes.queryExcludeCurrent }
 										onChange={ ( value ) =>
 											setAttributes( { queryExcludeCurrent: value } )
 										}
 									/>
 									<SelectControl
-										label={ __( 'Sticky Posts', 'atomic-wind' ) }
+										label={ __( 'Sticky Posts', 'otter-blocks' ) }
 										value={ attributes.querySticky || '' }
 										options={ [
-											{ label: __( 'Default', 'atomic-wind' ), value: '' },
-											{ label: __( 'Exclude', 'atomic-wind' ), value: 'exclude' },
-											{ label: __( 'Only Sticky', 'atomic-wind' ), value: 'only' },
+											{ label: __( 'Default', 'otter-blocks' ), value: '' },
+											{ label: __( 'Exclude', 'otter-blocks' ), value: 'exclude' },
+											{ label: __( 'Only Sticky', 'otter-blocks' ), value: 'only' },
 										] }
 										onChange={ ( value ) =>
 											setAttributes( { querySticky: value } )
 										}
 									/>
 									<p className="components-base-control__help">
-										{ __( 'Inner blocks are repeated for each queried post on the frontend.', 'atomic-wind' ) }
+										{ __( 'Inner blocks are repeated for each queried post on the frontend.', 'otter-blocks' ) }
 									</p>
 								</>
 							) }
@@ -277,44 +277,44 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 					) }
 					{ hasPostFieldOptions && isInsideQuery && (
 						<PanelBody
-							title={ __( 'Post Data', 'atomic-wind' ) }
+							title={ __( 'Post Data', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
-						<SelectControl
-							label={ __( 'Post Field', 'atomic-wind' ) }
-							value={ attributes.postField || '' }
-							options={ POST_FIELD_OPTIONS[ props.name ] }
-							onChange={ ( value ) =>
-								setAttributes( { postField: value } )
-							}
-							help={
-								attributes.postField
-									? __( 'Content will be replaced with post data on the frontend.', 'atomic-wind' )
-									: undefined
-							}
-						/>
-						{ attributes.postField === 'excerpt' && props.name === 'atomic-wind/text' && (
-							<RangeControl
-								label={ __( 'Excerpt Length (words)', 'atomic-wind' ) }
-								value={ attributes.excerptLength || 25 }
+							<SelectControl
+								label={ __( 'Post Field', 'otter-blocks' ) }
+								value={ attributes.postField || '' }
+								options={ POST_FIELD_OPTIONS[ props.name ] }
 								onChange={ ( value ) =>
-									setAttributes( { excerptLength: value } )
+									setAttributes( { postField: value } )
 								}
-								min={ 1 }
-								max={ 100 }
-							/>
-						) }
-						{ attributes.postField === 'custom_field' && props.name === 'atomic-wind/text' && (
-							<TextControl
-								label={ __( 'Meta Key', 'atomic-wind' ) }
-								value={ attributes.customFieldKey || '' }
-								onChange={ ( value ) =>
-									setAttributes( { customFieldKey: value } )
+								help={
+									attributes.postField
+										? __( 'Content will be replaced with post data on the frontend.', 'otter-blocks' )
+										: undefined
 								}
-								help={ __( 'Enter the post meta key or ACF field name.', 'atomic-wind' ) }
 							/>
-						) }
-					</PanelBody>
+							{ attributes.postField === 'excerpt' && props.name === 'atomic-wind/text' && (
+								<RangeControl
+									label={ __( 'Excerpt Length (words)', 'otter-blocks' ) }
+									value={ attributes.excerptLength || 25 }
+									onChange={ ( value ) =>
+										setAttributes( { excerptLength: value } )
+									}
+									min={ 1 }
+									max={ 100 }
+								/>
+							) }
+							{ attributes.postField === 'custom_field' && props.name === 'atomic-wind/text' && (
+								<TextControl
+									label={ __( 'Meta Key', 'otter-blocks' ) }
+									value={ attributes.customFieldKey || '' }
+									onChange={ ( value ) =>
+										setAttributes( { customFieldKey: value } )
+									}
+									help={ __( 'Enter the post meta key or ACF field name.', 'otter-blocks' ) }
+								/>
+							) }
+						</PanelBody>
 					) }
 				</InspectorControls>
 			</>
