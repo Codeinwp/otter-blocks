@@ -1,0 +1,46 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "atomic-wind/link",
+	"title": "Link",
+	"category": "atomic-wind",
+	"description": "An anchor element with link picker and rich text.",
+	"keywords": [ "link", "anchor", "url" ],
+	"textdomain": "atomic-wind",
+	"attributes": {
+		"url": {
+			"type": "string",
+			"source": "attribute",
+			"selector": "a",
+			"attribute": "href"
+		},
+		"text": {
+			"type": "rich-text",
+			"source": "rich-text",
+			"selector": "a",
+			"role": "content"
+		},
+		"opensInNewTab": {
+			"type": "boolean",
+			"default": false
+		},
+		"rel": {
+			"type": "string",
+			"source": "attribute",
+			"selector": "a",
+			"attribute": "rel"
+		},
+		"mode": {
+			"type": "string",
+			"default": "text"
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"html": false,
+		"color": false,
+		"typography": false,
+		"spacing": false
+	},
+	"editorScript": "file:./index.js"
+}

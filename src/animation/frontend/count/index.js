@@ -23,7 +23,7 @@ const speedConfig = {
  */
 const getConfiguration = ( elem ) => {
 	let parent = elem.parentElement;
-	const formattingTags = ['STRONG', 'B', 'EM', 'I', 'U', 'SPAN', 'CODE', 'MARK', 'SMALL', 'S', 'DEL', 'INS', 'SUP', 'SUB'];
+	const formattingTags = [ 'STRONG', 'B', 'EM', 'I', 'U', 'SPAN', 'CODE', 'MARK', 'SMALL', 'S', 'DEL', 'INS', 'SUP', 'SUB' ];
 
 	while (parent && (formattingTags.includes(parent.tagName))) {
 		parent = parent.parentElement;

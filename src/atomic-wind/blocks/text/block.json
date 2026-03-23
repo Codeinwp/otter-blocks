@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "atomic-wind/text",
+	"title": "Text",
+	"category": "atomic-wind",
+	"description": "A rich text element with tag selection.",
+	"keywords": [ "text", "paragraph", "heading" ],
+	"textdomain": "atomic-wind",
+	"attributes": {
+		"tagName": {
+			"type": "string",
+			"default": "p"
+		},
+		"content": {
+			"type": "rich-text",
+			"source": "rich-text",
+			"selector": "[data-rich-text]",
+			"role": "content"
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"html": false,
+		"color": false,
+		"typography": false,
+		"spacing": false
+	},
+	"editorScript": "file:./index.js"
+}

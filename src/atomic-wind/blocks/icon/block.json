@@ -1,0 +1,25 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "atomic-wind/icon",
+	"title": "Icon",
+	"category": "atomic-wind",
+	"description": "An inline SVG icon from the Lucide icon set.",
+	"keywords": [ "icon", "svg", "lucide" ],
+	"textdomain": "atomic-wind",
+	"attributes": {
+		"icon": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"html": false,
+		"color": false,
+		"typography": false,
+		"spacing": false
+	},
+	"render": "file:./render.php",
+	"editorScript": "file:./index.js"
+}
