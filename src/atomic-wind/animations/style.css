@@ -1,0 +1,64 @@
+.aw-animate-hidden {
+	opacity: 0;
+	visibility: hidden;
+}
+
+[class*="aw-animate-"]:not(.aw-animate-hidden) {
+	animation-duration: 600ms;
+	animation-timing-function: ease-out;
+	animation-fill-mode: both;
+}
+
+@keyframes aw-fade-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes aw-slide-up {
+	from { opacity: 0; transform: translateY(30px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes aw-slide-down {
+	from { opacity: 0; transform: translateY(-30px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes aw-slide-left {
+	from { opacity: 0; transform: translateX(30px); }
+	to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes aw-slide-right {
+	from { opacity: 0; transform: translateX(-30px); }
+	to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes aw-zoom-in {
+	from { opacity: 0; transform: scale(0.9); }
+	to { opacity: 1; transform: scale(1); }
+}
+
+.aw-animate-fade-in { animation-name: aw-fade-in; }
+.aw-animate-slide-up { animation-name: aw-slide-up; }
+.aw-animate-slide-down { animation-name: aw-slide-down; }
+.aw-animate-slide-left { animation-name: aw-slide-left; }
+.aw-animate-slide-right { animation-name: aw-slide-right; }
+.aw-animate-zoom-in { animation-name: aw-zoom-in; }
+
+.aw-delay-100 { animation-delay: 100ms; }
+.aw-delay-200 { animation-delay: 200ms; }
+.aw-delay-300 { animation-delay: 300ms; }
+.aw-delay-400 { animation-delay: 400ms; }
+.aw-delay-500 { animation-delay: 500ms; }
+
+@media (prefers-reduced-motion: reduce) {
+	.aw-animate-hidden {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	[class*="aw-animate-"]:not(.aw-animate-hidden) {
+		animation: none;
+	}
+}

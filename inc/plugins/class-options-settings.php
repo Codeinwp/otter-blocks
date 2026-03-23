@@ -172,6 +172,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_atomic_wind_blocks',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Enable Atomic Wind Blocks', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => false,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'otter_blocks_logger_flag',
 			array(
 				'type'         => 'string',
