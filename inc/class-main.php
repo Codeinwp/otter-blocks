@@ -619,6 +619,8 @@ class Main {
 		} else {
 			// translators: %s - discount.
 			$config['title'] = sprintf( __( 'Otter Pro: %s off this week', 'otter-blocks' ), '60%' );
+			// translators: %s is the discount percentage.
+			$config['upgrade_menu_text'] = sprintf( __( 'BF Sale - %s off', 'otter-blocks' ), '60%' );
 		}
 
 		$url_params = array(

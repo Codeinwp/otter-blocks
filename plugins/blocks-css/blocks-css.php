@@ -68,9 +68,9 @@ add_filter(
 
 		$config = $configs['default'];
 	
-		$config['message']  = __( 'You use Blocks CSS. Otter Pro includes custom CSS per block, plus advanced blocks and WooCommerce integration. Built by the same team.', 'blocks-css' );
+		$config['message']             = __( 'You use Blocks CSS. Otter Pro includes custom CSS per block, plus advanced blocks and WooCommerce integration. Built by the same team.', 'blocks-css' );
 		$config['plugin_meta_message'] = __( 'Black Friday Sale - Get Otter Pro free', 'blocks-css' );
-		$config['sale_url'] = add_query_arg(
+		$config['sale_url']            = add_query_arg(
 			array(
 				'utm_term' => 'free',
 			),
