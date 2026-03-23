@@ -60,6 +60,21 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
+	 * Check if a post contains any atomic-wind/* block.
+	 *
+	 * Uses a direct strpos on post_content (already in memory) — no extra DB query.
+	 * has_block() requires a full block name and normalizes non-namespaced names to
+	 * core/*, so it cannot be used for namespace-prefix matching.
+	 *
+	 * @param \WP_Post $post Post object.
+	 * @return bool
+	 */
+	private function post_has_atomic_wind_blocks( \WP_Post $post ) {
+		return has_blocks( $post ) &&
+			false !== strpos( $post->post_content, '<!-- wp:atomic-wind/' );
+	}
+
+	/**
 	 * Get the path to the plugin root.
 	 *
 	 * @return string
@@ -145,6 +160,12 @@ class Atomic_Wind_Blocks {
 	 * @return void
 	 */
 	public function enqueue_base_css() {
+		global $post;
+	
+		if ( ! $post || ! $this->post_has_atomic_wind_blocks( $post ) ) {
+			return;
+		}
+	
 		wp_register_style( 'atomic-wind-base', false, [], OTTER_BLOCKS_VERSION );
 		wp_enqueue_style( 'atomic-wind-base' );
 		$css = '[class*="wp-block-atomic-wind-"]{margin:0;max-width:unset;}[class*="wp-block-atomic-wind-"] p{margin:0;}';
@@ -235,8 +256,11 @@ class Atomic_Wind_Blocks {
 	public function output_cached_css() {
 		global $post;
 
-
 		if ( ! $post ) {
+			return;
+		}
+
+		if ( ! $this->post_has_atomic_wind_blocks( $post ) ) {
 			return;
 		}
 
