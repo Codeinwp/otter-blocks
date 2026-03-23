@@ -1,23 +1,12 @@
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SearchControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useMemo } from '@wordpress/element';
+import { useState, useMemo } from '@wordpress/element';
 
-const { icons: ALL_ICONS = [], assetsUrl = '' } = window.atomicWindIcons ?? {};
+const { icons: ALL_ICONS = [], iconsMap: ICONS_MAP = {}} = window.atomicWindIcons ?? {};
 
 function IconPreview( { name, size, isSelected, onClick } ) {
-	const [ svgInner, setSvgInner ] = useState( '' );
-
-	useEffect( () => {
-		if ( ! name ) {return;}
-		fetch( assetsUrl + name + '.svg' )
-			.then( ( r ) => r.text() )
-			.then( ( text ) => {
-				const match = text.match( /<svg[^>]*>([\s\S]*?)<\/svg>/i );
-				setSvgInner( match ? match[ 1 ] : '' );
-			} )
-			.catch( () => {} );
-	}, [ name ] );
+	const svgInner = ICONS_MAP[ name ] || '';
 
 	return (
 		<button
@@ -57,42 +46,18 @@ function IconPreview( { name, size, isSelected, onClick } ) {
 export default function Edit( { attributes, setAttributes } ) {
 	const { icon } = attributes;
 	const [ search, setSearch ] = useState( '' );
-	const [ svgInner, setSvgInner ] = useState( '' );
 	const blockProps = useBlockProps();
+	const svgInner = ICONS_MAP[ icon ] || '';
 
 	const filtered = useMemo( () => {
 		const q = search.trim().toLowerCase();
 		return q ? ALL_ICONS.filter( ( n ) => n.includes( q ) ) : ALL_ICONS;
 	}, [ search ] );
 
-	useEffect( () => {
-		if ( ! icon ) {
-			setSvgInner( '' );
-			return;
-		}
-		fetch( assetsUrl + icon + '.svg' )
-			.then( ( r ) => r.text() )
-			.then( ( text ) => {
-				const match = text.match( /<svg[^>]*>([\s\S]*?)<\/svg>/i );
-				setSvgInner( match ? match[ 1 ] : '' );
-			} )
-			.catch( () => {} );
-	}, [ icon ] );
-
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Icon', 'otter-blocks' ) }>
-					<p style={ { margin: '0 0 8px', fontSize: '12px', color: '#757575' } }>
-						{ __( 'Icons by', 'otter-blocks' ) }
-						<a
-							href="https://lucide.dev"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-						Lucide
-						</a>
-					</p>
 					<SearchControl
 						label={ __( 'Search icons', 'otter-blocks' ) }
 						value={ search }
@@ -123,6 +88,17 @@ export default function Edit( { attributes, setAttributes } ) {
 							{ __( 'Showing first 120 results — refine your search.', 'otter-blocks' ) }
 						</p>
 					) }
+					<p style={ { margin: '12px 0 0', fontSize: '11px', color: '#757575', lineHeight: '1.4' } }>
+						{ __( 'Icons by', 'otter-blocks' ) }{ ' ' }
+						<a
+							href="https://lucide.dev"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							Lucide
+						</a>{ ' - ' }
+						{ __( 'open-source icon library.', 'otter-blocks' ) }
+					</p>
 				</PanelBody>
 			</InspectorControls>
 

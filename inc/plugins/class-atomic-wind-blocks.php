@@ -160,20 +160,31 @@ class Atomic_Wind_Blocks {
 	 * @return void
 	 */
 	public function enqueue_icons_data() {
-		$files = glob( $this->base_path() . '/assets/atomic-wind/icons/*.svg' );
-		$icons = array_map(
-			function ( $f ) {
-				return basename( $f, '.svg' );
-			},
-			$files ? $files : array()
-		);
+		$json_path = $this->base_path() . '/assets/atomic-wind/icons.json';
+		$icons     = array();
+		$icons_map = new \stdClass();
+
+		if ( is_file( $json_path ) ) {
+			if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
+				$content = wpcom_vip_file_get_contents( $json_path );
+			} else {
+				$content = file_get_contents( $json_path ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+			}
+			if ( $content ) {
+				$map = json_decode( $content, true );
+				if ( is_array( $map ) ) {
+					$icons     = array_keys( $map );
+					$icons_map = $map;
+				}
+			}
+		}
 
 		wp_add_inline_script(
 			'wp-blocks',
 			'window.atomicWindIcons = ' . wp_json_encode(
 				array(
-					'icons'     => $icons,
-					'assetsUrl' => $this->plugin_url( 'assets/atomic-wind/icons/' ),
+					'icons'    => $icons,
+					'iconsMap' => $icons_map,
 				)
 			) . ';' .
 			'window.atomicWindEditor = ' . wp_json_encode(

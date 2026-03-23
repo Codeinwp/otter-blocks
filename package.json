@@ -19,6 +19,7 @@
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
 		"release": "semantic-release",
+		"icons:update": "bash bin/update-atomic-wind-icons.sh",
 		"dist": "bash bin/dist.sh",
 		"dist-dev": "bash bin/dist.sh development",
 		"test:unit": "wp-scripts test-unit-js",

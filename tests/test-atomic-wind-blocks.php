@@ -691,6 +691,54 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	}
 
 	// -------------------------------------------------------
+	// enqueue_icons_data
+	// -------------------------------------------------------
+
+	public function test_enqueue_icons_data_injects_icons_map() {
+		if ( ! wp_script_is( 'wp-blocks', 'registered' ) ) {
+			wp_register_script( 'wp-blocks', '', array(), false, true );
+		}
+		$this->instance->enqueue_icons_data();
+		$data   = wp_scripts()->get_data( 'wp-blocks', 'before' );
+		$inline = is_array( $data ) ? implode( '', $data ) : (string) $data;
+		$this->assertStringContainsString( 'iconsMap', $inline );
+		$this->assertStringContainsString( '"search"', $inline );
+	}
+
+	public function test_enqueue_icons_data_no_assets_url() {
+		if ( ! wp_script_is( 'wp-blocks', 'registered' ) ) {
+			wp_register_script( 'wp-blocks', '', array(), false, true );
+		}
+		$this->instance->enqueue_icons_data();
+		$data   = wp_scripts()->get_data( 'wp-blocks', 'before' );
+		$inline = is_array( $data ) ? implode( '', $data ) : (string) $data;
+		$this->assertStringNotContainsString( '"assetsUrl"', $inline );
+		$this->assertStringNotContainsString( 'iconsJsonUrl', $inline );
+	}
+
+	public function test_enqueue_icons_data_graceful_fallback() {
+		if ( ! wp_script_is( 'wp-blocks', 'registered' ) ) {
+			wp_register_script( 'wp-blocks', '', array(), false, true );
+		}
+		$json_path = OTTER_BLOCKS_PATH . '/assets/atomic-wind/icons.json';
+		$backup    = $json_path . '.bak';
+		$had_file  = is_file( $json_path );
+		if ( $had_file ) {
+			rename( $json_path, $backup );
+		}
+		try {
+			$this->instance->enqueue_icons_data();
+			$data   = wp_scripts()->get_data( 'wp-blocks', 'before' );
+			$inline = is_array( $data ) ? implode( '', $data ) : (string) $data;
+			$this->assertStringContainsString( 'atomicWindIcons', $inline );
+		} finally {
+			if ( $had_file ) {
+				rename( $backup, $json_path );
+			}
+		}
+	}
+
+	// -------------------------------------------------------
 	// Text output is escaped
 	// -------------------------------------------------------
 

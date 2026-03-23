@@ -15,7 +15,8 @@ git checkout
 
 rm -rf "$ICONS_DIR"
 mkdir -p "$ICONS_DIR"
-
 find "$WORK_DIR/lucide/icons" -name "*.svg" -exec cp {} "$ICONS_DIR/" \;
 
-echo "Icons updated: $(ls "$ICONS_DIR"/*.svg | wc -l) SVGs in assets/atomic-wind/icons/"
+node "$ROOT_DIR/bin/generate-icons-json.mjs" \
+  --icons-dir "$ICONS_DIR" \
+  --out "$ROOT_DIR/assets/atomic-wind/icons.json"
