@@ -19,6 +19,7 @@
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
 		"release": "semantic-release",
+		"icons:update": "bash bin/update-atomic-wind-icons.sh",
 		"dist": "bash bin/dist.sh",
 		"dist-dev": "bash bin/dist.sh development",
 		"test:unit": "wp-scripts test-unit-js",
@@ -44,6 +45,7 @@
 		"format:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script format",
 		"wp-env": "wp-env",
 		"build:makepot": "docker run --user root --rm --volume \"$(pwd):/var/www/html/otter-blocks\" wordpress:cli bash -c 'php -d memory_limit=512M \"$(which wp)\" --version --allow-root && wp i18n make-pot otter-blocks ./otter-blocks/languages/otter-pro.pot --include=\"otter-pro,build/pro,inc\" --allow-root --domain=otter-pro --headers={\\\"Last-Translator\\\":\\\"friends@themeisle.com\\\"\\,\\\"Report-Msgid-Bugs-To\\\":\\\"https://github.com/Codeinwp/otter-blocks/issues\\\"\\,\\\"Project-Id-Version\\\":\\\"Otter-Blocks\\\"\\,\\\"POT-Creation-Date\\\":\\\"\\\"}'",
+		"update-icons:atomic-wind": "bash bin/update-atomic-wind-icons.sh",
 		"plugins:sdk:update": "composer require codeinwp/themeisle-sdk --update-with-dependencies --no-install --working-dir=./plugins/blocks-animation && composer require codeinwp/themeisle-sdk --update-with-dependencies --no-install --working-dir=./plugins/blocks-css"
 	},
 	"repository": {
@@ -77,6 +79,7 @@
 		"react-intersection-observer": "^9.13.0",
 		"react-sortable-hoc": "^2.0.0",
 		"react-visibility-sensor": "^5.1.1",
+		"tailwindcss": "^4.1.17",
 		"uuid": "^9.0.1"
 	},
 	"devDependencies": {

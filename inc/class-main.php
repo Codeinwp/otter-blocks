@@ -87,6 +87,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Server\Prompt_Server',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud',
 			'\ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Atomic_Wind_Blocks',
 		);
 
 		$classnames = apply_filters( 'otter_blocks_autoloader', $classnames );

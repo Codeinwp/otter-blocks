@@ -1,0 +1,371 @@
+/* Inspector toggle button */
+.aw-ce-inspector-toggle {
+	padding: 12px 16px;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.aw-ce-inspector-btn.components-button {
+	width: 100%;
+	justify-content: center;
+	gap: 6px;
+	height: 32px;
+	font-size: 12px;
+	font-weight: 500;
+	border: 1px solid #e0e0e0;
+	border-radius: 3px;
+	color: #1e1e1e;
+}
+
+.aw-ce-inspector-btn.components-button svg {
+	width: 18px;
+	height: 18px;
+}
+
+.aw-ce-inspector-btn.components-button:hover {
+	background: #f0f0f0;
+}
+
+.aw-ce-inspector-btn.is-active.components-button {
+	background: #1e1e1e;
+	color: #fff;
+	border-color: #1e1e1e;
+}
+
+.aw-ce-inspector-btn.is-active.components-button:hover {
+	background: #333;
+}
+
+/* Panel */
+.aw-ce-panel {
+	position: fixed;
+	z-index: 100000;
+	background: #fff;
+	border-radius: 4px;
+	border: 1px solid #e0e0e0;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* Header / drag handle */
+.aw-ce-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 2px 0 10px;
+	height: 32px;
+	background: #1e1e1e;
+	cursor: grab;
+	user-select: none;
+	flex-shrink: 0;
+}
+
+.aw-ce-header:active {
+	cursor: grabbing;
+}
+
+.aw-ce-header-left {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.aw-ce-header-icon {
+	display: flex;
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.aw-ce-header-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.aw-ce-header-title {
+	font-size: 11px;
+	font-weight: 500;
+	color: #fff;
+	letter-spacing: 0.2px;
+}
+
+.aw-ce-header .components-button {
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.aw-ce-header .components-button:hover {
+	color: #fff;
+}
+
+.aw-ce-header-close.components-button {
+	min-width: 20px;
+	height: 20px;
+	padding: 0;
+}
+
+.aw-ce-header-close.components-button svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* Body: tree + classname */
+.aw-ce-body {
+	display: flex;
+	flex: 1;
+	overflow: hidden;
+	min-height: 0;
+}
+
+/* Block tree */
+.aw-ce-tree {
+	flex-shrink: 0;
+	overflow-y: auto;
+	background: #f8f8f8;
+	padding: 4px 0;
+}
+
+.aw-ce-tree-node {
+	display: flex;
+	align-items: baseline;
+	gap: 2px;
+	width: 100%;
+	padding: 4px 8px;
+	border: none;
+	background: none;
+	cursor: pointer;
+	font-size: 11px;
+	text-align: left;
+	line-height: 1.4;
+	color: #1e1e1e;
+	border-radius: 0;
+}
+
+.aw-ce-tree-node:hover {
+	background: #e8e8e8;
+}
+
+.aw-ce-tree-node.is-selected {
+	background: #3858e9;
+	color: #fff;
+}
+
+.aw-ce-tree-toggle {
+	font-size: 7px;
+	flex-shrink: 0;
+	width: 14px;
+	text-align: center;
+	opacity: 0.5;
+}
+
+.aw-ce-tree-toggle-spacer {
+	width: 14px;
+	flex-shrink: 0;
+}
+
+.aw-ce-tree-node.is-selected .aw-ce-tree-toggle {
+	opacity: 0.8;
+}
+
+.aw-ce-tree-title {
+	flex-shrink: 0;
+	white-space: nowrap;
+}
+
+.aw-ce-tree-preview {
+	opacity: 0.45;
+	font-size: 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-left: 4px;
+}
+
+.aw-ce-tree-node.is-selected .aw-ce-tree-preview {
+	opacity: 0.6;
+}
+
+/* Tree resize handle */
+.aw-ce-tree-resize {
+	width: 5px;
+	flex-shrink: 0;
+	cursor: col-resize;
+	background: transparent;
+	border-right: 1px solid #e0e0e0;
+	transition: background 0.15s;
+}
+
+.aw-ce-tree-resize:hover {
+	background: #3858e9;
+	border-right-color: #3858e9;
+}
+
+/* ClassName pane */
+.aw-ce-classname {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.aw-ce-classname-header {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 6px;
+	border-bottom: 1px solid #f0f0f0;
+	flex-shrink: 0;
+	min-height: 28px;
+}
+
+.aw-ce-classname-actions {
+	display: flex;
+	gap: 0;
+	margin-left: auto;
+	flex-shrink: 0;
+}
+
+/* Small icon buttons used throughout the panel */
+.aw-ce-sm-btn.components-button {
+	min-width: 20px;
+	height: 20px;
+	padding: 0;
+	color: #757575;
+}
+
+.aw-ce-sm-btn.components-button svg {
+	width: 16px;
+	height: 16px;
+}
+
+.aw-ce-sm-btn.components-button:hover {
+	color: #1e1e1e;
+}
+
+.aw-ce-sm-btn.is-copied.components-button {
+	color: #0a8529;
+}
+
+.aw-ce-sm-btn.is-undo.components-button {
+	color: #b3440a;
+}
+
+.aw-ce-sm-btn.is-undo.components-button:hover {
+	color: #8c3508;
+}
+
+.aw-ce-classname-label {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: #757575;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
+.aw-ce-classname-label-preview {
+	font-weight: 400;
+	text-transform: none;
+	letter-spacing: 0;
+	opacity: 0.7;
+}
+
+/* Tabs */
+.aw-ce-tabs {
+	display: flex;
+	border-bottom: 1px solid #e0e0e0;
+	flex-shrink: 0;
+}
+
+.aw-ce-tab {
+	padding: 5px 14px;
+	font-size: 11px;
+	font-weight: 500;
+	color: #757575;
+	background: none;
+	border: none;
+	border-bottom: 2px solid transparent;
+	cursor: pointer;
+	margin-bottom: -1px;
+}
+
+.aw-ce-tab:hover {
+	color: #1e1e1e;
+}
+
+.aw-ce-tab.is-active {
+	color: #1e1e1e;
+	border-bottom-color: #3858e9;
+}
+
+.aw-ce-classname-body {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	min-height: 0;
+	overflow: hidden;
+}
+
+/* Tab content (state/animation panels) */
+.aw-ce-tab-content {
+	flex: 1;
+	overflow-y: auto;
+	min-height: 0;
+}
+
+.aw-ce-classname-input {
+	flex: 1;
+	resize: none;
+	font-family: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Consolas, monospace;
+	font-size: 12px;
+	line-height: 1.6;
+	padding: 8px 10px;
+	border: 1px solid #e0e0e0;
+	border-radius: 3px;
+	outline: none;
+	min-height: 0;
+	color: #1e1e1e;
+	background: #fafafa;
+}
+
+.aw-ce-classname-input:focus {
+	outline: none;
+	border-color: #3858e9;
+	background: #fff;
+}
+
+.aw-ce-classname-placeholder {
+	color: #a0a0a0;
+	font-size: 12px;
+	margin: auto;
+	text-align: center;
+}
+
+/* Panel resize handle (bottom-right corner) */
+.aw-ce-resize-handle {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 18px;
+	height: 18px;
+	cursor: nwse-resize;
+}
+
+.aw-ce-resize-handle::after {
+	content: "";
+	position: absolute;
+	right: 4px;
+	bottom: 4px;
+	width: 8px;
+	height: 8px;
+	border-right: 2px solid #ccc;
+	border-bottom: 2px solid #ccc;
+}
+
+.aw-ce-resize-handle:hover::after {
+	border-color: #3858e9;
+}
