@@ -314,7 +314,7 @@ const Dashboard = () => {
 				<PanelRow>
 					<ToggleControl
 						label={ __( 'Enable Atomic Wind Blocks', 'otter-blocks' ) }
-						help={ __( 'Enables 5 primitive, unstyled blocks: Box, Text, Image, Link, and Icon dedicated to be used with Tailwind CSS.', 'otter-blocks' ) }
+						help={ __( 'Enables a collection of basic building blocks—Box, Text, Image, Link, and Icon—so you can easily use Tailwind CSS in your templates.', 'otter-blocks' ) }
 						checked={ state.values.enableAtomicWindBlocks }
 						disabled={ 'saving' === state.status.enableAtomicWindBlocks }
 						onChange={ ( value ) => applyAction({ type: 'update', name: 'enableAtomicWindBlocks', value }) }
