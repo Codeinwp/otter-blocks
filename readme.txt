@@ -4,7 +4,7 @@ Tags: block, blocks, gutenberg, gutenberg blocks, page builder
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 3.1.6
+Stable tag: 3.1.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
@@ -371,10 +371,9 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 == Changelog ==
 
-##### [Version 3.1.6](https://github.com/Codeinwp/otter-blocks/compare/v3.1.5...v3.1.6) (2026-03-23)
+##### [Version 3.1.7](https://github.com/Codeinwp/otter-blocks/compare/v3.1.6...v3.1.7) (2026-03-25)
 
-- Adds experimental atomic-wind blocks
-- Improves handling of boxed values, allowing string values for four-directional properties
+- fixes experimental blocks interactivity state management
 
 
 
