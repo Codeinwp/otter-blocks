@@ -243,9 +243,89 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'data-hide-if="disabled"', $result );
 	}
 
-	public function test_state_trigger_only_does_not_inject_visibility_attrs() {
+	public function test_state_trigger_injects_trigger_attrs_not_visibility() {
 		$block   = $this->make_block( 'atomic-wind/text', array( 'stateTrigger' => 'tabs' ) );
 		$content = '<p class="wp-block">Trigger</p>';
+
+		$result = $this->instance->render_state_attrs( $content, $block );
+
+		$this->assertStringContainsString( 'data-state-trigger="tabs"', $result );
+		$this->assertStringContainsString( 'data-state-action="toggle"', $result );
+		$this->assertStringNotContainsString( 'data-show-if', $result );
+		$this->assertStringNotContainsString( 'data-hide-if', $result );
+	}
+
+	public function test_state_trigger_set_action_injects_value() {
+		$block   = $this->make_block( 'atomic-wind/link', array(
+			'stateTrigger' => 'season',
+			'stateAction'  => 'set',
+			'stateValue'   => 'spring',
+		) );
+		$content = '<a class="wp-block">Spring</a>';
+
+		$result = $this->instance->render_state_attrs( $content, $block );
+
+		$this->assertStringContainsString( 'data-state-trigger="season"', $result );
+		$this->assertStringContainsString( 'data-state-action="set"', $result );
+		$this->assertStringContainsString( 'data-state-value="spring"', $result );
+	}
+
+	public function test_state_trigger_toggle_omits_value() {
+		$block   = $this->make_block( 'atomic-wind/text', array(
+			'stateTrigger' => 'panel',
+			'stateAction'  => 'toggle',
+		) );
+		$content = '<p class="wp-block">Toggle</p>';
+
+		$result = $this->instance->render_state_attrs( $content, $block );
+
+		$this->assertStringContainsString( 'data-state-action="toggle"', $result );
+		$this->assertStringNotContainsString( 'data-state-value', $result );
+	}
+
+	public function test_state_trigger_default_attr() {
+		$block   = $this->make_block( 'atomic-wind/link', array(
+			'stateTrigger' => 'season',
+			'stateAction'  => 'set',
+			'stateValue'   => 'all',
+			'stateDefault' => true,
+		) );
+		$content = '<a class="wp-block">All</a>';
+
+		$result = $this->instance->render_state_attrs( $content, $block );
+
+		$this->assertStringContainsString( 'data-state-default', $result );
+	}
+
+	public function test_state_handles_leading_whitespace() {
+		$block   = $this->make_block( 'atomic-wind/box', array( 'showIf' => 'active' ) );
+		$content = "\n<div class=\"wp-block\">Content</div>";
+
+		$result = $this->instance->render_state_attrs( $content, $block );
+
+		$this->assertStringContainsString( 'data-show-if="active"', $result );
+	}
+
+	public function test_state_trigger_value_escapes_xss() {
+		$block   = $this->make_block( 'atomic-wind/link', array(
+			'stateTrigger' => 'x',
+			'stateAction'  => 'set',
+			'stateValue'   => '"><script>alert(1)</script>',
+		) );
+		$content = '<a class="wp-block">Link</a>';
+
+		$result = $this->instance->render_state_attrs( $content, $block );
+
+		$this->assertStringNotContainsString( '<script>', $result );
+	}
+
+	public function test_state_skips_trigger_when_already_present() {
+		$block   = $this->make_block( 'atomic-wind/link', array(
+			'stateTrigger' => 'tabs',
+			'stateAction'  => 'set',
+			'stateValue'   => 'one',
+		) );
+		$content = '<a data-state-trigger="tabs" data-state-action="set" data-state-value="one" class="wp-block">Tab</a>';
 
 		$result = $this->instance->render_state_attrs( $content, $block );
 
