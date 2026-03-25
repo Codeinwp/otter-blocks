@@ -751,9 +751,12 @@ class Atomic_Wind_Blocks {
 
 		$has_state = false;
 
-		$show_if = isset( $block['attrs']['showIf'] ) ? $block['attrs']['showIf'] : '';
-		$hide_if = isset( $block['attrs']['hideIf'] ) ? $block['attrs']['hideIf'] : '';
-		$trigger = isset( $block['attrs']['stateTrigger'] ) ? $block['attrs']['stateTrigger'] : '';
+		$show_if       = isset( $block['attrs']['showIf'] ) ? $block['attrs']['showIf'] : '';
+		$hide_if       = isset( $block['attrs']['hideIf'] ) ? $block['attrs']['hideIf'] : '';
+		$trigger       = isset( $block['attrs']['stateTrigger'] ) ? $block['attrs']['stateTrigger'] : '';
+		$state_action  = isset( $block['attrs']['stateAction'] ) ? $block['attrs']['stateAction'] : 'toggle';
+		$state_value   = isset( $block['attrs']['stateValue'] ) ? $block['attrs']['stateValue'] : '';
+		$state_default = ! empty( $block['attrs']['stateDefault'] );
 
 		if ( $show_if || $hide_if || $trigger ) {
 			$has_state = true;
@@ -772,12 +775,24 @@ class Atomic_Wind_Blocks {
 		if ( $hide_if ) {
 			$attrs .= ' data-hide-if="' . esc_attr( $hide_if ) . '"';
 		}
+		if ( $trigger ) {
+			$attrs .= ' data-state-trigger="' . esc_attr( $trigger ) . '"';
+			$attrs .= ' data-state-action="' . esc_attr( $state_action ) . '"';
 
-		if ( ! $attrs || false !== strpos( $block_content, 'data-show-if' ) || false !== strpos( $block_content, 'data-hide-if' ) ) {
+			if ( 'set' === $state_action && $state_value ) {
+				$attrs .= ' data-state-value="' . esc_attr( $state_value ) . '"';
+			}
+
+			if ( $state_default ) {
+				$attrs .= ' data-state-default';
+			}
+		}
+
+		if ( ! $attrs || false !== strpos( $block_content, 'data-show-if' ) || false !== strpos( $block_content, 'data-hide-if' ) || false !== strpos( $block_content, 'data-state-trigger' ) ) {
 			return $block_content;
 		}
 
-		return preg_replace( '/^(<[a-zA-Z][a-zA-Z0-9]*)\b/', '$1' . $attrs, $block_content, 1 );
+		return preg_replace( '/^(\s*<[a-zA-Z][a-zA-Z0-9]*)\b/', '$1' . $attrs, $block_content, 1 );
 	}
 
 	/**

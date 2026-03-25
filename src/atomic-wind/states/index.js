@@ -216,7 +216,7 @@ addFilter(
 	'blocks.getSaveContent.extraProps',
 	'atomic-wind/state-save-props',
 	( extraProps, blockType, attributes ) => {
-		if ( blockType.category !== 'otter-blocks' ) {
+		if ( blockType.category !== 'atomic-wind' ) {
 			return extraProps;
 		}
 
