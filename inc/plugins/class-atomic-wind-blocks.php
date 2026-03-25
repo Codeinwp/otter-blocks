@@ -484,7 +484,7 @@ class Atomic_Wind_Blocks {
 			'no_found_rows'  => true,
 		);
 
-		$taxonomy_filter = isset( $block['attrs']['queryTaxonomy'] ) ? sanitize_key( $block['attrs']['queryTaxonomy'] ) : '';
+		$taxonomy_filter = isset( $block['attrs']['queryTaxonomy'] ) ? sanitize_text_field( $block['attrs']['queryTaxonomy'] ) : '';
 		if ( $taxonomy_filter && false !== strpos( $taxonomy_filter, ':' ) ) {
 			$parts = explode( ':', $taxonomy_filter, 2 );
 			$tax   = sanitize_key( $parts[0] );
