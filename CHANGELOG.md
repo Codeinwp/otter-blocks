@@ -1,3 +1,8 @@
+##### [Version 3.1.6](https://github.com/Codeinwp/otter-blocks/compare/v3.1.5...v3.1.6) (2026-03-23)
+
+- Adds experimental atomic-wind blocks
+- Improves handling of boxed values, allowing string values for four-directional properties
+
 ##### [Version 3.1.5](https://github.com/Codeinwp/otter-blocks/compare/v3.1.4...v3.1.5) (2026-02-27)
 
 - Added title for Close button from the Popup block

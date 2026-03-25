@@ -4,7 +4,7 @@
 **Requires at least:** 6.2  
 **Tested up to:** 6.9  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.1.5  
+**Stable tag:** 3.1.6  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
@@ -363,18 +363,18 @@ If you encounter any difficulties or if you have questions about Otter, you can 
 
 The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customized according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
 
+### How to report a security issue? ###
+ 
+Plugin security is a core priority for us. If you identify a potential vulnerability, we ask that you disclose it responsibly.
+
+Please follow the reporting protocols outlined on our [Security Page](https://themeisle.com/security/).
+
 ## Changelog ##
 
-##### [Version 3.1.5](https://github.com/Codeinwp/otter-blocks/compare/v3.1.4...v3.1.5) (2026-02-27)
+##### [Version 3.1.6](https://github.com/Codeinwp/otter-blocks/compare/v3.1.5...v3.1.6) (2026-03-23)
 
-- Added title for Close button from the Popup block
-- Fixed issue when form validation was not appearing when you click on the Submit button
-- Fixed issue with Team Members Pattern having errors in the mobile preview
-- Fixed issue with assets not being enqueued for block template parts
-- Fixed issue where WP Enlarge on click option was not working when using Otters animations
-- Fixed Visibility conditions that were not applied to 767px and 768px screens
-- Fixed tabs broken on mobile view
-- Enhanced security
+- Adds experimental atomic-wind blocks
+- Improves handling of boxed values, allowing string values for four-directional properties
 
 
 
