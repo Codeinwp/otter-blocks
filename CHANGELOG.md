@@ -1,3 +1,7 @@
+##### [Version 3.1.7](https://github.com/Codeinwp/otter-blocks/compare/v3.1.6...v3.1.7) (2026-03-25)
+
+- fixes experimental blocks interactivity state management
+
 ##### [Version 3.1.6](https://github.com/Codeinwp/otter-blocks/compare/v3.1.5...v3.1.6) (2026-03-23)
 
 - Adds experimental atomic-wind blocks
