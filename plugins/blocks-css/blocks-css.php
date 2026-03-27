@@ -67,18 +67,19 @@ add_filter(
 		}
 
 		$config = $configs['default'];
-	
-		$config['message']             = __( 'You use Blocks CSS. Otter Pro includes custom CSS per block, plus advanced blocks and WooCommerce integration. Built by the same team.', 'blocks-css' );
+
+		// translators: 1. Number of free licenses, 2. The price of the product.
+		$config['message']             = sprintf( __( 'You’re using Blocks CSS, and the team behind it is celebrating Black Friday by giving away %1$s licences of Otter Pro. A powerful block collection worth %2$s, with advanced blocks, custom CSS, animations, and WooCommerce integration. Claim yours before they run out.', 'blocks-css' ), 100, '$69' );
 		$config['plugin_meta_message'] = __( 'Black Friday Sale - Get Otter Pro free', 'blocks-css' );
 		$config['sale_url']            = add_query_arg(
 			array(
 				'utm_term' => 'free',
 			),
-			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/otter-bf', 'bfcm', 'blocks-css' ) )
+			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/otter-claim-bf', 'bfcm', 'blocks-css' ) )
 		);
 
 		$configs[ BLOCKS_CSS_PRODUCT_SLUG ] = $config;
 
 		return $configs;
-	} 
+	}
 );

@@ -72,17 +72,18 @@ add_filter(
 
 		$config = $configs['default'];
 
-		$config['message']             = __( 'You use Blocks Animation. Sites like yours get more from Otter Pro: advanced blocks, custom CSS, animations and more. Built by the same team.', 'blocks-animation' );
+		// translators: 1. Number of free licenses, 2. The price of the product.
+		$config['message']             = sprintf( __( 'You’re using Blocks Animation, and the team behind it is celebrating Black Friday by giving away %1$s licences of Otter Pro. A powerful block collection worth %2$s, with advanced blocks, custom CSS, animations, and WooCommerce integration. Claim yours before they run out.', 'blocks-animation' ), 100, '$69' );
 		$config['plugin_meta_message'] = __( 'Black Friday Sale - Get Otter Pro free', 'blocks-animation' );
 		$config['sale_url']            = add_query_arg(
 			array(
 				'utm_term' => 'free',
 			),
-			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/otter-bf', 'bfcm', 'blocks-animation' ) )
+			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/otter-claim-bf', 'bfcm', 'blocks-animation' ) )
 		);
 
 		$configs[ BLOCKS_ANIMATION_PRODUCT_SLUG ] = $config;
 
 		return $configs;
-	} 
+	}
 );
