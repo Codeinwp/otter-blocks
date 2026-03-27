@@ -606,21 +606,30 @@ class Main {
 		$license = apply_filters( 'product_otter_license_key', false );
 		$status  = apply_filters( 'product_otter_license_status', false );
 
-		$is_pro     = 'valid' === $status;
-		$is_expired = 'expired' === $status || 'active-expired' === $status;
+		$is_pro           = 'valid' === $status;
+		$is_expired       = 'expired' === $status || 'active-expired' === $status;
+		$pro_product_slug = defined( 'OTTER_PRO_BASEFILE' ) ? basename( dirname( OTTER_PRO_BASEFILE ) ) : '';
 
 		if ( $is_pro ) {
+			// translators: %s is the discount percentage.
+			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - up to %s off', 'otter-blocks' ), '30%' );
 			// translators: %1$s - discount, %2$s - discount.
 			$message   = sprintf( __( 'Upgrade your Otter Pro plan: %1$s off this week. Already on the plan you need? Renew early and save up to %2$s.', 'otter-blocks' ), '30%', '20%' );
 			$cta_label = __( 'See your options', 'otter-blocks' );
 		} elseif ( $is_expired ) {
-			$message   = __( 'Your Otter Pro features are still here, just locked. Renew at a reduced rate this week.', 'otter-blocks' );
-			$cta_label = __( 'Reactivate now', 'otter-blocks' );
+			// translators: %s is the discount percentage.
+			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - %s off', 'otter-blocks' ), '50%' );
+			// translators: %s is the discount percentage.
+			$config['upgrade_menu_text'] = sprintf( __( 'BF Sale - %s off', 'otter-blocks' ), '50%' );
+			$message                     = __( 'Your Otter Pro features are still here, just locked. Renew at a reduced rate this week.', 'otter-blocks' );
+			$cta_label                   = __( 'Reactivate now', 'otter-blocks' );
 		} else {
-			// translators: %s - discount.
-			$config['title'] = sprintf( __( 'Otter Pro: %s off this week', 'otter-blocks' ), '60%' );
+			// translators: %s is the discount percentage.
+			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - %s off', 'otter-blocks' ), '60%' );
 			// translators: %s is the discount percentage.
 			$config['upgrade_menu_text'] = sprintf( __( 'BF Sale - %s off', 'otter-blocks' ), '60%' );
+			// translators: %s - discount.
+			$config['title'] = sprintf( __( 'Otter Pro: %s off this week', 'otter-blocks' ), '60%' );
 		}
 
 		$url_params = array(
@@ -629,12 +638,8 @@ class Main {
 			'expired'  => $is_expired ? '1' : false,
 		);
 
-		if ( $is_pro || $is_expired ) {
-			// translators: %s is the discount percentage.
-			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - up to %s off', 'otter-blocks' ), '30%' );
-		} else {
-			// translators: %s is the discount percentage.
-			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - %s off', 'otter-blocks' ), '60%' );
+		if ( ( $is_pro || $is_expired ) && ! empty( $pro_product_slug ) ) {
+			$config['plugin_meta_targets'] = array( $pro_product_slug );
 		}
 
 		$config['cta_label'] = $cta_label;
