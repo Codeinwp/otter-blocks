@@ -230,10 +230,23 @@ class Stripe_API {
 			$object['subscription_id'] = $session['subscription'];
 		}
 
+		$items            = $this->create_request( 'session_items', $session_id );
+		$paid_product_ids = array();
+		if ( ! empty( $items['data'] ) ) {
+			foreach ( $items['data'] as $item ) {
+				$price = $this->create_request( 'price', $item['price']['id'] );
+				if ( isset( $price['product'] ) ) {
+					$paid_product_ids[] = $price['product'];
+				}
+			}
+		}
+
 		$queries = [];
 		parse_str( $session['success_url'], $queries );
-		if ( isset( $queries['product_id'] ) ) {
+		if ( isset( $queries['product_id'] ) && in_array( $queries['product_id'], $paid_product_ids, true ) ) {
 			$object['product_id'] = $queries['product_id'];
+		} else {
+			return;
 		}
 
 		array_push( $data, $object );
