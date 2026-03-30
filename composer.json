@@ -72,7 +72,7 @@
 	},
 	"minimum-stability": "dev",
 	"require": {
-		"codeinwp/themeisle-sdk": "^3.2",
+		"codeinwp/themeisle-sdk": "^3.3",
 		"masterminds/html5": "^2.7",
 		"tubalmartin/cssmin": "^4.1",
 		"wptt/webfont-loader": "^1.1",
