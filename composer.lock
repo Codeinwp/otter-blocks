@@ -4,25 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4530d8e3909c9fd175e971fb8ef4b055",
+    "content-hash": "4fddabbc0ea7df1b3c8c1cfa0e3698b7",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.50",
+            "version": "3.3.51",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "3c1f8dfc2390e667bbc086c5d660900a7985efa6"
+                "reference": "bb2a8414b0418b18c68c9ff1df3d7fb10467928d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/3c1f8dfc2390e667bbc086c5d660900a7985efa6",
-                "reference": "3c1f8dfc2390e667bbc086c5d660900a7985efa6",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/bb2a8414b0418b18c68c9ff1df3d7fb10467928d",
+                "reference": "bb2a8414b0418b18c68c9ff1df3d7fb10467928d",
                 "shasum": ""
             },
             "require-dev": {
                 "codeinwp/phpcs-ruleset": "dev-main",
-                "yoast/phpunit-polyfills": "^2.0"
+                "yoast/phpunit-polyfills": "^4.0"
             },
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
@@ -43,9 +43,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.50"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.51"
             },
-            "time": "2025-11-25T19:36:35+00:00"
+            "time": "2026-03-30T07:58:49+00:00"
         },
         {
             "name": "enshrined/svg-sanitize",
@@ -3237,5 +3237,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
