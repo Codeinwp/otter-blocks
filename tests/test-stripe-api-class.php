@@ -109,4 +109,17 @@ class TestStripeAPI extends WP_UnitTestCase {
 
 		$this->assertTrue( 'success' === $status );
 	}
+
+	/**
+	 * Test user purchase the product with correct price id.
+	 */
+	public function test_user_purchase_with_correct_price_id() {
+		wp_set_current_user( 1 );
+
+		$this->stripe_api->save_customer_data( 'sess_wrong_price_product' );
+		$data = $this->stripe_api->get_customer_data();
+
+		$this->assertEmpty( $data );
+		$this->assertFalse( $this->stripe_api->check_purchase( 'prod_1' ) );
+	}
 }
