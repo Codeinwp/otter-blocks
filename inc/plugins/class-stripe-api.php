@@ -230,10 +230,44 @@ class Stripe_API {
 			$object['subscription_id'] = $session['subscription'];
 		}
 
-		$queries = [];
-		parse_str( $session['success_url'], $queries );
-		if ( isset( $queries['product_id'] ) ) {
+		$items            = $this->create_request( 'session_items', $session_id );
+		$paid_product_ids = array();
+		if ( is_wp_error( $items ) || empty( $items['data'] ) || ! is_array( $items['data'] ) ) {
+			return;
+		}
+	
+		foreach ( $items['data'] as $item ) {
+			$product_id = null;
+
+			if ( isset( $item['price']['product'] ) && ! empty( $item['price']['product'] ) ) {
+				$product_id = $item['price']['product'];
+			} elseif ( isset( $item['price']['id'] ) && ! empty( $item['price']['id'] ) ) {
+				$price = $this->create_request( 'price', $item['price']['id'] );
+
+				if ( is_wp_error( $price ) || ! isset( $price['product'] ) ) {
+					continue;
+				}
+
+				if ( isset( $price['product'] ) ) {
+					$product_id = $price['product'];
+				}
+			}
+
+			if ( null !== $product_id ) {
+				$paid_product_ids[] = $product_id;
+			}
+		}
+
+		$queries      = [];
+		$query_string = wp_parse_url( $session['success_url'], PHP_URL_QUERY );
+		if ( ! empty( $query_string ) ) {
+			parse_str( $query_string, $queries );
+		}
+
+		if ( isset( $queries['product_id'] ) && in_array( $queries['product_id'], $paid_product_ids, true ) ) {
 			$object['product_id'] = $queries['product_id'];
+		} else {
+			return;
 		}
 
 		array_push( $data, $object );
