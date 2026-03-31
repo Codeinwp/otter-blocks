@@ -438,7 +438,9 @@ class Dynamic_Content {
 			$key  = $this->get_exception_key( $data, $post->ID );
 
 			if ( ! isset( $data[ $key ] ) ) {
+				remove_filter( 'render_block', array( $this, 'apply_dynamic_content' ), 10 );
 				$excerpt = wp_trim_excerpt( '', $post );
+				add_filter( 'render_block', array( $this, 'apply_dynamic_content' ), 10 );
 			}
 		}
 
@@ -727,8 +729,12 @@ class Dynamic_Content {
 			if ( 'postContent' === $data['type'] ) {
 
 				// To do not trigger postContent action if the given content contains the postContent dynamic tag, because it will cause an infinite loop.
+				$post = get_post( $data['context'] );
+				if ( ! $post instanceof \WP_Post ) {
+					return $data;
+				}
 				$content = get_the_content( $data['context'] );
-				if ( isset( $post ) && strpos( $content, 'data-type="postContent"' ) ) {
+				if ( strpos( $content, 'data-type="postContent"' ) ) {
 					$key = $this->get_exception_key( $data, $post->ID );
 					if ( $key ) {
 						$data[ $key ] = true;
