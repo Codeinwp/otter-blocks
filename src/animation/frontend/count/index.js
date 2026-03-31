@@ -11,7 +11,7 @@ const MAX_PARENT_SEARCH = 3;
 const speedConfig = {
 	'none': undefined,
 	'o-count-slower': 3,
-	'o-count-slow': 2,
+	'o-count-slow': 2.5,
 	'o-count-fast': 1.5,
 	'o-count-faster': 1
 };
