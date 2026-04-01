@@ -4,7 +4,7 @@
 **Requires at least:** 6.2  
 **Tested up to:** 6.9  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.1.7  
+**Stable tag:** 3.1.8  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
@@ -371,9 +371,15 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 ## Changelog ##
 
-##### [Version 3.1.7](https://github.com/Codeinwp/otter-blocks/compare/v3.1.6...v3.1.7) (2026-03-25)
+##### [Version 3.1.8](https://github.com/Codeinwp/otter-blocks/compare/v3.1.7...v3.1.8) (2026-04-01)
 
-- fixes experimental blocks interactivity state management
+- Fixed saving of dynamic post content values
+- Fixed slow animation speed
+- Fixed a PHP undefined array key warning
+- Fixed accordion icon on large titles
+- Fixed over-sanitization of atomic-wind experimental blocks query
+- Improved theme color output by using CSS variables instead of hex codes
+- Enhanced security
 
 
 
