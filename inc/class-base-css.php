@@ -150,7 +150,7 @@ class Base_CSS {
 					'fontfamily'  => $attr['fontFamily'],
 					'fontvariant' => ( isset( $attr['fontVariant'] ) && ! empty( $attr['fontVariant'] ) ? array( $attr['fontVariant'] ) : array() ),
 				);
-			} elseif ( ! in_array( $attr['fontVariant'], self::$google_fonts[ $attr['fontFamily'] ]['fontvariant'], true ) ) {
+			} elseif ( isset( $attr['fontVariant'] ) && ! empty( $attr['fontVariant'] ) && ! in_array( $attr['fontVariant'], self::$google_fonts[ $attr['fontFamily'] ]['fontvariant'], true ) ) {
 					array_push( self::$google_fonts[ $attr['fontFamily'] ]['fontvariant'], ( isset( $attr['fontStyle'] ) && 'italic' === $attr['fontStyle'] ) ? $attr['fontVariant'] . ':i' : $attr['fontVariant'] );
 			}
 		}
