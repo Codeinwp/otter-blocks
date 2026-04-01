@@ -25,7 +25,7 @@ import {
 	useCSSNode
 } from '../../../helpers/block-utility.js';
 
-import { useDarkBackground } from '../../../helpers/utility-hooks.js';
+import { useDarkBackground, useColorResolver } from '../../../helpers/utility-hooks.js';
 
 // @ts-ignore
 import faIcons from '../../../../../assets/fontawesome/fa-icons.json';
@@ -70,12 +70,13 @@ const Edit = ({
 	}, []);
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+	const resolveColor = useColorResolver();
 
 	const inlineStyles = {
-		'--title-color': getValue( 'titleColor' ),
-		'--title-background': getValue( 'titleBackground' ),
-		'--content-background': getValue( 'contentBackground' ),
-		'--border-color': getValue( 'borderColor' ),
+		'--title-color': resolveColor( getValue( 'titleColor' ) ),
+		'--title-background': resolveColor( getValue( 'titleBackground' ) ),
+		'--content-background': resolveColor( getValue( 'contentBackground' ) ),
+		'--border-color': resolveColor( getValue( 'borderColor' ) ),
 		'--border-width': getValue( 'borderWidth' ),
 		'--box-shadow': attributes.boxShadow.active && `${attributes.boxShadow.horizontal}px ${attributes.boxShadow.vertical}px ${attributes.boxShadow.blur}px ${attributes.boxShadow.spread}px ${hex2rgba( attributes.boxShadow.color, attributes.boxShadow.colorOpacity )}`,
 		'--padding': boxValues( attributes.padding, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
@@ -119,8 +120,8 @@ const Edit = ({
 
 	const [ activeCSSNodeName, setActiveNodeCSS ] = useCSSNode();
 	useEffect( () => {
-		const activeTitleColor = getValue( 'activeTitleColor' );
-		const activeTitleBackground = getValue( 'activeTitleBackground' );
+		const activeTitleColor = resolveColor( getValue( 'activeTitleColor' ) );
+		const activeTitleBackground = resolveColor( getValue( 'activeTitleBackground' ) );
 
 		setActiveNodeCSS([
 			...( activeTitleColor ? [ `> * > * > .wp-block-themeisle-blocks-accordion-item.is-open > .wp-block-themeisle-blocks-accordion-item__title {

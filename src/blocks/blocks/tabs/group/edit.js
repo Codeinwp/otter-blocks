@@ -38,7 +38,7 @@ import Controls from './controls.js';
 import { blockInit, getDefaultValueByField } from '../../../helpers/block-utility.js';
 import { boxToCSS, objectOrNumberAsBox, _px } from '../../../helpers/helper-functions';
 import BlockAppender from '../../../components/block-appender-button';
-import { useDarkBackground } from '../../../helpers/utility-hooks.js';
+import { useDarkBackground, useColorResolver } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -168,6 +168,9 @@ const Edit = ({
 
 	useDarkBackground( attributes.tabColor, attributes, setAttributes );
 
+	// Get color resolver to handle theme color slugs
+	const resolveColor = useColorResolver();
+
 	/**
 	 * ------------ Tab Actions ------------
 	 */
@@ -213,14 +216,14 @@ const Edit = ({
 	const inlineStyles = {
 		'--title-border-width': boxToCSS( getSyncValue( 'titleBorderWidth' ) ),
 		'--border-width': boxToCSS( _px( getSyncValue( 'borderWidth' ) ) ),
-		'--border-color': getSyncValue( 'borderColor' ),
-		'--title-color': getSyncValue( 'titleColor' ),
-		'--title-background': getSyncValue( 'titleBackgroundColor' ),
-		'--tab-color': getSyncValue( 'tabColor' ),
-		'--active-title-color': getSyncValue( 'activeTitleColor' ),
-		'--active-title-background': getSyncValue( 'activeTitleBackgroundColor' ),
-		'--active-title-border-color': getSyncValue( 'activeBorderColor' ),
-		'--content-text-color': getSyncValue( 'contentTextColor' ),
+		'--border-color': resolveColor( getSyncValue( 'borderColor' ) ),
+		'--title-color': resolveColor( getSyncValue( 'titleColor' ) ),
+		'--title-background': resolveColor( getSyncValue( 'titleBackgroundColor' ) ),
+		'--tab-color': resolveColor( getSyncValue( 'tabColor' ) ),
+		'--active-title-color': resolveColor( getSyncValue( 'activeTitleColor' ) ),
+		'--active-title-background': resolveColor( getSyncValue( 'activeTitleBackgroundColor' ) ),
+		'--active-title-border-color': resolveColor( getSyncValue( 'activeBorderColor' ) ),
+		'--content-text-color': resolveColor( getSyncValue( 'contentTextColor' ) ),
 		'--title-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
 		'--content-padding': boxToCSS( getSyncValue( 'contentPadding' ) ),
 		'--border-side-width': 'left' === attributes.tabsPosition ?  objectOrNumberAsBox( getSyncValue( 'borderWidth' ) )?.left :  objectOrNumberAsBox( getSyncValue( 'borderWidth' ) )?.top,

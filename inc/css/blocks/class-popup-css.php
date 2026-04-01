@@ -56,14 +56,23 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property' => '--background-color',
 						'value'    => 'backgroundColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--close-color',
 						'value'    => 'closeColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--overlay-color',
 						'value'    => 'overlayColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--overlay-opacity',
@@ -89,6 +98,9 @@ class Popup_CSS extends Base_CSS {
 					array(
 						'property' => '--brd-color',
 						'value'    => 'borderColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--brd-style',

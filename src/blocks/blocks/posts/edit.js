@@ -54,7 +54,8 @@ import {
 } from '../../helpers/helper-functions.js';
 import {
 	useDarkBackground,
-	useResponsiveAttributes
+	useResponsiveAttributes,
+	useColorResolver
 } from '../../helpers/utility-hooks.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
@@ -240,6 +241,9 @@ const Edit = ({
 
 	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
+	// Get color resolver to handle theme color slugs
+	const resolveColor = useColorResolver();
+
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const imageBoxShadow = getValue( 'imageBoxShadow' );
@@ -258,10 +262,10 @@ const Edit = ({
 		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hex2rgba( boxShadow.color, boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
 		'--text-align': attributes.textAlign,
-		'--text-color': attributes.textColor,
-		'--background-color': attributes.backgroundColor,
+		'--text-color': resolveColor( attributes.textColor ),
+		'--background-color': resolveColor( attributes.backgroundColor ),
 		'--background-overlay': attributes.backgroundOverlay || '#0000005e',
-		'--border-color': attributes.borderColor,
+		'--border-color': resolveColor( attributes.borderColor ),
 		'--content-gap': attributes.contentGap,
 		'--img-width': responsiveGetAttributes([ _px( attributes.imageWidth ), attributes.imageWidthTablet, attributes.imageWidthMobile ]),
 		'--img-width-tablet': attributes.imageWidthTablet,

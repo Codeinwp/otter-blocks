@@ -203,6 +203,54 @@ class Base_CSS {
 	}
 
 	/**
+	 * Convert a color slug to a CSS variable reference.
+	 * WordPress generates CSS variables in the format: --wp--preset--color--{slug}
+	 *
+	 * @param string|null $slug The color slug.
+	 * @return string|null The CSS variable reference.
+	 * @since   3.1.5
+	 * @access  public
+	 */
+	public static function get_color_css_variable( $slug ) {
+		if ( empty( $slug ) ) {
+			return $slug;
+		}
+
+		// If it's already a color value or CSS variable, return as-is.
+		if (
+			strpos( $slug, '#' ) === 0 ||
+			strpos( $slug, 'rgb' ) === 0 ||
+			strpos( $slug, 'hsl' ) === 0 ||
+			strpos( $slug, 'var(' ) === 0
+		) {
+			return $slug;
+		}
+
+		// Sanitize slug: WordPress slugs should only contain lowercase alphanumeric, hyphens, and underscores.
+		// This prevents potential CSS injection if slug comes from untrusted sources.
+		$sanitized_slug = strtolower( preg_replace( '/[^a-z0-9-_]/', '', $slug ) );
+
+		// Convert slug to CSS variable.
+		return 'var(--wp--preset--color--' . $sanitized_slug . ')';
+	}
+
+	/**
+	 * Resolve a color value which may be a slug from the theme color palette.
+	 * This function converts slugs to CSS variables to preserve the connection to theme.json.
+	 * If the value is a slug, it returns a CSS variable reference.
+	 * Otherwise, returns the value as-is (for hex, rgb, hsl values).
+	 *
+	 * @param string|null $value The color value or slug.
+	 * @return string|null The CSS variable or color value.
+	 * @since   3.1.5
+	 * @access  public
+	 */
+	public static function resolve_color_value( $value ) {
+		// Use CSS variable conversion for slugs.
+		return self::get_color_css_variable( $value );
+	}
+
+	/**
 	 * Get Blocks CSS
 	 *
 	 * @param int $post_id Post id.

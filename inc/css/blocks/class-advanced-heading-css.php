@@ -44,10 +44,16 @@ class Advanced_Heading_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'headingColor',
+						'format'   => function ( $value, $attrs ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => 'background',
 						'value'    => 'backgroundColor',
+						'format'   => function ( $value, $attrs ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => 'font-family',
@@ -225,10 +231,16 @@ class Advanced_Heading_CSS extends Base_CSS {
 			array(
 				'property' => 'color',
 				'value'    => 'highlightColor',
+				'format'   => function ( $value, $attrs ) {
+					return Base_CSS::resolve_color_value( $value );
+				},
 			),
 			array(
 				'property' => 'background',
 				'value'    => 'highlightBackground',
+				'format'   => function ( $value, $attrs ) {
+					return Base_CSS::resolve_color_value( $value );
+				},
 			),
 		);
 
@@ -537,6 +549,9 @@ class Advanced_Heading_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'linkColor',
+						'format'   => function ( $value, $attrs ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 				),
 			)
@@ -549,6 +564,9 @@ class Advanced_Heading_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'linkHoverColor',
+						'format'   => function ( $value, $attrs ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 				),
 			)
