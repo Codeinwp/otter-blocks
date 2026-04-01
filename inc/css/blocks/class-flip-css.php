@@ -96,6 +96,9 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => '--border-color',
 						'value'    => 'borderColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property'  => '--border-width',
@@ -136,6 +139,9 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property'  => '--front-background',
 						'value'     => 'frontBackgroundColor',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return ! isset( $attrs['frontBackgroundType'] );
 						},
@@ -198,6 +204,9 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property'  => '--back-background',
 						'value'     => 'backBackgroundColor',
+						'format'    => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 						'condition' => function ( $attrs ) {
 							return ! isset( $attrs['backBackgroundType'] );
 						},
@@ -373,6 +382,9 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'titleColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => 'font-size',
@@ -392,6 +404,9 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'descriptionColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => 'font-size',

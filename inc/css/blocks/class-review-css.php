@@ -79,41 +79,65 @@ class Review_CSS extends Base_CSS {
 						array(
 							'property' => '--background-color',
 							'value'    => 'backgroundColor',
+							'format'   => function ( $value ) {
+								return Base_CSS::resolve_color_value( $value );
+							},
 							'hasSync'  => 'review-background-color',
 						),
 						array(
 							'property' => '--primary-color',
 							'value'    => 'primaryColor',
+							'format'   => function ( $value ) {
+								return Base_CSS::resolve_color_value( $value );
+							},
 							'hasSync'  => 'review-primary-color',
 						),
 						array(
 							'property' => '--text-color',
 							'value'    => 'textColor',
+							'format'   => function ( $value ) {
+								return Base_CSS::resolve_color_value( $value );
+							},
 							'hasSync'  => 'review-text-color',
 						),
 						array(
 							'property' => '--button-text-color',
 							'value'    => 'buttonTextColor',
+							'format'   => function ( $value ) {
+								return Base_CSS::resolve_color_value( $value );
+							},
 							'hasSync'  => 'review-button-text-color',
 						),
 						array(
 							'property' => '--border-color',
 							'value'    => 'borderColor',
+							'format'   => function ( $value ) {
+								return Base_CSS::resolve_color_value( $value );
+							},
 							'hasSync'  => 'review-border-color',
 						),
 						array(
 							'property' => '--stars-color',
 							'value'    => 'starsColor',
+							'format'   => function ( $value ) {
+								return Base_CSS::resolve_color_value( $value );
+							},
 							'hasSync'  => 'review-stars-color',
 						),
 						array(
 							'property' => '--pros-color',
 							'value'    => 'prosColor',
+							'format'   => function ( $value ) {
+								return Base_CSS::resolve_color_value( $value );
+							},
 							'hasSync'  => 'review-pros-color',
 						),
 						array(
 							'property' => '--cons-color',
 							'value'    => 'consColor',
+							'format'   => function ( $value ) {
+								return Base_CSS::resolve_color_value( $value );
+							},
 							'hasSync'  => 'review-cons-color',
 						),
 						array(
@@ -225,34 +249,58 @@ class Review_CSS extends Base_CSS {
 					array(
 						'property' => '--review-background-color',
 						'value'    => 'backgroundColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--review-primary-color',
 						'value'    => 'primaryColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--review-text-color',
 						'value'    => 'textColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--review-button-text-color',
 						'value'    => 'buttonTextColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--review-stars-color',
 						'value'    => 'starsColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--review-border-color',
 						'value'    => 'borderColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--review-pros-color',
 						'value'    => 'prosColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--review-cons-color',
 						'value'    => 'consColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 				),
 			)

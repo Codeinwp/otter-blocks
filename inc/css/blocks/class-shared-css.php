@@ -22,18 +22,30 @@ class Shared_CSS {
 			array(
 				'property' => '--text-color',
 				'value'    => 'color',
+				'format'   => function ( $value ) {
+					return Base_CSS::resolve_color_value( $value );
+				},
 			),
 			array(
 				'property' => '--link-color',
 				'value'    => 'linkColor',
+				'format'   => function ( $value ) {
+					return Base_CSS::resolve_color_value( $value );
+				},
 			),
 			array(
 				'property' => '--content-color-hover',
 				'value'    => 'colorHover',
+				'format'   => function ( $value ) {
+					return Base_CSS::resolve_color_value( $value );
+				},
 			),
 			array(
 				'property'  => '--background',
 				'value'     => 'backgroundColor',
+				'format'    => function ( $value ) {
+					return Base_CSS::resolve_color_value( $value );
+				},
 				'condition' => function ( $attrs ) {
 					return ! ( isset( $attrs['backgroundType'] ) && 'color' !== $attrs['backgroundType'] );
 				},
@@ -209,6 +221,9 @@ class Shared_CSS {
 			array(
 				'property'  => 'border-color',
 				'value'     => 'borderColor',
+				'format'    => function ( $value ) {
+					return Base_CSS::resolve_color_value( $value );
+				},
 				'condition' => function ( $attrs ) {
 					return isset( $attrs['border'] ) && is_array( $attrs['border'] );
 				},
@@ -278,16 +293,18 @@ class Shared_CSS {
 						'value'   => 'boxShadowColor',
 						'default' => '#000',
 						'format'  => function ( $value, $attrs ) {
+							$resolved = Base_CSS::resolve_color_value( $value );
+							
 							if ( ! isset( $attrs['boxShadowColorOpacity'] ) ) {
-								return $value;
+								return $resolved;
 							}
 
 							if ( 100 === $attrs['boxShadowColorOpacity'] ) {
-								return $value;
+								return $resolved;
 							}
 
 							$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 ) / 100;
-							return Base_CSS::hex2rgba( $value, $opacity );
+							return Base_CSS::hex2rgba( $resolved, $opacity );
 						},
 					),
 				),
@@ -308,6 +325,9 @@ class Shared_CSS {
 			array(
 				'property'  => 'background',
 				'value'     => 'backgroundOverlayColor',
+				'format'    => function ( $value ) {
+					return Base_CSS::resolve_color_value( $value );
+				},
 				'condition' => function ( $attrs ) {
 					return ! ( isset( $attrs['backgroundOverlayType'] ) && 'color' !== $attrs['backgroundOverlayType'] );
 				},

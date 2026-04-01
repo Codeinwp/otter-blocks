@@ -47,7 +47,7 @@ import {
 	getDefaultValueByField
 } from '../../helpers/block-utility.js';
 
-import { useDarkBackground } from '../../helpers/utility-hooks.js';
+import { useDarkBackground, useColorResolver } from '../../helpers/utility-hooks.js';
 import { _px } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
@@ -116,6 +116,9 @@ const Edit = ({
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
+	// Get color resolver to handle theme color slugs
+	const resolveColor = useColorResolver();
+
 	useDarkBackground( getValue( 'backgroundColor' ), attributes, setAttributes );
 
 	const overallRatings = ( attributes.features.reduce( ( accumulator, feature ) => accumulator + feature.rating, 0 ) / attributes.features.length ).toFixed( 1 );
@@ -153,14 +156,14 @@ const Edit = ({
 	const boxShadow = getValue( 'boxShadow' );
 
 	const inlineStyles = {
-		'--background-color': getValue( 'backgroundColor' ),
-		'--primary-color': getValue( 'primaryColor' ),
-		'--text-color': getValue( 'textColor' ),
-		'--button-text-color': getValue( 'buttonTextColor' ),
-		'--border-color': getValue( 'borderColor' ),
-		'--stars-color': getValue( 'starsColor' ),
-		'--pros-color': getValue( 'prosColor' ),
-		'--cons-color': getValue( 'consColor' ),
+		'--background-color': resolveColor( getValue( 'backgroundColor' ) ),
+		'--primary-color': resolveColor( getValue( 'primaryColor' ) ),
+		'--text-color': resolveColor( getValue( 'textColor' ) ),
+		'--button-text-color': resolveColor( getValue( 'buttonTextColor' ) ),
+		'--border-color': resolveColor( getValue( 'borderColor' ) ),
+		'--stars-color': resolveColor( getValue( 'starsColor' ) ),
+		'--pros-color': resolveColor( getValue( 'prosColor' ) ),
+		'--cons-color': resolveColor( getValue( 'consColor' ) ),
 		'--content-font-size': getValue( 'contentFontSize' ),
 		...( attributes?.padding?.top && { '--padding-desktop-top': attributes.padding.top }),
 		...( attributes?.padding?.bottom && { '--padding-desktop-bottom': attributes.padding.bottom }),

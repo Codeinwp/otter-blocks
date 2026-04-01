@@ -37,7 +37,8 @@ import { boxValues, _cssBlock, _px } from '../../helpers/helper-functions';
 import { makeBox } from '../../plugins/copy-paste/utils';
 import {
 	useDarkBackground,
-	useResponsiveAttributes
+	useResponsiveAttributes,
+	useColorResolver
 } from '../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
@@ -62,6 +63,9 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
+
+	// Get color resolver to handle theme color slugs
+	const resolveColor = useColorResolver();
 
 	const changeContent = value => {
 		setAttributes({ content: value });
@@ -153,14 +157,14 @@ const Edit = ({
 			attributes.fontSizeTablet,
 			attributes.fontSizeMobile
 		]),
-		color: attributes.headingColor,
+		color: resolveColor( attributes.headingColor ),
 		fontFamily: attributes.fontFamily || undefined,
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
 		fontStyle: attributes.fontStyle || undefined,
 		textTransform: attributes.textTransform || undefined,
 		lineHeight: ( ( ! isString( attributes.lineHeight ) &&  3 < attributes.lineHeight ) ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
 		letterSpacing: _px( attributes.letterSpacing ),
-		background: attributes.backgroundColor,
+		background: resolveColor( attributes.backgroundColor ),
 		...textShadowStyle,
 		...inlineStyle
 	}, x => x?.includes?.( 'undefined' ) );
@@ -182,18 +186,18 @@ const Edit = ({
 			<style>
 				{
 					`#block-${ clientId } mark, #block-${ clientId } .highlight ` + _cssBlock([
-						[ 'color', attributes.highlightColor ],
-						[ 'background', attributes.highlightBackground ]
+						[ 'color', resolveColor( attributes.highlightColor ) ],
+						[ 'background', resolveColor( attributes.highlightBackground ) ]
 					])
 				}
 				{
 					`#block-${ clientId } a` + _cssBlock([
-						[ 'color', attributes.linkColor  ]
+						[ 'color', resolveColor( attributes.linkColor )  ]
 					])
 				}
 				{
 					`#block-${ clientId } a:hover` + _cssBlock([
-						[ 'color', attributes.linkHoverColor  ]
+						[ 'color', resolveColor( attributes.linkHoverColor )  ]
 					])
 				}
 			</style>

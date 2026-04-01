@@ -8,7 +8,7 @@ import { useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFromColor } from './helper-functions.js';
+import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFromColor, getColorCSSVariable } from './helper-functions.js';
 
 /**
  * Utiliy hook to get/set responsive attributes.
@@ -37,8 +37,10 @@ export const useResponsiveAttributes = ( setAttributes = () => {}) => useSelect(
  */
 export const useDarkBackground = ( backgroundColor, attributes, setAttributes, darkClassName = 'has-dark-bg', lightClassName = 'has-light-bg' ) => {
 	useEffect( () => {
-		const isDark = 'dark' === lightnessFromColor( backgroundColor );
-		const isLight = 'light' === lightnessFromColor( backgroundColor );
+		// Resolve color slugs to CSS variables before checking lightness
+		const resolvedColor = getColorCSSVariable( backgroundColor );
+		const isDark = 'dark' === lightnessFromColor( resolvedColor );
+		const isLight = 'light' === lightnessFromColor( resolvedColor );
 
 		let classes = attributes.className || '';
 
@@ -66,4 +68,17 @@ export const useDarkBackground = ( backgroundColor, attributes, setAttributes, d
 
 		setAttributes({ className: classes });
 	}, [ backgroundColor ]);
+};
+
+/**
+ * Utility hook to resolve color slugs from the theme palette.
+ * Returns a function that can resolve a color value (which may be a slug) to a CSS variable.
+ * This preserves the connection to theme.json colors.
+ *
+ * @return {Function} A function that resolves color values/slugs.
+ */
+export const useColorResolver = () => {
+	// Return the getColorCSSVariable function directly
+	// We don't need the palette since we use CSS variables
+	return getColorCSSVariable;
 };
