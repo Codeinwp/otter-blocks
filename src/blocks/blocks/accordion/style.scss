@@ -166,6 +166,7 @@
 
 	&:not( .has-icon ) > &-item:not([open]) > &-item__title::after {
 		transform: rotate(45deg) translate(-25%, 0%);
+		flex-shrink: 0;
 	}
 
 	&:not( .has-open-icon ) > &-item[open] > &-item__title::after {
