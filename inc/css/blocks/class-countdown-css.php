@@ -78,10 +78,16 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => '--background-color',
 						'value'    => 'backgroundColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--border-color',
 						'value'    => 'borderColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 					array(
 						'property' => '--border-style',
@@ -279,6 +285,9 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'valueColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 				),
 			)
@@ -291,6 +300,9 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'labelColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 				),
 			)
@@ -303,6 +315,9 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'separatorColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 				),
 			)

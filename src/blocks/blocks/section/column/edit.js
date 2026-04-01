@@ -38,7 +38,7 @@ import {
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
 import { _cssBlock } from '../../../helpers/helper-functions';
-import { useDarkBackground } from '../../../helpers/utility-hooks.js';
+import { useDarkBackground, useColorResolver } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -103,6 +103,9 @@ const Edit = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	// Get color resolver to handle theme color slugs
+	const resolveColor = useColorResolver();
 
 	useEffect( () => {
 		if ( 1 < parentBlock.innerBlocks.length ) {
@@ -223,7 +226,7 @@ const Edit = ({
 
 	if ( 'color' === attributes.backgroundType ) {
 		background = {
-			'--background': attributes.backgroundColor
+			'--background': resolveColor( attributes.backgroundColor )
 		};
 	}
 
@@ -250,7 +253,7 @@ const Edit = ({
 			borderBottomWidth: attributes.border.bottom,
 			borderLeftWidth: attributes.border.left,
 			borderStyle: 'solid',
-			borderColor: attributes.borderColor
+			borderColor: resolveColor( attributes.borderColor )
 		};
 	}
 
@@ -264,8 +267,9 @@ const Edit = ({
 	}
 
 	if ( true === attributes.boxShadow ) {
+		const resolvedBoxShadowColor = resolveColor( attributes.boxShadowColor );
 		boxShadowStyle = {
-			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${ attributes.boxShadowColor.includes( 'var(' ) && ( attributes.boxShadowColorOpacity === undefined || 100 === attributes.boxShadowColorOpacity ) ? attributes.boxShadowColor : hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
+			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${ resolvedBoxShadowColor?.includes( 'var(' ) && ( attributes.boxShadowColorOpacity === undefined || 100 === attributes.boxShadowColorOpacity ) ? resolvedBoxShadowColor : hexToRgba( ( resolvedBoxShadowColor || '#000000' ), attributes.boxShadowColorOpacity ) }`
 		};
 	}
 
@@ -281,8 +285,8 @@ const Edit = ({
 		...borderStyle,
 		...borderRadiusStyle,
 		...boxShadowStyle,
-		'--link-color': attributes.linkColor,
-		'--background-color-hover': attributes.backgroundColorHover
+		'--link-color': resolveColor( attributes.linkColor ),
+		'--background-color-hover': resolveColor( attributes.backgroundColorHover )
 	};
 
 	if ( attributes.verticalAlign ) {
@@ -291,7 +295,7 @@ const Edit = ({
 
 	if ( 'color' === attributes.backgroundOverlayType ) {
 		overlayBackground = {
-			background: attributes.backgroundOverlayColor,
+			background: resolveColor( attributes.backgroundOverlayColor ),
 			opacity: attributes.backgroundOverlayOpacity / 100
 		};
 	}
@@ -333,12 +337,12 @@ const Edit = ({
 			<style>
 				{
 					`#block-${ clientId }` + _cssBlock([
-						[ '--text-color', attributes.color ]
+						[ '--text-color', resolveColor( attributes.color ) ]
 					])
 				}
 				{
 					`#block-${ clientId }:hover` + _cssBlock([
-						[ '--text-color', attributes.colorHover ]
+						[ '--text-color', resolveColor( attributes.colorHover ) ]
 					])
 				}
 			</style>

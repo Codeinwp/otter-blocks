@@ -67,10 +67,10 @@ class Circle_Counter_CSS extends Base_CSS {
 							$percentage = isset( $attrs['percentage'] ) ? $attrs['percentage'] : 50;
 
 							if ( 50 > $percentage ) {
-								return isset( $attrs['progressColor'] ) ? $attrs['progressColor'] : '#3878ff';
+								return isset( $attrs['progressColor'] ) ? Base_CSS::resolve_color_value( $attrs['progressColor'] ) : '#3878ff';
 							}
 
-							return $value;
+							return Base_CSS::resolve_color_value( $value );
 						},
 					),
 					array(
@@ -80,10 +80,10 @@ class Circle_Counter_CSS extends Base_CSS {
 							$percentage = isset( $attrs['percentage'] ) ? $attrs['percentage'] : 50;
 
 							if ( 50 > $percentage ) {
-								return isset( $attrs['backgroundColor'] ) ? $attrs['backgroundColor'] : '#4682b426';
+								return isset( $attrs['backgroundColor'] ) ? Base_CSS::resolve_color_value( $attrs['backgroundColor'] ) : '#4682b426';
 							}
 
-							return $value;
+							return Base_CSS::resolve_color_value( $value );
 						},
 					),
 					array(
@@ -132,6 +132,9 @@ class Circle_Counter_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'titleColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 				),
 			)
@@ -144,6 +147,9 @@ class Circle_Counter_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'progressColor',
+						'format'   => function ( $value ) {
+							return Base_CSS::resolve_color_value( $value );
+						},
 					),
 				),
 			)

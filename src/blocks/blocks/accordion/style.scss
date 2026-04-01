@@ -162,6 +162,7 @@
 		border-bottom: 2px solid currentColor;
 		width: 8px;
 		height: 8px;
+		flex-shrink: 0;
 	}
 
 	&:not( .has-icon ) > &-item:not([open]) > &-item__title::after {

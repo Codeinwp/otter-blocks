@@ -22,6 +22,7 @@ import Inspector from './inspector.js';
 import themeIsleIcons from './../../helpers/themeisle-icons';
 import { blockInit, getDefaultValueByField } from '../../helpers/block-utility.js';
 import { _cssBlock, boxValues } from '../../helpers/helper-functions';
+import { useColorResolver } from '../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -58,12 +59,15 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	// Get color resolver to handle theme color slugs
+	const resolveColor = useColorResolver();
+
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const inlineStyles = {
-		'--border-color': attributes.borderColor,
+		'--border-color': resolveColor( attributes.borderColor ),
 		'--border-size': attributes.borderSize !== undefined && `${attributes.borderSize }px`,
 		'--border-radius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }%`,
 		'--margin': ! isObjectLike( getValue( 'margin' ) ) ? getValue( 'margin' ) + 'px' : boxValues( getValue( 'margin' ), { top: '5px', right: '5px', bottom: '5px', left: '5px' }),
@@ -97,30 +101,30 @@ const Edit = ({
 				<style>
 					{
 						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container` + _cssBlock([
-							[ 'color', getValue( 'textColor' ) ],
-							[ 'background-color', getValue( 'backgroundColor' ) ]
+							[ 'color', resolveColor( getValue( 'textColor' ) ) ],
+							[ 'background-color', resolveColor( getValue( 'backgroundColor' ) ) ]
 						])
 					}
 					{
 						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container:hover` + _cssBlock([
-							[ 'color', getValue( 'textColorHover' ) ],
-							[ 'background-color', getValue( 'backgroundColorHover' ) ],
-							[ 'border-color', attributes.borderColorHover ]
+							[ 'color', resolveColor( getValue( 'textColorHover' ) ) ],
+							[ 'background-color', resolveColor( getValue( 'backgroundColorHover' ) ) ],
+							[ 'border-color', resolveColor( attributes.borderColorHover ) ]
 						])
 					}
 					{
 						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container a {` + _cssBlock([
-							[ 'color', getValue( 'textColor' ) ]
+							[ 'color', resolveColor( getValue( 'textColor' ) ) ]
 						])
 					}
 					{
 						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container svg` + _cssBlock([
-							[ 'fill', getValue( 'textColor' ) ]
+							[ 'fill', resolveColor( getValue( 'textColor' ) ) ]
 						])
 					}
 					{
 						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container:hover svg` + _cssBlock([
-							[ 'fill', getValue( 'textColorHover' ) ]
+							[ 'fill', resolveColor( getValue( 'textColorHover' ) ) ]
 						])
 					}
 				</style>

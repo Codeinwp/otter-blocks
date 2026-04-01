@@ -1,7 +1,8 @@
 const CircularProgressBar = ({
 	attributes,
 	progressRef,
-	valueRef
+	valueRef,
+	resolveColor
 }) => {
 	const size = attributes.height;
 	const center = size / 2;
@@ -32,7 +33,7 @@ const CircularProgressBar = ({
 					r={ radius }
 					strokeWidth={ attributes.strokeWidth }
 					style={ {
-						stroke: attributes.backgroundColor
+						stroke: resolveColor( attributes.backgroundColor )
 					} }
 				/>
 				<circle
@@ -44,7 +45,7 @@ const CircularProgressBar = ({
 					strokeWidth={ attributes.strokeWidth }
 					strokeDasharray={ circumference }
 					style={ {
-						stroke: attributes.progressColor
+						stroke: resolveColor( attributes.progressColor )
 					} }
 				/>
 				<text
@@ -53,7 +54,7 @@ const CircularProgressBar = ({
 					x="50%"
 					y="50%"
 					style={ {
-						fill: attributes.progressColor,
+						fill: resolveColor( attributes.progressColor ),
 						fontSize: attributes.fontSizePercent + 'px'
 					} }
 				>

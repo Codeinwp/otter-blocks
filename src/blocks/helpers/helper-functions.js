@@ -331,14 +331,22 @@ export const hex2rgba = ( color, alpha = 100 ) => {
  * @return {string|boolean}
  */
 export const lightnessFromColor = color => {
-	if ( ! color ) {
+	// Handle falsy values and non-string types
+	if ( ! color || typeof color !== 'string' ) {
 		return false;
 	}
 
 	let value = color;
 
+	// Handle CSS variables
 	if ( color.startsWith( 'var(' ) ) {
-		value = getComputedStyle( document.documentElement ).getPropertyValue( color.slice( 4, -1 ) ).trim();
+		// Check if we're in a browser environment
+		if ( typeof document !== 'undefined' && document.documentElement ) {
+			value = getComputedStyle( document.documentElement ).getPropertyValue( color.slice( 4, -1 ) ).trim();
+		} else {
+			// In test/non-browser environment, can't resolve CSS variables
+			return false;
+		}
 	}
 
 	// Convert hex to RGB if necessary
@@ -351,13 +359,66 @@ export const lightnessFromColor = color => {
 	}
 
 	// Extract the red, green, and blue values
-	const [ r, g, b ] = value.match( /\d+/g ).map( Number );
+	const matches = value.match( /\d+/g );
+	if ( ! matches || matches.length < 3 ) {
+		// Invalid color format
+		return false;
+	}
+	
+	const [ r, g, b ] = matches.map( Number );
 
 	// Calculate the brightness value
 	const brightness = ( 0.299 * r ) + ( 0.587 * g ) + ( 0.114 * b );
 
 	// Compare the brightness to a threshold
 	return 128 > brightness ? 'dark' : 'light';
+};
+
+/**
+ * Convert a color slug to a CSS variable reference.
+ * WordPress generates CSS variables in the format: --wp--preset--color--{slug}
+ *
+ * @param {string|undefined} slug The color slug
+ * @return {string|undefined} The CSS variable reference
+ */
+export const getColorCSSVariable = ( slug ) => {
+	// Handle all falsy values and non-string types
+	if ( ! slug || typeof slug !== 'string' ) {
+		return slug;
+	}
+
+	// If it's already a color value or CSS variable, return as-is
+	if (
+		slug.startsWith( '#' ) ||
+		slug.startsWith( 'rgb' ) ||
+		slug.startsWith( 'hsl' ) ||
+		slug.startsWith( 'var(' )
+	) {
+		return slug;
+	}
+
+	// Sanitize slug: WordPress slugs should only contain lowercase alphanumeric, hyphens, and underscores
+	// This prevents potential CSS injection if slug comes from untrusted sources
+	const sanitizedSlug = slug.toLowerCase().replace( /[^a-z0-9-_]/g, '' );
+
+	// Convert slug to CSS variable
+	return `var(--wp--preset--color--${ sanitizedSlug })`;
+};
+
+/**
+ * Resolve a color value which may be a slug from the color palette.
+ * This function converts slugs to CSS variables to preserve the connection to theme.json.
+ * If the value is a slug, it returns a CSS variable reference.
+ * Otherwise, returns the value as-is (for hex, rgb, hsl values).
+ *
+ * @deprecated The palette parameter is deprecated and no longer used. Use getColorCSSVariable() directly.
+ * @param {string|undefined} value   The color value or slug
+ * @param {Array}            palette Optional color palette array (deprecated, no longer used)
+ * @return {string|undefined} The CSS variable or color value
+ */
+export const resolveColorValue = ( value, palette = null ) => {
+	// Use CSS variable conversion for slugs
+	return getColorCSSVariable( value );
 };
 
 /**
