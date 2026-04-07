@@ -93,6 +93,10 @@ const Preview = ({
 			</div>
 		);
 	}
+	const featuredPost = posts?.[0];
+	const featuredPostAuthor = authors?.find(
+		( author ) => author?.id === featuredPost?.author
+	);
 
 	return (
 		<div { ...blockProps } style={ inlineStyles }>
@@ -100,9 +104,9 @@ const Preview = ({
 				{ attributes.enableFeaturedPost && (
 					<FeaturedPost
 						attributes={ attributes }
-						post={ posts?.[0] }
+						post={ featuredPost }
 						categoriesList={ categoriesList }
-						author={ authors[0] }
+						author={ featuredPostAuthor }
 					/>
 				) }
 
