@@ -64,6 +64,63 @@ import { styles } from './constants.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+const Preview = ({
+	posts,
+	categoriesList,
+	authors,
+	blockProps,
+	inlineStyles,
+	attributes,
+	isLoading
+}) => {
+	if ( ! posts || ! categoriesList || ! authors || isLoading ) {
+		return (
+			<div { ...blockProps }>
+				<Placeholder>
+					<Spinner />
+					{ __( 'Loading Posts', 'otter-blocks' ) }
+				</Placeholder>
+			</div>
+		);
+	}
+
+	if ( 0 === posts.length ) {
+		return (
+			<div { ...blockProps }>
+				<Placeholder>
+					{ __( 'No Posts', 'otter-blocks' ) }
+				</Placeholder>
+			</div>
+		);
+	}
+
+	return (
+		<div { ...blockProps } style={ inlineStyles }>
+			<Disabled>
+				{ attributes.enableFeaturedPost && (
+					<FeaturedPost
+						attributes={ attributes }
+						post={ posts?.[0] }
+						categoriesList={ categoriesList }
+						author={ authors[0] }
+					/>
+				) }
+
+				<Layout
+					attributes={ attributes }
+					posts={ posts }
+					categoriesList={ categoriesList }
+					authors={ authors }
+				/>
+
+			</Disabled>
+			{
+				attributes.hasPagination && <PaginationPreview />
+			}
+		</div>
+	);
+};
+
 /**
  * Posts component
  * @param {import('./types').PostProps} param0
@@ -307,62 +364,6 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
-	const Preview = ({
-		posts,
-		categoriesList,
-		authors,
-		blockProps,
-		inlineStyles,
-		attributes
-	}) => {
-		if ( ! posts || ! categoriesList || ! authors || isLoading ) {
-			return (
-				<div { ...blockProps }>
-					<Placeholder>
-						<Spinner />
-						{ __( 'Loading Posts', 'otter-blocks' ) }
-					</Placeholder>
-				</div>
-			);
-		}
-
-		if ( 0 === posts.length ) {
-			return (
-				<div { ...blockProps }>
-					<Placeholder>
-						{ __( 'No Posts', 'otter-blocks' ) }
-					</Placeholder>
-				</div>
-			);
-		}
-
-		return (
-			<div { ...blockProps } style={ inlineStyles }>
-				<Disabled>
-					{ attributes.enableFeaturedPost && (
-						<FeaturedPost
-							attributes={ attributes }
-							post={ posts?.[0] }
-							categoriesList={ categoriesList }
-							author={ authors[0] }
-						/>
-					) }
-
-					<Layout
-						attributes={ attributes }
-						posts={ posts }
-						categoriesList={ categoriesList }
-						authors={ authors }
-					/>
-
-				</Disabled>
-				{
-					attributes.hasPagination && <PaginationPreview />
-				}
-			</div>
-		);
-	};
-
 	return (
 		<Fragment>
 			{ categoriesList && (
@@ -386,6 +387,7 @@ const Edit = ({
 				blockProps={ blockProps }
 				inlineStyles={ inlineStyles }
 				attributes={ attributes }
+				isLoading={ isLoading }
 			/>
 		</Fragment>
 	);
