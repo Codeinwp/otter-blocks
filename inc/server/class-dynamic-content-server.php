@@ -241,7 +241,7 @@ class Dynamic_Content_Server {
 				continue;
 			}
 
-			$size = @getimagesize( $path );
+			$size = @getimagesize( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 
 			// Set MIME type only once (first valid image).
 			if ( ! $mime_locked && is_array( $size ) && ! empty( $size['mime'] ) ) {

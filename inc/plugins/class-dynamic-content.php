@@ -151,7 +151,7 @@ class Dynamic_Content {
 	/**
 	 * Filter post content for dynamic link.
 	 *
-	 * @param string $content Post content.
+	 * @param string   $content Post content.
 	 * @param int|null $key Optional key for multiple dynamic links in the same content.
 	 *
 	 * @return string
@@ -678,7 +678,7 @@ class Dynamic_Content {
 	/**
 	 * Apply dynamic data.
 	 *
-	 * @param array $data Dynamic request.
+	 * @param array    $data Dynamic request.
 	 * @param int|null $key Optional key for multiple dynamic links in the same content.
 	 *
 	 * @return string|string[]
