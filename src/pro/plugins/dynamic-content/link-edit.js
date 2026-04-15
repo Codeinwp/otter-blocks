@@ -18,6 +18,46 @@ const ALLOWED_ACF_TYPES = [
 	'url'
 ];
 
+/**
+ * Recursively flatten ACF fields into <option> elements for a <select> control.
+ *
+ * @param {Array}  fields - ACF field objects at the current nesting level.
+ * @param {number} depth  - Current depth (0 = direct children of an ACF group).
+ * @return {Array} Flat array of <option> React elements.
+ */
+const FIELD_INDENT = '\u00A0\u00A0\u00A0';
+
+const flattenACFOptions = ( fields, depth = 0 ) => {
+	if ( ! fields?.length ) {
+		return [];
+	}
+
+	const indent = FIELD_INDENT.repeat( depth );
+
+	return fields
+		.filter( ({ key, label }) => key && label )
+		.flatMap( ({ key, label, type, subFields }) => {
+			if ( 'repeater' === type ) {
+				return [
+					<option key={ `repeater-header-${ key }` } disabled value="">
+						{ `${ indent }${ label }` }
+					</option>,
+					...flattenACFOptions( subFields || [], depth + 1 )
+				];
+			}
+
+			if ( ALLOWED_ACF_TYPES.includes( type ) ) {
+				return [
+					<option key={ key } value={ key }>
+						{ `${ indent }${ label }` }
+					</option>
+				];
+			}
+
+			return [];
+		} );
+};
+
 const Edit = ({
 	attributes,
 	changeAttributes
@@ -55,16 +95,7 @@ const Edit = ({
 										key={ group?.data?.key }
 										label={ group?.data?.title }
 									>
-										{ group?.fields
-											?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
-											.map( ({ key, label }) => (
-												<option
-													key={ key }
-													value={ key }
-												>
-													{ label }
-												</option>
-											) ) }
+										{ flattenACFOptions( group?.fields || [] ) }
 									</optgroup>
 								);
 							}) }

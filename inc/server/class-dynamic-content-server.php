@@ -231,23 +231,31 @@ class Dynamic_Content_Server {
 
 		$path = apply_filters( 'otter_blocks_evaluate_dynamic_content_media_server', $path, $request );
 
-		if ( $size = @getimagesize( $path ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure
-			ob_start();
-				readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
-			$output = ob_get_contents();
+		$paths       = is_array( $path ) ? $path : array( $path );
+		$output      = '';
+		$mime_type   = '';
+		$mime_locked = false;
 
-			if ( ! empty( $size['mime'] ) ) {
-				header( 'Content-type: ' . $size['mime'] );
+		foreach ( $paths as $path ) {
+			if ( empty( $path ) ) {
+				continue;
 			}
-			return $output;
+
+			$size = @getimagesize( $path );
+
+			// Set MIME type only once (first valid image).
+			if ( ! $mime_locked && is_array( $size ) && ! empty( $size['mime'] ) ) {
+				$mime_type   = $size['mime'];
+				$mime_locked = true;
+			}
+
+			ob_start();
+			readfile( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+			$output .= ob_get_clean();
 		}
 
-		ob_start();
-			readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
-		$output = ob_get_contents();
-
-		if ( isset( $size['mime'] ) ) {
-			header( 'Content-type: ' . $size['mime'] );
+		if ( ! empty( $mime_type ) && ! headers_sent() ) {
+			header( 'Content-Type: ' . $mime_type );
 		}
 		return $output;
 	}
