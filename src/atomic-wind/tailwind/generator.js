@@ -45,7 +45,7 @@ async function loadModule() {
 
 async function createCompiler() {
 	compiler = await tailwindcss.compile(
-		'@import "tailwindcss" important;\n',
+		'@import "tailwindcss";\n',
 		{ base: '/', loadStylesheet, loadModule }
 	);
 	classes.clear();
