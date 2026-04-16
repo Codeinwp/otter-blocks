@@ -169,17 +169,47 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$link = $this->apply_link( $matches[0], $key );
-
-		if ( is_array( $link ) ) {
-			$_content = array_fill( 0, count( $link ), $content );
-			$content  = '';
-			foreach ( $link as $key => $value ) {
-				$content .= preg_replace( $re, $value, $_content[ $key ] );
+		$resolved    = array();
+		$clone_count = 1;
+		foreach ( $matches as $match ) {
+			$value      = $this->apply_link( $match, $key );
+			$resolved[] = $value;
+			if ( is_array( $value ) ) {
+				$clone_count = max( $clone_count, count( $value ) );
 			}
-			return $content;
 		}
-		return preg_replace( $re, $link, $content, 1 );
+
+		// Replace the content for multiple dynamic links in the same content.
+		if ( $clone_count > 1 ) {
+			$output = '';
+			for ( $i = 0; $i < $clone_count; $i++ ) {
+				$clone = $content;
+				foreach ( $matches as $j => $match ) {
+					$value       = $resolved[ $j ];
+					$replacement = is_array( $value )
+						? ( isset( $value[ $i ] ) ? $value[ $i ] : '' )
+						: $value;
+					$pos         = strpos( $clone, $match[0] );
+					if ( false !== $pos ) {
+						$clone = substr_replace( $clone, $replacement, $pos, strlen( $match[0] ) );
+					}
+				}
+				$output .= $clone;
+			}
+			return $output;
+		}
+
+		// Replace the content for single dynamic link in the content.
+		$index = 0;
+		return preg_replace_callback(
+			$re,
+			function ( $data ) use ( &$resolved, &$index ) {
+				$value = isset( $resolved[ $index ] ) ? $resolved[ $index ] : $data[0];
+				$index++;
+				return is_string( $value ) ? $value : $data[0];
+			},
+			$content
+		);
 	}
 
 	/**
@@ -221,17 +251,47 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$images = $this->apply_images( $matches[0] );
-		if ( is_array( $images ) ) {
-			$_content = array_fill( 0, count( $images ), $content );
-			$content  = '';
-			foreach ( $images as $key => $value ) {
-				$content .= preg_replace( $re, $value, $_content[ $key ] );
+		$resolved    = array();
+		$clone_count = 1;
+		foreach ( $matches as $match ) {
+			$value      = $this->apply_images( $match );
+			$resolved[] = $value;
+			if ( is_array( $value ) ) {
+				$clone_count = max( $clone_count, count( $value ) );
 			}
-			return $content;
 		}
 
-		return preg_replace( $re, $images, $content );
+		// Replace the content for multiple dynamic images in the same content.
+		if ( $clone_count > 1 ) {
+			$output = '';
+			for ( $i = 0; $i < $clone_count; $i++ ) {
+				$clone = $content;
+				foreach ( $matches as $j => $match ) {
+					$value       = $resolved[ $j ];
+					$replacement = is_array( $value )
+						? ( isset( $value[ $i ] ) ? $value[ $i ] : '' )
+						: $value;
+					$pos         = strpos( $clone, $match[0] );
+					if ( false !== $pos ) {
+						$clone = substr_replace( $clone, $replacement, $pos, strlen( $match[0] ) );
+					}
+				}
+				$output .= $clone;
+			}
+			return $output;
+		}
+
+		// Replace the content for single dynamic image in the content.
+		$index = 0;
+		return preg_replace_callback(
+			$re,
+			function ( $data ) use ( &$resolved, &$index ) {
+				$value = isset( $resolved[ $index ] ) ? $resolved[ $index ] : $data[0];
+				$index++;
+				return is_string( $value ) ? $value : $data[0];
+			},
+			$content
+		);
 	}
 
 	/**

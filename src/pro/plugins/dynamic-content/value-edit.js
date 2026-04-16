@@ -17,6 +17,8 @@ import { useSelect } from '@wordpress/data';
 
 import { Fragment } from '@wordpress/element';
 
+import { flattenACFFieldOptions } from '../../helpers/acf-field-options';
+
 const ALLOWED_ACF_TYPES = [
 	'button_group',
 	'checkbox',
@@ -35,48 +37,6 @@ const ALLOWED_ACF_TYPES = [
 	'true_false',
 	'url'
 ];
-
-/**
- * Recursively flatten ACF fields into <option> elements for a <select> control.
- *
- * @param {Array}  fields - ACF field objects at the current nesting level.
- * @param {number} depth  - Current depth (0 = direct children of an ACF group).
- * @return {Array} Flat array of <option> React elements.
- */
-const FIELD_INDENT = '\u00A0\u00A0\u00A0';
-
-const flattenACFOptions = ( fields, depth = 0 ) => {
-	if ( ! fields?.length ) {
-		return [];
-	}
-
-	const indent = FIELD_INDENT.repeat( depth );
-
-	return fields
-		.filter( ({ key, label }) => key && label )
-		.flatMap( ({ key, label, type, subFields }) => {
-			if ( 'repeater' === type ) {
-				return [
-					// Disabled header option representing the repeater itself.
-					<option key={ `repeater-header-${ key }` } disabled value="">
-						{ `${ indent }${ label }` }
-					</option>,
-					// Sub-fields indented one level deeper.
-					...flattenACFOptions( subFields || [], depth + 1 )
-				];
-			}
-
-			if ( ALLOWED_ACF_TYPES.includes( type ) ) {
-				return [
-					<option key={ key } value={ key }>
-						{ `${ indent }${ label }` }
-					</option>
-				];
-			}
-
-			return [];
-		} );
-};
 
 const Edit = ({
 	attributes,
@@ -297,7 +257,7 @@ const Edit = ({
 										key={ group?.data?.key }
 										label={ group?.data?.title }
 									>
-										{ flattenACFOptions( group?.fields || [] ) }
+										{ flattenACFFieldOptions( group?.fields || [], ALLOWED_ACF_TYPES ) }
 									</optgroup>
 								);
 							}) }

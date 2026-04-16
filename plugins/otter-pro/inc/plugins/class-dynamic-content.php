@@ -626,7 +626,7 @@ class Dynamic_Content {
 	 * @param \WP_REST_Request $request Request data.
 	 *
 	 * @since 2.0.9
-	 * @return string|string[]
+	 * @return string
 	 */
 	public function evaluate_content_media_server( $path, $request ) {
 		$type    = $request->get_param( 'type' );
@@ -665,16 +665,28 @@ class Dynamic_Content {
 			if ( empty( $field ) ) {
 				$images = $this->get_acf_repeater_sub_field_image( $meta, $context );
 				if ( ! empty( $images ) ) {
-					$path = array();
-					foreach ( $images as $image ) {
-						$path[] = $this->get_server_attachment_path( $image );
-					}
-					return $path;
+					$field = $images[0];
 				}
 			}
 
 			if ( ! empty( $field ) ) {
-				$path = $this->get_server_attachment_path( $field );
+				if ( is_array( $field ) && isset( $field['ID'] ) ) {
+					$path = wp_get_original_image_path( $field['ID'] );
+				}
+
+				if ( is_string( $field ) ) {
+					$image = $this->get_image_id_from_url( $field );
+
+					if ( $image ) {
+						$path = wp_get_original_image_path( $image );
+					} else {
+						$path = $field;
+					}
+				}
+
+				if ( is_int( $field ) ) {
+					$path = wp_get_original_image_path( $field );
+				}
 			}
 		}
 
@@ -788,35 +800,6 @@ class Dynamic_Content {
 		}
 
 		return esc_url( $value );
-	}
-
-	/**
-	 * Get attchament path.
-	 *
-	 * @param mixed $field ACF field value.
-	 * @return string URL of the attachment, or empty string if it cannot be determined.
-	 */
-	private function get_server_attachment_path( $field ) {
-		$path = '';
-		if ( is_array( $field ) && isset( $field['ID'] ) ) {
-			$path = wp_get_original_image_path( $field['ID'] );
-		}
-
-		if ( is_string( $field ) ) {
-			$image = $this->get_image_id_from_url( $field );
-
-			if ( $image ) {
-				$path = wp_get_original_image_path( $image );
-			} else {
-				$path = $field;
-			}
-		}
-
-		if ( is_int( $field ) ) {
-			$path = wp_get_original_image_path( $field );
-		}
-
-		return esc_url( $path );
 	}
 
 	/**
