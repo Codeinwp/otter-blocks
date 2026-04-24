@@ -137,7 +137,7 @@ class Atomic_Wind_Blocks {
 			return;
 		}
 
-		$asset_file = $this->build_path() . '/tailwind-generator.asset.php';
+		$asset_file = $this->build_path() . '/tailwind-generator-editor.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
 			return;
@@ -147,7 +147,7 @@ class Atomic_Wind_Blocks {
 
 		wp_enqueue_script(
 			'atomic-wind-tailwind-generator',
-			$this->plugin_url( 'build/atomic-wind/tailwind-generator.js' ),
+			$this->plugin_url( 'build/atomic-wind/tailwind-generator-editor.js' ),
 			$asset['dependencies'],
 			$asset['version'],
 			true
@@ -273,7 +273,7 @@ class Atomic_Wind_Blocks {
 			return;
 		}
 
-		$generator_asset = $this->build_path() . '/tailwind-generator.asset.php';
+		$generator_asset = $this->build_path() . '/tailwind-generator-frontend.asset.php';
 
 		if ( ! file_exists( $generator_asset ) ) {
 			return;
@@ -282,7 +282,7 @@ class Atomic_Wind_Blocks {
 		$gen = include $generator_asset;
 		wp_enqueue_script(
 			'atomic-wind-tailwind-generator',
-			$this->plugin_url( 'build/atomic-wind/tailwind-generator.js' ),
+			$this->plugin_url( 'build/atomic-wind/tailwind-generator-frontend.js' ),
 			$gen['dependencies'],
 			$gen['version'],
 			true
