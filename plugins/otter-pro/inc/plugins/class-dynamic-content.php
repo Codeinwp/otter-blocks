@@ -213,14 +213,25 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic Data.
 	 *
-	 * @return string
+	 * @return string|string[]
 	 */
 	public function get_acf( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		$meta    = '';
 
-		if ( isset( $data['metaKey'] ) ) {
-			$meta = get_field( esc_html( $data['metaKey'] ), $data['context'], true );
+		if ( ! isset( $data['metaKey'] ) ) {
+			return $default;
+		}
+
+		$field_key = esc_html( $data['metaKey'] );
+		$meta      = get_field( $field_key, $data['context'] );
+
+		// Get the ACF repeater's sub-field value.
+		if ( ( null === $meta || false === $meta || '' === $meta ) && function_exists( 'acf_get_field' ) ) {
+			$sub_value = $this->get_acf_repeater_sub_field( $field_key, $data['context'] );
+			if ( null !== $sub_value ) {
+				return $sub_value;
+			}
 		}
 
 		if ( is_array( $meta ) ) {
@@ -254,6 +265,177 @@ class Dynamic_Content {
 		}
 
 		return esc_html( $meta );
+	}
+
+	/**
+	 * Get ACF Repeater Sub-field Values.
+	 *
+	 * @param string $sub_field_key ACF field key of the targeted sub-field.
+	 * @param int    $post_id       Post ID.
+	 * @return string[]|null           Array of sub-field values, or null on failure.
+	 */
+	private function get_acf_repeater_sub_field( $sub_field_key, $post_id ) {
+		$field = acf_get_field( $sub_field_key );
+		if ( ! $field || ! isset( $field['parent'] ) ) {
+			return null;
+		}
+
+		$path   = array( $field['name'] );
+		$cursor = $field;
+
+		while ( true ) {
+			$parent = acf_get_field( (int) $cursor['parent'] );
+			if ( ! $parent ) {
+				break;
+			}
+			array_unshift( $path, $parent['name'] );
+			$cursor = $parent;
+		}
+
+		// The top-level ancestor must be a repeater field.
+		if ( 'repeater' !== $cursor['type'] ) {
+			return null;
+		}
+
+		$rows = get_field( $cursor['key'], $post_id );
+		if ( ! is_array( $rows ) || empty( $rows ) ) {
+			return null;
+		}
+
+		// $path[0] is the top-level repeater's own name — already consumed by
+		// get_field(). Pass the remainder as the drill-down path.
+		$values = $this->collect_acf_sub_field_values( $rows, array_slice( $path, 1 ) );
+
+		if ( empty( $values ) ) {
+			return null;
+		}
+
+		$items = array();
+		foreach ( $values as $v ) {
+			$items[] = esc_html( $v );
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Recursively collect values of a specific sub-field from ACF repeater rows.
+	 *
+	 * @param mixed    $rows Repeater rows at the current depth level.
+	 * @param string[] $path Remaining field names leading to the target leaf.
+	 * @return string[]      Flat array of unescaped leaf string values.
+	 */
+	private function collect_acf_sub_field_values( $rows, $path ) {
+		if ( empty( $path ) || ! is_array( $rows ) ) {
+			return array();
+		}
+
+		$field_name = array_shift( $path );
+		$collected  = array();
+
+		foreach ( $rows as $row ) {
+			if ( ! is_array( $row ) || ! isset( $row[ $field_name ] ) ) {
+				continue;
+			}
+
+			$value = $row[ $field_name ];
+
+			if ( empty( $path ) ) {
+				// Leaf node: collect non-empty strings.
+				if ( is_string( $value ) && '' !== $value ) {
+					$collected[] = $value;
+				}
+			} elseif ( is_array( $value ) ) {
+				// Intermediate node pointing to a nested repeater.
+				$collected = array_merge(
+					$collected,
+					$this->collect_acf_sub_field_values( $value, $path )
+				);
+			}
+		}
+
+		return $collected;
+	}
+
+	/**
+	 * Get ACF Repeater Sub-field Image Values.
+	 *
+	 * @param string $sub_field_key ACF field key of the image sub-field.
+	 * @param int    $post_id       Post ID.
+	 * @return mixed[]              Flat array of raw image values, or empty array on failure.
+	 */
+	private function get_acf_repeater_sub_field_image( $sub_field_key, $post_id ) {
+		if ( ! function_exists( 'acf_get_field' ) ) {
+			return array();
+		}
+
+		$field = acf_get_field( $sub_field_key );
+		if ( ! $field || ! isset( $field['parent'] ) ) {
+			return array();
+		}
+
+		// Walk up the ancestor chain to find the top-level repeater.
+		$path   = array( $field['name'] );
+		$cursor = $field;
+
+		while ( true ) {
+			$parent = acf_get_field( (int) $cursor['parent'] );
+			if ( ! $parent ) {
+				break;
+			}
+			array_unshift( $path, $parent['name'] );
+			$cursor = $parent;
+		}
+
+		if ( 'repeater' !== $cursor['type'] ) {
+			return array();
+		}
+
+		$rows = get_field( $cursor['key'], $post_id );
+		if ( ! is_array( $rows ) || empty( $rows ) ) {
+			return array();
+		}
+
+		return $this->collect_acf_sub_field_images( $rows, array_slice( $path, 1 ) );
+	}
+
+	/**
+	 * Recursively collect image values of a specific sub-field from ACF repeater rows.
+	 *
+	 * @param mixed    $rows Repeater rows at the current depth level.
+	 * @param string[] $path Remaining field names leading to the target leaf.
+	 * @return mixed[]       Flat array of raw image values.
+	 */
+	private function collect_acf_sub_field_images( $rows, $path ) {
+		if ( empty( $path ) || ! is_array( $rows ) ) {
+			return array();
+		}
+
+		$field_name = array_shift( $path );
+		$collected  = array();
+
+		foreach ( $rows as $row ) {
+			if ( ! is_array( $row ) || ! isset( $row[ $field_name ] ) ) {
+				continue;
+			}
+
+			$value = $row[ $field_name ];
+
+			if ( empty( $path ) ) {
+				// Leaf node: collect any non-empty image value.
+				if ( ! empty( $value ) ) {
+					$collected[] = $value;
+				}
+			} elseif ( is_array( $value ) ) {
+				// Intermediate node: recurse into nested repeater rows.
+				$collected = array_merge(
+					$collected,
+					$this->collect_acf_sub_field_images( $value, $path )
+				);
+			}
+		}
+
+		return $collected;
 	}
 
 	/**
@@ -478,6 +660,15 @@ class Dynamic_Content {
 		if ( 'acf' === $type && ! empty( $meta ) && class_exists( 'ACF' ) ) {
 			$field = get_field( $meta, $context );
 
+			// Fall back to repeater sub-field traversal when the field is a
+			// sub-field inside a repeater (get_field() returns nothing for those).
+			if ( empty( $field ) ) {
+				$images = $this->get_acf_repeater_sub_field_image( $meta, $context );
+				if ( ! empty( $images ) ) {
+					$field = $images[0];
+				}
+			}
+
 			if ( ! empty( $field ) ) {
 				if ( is_array( $field ) && isset( $field['ID'] ) ) {
 					$path = wp_get_original_image_path( $field['ID'] );
@@ -509,7 +700,7 @@ class Dynamic_Content {
 	 * @param array  $data Request data.
 	 *
 	 * @since 2.0.9
-	 * @return string
+	 * @return string|string[]
 	 */
 	public function evaluate_content_media_content( $value, $data ) {
 		if ( 'postMeta' === $data['type'] && isset( $data['meta'] ) && ! empty( $data['meta'] ) ) {
@@ -538,18 +729,21 @@ class Dynamic_Content {
 		if ( 'acf' === $data['type'] && ! empty( $data['meta'] ) && class_exists( 'ACF' ) ) {
 			$field = get_field( $data['meta'], $data['context'] );
 
+			// Fall back to repeater sub-field traversal when the field is a
+			// sub-field inside a repeater (get_field() returns nothing for those).
+			if ( empty( $field ) ) {
+				$images = $this->get_acf_repeater_sub_field_image( $data['meta'], $data['context'] );
+				if ( ! empty( $images ) ) {
+					$value = array();
+					foreach ( $images as $image ) {
+						$value[] = $this->get_attachment_url( $image );
+					}
+					return $value;
+				}
+			}
+
 			if ( ! empty( $field ) ) {
-				if ( is_array( $field ) && isset( $field['url'] ) ) {
-					$value = $field['url'];
-				}
-
-				if ( is_string( $field ) ) {
-					$value = $field;
-				}
-
-				if ( is_int( $field ) ) {
-					$value = wp_get_attachment_image_url( $field, 'full' );
-				}
+				$value = $this->get_attachment_url( $field );
 			}
 		}
 
@@ -583,6 +777,29 @@ class Dynamic_Content {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get attachment URL from ACF field value.
+	 *
+	 * @param mixed $field ACF field value.
+	 * @return string URL of the attachment, or empty string if it cannot be determined.
+	 */
+	private function get_attachment_url( $field ) {
+		$value = '';
+		if ( is_array( $field ) && isset( $field['url'] ) ) {
+			$value = $field['url'];
+		}
+
+		if ( is_string( $field ) ) {
+			$value = $field;
+		}
+
+		if ( is_int( $field ) ) {
+			$value = wp_get_attachment_image_url( $field, 'full' );
+		}
+
+		return esc_url( $value );
 	}
 
 	/**
