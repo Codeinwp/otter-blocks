@@ -15,9 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Remove wp-env override
+      - name: Set wp-env PHP version
         run: |
-          echo '{"phpVersion": "7.4"}' > .wp-env.override.json
+          echo '{"phpVersion":"8.0"}' > .wp-env.override.json
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -29,6 +30,7 @@ jobs:
 
       - name: Build assets
         run: npm run build
+
       - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader
 
@@ -38,6 +40,7 @@ jobs:
           categories: plugin_repo,security,performance,general
           exclude-directories: |
             node_modules
+            vendor
             tests
             bin
             .github
@@ -54,6 +57,14 @@ jobs:
             WordPress.WP.EnqueuedResourceParameters.MissingVersion
           include-experimental: true
           repo-token: ''
+
+      - name: Show PHP error log on failure
+        if: failure()
+        run: |
+          echo "## PHP Error Log" >> $GITHUB_STEP_SUMMARY
+          wp-env run cli cat /tmp/wordpress-errors.log 2>/dev/null || true
+          wp-env run cli cat /var/log/php-error.log 2>/dev/null || true
+          wp-env logs 2>/dev/null | tail -100 || true
 
       - name: Plugin Check Summary
         if: always()
