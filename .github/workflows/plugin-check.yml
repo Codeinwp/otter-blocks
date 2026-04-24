@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Remove wp-env override
-        run: rm -f .wp-env.override.json
+        run: echo '{"phpVersion": "7.4"}' > .wp-env.override.json
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
