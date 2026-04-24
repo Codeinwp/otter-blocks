@@ -17,7 +17,7 @@ jobs:
 
       - name: Set wp-env PHP version
         run: |
-          echo '{"phpVersion":"8.0"}' > .wp-env.override.json
+          echo '{}' > .wp-env.override.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
