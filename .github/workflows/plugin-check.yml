@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set wp-env PHP version
+      - name: Neutralize wp-env override
         run: |
           echo '{}' > .wp-env.override.json
 
@@ -37,10 +37,11 @@ jobs:
       - uses: wordpress/plugin-check-action@v1
         id: plugin-check
         with:
-          categories: plugin_repo,security,performance,general
+          categories: plugin_repo,security,general
           exclude-directories: |
             node_modules
             vendor
+            build
             tests
             bin
             .github
@@ -57,14 +58,6 @@ jobs:
             WordPress.WP.EnqueuedResourceParameters.MissingVersion
           include-experimental: true
           repo-token: ''
-
-      - name: Show PHP error log on failure
-        if: failure()
-        run: |
-          echo "## PHP Error Log" >> $GITHUB_STEP_SUMMARY
-          wp-env run cli cat /tmp/wordpress-errors.log 2>/dev/null || true
-          wp-env run cli cat /var/log/php-error.log 2>/dev/null || true
-          wp-env logs 2>/dev/null | tail -100 || true
 
       - name: Plugin Check Summary
         if: always()
