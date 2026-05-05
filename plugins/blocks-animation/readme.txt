@@ -1,6 +1,6 @@
 === Blocks Animation: CSS Animations for Gutenberg Blocks ===
 Contributors: themeisle, hardeepasrani, mariamunteanu1
-Tags: gutenberg, block, block editor, editor, animation, animations, animate, styles, block animations
+Tags: animation, gutenberg blocks, css, effects, transitions
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 5.4
@@ -8,7 +8,7 @@ Stable tag: 3.1.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
-Blocks Animation allows you to add CSS Animations to all of your Gutenberg blocks in the most elegant way.
+Add CSS animations and scroll effects to any Gutenberg block. Choose from fade, slide, zoom & more, with delay and duration controls — no code needed.
 
 == Description ==
 
