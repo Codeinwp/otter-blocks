@@ -128,10 +128,11 @@ class Form_Pro_Features {
 
 						$file_data = $files[ $file_data_key ];
 
-						// Get the extension from file using WordPress functions.
-						$extension = wp_check_filetype( $file_data['name'] );
+						// Validate file type based on actual file content, not just filename extension.
+						// This prevents spoofing by renaming malicious files with allowed extensions.
+						$file_validation = wp_check_filetype_and_ext( $file_data['tmp_name'], $file_data['name'] );
 
-						if ( ! $extension['ext'] ) {
+						if ( ! $file_validation['ext'] || ! $file_validation['type'] ) {
 							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP );
 							break;
 						}
@@ -142,24 +143,33 @@ class Form_Pro_Features {
 							$mime_types    = wp_get_mime_types();
 							$allowed_mimes = array();
 
+							$ext_to_mime = array();
+							foreach ( $mime_types as $exts => $mime ) {
+								$ext_list = explode( '|', $exts );
+								foreach ( $ext_list as $ext ) {
+									$ext_to_mime[ $ext ] = $mime;
+								}
+							}
+
 							foreach ( $form_files_ext as $type ) {
 								$type = strtolower( trim( str_replace( '.', '', $type ) ) );
 
 								// Handle wildcard mime types like image/*.
-								if ( str_contains( $type, '/' ) ) {
+								if ( false !== strpos( $type, '/' ) ) {
 									$allowed_mimes[] = $type;
 									continue;
 								}
 
-								foreach ( $mime_types as $exts => $mime ) {
-									$ext_list = explode( '|', $exts );
-									if ( in_array( $type, $ext_list, true ) ) {
-										$allowed_mimes[] = $mime;
-									}
+								// Use lookup map for direct access.
+								if ( isset( $ext_to_mime[ $type ] ) ) {
+									$allowed_mimes[] = $ext_to_mime[ $type ];
 								}
 							}
 
-							$mime_match = wp_match_mime_types( $allowed_mimes, $extension['type'] );
+							// Remove duplicate MIME types.
+							$allowed_mimes = array_unique( $allowed_mimes );
+
+							$mime_match = wp_match_mime_types( $allowed_mimes, $file_validation['type'] );
 
 							if ( 0 == count( $mime_match ) ) {
 								$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE );
