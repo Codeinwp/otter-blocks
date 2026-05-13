@@ -139,10 +139,27 @@ class Form_Pro_Features {
 						$form_files_ext = $field_option->get_option( 'allowedFileTypes' );
 
 						if ( ! empty( $form_files_ext ) ) {
-							$form_files_ext = str_replace( '.', '', $form_files_ext );
-							$form_files_ext = str_replace( '/*', '', $form_files_ext );
+							$mime_types    = wp_get_mime_types();
+							$allowed_mimes = array();
 
-							$mime_match = wp_match_mime_types( $form_files_ext, $extension['type'] );
+							foreach ( $form_files_ext as $type ) {
+								$type = strtolower( trim( str_replace( '.', '', $type ) ) );
+
+								// Handle wildcard mime types like image/*.
+								if ( str_contains( $type, '/' ) ) {
+									$allowed_mimes[] = $type;
+									continue;
+								}
+
+								foreach ( $mime_types as $exts => $mime ) {
+									$ext_list = explode( '|', $exts );
+									if ( in_array( $type, $ext_list, true ) ) {
+										$allowed_mimes[] = $mime;
+									}
+								}
+							}
+
+							$mime_match = wp_match_mime_types( $allowed_mimes, $extension['type'] );
 
 							if ( 0 == count( $mime_match ) ) {
 								$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE );
