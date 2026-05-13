@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { isEmpty } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
 
 import {
 	BaseControl,
@@ -32,18 +32,6 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import StripeControls from './components/stripe-controls';
 import { PanelTab } from '../../components/index.js';
-
-/**
- * Deep clone helper to ensure independent state for duplicated blocks.
- * @param {any} obj - The object to clone
- * @return {any} - Deep cloned copy
- */
-const deepClone = ( obj ) => {
-	if ( obj === null || typeof obj !== 'object' ) {
-		return obj;
-	}
-	return JSON.parse( JSON.stringify( obj ) );
-};
 
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
@@ -401,7 +389,7 @@ const Edit = ({
 	}, [ attributes.otterConditions ]);
 
 	const addGroup = () => {
-		const otterConditions = deepClone( attributes.otterConditions || [] );
+		const otterConditions = cloneDeep( attributes.otterConditions || [] );
 		const newGroupIndex = otterConditions.length; // Use the index of the new group
 		otterConditions.push([{}]);
 		setAttributes({ otterConditions });
@@ -409,7 +397,7 @@ const Edit = ({
 	};
 
 	const removeGroup = n => {
-		let otterConditions = deepClone( attributes.otterConditions );
+		let otterConditions = cloneDeep( attributes.otterConditions );
 		otterConditions.splice( n, 1 );
 
 		if ( ! Boolean( otterConditions.length ) ) {
@@ -420,13 +408,13 @@ const Edit = ({
 	};
 
 	const addNewCondition = index => {
-		const otterConditions = deepClone( attributes.otterConditions );
+		const otterConditions = cloneDeep( attributes.otterConditions );
 		otterConditions[ index ].push({});
 		setAttributes({ otterConditions });
 	};
 
 	const removeCondition = ( index, key ) => {
-		const otterConditions = deepClone( attributes.otterConditions );
+		const otterConditions = cloneDeep( attributes.otterConditions );
 		otterConditions[ index ].splice( key, 1 );
 
 		if ( 0 === otterConditions[ index ]) {
@@ -439,7 +427,7 @@ const Edit = ({
 	const changeCondition = ( value, index, key ) => {
 		window.oTrk?.set( `condition-type_${attributes?.id ?? name}_${index}_${key}`, { groupID: attributes?.id ?? name, feature: 'condition', featureComponent: 'condition-type', featureValue: value });
 
-		const otterConditions = deepClone( attributes.otterConditions );
+		const otterConditions = cloneDeep( attributes.otterConditions );
 
 		const attrs = applyFilters( 'otter.blockConditions.defaults', {}, value );
 
@@ -472,19 +460,19 @@ const Edit = ({
 	 * @param {string} type  The type of the condition.
 	 */
 	const changeArrayValue = ( value, index, key, type ) => {
-		const otterConditions = deepClone( attributes.otterConditions );
+		const otterConditions = cloneDeep( attributes.otterConditions );
 		otterConditions[ index ][ key ][ type ] = value;
 		setAttributes({ otterConditions });
 	};
 
 	const changeVisibility = ( value, index, key ) => {
-		const otterConditions = deepClone( attributes.otterConditions );
+		const otterConditions = cloneDeep( attributes.otterConditions );
 		otterConditions[ index ][ key ].visibility = 'true' === value ? true : false;
 		setAttributes({ otterConditions });
 	};
 
 	const changeValue = ( value, index, key, field ) => {
-		const otterConditions = deepClone( attributes.otterConditions );
+		const otterConditions = cloneDeep( attributes.otterConditions );
 		if ( null !== value ) {
 			otterConditions[ index ][ key ][ field ] = value;
 		} else {
@@ -502,7 +490,7 @@ const Edit = ({
 	 * @param {string} type  The type of the condition.
 	 */
 	const toggleValueInArray = ( value, index, key, type ) => {
-		const otterConditions = deepClone( attributes.otterConditions );
+		const otterConditions = cloneDeep( attributes.otterConditions );
 		if ( otterConditions[ index ][ key ][ type ]?.includes( value ) ) {
 			otterConditions[ index ][ key ][ type ] = otterConditions[ index ][ key ][ type ].filter( v => v !== value );
 		} else {
