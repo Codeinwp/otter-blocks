@@ -128,9 +128,8 @@ class Form_Pro_Features {
 
 						$file_data = $files[ $file_data_key ];
 
-						// Validate file type based on actual file content, not just filename extension.
-						// This prevents spoofing by renaming malicious files with allowed extensions.
-						$file_validation = wp_check_filetype_and_ext( $file_data['tmp_name'], $file_data['name'] );
+						// Get the extension from file using WordPress functions.
+						$file_validation = wp_check_filetype( $file_data['name'] );
 
 						if ( ! $file_validation['ext'] || ! $file_validation['type'] ) {
 							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP );
