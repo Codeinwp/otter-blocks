@@ -80,7 +80,7 @@
 		"react-sortable-hoc": "^2.0.0",
 		"react-visibility-sensor": "^5.1.1",
 		"tailwindcss": "^4.1.17",
-		"uuid": "^9.0.1"
+		"uuid": "^14.0.0"
 	},
 	"devDependencies": {
 		"@automattic/babel-plugin-replace-textdomain": "^1.0.35",
