@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani
 Tags: gutenberg, custom css, block editor, css editor, design
 Requires at least: 6.2    
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 5.4  
 Stable tag: 3.1.9
 License: GPLv3  
