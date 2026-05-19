@@ -1,3 +1,9 @@
+##### [Version 3.1.10](https://github.com/Codeinwp/otter-blocks/compare/v3.1.9...v3.1.10) (2026-05-19)
+
+- Fixed visibility conditions change on duplicated blocks
+- Enhanced file type validation
+- Updated dependencies
+
 ##### [Version 3.1.9](https://github.com/Codeinwp/otter-blocks/compare/v3.1.8...v3.1.9) (2026-04-24)
 
 - Fixed issue where attributes, variations options appear as empty when the WooCommerce Builder integration from Otter PRO is enabled
