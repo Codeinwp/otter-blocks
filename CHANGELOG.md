@@ -1,3 +1,8 @@
+##### [Version 3.1.9](https://github.com/Codeinwp/otter-blocks/compare/v3.1.8...v3.1.9) (2026-04-24)
+
+- Fixed issue where attributes, variations options appear as empty when the WooCommerce Builder integration from Otter PRO is enabled
+- Fixed issue with animations in the editor view
+
 ##### [Version 3.1.8](https://github.com/Codeinwp/otter-blocks/compare/v3.1.7...v3.1.8) (2026-04-01)
 
 - Fixed saving of dynamic post content values
