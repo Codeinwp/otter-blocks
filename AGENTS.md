@@ -68,7 +68,7 @@ composer run format        # PHPCBF
 composer run phpstan       # PHPStan static analysis (uses phpstan.neon + baseline)
 ```
 
-ESLint: WordPress preset with TypeScript (`.eslintrc`). PHPCS: WordPress-Core/Docs/Extra + VIP-Go (`phpcs.xml`).
+ESLint: WordPress preset with TypeScript (`eslint.config.cjs`). PHPCS: WordPress-Core/Docs/Extra + VIP-Go (`phpcs.xml`).
 
 ## Architecture
 

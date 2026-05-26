@@ -35,15 +35,15 @@ const RichTextEditor = ({
 
 	useEffect( () => {
 		const settings = {
-			classic_block_editor: true, // eslint-disable-line camelcase
+			classic_block_editor: true,  
 			plugins: 'lists,media,paste,tabfocus,wordpress,wpautoresize,wpeditimage,wpgallery,wplink,wpdialogs,wptextpattern,wpview',
 			toolbar1: 'formatselect,bold,italic,bullist,numlist,alignleft,aligncenter,alignright,link,unlink,spellchecker,wp_add_media'
 		};
 
 		// Disable forced p tags if raw HTML is allowed.
 		if ( allowRawHTML ) {
-			settings.force_p_newlines = false; // eslint-disable-line camelcase
-			settings.forced_root_block = ''; // eslint-disable-line camelcase
+			settings.force_p_newlines = false;  
+			settings.forced_root_block = '';  
 		}
 
 		wp.oldEditor.initialize( editorRef.current.id, {

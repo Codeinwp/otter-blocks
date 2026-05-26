@@ -50,7 +50,7 @@ export const recordEvent = async( data = {}) => {
 					_id: trackingId,
 					data: {
 						slug: getCurrentTheme()?.template || getCurrentTheme()?.stylesheet,
-						// eslint-disable-next-line camelcase
+						 
 						license_id: window.otterOnboardingData?.license,
 						site: window.otterOnboardingData?.rootUrl || '',
 						...data

@@ -155,7 +155,7 @@ export const sendPromptToOpenAI = promptRequestBuilder();
  */
 export const sendPromptToOpenAIWithRegenerate = promptRequestBuilder({
 	temperature: 1.3,
-	// eslint-disable-next-line camelcase
+	 
 	stream: false
 });
 
