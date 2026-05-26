@@ -18,15 +18,15 @@ test.describe( 'Global Memory State', () => {
 
 		await styleDesktop.click();
 
-		await page.getByRole( 'button', { name: 'Preview' }).click();
-		await page.getByRole( 'menuitem', { name: 'Tablet' }).click();
+		await page.getByRole( 'button', { name: 'View', exact: true }).click();
+		await page.getByRole( 'menuitemradio', { name: 'Tablet' }).click();
 
 		const styleTablet = page.getByRole( 'button', { name: 'Style', exact: true });
 		await styleTablet.waitFor();
 
 		expect( await styleTablet.isVisible() ).toBeTruthy();
 
-		await page.getByRole( 'menuitem', { name: 'Desktop' }).click();
+		await page.getByRole( 'menuitemradio', { name: 'Desktop' }).click();
 
 		const styleDesktopAfter = page.getByRole( 'button', { name: 'Style', exact: true });
 		await styleDesktopAfter.waitFor();

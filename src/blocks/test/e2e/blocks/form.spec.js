@@ -28,8 +28,9 @@ test.describe( 'Form Block', () => {
 	test( 'can be created by typing "/form"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
+		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
 		await page.keyboard.type( '/form' );
+		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
 		await page.keyboard.press( 'Enter' );
 
 		const blocks = await editor.getBlocks();
@@ -448,7 +449,9 @@ test.describe( 'Form Block', () => {
 
 		await page.getByPlaceholder( 'Default is to admin site' ).fill( ccValue );
 
-		const saveBtn = page.getByRole( 'button', { name: 'Update', disabled: false });
+		// WP 7.0 renamed the post save button from "Update" to "Save". Scope to the top-bar
+		// publish button so we don't match the form-options "Save" button.
+		const saveBtn = page.locator( '.editor-post-publish-button__button', { hasText: 'Save' });
 
 		await saveBtn.waitFor({
 			timeout: 4000

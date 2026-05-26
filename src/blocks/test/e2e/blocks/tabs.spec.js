@@ -11,8 +11,9 @@ test.describe( 'Tabs Block', () => {
 	test( 'can be created by typing "/tabs"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
+		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
 		await page.keyboard.type( '/tabs' );
+		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
 		await page.keyboard.press( 'Enter' );
 
 		const blocks = await editor.getBlocks();
@@ -42,6 +43,7 @@ test.describe( 'Tabs Block', () => {
 		const { clientId } = tabBlock;
 		const currentTabsItems = tabBlock.innerBlocks.length;
 
+		// themeisle-blocks/tabs opts out of the iframed canvas, so the block renders at page level.
 		await page.getByRole( 'document', { name: 'Block: Tabs' }).getByRole( 'button', { name: 'Add Tab' }).click();
 
 		tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );

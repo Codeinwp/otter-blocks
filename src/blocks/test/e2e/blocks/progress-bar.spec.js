@@ -11,8 +11,9 @@ test.describe( 'Progress Bar Block', () => {
 	test( 'can be created by typing "/progress-bar"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
+		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
 		await page.keyboard.type( '/progress-bar' );
+		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
 		await page.keyboard.press( 'Enter' );
 
 		const blocks = await editor.getBlocks();

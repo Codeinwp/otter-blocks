@@ -38,7 +38,7 @@ test.describe( 'Block Conditions', () => {
 
 		// Check the block for logged-in users.
 		await page.goto( `/?p=${postId}` );
-		await expect( page.locator( '#wp--skip-link--target img' ) ).toBeVisible();
+		await expect( page.locator( 'main .wp-block-image img, .entry-content .wp-block-image img' ).first() ).toBeVisible();
 
 		// // Check the block for logged out users.
 		await page.getByRole( 'menuitem', { name: 'Howdy, admin' }).hover();
@@ -46,6 +46,6 @@ test.describe( 'Block Conditions', () => {
 		await page.getByRole( 'menuitem', { name: 'Log Out' }).click();
 
 		await page.goto( `/?p=${postId}` );
-		await expect( page.locator( '#wp--skip-link--target img' ) ).toBeHidden();
+		await expect( page.locator( 'main .wp-block-image img, .entry-content .wp-block-image img' ).first() ).toBeHidden();
 	});
 });

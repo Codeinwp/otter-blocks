@@ -14,8 +14,8 @@ test.describe( 'Timeline Block', () => {
 			name: 'themeisle-blocks/timeline'
 		});
 
-		await expect( page.locator( '.o-timeline-content' ).first() ).toBeVisible(); // First container visible.
-		await expect( page.getByText( 'Project Launch' ) ).toBeVisible(); // Content visible.
+		await expect( editor.canvas.locator( '.o-timeline-content' ).first() ).toBeVisible(); // First container visible.
+		await expect( editor.canvas.getByText( 'Project Launch' ) ).toBeVisible(); // Content visible.
 
 		const postId = await editor.publishPost();
 		await page.goto( `/?p=${postId}` );

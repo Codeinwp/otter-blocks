@@ -7,7 +7,8 @@ test.describe( 'AI Block', () => {
 	test.beforeEach( async({ admin, page }) => {
 
 		// Mock the api response of the otter/v1/generate endpoint for `textTransformation`.
-		await page.route( '**/index.php?rest_route=%2Fotter%2Fv1%2Fgenerate&_locale=user', async( route ) => {
+		// Pretty permalinks → REST is exposed at /wp-json/otter/v1/openai/generate (not the legacy /?rest_route=/otter/v1/generate).
+		await page.route( '**/wp-json/otter/v1/openai/generate*', async( route ) => {
 
 			const request = route.request();
 			if ( 'POST' !== request.method() ) {
@@ -61,6 +62,8 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
+		// Wait for the prompt list to load so embeddedPrompts is populated before "Generate".
+		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
 		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
 		await page.getByRole( 'button', { name: 'Generate' }).click();
 		await page.getByRole( 'button', { name: 'Replace' }).click();
@@ -99,6 +102,7 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
+		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
 		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
 		await page.getByRole( 'button', { name: 'Generate' }).click();
 		await page.getByRole( 'button', { name: 'Replace' }).click();
@@ -114,6 +118,7 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
+		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
 		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
 		await page.getByRole( 'button', { name: 'Generate' }).click();
 		await page.getByRole( 'button', { name: 'Insert below' }).click();

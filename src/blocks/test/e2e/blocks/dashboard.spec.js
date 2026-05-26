@@ -1,14 +1,21 @@
 /**
- * WordPress dependencies
+ * Internal dependencies
  */
-import { test, expect } from '@wordpress/e2e-test-utils-playwright';
+import { test, expect } from '../fixtures';
 
 test.describe( 'Dashboard', () => {
+	const PRESEEDED_OPENAI_KEY = 'sk_XXXXXXXXXXXXXXXXXXXXXXxx';
+
 	test.beforeEach( async({ admin }) => {
 		await admin.visitAdminPage( 'admin.php?page=otter' );
 	});
 
-	test( 'check OpenAI API key test', async({ page }) => {
+	test( 'check OpenAI API key test', async({ admin, otterUtils, page }) => {
+		// bin/e2e-tests.sh preseeds themeisle_open_ai_api_key, which makes the OpenAI input
+		// render with the masked-key placeholder. Clear it so the empty-state placeholder shows.
+		await otterUtils.setOptions({ themeisle_open_ai_api_key: '' });
+		await admin.visitAdminPage( 'admin.php?page=otter' );
+
 		const integrationsTab = page.getByRole( 'button', { name: 'Integrations' });
 		await integrationsTab.click();
 		await page.waitForTimeout( 1000 );
@@ -28,6 +35,9 @@ test.describe( 'Dashboard', () => {
 
 		expect( await snackbar.isVisible() ).toBe( true );
 		expect( await snackbar.innerText() ).toContain( 'Incorrect API key provided: test.' );
+
+		// Restore the preseeded key for downstream tests that rely on it (AI toolbar actions etc.).
+		await otterUtils.setOptions({ themeisle_open_ai_api_key: PRESEEDED_OPENAI_KEY });
 	});
 
 	test( 'toggle AI Block Toolbar', async({ page }) => {

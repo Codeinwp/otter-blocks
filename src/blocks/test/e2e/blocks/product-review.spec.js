@@ -11,8 +11,9 @@ test.describe( 'Product Review Block', () => {
 	test( 'can be created by typing "/product-review"', async({ editor, page }) => {
 
 		// Create a Review Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
+		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
 		await page.keyboard.type( '/product-review' );
+		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
 		await page.keyboard.press( 'Enter' );
 
 		const blocks = await editor.getBlocks();

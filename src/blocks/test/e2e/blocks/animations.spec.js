@@ -16,7 +16,7 @@ test.describe( 'Animations', () => {
 			}
 		});
 
-		const box = await page.getByRole( 'document', { name: 'Block: Paragraph' }).boundingBox();
+		const box = await editor.canvas.getByRole( 'document', { name: 'Block: Paragraph' }).boundingBox();
 
 		// Select a text inside the paragraph block.
 		await page.mouse.move( box.x + 10, box.y + 10 );
@@ -28,8 +28,7 @@ test.describe( 'Animations', () => {
 
 		await page.getByRole( 'menuitem', { name: 'Typing Animation' }).click();
 
-		await expect( page.getByLabel( 'Paragraph block' ).locator( 'o-anim-typing' ).first() ).toBeVisible();
-		await expect( page.getByLabel( 'Paragraph block' ).locator( '.o-typing-delay-500ms' ).first() ).toBeVisible();
+		await expect( editor.canvas.getByLabel( 'Block: Paragraph' ).locator( 'o-anim-typing' ).first() ).toBeVisible();
 	});
 
 	test( 'add simple animation', async({ editor, page }) => {
@@ -40,16 +39,13 @@ test.describe( 'Animations', () => {
 			}
 		});
 
-		// Activate
-		await page.getByRole( 'button', { name: 'Block Tools options' }).click();
-		await page.getByRole( 'menuitemcheckbox', { name: 'Show Animations' }).click();
-		await page.getByRole( 'button', { name: 'Block Tools options' }).click();
+		// Animations is enabled by default for all blocks (managed via "Manage Default Tools").
 
 		// Open the animation panel.
 		await page.getByRole( 'button', { name: 'Animations' }).click();
 
-		// Select an animation
-		await page.getByRole( 'button', { name: 'None' }).click();
+		// Select an animation — the "None" picker uses a custom button (no aria-role).
+		await page.locator( '.o-animations-control__button' ).click();
 		await page.getByRole( 'menuitem', { name: 'Head Shake' }).click();
 
 		// Select a delay
@@ -59,9 +55,9 @@ test.describe( 'Animations', () => {
 		await page.getByRole( 'combobox', { name: 'Speed' }).selectOption( 'slower' );
 
 		// Check the CSS classes.
-		await expect( page.locator( '.headShake' ).first() ).toBeVisible();
-		await expect( page.locator( '.delay-500ms' ).first() ).toBeVisible();
-		await expect( page.locator( '.slower' ).first() ).toBeVisible();
+		await expect( editor.canvas.locator( '.headShake' ).first() ).toBeVisible();
+		await expect( editor.canvas.locator( '.delay-500ms' ).first() ).toBeVisible();
+		await expect( editor.canvas.locator( '.slower' ).first() ).toBeVisible();
 	});
 
 	test( 'add simple animation with custom values', async({ editor, page }) => {
@@ -72,16 +68,13 @@ test.describe( 'Animations', () => {
 			}
 		});
 
-		// Activate
-		await page.getByRole( 'button', { name: 'Block Tools options' }).click();
-		await page.getByRole( 'menuitemcheckbox', { name: 'Show Animations' }).click();
-		await page.getByRole( 'button', { name: 'Block Tools options' }).click();
+		// Animations is enabled by default for all blocks (managed via "Manage Default Tools").
 
 		// Open the animation panel.
 		await page.getByRole( 'button', { name: 'Animations' }).click();
 
-		// Select an animation
-		await page.getByRole( 'button', { name: 'None' }).click();
+		// Select an animation — the "None" picker uses a custom button (no aria-role).
+		await page.locator( '.o-animations-control__button' ).click();
 		await page.getByRole( 'menuitem', { name: 'Head Shake' }).click();
 
 		// Select a delay
@@ -93,8 +86,8 @@ test.describe( 'Animations', () => {
 		await page.locator( '#inspector-input-control-1' ).fill( '2' );
 
 		// Check the CSS classes.
-		await expect( page.locator( '.headShake' ).first() ).toBeVisible();
-		await expect( page.locator( '.o-anim-custom-delay.o-anim-value-delay-2s' ).first() ).toBeVisible();
-		await expect( page.locator( '.o-anim-custom-speed.o-anim-value-speed-2s' ).first() ).toBeVisible();
+		await expect( editor.canvas.locator( '.headShake' ).first() ).toBeVisible();
+		await expect( editor.canvas.locator( '.o-anim-custom-delay.o-anim-value-delay-2s' ).first() ).toBeVisible();
+		await expect( editor.canvas.locator( '.o-anim-custom-speed.o-anim-value-speed-2s' ).first() ).toBeVisible();
 	});
 });

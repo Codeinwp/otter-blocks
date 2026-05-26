@@ -34,8 +34,9 @@ test.describe( 'Slider Block', () => {
 	test( 'can be created by typing "/slider"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
+		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
 		await page.keyboard.type( '/slider' );
+		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
 		await page.keyboard.press( 'Enter' );
 
 		const blocks = await editor.getBlocks();
@@ -88,8 +89,9 @@ test.describe( 'Slider Block', () => {
 
 		expect( sliderBlock.attributes.images.length ).toBeGreaterThan( 0 );
 
-		await page.getByRole( 'document', { name: 'Block: Slider' }).getByRole( 'button' ).first().click();
-		await page.getByRole( 'document', { name: 'Block: Slider' }).getByRole( 'button' ).nth( 1 ).click();
+		// themeisle-blocks/slider opts out of the iframed canvas, so the block renders at page level.
+		await page.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).first().click();
+		await page.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).nth( 1 ).click();
 
 		await expect( page.locator( 'div:nth-child(2) > figure > .wp-block-themeisle-blocks-slider-item' ) ).toBeVisible();
 	});

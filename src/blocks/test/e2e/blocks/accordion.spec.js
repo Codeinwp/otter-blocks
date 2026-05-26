@@ -8,11 +8,13 @@ test.describe( 'Accordion Block', () => {
 		await admin.createNewPost();
 	});
 
-	test( 'can be created by typing "/accordion"', async({ editor, page }) => {
+	test( 'can be created by typing "/faq"', async({ editor, page }) => {
 
-		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/accordion' );
+		// WP 7.0 introduced core/accordion, which collides with themeisle-blocks/accordion
+		// when typing "/accordion". The Otter accordion uniquely matches the "faq" keyword.
+		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
+		await page.keyboard.type( '/faq' );
+		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
 		await page.keyboard.press( 'Enter' );
 
 		const blocks = await editor.getBlocks();
