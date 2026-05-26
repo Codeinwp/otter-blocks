@@ -148,20 +148,32 @@ registerStore( 'otter-pro', {
 
 			if ( data?.success ) {
 				const { groups } = data;
-				const fields = groups
-					?.map( ({ fields, data }) => {
-						return fields.map( field => {
-							field.urlLocation = `${ window.themeisleGutenberg?.rootUrl || '' }/wp-admin/post.php?post=${ data.ID }&action=edit`;
-							return field;
-						});
-					})
-					.flat()
-					.reduce( ( acc, field ) => {
+
+				/**
+				 * Recursively flattens ACF fields, including sub-fields, into a single-level object keyed by field key.
+				 *
+				 * @param {Array}  fieldList   - Array of ACF field objects.
+				 * @param {string} urlLocation - Admin edit URL for the parent group.
+				 * @param {Object} acc         - Accumulator object.
+				 * @return {Object} The populated accumulator.
+				 */
+				const flattenFields = ( fieldList, urlLocation, acc = {} ) => {
+					fieldList.forEach( field => {
 						if ( field.key && field.label ) {
-							acc[ field.key ] = pick( field, [ 'label', 'type', 'prepend', 'append', 'default_value', 'value', 'urlLocation' ]);
+							field.urlLocation = urlLocation;
+							acc[ field.key ] = pick( field, [ 'label', 'type', 'prepend', 'append', 'default_value', 'value', 'urlLocation', 'sub_fields' ]);
 						}
-						return acc;
-					}, {});
+						if ( field.sub_fields?.length ) {
+							flattenFields( field.sub_fields, urlLocation, acc );
+						}
+					});
+					return acc;
+				};
+
+				const fields = groups?.reduce( ( acc, { fields: groupFields, data: groupData }) => {
+					const urlLocation = `${ window.themeisleGutenberg?.rootUrl || '' }/wp-admin/post.php?post=${ groupData.ID }&action=edit`;
+					return flattenFields( groupFields, urlLocation, acc );
+				}, {});
 
 				return actions.setACFData( groups, fields, true );
 			}

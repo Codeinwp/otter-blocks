@@ -17,6 +17,8 @@ import { useSelect } from '@wordpress/data';
 
 import { Fragment } from '@wordpress/element';
 
+import { flattenACFFieldOptions } from '../../helpers/acf-field-options';
+
 const ALLOWED_ACF_TYPES = [
 	'button_group',
 	'checkbox',
@@ -255,16 +257,7 @@ const Edit = ({
 										key={ group?.data?.key }
 										label={ group?.data?.title }
 									>
-										{ group?.fields
-											?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
-											.map( ({ key, label }) => (
-												<option
-													key={ key }
-													value={ key }
-												>
-													{ label }
-												</option>
-											) ) }
+										{ flattenACFFieldOptions( group?.fields || [], ALLOWED_ACF_TYPES ) }
 									</optgroup>
 								);
 							}) }

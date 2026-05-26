@@ -4,37 +4,28 @@
 import { __ } from '@wordpress/i18n';
 
 import {
+	BaseControl,
 	Placeholder,
-	SelectControl,
 	Spinner
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
+
+import { flattenACFFieldOptions } from '../../helpers/acf-field-options';
+
+const ALLOWED_ACF_IMAGE_TYPES = [ 'image', 'url' ];
 
 const ACFImageSelect = ({
 	label,
 	value,
 	onChange
 }) => {
-	const { fields, isLoaded } = useSelect( select => {
+	const { groups, isLoaded } = useSelect( select => {
 		const { groups } = select( 'otter-pro' ).getACFData();
 		const isLoaded = select( 'otter-pro' ).isACFLoaded();
 
-		const fields = [];
-
-		groups.forEach( group => {
-			group.fields.forEach( field => {
-				if ( 'image' === field.type || 'url' === field.type ) {
-					fields.push({
-						label: field.label,
-						value: field.key
-					});
-				}
-			});
-		});
-
 		return {
-			fields,
+			groups,
 			isLoaded
 		};
 	}, []);
@@ -44,18 +35,24 @@ const ACFImageSelect = ({
 	}
 
 	return (
-		<SelectControl
-			label={ label }
-			value={ value }
-			options={ [
-				{
-					label: __( 'Select a field', 'otter-pro' ),
-					value: 'none'
-				},
-				...fields
-			] }
-			onChange={ onChange }
-		/>
+		<BaseControl label={ label }>
+			<select
+				value={ value || 'none' }
+				onChange={ event => onChange( event.target.value ) }
+				className="components-select-control__input"
+			>
+				<option value="none">{ __( 'Select a field', 'otter-pro' ) }</option>
+
+				{ groups.map( group => (
+					<optgroup
+						key={ group?.data?.key }
+						label={ group?.data?.title }
+					>
+						{ flattenACFFieldOptions( group?.fields || [], ALLOWED_ACF_IMAGE_TYPES ) }
+					</optgroup>
+				) ) }
+			</select>
+		</BaseControl>
 	);
 };
 
