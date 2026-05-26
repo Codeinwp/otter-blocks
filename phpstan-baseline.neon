@@ -805,12 +805,6 @@ parameters:
 			path: inc/css/class-css-handler.php
 
 		-
-			message: '#^Path in include_once\(\) "\./wp\-admin/includes/file\.php" is not a file or it does not exist\.$#'
-			identifier: includeOnce.fileNotFound
-			count: 1
-			path: inc/css/class-css-handler.php
-
-		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1

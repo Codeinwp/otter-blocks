@@ -20,11 +20,6 @@ parameters:
 		- COOKIE_DOMAIN
 		- OTTER_BLOCKS_PRO_SUPPORT
 		- OTTER_BLOCKS_SHOW_NOTICES
-	ignoreErrors:
-		-
-			identifiers:
-				- include.fileNotFound
-				- requireOnce.fileNotFound
 includes:
 	- %currentWorkingDirectory%/vendor/szepeviktor/phpstan-wordpress/extension.neon
 	- %currentWorkingDirectory%/phpstan-baseline.neon
