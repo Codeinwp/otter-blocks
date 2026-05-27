@@ -102,6 +102,22 @@ function require_admin() {
 	return current_user_can( 'manage_options' );
 }
 
+/**
+ * wp-env has no MTA; real wp_mail() returns false and form submissions surface code 106 in E2E.
+ *
+ * @param null|bool $short_circuit Value from a previous filter.
+ * @return bool|null
+ */
+function stub_wp_mail_for_e2e( $short_circuit ) {
+	if ( null !== $short_circuit ) {
+		return $short_circuit;
+	}
+
+	return true;
+}
+
+add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e' );
+
 add_action(
 	'rest_api_init',
 	function () {

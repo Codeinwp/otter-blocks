@@ -71,7 +71,7 @@ test.describe( 'AI Block', () => {
 		const blocks = await editor.getBlocks();
 
 		expect( blocks.every( block => 'themeisle-blocks/content-generator' !== block.name ) ).toBe( true );
-		await expect( page.getByText( 'Discover the Next Frontier' ) ).toBeVisible();
+		await expect( editor.canvas.getByText( 'Discover the Next Frontier' ) ).toBeVisible();
 	});
 
 	test( 'replace target block', async({ editor, page }) => {

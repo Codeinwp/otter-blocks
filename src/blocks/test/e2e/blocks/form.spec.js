@@ -453,11 +453,8 @@ test.describe( 'Form Block', () => {
 		// publish button so we don't match the form-options "Save" button.
 		const saveBtn = page.locator( '.editor-post-publish-button__button', { hasText: 'Save' });
 
-		await saveBtn.waitFor({
-			timeout: 4000
-		});
-
-		expect( await saveBtn.isEnabled() ).toBeTruthy();
+		// enableSaveBtn is debounced 3s after form option changes.
+		await expect( saveBtn ).toBeEnabled({ timeout: 10_000 });
 	});
 
 	test( 'default values for fields', async({ page, editor }) => {
