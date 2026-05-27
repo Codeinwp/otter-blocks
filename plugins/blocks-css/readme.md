@@ -1,10 +1,10 @@
 # Blocks CSS: CSS Editor for Gutenberg Blocks #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/)  
-**Tags:** gutenberg, block, css, css editor, blocks css  
+**Tags:** gutenberg, custom css, block editor, css editor, design  
 **Requires at least:** 6.2      
-**Tested up to:** 6.9  
+**Tested up to:** 7.0  
 **Requires PHP:** 5.4    
-**Stable tag:** 3.1.9  
+**Stable tag:** 3.1.10  
 **License:** GPLv3    
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html    
 

@@ -1,10 +1,10 @@
 # Otter Blocks - Gutenberg Blocks, Page Builder for Gutenberg Editor & FSE #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
-**Tags:** block, blocks, gutenberg, gutenberg blocks, page builder  
+**Tags:** gutenberg blocks, gutenberg, blocks, page builder, fse  
 **Requires at least:** 6.2  
-**Tested up to:** 6.9  
+**Tested up to:** 7.0  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.1.9  
+**Stable tag:** 3.1.10  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
@@ -371,10 +371,11 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 ## Changelog ##
 
-##### [Version 3.1.9](https://github.com/Codeinwp/otter-blocks/compare/v3.1.8...v3.1.9) (2026-04-24)
+##### [Version 3.1.10](https://github.com/Codeinwp/otter-blocks/compare/v3.1.9...v3.1.10) (2026-05-19)
 
-- Fixed issue where attributes, variations options appear as empty when the WooCommerce Builder integration from Otter PRO is enabled
-- Fixed issue with animations in the editor view
+- Fixed visibility conditions change on duplicated blocks
+- Enhanced file type validation
+- Updated dependencies
 
 
 
