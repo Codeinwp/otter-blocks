@@ -10,6 +10,23 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Playwright Blocks Serial
+            suite: e2e-serial
+            command: npm run test:e2e:playwright:serial
+            artifact: artifacts-e2e-serial
+          - name: Playwright Blocks Parallel
+            suite: e2e-parallel
+            command: npm run test:e2e:playwright:parallel
+            artifact: artifacts-e2e-parallel
+          - name: Performance
+            suite: performance
+            command: npm run test:performance
+            artifact: artifacts-performance
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -41,35 +58,36 @@ jobs:
       - name: Install Playwright
         run: |
           npm install -g playwright-cli
-          npx playwright install
+          npx playwright install --with-deps chromium
 
-      - name: Playwright Blocks
+      - name: Run ${{ matrix.name }}
         run: |
-          npm run test:e2e:playwright && echo "PLAYWRIGHT_SUCCESS=true" >> $GITHUB_ENV || echo "PLAYWRIGHT_SUCCESS=false" >> $GITHUB_EN
-        continue-on-error: true
+          ${{ matrix.command }}
 
-      - name: Performance check
+      - name: Print performance results
+        if: matrix.suite == 'performance'
         run: |
-          npm run test:performance
           cat artifacts/post-editor.performance-results.json
 
       - name: Upload tests artifacts
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: artifact
+          name: ${{ matrix.artifact }}
           path: ./artifacts
           retention-days: 1
 
       - name: Print the results
+        if: matrix.suite == 'performance'
         run: |
           RESULTS=$(jq -r 'to_entries|map("\(.key): \(.value)")|join(", ")' artifacts/post-editor.performance-results.json)
-          FLAKY_TEST_STATUS="Playwright Test Status: $PLAYWRIGHT_SUCCESS"
+          FLAKY_TEST_STATUS="Playwright Test Status: See serial and parallel matrix jobs"
           echo "::set-output name=PERFORMANCE_OUTPUT::$RESULTS"
           echo "::set-output name=FLAKY_TEST_STATUS::$FLAKY_TEST_STATUS"
         id: summary
 
       - name: Comment
+        if: matrix.suite == 'performance'
         uses: NejcZdovc/comment-pr@v2
         with:
           file: "e2e-summary.md"

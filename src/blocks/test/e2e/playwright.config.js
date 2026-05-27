@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig, devices } from '@playwright/test';
@@ -10,13 +9,23 @@ const STORAGE_STATE_PATH =
     process.env.STORAGE_STATE_PATH ||
     path.join( process.cwd(), 'artifacts/storage-states/admin.json' );
 
+const E2E_WORKERS = parseInt( process.env.E2E_WORKERS || '', 10 ) || ( process.env.CI ? 4 : 2 );
+
+const SERIAL_SPECS = [
+	'**/blocks/block-conditions.spec.js',
+	'**/blocks/dashboard.spec.js',
+	'**/blocks/form.spec.js',
+	'**/blocks/onboarding.spec.js'
+];
+
 const config = defineConfig({
 	reporter: 'list',
 	forbidOnly: !! process.env.CI,
-	workers: 1,
+	workers: E2E_WORKERS,
 	retries: process.env.CI ? 2 : 0,
 	timeout: parseInt( process.env.TIMEOUT || '', 10 ) || 100_000, // Defaults to 100 seconds.
-	// Don't report slow test "files", as we will be running our tests in serial.
+	// Keep tests within each file sequential by default.
+	fullyParallel: false,
 	reportSlowTests: null,
 	testDir: fileURLToPath( new URL( './blocks', 'file:' + __filename ).href ),
 	outputDir: path.join( process.cwd(), 'artifacts/test-results' ),
@@ -52,7 +61,17 @@ const config = defineConfig({
 	},
 	projects: [
 		{
-			name: 'chromium',
+			name: 'chromium-serial',
+			testMatch: SERIAL_SPECS,
+			workers: 1,
+			use: { ...devices['Desktop Chrome'] },
+			grepInvert: /-chromium/
+		},
+		{
+			name: 'chromium-parallel',
+			testIgnore: SERIAL_SPECS,
+			dependencies: [ 'chromium-serial' ],
+			workers: E2E_WORKERS,
 			use: { ...devices['Desktop Chrome'] },
 			grepInvert: /-chromium/
 		}

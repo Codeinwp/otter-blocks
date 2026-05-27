@@ -14,8 +14,6 @@ test.describe( 'Slider Block', () => {
 	let uploadedMedia;
 
 	test.beforeAll( async({ requestUtils }) => {
-		await requestUtils.deleteAllMedia();
-
 		uploadedMedia = await requestUtils.uploadMedia(
 			path.resolve(
 				process.cwd(),
@@ -26,14 +24,6 @@ test.describe( 'Slider Block', () => {
 
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
-	});
-
-	test.afterEach( async({ requestUtils }) => {
-		await requestUtils.deleteAllPosts();
-	});
-
-	test.afterAll( async({ requestUtils }) => {
-		await requestUtils.deleteAllMedia();
 	});
 
 	test( 'can be created by typing "/slider"', async({ editor, page }) => {

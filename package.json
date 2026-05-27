@@ -28,6 +28,8 @@
 		"test:unit:debug": "wp-scripts --inspect-brk test-unit-js --runInBand --no-cache",
 		"test:e2e:blockId": "wp-scripts test-e2e uniq-id-checking.spec.js",
 		"test:e2e:playwright": "npx playwright test --config src/blocks/test/e2e/playwright.config.js",
+		"test:e2e:playwright:serial": "npx playwright test --config src/blocks/test/e2e/playwright.config.js --project=chromium-serial",
+		"test:e2e:playwright:parallel": "npx playwright test --config src/blocks/test/e2e/playwright.config.js --project=chromium-parallel --no-deps",
 		"test:e2e:playwright-ui": "npx playwright test --config src/blocks/test/e2e/playwright.config.js --ui",
 		"test:performance": "wp-scripts test-playwright --config src/blocks/test/performance/playwright.config.ts",
 		"test:performance:debug": "wp-scripts test-playwright --config src/blocks/test/performance/playwright.config.ts --debug",
