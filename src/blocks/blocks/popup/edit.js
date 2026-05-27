@@ -204,6 +204,8 @@ const Edit = ({
 											<div className="otter-popup__modal_header">
 												<Button
 													icon={ closeSmall }
+													label={ __( 'Close', 'otter-blocks' ) }
+													showTooltip={ true }
 													onClick={ () => setEditing( false ) }
 												/>
 											</div>
