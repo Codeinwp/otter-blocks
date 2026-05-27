@@ -18,23 +18,21 @@ test.describe( 'Dashboard', () => {
 
 		const integrationsTab = page.getByRole( 'button', { name: 'Integrations' });
 		await integrationsTab.click();
-		await page.waitForTimeout( 1000 );
 
 		const openAIAccordion = page.getByRole( 'button', { name: 'OpenAI' });
 		await openAIAccordion.click();
-		await page.waitForTimeout( 1000 );
 
 		const inputArea = page.getByPlaceholder( 'OpenAI API Key' );
+		await expect( inputArea ).toBeVisible();
 		await inputArea.fill( 'test' );
 
 		const save = page.locator( 'div' ).filter({ hasText: /^SaveGet API Key↗More Info↗$/ }).getByRole( 'button' );
 		await save.click();
-		await page.waitForTimeout( 1000 );
 
 		const snackbar = page.getByTestId( 'snackbar' );
 
-		expect( await snackbar.isVisible() ).toBe( true );
-		expect( await snackbar.innerText() ).toContain( 'Incorrect API key provided: test.' );
+		await expect( snackbar ).toBeVisible();
+		await expect( snackbar ).toContainText( 'Incorrect API key provided: test.' );
 
 		// Restore the preseeded key for downstream tests that rely on it (AI toolbar actions etc.).
 		await otterUtils.setOptions({ themeisle_open_ai_api_key: PRESEEDED_OPENAI_KEY });
@@ -46,14 +44,12 @@ test.describe( 'Dashboard', () => {
 		const initialToggleValue = await toggle.isChecked();
 
 		await toggle.click();
-		await page.waitForTimeout( 1000 ); // Wait for the toggle to be updated.
-		expect( await toggle.isChecked() ).not.toEqual( initialToggleValue );
+		await expect( toggle ).toBeChecked({ checked: ! initialToggleValue });
 
-		page.reload();
+		await page.reload();
 
 		await toggle.click();
-		await page.waitForTimeout( 1000 );
-		expect( await toggle.isChecked() ).toEqual( initialToggleValue );
+		await expect( toggle ).toBeChecked({ checked: initialToggleValue });
 	});
 
 	test( 'edit editable custom actions', async({ page }) => {
@@ -65,7 +61,7 @@ test.describe( 'Dashboard', () => {
 		await page.getByRole( 'button', { name: 'OpenAI' }).click();
 
 		// Edit the first action.
-		page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child button' ).click();
+		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child button' ).click();
 		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child' ).getByPlaceholder( 'Action Name' ).fill( actionTitleValue );
 		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child' ).getByPlaceholder( 'Prompt' ).fill( actionPromptValue );
 

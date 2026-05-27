@@ -3,6 +3,11 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { insertBlockBySlash } from '../helpers/editor';
+
 test.describe( 'Advanced Heading Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -11,15 +16,12 @@ test.describe( 'Advanced Heading Block', () => {
 	test( 'can be created by typing "/advanced-heading"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
-		await page.keyboard.type( '/advanced-heading' );
-		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasProgressBar = blocks.some( ( block ) => 'themeisle-blocks/advanced-heading' === block.name );
-
-		expect( hasProgressBar ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/advanced-heading',
+			blockName: 'themeisle-blocks/advanced-heading'
+		});
 	});
 
 	test( 'can use typo component"', async({ editor, page }) => {

@@ -3,58 +3,36 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { expectBlockByName, insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
+import { expectFormOptionSavedNotice, findSavedFormEmail, getSavedFormEmails, insertContactForm, openFormOptions, showFormOption } from '../helpers/forms';
+import { expectSuccessMessage, visibleText } from '../helpers/frontend';
+
 test.describe( 'Form Block', () => {
 
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
 	});
 
-	// test( 'check if Otter Pro is active', async({ page }) => {
-	// 	await page.goto( '/wp-admin/admin.php?page=otter' );
-	//
-	// 	await page.waitForTimeout( 1000 );
-	//
-	// 	const activateInputField = page.getByPlaceholder( 'Enter license key' );
-	//
-	// 	expect( activateInputField ).toBeVisible();
-	//
-	// 	const activateBtn = page.getByRole( 'button', { name: 'Deactivate' });
-	//
-	// 	expect( activateBtn ).toBeVisible();
-	//
-	// 	await activateBtn.click();
-	// });
-
 	test( 'can be created by typing "/form"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
-		await page.keyboard.type( '/form' );
-		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasProgressBar = blocks.some( ( block ) => 'themeisle-blocks/form' === block.name );
-
-		expect( hasProgressBar ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/form',
+			blockName: 'themeisle-blocks/form'
+		});
 	});
 
 	test( 'click on the first variation and check if it has content', async({ editor, page }) => {
-		await editor.insertBlock({ name: 'themeisle-blocks/form' });
-
-		const blocks = await editor.getBlocks();
-
-		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
-
-		expect( formBlock ).toBeTruthy();
-
-		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
+		await insertContactForm({ editor, page });
 
 		// Check if the blocks has innerBlocks
 
-		const updateBlocks = await editor.getBlocks();
-
-		const updatedFormBlock = updateBlocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
+		const updatedFormBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
 
 		expect( updatedFormBlock.innerBlocks.length ).toBeGreaterThan( 0 );
 	});
@@ -66,22 +44,8 @@ test.describe( 'Form Block', () => {
 		 * Create a form block and insert the CC value using the Inspector Controls.
 		 */
 
-		await editor.insertBlock({ name: 'themeisle-blocks/form' });
-
-		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
-
-		expect( formBlock ).toBeTruthy();
-
-		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
-
-		// Open the options panel
-		await page.getByRole( 'button', { name: 'Form Options options' }).click();
-
-		// activate the option
-		await page.getByRole( 'menuitemcheckbox', { name: 'Show CC' }).click();
-
-		// Close the options panel
-		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+		let formBlock = await insertContactForm({ editor, page });
+		await showFormOption( page, 'Show CC' );
 
 		const cc = page.getByPlaceholder( 'Send copies to' );
 
@@ -91,38 +55,23 @@ test.describe( 'Form Block', () => {
 
 		await editor.publishPost();
 
-		await page.waitForTimeout( 1000 );
-
-		// Check if the notice is visible
-		const msg = page.getByRole( 'button', { name: 'Dismiss this notice' }).filter({
-			hasText: 'Form options have been saved.'
-		});
-
-		await page.waitForTimeout( 1500 );
-
-		expect( await msg.isVisible() ).toBeTruthy();
+		await expectFormOptionSavedNotice( page );
 
 		/*
 		 * Check if the value is saved in the database.
 		 */
 
-		formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+		formBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
 
 		expect( formBlock ).toBeTruthy();
 		expect( formBlock.attributes.optionName ).toBeTruthy();
 
-		const databaseEmails = await page.evaluate( async() => {
-			// eslint-disable-next-line camelcase
-			const { themeisle_blocks_form_emails } = await ( new wp.api.models.Settings() ).fetch();
-
-			// eslint-disable-next-line camelcase
-			return themeisle_blocks_form_emails;
-		});
+		const databaseEmails = await getSavedFormEmails( page );
 
 		expect( databaseEmails ).toBeTruthy();
 		expect( databaseEmails.length ).toBeGreaterThan( 0 );
 
-		const savedEmail = databaseEmails.find( email => email?.form === formBlock.attributes.optionName );
+		const savedEmail = findSavedFormEmail( databaseEmails, formBlock.attributes.optionName );
 
 		expect( savedEmail ).toBeTruthy();
 		expect( savedEmail?.cc ).toBe( ccValue );
@@ -136,22 +85,8 @@ test.describe( 'Form Block', () => {
 		 * Create a form block and insert the From Email value using the Inspector Controls.
 		 */
 
-		await editor.insertBlock({ name: 'themeisle-blocks/form' });
-
-		let formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
-
-		expect( formBlock ).toBeTruthy();
-
-		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
-
-		// Open the options panel
-		await page.getByRole( 'button', { name: 'Form Options options' }).click();
-
-		// activate the option
-		await page.getByRole( 'menuitemcheckbox', { name: 'Show From Email' }).click();
-
-		// Close the options panel
-		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+		let formBlock = await insertContactForm({ editor, page });
+		await showFormOption( page, 'Show From Email' );
 
 		const from = page.getByPlaceholder( 'e.g. noreply@example.com' );
 
@@ -161,79 +96,53 @@ test.describe( 'Form Block', () => {
 
 		await editor.publishPost();
 
-		await page.waitForTimeout( 1000 );
-
-		// Check if the notice is visible
-		const msg = page.getByRole( 'button', { name: 'Dismiss this notice' }).filter({
-			hasText: 'Form options have been saved.'
-		});
-
-		await page.waitForTimeout( 1500 );
-
-		expect( await msg.isVisible() ).toBeTruthy();
+		await expectFormOptionSavedNotice( page );
 
 		/*
 		 * Check if the value is saved in the database.
 		 */
 
-		formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
+		formBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
 
 		expect( formBlock ).toBeTruthy();
 		expect( formBlock.attributes.optionName ).toBeTruthy();
 
-		const databaseEmails = await page.evaluate( async() => {
-			// eslint-disable-next-line camelcase
-			const { themeisle_blocks_form_emails } = await ( new wp.api.models.Settings() ).fetch();
-
-			// eslint-disable-next-line camelcase
-			return themeisle_blocks_form_emails;
-		});
+		const databaseEmails = await getSavedFormEmails( page );
 
 		expect( databaseEmails ).toBeTruthy();
 		expect( databaseEmails.length ).toBeGreaterThan( 0 );
 
-		const savedEmail = databaseEmails.find( email => email?.form === formBlock.attributes.optionName );
+		const savedEmail = findSavedFormEmail( databaseEmails, formBlock.attributes.optionName );
 
 		expect( savedEmail ).toBeTruthy();
 		expect( savedEmail?.fromEmail ).toBe( fromEmail );
 	});
 
 	test( 'check if the form is rendered in frontend', async({ page, editor }) => {
-		await editor.insertBlock({ name: 'themeisle-blocks/form' });
+		const formBlock = await insertContactForm({ editor, page });
 
-		const blocks = await editor.getBlocks();
-
-		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
-
-		expect( formBlock ).toBeTruthy();
-
-		const { clientId, attributes } = formBlock;
+		const { attributes } = formBlock;
 		const otterId = attributes?.id;
 
 		expect( otterId ).toBeTruthy();
 
-		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
+		await publishAndViewPost({ editor, page });
 
-		const postId = await editor.publishPost();
+		const form = page.locator( `#${otterId}` );
 
-		await page.goto( `/?p=${postId}` );
+		await expect( form ).toBeVisible();
 
-		const form = await page.$( `#${otterId}` );
+		const submitArea = visibleText( page, 'Submit' );
 
-		expect( form ).toBeTruthy();
-
-		const submitArea = page.locator( 'div' ).filter({ hasText: /^Submit$/ });
-
-		expect( await submitArea.isVisible() ).toBeTruthy();
+		await expect( submitArea ).toBeVisible();
 
 		const submitBtn = submitArea.getByRole( 'button', { name: 'Submit' });
 
-		expect( await submitBtn.isVisible() ).toBeTruthy();
+		await expect( submitBtn ).toBeVisible();
 	});
 
 	test( 'insert a file field and check if it renders in frontend', async({ page, editor }) => {
 
-		await page.waitForTimeout( 1000 );
 		await editor.insertBlock({ name: 'themeisle-blocks/form', innerBlocks: [
 			{
 				name: 'themeisle-blocks/form-file',
@@ -248,10 +157,7 @@ test.describe( 'Form Block', () => {
 			}
 		] });
 
-		const blocks = await editor.getBlocks();
-
-		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
-		expect( formBlock ).toBeTruthy();
+		const formBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
 
 		const fileInputBlock = formBlock.innerBlocks.find( ( block ) => 'themeisle-blocks/form-file' === block.name );
 		expect( fileInputBlock ).toBeTruthy();
@@ -260,15 +166,11 @@ test.describe( 'Form Block', () => {
 
 		expect( attributes.id ).toBeTruthy();
 
-		const postId = await editor.publishPost();
+		await publishAndViewPost({ editor, page, waitAfterPublish: 1700 });
 
-		await page.waitForTimeout( 1700 );
+		const fileInput = page.locator( `#${attributes.id} input[type="file"]` );
 
-		await page.goto( `/?p=${postId}` );
-
-		const fileInput = await page.$( `#${attributes.id} input[type="file"]` );
-
-		expect( fileInput ).toBeTruthy();
+		await expect( fileInput ).toBeVisible();
 
 		// This is a base64 representation of a 1x1 red pixel in PNG format
 		const base64Image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAA1JREFUCNdjYGBgYAAAAAUAAXhP/o8AAAAASUVORK5CYII=';
@@ -286,18 +188,13 @@ test.describe( 'Form Block', () => {
 		// Click the submit button
 		await page.getByRole( 'button', { name: 'Submit' }).click();
 
-		await page.waitForTimeout( 1000 );
-
 		// Check if Success message div is visible
-		const successMsg = page.locator( 'div' ).filter({ hasText: /^Success$/ });
-
-		expect( await successMsg.isVisible() ).toBeTruthy();
+		await expectSuccessMessage( page );
 
 	});
 
 	test( 'insert a hidden field and check if it renders in frontend', async({ page, editor }) => {
 
-		await page.waitForTimeout( 1000 );
 		await editor.insertBlock({ name: 'themeisle-blocks/form', innerBlocks: [
 			{
 				name: 'themeisle-blocks/form-hidden-field',
@@ -311,10 +208,7 @@ test.describe( 'Form Block', () => {
 			}
 		] });
 
-		const blocks = await editor.getBlocks();
-
-		const formBlock = blocks.find( ( block ) => 'themeisle-blocks/form' === block.name );
-		expect( formBlock ).toBeTruthy();
+		const formBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
 
 		const fileHiddenBlock = formBlock.innerBlocks.find( ( block ) => 'themeisle-blocks/form-hidden-field' === block.name );
 
@@ -324,40 +218,24 @@ test.describe( 'Form Block', () => {
 
 		expect( attributes.id ).toBeTruthy();
 
-		const postId = await editor.publishPost();
+		await publishAndViewPost({ editor, page, query: '&test=123' });
 
-		await page.waitForTimeout( 1500 );
+		const hiddenInput = page.locator( `#${attributes.id} input[type="hidden"]` );
 
-		await page.goto( `/?p=${postId}&test=123` );
-
-		const hiddenInput = await page.locator( `#${attributes.id} input[type="hidden"]` );
-
-		expect( hiddenInput ).toBeTruthy();
+		await expect( hiddenInput ).toBeAttached();
 
 		await expect( hiddenInput ).toHaveAttribute( 'data-param-name', 'test' );
 
 	});
 
-	test( 'redirect to a page after form submission', async({ page, editor, browser }) => {
+	test( 'redirect to a page after form submission', async({ page, editor }) => {
 
 		/*
 		 * Create a form block and insert the Redirect value using the Inspector Controls.
 		 */
 
-		await editor.insertBlock({ name: 'themeisle-blocks/form' });
-
-		const formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
-
-		expect( formBlock ).toBeTruthy();
-
-		const { clientId } = formBlock;
-
-		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
-
-		// Open the options panel
-		await page.getByRole( 'button', { name: 'Form Options options' }).click();
-
-		// activate the option
+		await insertContactForm({ editor, page });
+		await openFormOptions( page );
 		await page.getByRole( 'menuitemcheckbox', { name: 'Redirect on Submit' }).click();
 
 		const redirectField = page.getByPlaceholder( 'https://example.com' );
@@ -368,40 +246,24 @@ test.describe( 'Form Block', () => {
 
 		expect( await redirectField.inputValue() ).toBe( REDIRECT_URL );
 
-		const postId = await editor.publishPost();
-
-		await page.waitForTimeout( 2000 );
-
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page, waitAfterPublish: 2000 });
 
 		await page.getByLabel( 'Name*' ).fill( 'John Doe' );
 		await page.getByLabel( 'Email*' ).fill( 'test@otter.com' );
-
-		page.on( 'response', ( response ) =>
-			console.log( '<<', response.status(), response.url() )
-		);
 
 		await page.waitForTimeout( 5000 ); // Wait to prevent the anti-spam check from blocking the request.
 
 		await page.getByRole( 'button', { name: 'Submit' }).click();
 
-		await page.waitForTimeout( 500 );
-
-		await expect( await page.$( `[data-redirect="${REDIRECT_URL}"]` ) ).toBeTruthy();
-		await expect( await page.getByText( 'Success' ) ).toBeVisible();
+		await expect( page.locator( `[data-redirect="${REDIRECT_URL}"]` ) ).toBeAttached();
+		await expectSuccessMessage( page );
 
 		// check for a element with the attribute data-redirect-url
 	});
 
-	test( 'errors on invalid API Key for Market Integration', async({ page, editor, browser }) => {
+	test( 'errors on invalid API Key for Market Integration', async({ page, editor }) => {
 
-		await editor.insertBlock({ name: 'themeisle-blocks/form' });
-
-		const formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
-
-		expect( formBlock ).toBeTruthy();
-
-		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
+		await insertContactForm({ editor, page });
 
 		await page.getByRole( 'button', { name: 'Marketing Integration' }).click();
 
@@ -420,24 +282,8 @@ test.describe( 'Form Block', () => {
 		 * Create a form block and insert the CC value using the Inspector Controls.
 		 */
 
-		await editor.insertBlock({ name: 'themeisle-blocks/form' });
-
-		const formBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/form' === block.name );
-
-		expect( formBlock ).toBeTruthy();
-
-		const { clientId } = formBlock;
-
-		await page.getByRole( 'button', { name: 'Contact form for clients' }).click();
-
-		// Open the options panel
-		await page.getByRole( 'button', { name: 'Form Options options' }).click();
-
-		// activate the option
-		await page.getByRole( 'menuitemcheckbox', { name: 'Show CC' }).click();
-
-		// Close the options panel
-		await page.getByRole( 'button', { name: 'Form Options options' }).click();
+		await insertContactForm({ editor, page });
+		await showFormOption( page, 'Show CC' );
 
 		const cc = page.getByPlaceholder( 'Send copies to' );
 
@@ -521,53 +367,42 @@ test.describe( 'Form Block', () => {
 			}
 		);
 
-		const postId = await editor.publishPost();
-
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
 		// Text input.
-		expect( await page.getByLabel( 'Name' ).inputValue() ).toBe( 'John Doe' );
+		await expect( page.getByLabel( 'Name' ) ).toHaveValue( 'John Doe' );
 
 		// Textarea.
-		expect( await page.getByLabel( 'Message' ).inputValue() ).toBe( 'Hello World' );
+		await expect( page.getByLabel( 'Message' ) ).toHaveValue( 'Hello World' );
 
 		// Checkboxes.
-		expect( await page.getByLabel( 'Checkbox Option 1' ).isChecked() ).toBeTruthy();
-		expect( await page.getByLabel( 'Checkbox Option 2' ).isChecked() ).toBeTruthy();
-		expect( await page.getByLabel( 'Checkbox Option 3' ).isChecked() ).toBeFalsy();
+		await expect( page.getByLabel( 'Checkbox Option 1' ) ).toBeChecked();
+		await expect( page.getByLabel( 'Checkbox Option 2' ) ).toBeChecked();
+		await expect( page.getByLabel( 'Checkbox Option 3' ) ).not.toBeChecked();
 
 		// Radio.
-		expect( await page.getByLabel( 'Radio Option 1' ).isChecked() ).toBeFalsy();
-		expect( await page.getByLabel( 'Radio Option 2' ).isChecked() ).toBeTruthy();
+		await expect( page.getByLabel( 'Radio Option 1' ) ).not.toBeChecked();
+		await expect( page.getByLabel( 'Radio Option 2' ) ).toBeChecked();
 
 		// Select.
-		expect( await page.getByRole( 'combobox' ).inputValue() ).toBe( 'select-option-2' );
+		await expect( page.getByRole( 'combobox' ) ).toHaveValue( 'select-option-2' );
 
 		// Hidden field.
-		expect( await page.locator( '.otter-form-input[type="hidden"]' ).inputValue() ).toBe( '123' );
+		await expect( page.locator( '.otter-form-input[type="hidden"]' ) ).toHaveValue( '123' );
 	});
 
-	test( 'can export form data', async({ page, editor }) => {
-		let downloadTriggered = false;
-		let fileName = '';
-
+	test( 'can export form data', async({ page }) => {
 		await page.goto( '/wp-admin/edit.php?post_type=otter_form_record' );
-
-		page.on( 'download', async download => {
-			await download.path(); // Wait for download to complete.
-			downloadTriggered = true;
-			fileName = download.suggestedFilename();
-		});
 
 		const exportBtn = page.getByRole( 'button', { name: 'Export' });
 
 		await expect( exportBtn ).toBeVisible();
 
+		const downloadPromise = page.waitForEvent( 'download' );
 		await exportBtn.click();
+		const download = await downloadPromise;
 
-		await page.waitForTimeout( 1000 );
-
-		expect( downloadTriggered ).toBeTruthy();
-		expect( fileName.startsWith( 'otter_form_submissions' ) ).toBeTruthy();
+		await download.path(); // Wait for download to complete.
+		expect( download.suggestedFilename().startsWith( 'otter_form_submissions' ) ).toBeTruthy();
 	});
 });

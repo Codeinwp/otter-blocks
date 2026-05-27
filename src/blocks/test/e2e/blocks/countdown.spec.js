@@ -3,6 +3,11 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { expectBlockByName, insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
+
 test.describe( 'Countdown Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -11,15 +16,12 @@ test.describe( 'Countdown Block', () => {
 	test( 'can be created by typing "/countdown"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
-		await page.keyboard.type( '/countdown' );
-		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasCountdown = blocks.some( ( block ) => 'themeisle-blocks/countdown' === block.name );
-
-		expect( hasCountdown ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/countdown',
+			blockName: 'themeisle-blocks/countdown'
+		});
 	});
 
 	test( 'select a data and check the rendering', async({ editor, page }) => {
@@ -27,7 +29,7 @@ test.describe( 'Countdown Block', () => {
 			name: 'themeisle-blocks/countdown'
 		});
 
-		const countdownBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/countdown' === block.name );
+		const countdownBlock = await expectBlockByName( editor, 'themeisle-blocks/countdown' );
 		const otterId = countdownBlock.attributes.id;
 
 		// Focus the block so its Inspector controls render.
@@ -49,9 +51,7 @@ test.describe( 'Countdown Block', () => {
 		await expect( page.locator( '.otter-countdown__label' ).filter({ hasText: /^Day$/ }) ).toBeVisible();
 
 		await page.locator( '.editor-styles-wrapper' ).click();
-		const postId = await editor.publishPost();
-
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
 		expect( ( await page.$eval( `#${otterId}`, ( el ) => el.getAttribute( 'data-date' ) ) ).startsWith( '2030-08-17' ) ).toBeTruthy();
 

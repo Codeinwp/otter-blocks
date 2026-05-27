@@ -3,6 +3,11 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { expectBlockByName, insertBlockBySlash } from '../helpers/editor';
+
 test.describe( 'Section Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -11,34 +16,27 @@ test.describe( 'Section Block', () => {
 	test( 'can be created by typing "/section"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
-		await page.keyboard.type( '/section' );
-		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasSection = blocks.some( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
-
-		expect( hasSection ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/section',
+			blockName: 'themeisle-blocks/advanced-columns'
+		});
 	});
 
 	test( 'can be created by typing "/section" and choose Single Column', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
-		await page.keyboard.type( '/section' );
-		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
-		await page.keyboard.press( 'Enter' );
-
-		const hasSection = ( await editor.getBlocks() ).some( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
-
-		expect( hasSection ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/section',
+			blockName: 'themeisle-blocks/advanced-columns'
+		});
 
 		await page.getByRole( 'button', { name: 'Single column' }).click();
 
-		const blocks = await editor.getBlocks();
-
-		const sectionBlock = blocks.find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		const sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		// Check if w have a column in innerBlocks
 		expect( sectionBlock.innerBlocks.length ).toBe( 1 );
@@ -54,7 +52,7 @@ test.describe( 'Section Block', () => {
 			]
 		});
 
-		let sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		let sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		const columnController = page.getByRole( 'spinbutton', { name: 'Columns' });
 
@@ -63,7 +61,7 @@ test.describe( 'Section Block', () => {
 		// Press the up arrow one time
 		await columnController.press( 'ArrowUp' );
 
-		sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		expect( sectionBlock.innerBlocks.length ).toBe( 2 );
 	});
@@ -81,7 +79,7 @@ test.describe( 'Section Block', () => {
 			]
 		});
 
-		let sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		let sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		const columnController = page.getByRole( 'spinbutton', { name: 'Columns' });
 
@@ -90,7 +88,7 @@ test.describe( 'Section Block', () => {
 		// Press the up arrow one time
 		await columnController.press( 'ArrowDown' );
 
-		sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		expect( sectionBlock.innerBlocks.length ).toBe( 1 );
 	});
@@ -98,10 +96,12 @@ test.describe( 'Section Block', () => {
 	test( 'check margin and padding controls', async({ editor, page }) => {
 
 		// Create a Section Block with the slash block shortcut. Add a column and a paragraph block.
-		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
-		await page.keyboard.type( '/section' );
-		await expect( page.locator( '.components-autocomplete__results [role="option"]' ).first() ).toBeVisible();
-		await page.keyboard.press( 'Enter' );
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/section',
+			blockName: 'themeisle-blocks/advanced-columns'
+		});
 		await page.getByLabel( 'Single column' ).click();
 		await page.getByLabel( 'Add block' ).click();
 		await page.getByRole( 'option', { name: 'Paragraph' }).click();

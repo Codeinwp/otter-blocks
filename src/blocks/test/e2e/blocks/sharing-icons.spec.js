@@ -3,6 +3,11 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { publishAndViewPost } from '../helpers/editor';
+
 test.describe( 'Sharing Icons', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -54,8 +59,7 @@ test.describe( 'Sharing Icons', () => {
 
 		await expect( page.getByLabel( 'Block: Sharing Icons' ) ).toBeVisible();
 
-		const postId = await editor.publishPost();
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
 		expect( await page.locator( '.social-icons-wrap .social-icon' ).count() ).toBe( Object.keys( attributes ).length ); // We have all the icons rendered.
 		expect( await page.locator( '.social-icons-wrap .social-icon svg' ).count() ).toBe( Object.keys( attributes ).length );
@@ -78,9 +82,8 @@ test.describe( 'Sharing Icons', () => {
 
 		await page.locator( 'button:nth-child(6)' ).click(); // Hide Reddit icon using the Toolbar actions.
 
-		const postId = await editor.publishPost();
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
-		expect( await page.locator( '.social-icons-wrap' ).getByRole( 'link', { name: 'Reddit' }) ).toBeHidden();
+		await expect( page.locator( '.social-icons-wrap' ).getByRole( 'link', { name: 'Reddit' }) ).toBeHidden();
 	});
 });
