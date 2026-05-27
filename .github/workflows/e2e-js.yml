@@ -61,6 +61,8 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Run ${{ matrix.name }}
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
         run: |
           ${{ matrix.command }}
 

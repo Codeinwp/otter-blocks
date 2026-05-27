@@ -46,6 +46,8 @@ npm run test:unit:php:multisite # Multisite PHPUnit tests
 
 # E2E tests (Playwright)
 npm run test:e2e:playwright
+npm run test:e2e:playwright:serial    # Serial-only specs
+npm run test:e2e:playwright:parallel  # Parallel-safe specs
 npm run test:e2e:playwright-ui  # With UI
 
 # Performance tests
@@ -54,6 +56,37 @@ npm run test:performance
 
 PHPUnit config: `phpunit.xml` (single-site), `phpunit/multisite.xml`.
 Playwright config: `src/blocks/test/e2e/playwright.config.js`.
+
+### Playwright E2E Split
+
+The blocks E2E suite is split by Playwright project:
+
+- `chromium-serial` runs specs listed in `SERIAL_SPECS` from `src/blocks/test/e2e/playwright.config.js` with `workers: 1`.
+- `chromium-parallel` ignores those serial specs and runs the rest with `E2E_WORKERS` (`CI ? 4 : 2` by default).
+- GitHub Actions runs `test:e2e:playwright:serial`, `test:e2e:playwright:parallel`, and `test:performance` as separate matrix jobs.
+
+Keep specs in the parallel project by default. Add a spec to `SERIAL_SPECS` only when it mutates shared WordPress state that cannot be isolated, such as global options, active theme/editor state, users/auth state, or external service state. Do not add `test.describe.configure({ mode: 'serial' })` just to control file-level parallelism; the project split handles that.
+
+For parallel-safe tests:
+
+- Avoid broad cleanup helpers like `deleteAllPosts()` or `deleteAllMedia()` inside individual specs.
+- Prefer test-local setup and cleanup: create the post/media/options needed by the test and remove only those resources when cleanup is necessary.
+- Do not rely on another spec's created content or settings.
+- Keep selectors user-facing where possible (`getByRole`, labels, visible text) and use block attributes only when validating saved block state.
+
+`wp-scripts test-playwright` downloads all Playwright browsers unless `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD` is set. CI installs Chromium explicitly with `npx playwright install --with-deps chromium` and sets `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=true` when running matrix jobs.
+
+### TDD Practices
+
+Use vertical red-green-refactor cycles for behavior changes:
+
+- Start with one behavior-focused test that uses the public interface.
+- Run it and confirm it fails for the expected reason.
+- Implement the smallest change that makes that test pass.
+- Repeat one behavior at a time; do not write a large batch of speculative tests before implementation.
+- Refactor only while tests are green, and rerun the relevant suite after each meaningful refactor.
+
+Good tests in this repo should read like behavior specs. They should verify what users, WordPress APIs, block markup, REST endpoints, or public helpers do, not private implementation details. Avoid tests that mock internal collaborators, assert private function shape, or inspect storage directly when the behavior can be verified through the editor, frontend, REST API, or public PHP/JS interface.
 
 ## Linting & Formatting
 
