@@ -1,10 +1,67 @@
 /**
  * WordPress dependencies.
  */
+import { parse } from '@wordpress/blocks';
+
 import {
 	dispatch,
 	select
 } from '@wordpress/data';
+
+/**
+ * Recursively inline `core/pattern` blocks by replacing each with the parsed
+ * content of the pattern it references. BlockPreview renders patterns via the
+ * block-editor data store, which isn't hydrated in the onboarding wizard's
+ * isolated provider, so without this step every `wp:pattern` reference shows
+ * up as blank in the preview.
+ *
+ * @param {Array}  blocks   Parsed blocks.
+ * @param {Array}  patterns Registered patterns from `select('core').getBlockPatterns()`.
+ * @param {number} depth    Recursion guard for pattern-in-pattern cycles.
+ * @return {Array}
+ */
+export const resolvePatternBlocks = ( blocks, patterns, depth = 0 ) => {
+	if ( ! Array.isArray( blocks ) || ! Array.isArray( patterns ) || ! patterns.length || 4 < depth ) {
+		return blocks;
+	}
+
+	const byName = patterns.reduce( ( acc, pattern ) => {
+		if ( pattern?.name ) {
+			acc[ pattern.name ] = pattern;
+		}
+		return acc;
+	}, {});
+
+	const resolve = block => {
+		if ( ! block ) {
+			return [];
+		}
+
+		if ( 'core/pattern' === block.name ) {
+			const slug = block.attributes?.slug;
+			const pattern = slug ? byName[ slug ] : null;
+
+			if ( pattern?.content ) {
+				return resolvePatternBlocks( parse( pattern.content ), patterns, depth + 1 );
+			}
+
+			return [];
+		}
+
+		if ( block.innerBlocks?.length ) {
+			return [
+				{
+					...block,
+					innerBlocks: block.innerBlocks.flatMap( resolve )
+				}
+			];
+		}
+
+		return [ block ];
+	};
+
+	return blocks.flatMap( resolve );
+};
 
 export const findBlock = ( blocksAr, name ) => {
 	const foundBlock = blocksAr.find( block => block.name === name );
