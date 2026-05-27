@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4fddabbc0ea7df1b3c8c1cfa0e3698b7",
+    "content-hash": "cd3c3a2c9c1562ea9b3777b2163ca2a0",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -227,26 +227,26 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v15.10.0",
+            "version": "v20.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "3df1a19a33477af9ead8984dbd84e8f637c36199"
+                "reference": "6d0ec5ffa0678a408d63163ace1453b35a85fb24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/3df1a19a33477af9ead8984dbd84e8f637c36199",
-                "reference": "3df1a19a33477af9ead8984dbd84e8f637c36199",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/6d0ec5ffa0678a408d63163ace1453b35a85fb24",
+                "reference": "6d0ec5ffa0678a408d63163ace1453b35a85fb24",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": ">=5.6.0"
+                "php": ">=7.2.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "3.5.0",
+                "friendsofphp/php-cs-fixer": "3.94.0",
                 "phpstan/phpstan": "^1.2",
                 "phpunit/phpunit": "^5.7 || ^9.0"
             },
@@ -257,6 +257,9 @@
                 }
             },
             "autoload": {
+                "files": [
+                    "lib/version_check.php"
+                ],
                 "psr-4": {
                     "Stripe\\": "lib/"
                 }
@@ -280,9 +283,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v15.10.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v20.1.0"
             },
-            "time": "2024-09-18T18:38:30+00:00"
+            "time": "2026-04-24T00:12:56+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
