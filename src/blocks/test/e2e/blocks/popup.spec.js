@@ -3,6 +3,12 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { publishAndViewPost } from '../helpers/editor';
+import { visibleText } from '../helpers/frontend';
+
 test.describe( 'Popup', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -39,10 +45,9 @@ test.describe( 'Popup', () => {
 			]
 		});
 
-		const postId = await editor.publishPost();
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
-		await page.locator( 'div' ).filter({ hasText: /^Open Popup$/ }).click();
+		await visibleText( page, 'Open Popup' ).click();
 
 		await expect( page.getByText( 'Popup Content Test' ) ).toBeVisible();
 	});
@@ -64,8 +69,7 @@ test.describe( 'Popup', () => {
 			]
 		});
 
-		const postId = await editor.publishPost();
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
 		await expect( page.getByText( 'Popup Content Test' ) ).toBeVisible();
 		await page.keyboard.press( 'Escape' );

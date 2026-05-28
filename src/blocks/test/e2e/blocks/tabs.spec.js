@@ -3,6 +3,11 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { expectBlockByName, insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
+
 test.describe( 'Tabs Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -11,23 +16,21 @@ test.describe( 'Tabs Block', () => {
 	test( 'can be created by typing "/tabs"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/tabs' );
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasTabs = blocks.some( ( block ) => 'themeisle-blocks/tabs' === block.name );
-
-		expect( hasTabs ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/tabs',
+			blockName: 'themeisle-blocks/tabs'
+		});
 	});
 
 
-	test( 'check if it has content by default', async({ editor, page }) => {
+	test( 'check if it has content by default', async({ editor }) => {
 		await editor.insertBlock({
 			name: 'themeisle-blocks/tabs'
 		});
 
-		const tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );
+		const tabBlock = await expectBlockByName( editor, 'themeisle-blocks/tabs' );
 
 		expect( tabBlock.innerBlocks.length ).toBeGreaterThan( 0 );
 	});
@@ -37,14 +40,14 @@ test.describe( 'Tabs Block', () => {
 			name: 'themeisle-blocks/tabs'
 		});
 
-		let tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );
+		let tabBlock = await expectBlockByName( editor, 'themeisle-blocks/tabs' );
 
-		const { clientId } = tabBlock;
 		const currentTabsItems = tabBlock.innerBlocks.length;
 
+		// themeisle-blocks/tabs opts out of the iframed canvas, so the block renders at page level.
 		await page.getByRole( 'document', { name: 'Block: Tabs' }).getByRole( 'button', { name: 'Add Tab' }).click();
 
-		tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );
+		tabBlock = await expectBlockByName( editor, 'themeisle-blocks/tabs' );
 
 		expect( tabBlock.innerBlocks.length ).toBeGreaterThan( currentTabsItems );
 	});
@@ -54,19 +57,17 @@ test.describe( 'Tabs Block', () => {
 			name: 'themeisle-blocks/tabs'
 		});
 
-		const tabBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/tabs' === block.name );
+		const tabBlock = await expectBlockByName( editor, 'themeisle-blocks/tabs' );
 
 		expect( tabBlock.innerBlocks.length ).toBeGreaterThan( 0 );
 
-		const postId = await editor.publishPost();
-
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
 		await page.getByRole( 'tab', { name: 'Tab 2' }).click();
 
 		await expect( page.locator( '.wp-block-themeisle-blocks-tabs__header_item' ).filter({ hasText: /^Tab 2$/ }).first() ).toHaveClass( /active/ );
 
-		expect( await page.getByRole( 'paragraph' ).filter({ hasText: 'This is just a placeholder to help you visualize how the content is displayed in' }).isVisible() ).toBeTruthy();
+		await expect( page.getByRole( 'paragraph' ).filter({ hasText: 'This is just a placeholder to help you visualize how the content is displayed in' }) ).toBeVisible();
 	});
 
 	test( 'change tab header content', async({ editor, page }) => {

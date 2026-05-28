@@ -81,7 +81,7 @@ If we save and click on preview, we have:
 
 As we can see, now we have some HTML values in the `Code editor`. And as mentioned in the [first chapter](first-block.md), `Apple is good` appears two times. Since it is very short, we do not need to worry too much.
 
-Save the page. Go back to your IDE and delete the `style={{ color: props.attributes?.color }}` from the `save` function. (I assume you are in the dev mode with `npm run dev`)
+Save the page. Go back to your IDE and delete the `style={{ color: props.attributes?.color }}` from the `save` function. (I assume you are in development mode with `npm run start`, `npm run dev:lite`, or `npm run dev:pro`.)
 
 Refresh the page and a nice surprise appears before your eyes.
 
@@ -91,7 +91,7 @@ The reason:
 
 ![eror-inspector](images/save-error-inspector.png)
 
-The new structure of the `save` function does not match with the old one. To avoid this error you need to write a migration scheme that you need to put it on the `deprecated` attribute on the `registerBlockType`. You can check the `src/block/slider/deprecated.js`.
+The new structure of the `save` function does not match with the old one. To avoid this error you need to write a migration scheme that you need to put it on the `deprecated` attribute on the `registerBlockType`. You can check `src/blocks/blocks/slider/deprecated.js`.
 
 :warning: *When developing the block, you could delete the block and insert a new one.*
 **But for the users, this is another story; they will not want to see this error, leading them to delete their work.**

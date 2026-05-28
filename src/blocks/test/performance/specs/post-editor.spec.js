@@ -486,16 +486,15 @@ test.describe( 'Post Editor Performance', () => {
 				.getByRole( 'button', {
 					name: 'Block Inserter',
 				} );
-			const paragraphBlockItem = page.locator(
-				'.block-editor-inserter__menu .editor-block-list-item-paragraph\\/paragraph'
-			);
-			const headingBlockItem = page.locator(
-				'.block-editor-inserter__menu .editor-block-list-item-heading\\/heading'
-			);
+			const inserterBlockItems = page
+				.locator( '.block-editor-inserter__menu .block-editor-block-types-list__item' );
+			const firstBlockItem = inserterBlockItems.nth( 0 );
+			const secondBlockItem = inserterBlockItems.nth( 1 );
 
 			// Open Inserter.
 			await globalInserterToggle.click();
 			await perfUtils.expectExpandedState( globalInserterToggle, 'true' );
+			await secondBlockItem.waitFor();
 
 			const samples = 10;
 			const throwaway = 1;
@@ -508,8 +507,8 @@ test.describe( 'Post Editor Performance', () => {
 				await metrics.startTracing();
 
 				// Hover Inserter items.
-				await paragraphBlockItem.hover();
-				await headingBlockItem.hover();
+				await firstBlockItem.hover();
+				await secondBlockItem.hover();
 
 				// Stop tracing.
 				await metrics.stopTracing();

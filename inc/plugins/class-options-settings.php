@@ -701,7 +701,7 @@ class Options_Settings {
 			array(
 				'type'         => 'object',
 				'description'  => __( 'Usage of Otter AI features.', 'otter-blocks' ),
-				'show_in_test' => array(
+				'show_in_rest' => array(
 					'schema' => array(
 						'type'       => 'object',
 						'properties' => array(

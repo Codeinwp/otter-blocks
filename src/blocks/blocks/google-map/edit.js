@@ -85,7 +85,7 @@ const Edit = ({
 
 		window.isMapLoaded = window.isMapLoaded || false;
 		window[ `removeMarker_${ clientId.substr( 0, 8 ) }` ] = removeMarker;
-		// eslint-disable-next-line camelcase
+		 
 		window.gm_authFailure = function() {
 			setAPISaved( false );
 			setErrorState( true );
@@ -421,7 +421,7 @@ const Edit = ({
 			setSaving( true );
 
 			const model = new window.wp.api.models.Settings({
-				// eslint-disable-next-line camelcase
+				 
 				themeisle_google_map_block_api_key: api
 			});
 

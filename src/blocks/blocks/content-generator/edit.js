@@ -148,12 +148,13 @@ const ContentGenerator = ({
 	 */
 	const replaceBlock = () => {
 		const blocks = getBlocks( clientId );
+		const blocksToInsert = blocks.map( makeBlockCopy ).filter( Boolean );
 
 		if ( attributes.replaceTargetBlock?.clientId ) {
-			replaceBlocks( attributes.replaceTargetBlock?.clientId, blocks.map( makeBlockCopy ) );
+			replaceBlocks( attributes.replaceTargetBlock?.clientId, blocksToInsert );
 			removeBlock( clientId );
 		} else {
-			replaceBlocks( clientId, blocks );
+			replaceBlocks( clientId, blocksToInsert );
 		}
 	};
 

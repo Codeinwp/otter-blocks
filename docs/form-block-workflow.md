@@ -14,7 +14,7 @@ When doing this we need to consider the following:
 ## How it works from the Submit click to the data being sent
 
 When the user clicks on the Submit button, the following happens:
-- The data is validated with JS and collected. Then sended to the server via `wp-json/form/frontend` endpoint (definition in `./inc/server/class-form-server.php`).
+- The data is validated with JS and collected. Then sent to the server via `/wp-json/otter/v1/form/frontend` endpoint (definition in `./inc/server/class-form-server.php`).
 - The data is validated with PHP via `otter_form_validate_form` filter hook. If the data is invalid, we check if it was sended by a bot with `otter_form_anti_spam_validation` filter hook.
 - If all ok, we apply some data preparation `otter_form_data_preparation`. This will add or change the data from the `$form_data` variable.
 - If everything goes well, we get the provider (the service that will receive the data) and run with the current data request of `$form_data`.

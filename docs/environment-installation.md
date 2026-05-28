@@ -32,7 +32,7 @@ Resources:
 
 Mentions:
  - Working with composer should be done by using the terminal instance included in the app. Click on `Open Site Shell` in the app.
- - Use PHP 7.3.X. This is required for composer commands (`composer run lint`, `composer run format`) to work.
+ - Use PHP 7.4+ (the Composer platform target is PHP 7.4). This is required for composer commands (`composer run lint`, `composer run format`) to work.
  - NodeJS is not included. You need to install it separately.
  - This is a WordPress only environment.
  - Making Visual Studio Code and PHPStorm to detect the PHP install file is tricky. In the terminal instance of the app, run `which php` and to see where is the PHP install file. Then in the IDE, set the PHP executable to that file. It looks something like this: `/Users/robert/Library/Application Support/Local/lightning-services/php-7.3.5+14/bin/darwin/bin/php`

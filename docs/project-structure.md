@@ -26,7 +26,7 @@ As time goes by, the project grows and evolves. The codebase becomes more comple
     - `woocommerce/` WooCommerce features and extensions
 - `inc/` contains the PHP files for all plugins
   - `css/` CSS dynamic generator for Blocks. It's used to generate the CSS for the blocks based on the user settings.
-  - `integration/` Form Block utilities
+  - `integrations/` Form Block utilities
   - `patterns/` contains the patterns for the Pattern Library
   - `plugins/` plugins functionality: Dynamic Content & Conditions, Stripe, WordPress Options definitions for Rest API, etc.
   - `render/` render classes for dynamic blocks (e.g.: Form File Field, Google/Leaflet Map, Plugin Card, Stripe Checkout, etc.)

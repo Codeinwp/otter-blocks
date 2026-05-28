@@ -32,7 +32,7 @@ import { FormContext } from '../edit.js';
 import { HTMLAnchorControl } from '../../../components';
 import { isString } from 'lodash';
 import { SortableContainer } from 'react-sortable-hoc';
-import arrayMove from 'array-move';
+import { arrayMoveImmutable as arrayMove } from 'array-move';
 
 const styles = [
 	{

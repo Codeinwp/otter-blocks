@@ -523,7 +523,7 @@ const Edit = ({
 
 			if ( isMissing || hasUpdated ) {
 				const model = new api.models.Settings({
-					// eslint-disable-next-line camelcase
+					 
 					themeisle_blocks_form_emails: emails
 				});
 
@@ -771,7 +771,7 @@ const Edit = ({
 
 					if ( isMissing || hasChanged ) {
 						const model = new api.models.Settings({
-							// eslint-disable-next-line camelcase
+							 
 							themeisle_blocks_form_emails: emails
 						});
 
@@ -836,9 +836,9 @@ const Edit = ({
 		setLoading({ captcha: 'loading' });
 		try {
 			const model = new api.models.Settings({
-				// eslint-disable-next-line camelcase
+				 
 				themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
-				// eslint-disable-next-line camelcase
+				 
 				themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
 			});
 

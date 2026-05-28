@@ -14,7 +14,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Build files using 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: "npm"

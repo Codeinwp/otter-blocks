@@ -2,6 +2,11 @@
  * WordPress dependencies
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { publishAndViewPost } from '../helpers/editor';
 import { tryLoginIn } from '../utils';
 
 test.describe( 'Block Conditions', () => {
@@ -34,11 +39,8 @@ test.describe( 'Block Conditions', () => {
 			}
 		});
 
-		const postId = await editor.publishPost();
-
-		// Check the block for logged-in users.
-		await page.goto( `/?p=${postId}` );
-		await expect( page.locator( '#wp--skip-link--target img' ) ).toBeVisible();
+		const postId = await publishAndViewPost({ editor, page });
+		await expect( page.locator( 'main .wp-block-image img, .entry-content .wp-block-image img' ).first() ).toBeVisible();
 
 		// // Check the block for logged out users.
 		await page.getByRole( 'menuitem', { name: 'Howdy, admin' }).hover();
@@ -46,6 +48,6 @@ test.describe( 'Block Conditions', () => {
 		await page.getByRole( 'menuitem', { name: 'Log Out' }).click();
 
 		await page.goto( `/?p=${postId}` );
-		await expect( page.locator( '#wp--skip-link--target img' ) ).toBeHidden();
+		await expect( page.locator( 'main .wp-block-image img, .entry-content .wp-block-image img' ).first() ).toBeHidden();
 	});
 });

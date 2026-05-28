@@ -231,6 +231,16 @@ class Form_Data_Request {
 	}
 
 	/**
+	 * Get the provider override.
+	 *
+	 * @return bool|string
+	 * @since 3.1.10
+	 */
+	public function get_changed_provider() {
+		return $this->changed_provider;
+	}
+
+	/**
 	 * Check if the root data of the request is set.
 	 * The root data is the top level structure of the request.
 	 *

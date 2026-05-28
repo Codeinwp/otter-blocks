@@ -64,7 +64,7 @@ const SiteInfo = () => {
 		});
 
 		setChangedData({
-			// eslint-disable-next-line camelcase
+			 
 			fields_filled: {
 				...changedData.fields_filled,
 				siteTitle: true
@@ -105,7 +105,7 @@ const SiteInfo = () => {
 		}
 
 		setChangedData({
-			// eslint-disable-next-line camelcase
+			 
 			fields_filled: {
 				...changedData.fields_filled,
 				siteLogo: true
