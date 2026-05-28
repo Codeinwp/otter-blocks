@@ -92,6 +92,11 @@ class Form_Providers {
 	 * @since 2.0.3
 	 */
 	public function select_provider_from_form_options( $form_request ) {
+		$changed_provider = $form_request->get_changed_provider();
+		if ( is_string( $changed_provider ) && '' !== $changed_provider ) {
+			return $this->get_provider_handlers( $changed_provider );
+		}
+
 		$form_options = $form_request->get_wp_options();
 		if ( $form_options->has_provider() && $form_options->has_credentials() ) {
 			return $this->get_provider_handlers( $form_options->get_provider() );

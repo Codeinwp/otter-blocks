@@ -618,6 +618,11 @@ class Form_Server {
 			return;
 		}
 
+		// No-consent subscribe requests fall back to the default provider, which already sends the owner email.
+		if ( 'submit-subscribe' === $form_data->get_wp_options()->get_action() && 'default' === $form_data->get_changed_provider() ) {
+			return;
+		}
+
 		// Send also an email to the form editor/owner with the data alongside the subscription.
 		if (
 			$form_data->get_wp_options()->has_provider() &&
