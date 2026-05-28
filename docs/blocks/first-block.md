@@ -143,7 +143,7 @@ registerBlockType( 'themeisle-blocks/tutorial-1', {
 });
 ```
 
-You can check the `index` file of the block in the `src/block` and see that they follow this pattern.
+You can check the `index.js` files of blocks in `src/blocks/blocks/` and see that they follow this pattern.
 
 The `attributes.js` follow this tructure:
 ```javascript
