@@ -52,6 +52,13 @@ class Form_Settings_Data {
 	private $has_captcha = false;
 
 	/**
+	 * Captcha provider.
+	 *
+	 * @var string
+	 */
+	private $captcha_provider = 'recaptcha';
+
+	/**
 	 * The metadata.
 	 *
 	 * @var array
@@ -154,6 +161,10 @@ class Form_Settings_Data {
 			$this->set_captcha( $integration_data['hasCaptcha'] );
 		}
 
+		if ( isset( $integration_data['captchaProvider'] ) ) {
+			$this->set_captcha_provider( $integration_data['captchaProvider'] );
+		}
+
 		$this->set_meta( $integration_data );
 	}
 
@@ -224,6 +235,9 @@ class Form_Settings_Data {
 
 				if ( isset( $form['hasCaptcha'] ) ) {
 					$integration->set_captcha( $form['hasCaptcha'] );
+				}
+				if ( isset( $form['captchaProvider'] ) ) {
+					$integration->set_captcha_provider( $form['captchaProvider'] );
 				}
 				if ( isset( $form['redirectLink'] ) ) {
 					$integration->set_redirect_link( $form['redirectLink'] );
@@ -346,6 +360,21 @@ class Form_Settings_Data {
 	 */
 	public function set_captcha( $has_captcha ) {
 		$this->has_captcha = $has_captcha;
+		return $this;
+	}
+
+	/**
+	 * Set captcha provider.
+	 *
+	 * @param string $provider Provider slug.
+	 * @return Form_Settings_Data
+	 * @since 3.1.12
+	 */
+	public function set_captcha_provider( $provider ) {
+		$provider = is_string( $provider ) ? sanitize_key( $provider ) : '';
+		$allowed  = array( 'recaptcha', 'turnstile' );
+
+		$this->captcha_provider = in_array( $provider, $allowed, true ) ? $provider : 'recaptcha';
 		return $this;
 	}
 
@@ -555,6 +584,16 @@ class Form_Settings_Data {
 	 */
 	public function form_has_captcha() {
 		return $this->has_captcha;
+	}
+
+	/**
+	 * Get captcha provider.
+	 *
+	 * @return string
+	 * @since 3.1.12
+	 */
+	public function get_captcha_provider() {
+		return $this->captcha_provider;
 	}
 
 	/**

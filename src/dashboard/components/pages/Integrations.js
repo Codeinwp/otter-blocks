@@ -37,6 +37,8 @@ const Integrations = () => {
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
+	const [ cloudflareTurnstileSiteKey, setCloudflareTurnstileSiteKey ] = useState( '' );
+	const [ cloudflareTurnstileSecretKey, setCloudflareTurnstileSecretKey ] = useState( '' );
 	const [ stripeAPI, setStripeAPI ] = useState( '' );
 	const [ openAISecretKey, setOpenAISecretKey ] = useState( '' );
 	const [ toolbarActions, setToolbarActions ] = useState([]);
@@ -52,6 +54,11 @@ const Integrations = () => {
 		setGoogleCaptchaAPISiteKey( getOption( 'themeisle_google_captcha_api_site_key' ) );
 		setGoogleCaptchaAPISecretKey( getOption( 'themeisle_google_captcha_api_secret_key' ) );
 	}, [ getOption( 'themeisle_google_captcha_api_site_key' ), getOption( 'themeisle_google_captcha_api_secret_key' ) ]);
+
+	useEffect( () => {
+		setCloudflareTurnstileSiteKey( getOption( 'themeisle_cloudflare_turnstile_site_key' ) );
+		setCloudflareTurnstileSecretKey( getOption( 'themeisle_cloudflare_turnstile_secret_key' ) );
+	}, [ getOption( 'themeisle_cloudflare_turnstile_site_key' ), getOption( 'themeisle_cloudflare_turnstile_secret_key' ) ]);
 
 	useEffect( () => {
 		setStripeAPI( getOption( 'themeisle_stripe_api_key' ) );
@@ -180,6 +187,57 @@ const Integrations = () => {
 
 							<ExternalLink
 								href="https://www.google.com/recaptcha/admin"
+							>
+								{ __( 'Get API Key', 'otter-blocks' ) }
+							</ExternalLink>
+						</div>
+					</BaseControl>
+				</PanelRow>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Cloudflare Turnstile', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<PanelRow>
+					<BaseControl
+						help={ __( 'In order to use Turnstile field in the Form block, you need to configure Cloudflare Turnstile keys.', 'otter-blocks' ) }
+						id="otter-options-cloudflare-turnstile"
+						className="otter-button-field"
+					>
+						<TextControl
+							type="password"
+							label={ __( 'Site Key', 'otter-blocks' ) }
+							value={ cloudflareTurnstileSiteKey }
+							placeholder={ __( 'Site Key', 'otter-blocks' ) }
+							disabled={ 'saving' === status }
+							onChange={ value => setCloudflareTurnstileSiteKey( value ) }
+						/>
+
+						<TextControl
+							type="password"
+							label={ __( 'Secret Key', 'otter-blocks' ) }
+							value={ cloudflareTurnstileSecretKey }
+							placeholder={ __( 'Secret Key', 'otter-blocks' ) }
+							disabled={ 'saving' === status }
+							onChange={ value => setCloudflareTurnstileSecretKey( value ) }
+						/>
+
+						<div className="otter-button-group">
+							<Button
+								variant="secondary"
+								isSecondary
+								disabled={ 'saving' === status }
+								onClick={ () => {
+									updateOption( 'themeisle_cloudflare_turnstile_site_key', cloudflareTurnstileSiteKey );
+									updateOption( 'themeisle_cloudflare_turnstile_secret_key', cloudflareTurnstileSecretKey );
+								} }
+							>
+								{ __( 'Save', 'otter-blocks' ) }
+							</Button>
+
+							<ExternalLink
+								href="https://developers.cloudflare.com/turnstile/get-started/"
 							>
 								{ __( 'Get API Key', 'otter-blocks' ) }
 							</ExternalLink>

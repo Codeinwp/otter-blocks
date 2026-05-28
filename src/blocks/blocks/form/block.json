@@ -26,6 +26,10 @@
 		"hasCaptcha": {
 			"type": "boolean"
 		},
+		"captchaProvider": {
+			"type": "string",
+			"default": "recaptcha"
+		},
 		"provider": {
 			"type": "string",
 			"default": ""

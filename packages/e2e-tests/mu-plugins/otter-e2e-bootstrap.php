@@ -31,6 +31,8 @@ const OPTION_WHITELIST = array(
 	'themeisle_open_ai_api_key',
 	'otter_iphub_api_key',
 	'themeisle_blocks_settings_onboarding',
+	'themeisle_cloudflare_turnstile_site_key',
+	'themeisle_cloudflare_turnstile_secret_key',
 );
 
 /**
@@ -117,6 +119,40 @@ function stub_wp_mail_for_e2e( $short_circuit ) {
 }
 
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e' );
+
+/**
+ * Prevent external HTTP calls for captcha verification during E2E.
+ *
+ * @param mixed  $preempt Whether to preempt an HTTP request.
+ * @param array  $request HTTP request arguments.
+ * @param string $url The request URL.
+ * @return array|mixed
+ */
+function stub_captcha_http_verification_for_e2e( $preempt, $request, $url ) {
+	if ( null !== $preempt ) {
+		return $preempt;
+	}
+
+	if (
+		false !== strpos( $url, 'www.google.com/recaptcha/api/siteverify' ) ||
+		false !== strpos( $url, 'challenges.cloudflare.com/turnstile/v0/siteverify' )
+	) {
+		return array(
+			'response' => array(
+				'code' => 200,
+			),
+			'body'     => wp_json_encode(
+				array(
+					'success' => true,
+				)
+			),
+		);
+	}
+
+	return $preempt;
+}
+
+add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_captcha_http_verification_for_e2e', 10, 3 );
 
 add_action(
 	'rest_api_init',

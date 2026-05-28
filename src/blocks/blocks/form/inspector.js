@@ -225,8 +225,8 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 
 			<ToolsPanelItem
 				hasValue={ () => true === attributes.hasCaptcha }
-				label={ __( 'Enable reCaptcha', 'otter-blocks' ) }
-				onSelect={ () => setAttributes({ hasCaptcha: true }) }
+				label={ __( 'Enable Captcha', 'otter-blocks' ) }
+				onSelect={ () => setAttributes({ hasCaptcha: true, captchaProvider: attributes.captchaProvider || 'recaptcha' }) }
 				onDeselect={ () => setAttributes({ hasCaptcha: false }) }
 				isShownByDefault={ false }
 			>
@@ -238,6 +238,16 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 						</div>
 					}
 					variant="help"
+				/>
+
+				<SelectControl
+					label={ __( 'Captcha Provider', 'otter-blocks' ) }
+					value={ attributes.captchaProvider || 'recaptcha' }
+					options={ [
+						{ label: __( 'Google reCaptcha', 'otter-blocks' ), value: 'recaptcha' },
+						{ label: __( 'Cloudflare Turnstile', 'otter-blocks' ), value: 'turnstile' }
+					] }
+					onChange={ captchaProvider => setAttributes({ captchaProvider }) }
 				/>
 			</ToolsPanelItem>
 

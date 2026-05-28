@@ -966,21 +966,36 @@ class Form_Server {
 			$form_data->set_error( Form_Data_Response::ERROR_MISSING_CAPTCHA );
 		}
 
-		if ( $form_data->payload_has( 'token' ) ) {
-			$secret = get_option( 'themeisle_google_captcha_api_secret_key' );
-			$resp   = wp_remote_post(
-				apply_filters( 'otter_blocks_recaptcha_verify_url', 'https://www.google.com/recaptcha/api/siteverify' ),
+		if ( $form_options->form_has_captcha() && $form_data->payload_has( 'token' ) ) {
+			$provider = $form_data->payload_has( 'captchaProvider' ) ? sanitize_key( $form_data->get_data_from_payload( 'captchaProvider' ) ) : null;
+			$provider = $provider ? $provider : ( method_exists( $form_options, 'get_captcha_provider' ) ? $form_options->get_captcha_provider() : 'recaptcha' );
+
+			if ( 'turnstile' === $provider ) {
+				$secret     = get_option( 'themeisle_cloudflare_turnstile_secret_key' );
+				$verify_url = apply_filters( 'otter_blocks_turnstile_verify_url', 'https://challenges.cloudflare.com/turnstile/v0/siteverify' );
+			} else {
+				$secret     = get_option( 'themeisle_google_captcha_api_secret_key' );
+				$verify_url = apply_filters( 'otter_blocks_recaptcha_verify_url', 'https://www.google.com/recaptcha/api/siteverify' );
+			}
+
+			$resp = wp_remote_post(
+				$verify_url,
 				array(
-					'body'    => 'secret=' . $secret . '&response=' . $form_data->get_data_from_payload( 'token' ),
+					'body'    => 'secret=' . rawurlencode( (string) $secret ) . '&response=' . rawurlencode( (string) $form_data->get_data_from_payload( 'token' ) ),
 					'headers' => [
 						'Content-Type' => 'application/x-www-form-urlencoded',
 					],
 				)
 			);
 
+			if ( is_wp_error( $resp ) || ! isset( $resp['body'] ) ) {
+				$form_data->set_error( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN );
+				return $form_data;
+			}
+
 			$result = json_decode( $resp['body'], true );
 
-			if ( ! $result['success'] ) {
+			if ( ! is_array( $result ) || empty( $result['success'] ) ) {
 				$form_data->set_error( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN );
 			}
 		}
