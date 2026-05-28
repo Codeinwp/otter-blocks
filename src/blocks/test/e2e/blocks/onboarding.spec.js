@@ -65,8 +65,8 @@ test.describe( 'FSE Onboarding', () => {
 		await siteTitle.type( ourTitle );
 
 		const title = await page.evaluate( () => {
-			const title = document.querySelector( '.o-main iframe' ).contentWindow.document.querySelector( '[aria-label="Site title text"]' ).innerHTML;
-			return title;
+			const iframeTitle = document.querySelector( '.o-main iframe' ).contentWindow.document.querySelector( '[aria-label="Site title text"]' ).innerHTML;
+			return iframeTitle;
 		});
 
 		expect( title ).toBe( ourTitle );
@@ -185,13 +185,13 @@ test.describe( 'FSE Onboarding', () => {
 		};
 
 		const templates = await page.evaluate( () => {
-			const templates = document.querySelectorAll( '.o-templates .o-templates__item' );
+			const templateItems = document.querySelectorAll( '.o-templates .o-templates__item' );
 
-			for ( let i = 0; i < templates.length; i++ ) {
-				templates[i].click();
+			for ( let i = 0; i < templateItems.length; i++ ) {
+				templateItems[i].click();
 			}
 
-			return templates;
+			return templateItems;
 		});
 
 		expect( await getSelectedTemplates()?.length ).toBe( templates.length );

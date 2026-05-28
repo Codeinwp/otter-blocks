@@ -1,4 +1,21 @@
-import { boxToCSS, boxValues, buildResponsiveGetAttributes, buildResponsiveSetAttributes, compactObject, getChoice, getColorCSSVariable, mergeBoxDefaultValues, removeBoxDefaultValues, resolveColorValue, stringToBox } from '../../helpers/helper-functions.js';
+import {
+	boxToCSS,
+	boxValues,
+	buildResponsiveGetAttributes,
+	buildResponsiveSetAttributes,
+	changeActiveStyle,
+	compactObject,
+	getActiveStyle,
+	getChoice,
+	getColorCSSVariable,
+	lightnessFromColor,
+	mergeBoxDefaultValues,
+	pullSavedState,
+	removeBoxDefaultValues,
+	resolveColorValue,
+	setSavedState,
+	stringToBox
+} from '../../helpers/helper-functions.js';
 
 describe( 'Box Values Function', () => {
 
@@ -88,6 +105,18 @@ describe( 'Build Get Responsive Set Attributes', () => {
 		// expect( attributes.value ).toBeUndefined(); TODO: revise this. If all the views are undefined, then the whole object must be undefined
 		expect( attributes.value?.[view.toLowerCase()]).toBeUndefined();
 	}) );
+
+	it( 'should unset the full responsive attribute when all views are cleared', () => {
+		const setValue = buildResponsiveSetAttributes( setAttributes, 'Mobile' );
+
+		setValue(
+			undefined,
+			[ 'value.desktop', 'value.tablet', 'value.mobile' ],
+			{ desktop: undefined, tablet: undefined, mobile: undefined }
+		);
+
+		expect( attributes.value ).toBeUndefined();
+	});
 
 	test.each([ 'Desktop', 'Tablet', 'Mobile' ])( 'should set the correct value without affecting other values.', ( ( view ) => {
 		setAttributes({ value: { desktop: 0, tablet: 0, mobile: 0 }});
@@ -316,5 +345,58 @@ describe( 'Resolve Color Value Function', () => {
 
 	it( 'should handle undefined values', () => {
 		expect( resolveColorValue( undefined ) ).toBeUndefined();
+	});
+});
+
+describe( 'Block style helpers', () => {
+	const styles = [
+		{ value: 'default', isDefault: true },
+		{ value: 'outline' },
+		{ value: 'filled' }
+	];
+
+	it( 'returns default style when no style class exists', () => {
+		expect( getActiveStyle( styles, 'wp-block themeisle-blocks-button' ) ).toBe( 'default' );
+	});
+
+	it( 'ignores unknown style classes and falls back to default', () => {
+		expect( getActiveStyle( styles, 'wp-block is-style-unknown' ) ).toBe( 'default' );
+	});
+
+	it( 'replaces the active style class', () => {
+		expect( changeActiveStyle( 'wp-block is-style-outline extra-class', styles, 'filled' ) )
+			.toBe( 'wp-block extra-class is-style-filled' );
+	});
+
+	it( 'removes style class when switching to default style', () => {
+		expect( changeActiveStyle( 'wp-block is-style-outline extra-class', styles, 'default' ) )
+			.toBe( 'wp-block extra-class' );
+	});
+});
+
+describe( 'Saved state helpers', () => {
+	beforeEach( () => {
+		delete ( window as any ).oSavedStates;
+	});
+
+	it( 'returns default value for undefined key', () => {
+		expect( pullSavedState( undefined, 'fallback' ) ).toBe( 'fallback' );
+	});
+
+	it( 'stores and retrieves state by key', () => {
+		setSavedState( 'panel', { open: true });
+		expect( pullSavedState( 'panel', null ) ).toEqual({ open: true });
+	});
+});
+
+describe( 'Color lightness helper', () => {
+	it( 'returns false for invalid color inputs', () => {
+		expect( lightnessFromColor( undefined ) ).toBe( false );
+		expect( lightnessFromColor( 'not-a-color' ) ).toBe( false );
+	});
+
+	it( 'classifies rgb colors as light or dark', () => {
+		expect( lightnessFromColor( 'rgb(0, 0, 0)' ) ).toBe( 'dark' );
+		expect( lightnessFromColor( 'rgb(255, 255, 255)' ) ).toBe( 'light' );
 	});
 });

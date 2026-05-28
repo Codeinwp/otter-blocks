@@ -191,11 +191,10 @@ class Dynamic_Content_Server {
 		if ( ! empty( $fallback ) ) {
 
 			$fallback           = sanitize_text_field( $fallback );
-			$feedback_full_path = realpath( $fallback );
-			$feedback_full_path = str_contains( $feedback_full_path, WP_CONTENT_DIR );
+			$fallback_full_path = realpath( $fallback );
 
-			if ( false !== $feedback_full_path && @getimagesize( $fallback ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-				$path = $feedback_full_path;
+			if ( false !== $fallback_full_path && 0 === strpos( $fallback_full_path, WP_CONTENT_DIR ) && @getimagesize( $fallback_full_path ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+				$path = $fallback_full_path;
 			}
 		}
 

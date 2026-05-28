@@ -4,9 +4,9 @@ Patterns are big part of Gutenberg ecosystem. In the old days, plugin developer 
 
 Adding a new pattern for Otter is straight forward.
 
-- All the patterns are located in `./src/patterns` folder.
+- All patterns are located in `./inc/patterns/`.
 - Every pattern is just an array with keys described by the [Gutenberg documentation](https://developer.wordpress.org/block-editor/developers/block-api/block-patterns/).
-- After creating a file for it, register it on `./inc/patterns.php` file in `$block_patterns` array.
+- After creating a file for it, register it in `./inc/class-patterns.php` in the `$block_patterns` array.
 
 ## Mentions
 

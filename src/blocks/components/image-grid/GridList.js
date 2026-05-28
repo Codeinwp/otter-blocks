@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import arrayMove from 'array-move';
+import { arrayMoveImmutable as arrayMove } from 'array-move';
 
 import classnames from 'classnames';
 

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.base_ref }}
       - name: Install composer deps
@@ -21,7 +21,7 @@ jobs:
       - name: Build files
         run: npm run analyzer
       - name: Upload base stats.json
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: base
           path: ./build/**/stats.json
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source files
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install composer deps
         run: composer install --no-dev --prefer-dist --no-progress --no-suggest
       - name: Install npm deps
@@ -41,7 +41,7 @@ jobs:
       - name: Build files
         run: npm run analyzer
       - name: Upload base stats.json
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pr
           path: ./build/**/stats.json
@@ -54,14 +54,14 @@ jobs:
 
     steps:
       - name: Checkout PR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Download base stats
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: base
           path: base
       - name: Download PR stats
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: pr
           path: pr

@@ -10,7 +10,7 @@ const WelcomeNotice = () => {
 		<div className="otter-nv-sidebar-upsell o-welcome">
 			<div className="otter-nv-sidebar-left">
 				<div className="otter-nv-sidebar-heading">
-					{/* eslint-disable-next-line jsx-a11y/alt-text */}
+					{ }
 					<h2>{ __( 'Welcome to Otter!', 'otter-blocks' ) }</h2>
 				</div>
 				<div className="otter-nv-sidebar-text">
@@ -24,7 +24,7 @@ const WelcomeNotice = () => {
 				</div>
 			</div>
 			<div className="otter-nv-sidebar-right">
-				{/* eslint-disable-next-line jsx-a11y/alt-text */}
+				{ }
 				<iframe src="https://www.youtube.com/embed/WcS2Vi4IOYw" title="Otter - Page Builder Blocks &amp; Extensions for Gutenberg" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 			</div>
 		</div>

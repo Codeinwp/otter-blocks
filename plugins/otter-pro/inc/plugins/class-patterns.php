@@ -147,11 +147,16 @@ class Patterns {
 
 	/**
 	 * Prepare the block pattern for registration. Apply translation if possible.
-	 * 
+	 *
+	 * Returns only the keys accepted by {@see register_block_pattern()};
+	 * extra keys present in the cached payload (e.g. `slug`, `minimum`,
+	 * translated-title variants) are intentionally dropped because
+	 * `WP_Block_Patterns_Registry::register()` stores but never reads them.
+	 *
 	 * @param array  $block_pattern The block pattern.
 	 * @param string $lang_locale The user locale language code.
-	 * 
-	 * @return array The block pattern.
+	 *
+	 * @return array{title?: string, content?: string, description?: string, viewportWidth?: int, inserter?: bool, categories?: string[], keywords?: string[], blockTypes?: string[], postTypes?: string[], templateTypes?: string[], filePath?: string} The block pattern.
 	 */
 	public function prepare_block_pattern( $block_pattern, $lang_locale = '' ) {
 		if ( isset( self::AVAILABLE_LANGUAGES[ $lang_locale ] ) ) {
@@ -161,15 +166,19 @@ class Patterns {
 			}
 		}
 
-		foreach ( array_keys( $block_pattern ) as $pattern_key ) {
-			if ( false === strpos( $pattern_key, self::TRANSLATED_TITLE_PREFIX ) ) {
-				continue;
-			}
+		// Whitelist of keys accepted by WP_Block_Patterns_Registry::register()
+		// (wp-includes/class-wp-block-patterns-registry.php). Extras like `slug`
+		// and `minimum` are merged into the registry but never read by WP, so
+		// dropping them here is behavior-preserving.
+		$prepared = array();
 
-			unset( $block_pattern[ $pattern_key ] );
+		foreach ( array( 'title', 'content', 'description', 'viewportWidth', 'inserter', 'categories', 'keywords', 'blockTypes', 'postTypes', 'templateTypes', 'filePath' ) as $allowed_key ) {
+			if ( array_key_exists( $allowed_key, $block_pattern ) ) {
+				$prepared[ $allowed_key ] = $block_pattern[ $allowed_key ];
+			}
 		}
 
-		return $block_pattern;
+		return $prepared;
 	}
 
 	/**

@@ -18,7 +18,8 @@
 	  "declaration": true,
 	  "declarationMap": true,
 	  "isolatedModules": true,
-	  "typeRoots": ["./node_modules/@types"]
+	  "typeRoots": ["./node_modules/@types"],
+	  "types": [ "jest" ]
 	},
 	"include": ["src/**/*" ],
 	"exclude": [

@@ -15,8 +15,8 @@ jobs:
       git-sha-8: ${{ steps.retrieve-git-sha-8.outputs.sha8 }}
     steps:
       - name: Check out source files
-        uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+        uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: "npm"

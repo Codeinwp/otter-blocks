@@ -100,7 +100,7 @@ const Fields = ({
 				<p>
 					{
 						// translators: %% is not a placeholder, it is a shortcode used to access dynamic data.
-						__( 'Bind page elements with dynamic data from your website database. You can use %% shortcodes to access dynamic data directly in the editor.', 'otter-blocks' ) // eslint-disable-next-line @wordpress/i18n-translator-comments
+						__( 'Bind page elements with dynamic data from your website database. You can use %% shortcodes to access dynamic data directly in the editor.', 'otter-blocks' )  
 					}
 				</p>
 

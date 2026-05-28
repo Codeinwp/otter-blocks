@@ -155,7 +155,7 @@ const Edit = ({
 			categories: catIds,
 			order: attributes.order || 'desc',
 			orderby: attributes.orderBy,
-			per_page: attributes.postsToShow, // eslint-disable-line camelcase
+			per_page: attributes.postsToShow,  
 			offset: attributes.offset,
 			context: 'view'
 		}, ( value ) => ! isUndefined( value ) );
@@ -251,7 +251,7 @@ const Edit = ({
 		}
 
 		const categoriesList = taxonomies
-			// eslint-disable-next-line camelcase
+			 
 			.map( taxonomy => select( 'core' ).getEntityRecords( 'taxonomy', taxonomy, { per_page: -1 }) ?? [])
 			.flat();
 

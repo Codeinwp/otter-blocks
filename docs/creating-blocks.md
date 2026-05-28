@@ -17,7 +17,7 @@ In the root folder, at `./blocks.json`, add another entry with the name of your 
 
 Back to the `./src/blocks/blocks/my-card`. You can create the other files like: `edit.js`, `save.js`, `inspector.js`, `style.scss`, `editor.scss`.
 
-If your block has functionality for end user (aka frontend), you need to add the script in new folder at `./src/blocks/frontend/`. Then you need to add as an entry point in `./webpack.config.json` file. Then building the project, you will that the script is added independently in `./build/blocks/` (you need to run `npm run build` or `npm run start` if you do not see the folder `./build`). Then register that independent script in `./inc/class-registration.php` on `enqueue_dependencies` function (this function load the script for the end user if the block is present in page). (Tip: Add a `console.log('Loaded')` at the beginning of your script to check if it is loaded).
+If your block has functionality for end users (frontend), add the script in `./src/blocks/frontend/`. Then add it as an entry point in `./webpack.config.js` (or `./webpack.config.pro.js` for Pro-only code). After building the project, the script is added independently in `./build/blocks/` (run `npm run build` or `npm run start` if you do not see `./build`). Then register that independent script in `./inc/class-registration.php` in `enqueue_dependencies` (this function loads the script for the end user if the block is present on the page). (Tip: add a `console.log('Loaded')` at the beginning of your script to check if it is loaded.)
 
 ## Adding content
 
@@ -37,7 +37,7 @@ To add content you will usually have those files:
 
 Pro feature need to be separated from the free version if it is possible. This is to make sure that the free version is not bloated with unnecessary code. The pro version will be loaded only if the user has the pro version of the plugin.
 
-Pro block are added in `./src/blocks/pro/`. The folder structure is the same as the free version.
+Pro blocks are added in `./src/pro/`. The folder structure is the same as the free version.
 
 Some blocks are hybrid, free to use but with limited functionality (e.g.: Sticky, Popup). The pro features are added via JS WP hooks (in a style similar to the one from PHP). Learn more about them [here](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-hooks/).
 

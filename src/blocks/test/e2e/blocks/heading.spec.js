@@ -3,6 +3,11 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { insertBlockBySlash } from '../helpers/editor';
+
 test.describe( 'Advanced Heading Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -11,14 +16,12 @@ test.describe( 'Advanced Heading Block', () => {
 	test( 'can be created by typing "/advanced-heading"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/advanced-heading' );
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasProgressBar = blocks.some( ( block ) => 'themeisle-blocks/advanced-heading' === block.name );
-
-		expect( hasProgressBar ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/advanced-heading',
+			blockName: 'themeisle-blocks/advanced-heading'
+		});
 	});
 
 	test( 'can use typo component"', async({ editor, page }) => {
@@ -39,8 +42,9 @@ test.describe( 'Advanced Heading Block', () => {
 		// Open custom font size.
 		await page.getByRole( 'button', { name: 'Set custom size' }).click();
 
-		// Select font size.
-		await page.getByLabel( 'Custom', { exact: true }).fill( '16' );
+		// Select font size — the input is labelled "Font size" in WP 7.0 (was "Custom" previously).
+		// Scope to the numeric input because the wrapping fieldset also carries the same label.
+		await page.locator( 'input[type="number"][id="inspector-input-control-0"]' ).fill( '16' );
 
 		// Open the menu for more options.
 		await page.getByRole( 'button', { name: 'View options' }).click();
