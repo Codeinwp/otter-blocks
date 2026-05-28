@@ -3,25 +3,38 @@
  */
 import classnames from 'classnames';
 
-import { SortableElement } from 'react-sortable-hoc';
-
 /**
  * WordPress dependencies
  */
 import { Button } from '@wordpress/components';
 
-const SortableItem = SortableElement( ({
+/**
+ * Internal dependencies
+ */
+import { useSortableRow } from '../sortable/index.js';
+
+const SortableItem = ({
+	id,
 	value,
 	selected,
 	dragging,
 	sorting,
 	selectedItemsCount,
-	onClick
+	onClick,
+	disabled
 }) => {
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		style
+	} = useSortableRow( id, disabled );
+
 	const shouldRenderItemCountBadge = dragging && 1 < selectedItemsCount;
 
 	return (
 		<Button
+			ref={ setNodeRef }
 			className={ classnames(
 				'o-images-grid-component__image',
 				{
@@ -30,13 +43,16 @@ const SortableItem = SortableElement( ({
 				}
 			) }
 			onClick={ () => onClick( value ) }
+			{ ...listeners }
+			{ ...attributes }
 			style={ {
+				...style,
 				backgroundImage: `url( ' ${ value.url } ' )`
 			} }
 		>
 			{ shouldRenderItemCountBadge && <div className="o-images-grid-component__image__count">{ selectedItemsCount }</div> }
 		</Button>
 	);
-});
+};
 
 export default SortableItem;

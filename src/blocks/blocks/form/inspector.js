@@ -1,8 +1,3 @@
-/**
- * External dependencies.
- */
-import { SortableContainer } from 'react-sortable-hoc';
-
 import {
 	alignCenter,
 	alignLeft,
@@ -54,6 +49,7 @@ import {
 	InspectorHeader,
 	InspectorExtensions,
 	ResponsiveControl,
+	SortableVerticalList,
 	SyncColorPanel,
 	SyncControlDropdown,
 	ToogleGroupControl,
@@ -395,24 +391,7 @@ const Inspector = ({
 		[ formOptions.action, savedFormOptions?.integration?.action ]
 	]);
 
-	const InputFieldList = SortableContainer( ({ items }) => {
-		return (
-			<div>
-				{ items.map( ( item, index ) => {
-					return (
-						<SortableInputField
-							key={ item.inputClientId }
-							index={ index }
-							item={ item }
-							actions={inputFieldActions}
-						/>
-					);
-				}) }
-			</div>
-		);
-	});
-
-	const onSortEnd = ({ oldIndex, newIndex }) => {
+	const onReorder = ( oldIndex, newIndex ) => {
 		inputFieldActions.move( inputFields?.[oldIndex]?.parentClientId, newIndex );
 	};
 
@@ -444,13 +423,20 @@ const Inspector = ({
 								<p>{ __( 'Press and hold to use drag and drop to sort the tabs', 'otter-blocks' ) }</p>
 
 								{ 0 < children?.length && (
-									<InputFieldList
+									<SortableVerticalList
 										items={ inputFields }
-										onSortEnd={ onSortEnd }
-										useDragHandle
-										axis="y"
-										lockAxis="y"
-									/>
+										getItemId={ ( item ) => item.inputField.clientId }
+										onReorder={ onReorder }
+									>
+										{ ( item ) => (
+											<SortableInputField
+												key={ item.inputField.clientId }
+												id={ item.inputField.clientId }
+												item={ item }
+												actions={ inputFieldActions }
+											/>
+										) }
+									</SortableVerticalList>
 								) }
 
 								<Button
