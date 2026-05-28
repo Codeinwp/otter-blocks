@@ -23,6 +23,7 @@ import './galley-extension/index.js';
 import './masonry-extension/index.js';
 import './image-extension/index.js';
 import './menu-icons/index.js';
+import './keyboard-navigation/index.js';
 
 // We disable the copy-paste plugin for now.
 // import './copy-paste/index.js';
