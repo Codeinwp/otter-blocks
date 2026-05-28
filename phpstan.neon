@@ -23,3 +23,4 @@ parameters:
 includes:
 	- %currentWorkingDirectory%/vendor/szepeviktor/phpstan-wordpress/extension.neon
 	- %currentWorkingDirectory%/phpstan-baseline.neon
+	- phar://phpstan.phar/conf/bleedingEdge.neon
