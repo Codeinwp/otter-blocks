@@ -90,4 +90,46 @@ test.describe( 'Modal', () => {
 		await page.keyboard.press( 'Escape' );
 		await expect( page.getByText( 'Popup Content Test' ) ).toBeHidden();
 	});
+
+	test( 'close button has aria-label', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'core/buttons',
+			attributes: {},
+			innerBlocks: [
+				{
+					name: 'core/button',
+					attributes: {
+						text: 'Open Modal',
+						anchor: 'modal-trigger'
+					}
+				}
+			]
+		});
+
+		await editor.insertBlock({
+			name: 'themeisle-blocks/modal',
+			attributes: {
+				anchor: 'modal-trigger'
+			},
+			innerBlocks: [
+				{
+					name: 'core/paragraph',
+					attributes: {
+						content: 'Popup Content Test'
+					}
+				}
+			]
+		});
+
+		const postId = await editor.publishPost();
+		await page.goto( `/?p=${postId}` );
+
+		await page.locator( 'div' ).filter({ hasText: /^Open Modal$/ }).click();
+
+		const closeButton = page.locator( '.otter-popup__modal_header .components-button' );
+		await expect( closeButton ).toHaveAttribute( 'aria-label', /.+/ );
+
+		await closeButton.click();
+		await expect( page.getByText( 'Popup Content Test' ) ).toBeHidden();
+	});
 });
