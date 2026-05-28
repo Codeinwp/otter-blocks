@@ -13,6 +13,72 @@ test.describe( 'Section Block', () => {
 		await admin.createNewPost();
 	});
 
+	test( 'can navigate between blocks using arrow keys', async({ editor, page }) => {
+		await page.waitForFunction( () => window?.wp?.blocks && window?.wp?.data );
+		await page.evaluate( () => {
+			const { createBlock } = window.wp.blocks;
+
+			const blocks = [
+				createBlock( 'core/paragraph', { content: 'Before' } ),
+				createBlock(
+					'themeisle-blocks/advanced-columns',
+					{},
+					[
+						createBlock(
+							'themeisle-blocks/advanced-column',
+							{},
+							[ createBlock( 'core/paragraph', { content: 'Inside' } ) ]
+						)
+					]
+				),
+				createBlock( 'core/paragraph', { content: 'After' } )
+			];
+
+			window.wp.data.dispatch( 'core/block-editor' ).resetBlocks( blocks );
+		});
+
+		const rootBlocks = page.locator( '.block-editor-block-list__layout.is-root-container' );
+
+		const sectionBlock = rootBlocks.locator(
+			'> .block-editor-block-list__block[data-type="themeisle-blocks/advanced-columns"]'
+		).first();
+
+		const paragraphs = rootBlocks.locator(
+			'> .block-editor-block-list__block[data-type="core/paragraph"]'
+		);
+
+		await expect( paragraphs ).toHaveCount( 2 );
+
+		const firstParagraph = paragraphs.first();
+		const lastParagraph = paragraphs.nth( 1 );
+
+		const firstParagraphClientId = await firstParagraph.getAttribute( 'data-block' );
+		const lastParagraphClientId = await lastParagraph.getAttribute( 'data-block' );
+
+		expect( firstParagraphClientId ).toBeTruthy();
+		expect( lastParagraphClientId ).toBeTruthy();
+
+		await editor.selectBlocks( sectionBlock );
+		await page.waitForFunction( () => {
+			return 'themeisle-blocks/advanced-columns' === window.wp.data.select( 'core/block-editor' )?.getSelectedBlock?.()?.name;
+		});
+
+		await page.keyboard.press( 'ArrowDown' );
+		await page.waitForFunction( ( expectedClientId ) => {
+			return expectedClientId === window.wp.data.select( 'core/block-editor' )?.getSelectedBlockClientId?.();
+		}, lastParagraphClientId );
+
+		await editor.selectBlocks( sectionBlock );
+		await page.waitForFunction( () => {
+			return 'themeisle-blocks/advanced-columns' === window.wp.data.select( 'core/block-editor' )?.getSelectedBlock?.()?.name;
+		});
+
+		await page.keyboard.press( 'ArrowUp' );
+		await page.waitForFunction( ( expectedClientId ) => {
+			return expectedClientId === window.wp.data.select( 'core/block-editor' )?.getSelectedBlockClientId?.();
+		}, firstParagraphClientId );
+	});
+
 	test( 'can be created by typing "/section"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
