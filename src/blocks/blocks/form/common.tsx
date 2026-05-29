@@ -15,8 +15,8 @@ import { dispatch } from '@wordpress/data';
 import type { BlockProps } from '../../helpers/blocks';
 import { changeActiveStyle, getActiveStyle, getChoice } from '../../helpers/helper-functions';
 import { Fragment } from '@wordpress/element';
-import { SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { RichText } from '@wordpress/block-editor';
+import { SortableDragHandle, useSortableRow } from '../../components/sortable/index.js';
 
 export const FieldInputWidth = ( props ) => {
 
@@ -239,18 +239,30 @@ export const mappedNameInfo = (
 	</Fragment>
 );
 
-const DragHandle = SortableHandle( () => {
-	return (
-		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__drag" tabIndex="0">
-			<span></span>
-		</div>
-	);
-});
+type SortableChoiceItemProps = {
+	id: string;
+	tab?: { isDefault?: boolean; content?: string };
+	useRadio?: boolean;
+	setAsDefault?: () => void;
+	onLabelChange?: ( value: string ) => void;
+	deleteTab?: () => void;
+};
 
-export const SortableChoiceItem = SortableElement( ( props ) => {
+export const SortableChoiceItem = ( props: SortableChoiceItemProps ) => {
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		style
+	} = useSortableRow( props.id );
+
 	return (
 		<Tooltip text={ __( 'Set as default or reorder', 'otter-blocks' ) } placement='left-start' delay={1800}>
-			<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">
+			<div
+				ref={ setNodeRef }
+				style={ style }
+				className="wp-block-themeisle-blocks-tabs-inspector-tab-option"
+			>
 				{
 					props?.useRadio ? (
 						<Fragment>
@@ -268,7 +280,10 @@ export const SortableChoiceItem = SortableElement( ( props ) => {
 					)
 				}
 
-				<DragHandle />
+				<SortableDragHandle
+					listeners={ listeners }
+					attributes={ attributes }
+				/>
 
 				<RichText
 					onChange={props.onLabelChange}
@@ -288,6 +303,6 @@ export const SortableChoiceItem = SortableElement( ( props ) => {
 			</div>
 		</Tooltip>
 	);
-});
+};
 
 export default { switchFormFieldTo, HideFieldLabelToggle, FieldInputWidth, SortableChoiceItem };

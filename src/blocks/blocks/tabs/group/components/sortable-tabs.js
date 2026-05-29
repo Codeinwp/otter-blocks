@@ -1,30 +1,33 @@
 /**
- * External dependencies
- */
-import {
-	SortableElement,
-	SortableHandle
-} from 'react-sortable-hoc';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
 import { Button } from '@wordpress/components';
 
-const DragHandle = SortableHandle( () => {
-	return (
-		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__drag" tabIndex="0">
-			<span></span>
-		</div>
-	);
-});
+/**
+ * Internal dependencies
+ */
+import { SortableDragHandle, useSortableRow } from '../../../../components/sortable/index.js';
 
-export const SortableTab = SortableElement( ({ tab, deleteTab, selectTab }) => {
+export const SortableTab = ({ id, tab, deleteTab, selectTab }) => {
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		style
+	} = useSortableRow( id );
+
 	return (
-		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">
-			<DragHandle />
+		<div
+			ref={ setNodeRef }
+			style={ style }
+			className="wp-block-themeisle-blocks-tabs-inspector-tab-option"
+		>
+			<SortableDragHandle
+				listeners={ listeners }
+				attributes={ attributes }
+			/>
 
 			<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__name">
 				{ tab.attributes.title || __( 'Untitled Tab', 'otter-blocks' ) }
@@ -47,5 +50,4 @@ export const SortableTab = SortableElement( ({ tab, deleteTab, selectTab }) => {
 			/>
 		</div>
 	);
-});
-
+};
