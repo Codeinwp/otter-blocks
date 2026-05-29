@@ -68,6 +68,11 @@ const SortableGrid = ({
 		onReorder({ oldIndex, newIndex, cancelled: false });
 	};
 
+	const handleDragCancel = ( event ) => {
+		const oldIndex = itemIds.indexOf( event.active?.id );
+		onReorder?.({ oldIndex, newIndex: oldIndex, cancelled: true });
+	};
+
 	const renderedItems = items.map( ( item, index ) => children( item, index, getItemId( item, index ), isItemDisabled?.( item, index ) ) );
 
 	return (
@@ -76,6 +81,7 @@ const SortableGrid = ({
 			collisionDetection={ closestCenter }
 			onDragStart={ handleDragStart }
 			onDragEnd={ handleDragEnd }
+			onDragCancel={ handleDragCancel }
 		>
 			<SortableContext
 				items={ itemIds }
