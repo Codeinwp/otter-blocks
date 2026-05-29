@@ -80,9 +80,15 @@ const ensureTurnstileLoaded = ( forms ) => {
 	};
 
 	// Don't inject a second copy if Turnstile is already on the page: our own
-	// `#turnstile` element, or an api.js added by another plugin/theme/bundle.
+	// script element, or an api.js added by another plugin/theme/bundle.
 	// Loading it twice triggers Turnstile's "imported multiple times" warning.
-	const existing = document.getElementById( 'turnstile' ) ||
+	//
+	// NOTE: the script id must NOT be `turnstile`. A DOM element with that id
+	// is exposed as the global `window.turnstile` (named element access), which
+	// shadows Cloudflare's API object. Turnstile's api.js then sees a truthy
+	// `window.turnstile`, assumes it was already loaded, and never installs
+	// `render`, so the widget silently fails to appear.
+	const existing = document.getElementById( 'otter-turnstile-script' ) ||
 		document.querySelector( 'script[src*="challenges.cloudflare.com/turnstile"]' );
 
 	if ( existing ) {
@@ -91,7 +97,7 @@ const ensureTurnstileLoaded = ( forms ) => {
 	}
 
 	const script = document.createElement( 'script' );
-	script.id = 'turnstile';
+	script.id = 'otter-turnstile-script';
 	script.async = true;
 	script.defer = true;
 	script.addEventListener( 'load', renderWhenReady );

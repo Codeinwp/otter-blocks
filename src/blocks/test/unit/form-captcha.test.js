@@ -52,6 +52,31 @@ describe( 'Form captcha', () => {
 		expect( window.turnstile.reset ).toHaveBeenCalledWith( 'widget-1' );
 	} );
 
+	it( 'injects the Turnstile script with an id that does not shadow window.turnstile', () => {
+		// Regression: an element with id="turnstile" is exposed as the global
+		// `window.turnstile`, which shadows Cloudflare's API and makes api.js
+		// believe Turnstile was already loaded, so `render` is never installed.
+		const form = document.createElement( 'div' );
+		form.id = 'form-id';
+		form.className = 'wp-block-themeisle-blocks-form has-captcha';
+		form.dataset.captchaProvider = 'turnstile';
+
+		const container = document.createElement( 'div' );
+		container.className = 'otter-form__container';
+		container.appendChild( document.createElement( 'div' ) );
+		form.appendChild( container );
+		document.body.appendChild( form );
+
+		addCaptchaOnPage( [ form ] );
+
+		const injected = document.querySelector(
+			'script[src*="challenges.cloudflare.com/turnstile"]'
+		);
+		expect( injected ).not.toBeNull();
+		expect( injected.id ).not.toBe( 'turnstile' );
+		expect( document.getElementById( 'turnstile' ) ).toBeNull();
+	} );
+
 	it( 'does not inject a second Turnstile script when one is already on the page', () => {
 		const form = document.createElement( 'div' );
 		form.id = 'form-dup';
@@ -64,8 +89,7 @@ describe( 'Form captcha', () => {
 		form.appendChild( container );
 		document.body.appendChild( form );
 
-		// Simulate Turnstile's api.js already loaded by another source, before
-		// window.turnstile becomes available (no `#turnstile` id either).
+		// Simulate Turnstile's api.js already loaded by another source.
 		const thirdParty = document.createElement( 'script' );
 		thirdParty.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 		document.body.appendChild( thirdParty );
@@ -76,7 +100,7 @@ describe( 'Form captcha', () => {
 			'script[src*="challenges.cloudflare.com/turnstile"]'
 		);
 		expect( turnstileScripts ).toHaveLength( 1 );
-		expect( document.getElementById( 'turnstile' ) ).toBeNull();
+		expect( document.getElementById( 'otter-turnstile-script' ) ).toBeNull();
 	} );
 
 	it( 'renders reCaptcha when provider is recaptcha', () => {
