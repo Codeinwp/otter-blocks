@@ -124,9 +124,5 @@
 	},
 	"optionalDependencies": {
 		"fsevents": "^2.3.3"
-	},
-	"overrides": {
-		"react": "^17.0.0",
-		"react-dom": "^17.0.0"
 	}
 }
