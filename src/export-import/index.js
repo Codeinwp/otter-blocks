@@ -17,7 +17,7 @@ import Exporter from './exporter.js';
 import edit from './importer.js';
 
 registerBlockType( 'themeisle-blocks/importer', {
-	apiVersion: 2,
+	apiVersion: 3,
 	title: __( 'Import Blocks from JSON', 'blocks-export-import' ),
 	description: __(
 		'Allows you import blocks from a JSON file.',

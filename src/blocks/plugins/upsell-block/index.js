@@ -102,7 +102,7 @@ const edit = props => {
 };
 
 registerBlockType( 'themeisle-blocks/patterns-upsell', {
-	apiVersion: 2,
+	apiVersion: 3,
 	title: __( 'Pro Pattern Notice', 'otter-blocks' ),
 	description: __( 'There are 30+ more patterns and full page designs available in Otter PRO.', 'otter-blocks' ),
 	supports: {

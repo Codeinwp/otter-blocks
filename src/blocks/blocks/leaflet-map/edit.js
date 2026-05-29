@@ -31,6 +31,8 @@ import Inspector from './inspector.js';
 import {
 	blockInit,
 	copyScriptAssetToIframe,
+	getBlockDocument,
+	getBlockWindow,
 	getEditorIframe
 } from '../../helpers/block-utility.js';
 
@@ -73,15 +75,26 @@ const Edit = ({
 	const [ isAddingToLocationActive, setActiveAddingToLocation ] = useState( false );
 	const [ openMarker, setOpenMarker ] = useState( null );
 
+	/**
+	 * Resolve the Leaflet global from the window that owns the map node.
+	 *
+	 * In the iframed editor (`apiVersion: 3`, FSE, Tablet/Mobile preview) the map
+	 * lives in the canvas iframe, so Leaflet is loaded into the iframe window —
+	 * use that instance instead of the top-level `window.L` so a single Leaflet
+	 * instance manages both the map and its markers.
+	 */
+	const getLeaflet = () => getBlockWindow( mapRef ).L;
+
 	const createMarker = ( markerProps, dispatch ) => {
-		if ( window.L && map && dispatch && markerProps ) {
+		const L = getLeaflet();
+		if ( L && map && dispatch && markerProps ) {
 			markerProps.id ??= uuidv4();
 			markerProps.latitude ??= map.getCenter().lat;
 			markerProps.longitude ??= map.getCenter().lng;
 			markerProps.title ??= __( 'Add a title', 'otter-blocks' );
 			markerProps.description ??= '';
 
-			const markerMap = window.L.marker([ markerProps.latitude, markerProps.longitude ] || map.getCenter(), {
+			const markerMap = L.marker([ markerProps.latitude, markerProps.longitude ] || map.getCenter(), {
 				draggable: true
 			});
 
@@ -173,16 +186,11 @@ const Edit = ({
 	const [ markersStore, dispatch ] = useReducer( markerReducer, [], () => []);
 	const createMap = () => {
 
-		if ( ! mapRef.current && ! window.L ) {
+		if ( ! mapRef.current ) {
 			return;
 		}
 
-		let { L } = window;
-
-		const iframe = getEditorIframe();
-		if ( Boolean( iframe ) ) {
-			L = iframe.contentWindow?.L;
-		}
+		const L = getLeaflet();
 
 		if ( ! L ) {
 			return ;
@@ -339,11 +347,14 @@ const Edit = ({
 		 * But we need interaction, in our case, to remove the marker.
 		 * So, creating an HTMLElement will allow us to bind function very easily.
 		 */
-		const container = document.createElement( 'div' );
-		const title = document.createElement( 'h6' );
-		const content = document.createElement( 'div' );
-		const description = document.createElement( 'p' );
-		const deleteButton = document.createElement( 'button' );
+		// Build popup nodes in the document that owns the map (the iframe document
+		// when iframed) so they belong to the same tree as the Leaflet popup.
+		const ownerDocument = getBlockDocument( mapRef );
+		const container = ownerDocument.createElement( 'div' );
+		const title = ownerDocument.createElement( 'h6' );
+		const content = ownerDocument.createElement( 'div' );
+		const description = ownerDocument.createElement( 'p' );
+		const deleteButton = ownerDocument.createElement( 'button' );
 
 		title.innerHTML = markerProps.title;
 		description.innerHTML = markerProps.description;

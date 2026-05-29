@@ -25,6 +25,7 @@ import {
  */
 import globalDefaultsBlocksAttrs from '../plugins/options/global-defaults/defaults.js';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { useRefEffect } from '@wordpress/compose';
 
 /**
  * Initiate the global id tracker with an empty list if it is the case.
@@ -439,6 +440,62 @@ export const copyScriptAssetToIframe = ( assetSelectorId, callback ) => {
 			n.src = original.src;
 		}
 	}
+};
+
+/**
+ * Get the document that owns a block's DOM element.
+ *
+ * In the iframed editor (`apiVersion: 3`) the block lives inside the editor
+ * canvas iframe, so its `ownerDocument` is the iframe document — not the
+ * top-level `document`. Reading from the element's `ownerDocument` is the
+ * pattern recommended by the WordPress block migration guide and is correct in
+ * nested, FSE and Tablet/Mobile preview contexts too. Falls back to the
+ * top-level `document` when no element is available yet (e.g. before the ref is
+ * attached) or when the editor is not iframed.
+ *
+ * @param {HTMLElement|{current: ?HTMLElement}|null} [refOrElement] The block element or a ref to it.
+ * @return {Document} The document that owns the element.
+ */
+export const getBlockDocument = ( refOrElement ) => {
+	const element = refOrElement?.current ?? refOrElement;
+	return element?.ownerDocument ?? document;
+};
+
+/**
+ * Get the window that owns a block's DOM element.
+ *
+ * Companion to {@link getBlockDocument}. Use this to read editor globals (e.g.
+ * `themeisleGutenberg`), browser APIs (`location`, `getComputedStyle`) or
+ * third-party libraries from within the iframed editor instead of reaching for
+ * the top-level `window`.
+ *
+ * @param {HTMLElement|{current: ?HTMLElement}|null} [refOrElement] The block element or a ref to it.
+ * @return {Window} The window that owns the element.
+ */
+export const getBlockWindow = ( refOrElement ) => {
+	return getBlockDocument( refOrElement ).defaultView ?? window;
+};
+
+/**
+ * Run an effect against a block's DOM element and its owning document/window.
+ *
+ * Thin wrapper over `useRefEffect` that hands the callback the element plus the
+ * `ownerDocument`/`defaultView` it belongs to, so third-party libraries (Glide,
+ * Leaflet, Google Maps, …) initialise against the iframed editor's document
+ * rather than the top-level one. Return a cleanup function as usual. Spread the
+ * returned ref callback onto the target element (it can be merged with other
+ * refs via `@wordpress/compose`'s `useMergeRefs`).
+ *
+ * @param {(element: HTMLElement, ownerDocument: Document, ownerWindow: Window) => (void | (() => void))} callback     The setup callback.
+ * @param {Array}                                                                                         dependencies Effect dependencies, forwarded to `useRefEffect`.
+ * @return {Function} A ref callback to attach to the target element.
+ */
+export const useBlockElementEffect = ( callback, dependencies ) => {
+	return useRefEffect( ( element ) => {
+		const ownerDocument = element?.ownerDocument ?? document;
+		const ownerWindow = ownerDocument.defaultView ?? window;
+		return callback( element, ownerDocument, ownerWindow );
+	}, dependencies );
 };
 
 export const buildGetSyncValue = ( name, attributes, defaultAttributes ) => {
