@@ -68,24 +68,35 @@ const ensureTurnstileLoaded = ( forms ) => {
 		return;
 	}
 
-	if ( document.getElementById( 'turnstile' ) ) {
-		return;
-	}
-
-	const script = document.createElement( 'script' );
-	script.id = 'turnstile';
-	document.body.appendChild( script );
-
-	script.addEventListener( 'load', () => {
+	// Poll until the Turnstile API is ready, then render. Used both after our own
+	// injection loads and when the script is already present from another source.
+	const renderWhenReady = () => {
 		const tryRenderCaptcha = setInterval( () => {
 			if ( window.hasOwnProperty( 'turnstile' ) && window.turnstile?.render ) {
 				forms.forEach( renderTurnstileOn );
 				clearInterval( tryRenderCaptcha );
 			}
 		}, 200 );
-	});
+	};
 
+	// Don't inject a second copy if Turnstile is already on the page: our own
+	// `#turnstile` element, or an api.js added by another plugin/theme/bundle.
+	// Loading it twice triggers Turnstile's "imported multiple times" warning.
+	const existing = document.getElementById( 'turnstile' ) ||
+		document.querySelector( 'script[src*="challenges.cloudflare.com/turnstile"]' );
+
+	if ( existing ) {
+		renderWhenReady();
+		return;
+	}
+
+	const script = document.createElement( 'script' );
+	script.id = 'turnstile';
+	script.async = true;
+	script.defer = true;
+	script.addEventListener( 'load', renderWhenReady );
 	script.src = window?.themeisleGutenbergForm?.turnstileAPIURL;
+	document.body.appendChild( script );
 };
 
 /**

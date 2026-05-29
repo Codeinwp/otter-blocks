@@ -52,6 +52,33 @@ describe( 'Form captcha', () => {
 		expect( window.turnstile.reset ).toHaveBeenCalledWith( 'widget-1' );
 	} );
 
+	it( 'does not inject a second Turnstile script when one is already on the page', () => {
+		const form = document.createElement( 'div' );
+		form.id = 'form-dup';
+		form.className = 'wp-block-themeisle-blocks-form has-captcha';
+		form.dataset.captchaProvider = 'turnstile';
+
+		const container = document.createElement( 'div' );
+		container.className = 'otter-form__container';
+		container.appendChild( document.createElement( 'div' ) );
+		form.appendChild( container );
+		document.body.appendChild( form );
+
+		// Simulate Turnstile's api.js already loaded by another source, before
+		// window.turnstile becomes available (no `#turnstile` id either).
+		const thirdParty = document.createElement( 'script' );
+		thirdParty.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+		document.body.appendChild( thirdParty );
+
+		addCaptchaOnPage( [ form ] );
+
+		const turnstileScripts = document.querySelectorAll(
+			'script[src*="challenges.cloudflare.com/turnstile"]'
+		);
+		expect( turnstileScripts ).toHaveLength( 1 );
+		expect( document.getElementById( 'turnstile' ) ).toBeNull();
+	} );
+
 	it( 'renders reCaptcha when provider is recaptcha', () => {
 		const form = document.createElement( 'div' );
 		form.id = 'form-2';
