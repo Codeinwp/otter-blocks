@@ -3,12 +3,6 @@
  */
 import classnames from 'classnames';
 
-import {
-	SortableContainer,
-	SortableElement,
-	SortableHandle
-} from 'react-sortable-hoc';
-
 /**
  * WordPress dependencies
  */
@@ -36,13 +30,10 @@ import {
 
 import { applyFilters } from '@wordpress/hooks';
 
-const DragHandle = SortableHandle( () => {
-	return (
-		<div className="o-sortable-handle" tabIndex="0">
-			<span></span>
-		</div>
-	);
-});
+/**
+ * Internal dependencies
+ */
+import { SortableDragHandle, SortableVerticalList, useSortableRow } from '../../../components/sortable/index.js';
 
 const fieldMapping = {
 	image: 'displayFeaturedImage',
@@ -56,7 +47,11 @@ export const SortableItem = ({
 	attributes,
 	setAttributes,
 	template,
-	disabled
+	disabled,
+	dragHandleListeners,
+	dragHandleAttributes,
+	setNodeRef,
+	style
 }) => {
 	const [ isOpen, setOpen ] = useState( false );
 
@@ -92,10 +87,10 @@ export const SortableItem = ({
 	const canEdit = templateLookUp[ template ] || customMeta?.display;
 	const icon = canEdit ? 'visibility' : 'hidden';
 
-	let message = sprintf( 
+	let message = sprintf(
 		/* translators: %s Label */
-		__( 'Display %s', 'otter-blocks' ), 
-		label 
+		__( 'Display %s', 'otter-blocks' ),
+		label
 	);
 	if ( canEdit ) {
 
@@ -105,6 +100,8 @@ export const SortableItem = ({
 
 	return (
 		<div
+			ref={ setNodeRef }
+			style={ style }
 			className={ classnames(
 				'o-sortable-item-area',
 				`o-sortable-item-area-${ template }`
@@ -120,7 +117,13 @@ export const SortableItem = ({
 					}
 				) }
 			>
-				{ ! disabled && <DragHandle /> }
+				{ ! disabled && dragHandleListeners && (
+					<SortableDragHandle
+						listeners={ dragHandleListeners }
+						attributes={ dragHandleAttributes }
+						variant="posts"
+					/>
+				) }
 
 				<div className="o-sortable-label">
 					{ label }
@@ -267,44 +270,59 @@ export const SortableItem = ({
 	);
 };
 
-const SortableItemContainer = SortableElement( ({
+const SortableTemplateItem = ({
+	id,
 	attributes,
 	setAttributes,
-	template,
-	disabled
+	template
 }) => {
+	const {
+		attributes: dragHandleAttributes,
+		listeners,
+		setNodeRef,
+		style
+	} = useSortableRow( id );
+
 	return (
 		<SortableItem
 			attributes={ attributes }
 			setAttributes={ setAttributes }
 			template={ template }
-			disabled={ disabled }
+			setNodeRef={ setNodeRef }
+			style={ style }
+			dragHandleListeners={ listeners }
+			dragHandleAttributes={ dragHandleAttributes }
 		/>
 	);
-});
+};
 
-export const SortableList = SortableContainer( ({
+export const SortableList = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	onReorder
 }) => {
+	const templates = attributes?.template?.filter( template => {
+		if ( template?.startsWith( 'custom_' ) && ( window?.acf === undefined || ( ! window.themeisleGutenberg?.hasPro ) ) ) {
+			return false;
+		}
+		return true;
+	}) ?? [];
+
 	return (
-		<div>
-			{ attributes?.template
-				?.filter( template => {
-					if ( template?.startsWith( 'custom_' ) && ( window?.acf === undefined || ( ! window.themeisleGutenberg?.hasPro ) ) ) {
-						return false;
-					}
-					return true;
-				})
-				.map( ( template, index ) => (
-					<SortableItemContainer
-						key={ `item-${ template }` }
-						index={ index }
-						attributes={ attributes }
-						setAttributes={ setAttributes }
-						template={ template }
-					/>
-				) ) }
-		</div>
+		<SortableVerticalList
+			items={ templates }
+			getItemId={ ( template ) => template }
+			onReorder={ onReorder }
+		>
+			{ ( template ) => (
+				<SortableTemplateItem
+					key={ `item-${ template }` }
+					id={ template }
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					template={ template }
+				/>
+			) }
+		</SortableVerticalList>
 	);
-});
+};

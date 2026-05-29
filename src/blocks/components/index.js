@@ -44,5 +44,11 @@ export {
 export { default as SyncColorPanel } from './sync-color-panel/';
 export { default as SyncControlDropdown } from './sync-control-dropdown/index';
 export { default as ToogleGroupControl } from './toogle-group-control/index.js';
+export {
+	SortableVerticalList,
+	SortableGrid,
+	SortableDragHandle,
+	useSortableRow
+} from './sortable/index.js';
 
 export { default as PrmptPlaceholder } from './prompt';
