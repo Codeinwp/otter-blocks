@@ -101,6 +101,8 @@ const Edit = ({
 
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
+	const [ cloudflareTurnstileSiteKey, setCloudflareTurnstileSiteKey ] = useState( '' );
+	const [ cloudflareTurnstileSecretKey, setCloudflareTurnstileSecretKey ] = useState( '' );
 
 	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
@@ -252,6 +254,7 @@ const Edit = ({
 	}, [ clientId ]);
 
 	const hasEssentialData = attributes.optionName && hasProtection;
+	const captchaProvider = attributes.captchaProvider || 'recaptcha';
 
 	useEffect( () => {
 		if ( canSaveData && ! isInsideAiBlock ) {
@@ -751,13 +754,15 @@ const Edit = ({
 					const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 					let isMissing = true;
 					let hasChanged = false;
+					const nextCaptchaProvider = attributes.captchaProvider || 'recaptcha';
 
 					emails?.forEach( ({ form }, index ) => {
 						if ( form === attributes.optionName ) {
-							if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
+							if ( emails[index].hasCaptcha !== attributes.hasCaptcha || emails[index].captchaProvider !== nextCaptchaProvider ) {
 								hasChanged = true;
 							}
 							emails[index].hasCaptcha = attributes.hasCaptcha;
+							emails[index].captchaProvider = nextCaptchaProvider;
 							isMissing = false;
 						}
 					});
@@ -765,7 +770,8 @@ const Edit = ({
 					if ( isMissing ) {
 						emails.push({
 							form: attributes.optionName,
-							hasCaptcha: attributes.hasCaptcha
+							hasCaptcha: attributes.hasCaptcha,
+							captchaProvider: nextCaptchaProvider
 						});
 					}
 
@@ -792,10 +798,19 @@ const Edit = ({
 			}
 		}
 		return () => controller?.abort();
-	}, [ attributes.hasCaptcha, attributes.optionName ]);
+	}, [ attributes.hasCaptcha, attributes.captchaProvider, attributes.optionName ]);
 
 	/**
-	 * Check if the reCaptcha API Keys are set.
+	 * Recheck captcha keys when provider changes.
+	 */
+	useEffect( () => {
+		if ( attributes.hasCaptcha ) {
+			setLoading({ captcha: 'init' });
+		}
+	}, [ captchaProvider ]);
+
+	/**
+	 * Check if the captcha API Keys are set.
 	 */
 	useEffect( () => {
 		let controller = new AbortController();
@@ -805,12 +820,24 @@ const Edit = ({
 				( new api.models.Settings() )?.fetch({ signal: controller.signal }).then( response => {
 					controller = null;
 
-					if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
+					const siteKeyOption = 'turnstile' === captchaProvider ? 'themeisle_cloudflare_turnstile_site_key' : 'themeisle_google_captcha_api_site_key';
+					const secretKeyOption = 'turnstile' === captchaProvider ? 'themeisle_cloudflare_turnstile_secret_key' : 'themeisle_google_captcha_api_secret_key';
+
+					const siteKey = response?.[ siteKeyOption ];
+					const secretKey = response?.[ secretKeyOption ];
+
+					if ( '' !== siteKey && '' !== secretKey ) {
 						setLoading({ captcha: 'done' });
 					} else {
 						setLoading({ captcha: 'missing' });
-						setGoogleCaptchaAPISiteKey( response.themeisle_google_captcha_api_site_key );
-						setGoogleCaptchaAPISecretKey( response.themeisle_google_captcha_api_secret_key );
+
+						if ( 'turnstile' === captchaProvider ) {
+							setCloudflareTurnstileSiteKey( siteKey );
+							setCloudflareTurnstileSecretKey( secretKey );
+						} else {
+							setGoogleCaptchaAPISiteKey( siteKey );
+							setGoogleCaptchaAPISecretKey( secretKey );
+						}
 					}
 				}).catch( e => {
 					console.error( e );
@@ -827,7 +854,7 @@ const Edit = ({
 		}
 
 		return () => controller?.abort();
-	}, [ loadingState.captcha, attributes.hasCaptcha ]);
+	}, [ loadingState.captcha, attributes.hasCaptcha, captchaProvider ]);
 
 	/**
 	 * Save API Keys in the Otter options.
@@ -835,26 +862,39 @@ const Edit = ({
 	const saveCaptchaAPIKey = () => {
 		setLoading({ captcha: 'loading' });
 		try {
-			const model = new api.models.Settings({
-				 
-				themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
-				 
-				themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
-			});
+			const payload = {};
+
+			if ( 'turnstile' === captchaProvider ) {
+				payload.themeisle_cloudflare_turnstile_site_key = cloudflareTurnstileSiteKey;
+				payload.themeisle_cloudflare_turnstile_secret_key = cloudflareTurnstileSecretKey;
+			} else {
+				payload.themeisle_google_captcha_api_site_key = googleCaptchaAPISiteKey;
+				payload.themeisle_google_captcha_api_secret_key = googleCaptchaAPISecretKey;
+			}
+
+			const model = new api.models.Settings( payload );
 
 			model?.save?.()?.then( response => {
 
-				if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
+				const siteKeyOption = 'turnstile' === captchaProvider ? 'themeisle_cloudflare_turnstile_site_key' : 'themeisle_google_captcha_api_site_key';
+				const secretKeyOption = 'turnstile' === captchaProvider ? 'themeisle_cloudflare_turnstile_secret_key' : 'themeisle_google_captcha_api_secret_key';
+
+				if ( '' !== response[ siteKeyOption ] && '' !== response[ secretKeyOption ] ) {
 					setLoading({ captcha: 'done' });
 				} else {
 					setLoading({ captcha: 'missing' });
 				}
 
-				setGoogleCaptchaAPISecretKey( '' );
-				setGoogleCaptchaAPISiteKey( '' );
+				if ( 'turnstile' === captchaProvider ) {
+					setCloudflareTurnstileSecretKey( '' );
+					setCloudflareTurnstileSiteKey( '' );
+				} else {
+					setGoogleCaptchaAPISecretKey( '' );
+					setGoogleCaptchaAPISiteKey( '' );
+				}
 				createNotice(
 					'info',
-					__( 'Google reCaptcha API Keys have been saved.', 'otter-blocks' ),
+					'turnstile' === captchaProvider ? __( 'Cloudflare Turnstile keys have been saved.', 'otter-blocks' ) : __( 'Google reCaptcha API Keys have been saved.', 'otter-blocks' ),
 					{
 						isDismissible: true,
 						type: 'snackbar'
@@ -1010,12 +1050,13 @@ const Edit = ({
 									attributes.hasCaptcha && 'done' !== loadingState?.captcha && (
 										<Placeholder
 											className="otter-form-captcha"
+											captchaProvider={ captchaProvider }
 											loadingState={ loadingState }
 											saveAPIKey={ saveCaptchaAPIKey }
-											siteKey={ googleCaptchaAPISiteKey }
-											secretKey={ googleCaptchaAPISecretKey }
-											setSiteKey={ setGoogleCaptchaAPISiteKey }
-											setSecretKey={ setGoogleCaptchaAPISecretKey }
+											siteKey={ 'turnstile' === captchaProvider ? cloudflareTurnstileSiteKey : googleCaptchaAPISiteKey }
+											secretKey={ 'turnstile' === captchaProvider ? cloudflareTurnstileSecretKey : googleCaptchaAPISecretKey }
+											setSiteKey={ 'turnstile' === captchaProvider ? setCloudflareTurnstileSiteKey : setGoogleCaptchaAPISiteKey }
+											setSecretKey={ 'turnstile' === captchaProvider ? setCloudflareTurnstileSecretKey : setGoogleCaptchaAPISecretKey }
 										/>
 									)
 								}

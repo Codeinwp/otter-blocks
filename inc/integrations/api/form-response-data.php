@@ -371,7 +371,7 @@ class Form_Data_Response {
 			self::ERROR_MISSING_PROVIDER                   => __( 'Provider settings are missing.', 'otter-blocks' ),
 			self::ERROR_MISSING_API_KEY                    => __( 'API Key is missing from settings.', 'otter-blocks' ),
 			self::ERROR_MISSING_MAIL_LIST_ID               => __( 'API Key is missing.', 'otter-blocks' ),
-			self::ERROR_INVALID_CAPTCHA_TOKEN              => __( 'The reCaptcha token is invalid.', 'otter-blocks' ),
+			self::ERROR_INVALID_CAPTCHA_TOKEN              => __( 'The captcha token is invalid.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT    => __( 'The API key format is invalid.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED => __( 'The user with this email was already registered.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_EMAIL             => __( 'The email address is invalid.', 'otter-blocks' ),

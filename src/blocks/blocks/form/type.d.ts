@@ -6,6 +6,7 @@ type Attributes = {
 	emailTo: string
 	optionName: string
 	hasCaptcha: boolean
+	captchaProvider: string
 	provider: string
 	listId: string
 	action: string
@@ -51,6 +52,7 @@ type Attributes = {
 export type FormOptions = {
 	form?: string
 	hasCaptcha?: boolean
+	captchaProvider?: string
 	email?: string
 	fromName?: string
 	fromEmail?: string
