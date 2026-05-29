@@ -41,7 +41,8 @@ import Controls from './controls.js';
 import Inspector from './inspector.js';
 import {
 	blockInit,
-	getDefaultValueByField
+	getDefaultValueByField,
+	getEditorIframe
 } from '../../helpers/block-utility.js';
 import Layout, { PaginationPreview } from './components/layout/index.js';
 import {
@@ -410,8 +411,12 @@ domReady( () => {
 
 			/**
 			 * @type {NodeListOf<HTMLDivElement>} postsHtml - The HTML nodes which contain the relevent post content for RankMath.
+			 *
+			 * In the iframed editor (`apiVersion: 3`) the rendered block markup lives inside the
+			 * editor canvas iframe, so query that document and fall back to the top document.
 			 */
-			const postsHtml = document.querySelectorAll( '.o-posts-grid-post-body' );
+			const editorDocument = getEditorIframe()?.contentWindow?.document ?? document;
+			const postsHtml = editorDocument.querySelectorAll( '.o-posts-grid-post-body' );
 			return ( content ?? '' ) + ( Array.from( postsHtml )?.map( ( post ) => post.innerHTML )?.join( '' ) ?? '' );
 		});
 

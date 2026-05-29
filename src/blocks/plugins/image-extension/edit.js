@@ -34,7 +34,23 @@ import {
  * Internal dependencies.
  */
 import ControlPanelControl from '../../components/control-panel-control/index.js';
-import { useCSSNode } from '../../helpers/block-utility';
+import { getEditorIframe, useCSSNode } from '../../helpers/block-utility';
+
+/**
+ * Resolve a CSS custom property to its computed value against the editor canvas.
+ *
+ * In the iframed editor (`apiVersion: 3`) theme CSS variables are defined on the
+ * iframe document's `:root`, not the top-level document — so resolve against the
+ * iframe document when present and fall back to the top document otherwise.
+ *
+ * @param {string} cssVar A `var( --name )` expression.
+ * @return {string} The resolved value.
+ */
+const resolveCSSVariable = ( cssVar ) => {
+	const ownerDocument = getEditorIframe()?.contentWindow?.document ?? document;
+	return getComputedStyle( ownerDocument.documentElement, null )
+		.getPropertyValue( cssVar?.replace( 'var(', '' )?.replace( ')', '' ) );
+};
 
 const Edit = ({
 	BlockEdit,
@@ -61,7 +77,7 @@ const Edit = ({
 	const changeBoxShadowColor = value => {
 		setAttributes({
 			boxShadowColor: ( 100 > attributes.boxShadowColorOpacity && attributes.boxShadowColor?.includes( 'var(' ) ) ?
-				getComputedStyle( document.documentElement, null ).getPropertyValue( value?.replace( 'var(', '' )?.replace( ')', '' ) ) :
+				resolveCSSVariable( value ) :
 				value
 		});
 	};
@@ -73,7 +89,7 @@ const Edit = ({
 	const changeBoxShadowColorOpacity = value => {
 		const changes = { boxShadowColorOpacity: value };
 		if ( 100 > value && attributes.boxShadowColor?.includes( 'var(' ) ) {
-			changes.boxShadowColor = getComputedStyle( document.documentElement, null ).getPropertyValue( attributes.boxShadowColor.replace( 'var(', '' ).replace( ')', '' ) );
+			changes.boxShadowColor = resolveCSSVariable( attributes.boxShadowColor );
 		}
 		setAttributes( changes );
 	};

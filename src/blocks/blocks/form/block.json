@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"name": "themeisle-blocks/form",
 	"title": "Form",
 	"category": "themeisle-blocks",
