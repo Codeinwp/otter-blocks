@@ -56,6 +56,50 @@ test.describe( 'Slider Block', () => {
 		expect( sliderBlock.attributes.images.length ).toBeGreaterThan( 0 );
 	});
 
+	test( 'duplicate does not throw NotFoundError', async({ editor, page }) => {
+		const images = [
+			{
+				id: uploadedMedia.id,
+				url: uploadedMedia.source_url,
+				alt: uploadedMedia.alt_text
+			}
+		];
+
+		images.push( images[ 0 ] );
+
+		await editor.insertBlock({
+			name: 'themeisle-blocks/slider',
+			attributes: {
+				images
+			}
+		});
+
+		await expect( page.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 1 );
+
+		const errors = [];
+		const onConsole = msg => {
+			if ( 'error' === msg.type() ) {
+				errors.push( msg.text() );
+			}
+		};
+		const onPageError = err => errors.push( err.message );
+
+		page.on( 'console', onConsole );
+		page.on( 'pageerror', onPageError );
+
+		await page.getByRole( 'document', { name: 'Block: Image Slider' } ).click();
+		await page.keyboard.press( 'Control+Shift+D' );
+
+		await expect( page.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 2 );
+		await page.waitForTimeout( 250 );
+
+		page.off( 'console', onConsole );
+		page.off( 'pageerror', onPageError );
+
+		const notFoundErrors = errors.filter( ( text ) => text?.includes( 'NotFoundError' ) || text?.includes( 'removeChild' ) );
+		expect( notFoundErrors ).toEqual([]);
+	});
+
 	test( 'check move buttons', async({ editor, page }) => {
 
 		const images = [
