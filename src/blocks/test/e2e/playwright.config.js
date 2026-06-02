@@ -12,6 +12,9 @@ const STORAGE_STATE_PATH =
 const E2E_WORKERS = parseInt( process.env.E2E_WORKERS || '', 10 ) || ( process.env.CI ? 4 : 2 );
 
 const SERIAL_SPECS = [
+
+	// Flips the AI backend + connector key options server-side; must not race parallel specs.
+	'**/blocks/ai-block-wp-client.spec.js',
 	'**/blocks/block-conditions.spec.js',
 	'**/blocks/dashboard.spec.js',
 	'**/blocks/form.spec.js',

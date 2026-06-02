@@ -697,6 +697,20 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_otter_ai_backend',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'The AI backend used by Otter AI features.', 'otter-blocks' ),
+				'sanitize_callback' => function ( $value ) {
+					return in_array( $value, array( 'auto', 'wp-ai-client', 'openai-key' ), true ) ? $value : 'auto';
+				},
+				'show_in_rest'      => true,
+				'default'           => 'auto',
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_otter_ai_usage',
 			array(
 				'type'         => 'object',

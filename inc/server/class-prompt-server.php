@@ -203,6 +203,13 @@ class Prompt_Server {
 		// Remove the values which keys start with 'otter_'.
 		$body = array_diff_key( $body, $otter_data );
 
+		$this->record_prompt_usage( $otter_data );
+
+		if ( AI_Client_Adaptor::BACKEND_WP === AI_Client_Adaptor::resolve_backend() ) {
+			$adaptor = new AI_Client_Adaptor();
+			return new \WP_REST_Response( $adaptor->generate( $body ), 200 );
+		}
+
 		$response = wp_remote_post(
 			self::BASE_URL,
 			array(
@@ -304,7 +311,7 @@ class Prompt_Server {
 				'site_url'   => get_site_url(),
 				'license_id' => apply_filters( 'product_otter_license_key', 'free' ),
 				'cache'      => gmdate( 'u' ),
-				'isValid'    => boolval( get_option( 'themeisle_open_ai_api_key', false ) ) ? 'true' : 'false',
+				'isValid'    => ( AI_Client_Adaptor::is_available() || boolval( get_option( 'themeisle_open_ai_api_key', false ) ) ) ? 'true' : 'false',
 			),
 			'https://api.themeisle.com/templates-cloud/otter-prompts'
 		);
@@ -363,9 +370,8 @@ class Prompt_Server {
 	/**
 	 * Record prompt usage.
 	 *
-	 * @param array $otter_metadata The metadata from the prompt usage request.
+	 * @param array<string, string> $otter_metadata The metadata from the prompt usage request.
 	 * @return void
-	 * @phpstan-ignore-next-line
 	 */
 	private function record_prompt_usage( $otter_metadata ) {
 		if ( ! isset( $otter_metadata['otter_used_action'] ) || ! isset( $otter_metadata['otter_user_content'] ) ) {
@@ -384,11 +390,11 @@ class Prompt_Server {
 			);
 		}
 
-		if ( ! is_array( $usage['usage_count'] ) ) {
+		if ( ! isset( $usage['usage_count'] ) || ! is_array( $usage['usage_count'] ) ) {
 			$usage['usage_count'] = array();
 		}
 
-		if ( ! is_array( $usage['prompts'] ) ) {
+		if ( ! isset( $usage['prompts'] ) || ! is_array( $usage['prompts'] ) ) {
 			$usage['prompts'] = array();
 		}
 

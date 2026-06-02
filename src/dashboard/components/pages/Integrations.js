@@ -10,8 +10,10 @@ import {
 	Button,
 	Disabled,
 	ExternalLink,
+	Notice,
 	PanelBody,
 	PanelRow,
+	SelectControl,
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
@@ -241,6 +243,50 @@ const Integrations = () => {
 				title={ __( 'OpenAI', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				{ Boolean( window.otterObj?.aiClientSupported ) && (
+					<PanelRow>
+						<BaseControl
+							label={ __( 'AI Backend', 'otter-blocks' ) }
+							help={ __( 'Choose how Otter AI features connect to an AI provider. WordPress AI uses the API keys configured under Settings > Connectors.', 'otter-blocks' ) }
+							id="otter-options-ai-backend"
+							className="otter-button-field"
+						>
+							<SelectControl
+								value={ getOption( 'themeisle_otter_ai_backend' ) || 'auto' }
+								options={ [
+									{ label: __( 'Auto (recommended)', 'otter-blocks' ), value: 'auto' },
+									{ label: __( 'WordPress AI (Settings > Connectors)', 'otter-blocks' ), value: 'wp-ai-client' },
+									{ label: __( 'Custom OpenAI API key', 'otter-blocks' ), value: 'openai-key' }
+								] }
+								disabled={ 'saving' === status }
+								onChange={ value => {
+									window.tiTrk?.with( 'otter' ).add({ feature: 'dashboard-integration', featureComponent: 'ai-backend', featureValue: value });
+									updateOption( 'themeisle_otter_ai_backend', value );
+								} }
+							/>
+
+							<div className="otter-button-group">
+								<ExternalLink
+									href={ window.otterObj?.connectorsUrl }
+								>
+									{ __( 'Manage Connectors', 'otter-blocks' ) }
+								</ExternalLink>
+							</div>
+						</BaseControl>
+					</PanelRow>
+				) }
+
+				{ 'wp-ai-client' === ( getOption( 'themeisle_otter_ai_backend' ) || 'auto' ) && ! window.otterObj?.aiClientAvailable && 0 < getOption( 'themeisle_open_ai_api_key' )?.length && (
+					<PanelRow>
+						<Notice
+							status="warning"
+							isDismissible={ false }
+						>
+							{ __( 'WordPress AI is selected, but no AI provider is configured under Settings > Connectors. Your OpenAI API key below is being used instead.', 'otter-blocks' ) }
+						</Notice>
+					</PanelRow>
+				) }
+
 				<PanelRow>
 					<BaseControl
 						label={ __( 'OpenAI API', 'otter-blocks' ) }

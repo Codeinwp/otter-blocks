@@ -25,7 +25,8 @@
         "ENABLE_OTTER_PRO_DEV": true
       },
       "plugins": [
-        "."
+        ".",
+        "https://downloads.wordpress.org/plugin/ai-provider-for-openai.zip"
       ],
       "themes": [ "./test/emptytheme" ],
         "mappings": {
