@@ -26,9 +26,9 @@ test.describe( 'AI Block via WP AI Client', () => {
 
 		await admin.createNewPost();
 
-		// The WP AI Client shipped in WordPress 7.0; skip on older cores.
-		const aiClientActive = await page.evaluate( () => window.themeisleGutenberg?.aiClientActive );
-		test.skip( ! aiClientActive, 'WP AI Client is not available in this WordPress version.' );
+		// The WP AI Client shipped in WordPress 7.0; skip on older cores or without a usable provider.
+		const wpAIClientReady = await page.evaluate( () => Boolean( window.themeisleGutenberg?.aiClientActive && window.themeisleGutenberg?.hasAIProvider ) );
+		test.skip( ! wpAIClientReady, 'WP AI Client backend or provider is not available in this WordPress version.' );
 	});
 
 	test.afterEach( async({ otterUtils }) => {

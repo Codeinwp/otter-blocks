@@ -270,11 +270,61 @@ namespace ThemeIsle\GutenbergBlocks\Tests {
 	}
 
 	/**
+	 * Fake AI backend for resolver tests.
+	 */
+	class Fake_AI_Backend implements \ThemeIsle\GutenbergBlocks\Server\AI_Backend {
+		/**
+		 * Whether this backend is available.
+		 *
+		 * @var bool
+		 */
+		private $available;
+
+		/**
+		 * The response returned by generate().
+		 *
+		 * @var array<string, mixed>
+		 */
+		private $response;
+
+		/**
+		 * Constructor.
+		 *
+		 * @param bool                 $available Whether this backend is available.
+		 * @param array<string, mixed> $response  The response returned by generate().
+		 */
+		public function __construct( $available = true, $response = array() ) {
+			$this->available = $available;
+			$this->response  = $response;
+		}
+
+		/**
+		 * Whether this backend can currently serve generation requests.
+		 *
+		 * @return bool
+		 */
+		public function is_available() {
+			return $this->available;
+		}
+
+		/**
+		 * Generate a fake response.
+		 *
+		 * @param array<string, mixed> $payload The OpenAI-format payload.
+		 * @return array<string, mixed>
+		 */
+		public function generate( array $payload ) {
+			return $this->response;
+		}
+	}
+
+	/**
 	 * Reset the adaptor's request-level availability cache.
 	 */
 	function reset_ai_adaptor_cache() {
 		$property = new \ReflectionProperty( \ThemeIsle\GutenbergBlocks\Server\AI_Client_Adaptor::class, 'available_cache' );
 		$property->setAccessible( true );
 		$property->setValue( null, null );
+		\ThemeIsle\GutenbergBlocks\Server\AI_Backend_Resolver::reset_cache();
 	}
 }

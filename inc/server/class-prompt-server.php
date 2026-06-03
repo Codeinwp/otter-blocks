@@ -49,10 +49,10 @@ class Prompt_Server {
 
 	/**
 	 * OpenAI Endpoint.
-	 * 
+	 *
 	 * @var string
 	 */
-	const BASE_URL = 'https://api.openai.com/v1/chat/completions';
+	const BASE_URL = Otter_OpenAI_Backend::BASE_URL;
 
 	/**
 	 * Initialize the class
@@ -120,7 +120,7 @@ class Prompt_Server {
 		$body = $request->get_body();
 		$body = json_decode( $body, true );
 
-		if ( ! is_array( $body ) && ! isset( $body['api_key'] ) ) {
+		if ( ! is_array( $body ) || ! isset( $body['api_key'] ) ) {
 			return new \WP_Error( 'rest_invalid_json', __( 'API key is missing.', 'otter-blocks' ), array( 'status' => 400 ) );
 		}
 
@@ -189,7 +189,9 @@ class Prompt_Server {
 		$body = $request->get_body();
 		$body = json_decode( $body, true );
 
-		$api_key = get_option( 'themeisle_open_ai_api_key' );
+		if ( ! is_array( $body ) ) {
+			return new \WP_Error( 'rest_invalid_json', __( 'Invalid prompt request body.', 'otter-blocks' ), array( 'status' => 400 ) );
+		}
 
 		// Extract the data from keys that start with 'otter_'.
 		$otter_data = array_filter(
@@ -205,36 +207,9 @@ class Prompt_Server {
 
 		$this->record_prompt_usage( $otter_data );
 
-		if ( AI_Client_Adaptor::BACKEND_WP === AI_Client_Adaptor::resolve_backend() ) {
-			$adaptor = new AI_Client_Adaptor();
-			return new \WP_REST_Response( $adaptor->generate( $body ), 200 );
-		}
+		$backend = AI_Backend_Resolver::resolve();
 
-		$response = wp_remote_post(
-			self::BASE_URL,
-			array(
-				'method'  => 'POST',
-				'headers' => array(
-					'Authorization' => 'Bearer ' . $api_key,
-					'Content-Type'  => 'application/json',
-				),
-				'body'    => wp_json_encode( $body ),
-				'timeout' => 2 * MINUTE_IN_SECONDS,
-			)
-		);
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$body = wp_remote_retrieve_body( $response );
-		$body = json_decode( $body, true );
-
-		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 400 ) );
-		}
-
-		return new \WP_REST_Response( $body, wp_remote_retrieve_response_code( $response ) );
+		return new \WP_REST_Response( $backend->generate( $body ), 200 );
 	}
 
 	/**

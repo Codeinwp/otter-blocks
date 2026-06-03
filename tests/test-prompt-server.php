@@ -30,7 +30,37 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 	public function tear_down() {
 		delete_transient( $this->prompt_server->transient_prompts );
 		delete_transient( $this->prompt_server->timeout_transient );
+		delete_option( 'themeisle_open_ai_api_key' );
+		remove_all_filters( 'pre_http_request' );
 		parent::tear_down();
+	}
+
+	/**
+	 * Invalid save-key bodies return a REST error instead of falling through.
+	 */
+	public function test_save_api_key_rejects_invalid_body() {
+		$request = new WP_REST_Request( 'POST', '/otter/v1/openai/key' );
+		$request->set_body( '{' );
+
+		$response = $this->prompt_server->save_api_key( $request );
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'rest_invalid_json', $response->get_error_code() );
+		$this->assertSame( 400, $response->get_error_data()['status'] );
+	}
+
+	/**
+	 * Invalid generate bodies return a REST error instead of reaching a backend.
+	 */
+	public function test_forward_prompt_rejects_invalid_body() {
+		$request = new WP_REST_Request( 'POST', '/otter/v1/openai/generate' );
+		$request->set_body( '{' );
+
+		$response = $this->prompt_server->forward_prompt( $request );
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'rest_invalid_json', $response->get_error_code() );
+		$this->assertSame( 400, $response->get_error_data()['status'] );
 	}
 
 	/**

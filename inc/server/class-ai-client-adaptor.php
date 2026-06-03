@@ -27,11 +27,11 @@ class AI_Client_Adaptor {
 	const BACKEND_WP = 'wp';
 
 	/**
-	 * Effective backend value for the legacy direct-OpenAI path.
+	 * Effective backend value for Otter's OpenAI API-key path.
 	 *
 	 * @var string
 	 */
-	const BACKEND_LEGACY = 'legacy';
+	const BACKEND_OTTER_OPENAI = 'legacy';
 
 	/**
 	 * Cached availability result for the current request.
@@ -80,48 +80,23 @@ class AI_Client_Adaptor {
 	/**
 	 * Resolve the effective AI backend from the user setting and runtime availability.
 	 *
-	 * Ladder: 'openai-key' forces the legacy path; 'auto' prefers the WP AI Client
+	 * Ladder: 'openai-key' forces the Otter OpenAI path; 'auto' prefers the WP AI Client
 	 * when usable; 'wp-ai-client' forces the WP path but falls back to the legacy
 	 * path when unusable and an Otter key exists (see is_fallback_active()).
 	 *
 	 * @return string One of the BACKEND_* constants.
 	 */
 	public static function resolve_backend() {
-		$backend = get_option( 'themeisle_otter_ai_backend', 'auto' );
-
-		if ( 'openai-key' === $backend ) {
-			$resolved = self::BACKEND_LEGACY;
-		} elseif ( 'wp-ai-client' === $backend ) {
-			if ( self::is_available() ) {
-				$resolved = self::BACKEND_WP;
-			} elseif ( ! empty( get_option( 'themeisle_open_ai_api_key' ) ) ) {
-				$resolved = self::BACKEND_LEGACY;
-			} else {
-				// Fail loudly at generation time with an actionable error.
-				$resolved = self::BACKEND_WP;
-			}
-		} else {
-			$resolved = self::is_available() ? self::BACKEND_WP : self::BACKEND_LEGACY;
-		}
-
-		/**
-		 * Filters the effective AI backend used by Otter AI features.
-		 *
-		 * @param string $resolved The effective backend: 'wp' or 'legacy'.
-		 * @param string $backend  The raw `themeisle_otter_ai_backend` setting value.
-		 */
-		return apply_filters( 'otter_ai_backend', $resolved, $backend );
+		return AI_Backend_Resolver::resolve_backend_id();
 	}
 
 	/**
-	 * Whether the forced WP AI Client backend fell back to the legacy path.
+	 * Whether the forced WP AI Client backend fell back to the Otter OpenAI path.
 	 *
 	 * @return bool
 	 */
 	public static function is_fallback_active() {
-		return 'wp-ai-client' === get_option( 'themeisle_otter_ai_backend', 'auto' )
-			&& ! self::is_available()
-			&& ! empty( get_option( 'themeisle_open_ai_api_key' ) );
+		return AI_Backend_Resolver::is_fallback_active();
 	}
 
 	/**
@@ -239,10 +214,11 @@ class AI_Client_Adaptor {
 			}
 
 			if ( ! empty( $history ) ) {
-				// The wordpress-stubs @method tag resolves `Message` in the global
-				// namespace instead of WordPress\AiClient\Messages\DTO (generator quirk).
-				// @phpstan-ignore argument.type
+				// The wordpress-stubs @method tag resolves `Message` in the global namespace instead of WordPress\AiClient\Messages\DTO.
+				// phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
+				// @phpstan-ignore argument.type (generator quirk)
 				$builder = $builder->with_history( ...$history );
+				// phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
 			}
 
 			$builder = $builder->with_text( $prompt_text );
@@ -360,9 +336,7 @@ class AI_Client_Adaptor {
 			}
 		}
 
-		$first = reset( $payload['functions'] );
-
-		return is_array( $first ) ? $first : null;
+		return null;
 	}
 
 	/**
@@ -373,14 +347,7 @@ class AI_Client_Adaptor {
 	 * @return array<string, mixed>
 	 */
 	private function error_response( $code, $message ) {
-		return array(
-			'error' => array(
-				'code'    => $code,
-				'message' => $message,
-				'param'   => null,
-				'type'    => 'wp_ai_client',
-			),
-		);
+		return AI_Response::error( $code, $message, 'wp_ai_client' );
 	}
 
 	/**
