@@ -15,11 +15,11 @@ type OpenAiSettings = {
 }
 
 type ChatResponse = {
-	choices: {
+	choices?: {
 		finish_reason: string,
 		index: number,
 		message: {
-			content: string,
+			content: string|null,
 			role: string
 			function_call?: {
 				name: string
@@ -27,11 +27,11 @@ type ChatResponse = {
 			}
 		}
 	}[]
-	created: number
-	id: string
-	model: string
-	object: string
-	usage: {
+	created?: number
+	id?: string
+	model?: string
+	object?: string
+	usage?: {
 		completion_tokens: number,
 		prompt_tokens: number,
 		total_tokens: number
@@ -42,6 +42,30 @@ type ChatResponse = {
 		param: string | null
 		type: string
 	}
+}
+
+type PromptRouteSuccess = {
+	content: string
+	usedTokens?: number
+	format?: 'text' | 'json' | string
+}
+
+export type PromptError = {
+	code: string | null
+	message: string
+	param?: string | null
+	type?: string
+}
+
+export type PromptResult = {
+	ok: true
+	content: string
+	usedTokens: number
+	raw: unknown
+} | {
+	ok: false
+	error: PromptError
+	raw?: unknown
 }
 
 type FormResponse = {
@@ -65,12 +89,12 @@ export type PromptData = {
 	otter_name: string
 	model: string
 	messages: PromptConversation[]
-	functions: {
+	functions?: {
 		name: string
 		description: string
 		parameters: any
-	}
-	function_call: {
+	}[]
+	function_call?: 'auto' | 'none' | {
 		[key: string]: string
 	}
 	[key: `otter_${string}`]: any
@@ -82,6 +106,69 @@ type PromptServerResponse = {
 	code: string
 	error: string
 	prompts: PromptsData
+}
+
+/**
+ * Extract generated content from an OpenAI-shaped fallback response.
+ *
+ * @param {ChatResponse} response The OpenAI-shaped fallback response.
+ * @return {string} The generated content or an empty string.
+ */
+function getPromptResponseContent( response?: ChatResponse ) {
+	return response?.choices?.[0]?.message?.function_call?.arguments ?? response?.choices?.[0]?.message?.content ?? '';
+}
+
+/**
+ * Extract token usage from an OpenAI-shaped fallback response.
+ *
+ * @param {ChatResponse} response The OpenAI-shaped fallback response.
+ * @return {number} The total token count, or 0 when unavailable.
+ */
+function getPromptResponseUsedTokens( response?: ChatResponse ) {
+	return response?.usage?.total_tokens ?? 0;
+}
+
+/**
+ * Convert the route response into the UI prompt contract.
+ *
+ * @param {ChatResponse|PromptResult|PromptRouteSuccess} response The raw route response.
+ * @return {PromptResult} Normalized prompt result.
+ */
+export function normalizePromptResponse( response: ChatResponse|PromptResult|PromptRouteSuccess ): PromptResult {
+	if ( 'boolean' === typeof response?.ok ) {
+		return response;
+	}
+
+	if ( 'string' === typeof ( response as PromptRouteSuccess )?.content ) {
+		const result = response as PromptRouteSuccess;
+
+		return {
+			ok: true,
+			content: result.content,
+			usedTokens: result.usedTokens ?? 0,
+			raw: response
+		};
+	}
+
+	if ( response?.error ) {
+		return {
+			ok: false,
+			error: {
+				code: response.error.code,
+				message: response.error.message,
+				param: response.error.param,
+				type: response.error.type
+			},
+			raw: response
+		};
+	}
+
+	return {
+		ok: true,
+		content: getPromptResponseContent( response ),
+		usedTokens: getPromptResponseUsedTokens( response ),
+		raw: response
+	};
 }
 
 /**
@@ -132,13 +219,17 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 				})
 			});
 
-			return response as ChatResponse;
+			return normalizePromptResponse( response as ChatResponse|PromptResult|PromptRouteSuccess );
 		} catch ( e ) {
 			return {
+				ok: false,
 				error: {
-					code: 'system',
-					message: e.error?.message ?? e.error
-				}
+					code: e.code ?? e.error?.code ?? 'system',
+					message: e.message ?? e.error?.message ?? e.error ?? 'Something went wrong.',
+					param: e.data?.param ?? null,
+					type: e.data?.type ?? 'system'
+				},
+				raw: e
 			};
 		}
 

@@ -2,12 +2,10 @@
 /**
  * Adaptor for the WordPress 7.0 AI Client.
  *
- * Translates Otter's internal OpenAI chat-completions payloads into
- * WP AI Client prompt builder calls and reshapes the results back into
- * the OpenAI wire format expected by the editor JavaScript.
+ * Translates OpenAI chat-completions-style prompt payloads into WP AI Client
+ * prompt builder calls and reshapes results into Otter's AI result contract.
  *
- * See docs/adr/0001-openai-wire-format-internal-contract.md for why the
- * OpenAI shape is kept as the internal contract.
+ * See docs/adr/0001-otter-ai-result-contract.md.
  *
  * @package ThemeIsle\GutenbergBlocks\Server
  */
@@ -152,18 +150,18 @@ class AI_Client_Adaptor {
 	 * Run an OpenAI chat-completions payload through the WP AI Client.
 	 *
 	 * @param array<string, mixed> $payload The OpenAI-format payload (already stripped of `otter_*` keys).
-	 * @return array<string, mixed> An OpenAI-shaped response array, with an `error` key on failure.
+	 * @return array<string, mixed>|\WP_Error An Otter AI response array or WordPress REST error.
 	 */
 	public function generate( $payload ) {
 		if ( ! self::is_available() ) {
-			return $this->error_response( 'no_ai_provider', __( 'No AI provider is configured. Add an API key under Settings → Connectors in your WordPress dashboard.', 'otter-blocks' ) );
+			return $this->error_response( 'no_ai_provider', __( 'No AI provider is configured. Add an API key under Settings → Connectors in your WordPress dashboard.', 'otter-blocks' ), 400 );
 		}
 
 		try {
 			$builder = $this->make_builder();
 
 			if ( null === $builder ) {
-				return $this->error_response( 'no_ai_provider', __( 'No AI provider is configured. Add an API key under Settings → Connectors in your WordPress dashboard.', 'otter-blocks' ) );
+				return $this->error_response( 'no_ai_provider', __( 'No AI provider is configured. Add an API key under Settings → Connectors in your WordPress dashboard.', 'otter-blocks' ), 400 );
 			}
 
 			$messages = isset( $payload['messages'] ) && is_array( $payload['messages'] ) ? $payload['messages'] : array();
@@ -261,7 +259,7 @@ class AI_Client_Adaptor {
 			$result = $builder->generate_text_result();
 
 			if ( is_wp_error( $result ) ) {
-				return $this->error_response( (string) $result->get_error_code(), $result->get_error_message() );
+				return $this->error_response( (string) $result->get_error_code(), $result->get_error_message(), 502 );
 			}
 
 			// The wordpress-stubs @method tag resolves `GenerativeAiResult` in the
@@ -275,43 +273,16 @@ class AI_Client_Adaptor {
 			// Throws a RuntimeException when the result has no text content.
 			$text = $result->toText();
 
-			$message = null !== $forced_function
-				? array(
-					'role'          => 'assistant',
-					'content'       => null,
-					'function_call' => array(
-						'name'      => isset( $forced_function['name'] ) ? $forced_function['name'] : '',
-						'arguments' => $text,
-					),
-				)
-				: array(
-					'role'    => 'assistant',
-					'content' => $text,
-				);
-
 			$usage = $result->getTokenUsage();
 
-			return array(
-				'id'      => $result->getId(),
-				'object'  => 'chat.completion',
-				'created' => time(),
-				'model'   => '',
-				'choices' => array(
-					array(
-						'index'         => 0,
-						'finish_reason' => 'stop',
-						'message'       => $message,
-					),
-				),
-				'usage'   => array(
-					'prompt_tokens'     => $usage->getPromptTokens(),
-					'completion_tokens' => $usage->getCompletionTokens(),
-					'total_tokens'      => $usage->getTotalTokens(),
-				),
+			return AI_Response::success(
+				$text,
+				$usage->getTotalTokens(),
+				null !== $forced_function ? 'json' : 'text'
 			);
 		} catch ( \Exception $e ) {
 			$code = $e instanceof \RuntimeException ? 'empty_response' : 'wp_ai_client_error';
-			return $this->error_response( $code, $e->getMessage() );
+			return $this->error_response( $code, $e->getMessage(), 502 );
 		}
 	}
 
@@ -340,14 +311,15 @@ class AI_Client_Adaptor {
 	}
 
 	/**
-	 * Build an OpenAI-shaped error response.
+	 * Build an AI generation error response.
 	 *
 	 * @param string $code    The error code.
 	 * @param string $message The error message.
-	 * @return array<string, mixed>
+	 * @param int    $status  The HTTP status code.
+	 * @return \WP_Error
 	 */
-	private function error_response( $code, $message ) {
-		return AI_Response::error( $code, $message, 'wp_ai_client' );
+	private function error_response( $code, $message, $status = 500 ) {
+		return AI_Response::error( $code, $message, 'wp_ai_client', $status );
 	}
 
 	/**

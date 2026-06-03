@@ -259,14 +259,14 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			'otter_used_action': 'textTransformation' === promptID ? 'textTransformation::otter_action_prompt' : ( promptID ?? '' ),
 			'otter_user_content': value
 		}).then ( ( data ) => {
-			if ( data?.error ) {
+			if ( ! data.ok ) {
 				setGenerationStatus( 'error' );
 				setShowError( true );
 				setErrorMessage( `Error ${data.error.code} - ${data.error.message}` ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 				return;
 			}
 
-			const result = data?.choices?.[0]?.message?.function_call?.arguments ?? data?.choices?.[0]?.message?.content;
+			const result = data.content;
 
 			setGenerationStatus( 'loaded' );
 
@@ -275,13 +275,15 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				setErrorMessage( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
 				return;
 			}
+
+			const usedToken = data.usedTokens;
 			
 			if ( regenerate ) {
 				const newResultHistory = [ ...resultHistory ];
 				newResultHistory[ resultHistoryIndex ] = {
 					result,
 					meta: {
-						usedToken: data.usage.total_tokens,
+						usedToken,
 						prompt: value
 					}
 				};
@@ -290,7 +292,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				setResultHistory([ ...resultHistory, {
 					result,
 					meta: {
-						usedToken: data.usage.total_tokens,
+						usedToken,
 						prompt: value
 					}
 				}]);
@@ -298,7 +300,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 			}
 			
-			setTokenUsageDescription( __( 'Token used:', 'otter-blocks' ) + data.usage.total_tokens );
+			setTokenUsageDescription( __( 'Token used:', 'otter-blocks' ) + usedToken );
 			props.onPreview?.( result );
 		});
 	}

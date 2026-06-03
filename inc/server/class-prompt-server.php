@@ -159,18 +159,27 @@ class Prompt_Server {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return $response;
+			return new \WP_Error(
+				$response->get_error_code(),
+				$response->get_error_message(),
+				array( 'status' => 502 )
+			);
 		}
 
 		$body = wp_remote_retrieve_body( $response );
 		$body = json_decode( $body );
 
 		if ( json_last_error() !== JSON_ERROR_NONE && ! is_object( $body ) ) {
-			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 502 ) );
 		}
 
 		if ( isset( $body->error ) ) {
-			return isset( $body->error->message ) ? new \WP_Error( isset( $body->error->code ) ? $body->error->code : 'unknown_error', $body->error->message ) : new \WP_Error( 'unknown_error', __( 'An error occurred while processing the request.', 'otter-blocks' ) );
+			$status  = wp_remote_retrieve_response_code( $response );
+			$status  = 400 <= $status ? $status : 502;
+			$code    = isset( $body->error->code ) ? $body->error->code : 'unknown_error';
+			$message = isset( $body->error->message ) ? $body->error->message : __( 'An error occurred while processing the request.', 'otter-blocks' );
+
+			return new \WP_Error( $code, $message, array( 'status' => $status ) );
 		}
 
 		update_option( 'themeisle_open_ai_api_key', $api_key );
@@ -208,8 +217,13 @@ class Prompt_Server {
 		$this->record_prompt_usage( $otter_data );
 
 		$backend = AI_Backend_Resolver::resolve();
+		$result  = $backend->generate( $body );
 
-		return new \WP_REST_Response( $backend->generate( $body ), 200 );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return new \WP_REST_Response( $result, 200 );
 	}
 
 	/**

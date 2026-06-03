@@ -183,12 +183,12 @@ const AIToolbar = ({
 				'otter_user_content': content
 			}
 		).then( ( response ) => {
-			if ( response.error ) {
-				setDisplayError( response.error?.message ?? response.error );
+			if ( ! response.ok ) {
+				setDisplayError( response.error.message );
 				return;
 			}
 
-			const blockContentRaw = response?.choices?.[0]?.message.content;
+			const blockContentRaw = response.content;
 
 			if ( ! blockContentRaw ) {
 				return;
@@ -203,9 +203,9 @@ const AIToolbar = ({
 				{
 					promptID: 'textTransformation',
 					resultHistory: [{
-						result: response?.choices?.[0]?.message.content ?? '',
+						result: blockContentRaw,
 						meta: {
-							usedToken: response?.usage.total_tokens,
+							usedToken: response.usedTokens,
 							prompt: embeddedPrompt.messages?.[ embeddedPrompt.messages.length - 1 ]?.content
 						}
 					}],

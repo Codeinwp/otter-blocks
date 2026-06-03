@@ -154,8 +154,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
-	 * OpenAI function calling translates to a JSON response with the matched
-	 * schema, and the output is reshaped into function_call.arguments.
+	 * OpenAI function calling translates to a JSON response with the matched schema.
 	 */
 	public function test_generate_translates_forced_json() {
 		$schema  = array(
@@ -190,10 +189,9 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 
 		$this->assertSame( array( $schema ), $adaptor->builder->get_call_args( 'as_json_response' ) );
 
-		$message = $response['choices'][0]['message'];
-		$this->assertNull( $message['content'] );
-		$this->assertSame( 'create_form', $message['function_call']['name'] );
-		$this->assertSame( '{"fields":[]}', $message['function_call']['arguments'] );
+		$this->assertSame( '{"fields":[]}', $response['content'] );
+		$this->assertSame( 33, $response['usedTokens'] );
+		$this->assertSame( 'json', $response['format'] );
 	}
 
 	/**
@@ -221,8 +219,8 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		);
 
 		$this->assertFalse( $adaptor->builder->was_called( 'as_json_response' ) );
-		$this->assertSame( 'Plain text response.', $response['choices'][0]['message']['content'] );
-		$this->assertArrayNotHasKey( 'function_call', $response['choices'][0]['message'] );
+		$this->assertSame( 'Plain text response.', $response['content'] );
+		$this->assertSame( 'text', $response['format'] );
 	}
 
 	/**
@@ -250,12 +248,12 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		);
 
 		$this->assertFalse( $adaptor->builder->was_called( 'as_json_response' ) );
-		$this->assertSame( 'Plain text response.', $response['choices'][0]['message']['content'] );
-		$this->assertArrayNotHasKey( 'function_call', $response['choices'][0]['message'] );
+		$this->assertSame( 'Plain text response.', $response['content'] );
+		$this->assertSame( 'text', $response['format'] );
 	}
 
 	/**
-	 * Successful generation is reshaped into the OpenAI chat-completions format.
+	 * Successful generation is reshaped into the Otter AI response format.
 	 */
 	public function test_generate_reshapes_success_response() {
 		$adaptor = $this->make_adaptor( new Fake_AI_Result( 'Generated text.' ) );
@@ -271,17 +269,13 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( 'chat.completion', $response['object'] );
-		$this->assertSame( 'fake-result-id', $response['id'] );
-		$this->assertSame( 'Generated text.', $response['choices'][0]['message']['content'] );
-		$this->assertSame( 'assistant', $response['choices'][0]['message']['role'] );
-		$this->assertSame( 11, $response['usage']['prompt_tokens'] );
-		$this->assertSame( 22, $response['usage']['completion_tokens'] );
-		$this->assertSame( 33, $response['usage']['total_tokens'] );
+		$this->assertSame( 'Generated text.', $response['content'] );
+		$this->assertSame( 33, $response['usedTokens'] );
+		$this->assertSame( 'text', $response['format'] );
 	}
 
 	/**
-	 * WP_Error results map to the OpenAI error shape.
+	 * WP_Error results remain WordPress REST errors.
 	 */
 	public function test_generate_reshapes_wp_error() {
 		$adaptor = $this->make_adaptor( new WP_Error( 'prompt_client_error', 'Invalid API key.' ) );
@@ -297,9 +291,11 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( 'prompt_client_error', $response['error']['code'] );
-		$this->assertSame( 'Invalid API key.', $response['error']['message'] );
-		$this->assertSame( 'wp_ai_client', $response['error']['type'] );
+		$this->assertWPError( $response );
+		$this->assertSame( 'prompt_client_error', $response->get_error_code() );
+		$this->assertSame( 'Invalid API key.', $response->get_error_message() );
+		$this->assertSame( 502, $response->get_error_data()['status'] );
+		$this->assertSame( 'wp_ai_client', $response->get_error_data()['type'] );
 	}
 
 	/**
@@ -321,7 +317,10 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( 'empty_response', $response['error']['code'] );
+		$this->assertWPError( $response );
+		$this->assertSame( 'empty_response', $response->get_error_code() );
+		$this->assertSame( 502, $response->get_error_data()['status'] );
+		$this->assertSame( 'wp_ai_client', $response->get_error_data()['type'] );
 	}
 
 	/**
@@ -342,7 +341,10 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( 'no_ai_provider', $response['error']['code'] );
+		$this->assertWPError( $response );
+		$this->assertSame( 'no_ai_provider', $response->get_error_code() );
+		$this->assertSame( 400, $response->get_error_data()['status'] );
+		$this->assertSame( 'wp_ai_client', $response->get_error_data()['type'] );
 	}
 
 	/**
@@ -425,16 +427,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	public function test_custom_backend_can_be_registered_and_selected() {
 		$custom = new Fake_AI_Backend(
 			true,
-			array(
-				'choices' => array(
-					array(
-						'message' => array(
-							'role'    => 'assistant',
-							'content' => 'Custom response.',
-						),
-					),
-				),
-			)
+			AI_Response::success( 'Custom response.', 0, 'text' )
 		);
 
 		add_filter(
@@ -455,19 +448,27 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		$backend = AI_Backend_Resolver::resolve();
 
 		$this->assertSame( $custom, $backend );
-		$this->assertSame( 'Custom response.', $backend->generate( array() )['choices'][0]['message']['content'] );
+		$this->assertSame( 'Custom response.', $backend->generate( array() )['content'] );
 	}
 
 	/**
-	 * AI errors use the shared OpenAI-shaped error envelope.
+	 * AI responses use the shared Otter AI envelope.
 	 */
-	public function test_ai_response_error_shape() {
-		$response = AI_Response::error( 'test_error', 'Something failed.', 'test_backend' );
+	public function test_ai_response_shape() {
+		$success = AI_Response::success( 'Generated content.', 7, 'text' );
 
-		$this->assertSame( 'test_error', $response['error']['code'] );
-		$this->assertSame( 'Something failed.', $response['error']['message'] );
-		$this->assertNull( $response['error']['param'] );
-		$this->assertSame( 'test_backend', $response['error']['type'] );
+		$this->assertSame( 'Generated content.', $success['content'] );
+		$this->assertSame( 7, $success['usedTokens'] );
+		$this->assertSame( 'text', $success['format'] );
+
+		$error = AI_Response::error( 'test_error', 'Something failed.', 'test_backend', 418 );
+
+		$this->assertWPError( $error );
+		$this->assertSame( 'test_error', $error->get_error_code() );
+		$this->assertSame( 'Something failed.', $error->get_error_message() );
+		$this->assertSame( 418, $error->get_error_data()['status'] );
+		$this->assertNull( $error->get_error_data()['param'] );
+		$this->assertSame( 'test_backend', $error->get_error_data()['type'] );
 	}
 
 	/**
@@ -551,7 +552,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		$this->assertSame( 123.0, $captured_args['timeout'] );
 		$this->assertSame( 'Bearer sk-override', $captured_args['headers']['Authorization'] );
 		$this->assertSame( 'gpt-test-model', $captured_args['headers']['X-Otter-Test-Model'] );
-		$this->assertSame( 'Filtered response.', $response->get_data()['choices'][0]['message']['content'] );
+		$this->assertSame( 'Filtered response.', $response->get_data()['content'] );
 	}
 
 	/**
@@ -611,7 +612,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( 'Post processed response.', $response->get_data()['choices'][0]['message']['content'] );
+		$this->assertSame( 'Post processed response.', $response->get_data()['content'] );
 	}
 
 	/**
@@ -650,12 +651,13 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 
 		$this->assertFalse( $openai_called );
 
-		$data = $response->get_data();
-
 		// In environments without the WP 7.0 AI Client the adaptor degrades to
-		// an actionable error; with it, a real reshaped response. Either way the
-		// response is in OpenAI shape and came from the WP path.
-		$this->assertTrue( isset( $data['choices'] ) || 'wp_ai_client' === $data['error']['type'] );
+		// an actionable WP_Error; with it, a successful Otter AI response.
+		if ( is_wp_error( $response ) ) {
+			$this->assertSame( 'wp_ai_client', $response->get_error_data()['type'] );
+		} else {
+			$this->assertArrayHasKey( 'content', $response->get_data() );
+		}
 
 		// Usage is recorded on the WP path too.
 		$usage = get_option( 'themeisle_otter_ai_usage' );
@@ -683,7 +685,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 									array(
 										'message' => array(
 											'role'    => 'assistant',
-											'content' => 'Legacy response.',
+											'content' => 'Otter OpenAI response.',
 										),
 									),
 								),
@@ -716,7 +718,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 
 		$data = $response->get_data();
 
-		$this->assertSame( 'Legacy response.', $data['choices'][0]['message']['content'] );
+		$this->assertSame( 'Otter OpenAI response.', $data['content'] );
 
 		// Usage is recorded on the Otter OpenAI path too.
 		$usage = get_option( 'themeisle_otter_ai_usage' );

@@ -41,7 +41,7 @@ class WP_AI_Client_Backend implements AI_Backend {
 	 * Generate through the WordPress AI Client.
 	 *
 	 * @param array<string, mixed> $payload The OpenAI-format payload.
-	 * @return array<string, mixed>
+	 * @return array<string, mixed>|\WP_Error
 	 */
 	public function generate( array $payload ) {
 		return $this->adaptor->generate( $payload );

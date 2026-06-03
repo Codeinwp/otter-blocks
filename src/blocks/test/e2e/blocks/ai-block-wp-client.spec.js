@@ -75,8 +75,8 @@ test.describe( 'AI Block via WP AI Client', () => {
 		await page.getByRole( 'button', { name: 'Generate' }).click();
 
 		// The mocked provider returns {"fields":[...]} via the forced-JSON path
-		// (functions/function_call → as_json_response → function_call.arguments),
-		// which the block parses into form field blocks for preview.
+		// (functions/function_call → as_json_response → format: json), which
+		// the block parses into form field blocks for preview.
 		await expect( page.getByText( 'Full Name' ) ).toBeVisible();
 		await expect( page.getByText( 'Email Address' ) ).toBeVisible();
 

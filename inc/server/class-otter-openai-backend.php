@@ -32,7 +32,7 @@ class Otter_OpenAI_Backend implements AI_Backend {
 	 * Forward the prompt to OpenAI API.
 	 *
 	 * @param array<string, mixed> $payload The OpenAI-format payload.
-	 * @return array<string, mixed>
+	 * @return array<string, mixed>|\WP_Error
 	 */
 	public function generate( array $payload ) {
 		/**
@@ -46,7 +46,7 @@ class Otter_OpenAI_Backend implements AI_Backend {
 		$payload = apply_filters( 'otter_ai_otter_openai_payload', $payload );
 
 		if ( ! is_array( $payload ) ) {
-			return $this->error_response( 'invalid_payload', __( 'The OpenAI request payload is invalid.', 'otter-blocks' ) );
+			return $this->error_response( 'invalid_payload', __( 'The OpenAI request payload is invalid.', 'otter-blocks' ), 400 );
 		}
 
 		$request_args = array(
@@ -71,7 +71,7 @@ class Otter_OpenAI_Backend implements AI_Backend {
 		$request_args = apply_filters( 'otter_ai_otter_openai_request_args', $request_args, $payload );
 
 		if ( ! is_array( $request_args ) ) {
-			return $this->error_response( 'invalid_request_args', __( 'The OpenAI request arguments are invalid.', 'otter-blocks' ) );
+			return $this->error_response( 'invalid_request_args', __( 'The OpenAI request arguments are invalid.', 'otter-blocks' ), 400 );
 		}
 
 		$headers = array();
@@ -98,14 +98,14 @@ class Otter_OpenAI_Backend implements AI_Backend {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return $this->error_response( (string) $response->get_error_code(), $response->get_error_message() );
+			return $this->error_response( (string) $response->get_error_code(), $response->get_error_message(), 502 );
 		}
 
 		$body = wp_remote_retrieve_body( $response );
 		$body = json_decode( $body, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			return $this->error_response( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ) );
+			return $this->error_response( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), 502 );
 		}
 
 		$body = is_array( $body ) ? $body : array();
@@ -113,25 +113,52 @@ class Otter_OpenAI_Backend implements AI_Backend {
 		/**
 		 * Filters the decoded OpenAI response before returning it to Otter callers.
 		 *
-		 * The returned value must remain OpenAI-shaped so editor consumers can
-		 * continue to handle all AI backends consistently.
+		 * Use this to adapt provider response changes before Otter normalizes
+		 * the result into its AI response contract.
 		 *
 		 * @param array<string, mixed> $body    The decoded OpenAI response body.
 		 * @param array<string, mixed> $payload The filtered OpenAI-format payload.
 		 */
 		$body = apply_filters( 'otter_ai_otter_openai_response', $body, $payload );
 
-		return is_array( $body ) ? $body : array();
+		if ( ! is_array( $body ) ) {
+			return $this->error_response( 'invalid_response', __( 'The OpenAI response body is invalid.', 'otter-blocks' ), 502 );
+		}
+
+		if ( isset( $body['error'] ) && is_array( $body['error'] ) ) {
+			$code    = isset( $body['error']['code'] ) ? (string) $body['error']['code'] : 'openai_error';
+			$message = isset( $body['error']['message'] ) ? (string) $body['error']['message'] : __( 'An error occurred while processing the request.', 'otter-blocks' );
+			$status  = wp_remote_retrieve_response_code( $response );
+			$status  = 400 <= $status ? $status : 502;
+
+			return $this->error_response( $code, $message, $status );
+		}
+
+		$message = isset( $body['choices'][0]['message'] ) && is_array( $body['choices'][0]['message'] ) ? $body['choices'][0]['message'] : array();
+		$content = '';
+		$format  = 'text';
+
+		if ( isset( $message['function_call'] ) && is_array( $message['function_call'] ) && isset( $message['function_call']['arguments'] ) ) {
+			$content = (string) $message['function_call']['arguments'];
+			$format  = 'json';
+		} elseif ( isset( $message['content'] ) ) {
+			$content = (string) $message['content'];
+		}
+
+		$used_tokens = isset( $body['usage']['total_tokens'] ) && is_numeric( $body['usage']['total_tokens'] ) ? (int) $body['usage']['total_tokens'] : 0;
+
+		return AI_Response::success( $content, $used_tokens, $format );
 	}
 
 	/**
-	 * Create an OpenAI-shaped error response.
+	 * Create an AI generation error response.
 	 *
 	 * @param string $code    The error code.
 	 * @param string $message The error message.
-	 * @return array<string, mixed>
+	 * @param int    $status  The HTTP status code.
+	 * @return \WP_Error
 	 */
-	private function error_response( $code, $message ) {
-		return AI_Response::error( $code, $message, 'openai' );
+	private function error_response( $code, $message, $status = 502 ) {
+		return AI_Response::error( $code, $message, 'openai', $status );
 	}
 }

@@ -3,6 +3,7 @@ import {
 	editLastConversation,
 	injectActionIntoPrompt,
 	injectConversationIntoPrompt,
+	normalizePromptResponse,
 	parseFormPromptResponseToBlocks,
 	tryInjectIntoTemplate,
 	tryParseResponse
@@ -77,6 +78,81 @@ describe( 'prompt helpers', () => {
 				expect.objectContaining({
 					label: 'Role',
 					options: 'Engineer\nDesigner'
+				})
+			);
+		});
+	});
+
+	describe( 'normalizePromptResponse', () => {
+		it( 'normalizes native route success responses', () => {
+			expect( normalizePromptResponse({
+				content: 'Native content',
+				usedTokens: 12,
+				format: 'text'
+			} as any ) ).toEqual(
+				expect.objectContaining({
+					ok: true,
+					content: 'Native content',
+					usedTokens: 12
+				})
+			);
+		});
+
+		it( 'returns content from function call arguments when present', () => {
+			expect( normalizePromptResponse({
+				choices: [{
+					message: {
+						content: 'Plain text',
+						function_call: {
+							name: 'generateForm',
+							arguments: '{"fields":[]}'
+						}
+					}
+				}]
+			} as any ) ).toEqual(
+				expect.objectContaining({
+					ok: true,
+					content: '{"fields":[]}',
+					usedTokens: 0
+				})
+			);
+		});
+
+		it( 'returns content and token usage from message responses', () => {
+			expect( normalizePromptResponse({
+				choices: [{
+					message: {
+						content: 'Plain text'
+					}
+				}],
+				usage: {
+					total_tokens: 33
+				}
+			} as any ) ).toEqual(
+				expect.objectContaining({
+					ok: true,
+					content: 'Plain text',
+					usedTokens: 33
+				})
+			);
+		});
+
+		it( 'returns a failed result for error responses', () => {
+			expect( normalizePromptResponse({
+				error: {
+					code: 'system',
+					message: 'Failed',
+					param: null,
+					type: 'openai'
+				}
+			} as any ) ).toEqual(
+				expect.objectContaining({
+					ok: false,
+					error: expect.objectContaining({
+						code: 'system',
+						message: 'Failed',
+						type: 'openai'
+					})
 				})
 			);
 		});

@@ -20,13 +20,13 @@ interface AI_Backend {
 	public function is_available();
 
 	/**
-	 * Generate an OpenAI-shaped response from an OpenAI-shaped payload.
+	 * Generate an Otter AI response from an OpenAI-shaped payload.
 	 *
-	 * Failures should be returned as body-level `error` objects in the same
-	 * shape as AI_Response::error().
+	 * Backends accept the current prompt-template payload format and return a
+	 * successful response array or a WordPress REST error.
 	 *
 	 * @param array<string, mixed> $payload The OpenAI-format payload.
-	 * @return array<string, mixed>
+	 * @return array<string, mixed>|\WP_Error
 	 */
 	public function generate( array $payload );
 }

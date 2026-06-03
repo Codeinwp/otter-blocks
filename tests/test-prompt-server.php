@@ -50,6 +50,44 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * OpenAI validation errors return a WordPress REST error with the provider status.
+	 */
+	public function test_save_api_key_returns_provider_error_status() {
+		add_filter(
+			'pre_http_request',
+			function () {
+				return array(
+					'headers'  => array(),
+					'body'     => wp_json_encode(
+						array(
+							'error' => array(
+								'code'    => 'invalid_api_key',
+								'message' => 'Incorrect API key provided.',
+							),
+						)
+					),
+					'response' => array(
+						'code'    => 401,
+						'message' => 'Unauthorized',
+					),
+					'cookies'  => array(),
+				);
+			}
+		);
+
+		$request = new WP_REST_Request( 'POST', '/otter/v1/openai/key' );
+		$request->set_body( wp_json_encode( array( 'api_key' => 'sk-invalid' ) ) );
+
+		$response = $this->prompt_server->save_api_key( $request );
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'invalid_api_key', $response->get_error_code() );
+		$this->assertSame( 'Incorrect API key provided.', $response->get_error_message() );
+		$this->assertSame( 401, $response->get_error_data()['status'] );
+		$this->assertFalse( get_option( 'themeisle_open_ai_api_key', false ) );
+	}
+
+	/**
 	 * Invalid generate bodies return a REST error instead of reaching a backend.
 	 */
 	public function test_forward_prompt_rejects_invalid_body() {
