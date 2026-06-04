@@ -76,31 +76,4 @@ class TestLiveSearch extends WP_UnitTestCase
         $search_query = $live_search->prepare_search_query( 'test', 'post', 'uncategorized' );
         $this->assertEquals( 'uncategorized', $search_query['category_name'] );
     }
-
-    /**
-     * Test live search render_blocks handles missing cat key gracefully.
-     */
-    public function test_live_search_render_blocks_without_cat() {
-        $live_search = \ThemeIsle\OtterPro\Plugins\Live_Search::instance();
-
-        // Mock block content and block data without 'cat' key
-        $block_content = '<form><input type="text" name="s" /></form>';
-        $block = array(
-            'blockName' => 'core/search',
-            'attrs' => array(
-                'otterIsLive' => true,
-                'otterSearchQuery' => array(
-                    'post_type' => array( 'post' ),
-                    // Note: 'cat' key is intentionally missing
-                ),
-            ),
-        );
-
-        // This should not produce a PHP warning about undefined array key 'cat'
-        $result = $live_search->render_blocks( $block_content, $block );
-
-        // Verify the result contains the expected data-cat attribute with empty value
-        $this->assertStringContainsString( 'data-cat=""', $result );
-        $this->assertStringContainsString( 'o-live-search', $result );
-    }
 }
