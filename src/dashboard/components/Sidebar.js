@@ -15,7 +15,7 @@ import Infobox from './Infobox.js';
 import LicenseField from './LicenseField.js';
 import  { setUtm } from '../../blocks/helpers/helper-functions.js';
 
-const YOUTUBE_PLAYLIST_URL = 'https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP&si=hjTkWi5YkPK5JgtL';
+const YOUTUBE_PLAYLIST_URL = 'https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP';
 
 /**
  * Component to display YouTube playlist card
