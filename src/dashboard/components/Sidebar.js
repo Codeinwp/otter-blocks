@@ -29,7 +29,7 @@ const YouTubePlaylistCard = ({ playlistUrl, playlistData }) => {
 				<a
 					href={ playlistUrl }
 					target="_blank"
-					rel="noreferrer"
+					rel="noopener noreferrer"
 					className="otter-youtube-card__thumbnail"
 				>
 					<span className="otter-youtube-card__play-button" aria-hidden="true">
