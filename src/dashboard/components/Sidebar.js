@@ -14,6 +14,55 @@ import Infobox from './Infobox.js';
 
 import LicenseField from './LicenseField.js';
 import  { setUtm } from '../../blocks/helpers/helper-functions.js';
+
+const YOUTUBE_PLAYLIST_URL = 'https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP&si=hjTkWi5YkPK5JgtL';
+
+/**
+ * Component to display YouTube playlist card
+ */
+const YouTubePlaylistCard = ({ playlistUrl, playlistData }) => {
+	const { videoTitle, thumbnail } = playlistData || {};
+
+	return (
+		<div className="otter-youtube-card">
+			{ thumbnail && (
+				<a
+					href={ playlistUrl }
+					target="_blank"
+					rel="noreferrer"
+					className="otter-youtube-card__thumbnail"
+				>
+					<span className="otter-youtube-card__play-button" aria-hidden="true">
+						<span className="otter-youtube-card__play-icon" />
+					</span>
+					<img
+						src={ thumbnail }
+						alt={ videoTitle || __( 'Otter YouTube playlist', 'otter-blocks' ) }
+						loading="lazy"
+					/>
+				</a>
+			) }
+			<div className="otter-youtube-card__content">
+				{ videoTitle && (
+					<p className="otter-youtube-card__title">
+						<strong>{ videoTitle }</strong>
+					</p>
+				) }
+			</div>
+			<div className="otter-info-button-group is-single">
+				<Button
+					variant="secondary"
+					isSecondary
+					target="_blank"
+					href={ playlistUrl }
+				>
+					{ __( 'Watch the complete playlist', 'otter-blocks' ) }
+				</Button>
+			</div>
+		</div>
+	);
+};
+
 const Sidebar = ({
 	setTab
 }) => {
@@ -74,6 +123,15 @@ const Sidebar = ({
 						{ __( 'Documentation', 'otter-blocks' ) }
 					</Button>
 				</div>
+			</Infobox>
+
+			<Infobox
+				title={ __( 'Otter YouTube Tutorials', 'otter-blocks' ) }
+			>
+				<YouTubePlaylistCard
+					playlistUrl={ YOUTUBE_PLAYLIST_URL }
+					playlistData={ window.otterObj?.youtubePlaylistData }
+				/>
 			</Infobox>
 		</Fragment>
 	);
