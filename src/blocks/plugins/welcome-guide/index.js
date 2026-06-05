@@ -191,7 +191,7 @@ const WelcomeGuide = () => {
 								label={ __( 'Yes, count me in!', 'otter-blocks' ) }
 								checked={ hasConsent }
 								onChange={ () => setConsent( ! hasConsent ) }
-								className="o-welcome-guide__input"
+								className="o-welcome-guide__checkbox"
 							/>
 
 							{ 'yes' !== getOption( 'otter_blocks_logger_flag' ) && (
@@ -199,7 +199,7 @@ const WelcomeGuide = () => {
 									label={ __( 'Become a contributor by opting in to our anonymous data tracking.', 'otter-blocks' ) }
 									checked={ canTrack }
 									onChange={ () => setTrack( ! canTrack )}
-									className="o-welcome-guide__input"
+									className="o-welcome-guide__checkbox"
 								/>
 							) }
 						</Fragment>
