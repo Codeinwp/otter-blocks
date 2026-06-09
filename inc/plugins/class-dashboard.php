@@ -229,86 +229,44 @@ class Dashboard {
 	}
 
 	/**
-	 * Get YouTube playlist latest video data.
+	 * Get the latest video from the Otter YouTube playlist.
 	 *
-	 * @return array
+	 * Uses the WordPress feed API (SimplePie under the hood), which handles
+	 * fetching, XML/namespace parsing and transient caching for us.
+	 *
+	 * @return array{videoTitle: string, videoLink: string, thumbnail: string|null}
 	 */
 	private function get_youtube_playlist_data() {
 		$playlist_id = 'PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP';
-		$cache_key = 'otter_youtube_playlist_data';
-		$fallback_ttl = HOUR_IN_SECONDS;
-		
-		// Try to get from cache first
-		$cached_data = get_transient( $cache_key );
-		if ( false !== $cached_data ) {
-			return $cached_data;
-		}
 
-		$default_data = array(
-			'videoTitle'   => __( 'Otter Tutorials', 'otter-blocks' ),
-			'videoLink'    => 'https://youtube.com/playlist?list=' . $playlist_id,
-			'thumbnail'    => null,
+		$data = array(
+			'videoTitle' => __( 'Otter Tutorials', 'otter-blocks' ),
+			'videoLink'  => 'https://youtube.com/playlist?list=' . $playlist_id,
+			'thumbnail'  => null,
 		);
 
-		try {
-			$rss_url = 'https://www.youtube.com/feeds/videos.xml?playlist_id=' . $playlist_id;
-			$response = wp_remote_get( $rss_url, array( 'timeout' => 5 ) );
-			
-			if ( is_wp_error( $response ) ) {
-				set_transient( $cache_key, $default_data, $fallback_ttl );
-				return $default_data;
-			}
+		$feed = fetch_feed( 'https://www.youtube.com/feeds/videos.xml?playlist_id=' . $playlist_id );
 
-			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-				set_transient( $cache_key, $default_data, $fallback_ttl );
-				return $default_data;
-			}
-
-			$body = wp_remote_retrieve_body( $response );
-			if ( empty( $body ) ) {
-				set_transient( $cache_key, $default_data, $fallback_ttl );
-				return $default_data;
-			}
-
-			// Parse XML
-			$xml = simplexml_load_string( $body );
-			if ( ! $xml ) {
-				set_transient( $cache_key, $default_data, $fallback_ttl );
-				return $default_data;
-			}
-
-			// Get the first entry (latest video)
-			$entry = $xml->entry[0] ?? null;
-			if ( ! $entry ) {
-				set_transient( $cache_key, $default_data, $fallback_ttl );
-				return $default_data;
-			}
-
-			// Extract title
-			$title = (string) $entry->title;
-
-			// Extract video ID from link
-			$link = (string) $entry->link['href'];
-			preg_match( '/v=([a-zA-Z0-9_-]{11})/', $link, $matches );
-			$video_id = $matches[1] ?? null;
-
-			// Build thumbnail URL
-			$thumbnail = $video_id ? 'https://i.ytimg.com/vi/' . $video_id . '/hqdefault.jpg' : null;
-
-			$data = array(
-				'videoTitle'   => $title,
-				'videoLink'    => $link,
-				'thumbnail'    => $thumbnail,
-			);
-
-			// Cache for 24 hours
-			set_transient( $cache_key, $data, DAY_IN_SECONDS );
-
+		if ( is_wp_error( $feed ) ) {
 			return $data;
-		} catch ( Exception $e ) {
-			set_transient( $cache_key, $default_data, $fallback_ttl );
-			return $default_data;
 		}
+
+		$item = $feed->get_item();
+
+		if ( ! $item ) {
+			return $data;
+		}
+
+		// YouTube nests <media:thumbnail> inside <media:group>, so the item-level
+		// get_thumbnail() returns null; SimplePie exposes it via the enclosure.
+		$enclosure = $item->get_enclosure();
+		$thumbnail = $enclosure ? $enclosure->get_thumbnail() : '';
+
+		$data['videoTitle'] = $item->get_title();
+		$data['videoLink']  = $item->get_permalink();
+		$data['thumbnail']  = ! empty( $thumbnail ) ? $thumbnail : null;
+
+		return $data;
 	}
 
 	/**

@@ -15,17 +15,26 @@ import Infobox from './Infobox.js';
 import LicenseField from './LicenseField.js';
 import  { setUtm } from '../../blocks/helpers/helper-functions.js';
 
-const YOUTUBE_PLAYLIST_URL = 'https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP';
-
 /**
- * Component to display YouTube playlist card
+ * YouTube tutorials card.
+ *
+ * Owns its Infobox wrapper and renders nothing unless the localized data
+ * provides a thumbnail, so a missing or failed feed never leaves an empty
+ * box or a broken card behind.
  */
-const YouTubePlaylistCard = ({ playlistUrl, playlistData }) => {
-	const { videoTitle, thumbnail } = playlistData || {};
+const YouTubePlaylistCard = () => {
+	const playlistUrl = 'https://youtube.com/playlist?list=PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP';
+	const { videoTitle, thumbnail } = window.otterObj?.youtubePlaylistData || {};
+
+	if ( ! thumbnail ) {
+		return null;
+	}
 
 	return (
-		<div className="otter-youtube-card">
-			{ thumbnail && (
+		<Infobox
+			title={ __( 'Otter YouTube Tutorials', 'otter-blocks' ) }
+		>
+			<div className="otter-youtube-card">
 				<a
 					href={ playlistUrl }
 					target="_blank"
@@ -41,25 +50,25 @@ const YouTubePlaylistCard = ({ playlistUrl, playlistData }) => {
 						loading="lazy"
 					/>
 				</a>
-			) }
-			<div className="otter-youtube-card__content">
-				{ videoTitle && (
-					<p className="otter-youtube-card__title">
-						<strong>{ videoTitle }</strong>
-					</p>
-				) }
+				<div className="otter-youtube-card__content">
+					{ videoTitle && (
+						<p className="otter-youtube-card__title">
+							<strong>{ videoTitle }</strong>
+						</p>
+					) }
+				</div>
+				<div className="otter-info-button-group is-single">
+					<Button
+						variant="secondary"
+						isSecondary
+						target="_blank"
+						href={ playlistUrl }
+					>
+						{ __( 'Watch the complete playlist', 'otter-blocks' ) }
+					</Button>
+				</div>
 			</div>
-			<div className="otter-info-button-group is-single">
-				<Button
-					variant="secondary"
-					isSecondary
-					target="_blank"
-					href={ playlistUrl }
-				>
-					{ __( 'Watch the complete playlist', 'otter-blocks' ) }
-				</Button>
-			</div>
-		</div>
+		</Infobox>
 	);
 };
 
@@ -125,14 +134,7 @@ const Sidebar = ({
 				</div>
 			</Infobox>
 
-			<Infobox
-				title={ __( 'Otter YouTube Tutorials', 'otter-blocks' ) }
-			>
-				<YouTubePlaylistCard
-					playlistUrl={ YOUTUBE_PLAYLIST_URL }
-					playlistData={ window.otterObj?.youtubePlaylistData }
-				/>
-			</Infobox>
+			<YouTubePlaylistCard />
 		</Fragment>
 	);
 };
