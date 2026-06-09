@@ -17,12 +17,7 @@ import  { setUtm } from '../../blocks/helpers/helper-functions.js';
 const Sidebar = ({
 	setTab
 }) => {
-	const isProLicenseActive = Boolean( window.otterObj.hasPro ) && (
-		true === window.otterObj?.license?.valid ||
-		'valid' === window.otterObj?.license?.valid ||
-		true === window.otterObj?.license?.license ||
-		'valid' === window.otterObj?.license?.license
-	);
+	const isProLicenseActive = Boolean( window.otterObj.hasPro ) && 'valid' === window.otterObj?.license?.valid;
 
 	const supportLink = isProLicenseActive ? 'https://store.themeisle.com/' : 'https://wordpress.org/support/plugin/otter-blocks';
 	const supportLabel = isProLicenseActive ? __( 'Contact Pro Support', 'otter-blocks' ) : __( 'Support', 'otter-blocks' );
