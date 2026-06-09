@@ -17,6 +17,11 @@ import  { setUtm } from '../../blocks/helpers/helper-functions.js';
 const Sidebar = ({
 	setTab
 }) => {
+	const isProLicenseActive = Boolean( window.otterObj.hasPro ) && 'valid' === window.otterObj?.license?.valid;
+
+	const supportLink = isProLicenseActive ? 'https://store.themeisle.com/' : 'https://wordpress.org/support/plugin/otter-blocks';
+	const supportLabel = isProLicenseActive ? __( 'Contact Pro Support', 'otter-blocks' ) : __( 'Support', 'otter-blocks' );
+
 	return (
 		<Fragment>
 			{ Boolean( window.otterObj.hasPro ) ? (
@@ -59,7 +64,7 @@ const Sidebar = ({
 				title={ __( 'Useful links', 'otter-blocks' ) }
 			>
 				<ul className="otter-info-links">
-					<li><a href="https://wordpress.org/support/plugin/otter-blocks" target="_blank" rel="noreferrer">{ __( 'Support', 'otter-blocks' ) }</a></li>
+					<li><a href={ supportLink } target="_blank" rel="noreferrer">{ supportLabel }</a></li>
 					<li><a href="https://github.com/Codeinwp/otter-blocks/discussions" target="_blank" rel="noreferrer">{ __( 'Feature request', 'otter-blocks' ) }</a></li>
 					<li><a href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post" target="_blank" rel="noreferrer">{ __( 'Leave a review', 'otter-blocks' ) }</a></li>
 				</ul>
