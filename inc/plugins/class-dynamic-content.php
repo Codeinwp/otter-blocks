@@ -60,7 +60,26 @@ class Dynamic_Content {
 			}
 
 			$position = strlen( $position );
-			$content  = substr_replace( $content, $replacement, $position, strlen( $string_to_replace ) );
+			if ( is_array( $replacement ) ) {
+				$re      = '/#otterDynamicLink\/?.[^"]*/';
+				$matches = array();
+				$num     = preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
+
+				if ( isset( $matches[0] ) ) {
+					$link = $this->apply_link_button( $matches[0] );
+				}
+				$_content = array_fill( 0, count( $replacement ), $content );
+				$content  = '';
+				foreach ( $replacement as $key => $value ) {
+					$updated_content = substr_replace( $_content[ $key ], $value, $position, strlen( $string_to_replace ) );
+					if ( isset( $link ) && is_array( $link ) && isset( $link[ $key ] ) ) {
+						$updated_content = str_replace( $matches[0], $link[ $key ], $updated_content );
+					}
+					$content .= $updated_content;
+				}
+			} else {
+				$content = substr_replace( $content, $replacement, $position, strlen( $string_to_replace ) );
+			}
 		}
 
 		return $content;
@@ -132,18 +151,65 @@ class Dynamic_Content {
 	/**
 	 * Filter post content for dynamic link.
 	 *
-	 * @param string $content Post content.
+	 * @param string   $content Post content.
+	 * @param int|null $key Optional key for multiple dynamic links in the same content.
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_link( $content ) {
+	public function apply_dynamic_link( $content, $key = null ) {
 		if ( false === strpos( $content, '<o-dynamic-link' ) ) {
 			return $content;
 		}
 
 		$re = '/<o-dynamic-link(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-target=["\'](?P<target>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<text>[^ $].*?)<\s*\/\s*o-dynamic-link>/';
 
-		return preg_replace_callback( $re, array( $this, 'apply_link' ), $content );
+		$matches = array();
+		$num     = preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
+		if ( isset( $num ) && 0 === $num ) {
+			return $content;
+		}
+
+		$resolved    = array();
+		$clone_count = 1;
+		foreach ( $matches as $match ) {
+			$value      = $this->apply_link( $match, $key );
+			$resolved[] = $value;
+			if ( is_array( $value ) ) {
+				$clone_count = max( $clone_count, count( $value ) );
+			}
+		}
+
+		// Replace the content for multiple dynamic links in the same content.
+		if ( $clone_count > 1 ) {
+			$output = '';
+			for ( $i = 0; $i < $clone_count; $i++ ) {
+				$clone = $content;
+				foreach ( $matches as $j => $match ) {
+					$value       = $resolved[ $j ];
+					$replacement = is_array( $value )
+						? ( isset( $value[ $i ] ) ? $value[ $i ] : '' )
+						: $value;
+					$pos         = strpos( $clone, $match[0] );
+					if ( false !== $pos ) {
+						$clone = substr_replace( $clone, $replacement, $pos, strlen( $match[0] ) );
+					}
+				}
+				$output .= $clone;
+			}
+			return $output;
+		}
+
+		// Replace the content for single dynamic link in the content.
+		$index = 0;
+		return preg_replace_callback(
+			$re,
+			function ( $data ) use ( &$resolved, &$index ) {
+				$value = isset( $resolved[ $index ] ) ? $resolved[ $index ] : $data[0];
+				$index++;
+				return is_string( $value ) ? $value : $data[0];
+			},
+			$content
+		);
 	}
 
 	/**
@@ -178,9 +244,54 @@ class Dynamic_Content {
 		$rest_url = get_rest_url( null, 'otter/v1' );
 		$rest_url = preg_replace( '/([^A-Za-z0-9\s_-])/', '\\\\$1', $rest_url );
 
-		$re = '/' . $rest_url . '\/dynamic\/?.[^"]*/';
+		$re      = '/' . $rest_url . '\/dynamic\/?.[^"]*/';
+		$matches = array();
+		$num     = preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
+		if ( isset( $num ) && 0 === $num ) {
+			return $content;
+		}
 
-		return preg_replace_callback( $re, array( $this, 'apply_images' ), $content );
+		$resolved    = array();
+		$clone_count = 1;
+		foreach ( $matches as $match ) {
+			$value      = $this->apply_images( $match );
+			$resolved[] = $value;
+			if ( is_array( $value ) ) {
+				$clone_count = max( $clone_count, count( $value ) );
+			}
+		}
+
+		// Replace the content for multiple dynamic images in the same content.
+		if ( $clone_count > 1 ) {
+			$output = '';
+			for ( $i = 0; $i < $clone_count; $i++ ) {
+				$clone = $content;
+				foreach ( $matches as $j => $match ) {
+					$value       = $resolved[ $j ];
+					$replacement = is_array( $value )
+						? ( isset( $value[ $i ] ) ? $value[ $i ] : '' )
+						: $value;
+					$pos         = strpos( $clone, $match[0] );
+					if ( false !== $pos ) {
+						$clone = substr_replace( $clone, $replacement, $pos, strlen( $match[0] ) );
+					}
+				}
+				$output .= $clone;
+			}
+			return $output;
+		}
+
+		// Replace the content for single dynamic image in the content.
+		$index = 0;
+		return preg_replace_callback(
+			$re,
+			function ( $data ) use ( &$resolved, &$index ) {
+				$value = isset( $resolved[ $index ] ) ? $resolved[ $index ] : $data[0];
+				$index++;
+				return is_string( $value ) ? $value : $data[0];
+			},
+			$content
+		);
 	}
 
 	/**
@@ -188,7 +299,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string|void
+	 * @return string|string[]|void
 	 */
 	public function apply_images( $data ) {
 		if ( ! isset( $data[0] ) ) {
@@ -267,10 +378,27 @@ class Dynamic_Content {
 	 * @param array $data Dynamic request.
 	 * @param bool  $magic_tags Is a request for Magic Tags.
 	 *
-	 * @return string
+	 * @return string|string[]
 	 */
 	public function apply_data( $data, $magic_tags = false ) {
 		$value = $this->get_data( $data, $magic_tags );
+
+		if ( is_array( $value ) ) {
+			$updated_value = array();
+			foreach ( $value as $key => $val ) {
+				$_value = $this->apply_formatting( $val, $data );
+				
+				if ( isset( $data['default'] ) && false !== strpos( $data['default'], '<o-dynamic-link' ) ) {
+					$link = $this->apply_dynamic_link( $data['default'], $key );
+					if ( ! empty( $link ) ) {
+						$_value = preg_replace( '/(<a.*?>).*?(<\/a>)/', '$1' . $_value . '$2', $link );
+					}
+				}
+
+				$updated_value[] = $_value;
+			}
+			return $updated_value;
+		}
 
 		if ( isset( $data['before'] ) || isset( $data['after'] ) ) {
 			$value = $this->apply_formatting( $value, $data );
@@ -310,7 +438,7 @@ class Dynamic_Content {
 	 * @param array $data Dynamic request.
 	 * @param bool  $magic_tags Is a request for Magic Tags.
 	 *
-	 * @return string
+	 * @return string|string[]
 	 */
 	public function get_data( $data, $magic_tags ) {
 		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || true === $magic_tags ) {
@@ -610,11 +738,12 @@ class Dynamic_Content {
 	/**
 	 * Apply dynamic data.
 	 *
-	 * @param array $data Dynamic request.
+	 * @param array    $data Dynamic request.
+	 * @param int|null $key Optional key for multiple dynamic links in the same content.
 	 *
-	 * @return string
+	 * @return string|string[]
 	 */
-	public function apply_link( $data ) {
+	public function apply_link( $data, $key = null ) {
 		$link = $this->get_link( $data );
 
 		if ( empty( $link ) ) {
@@ -627,6 +756,23 @@ class Dynamic_Content {
 			$attrs = 'target="_blank"';
 		}
 
+		if ( is_array( $link ) ) {
+			$value = array();
+			foreach ( $link as $link_item ) {
+				$value[] = sprintf(
+					'<a href="%s" %s>%s</a>',
+					esc_url( $link_item ),
+					$attrs,
+					wp_kses_post( $data['text'] )
+				);
+			}
+
+			if ( null !== $key ) {
+				return isset( $value[ $key ] ) ? $value[ $key ] : '';
+			}
+
+			return $value;
+		}
 		$value = sprintf(
 			'<a href="%s" %s>%s</a>',
 			esc_url( $link ),
@@ -642,7 +788,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string|void
+	 * @return string|string[]|void
 	 */
 	public function apply_link_button( $data ) {
 		if ( ! isset( $data[0] ) ) {
@@ -666,7 +812,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string|void
+	 * @return string|string[]|void
 	 */
 	public function get_link( $data ) {
 		if ( ! isset( $data['type'] ) ) {

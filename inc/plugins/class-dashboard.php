@@ -111,6 +111,7 @@ class Dashboard {
 			.o-menu-submissions {
 				display: flex;
 				align-items: center;
+				gap: 6px;
 			}
 
 			.o-menu-badge {
@@ -229,6 +230,47 @@ class Dashboard {
 	}
 
 	/**
+	 * Get the latest video from the Otter YouTube playlist.
+	 *
+	 * Uses the WordPress feed API (SimplePie under the hood), which handles
+	 * fetching, XML/namespace parsing and transient caching for us.
+	 *
+	 * @return array{videoTitle: string, videoLink: string, thumbnail: string|null}
+	 */
+	private function get_youtube_playlist_data() {
+		$playlist_id = 'PLmRasCVwuvpSep2MOsIoE0ncO9JE3FcKP';
+
+		$data = array(
+			'videoTitle' => __( 'Otter Tutorials', 'otter-blocks' ),
+			'videoLink'  => 'https://youtube.com/playlist?list=' . $playlist_id,
+			'thumbnail'  => null,
+		);
+
+		$feed = fetch_feed( 'https://www.youtube.com/feeds/videos.xml?playlist_id=' . $playlist_id );
+
+		if ( is_wp_error( $feed ) ) {
+			return $data;
+		}
+
+		$item = $feed->get_item();
+
+		if ( ! $item ) {
+			return $data;
+		}
+
+		// YouTube nests <media:thumbnail> inside <media:group>, so the item-level
+		// get_thumbnail() returns null; SimplePie exposes it via the enclosure.
+		$enclosure = $item->get_enclosure();
+		$thumbnail = $enclosure ? $enclosure->get_thumbnail() : '';
+
+		$data['videoTitle'] = $item->get_title();
+		$data['videoLink']  = $item->get_permalink();
+		$data['thumbnail']  = ! empty( $thumbnail ) ? $thumbnail : null;
+
+		return $data;
+	}
+
+	/**
 	 * Get the dashboard data to store in global object.
 	 *
 	 * @return array
@@ -286,6 +328,7 @@ class Dashboard {
 			'aiClientAvailable'      => AI_Client_Adaptor::is_available(),
 			'aiClientSupported'      => function_exists( 'wp_ai_client_prompt' ),
 			'connectorsUrl'          => esc_url( admin_url( 'options-connectors.php' ) ),
+			'youtubePlaylistData'    => $this->get_youtube_playlist_data(),
 		);
 
 		$global_data = apply_filters( 'otter_dashboard_data', $global_data );
