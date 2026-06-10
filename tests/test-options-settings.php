@@ -62,16 +62,24 @@ class Test_Options_Settings extends WP_UnitTestCase {
 				array(
 					'form'          => ' form-id<script> ',
 					'fromEmail'     => 'bad-email',
+					'replyTo'       => "sales@example.com\r\nBcc: evil@attacker.com",
 					'requiredFields' => 'invalid-type',
 					'autoresponder' => array(
 						'body' => '<strong>ok</strong><form><input type="text"></form>',
 					),
+				),
+				array(
+					'form'    => 'second-form',
+					'replyTo' => 'sales@example.com',
 				),
 			)
 		);
 
 		$this->assertSame( 'form-id', $sanitized[0]['form'] );
 		$this->assertSame( '', $sanitized[0]['fromEmail'] );
+		$this->assertStringNotContainsString( "\r", $sanitized[0]['replyTo'] );
+		$this->assertStringNotContainsString( "\n", $sanitized[0]['replyTo'] );
+		$this->assertSame( 'sales@example.com', $sanitized[1]['replyTo'] );
 		$this->assertSame( array(), $sanitized[0]['requiredFields'] );
 		$this->assertStringContainsString( '<strong>ok</strong>', $sanitized[0]['autoresponder']['body'] );
 		$this->assertStringNotContainsString( '<form>', $sanitized[0]['autoresponder']['body'] );

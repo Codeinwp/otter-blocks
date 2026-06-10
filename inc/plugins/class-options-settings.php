@@ -344,6 +344,9 @@ class Options_Settings {
 							if ( isset( $item['bcc'] ) ) {
 								$item['bcc'] = sanitize_text_field( $item['bcc'] );
 							}
+							if ( isset( $item['replyTo'] ) ) {
+								$item['replyTo'] = sanitize_email( $item['replyTo'] );
+							}
 							if ( isset( $item['autoresponder']['body'] ) ) {
 								$item['autoresponder']['body'] = wp_kses( $item['autoresponder']['body'], $this::get_allowed_mail_html() );
 							}
@@ -422,6 +425,9 @@ class Options_Settings {
 									'type' => 'string',
 								),
 								'bcc'                     => array(
+									'type' => 'string',
+								),
+								'replyTo'                 => array(
 									'type' => 'string',
 								),
 								'autoresponder'           => array(

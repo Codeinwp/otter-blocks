@@ -60,6 +60,7 @@ export type FormOptions = {
 	errorMessage?: string
 	cc?: string
 	bcc?: string
+	replyTo?: string
 	autoresponder?: {
 		subject?: string
 		body?: string
