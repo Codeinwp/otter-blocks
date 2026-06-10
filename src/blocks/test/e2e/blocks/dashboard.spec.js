@@ -19,7 +19,7 @@ test.describe( 'Dashboard', () => {
 		const integrationsTab = page.getByRole( 'button', { name: 'Integrations' });
 		await integrationsTab.click();
 
-		const openAIAccordion = page.getByRole( 'button', { name: 'OpenAI' });
+		const openAIAccordion = page.getByRole( 'button', { name: 'AI Provider' });
 		await openAIAccordion.click();
 
 		const inputArea = page.getByPlaceholder( 'OpenAI API Key' );
@@ -58,7 +58,7 @@ test.describe( 'Dashboard', () => {
 		const actionPromptValue = 'Fix spelling mistakes in the content.';
 
 		await page.getByRole( 'button', { name: 'Integrations' }).click();
-		await page.getByRole( 'button', { name: 'OpenAI' }).click();
+		await page.getByRole( 'button', { name: 'AI Provider' }).click();
 
 		// Edit the first action.
 		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child button' ).click();
@@ -74,7 +74,7 @@ test.describe( 'Dashboard', () => {
 		await page.reload();
 
 		await page.getByRole( 'button', { name: 'Integrations' }).click();
-		await page.getByRole( 'button', { name: 'OpenAI' }).click();
+		await page.getByRole( 'button', { name: 'AI Provider' }).click();
 		await expect( page.getByRole( 'button', { name: actionTitleValue }) ).toBeVisible();
 	});
 });

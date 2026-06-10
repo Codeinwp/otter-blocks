@@ -240,7 +240,7 @@ const Integrations = () => {
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'OpenAI', 'otter-blocks' ) }
+				title={ __( 'AI Provider', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				{ Boolean( window.otterObj?.aiClientSupported ) && (
