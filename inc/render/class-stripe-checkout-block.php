@@ -144,7 +144,7 @@ class Stripe_Checkout_Block {
 		$details_markup = '';
 
 		if ( 0 < count( $product['images'] ) ) {
-			$details_markup .= '<img src="' . esc_url( $product['images'][0] ) . '" alt="' . esc_attr( $product['description'] ) . '" />';
+			$details_markup .= '<img src="' . esc_url( $product['images'][0] ) . '" alt="' . esc_attr( $product['name'] ) . '" />';
 		}
 
 		$price = $this->stripe_api->create_request( 'price', $attributes['price'] );

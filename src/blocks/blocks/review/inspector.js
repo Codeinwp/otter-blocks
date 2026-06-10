@@ -39,6 +39,7 @@ import {
  * Internal dependencies
  */
 import {
+	AltTextControl,
 	BoxShadowControl,
 	ButtonToggleControl,
 	InspectorExtensions,
@@ -430,7 +431,7 @@ const Inspector = ({
 							>
 								<img
 									src={ productAttributes?.image?.url || attributes.image.url }
-									alt={ productAttributes?.image?.url || attributes.image.alt }
+									alt={ productAttributes?.image?.alt || attributes.image.alt }
 								/>
 
 								<Button
@@ -440,6 +441,13 @@ const Inspector = ({
 								>
 									{ __( 'Remove image', 'otter-blocks' ) }
 								</Button>
+
+								{ ! attributes.product && attributes.image && (
+									<AltTextControl
+										value={ attributes.image.alt }
+										onChange={ alt => setAttributes({ image: { ...attributes.image, alt } }) }
+									/>
+								) }
 							</BaseControl>
 						) }
 					</PanelBody>
