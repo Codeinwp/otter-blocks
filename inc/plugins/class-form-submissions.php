@@ -504,8 +504,37 @@ class Form_Submissions {
 				color: #d63638;
 				font-weight: 600;
 			}
+			.o-filters-locked {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				margin-right: 6px;
+			}
 			.o-filters-locked select:disabled {
 				opacity: .7;
+				margin: 0;
+			}
+			.o-filters-unlock,
+			.o-filters-unlock:focus {
+				display: inline-flex;
+				align-items: center;
+				gap: 3px;
+				margin: 0 2px;
+				text-decoration: none;
+				line-height: 2.15384615; /* match .button line-height so the row aligns */
+				color: #ED6F57;
+			}
+			.o-filters-unlock:hover,
+			.o-filters-unlock:active {
+				color: #E25C4F;
+			}
+			.o-filters-unlock .dashicons-lock {
+				font-size: 14px;
+				width: 14px;
+				height: 14px;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
 			}
 			</style>
 			<?php
@@ -712,16 +741,19 @@ class Form_Submissions {
 	 * @return void
 	 */
 	private function locked_filters_upsell() {
+		$upgrade_url = function_exists( 'tsdk_utmify' ) && function_exists( 'tsdk_translate_link' )
+			? tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions-filters', 'admin' ) )
+			: 'https://themeisle.com/plugins/otter-blocks/upgrade/';
 		?>
-		<span class="o-filters-locked">
+		<span class="o-filters-locked" title="<?php esc_attr_e( 'Filtering by form and post is available in Otter Pro.', 'otter-blocks' ); ?>">
 			<select disabled>
 				<option><?php esc_html_e( 'All Forms', 'otter-blocks' ); ?></option>
 			</select>
 			<select disabled>
 				<option><?php esc_html_e( 'All Posts', 'otter-blocks' ); ?></option>
 			</select>
-			<a href="<?php echo esc_url( function_exists( 'tsdk_utmify' ) && function_exists( 'tsdk_translate_link' ) ? tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions-filters', 'admin' ) ) : 'https://themeisle.com/plugins/otter-blocks/upgrade/' ); ?>" target="_blank">
-				<?php esc_html_e( 'Filter with Otter Pro', 'otter-blocks' ); ?>
+			<a class="o-filters-unlock" href="<?php echo esc_url( $upgrade_url ); ?>" target="_blank" rel="noopener">
+				<span class="dashicons dashicons-lock" aria-hidden="true"></span><?php esc_html_e( 'Unlock filters', 'otter-blocks' ); ?>
 			</a>
 		</span>
 		<?php

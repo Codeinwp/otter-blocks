@@ -380,6 +380,35 @@ class Dashboard {
 				font-size: 14px;
 				max-height: 35px;
 			}
+
+			.wp-core-ui .button.o-locked-action,
+			.wp-core-ui .button.o-locked-action:focus {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				color: #ED6F57;
+				border-color: #ED6F57;
+			}
+
+			.wp-core-ui .button.o-locked-action:hover,
+			.wp-core-ui .button.o-locked-action:active {
+				color: #E25C4F;
+				border-color: #E25C4F;
+				background: #fdf1ef;
+			}
+
+			.o-locked-action .dashicons-lock {
+				font-size: 15px;
+				width: 15px;
+				height: 15px;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.o-locked-action .o-menu-badge {
+				opacity: 1;
+			}
 		</style>
 		<div class="otter-banner">
 			<div class="otter-banner__image">
@@ -393,14 +422,17 @@ class Dashboard {
 					<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
 				</button>
 				<?php else : ?>
-				<div style="display: flex; align-items: center; gap: 10px;">
-					<button id="export-submissions" class="button" disabled title="<?php esc_attr_e( 'Bulk export is available in Otter Pro.', 'otter-blocks' ); ?>">
-						<?php esc_html_e( 'Export', 'otter-blocks' ); ?> <span class="o-menu-badge"><?php esc_html_e( 'Pro', 'otter-blocks' ); ?></span>
-					</button>
-					<a href="<?php echo esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions-export', 'admin' ) ) ); ?>" target="_blank">
-						<?php esc_html_e( 'Unlock with Otter Pro', 'otter-blocks' ); ?>
-					</a>
-				</div>
+				<a
+					class="button o-locked-action"
+					href="<?php echo esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions-export', 'admin' ) ) ); ?>"
+					target="_blank"
+					rel="noopener"
+					title="<?php esc_attr_e( 'Bulk export is available in Otter Pro.', 'otter-blocks' ); ?>"
+				>
+					<span class="dashicons dashicons-lock" aria-hidden="true"></span>
+					<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
+					<span class="o-menu-badge"><?php esc_html_e( 'Pro', 'otter-blocks' ); ?></span>
+				</a>
 				<?php endif; ?>
 			</div>
 		</div>
