@@ -520,6 +520,18 @@ const waitForIframeScriptReady = ( assetSelectorId, iframeWindow, scriptEl ) => 
 /**
  * Copy the JS node asset from main document to the iframe.
  *
+ * WordPress can inject scripts into the canvas iframe natively: anything
+ * enqueued on the `enqueue_block_assets` hook is collected by
+ * `_wp_get_iframed_editor_assets()` and printed inside the iframe at boot
+ * (see the `is_admin()` branch in `inc/class-registration.php`, which already
+ * uses this for editor styles). We deliberately do NOT use that for the heavy
+ * third-party scripts (Leaflet ~150KB, Lottie player ~280KB, Glide): the
+ * iframe assets are resolved once, server-side, on editor load, so the native
+ * route would ship them in every editor session even when no such block is
+ * used. Copying on demand from the parent document keeps them lazy, at the
+ * cost of the load/readiness tracking below. If that trade-off ever flips,
+ * delete this machinery and enqueue the scripts on `enqueue_block_assets`.
+ *
  * @param {string}   assetSelectorId The id of the asset.
  * @param {Function} callback        The callback.
  */

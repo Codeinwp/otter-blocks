@@ -343,6 +343,16 @@ class Registration {
 			// iframe natively. Enqueuing on `enqueue_block_editor_assets` would
 			// load them only in the parent document, and WordPress 6.9+ warns
 			// when it copies such styles into the iframe.
+			//
+			// Scripts enqueued here would also be injected into the iframe
+			// natively (via `_wp_get_iframed_editor_assets()`), but the iframe
+			// assets are resolved once on editor load, with no way to add them
+			// later. Heavy per-block scripts (Leaflet, Lottie, Glide) are
+			// therefore NOT enqueued here — they would load in every editor
+			// session regardless of the blocks used. Instead they are copied
+			// into the iframe on demand by `copyScriptAssetToIframe()` in
+			// `src/blocks/helpers/block-utility.js`, which keeps them lazy at
+			// the cost of client-side readiness tracking.
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 			wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
 			return;
