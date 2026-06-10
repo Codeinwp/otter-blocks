@@ -50,6 +50,21 @@ class Otter_OpenAI_Backend implements AI_Backend {
 			return $this->error_response( 'invalid_payload', __( 'The OpenAI request payload is invalid.', 'otter-blocks' ), 400 );
 		}
 
+		/**
+		 * Filters the OpenAI model used for Otter's OpenAI requests.
+		 *
+		 * The model normally comes from the fetched prompt templates; return a
+		 * different model ID to override it.
+		 *
+		 * @param string               $model   The model ID from the prompt template.
+		 * @param array<string, mixed> $payload The filtered OpenAI-format payload.
+		 */
+		$model = apply_filters( 'otter_ai_otter_openai_model', isset( $payload['model'] ) ? (string) $payload['model'] : '', $payload );
+
+		if ( is_string( $model ) && '' !== $model ) {
+			$payload['model'] = $model;
+		}
+
 		$request_args = array(
 			'method'  => 'POST',
 			'headers' => array(

@@ -39,6 +39,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		remove_all_filters( 'otter_ai_backend' );
 		remove_all_filters( 'otter_ai_backends' );
 		remove_all_filters( 'otter_ai_otter_openai_payload' );
+		remove_all_filters( 'otter_ai_otter_openai_model' );
 		remove_all_filters( 'otter_ai_otter_openai_request_args' );
 		remove_all_filters( 'otter_ai_otter_openai_response' );
 		remove_all_filters( 'pre_http_request' );
@@ -948,6 +949,85 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		);
 
 		$this->assertSame( 'Post processed response.', $response->get_data()['content'] );
+	}
+
+	/**
+	 * The model pinned by the fetched prompt templates can be overridden by
+	 * filter; empty overrides keep the template model.
+	 */
+	public function test_otter_openai_filters_model() {
+		update_option( 'themeisle_otter_ai_backend', 'openai-key' );
+		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
+
+		$captured_args = array();
+
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) use ( &$captured_args ) {
+				if ( Otter_OpenAI_Backend::BASE_URL === $url ) {
+					$captured_args = $args;
+					return array(
+						'headers'  => array(),
+						'body'     => wp_json_encode(
+							array(
+								'choices' => array(
+									array(
+										'message' => array(
+											'role'    => 'assistant',
+											'content' => 'Model override response.',
+										),
+									),
+								),
+							)
+						),
+						'response' => array(
+							'code'    => 200,
+							'message' => 'OK',
+						),
+					);
+				}
+
+				return $preempt;
+			},
+			10,
+			3
+		);
+
+		$template_model = null;
+		add_filter(
+			'otter_ai_otter_openai_model',
+			function ( $model ) use ( &$template_model ) {
+				$template_model = $model;
+				return 'gpt-4o';
+			}
+		);
+
+		$payload = array(
+			'model'    => 'gpt-3.5-turbo',
+			'messages' => array(
+				array(
+					'role'    => 'user',
+					'content' => 'Hello',
+				),
+			),
+		);
+
+		$this->dispatch_generate( $payload );
+
+		$sent_body = json_decode( $captured_args['body'], true );
+
+		$this->assertSame( 'gpt-3.5-turbo', $template_model );
+		$this->assertSame( 'gpt-4o', $sent_body['model'] );
+
+		// An empty override keeps the template model.
+		remove_all_filters( 'otter_ai_otter_openai_model' );
+		add_filter( 'otter_ai_otter_openai_model', '__return_empty_string' );
+
+		$this->dispatch_generate( $payload );
+
+		$sent_body = json_decode( $captured_args['body'], true );
+
+		$this->assertSame( 'gpt-3.5-turbo', $sent_body['model'] );
 	}
 
 	/**
