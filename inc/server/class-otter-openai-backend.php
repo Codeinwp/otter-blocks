@@ -42,9 +42,6 @@ class Otter_OpenAI_Backend implements AI_Backend {
 		/**
 		 * Filters the OpenAI-shaped payload before Otter sends it to OpenAI.
 		 *
-		 * This is the main extension point for adapting request shape as the
-		 * OpenAI API evolves while preserving Otter's internal wire contract.
-		 *
 		 * @param array<string, mixed> $payload The OpenAI-format payload.
 		 */
 		$payload = apply_filters( 'otter_ai_otter_openai_payload', $payload );
@@ -65,9 +62,6 @@ class Otter_OpenAI_Backend implements AI_Backend {
 
 		/**
 		 * Filters the HTTP arguments used for Otter's OpenAI request.
-		 *
-		 * Use this for transport-level changes such as timeout, endpoint
-		 * proxying via HTTP API filters, or additional headers.
 		 *
 		 * @param array<string, mixed> $request_args The wp_remote_post() arguments.
 		 * @param array<string, mixed> $payload      The filtered OpenAI-format payload.
@@ -130,9 +124,6 @@ class Otter_OpenAI_Backend implements AI_Backend {
 
 		/**
 		 * Filters the decoded OpenAI response before returning it to Otter callers.
-		 *
-		 * Use this to adapt provider response changes before Otter normalizes
-		 * the result into its AI response contract.
 		 *
 		 * @param array<string, mixed> $body    The decoded OpenAI response body.
 		 * @param array<string, mixed> $payload The filtered OpenAI-format payload.

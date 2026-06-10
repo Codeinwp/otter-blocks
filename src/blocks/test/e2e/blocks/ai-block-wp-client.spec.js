@@ -15,12 +15,8 @@ import { test, expect } from '../fixtures';
 test.describe( 'AI Block via WP AI Client', () => {
 	test.beforeEach( async({ admin, otterUtils, page }) => {
 		await otterUtils.setOptions({
-
-			 
-			themeisle_otter_ai_backend: 'wp-ai-client',
-
-			 
-			connectors_ai_openai_api_key: 'sk-otter-e2e-mock'
+			'themeisle_otter_ai_backend': 'wp-ai-client',
+			'connectors_ai_openai_api_key': 'sk-otter-e2e-mock'
 		});
 		await otterUtils.seedPrompts();
 
@@ -33,12 +29,8 @@ test.describe( 'AI Block via WP AI Client', () => {
 
 	test.afterEach( async({ otterUtils }) => {
 		await otterUtils.setOptions({
-
-			 
-			themeisle_otter_ai_backend: 'auto',
-
-			 
-			connectors_ai_openai_api_key: ''
+			'themeisle_otter_ai_backend': 'auto',
+			'connectors_ai_openai_api_key': ''
 		});
 	});
 

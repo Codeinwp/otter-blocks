@@ -117,7 +117,6 @@ class AI_Client_Adaptor {
 
 			$messages = isset( $payload['messages'] ) && is_array( $payload['messages'] ) ? $payload['messages'] : array();
 
-			// Split messages: system → instruction, the rest → conversation turns.
 			$system_parts = array();
 			$turns        = array();
 
@@ -181,8 +180,8 @@ class AI_Client_Adaptor {
 
 			$builder = $builder->with_text( $prompt_text );
 
-			// Generation parameters. The `model` pin is intentionally dropped: the
-			// WP AI Client picks a suitable model from any configured provider.
+			// The `model` pin is intentionally dropped: the WP AI Client picks
+			// a suitable model from any configured provider.
 			if ( isset( $payload['temperature'] ) ) {
 				$builder = $builder->using_temperature( (float) $payload['temperature'] );
 			}
@@ -227,10 +226,10 @@ class AI_Client_Adaptor {
 				return $this->error_response( (string) $result->get_error_code(), $result->get_error_message(), 502 );
 			}
 
-			// The wordpress-stubs @method tag resolves `GenerativeAiResult` in the
-			// global namespace instead of WordPress\AiClient\Results\DTO (generator quirk).
 			/**
-			 * The generation result.
+			 * The generation result, typed locally because the wordpress-stubs
+			 * `@method` tag resolves `GenerativeAiResult` in the global namespace
+			 * instead of WordPress\AiClient\Results\DTO (generator quirk).
 			 *
 			 * @var \WordPress\AiClient\Results\DTO\GenerativeAiResult $result
 			 */
