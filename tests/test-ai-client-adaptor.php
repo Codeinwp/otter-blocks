@@ -122,6 +122,39 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Payloads that do not end with a user turn are rejected instead of
+	 * silently reordering the conversation.
+	 */
+	public function test_generate_rejects_payload_not_ending_with_user_turn() {
+		$adaptor = $this->make_adaptor();
+
+		$response = $adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'U1',
+					),
+					array(
+						'role'    => 'assistant',
+						'content' => 'A1',
+					),
+				),
+			)
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'invalid_payload', $response->get_error_code() );
+		$this->assertSame( 400, $response->get_error_data()['status'] );
+
+		// Payloads with no conversation turns at all are rejected too.
+		$response = $adaptor->generate( array( 'messages' => array() ) );
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'invalid_payload', $response->get_error_code() );
+	}
+
+	/**
 	 * Generation parameters are mapped and the model pin is dropped.
 	 */
 	public function test_generate_maps_parameters_and_drops_model() {
@@ -493,6 +526,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 				$args['timeout']                         = 123;
 				$args['headers']['Authorization']        = 'Bearer sk-override';
 				$args['headers']['X-Otter-Test-Model'] = $payload['model'];
+				$args['sslverify']                       = false;
 				return $args;
 			},
 			10,
@@ -549,9 +583,12 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 
 		$this->assertSame( 'gpt-test-model', $sent_body['model'] );
 		$this->assertTrue( $filter_saw_authorization );
-		$this->assertSame( 123.0, $captured_args['timeout'] );
+		$this->assertSame( 123, $captured_args['timeout'] );
 		$this->assertSame( 'Bearer sk-override', $captured_args['headers']['Authorization'] );
 		$this->assertSame( 'gpt-test-model', $captured_args['headers']['X-Otter-Test-Model'] );
+
+		// Transport-level args beyond the defaults pass through to wp_remote_post().
+		$this->assertFalse( $captured_args['sslverify'] );
 		$this->assertSame( 'Filtered response.', $response->get_data()['content'] );
 	}
 
@@ -655,14 +692,17 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		// an actionable WP_Error; with it, a successful Otter AI response.
 		if ( is_wp_error( $response ) ) {
 			$this->assertSame( 'wp_ai_client', $response->get_error_data()['type'] );
+
+			// Failed generations are not recorded.
+			$this->assertFalse( get_option( 'themeisle_otter_ai_usage' ) );
 		} else {
 			$this->assertArrayHasKey( 'content', $response->get_data() );
-		}
 
-		// Usage is recorded on the WP path too.
-		$usage = get_option( 'themeisle_otter_ai_usage' );
-		$this->assertSame( 'otter_action_test', $usage['usage_count'][0]['key'] );
-		$this->assertSame( 1, $usage['usage_count'][0]['value'] );
+			// Usage is recorded on the WP path too.
+			$usage = get_option( 'themeisle_otter_ai_usage' );
+			$this->assertSame( 'otter_action_test', $usage['usage_count'][0]['key'] );
+			$this->assertSame( 1, $usage['usage_count'][0]['value'] );
+		}
 	}
 
 	/**

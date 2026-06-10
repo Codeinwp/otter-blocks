@@ -1,6 +1,7 @@
 import { createBlock } from '@wordpress/blocks';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
+import { __ } from '@wordpress/i18n';
 
 type OpenAiSettings = {
 	model?: string
@@ -12,36 +13,6 @@ type OpenAiSettings = {
 	presence_penalty?: number
 	frequency_penalty?: number
 	stop?: string|string[]
-}
-
-type ChatResponse = {
-	choices?: {
-		finish_reason: string,
-		index: number,
-		message: {
-			content: string|null,
-			role: string
-			function_call?: {
-				name: string
-				arguments: string
-			}
-		}
-	}[]
-	created?: number
-	id?: string
-	model?: string
-	object?: string
-	usage?: {
-		completion_tokens: number,
-		prompt_tokens: number,
-		total_tokens: number
-	},
-	error?: {
-		code: string | null,
-		message: string
-		param: string | null
-		type: string
-	}
 }
 
 type PromptRouteSuccess = {
@@ -109,39 +80,19 @@ type PromptServerResponse = {
 }
 
 /**
- * Extract generated content from an OpenAI-shaped fallback response.
- *
- * @param {ChatResponse} response The OpenAI-shaped fallback response.
- * @return {string} The generated content or an empty string.
- */
-function getPromptResponseContent( response?: ChatResponse ) {
-	return response?.choices?.[0]?.message?.function_call?.arguments ?? response?.choices?.[0]?.message?.content ?? '';
-}
-
-/**
- * Extract token usage from an OpenAI-shaped fallback response.
- *
- * @param {ChatResponse} response The OpenAI-shaped fallback response.
- * @return {number} The total token count, or 0 when unavailable.
- */
-function getPromptResponseUsedTokens( response?: ChatResponse ) {
-	return response?.usage?.total_tokens ?? 0;
-}
-
-/**
  * Convert the route response into the UI prompt contract.
  *
- * @param {ChatResponse|PromptResult|PromptRouteSuccess} response The raw route response.
+ * Both backends return the normalized `{ content, usedTokens, format }` shape
+ * (see AI_Response::success); errors arrive as thrown REST errors and are
+ * handled by the request catch block.
+ *
+ * @param {PromptRouteSuccess|unknown} response The raw route response.
  * @return {PromptResult} Normalized prompt result.
  */
-export function normalizePromptResponse( response: ChatResponse|PromptResult|PromptRouteSuccess ): PromptResult {
-	if ( 'boolean' === typeof response?.ok ) {
-		return response;
-	}
+export function normalizePromptResponse( response: PromptRouteSuccess|unknown ): PromptResult {
+	const result = response as PromptRouteSuccess;
 
-	if ( 'string' === typeof ( response as PromptRouteSuccess )?.content ) {
-		const result = response as PromptRouteSuccess;
-
+	if ( 'string' === typeof result?.content ) {
 		return {
 			ok: true,
 			content: result.content,
@@ -150,23 +101,13 @@ export function normalizePromptResponse( response: ChatResponse|PromptResult|Pro
 		};
 	}
 
-	if ( response?.error ) {
-		return {
-			ok: false,
-			error: {
-				code: response.error.code,
-				message: response.error.message,
-				param: response.error.param,
-				type: response.error.type
-			},
-			raw: response
-		};
-	}
-
 	return {
-		ok: true,
-		content: getPromptResponseContent( response ),
-		usedTokens: getPromptResponseUsedTokens( response ),
+		ok: false,
+		error: {
+			code: 'invalid_response',
+			message: __( 'Received an unexpected response from the AI service. Please try again.', 'otter-blocks' ),
+			type: 'system'
+		},
 		raw: response
 	};
 }
@@ -219,7 +160,7 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 				})
 			});
 
-			return normalizePromptResponse( response as ChatResponse|PromptResult|PromptRouteSuccess );
+			return normalizePromptResponse( response );
 		} catch ( e ) {
 			return {
 				ok: false,

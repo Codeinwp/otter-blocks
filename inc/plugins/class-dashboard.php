@@ -285,7 +285,6 @@ class Dashboard {
 			'hasPatternSources'      => Template_Cloud::has_used_pattern_sources(),
 			'aiClientAvailable'      => AI_Client_Adaptor::is_available(),
 			'aiClientSupported'      => function_exists( 'wp_ai_client_prompt' ),
-			'aiBackendFallback'      => AI_Client_Adaptor::is_fallback_active(),
 			'connectorsUrl'          => esc_url( admin_url( 'options-connectors.php' ) ),
 		);
 

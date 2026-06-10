@@ -248,8 +248,7 @@ class Registration {
 
 		global $wp_roles;
 
-		$is_wp_ai_backend   = AI_Client_Adaptor::BACKEND_WP === AI_Client_Adaptor::resolve_backend();
-		$ai_provider_status = AI_Client_Adaptor::provider_status();
+		$is_wp_ai_backend = AI_Client_Adaptor::BACKEND_WP === AI_Client_Adaptor::resolve_backend();
 
 		wp_localize_script(
 			'otter-blocks',
@@ -299,8 +298,7 @@ class Registration {
 				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true ),
 				'hasOpenAiKey'            => $is_wp_ai_backend || ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
 				'aiClientActive'          => $is_wp_ai_backend,
-				'hasAIProvider'           => $ai_provider_status['hasAIProvider'],
-				'aiProviderSource'        => $ai_provider_status['source'],
+				'hasAIProvider'           => AI_Client_Adaptor::is_available(),
 				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
 			)
 		);

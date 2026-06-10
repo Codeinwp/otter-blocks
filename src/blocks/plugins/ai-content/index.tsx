@@ -76,7 +76,14 @@ const AIToolbar = ({
 	onClose
 }) => {
 	const [ getOption, _, status ] = useSettings();
-	const [ hasAPIKey, setHasAPIKey ] = useState<boolean>( false );
+
+	// True when the active backend can actually generate: the WP AI Client
+	// backend needs a configured provider; otherwise a legacy OpenAI key.
+	const [ hasAPIKey, setHasAPIKey ] = useState<boolean>(
+		window.themeisleGutenberg?.aiClientActive
+			? Boolean( window.themeisleGutenberg?.hasAIProvider )
+			: Boolean( window.themeisleGutenberg?.hasOpenAiKey )
+	);
 	const [ isProcessing, setIsProcessing ] = useState<Record<string, boolean>>({});
 	const [ displayError, setDisplayError ] = useState<string|undefined>( undefined );
 	const [ customActions, setCustomActions ] = useState<{title: string, prompt: string}[]>([]);
@@ -101,10 +108,13 @@ const AIToolbar = ({
 			return;
 		}
 
-		if ( 'loaded' === status && ! hasAPIKey ) {
-			const key = getOption( openAiAPIKeyName ) as string;
-			setHasAPIKey(  Boolean( key ) && 0 < key.length );
+		if ( 'loaded' === status ) {
 			setCustomActions( getOption( 'themeisle_blocks_settings_prompt_actions' ) as {title: string, prompt: string}[]);
+
+			if ( ! hasAPIKey ) {
+				const key = getOption( openAiAPIKeyName ) as string;
+				setHasAPIKey( Boolean( key ) && 0 < key.length );
+			}
 		}
 	}, [ status, getOption ]);
 
@@ -152,7 +162,7 @@ const AIToolbar = ({
 		}
 
 		if ( ! hasAPIKey ) {
-			setDisplayError( __( 'No Open API key detected. Please add your key.', 'otter-blocks' ) );
+			setDisplayError( __( 'No AI provider detected. Please set one up in Integrations.', 'otter-blocks' ) );
 			return;
 		}
 
@@ -248,7 +258,7 @@ const AIToolbar = ({
 				( ! hasAPIKey ) && (
 					<MenuGroup>
 						<span className='o-menu-item-alignment' style={{ display: 'block', marginBottom: '10px' }}>
-							{ __( 'Please add your OpenAI API key in Integrations.', 'otter-blocks' ) }
+							{ __( 'Please set up an AI provider in Integrations.', 'otter-blocks' ) }
 						</span>
 						<ExternalLink className='o-menu-item-alignment' href={window.themeisleGutenberg.optionsPath} target="_blank" rel="noopener noreferrer">
 							{

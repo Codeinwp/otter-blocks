@@ -74,6 +74,21 @@ class Otter_OpenAI_Backend implements AI_Backend {
 			return $this->error_response( 'invalid_request_args', __( 'The OpenAI request arguments are invalid.', 'otter-blocks' ), 400 );
 		}
 
+		// Re-establish the required keys without discarding any other
+		// wp_remote_post() argument the filter may have set (sslverify,
+		// redirection, httpversion, ...).
+		if ( ! isset( $request_args['method'] ) || ! is_string( $request_args['method'] ) ) {
+			$request_args['method'] = 'POST';
+		}
+
+		if ( ! isset( $request_args['body'] ) || ! is_string( $request_args['body'] ) ) {
+			$request_args['body'] = wp_json_encode( $payload );
+		}
+
+		if ( ! isset( $request_args['timeout'] ) || ! is_numeric( $request_args['timeout'] ) ) {
+			$request_args['timeout'] = 2 * MINUTE_IN_SECONDS;
+		}
+
 		$headers = array();
 		if ( ! isset( $request_args['headers'] ) || ! is_array( $request_args['headers'] ) ) {
 			$request_args['headers'] = array();
@@ -85,15 +100,14 @@ class Otter_OpenAI_Backend implements AI_Backend {
 			}
 		}
 
-		$request_args = array(
-			'method'  => isset( $request_args['method'] ) && is_string( $request_args['method'] ) ? $request_args['method'] : 'POST',
-			'headers' => $headers,
-			'body'    => isset( $request_args['body'] ) && is_string( $request_args['body'] ) ? $request_args['body'] : wp_json_encode( $payload ),
-			'timeout' => isset( $request_args['timeout'] ) && is_numeric( $request_args['timeout'] ) ? (float) $request_args['timeout'] : 2 * MINUTE_IN_SECONDS,
-		);
+		$request_args['headers'] = $headers;
 
 		$response = wp_remote_post(
 			self::BASE_URL,
+			// The stubs seal the args shape, but wp_remote_post() accepts any
+			// WP_Http::request() argument, including filter-supplied extras.
+			// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+			// @phpstan-ignore argument.type (sealed array shape in stubs)
 			$request_args
 		);
 

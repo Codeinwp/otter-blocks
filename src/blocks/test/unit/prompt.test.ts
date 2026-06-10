@@ -98,17 +98,10 @@ describe( 'prompt helpers', () => {
 			);
 		});
 
-		it( 'returns content from function call arguments when present', () => {
+		it( 'defaults token usage to zero when missing', () => {
 			expect( normalizePromptResponse({
-				choices: [{
-					message: {
-						content: 'Plain text',
-						function_call: {
-							name: 'generateForm',
-							arguments: '{"fields":[]}'
-						}
-					}
-				}]
+				content: '{"fields":[]}',
+				format: 'json'
 			} as any ) ).toEqual(
 				expect.objectContaining({
 					ok: true,
@@ -118,26 +111,7 @@ describe( 'prompt helpers', () => {
 			);
 		});
 
-		it( 'returns content and token usage from message responses', () => {
-			expect( normalizePromptResponse({
-				choices: [{
-					message: {
-						content: 'Plain text'
-					}
-				}],
-				usage: {
-					total_tokens: 33
-				}
-			} as any ) ).toEqual(
-				expect.objectContaining({
-					ok: true,
-					content: 'Plain text',
-					usedTokens: 33
-				})
-			);
-		});
-
-		it( 'returns a failed result for error responses', () => {
+		it( 'returns a failed result for unexpected response shapes', () => {
 			expect( normalizePromptResponse({
 				error: {
 					code: 'system',
@@ -149,9 +123,8 @@ describe( 'prompt helpers', () => {
 				expect.objectContaining({
 					ok: false,
 					error: expect.objectContaining({
-						code: 'system',
-						message: 'Failed',
-						type: 'openai'
+						code: 'invalid_response',
+						type: 'system'
 					})
 				})
 			);

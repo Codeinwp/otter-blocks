@@ -728,7 +728,7 @@ class Options_Settings {
 											'type' => 'string',
 										),
 										'value' => array(
-											'type' => 'string',
+											'type' => 'integer',
 										),
 									),
 								),

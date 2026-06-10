@@ -98,55 +98,6 @@ class AI_Client_Adaptor {
 	}
 
 	/**
-	 * Get the status of the configured WP AI providers.
-	 *
-	 * @return array{hasAIProvider: bool, source: string, providerId: string|null}
-	 */
-	public static function provider_status() {
-		$status = array(
-			'hasAIProvider' => false,
-			'source'        => 'none',
-			'providerId'    => null,
-		);
-
-		if ( ! function_exists( 'wp_get_connectors' ) ) {
-			return $status;
-		}
-
-		$status['hasAIProvider'] = self::is_available();
-
-		foreach ( wp_get_connectors() as $id => $connector ) {
-			if ( 'ai_provider' !== $connector['type'] ) {
-				continue;
-			}
-
-			$auth = $connector['authentication'];
-
-			if ( 'api_key' !== $auth['method'] ) {
-				continue;
-			}
-
-			$source = 'none';
-
-			if ( ! empty( $auth['env_var_name'] ) && getenv( $auth['env_var_name'] ) ) {
-				$source = 'env';
-			} elseif ( ! empty( $auth['constant_name'] ) && defined( $auth['constant_name'] ) && constant( $auth['constant_name'] ) ) {
-				$source = 'constant';
-			} elseif ( ! empty( $auth['setting_name'] ) && get_option( $auth['setting_name'] ) ) {
-				$source = 'database';
-			}
-
-			if ( 'none' !== $source ) {
-				$status['source']     = $source;
-				$status['providerId'] = (string) $id;
-				break;
-			}
-		}
-
-		return $status;
-	}
-
-	/**
 	 * Run an OpenAI chat-completions payload through the WP AI Client.
 	 *
 	 * @param array<string, mixed> $payload The OpenAI-format payload (already stripped of `otter_*` keys).
@@ -188,23 +139,20 @@ class AI_Client_Adaptor {
 				$builder = $builder->using_system_instruction( implode( "\n\n", $system_parts ) );
 			}
 
-			// The last user turn becomes the prompt text; everything before it is history.
-			$last_user_index = null;
-			foreach ( $turns as $index => $turn ) {
-				if ( 'user' === $turn['role'] ) {
-					$last_user_index = $index;
-				}
+			// The final turn becomes the prompt text; everything before it is
+			// history, in order. Promoting an earlier user turn would silently
+			// reorder the conversation, so a payload that does not end with a
+			// user turn is rejected instead.
+			$last_turn = end( $turns );
+
+			if ( false === $last_turn || 'user' !== $last_turn['role'] ) {
+				return $this->error_response( 'invalid_payload', __( 'The AI prompt must end with a user message.', 'otter-blocks' ), 400 );
 			}
 
-			$prompt_text = '';
+			$prompt_text = $last_turn['content'];
 			$history     = array();
 
-			foreach ( $turns as $index => $turn ) {
-				if ( $index === $last_user_index ) {
-					$prompt_text = $turn['content'];
-					continue;
-				}
-
+			foreach ( array_slice( $turns, 0, count( $turns ) - 1 ) as $turn ) {
 				$part      = new \WordPress\AiClient\Messages\DTO\MessagePart( $turn['content'] );
 				$history[] = 'model' === $turn['role']
 					? new \WordPress\AiClient\Messages\DTO\ModelMessage( array( $part ) )

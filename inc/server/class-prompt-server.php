@@ -214,14 +214,14 @@ class Prompt_Server {
 		// Remove the values which keys start with 'otter_'.
 		$body = array_diff_key( $body, $otter_data );
 
-		$this->record_prompt_usage( $otter_data );
-
 		$backend = AI_Backend_Resolver::resolve();
 		$result  = $backend->generate( $body );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
+
+		$this->record_prompt_usage( $otter_data );
 
 		return new \WP_REST_Response( $result, 200 );
 	}
@@ -359,7 +359,7 @@ class Prompt_Server {
 	/**
 	 * Record prompt usage.
 	 *
-	 * @param array<string, string> $otter_metadata The metadata from the prompt usage request.
+	 * @param array<string, mixed> $otter_metadata The client-supplied metadata from the prompt usage request.
 	 * @return void
 	 */
 	private function record_prompt_usage( $otter_metadata ) {
@@ -369,6 +369,17 @@ class Prompt_Server {
 
 		$action       = $otter_metadata['otter_used_action'];
 		$user_content = $otter_metadata['otter_user_content'];
+
+		if ( ! is_string( $action ) || ! is_string( $user_content ) ) {
+			return;
+		}
+
+		$action       = substr( sanitize_text_field( $action ), 0, 100 );
+		$user_content = substr( sanitize_textarea_field( $user_content ), 0, 1000 );
+
+		if ( '' === $action ) {
+			return;
+		}
 
 		$usage = get_option( 'themeisle_otter_ai_usage' );
 
@@ -397,6 +408,12 @@ class Prompt_Server {
 		}
 
 		unset( $u );
+
+		// The option is autoloaded: cap the number of distinct actions so
+		// client-supplied keys cannot grow it without bound.
+		if ( $is_missing && count( $usage['usage_count'] ) >= 50 ) {
+			return;
+		}
 
 		if ( $is_missing ) {
 			$usage['usage_count'][] = array(

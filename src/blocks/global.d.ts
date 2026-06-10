@@ -91,7 +91,6 @@ declare global {
 			hasOpenAiKey: boolean
 			aiClientActive: boolean
 			hasAIProvider: boolean
-			aiProviderSource: 'env' | 'constant' | 'database' | 'none'
 		}
 		otterPro?: Readonly<{
 			isActive: boolean

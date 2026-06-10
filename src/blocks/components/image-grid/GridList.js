@@ -15,7 +15,7 @@ import {
 
 import { __ } from '@wordpress/i18n';
 
-import { useState } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 
 import { Button } from '@wordpress/components';
 
@@ -33,6 +33,17 @@ const GridList = ({
 	const [ selectedItems, setSelectedItems ] = useState([]);
 	const [ isSorting, setIsSorting ] = useState( false );
 	const [ sortingItemKey, setSortingItemKey ] = useState( null );
+
+	// The same attachment can appear more than once in the grid, so the
+	// attachment id alone is not a unique sortable id; suffix repeats.
+	const itemIds = useMemo( () => {
+		const seen = {};
+
+		return attributes.images.map( ( item ) => {
+			const count = seen[ item.id ] = ( seen[ item.id ] ?? 0 ) + 1;
+			return 1 === count ? `${ item.id }` : `${ item.id }-${ count }`;
+		});
+	}, [ attributes.images ]);
 
 	const handleDragStart = ( index ) => {
 		setIsSorting( true );
@@ -90,27 +101,27 @@ const GridList = ({
 		>
 			<SortableGrid
 				items={ attributes.images }
-				getItemId={ ( item ) => item.id }
+				getItemId={ ( item, index ) => itemIds[ index ] }
 				onDragStart={ handleDragStart }
 				onReorder={ handleReorder }
 				activationDistance={ 3 }
 				isItemDisabled={ isItemDisabled }
 			>
-				{ ( item ) => {
+				{ ( item, index, id, disabled ) => {
 					const isSelected = selectedItems.includes( item );
 					const itemIsBeingDragged = sortingItemKey === item;
 
 					return (
 						<SortableItem
-							key={ `image-${ item.id }` }
-							id={ item.id }
+							key={ `image-${ id }` }
+							id={ id }
 							value={ item }
 							selected={ isSelected }
 							dragging={ itemIsBeingDragged }
 							sorting={ isSorting }
 							selectedItemsCount={ selectedItems.length }
 							onClick={ handleItemSelect }
-							disabled={ isItemDisabled( item ) }
+							disabled={ disabled }
 						/>
 					);
 				} }
