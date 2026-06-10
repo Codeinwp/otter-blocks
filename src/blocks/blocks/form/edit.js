@@ -81,7 +81,7 @@ const formOptionsMap = {
 	cc: 'cc',
 	bcc: 'bcc',
 	autoresponder: 'autoresponder',
-	submissionsSaveLocation: 'submissionsSaveLocation',
+	emailNotification: 'emailNotification',
 	webhookId: 'webhookId',
 	requiredFields: 'requiredFields'
 };
@@ -147,7 +147,7 @@ const Edit = ({
 		cc: undefined,
 		bcc: undefined,
 		autoresponder: undefined,
-		submissionsSaveLocation: undefined
+		emailNotification: undefined
 	});
 
 	const {
@@ -374,7 +374,9 @@ const Edit = ({
 			hasCaptcha: wpOptions?.hasCaptcha,
 			autoresponder: wpOptions?.autoresponder,
 			autoresponderSubject: wpOptions?.autoresponderSubject,
-			submissionsSaveLocation: wpOptions?.submissionsSaveLocation,
+
+			// Read-time migration of the legacy save-location values: only `database` meant no email notification.
+			emailNotification: wpOptions?.emailNotification ?? ( wpOptions?.submissionsSaveLocation ? 'database' !== wpOptions.submissionsSaveLocation : true ),
 			webhookId: wpOptions?.webhookId,
 			requiredFields: wpOptions?.requiredFields
 		});
@@ -435,6 +437,9 @@ const Edit = ({
 		Object.keys( formOptionsMap ).forEach( key => {
 			data[key] = formOptions[formOptionsMap[key]];
 		});
+
+		// Rewrite the stored options to the new format: the legacy save-location value was migrated to `emailNotification` at read time.
+		data.submissionsSaveLocation = undefined;
 
 		try {
 			( new DeferredWpOptionsSave() ).save(

@@ -18,7 +18,6 @@ use ThemeIsle\GutenbergBlocks\Integration\Form_Utils;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
 use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
-use ThemeIsle\GutenbergBlocks\Pro;
 use WP_Error;
 use WP_HTTP_Response;
 use WP_REST_Request;
@@ -65,6 +64,14 @@ class Form_Server {
 	 * Autoresponder Email Error Expiration Time
 	 */
 	const AUTO_RESPONDER_ERROR_EXPIRATION_TIME = WEEK_IN_SECONDS;
+
+	/**
+	 * Admin Alert cooldown for infrastructure failures (captcha provider, delivery).
+	 *
+	 * At most one alert per form per failure type within this window — the Records and
+	 * their Delivery Status remain the per-submission source of truth.
+	 */
+	const ADMIN_ALERT_EXPIRATION_TIME = HOUR_IN_SECONDS;
 
 	/**
 	 * Initialize the class
@@ -314,26 +321,45 @@ class Form_Server {
 				do_action( 'otter_form_issues_handler', $form_data );
 			} else {
 
-				if ( ! empty( $form_options->get_redirect_link() ) ) {
-					$res->add_response_field( 'redirectLink', $form_options->get_redirect_link() );
-				}
+				/**
+				 * Persist the submission as a Record before attempting any delivery action,
+				 * so a delivery failure can no longer lose the submission. The save handler
+				 * stores the new Record ID on the form data.
+				 *
+				 * @param Form_Data_Request $form_data The form data.
+				 * @since 3.1
+				 */
+				do_action( 'otter_form_record_save', $form_data );
 
-				$this->apply_main_provider( $form_data ); // Send the data to the provider.
+				if ( $form_data->has_infrastructure_failure() ) {
 
-				do_action( 'otter_form_after_submit', $form_data );
-
-				if ( ! ( $form_data instanceof Form_Data_Request ) ) {
-					$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR )
-						->add_reason( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
-				}
-
-				if ( $form_data->has_error() ) {
-					$res->set_code( $form_data->get_error_code() )
+					// A dependent service is down: the Record was saved and marked failed, but the submission cannot be verified/delivered.
+					$res->set_code( $form_data->get_infrastructure_failure_code() )
 						->set_display_error( $form_options->get_error_message() );
+
 				} else {
-					$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND )
-						->set_success_message( $form_options->get_submit_message() )
-						->mark_as_success();
+
+					if ( ! empty( $form_options->get_redirect_link() ) ) {
+						$res->add_response_field( 'redirectLink', $form_options->get_redirect_link() );
+					}
+
+					$this->apply_main_provider( $form_data ); // Send the data to the provider.
+
+					do_action( 'otter_form_after_submit', $form_data );
+
+					if ( ! ( $form_data instanceof Form_Data_Request ) ) {
+						$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR )
+							->add_reason( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
+					}
+
+					if ( $form_data->has_error() ) {
+						$res->set_code( $form_data->get_error_code() )
+							->set_display_error( $form_options->get_error_message() );
+					} else {
+						$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND )
+							->set_success_message( $form_options->get_submit_message() )
+							->mark_as_success();
+					}
 				}
 			}
 		} catch ( Exception $e ) {
@@ -415,9 +441,8 @@ class Form_Server {
 		try {
 			$form_options = $form_data->get_wp_options();
 
-			$can_send_email = substr( $form_options->get_submissions_save_location(), -strlen( 'email' ) ) === 'email';
-
-			if ( Pro::is_pro_active() && ! $can_send_email ) {
+			// The submission is already saved as a Record; the notification email is optional.
+			if ( ! $form_options->has_email_notification() ) {
 				return $form_data;
 			}
 
@@ -534,10 +559,49 @@ class Form_Server {
 				}
 			}
 
+			if ( ! $send_email && $form_data->has_infrastructure_failure() ) {
+				$send_email = $this->can_send_throttled_alert( $form_data, 'captcha_provider' );
+			}
+
+			$delivery_failure_codes = array(
+				Form_Data_Response::ERROR_EMAIL_NOT_SEND,
+				Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER,
+				Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR,
+			);
+
+			if (
+				! $send_email &&
+				(
+					in_array( $form_data->get_error_code(), $delivery_failure_codes, true ) ||
+					$form_data->has_warning_codes( $delivery_failure_codes )
+				)
+			) {
+				$send_email = $this->can_send_throttled_alert( $form_data, 'delivery' );
+			}
+
 			if ( $send_email ) {
 				$this->send_error_email( $form_data );
 			}
 		}
+	}
+
+	/**
+	 * Check the cooldown for an Admin Alert: at most one alert per form per failure type per hour.
+	 *
+	 * @param Form_Data_Request $form_data The form request data.
+	 * @param string            $type The failure type (e.g.: 'captcha_provider', 'delivery').
+	 * @return bool Whether the alert can be sent.
+	 * @since 3.1
+	 */
+	private function can_send_throttled_alert( $form_data, $type ) {
+		$key = $form_data->get_form_option_id() . '_alert_' . $type;
+
+		if ( false !== get_transient( $key ) ) {
+			return false;
+		}
+
+		set_transient( $key, true, self::ADMIN_ALERT_EXPIRATION_TIME );
+		return true;
 	}
 
 	/**
@@ -966,7 +1030,7 @@ class Form_Server {
 			$form_data->set_error( Form_Data_Response::ERROR_MISSING_CAPTCHA );
 		}
 
-		if ( $form_data->payload_has( 'token' ) ) {
+		if ( $form_data->payload_has( 'token' ) && ! $form_data->has_error() ) {
 			$secret = get_option( 'themeisle_google_captcha_api_secret_key' );
 			$resp   = wp_remote_post(
 				apply_filters( 'otter_blocks_recaptcha_verify_url', 'https://www.google.com/recaptcha/api/siteverify' ),
@@ -978,9 +1042,22 @@ class Form_Server {
 				)
 			);
 
-			$result = json_decode( $resp['body'], true );
+			/**
+			 * A provider failure (unreachable service, timeout, 5xx) is not a verification failure:
+			 * the submission is saved and marked failed instead of being rejected.
+			 */
+			$response_code = wp_remote_retrieve_response_code( $resp );
+			if ( is_wp_error( $resp ) || 200 !== $response_code ) {
+				$form_data->mark_infrastructure_failure(
+					Form_Data_Response::ERROR_CAPTCHA_PROVIDER_UNREACHABLE,
+					is_wp_error( $resp ) ? $resp->get_error_message() : 'HTTP ' . $response_code
+				);
+				return $form_data;
+			}
 
-			if ( ! $result['success'] ) {
+			$result = json_decode( wp_remote_retrieve_body( $resp ), true );
+
+			if ( ! is_array( $result ) || empty( $result['success'] ) ) {
 				$form_data->set_error( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN );
 			}
 		}

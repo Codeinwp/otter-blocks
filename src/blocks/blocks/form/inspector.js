@@ -30,6 +30,7 @@ import {
 	Spinner,
 	TextControl,
 	TextareaControl,
+	ToggleControl,
 	FontSizePicker
 } from '@wordpress/components';
 
@@ -116,6 +117,23 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 					value={ formOptions.emailTo }
 					onChange={ emailTo => setFormOption({ emailTo }) }
 					help={ __( 'Default is site administrator.', 'otter-blocks' ) }
+				/>
+			</ToolsPanelItem>
+
+			<ToolsPanelItem
+				hasValue={ () => undefined !== formOptions.emailNotification }
+				label={ __( 'Email Notification', 'otter-blocks' ) }
+				onDeselect={ () => setFormOption({ emailNotification: undefined }) }
+				isShownByDefault={ true }
+			>
+				<ToggleControl
+					label={ __( 'Email Notification', 'otter-blocks' ) }
+					checked={ formOptions.emailNotification ?? true }
+					onChange={ emailNotification => {
+						window.oTrk?.set( `${attributes.id}_notification`, { feature: 'form-storing', featureComponent: 'email-notification', featureValue: emailNotification, groupID: attributes.id });
+						setFormOption({ emailNotification });
+					} }
+					help={ __( 'Send an email to the site owner for each submission. Submissions are always saved in the Database — see them in Otter Blocks > Submissions.', 'otter-blocks' ) }
 				/>
 			</ToolsPanelItem>
 
@@ -244,26 +262,6 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 
 			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
 				<Fragment>
-					<ToolsPanelItem
-						hasValue={ () => undefined !== formOptions.submissionsSaveLocation }
-						label={ __( 'Submissions', 'otter-blocks' ) }
-						onDeselect={ () => setFormOption({ submissionsSaveLocation: undefined }) }
-						isShownByDefault={ true }
-					>
-						<SelectControl
-							label={ __( 'Save Location', 'otter-blocks' ) }
-							value={ 'email' }
-							onChange={ () => {} }
-							options={
-								[
-									{ label: __( 'Database (Pro)', 'otter-blocks' ), value: 'database' },
-									{ label: __( 'Email Only', 'otter-blocks' ), value: 'email' },
-									{ label: __( 'Database and Email (Pro)', 'otter-blocks' ), value: 'database-email' }
-								]
-							}
-							help={ __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-blocks' ) }
-						/>
-					</ToolsPanelItem>
 					<ToolsPanelItem
 						hasValue={ () => false }
 						label={ __( 'Autoresponder', 'otter-blocks' ) }
@@ -618,16 +616,6 @@ const Inspector = ({
 															{ __( 'Add users to the contact list and skip email alerts for each submission. Ideal for news letter sign-up forms.', 'otter-blocks' ) }
 														</div>
 													) }
-
-													{
-														'subscribe' === formOptions.action &&
-														( 'email' === formOptions.submissionsSaveLocation || ! Boolean( window?.otterPro?.isActive ) ) &&
-														(
-															<div style={{ marginBottom: '10px' }}>
-																{ __( 'By skipping the email alerts you will lose the data from other fields. If this is a problem, we recommend switching to Database saving or using Submit & Subscribe Action', 'otter-blocks' ) }
-															</div>
-														)
-													}
 												</Fragment>
 											) }
 										</Fragment>

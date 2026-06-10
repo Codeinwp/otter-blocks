@@ -76,20 +76,6 @@ class Dashboard {
 
 		add_submenu_page(
 			'otter',
-			__( 'Submissions', 'otter-blocks' ),
-			sprintf(
-				'<div class="o-menu-submissions">%s <span class="o-menu-badge">%s</span></div>',
-				esc_html__( 'Submissions', 'otter-blocks' ),
-				esc_html__( 'Pro', 'otter-blocks' )
-			),
-			'manage_options',
-			'form-submissions-free',
-			array( $this, 'form_submissions_callback' ),
-			10
-		);
-
-		add_submenu_page(
-			'otter',
 			__( 'Blocks', 'otter-blocks' ),
 			__( 'Blocks', 'otter-blocks' ),
 			'manage_options',
@@ -141,56 +127,6 @@ class Dashboard {
 	 */
 	public function menu_callback() {
 		echo '<div id="otter"></div>';
-	}
-
-	/**
-	 * The content of the form submissions upsell page.
-	 */
-	public function form_submissions_callback() {
-		?>
-		<style>
-			div.error, div.notice {
-				display: none;
-			}
-
-			.otter-form-submissions-upsell-content {
-				text-align: center;
-				padding: 40px 20px;
-				max-width: 520px;
-				margin: 0 auto;
-			}
-
-			.otter-form-submissions-upsell-content h2 {
-				font-size: 32px;
-				margin-bottom: 25px;
-			}
-
-			.otter-form-submissions-upsell-content p {
-				font-size: 14px;
-				margin-bottom: 20px;
-			}
-
-			.otter-form-submissions-upsell-content .button {
-				font-size: 16px;
-				padding: 10px 50px;
-				background-color: #ED6F57;
-				border-color: #ED6F57;
-			}
-
-			.otter-form-submissions-upsell-content .button:hover {
-				background-color: #E25C4F;
-				border-color: #E25C4F;
-			}
-		</style>
-		<div id="otter-form-submissions-upsell">
-			<div class="otter-form-submissions-upsell-content">
-				<img style="max-width: 100%" src="<?php echo esc_url( OTTER_BLOCKS_URL . 'assets/images/form-submissions-upsell.svg' ); ?>" alt="Otter Form Submissions Upsell" />
-				<h2 style="line-height: 1"><?php esc_html_e( 'Collect Your Form Submissions', 'otter-blocks' ); ?></h2>
-				<p><?php esc_html_e( 'Store, manage and analyze your form submissions with ease – all in one place. With Otter powerful features, managing submissions has never been simpler.', 'otter-blocks' ); ?></p>
-				<a href="<?php echo esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions', 'admin' ) ) ); ?>" class="button button-primary" target="_blank"><?php esc_html_e( 'Explore Otter PRO', 'otter-blocks' ); ?></a>
-			</div>
-		</div>
-		<?php
 	}
 
 	/**
@@ -385,7 +321,7 @@ class Dashboard {
 	public function form_submission_elements() {
 		$screen = get_current_screen();
 
-		if ( 'edit-otter_form_record' === $screen->id || 'otter-blocks_page_form-submissions-free' === $screen->id ) {
+		if ( 'edit-otter_form_record' === $screen->id ) {
 			$this->the_otter_banner();
 		}
 	}
@@ -456,6 +392,15 @@ class Dashboard {
 				<button id="export-submissions" class="button">
 					<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
 				</button>
+				<?php else : ?>
+				<div style="display: flex; align-items: center; gap: 10px;">
+					<button id="export-submissions" class="button" disabled title="<?php esc_attr_e( 'Bulk export is available in Otter Pro.', 'otter-blocks' ); ?>">
+						<?php esc_html_e( 'Export', 'otter-blocks' ); ?> <span class="o-menu-badge"><?php esc_html_e( 'Pro', 'otter-blocks' ); ?></span>
+					</button>
+					<a href="<?php echo esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions-export', 'admin' ) ) ); ?>" target="_blank">
+						<?php esc_html_e( 'Unlock with Otter Pro', 'otter-blocks' ); ?>
+					</a>
+				</div>
 				<?php endif; ?>
 			</div>
 		</div>
@@ -515,7 +460,8 @@ class Dashboard {
 	 */
 	public function form_submissions_widget_content() {
 
-		$is_active    = Pro::is_pro_active();
+		// Submission storage lives in the lite plugin: the widget shows real data for every plan.
+		$is_active    = post_type_exists( 'otter_form_record' );
 		$entries      = array();
 		$count        = 0;
 		$posts_filter = 'all';
@@ -589,74 +535,6 @@ class Dashboard {
 
 		?>
 		<style>
-			.o-upsell-container {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				width: 100%;
-				margin-bottom: 8px;
-			}
-
-			.o-upsell-banner {
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				padding: 24px;
-				gap: 12px;
-				isolation: isolate;
-
-				width: fit-content;
-
-				background: #FFFFFF;
-				box-shadow: 0px 2px 25px 10px rgba(0, 0, 0, 0.08);
-				border-radius: 6px;
-
-				/* Inside auto layout */
-
-				flex: none;
-				order: 0;
-				align-self: stretch;
-				flex-grow: 0;
-
-			}
-
-			.o-upsell-banner .o-banner-tile {
-				font-weight: 600;
-				font-size: 16px;
-				line-height: 150%;
-				text-align: center;
-			}
-
-			.o-upsell-banner p {
-				font-weight: 400;
-				font-size: 13px;
-				line-height: 150%;
-				display: flex;
-				align-items: center;
-				text-align: center;
-				margin: 0px;
-			}
-
-			.o-upsell-banner a {
-				display: flex;
-				flex-direction: row;
-				justify-content: center;
-				align-items: center;
-				padding: 13.5px 24px;
-				background: #ED6F57;
-				border-radius: 2px;
-				font-style: normal;
-				font-weight: 600;
-				font-size: 13px;
-				line-height: 13px;
-				color: #FFFFFF;
-			}
-
-			.o-upsell-banner img {
-				width: 80px
-			}
-
 			.otter-form-submissions-widget {
 				padding: 6px 3px 0px 3px;
 			}
@@ -740,19 +618,6 @@ class Dashboard {
 			</script>
 		<?php } ?>
 		<div class="otter-form-submissions-widget <?php echo ! $is_active ? 'inactive' : ''; ?>">
-
-			<?php if ( ! $is_active ) { ?>
-				<div class="o-upsell-container">
-					<div class="o-upsell-banner">
-						<img src="<?php echo esc_url_raw( OTTER_BLOCKS_URL . 'assets/images/logo-alt.png' ); ?>" alt="Otter Logo" />
-						<div class="o-banner-tile">
-							<?php esc_html_e( 'Collect your Form Submissions with Otter Blocks', 'otter-blocks' ); ?>
-						</div>
-						<p><?php esc_html_e( 'With Otter\'s powerful features, you can easily store and manage form submissions - all in one place.', 'otter-blocks' ); ?></p>
-						<a target="_blank" href="<?php echo esc_url( Pro::get_url() ); ?>" ><?php esc_html_e( 'Upgrade to Otter Pro', 'otter-blocks' ); ?></a>
-					</div>
-				</div>
-			<?php } ?>
 
 			<div class="o-form-entries">
 				<div class="o-entries-header">

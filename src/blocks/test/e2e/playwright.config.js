@@ -15,6 +15,9 @@ const SERIAL_SPECS = [
 	'**/blocks/block-conditions.spec.js',
 	'**/blocks/dashboard.spec.js',
 	'**/blocks/form.spec.js',
+
+	// Mutates site-wide scenario state (mail/captcha modes, stored records) via the bootstrap mu-plugin.
+	'**/blocks/form-retention.spec.js',
 	'**/blocks/onboarding.spec.js'
 ];
 

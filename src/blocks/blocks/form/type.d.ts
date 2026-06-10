@@ -64,7 +64,9 @@ export type FormOptions = {
 		subject?: string
 		body?: string
 	}
+	/** Legacy save-location value, migrated to `emailNotification` at read time. */
 	submissionsSaveLocation?: string
+	emailNotification?: boolean
 	webhookId?: string
 }
 
