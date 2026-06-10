@@ -35,6 +35,10 @@ class Otter_OpenAI_Backend implements AI_Backend {
 	 * @return array<string, mixed>|\WP_Error
 	 */
 	public function generate( array $payload ) {
+		if ( ! $this->is_available() ) {
+			return $this->error_response( 'no_api_key', __( 'No OpenAI API key is configured. Add your API key in the Otter dashboard under Integrations.', 'otter-blocks' ), 400 );
+		}
+
 		/**
 		 * Filters the OpenAI-shaped payload before Otter sends it to OpenAI.
 		 *
@@ -157,6 +161,10 @@ class Otter_OpenAI_Backend implements AI_Backend {
 			$format  = 'json';
 		} elseif ( isset( $message['content'] ) ) {
 			$content = (string) $message['content'];
+		}
+
+		if ( '' === $content ) {
+			return $this->error_response( 'empty_response', __( 'OpenAI returned an empty response. Please try again.', 'otter-blocks' ), 502 );
 		}
 
 		$used_tokens = isset( $body['usage']['total_tokens'] ) && is_numeric( $body['usage']['total_tokens'] ) ? (int) $body['usage']['total_tokens'] : 0;

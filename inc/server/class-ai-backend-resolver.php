@@ -13,11 +13,41 @@ namespace ThemeIsle\GutenbergBlocks\Server;
 class AI_Backend_Resolver {
 
 	/**
+	 * `themeisle_otter_ai_backend` value: pick the backend automatically.
+	 *
+	 * @var string
+	 */
+	const SETTING_AUTO = 'auto';
+
+	/**
+	 * `themeisle_otter_ai_backend` value: force the WP AI Client backend.
+	 *
+	 * @var string
+	 */
+	const SETTING_WP_AI_CLIENT = 'wp-ai-client';
+
+	/**
+	 * `themeisle_otter_ai_backend` value: force the Otter OpenAI key backend.
+	 *
+	 * @var string
+	 */
+	const SETTING_OPENAI_KEY = 'openai-key';
+
+	/**
 	 * Cached backend registry for the current request.
 	 *
 	 * @var array<string, AI_Backend>|null
 	 */
 	private static $backends_cache = null;
+
+	/**
+	 * The valid `themeisle_otter_ai_backend` setting values.
+	 *
+	 * @return list<string>
+	 */
+	public static function get_setting_values() {
+		return array( self::SETTING_AUTO, self::SETTING_WP_AI_CLIENT, self::SETTING_OPENAI_KEY );
+	}
 
 	/**
 	 * Resolve the effective backend instance.
@@ -51,11 +81,11 @@ class AI_Backend_Resolver {
 	 */
 	public static function resolve_backend_id( $backends = null ) {
 		$backends = null === $backends ? self::get_backends() : $backends;
-		$backend  = get_option( 'themeisle_otter_ai_backend', 'auto' );
+		$backend  = get_option( 'themeisle_otter_ai_backend', self::SETTING_AUTO );
 
-		if ( 'openai-key' === $backend ) {
+		if ( self::SETTING_OPENAI_KEY === $backend ) {
 			$resolved = AI_Client_Adaptor::BACKEND_OTTER_OPENAI;
-		} elseif ( 'wp-ai-client' === $backend ) {
+		} elseif ( self::SETTING_WP_AI_CLIENT === $backend ) {
 			if ( self::is_backend_available( $backends, AI_Client_Adaptor::BACKEND_WP ) ) {
 				$resolved = AI_Client_Adaptor::BACKEND_WP;
 			} elseif ( self::is_backend_available( $backends, AI_Client_Adaptor::BACKEND_OTTER_OPENAI ) ) {
@@ -85,7 +115,7 @@ class AI_Backend_Resolver {
 	public static function is_fallback_active() {
 		$backends = self::get_backends();
 
-		return 'wp-ai-client' === get_option( 'themeisle_otter_ai_backend', 'auto' )
+		return self::SETTING_WP_AI_CLIENT === get_option( 'themeisle_otter_ai_backend', self::SETTING_AUTO )
 			&& AI_Client_Adaptor::BACKEND_OTTER_OPENAI === self::resolve_backend_id( $backends )
 			&& ! self::is_backend_available( $backends, AI_Client_Adaptor::BACKEND_WP );
 	}

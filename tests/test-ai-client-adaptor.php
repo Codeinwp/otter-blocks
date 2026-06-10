@@ -155,6 +155,34 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
+	 * OpenAI-style content-parts arrays are rejected instead of being cast
+	 * to the literal string "Array".
+	 */
+	public function test_generate_rejects_non_string_message_content() {
+		$adaptor = $this->make_adaptor();
+
+		$response = $adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => array(
+							array(
+								'type' => 'text',
+								'text' => 'Hello',
+							),
+						),
+					),
+				),
+			)
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'invalid_payload', $response->get_error_code() );
+		$this->assertSame( 400, $response->get_error_data()['status'] );
+	}
+
+	/**
 	 * Generation parameters are mapped and the model pin is dropped.
 	 */
 	public function test_generate_maps_parameters_and_drops_model() {
@@ -220,11 +248,281 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( array( $schema ), $adaptor->builder->get_call_args( 'as_json_response' ) );
+		$expected_schema = array(
+			'type'                 => 'object',
+			'properties'           => array(
+				'fields' => array( 'type' => array( 'array', 'null' ) ),
+			),
+			'additionalProperties' => false,
+			'required'             => array( 'fields' ),
+		);
+
+		$this->assertSame( array( $expected_schema ), $adaptor->builder->get_call_args( 'as_json_response' ) );
 
 		$this->assertSame( '{"fields":[]}', $response['content'] );
 		$this->assertSame( 33, $response['usedTokens'] );
 		$this->assertSame( 'json', $response['format'] );
+	}
+
+	/**
+	 * Nested object schemas gain additionalProperties: false for strict json_schema.
+	 */
+	public function test_generate_normalizes_nested_json_schema() {
+		$schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'fields' => array(
+					'type'  => 'array',
+					'items' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'label' => array( 'type' => 'string' ),
+						),
+					),
+				),
+			),
+		);
+		$adaptor  = $this->make_adaptor( new Fake_AI_Result( '{"fields":[]}' ) );
+		$expected = array(
+			'type'                 => 'object',
+			'properties'           => array(
+				'fields' => array(
+					'type'  => array( 'array', 'null' ),
+					'items' => array(
+						'type'                 => 'object',
+						'properties'           => array(
+							'label' => array( 'type' => array( 'string', 'null' ) ),
+						),
+						'additionalProperties' => false,
+						'required'             => array( 'label' ),
+					),
+				),
+			),
+			'additionalProperties' => false,
+			'required'             => array( 'fields' ),
+		);
+
+		$adaptor->generate(
+			array(
+				'messages'      => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Make a form',
+					),
+				),
+				'functions'     => array(
+					array(
+						'name'       => 'create_form',
+						'parameters' => $schema,
+					),
+				),
+				'function_call' => array( 'name' => 'create_form' ),
+			)
+		);
+
+		$this->assertSame( array( $expected ), $adaptor->builder->get_call_args( 'as_json_response' ) );
+	}
+
+	/**
+	 * Unsupported JSON Schema keywords are stripped for strict json_schema.
+	 */
+	public function test_generate_strips_unsupported_json_schema_keywords() {
+		$schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'fields' => array(
+					'type'              => 'array',
+					'uniqueItems'       => true,
+					'minItems'          => 1,
+					'dependentRequired' => array( 'label' => array( 'type' ) ),
+					'items'             => array(
+						'type'       => 'object',
+						'not'        => array(
+							'required' => array( 'legacy' ),
+						),
+						'properties' => array(
+							'label' => array(
+								'type'    => 'string',
+								'default' => 'Field',
+							),
+						),
+					),
+				),
+			),
+		);
+		$adaptor = $this->make_adaptor( new Fake_AI_Result( '{"fields":[]}' ) );
+
+		$adaptor->generate(
+			array(
+				'messages'      => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Make a form',
+					),
+				),
+				'functions'     => array(
+					array(
+						'name'       => 'create_form',
+						'parameters' => $schema,
+					),
+				),
+				'function_call' => array( 'name' => 'create_form' ),
+			)
+		);
+
+		$normalized = $adaptor->builder->get_call_args( 'as_json_response' )[0];
+		$fields     = $normalized['properties']['fields'];
+
+		$this->assertArrayNotHasKey( 'uniqueItems', $fields );
+		$this->assertArrayNotHasKey( 'minItems', $fields );
+		$this->assertArrayNotHasKey( 'dependentRequired', $fields );
+		$this->assertArrayNotHasKey( 'not', $fields['items'] );
+		$this->assertArrayNotHasKey( 'default', $fields['items']['properties']['label'] );
+	}
+
+	/**
+	 * Partial required lists from prompt templates are expanded for strict json_schema.
+	 */
+	public function test_generate_expands_partial_required_lists() {
+		$schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'fields' => array(
+					'type'  => 'array',
+					'items' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'label'       => array( 'type' => 'string' ),
+							'type'        => array( 'type' => 'string' ),
+							'placeholder' => array( 'type' => 'string' ),
+						),
+						'required'   => array( 'label', 'type' ),
+					),
+				),
+			),
+		);
+		$adaptor = $this->make_adaptor( new Fake_AI_Result( '{"fields":[]}' ) );
+
+		$adaptor->generate(
+			array(
+				'messages'      => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Make a form',
+					),
+				),
+				'functions'     => array(
+					array(
+						'name'       => 'create_form',
+						'parameters' => $schema,
+					),
+				),
+				'function_call' => array( 'name' => 'create_form' ),
+			)
+		);
+
+		$normalized = $adaptor->builder->get_call_args( 'as_json_response' )[0];
+
+		$this->assertSame(
+			array( 'label', 'type', 'placeholder' ),
+			$normalized['properties']['fields']['items']['required']
+		);
+		$this->assertSame(
+			array( 'string', 'null' ),
+			$normalized['properties']['fields']['items']['properties']['placeholder']['type']
+		);
+	}
+
+	/**
+	 * Supported strict json_schema references are preserved and normalized.
+	 */
+	public function test_generate_preserves_schema_references_and_definitions() {
+		$schema = array(
+			'type'       => 'object',
+			'properties' => array(
+				'steps' => array(
+					'type'  => 'array',
+					'items' => array( '$ref' => '#/$defs/step' ),
+				),
+			),
+			'required'   => array( 'steps' ),
+			'$defs'      => array(
+				'step' => array(
+					'type'       => 'object',
+					'properties' => array(
+						'explanation' => array( 'type' => 'string' ),
+					),
+					'required'   => array( 'explanation' ),
+				),
+			),
+		);
+		$adaptor = $this->make_adaptor( new Fake_AI_Result( '{"steps":[]}' ) );
+
+		$adaptor->generate(
+			array(
+				'messages'      => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Make steps',
+					),
+				),
+				'functions'     => array(
+					array(
+						'name'       => 'create_steps',
+						'parameters' => $schema,
+					),
+				),
+				'function_call' => array( 'name' => 'create_steps' ),
+			)
+		);
+
+		$normalized = $adaptor->builder->get_call_args( 'as_json_response' )[0];
+
+		$this->assertSame( '#/$defs/step', $normalized['properties']['steps']['items']['$ref'] );
+		$this->assertArrayHasKey( '$defs', $normalized );
+		$this->assertSame( array( 'explanation' ), $normalized['$defs']['step']['required'] );
+		$this->assertFalse( $normalized['$defs']['step']['additionalProperties'] );
+	}
+
+	/**
+	 * Schema-valued additionalProperties is rejected by strict json_schema.
+	 */
+	public function test_generate_forces_additional_properties_false_for_objects() {
+		$schema = array(
+			'type'                 => 'object',
+			'properties'           => array(
+				'metadata' => array(
+					'type'                 => 'object',
+					'additionalProperties' => array( 'type' => 'string' ),
+				),
+			),
+			'required'             => array( 'metadata' ),
+			'additionalProperties' => array( 'type' => 'string' ),
+		);
+		$adaptor = $this->make_adaptor( new Fake_AI_Result( '{"metadata":{}}' ) );
+
+		$adaptor->generate(
+			array(
+				'messages'      => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Make metadata',
+					),
+				),
+				'functions'     => array(
+					array(
+						'name'       => 'create_metadata',
+						'parameters' => $schema,
+					),
+				),
+				'function_call' => array( 'name' => 'create_metadata' ),
+			)
+		);
+
+		$normalized = $adaptor->builder->get_call_args( 'as_json_response' )[0];
+
+		$this->assertFalse( $normalized['additionalProperties'] );
+		$this->assertFalse( $normalized['properties']['metadata']['additionalProperties'] );
 	}
 
 	/**
@@ -653,6 +951,125 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Without an API key the Otter OpenAI backend fails with an actionable
+	 * error instead of sending a request with an empty bearer token.
+	 */
+	public function test_otter_openai_errors_without_api_key() {
+		$http_called = false;
+
+		add_filter(
+			'pre_http_request',
+			function ( $preempt ) use ( &$http_called ) {
+				$http_called = true;
+				return $preempt;
+			}
+		);
+
+		$backend  = new Otter_OpenAI_Backend();
+		$response = $backend->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Hello',
+					),
+				),
+			)
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'no_api_key', $response->get_error_code() );
+		$this->assertSame( 400, $response->get_error_data()['status'] );
+		$this->assertSame( 'openai', $response->get_error_data()['type'] );
+		$this->assertFalse( $http_called );
+	}
+
+	/**
+	 * Empty OpenAI completions surface as an error instead of a successful
+	 * generation with no content.
+	 */
+	public function test_otter_openai_errors_on_empty_content() {
+		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
+
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) {
+				if ( Otter_OpenAI_Backend::BASE_URL === $url ) {
+					return array(
+						'headers'  => array(),
+						'body'     => wp_json_encode( array( 'choices' => array() ) ),
+						'response' => array(
+							'code'    => 200,
+							'message' => 'OK',
+						),
+					);
+				}
+
+				return $preempt;
+			},
+			10,
+			3
+		);
+
+		$backend  = new Otter_OpenAI_Backend();
+		$response = $backend->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Hello',
+					),
+				),
+			)
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'empty_response', $response->get_error_code() );
+		$this->assertSame( 502, $response->get_error_data()['status'] );
+		$this->assertSame( 'openai', $response->get_error_data()['type'] );
+	}
+
+	/**
+	 * forward_prompt() rejects backend results that break the success envelope.
+	 */
+	public function test_forward_prompt_rejects_malformed_backend_result() {
+		add_filter(
+			'otter_ai_backends',
+			function ( $backends ) {
+				$backends['custom'] = new Fake_AI_Backend( true, array( 'unexpected' => 'shape' ) );
+				return $backends;
+			}
+		);
+
+		add_filter(
+			'otter_ai_backend',
+			function () {
+				return 'custom';
+			}
+		);
+
+		$response = $this->dispatch_generate(
+			array(
+				'otter_used_action'  => 'otter_action_test',
+				'otter_user_content' => 'Test content',
+				'messages'           => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Hello',
+					),
+				),
+			)
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'invalid_backend_response', $response->get_error_code() );
+		$this->assertSame( 502, $response->get_error_data()['status'] );
+
+		// Malformed generations are not recorded as usage.
+		$this->assertEmpty( get_option( 'themeisle_otter_ai_usage' ) );
+	}
+
+	/**
 	 * forward_prompt() routes to the WP AI Client path and skips the OpenAI request.
 	 */
 	public function test_forward_prompt_uses_wp_backend() {
@@ -694,7 +1111,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 			$this->assertSame( 'wp_ai_client', $response->get_error_data()['type'] );
 
 			// Failed generations are not recorded.
-			$this->assertFalse( get_option( 'themeisle_otter_ai_usage' ) );
+			$this->assertEmpty( get_option( 'themeisle_otter_ai_usage' ) );
 		} else {
 			$this->assertArrayHasKey( 'content', $response->get_data() );
 

@@ -80,6 +80,19 @@ type PromptServerResponse = {
 }
 
 /**
+ * Whether the resolved AI backend can generate: the WP AI Client backend
+ * needs a configured provider; otherwise a legacy OpenAI key. Single gate
+ * shared by every editor surface so they cannot disagree.
+ *
+ * @return {boolean} Whether AI generation is configured.
+ */
+export function isAIBackendConfigured(): boolean {
+	return window.themeisleGutenberg?.aiClientActive
+		? Boolean( window.themeisleGutenberg?.hasAIProvider )
+		: Boolean( window.themeisleGutenberg?.hasOpenAiKey );
+}
+
+/**
  * Convert the route response into the UI prompt contract.
  *
  * Both backends return the normalized `{ content, usedTokens, format }` shape

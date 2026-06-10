@@ -122,8 +122,20 @@ class AI_Client_Adaptor {
 			$turns        = array();
 
 			foreach ( $messages as $message ) {
+				if ( ! is_array( $message ) ) {
+					continue;
+				}
+
 				$role    = isset( $message['role'] ) ? $message['role'] : 'user';
-				$content = isset( $message['content'] ) ? (string) $message['content'] : '';
+				$content = isset( $message['content'] ) ? $message['content'] : '';
+
+				// OpenAI-style content-parts arrays have no WP AI Client equivalent;
+				// reject them instead of casting an array to the literal "Array".
+				if ( ! is_scalar( $content ) ) {
+					return $this->error_response( 'invalid_payload', __( 'AI message content must be plain text.', 'otter-blocks' ), 400 );
+				}
+
+				$content = (string) $content;
 
 				if ( 'system' === $role ) {
 					$system_parts[] = $content;
@@ -200,7 +212,12 @@ class AI_Client_Adaptor {
 			$forced_function = $this->get_forced_function( $payload );
 
 			if ( null !== $forced_function ) {
-				$schema  = isset( $forced_function['parameters'] ) && is_array( $forced_function['parameters'] ) ? $forced_function['parameters'] : null;
+				$schema = isset( $forced_function['parameters'] ) && is_array( $forced_function['parameters'] ) ? $forced_function['parameters'] : null;
+
+				if ( is_array( $schema ) ) {
+					$schema = $this->normalize_strict_json_schema( $schema );
+				}
+
 				$builder = $builder->as_json_response( $schema );
 			}
 
@@ -256,6 +273,159 @@ class AI_Client_Adaptor {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Normalize a JSON schema for OpenAI strict json_schema output.
+	 *
+	 * @param mixed $schema The schema to normalize.
+	 * @return mixed The normalized schema.
+	 */
+	private function normalize_strict_json_schema( $schema ) {
+		if ( ! is_array( $schema ) ) {
+			return $schema;
+		}
+
+		foreach ( $this->get_unsupported_json_schema_keywords() as $keyword ) {
+			unset( $schema[ $keyword ] );
+		}
+
+		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
+			$required = isset( $schema['required'] ) && is_array( $schema['required'] ) ? array_values( array_filter( $schema['required'], 'is_string' ) ) : array();
+
+			foreach ( $schema['properties'] as $key => $property ) {
+				if ( is_array( $property ) ) {
+					$property = $this->normalize_strict_json_schema( $property );
+
+					if ( ! in_array( $key, $required, true ) ) {
+						$property = $this->make_json_schema_nullable( $property );
+					}
+
+					$schema['properties'][ $key ] = $property;
+				}
+			}
+		}
+
+		if ( isset( $schema['items'] ) && is_array( $schema['items'] ) ) {
+			$schema['items'] = $this->normalize_strict_json_schema( $schema['items'] );
+		}
+
+		if ( isset( $schema['anyOf'] ) && is_array( $schema['anyOf'] ) ) {
+			foreach ( $schema['anyOf'] as $index => $sub_schema ) {
+				if ( is_array( $sub_schema ) ) {
+					$schema['anyOf'][ $index ] = $this->normalize_strict_json_schema( $sub_schema );
+				}
+			}
+		}
+
+		if ( isset( $schema['$defs'] ) && is_array( $schema['$defs'] ) ) {
+			foreach ( $schema['$defs'] as $key => $definition ) {
+				if ( is_array( $definition ) ) {
+					$schema['$defs'][ $key ] = $this->normalize_strict_json_schema( $definition );
+				}
+			}
+		}
+
+		if ( $this->is_object_json_schema( $schema ) ) {
+			$schema['additionalProperties'] = false;
+		}
+
+		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
+			$schema['required'] = array_keys( $schema['properties'] );
+		}
+
+		return $schema;
+	}
+
+	/**
+	 * Make a JSON schema accept null while preserving its existing shape.
+	 *
+	 * @param array<string, mixed> $schema The schema to make nullable.
+	 * @return array<string, mixed> The nullable schema.
+	 */
+	private function make_json_schema_nullable( $schema ) {
+		if ( isset( $schema['type'] ) ) {
+			$types = is_array( $schema['type'] ) ? $schema['type'] : array( $schema['type'] );
+
+			if ( ! in_array( 'null', $types, true ) ) {
+				$types[] = 'null';
+			}
+
+			$schema['type'] = $types;
+			return $schema;
+		}
+
+		if ( isset( $schema['anyOf'] ) && is_array( $schema['anyOf'] ) ) {
+			foreach ( $schema['anyOf'] as $sub_schema ) {
+				if ( is_array( $sub_schema ) && isset( $sub_schema['type'] ) && 'null' === $sub_schema['type'] ) {
+					return $schema;
+				}
+			}
+
+			$schema['anyOf'][] = array( 'type' => 'null' );
+			return $schema;
+		}
+
+		return array(
+			'anyOf' => array(
+				$schema,
+				array( 'type' => 'null' ),
+			),
+		);
+	}
+
+	/**
+	 * Check whether a JSON schema describes an object.
+	 *
+	 * @param array<string, mixed> $schema The schema to check.
+	 * @return bool Whether the schema describes an object.
+	 */
+	private function is_object_json_schema( $schema ) {
+		if ( ! isset( $schema['type'] ) ) {
+			return false;
+		}
+
+		$type = (array) $schema['type'];
+
+		return in_array( 'object', $type, true );
+	}
+
+	/**
+	 * JSON Schema keywords that OpenAI strict json_schema mode rejects.
+	 *
+	 * @return list<string>
+	 */
+	private function get_unsupported_json_schema_keywords() {
+		return array(
+			'default',
+			'uniqueItems',
+			'minItems',
+			'maxItems',
+			'unevaluatedItems',
+			'contains',
+			'minContains',
+			'maxContains',
+			'minLength',
+			'maxLength',
+			'pattern',
+			'format',
+			'minimum',
+			'maximum',
+			'multipleOf',
+			'patternProperties',
+			'unevaluatedProperties',
+			'propertyNames',
+			'minProperties',
+			'maxProperties',
+			'oneOf',
+			'allOf',
+			'not',
+			'dependentRequired',
+			'dependentSchemas',
+			'if',
+			'then',
+			'else',
+		);
 	}
 
 	/**

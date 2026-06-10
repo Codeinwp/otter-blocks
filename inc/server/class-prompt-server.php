@@ -221,6 +221,10 @@ class Prompt_Server {
 			return $result;
 		}
 
+		if ( ! AI_Response::is_valid( $result ) ) {
+			return AI_Response::error( 'invalid_backend_response', __( 'The AI backend returned an invalid response.', 'otter-blocks' ), 'otter', 502 );
+		}
+
 		$this->record_prompt_usage( $otter_data );
 
 		return new \WP_REST_Response( $result, 200 );
@@ -402,7 +406,8 @@ class Prompt_Server {
 
 		foreach ( $usage['usage_count'] as &$u ) {
 			if ( isset( $u['key'] ) && $u['key'] === $action ) {
-				++$u['value'];
+				// Stored data may predate the option's sanitize callback.
+				$u['value'] = ( isset( $u['value'] ) && is_numeric( $u['value'] ) ? (int) $u['value'] : 0 ) + 1;
 				$is_missing = false;
 			}
 		}

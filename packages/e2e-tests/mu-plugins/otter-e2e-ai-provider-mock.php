@@ -9,6 +9,10 @@
  *  - GET  /v1/models     — model discovery, used by is_supported_for_text_generation().
  *  - POST /v1/responses  — text generation (OpenAI Responses API).
  *
+ * Otter's legacy backend (`openai-key`) talks to POST /v1/chat/completions;
+ * that endpoint is mocked only for the sentinel LEGACY_MOCK_KEY so the
+ * dashboard key-validation spec keeps its real-endpoint behavior.
+ *
  * When the generation request asks for structured JSON output
  * (`text.format.type === 'json_schema'`, the translation of Otter's forced
  * function calling), the mock returns a form-fields JSON payload; otherwise it
@@ -27,6 +31,21 @@ if ( defined( 'WP_ENVIRONMENT_TYPE' ) && 'production' === constant( 'WP_ENVIRONM
 const TEXT_RESPONSE = '<h2>WP AI Client mock response</h2><p>Deterministic content generated through the WordPress AI Client.</p>';
 
 const FORM_RESPONSE = '{"fields":[{"label":"Full Name","type":"text","required":true},{"label":"Email Address","type":"email","required":true}]}';
+
+const LEGACY_TEXT_RESPONSE = '<h2>Legacy OpenAI mock response</h2><p>Deterministic content generated through the Otter OpenAI backend.</p>';
+
+/**
+ * Sentinel API key for the legacy `/chat/completions` mock. Requests bearing
+ * any other key (the preseeded dashboard key, the literal 'test' used by the
+ * key-validation spec) pass through untouched.
+ */
+const LEGACY_MOCK_KEY = 'sk-otter-e2e-legacy-mock';
+
+/**
+ * Marker a spec can type into the prompt to make the legacy mock return an
+ * empty completion (no choices), exercising the empty-response error path.
+ */
+const LEGACY_EMPTY_MARKER = 'otter-e2e-empty';
 
 /**
  * Build a WP HTTP API response array with a JSON body.
@@ -102,8 +121,37 @@ function mock_openai_http( $preempt, $args, $url ) {
 		);
 	}
 
-	// Anything else (e.g. the legacy path's /chat/completions key validation)
-	// passes through untouched so legacy-backend specs keep their behavior.
+	// Legacy backend: POST /v1/chat/completions, only for the sentinel key so
+	// the dashboard key-validation spec keeps hitting the real endpoint.
+	if ( false !== strpos( $url, '/chat/completions' ) ) {
+		$auth = isset( $args['headers']['Authorization'] ) && is_string( $args['headers']['Authorization'] ) ? $args['headers']['Authorization'] : '';
+
+		if ( 'Bearer ' . LEGACY_MOCK_KEY !== $auth ) {
+			return $preempt;
+		}
+
+		$body = isset( $args['body'] ) && is_string( $args['body'] ) ? $args['body'] : '';
+
+		if ( false !== strpos( $body, LEGACY_EMPTY_MARKER ) ) {
+			return respond( array( 'choices' => array() ) );
+		}
+
+		return respond(
+			array(
+				'choices' => array(
+					array(
+						'message' => array(
+							'role'    => 'assistant',
+							'content' => LEGACY_TEXT_RESPONSE,
+						),
+					),
+				),
+				'usage'   => array( 'total_tokens' => 42 ),
+			)
+		);
+	}
+
+	// Anything else passes through untouched.
 	return $preempt;
 }
 

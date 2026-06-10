@@ -29,6 +29,22 @@ class AI_Response {
 	}
 
 	/**
+	 * Check that a generation result matches the success envelope.
+	 *
+	 * Guards the REST boundary against malformed results from filtered
+	 * response bodies or third-party backends.
+	 *
+	 * @param mixed $result The backend generate() result.
+	 * @return bool
+	 */
+	public static function is_valid( $result ) {
+		return is_array( $result )
+			&& isset( $result['content'] ) && is_string( $result['content'] )
+			&& isset( $result['usedTokens'] ) && is_int( $result['usedTokens'] )
+			&& isset( $result['format'] ) && is_string( $result['format'] );
+	}
+
+	/**
 	 * Build an AI generation error response.
 	 *
 	 * @param string $code    The error code.

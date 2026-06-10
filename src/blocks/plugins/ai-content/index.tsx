@@ -29,7 +29,7 @@ import { BlockControls } from '@wordpress/block-editor';
  */
 import { aiGeneration } from '../../helpers/icons';
 import './editor.scss';
-import { PromptsData, editLastConversation, injectActionIntoPrompt, retrieveEmbeddedPrompt, sendPromptToOpenAI, tryInjectIntoTemplate } from '../../helpers/prompt';
+import { PromptsData, editLastConversation, injectActionIntoPrompt, isAIBackendConfigured, retrieveEmbeddedPrompt, sendPromptToOpenAI, tryInjectIntoTemplate } from '../../helpers/prompt';
 import useSettings from '../../helpers/use-settings';
 import { openAiAPIKeyName } from '../../components/prompt';
 import { insertBlockBelow } from '../../helpers/block-utility';
@@ -77,13 +77,7 @@ const AIToolbar = ({
 }) => {
 	const [ getOption, _, status ] = useSettings();
 
-	// True when the active backend can actually generate: the WP AI Client
-	// backend needs a configured provider; otherwise a legacy OpenAI key.
-	const [ hasAPIKey, setHasAPIKey ] = useState<boolean>(
-		window.themeisleGutenberg?.aiClientActive
-			? Boolean( window.themeisleGutenberg?.hasAIProvider )
-			: Boolean( window.themeisleGutenberg?.hasOpenAiKey )
-	);
+	const [ hasAPIKey, setHasAPIKey ] = useState<boolean>( isAIBackendConfigured() );
 	const [ isProcessing, setIsProcessing ] = useState<Record<string, boolean>>({});
 	const [ displayError, setDisplayError ] = useState<string|undefined>( undefined );
 	const [ customActions, setCustomActions ] = useState<{title: string, prompt: string}[]>([]);

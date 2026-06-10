@@ -18,6 +18,7 @@ import {
 	PromptsData,
 	injectActionIntoPrompt,
 	injectConversationIntoPrompt,
+	isAIBackendConfigured,
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
@@ -133,7 +134,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	const [ generationStatus, setGenerationStatus ] = useState<'loading' | 'loaded' | 'error'>( 'loaded' );
 
-	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( window.themeisleGutenberg?.hasOpenAiKey ? 'present' : 'checking' );
+	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( isAIBackendConfigured() ? 'present' : 'checking' );
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
 
 	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number, prompt: string }}[]>( props.resultHistory ?? []);
