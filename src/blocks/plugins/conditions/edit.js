@@ -626,9 +626,21 @@ const Edit = ({
 		</Fragment>
 	);
 
+	const hasActiveConditions = Boolean( attributes.otterConditions?.some( group => group?.some?.( condition => condition?.type ) ) );
+
 	return (
 		<PanelBody
-			title={ __( 'Visibility Conditions', 'otter-blocks' ) }
+			title={(
+				<Fragment>
+					{ __( 'Visibility Conditions', 'otter-blocks' ) }
+
+					{ hasActiveConditions && (
+						<span className="o-conditions__indicator">
+							<span className="screen-reader-text">{ __( '(has active conditions)', 'otter-blocks' ) }</span>
+						</span>
+					) }
+				</Fragment>
+			)}
 			initialOpen={ false }
 		>
 			<p className="o-conditions__intro">{ __( 'Display the block if…', 'otter-blocks' ) }</p>
