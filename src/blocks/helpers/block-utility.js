@@ -412,6 +412,111 @@ export const useCSSNode = ( options = {}) => {
  */
 export const getEditorIframe = () => ( document.querySelector( 'iframe[name^="editor-canvas"]' ) );
 
+const pendingIframeScriptCallbacks = new Map();
+const pendingIframeScriptInflight = new Set();
+
+/**
+ * Run all queued callbacks for a script copied into the editor iframe.
+ *
+ * @param {string} assetSelectorId The id selector of the asset.
+ */
+const flushIframeScriptCallbacks = ( assetSelectorId ) => {
+	const queue = pendingIframeScriptCallbacks.get( assetSelectorId );
+
+	if ( ! queue?.length ) {
+		return;
+	}
+
+	pendingIframeScriptCallbacks.delete( assetSelectorId );
+	queue.forEach( ( cb ) => cb() );
+};
+
+/**
+ * Queue a callback until an iframe script asset has finished loading.
+ *
+ * @param {string}   assetSelectorId The id selector of the asset.
+ * @param {Function} callback        The callback.
+ */
+const queueIframeScriptCallback = ( assetSelectorId, callback ) => {
+	if ( ! pendingIframeScriptCallbacks.has( assetSelectorId ) ) {
+		pendingIframeScriptCallbacks.set( assetSelectorId, [] );
+	}
+
+	pendingIframeScriptCallbacks.get( assetSelectorId ).push( callback );
+};
+
+/**
+ * Whether a copied iframe script node has finished loading.
+ *
+ * @param {HTMLScriptElement} scriptEl The script element.
+ * @return {boolean} True when the script is ready.
+ */
+const isIframeScriptLoaded = ( scriptEl ) => {
+	return Boolean(
+		scriptEl.complete ||
+		'complete' === scriptEl.readyState ||
+		'loaded' === scriptEl.readyState
+	);
+};
+
+/**
+ * Whether a copied iframe script has finished executing in the iframe window.
+ *
+ * @param {Window}              iframeWindow    The iframe window.
+ * @param {string}              assetSelectorId The id selector of the asset.
+ * @param {HTMLScriptElement|null} scriptEl     The copied script element.
+ * @return {boolean} True when the asset is ready to use.
+ */
+const isIframeScriptReady = ( iframeWindow, assetSelectorId, scriptEl ) => {
+	if ( '#leaflet-js' === assetSelectorId ) {
+		return Boolean( iframeWindow?.L );
+	}
+
+	return Boolean( scriptEl && isIframeScriptLoaded( scriptEl ) );
+};
+
+/**
+ * Wait until a copied iframe script is ready, then flush queued callbacks.
+ *
+ * @param {string}              assetSelectorId The id selector of the asset.
+ * @param {Window}              iframeWindow    The iframe window.
+ * @param {HTMLScriptElement|null} scriptEl     The copied script element.
+ */
+const waitForIframeScriptReady = ( assetSelectorId, iframeWindow, scriptEl ) => {
+	const tryFlush = () => {
+		if ( isIframeScriptReady( iframeWindow, assetSelectorId, scriptEl ) ) {
+			flushIframeScriptCallbacks( assetSelectorId );
+			return true;
+		}
+
+		return false;
+	};
+
+	if ( tryFlush() ) {
+		return;
+	}
+
+	if ( scriptEl && ! scriptEl.dataset.otterIframeCallbackBound ) {
+		scriptEl.dataset.otterIframeCallbackBound = 'true';
+		scriptEl.addEventListener( 'load', tryFlush );
+	}
+
+	let attempts = 0;
+	const poll = () => {
+		if ( ! pendingIframeScriptCallbacks.has( assetSelectorId ) ) {
+			return;
+		}
+
+		if ( tryFlush() || 300 < attempts++ ) {
+			return;
+		}
+
+		requestAnimationFrame( poll );
+	};
+
+	requestAnimationFrame( poll );
+};
+
 /**
  * Copy the JS node asset from main document to the iframe.
  *
@@ -421,25 +526,119 @@ export const getEditorIframe = () => ( document.querySelector( 'iframe[name^="ed
 export const copyScriptAssetToIframe = ( assetSelectorId, callback ) => {
 	const iframe = getEditorIframe();
 	callback ??= () => {};
-	if ( Boolean( iframe ) ) {
-		if ( Boolean( iframe?.contentWindow?.document.querySelector( assetSelectorId ) ) ) {
+
+	if ( ! iframe?.contentWindow?.document ) {
+		return;
+	}
+
+	const iframeWindow = iframe.contentWindow;
+	const iframeDocument = iframeWindow.document;
+	const existing = iframeDocument.querySelector( assetSelectorId );
+
+	if ( existing ) {
+		if ( isIframeScriptReady( iframeWindow, assetSelectorId, existing ) ) {
 			callback?.();
 		} else {
-			const original = document.querySelector( assetSelectorId );
-
-			if ( ! Boolean( original ) ) {
-				console.warn( `Selector: ${ assetSelectorId } is invalid.` );
-				return;
-			}
-
-			const n = iframe.contentWindow.document.createElement( 'script' );
-			n.onload = callback;
-			n.id = original.id;
-			n.type = 'text/javascript';
-			iframe.contentWindow.document?.head.appendChild( n );
-			n.src = original.src;
+			queueIframeScriptCallback( assetSelectorId, callback );
+			waitForIframeScriptReady( assetSelectorId, iframeWindow, existing );
 		}
+
+		return;
 	}
+
+	if ( pendingIframeScriptInflight.has( assetSelectorId ) ) {
+		queueIframeScriptCallback( assetSelectorId, callback );
+		return;
+	}
+
+	const original = document.querySelector( assetSelectorId );
+
+	if ( ! Boolean( original ) ) {
+		console.warn( `Selector: ${ assetSelectorId } is invalid.` );
+		return;
+	}
+
+	pendingIframeScriptInflight.add( assetSelectorId );
+	queueIframeScriptCallback( assetSelectorId, callback );
+
+	const script = iframeDocument.createElement( 'script' );
+	script.onload = () => {
+		pendingIframeScriptInflight.delete( assetSelectorId );
+		waitForIframeScriptReady( assetSelectorId, iframeWindow, script );
+	};
+	script.onerror = () => {
+		pendingIframeScriptInflight.delete( assetSelectorId );
+		pendingIframeScriptCallbacks.delete( assetSelectorId );
+	};
+	script.id = original.id;
+	script.type = 'text/javascript';
+	iframeDocument.head.appendChild( script );
+	script.src = original.src;
+};
+
+/**
+ * Mount the shared Otter icon gradient definition into a document.
+ *
+ * Block icons in the iframed editor (`apiVersion: 3`) reference
+ * `fill: url(#o-icon-fill)` from CSS, so the gradient must live in the same
+ * document as the SVG icons.
+ *
+ * @param {Document} ownerDocument The document that should own the gradient.
+ */
+export const mountIconGradient = ( ownerDocument ) => {
+	if ( ! ownerDocument?.body || ownerDocument.querySelector( 'svg.o-icon-gradient' ) ) {
+		return;
+	}
+
+	const gradient = ownerDocument.createElement( 'div' );
+	gradient.setAttribute( 'style', 'height: 0; width: 0; overflow: hidden;' );
+	gradient.setAttribute( 'aria-hidden', 'true' );
+	gradient.innerHTML = `
+		<svg xmlns="http://www.w3.org/2000/svg" class="o-icon-gradient" height="0" width="0" style="opacity: 0">
+			<defs>
+				<linearGradient id="o-icon-fill">
+					<stop offset="0%" stop-color="#ED6F57" stop-opacity="1"></stop>
+					<stop offset="100%" stop-color="#F22B6C" stop-opacity="1"></stop>
+				</linearGradient>
+			</defs>
+		</svg>
+	`.trim();
+	ownerDocument.body.appendChild( gradient );
+};
+
+/**
+ * Ensure the Otter icon gradient exists in the editor and canvas iframe.
+ */
+export const mountIconGradientForEditor = () => {
+	mountIconGradient( document );
+
+	const iframe = getEditorIframe();
+
+	if ( iframe?.contentDocument ) {
+		mountIconGradient( iframe.contentDocument );
+	}
+};
+
+/**
+ * Keep the icon gradient available when the editor canvas iframe appears.
+ */
+export const watchEditorIframeIconGradient = () => {
+	mountIconGradientForEditor();
+
+	const observer = new MutationObserver( () => {
+		mountIconGradientForEditor();
+	});
+
+	observer.observe( document.body, {
+		childList: true,
+		subtree: true
+	});
+
+	document.addEventListener( 'load', ( event ) => {
+		if ( event.target?.name?.startsWith?.( 'editor-canvas' ) ) {
+			mountIconGradientForEditor();
+		}
+	}, true );
 };
 
 /**
