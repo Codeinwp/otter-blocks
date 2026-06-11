@@ -43,8 +43,9 @@ test.describe( 'Advanced Heading Block', () => {
 		await page.getByRole( 'button', { name: 'Set custom size' }).click();
 
 		// Select font size — the input is labelled "Font size" in WP 7.0 (was "Custom" previously).
-		// Scope to the numeric input because the wrapping fieldset also carries the same label.
-		await page.locator( 'input[type="number"][id="inspector-input-control-0"]' ).fill( '16' );
+		// The spinbutton role targets the numeric input; the wrapping fieldset
+		// carries the same label but has no spinbutton role.
+		await page.getByRole( 'spinbutton', { name: 'Font size' }).fill( '16' );
 
 		// Open the menu for more options.
 		await page.getByRole( 'button', { name: 'View options' }).click();
