@@ -2,13 +2,12 @@
  * Internal dependencies
  */
 import { test, expect } from '../fixtures';
-import { expectBlockByName } from '../helpers/editor';
-import { expectFormOptionSavedNotice, findSavedFormEmail, getSavedFormEmails, insertContactForm } from '../helpers/forms';
+import { expectBlockByName, publishPostReliable } from '../helpers/editor';
+import { expectFormOptionSavedNotice, findSavedFormEmail, getEmailNotificationToggle, getSavedFormEmails, insertContactForm, prepareFormOptionsInspector } from '../helpers/forms';
 import { expectSuccessMessage } from '../helpers/frontend';
 
 /**
- * Scenarios for the "save first, deliver second" submission retention pipeline
- * (docs/adr/0001-form-submission-retention.md), driven through the editor, the
+ * Scenarios for the "save first, deliver second" submission retention pipeline, driven through the editor, the
  * frontend and the `otter-e2e/v1` bootstrap endpoints.
  */
 
@@ -89,7 +88,7 @@ test.describe( 'Form submission retention', () => {
 		const formBlock = await insertContactForm({ editor, page });
 		const formId = formBlock.attributes.id;
 
-		const postId = await editor.publishPost();
+		const postId = await publishPostReliable( editor, page );
 
 		// Clear the mail log of anything the publish flow may have attempted.
 		await otterUtils.setMailMode( 'ok' );
@@ -116,7 +115,7 @@ test.describe( 'Form submission retention', () => {
 		const formBlock = await insertContactForm({ editor, page });
 		const formId = formBlock.attributes.id;
 
-		const postId = await editor.publishPost();
+		const postId = await publishPostReliable( editor, page );
 
 		await otterUtils.setMailMode( 'fail' );
 
@@ -156,13 +155,13 @@ test.describe( 'Form submission retention', () => {
 		let formBlock = await insertContactForm({ editor, page });
 		const formId = formBlock.attributes.id;
 
-		const notificationToggle = page.getByRole( 'checkbox', { name: 'Email Notification' });
+		const notificationToggle = await prepareFormOptionsInspector( editor, page );
 
 		await expect( notificationToggle ).toBeChecked();
 		await notificationToggle.click();
 		await expect( notificationToggle ).not.toBeChecked();
 
-		const postId = await editor.publishPost();
+		const postId = await publishPostReliable( editor, page );
 		await expectFormOptionSavedNotice( page );
 
 		// The toggle is persisted in the form options.
@@ -189,7 +188,7 @@ test.describe( 'Form submission retention', () => {
 	test( 'legacy save-location value maps to the toggle and is rewritten on save', async({ admin, editor, page, otterUtils }) => {
 		await insertContactForm({ editor, page });
 
-		const postId = await editor.publishPost();
+		const postId = await publishPostReliable( editor, page );
 		await expectFormOptionSavedNotice( page );
 
 		/*
@@ -200,7 +199,7 @@ test.describe( 'Form submission retention', () => {
 		await admin.editPost( postId );
 
 		const formBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
-		const optionName = formBlock.attributes.optionName;
+		const { optionName } = formBlock.attributes;
 
 		const saveBtn = page.locator( '.editor-post-publish-button__button' );
 		await expect( saveBtn ).toBeEnabled({ timeout: 10_000 });
@@ -226,8 +225,8 @@ test.describe( 'Form submission retention', () => {
 		await editor.openDocumentSettingsSidebar();
 
 		// Read-time migration: legacy `database` means the notification is off.
-		const notificationToggle = page.getByRole( 'checkbox', { name: 'Email Notification' });
-		await expect( notificationToggle ).not.toBeChecked({ timeout: 15_000 });
+		const notificationToggle = await getEmailNotificationToggle( page );
+		await expect( notificationToggle ).not.toBeChecked();
 
 		// Flip it back on and save the post: the entry must be rewritten to the new format.
 		await notificationToggle.click();
@@ -380,7 +379,7 @@ test.describe( 'Form submission retention', () => {
 
 		const records = ( await otterUtils.getFormRecords() ).filter( record => record.form === formId );
 		expect( records ).toHaveLength( 1 );
-		const [ { id: recordId } ] = records;
+		const [{ id: recordId }] = records;
 
 		// The list table shows the record with a Failed delivery badge.
 		await page.goto( '/wp-admin/edit.php?post_type=otter_form_record' );

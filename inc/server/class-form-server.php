@@ -17,6 +17,7 @@ use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Utils;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
+use ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions;
 use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 use WP_Error;
 use WP_HTTP_Response;
@@ -533,16 +534,7 @@ class Form_Server {
 
 			$send_email = false;
 
-			switch ( $form_data->get_error_code() ) {
-				case Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR:
-				case Form_Data_Response::ERROR_MISSING_EMAIL:
-				case Form_Data_Response::ERROR_RUNTIME_ERROR:
-					$send_email = true;
-					break;
-			}
-
 			if (
-				! $send_email &&
 				$form_data->has_warning() &&
 				$form_data->has_warning_codes(
 					array(
@@ -563,17 +555,14 @@ class Form_Server {
 				$send_email = $this->can_send_throttled_alert( $form_data, 'captcha_provider' );
 			}
 
-			$delivery_failure_codes = array(
-				Form_Data_Response::ERROR_EMAIL_NOT_SEND,
-				Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER,
-				Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR,
-			);
+			$delivery_failure_actions = Form_Submissions::get_delivery_failure_actions();
 
 			if (
 				! $send_email &&
+				! $form_data->has_infrastructure_failure() &&
 				(
-					in_array( $form_data->get_error_code(), $delivery_failure_codes, true ) ||
-					$form_data->has_warning_codes( $delivery_failure_codes )
+					isset( $delivery_failure_actions[ $form_data->get_error_code() ] ) ||
+					$form_data->has_warning_codes( array_keys( $delivery_failure_actions ) )
 				)
 			) {
 				$send_email = $this->can_send_throttled_alert( $form_data, 'delivery' );

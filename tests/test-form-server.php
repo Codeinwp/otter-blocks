@@ -57,6 +57,11 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private $data_preparation_filter = null;
 
 	/**
+	 * @var callable|null
+	 */
+	private $after_submit_action = null;
+
+	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {
@@ -93,7 +98,14 @@ class Test_Form_Server extends WP_UnitTestCase {
 			remove_filter( 'otter_form_data_preparation', $this->data_preparation_filter, 10 );
 		}
 
+		if ( null !== $this->after_submit_action ) {
+			remove_action( 'otter_form_after_submit', $this->after_submit_action, 5 );
+			$this->after_submit_action = null;
+		}
+
 		$this->form_providers->providers = $this->original_providers;
+
+		$this->cleanup_upload_fixtures();
 
 		delete_option( 'themeisle_blocks_form_emails' );
 		delete_option( 'themeisle_blocks_form_fields_option' );
@@ -358,6 +370,35 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure repeated captcha provider outages do not re-alert through the delivery throttle.
+	 */
+	public function test_captcha_provider_outage_admin_alert_is_throttled_per_form() {
+		$this->mock_mail();
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+
+		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+		$this->http_filter = function () {
+			return new WP_Error( 'http_request_failed', 'Connection timed out.' );
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+
+		$request = $this->get_frontend_request(
+			array(
+				'payload' => array(
+					'token' => 'captcha-token',
+				),
+			)
+		);
+
+		$this->form_server->frontend( $request );
+		$this->assertCount( 1, $this->mail_requests );
+
+		$this->form_server->frontend( $request );
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertCount( 2, $this->get_form_records() );
+	}
+
+	/**
 	 * Ensure a captcha provider HTTP error (5xx) is treated as an infrastructure failure,
 	 * not a verification failure: the Record is saved and marked failed.
 	 */
@@ -483,6 +524,118 @@ class Test_Form_Server extends WP_UnitTestCase {
 		// The throttled delivery alert went to the site admin.
 		$this->assertCount( 1, $this->mail_requests );
 		$this->assertSame( get_site_option( 'admin_email' ), $this->mail_requests[0]['to'] );
+	}
+
+	/**
+	 * Data provider for every delivery-failure code in the shared action map.
+	 *
+	 * @return array<string, array{0: int|string, 1: string}>
+	 */
+	public function delivery_failure_actions_provider() {
+		$cases = array();
+
+		foreach ( Form_Submissions::get_delivery_failure_actions() as $code => $action ) {
+			$cases[ 'code_' . $code ] = array( $code, $action );
+		}
+
+		return $cases;
+	}
+
+	/**
+	 * Ensure every delivery-failure code maps to the expected action on the stored Record
+	 * after a frontend submission runs through the delivery pipeline.
+	 *
+	 * @dataProvider delivery_failure_actions_provider
+	 *
+	 * @param int|string $code The response error code.
+	 * @param string     $expected_action The delivery action label.
+	 */
+	public function test_delivery_failure_action_maps_to_record_meta( $code, $expected_action ) {
+		$overrides = $this->configure_delivery_failure_case( $code );
+
+		$this->form_server->frontend( $this->get_frontend_request( $overrides ) );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame(
+			Form_Submissions::DELIVERY_STATUS_FAILED,
+			get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true )
+		);
+
+		$errors = get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_ERRORS_META_KEY, true );
+		$this->assertSame( $expected_action, $errors[0]['action'] );
+		$this->assertSame( (string) $code, $errors[0]['code'] );
+	}
+
+	/**
+	 * Ensure a retained upload stored through the frontend pipeline is removed when the
+	 * Submission Record is permanently deleted.
+	 */
+	public function test_frontend_submission_with_retained_upload_deletes_file_on_record_delete() {
+		$this->mock_mail();
+
+		$path     = $this->create_upload_fixture( 'integration-upload.txt' );
+		$file_key = 'file-1';
+
+		$this->data_preparation_filter = function ( $form_data ) use ( $path, $file_key ) {
+			$form_data->set_keep_uploaded_files( true );
+			$form_data->set_uploaded_files_path(
+				array(
+					$file_key => array(
+						'file_path' => $path,
+						'file_type' => 'text/plain',
+					),
+				)
+			);
+
+			return $form_data;
+		};
+		add_filter( 'otter_form_data_preparation', $this->data_preparation_filter, 10 );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formInputsData' => array(
+							array(
+								'id'       => 'wp-block-themeisle-blocks-form-input-upload01',
+								'type'     => 'file',
+								'label'    => 'Upload',
+								'value'    => basename( $path ),
+								'metadata' => array(
+									'name'            => basename( $path ),
+									'size'            => (string) filesize( $path ),
+									'data'            => $file_key,
+									'fieldOptionName' => 'upload-field',
+								),
+							),
+						),
+					),
+				)
+			)
+		);
+
+		$this->assertTrue( $response->get_data()['success'] );
+		$this->assertFileExists( $path );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+
+		$meta     = get_post_meta( $records[0]->ID, Form_Submissions::FORM_RECORD_META_KEY, true );
+		$has_path = false;
+
+		foreach ( $meta['inputs'] as $input ) {
+			if ( ! empty( $input['path'] ) && $input['path'] === $path ) {
+				$has_path = true;
+				break;
+			}
+		}
+
+		$this->assertTrue( $has_path );
+
+		wp_delete_post( $records[0]->ID, true );
+
+		$this->assertFileDoesNotExist( $path );
 	}
 
 	/**
@@ -1490,6 +1643,155 @@ class Test_Form_Server extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertTrue( $data['success'] );
 		$this->assertSame( 'Confirmed through REST.', $data['submitMessage'] );
+	}
+
+	/**
+	 * Configure mocks, options and request overrides for a delivery failure code.
+	 *
+	 * @param int|string $code The response error code.
+	 * @return array Request overrides for get_frontend_request().
+	 */
+	private function configure_delivery_failure_case( $code ) {
+		$code = (string) $code;
+
+		$subscribe_codes = array(
+			Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR,
+			Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR,
+			Form_Data_Response::ERROR_PROVIDER_INVALID_KEY,
+			Form_Data_Response::ERROR_PROVIDER_INVALID_API_KEY_FORMAT,
+			Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL,
+			Form_Data_Response::ERROR_MISSING_EMAIL,
+		);
+
+		switch ( $code ) {
+			case Form_Data_Response::ERROR_EMAIL_NOT_SEND:
+				$this->mock_mail( false );
+				return array();
+
+			case Form_Data_Response::ERROR_CAPTCHA_PROVIDER_UNREACHABLE:
+				$this->mock_mail();
+				update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+				update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+				$this->http_filter = function () {
+					return new WP_Error( 'http_request_failed', 'Connection timed out.' );
+				};
+				add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+
+				return array(
+					'payload' => array(
+						'token' => 'captcha-token',
+					),
+				);
+
+			case Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER:
+				$this->mock_mail();
+				$this->after_submit_action = function ( $form_data ) {
+					$form_data->add_warning( Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER, 'Webhook endpoint unreachable.' );
+
+					return $form_data;
+				};
+				add_action( 'otter_form_after_submit', $this->after_submit_action, 5 );
+
+				return array();
+
+			case Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED:
+				$this->mock_mail();
+				update_option(
+					'themeisle_blocks_form_emails',
+					array(
+						$this->get_form_option(
+							array(
+								'integration' => array(
+									'provider' => 'missing-provider',
+									'apiKey'   => 'api-key',
+									'listId'   => 'list-id',
+								),
+							)
+						),
+					)
+				);
+
+				return array();
+
+			case Form_Data_Response::ERROR_RUNTIME_ERROR:
+				$this->mock_mail();
+				$this->form_providers->providers['default']['frontend']['submit'] = function () {
+					throw new Exception( 'Provider exploded.' );
+				};
+
+				return array();
+		}
+
+		if ( in_array( $code, $subscribe_codes, true ) ) {
+			$this->mock_mail();
+			$error_code = $code;
+
+			$this->form_providers->providers['failing-provider'] = array(
+				'frontend' => array(
+					'submit' => function ( $form_data ) use ( $error_code ) {
+						$form_data->set_error( $error_code );
+					},
+				),
+				'editor'   => array(),
+			);
+
+			update_option(
+				'themeisle_blocks_form_emails',
+				array(
+					$this->get_form_option(
+						array(
+							'integration' => array(
+								'provider' => 'failing-provider',
+								'apiKey'   => 'api-key',
+								'listId'   => 'list-id',
+							),
+						)
+					),
+				)
+			);
+
+			return array();
+		}
+
+		$this->fail( 'Unhandled delivery failure code: ' . $code );
+	}
+
+	/**
+	 * Create an upload fixture under uploads/otter-tests.
+	 *
+	 * @param string $name The file name.
+	 * @return string The absolute file path.
+	 */
+	private function create_upload_fixture( $name ) {
+		$uploads = wp_upload_dir();
+		wp_mkdir_p( $uploads['basedir'] . '/otter-tests' );
+
+		$path = $uploads['basedir'] . '/otter-tests/' . $name;
+		file_put_contents( $path, 'integration test file' );
+
+		return $path;
+	}
+
+	/**
+	 * Remove upload fixtures created during tests.
+	 *
+	 * @return void
+	 */
+	private function cleanup_upload_fixtures() {
+		$uploads = wp_upload_dir();
+		$dir     = $uploads['basedir'] . '/otter-tests';
+
+		if ( ! is_dir( $dir ) ) {
+			return;
+		}
+
+		foreach ( glob( $dir . '/*' ) as $file ) {
+			if ( is_file( $file ) ) {
+				wp_delete_file( $file );
+			}
+		}
+
+		@rmdir( $dir );
 	}
 
 	/**

@@ -41,6 +41,9 @@ export type OtterUtils = {
 	/** Mock the reCAPTCHA verify endpoint: provider outage, rejected token, accepted token, or pass-through. */
 	setCaptchaMode: ( mode: 'down' | 'invalid' | 'valid' | 'off' ) => Promise<unknown>;
 
+	/** Stub or pass through /otter/v1/openai/generate (AI block E2E). */
+	setOpenAiMode: ( mode: 'stub' | 'off' ) => Promise<unknown>;
+
 	/** Upsert an entry in themeisle_blocks_form_emails; a null value removes the key (simulates legacy entries). */
 	upsertFormOption: ( entry: { form: string } & Record<string, unknown> ) => Promise<unknown>;
 
@@ -72,6 +75,7 @@ export const test = base.extend<{ otterUtils: OtterUtils }>({
 			setMailMode: ( mode ) => call( 'mail', { mode }),
 			getMailLog: () => call( 'mail/log' ) as Promise<MailLogEntry[]>,
 			setCaptchaMode: ( mode ) => call( 'captcha', { mode }),
+			setOpenAiMode: ( mode ) => call( 'openai', { mode }),
 			upsertFormOption: ( entry ) => call( 'form/options', entry ),
 			getFormVerificationNonce: async() => {
 				const response = ( await call( 'form/nonce' ) ) as { nonce: string };

@@ -56,6 +56,11 @@ const MAIL_LOG_OPTION = 'otter_e2e_mail_log';
 const CAPTCHA_MODE_OPTION = 'otter_e2e_captcha_mode';
 
 /**
+ * When truthy, /otter/v1/openai/generate returns a deterministic stub instead of calling OpenAI.
+ */
+const OPENAI_STUB_OPTION = 'otter_e2e_openai_stub';
+
+/**
  * Form record post type, mirrored from \ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions.
  */
 const FORM_RECORD_TYPE = 'otter_form_record';
@@ -188,6 +193,81 @@ function mock_captcha_provider( $preempt, $args, $url ) {
 }
 
 add_filter( 'pre_http_request', __NAMESPACE__ . '\\mock_captcha_provider', 10, 3 );
+
+/**
+ * Deterministic OpenAI chat completion used by AI block E2E specs.
+ *
+ * @return array<string, mixed>
+ */
+function stub_openai_generate_response() {
+	return array(
+		'id'                 => 'chatcmpl-9oWud5dugI37NCO4ZIUFH2GRFJ9Z4',
+		'object'             => 'chat.completion',
+		'created'            => 1721829943,
+		'model'              => 'gpt-3.5-turbo-0125',
+		'choices'            => array(
+			array(
+				'index'         => 0,
+				'message'       => array(
+					'role'    => 'assistant',
+					'content' => '<h1><strong>Discover the Next Frontier: Space Nation on the Rise</strong></h1>
+
+<p>Are you ready to embark on a journey to a new world beyond our wildest dreams? Look no further than the rapidly emerging Space Nation that is captivating the imaginations of millions. From groundbreaking technologies to bold explorations, this cosmic civilization is redefining what it means to reach for the stars.</p>
+
+<h2><em>Unveiling the Wonders of Space Nation</em></h2>
+
+<p>Peer into the future and witness the awe-inspiring advancements taking place in this celestial realm. With each innovation, Space Nation pushes the boundaries of possibility, offering a glimpse into a future where the impossible becomes reality.</p>
+
+<h2><em>Join the Movement</em></h2>
+
+<p>Don\'t miss your chance to be part of history in the making. Whether you are an aspiring pioneer or a curious observer, there is a place for you in the unfolding saga of Space Nation. Embrace the spirit of exploration and venture into a realm where the skies are no longer the limit.</p>
+
+<h3><strong>Why Space Nation?</strong></h3>
+
+<ul>
+  <li>Experience groundbreaking technologies shaping the future</li>
+  <li>Witness bold explorations into the unknown</li>
+  <li>Join a community of visionaries and trailblazers</li>
+</ul>
+
+<h3><strong>Take Action Today</strong></h3>
+
+<p>Ready to embark on an adventure that transcends the confines of Earth? Step into the world of Space Nation and dare to dream beyond the stars.</p>',
+				),
+				'logprobs'      => null,
+				'finish_reason' => 'stop',
+			),
+		),
+		'usage'              => array(
+			'prompt_tokens'     => 331,
+			'completion_tokens' => 338,
+			'total_tokens'      => 669,
+		),
+		'system_fingerprint' => null,
+	);
+}
+
+/**
+ * Short-circuit /otter/v1/openai/generate when the E2E stub mode is active.
+ *
+ * @param mixed               $result  Response to replace the requested version with, or null.
+ * @param \WP_REST_Server     $server  Server instance.
+ * @param \WP_REST_Request    $request Request used to generate the response.
+ * @return mixed
+ */
+function stub_openai_generate_route( $result, $server, $request ) {
+	if ( ! get_option( OPENAI_STUB_OPTION, false ) ) {
+		return $result;
+	}
+
+	if ( '/otter/v1/openai/generate' !== $request->get_route() || 'POST' !== $request->get_method() ) {
+		return $result;
+	}
+
+	return rest_ensure_response( stub_openai_generate_response() );
+}
+
+add_filter( 'rest_pre_dispatch', __NAMESPACE__ . '\\stub_openai_generate_route', 10, 3 );
 
 /**
  * List the stored form Submission Records with their Delivery Status meta.
@@ -388,6 +468,34 @@ add_action(
 
 		register_rest_route(
 			REST_NAMESPACE,
+			'/openai',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function ( \WP_REST_Request $request ) {
+					$mode = $request->get_param( 'mode' );
+
+					if ( ! in_array( $mode, array( 'stub', 'off' ), true ) ) {
+						return new \WP_Error(
+							'otter_e2e_invalid_openai_mode',
+							'OpenAI mode must be "stub" or "off".',
+							array( 'status' => 400 )
+						);
+					}
+
+					if ( 'off' === $mode ) {
+						delete_option( OPENAI_STUB_OPTION );
+					} else {
+						update_option( OPENAI_STUB_OPTION, true, false );
+					}
+
+					return rest_ensure_response( array( 'ok' => true ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
 			'/captcha',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
@@ -523,6 +631,7 @@ add_action(
 					delete_option( MAIL_MODE_OPTION );
 					delete_option( MAIL_LOG_OPTION );
 					delete_option( CAPTCHA_MODE_OPTION );
+					delete_option( OPENAI_STUB_OPTION );
 					cleanup_form_records();
 					return rest_ensure_response( array( 'ok' => true ) );
 				},

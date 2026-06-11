@@ -56,10 +56,36 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 	public function tear_down() {
 		unset( $_REQUEST[ Form_Submissions::FORM_RECORD_TYPE ], $_REQUEST['_wpnonce'], $_REQUEST['post'] );
 		unset( $GLOBALS['otter_test_stripe_record_id'] );
+		unset( $GLOBALS['otter_legacy_store_called'] );
 
 		delete_option( 'themeisle_stripe_api_key' );
+		wp_clear_scheduled_hook( 'otter_form_automatic_confirmation' );
+
+		$this->cleanup_upload_fixtures();
 
 		parent::tear_down();
+	}
+
+	/**
+	 * Remove upload fixtures created during tests.
+	 *
+	 * @return void
+	 */
+	private function cleanup_upload_fixtures() {
+		$uploads = wp_upload_dir();
+		$dir     = $uploads['basedir'] . '/otter-tests';
+
+		if ( ! is_dir( $dir ) ) {
+			return;
+		}
+
+		foreach ( glob( $dir . '/*' ) as $file ) {
+			if ( is_file( $file ) ) {
+				wp_delete_file( $file );
+			}
+		}
+
+		@rmdir( $dir );
 	}
 
 	/**
@@ -120,7 +146,7 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 	 * @param string $status The post status.
 	 * @return int The record ID.
 	 */
-	private function create_record( $status = 'unread' ) {
+	private function create_record( $status = 'unread', $meta = array() ) {
 		$record_id = wp_insert_post(
 			array(
 				'post_type'   => Form_Submissions::FORM_RECORD_TYPE,
@@ -132,20 +158,65 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		add_post_meta(
 			$record_id,
 			Form_Submissions::FORM_RECORD_META_KEY,
-			array(
-				'form'     => array(
-					'label' => 'Form',
-					'value' => 'cap-form',
+			array_merge(
+				array(
+					'form'     => array(
+						'label' => 'Form',
+						'value' => 'cap-form',
+					),
+					'post_url' => array(
+						'label' => 'Post URL',
+						'value' => 'https://example.com/cap',
+					),
+					'inputs'   => array(),
 				),
-				'post_url' => array(
-					'label' => 'Post URL',
-					'value' => 'https://example.com/cap',
-				),
-				'inputs'   => array(),
+				$meta
 			)
 		);
 
 		return $record_id;
+	}
+
+	/**
+	 * Create an upload fixture.
+	 *
+	 * @param string $name The file name.
+	 * @return string The file path.
+	 */
+	private function create_upload_file( $name ) {
+		$uploads = wp_upload_dir();
+		wp_mkdir_p( $uploads['basedir'] . '/otter-tests' );
+
+		$path = $uploads['basedir'] . '/otter-tests/' . $name;
+		file_put_contents( $path, 'test file' );
+
+		return $path;
+	}
+
+	/**
+	 * Build record meta containing a single file field.
+	 *
+	 * @param string $path The file path.
+	 * @param bool   $saved_in_media Whether the file was saved to the media library.
+	 * @param string $key The input key.
+	 * @return array
+	 */
+	private function get_file_record_meta( $path, $saved_in_media = false, $key = 'file-input' ) {
+		return array(
+			'inputs' => array(
+				$key => array(
+					'label'          => 'Upload',
+					'value'          => basename( $path ),
+					'type'           => 'file',
+					'path'           => $path,
+					'saved_in_media' => $saved_in_media,
+					'metadata'       => array(
+						'name' => basename( $path ),
+						'size' => filesize( $path ),
+					),
+				),
+			),
+		);
 	}
 
 	/**
@@ -175,6 +246,69 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		$rejected->set_error( Form_Data_Response::ERROR_BOT_DETECTED );
 		$this->submissions->store_form_record( $rejected );
 		$this->assertCount( 1, $this->get_records() );
+	}
+
+	/**
+	 * Ensure an older Pro storage object cannot reintroduce the legacy Email Only skip.
+	 */
+	public function test_legacy_pro_bridge_uses_lite_storage_without_legacy_save_location_gate() {
+		$form_data = $this->build_form_data();
+
+		$old_instance = \ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::$instance;
+		\ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::$instance = new class() {
+			public function store_form_record( $form_data ) {
+				$GLOBALS['otter_legacy_store_called'] = true;
+				return $form_data;
+			}
+		};
+
+		try {
+			$this->submissions->bridge_legacy_pro_store( $form_data );
+		} finally {
+			\ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::$instance = $old_instance;
+		}
+
+		$this->assertTrue( $form_data->has_record_id() );
+		$this->assertCount( 1, $this->get_records() );
+		$this->assertArrayNotHasKey( 'otter_legacy_store_called', $GLOBALS );
+	}
+
+	/**
+	 * Ensure deleting a Submission Record deletes its owned non-media upload.
+	 */
+	public function test_permanent_delete_removes_owned_non_media_upload_file() {
+		$path      = $this->create_upload_file( 'owned-upload.txt' );
+		$record_id = $this->create_record( 'unread', $this->get_file_record_meta( $path ) );
+
+		$this->assertFileExists( $path );
+
+		wp_delete_post( $record_id, true );
+
+		$this->assertFileDoesNotExist( $path );
+	}
+
+	/**
+	 * Ensure deleting a Submission Record keeps media-library and shared upload files.
+	 */
+	public function test_permanent_delete_keeps_media_library_and_shared_upload_files() {
+		$media_path  = $this->create_upload_file( 'media-upload.txt' );
+		$shared_path = $this->create_upload_file( 'shared-upload.txt' );
+
+		$first_id = $this->create_record(
+			'unread',
+			array(
+				'inputs' => array_merge(
+					$this->get_file_record_meta( $media_path, true, 'media-file-input' )['inputs'],
+					$this->get_file_record_meta( $shared_path, false, 'shared-file-input' )['inputs']
+				),
+			)
+		);
+		$this->create_record( 'unread', $this->get_file_record_meta( $shared_path, false, 'shared-file-input' ) );
+
+		wp_delete_post( $first_id, true );
+
+		$this->assertFileExists( $media_path );
+		$this->assertFileExists( $shared_path );
 	}
 
 	/**
@@ -332,5 +466,22 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		$this->assertTrue( $data['success'] );
 		$this->assertSame( 'unread', get_post_status( $record_id ) );
 		$this->assertCount( 1, $this->get_records() );
+	}
+
+	/**
+	 * Ensure the Stripe confirmation cron is scheduled only once a draft has a checkout session.
+	 */
+	public function test_update_submission_dump_data_schedules_confirmation_only_for_stripe_drafts() {
+		$record_id = $this->create_record( 'draft' );
+		$form_data = $this->build_form_data();
+		$form_data->mark_as_temporary();
+
+		$this->submissions->update_submission_dump_data( $form_data, $record_id );
+		$this->assertFalse( wp_next_scheduled( 'otter_form_automatic_confirmation' ) );
+
+		$form_data->metadata['otter_form_stripe_checkout_session_id'] = 'sess_123';
+		$this->submissions->update_submission_dump_data( $form_data, $record_id );
+
+		$this->assertNotFalse( wp_next_scheduled( 'otter_form_automatic_confirmation' ) );
 	}
 }

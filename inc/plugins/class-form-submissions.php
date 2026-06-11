@@ -66,15 +66,17 @@ class Form_Submissions {
 	 * @return void
 	 */
 	public function init() {
+		add_action( 'before_delete_post', array( $this, 'delete_uploaded_files_on_record_delete' ), 10, 2 );
+
 		/**
 		 * Shim for version skew: an older Otter Pro build with an active license still owns
 		 * storage (its Form_Emails_Storing registers the CPT, the dashboard and the save
 		 * hook), so defer the UI/CPT registration to it to avoid double registration; the
 		 * updated Pro build is a thin extension and exposes the `is_thin_extension` marker.
 		 *
-		 * Storage ordering must not regress though: bridge the save-before-delivery hook to
-		 * the legacy Pro store (and unhook its after-delivery save) so a delivery failure
-		 * cannot lose the submission even while the old Pro build is active.
+		 * Storage ordering must not regress though: the bridge removes the legacy
+		 * after-delivery save and lets Lite create the record before delivery, without the
+		 * old save-location gate.
 		 */
 		if (
 			class_exists( '\ThemeIsle\OtterPro\Plugins\Form_Emails_Storing' ) &&
@@ -130,9 +132,29 @@ class Form_Submissions {
 		add_action( 'draft_to_unread', array( $this, 'apply_hooks_on_draft_transition' ), 10 );
 		add_action( 'otter_form_update_record_meta_dump', array( $this, 'update_submission_dump_data' ), 10, 2 );
 		add_action( 'otter_form_automatic_confirmation', array( $this, 'move_old_stripe_draft_sessions_to_unread' ) );
-		add_action( 'wp', array( $this, 'schedule_automatic_confirmation' ) );
 
 		add_action( 'wp_ajax_otter_form_submissions', array( $this, 'export_submissions' ) );
+	}
+
+	/**
+	 * Get delivery failure actions keyed by response error code.
+	 *
+	 * @return array<int|string, string>
+	 */
+	public static function get_delivery_failure_actions() {
+		return array(
+			Form_Data_Response::ERROR_CAPTCHA_PROVIDER_UNREACHABLE => 'captcha',
+			Form_Data_Response::ERROR_EMAIL_NOT_SEND       => 'email',
+			Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER => 'webhook',
+			Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR => 'subscribe',
+			Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR => 'subscribe',
+			Form_Data_Response::ERROR_PROVIDER_INVALID_KEY => 'subscribe',
+			Form_Data_Response::ERROR_PROVIDER_INVALID_API_KEY_FORMAT => 'subscribe',
+			Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL => 'subscribe',
+			Form_Data_Response::ERROR_MISSING_EMAIL        => 'subscribe',
+			Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED => 'provider',
+			Form_Data_Response::ERROR_RUNTIME_ERROR        => 'provider',
+		);
 	}
 
 	/**
@@ -373,9 +395,9 @@ class Form_Submissions {
 	}
 
 	/**
-	 * Bridge the save-before-delivery hook to an older Otter Pro build that still owns
-	 * storage, and unhook its legacy after-delivery save so the record is neither lost
-	 * on delivery failure nor stored twice.
+	 * Bridge the save-before-delivery hook for an older Otter Pro build that still owns
+	 * storage UI/CPT registration, and unhook its legacy after-delivery save so the
+	 * record is neither lost on delivery failure nor stored twice.
 	 *
 	 * @param Form_Data_Request $form_data The form data object.
 	 * @return Form_Data_Request The form data object.
@@ -393,7 +415,7 @@ class Form_Submissions {
 
 		remove_action( 'otter_form_after_submit', array( $legacy, 'store_form_record' ) );
 
-		return $legacy->store_form_record( $form_data );
+		return $this->store_form_record( $form_data );
 	}
 
 	/**
@@ -412,19 +434,7 @@ class Form_Submissions {
 			return;
 		}
 
-		$delivery_actions = array(
-			Form_Data_Response::ERROR_CAPTCHA_PROVIDER_UNREACHABLE => 'captcha',
-			Form_Data_Response::ERROR_EMAIL_NOT_SEND       => 'email',
-			Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER => 'webhook',
-			Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR => 'subscribe',
-			Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR => 'subscribe',
-			Form_Data_Response::ERROR_PROVIDER_INVALID_KEY => 'subscribe',
-			Form_Data_Response::ERROR_PROVIDER_INVALID_API_KEY_FORMAT => 'subscribe',
-			Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL => 'subscribe',
-			Form_Data_Response::ERROR_MISSING_EMAIL        => 'subscribe',
-			Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED => 'provider',
-			Form_Data_Response::ERROR_RUNTIME_ERROR        => 'provider',
-		);
+		$delivery_actions = self::get_delivery_failure_actions();
 
 		$errors = array();
 
@@ -482,6 +492,129 @@ class Form_Submissions {
 		} else {
 			update_post_meta( $record_id, self::DELIVERY_ERRORS_META_KEY, $errors );
 		}
+	}
+
+	/**
+	 * Delete uploaded files owned by a Submission Record when it is permanently deleted.
+	 *
+	 * @param int          $post_id The post ID.
+	 * @param WP_Post|null $post The post object.
+	 * @return void
+	 */
+	public function delete_uploaded_files_on_record_delete( $post_id, $post = null ) {
+		if ( ! $post instanceof WP_Post ) {
+			$post = get_post( $post_id );
+		}
+
+		if ( ! $post instanceof WP_Post || self::FORM_RECORD_TYPE !== $post->post_type ) {
+			return;
+		}
+
+		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
+
+		foreach ( $this->get_owned_upload_paths_from_meta( $meta ) as $path ) {
+			if ( $this->is_upload_path_referenced_by_another_record( $path, $post_id ) ) {
+				continue;
+			}
+
+			if ( $this->is_safe_upload_path( $path ) ) {
+				wp_delete_file( $path );
+			}
+		}
+	}
+
+	/**
+	 * Extract non-media upload paths from Submission Record meta.
+	 *
+	 * @param mixed $meta The record meta.
+	 * @return string[]
+	 */
+	private function get_owned_upload_paths_from_meta( $meta ) {
+		if ( ! is_array( $meta ) || empty( $meta['inputs'] ) || ! is_array( $meta['inputs'] ) ) {
+			return array();
+		}
+
+		$paths = array();
+
+		foreach ( $meta['inputs'] as $input ) {
+			if (
+				! is_array( $input ) ||
+				( isset( $input['type'] ) && 'file' !== $input['type'] ) ||
+				! empty( $input['saved_in_media'] ) ||
+				empty( $input['path'] ) ||
+				! is_string( $input['path'] )
+			) {
+				continue;
+			}
+
+			$paths[] = $input['path'];
+		}
+
+		return array_values( array_unique( $paths ) );
+	}
+
+	/**
+	 * Check whether another Submission Record still references the upload path.
+	 *
+	 * @param string $path The upload path.
+	 * @param int    $excluded_record_id The record being deleted.
+	 * @return bool
+	 */
+	private function is_upload_path_referenced_by_another_record( $path, $excluded_record_id ) {
+		$records = get_posts(
+			array(
+				'post_type'      => self::FORM_RECORD_TYPE,
+				'post_status'    => array( 'draft', 'unread', 'read', 'trash' ),
+				'posts_per_page' => -1,
+				'meta_query'     => array(
+					array(
+						'key'     => self::FORM_RECORD_META_KEY,
+						'value'   => $path,
+						'compare' => 'LIKE',
+					),
+				),
+			)
+		);
+
+		foreach ( $records as $record ) {
+			$record_id = (int) $record->ID;
+
+			if ( $record_id === (int) $excluded_record_id ) {
+				continue;
+			}
+
+			$meta = get_post_meta( $record_id, self::FORM_RECORD_META_KEY, true );
+			if ( in_array( $path, $this->get_owned_upload_paths_from_meta( $meta ), true ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check whether a path points to an existing file inside the uploads directory.
+	 *
+	 * @param string $path The upload path.
+	 * @return bool
+	 */
+	private function is_safe_upload_path( $path ) {
+		if ( ! file_exists( $path ) ) {
+			return false;
+		}
+
+		$uploads   = wp_upload_dir();
+		$base_dir  = realpath( $uploads['basedir'] );
+		$file_path = realpath( $path );
+
+		if ( false === $base_dir || false === $file_path ) {
+			return false;
+		}
+
+		$base_dir  = trailingslashit( wp_normalize_path( $base_dir ) );
+		$file_path = wp_normalize_path( $file_path );
+
+		return 0 === strpos( $file_path, $base_dir );
 	}
 
 	/**
@@ -1582,6 +1715,13 @@ class Form_Submissions {
 			)
 		);
 		update_post_meta( $record_id, self::FORM_RECORD_META_KEY, $meta );
+
+		if (
+			$form_data->is_temporary() &&
+			$form_data->has_metadata( 'otter_form_stripe_checkout_session_id' )
+		) {
+			$this->schedule_automatic_confirmation();
+		}
 	}
 
 	/**
@@ -1648,6 +1788,10 @@ class Form_Submissions {
 				return;
 			}
 		}
+
+		if ( ! $this->has_pending_stripe_draft_sessions() ) {
+			wp_clear_scheduled_hook( 'otter_form_automatic_confirmation' );
+		}
 	}
 
 	/**
@@ -1659,6 +1803,31 @@ class Form_Submissions {
 		if ( ! wp_next_scheduled( 'otter_form_automatic_confirmation' ) ) {
 			wp_schedule_event( time(), 'hourly', 'otter_form_automatic_confirmation' );
 		}
+	}
+
+	/**
+	 * Check whether there are draft records waiting on a Stripe checkout session.
+	 *
+	 * @return bool
+	 */
+	private function has_pending_stripe_draft_sessions() {
+		$query = new WP_Query(
+			array(
+				'post_type'      => self::FORM_RECORD_TYPE,
+				'post_status'    => 'draft',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					array(
+						'key'     => self::FORM_RECORD_META_KEY,
+						'value'   => 'otter_form_stripe_checkout_session_id',
+						'compare' => 'LIKE',
+					),
+				),
+			)
+		);
+
+		return $query->have_posts();
 	}
 
 	/**

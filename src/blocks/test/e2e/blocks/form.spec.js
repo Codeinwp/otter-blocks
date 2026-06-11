@@ -6,7 +6,7 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 /**
  * Internal dependencies
  */
-import { expectBlockByName, insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
+import { expectBlockByName, insertBlockBySlash, publishAndViewPost, publishPostReliable } from '../helpers/editor';
 import { expectFormOptionSavedNotice, findSavedFormEmail, getSavedFormEmails, insertContactForm, openFormOptions, showFormOption } from '../helpers/forms';
 import { expectSuccessMessage, visibleText } from '../helpers/frontend';
 
@@ -53,7 +53,7 @@ test.describe( 'Form Block', () => {
 
 		expect( await cc.inputValue() ).toBe( ccValue );
 
-		await editor.publishPost();
+		await publishPostReliable( editor, page );
 
 		await expectFormOptionSavedNotice( page );
 
@@ -94,7 +94,7 @@ test.describe( 'Form Block', () => {
 
 		expect( await from.inputValue() ).toBe( fromEmail );
 
-		await editor.publishPost();
+		await publishPostReliable( editor, page );
 
 		await expectFormOptionSavedNotice( page );
 
@@ -289,7 +289,7 @@ test.describe( 'Form Block', () => {
 
 		await cc.fill( ccValue );
 
-		await editor.publishPost();
+		await publishPostReliable( editor, page );
 
 		await page.getByLabel( 'Close panel' ).click();
 
