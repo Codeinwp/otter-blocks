@@ -2,12 +2,228 @@
  * WordPress dependencies.
  */
 import { parse, rawHandler, serialize } from '@wordpress/blocks';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies.
  */
 import type { BlockProps } from '../../helpers/blocks';
-import { isRichTextBlock } from './actions';
+
+const RICHTEXT_BLOCKS = [
+	'core/paragraph',
+	'core/heading'
+];
+
+const EDITOR_INTERNAL_ATTR_KEYS = new Set([ 'source', 'selector', 'attribute', 'role', 'meta' ]);
+
+const STRUCTURAL_BLOCK_INSTRUCTION = 'Return the result using WordPress Gutenberg block comment syntax (<!-- wp:block-name {"attr":...} -->). Preserve every block from the input: same block types, same instance ids in attributes, and the same order. Do not add or remove blocks. Only update textual attributes such as label, placeholder, or paragraph content.';
+
+type BlockTypeLike = {
+	attributes?: Record<string, Record<string, unknown>>
+} | undefined;
+
+type GetBlockType = ( name: string ) => BlockTypeLike;
+
+/** Schema registry (by block type) + instance tree (by block id). */
+export type BlockSchemaPayload = {
+	schemas: Record<string, Record<string, Record<string, unknown>>>;
+	tree: Record<string, BlockTreeNode>;
+};
+
+export type BlockTreeNode = {
+	type: string;
+	innerBlocks?: Record<string, BlockTreeNode>;
+};
+
+export type BlockContentContext = {
+	blockContent: string;
+	blockMarkup?: string;
+	blockAttributes?: string;
+};
+
+export const isRichTextBlock = ( blockName?: string ) => {
+	return Boolean( blockName && RICHTEXT_BLOCKS.includes( blockName ) );
+};
+
+export const collectBlockNames = ( blocks: BlockProps<unknown>[] ): string[] => {
+	const names = new Set<string>();
+
+	const walk = ( blockList: BlockProps<unknown>[] ) => {
+		for ( const block of blockList ) {
+			if ( block.name ) {
+				names.add( block.name );
+			}
+
+			if ( block.innerBlocks?.length ) {
+				walk( block.innerBlocks as BlockProps<unknown>[] );
+			}
+		}
+	};
+
+	walk( blocks );
+
+	return [ ...names ];
+};
+
+const sanitizeAttributeDefinition = ( attr: Record<string, unknown> ): Record<string, unknown> => {
+	const sanitized: Record<string, unknown> = {};
+
+	for ( const [ key, value ] of Object.entries( attr ) ) {
+		if ( ! EDITOR_INTERNAL_ATTR_KEYS.has( key ) ) {
+			sanitized[ key ] = value;
+		}
+	}
+
+	return sanitized;
+};
+
+export const getBlockInstanceKey = ( block: BlockProps<unknown> ): string => {
+	const id = block.attributes?.id;
+
+	if ( 'string' === typeof id && id ) {
+		return id;
+	}
+
+	return block.clientId;
+};
+
+const isSerializedAttribute = ( attrDef: Record<string, unknown> ): boolean => {
+	return ! attrDef.source;
+};
+
+const getSchemaForType = (
+	name: string,
+	getBlockType: GetBlockType
+): Record<string, Record<string, unknown>> => {
+	const blockType = getBlockType( name );
+
+	if ( ! blockType?.attributes ) {
+		return {};
+	}
+
+	const attrs: Record<string, Record<string, unknown>> = {};
+
+	for ( const [ attrName, attrDef ] of Object.entries( blockType.attributes ) ) {
+		if ( ! attrDef || 'object' !== typeof attrDef ) {
+			continue;
+		}
+
+		if ( ! isSerializedAttribute( attrDef as Record<string, unknown> ) ) {
+			continue;
+		}
+
+		attrs[ attrName ] = sanitizeAttributeDefinition( attrDef as Record<string, unknown> );
+	}
+
+	return attrs;
+};
+
+const buildTreeNode = (
+	block: BlockProps<unknown>
+): BlockTreeNode => {
+	const node: BlockTreeNode = {
+		type: block.name || ''
+	};
+
+	if ( block.innerBlocks?.length ) {
+		node.innerBlocks = {};
+
+		for ( const innerBlock of block.innerBlocks as BlockProps<unknown>[] ) {
+			const key = getBlockInstanceKey( innerBlock );
+			node.innerBlocks[ key ] = buildTreeNode( innerBlock );
+		}
+	}
+
+	return node;
+};
+
+const collectTypesFromTree = ( node: BlockTreeNode, types: Set<string> ) => {
+	if ( node.type ) {
+		types.add( node.type );
+	}
+
+	if ( node.innerBlocks ) {
+		for ( const child of Object.values( node.innerBlocks ) ) {
+			collectTypesFromTree( child, types );
+		}
+	}
+};
+
+export const buildBlockSchemaPayload = (
+	blocks: BlockProps<unknown>[],
+	getBlockType: GetBlockType
+): BlockSchemaPayload | null => {
+	const tree: Record<string, BlockTreeNode> = {};
+	const types = new Set<string>();
+
+	for ( const block of blocks ) {
+		const key = getBlockInstanceKey( block );
+		const node = buildTreeNode( block );
+		tree[ key ] = node;
+		collectTypesFromTree( node, types );
+	}
+
+	if ( 0 === Object.keys( tree ).length ) {
+		return null;
+	}
+
+	const schemas: Record<string, Record<string, Record<string, unknown>>> = {};
+
+	for ( const type of types ) {
+		const schema = getSchemaForType( type, getBlockType );
+
+		if ( 0 < Object.keys( schema ).length ) {
+			schemas[ type ] = schema;
+		}
+	}
+
+	return {
+		schemas,
+		tree
+	};
+};
+
+export const extractBlockAttributeDefinitions = (
+	blocks: BlockProps<unknown>[],
+	getBlockType?: GetBlockType
+): string => {
+	const resolveBlockType: GetBlockType = getBlockType ?? ( ( name ) => select( 'core/blocks' )?.getBlockType( name ) );
+	const payload = buildBlockSchemaPayload( blocks, resolveBlockType );
+
+	return payload ? JSON.stringify( payload, null, 2 ) : '';
+};
+
+export const resolveBlockMarkupForPrompt = (
+	context: Pick<BlockContentContext, 'blockMarkup' | 'blockAttributes'>
+): string => {
+	if ( ! context.blockMarkup?.trim() ) {
+		return '';
+	}
+
+	const parts = [ context.blockMarkup ];
+
+	if ( context.blockAttributes?.trim() ) {
+		parts.push( '', 'Block schema:', context.blockAttributes );
+	}
+
+	return parts.join( '\n' );
+};
+
+export const resolveBlockContentForPrompt = ( context: BlockContentContext ): string => {
+	const textContent = context.blockContent?.trim() ?? '';
+
+	if ( textContent ) {
+		return context.blockContent;
+	}
+
+	const markupBundle = resolveBlockMarkupForPrompt( context );
+
+	if ( ! markupBundle ) {
+		return context.blockContent || '';
+	}
+
+	return `${ markupBundle }\n\n${ STRUCTURAL_BLOCK_INSTRUCTION }`;
+};
 
 export const extractBlockTextContent = ( source: BlockProps<unknown> | BlockProps<unknown>[] ): string => {
 	if ( Array.isArray( source ) ) {

@@ -48,10 +48,12 @@ import {
 } from './actions';
 import {
 	applyGeneratedContent,
+	extractBlockAttributeDefinitions,
 	extractBlockMarkup,
 	extractBlockTextContent,
 	extractBlockTypes,
-	getSelectedBlockClientIds
+	getSelectedBlockClientIds,
+	resolveBlockContentForPrompt
 } from './apply-content';
 
 type ResultHistoryItem = {
@@ -128,11 +130,13 @@ const AIContentModal = ({
 		const blockContent = extractBlockTextContent( selectedBlocks );
 		const blockMarkup = extractBlockMarkup( selectedBlocks );
 		const blockType = extractBlockTypes( selectedBlocks );
+		const blockAttributes = extractBlockAttributeDefinitions( selectedBlocks );
 
 		return {
 			blockContent,
 			blockMarkup,
-			blockType
+			blockType,
+			blockAttributes
 		};
 	}, [ selectedBlocks ]);
 
@@ -257,7 +261,7 @@ const AIContentModal = ({
 				embeddedPrompt,
 				{
 					otter_used_action: `textTransformation::${ selectedAction?.id }`,
-					otter_user_content: blockContext.blockContent
+					otter_user_content: resolveBlockContentForPrompt( blockContext )
 				}
 			);
 

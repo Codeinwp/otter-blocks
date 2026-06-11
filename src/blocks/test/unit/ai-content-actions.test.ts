@@ -20,7 +20,12 @@ import {
 
 import {
 	applyGeneratedContent,
-	parseGeneratedContent
+	collectBlockNames,
+	extractBlockAttributeDefinitions,
+	parseGeneratedContent,
+	resolveBlockContentForPrompt,
+	resolveBlockMarkupForPrompt,
+	type BlockSchemaPayload
 } from '../../plugins/ai-content/apply-content';
 
 describe( 'ai-content actions', () => {
@@ -178,6 +183,7 @@ describe( 'ai-content actions', () => {
 			{
 				blockContent: 'Hello world',
 				blockMarkup: '<p>Hello world</p>',
+				blockAttributes: '{ "paragraph-1": { "type": "core/paragraph" } }',
 				blockType: 'paragraph',
 				tone: 'Professional'
 			}
@@ -187,6 +193,72 @@ describe( 'ai-content actions', () => {
 		expect( prompt ).toContain( 'paragraph' );
 		expect( prompt ).toContain( 'Hello world' );
 		expect( prompt ).toContain( '<p>Hello world</p>' );
+		expect( prompt ).toContain( 'Block schema:' );
+	});
+
+	it( 'appends attribute definitions to {block_markup}', () => {
+		const markup = '<!-- wp:themeisle-blocks/form -->';
+		const attrDefs = '{ "form-1": { "type": "themeisle-blocks/form" } }';
+
+		const prompt = replaceMagicTags(
+			'Rebuild:\n\n{block_markup}',
+			{
+				blockContent: '',
+				blockMarkup: markup,
+				blockAttributes: attrDefs
+			}
+		);
+
+		expect( prompt ).toContain( markup );
+		expect( prompt ).toContain( 'Block schema:' );
+		expect( prompt ).toContain( attrDefs );
+		expect( prompt ).not.toContain( 'WordPress Gutenberg block comment syntax' );
+	});
+
+	it( 'resolves {block_content} to markup bundle for structural blocks', () => {
+		const formMarkup = '<!-- wp:themeisle-blocks/form -->';
+		const attrDefs = '{ "themeisle-blocks/form-input": { "label": { "type": "string" } } }';
+
+		const prompt = replaceMagicTags(
+			'Improve this form:\n\n{block_content}',
+			{
+				blockContent: '',
+				blockMarkup: formMarkup,
+				blockAttributes: attrDefs
+			}
+		);
+
+		expect( prompt ).toContain( formMarkup );
+		expect( prompt ).toContain( 'Block schema:' );
+		expect( prompt ).toContain( attrDefs );
+		expect( prompt ).toContain( 'WordPress Gutenberg block comment syntax' );
+	});
+
+	it( 'keeps {block_content} as plain text for richtext blocks', () => {
+		const prompt = replaceMagicTags(
+			'Rewrite:\n\n{block_content}',
+			{
+				blockContent: 'Hello world',
+				blockMarkup: '<!-- wp:paragraph --><p>Hello world</p><!-- /wp:paragraph -->',
+				blockAttributes: '{ "core/paragraph": { "content": { "type": "string" } } }'
+			}
+		);
+
+		expect( prompt ).toBe( 'Rewrite:\n\nHello world' );
+	});
+
+	it( 'resolves {block_attributes} independently from {block_content}', () => {
+		const attrDefs = '{ "themeisle-blocks/form": { "id": { "type": "string" } } }';
+
+		const prompt = replaceMagicTags(
+			'Attributes:\n{block_attributes}',
+			{
+				blockContent: '',
+				blockAttributes: attrDefs
+			}
+		);
+
+		expect( prompt ).toBe( `Attributes:\n${ attrDefs }` );
 	});
 });
 
@@ -237,6 +309,200 @@ describe( 'parseGeneratedContent', () => {
 		expect( blocks[0].name ).toBe( 'core/heading' );
 		expect( blocks[0].attributes?.content ).toBe( 'Title' );
 		expect( blocks[0].attributes?.level ).toBe( 3 );
+	});
+});
+
+describe( 'resolveBlockMarkupForPrompt', () => {
+	it( 'returns markup with attribute definitions', () => {
+		const markup = '<!-- wp:themeisle-blocks/form -->';
+		const attrs = '{ "form-1": { "type": "themeisle-blocks/form" } }';
+
+		const resolved = resolveBlockMarkupForPrompt({
+			blockMarkup: markup,
+			blockAttributes: attrs
+		});
+
+		expect( resolved ).toContain( markup );
+		expect( resolved ).toContain( 'Block schema:' );
+		expect( resolved ).toContain( attrs );
+	});
+});
+
+describe( 'resolveBlockContentForPrompt', () => {
+	it( 'returns richtext content without markup or definitions', () => {
+		const resolved = resolveBlockContentForPrompt({
+			blockContent: 'Hello world',
+			blockMarkup: '<!-- wp:paragraph --><p>Hello world</p><!-- /wp:paragraph -->',
+			blockAttributes: '{ "core/paragraph": {} }'
+		});
+
+		expect( resolved ).toBe( 'Hello world' );
+	});
+
+	it( 'returns markup bundle when richtext content is empty', () => {
+		const markup = '<!-- wp:themeisle-blocks/form -->';
+		const attrs = '{ "themeisle-blocks/form-input": { "label": { "type": "string" } } }';
+
+		const resolved = resolveBlockContentForPrompt({
+			blockContent: '',
+			blockMarkup: markup,
+			blockAttributes: attrs
+		});
+
+		expect( resolved ).toContain( markup );
+		expect( resolved ).toContain( 'Block schema:' );
+		expect( resolved ).toContain( attrs );
+		expect( resolved ).toContain( 'WordPress Gutenberg block comment syntax' );
+	});
+});
+
+describe( 'extractBlockAttributeDefinitions', () => {
+	const mockGetBlockType = ( name: string ) => {
+		const schemas: Record<string, { attributes: Record<string, Record<string, unknown>> }> = {
+			'themeisle-blocks/form': {
+				attributes: {
+					id: { type: 'string' },
+					optionName: { type: 'string' }
+				}
+			},
+			'themeisle-blocks/form-input': {
+				attributes: {
+					label: { type: 'string' },
+					isRequired: { type: 'boolean' },
+					defaultValue: {
+						type: 'string',
+						source: 'attribute',
+						selector: 'input.otter-form-input',
+						attribute: 'value'
+					}
+				}
+			},
+			'themeisle-blocks/form-textarea': {
+				attributes: {
+					label: { type: 'string' }
+				}
+			}
+		};
+
+		return schemas[ name ];
+	};
+
+	it( 'collects inner block types from the selection tree', () => {
+		const blocks = [
+			{
+				clientId: 'form',
+				name: 'themeisle-blocks/form',
+				attributes: {},
+				innerBlocks: [
+					{ clientId: 'input', name: 'themeisle-blocks/form-input', attributes: {} },
+					{ clientId: 'textarea', name: 'themeisle-blocks/form-textarea', attributes: {} }
+				]
+			}
+		];
+
+		expect( collectBlockNames( blocks ) ).toEqual([
+			'themeisle-blocks/form',
+			'themeisle-blocks/form-input',
+			'themeisle-blocks/form-textarea'
+		]);
+	});
+
+	it( 'strips editor-internal attribute keys from definitions', () => {
+		const blocks = [
+			{
+				clientId: 'input',
+				name: 'themeisle-blocks/form-input',
+				attributes: { id: 'input-1' }
+			}
+		];
+
+		const definitions = JSON.parse(
+			extractBlockAttributeDefinitions( blocks, mockGetBlockType )
+		) as BlockSchemaPayload;
+
+		expect( definitions.schemas['themeisle-blocks/form-input'] ).toEqual({
+			label: { type: 'string' },
+			isRequired: { type: 'boolean' }
+		});
+		expect( definitions.tree['input-1'] ).toEqual({ type: 'themeisle-blocks/form-input' });
+	});
+
+	it( 'maps inner blocks by instance id so duplicate types stay distinct', () => {
+		const blocks = [
+			{
+				clientId: 'form',
+				name: 'themeisle-blocks/form',
+				attributes: { id: 'form-1' },
+				innerBlocks: [
+					{
+						clientId: 'input-a',
+						name: 'themeisle-blocks/form-input',
+						attributes: { id: 'input-name', label: 'Name' }
+					},
+					{
+						clientId: 'input-b',
+						name: 'themeisle-blocks/form-input',
+						attributes: { id: 'input-email', label: 'Email', type: 'email' }
+					},
+					{
+						clientId: 'textarea',
+						name: 'themeisle-blocks/form-textarea',
+						attributes: { id: 'textarea-message', label: 'Message' }
+					}
+				]
+			}
+		];
+
+		const definitions = JSON.parse(
+			extractBlockAttributeDefinitions( blocks, mockGetBlockType )
+		) as BlockSchemaPayload;
+
+		expect( Object.keys( definitions.tree ) ).toEqual([ 'form-1' ]);
+		expect( definitions.tree['form-1'].type ).toBe( 'themeisle-blocks/form' );
+		expect( Object.keys( definitions.tree['form-1'].innerBlocks || {}) ).toEqual([
+			'input-name',
+			'input-email',
+			'textarea-message'
+		]);
+		expect( definitions.tree['form-1'].innerBlocks?.['input-name'] ).toEqual({ type: 'themeisle-blocks/form-input' });
+		expect( definitions.tree['form-1'].innerBlocks?.['input-email'] ).toEqual({ type: 'themeisle-blocks/form-input' });
+		expect( definitions.tree['form-1'].innerBlocks?.['textarea-message'] ).toEqual({ type: 'themeisle-blocks/form-textarea' });
+		expect( definitions.schemas['themeisle-blocks/form-input'] ).toEqual({
+			label: { type: 'string' },
+			isRequired: { type: 'boolean' }
+		});
+		expect( definitions.schemas['themeisle-blocks/form'] ).toEqual({
+			id: { type: 'string' },
+			optionName: { type: 'string' }
+		});
+	});
+
+	it( 'outputs pretty-printed json with deduplicated type schemas', () => {
+		const blocks = [
+			{
+				clientId: 'form',
+				name: 'themeisle-blocks/form',
+				attributes: { id: 'form-1' },
+				innerBlocks: [
+					{
+						clientId: 'input-a',
+						name: 'themeisle-blocks/form-input',
+						attributes: { id: 'input-name' }
+					},
+					{
+						clientId: 'input-b',
+						name: 'themeisle-blocks/form-input',
+						attributes: { id: 'input-email' }
+					}
+				]
+			}
+		];
+
+		const serialized = extractBlockAttributeDefinitions( blocks, mockGetBlockType );
+
+		expect( serialized ).toContain( '\n' );
+		expect( serialized.match( /"themeisle-blocks\/form-input"/g ) ).toHaveLength( 3 );
+		expect( serialized.match( /"label"/g ) ).toHaveLength( 1 );
 	});
 });
 

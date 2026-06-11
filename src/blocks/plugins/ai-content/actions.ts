@@ -3,6 +3,13 @@
  */
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies.
+ */
+import { isRichTextBlock, resolveBlockContentForPrompt, resolveBlockMarkupForPrompt } from './apply-content';
+
+export { isRichTextBlock };
+
 export type AIToolbarAction = {
 	id: string;
 	title: string;
@@ -236,10 +243,6 @@ export const normalizeToolbarActions = ( actions: Partial<AIToolbarAction>[] = [
 	return actions.map( ( action, index ) => normalizeToolbarAction( action, index, usedIds ) );
 };
 
-export const isRichTextBlock = ( blockName?: string ) => {
-	return Boolean( blockName && RICHTEXT_BLOCKS.includes( blockName ) );
-};
-
 export const filterToolbarActionsForBlocks = (
 	actions: AIToolbarAction[],
 	blockNames: string[]
@@ -264,23 +267,25 @@ export const filterToolbarActionsForBlocks = (
 	});
 };
 
-type MagicTagContext = {
+export type MagicTagContext = {
 	blockContent: string;
 	blockMarkup?: string;
+	blockAttributes?: string;
 	blockType?: string;
 	tone?: string;
 };
 
 export const replaceMagicTags = ( template: string, context: MagicTagContext ): string => {
 	if ( ! template ) {
-		return context.blockContent || '';
+		return resolveBlockContentForPrompt( context );
 	}
 
 	let result = template;
 
 	result = result.replace( /\{text_input\}/gi, () => context.blockContent || '' );
-	result = result.replace( /\{block_content\}/gi, () => context.blockContent || '' );
-	result = result.replace( /\{block_markup\}/gi, () => context.blockMarkup || '' );
+	result = result.replace( /\{block_content\}/gi, () => resolveBlockContentForPrompt( context ) );
+	result = result.replace( /\{block_markup\}/gi, () => resolveBlockMarkupForPrompt( context ) );
+	result = result.replace( /\{block_attributes\}/gi, () => context.blockAttributes || '' );
 	result = result.replace( /\{block_type\}/gi, () => context.blockType || '' );
 	result = result.replace( /\{tone\}/gi, () => context.tone || '' );
 

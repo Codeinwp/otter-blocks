@@ -28,7 +28,8 @@ import { SortableDragHandle, useSortableRow } from '../../blocks/components/sort
 
 const MAGIC_TAGS = [
 	{ tag: '{block_content}', label: '{block_content}', title: __( 'Text content of the block', 'otter-blocks' ) },
-	{ tag: '{block_markup}', label: '{block_markup}', title: __( 'Full HTML / block markup', 'otter-blocks' ), isMarkup: true },
+	{ tag: '{block_markup}', label: '{block_markup}', title: __( 'Full HTML / block markup with attribute definitions', 'otter-blocks' ), isMarkup: true },
+	{ tag: '{block_attributes}', label: '{block_attributes}', title: __( 'Block attribute definitions from block.json', 'otter-blocks' ), isMarkup: true },
 	{ tag: '{block_type}', label: '{block_type}', title: __( 'e.g. paragraph, heading, list', 'otter-blocks' ) },
 	{ tag: '{tone}', label: '{tone}', title: __( 'Selected tone in the editor', 'otter-blocks' ) }
 ];
