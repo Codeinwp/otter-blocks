@@ -47,12 +47,11 @@ import {
 	replaceMagicTags
 } from './actions';
 import {
+	applyGeneratedContent,
 	extractBlockMarkup,
 	extractBlockTextContent,
 	extractBlockTypes,
-	getSelectedBlockClientIds,
-	insertGeneratedBlocksBelow,
-	preservePlainTextAsBlock
+	getSelectedBlockClientIds
 } from './apply-content';
 
 type ResultHistoryItem = {
@@ -86,7 +85,7 @@ const AIContentModal = ({
 	singleClientId,
 	selectedClientIds
 }: AIContentModalProps ) => {
-	const [ getOption, _, settingsStatus ] = useSettings();
+	const [ getOption ] = useSettings();
 	const { replaceBlocks } = useDispatch( 'core/block-editor' );
 	const { createNotice } = useDispatch( 'core/notices' );
 
@@ -316,7 +315,11 @@ const AIContentModal = ({
 			return;
 		}
 
-		const blocks = preservePlainTextAsBlock( currentResult, selectedBlocks );
+		const blocks = applyGeneratedContent(
+			currentResult,
+			selectedBlocks,
+			selectedAction?.availability ?? 'richtext'
+		);
 
 		if ( ! blocks.length ) {
 			createNotice(
@@ -331,28 +334,6 @@ const AIContentModal = ({
 		}
 
 		replaceBlocks( replaceClientIds, blocks );
-		onClose();
-	};
-
-	const handleInsertBelow = () => {
-		if ( ! currentResult ) {
-			return;
-		}
-
-		const anchorClientId = replaceClientIds[ replaceClientIds.length - 1 ];
-
-		if ( ! anchorClientId || ! insertGeneratedBlocksBelow( anchorClientId, currentResult ) ) {
-			createNotice(
-				'error',
-				__( 'Could not insert the generated content.', 'otter-blocks' ),
-				{
-					type: 'snackbar',
-					isDismissible: true
-				}
-			);
-			return;
-		}
-
 		onClose();
 	};
 
@@ -490,14 +471,6 @@ const AIContentModal = ({
 							onClick={ handleApply }
 						>
 							{ __( 'Apply', 'otter-blocks' ) }
-						</Button>
-
-						<Button
-							variant="secondary"
-							disabled={ ! hasResult || isDirty || 'loading' === status }
-							onClick={ handleInsertBelow }
-						>
-							{ __( 'Insert below', 'otter-blocks' ) }
 						</Button>
 
 						{ hasResult && ! isDirty && 1 < resultHistory.length && (

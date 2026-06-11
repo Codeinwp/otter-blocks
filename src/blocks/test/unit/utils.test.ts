@@ -1,3 +1,9 @@
+jest.mock( 'uuid', () => ({
+	v4: () => 'mocked-uuid'
+}) );
+
+jest.mock( '@wordpress/blocks', () => require( './mocks/wordpress-blocks' ) );
+
 import { findBlock } from '../../../onboarding/utils';
 
 describe( 'findBlock', () => {

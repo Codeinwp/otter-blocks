@@ -1,3 +1,9 @@
+jest.mock( 'uuid', () => ({
+	v4: () => 'mocked-uuid'
+}) );
+
+jest.mock( '@wordpress/blocks', () => require( './mocks/wordpress-blocks' ) );
+
 import {
 	AI_TOOLBAR_ACTIONS_OPTION,
 	countCustomActions,
@@ -11,6 +17,11 @@ import {
 	normalizeToolbarActions,
 	replaceMagicTags
 } from '../../plugins/ai-content/actions';
+
+import {
+	applyGeneratedContent,
+	parseGeneratedContent
+} from '../../plugins/ai-content/apply-content';
 
 describe( 'ai-content actions', () => {
 	it( 'normalizes legacy { title, prompt } settings', () => {
@@ -176,5 +187,102 @@ describe( 'ai-content actions', () => {
 		expect( prompt ).toContain( 'paragraph' );
 		expect( prompt ).toContain( 'Hello world' );
 		expect( prompt ).toContain( '<p>Hello world</p>' );
+	});
+});
+
+describe( 'parseGeneratedContent', () => {
+	it( 'parses plain text into a paragraph block via rawHandler', () => {
+		const blocks = parseGeneratedContent( 'Hello world' );
+
+		expect( blocks ).toHaveLength( 1 );
+		expect( blocks[0].name ).toBe( 'core/paragraph' );
+		expect( blocks[0].attributes?.content ).toBe( 'Hello world' );
+	});
+
+	it( 'parses raw HTML into blocks via rawHandler', () => {
+		const blocks = parseGeneratedContent( '<ul><li>A</li><li>B</li></ul>' );
+
+		expect( blocks.length ).toBeGreaterThan( 0 );
+		expect( blocks[0].name ).toBe( 'core/list' );
+	});
+
+	it( 'parses block comment syntax via the block parser', () => {
+		const blockMarkup = [
+			'<!-- wp:paragraph -->',
+			'<p>First</p>',
+			'<!-- /wp:paragraph -->',
+			'',
+			'<!-- wp:heading {"level":2} -->',
+			'<h2>Title</h2>',
+			'<!-- /wp:heading -->'
+		].join( '\n' );
+
+		const blocks = parseGeneratedContent( blockMarkup );
+
+		expect( blocks ).toHaveLength( 2 );
+		expect( blocks[0].name ).toBe( 'core/paragraph' );
+		expect( blocks[1].name ).toBe( 'core/heading' );
+	});
+
+	it( 'preserves block attributes from block comment syntax', () => {
+		const blockMarkup = [
+			'<!-- wp:heading {"level":3,"textAlign":"center"} -->',
+			'<h3 class="has-text-align-center">Title</h3>',
+			'<!-- /wp:heading -->'
+		].join( '\n' );
+
+		const blocks = parseGeneratedContent( blockMarkup );
+
+		expect( blocks ).toHaveLength( 1 );
+		expect( blocks[0].name ).toBe( 'core/heading' );
+		expect( blocks[0].attributes?.content ).toBe( 'Title' );
+		expect( blocks[0].attributes?.level ).toBe( 3 );
+	});
+});
+
+describe( 'applyGeneratedContent', () => {
+	it( 'uses preservePlainTextAsBlock for richtext availability', () => {
+		const sourceBlocks = [
+			{ clientId: 'a', name: 'core/paragraph', attributes: { content: 'original' }}
+		];
+
+		const blocks = applyGeneratedContent( 'rewritten text', sourceBlocks, 'richtext' );
+
+		expect( blocks ).toHaveLength( 1 );
+		expect( blocks[0].name ).toBe( 'core/paragraph' );
+	});
+
+	it( 'uses parseGeneratedContent directly for any availability', () => {
+		const sourceBlocks = [
+			{ clientId: 'a', name: 'core/paragraph', attributes: {}}
+		];
+
+		const denseHtml = '<ul><li>Item</li></ul>';
+		const blocks = applyGeneratedContent( denseHtml, sourceBlocks, 'any' );
+
+		expect( blocks.length ).toBeGreaterThan( 0 );
+		expect( blocks[0].name ).toBe( 'core/list' );
+	});
+
+	it( 'uses parseGeneratedContent for any availability with block syntax', () => {
+		const sourceBlocks = [
+			{ clientId: 'a', name: 'core/paragraph', attributes: {}}
+		];
+
+		const blockMarkup = [
+			'<!-- wp:paragraph -->',
+			'<p>A</p>',
+			'<!-- /wp:paragraph -->',
+			'',
+			'<!-- wp:paragraph -->',
+			'<p>B</p>',
+			'<!-- /wp:paragraph -->'
+		].join( '\n' );
+
+		const blocks = applyGeneratedContent( blockMarkup, sourceBlocks, 'any' );
+
+		expect( blocks ).toHaveLength( 2 );
+		expect( blocks[0].name ).toBe( 'core/paragraph' );
+		expect( blocks[1].name ).toBe( 'core/paragraph' );
 	});
 });

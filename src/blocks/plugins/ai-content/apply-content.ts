@@ -1,12 +1,11 @@
 /**
  * WordPress dependencies.
  */
-import { rawHandler, serialize } from '@wordpress/blocks';
+import { parse, rawHandler, serialize } from '@wordpress/blocks';
 
 /**
  * Internal dependencies.
  */
-import { insertBlockBelow } from '../../helpers/block-utility';
 import type { BlockProps } from '../../helpers/blocks';
 import { isRichTextBlock } from './actions';
 
@@ -46,18 +45,21 @@ export const parseGeneratedHtml = ( html: string ) => {
 	});
 };
 
-export const insertGeneratedBlocksBelow = (
-	clientId: string,
-	generatedHtml: string
-) => {
-	const blocks = parseGeneratedHtml( generatedHtml );
+/**
+ * Parse AI-generated content into blocks. Tries the WordPress block parser
+ * first (handles `<!-- wp:xxx -->` comment syntax), then falls back to
+ * {@link parseGeneratedHtml} for raw HTML.
+ *
+ * @param {string} html Generated HTML or block markup.
+ */
+export const parseGeneratedContent = ( html: string ) => {
+	const blocks = parse( html );
 
-	if ( ! blocks.length ) {
-		return false;
+	if ( blocks.length ) {
+		return blocks;
 	}
 
-	insertBlockBelow( clientId, blocks );
-	return true;
+	return parseGeneratedHtml( html );
 };
 
 export const preservePlainTextAsBlock = (
@@ -79,7 +81,28 @@ export const preservePlainTextAsBlock = (
 		}
 	}
 
-	return parseGeneratedHtml( generatedHtml );
+	return parseGeneratedContent( generatedHtml );
+};
+
+/**
+ * Apply generated content to blocks, routing through the appropriate parser
+ * based on the action's availability. "Any block" actions skip the
+ * plain-text-wrapping logic so structural rebuilds survive deserialization.
+ *
+ * @param {string}                                               generatedHtml Generated content from the model.
+ * @param {import('../../helpers/blocks').BlockProps<unknown>[]} sourceBlocks  Selected source blocks.
+ * @param {'richtext'|'any'}                                     availability  Action availability scope.
+ */
+export const applyGeneratedContent = (
+	generatedHtml: string,
+	sourceBlocks: BlockProps<unknown>[],
+	availability: 'richtext' | 'any'
+) => {
+	if ( 'any' === availability ) {
+		return parseGeneratedContent( generatedHtml );
+	}
+
+	return preservePlainTextAsBlock( generatedHtml, sourceBlocks );
 };
 
 export const getSelectedBlockClientIds = (
