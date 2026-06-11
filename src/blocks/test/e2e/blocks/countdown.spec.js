@@ -42,6 +42,7 @@ test.describe( 'Countdown Block', () => {
 
 		// Use the spinbutton role: a bare label match collides with the date-grid
 		// "<date>. Today" button (substring match) under strict selectors.
+
 		await page.getByRole( 'spinbutton', { name: 'Day' }).fill( '17' );
 		await page.getByRole( 'combobox', { name: 'Month' }).selectOption( 'August' );
 		await page.getByRole( 'spinbutton', { name: 'Year' }).fill( '2030' );

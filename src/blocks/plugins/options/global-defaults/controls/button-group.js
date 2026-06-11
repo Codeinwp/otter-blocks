@@ -129,8 +129,8 @@ const ButtonGroupBlock = ({
 						fontSize: attributes.fontSize,
 						fontFamily: attributes.fontFamily,
 						lineHeight: attributes.lineHeight,
-						appearance: attributes.fontVariant,
-						letterCase: attributes.fontStyle
+						appearance: attributes.fontStyle,
+						letterCase: attributes.textTransform
 					}}
 
 					onChange={ values => {
@@ -138,8 +138,8 @@ const ButtonGroupBlock = ({
 							fontSize: values.fontSize,
 							fontFamily: values.fontFamily,
 							lineHeight: values.lineHeight,
-							fontVariant: values.appearance,
-							fontStyle: values.letterCase
+							fontStyle: values.appearance,
+							textTransform: values.letterCase
 						});
 					} }
 				/>
