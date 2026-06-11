@@ -29,6 +29,10 @@ const PRO_LICENSE_OPTION = 'otter_pro_license_data';
  */
 const OPTION_WHITELIST = array(
 	'themeisle_open_ai_api_key',
+	'themeisle_blocks_settings_prompt_actions',
+	'themeisle_blocks_settings_ai_toolbar_actions',
+	'themeisle_blocks_ai_toolbar_actions_migrated',
+	'themeisle_blocks_settings_block_ai_toolbar_module',
 	'otter_iphub_api_key',
 	'themeisle_blocks_settings_onboarding',
 );
@@ -37,6 +41,17 @@ const OPTION_WHITELIST = array(
  * Transient that inc/server/class-prompt-server.php reads first; if it's set we never hit themeisle.com.
  */
 const PROMPTS_TRANSIENT = 'otter_prompts';
+
+/**
+ * OpenAI chat completions endpoint used by inc/server/class-prompt-server.php.
+ */
+const OPENAI_COMPLETIONS_URL = 'https://api.openai.com/v1/chat/completions';
+
+/**
+ * Prefix shared by bin/e2e-tests.sh and Playwright fixtures for the fake OpenAI key.
+ * Real keys are never stubbed; dashboard tests can still assert validation errors for keys like "test".
+ */
+const OPENAI_STUB_KEY_PREFIX = 'sk_XXXXXXXXX';
 
 /**
  * Minimal prompt seeds matching the PromptData shape consumed by src/blocks/components/prompt/index.tsx.
@@ -116,7 +131,128 @@ function stub_wp_mail_for_e2e( $short_circuit ) {
 	return true;
 }
 
+/**
+ * Whether the stored OpenAI key is the E2E stub (not a real secret).
+ *
+ * @param string $api_key OpenAI API key option value.
+ * @return bool
+ */
+function is_e2e_openai_stub_key( $api_key ) {
+	return is_string( $api_key ) && 0 === strpos( $api_key, OPENAI_STUB_KEY_PREFIX );
+}
+
+/**
+ * HTML content returned for content-generator block E2E tests.
+ *
+ * @return string
+ */
+function stub_openai_space_nation_content() {
+	return '<h1><strong>Discover the Next Frontier: Space Nation on the Rise</strong></h1>'
+		. '<p>Are you ready to embark on a journey to a new world beyond our wildest dreams? Look no further than the rapidly emerging Space Nation that is captivating the imaginations of millions. From groundbreaking technologies to bold explorations, this cosmic civilization is redefining what it means to reach for the stars.</p>'
+		. '<h2><em>Unveiling the Wonders of Space Nation</em></h2>'
+		. '<p>Peer into the future and witness the awe-inspiring advancements taking place in this celestial realm. With each innovation, Space Nation pushes the boundaries of possibility, offering a glimpse into a future where the impossible becomes reality.</p>'
+		. '<h2><em>Join the Movement</em></h2>'
+		. '<p>Don\'t miss your chance to be part of history in the making. Whether you are an aspiring pioneer or a curious observer, there is a place for you in the unfolding saga of Space Nation. Embrace the spirit of exploration and venture into a realm where the skies are no longer the limit.</p>'
+		. '<h3><strong>Why Space Nation?</strong></h3>'
+		. '<ul><li>Experience groundbreaking technologies shaping the future</li><li>Witness bold explorations into the unknown</li><li>Join a community of visionaries and trailblazers</li></ul>'
+		. '<h3><strong>Take Action Today</strong></h3>'
+		. '<p>Ready to embark on an adventure that transcends the confines of Earth? Step into the world of Space Nation and dare to dream beyond the stars.</p>';
+}
+
+/**
+ * Pick stub completion content based on the outbound OpenAI request body.
+ *
+ * @param string $request_body JSON-encoded chat completion request.
+ * @return string
+ */
+function stub_openai_completion_content( $request_body ) {
+	$payload = json_decode( $request_body, true );
+
+	if ( is_array( $payload ) && isset( $payload['messages'] ) && is_array( $payload['messages'] ) ) {
+		foreach ( $payload['messages'] as $message ) {
+			if ( ! is_array( $message ) || empty( $message['content'] ) ) {
+				continue;
+			}
+
+			if ( false !== stripos( $message['content'], 'space nation' ) ) {
+				return stub_openai_space_nation_content();
+			}
+		}
+	}
+
+	return '<p>Rewritten content for testing.</p>';
+}
+
+/**
+ * Build a wp_remote_* response array for a stubbed OpenAI completion.
+ *
+ * @param string $content Assistant message content.
+ * @return array<string, mixed>
+ */
+function stub_openai_http_response( $content ) {
+	return array(
+		'headers'  => array(),
+		'body'     => wp_json_encode(
+			array(
+				'id'                 => 'chatcmpl-e2e-stub',
+				'object'             => 'chat.completion',
+				'created'            => 1721829943,
+				'model'              => 'gpt-3.5-turbo-0125',
+				'choices'            => array(
+					array(
+						'index'         => 0,
+						'message'       => array(
+							'role'    => 'assistant',
+							'content' => $content,
+						),
+						'logprobs'      => null,
+						'finish_reason' => 'stop',
+					),
+				),
+				'usage'              => array(
+					'prompt_tokens'     => 20,
+					'completion_tokens' => 10,
+					'total_tokens'      => 30,
+				),
+				'system_fingerprint' => null,
+			)
+		),
+		'response' => array(
+			'code'    => 200,
+			'message' => 'OK',
+		),
+		'cookies'  => array(),
+		'filename' => null,
+	);
+}
+
+/**
+ * Short-circuit OpenAI HTTP calls when the E2E stub API key is configured.
+ *
+ * @param false|array|WP_Error $preempt     A preemptive return value.
+ * @param array                $parsed_args Request arguments.
+ * @param string               $url         Request URL.
+ * @return false|array|WP_Error
+ */
+function stub_openai_http_for_e2e( $preempt, $parsed_args, $url ) {
+	if ( false !== $preempt || OPENAI_COMPLETIONS_URL !== $url ) {
+		return $preempt;
+	}
+
+	$api_key = get_option( 'themeisle_open_ai_api_key' );
+
+	if ( ! is_e2e_openai_stub_key( $api_key ) ) {
+		return $preempt;
+	}
+
+	$request_body = isset( $parsed_args['body'] ) ? $parsed_args['body'] : '';
+	$content      = stub_openai_completion_content( $request_body );
+
+	return stub_openai_http_response( $content );
+}
+
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e' );
+add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_openai_http_for_e2e', 10, 3 );
 
 add_action(
 	'rest_api_init',
@@ -222,6 +358,8 @@ add_action(
 					foreach ( OPTION_WHITELIST as $key ) {
 						delete_option( $key );
 					}
+					delete_option( 'themeisle_blocks_settings_ai_toolbar_actions' );
+					delete_option( 'themeisle_blocks_ai_toolbar_actions_migrated' );
 					delete_transient( PROMPTS_TRANSIENT );
 					delete_transient( 'otter_prompts_timeout' );
 					return rest_ensure_response( array( 'ok' => true ) );

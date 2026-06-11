@@ -3,25 +3,21 @@
  */
 import { __ } from '@wordpress/i18n';
 
-
 import {
 	DropdownMenu,
 	MenuGroup,
 	MenuItem,
 	ToolbarGroup,
-	Spinner,
-	ExternalLink,
-	Disabled
+	ExternalLink
 } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { Fragment, useMemo, useState } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
-import { useDispatch, useSelect } from '@wordpress/data';
-import { rawHandler, createBlock } from '@wordpress/blocks';
+import { useSelect } from '@wordpress/data';
 import { BlockControls } from '@wordpress/block-editor';
 
 /**
@@ -29,217 +25,36 @@ import { BlockControls } from '@wordpress/block-editor';
  */
 import { aiGeneration } from '../../helpers/icons';
 import './editor.scss';
-import { PromptsData, editLastConversation, injectActionIntoPrompt, retrieveEmbeddedPrompt, sendPromptToOpenAI, tryInjectIntoTemplate } from '../../helpers/prompt';
 import useSettings from '../../helpers/use-settings';
 import { openAiAPIKeyName } from '../../components/prompt';
-import { insertBlockBelow } from '../../helpers/block-utility';
 import type { BlockProps } from '../../helpers/blocks';
+import {
+	AIToolbarAction,
+	filterToolbarActionsForBlocks,
+	getToolbarActionsFromSettings,
+	normalizeToolbarActions
+} from './actions';
+import AIContentModal from './modal';
+import { extractBlockTextContent } from './apply-content';
 
-const isValidBlock =  ( blockName: string|undefined ) => {
-	if ( ! blockName ) {
-		return false;
-	}
-
-	return [
-		'core/paragraph',
-		'core/heading'
-	].some( ( name ) => name === blockName );
+type AIToolbarMenuProps = {
+	hasAPIKey: boolean;
+	toolbarActions: AIToolbarAction[];
+	activeBlocks: BlockProps<unknown>[];
+	onOpenAction: ( actionId?: string, initialPrompt?: string ) => void;
+	onCloseDropdown: () => void;
 };
 
-/**
- * Extract the content from a block or blocks.
- *
- * @param source The block or blocks to extract the content from.
- */
-const extractContent = ( source: BlockProps<unknown> | BlockProps<unknown>[]): string => {
-
-	if ( Array.isArray( source ) ) {
-		return source.reduce( ( content: string, block: BlockProps<unknown> ) => {
-			return content + extractContent( block );
-		}, '' );
-	}
-
-	if (
-		'core/paragraph' === source.name ||
-		'core/heading' === source.name
-	) {
-		return source.attributes.content as string;
-	}
-
-	return '';
-};
-
-let embeddedPromptsCache: PromptsData|null = null;
-
-const AIToolbar = ({
-	props,
-	onClose
-}) => {
-	const [ getOption, _, status ] = useSettings();
-	const [ hasAPIKey, setHasAPIKey ] = useState<boolean>( false );
-	const [ isProcessing, setIsProcessing ] = useState<Record<string, boolean>>({});
-	const [ displayError, setDisplayError ] = useState<string|undefined>( undefined );
-	const [ customActions, setCustomActions ] = useState<{title: string, prompt: string}[]>([]);
-
-	// Get the create notice function from the hooks api.
-	const { createNotice } = useDispatch( 'core/notices' );
-
-	const {
-		isMultipleSelection,
-		selectedBlocks
-	} = useSelect( ( select ) => {
-		const selectedBlocks = select( 'core/block-editor' ).getMultiSelectedBlocks();
-
-		return {
-			isMultipleSelection: 1 < selectedBlocks.length,
-			selectedBlocks
-		};
-	}, []);
-
-	useEffect( () => {
-		if ( 'loading' === status ) {
-			return;
-		}
-
-		if ( 'loaded' === status && ! hasAPIKey ) {
-			const key = getOption( openAiAPIKeyName ) as string;
-			setHasAPIKey(  Boolean( key ) && 0 < key.length );
-			setCustomActions( getOption( 'themeisle_blocks_settings_prompt_actions' ) as {title: string, prompt: string}[]);
-		}
-	}, [ status, getOption ]);
-
-	useEffect( () => {
-		if ( ! displayError ) {
-			return;
-		}
-
-		createNotice(
-			'error',
-			displayError,
-			{
-				type: 'snackbar',
-				isDismissible: true
-			}
-		);
-
-		setDisplayError( undefined );
-	}, [ displayError ]);
-
-	const generateContent = async( content: string, actionKey: string, callback: Function = () =>{}, actionIndex: number = -1 ) => {
-
-		if ( ! content ) {
-			setDisplayError( __( 'No content detected in selected block.', 'otter-blocks' ) );
-			return;
-		}
-
-		if ( ! embeddedPromptsCache ) {
-			const response = await retrieveEmbeddedPrompt( 'textTransformation' );
-			embeddedPromptsCache = response?.prompts ?? [];
-		}
-
-		let embeddedPrompt = embeddedPromptsCache?.find( ( prompt ) => 'textTransformation' === prompt.otter_name );
-
-		if ( ! embeddedPrompt ) {
-			setDisplayError( __( 'Something when wrong retrieving the prompts.', 'otter-blocks' ) );
-			return;
-		}
-
-		const action: undefined | string = embeddedPrompt?.[actionKey];
-
-		if ( ! action ) {
-			setDisplayError( __( 'The action is not longer available.', 'otter-blocks' ) );
-			return;
-		}
-
-		if ( ! hasAPIKey ) {
-			setDisplayError( __( 'No Open API key detected. Please add your key.', 'otter-blocks' ) );
-			return;
-		}
-
-		setIsProcessing( prevState => ({ ...prevState, [ actionKey ]: true }) );
-
-		window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'ai-toolbar', featureValue: actionKey }, { consent: true });
-
-		embeddedPrompt = injectActionIntoPrompt(
-			embeddedPrompt,
-			action
-		);
-
-		if ( -1 !== actionIndex && customActions?.[ actionIndex ]?.prompt ) {
-
-			// Overwrite the prompt with the custom action.
-			embeddedPrompt = editLastConversation( embeddedPrompt, ( _ ) => tryInjectIntoTemplate( customActions![ actionIndex ]!.prompt, content ) );
-			window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'ai-toolbar-custom-action', featureValue: customActions?.[ actionIndex ]?.title }, { consent: true });
-		}
-
-		sendPromptToOpenAI(
-			content,
-			injectActionIntoPrompt(
-				embeddedPrompt,
-				action
-			),
-			{
-				'otter_used_action': `textTransformation::${ actionKey }`,
-				'otter_user_content': content
-			}
-		).then( ( response ) => {
-			if ( response.error ) {
-				setDisplayError( response.error?.message ?? response.error );
-				return;
-			}
-
-			const blockContentRaw = response?.choices?.[0]?.message.content;
-
-			if ( ! blockContentRaw ) {
-				return;
-			}
-
-			const newBlocks = rawHandler({
-				HTML: blockContentRaw
-			});
-
-			const aiBlock = createBlock(
-				'themeisle-blocks/content-generator',
-				{
-					promptID: 'textTransformation',
-					resultHistory: [{
-						result: response?.choices?.[0]?.message.content ?? '',
-						meta: {
-							usedToken: response?.usage.total_tokens,
-							prompt: embeddedPrompt.messages?.[ embeddedPrompt.messages.length - 1 ]?.content
-						}
-					}],
-					replaceTargetBlock: {
-						clientId: props.clientId,
-						name: props.name
-					}
-				},
-				newBlocks
-			);
-
-			insertBlockBelow( props.clientId, aiBlock );
-
-			setIsProcessing( prevState => ({ ...prevState, [ actionKey ]: false }) );
-			callback?.();
-		}).catch( ( error ) => {
-			setDisplayError( error.message );
-			setIsProcessing( prevState => ({ ...prevState, [ actionKey ]: false }) );
-		});
-	};
-
-	const ActionMenuItem = ( args: { actionKey: string, children: React.ReactNode, callback: Function, actionIndex?: number }) => {
-		return (
-			<Disabled isDisabled={Object.values( isProcessing ).some( x => x )}>
-				<MenuItem
-					onClick={ () => {
-						generateContent( extractContent( isMultipleSelection ? selectedBlocks : props ), args.actionKey, () => args.callback?.( args.actionKey ), args?.actionIndex );
-					}}
-				>
-					{ args.children }
-					{ isProcessing?.[args.actionKey] && <Spinner /> }
-				</MenuItem>
-			</Disabled>
-		);
+const AIToolbarMenu = ({
+	hasAPIKey,
+	toolbarActions,
+	activeBlocks,
+	onOpenAction,
+	onCloseDropdown
+}: AIToolbarMenuProps ) => {
+	const openAction = ( actionId?: string, initialPrompt?: string ) => {
+		onOpenAction( actionId, initialPrompt );
+		onCloseDropdown();
 	};
 
 	return (
@@ -248,9 +63,9 @@ const AIToolbar = ({
 				( ! hasAPIKey ) && (
 					<MenuGroup>
 						<span className='o-menu-item-alignment' style={{ display: 'block', marginBottom: '10px' }}>
-							{ __( 'Please add your OpenAI API key in Integrations.', 'otter-blocks' ) }
+							{ __( 'Please add your OpenAI API key in the AI settings.', 'otter-blocks' ) }
 						</span>
-						<ExternalLink className='o-menu-item-alignment' href={window.themeisleGutenberg.optionsPath} target="_blank" rel="noopener noreferrer">
+						<ExternalLink className='o-menu-item-alignment' href={ `${ window.themeisleGutenberg.optionsPath }#ai` } target="_blank" rel="noopener noreferrer">
 							{
 								__( 'Go to Dashboard', 'otter-blocks' )
 							}
@@ -260,27 +75,30 @@ const AIToolbar = ({
 			}
 			<MenuGroup>
 				{
-					customActions.map( ( action, index ) => (
-						<ActionMenuItem key={index} actionIndex={index} actionKey={'otter_action_prompt'} callback={onClose}>
+					toolbarActions.map( ( action ) => (
+						<MenuItem
+							key={ action.id }
+							onClick={ () => openAction( action.id ) }
+						>
 							{ action.title }
-						</ActionMenuItem>
+						</MenuItem>
 					) )
 				}
 			</MenuGroup>
 			<MenuGroup>
-				<ActionMenuItem actionKey='otter_action_prompt' callback={onClose}>
+				<MenuItem onClick={ () => openAction( toolbarActions[0]?.id, extractBlockTextContent( activeBlocks ) ) }>
 					{ __( 'Use as prompt', 'otter-blocks' ) }
-				</ActionMenuItem>
+				</MenuItem>
 			</MenuGroup>
 			<MenuGroup>
-				<ExternalLink className='o-menu-item-alignment' href={`${window.themeisleGutenberg?.optionsPath}#integrations`} rel="noopener noreferrer">
+				<ExternalLink className='o-menu-item-alignment' href={ `${ window.themeisleGutenberg?.optionsPath }#ai` } rel="noopener noreferrer">
 					{
 						__( 'Edit Custom Prompts', 'otter-blocks' )
 					}
 				</ExternalLink>
 			</MenuGroup>
 			<MenuGroup>
-				<ExternalLink className='o-menu-item-alignment' href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions"rel="noopener noreferrer">
+				<ExternalLink className='o-menu-item-alignment' href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions" rel="noopener noreferrer">
 					{
 						__( 'Go to docs', 'otter-blocks' )
 					}
@@ -290,64 +108,130 @@ const AIToolbar = ({
 	);
 };
 
-const withConditions = createHigherOrderComponent( BlockEdit => {
+const withAIToolbar = createHigherOrderComponent( BlockEdit => {
 	return props => {
+		const [ getOption, _, settingsStatus ] = useSettings();
+		const [ isModalOpen, setIsModalOpen ] = useState( false );
+		const [ modalActionId, setModalActionId ] = useState<string | undefined>();
+		const [ modalInitialPrompt, setModalInitialPrompt ] = useState<string | undefined>();
+
 		const {
+			canUse,
 			isMultipleSelection,
-			areValidBlocks,
-			isHidden
+			selectedBlocks,
+			selectedClientIds,
+			activeBlocks
 		} = useSelect( ( select ) => {
 
-			const canUse = Boolean( window.themeisleGutenberg?.hasModule?.aiToolbar );
+			const canUseToolbar = Boolean( window.themeisleGutenberg?.hasModule?.aiToolbar );
 
-			if ( ! canUse ) {
+			if ( ! canUseToolbar ) {
 				return {
+					canUse: canUseToolbar,
 					isMultipleSelection: false,
-					areValidBlocks: false,
-					isHidden: true
+					selectedBlocks: [],
+					selectedClientIds: [],
+					activeBlocks: []
 				};
 			}
 
-			const selectedBlocks: {name: string; [key: string]: any}[] = select( 'core/block-editor' )?.getMultiSelectedBlocks() ?? [];
-			const hiddenBlocks: string[] = select( 'core/preferences' )?.get( 'core/edit-post', 'hiddenBlockTypes' ) ?? [];
+			const blockEditor = select( 'core/block-editor' );
+			const selectedBlocks: {name: string; clientId: string; [key: string]: any}[] = blockEditor?.getMultiSelectedBlocks() ?? [];
+			const selectedClientIds = blockEditor?.getMultiSelectedBlockClientIds() ?? [];
+			const clientIds = 0 < selectedClientIds.length ? selectedClientIds : ( props.clientId ? [ props.clientId ] : [] );
+			const activeBlocks = clientIds
+				.map( ( clientId ) => blockEditor?.getBlock( clientId ) )
+				.filter( Boolean );
 
 			return {
+				canUse: canUseToolbar,
 				isMultipleSelection: 1 < selectedBlocks.length,
-				areValidBlocks: selectedBlocks.every( ( block ) => isValidBlock( block.name ) ),
-				isHidden: hiddenBlocks.includes( 'themeisle-blocks/content-generator' ) ?? false
+				selectedBlocks,
+				selectedClientIds,
+				activeBlocks
 			};
-		}, []);
+		}, [ props.clientId ]);
+
+		const applicableActions = useMemo( () => {
+			if ( 'loading' === settingsStatus ) {
+				return [];
+			}
+
+			const actions = normalizeToolbarActions(
+				getToolbarActionsFromSettings( getOption ) as Parameters<typeof normalizeToolbarActions>[0]
+			);
+			const blockNames = isMultipleSelection
+				? selectedBlocks.map( ( block ) => block.name )
+				: [ props.name ];
+
+			return filterToolbarActionsForBlocks( actions, blockNames );
+		}, [ getOption, isMultipleSelection, props.name, selectedBlocks, settingsStatus ]);
+
+		const hasAPIKey = 'loaded' === settingsStatus && (
+			Boolean( window.themeisleGutenberg?.hasOpenAiKey ) ||
+			Boolean( getOption( openAiAPIKeyName ) )
+		);
+
+		const isBlockSelected = isMultipleSelection
+			? selectedBlocks.some( ( block ) => block.clientId === props.clientId )
+			: props.isSelected;
+
+		const showToolbar = canUse && 0 < applicableActions.length && isBlockSelected;
+
+		const openModal = ( actionId?: string, initialPrompt?: string ) => {
+			setModalActionId( actionId );
+			setModalInitialPrompt( initialPrompt );
+			setIsModalOpen( true );
+		};
 
 		return (
 			<Fragment>
 				<BlockEdit { ...props } />
 				{
-					(
-						! isHidden &&
-						(
-							( isValidBlock( props.name ) && props.isSelected ) || ( areValidBlocks && isMultipleSelection )
-						)
-					) &&
-					(
-						<BlockControls group="other">
-							<ToolbarGroup>
-								<DropdownMenu
-									icon={ aiGeneration }
-									label={ __( 'Otter AI Content', 'otter-blocks' ) }
-								>
-									{
-										({ onClose }) => (
-											<AIToolbar props={ props } onClose={ onClose } />
-										)
-									}
-								</DropdownMenu>
-							</ToolbarGroup>
-						</BlockControls>
+					showToolbar && (
+						<Fragment>
+							<BlockControls group="other">
+								<ToolbarGroup>
+									<DropdownMenu
+										icon={ aiGeneration }
+										label={ __( 'Otter AI Content', 'otter-blocks' ) }
+									>
+										{
+											({ onClose }) => (
+												<AIToolbarMenu
+													hasAPIKey={ hasAPIKey }
+													toolbarActions={ applicableActions }
+													activeBlocks={ activeBlocks as BlockProps<unknown>[] }
+													onOpenAction={ openModal }
+													onCloseDropdown={ onClose }
+												/>
+											)
+										}
+									</DropdownMenu>
+								</ToolbarGroup>
+							</BlockControls>
+
+							{
+								isModalOpen && (
+									<AIContentModal
+										isOpen={ isModalOpen }
+										onClose={ () => setIsModalOpen( false ) }
+										actions={ applicableActions }
+										initialActionId={ modalActionId }
+										initialPrompt={ modalInitialPrompt }
+										selectedBlocks={ activeBlocks as BlockProps<unknown>[] }
+										isMultipleSelection={ isMultipleSelection }
+										singleClientId={ props.clientId }
+										selectedClientIds={ selectedClientIds }
+									/>
+								)
+							}
+						</Fragment>
 					) }
 			</Fragment>
 		);
 	};
 
-}, 'withConditions' );
+}, 'withAIToolbar' );
 
-addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/otter-ai-content-toolbar', withConditions );
+addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/otter-ai-content-toolbar', withAIToolbar );

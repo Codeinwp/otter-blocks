@@ -16,6 +16,26 @@ use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 class Options_Settings {
 
 	/**
+	 * Canonical AI toolbar actions option.
+	 */
+	const AI_TOOLBAR_ACTIONS_OPTION = 'themeisle_blocks_settings_ai_toolbar_actions';
+
+	/**
+	 * Migration flag for AI toolbar actions.
+	 */
+	const AI_TOOLBAR_ACTIONS_MIGRATED_OPTION = 'themeisle_blocks_ai_toolbar_actions_migrated';
+
+	/**
+	 * Legacy AI toolbar actions option.
+	 */
+	const LEGACY_TOOLBAR_ACTIONS_OPTION = 'themeisle_blocks_settings_prompt_actions';
+
+	/**
+	 * Maximum number of custom toolbar actions.
+	 */
+	const MAX_CUSTOM_TOOLBAR_ACTIONS = 5;
+
+	/**
 	 * The main instance var.
 	 *
 	 * @var Options_Settings|null
@@ -27,6 +47,7 @@ class Options_Settings {
 	 */
 	public function init() {
 		add_action( 'init', array( $this, 'register_settings' ), 99 );
+		add_action( 'init', array( $this, 'migrate_ai_toolbar_actions' ), 100 );
 		add_action( 'init', array( $this, 'default_block' ), 99 );
 		add_action( 'init', array( $this, 'register_meta' ), 19 );
 	}
@@ -777,60 +798,72 @@ class Options_Settings {
 			)
 		);
 
-		register_setting(
-			'themeisle_blocks_settings',
-			'themeisle_blocks_settings_prompt_actions',
-			array(
-				'type'              => 'array',
-				'description'       => __( 'The prompt actions list of toolbar.', 'otter-blocks' ),
-				'sanitize_callback' => function ( $prompts ) {
-					return array_map(
-						function ( $item ) {
-							if ( isset( $item['title'] ) ) {
-								$item['title'] = sanitize_text_field( $item['title'] );
-							}
-							if ( isset( $item['prompt'] ) ) {
-								$item['prompt'] = sanitize_text_field( $item['prompt'] );
-							}
-							return $item;
-						},
-						$prompts
-					);
-				},
-				'default'           => array(
-					array(
-						'title'  => 'Fix Grammar',
-						'prompt' => 'Fix any grammatical errors in the following: {text_input}',
-					),
-					array(
-						'title'  => 'Rephrase',
-						'prompt' => 'Rephrase the following following: {text_input}',
-					),
-					array(
-						'title'  => 'Make Shorter',
-						'prompt' => 'Summarize or shorten the following: {text_input}',
-					),
-					array(
-						'title'  => 'Make Longer',
-						'prompt' => 'Expand or elaborate on the following: {text_input}',
-					),
-				),
-				'show_in_rest'      => array(
-					'schema' => array(
-						'type'  => 'array',
-						'items' => array(
-							'type'       => 'object',
-							'properties' => array(
-								'title'  => array(
-									'type' => 'string',
-								),
-								'prompt' => array(
+		$toolbar_actions_schema = array(
+			'type'              => 'array',
+			'description'       => __( 'The prompt actions list of toolbar.', 'otter-blocks' ),
+			'sanitize_callback' => array( self::class, 'sanitize_prompt_actions' ),
+			'default'           => self::get_default_prompt_actions(),
+			'show_in_rest'      => array(
+				'schema' => array(
+					'type'  => 'array',
+					'items' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'id'           => array(
+								'type' => 'string',
+							),
+							'title'        => array(
+								'type' => 'string',
+							),
+							'prompt'       => array(
+								'type' => 'string',
+							),
+							'enabled'      => array(
+								'type' => 'boolean',
+							),
+							'custom'       => array(
+								'type' => 'boolean',
+							),
+							'availability' => array(
+								'type' => 'string',
+								'enum' => array( 'richtext', 'any' ),
+							),
+							'type'         => array(
+								'type' => 'string',
+								'enum' => array( 'prompt', 'tone' ),
+							),
+							'tones'        => array(
+								'type'  => 'array',
+								'items' => array(
 									'type' => 'string',
 								),
 							),
 						),
 					),
 				),
+			),
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			self::LEGACY_TOOLBAR_ACTIONS_OPTION,
+			$toolbar_actions_schema
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			self::AI_TOOLBAR_ACTIONS_OPTION,
+			$toolbar_actions_schema
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			self::AI_TOOLBAR_ACTIONS_MIGRATED_OPTION,
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Whether AI toolbar actions were migrated to the canonical option.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => false,
 			)
 		);
 
@@ -914,6 +947,293 @@ class Options_Settings {
 		$post_type_object->template = array(
 			array( 'themeisle-blocks/advanced-columns', $attributes ),
 		);
+	}
+
+	/**
+	 * Built-in toolbar action ids.
+	 *
+	 * @static
+	 * @access public
+	 *
+	 * @return array<int, string>
+	 */
+	public static function get_known_prompt_action_ids() {
+		return array( 'rewrite', 'summarize', 'expand', 'shorten', 'translate', 'tone', 'grammar', 'simplify' );
+	}
+
+	/**
+	 * Default toolbar prompt actions.
+	 *
+	 * @static
+	 * @access public
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function get_default_prompt_actions() {
+		return array(
+			array(
+				'id'           => 'rewrite',
+				'title'        => __( 'Rewrite', 'otter-blocks' ),
+				'prompt'       => __( "Rewrite this block for clarity and flow:\n\n{block_content}", 'otter-blocks' ),
+				'enabled'      => true,
+				'custom'       => false,
+				'availability' => 'richtext',
+				'type'         => 'prompt',
+			),
+			array(
+				'id'           => 'summarize',
+				'title'        => __( 'Summarize', 'otter-blocks' ),
+				'prompt'       => __( "Summarize this block concisely:\n\n{block_content}", 'otter-blocks' ),
+				'enabled'      => true,
+				'custom'       => false,
+				'availability' => 'richtext',
+				'type'         => 'prompt',
+			),
+			array(
+				'id'           => 'expand',
+				'title'        => __( 'Expand', 'otter-blocks' ),
+				'prompt'       => __( "Expand this block with useful supporting detail:\n\n{block_content}", 'otter-blocks' ),
+				'enabled'      => true,
+				'custom'       => false,
+				'availability' => 'richtext',
+				'type'         => 'prompt',
+			),
+			array(
+				'id'           => 'shorten',
+				'title'        => __( 'Shorten', 'otter-blocks' ),
+				'prompt'       => __( "Make this block shorter while preserving the key meaning:\n\n{block_content}", 'otter-blocks' ),
+				'enabled'      => true,
+				'custom'       => false,
+				'availability' => 'richtext',
+				'type'         => 'prompt',
+			),
+			array(
+				'id'           => 'translate',
+				'title'        => __( 'Translate', 'otter-blocks' ),
+				'prompt'       => __( "Translate this block into {tone}:\n\n{block_content}", 'otter-blocks' ),
+				'enabled'      => true,
+				'custom'       => false,
+				'availability' => 'richtext',
+				'type'         => 'tone',
+				'tones'        => array( __( 'English', 'otter-blocks' ), __( 'Spanish', 'otter-blocks' ), __( 'French', 'otter-blocks' ), __( 'German', 'otter-blocks' ), __( 'Italian', 'otter-blocks' ), __( 'Portuguese', 'otter-blocks' ), __( 'Romanian', 'otter-blocks' ) ),
+			),
+			array(
+				'id'           => 'tone',
+				'title'        => __( 'Change Tone', 'otter-blocks' ),
+				'prompt'       => __( "Rewrite this block in a {tone} tone:\n\n{block_content}", 'otter-blocks' ),
+				'enabled'      => true,
+				'custom'       => false,
+				'availability' => 'richtext',
+				'type'         => 'tone',
+				'tones'        => array( __( 'Professional', 'otter-blocks' ), __( 'Casual', 'otter-blocks' ), __( 'Friendly', 'otter-blocks' ), __( 'Confident', 'otter-blocks' ), __( 'Formal', 'otter-blocks' ), __( 'Empathetic', 'otter-blocks' ) ),
+			),
+			array(
+				'id'           => 'grammar',
+				'title'        => __( 'Fix Grammar', 'otter-blocks' ),
+				'prompt'       => __( "Correct spelling and grammar mistakes in this block while keeping the original tone:\n\n{block_content}", 'otter-blocks' ),
+				'enabled'      => true,
+				'custom'       => false,
+				'availability' => 'richtext',
+				'type'         => 'prompt',
+			),
+			array(
+				'id'           => 'simplify',
+				'title'        => __( 'Simplify', 'otter-blocks' ),
+				'prompt'       => __( "Simplify this block so it is easier to read:\n\n{block_content}", 'otter-blocks' ),
+				'enabled'      => true,
+				'custom'       => false,
+				'availability' => 'richtext',
+				'type'         => 'prompt',
+			),
+		);
+	}
+
+	/**
+	 * Sanitize toolbar prompt actions.
+	 *
+	 * @static
+	 * @access public
+	 *
+	 * @param mixed $prompts Prompt actions payload.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function sanitize_prompt_actions( $prompts ) {
+		if ( ! is_array( $prompts ) ) {
+			return array();
+		}
+
+		$known_ids    = self::get_known_prompt_action_ids();
+		$custom_count = 0;
+		$sanitized    = array();
+
+		foreach ( $prompts as $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+
+			$action = array();
+
+			if ( isset( $item['id'] ) ) {
+				$action['id'] = sanitize_key( $item['id'] );
+			}
+
+			if ( isset( $item['title'] ) ) {
+				$action['title'] = sanitize_text_field( $item['title'] );
+			}
+
+			if ( isset( $item['prompt'] ) ) {
+				$action['prompt'] = sanitize_textarea_field( $item['prompt'] );
+			}
+
+			if ( empty( $action['title'] ) && empty( $action['prompt'] ) ) {
+				continue;
+			}
+
+			$action['enabled'] = isset( $item['enabled'] ) ? rest_sanitize_boolean( $item['enabled'] ) : true;
+
+			if ( isset( $item['custom'] ) ) {
+				$action['custom'] = rest_sanitize_boolean( $item['custom'] );
+			} else {
+				$action['custom'] = ! isset( $action['id'] ) || ! in_array( $action['id'], $known_ids, true );
+			}
+
+			if ( $action['custom'] ) {
+				++$custom_count;
+
+				if ( $custom_count > self::MAX_CUSTOM_TOOLBAR_ACTIONS ) {
+					$action['enabled'] = false;
+				}
+
+				if ( empty( $action['id'] ) ) {
+					$action['id'] = self::generate_custom_toolbar_action_id();
+				}
+			}
+
+			$availability           = isset( $item['availability'] ) ? sanitize_key( $item['availability'] ) : 'richtext';
+			$action['availability'] = in_array( $availability, array( 'richtext', 'any' ), true ) ? $availability : 'richtext';
+			$type                   = isset( $item['type'] ) ? sanitize_key( $item['type'] ) : 'prompt';
+			$action['type']         = in_array( $type, array( 'prompt', 'tone' ), true ) ? $type : 'prompt';
+
+			if ( isset( $item['tones'] ) && is_array( $item['tones'] ) ) {
+				$action['tones'] = array_values(
+					array_map(
+						function ( $tone ) {
+							return sanitize_text_field( $tone );
+						},
+						$item['tones']
+					)
+				);
+			}
+
+			$sanitized[] = $action;
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Append the builtin default actions whose ids are missing from the given list.
+	 *
+	 * Existing actions keep their position; missing builtins are appended in
+	 * their default order.
+	 *
+	 * @static
+	 * @access public
+	 *
+	 * @param mixed $actions Toolbar actions list.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function merge_missing_builtin_actions( $actions ) {
+		if ( ! is_array( $actions ) ) {
+			$actions = array();
+		}
+
+		$existing_ids = array();
+
+		foreach ( $actions as $action ) {
+			if ( is_array( $action ) && ! empty( $action['id'] ) ) {
+				$existing_ids[] = $action['id'];
+			}
+		}
+
+		foreach ( self::get_default_prompt_actions() as $builtin ) {
+			if ( ! in_array( $builtin['id'], $existing_ids, true ) ) {
+				$actions[] = $builtin;
+			}
+		}
+
+		return $actions;
+	}
+
+	/**
+	 * Generate a stable custom toolbar action id.
+	 *
+	 * @static
+	 * @access public
+	 * @return string
+	 */
+	public static function generate_custom_toolbar_action_id() {
+		if ( function_exists( 'wp_generate_uuid4' ) ) {
+			return 'custom-' . wp_generate_uuid4();
+		}
+
+		return 'custom-' . wp_generate_password( 8, false, false );
+	}
+
+	/**
+	 * Migrate legacy toolbar actions into the canonical option.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function migrate_ai_toolbar_actions() {
+		if ( get_option( self::AI_TOOLBAR_ACTIONS_MIGRATED_OPTION ) ) {
+			return;
+		}
+
+		$canonical = get_option( self::AI_TOOLBAR_ACTIONS_OPTION, null );
+
+		if ( is_array( $canonical ) && ! empty( $canonical ) ) {
+			update_option( self::AI_TOOLBAR_ACTIONS_MIGRATED_OPTION, true );
+			return;
+		}
+
+		$legacy = get_option( self::LEGACY_TOOLBAR_ACTIONS_OPTION, null );
+
+		if ( is_array( $legacy ) && ! empty( $legacy ) ) {
+			$migrated = self::merge_missing_builtin_actions( self::sanitize_prompt_actions( $legacy ) );
+		} else {
+			$migrated = self::get_default_prompt_actions();
+		}
+
+		update_option( self::AI_TOOLBAR_ACTIONS_OPTION, $migrated );
+		update_option( self::AI_TOOLBAR_ACTIONS_MIGRATED_OPTION, true );
+	}
+
+	/**
+	 * Read toolbar actions from the canonical option with legacy fallback.
+	 *
+	 * @static
+	 * @access public
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function get_ai_toolbar_actions() {
+		$actions = get_option( self::AI_TOOLBAR_ACTIONS_OPTION, null );
+
+		if ( is_array( $actions ) && ! empty( $actions ) ) {
+			return $actions;
+		}
+
+		$legacy = get_option( self::LEGACY_TOOLBAR_ACTIONS_OPTION, null );
+
+		if ( is_array( $legacy ) && ! empty( $legacy ) ) {
+			return $legacy;
+		}
+
+		return self::get_default_prompt_actions();
 	}
 
 	/**

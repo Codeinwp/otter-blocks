@@ -37,6 +37,7 @@ const WP_BASE_URL = process.env.WP_BASE_URL || `http://localhost:${ WP_ENV_PORT 
 process.env.WP_BASE_URL = WP_BASE_URL;
 
 const SERIAL_SPECS = [
+	'**/blocks/ai-toolbar.spec.js',
 	'**/blocks/block-conditions.spec.js',
 	'**/blocks/dashboard.spec.js',
 	'**/blocks/form.spec.js',

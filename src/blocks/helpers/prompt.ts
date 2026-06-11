@@ -299,7 +299,8 @@ export function tryInjectIntoTemplate( template: string, content: string ): stri
 		return content;
 	}
 
-	const injected = template.replace( /{text_input}/gi, () => content || '{text_input}' );
+	let injected = template.replace( /\{text_input\}/gi, () => content || '{text_input}' );
+	injected = injected.replace( /\{block_content\}/gi, () => content || '{block_content}' );
 
 	return ( injected === template && content ) ? template + ' ' + content : injected;
 }

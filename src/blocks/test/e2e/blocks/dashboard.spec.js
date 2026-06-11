@@ -16,17 +16,14 @@ test.describe( 'Dashboard', () => {
 		await otterUtils.setOptions({ themeisle_open_ai_api_key: '' });
 		await admin.visitAdminPage( 'admin.php?page=otter' );
 
-		const integrationsTab = page.getByRole( 'button', { name: 'Integrations' });
-		await integrationsTab.click();
-
-		const openAIAccordion = page.getByRole( 'button', { name: 'OpenAI' });
-		await openAIAccordion.click();
+		const aiTab = page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true });
+		await aiTab.click();
 
 		const inputArea = page.getByPlaceholder( 'OpenAI API Key' );
 		await expect( inputArea ).toBeVisible();
 		await inputArea.fill( 'test' );
 
-		const save = page.locator( 'div' ).filter({ hasText: /^SaveGet API Key↗More Info↗$/ }).getByRole( 'button' );
+		const save = page.getByRole( 'button', { name: 'Save', exact: true });
 		await save.click();
 
 		const snackbar = page.getByTestId( 'snackbar' );
@@ -38,18 +35,26 @@ test.describe( 'Dashboard', () => {
 		await otterUtils.setOptions({ themeisle_open_ai_api_key: PRESEEDED_OPENAI_KEY });
 	});
 
-	test( 'toggle AI Block Toolbar', async({ page }) => {
+	test( 'toggle AI Block Toolbar', async({ page, otterUtils }) => {
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'Dashboard', exact: true }).click();
 
 		const toggle = page.getByLabel( 'Enable AI Block Toolbar Module' );
+		await expect( toggle ).toBeVisible();
 		const initialToggleValue = await toggle.isChecked();
 
-		await toggle.click();
-		await expect( toggle ).toBeChecked({ checked: ! initialToggleValue });
+		try {
+			await toggle.click();
+			await expect( toggle ).toBeChecked({ checked: ! initialToggleValue });
 
-		await page.reload();
+			await page.reload();
+			await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'Dashboard', exact: true }).click();
+			await expect( toggle ).toBeChecked({ checked: ! initialToggleValue });
 
-		await toggle.click();
-		await expect( toggle ).toBeChecked({ checked: initialToggleValue });
+			await toggle.click();
+			await expect( toggle ).toBeChecked({ checked: initialToggleValue });
+		} finally {
+			await otterUtils.setOptions({ themeisle_blocks_settings_block_ai_toolbar_module: true });
+		}
 	});
 
 	test( 'edit editable custom actions', async({ page }) => {
@@ -57,24 +62,47 @@ test.describe( 'Dashboard', () => {
 		const actionTitleValue = 'Fix Spelling';
 		const actionPromptValue = 'Fix spelling mistakes in the content.';
 
-		await page.getByRole( 'button', { name: 'Integrations' }).click();
-		await page.getByRole( 'button', { name: 'OpenAI' }).click();
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
 
-		// Edit the first action.
-		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child button' ).click();
-		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child' ).getByPlaceholder( 'Action Name' ).fill( actionTitleValue );
-		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child' ).getByPlaceholder( 'Prompt' ).fill( actionPromptValue );
+		const firstAction = page.locator( '.otter-ai-action-card' ).first();
 
-		// Save the changes.
+		await firstAction.locator( '.otter-ai-action-card__header' ).click();
+		await firstAction.getByLabel( 'Action name' ).fill( actionTitleValue );
+		await firstAction.getByLabel( 'Prompt' ).fill( actionPromptValue );
+
 		const requestPromise = page.waitForRequest( request =>
 			request.url().includes( 'settings' )
 		);
-		await page.locator( 'div' ).filter({ hasText: /^SaveMore Info↗$/ }).getByRole( 'button' ).click();
+		await page.getByRole( 'button', { name: 'Save Actions' }).click();
 		await requestPromise;
 		await page.reload();
 
-		await page.getByRole( 'button', { name: 'Integrations' }).click();
-		await page.getByRole( 'button', { name: 'OpenAI' }).click();
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
 		await expect( page.getByRole( 'button', { name: actionTitleValue }) ).toBeVisible();
+	});
+
+	test( 'adds and removes a custom toolbar action', async({ page, otterUtils }) => {
+		await otterUtils.setOptions({ themeisle_open_ai_api_key: PRESEEDED_OPENAI_KEY });
+
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
+		await page.getByRole( 'button', { name: 'Add custom action' }).click();
+
+		const customAction = page.locator( '.otter-ai-action-card' ).last();
+		await customAction.locator( '.otter-ai-action-card__header' ).click();
+		await customAction.getByLabel( 'Action name' ).fill( 'My Custom Action' );
+
+		await page.getByRole( 'button', { name: 'Save Actions' }).click();
+		await page.reload();
+
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
+		await expect( page.getByRole( 'button', { name: 'My Custom Action' }) ).toBeVisible();
+
+		await page.locator( '.otter-ai-action-card' ).filter({ hasText: 'My Custom Action' }).locator( '.otter-ai-action-card__header' ).click();
+		await page.getByRole( 'button', { name: 'Delete action' }).click();
+		await page.getByRole( 'button', { name: 'Save Actions' }).click();
+		await page.reload();
+
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
+		await expect( page.getByRole( 'button', { name: 'My Custom Action' }) ).not.toBeVisible();
 	});
 });
