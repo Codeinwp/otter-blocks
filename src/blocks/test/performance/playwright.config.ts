@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const fs = require( 'fs' );
 const path = require( 'path' );
 const { fileURLToPath } = require( 'url' );
 const { defineConfig, devices } = require( '@playwright/test' );
@@ -13,6 +14,30 @@ process.env.STORAGE_STATE_PATH ??= path.join(
 
 process.env.ASSETS_PATH = path.join( __dirname, 'assets' );
 
+// Port precedence: WP_BASE_URL > WP_ENV_PORT > .wp-env.override.json > 8888.
+// The override file pins a per-checkout port (written by `npm run env:start`)
+// and is read by wp-env itself, so the suites follow it with no env var.
+const getOverridePort = () => {
+	try {
+		const override = JSON.parse(
+			fs.readFileSync(
+				path.join( process.cwd(), '.wp-env.override.json' ),
+				'utf8'
+			)
+		);
+		return parseInt( override.port, 10 ) || undefined;
+	} catch ( e ) {
+		return undefined;
+	}
+};
+
+const WP_ENV_PORT = parseInt( process.env.WP_ENV_PORT || '', 10 ) || getOverridePort() || 8888;
+const WP_BASE_URL = process.env.WP_BASE_URL || `http://localhost:${ WP_ENV_PORT }`;
+
+// @wordpress/e2e-test-utils-playwright reads WP_BASE_URL directly (its
+// RequestUtils falls back to localhost:8889), so export the resolved URL.
+process.env.WP_BASE_URL = WP_BASE_URL;
+
 const config = defineConfig({
 
 	// fullyParallel: false,
@@ -22,7 +47,7 @@ const config = defineConfig({
 	snapshotPathTemplate:
 		'{testDir}/{testFileDir}/__snapshots__/{arg}-{projectName}{ext}',
 	use: {
-		baseURL: process.env.WP_BASE_URL || 'http://localhost:8889',
+		baseURL: WP_BASE_URL,
 		headless: true,
 		viewport: {
 			width: 960,
@@ -42,7 +67,7 @@ const config = defineConfig({
 	},
 	webServer: {
 		command: 'npm run wp-env start',
-		port: 8889,
+		port: Number( new URL( WP_BASE_URL ).port ) || 80,
 		timeout: 120_000, // 120 seconds.
 		reuseExistingServer: true
 	},

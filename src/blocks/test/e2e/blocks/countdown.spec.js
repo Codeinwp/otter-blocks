@@ -40,11 +40,13 @@ test.describe( 'Countdown Block', () => {
 		// Match by the stable wrapper class.
 		await page.locator( '.o-extend-btn' ).first().click();
 
-		await page.getByLabel( 'Day' ).fill( '17' );
+		// Use the spinbutton role: getByLabel matches substrings, so 'Day' also
+		// hits the calendar's "<date>. Today" button.
+		await page.getByRole( 'spinbutton', { name: 'Day' }).fill( '17' );
 		await page.getByRole( 'combobox', { name: 'Month' }).selectOption( 'August' );
-		await page.getByLabel( 'Year' ).fill( '2030' );
+		await page.getByRole( 'spinbutton', { name: 'Year' }).fill( '2030' );
 
-		await page.getByLabel( 'Year' ).press( 'Enter' );
+		await page.getByRole( 'spinbutton', { name: 'Year' }).press( 'Enter' );
 
 		// Editor preview uses singular labels ("Day", "Hour", …); the frontend renders the
 		// pluralised form ("Days") once the countdown has a real value.
