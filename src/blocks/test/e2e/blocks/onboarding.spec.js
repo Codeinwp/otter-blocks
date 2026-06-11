@@ -4,19 +4,8 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 test.describe( 'FSE Onboarding', () => {
-	test.beforeEach( async({ admin, page }) => {
-		const slug = 'raft';
-
-		await admin.visitAdminPage( 'themes.php' );
-
-		const activateButton = await page.$(
-			`div[data-slug="${ slug }"] .button.activate`
-		);
-
-		if ( activateButton ) {
-			await page.click( `div[data-slug="${ slug }"] .button.activate` );
-			await page.waitForSelector( `div[data-slug="${ slug }"].active` );
-		}
+	test.beforeEach( async({ admin, page, requestUtils }) => {
+		await requestUtils.activateTheme( 'raft' );
 
 		await admin.visitAdminPage( 'site-editor.php?onboarding=true' );
 
