@@ -281,12 +281,16 @@ class Form_Settings_Data {
 				/**
 				 * Read-time migration of the legacy save-location setting: `email`,
 				 * `database-email` and empty/missing (email was the de facto behavior) map to
-				 * notification on, `database` maps to off. The stored option is rewritten to
-				 * the new `emailNotification` format when the form is next saved in the editor.
+				 * notification on, `database` maps to off. Legacy `database` only skipped the
+				 * owner email when Pro was active (the old gate was
+				 * `Pro::is_pro_active() && ! $can_send_email`), so without an active Pro
+				 * license the email was always sent and we keep the notification on. The
+				 * stored option is rewritten to the new `emailNotification` format when the
+				 * form is next saved in the editor.
 				 */
 				if ( isset( $form['emailNotification'] ) ) {
 					$integration->set_email_notification( filter_var( $form['emailNotification'], FILTER_VALIDATE_BOOLEAN ) );
-				} elseif ( ! empty( $form['submissionsSaveLocation'] ) ) {
+				} elseif ( ! empty( $form['submissionsSaveLocation'] ) && Pro::is_pro_active() ) {
 					$integration->set_email_notification( 'database' !== $form['submissionsSaveLocation'] );
 				} else {
 					$integration->set_email_notification( true );

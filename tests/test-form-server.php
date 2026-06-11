@@ -10,6 +10,7 @@ use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Providers;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions;
+use ThemeIsle\GutenbergBlocks\Pro;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
 
 /**
@@ -62,6 +63,11 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private $after_submit_action = null;
 
 	/**
+	 * @var callable|null
+	 */
+	private $pro_license_filter = null;
+
+	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {
@@ -103,6 +109,11 @@ class Test_Form_Server extends WP_UnitTestCase {
 			$this->after_submit_action = null;
 		}
 
+		if ( null !== $this->pro_license_filter ) {
+			remove_filter( 'product_otter_license_status', $this->pro_license_filter );
+			$this->pro_license_filter = null;
+		}
+
 		$this->form_providers->providers = $this->original_providers;
 
 		$this->cleanup_upload_fixtures();
@@ -111,7 +122,7 @@ class Test_Form_Server extends WP_UnitTestCase {
 		delete_option( 'themeisle_blocks_form_fields_option' );
 		delete_option( 'themeisle_google_captcha_api_secret_key' );
 		delete_transient( 'contact_form_autoresponder_error' );
-		delete_transient( 'contact_form_alert_delivery' );
+		delete_transient( 'contact_form_alert_delivery_email' );
 		delete_transient( 'contact_form_alert_captcha_provider' );
 
 		parent::tear_down();
@@ -643,17 +654,40 @@ class Test_Form_Server extends WP_UnitTestCase {
 	 * within the cooldown stores another Record but does not re-alert.
 	 */
 	public function test_delivery_admin_alert_is_throttled_per_form() {
-		$this->mock_mail( false );
+		// Cooldown starts only after the alert was successfully delivered.
+		$this->mock_mail(
+			function ( $atts ) {
+				return false !== strpos( $atts['subject'], 'An error with the Form blocks has occurred' );
+			}
+		);
 
 		$this->form_server->frontend( $this->get_frontend_request() );
 
-		// First failure: the failed owner email and the admin alert attempt.
+		// First failure: the failed owner email and the admin alert.
 		$this->assertCount( 2, $this->mail_requests );
 
 		$this->form_server->frontend( $this->get_frontend_request() );
 
 		// Second failure: only the owner email attempt — the alert is on cooldown.
 		$this->assertCount( 3, $this->mail_requests );
+		$this->assertCount( 2, $this->get_form_records() );
+	}
+
+	/**
+	 * Ensure a failed Admin Alert delivery does not burn the throttle window.
+	 */
+	public function test_delivery_admin_alert_throttle_starts_after_successful_send() {
+		$this->mock_mail( false );
+
+		$this->form_server->frontend( $this->get_frontend_request() );
+
+		// First failure: owner email and admin alert both attempted but not delivered.
+		$this->assertCount( 2, $this->mail_requests );
+
+		$this->form_server->frontend( $this->get_frontend_request() );
+
+		// Second failure: both are attempted again because the alert never succeeded.
+		$this->assertCount( 4, $this->mail_requests );
 		$this->assertCount( 2, $this->get_form_records() );
 	}
 
@@ -808,7 +842,8 @@ class Test_Form_Server extends WP_UnitTestCase {
 		$cases = array(
 			array( array( 'submissionsSaveLocation' => 'email' ), true ),
 			array( array( 'submissionsSaveLocation' => 'database-email' ), true ),
-			array( array( 'submissionsSaveLocation' => 'database' ), false ),
+			// Without Pro, legacy `database` still sent the owner email in production.
+			array( array( 'submissionsSaveLocation' => 'database' ), true ),
 			array( array( 'submissionsSaveLocation' => '' ), true ),
 			array( array(), true ),
 			array( array( 'emailNotification' => false ), false ),
@@ -837,6 +872,32 @@ class Test_Form_Server extends WP_UnitTestCase {
 			$settings = Form_Settings_Data::get_form_setting_from_wordpress_options( 'contact_form' );
 			$this->assertSame( $case[1], $settings->has_email_notification(), 'Case #' . $index . ' failed.' );
 		}
+	}
+
+	/**
+	 * Ensure legacy `database` disables the Email Notification toggle only when Pro is active.
+	 */
+	public function test_legacy_database_save_location_disables_email_notification_when_pro_active() {
+		if ( ! Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		$this->mock_pro_active();
+
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'submissionsSaveLocation' => 'database',
+					)
+				),
+			)
+		);
+
+		$settings = Form_Settings_Data::get_form_setting_from_wordpress_options( 'contact_form' );
+
+		$this->assertFalse( $settings->has_email_notification() );
 	}
 
 	/**
@@ -1838,9 +1899,22 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private function mock_mail( $result = true ) {
 		$this->mail_filter = function ( $preempt, $atts ) use ( $result ) {
 			$this->mail_requests[] = $atts;
-			return $result;
+			return is_callable( $result ) ? $result( $atts ) : $result;
 		};
 		add_filter( 'pre_wp_mail', $this->mail_filter, 10, 2 );
+	}
+
+	/**
+	 * Stub a valid Otter Pro license for read-time migration tests.
+	 *
+	 * @return void
+	 */
+	private function mock_pro_active() {
+		$this->pro_license_filter = function () {
+			return 'valid';
+		};
+
+		add_filter( 'product_otter_license_status', $this->pro_license_filter );
 	}
 
 	/**

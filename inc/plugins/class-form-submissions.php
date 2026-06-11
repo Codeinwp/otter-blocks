@@ -115,7 +115,7 @@ class Form_Submissions {
 		add_filter( 'post_row_actions', array( $this, 'form_record_row_actions' ), 10, 2 );
 		add_action( 'restrict_manage_posts', array( $this, 'form_record_add_filters' ) );
 		add_filter( 'parse_query', array( $this, 'form_record_filter_query' ) );
-		add_action( 'transition_post_status', array( $this, 'transition_draft_to_read' ), 10, 3 );
+		add_filter( 'wp_untrash_post_status', array( $this, 'restore_status_on_untrash' ), 10, 3 );
 
 		// Implement row actions behaviour.
 		add_action( 'admin_action_row-read', array( $this, 'read_otter_form_record' ) );
@@ -373,7 +373,10 @@ class Form_Submissions {
 			}
 		}
 
-		add_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
+		// Slash the value: add_post_meta() unslashes it, which would otherwise strip backslashes from the submitted data.
+		add_post_meta( $post_id, self::FORM_RECORD_META_KEY, wp_slash( $meta ) );
+
+		wp_cache_delete( 'otter_form_records', 'otter_form' );
 
 		$form_data->set_record_id( $post_id );
 
@@ -414,6 +417,19 @@ class Form_Submissions {
 		}
 
 		remove_action( 'otter_form_after_submit', array( $legacy, 'store_form_record' ) );
+
+		/**
+		 * The legacy Form_Pro_Features deletes uploads after delivery when the save
+		 * location is 'email'; now that the record is always saved it would delete the
+		 * files the record references, so unhook it as well.
+		 */
+		if ( class_exists( '\ThemeIsle\OtterPro\Plugins\Form_Pro_Features' ) ) {
+			$legacy_features = \ThemeIsle\OtterPro\Plugins\Form_Pro_Features::$instance;
+
+			if ( $legacy_features && method_exists( $legacy_features, 'clean_files_from_uploads' ) ) {
+				remove_action( 'otter_form_after_submit', array( $legacy_features, 'clean_files_from_uploads' ) );
+			}
+		}
 
 		return $this->store_form_record( $form_data );
 	}
@@ -828,23 +844,25 @@ class Form_Submissions {
 	}
 
 	/**
-	 * Mark form record as read when they're restored from trash.
+	 * Restore a form record to its pre-trash status when it is untrashed.
 	 *
-	 * @param string  $new_status The new status.
-	 * @param string  $old_status The old status.
-	 * @param WP_Post $post The post object.
+	 * WP core restores untrashed posts to 'draft', which for form records is the
+	 * payment-pending status: a confirmed 'unread'/'read' record would show up as
+	 * pending, while a genuinely pending 'draft' record must stay 'draft' so
+	 * `confirm_submission()` can still deliver it after payment.
+	 *
+	 * @param string $new_status The status the post is about to be restored to.
+	 * @param int    $post_id The post ID.
+	 * @param string $previous_status The status the post had before it was trashed.
+	 *
+	 * @return string
 	 */
-	public function transition_draft_to_read( $new_status, $old_status, $post ) {
-		if ( self::FORM_RECORD_TYPE !== $post->post_type || 'trash' !== $old_status || 'draft' !== $new_status ) {
-			return;
+	public function restore_status_on_untrash( $new_status, $post_id, $previous_status ) {
+		if ( self::FORM_RECORD_TYPE !== get_post_type( $post_id ) || empty( $previous_status ) ) {
+			return $new_status;
 		}
 
-		wp_update_post(
-			array(
-				'ID'          => $post->ID,
-				'post_status' => 'read',
-			)
-		);
+		return $previous_status;
 	}
 
 	/**
@@ -921,8 +939,8 @@ class Form_Submissions {
 			return $query;
 		}
 
-		$form = ( ! empty( $_REQUEST['form'] ) ) ? sanitize_text_field( wp_unslash( $_REQUEST['form'] ) ) : '';
-		$post = ( ! empty( $_REQUEST['post'] ) ) ? esc_url_raw( wp_unslash( $_REQUEST['post'] ) ) : '';
+		$form = ( ! empty( $_REQUEST['otter_form_filter'] ) && is_string( $_REQUEST['otter_form_filter'] ) ) ? sanitize_text_field( wp_unslash( $_REQUEST['otter_form_filter'] ) ) : '';
+		$post = ( ! empty( $_REQUEST['otter_post_filter'] ) && is_string( $_REQUEST['otter_post_filter'] ) ) ? esc_url_raw( wp_unslash( $_REQUEST['otter_post_filter'] ) ) : '';
 
 		if ( ! empty( $form ) ) {
 			$query->query_vars['meta_query'][] = array(
@@ -1136,18 +1154,20 @@ class Form_Submissions {
 		$meta = get_post_meta( $post_id, self::FORM_RECORD_META_KEY, true );
 
 		foreach ( $_POST as $key => $value ) {
-			if ( 0 !== strpos( $key, 'otter_meta_' ) ) {
+			if ( 0 !== strpos( $key, 'otter_meta_' ) || ! is_string( $value ) ) {
 				continue;
 			}
 
-			$id = substr( $key, -8 );
+			$id    = substr( $key, -8 );
+			$value = sanitize_textarea_field( wp_unslash( $value ) );
 
 			if ( isset( $meta['inputs'][ $id ] ) && $meta['inputs'][ $id ]['value'] !== $value ) {
 				$meta['inputs'][ $id ]['value'] = $value;
 			}
 		}
 
-		update_post_meta( $post_id, self::FORM_RECORD_META_KEY, $meta );
+		// Slash the value: update_post_meta() unslashes it, which would otherwise strip backslashes from the stored data.
+		update_post_meta( $post_id, self::FORM_RECORD_META_KEY, wp_slash( $meta ) );
 	}
 
 	/**
@@ -1297,18 +1317,26 @@ class Form_Submissions {
 		$meta            = get_post_meta( $post->ID, self::FORM_RECORD_META_KEY, true );
 		$delivery_status = get_post_meta( $post->ID, self::DELIVERY_STATUS_META_KEY, true );
 		$delivery_errors = get_post_meta( $post->ID, self::DELIVERY_ERRORS_META_KEY, true );
+
+		if ( empty( $meta ) || ! is_array( $meta ) ) {
+			return;
+		}
+
+		$form_label = isset( $meta['form']['label'] ) ? $meta['form']['label'] : __( 'Form', 'otter-blocks' );
+		$form_value = isset( $meta['form']['value'] ) ? $meta['form']['value'] : '';
+		$post_url   = isset( $meta['post_url']['value'] ) ? $meta['post_url']['value'] : '';
 		?>
 		<div class="submitbox">
 			<div class="metadata">
 				<div>
 					<span class="dashicons dashicons-feedback"></span>
-					<?php echo esc_html( $meta['form']['label'] ); ?>:
-					<a href="<?php echo esc_url( $meta['post_url']['value'] . '#' . $meta['form']['value'] ); ?>"><?php echo esc_html( substr( $meta['form']['value'], -8 ) ); ?></a>
+					<?php echo esc_html( $form_label ); ?>:
+					<a href="<?php echo esc_url( $post_url . '#' . $form_value ); ?>"><?php echo esc_html( substr( $form_value, -8 ) ); ?></a>
 				</div>
 				<div>
 					<span class="dashicons dashicons-admin-page"></span>
 					<?php echo esc_html__( 'Post', 'otter-blocks' ); ?>:
-					<a href="<?php echo esc_url( $meta['post_url']['value'] ); ?>"><?php echo esc_html__( 'View', 'otter-blocks' ); ?></a>
+					<a href="<?php echo esc_url( $post_url ); ?>"><?php echo esc_html__( 'View', 'otter-blocks' ); ?></a>
 				</div>
 				<div>
 					<span class="dashicons dashicons-calendar"></span>
@@ -1489,7 +1517,8 @@ class Form_Submissions {
 		 * trigger the 'form_record_filter_query'. This is why the $wpdb.
 		 */
 		$cache_key    = 'otter_form_records';
-		$form_records = wp_cache_get( $cache_key );
+		$cache_group  = 'otter_form';
+		$form_records = wp_cache_get( $cache_key, $cache_group );
 
 		if ( ! $form_records ) {
 			global $wpdb;
@@ -1501,18 +1530,37 @@ class Form_Submissions {
 				)
 			);
 
-			wp_cache_set( $cache_key, $form_records );
+			wp_cache_set( $cache_key, $form_records, $cache_group, 5 * MINUTE_IN_SECONDS );
 		}
+
+		if ( ! is_array( $form_records ) ) {
+			return array();
+		}
+
+		// Prime the meta cache for all the records at once to avoid one query per record.
+		update_meta_cache( 'post', wp_list_pluck( $form_records, 'ID' ) );
 
 		$options = array();
 		foreach ( $form_records as $record ) {
 			$meta = get_post_meta( $record->ID, self::FORM_RECORD_META_KEY, true );
 
+			if ( ! is_array( $meta ) ) {
+				continue;
+			}
+
 			switch ( $filter ) {
 				case 'form':
+					if ( ! isset( $meta['form']['value'] ) ) {
+						break;
+					}
+
 					$options[ $meta['form']['value'] ] = substr( $meta['form']['value'], -8 );
 					break;
 				case 'post':
+					if ( ! isset( $meta['post_url']['value'] ) ) {
+						break;
+					}
+
 					if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
 						$post_id = wpcom_vip_url_to_postid( $meta['post_url']['value'] );
 					} else {
@@ -1540,11 +1588,11 @@ class Form_Submissions {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$form = isset( $_GET['form'] ) ? sanitize_text_field( wp_unslash( $_GET['form'] ) ) : '';
+		$form = isset( $_GET['otter_form_filter'] ) && is_string( $_GET['otter_form_filter'] ) ? sanitize_text_field( wp_unslash( $_GET['otter_form_filter'] ) ) : '';
 
 		?>
 		<label for="filter-by-form"></label>
-		<select name="form" id="filter-by-form">
+		<select name="otter_form_filter" id="filter-by-form">
 			<option value=""><?php esc_html_e( 'All Forms', 'otter-blocks' ); ?></option>
 			<?php foreach ( $forms as $form_id => $form_name ) : ?>
 				<option value="<?php echo esc_attr( $form_id ); ?>" <?php selected( $form, $form_id ); ?>><?php echo esc_html( $form_name ); ?></option>
@@ -1566,11 +1614,11 @@ class Form_Submissions {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$post = isset( $_GET['post'] ) ? sanitize_text_field( wp_unslash( $_GET['post'] ) ) : '';
+		$post = isset( $_GET['otter_post_filter'] ) && is_string( $_GET['otter_post_filter'] ) ? sanitize_text_field( wp_unslash( $_GET['otter_post_filter'] ) ) : '';
 
 		?>
 		<label for="filter-by-post"></label>
-		<select name="post" id="filter-by-post">
+		<select name="otter_post_filter" id="filter-by-post">
 			<option value=""><?php esc_html_e( 'All Posts', 'otter-blocks' ); ?></option>
 			<?php foreach ( $posts as $post_id => $post_title ) : ?>
 				<option value="<?php echo esc_attr( $post_id ); ?>" <?php selected( $post, $post_id ); ?>><?php echo esc_html( $post_title ); ?></option>
@@ -1714,7 +1762,8 @@ class Form_Submissions {
 				),
 			)
 		);
-		update_post_meta( $record_id, self::FORM_RECORD_META_KEY, $meta );
+		// Slash the value: update_post_meta() unslashes it, which would otherwise strip backslashes from the stored data.
+		update_post_meta( $record_id, self::FORM_RECORD_META_KEY, wp_slash( $meta ) );
 
 		if (
 			$form_data->is_temporary() &&

@@ -375,8 +375,8 @@ const Edit = ({
 			autoresponder: wpOptions?.autoresponder,
 			autoresponderSubject: wpOptions?.autoresponderSubject,
 
-			// Read-time migration of the legacy save-location values: only `database` meant no email notification.
-			emailNotification: wpOptions?.emailNotification ?? ( wpOptions?.submissionsSaveLocation ? 'database' !== wpOptions.submissionsSaveLocation : true ),
+			// Read-time migration of the legacy save-location values: only `database` meant no email notification, and the email was skipped only when a Pro license was active (mirrors the PHP migration in Form_Settings_Data).
+			emailNotification: wpOptions?.emailNotification ?? ( ( wpOptions?.submissionsSaveLocation && Boolean( window.otterPro?.isActive ) ) ? 'database' !== wpOptions.submissionsSaveLocation : true ),
 			webhookId: wpOptions?.webhookId,
 			requiredFields: wpOptions?.requiredFields
 		});
@@ -438,8 +438,13 @@ const Edit = ({
 			data[key] = formOptions[formOptionsMap[key]];
 		});
 
-		// Rewrite the stored options to the new format: the legacy save-location value was migrated to `emailNotification` at read time.
-		data.submissionsSaveLocation = undefined;
+		// Forward-compat with older Otter Pro bundles: their Save Location control writes `submissionsSaveLocation` to the form options state. When the user changed it, persist it and map it to the new `emailNotification` format (only `database` disabled the owner email). Otherwise rewrite away from the legacy key on save.
+		if ( undefined !== formOptions.submissionsSaveLocation ) {
+			data.submissionsSaveLocation = formOptions.submissionsSaveLocation;
+			data.emailNotification = 'database' !== formOptions.submissionsSaveLocation;
+		} else {
+			data.submissionsSaveLocation = undefined;
+		}
 
 		try {
 			( new DeferredWpOptionsSave() ).save(
@@ -449,7 +454,15 @@ const Edit = ({
 						return data;
 					}
 					Object.keys( data ).forEach( k => {
-						oldValue[k] = data[k];
+						if ( undefined !== data[k]) {
+							oldValue[k] = data[k];
+							return;
+						}
+
+						// An undefined value for a known option is a deliberate reset (e.g. a ToolsPanel deselect), so drop the stored value. The legacy save-location key is also dropped once the entry is rewritten to `emailNotification`.
+						if ( Object.prototype.hasOwnProperty.call( formOptionsMap, k ) || 'submissionsSaveLocation' === k ) {
+							delete oldValue[k];
+						}
 					});
 					return oldValue;
 				}, ( res, error ) => {

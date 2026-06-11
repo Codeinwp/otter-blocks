@@ -152,7 +152,18 @@ function stub_wp_mail_for_e2e( $short_circuit, $atts = array() ) {
 		return $short_circuit;
 	}
 
-	return 'fail' !== get_option( MAIL_MODE_OPTION, 'ok' );
+	if ( 'fail' === get_option( MAIL_MODE_OPTION, 'ok' ) ) {
+		$subject = isset( $atts['subject'] ) ? $atts['subject'] : '';
+
+		// Admin alerts must succeed in fail mode so throttle specs can exercise cooldown semantics.
+		if ( false !== strpos( $subject, 'An error with the Form blocks has occurred' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	return true;
 }
 
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e', 10, 2 );
