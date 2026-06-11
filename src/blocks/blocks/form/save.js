@@ -23,7 +23,6 @@ const Save = ({
 			'can-submit-and-subscribe': 'submit-subscribe' === attributes.action,
 			'has-captcha': attributes.hasCaptcha
 		}),
-		...( attributes.hasCaptcha ? { 'data-captcha-provider': attributes.captchaProvider || 'recaptcha' } : {} ),
 		'data-option-name': attributes.optionName
 	});
 

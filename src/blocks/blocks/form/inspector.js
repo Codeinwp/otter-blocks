@@ -223,33 +223,24 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 				) }
 			</ToolsPanelItem>
 
-			<ToolsPanelItem
-				hasValue={ () => true === attributes.hasCaptcha }
-				label={ __( 'Enable Captcha', 'otter-blocks' ) }
-				onSelect={ () => setAttributes({ hasCaptcha: true, captchaProvider: attributes.captchaProvider || 'recaptcha' }) }
-				onDeselect={ () => setAttributes({ hasCaptcha: false }) }
-				isShownByDefault={ false }
-			>
-				<Notice
-					notice={
-						<div>
-							{ __( 'Captcha is activated. You can modify the API Keys in Integrations tab from Settings > Otter.', 'otter-blocks' ) }
-							<ExternalLink href={ ( window?.themeisleGutenberg?.optionsPath ) }>{ __( 'Go to Dashboard.', 'otter-blocks' ) }</ExternalLink>
-						</div>
-					}
-					variant="help"
-				/>
-
-				<SelectControl
-					label={ __( 'Captcha Provider', 'otter-blocks' ) }
-					value={ attributes.captchaProvider || 'recaptcha' }
-					options={ [
-						{ label: __( 'Google reCaptcha', 'otter-blocks' ), value: 'recaptcha' },
-						{ label: __( 'Cloudflare Turnstile', 'otter-blocks' ), value: 'turnstile' }
-					] }
-					onChange={ captchaProvider => setAttributes({ captchaProvider }) }
-				/>
-			</ToolsPanelItem>
+			{ true === attributes.hasCaptcha && (
+				<ToolsPanelItem
+					hasValue={ () => true === attributes.hasCaptcha }
+					label={ __( 'Enable Captcha', 'otter-blocks' ) }
+					onDeselect={ () => setAttributes({ hasCaptcha: false }) }
+					isShownByDefault={ false }
+				>
+					<Notice
+						notice={
+							<div>
+								{ __( 'This setting is deprecated. Captcha has moved to its own block — once disabled, add captcha back by inserting the Captcha block inside the form. You can modify the API Keys in Integrations tab from Settings > Otter.', 'otter-blocks' ) }
+								<ExternalLink href={ ( window?.themeisleGutenberg?.optionsPath ) }>{ __( 'Go to Dashboard.', 'otter-blocks' ) }</ExternalLink>
+							</div>
+						}
+						variant="help"
+					/>
+				</ToolsPanelItem>
+			) }
 
 
 			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (

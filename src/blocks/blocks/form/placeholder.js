@@ -6,6 +6,9 @@ import { __ } from '@wordpress/i18n';
 import {
 	Button,
 	ExternalLink,
+	Flex,
+	FlexBlock,
+	FlexItem,
 	Placeholder,
 	Spinner,
 	TextControl
@@ -22,7 +25,8 @@ const BlockPlaceholder = ({
 	siteKey,
 	secretKey,
 	setSiteKey,
-	setSecretKey
+	setSecretKey,
+	children
 }) => {
 	const providerLabels = {
 		recaptcha: {
@@ -67,33 +71,46 @@ const BlockPlaceholder = ({
 			className={ className }
 
 		>
-			<div className="components-placeholder__actions" style={{ width: '100%' }}>
-				<TextControl
-					type="text"
-					label={ __( 'Site Key', 'otter-blocks' ) }
-					value={ siteKey }
-					className="components-placeholder__input"
-					onChange={ setSiteKey }
-				/>
+			{ children }
 
-				<TextControl
-					type="text"
-					label={ __( 'Secret Key', 'otter-blocks' ) }
-					value={ mask }
-					className="components-placeholder__input"
-					onChange={ setSecretKey }
-				/>
+			<Flex
+				className="components-placeholder__actions"
+				align="flex-end"
+				gap={ 4 }
+				style={{ width: '100%' }}
+			>
+				<FlexBlock>
+					<TextControl
+						type="text"
+						label={ __( 'Site Key', 'otter-blocks' ) }
+						value={ siteKey }
+						onChange={ setSiteKey }
+						__nextHasNoMarginBottom
+					/>
+				</FlexBlock>
 
-				<Button
-					isPrimary
-					type="submit"
-					onClick={ saveAPIKey }
-					isBusy={ isSaving }
-					disabled={ '' === siteKey || '' === secretKey }
-				>
-					{ __( 'Save', 'otter-blocks' ) }
-				</Button>
-			</div>
+				<FlexBlock>
+					<TextControl
+						type="text"
+						label={ __( 'Secret Key', 'otter-blocks' ) }
+						value={ mask }
+						onChange={ setSecretKey }
+						__nextHasNoMarginBottom
+					/>
+				</FlexBlock>
+
+				<FlexItem>
+					<Button
+						isPrimary
+						type="submit"
+						onClick={ saveAPIKey }
+						isBusy={ isSaving }
+						disabled={ '' === siteKey || '' === secretKey }
+					>
+						{ __( 'Save', 'otter-blocks' ) }
+					</Button>
+				</FlexItem>
+			</Flex>
 
 			<div className="components-placeholder__learn-more" style={{ margin: '10px 0px' }}>
 				{ provider.activateText } <ExternalLink href={ provider.learnMore }>{ provider.learnMoreText }</ExternalLink>

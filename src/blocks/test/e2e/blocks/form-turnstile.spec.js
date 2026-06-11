@@ -2,10 +2,26 @@
  * Internal dependencies
  */
 import { test, expect } from '../fixtures';
-import { expectBlockByName, publishAndViewPost } from '../helpers/editor';
-import { insertContactForm, showFormOption } from '../helpers/forms';
+import { getBlockByName, expectBlockByName, publishAndViewPost } from '../helpers/editor';
+import { insertContactForm } from '../helpers/forms';
 
-test.describe( 'Form Block - Turnstile', () => {
+const CAPTCHA_BLOCK = 'themeisle-blocks/form-captcha';
+
+// editor.getBlocks() strips clientIds, so resolve the form's clientId from the store.
+async function getFormClientId( page ) {
+	return page.evaluate( () => {
+		return window.wp.data.select( 'core/block-editor' ).getBlocks().find( ({ name }) => 'themeisle-blocks/form' === name )?.clientId;
+	});
+}
+
+async function insertCaptchaBlock( page, formClientId, provider ) {
+	await page.evaluate( ({ formClientId, provider, blockName }) => {
+		const block = window.wp.blocks.createBlock( blockName, { provider });
+		window.wp.data.dispatch( 'core/block-editor' ).insertBlock( block, undefined, formClientId );
+	}, { formClientId, provider, blockName: CAPTCHA_BLOCK });
+}
+
+test.describe( 'Form Block - Captcha block', () => {
 
 	test.beforeEach( async({ admin, otterUtils }) => {
 		await otterUtils.setOptions({
@@ -37,15 +53,23 @@ test.describe( 'Form Block - Turnstile', () => {
 
 		await insertContactForm({ editor, page });
 
-		await showFormOption( page, 'Enable Captcha' );
-		await page.getByLabel( 'Captcha Provider' ).selectOption( 'turnstile' );
-
 		const formBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
 		const formId = formBlock?.attributes?.id;
 		expect( formId ).toBeTruthy();
 
+		const formClientId = await getFormClientId( page );
+		expect( formClientId ).toBeTruthy();
+
+		await insertCaptchaBlock( page, formClientId, 'turnstile' );
+
+		await expect.poll( async() => {
+			const form = await getBlockByName( editor, 'themeisle-blocks/form' );
+			return form?.innerBlocks?.filter( ({ name }) => CAPTCHA_BLOCK === name )?.length;
+		}).toBe( 1 );
+
 		await publishAndViewPost({ editor, page });
 
+		await expect( page.locator( `#${formId} .o-form-captcha[data-captcha-provider="turnstile"]` ) ).toBeAttached();
 		await expect( page.locator( `#${formId} [data-turnstile-rendered=\"1\"]` ) ).toBeVisible();
 
 		const requiredInputs = page.locator( `#${formId} input[required], #${formId} textarea[required]` );
@@ -68,5 +92,23 @@ test.describe( 'Form Block - Turnstile', () => {
 		await page.getByRole( 'button', { name: 'Submit' }).click();
 
 		await expect( page.locator( `#${formId} .o-form-server-response.o-success` ) ).toBeVisible({ timeout: 15000 });
+	});
+
+	test( 'keeps a single Captcha block per form', async({ editor, page }) => {
+		await insertContactForm({ editor, page });
+
+		await expectBlockByName( editor, 'themeisle-blocks/form' );
+
+		const formClientId = await getFormClientId( page );
+		expect( formClientId ).toBeTruthy();
+
+		await insertCaptchaBlock( page, formClientId, 'turnstile' );
+		await insertCaptchaBlock( page, formClientId, 'recaptcha' );
+
+		// The Form block removes every Captcha block beyond the first.
+		await expect.poll( async() => {
+			const form = await getBlockByName( editor, 'themeisle-blocks/form' );
+			return form?.innerBlocks?.filter( ({ name }) => CAPTCHA_BLOCK === name )?.length;
+		}).toBe( 1 );
 	});
 });

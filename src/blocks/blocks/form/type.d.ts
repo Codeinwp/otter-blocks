@@ -6,7 +6,6 @@ type Attributes = {
 	emailTo: string
 	optionName: string
 	hasCaptcha: boolean
-	captchaProvider: string
 	provider: string
 	listId: string
 	action: string

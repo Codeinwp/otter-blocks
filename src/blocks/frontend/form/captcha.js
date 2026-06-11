@@ -13,13 +13,30 @@ const TURNSTILE_SCRIPT_ID = 'otter-turnstile-script';
  */
 
 /**
- * Get the captcha provider selected for a form.
+ * Get the Captcha block container of a form, ignoring the ones inside nested forms.
  *
  * @param {HTMLDivElement} form The form container.
+ * @return {HTMLDivElement|null} The captcha mount node rendered by the Captcha block.
+ */
+export const getCaptchaContainer = ( form ) => {
+
+	/** @type {Array.<HTMLDivElement>} */
+	const innerForms = [ ...( form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form' ) ?? []) ];
+
+	return [ ...( form?.querySelectorAll( ':scope > .otter-form__container .o-form-captcha' ) ?? []) ]
+		.filter( node => ! innerForms?.some( innerForm => innerForm?.contains( node ) ) )?.[0] ?? null;
+};
+
+/**
+ * Get the captcha provider selected for a form. The Captcha block container wins
+ * over the legacy form-level setting, which is always reCaptcha.
+ *
+ * @param {HTMLDivElement}      form      The form container.
+ * @param {HTMLDivElement|null} container The Captcha block container.
  * @return {string} The captcha provider.
  */
-const getCaptchaProvider = ( form ) => {
-	return form?.dataset?.captchaProvider || 'recaptcha';
+const getCaptchaProvider = ( form, container = null ) => {
+	return container?.dataset?.captchaProvider || 'recaptcha';
 };
 
 /**
@@ -97,9 +114,11 @@ const waitForCaptcha = ( isReady, render ) => {
  * @return {void}
  */
 export const addCaptchaOnPage = ( forms ) => {
-	const captchaForms = [ ...forms ].filter( form => form?.classList?.contains( 'has-captcha' ) );
-	const recaptchaForms = captchaForms.filter( form => 'recaptcha' === getCaptchaProvider( form ) );
-	const turnstileForms = captchaForms.filter( form => 'turnstile' === getCaptchaProvider( form ) );
+	const captchaForms = [ ...forms ]
+		.map( form => ({ form, container: getCaptchaContainer( form ) }) )
+		.filter( ({ form, container }) => container || form?.classList?.contains( 'has-captcha' ) );
+	const recaptchaForms = captchaForms.filter( ({ form, container }) => 'recaptcha' === getCaptchaProvider( form, container ) );
+	const turnstileForms = captchaForms.filter( ({ form, container }) => 'turnstile' === getCaptchaProvider( form, container ) );
 
 	if ( 0 < recaptchaForms.length ) {
 		ensureRecaptchaLoaded( recaptchaForms );
@@ -113,11 +132,11 @@ export const addCaptchaOnPage = ( forms ) => {
 /**
  * Load reCaptcha if needed, then render it on the given forms.
  *
- * @param {HTMLDivElement[]} forms The form containers.
+ * @param {Array.<{form: HTMLDivElement, container: HTMLDivElement|null}>} forms The form containers with their captcha mount nodes.
  * @return {void}
  */
 const ensureRecaptchaLoaded = ( forms ) => {
-	const render = () => forms.forEach( renderRecaptchaOn );
+	const render = () => forms.forEach( ({ form, container }) => renderRecaptchaOn( form, container ) );
 
 	if ( isRecaptchaReady() ) {
 		render();
@@ -143,11 +162,11 @@ const ensureRecaptchaLoaded = ( forms ) => {
 /**
  * Load Turnstile if needed, then render it on the given forms.
  *
- * @param {HTMLDivElement[]} forms The form containers.
+ * @param {Array.<{form: HTMLDivElement, container: HTMLDivElement|null}>} forms The form containers with their captcha mount nodes.
  * @return {void}
  */
 const ensureTurnstileLoaded = ( forms ) => {
-	const render = () => forms.forEach( renderTurnstileOn );
+	const render = () => forms.forEach( ({ form, container }) => renderTurnstileOn( form, container ) );
 
 	if ( isTurnstileReady() ) {
 		render();
@@ -201,15 +220,19 @@ const createCaptchaNode = ( form ) => {
 /**
  * Render the reCaptcha component on form.
  *
- * @param {HTMLDivElement} form The form container.
+ * @param {HTMLDivElement}      form      The form container.
+ * @param {HTMLDivElement|null} mountNode The Captcha block container. When missing, a node is appended before the submit area (legacy).
  * @return {number|undefined} The captcha widget ID.
  */
-const renderRecaptchaOn = ( form ) => {
+const renderRecaptchaOn = ( form, mountNode = null ) => {
 	if ( ! isRecaptchaReady() ) {
 		return;
 	}
 
-	const captchaNode = createCaptchaNode( form );
+	const captchaNode = mountNode || createCaptchaNode( form );
+
+	// The Captcha block container must be empty (it can hold an editor-only configuration warning).
+	captchaNode.replaceChildren();
 
 	const captchaId = window.grecaptcha?.render(
 		captchaNode,
@@ -232,15 +255,19 @@ const renderRecaptchaOn = ( form ) => {
 /**
  * Render the Turnstile component on form.
  *
- * @param {HTMLDivElement} form The form container.
+ * @param {HTMLDivElement}      form      The form container.
+ * @param {HTMLDivElement|null} mountNode The Captcha block container. When missing, a node is appended before the submit area (legacy).
  * @return {string|undefined} The captcha widget ID.
  */
-const renderTurnstileOn = ( form ) => {
+const renderTurnstileOn = ( form, mountNode = null ) => {
 	if ( ! isTurnstileReady() ) {
 		return;
 	}
 
-	const captchaNode = createCaptchaNode( form );
+	const captchaNode = mountNode || createCaptchaNode( form );
+
+	// The Captcha block container must be empty (it can hold an editor-only configuration warning).
+	captchaNode.replaceChildren();
 
 	const widgetId = window.turnstile?.render(
 		captchaNode,

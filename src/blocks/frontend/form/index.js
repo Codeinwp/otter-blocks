@@ -1,7 +1,7 @@
 /**
  * Internal dependencies.
  */
-import { addCaptchaOnPage } from './captcha.js';
+import { addCaptchaOnPage, getCaptchaContainer } from './captcha.js';
 import DisplayFormMessage from './message.js';
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
@@ -382,9 +382,10 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	// Get the data from the form fields.
 	const { formFieldsData } = await extractFormFields( form );
 	const formIsEmpty = 2 > formFieldsData?.length;
-	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
+	const captchaContainer = getCaptchaContainer( form );
+	const hasCaptcha = Boolean( captchaContainer ) || form?.classList?.contains( 'has-captcha' );
 	const hasValidToken = id && window.themeisleGutenberg?.tokens?.[id]?.token;
-	const captchaProvider = form?.dataset?.captchaProvider || 'recaptcha';
+	const captchaProvider = captchaContainer?.dataset?.captchaProvider || 'recaptcha';
 	const captchaLoaded = 'turnstile' === captchaProvider ? window.hasOwnProperty( 'turnstile' ) : window.hasOwnProperty( 'grecaptcha' );
 	const spinner = makeSpinner( btn );
 	const isValidationSuccessful = validateInputs( form );

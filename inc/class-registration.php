@@ -747,6 +747,7 @@ class Registration {
 	public function register_blocks() {
 		$dynamic_blocks = array(
 			'about-author'         => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'form-captcha'         => '\ThemeIsle\GutenbergBlocks\Render\Form_Captcha_Block',
 			'form-nonce'           => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 			'google-map'           => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 			'leaflet-map'          => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
@@ -774,6 +775,7 @@ class Registration {
 			'flip',
 			'font-awesome-icons',
 			'form',
+			'form-captcha',
 			'form-input',
 			'form-nonce',
 			'form-textarea',

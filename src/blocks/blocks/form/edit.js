@@ -39,6 +39,7 @@ import {
 	Fragment,
 	useState,
 	useEffect,
+	useRef,
 	createContext
 } from '@wordpress/element';
 
@@ -101,8 +102,6 @@ const Edit = ({
 
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
-	const [ cloudflareTurnstileSiteKey, setCloudflareTurnstileSiteKey ] = useState( '' );
-	const [ cloudflareTurnstileSecretKey, setCloudflareTurnstileSecretKey ] = useState( '' );
 
 	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
@@ -254,7 +253,11 @@ const Edit = ({
 	}, [ clientId ]);
 
 	const hasEssentialData = attributes.optionName && hasProtection;
-	const captchaProvider = attributes.captchaProvider || 'recaptcha';
+
+	const captchaBlock = children?.find( ({ name }) => 'themeisle-blocks/form-captcha' === name );
+	const hasCaptchaBlock = Boolean( captchaBlock );
+	const captchaBlockProvider = captchaBlock?.attributes?.provider ?? 'recaptcha';
+	const everHadCaptchaBlock = useRef( false );
 
 	useEffect( () => {
 		if ( canSaveData && ! isInsideAiBlock ) {
@@ -294,6 +297,20 @@ const Edit = ({
 				if ( nonceBlock ) {
 					insertBlock?.( nonceBlock, ( children?.length ) || 0, clientId, false );
 				}
+			}
+
+			// Keep a single Captcha block per form (covers duplicate/copy-paste).
+			const captchaBlocks = children.filter( ({ name }) => 'themeisle-blocks/form-captcha' === name );
+
+			if ( 2 <= captchaBlocks?.length ) {
+				captchaBlocks.slice( 1 ).forEach( block => {
+					removeBlock( block.clientId, false );
+				});
+			}
+
+			// The Captcha block supersedes the deprecated form-level toggle.
+			if ( 0 < captchaBlocks?.length && true === attributes.hasCaptcha ) {
+				setAttributes({ hasCaptcha: false });
 			}
 		}
 
@@ -438,6 +455,15 @@ const Edit = ({
 		Object.keys( formOptionsMap ).forEach( key => {
 			data[key] = formOptions[formOptionsMap[key]];
 		});
+
+		// The captcha requirement is driven by the Captcha block when present, with
+		// the deprecated form-level toggle as fallback. Skip forms that never used
+		// captcha to avoid polluting the WP Options; the sticky ref makes sure
+		// removing the Captcha block still clears the stored requirement.
+		if ( undefined !== attributes.hasCaptcha || hasCaptchaBlock || everHadCaptchaBlock.current ) {
+			data.hasCaptcha = Boolean( attributes.hasCaptcha ) || hasCaptchaBlock;
+			data.captchaProvider = hasCaptchaBlock ? captchaBlockProvider : 'recaptcha';
+		}
 
 		try {
 			( new DeferredWpOptionsSave() ).save(
@@ -742,72 +768,14 @@ const Edit = ({
 	};
 
 	/**
-	 * Save the captcha option in settings.
+	 * Track if the form ever had a Captcha block in this session, so removing it
+	 * still clears the stored requirement on the next save (see saveFormEmailOptions).
 	 */
 	useEffect( () => {
-		let controller = new AbortController();
-		if ( attributes.hasCaptcha !== undefined && attributes.optionName ) {
-			try {
-				( new api.models.Settings() )?.current?.fetch({ signal: controller.signal }).done( res => {
-					controller = null;
-
-					const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-					let isMissing = true;
-					let hasChanged = false;
-					const nextCaptchaProvider = attributes.captchaProvider || 'recaptcha';
-
-					emails?.forEach( ({ form }, index ) => {
-						if ( form === attributes.optionName ) {
-							if ( emails[index].hasCaptcha !== attributes.hasCaptcha || emails[index].captchaProvider !== nextCaptchaProvider ) {
-								hasChanged = true;
-							}
-							emails[index].hasCaptcha = attributes.hasCaptcha;
-							emails[index].captchaProvider = nextCaptchaProvider;
-							isMissing = false;
-						}
-					});
-
-					if ( isMissing ) {
-						emails.push({
-							form: attributes.optionName,
-							hasCaptcha: attributes.hasCaptcha,
-							captchaProvider: nextCaptchaProvider
-						});
-					}
-
-					if ( isMissing || hasChanged ) {
-						const model = new api.models.Settings({
-							 
-							themeisle_blocks_form_emails: emails
-						});
-
-						model.save();
-
-						createNotice(
-							'info',
-							__( 'Form preferences have been saved.', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
-					}
-				});
-			} catch ( e ) {
-				console.warn( e.message );
-			}
+		if ( hasCaptchaBlock ) {
+			everHadCaptchaBlock.current = true;
 		}
-		return () => controller?.abort();
-	}, [ attributes.hasCaptcha, attributes.captchaProvider, attributes.optionName ]);
-
-	/**
-	 * Recheck captcha keys when provider changes.
-	 */
-	useEffect( () => {
-		if ( attributes.hasCaptcha ) {
-			setLoading({ captcha: 'init' });
-		}
-	}, [ captchaProvider ]);
+	}, [ hasCaptchaBlock ]);
 
 	/**
 	 * Check if the captcha API Keys are set.
@@ -820,24 +788,16 @@ const Edit = ({
 				( new api.models.Settings() )?.fetch({ signal: controller.signal }).then( response => {
 					controller = null;
 
-					const siteKeyOption = 'turnstile' === captchaProvider ? 'themeisle_cloudflare_turnstile_site_key' : 'themeisle_google_captcha_api_site_key';
-					const secretKeyOption = 'turnstile' === captchaProvider ? 'themeisle_cloudflare_turnstile_secret_key' : 'themeisle_google_captcha_api_secret_key';
-
-					const siteKey = response?.[ siteKeyOption ];
-					const secretKey = response?.[ secretKeyOption ];
+					const siteKey = response?.themeisle_google_captcha_api_site_key;
+					const secretKey = response?.themeisle_google_captcha_api_secret_key;
 
 					if ( '' !== siteKey && '' !== secretKey ) {
 						setLoading({ captcha: 'done' });
 					} else {
 						setLoading({ captcha: 'missing' });
 
-						if ( 'turnstile' === captchaProvider ) {
-							setCloudflareTurnstileSiteKey( siteKey );
-							setCloudflareTurnstileSecretKey( secretKey );
-						} else {
-							setGoogleCaptchaAPISiteKey( siteKey );
-							setGoogleCaptchaAPISecretKey( secretKey );
-						}
+						setGoogleCaptchaAPISiteKey( siteKey );
+						setGoogleCaptchaAPISecretKey( secretKey );
 					}
 				}).catch( e => {
 					console.error( e );
@@ -854,7 +814,7 @@ const Edit = ({
 		}
 
 		return () => controller?.abort();
-	}, [ loadingState.captcha, attributes.hasCaptcha, captchaProvider ]);
+	}, [ loadingState.captcha, attributes.hasCaptcha ]);
 
 	/**
 	 * Save API Keys in the Otter options.
@@ -862,39 +822,25 @@ const Edit = ({
 	const saveCaptchaAPIKey = () => {
 		setLoading({ captcha: 'loading' });
 		try {
-			const payload = {};
-
-			if ( 'turnstile' === captchaProvider ) {
-				payload.themeisle_cloudflare_turnstile_site_key = cloudflareTurnstileSiteKey;
-				payload.themeisle_cloudflare_turnstile_secret_key = cloudflareTurnstileSecretKey;
-			} else {
-				payload.themeisle_google_captcha_api_site_key = googleCaptchaAPISiteKey;
-				payload.themeisle_google_captcha_api_secret_key = googleCaptchaAPISecretKey;
-			}
-
-			const model = new api.models.Settings( payload );
+			const model = new api.models.Settings({
+				// eslint-disable-next-line camelcase
+				themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
+				// eslint-disable-next-line camelcase
+				themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
+			});
 
 			model?.save?.()?.then( response => {
-
-				const siteKeyOption = 'turnstile' === captchaProvider ? 'themeisle_cloudflare_turnstile_site_key' : 'themeisle_google_captcha_api_site_key';
-				const secretKeyOption = 'turnstile' === captchaProvider ? 'themeisle_cloudflare_turnstile_secret_key' : 'themeisle_google_captcha_api_secret_key';
-
-				if ( '' !== response[ siteKeyOption ] && '' !== response[ secretKeyOption ] ) {
+				if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
 					setLoading({ captcha: 'done' });
 				} else {
 					setLoading({ captcha: 'missing' });
 				}
 
-				if ( 'turnstile' === captchaProvider ) {
-					setCloudflareTurnstileSecretKey( '' );
-					setCloudflareTurnstileSiteKey( '' );
-				} else {
-					setGoogleCaptchaAPISecretKey( '' );
-					setGoogleCaptchaAPISiteKey( '' );
-				}
+				setGoogleCaptchaAPISecretKey( '' );
+				setGoogleCaptchaAPISiteKey( '' );
 				createNotice(
 					'info',
-					'turnstile' === captchaProvider ? __( 'Cloudflare Turnstile keys have been saved.', 'otter-blocks' ) : __( 'Google reCaptcha API Keys have been saved.', 'otter-blocks' ),
+					__( 'Google reCaptcha API Keys have been saved.', 'otter-blocks' ),
 					{
 						isDismissible: true,
 						type: 'snackbar'
@@ -1050,13 +996,12 @@ const Edit = ({
 									attributes.hasCaptcha && 'done' !== loadingState?.captcha && (
 										<Placeholder
 											className="otter-form-captcha"
-											captchaProvider={ captchaProvider }
 											loadingState={ loadingState }
 											saveAPIKey={ saveCaptchaAPIKey }
-											siteKey={ 'turnstile' === captchaProvider ? cloudflareTurnstileSiteKey : googleCaptchaAPISiteKey }
-											secretKey={ 'turnstile' === captchaProvider ? cloudflareTurnstileSecretKey : googleCaptchaAPISecretKey }
-											setSiteKey={ 'turnstile' === captchaProvider ? setCloudflareTurnstileSiteKey : setGoogleCaptchaAPISiteKey }
-											setSecretKey={ 'turnstile' === captchaProvider ? setCloudflareTurnstileSecretKey : setGoogleCaptchaAPISecretKey }
+											siteKey={ googleCaptchaAPISiteKey }
+											secretKey={ googleCaptchaAPISecretKey }
+											setSiteKey={ setGoogleCaptchaAPISiteKey }
+											setSecretKey={ setGoogleCaptchaAPISecretKey }
 										/>
 									)
 								}
