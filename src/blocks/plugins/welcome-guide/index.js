@@ -175,7 +175,7 @@ const WelcomeGuide = () => {
 					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-finish.png' } />,
 					content: (
 						<div className="o-welcome-guide__page-content--finish">
-							<h1 className="o-welcome-guide__heading">{ __( 'Thank you for chosing Otter!', 'otter-blocks' ) }</h1>
+							<h1 className="o-welcome-guide__heading">{ __( 'Thank you for choosing Otter!', 'otter-blocks' ) }</h1>
 
 							<p className="o-welcome-guide__text">{ __( 'Join Otter\'s mailing list to get first access to product updates, tutorials and promotions.', 'otter-blocks' ) }</p>
 
