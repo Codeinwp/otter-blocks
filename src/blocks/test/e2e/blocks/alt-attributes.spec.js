@@ -9,6 +9,34 @@ import path from 'path';
  */
 import { publishAndViewPost } from '../helpers/editor';
 
+const selectBlockByName = ( page, blockName ) => page.evaluate( name => {
+	const findBlock = blocks => {
+		for ( const block of blocks ) {
+			if ( block.name === name ) {
+				return block;
+			}
+
+			const inner = findBlock( block.innerBlocks || [] );
+
+			if ( inner ) {
+				return inner;
+			}
+		}
+
+		return null;
+	};
+
+	const block = findBlock( window.wp.data.select( 'core/block-editor' ).getBlocks() );
+
+	if ( ! block ) {
+		throw new Error( `Block not found: ${ name }` );
+	}
+
+	window.wp.data.dispatch( 'core/block-editor' ).selectBlock( block.clientId );
+
+	return block.clientId;
+}, blockName );
+
 test.describe( 'Alt attributes', () => {
 
 	let uploadedMedia;
@@ -61,6 +89,49 @@ test.describe( 'Alt attributes', () => {
 
 		// An icon without alt text is decorative: the attribute is present and empty, never missing.
 		await expect( icons.nth( 1 ) ).toHaveAttribute( 'alt', '' );
+	});
+
+	test( 'Icon List parent default image alt is inherited unless overridden', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/icon-list',
+			attributes: {
+				defaultLibrary: 'image',
+				defaultIcon: uploadedMedia.source_url,
+				defaultIconId: uploadedMedia.id,
+				defaultIconAlt: 'Parent default alt'
+			},
+			innerBlocks: [
+				{
+					name: 'themeisle-blocks/icon-list-item',
+					attributes: {
+						content: 'Inherited item'
+					}
+				},
+				{
+					name: 'themeisle-blocks/icon-list-item',
+					attributes: {
+						library: 'image',
+						icon: uploadedMedia.source_url,
+						iconId: uploadedMedia.id,
+						iconAlt: 'Item override alt',
+						content: 'Overridden item'
+					}
+				}
+			]
+		});
+
+		// themeisle-blocks/icon-list is apiVersion 2, which opts the post editor out of the iframed canvas, so blocks render at page level.
+		const icons = page.locator( '.wp-block-themeisle-blocks-icon-list-item img' );
+
+		await expect( icons ).toHaveCount( 2 );
+		await expect( icons.first() ).toHaveAttribute( 'alt', 'Parent default alt' );
+		await expect( icons.nth( 1 ) ).toHaveAttribute( 'alt', 'Item override alt' );
+
+		await publishAndViewPost({ editor, page });
+
+		await expect( icons ).toHaveCount( 2 );
+		await expect( icons.first() ).toHaveAttribute( 'alt', 'Parent default alt' );
+		await expect( icons.nth( 1 ) ).toHaveAttribute( 'alt', 'Item override alt' );
 	});
 
 	test( 'Icon List image icon alt is editable from the inspector', async({ editor, page }) => {
@@ -119,6 +190,142 @@ test.describe( 'Alt attributes', () => {
 		await publishAndViewPost({ editor, page });
 
 		await expect( page.locator( '.o-timeline-icon img' ) ).toHaveAttribute( 'alt', 'Timeline event icon' );
+	});
+
+	test( 'Timeline image icon without alt is decorative on the frontend', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/timeline',
+			innerBlocks: [
+				{
+					name: 'themeisle-blocks/timeline-item',
+					attributes: {
+						iconType: 'image',
+						icon: uploadedMedia.source_url,
+						iconId: uploadedMedia.id
+					},
+					innerBlocks: [
+						{
+							name: 'core/paragraph',
+							attributes: { content: 'Event' }
+						}
+					]
+				}
+			]
+		});
+
+		await publishAndViewPost({ editor, page });
+
+		await expect( page.locator( '.o-timeline-icon img' ) ).toHaveAttribute( 'alt', '' );
+	});
+
+	test( 'Timeline image icon alt is editable from the inspector', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/timeline',
+			innerBlocks: [
+				{
+					name: 'themeisle-blocks/timeline-item',
+					attributes: {
+						iconType: 'image',
+						icon: uploadedMedia.source_url,
+						iconId: uploadedMedia.id,
+						iconAlt: 'Initial alt'
+					},
+					innerBlocks: [
+						{
+							name: 'core/paragraph',
+							attributes: { content: 'Event' }
+						}
+					]
+				}
+			]
+		});
+
+		await selectBlockByName( page, 'themeisle-blocks/timeline-item' );
+		await editor.openDocumentSettingsSidebar();
+
+		const altField = page.getByLabel( 'Alt text (alternative text)' );
+
+		await expect( altField ).toHaveValue( 'Initial alt' );
+		await altField.fill( 'Edited alt' );
+
+		await publishAndViewPost({ editor, page });
+
+		await expect( page.locator( '.o-timeline-icon img' ) ).toHaveAttribute( 'alt', 'Edited alt' );
+	});
+
+	test( 'Slider image alt is editable from the inspector', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/slider',
+			attributes: {
+				images: [
+					{
+						id: uploadedMedia.id,
+						url: uploadedMedia.source_url,
+						alt: 'Initial alt'
+					}
+				]
+			}
+		});
+
+		// themeisle-blocks/slider opts out of the iframed canvas, so the block renders at page level.
+		await page.getByRole( 'document', { name: 'Block: Image Slider' }).click();
+		await editor.openDocumentSettingsSidebar();
+		await page.getByRole( 'button', { name: 'Images' }).click();
+
+		const altField = page.getByLabel( 'Image 1 alt text (alternative text)' );
+
+		await expect( altField ).toHaveValue( 'Initial alt' );
+		await altField.fill( 'Edited alt' );
+
+		await publishAndViewPost({ editor, page });
+
+		await expect( page.locator( '.wp-block-themeisle-blocks-slider-item' ).first() ).toHaveAttribute( 'alt', 'Edited alt' );
+	});
+
+	test( 'old Slider content drops the redundant title attribute after resave', async({ editor, page }) => {
+		await editor.setContent( `
+<!-- wp:themeisle-blocks/slider {"images":[{"id":${ uploadedMedia.id },"url":"${ uploadedMedia.source_url }","alt":"Slide one"}],"autoplay":true,"height":"400px"} -->
+<div class="wp-block-themeisle-blocks-slider glide" data-per-view="1" data-gap="0" data-peek="0" data-autoplay="true" data-height="400px" data-hide-arrows="false"><div class="glide__track" data-glide-el="track"><div class="glide__slides"><div class="wp-block-themeisle-blocks-slider-item-wrapper glide__slide" tabindex="0"><figure><img class="wp-block-themeisle-blocks-slider-item" src="${ uploadedMedia.source_url }" alt="Slide one" title="Slide one" data-id="${ uploadedMedia.id }"/></figure></div></div><div class="glide__bullets" data-glide-el="controls[nav]"><button class="glide__bullet" data-glide-dir="=0"></button></div></div></div>
+<!-- /wp:themeisle-blocks/slider -->
+` );
+
+		await expect( page.getByRole( 'button', { name: 'Attempt Block Recovery' }) ).toHaveCount( 0 );
+		await expect( page.locator( '.wp-block-themeisle-blocks-slider-item' ).first() ).toBeVisible();
+
+		// Touch the block so the post re-serializes with the current save (no title on img).
+		await selectBlockByName( page, 'themeisle-blocks/slider' );
+		await page.evaluate( () => {
+			const block = window.wp.data.select( 'core/block-editor' ).getSelectedBlock();
+
+			window.wp.data.dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, {
+				hideArrows: ! block.attributes.hideArrows
+			});
+		});
+
+		await publishAndViewPost({ editor, page });
+
+		const slide = page.locator( '.wp-block-themeisle-blocks-slider-item' ).first();
+
+		await expect( slide ).toHaveAttribute( 'alt', 'Slide one' );
+		expect( await slide.getAttribute( 'title' ) ).toBeNull();
+	});
+
+	test( 'Flip Card front image renders the alt on frontend', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/flip',
+			attributes: {
+				frontContentType: 'image',
+				frontMedia: {
+					id: uploadedMedia.id,
+					url: uploadedMedia.source_url,
+					alt: 'Flip card image'
+				}
+			}
+		});
+
+		await publishAndViewPost({ editor, page });
+
+		await expect( page.locator( '.wp-block-themeisle-blocks-flip .o-flip-front .o-img' ) ).toHaveAttribute( 'alt', 'Flip card image' );
 	});
 
 	test( 'Slider images keep the alt and no longer duplicate it as title', async({ editor, page }) => {
