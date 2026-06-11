@@ -77,13 +77,14 @@ test.describe( 'Animations', () => {
 		await page.locator( '.o-animations-control__button' ).click();
 		await page.getByRole( 'menuitem', { name: 'Head Shake' }).click();
 
-		// Select a delay
+		// Select a delay. The custom delay/speed UnitControls are both labelled
+		// "Value"; only the delay one exists at this point.
 		await page.getByRole( 'combobox', { name: 'Delay' }).selectOption( 'o-anim-custom-delay' );
-		await page.locator( '#inspector-input-control-0' ).fill( '2' );
+		await page.getByRole( 'spinbutton', { name: 'Value' }).fill( '2' );
 
-		// Select a speed
+		// Select a speed — its "Value" input renders after the delay one.
 		await page.getByRole( 'combobox', { name: 'Speed' }).selectOption( 'o-anim-custom-speed' );
-		await page.locator( '#inspector-input-control-1' ).fill( '2' );
+		await page.getByRole( 'spinbutton', { name: 'Value' }).last().fill( '2' );
 
 		// Check the CSS classes.
 		await expect( editor.canvas.locator( '.headShake' ).first() ).toBeVisible();
