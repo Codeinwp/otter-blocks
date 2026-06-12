@@ -504,8 +504,8 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 				},
 				( res, displayMsg ) => {},
 				() => {
-					if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
-						window.themeisleGutenberg?.tokens?.[ id ].reset();
+					if ( window.themeisleGutenberg?.tokens?.[ id ]?.reset ) {
+						window.themeisleGutenberg.tokens[ id ].reset();
 					}
 					btn.disabled = false;
 					spinner.hide();

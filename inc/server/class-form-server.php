@@ -967,8 +967,14 @@ class Form_Server {
 		}
 
 		if ( $form_options->form_has_captcha() && $form_data->payload_has( 'token' ) ) {
-			$provider = $form_data->payload_has( 'captchaProvider' ) ? sanitize_key( $form_data->get_data_from_payload( 'captchaProvider' ) ) : null;
-			$provider = $provider ? $provider : ( method_exists( $form_options, 'get_captcha_provider' ) ? $form_options->get_captcha_provider() : 'recaptcha' );
+
+			// The saved form options are authoritative; the payload value is only
+			// a fallback for forms saved before the provider was stored with them.
+			if ( $form_options->has_captcha_provider() ) {
+				$provider = $form_options->get_captcha_provider();
+			} else {
+				$provider = $form_data->payload_has( 'captchaProvider' ) ? sanitize_key( $form_data->get_data_from_payload( 'captchaProvider' ) ) : 'recaptcha';
+			}
 
 			if ( 'turnstile' === $provider ) {
 				$secret     = get_option( 'themeisle_cloudflare_turnstile_secret_key' );
@@ -978,10 +984,21 @@ class Form_Server {
 				$verify_url = apply_filters( 'otter_blocks_recaptcha_verify_url', 'https://www.google.com/recaptcha/api/siteverify' );
 			}
 
+			if ( empty( $secret ) ) {
+				$form_data->set_error( Form_Data_Response::ERROR_CAPTCHA_NOT_CONFIGURED );
+				return $form_data;
+			}
+
+			$body = 'secret=' . rawurlencode( (string) $secret ) . '&response=' . rawurlencode( (string) $form_data->get_data_from_payload( 'token' ) );
+
+			if ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
+				$body .= '&remoteip=' . rawurlencode( sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) );
+			}
+
 			$resp = wp_remote_post(
 				$verify_url,
 				array(
-					'body'    => 'secret=' . rawurlencode( (string) $secret ) . '&response=' . rawurlencode( (string) $form_data->get_data_from_payload( 'token' ) ),
+					'body'    => $body,
 					'headers' => [
 						'Content-Type' => 'application/x-www-form-urlencoded',
 					],

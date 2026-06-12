@@ -60,6 +60,7 @@ class Form_Data_Response {
 	const ERROR_PROVIDER_DUPLICATED_EMAIL          = '208';
 	const ERROR_PROVIDER_CREDENTIAL_ERROR          = '209';
 	const ERROR_WEBHOOK_COULD_NOT_TRIGGER          = '210';
+	const ERROR_CAPTCHA_NOT_CONFIGURED             = '211';
 	const ERROR_RUNTIME_STRIPE_SESSION_VALIDATION  = '300';
 	const ERROR_STRIPE_CHECKOUT_SESSION_CREATION   = '301';
 	const ERROR_STRIPE_CHECKOUT_SESSION_NOT_FOUND  = '302';
@@ -372,6 +373,7 @@ class Form_Data_Response {
 			self::ERROR_MISSING_API_KEY                    => __( 'API Key is missing from settings.', 'otter-blocks' ),
 			self::ERROR_MISSING_MAIL_LIST_ID               => __( 'API Key is missing.', 'otter-blocks' ),
 			self::ERROR_INVALID_CAPTCHA_TOKEN              => __( 'The captcha token is invalid.', 'otter-blocks' ),
+			self::ERROR_CAPTCHA_NOT_CONFIGURED             => __( 'The captcha is not configured: the API keys are missing.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT    => __( 'The API key format is invalid.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED => __( 'The user with this email was already registered.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_EMAIL             => __( 'The email address is invalid.', 'otter-blocks' ),

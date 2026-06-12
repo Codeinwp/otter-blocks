@@ -52,11 +52,12 @@ class Form_Settings_Data {
 	private $has_captcha = false;
 
 	/**
-	 * Captcha provider.
+	 * Captcha provider. Null until the form options are saved with one,
+	 * so legacy forms can be told apart from forms saved as reCaptcha.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $captcha_provider = 'recaptcha';
+	private $captcha_provider = null;
 
 	/**
 	 * The metadata.
@@ -593,7 +594,17 @@ class Form_Settings_Data {
 	 * @since 3.1.12
 	 */
 	public function get_captcha_provider() {
-		return $this->captcha_provider;
+		return null === $this->captcha_provider ? 'recaptcha' : $this->captcha_provider;
+	}
+
+	/**
+	 * Check if a captcha provider was saved with the form options.
+	 *
+	 * @return bool
+	 * @since 3.1.12
+	 */
+	public function has_captcha_provider() {
+		return null !== $this->captcha_provider;
 	}
 
 	/**

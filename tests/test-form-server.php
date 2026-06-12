@@ -550,6 +550,163 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the saved form provider wins over the payload one, so a client
+	 * cannot downgrade a Turnstile form to reCAPTCHA when both keys are set.
+	 */
+	public function test_frontend_submission_ignores_payload_captcha_provider_when_form_sets_one() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token'           => 'valid-token',
+						'captchaProvider' => 'recaptcha',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure the payload provider is still used for legacy forms saved before
+	 * the provider was part of the form options.
+	 */
+	public function test_frontend_submission_uses_payload_captcha_provider_for_legacy_forms() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha' => true,
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token'           => 'valid-token',
+						'captchaProvider' => 'turnstile',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure a captcha form with no API keys configured rejects the submission
+	 * without calling the verification service.
+	 */
+	public function test_frontend_submission_rejects_captcha_when_keys_not_configured() {
+		$this->http_filter = function ( $preempt, $args, $url ) {
+			$this->http_requests[] = $url;
+			return array(
+				'response' => array(
+					'code' => 200,
+				),
+				'body'     => wp_json_encode( array( 'success' => true ) ),
+			);
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'valid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_CAPTCHA_NOT_CONFIGURED, $data['code'] );
+		$this->assertEmpty( $this->http_requests );
+	}
+
+	/**
+	 * Ensure the visitor IP is forwarded to the verification service.
+	 */
+	public function test_frontend_submission_sends_remoteip_to_captcha_service() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.7';
+		$captured_body          = null;
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args ) use ( &$captured_body ) {
+				$captured_body = $args['body'];
+				return $preempt;
+			},
+			9,
+			2
+		);
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'valid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertStringContainsString( 'remoteip=203.0.113.7', $captured_body );
+	}
+
+	/**
 	 * Ensure temporary submissions validate but skip provider side effects.
 	 */
 	public function test_frontend_temporary_submission_skips_default_email() {
