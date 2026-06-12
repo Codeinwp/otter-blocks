@@ -3,9 +3,9 @@ import { addCaptchaOnPage } from '../../frontend/form/captcha';
 /**
  * Build a form container like the saved Form block markup.
  *
- * @param {string}  id              The form id.
- * @param {Object}  options         Options.
- * @param {boolean} options.legacy  Add the legacy `has-captcha` class.
+ * @param {string}  id               The form id.
+ * @param {Object}  options          Options.
+ * @param {boolean} options.legacy   Add the legacy `has-captcha` class.
  * @param {string}  options.provider Add a Captcha block container with the given provider.
  * @return {HTMLDivElement} The form node, attached to the document.
  */

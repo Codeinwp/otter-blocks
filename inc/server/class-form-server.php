@@ -988,12 +988,12 @@ class Form_Server {
 				)
 			);
 
-			if ( is_wp_error( $resp ) || ! isset( $resp['body'] ) ) {
+			if ( is_wp_error( $resp ) ) {
 				$form_data->set_error( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN );
 				return $form_data;
 			}
 
-			$result = json_decode( $resp['body'], true );
+			$result = json_decode( wp_remote_retrieve_body( $resp ), true );
 
 			if ( ! is_array( $result ) || empty( $result['success'] ) ) {
 				$form_data->set_error( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN );

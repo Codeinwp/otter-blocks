@@ -366,7 +366,7 @@ class Form_Settings_Data {
 	/**
 	 * Set captcha provider.
 	 *
-	 * @param string $provider Provider slug.
+	 * @param mixed $provider Provider slug, as received from the form options payload.
 	 * @return Form_Settings_Data
 	 * @since 3.1.12
 	 */

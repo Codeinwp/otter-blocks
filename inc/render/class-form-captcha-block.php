@@ -18,7 +18,7 @@ class Form_Captcha_Block {
 	 * This method will pe passed to the render_callback parameter and it will output
 	 * the server side output of the block.
 	 *
-	 * @param array $attributes Block attrs.
+	 * @param array<string, mixed> $attributes Block attrs.
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
