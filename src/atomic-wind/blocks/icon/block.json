@@ -11,6 +11,9 @@
 		"icon": {
 			"type": "string",
 			"default": ""
+		},
+		"metadata": {
+			"type": "object"
 		}
 	},
 	"supports": {

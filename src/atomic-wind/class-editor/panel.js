@@ -6,6 +6,7 @@ import { close, chevronLeft, chevronRight, copy, upload, undo } from '@wordpress
 import { createPortal, useState, useEffect, useRef, useCallback, memo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import blockIcon from '../blocks/icon';
+import { getStructuralLabel, toPlainText } from '../blocks/labels';
 import { StateControls } from '../states';
 import { AnimationControls } from '../animations';
 
@@ -17,13 +18,11 @@ function decodeEntities( html ) {
 
 function getTextPreview( block ) {
 	if ( block.name === 'atomic-wind/text' ) {
-		const raw = block.attributes?.content || '';
-		const text = decodeEntities( raw.replace( /<[^>]+>/g, '' ) ).trim();
+		const text = decodeEntities( toPlainText( block.attributes?.content ) );
 		return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
 	}
 	if ( block.name === 'atomic-wind/link' && block.attributes?.mode !== 'inner-blocks' ) {
-		const raw = block.attributes?.content || '';
-		const text = decodeEntities( raw.replace( /<[^>]+>/g, '' ) ).trim();
+		const text = decodeEntities( toPlainText( block.attributes?.text ) );
 		return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
 	}
 	return '';
@@ -39,9 +38,9 @@ const TreeNode = memo( ( { block, depth, selectedId, onSelect, collapsed, onTogg
 	const title = useSelect(
 		( select ) => {
 			const type = select( blocksStore ).getBlockType( block.name );
-			return type ? type.title : block.name;
+			return getStructuralLabel( block.name, block.attributes ) || ( type ? type.title : block.name );
 		},
-		[ block.name ]
+		[ block.name, block.attributes ]
 	);
 
 	const hasChildren = block.innerBlocks && block.innerBlocks.length > 0;
@@ -132,7 +131,7 @@ const Panel = ( { onClose } ) => {
 			if ( ! block ) {return { selectedTitle: '', selectedPreview: '', selectedAttributes: {}};}
 			const type = select( blocksStore ).getBlockType( block.name );
 			return {
-				selectedTitle: type ? type.title : block.name,
+				selectedTitle: getStructuralLabel( block.name, block.attributes ) || ( type ? type.title : block.name ),
 				selectedPreview: getTextPreview( block ),
 				selectedAttributes: block.attributes || {},
 			};
