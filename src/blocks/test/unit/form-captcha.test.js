@@ -76,6 +76,36 @@ describe( 'Form captcha', () => {
 		expect( window.turnstile.reset ).toHaveBeenCalledWith( 'widget-1' );
 	} );
 
+	it( 'clears the single-use Turnstile token on reset, until the next solve', () => {
+		const form = createForm( 'form-reset', { provider: 'turnstile' });
+
+		let solve;
+		window.turnstile = {
+			render: jest.fn( ( node, options ) => {
+				solve = options.callback;
+				solve( 'first-token' );
+				return 'widget-reset';
+			} ),
+			reset: jest.fn()
+		};
+
+		addCaptchaOnPage( [ form ] );
+
+		// After a submission the stored reset is invoked: the redeemed token must
+		// be dropped right away, not only when the new challenge completes.
+		window.themeisleGutenberg.tokens['form-reset'].reset();
+		expect( window.themeisleGutenberg.tokens['form-reset'].token ).toBeNull();
+		expect( window.turnstile.reset ).toHaveBeenCalledWith( 'widget-reset' );
+
+		// The reset stays callable while the token is empty (e.g. after expiry).
+		window.themeisleGutenberg.tokens['form-reset'].reset();
+		expect( window.turnstile.reset ).toHaveBeenCalledTimes( 2 );
+
+		// A new solve stores the fresh token again.
+		solve( 'second-token' );
+		expect( window.themeisleGutenberg.tokens['form-reset'].token ).toBe( 'second-token' );
+	} );
+
 	it( 'injects the Turnstile script with an id that does not shadow window.turnstile', () => {
 		// Regression: an element with id="turnstile" is exposed as the global
 		// `window.turnstile`, which shadows Cloudflare's API and makes api.js
@@ -128,6 +158,7 @@ describe( 'Form captcha', () => {
 
 		window.themeisleGutenberg.tokens['form-2'].reset();
 		expect( window.grecaptcha.reset ).toHaveBeenCalledWith( 123 );
+		expect( window.themeisleGutenberg.tokens['form-2'].token ).toBeNull();
 	} );
 
 	it( 'renders reCaptcha for legacy forms with the has-captcha class', () => {

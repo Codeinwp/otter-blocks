@@ -234,18 +234,19 @@ const renderRecaptchaOn = ( form, mountNode = null ) => {
 	// The Captcha block container must be empty (it can hold an editor-only configuration warning).
 	captchaNode.replaceChildren();
 
+	// Tokens are single-use: drop the redeemed one immediately so a resubmit
+	// before the new challenge completes is blocked instead of replaying it.
+	const reset = () => {
+		setCaptchaToken( form.id, null, reset );
+		window.grecaptcha?.reset( captchaId );
+	};
+
 	const captchaId = window.grecaptcha?.render(
 		captchaNode,
 		{
 			sitekey: window?.themeisleGutenbergForm?.reRecaptchaSitekey,
-			callback: ( token ) => {
-				setCaptchaToken(
-					form.id,
-					token,
-					() => window.grecaptcha?.reset( captchaId )
-				);
-			},
-			'expired-callback': () => setCaptchaToken( form.id, null )
+			callback: ( token ) => setCaptchaToken( form.id, token, reset ),
+			'expired-callback': () => setCaptchaToken( form.id, null, reset )
 		}
 	);
 
@@ -269,19 +270,20 @@ const renderTurnstileOn = ( form, mountNode = null ) => {
 	// The Captcha block container must be empty (it can hold an editor-only configuration warning).
 	captchaNode.replaceChildren();
 
+	// Tokens are single-use: drop the redeemed one immediately so a resubmit
+	// before the new challenge completes is blocked instead of replaying it.
+	const reset = () => {
+		setCaptchaToken( form.id, null, reset );
+		window.turnstile?.reset( widgetId );
+	};
+
 	const widgetId = window.turnstile?.render(
 		captchaNode,
 		{
 			sitekey: window?.themeisleGutenbergForm?.turnstileSitekey,
-			callback: ( token ) => {
-				setCaptchaToken(
-					form.id,
-					token,
-					() => window.turnstile?.reset( widgetId )
-				);
-			},
-			'expired-callback': () => setCaptchaToken( form.id, null ),
-			'error-callback': () => setCaptchaToken( form.id, null )
+			callback: ( token ) => setCaptchaToken( form.id, token, reset ),
+			'expired-callback': () => setCaptchaToken( form.id, null, reset ),
+			'error-callback': () => setCaptchaToken( form.id, null, reset )
 		}
 	);
 
