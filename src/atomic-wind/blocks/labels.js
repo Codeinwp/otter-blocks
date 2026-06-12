@@ -1,20 +1,34 @@
 import { __ } from '@wordpress/i18n';
 
-// div and span intentionally have no entry so generic wrappers fall through
-// to the block title and block variation matching.
-const TAG_LABELS = {
-	section: __( 'Section', 'otter-blocks' ),
-	article: __( 'Article', 'otter-blocks' ),
-	main: __( 'Main', 'otter-blocks' ),
-	aside: __( 'Aside', 'otter-blocks' ),
-	header: __( 'Header', 'otter-blocks' ),
-	footer: __( 'Footer', 'otter-blocks' ),
-	nav: __( 'Navigation', 'otter-blocks' ),
-	details: __( 'Details', 'otter-blocks' ),
-	summary: __( 'Summary', 'otter-blocks' ),
-};
-
 const LABEL_CONTEXTS = [ 'list-view', 'breadcrumb' ];
+
+// Resolved lazily so locale data registered after module init still applies.
+// div and span intentionally have no label so generic wrappers fall through
+// to the block title and block variation matching.
+const getTagLabel = ( tagName ) => {
+	switch ( tagName ) {
+	case 'section':
+		return __( 'Section', 'otter-blocks' );
+	case 'article':
+		return __( 'Article', 'otter-blocks' );
+	case 'main':
+		return __( 'Main', 'otter-blocks' );
+	case 'aside':
+		return __( 'Aside', 'otter-blocks' );
+	case 'header':
+		return __( 'Header', 'otter-blocks' );
+	case 'footer':
+		return __( 'Footer', 'otter-blocks' );
+	case 'nav':
+		return __( 'Navigation', 'otter-blocks' );
+	case 'details':
+		return __( 'Details', 'otter-blocks' );
+	case 'summary':
+		return __( 'Summary', 'otter-blocks' );
+	default:
+		return undefined;
+	}
+};
 
 export const toPlainText = ( value ) => {
 	if ( ! value ) {
@@ -28,6 +42,8 @@ export const toPlainText = ( value ) => {
 // Rename UI (attributes.metadata.name) must win, because defining our own
 // label callback prevents core from displaying it; returning undefined when
 // there is no better label keeps the block title and variation titles working.
+// Content fallbacks return the raw attribute value (string or RichTextData)
+// so core converts and decodes it exactly once.
 const createLabel = ( getFallback ) => ( attributes, { context } = {} ) => {
 	if ( ! LABEL_CONTEXTS.includes( context ) ) {
 		return undefined;
@@ -39,15 +55,15 @@ const createLabel = ( getFallback ) => ( attributes, { context } = {} ) => {
 	return getFallback ? getFallback( attributes ) : undefined;
 };
 
-export const boxLabel = createLabel( ( { tagName } ) => TAG_LABELS[ tagName ] );
+export const boxLabel = createLabel( ( { tagName } ) => getTagLabel( tagName ) );
 
-export const textLabel = createLabel( ( { content } ) => toPlainText( content ) || undefined );
+export const textLabel = createLabel( ( { content } ) => ( toPlainText( content ) ? content : undefined ) );
 
 export const linkLabel = createLabel( ( { mode, text } ) => {
 	if ( mode === 'inner-blocks' ) {
 		return undefined;
 	}
-	return toPlainText( text ) || undefined;
+	return toPlainText( text ) ? text : undefined;
 } );
 
 export const imageLabel = createLabel( ( { alt } ) => toPlainText( alt ) || undefined );
@@ -58,5 +74,5 @@ export const getStructuralLabel = ( blockName, attributes ) => {
 	if ( attributes?.metadata?.name ) {
 		return attributes.metadata.name;
 	}
-	return blockName === 'atomic-wind/box' ? TAG_LABELS[ attributes?.tagName ] : undefined;
+	return blockName === 'atomic-wind/box' ? getTagLabel( attributes?.tagName ) : undefined;
 };

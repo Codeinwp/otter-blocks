@@ -16,14 +16,20 @@ function decodeEntities( html ) {
 	return _decodeEl.value;
 }
 
+// RichTextData.toPlainText() output is already decoded; only raw strings
+// still carry entities.
+function previewText( value ) {
+	const plain = toPlainText( value );
+	const text = typeof value === 'string' ? decodeEntities( plain ) : plain;
+	return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
+}
+
 function getTextPreview( block ) {
 	if ( block.name === 'atomic-wind/text' ) {
-		const text = decodeEntities( toPlainText( block.attributes?.content ) );
-		return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
+		return previewText( block.attributes?.content );
 	}
 	if ( block.name === 'atomic-wind/link' && block.attributes?.mode !== 'inner-blocks' ) {
-		const text = decodeEntities( toPlainText( block.attributes?.text ) );
-		return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
+		return previewText( block.attributes?.text );
 	}
 	return '';
 }

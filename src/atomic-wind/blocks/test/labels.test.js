@@ -18,6 +18,11 @@ describe( 'atomic-wind block labels', () => {
 			expect( boxLabel( { tagName: 'span' }, { context: 'list-view' } ) ).toBeUndefined();
 		} );
 
+		it( 'ignores tag names that collide with Object.prototype members', () => {
+			expect( boxLabel( { tagName: 'constructor' }, { context: 'list-view' } ) ).toBeUndefined();
+			expect( boxLabel( { tagName: 'hasOwnProperty' }, { context: 'list-view' } ) ).toBeUndefined();
+		} );
+
 		it( 'returns undefined outside list-view and breadcrumb contexts', () => {
 			expect( boxLabel( { metadata: { name: 'Hero' }, tagName: 'section' }, { context: 'visual' } ) ).toBeUndefined();
 			expect( boxLabel( { metadata: { name: 'Hero' }, tagName: 'section' }, { context: 'accessibility' } ) ).toBeUndefined();
@@ -27,16 +32,16 @@ describe( 'atomic-wind block labels', () => {
 	} );
 
 	describe( 'textLabel', () => {
-		it( 'uses the plain text content', () => {
-			expect( textLabel( { content: '<strong>Hello</strong>  world' }, { context: 'list-view' } ) ).toBe( 'Hello world' );
-		} );
+		it( 'passes non-empty content through for core to convert once', () => {
+			expect( textLabel( { content: '<strong>Hello</strong>  world' }, { context: 'list-view' } ) ).toBe( '<strong>Hello</strong>  world' );
 
-		it( 'supports RichTextData-like values', () => {
-			expect( textLabel( { content: { toPlainText: () => 'Rich text' }}, { context: 'list-view' } ) ).toBe( 'Rich text' );
+			const richText = { toPlainText: () => 'Rich text' };
+			expect( textLabel( { content: richText }, { context: 'list-view' } ) ).toBe( richText );
 		} );
 
 		it( 'returns undefined when the content is empty', () => {
 			expect( textLabel( { content: '' }, { context: 'list-view' } ) ).toBeUndefined();
+			expect( textLabel( { content: { toPlainText: () => ' ' }}, { context: 'list-view' } ) ).toBeUndefined();
 			expect( textLabel( {}, { context: 'list-view' } ) ).toBeUndefined();
 		} );
 	} );
