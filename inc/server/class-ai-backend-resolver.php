@@ -13,41 +13,11 @@ namespace ThemeIsle\GutenbergBlocks\Server;
 class AI_Backend_Resolver {
 
 	/**
-	 * `themeisle_otter_ai_backend` value: pick the backend automatically.
-	 *
-	 * @var string
-	 */
-	const SETTING_AUTO = 'auto';
-
-	/**
-	 * `themeisle_otter_ai_backend` value: force the WP AI Client backend.
-	 *
-	 * @var string
-	 */
-	const SETTING_WP_AI_CLIENT = 'wp-ai-client';
-
-	/**
-	 * `themeisle_otter_ai_backend` value: force the Otter OpenAI key backend.
-	 *
-	 * @var string
-	 */
-	const SETTING_OPENAI_KEY = 'openai-key';
-
-	/**
 	 * Cached backend registry for the current request.
 	 *
 	 * @var array<string, AI_Backend>|null
 	 */
 	private static $backends_cache = null;
-
-	/**
-	 * The valid `themeisle_otter_ai_backend` setting values.
-	 *
-	 * @return list<string>
-	 */
-	public static function get_setting_values() {
-		return array( self::SETTING_AUTO, self::SETTING_WP_AI_CLIENT, self::SETTING_OPENAI_KEY );
-	}
 
 	/**
 	 * Resolve the effective backend instance.
@@ -76,48 +46,22 @@ class AI_Backend_Resolver {
 	/**
 	 * Resolve the effective backend ID.
 	 *
+	 * Resolution is automatic: the WP AI Client when it is usable, otherwise the
+	 * legacy Otter OpenAI key path.
+	 *
 	 * @param array<string, AI_Backend>|null $backends Optional backend registry.
 	 * @return string
 	 */
 	public static function resolve_backend_id( $backends = null ) {
 		$backends = null === $backends ? self::get_backends() : $backends;
-		$backend  = get_option( 'themeisle_otter_ai_backend', self::SETTING_AUTO );
-
-		if ( self::SETTING_OPENAI_KEY === $backend ) {
-			$resolved = AI_Client_Adaptor::BACKEND_OTTER_OPENAI;
-		} elseif ( self::SETTING_WP_AI_CLIENT === $backend ) {
-			if ( self::is_backend_available( $backends, AI_Client_Adaptor::BACKEND_WP ) ) {
-				$resolved = AI_Client_Adaptor::BACKEND_WP;
-			} elseif ( self::is_backend_available( $backends, AI_Client_Adaptor::BACKEND_OTTER_OPENAI ) ) {
-				$resolved = AI_Client_Adaptor::BACKEND_OTTER_OPENAI;
-			} else {
-				// Fail loudly at generation time with an actionable error.
-				$resolved = AI_Client_Adaptor::BACKEND_WP;
-			}
-		} else {
-			$resolved = self::is_backend_available( $backends, AI_Client_Adaptor::BACKEND_WP ) ? AI_Client_Adaptor::BACKEND_WP : AI_Client_Adaptor::BACKEND_OTTER_OPENAI;
-		}
+		$resolved = self::is_backend_available( $backends, AI_Client_Adaptor::BACKEND_WP ) ? AI_Client_Adaptor::BACKEND_WP : AI_Client_Adaptor::BACKEND_OTTER_OPENAI;
 
 		/**
 		 * Filters the effective AI backend used by Otter AI features.
 		 *
 		 * @param string $resolved The effective backend: 'wp' or 'legacy' (the Otter OpenAI value).
-		 * @param string $backend  The raw `themeisle_otter_ai_backend` setting value.
 		 */
-		return (string) apply_filters( 'otter_ai_backend', $resolved, $backend );
-	}
-
-	/**
-	 * Whether the forced WP AI Client backend fell back to legacy.
-	 *
-	 * @return bool
-	 */
-	public static function is_fallback_active() {
-		$backends = self::get_backends();
-
-		return self::SETTING_WP_AI_CLIENT === get_option( 'themeisle_otter_ai_backend', self::SETTING_AUTO )
-			&& AI_Client_Adaptor::BACKEND_OTTER_OPENAI === self::resolve_backend_id( $backends )
-			&& ! self::is_backend_available( $backends, AI_Client_Adaptor::BACKEND_WP );
+		return (string) apply_filters( 'otter_ai_backend', $resolved );
 	}
 
 	/**

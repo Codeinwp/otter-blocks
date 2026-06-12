@@ -13,7 +13,6 @@ import {
 	Notice,
 	PanelBody,
 	PanelRow,
-	SelectControl,
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
@@ -73,6 +72,10 @@ const Integrations = () => {
 	}, [ getOption( 'themeisle_blocks_settings_prompt_actions' ) ]);
 
 	const { createNotice } = useDispatch( 'core/notices' );
+
+	const aiClientSupported = Boolean( window.otterObj?.aiClientSupported );
+	const aiClientAvailable = Boolean( window.otterObj?.aiClientAvailable );
+	const hasOpenAIKeySaved = 0 < getOption( 'themeisle_open_ai_api_key' )?.length;
 
 	let ProModules = () => {
 		return (
@@ -243,28 +246,14 @@ const Integrations = () => {
 				title={ __( 'AI Provider', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				{ Boolean( window.otterObj?.aiClientSupported ) && (
+				{ aiClientSupported && (
 					<PanelRow>
 						<BaseControl
-							label={ __( 'AI Backend', 'otter-blocks' ) }
-							help={ __( 'Choose how Otter AI features connect to an AI provider. WordPress AI uses the API keys configured under Settings > Connectors.', 'otter-blocks' ) }
+							label={ __( 'WordPress AI', 'otter-blocks' ) }
+							help={ __( 'Otter AI features use the AI providers configured under Settings > Connectors.', 'otter-blocks' ) }
 							id="otter-options-ai-backend"
 							className="otter-button-field"
 						>
-							<SelectControl
-								value={ getOption( 'themeisle_otter_ai_backend' ) || 'auto' }
-								options={ [
-									{ label: __( 'Auto (recommended)', 'otter-blocks' ), value: 'auto' },
-									{ label: __( 'WordPress AI (Settings > Connectors)', 'otter-blocks' ), value: 'wp-ai-client' },
-									{ label: __( 'Custom OpenAI API key', 'otter-blocks' ), value: 'openai-key' }
-								] }
-								disabled={ 'saving' === status }
-								onChange={ value => {
-									window.tiTrk?.with( 'otter' ).add({ feature: 'dashboard-integration', featureComponent: 'ai-backend', featureValue: value });
-									updateOption( 'themeisle_otter_ai_backend', value );
-								} }
-							/>
-
 							<div className="otter-button-group">
 								<ExternalLink
 									href={ window.otterObj?.connectorsUrl }
@@ -276,102 +265,119 @@ const Integrations = () => {
 					</PanelRow>
 				) }
 
-				{ 'wp-ai-client' === ( getOption( 'themeisle_otter_ai_backend' ) || 'auto' ) && ! window.otterObj?.aiClientAvailable && 0 < getOption( 'themeisle_open_ai_api_key' )?.length && (
+				{ aiClientSupported && ! aiClientAvailable && ! hasOpenAIKeySaved && (
+					<PanelRow>
+						<Notice
+							status="info"
+							isDismissible={ false }
+						>
+							{ __( 'No AI provider is configured yet. Set one up under Settings > Connectors to use Otter AI features.', 'otter-blocks' ) }
+						</Notice>
+					</PanelRow>
+				) }
+
+				{ aiClientSupported && ! aiClientAvailable && hasOpenAIKeySaved && (
 					<PanelRow>
 						<Notice
 							status="warning"
 							isDismissible={ false }
 						>
-							{ __( 'WordPress AI is selected, but no AI provider is configured under Settings > Connectors. Your OpenAI API key below is being used instead.', 'otter-blocks' ) }
+							{ __( 'No AI provider is configured under Settings > Connectors. Your OpenAI API key below is being used instead.', 'otter-blocks' ) }
 						</Notice>
 					</PanelRow>
 				) }
 
-				<PanelRow>
-					<BaseControl
-						label={ __( 'OpenAI API', 'otter-blocks' ) }
-						help={ __( 'In order to use AI Block, you need to use OpenAI API.', 'otter-blocks' ) }
-						id="otter-options-stripe-api"
-						className="otter-button-field"
-					>
-						<TextControl
-							type="text"
-							label={ __( 'Secret Key', 'otter-blocks' ) }
-							value={ openAISecretKey }
-							placeholder={ maskOpenAISecretKey ? maskOpenAISecretKey : __( 'OpenAI API Key', 'otter-blocks' ) }
-							disabled={ 'saving' === status }
-							onChange={ value => setOpenAISecretKey( value ) }
-						/>
-
-						<div className="otter-button-group">
-							<Button
-								variant="secondary"
-								isSecondary
+				{ ( ! aiClientSupported || hasOpenAIKeySaved ) && (
+					<PanelRow>
+						<BaseControl
+							label={ __( 'OpenAI API', 'otter-blocks' ) }
+							help={
+								aiClientSupported ?
+									__( 'Legacy connection. We recommend switching to WordPress AI under Settings > Connectors. Clearing the key removes this option.', 'otter-blocks' ) :
+									__( 'In order to use AI Block, you need to use OpenAI API.', 'otter-blocks' )
+							}
+							id="otter-options-stripe-api"
+							className="otter-button-field"
+						>
+							<TextControl
+								type="text"
+								label={ __( 'Secret Key', 'otter-blocks' ) }
+								value={ openAISecretKey }
+								placeholder={ maskOpenAISecretKey ? maskOpenAISecretKey : __( 'OpenAI API Key', 'otter-blocks' ) }
 								disabled={ 'saving' === status }
-								onClick={ async() => {
-									try {
-										const response = await apiFetch({
-											path: 'otter/v1/openai/key',
-											method: 'POST',
-											data: {
-												'api_key': openAISecretKey
+								onChange={ value => setOpenAISecretKey( value ) }
+							/>
+	
+							<div className="otter-button-group">
+								<Button
+									variant="secondary"
+									isSecondary
+									disabled={ 'saving' === status }
+									onClick={ async() => {
+										try {
+											const response = await apiFetch({
+												path: 'otter/v1/openai/key',
+												method: 'POST',
+												data: {
+													'api_key': openAISecretKey
+												}
+											});
+	
+											if ( ! response.success ) {
+												createNotice(
+													'error',
+													response.message ?? __( 'An unknown error occurred.', 'otter-blocks' ),
+													{
+														isDismissible: true,
+														type: 'snackbar'
+													}
+												);
+	
+												return;
 											}
-										});
-
-										if ( ! response.success ) {
+	
 											createNotice(
-												'error',
-												response.message ?? __( 'An unknown error occurred.', 'otter-blocks' ),
+												'success',
+												__( 'API Key saved successfully.', 'otter-blocks' ),
 												{
 													isDismissible: true,
 													type: 'snackbar'
 												}
 											);
-
-											return;
+										} catch ( e ) {
+											createNotice(
+												'error',
+												e?.message ?? __( 'An unknown error occurred.', 'otter-blocks' ),
+												{
+													isDismissible: true,
+													type: 'snackbar'
+												}
+											);
+	
+	
 										}
-
-										createNotice(
-											'success',
-											__( 'API Key saved successfully.', 'otter-blocks' ),
-											{
-												isDismissible: true,
-												type: 'snackbar'
-											}
-										);
-									} catch ( e ) {
-										createNotice(
-											'error',
-											e?.message ?? __( 'An unknown error occurred.', 'otter-blocks' ),
-											{
-												isDismissible: true,
-												type: 'snackbar'
-											}
-										);
-
-
-									}
-								} }
-							>
-								{ __( 'Save', 'otter-blocks' ) }
-							</Button>
-
-							<ExternalLink
-								href="https://platform.openai.com/account/api-keys"
-							>
-								{ __( 'Get API Key', 'otter-blocks' ) }
-							</ExternalLink>
-
-							<ExternalLink
-								href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
-							>
-								{ __( 'More Info', 'otter-blocks' ) }
-							</ExternalLink>
-						</div>
-					</BaseControl>
-				</PanelRow>
+									} }
+								>
+									{ __( 'Save', 'otter-blocks' ) }
+								</Button>
+	
+								<ExternalLink
+									href="https://platform.openai.com/account/api-keys"
+								>
+									{ __( 'Get API Key', 'otter-blocks' ) }
+								</ExternalLink>
+	
+								<ExternalLink
+									href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
+								>
+									{ __( 'More Info', 'otter-blocks' ) }
+								</ExternalLink>
+							</div>
+						</BaseControl>
+					</PanelRow>
+				) }
 				{
-					0 < getOption( 'themeisle_open_ai_api_key' )?.length ? (
+					hasOpenAIKeySaved ? (
 						<PanelRow>
 							<BaseControl
 								label={ __( 'Toolbar Actions', 'otter-blocks' ) }

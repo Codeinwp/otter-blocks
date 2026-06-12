@@ -14,7 +14,6 @@ test.describe( 'AI surfaces without a configured backend', () => {
 
 	test.beforeEach( async({ admin, otterUtils }) => {
 		await otterUtils.setOptions({
-			'themeisle_otter_ai_backend': 'auto',
 			'themeisle_open_ai_api_key': '',
 			'connectors_ai_openai_api_key': ''
 		});
@@ -29,7 +28,7 @@ test.describe( 'AI surfaces without a configured backend', () => {
 		});
 	});
 
-	test( 'AI Block shows the API key setup placeholder', async({ editor, page }) => {
+	test( 'AI Block shows the AI setup placeholder', async({ editor, page }) => {
 		await editor.insertBlock({
 			name: 'themeisle-blocks/content-generator',
 			attributes: {
@@ -37,7 +36,17 @@ test.describe( 'AI surfaces without a configured backend', () => {
 			}
 		});
 
-		await expect( page.getByText( 'API Key not found. Please introduce the API Key' ) ).toBeVisible();
+		// On WP 7.0+ the placeholder routes to the core Connectors flow; the
+		// legacy inline key form only remains on older cores.
+		const aiClientSupported = await page.evaluate( () => Boolean( window.themeisleGutenberg?.aiClientSupported ) );
+
+		if ( aiClientSupported ) {
+			await expect( page.getByText( 'No AI provider is configured. Set one up under Settings > Connectors' ) ).toBeVisible();
+			await expect( page.getByRole( 'link', { name: 'Manage Connectors' }) ).toBeVisible();
+		} else {
+			await expect( page.getByText( 'API Key not found. Please introduce the API Key' ) ).toBeVisible();
+		}
+
 		await expect( page.getByPlaceholder( 'Start describing what content' ) ).toBeHidden();
 	});
 

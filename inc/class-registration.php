@@ -298,7 +298,9 @@ class Registration {
 				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true ),
 				'hasOpenAiKey'            => $is_wp_ai_backend || ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
 				'aiClientActive'          => $is_wp_ai_backend,
+				'aiClientSupported'       => function_exists( 'wp_ai_client_prompt' ),
 				'hasAIProvider'           => AI_Client_Adaptor::is_available(),
+				'connectorsUrl'           => esc_url( admin_url( 'options-connectors.php' ) ),
 				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
 			)
 		);

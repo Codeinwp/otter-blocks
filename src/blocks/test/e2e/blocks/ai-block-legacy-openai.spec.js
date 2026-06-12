@@ -17,9 +17,11 @@ test.describe( 'AI Block via legacy OpenAI backend', () => {
 	const LEGACY_MOCK_KEY = 'sk-otter-e2e-legacy-mock';
 
 	test.beforeEach( async({ admin, otterUtils }) => {
+		// With no Connectors provider configured, resolution falls back to the
+		// legacy Otter OpenAI key path.
 		await otterUtils.setOptions({
-			'themeisle_otter_ai_backend': 'openai-key',
-			'themeisle_open_ai_api_key': LEGACY_MOCK_KEY
+			'themeisle_open_ai_api_key': LEGACY_MOCK_KEY,
+			'connectors_ai_openai_api_key': ''
 		});
 		await otterUtils.seedPrompts();
 
@@ -28,7 +30,6 @@ test.describe( 'AI Block via legacy OpenAI backend', () => {
 
 	test.afterEach( async({ otterUtils }) => {
 		await otterUtils.setOptions({
-			'themeisle_otter_ai_backend': 'auto',
 			'themeisle_open_ai_api_key': PRESEEDED_OPENAI_KEY
 		});
 	});

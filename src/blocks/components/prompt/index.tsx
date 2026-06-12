@@ -307,10 +307,12 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	}
 
 	if ( 'present' !== apiKeyStatus ) {
+		const aiClientSupported = Boolean( window.themeisleGutenberg?.aiClientSupported );
+
 		return (
 			<Placeholder
 				className="prompt-placeholder"
-				label={ __( 'OpenAI API Key', 'otter-blocks' ) }
+				label={ aiClientSupported ? __( 'WordPress AI', 'otter-blocks' ) : __( 'OpenAI API Key', 'otter-blocks' ) }
 			>
 				{
 					'checking' === apiKeyStatus && (
@@ -322,7 +324,21 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				}
 
 				{
-					'missing' === apiKeyStatus && (
+					'missing' === apiKeyStatus && aiClientSupported && (
+						<Fragment>
+							<span>{ __( 'No AI provider is configured. Set one up under Settings > Connectors, then reload the editor.', 'otter-blocks' ) }</span>
+
+							<div className='o-info-row'>
+								<ExternalLink href={ window.themeisleGutenberg?.connectorsUrl ?? '' }>
+									{ __( 'Manage Connectors', 'otter-blocks' ) }
+								</ExternalLink>
+							</div>
+						</Fragment>
+					)
+				}
+
+				{
+					'missing' === apiKeyStatus && ! aiClientSupported && (
 						<Fragment>
 							<span>{ __( 'API Key not found. Please introduce the API Key', 'otter-blocks' ) }
 							</span>

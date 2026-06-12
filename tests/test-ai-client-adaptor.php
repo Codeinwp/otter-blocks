@@ -43,7 +43,6 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		remove_all_filters( 'otter_ai_otter_openai_request_args' );
 		remove_all_filters( 'otter_ai_otter_openai_response' );
 		remove_all_filters( 'pre_http_request' );
-		delete_option( 'themeisle_otter_ai_backend' );
 		delete_option( 'themeisle_open_ai_api_key' );
 		delete_option( 'themeisle_otter_ai_usage' );
 		reset_ai_adaptor_cache();
@@ -680,58 +679,31 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The backend resolution ladder.
+	 * Backend resolution is automatic: the WP path when available, the Otter
+	 * OpenAI path otherwise.
 	 */
-	public function test_resolve_backend_ladder() {
-		// 'openai-key' always forces the Otter OpenAI path.
-		update_option( 'themeisle_otter_ai_backend', 'openai-key' );
-		$this->force_availability( true );
-		$this->assertSame( AI_Client_Adaptor::BACKEND_OTTER_OPENAI, AI_Client_Adaptor::resolve_backend() );
-
-		// 'auto' prefers the WP path when available.
-		update_option( 'themeisle_otter_ai_backend', 'auto' );
+	public function test_resolve_backend_prefers_wp_when_available() {
 		$this->force_availability( true );
 		$this->assertSame( AI_Client_Adaptor::BACKEND_WP, AI_Client_Adaptor::resolve_backend() );
 
 		$this->force_availability( false );
 		$this->assertSame( AI_Client_Adaptor::BACKEND_OTTER_OPENAI, AI_Client_Adaptor::resolve_backend() );
-
-		// Forced 'wp-ai-client' uses the WP path when available.
-		update_option( 'themeisle_otter_ai_backend', 'wp-ai-client' );
-		$this->force_availability( true );
-		$this->assertSame( AI_Client_Adaptor::BACKEND_WP, AI_Client_Adaptor::resolve_backend() );
-		$this->assertFalse( AI_Client_Adaptor::is_fallback_active() );
-
-		// Forced but unavailable with an Otter key falls back to Otter OpenAI.
-		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
-		$this->force_availability( false );
-		$this->assertSame( AI_Client_Adaptor::BACKEND_OTTER_OPENAI, AI_Client_Adaptor::resolve_backend() );
-		$this->assertTrue( AI_Client_Adaptor::is_fallback_active() );
-
-		// Forced but unavailable without any key stays on the WP path (fails loudly).
-		delete_option( 'themeisle_open_ai_api_key' );
-		$this->force_availability( false );
-		$this->assertSame( AI_Client_Adaptor::BACKEND_WP, AI_Client_Adaptor::resolve_backend() );
-		$this->assertFalse( AI_Client_Adaptor::is_fallback_active() );
 	}
 
 	/**
-	 * Fallback reporting follows the filtered resolved backend.
+	 * The resolved backend can be overridden through the filter.
 	 */
-	public function test_fallback_active_is_derived_from_resolved_backend() {
-		update_option( 'themeisle_otter_ai_backend', 'wp-ai-client' );
-		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
-		$this->force_availability( false );
+	public function test_resolved_backend_can_be_overridden_by_filter() {
+		$this->force_availability( true );
 
 		add_filter(
 			'otter_ai_backend',
 			function () {
-				return AI_Client_Adaptor::BACKEND_WP;
+				return AI_Client_Adaptor::BACKEND_OTTER_OPENAI;
 			}
 		);
 
-		$this->assertSame( AI_Client_Adaptor::BACKEND_WP, AI_Client_Adaptor::resolve_backend() );
-		$this->assertFalse( AI_Client_Adaptor::is_fallback_active() );
+		$this->assertSame( AI_Client_Adaptor::BACKEND_OTTER_OPENAI, AI_Client_Adaptor::resolve_backend() );
 	}
 
 	/**
@@ -807,7 +779,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	 * Otter OpenAI payload and request filters run before the HTTP request.
 	 */
 	public function test_otter_openai_filters_payload_and_request_args() {
-		update_option( 'themeisle_otter_ai_backend', 'openai-key' );
+		$this->force_availability( false );
 		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
 
 		add_filter(
@@ -895,7 +867,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	 * Otter OpenAI response filters can post-process the decoded response body.
 	 */
 	public function test_otter_openai_filters_response() {
-		update_option( 'themeisle_otter_ai_backend', 'openai-key' );
+		$this->force_availability( false );
 		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
 
 		add_filter(
@@ -956,7 +928,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	 * filter; empty overrides keep the template model.
 	 */
 	public function test_otter_openai_filters_model() {
-		update_option( 'themeisle_otter_ai_backend', 'openai-key' );
+		$this->force_availability( false );
 		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
 
 		$captured_args = array();
@@ -1153,7 +1125,6 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	 * forward_prompt() routes to the WP AI Client path and skips the OpenAI request.
 	 */
 	public function test_forward_prompt_uses_wp_backend() {
-		update_option( 'themeisle_otter_ai_backend', 'wp-ai-client' );
 		$this->force_availability( true );
 
 		$openai_called = false;
@@ -1206,9 +1177,8 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	 * forward_prompt() keeps using the Otter OpenAI path when resolved to it.
 	 */
 	public function test_forward_prompt_uses_otter_openai_backend() {
-		update_option( 'themeisle_otter_ai_backend', 'openai-key' );
 		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
-		$this->force_availability( true );
+		$this->force_availability( false );
 
 		add_filter(
 			'pre_http_request',

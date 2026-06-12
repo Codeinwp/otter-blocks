@@ -7,7 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
-use ThemeIsle\GutenbergBlocks\Server\AI_Backend_Resolver;
 use ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server;
 use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 
@@ -693,20 +692,6 @@ class Options_Settings {
 				'sanitize_callback' => 'sanitize_text_field',
 				'show_in_rest'      => true,
 				'default'           => '',
-			)
-		);
-
-		register_setting(
-			'themeisle_blocks_settings',
-			'themeisle_otter_ai_backend',
-			array(
-				'type'              => 'string',
-				'description'       => __( 'The AI backend used by Otter AI features.', 'otter-blocks' ),
-				'sanitize_callback' => function ( $value ) {
-					return in_array( $value, AI_Backend_Resolver::get_setting_values(), true ) ? $value : AI_Backend_Resolver::SETTING_AUTO;
-				},
-				'show_in_rest'      => true,
-				'default'           => AI_Backend_Resolver::SETTING_AUTO,
 			)
 		);
 

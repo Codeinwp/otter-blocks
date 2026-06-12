@@ -31,7 +31,6 @@ const OPTION_WHITELIST = array(
 	'themeisle_open_ai_api_key',
 	'otter_iphub_api_key',
 	'themeisle_blocks_settings_onboarding',
-	'themeisle_otter_ai_backend',
 	'connectors_ai_openai_api_key',
 );
 

@@ -76,25 +76,14 @@ class AI_Client_Adaptor {
 	}
 
 	/**
-	 * Resolve the effective AI backend from the user setting and runtime availability.
+	 * Resolve the effective AI backend from runtime availability.
 	 *
-	 * Ladder: 'openai-key' forces the Otter OpenAI path; 'auto' prefers the WP AI Client
-	 * when usable; 'wp-ai-client' forces the WP path but falls back to the legacy
-	 * path when unusable and an Otter key exists (see is_fallback_active()).
+	 * The WP AI Client when usable, otherwise the legacy Otter OpenAI key path.
 	 *
 	 * @return string One of the BACKEND_* constants.
 	 */
 	public static function resolve_backend() {
 		return AI_Backend_Resolver::resolve_backend_id();
-	}
-
-	/**
-	 * Whether the forced WP AI Client backend fell back to the Otter OpenAI path.
-	 *
-	 * @return bool
-	 */
-	public static function is_fallback_active() {
-		return AI_Backend_Resolver::is_fallback_active();
 	}
 
 	/**

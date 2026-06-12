@@ -90,7 +90,9 @@ declare global {
 			isPreview: boolean
 			hasOpenAiKey: boolean
 			aiClientActive: boolean
+			aiClientSupported: boolean
 			hasAIProvider: boolean
+			connectorsUrl: string
 		}
 		otterPro?: Readonly<{
 			isActive: boolean
