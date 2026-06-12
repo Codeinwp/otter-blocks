@@ -1017,6 +1017,14 @@ class Form_Submissions {
 					$url         = $meta['post_url']['value'];
 				}
 
+				if ( empty( $url ) && isset( $meta['post_url']['value'] ) ) {
+					$url = $meta['post_url']['value'];
+				}
+
+				if ( '' === trim( (string) $title ) ) {
+					$title = __( '(no title)', 'otter-blocks' );
+				}
+
 				$this->format_based_on_status(
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
