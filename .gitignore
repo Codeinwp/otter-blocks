@@ -14,6 +14,7 @@ trace.json
 license.json
 .phpunit.result.cache
 .fleet
+.wp-env.override.json
 tests/assets/*_tmp
 .phpunit.result.cache
 languages
