@@ -409,6 +409,17 @@ class Dashboard {
 			.o-locked-action .o-menu-badge {
 				opacity: 1;
 			}
+
+			.otter-banner__actions {
+				display: inline-flex;
+				align-items: center;
+				gap: 12px;
+			}
+
+			.o-pro-notice {
+				color: #757575;
+				font-size: 12px;
+			}
 		</style>
 		<div class="otter-banner">
 			<div class="otter-banner__image">
@@ -422,17 +433,20 @@ class Dashboard {
 					<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
 				</button>
 				<?php else : ?>
-				<a
-					class="button o-locked-action"
-					href="<?php echo esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions-export', 'admin' ) ) ); ?>"
-					target="_blank"
-					rel="noopener"
-					title="<?php esc_attr_e( 'Bulk export is available in Otter Pro.', 'otter-blocks' ); ?>"
-				>
-					<span class="dashicons dashicons-lock" aria-hidden="true"></span>
-					<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
-					<span class="o-menu-badge"><?php esc_html_e( 'Pro', 'otter-blocks' ); ?></span>
-				</a>
+				<span class="otter-banner__actions">
+					<span class="o-pro-notice"><?php esc_html_e( 'Filter and export form submissions with Otter Pro.', 'otter-blocks' ); ?></span>
+					<a
+						class="button o-locked-action"
+						href="<?php echo esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions-export', 'admin' ) ) ); ?>"
+						target="_blank"
+						rel="noopener"
+						title="<?php esc_attr_e( 'Bulk export is available in Otter Pro.', 'otter-blocks' ); ?>"
+					>
+						<span class="dashicons dashicons-lock" aria-hidden="true"></span>
+						<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
+						<span class="o-menu-badge"><?php esc_html_e( 'Pro', 'otter-blocks' ); ?></span>
+					</a>
+				</span>
 				<?php endif; ?>
 			</div>
 		</div>

@@ -664,28 +664,6 @@ class Form_Submissions {
 				opacity: .7;
 				margin: 0;
 			}
-			.o-filters-unlock,
-			.o-filters-unlock:focus {
-				display: inline-flex;
-				align-items: center;
-				gap: 3px;
-				margin: 0 2px;
-				text-decoration: none;
-				line-height: 2.15384615; /* match .button line-height so the row aligns */
-				color: #ED6F57;
-			}
-			.o-filters-unlock:hover,
-			.o-filters-unlock:active {
-				color: #E25C4F;
-			}
-			.o-filters-unlock .dashicons-lock {
-				font-size: 14px;
-				width: 14px;
-				height: 14px;
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-			}
 			</style>
 			<?php
 		}
@@ -893,9 +871,6 @@ class Form_Submissions {
 	 * @return void
 	 */
 	private function locked_filters_upsell() {
-		$upgrade_url = function_exists( 'tsdk_utmify' ) && function_exists( 'tsdk_translate_link' )
-			? tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/upgrade/', 'form-submissions-filters', 'admin' ) )
-			: 'https://themeisle.com/plugins/otter-blocks/upgrade/';
 		?>
 		<span class="o-filters-locked" title="<?php esc_attr_e( 'Filtering by form and post is available in Otter Pro.', 'otter-blocks' ); ?>">
 			<select disabled>
@@ -904,9 +879,6 @@ class Form_Submissions {
 			<select disabled>
 				<option><?php esc_html_e( 'All Posts', 'otter-blocks' ); ?></option>
 			</select>
-			<a class="o-filters-unlock" href="<?php echo esc_url( $upgrade_url ); ?>" target="_blank" rel="noopener">
-				<span class="dashicons dashicons-lock" aria-hidden="true"></span><?php esc_html_e( 'Unlock filters', 'otter-blocks' ); ?>
-			</a>
 		</span>
 		<?php
 	}
@@ -990,10 +962,25 @@ class Form_Submissions {
 				echo esc_html( get_the_title( $post_id ) );
 				break;
 			case 'form':
+				// Filtering is a Pro feature; without it, keep linking to the form on the source page.
+				if ( Pro::is_pro_active() ) {
+					$url = add_query_arg(
+						array(
+							'post_type'         => self::FORM_RECORD_TYPE,
+							'otter_form_filter' => $meta['form']['value'],
+							'filter_action'     => 'Filter',
+							'filters_nonce'     => wp_create_nonce( 'filter' ),
+						),
+						admin_url( 'edit.php' )
+					);
+				} else {
+					$url = $meta['post_url']['value'] . '#' . $meta['form']['value'];
+				}
+
 				$this->format_based_on_status(
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
-						esc_url( $meta['post_url']['value'] . '#' . $meta['form']['value'] ),
+						esc_url( $url ),
 						esc_html( substr( $meta['form']['value'], -8 ) )
 					),
 					get_post_status( $post_id )

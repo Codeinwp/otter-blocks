@@ -607,7 +607,17 @@ class Form_Emails_Storing {
 				$this->format_based_on_status(
 					sprintf(
 						'<a href="%1$s">%2$s</a>',
-						esc_url( $meta['post_url']['value'] . '#' . $meta['form']['value'] ),
+						esc_url(
+							add_query_arg(
+								array(
+									'post_type'         => self::FORM_RECORD_TYPE,
+									'otter_form_filter' => $meta['form']['value'],
+									'filter_action'     => 'Filter',
+									'filters_nonce'     => wp_create_nonce( 'filter' ),
+								),
+								admin_url( 'edit.php' )
+							)
+						),
 						esc_html( substr( $meta['form']['value'], -8 ) )
 					),
 					get_post_status( $post_id )
