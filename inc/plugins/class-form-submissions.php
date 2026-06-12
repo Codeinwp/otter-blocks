@@ -426,6 +426,7 @@ class Form_Submissions {
 		if ( class_exists( '\ThemeIsle\OtterPro\Plugins\Form_Pro_Features' ) ) {
 			$legacy_features = \ThemeIsle\OtterPro\Plugins\Form_Pro_Features::$instance;
 
+			// @phpstan-ignore-next-line the method is missing in older Otter Pro versions.
 			if ( $legacy_features && method_exists( $legacy_features, 'clean_files_from_uploads' ) ) {
 				remove_action( 'otter_form_after_submit', array( $legacy_features, 'clean_files_from_uploads' ) );
 			}
@@ -582,7 +583,7 @@ class Form_Submissions {
 				'post_type'      => self::FORM_RECORD_TYPE,
 				'post_status'    => array( 'draft', 'unread', 'read', 'trash' ),
 				'posts_per_page' => -1,
-				'meta_query'     => array(
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 					array(
 						'key'     => self::FORM_RECORD_META_KEY,
 						'value'   => $path,
@@ -1866,7 +1867,7 @@ class Form_Submissions {
 				'post_status'    => 'draft',
 				'posts_per_page' => 1,
 				'fields'         => 'ids',
-				'meta_query'     => array(
+				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 					array(
 						'key'     => self::FORM_RECORD_META_KEY,
 						'value'   => 'otter_form_stripe_checkout_session_id',

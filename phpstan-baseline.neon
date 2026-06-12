@@ -1801,12 +1801,6 @@ parameters:
 			path: inc/plugins/class-form-submissions.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::transition_draft_to_read() has no return type specified.'
-			identifier: missingType.return
-			count: 1
-			path: inc/plugins/class-form-submissions.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::update_submission_dump_data() has no return type specified.'
 			identifier: missingType.return
 			count: 1
@@ -2876,12 +2870,6 @@ parameters:
 
 		-
 			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::store_form_record() has no return type specified.'
-			identifier: missingType.return
-			count: 1
-			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
-
-		-
-			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::transition_draft_to_read() has no return type specified.'
 			identifier: missingType.return
 			count: 1
 			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php

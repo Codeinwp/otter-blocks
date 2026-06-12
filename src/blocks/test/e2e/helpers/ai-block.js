@@ -35,8 +35,8 @@ export const MOCK_GENERATE_RESPONSE = {
 /**
  * Seed prompts/API key and stub OpenAI REST routes for deterministic AI block tests.
  *
- * @param {import('@playwright/test').Page} page       The page.
- * @param {import('../fixtures').OtterUtils} otterUtils The Otter E2E helpers.
+ * @param {Object}                           props            Helper props.
+ * @param {import('../fixtures').OtterUtils} props.otterUtils The Otter E2E helpers.
  * @return {Promise<void>}
  */
 export async function setupAiBlockTest({ otterUtils }) {
@@ -59,9 +59,9 @@ export async function waitForAiPromptUi( page ) {
 /**
  * Insert a content-generator block and wait until its prompt UI is ready.
  *
- * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor The editor utils.
- * @param {import('@playwright/test').Page}                        page   The page.
- * @param {Record<string, unknown>}                                attributes Block attributes.
+ * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor     The editor utils.
+ * @param {import('@playwright/test').Page}                       page       The page.
+ * @param {Record<string, unknown>}                               attributes Block attributes.
  * @return {Promise<void>}
  */
 export async function insertAiBlock( editor, page, attributes = {}) {

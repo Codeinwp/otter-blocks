@@ -387,6 +387,7 @@ class Form_Server {
 	 *
 	 * @param WP_REST_Request    $request The original form request.
 	 * @param Form_Data_Response $res The response on which to record the runtime error.
+	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
 	 * @return Form_Data_Request A fresh form data object carrying the runtime error, safe for downstream calls.
 	 * @since 3.1
 	 */

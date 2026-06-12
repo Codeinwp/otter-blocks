@@ -41,7 +41,7 @@ export async function getEmailNotificationToggle( page ) {
  * Open the block inspector and wait until Form Options are ready to edit.
  *
  * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor The editor utils.
- * @param {import('@playwright/test').Page}                        page   The page.
+ * @param {import('@playwright/test').Page}                       page   The page.
  * @return {Promise<import('@playwright/test').Locator>} The Email Notification toggle.
  */
 export async function prepareFormOptionsInspector( editor, page ) {

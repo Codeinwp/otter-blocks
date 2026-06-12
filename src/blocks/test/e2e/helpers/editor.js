@@ -64,7 +64,7 @@ export async function waitForPostPublished( page ) {
  * their own notices immediately after publish.
  *
  * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor The editor utils.
- * @param {import('@playwright/test').Page}                        page   The page.
+ * @param {import('@playwright/test').Page}                       page   The page.
  * @return {Promise<number>} The published post ID.
  */
 export async function publishPostReliable( editor, page ) {
