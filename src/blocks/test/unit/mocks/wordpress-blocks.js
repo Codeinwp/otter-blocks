@@ -57,8 +57,43 @@ const rawHandler = ({ HTML }) => {
 	}];
 };
 
+const createBlock = ( name, attributes = {}, innerBlocks = [] ) => ({
+	name,
+	attributes,
+	innerBlocks
+});
+
+const serializeAttributes = ( attributes ) => {
+	const keys = Object.keys( attributes || {} );
+
+	if ( ! keys.length ) {
+		return '';
+	}
+
+	return ` ${ JSON.stringify( attributes ) }`;
+};
+
+const serializeBlock = ( block ) => {
+	const attrs = serializeAttributes( block.attributes );
+	const inner = ( block.innerBlocks || [] ).map( serializeBlock ).join( '' );
+
+	if ( 'core/paragraph' === block.name ) {
+		return `<!-- wp:paragraph${ attrs } --><p>${ block.attributes?.content || '' }</p>${ inner }<!-- /wp:paragraph -->`;
+	}
+
+	if ( 'core/heading' === block.name ) {
+		const level = block.attributes?.level || 2;
+		return `<!-- wp:heading${ attrs } --><h${ level }>${ block.attributes?.content || '' }</h${ level }>${ inner }<!-- /wp:heading -->`;
+	}
+
+	const serializedName = block.name.replace( /^core\//, '' );
+
+	return `<!-- wp:${ serializedName }${ attrs } -->${ inner }<!-- /wp:${ serializedName } -->`;
+};
+
 module.exports = {
+	createBlock,
 	parse: parseBlockMarkup,
 	rawHandler,
-	serialize: jest.fn( () => '' )
+	serialize: jest.fn( blocks => ( blocks || [] ).map( serializeBlock ).join( '' ) )
 };

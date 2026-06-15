@@ -155,9 +155,62 @@ export const sendPromptToOpenAI = promptRequestBuilder();
  */
 export const sendPromptToOpenAIWithRegenerate = promptRequestBuilder({
 	temperature: 1.3,
-	 
+
 	stream: false
 });
+
+/**
+ * Model used by the AI Block generation pipeline.
+ *
+ * Kept as a single constant so it can be bumped without touching the engine.
+ */
+export const BLOCK_GENERATION_MODEL = 'gpt-5-mini';
+
+/*
+ * The block generation pipeline ships its own instructions (block catalog +
+ * strict JSON schema) inside the prompt, so it must NOT reuse the server-side
+ * `textTransformation` template, whose system prompt forces plain HTML output.
+ * Instead we forward a self-contained request to the same OpenAI proxy.
+ */
+const BLOCK_GENERATION_SYSTEM_PROMPT =
+	'You are a WordPress block generation engine. ' +
+	'Follow the schema described in the user message and reply with strict JSON only. ' +
+	'Do not include explanations, prose, or markdown code fences.';
+
+/**
+ * Forward a self-contained block generation request to the OpenAI proxy.
+ *
+ * @param instruction Fully-built generation prompt (catalog + task + schema).
+ * @return The raw chat completion response.
+ */
+export async function sendBlockGenerationPrompt( instruction: string ): Promise<ChatResponse> {
+	try {
+		const response = await apiFetch({
+			path: addQueryArgs( '/otter/v1/openai/generate', {}),
+			method: 'POST',
+			body: JSON.stringify({
+				otter_used_action: 'blockGeneration',
+				otter_user_content: instruction,
+				model: BLOCK_GENERATION_MODEL,
+				messages: [
+					{ role: 'system', content: BLOCK_GENERATION_SYSTEM_PROMPT },
+					{ role: 'user', content: instruction }
+				],
+				response_format: { type: 'json_object' },
+				stream: false
+			})
+		});
+
+		return response as ChatResponse;
+	} catch ( e ) {
+		return {
+			error: {
+				code: 'system',
+				message: e.error?.message ?? e.error
+			}
+		} as ChatResponse;
+	}
+}
 
 const fieldMapping = {
 	'text': 'themeisle-blocks/form-input',

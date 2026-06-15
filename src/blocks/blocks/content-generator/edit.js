@@ -1,53 +1,45 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * WordPress dependencies
  */
-import { Button, Disabled, Dropdown, ResizableBox, SelectControl } from '@wordpress/components';
-
 import {
-	__experimentalBlockVariationPicker as VariationPicker,
 	InnerBlocks,
-	RichText,
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import {
-	Fragment,
-	useEffect, useMemo,
-	useRef,
-	useState
-} from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 
-import { createBlock, rawHandler } from '@wordpress/blocks';
+import { createBlock } from '@wordpress/blocks';
+
+import { useDispatch, useSelect } from '@wordpress/data';
+
+import { __ } from '@wordpress/i18n';
+
+import { Button, Disabled } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import Inspector from './inspector.js';
+import PreviewBoundary from './preview-boundary.js';
 import PromptPlaceholder from '../../components/prompt';
-import { parseFormPromptResponseToBlocks, tryParseResponse } from '../../helpers/prompt';
-import { useDispatch, useSelect, dispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
-import { insertBlockBelow, pullOtterPatterns } from '../../helpers/block-utility';
-
-function formatNameBlock( name ) {
-	const namePart = name.split( '/' )[1];
-	return namePart.split( ' ' ).map( word => word.charAt( 0 ).toUpperCase() + word.slice( 1 ) ).join( ' ' );
-}
+import { sendBlockGenerationPrompt } from '../../helpers/prompt';
+import { generateBlocksFromTask } from '../../plugins/ai-content/block-generation';
+import { aiDebug, aiDebugEnd, aiDebugStart } from '../../plugins/ai-content/debug';
+import { insertBlockBelow } from '../../helpers/block-utility';
 
 /**
- * AI Block
+ * AI Block — Content Generator.
+ *
+ * Turns a free-form task into validated Gutenberg blocks through the block
+ * generation pipeline (catalog → generate → validate → repair), then previews
+ * them as inner blocks so they can be inserted or used to replace the block.
+ *
  * @param {import('./types').ContentGeneratorProps} props
  */
 const ContentGenerator = ({
 	attributes,
 	setAttributes,
-	clientId,
-	name
+	clientId
 }) => {
 
 	const blockProps = useBlockProps();
@@ -57,72 +49,17 @@ const ContentGenerator = ({
 	const {
 		removeBlock,
 		replaceInnerBlocks,
-		selectBlock,
 		replaceBlocks
 	} = useDispatch( 'core/block-editor' );
 
-	/**
-	 * On success callback
-	 *
-	 * @type {import('../../components/prompt').PromptOnSuccess}
-	 */
-	const onPreview = ( result ) => {
-		if ( 'form' === attributes.promptID ) {
-
-			const formFields = parseFormPromptResponseToBlocks( result );
-
-			const form = createBlock( 'themeisle-blocks/form', {}, formFields );
-
-			replaceInnerBlocks( clientId, [ form ]);
-		}
-
-		if ( 'textTransformation' === attributes.promptID ) {
-			const blocks = rawHandler({
-				HTML: result
-			});
-
-			replaceInnerBlocks( clientId, blocks );
-		}
-
-		if ( 'patternsPicker' === attributes.promptID ) {
-			const r = tryParseResponse( result ) ?? {};
-			const content = pullOtterPatterns()
-				.filter( pattern => {
-					return r?.slugs?.some( test => pattern.name.endsWith( test ) );
-				})
-				.map( pattern => pattern?.content )
-				.filter( Boolean )
-				.join( '\n' );
-
-			if ( ! content ) {
-				dispatch( 'core/notices' )?.createNotice(
-					'info',
-					__( 'No patterns found for your query.', 'otter-blocks' ),
-					{
-						type: 'snackbar',
-						isDismissible: true,
-						id: 'o-no-patterns'
-					}
-				);
-			}
-
-			const blocks = rawHandler({
-				HTML: content
-			});
-
-			replaceInnerBlocks( clientId, blocks );
-		}
-	};
-
-	const { hasInnerBlocks, getBlock, getBlocks } = useSelect(
+	const { hasInnerBlocks, getBlocks, blockTypes } = useSelect(
 		select => {
-
-			const { getBlock, getBlocks } = select( 'core/block-editor' );
+			const { getBlocks } = select( 'core/block-editor' );
 
 			return {
 				hasInnerBlocks: getBlocks?.( clientId ).length,
 				getBlocks,
-				getBlock
+				blockTypes: select( 'core/blocks' )?.getBlockTypes?.() ?? []
 			};
 		},
 		[ clientId ]
@@ -144,7 +81,7 @@ const ContentGenerator = ({
 	};
 
 	/**
-	 * Replace the block with the blocks generated from the prompt response
+	 * Replace the block with the blocks generated from the prompt response.
 	 */
 	const replaceBlock = () => {
 		const blocks = getBlocks( clientId );
@@ -159,118 +96,98 @@ const ContentGenerator = ({
 	};
 
 	/**
-	 * Insert the blocks generated from the prompt response below the current block
+	 * Insert the blocks generated from the prompt response below the current block.
 	 */
 	const insertContentIntoPage = () => {
 		const blocks = getBlocks( clientId );
 		insertBlockBelow( clientId, blocks.map( makeBlockCopy ) );
 	};
 
-	const { blockType, defaultVariation, variations } = useSelect(
-		select => {
-			const {
-				getBlockVariations,
-				getBlockType,
-				getDefaultBlockVariation
-			} = select( 'core/blocks' );
+	/**
+	 * Run the block generation pipeline and preview the result as inner blocks.
+	 *
+	 * @param {string} task The user task describing the desired content.
+	 * @return {Promise<{result: string, usedToken: number}|{error: string}>} The pipeline outcome.
+	 */
+	const onGenerateBlocks = async( task ) => {
+		let usedToken = 0;
+		let requestCount = 0;
 
-			return {
-				blockType: getBlockType( name ),
-				defaultVariation: getDefaultBlockVariation( name, 'block' ),
-				variations: getBlockVariations( name, 'block' )
-			};
-		},
-		[ name ]
-	);
+		aiDebugStart( 'Content Generator run' );
+		aiDebug( 'Task received', { task, availableBlockTypes: blockTypes.length });
 
-	const PRESETS = {
-		form: {
-			title: __( 'AI Form generator', 'otter-blocks' ),
-			placeholder: __( 'Start describing what form you need…', 'otter-blocks' ),
-			actions: ( props ) => {
-				return (
-					<Fragment>
-						<Button
-							variant="primary"
-							onClick={replaceBlock}
-							disabled={'loading' === props.status}
-						>
-							{__( 'Replace', 'otter-blocks' )}
-						</Button>
-						<Button
-							variant="secondary"
-							onClick={insertContentIntoPage}
-							disabled={'loading' === props.status}
-						>
-							{__( 'Insert below', 'otter-blocks' )}
-						</Button>
-					</Fragment>
-				);
+		const requestCompletion = async( instruction ) => {
+			requestCount++;
+			aiDebug( `OpenAI request #${ requestCount } (gpt-5-mini)`, { chars: instruction.length });
+
+			const response = await sendBlockGenerationPrompt( instruction );
+
+			if ( response.error ) {
+				aiDebug( `OpenAI request #${ requestCount } errored`, response.error );
+				throw new Error( response.error.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 			}
-		},
-		textTransformation: {
-			title: __( 'AI Content generator', 'otter-blocks' ),
-			placeholder: __( 'Start describing what content you need…', 'otter-blocks' ),
-			actions: ( props ) => {
-				return (
-					<Fragment>
-						<Button
-							variant="primary"
-							onClick={replaceBlock}
-							disabled={'loading' === props.status}
-						>
-							{__( 'Replace', 'otter-blocks' )}
-						</Button>
-						<Button
-							variant="secondary"
-							onClick={insertContentIntoPage}
-							disabled={'loading' === props.status}
-						>
-							{__( 'Insert below', 'otter-blocks' )}
-						</Button>
-					</Fragment>
-				);
+
+			const content = response?.choices?.[0]?.message?.content;
+
+			if ( ! content ) {
+				aiDebug( `OpenAI request #${ requestCount } returned empty content` );
+				throw new Error( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
 			}
-		},
-		patternsPicker: {
-			title: __( 'Smart Otter Patterns Picker', 'otter-blocks' ),
-			placeholder: __( 'Describe what kind of page do you want.', 'otter-blocks' ),
-			actions: ( props ) => {
-				return (
-					<Fragment>
-						<Button
-							variant="primary"
-							onClick={replaceBlock}
-							disabled={'loading' === props.status}
-						>
-							{__( 'Replace', 'otter-blocks' )}
-						</Button>
-						<Button
-							variant="secondary"
-							onClick={insertContentIntoPage}
-							disabled={'loading' === props.status}
-						>
-							{__( 'Insert below', 'otter-blocks' )}
-						</Button>
-					</Fragment>
-				);
+
+			usedToken += response?.usage?.total_tokens ?? 0;
+			aiDebug( `OpenAI request #${ requestCount } ok`, { tokens: response?.usage?.total_tokens ?? 0 });
+
+			return content;
+		};
+
+		try {
+			const generation = await generateBlocksFromTask({
+				task,
+				blockTypes,
+				requestCompletion
+			});
+
+			if ( ! generation.blocks.length ) {
+				aiDebug( 'No valid blocks produced' );
+				aiDebugEnd();
+				return { error: __( 'Could not generate valid blocks. Please try a simpler prompt.', 'otter-blocks' ) };
 			}
+
+			aiDebug( 'Inserting blocks into editor', generation.blocks.map( block => block.name ) );
+			replaceInnerBlocks( clientId, generation.blocks );
+
+			const result = generation.rationale.length
+				? generation.rationale.join( '\n' )
+				: __( 'Generated content is ready.', 'otter-blocks' );
+
+			aiDebug( 'Done', { tokens: usedToken, dropped: generation.diagnostics.droppedRoots.length });
+			aiDebugEnd();
+			return { result, usedToken };
+		} catch ( e ) {
+			aiDebug( 'Run failed', e?.message );
+			aiDebugEnd();
+			return { error: e?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) };
 		}
 	};
 
-	useEffect( () => {
-		if ( ! Boolean( attributes.replaceTargetBlock ) ) {
-			return;
-		}
-
-		// Cleanup the replaceTargetBlock attribute if the block is not found.
-		const targetBlock = getBlock?.( attributes.replaceTargetBlock );
-		if ( targetBlock && attributes.replaceTargetBlock?.name !== targetBlock.name ) {
-			setAttributes({
-				replaceTargetBlock: undefined
-			});
-		}
-	}, [ attributes.replaceTargetBlock ]);
+	const actionButtons = ( props ) => (
+		<Fragment>
+			<Button
+				variant="primary"
+				onClick={ replaceBlock }
+				disabled={ 'loading' === props.status }
+			>
+				{ __( 'Replace', 'otter-blocks' ) }
+			</Button>
+			<Button
+				variant="secondary"
+				onClick={ insertContentIntoPage }
+				disabled={ 'loading' === props.status }
+			>
+				{ __( 'Insert below', 'otter-blocks' ) }
+			</Button>
+		</Fragment>
+	);
 
 	return (
 		<Fragment>
@@ -280,81 +197,29 @@ const ContentGenerator = ({
 			/>
 
 			<div { ...blockProps }>
-				{
-					attributes.promptID === undefined ? (
-						<VariationPicker
-							icon={ get( blockType, [ 'icon', 'src' ]) }
-							label={ get( blockType, [ 'title' ]) }
-							variations={ variations }
-							onSelect={ ( nextVariation = defaultVariation ) => {
-								if ( nextVariation ) {
-									setAttributes( nextVariation.attributes );
-								}
-								selectBlock( clientId );
-							} }
-						/>
-					) : (
-						<PromptPlaceholder
-							promptID={attributes.promptID}
-							title={PRESETS?.[attributes.promptID]?.title}
-							value={prompt}
-							onValueChange={setPrompt}
-							onPreview={onPreview}
-							actionButtons={PRESETS?.[attributes.promptID]?.actions}
-							onClose={() => removeBlock( clientId )}
-							promptPlaceholder={PRESETS?.[attributes.promptID]?.placeholder}
-							resultHistory={attributes.resultHistory}
-						>
-							{
-								hasInnerBlocks ? (
-									<Disabled>
-										<InnerBlocks renderAppender={false}/>
-									</Disabled>
-								) : ''
-							}
-						</PromptPlaceholder>
-					)
-				}
+				<PromptPlaceholder
+					promptID={ attributes.promptID }
+					title={ __( 'AI Content generator', 'otter-blocks' ) }
+					value={ prompt }
+					onValueChange={ setPrompt }
+					onGenerateBlocks={ onGenerateBlocks }
+					actionButtons={ actionButtons }
+					onClose={ () => removeBlock( clientId ) }
+					promptPlaceholder={ __( 'Start describing what content you need…', 'otter-blocks' ) }
+				>
+					{
+						hasInnerBlocks ? (
+							<PreviewBoundary>
+								<Disabled>
+									<InnerBlocks renderAppender={ false } />
+								</Disabled>
+							</PreviewBoundary>
+						) : ''
+					}
+				</PromptPlaceholder>
 			</div>
 		</Fragment>
 	);
 };
 
 export default ContentGenerator;
-
-// INFO: those are function for changing the content of an existing block.
-// const [ showDropdown, setShowDropdown ] = useState( false );
-// const [ containerClientId, setContainerClientId ] = useState( '' );
-//
-// const canReplaceBlock = useSelect( select => {
-// 	const { getBlocks } = select( 'core/block-editor' );
-//
-// 	return ( getBlocks?.() ?? []).some( block => block.clientId === attributes.blockToReplace );
-// }, [ clientId, attributes.blockToReplace ]);
-//
-// const replaceTargetBlock = () => {
-//
-// 	const blocksToAdd = getBlocks?.( containerId )?.map( block => {
-// 		return createBlock( block.name, block.attributes, block.innerBlocks );
-// 	}) ?? [];
-//
-// 	if ( ! blocksToAdd.length ) {
-// 		return;
-// 	}
-//
-// 	replaceInnerBlocks( attributes.blockToReplace, blocksToAdd );
-// };
-//
-// const appendToTargetBlock = () => {
-// 	const blocksToAdd = getBlocks?.( containerId )?.map( block => {
-// 		return createBlock( block.name, block.attributes, block.innerBlocks );
-// 	}) ?? [];
-//
-// 	const targetBlock = getBlock( attributes.blockToReplace );
-//
-// 	if ( ! blocksToAdd.length ) {
-// 		return;
-// 	}
-//
-// 	insertBlocks( blocksToAdd, targetBlock.innerBlocks?.length ?? 0, attributes.blockToReplace );
-// };

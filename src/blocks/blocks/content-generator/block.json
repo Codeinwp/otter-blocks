@@ -14,7 +14,8 @@
 	"textdomain": "otter-blocks",
 	"attributes": {
 		"promptID": {
-			"type": "string"
+			"type": "string",
+			"default": "textTransformation"
 		},
 		"resultHistory": {
 			"type": "array",
