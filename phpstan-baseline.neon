@@ -1741,40 +1741,40 @@ parameters:
 			path: inc/plugins/class-form-submissions.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::form_record_bulk_actions() return type has no value type specified in iterable type array.'
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_bulk_actions() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
-			path: inc/plugins/class-form-submissions.php
+			path: inc/plugins/class-form-records-list-table.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::form_record_columns() return type has no value type specified in iterable type array.'
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_columns() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
-			path: inc/plugins/class-form-submissions.php
+			path: inc/plugins/class-form-records-list-table.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::form_record_row_actions() has parameter $actions with no value type specified in iterable type array.'
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_row_actions() has parameter $actions with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
-			path: inc/plugins/class-form-submissions.php
+			path: inc/plugins/class-form-records-list-table.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::form_record_row_actions() return type has no value type specified in iterable type array.'
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_row_actions() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
-			path: inc/plugins/class-form-submissions.php
+			path: inc/plugins/class-form-records-list-table.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::form_record_sortable_columns() return type has no value type specified in iterable type array.'
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_sortable_columns() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
-			path: inc/plugins/class-form-submissions.php
+			path: inc/plugins/class-form-records-list-table.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::format_based_on_status() has no return type specified.'
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::format_based_on_status() has no return type specified.'
 			identifier: missingType.return
 			count: 1
-			path: inc/plugins/class-form-submissions.php
+			path: inc/plugins/class-form-records-list-table.php
 
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Filters::get_filter() return type has no value type specified in iterable type array.'

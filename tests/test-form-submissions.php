@@ -580,4 +580,31 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 
 		$this->assertSame( 'New Value', $meta['inputs']['abcd1234']['value'] );
 	}
+
+	/**
+	 * Ensure the list-table delivery column reflects a failed delivery.
+	 *
+	 * Exercised through the `manage_{type}_posts_custom_column` hook so it stays valid
+	 * regardless of which class owns the callback.
+	 */
+	public function test_delivery_column_renders_failed_status() {
+		$record_id = $this->create_record( 'unread' );
+		update_post_meta( $record_id, Form_Submissions::DELIVERY_STATUS_META_KEY, Form_Submissions::DELIVERY_STATUS_FAILED );
+		update_post_meta(
+			$record_id,
+			Form_Submissions::DELIVERY_ERRORS_META_KEY,
+			array(
+				array(
+					'action'  => 'email',
+					'message' => 'SMTP failed',
+				),
+			)
+		);
+
+		ob_start();
+		do_action( 'manage_' . Form_Submissions::FORM_RECORD_TYPE . '_posts_custom_column', 'delivery', $record_id );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'Failed', $output );
+	}
 }
