@@ -17,7 +17,7 @@ import {
 
 import {
 	Fragment,
-	useEffect, useMemo,
+	useEffect,
 	useRef,
 	useState
 } from '@wordpress/element';
@@ -40,6 +40,16 @@ function formatNameBlock( name ) {
 }
 
 /**
+ * Allowlist the prompt preset id so an arbitrary string can never reach the tracking wire.
+ *
+ * @param {string|undefined} promptID The preset id in scope.
+ * @return {string} A known preset slug, or 'other'.
+ */
+const allowedPromptID = ( promptID ) => {
+	return [ 'form', 'textTransformation', 'patternsPicker' ].includes( promptID ) ? promptID : 'other';
+};
+
+/**
  * AI Block
  * @param {import('./types').ContentGeneratorProps} props
  */
@@ -53,6 +63,12 @@ const ContentGenerator = ({
 	const blockProps = useBlockProps();
 
 	const [ prompt, setPrompt ] = useState( '' );
+
+	// Session key used ONLY as the dedup key for the AI generation tracking sets (never sent as a value).
+	const trackingKey = attributes?.id ?? clientId;
+
+	// Tracks whether the generation was already accepted, so a later discard cannot clobber a prior accept.
+	const hasAccepted = useRef( false );
 
 	const {
 		removeBlock,
@@ -150,6 +166,10 @@ const ContentGenerator = ({
 		const blocks = getBlocks( clientId );
 		const blocksToInsert = blocks.map( makeBlockCopy ).filter( Boolean );
 
+		// Track that the AI generation was kept by replacing the block.
+		hasAccepted.current = true;
+		window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: `outcome-${ allowedPromptID( attributes?.promptID ) }`, featureValue: 'replace' });
+
 		if ( attributes.replaceTargetBlock?.clientId ) {
 			replaceBlocks( attributes.replaceTargetBlock?.clientId, blocksToInsert );
 			removeBlock( clientId );
@@ -163,6 +183,11 @@ const ContentGenerator = ({
 	 */
 	const insertContentIntoPage = () => {
 		const blocks = getBlocks( clientId );
+
+		// Track that the AI generation was kept by inserting it into the page.
+		hasAccepted.current = true;
+		window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: `outcome-${ allowedPromptID( attributes?.promptID ) }`, featureValue: 'insert' });
+
 		insertBlockBelow( clientId, blocks.map( makeBlockCopy ) );
 	};
 
@@ -296,6 +321,8 @@ const ContentGenerator = ({
 					) : (
 						<PromptPlaceholder
 							promptID={attributes.promptID}
+							trackingKey={trackingKey}
+							hasAcceptedRef={hasAccepted}
 							title={PRESETS?.[attributes.promptID]?.title}
 							value={prompt}
 							onValueChange={setPrompt}
