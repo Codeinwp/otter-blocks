@@ -383,7 +383,7 @@ class Patterns {
 	/**
 	 * Pro pattern upsell entries for the Design Library.
 	 *
-	 * @return array List of pattern entries.
+	 * @return array<int, array<string, mixed>> List of pattern entries.
 	 */
 	public static function get_upsell_patterns() {
 		if ( Pro::is_pro_active() ) {

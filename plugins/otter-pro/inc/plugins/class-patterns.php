@@ -25,7 +25,7 @@ class Patterns {
 	 * 
 	 * @var string PATTERNS_ENDPOINT The endpoint URL for Otter patterns.
 	 */
-	const PATTERNS_ENDPOINT = 'https://api.themeisle.com/templates-cloud/otter-patterns';
+	const PATTERNS_ENDPOINT  = 'https://api.themeisle.com/templates-cloud/otter-patterns';
 	const PATTERNS_CACHE_KEY = 'otter_pro_patterns_v2';
 
 	/**
@@ -66,7 +66,7 @@ class Patterns {
 	 */
 	public function maybe_sync_patterns() {
 		if ( ! get_transient( self::PATTERNS_CACHE_KEY ) && ! get_transient( 'otter_pro_patterns_refetch' ) ) {
-			$this->sync_patterns();	
+			$this->sync_patterns(); 
 		}
 	}
 
