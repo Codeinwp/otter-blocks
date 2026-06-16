@@ -289,6 +289,30 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_cloudflare_turnstile_site_key',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'Cloudflare Turnstile Site key for the Form Block.', 'otter-blocks' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => '',
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_cloudflare_turnstile_secret_key',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'Cloudflare Turnstile Secret key for the Form Block.', 'otter-blocks' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => '',
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_default_block',
 			array(
 				'type'              => 'boolean',

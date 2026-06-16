@@ -51,6 +51,7 @@ type Attributes = {
 export type FormOptions = {
 	form?: string
 	hasCaptcha?: boolean
+	captchaProvider?: string
 	email?: string
 	fromName?: string
 	fromEmail?: string

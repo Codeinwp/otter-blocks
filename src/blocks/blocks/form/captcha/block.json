@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/form-captcha",
+	"title": "Captcha",
+	"category": "themeisle-blocks",
+	"description": "Protect the form from spam with a captcha challenge. Powered by Otter.",
+	"keywords": [ "captcha", "recaptcha", "turnstile" ],
+	"textdomain": "otter-blocks",
+	"ancestor": [ "themeisle-blocks/form" ],
+	"attributes": {
+		"provider": {
+			"type": "string",
+			"default": "recaptcha"
+		}
+	},
+	"supports": {
+		"html": false,
+		"reusable": false
+	}
+}

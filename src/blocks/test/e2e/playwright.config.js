@@ -45,6 +45,7 @@ const SERIAL_SPECS = [
 	'**/blocks/block-conditions.spec.js',
 	'**/blocks/dashboard.spec.js',
 	'**/blocks/form.spec.js',
+	'**/blocks/form-turnstile.spec.js',
 	'**/blocks/onboarding.spec.js'
 ];
 
