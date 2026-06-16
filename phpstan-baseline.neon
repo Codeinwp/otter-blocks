@@ -1714,7 +1714,7 @@ parameters:
 			rawMessage: 'Call to function method_exists() with WP_Role and ''add_cap'' will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: inc/plugins/class-form-submissions.php
+			path: inc/plugins/class-form-records-post-type.php
 
 		-
 			rawMessage: Instanceof between ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request and ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request will always evaluate to true.

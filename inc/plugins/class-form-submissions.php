@@ -90,8 +90,7 @@ class Form_Submissions {
 			return;
 		}
 
-		add_action( 'init', array( $this, 'create_form_records_type' ) );
-		add_action( 'admin_init', array( $this, 'set_form_records_cap' ), 10, 0 );
+		( new Form_Records_Post_Type() )->register();
 
 		/**
 		 * Save the submission before any delivery action runs, then record the delivery
@@ -146,98 +145,6 @@ class Form_Submissions {
 			Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED => 'provider',
 			Form_Data_Response::ERROR_RUNTIME_ERROR        => 'provider',
 		);
-	}
-
-	/**
-	 * Create custom post type for form records.
-	 *
-	 * @return void
-	 */
-	public function create_form_records_type() {
-		register_post_type(
-			self::FORM_RECORD_TYPE,
-			array(
-				'labels'          => array(
-					'name'               => esc_html_x( 'Form Submissions', '', 'otter-blocks' ),
-					'singular_name'      => esc_html_x( 'Form Submission', '', 'otter-blocks' ),
-					'search_items'       => esc_html__( 'Search Submissions', 'otter-blocks' ),
-					'all_items'          => esc_html__( 'Form Submissions', 'otter-blocks' ),
-					'view_item'          => esc_html__( 'View Submission', 'otter-blocks' ),
-					'update_item'        => esc_html__( 'Update Submission', 'otter-blocks' ),
-					'not_found'          => esc_html__( 'No submissions found', 'otter-blocks' ),
-					'not_found_in_trash' => esc_html__( 'No submissions found in the Trash', 'otter-blocks' ),
-				),
-				'capability_type' => self::FORM_RECORD_TYPE,
-				'capabilities'    => array(
-					'create_posts' => 'create_otter_form_records',
-				),
-				'description'     => __( 'Holds the data from the form submissions', 'otter-blocks' ),
-				'public'          => false,
-				'show_ui'         => true,
-				'show_in_rest'    => false,
-				'supports'        => array( 'title' ),
-			)
-		);
-
-		register_post_status(
-			'read',
-			array(
-				'label'                     => _x( 'Read', 'otter-form-record', 'otter-blocks' ),
-				'public'                    => true,
-				'exclude_from_search'       => false,
-				'show_in_admin_all_list'    => true,
-				'show_in_admin_status_list' => true,
-				/* translators: %s the number of posts */
-				'label_count'               => _n_noop(
-					'Read <span class="count">(%s)</span>',
-					'Read <span class="count">(%s)</span>',
-					'otter-blocks'
-				),
-			)
-		);
-
-		register_post_status(
-			'unread',
-			array(
-				'label'                     => _x( 'Unread', 'otter-form-record', 'otter-blocks' ),
-				'public'                    => true,
-				'exclude_from_search'       => false,
-				'show_in_admin_all_list'    => true,
-				'show_in_admin_status_list' => true,
-				/* translators: %s the number of posts */
-				'label_count'               => _n_noop(
-					'Unread <span class="count">(%s)</span>',
-					'Unread <span class="count">(%s)</span>',
-					'otter-blocks'
-				),
-			)
-		);
-	}
-
-	/**
-	 * Set custom capabilities for otter_form_record.
-	 *
-	 * @return void
-	 */
-	public function set_form_records_cap() {
-		$role = get_role( 'administrator' );
-
-		if ( null === $role ) {
-			return;
-		}
-
-		if ( ! method_exists( $role, 'add_cap' ) ) {
-			return;
-		}
-
-		$role->add_cap( 'edit_' . self::FORM_RECORD_TYPE );
-		$role->add_cap( 'read_' . self::FORM_RECORD_TYPE );
-		$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE );
-		$role->add_cap( 'edit_' . self::FORM_RECORD_TYPE . 's' );
-		$role->add_cap( 'read_' . self::FORM_RECORD_TYPE . 's' );
-		$role->add_cap( 'delete_' . self::FORM_RECORD_TYPE . 's' );
-		$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE );
-		$role->remove_cap( 'create_' . self::FORM_RECORD_TYPE . 's' );
 	}
 
 	/**

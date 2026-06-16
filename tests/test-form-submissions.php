@@ -8,6 +8,7 @@
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
+use ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Post_Type;
 use ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions;
 use ThemeIsle\GutenbergBlocks\Tests\StripeHttpClientMock;
 
@@ -44,7 +45,7 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		$this->editor_id = self::factory()->user->create( array( 'role' => 'editor' ) );
 
 		// Grant the custom record capabilities the same way admin_init does.
-		$this->submissions->set_form_records_cap();
+		( new Form_Records_Post_Type() )->set_form_records_cap();
 
 		update_option( 'themeisle_stripe_api_key', 'sk_test_e2e' );
 		\Stripe\ApiRequestor::setHttpClient( new StripeHttpClientMock() );
