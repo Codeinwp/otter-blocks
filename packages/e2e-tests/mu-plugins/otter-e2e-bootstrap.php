@@ -39,6 +39,8 @@ const OPTION_WHITELIST = array(
 	// cross-run accumulation that eventually fails REST schema validation.
 	'themeisle_blocks_form_emails',
 	'themeisle_blocks_form_fields_option',
+	'themeisle_blocks_settings_patterns_library',
+	'themeisle_blocks_settings_atomic_wind_blocks',
 );
 
 /**
