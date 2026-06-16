@@ -79,7 +79,7 @@ export async function expectFormVariationIconsVisible( editor ) {
  * Insert multiple Leaflet map blocks and wait for them to initialise in the editor.
  *
  * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor Editor fixture.
- * @param {number} count Number of map blocks to insert.
+ * @param {number}                                                count  Number of map blocks to insert.
  */
 export async function insertLeafletMaps( editor, count = 2 ) {
 	const locations = [
@@ -110,8 +110,8 @@ export async function insertLeafletMaps( editor, count = 2 ) {
 /**
  * Assert all inserted Leaflet maps rendered interactive tiles in the editor canvas.
  *
- * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor Editor fixture.
- * @param {number} expectedCount Expected number of map instances.
+ * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor        Editor fixture.
+ * @param {number}                                                expectedCount Expected number of map instances.
  */
 export async function expectLeafletMapsRendered( editor, expectedCount ) {
 	const mapContainers = editor.canvas.locator( '.leaflet-container' );

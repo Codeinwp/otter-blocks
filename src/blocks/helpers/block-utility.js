@@ -462,9 +462,9 @@ const isIframeScriptLoaded = ( scriptEl ) => {
 /**
  * Whether a copied iframe script has finished executing in the iframe window.
  *
- * @param {Window}              iframeWindow    The iframe window.
- * @param {string}              assetSelectorId The id selector of the asset.
- * @param {HTMLScriptElement|null} scriptEl     The copied script element.
+ * @param {Window}                 iframeWindow    The iframe window.
+ * @param {string}                 assetSelectorId The id selector of the asset.
+ * @param {HTMLScriptElement|null} scriptEl        The copied script element.
  * @return {boolean} True when the asset is ready to use.
  */
 const isIframeScriptReady = ( iframeWindow, assetSelectorId, scriptEl ) => {
@@ -478,9 +478,9 @@ const isIframeScriptReady = ( iframeWindow, assetSelectorId, scriptEl ) => {
 /**
  * Wait until a copied iframe script is ready, then flush queued callbacks.
  *
- * @param {string}              assetSelectorId The id selector of the asset.
- * @param {Window}              iframeWindow    The iframe window.
- * @param {HTMLScriptElement|null} scriptEl     The copied script element.
+ * @param {string}                 assetSelectorId The id selector of the asset.
+ * @param {Window}                 iframeWindow    The iframe window.
+ * @param {HTMLScriptElement|null} scriptEl        The copied script element.
  */
 const waitForIframeScriptReady = ( assetSelectorId, iframeWindow, scriptEl ) => {
 	const tryFlush = () => {
