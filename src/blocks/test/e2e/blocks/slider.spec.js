@@ -74,7 +74,7 @@ test.describe( 'Slider Block', () => {
 			}
 		});
 
-		await expect( page.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 1 );
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 1 );
 
 		const errors = [];
 		const onConsole = msg => {
@@ -87,12 +87,12 @@ test.describe( 'Slider Block', () => {
 		page.on( 'console', onConsole );
 		page.on( 'pageerror', onPageError );
 
-		// The slider opts out of the iframed canvas and captures key events, so the
-		// Control+Shift+D shortcut is unreliable here; duplicate via the block toolbar instead.
-		await page.getByRole( 'document', { name: 'Block: Image Slider' } ).click();
+		// The slider captures key events, so the Control+Shift+D shortcut is
+		// unreliable here; duplicate via the block toolbar instead.
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' } ).click();
 		await editor.clickBlockOptionsMenuItem( 'Duplicate' );
 
-		await expect( page.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 2 );
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 2 );
 		await page.waitForTimeout( 250 );
 
 		page.off( 'console', onConsole );
