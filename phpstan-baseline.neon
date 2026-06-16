@@ -1777,10 +1777,10 @@ parameters:
 			path: inc/plugins/class-form-submissions.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::get_filter() return type has no value type specified in iterable type array.'
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Filters::get_filter() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
-			path: inc/plugins/class-form-submissions.php
+			path: inc/plugins/class-form-records-filters.php
 
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::handle_form_record_bulk_actions() has parameter $object_ids with no value type specified in iterable type array.'

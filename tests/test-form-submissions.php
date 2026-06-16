@@ -484,4 +484,64 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 
 		$this->assertNotFalse( wp_next_scheduled( 'otter_form_automatic_confirmation' ) );
 	}
+
+	/**
+	 * Ensure the Pro list-table filter appends a meta_query clause for the selected form.
+	 *
+	 * Exercised through the `parse_query` hook so it stays valid regardless of which class
+	 * owns the callback.
+	 */
+	public function test_pro_filter_query_adds_form_meta_clause() {
+		if ( ! \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		$license = function () {
+			return 'valid';
+		};
+		add_filter( 'product_otter_license_status', $license );
+
+		set_current_screen( 'edit-' . Form_Submissions::FORM_RECORD_TYPE );
+
+		global $pagenow;
+		$previous_pagenow = $pagenow;
+		$pagenow          = 'edit.php';
+
+		$_GET['post_type']                            = Form_Submissions::FORM_RECORD_TYPE;
+		$_GET['filter_action']                        = 'Filter';
+		$_GET['filters_nonce']                        = wp_create_nonce( 'filter' );
+		$_GET['otter_form_filter']                    = 'guard-form';
+		$_REQUEST['otter_form_filter']                = 'guard-form';
+
+		$query        = new WP_Query();
+		$query->query = array( 'post_type' => Form_Submissions::FORM_RECORD_TYPE );
+
+		$result = apply_filters( 'parse_query', $query );
+
+		$meta_query = isset( $result->query_vars['meta_query'] ) ? $result->query_vars['meta_query'] : array();
+
+		$found = false;
+		foreach ( $meta_query as $clause ) {
+			if (
+				is_array( $clause ) &&
+				isset( $clause['key'], $clause['value'] ) &&
+				Form_Submissions::FORM_RECORD_META_KEY === $clause['key'] &&
+				'guard-form' === $clause['value']
+			) {
+				$found = true;
+			}
+		}
+
+		remove_filter( 'product_otter_license_status', $license );
+		$pagenow = $previous_pagenow;
+		unset(
+			$_GET['post_type'],
+			$_GET['filter_action'],
+			$_GET['filters_nonce'],
+			$_GET['otter_form_filter'],
+			$_REQUEST['otter_form_filter']
+		);
+
+		$this->assertTrue( $found, 'Pro form filter should append a meta_query clause matching the form value.' );
+	}
 }
