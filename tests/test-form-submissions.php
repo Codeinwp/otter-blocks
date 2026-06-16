@@ -8,6 +8,7 @@
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
+use ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Export;
 use ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Post_Type;
 use ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions;
 use ThemeIsle\GutenbergBlocks\Tests\StripeHttpClientMock;
@@ -410,7 +411,7 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		$this->expectException( 'WPDieException' );
 		$this->expectExceptionMessage( 'Exporting submissions requires Otter Pro.' );
 
-		$this->submissions->export_submissions();
+		( new Form_Records_Export() )->export_submissions();
 	}
 
 	/**

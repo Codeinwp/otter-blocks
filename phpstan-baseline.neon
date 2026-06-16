@@ -1735,10 +1735,10 @@ parameters:
 			path: inc/plugins/class-form-submissions.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::export_submissions() has no return type specified.'
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Export::export_submissions() has no return type specified.'
 			identifier: missingType.return
 			count: 1
-			path: inc/plugins/class-form-submissions.php
+			path: inc/plugins/class-form-records-export.php
 
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_bulk_actions() return type has no value type specified in iterable type array.'
