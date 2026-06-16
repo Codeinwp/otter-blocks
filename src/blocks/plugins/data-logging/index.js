@@ -14,12 +14,16 @@ if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor'
 	let hasEditorLoaded = false;
 	let hasSaved = false;
 
-	// Activation funnel state.
-	// `activationFirstSaveDone` is persisted per-site via the `otter_activation_first_save`
-	// option so the first-save milestone fires exactly once per site (not once per browser).
-	// `activationFirstInsertFired` is a once-per-session guard for the first-insert milestone.
+	// Post-deploy activation funnel. Both milestones are persisted per-site (otter_activation_first_save /
+	// otter_activation_first_insert), and established sites are treated as already-activated (see fetch below).
 	let activationFirstSaveDone = false;
 	let activationFirstInsertFired = false;
+
+	// Guard the milestones until the per-site state is loaded, so a fast publish can't double-fire.
+	let settingsResolved = false;
+
+	// Baseline Otter-block count at load; first-insert fires only when the count later EXCEEDS it.
+	let activationInsertBaseline = null;
 
 	let otterBlocks = [];
 
@@ -86,10 +90,30 @@ if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor'
 				window.themeisleGutenberg.dataLogging = response.otter_blocks_logger_data;
 			}
 
-			// Persisted per-site marker so the first-save milestone fires once per site.
+			// Per-site markers so each milestone fires once per site.
 			if ( response.otter_activation_first_save ) {
 				activationFirstSaveDone = true;
 			}
+
+			if ( response.otter_activation_first_insert ) {
+				activationFirstInsertFired = true;
+			}
+
+			// Treat sites with prior Otter usage as already-activated, so long-time users aren't counted.
+			const loggerData = response.otter_blocks_logger_data;
+			const hasPriorUsage = loggerData && (
+				( Array.isArray( loggerData.blocks ) && 0 < loggerData.blocks.length ) ||
+				( Array.isArray( loggerData.templates ) && 0 < loggerData.templates.length )
+			);
+
+			if ( hasPriorUsage ) {
+				activationFirstSaveDone = true;
+				activationFirstInsertFired = true;
+			}
+
+			settingsResolved = true;
+		}).catch( () => {
+			settingsResolved = true;
 		});
 	});
 
@@ -205,7 +229,31 @@ if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor'
 			otter_activation_first_save: true
 		});
 
-		await model.save();
+		// Fail-open: a rare persist failure may slightly over-count rather than lose the milestone.
+		await model.save().catch( () => {} );
+	};
+
+	/**
+	 * Fire the per-site first-insert milestone and persist the marker (mirrors trackActivationFirstSave).
+	 */
+	const trackActivationFirstInsert = async() => {
+
+		// Guard before the async save so concurrent ticks can't re-fire.
+		activationFirstInsertFired = true;
+
+		window.oTrk?.set( 'activation-first-insert', {
+			feature: 'activation',
+			featureComponent: 'first-insert',
+			featureValue: 'true'
+		});
+
+		const model = new window.wp.api.models.Settings({
+
+			otter_activation_first_insert: true
+		});
+
+		// Fail-open: a rare persist failure may slightly over-count rather than lose the milestone.
+		await model.save().catch( () => {} );
 	};
 
 	subscribe( () => {
@@ -229,25 +277,22 @@ if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor'
 
 		otterBlocks = blocksTypes.filter( block => 'themeisle-blocks' === block.category ).map( block => block.name );
 
-		// PART B: first-insert milestone. Detect, via the store subscription, the first time an
-		// Otter-category block exists in the editor and fire once (once-per-session guard). This is
-		// intentionally NOT gated on save so the insert -> save drop-off remains computable.
-		if ( ! activationFirstInsertFired && Boolean( window.themeisleGutenberg.canTrack ) && 0 < otterBlocks.length && 0 < countOtterBlocks() ) {
-			activationFirstInsertFired = true;
-			window.oTrk?.set( 'activation-first-insert', {
-				feature: 'activation',
-				featureComponent: 'first-insert',
-				featureValue: 'true'
-			});
+		// PART B: first-insert. Record a baseline of Otter blocks already in the post on the first stable
+		// tick; fire only when the count later exceeds it (a real insert this session), not on open.
+		if ( settingsResolved && __unstableIsEditorReady() && 0 < otterBlocks.length ) {
+			if ( null === activationInsertBaseline ) {
+				activationInsertBaseline = countOtterBlocks();
+			} else if ( ! activationFirstInsertFired && Boolean( window.themeisleGutenberg.canTrack ) && countOtterBlocks() > activationInsertBaseline ) {
+				trackActivationFirstInsert();
+			}
 		}
 
 		if ( ( isPublishing || ( postPublished && isSaving ) ) && ! isAutoSaving && Boolean( window.themeisleGutenberg.canTrack ) ) {
 			hasSaved = true;
 			saveTrackingData();
 
-			// PART A: first-save milestone. On the first non-autosave publish/save of a post that
-			// contains at least one Otter block, fire the per-site once milestone + depth bucket.
-			if ( ! activationFirstSaveDone ) {
+			// PART A: first-save. First non-autosave publish/save of a post with an Otter block; per-site.
+			if ( settingsResolved && ! activationFirstSaveDone ) {
 				const otterBlockCount = countOtterBlocks();
 
 				if ( 0 < otterBlockCount ) {
