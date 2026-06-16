@@ -106,4 +106,61 @@ class Test_Options_Settings extends WP_UnitTestCase {
 		$this->assertSame( 'Authorization', $sanitized[0]['headers'][0]['key'] );
 		$this->assertSame( 'Bearer token', $sanitized[0]['headers'][0]['value'] );
 	}
+
+	/**
+	 * Ensure the AI usage sanitize callback enforces the stored shape: the
+	 * option is REST-writable, so non-integer counts and malformed entries
+	 * must not survive a write.
+	 */
+	public function test_ai_usage_sanitize_callback_enforces_shape() {
+		$registered_settings = get_registered_settings();
+		$callback            = $registered_settings['themeisle_otter_ai_usage']['sanitize_callback'];
+
+		$sanitized = call_user_func(
+			$callback,
+			array(
+				'usage_count' => array(
+					array(
+						'key'   => ' action<script> ',
+						'value' => '7',
+					),
+					array(
+						'key'   => 'negative',
+						'value' => -3,
+					),
+					array(
+						'key'   => 'corrupted',
+						'value' => 'not-a-number',
+					),
+					'not-an-entry',
+				),
+				'prompts'     => array(
+					array(
+						'key'    => 'action',
+						'values' => array( 'prompt one', 42, 'prompt two' ),
+					),
+					array(
+						'key'    => 'missing-values',
+						'values' => 'not-an-array',
+					),
+				),
+			)
+		);
+
+		$this->assertSame( 'action', $sanitized['usage_count'][0]['key'] );
+		$this->assertSame( 7, $sanitized['usage_count'][0]['value'] );
+		$this->assertSame( 0, $sanitized['usage_count'][1]['value'] );
+		$this->assertCount( 2, $sanitized['usage_count'] );
+		$this->assertSame( array( 'prompt one', 'prompt two' ), $sanitized['prompts'][0]['values'] );
+		$this->assertCount( 1, $sanitized['prompts'] );
+
+		// Non-array writes collapse to the empty shape.
+		$this->assertSame(
+			array(
+				'usage_count' => array(),
+				'prompts'     => array(),
+			),
+			call_user_func( $callback, 'garbage' )
+		);
+	}
 }

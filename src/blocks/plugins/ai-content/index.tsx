@@ -29,7 +29,7 @@ import { BlockControls } from '@wordpress/block-editor';
  */
 import { aiGeneration } from '../../helpers/icons';
 import './editor.scss';
-import { PromptsData, editLastConversation, injectActionIntoPrompt, retrieveEmbeddedPrompt, sendPromptToOpenAI, tryInjectIntoTemplate } from '../../helpers/prompt';
+import { PromptsData, editLastConversation, injectActionIntoPrompt, isAIBackendConfigured, retrieveEmbeddedPrompt, sendPromptToOpenAI, tryInjectIntoTemplate } from '../../helpers/prompt';
 import useSettings from '../../helpers/use-settings';
 import { openAiAPIKeyName } from '../../components/prompt';
 import { insertBlockBelow } from '../../helpers/block-utility';
@@ -76,7 +76,8 @@ const AIToolbar = ({
 	onClose
 }) => {
 	const [ getOption, _, status ] = useSettings();
-	const [ hasAPIKey, setHasAPIKey ] = useState<boolean>( false );
+
+	const [ hasAPIKey, setHasAPIKey ] = useState<boolean>( isAIBackendConfigured() );
 	const [ isProcessing, setIsProcessing ] = useState<Record<string, boolean>>({});
 	const [ displayError, setDisplayError ] = useState<string|undefined>( undefined );
 	const [ customActions, setCustomActions ] = useState<{title: string, prompt: string}[]>([]);
@@ -101,10 +102,13 @@ const AIToolbar = ({
 			return;
 		}
 
-		if ( 'loaded' === status && ! hasAPIKey ) {
-			const key = getOption( openAiAPIKeyName ) as string;
-			setHasAPIKey(  Boolean( key ) && 0 < key.length );
+		if ( 'loaded' === status ) {
 			setCustomActions( getOption( 'themeisle_blocks_settings_prompt_actions' ) as {title: string, prompt: string}[]);
+
+			if ( ! hasAPIKey ) {
+				const key = getOption( openAiAPIKeyName ) as string;
+				setHasAPIKey( Boolean( key ) && 0 < key.length );
+			}
 		}
 	}, [ status, getOption ]);
 
@@ -152,7 +156,7 @@ const AIToolbar = ({
 		}
 
 		if ( ! hasAPIKey ) {
-			setDisplayError( __( 'No Open API key detected. Please add your key.', 'otter-blocks' ) );
+			setDisplayError( __( 'No AI provider detected. Please set one up in Integrations.', 'otter-blocks' ) );
 			return;
 		}
 
@@ -183,12 +187,12 @@ const AIToolbar = ({
 				'otter_user_content': content
 			}
 		).then( ( response ) => {
-			if ( response.error ) {
-				setDisplayError( response.error?.message ?? response.error );
+			if ( ! response.ok ) {
+				setDisplayError( response.error.message );
 				return;
 			}
 
-			const blockContentRaw = response?.choices?.[0]?.message.content;
+			const blockContentRaw = response.content;
 
 			if ( ! blockContentRaw ) {
 				return;
@@ -203,9 +207,9 @@ const AIToolbar = ({
 				{
 					promptID: 'textTransformation',
 					resultHistory: [{
-						result: response?.choices?.[0]?.message.content ?? '',
+						result: blockContentRaw,
 						meta: {
-							usedToken: response?.usage.total_tokens,
+							usedToken: response.usedTokens,
 							prompt: embeddedPrompt.messages?.[ embeddedPrompt.messages.length - 1 ]?.content
 						}
 					}],
@@ -248,7 +252,7 @@ const AIToolbar = ({
 				( ! hasAPIKey ) && (
 					<MenuGroup>
 						<span className='o-menu-item-alignment' style={{ display: 'block', marginBottom: '10px' }}>
-							{ __( 'Please add your OpenAI API key in Integrations.', 'otter-blocks' ) }
+							{ __( 'Please set up an AI provider in Integrations.', 'otter-blocks' ) }
 						</span>
 						<ExternalLink className='o-menu-item-alignment' href={window.themeisleGutenberg.optionsPath} target="_blank" rel="noopener noreferrer">
 							{

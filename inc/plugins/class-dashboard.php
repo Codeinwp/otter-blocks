@@ -10,6 +10,7 @@ namespace ThemeIsle\GutenbergBlocks\Plugins;
 use ThemeIsle\GutenbergBlocks\Pro;
 use ThemeIsle\GutenbergBlocks\Plugins\FSE_Onboarding;
 use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
+use ThemeIsle\GutenbergBlocks\Server\AI_Client_Adaptor;
 
 /**
  * Class Dashboard
@@ -324,6 +325,9 @@ class Dashboard {
 			),
 			'neveInstalled'          => defined( 'NEVE_VERSION' ),
 			'hasPatternSources'      => Template_Cloud::has_used_pattern_sources(),
+			'aiClientAvailable'      => AI_Client_Adaptor::is_available(),
+			'aiClientSupported'      => function_exists( 'wp_ai_client_prompt' ),
+			'connectorsUrl'          => esc_url( admin_url( 'options-connectors.php' ) ),
 			'youtubePlaylistData'    => $this->get_youtube_playlist_data(),
 		);
 

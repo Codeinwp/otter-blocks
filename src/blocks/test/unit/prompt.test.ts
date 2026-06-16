@@ -3,6 +3,7 @@ import {
 	editLastConversation,
 	injectActionIntoPrompt,
 	injectConversationIntoPrompt,
+	normalizePromptResponse,
 	parseFormPromptResponseToBlocks,
 	tryInjectIntoTemplate,
 	tryParseResponse
@@ -77,6 +78,54 @@ describe( 'prompt helpers', () => {
 				expect.objectContaining({
 					label: 'Role',
 					options: 'Engineer\nDesigner'
+				})
+			);
+		});
+	});
+
+	describe( 'normalizePromptResponse', () => {
+		it( 'normalizes native route success responses', () => {
+			expect( normalizePromptResponse({
+				content: 'Native content',
+				usedTokens: 12,
+				format: 'text'
+			} as any ) ).toEqual(
+				expect.objectContaining({
+					ok: true,
+					content: 'Native content',
+					usedTokens: 12
+				})
+			);
+		});
+
+		it( 'defaults token usage to zero when missing', () => {
+			expect( normalizePromptResponse({
+				content: '{"fields":[]}',
+				format: 'json'
+			} as any ) ).toEqual(
+				expect.objectContaining({
+					ok: true,
+					content: '{"fields":[]}',
+					usedTokens: 0
+				})
+			);
+		});
+
+		it( 'returns a failed result for unexpected response shapes', () => {
+			expect( normalizePromptResponse({
+				error: {
+					code: 'system',
+					message: 'Failed',
+					param: null,
+					type: 'openai'
+				}
+			} as any ) ).toEqual(
+				expect.objectContaining({
+					ok: false,
+					error: expect.objectContaining({
+						code: 'invalid_response',
+						type: 'system'
+					})
 				})
 			);
 		});

@@ -699,9 +699,63 @@ class Options_Settings {
 			'themeisle_blocks_settings',
 			'themeisle_otter_ai_usage',
 			array(
-				'type'         => 'object',
-				'description'  => __( 'Usage of Otter AI features.', 'otter-blocks' ),
-				'show_in_rest' => array(
+				'type'              => 'object',
+				'description'       => __( 'Usage of Otter AI features.', 'otter-blocks' ),
+				'sanitize_callback' => function ( $value ) {
+					$sanitized = array(
+						'usage_count' => array(),
+						'prompts'     => array(),
+					);
+
+					if ( ! is_array( $value ) ) {
+						return $sanitized;
+					}
+
+					if ( isset( $value['usage_count'] ) && is_array( $value['usage_count'] ) ) {
+						foreach ( $value['usage_count'] as $item ) {
+							if ( ! is_array( $item ) || ! isset( $item['key'], $item['value'] ) || ! is_string( $item['key'] ) || ! is_numeric( $item['value'] ) ) {
+								continue;
+							}
+
+							$sanitized['usage_count'][] = array(
+								'key'   => substr( sanitize_text_field( $item['key'] ), 0, 100 ),
+								'value' => max( 0, (int) $item['value'] ),
+							);
+
+							if ( count( $sanitized['usage_count'] ) >= 50 ) {
+								break;
+							}
+						}
+					}
+
+					if ( isset( $value['prompts'] ) && is_array( $value['prompts'] ) ) {
+						foreach ( $value['prompts'] as $item ) {
+							if ( ! is_array( $item ) || ! isset( $item['key'], $item['values'] ) || ! is_string( $item['key'] ) || ! is_array( $item['values'] ) ) {
+								continue;
+							}
+
+							$values = array();
+
+							foreach ( $item['values'] as $prompt ) {
+								if ( is_string( $prompt ) ) {
+									$values[] = substr( sanitize_textarea_field( $prompt ), 0, 1000 );
+								}
+							}
+
+							$sanitized['prompts'][] = array(
+								'key'    => substr( sanitize_text_field( $item['key'] ), 0, 100 ),
+								'values' => array_slice( $values, -10 ),
+							);
+
+							if ( count( $sanitized['prompts'] ) >= 50 ) {
+								break;
+							}
+						}
+					}
+
+					return $sanitized;
+				},
+				'show_in_rest'      => array(
 					'schema' => array(
 						'type'       => 'object',
 						'properties' => array(
@@ -714,7 +768,7 @@ class Options_Settings {
 											'type' => 'string',
 										),
 										'value' => array(
-											'type' => 'string',
+											'type' => 'integer',
 										),
 									),
 								),
@@ -741,7 +795,7 @@ class Options_Settings {
 						),
 					),
 				),
-				'default'      => array(),
+				'default'           => array(),
 			)
 		);
 

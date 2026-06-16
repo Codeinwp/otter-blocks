@@ -11,6 +11,7 @@ use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\Gut
 use ThemeIsle\GutenbergBlocks\Plugins\Dashboard;
 use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
 use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
+use ThemeIsle\GutenbergBlocks\Server\AI_Client_Adaptor;
 
 /**
  * Class Registration.
@@ -247,6 +248,8 @@ class Registration {
 
 		global $wp_roles;
 
+		$is_wp_ai_backend = AI_Client_Adaptor::BACKEND_WP === AI_Client_Adaptor::resolve_backend();
+
 		wp_localize_script(
 			'otter-blocks',
 			'themeisleGutenberg',
@@ -293,7 +296,11 @@ class Registration {
 				'version'                 => OTTER_BLOCKS_VERSION,
 				'isRTL'                   => is_rtl(),
 				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true ),
-				'hasOpenAiKey'            => ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
+				'hasOpenAiKey'            => $is_wp_ai_backend || ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
+				'aiClientActive'          => $is_wp_ai_backend,
+				'aiClientSupported'       => function_exists( 'wp_ai_client_prompt' ),
+				'hasAIProvider'           => AI_Client_Adaptor::is_available(),
+				'connectorsUrl'           => esc_url( admin_url( 'options-connectors.php' ) ),
 				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
 			)
 		);
