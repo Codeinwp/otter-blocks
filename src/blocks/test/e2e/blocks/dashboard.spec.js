@@ -69,18 +69,52 @@ test.describe( 'Dashboard', () => {
 		}
 	});
 
-	test( 'toggle AI Block Toolbar', async({ page }) => {
+	test( 'toggle AI Block Toolbar', async({ admin, page, requestUtils }) => {
+
+		/*
+		 * The dashboard hydrates settings asynchronously and toggles render
+		 * unchecked until then, so reading the initial value from the UI races
+		 * hydration (the value can flip between the read and the click). Seed a
+		 * known state via the REST API instead, and use the seeded checked
+		 * toggles as hydration signals before interacting.
+		 */
+		await requestUtils.rest({
+			method: 'POST',
+			path: '/wp/v2/settings',
+			data: {
+				themeisle_blocks_settings_block_ai_toolbar_module: true,
+				themeisle_blocks_settings_css_module: true
+			}
+		});
+		await admin.visitAdminPage( 'admin.php?page=otter' );
 
 		const toggle = page.getByLabel( 'Enable AI Block Toolbar Module' );
-		const initialToggleValue = await toggle.isChecked();
+		const hydrationCanary = page.getByLabel( 'Enable Custom CSS Module' );
 
+		const waitForSave = () => page.waitForResponse( response =>
+			response.url().includes( 'wp/v2/settings' ) &&
+			[ 'POST', 'PUT' ].includes( response.request().method() )
+		);
+
+		// Checked only happens once the seeded value has hydrated.
+		await expect( toggle ).toBeChecked();
+
+		let saved = waitForSave();
 		await toggle.click();
-		await expect( toggle ).toBeChecked({ checked: ! initialToggleValue });
+		await expect( toggle ).not.toBeChecked();
+		await saved;
 
 		await page.reload();
 
+		// Wait for hydration before interacting, otherwise the click can be
+		// overwritten when the settings request resolves.
+		await expect( hydrationCanary ).toBeChecked();
+		await expect( toggle ).not.toBeChecked();
+
+		saved = waitForSave();
 		await toggle.click();
-		await expect( toggle ).toBeChecked({ checked: initialToggleValue });
+		await expect( toggle ).toBeChecked();
+		await saved;
 	});
 
 	test( 'edit editable custom actions', async({ page }) => {

@@ -6,9 +6,10 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 test.describe( 'AI Block', () => {
 	test.beforeEach( async({ admin, page }) => {
 
-		// Mock the api response of the otter/v1/generate endpoint for `textTransformation`.
-		// Pretty permalinks → REST is exposed at /wp-json/otter/v1/openai/generate (not the legacy /?rest_route=/otter/v1/generate).
-		await page.route( '**/wp-json/otter/v1/openai/generate*', async( route ) => {
+		// Mock the api response of the otter/v1/openai/generate endpoint for `textTransformation`.
+		// Match on the decoded URL so it works with both pretty permalinks
+		// (/wp-json/otter/v1/…) and plain permalinks (/?rest_route=%2Fotter%2Fv1%2F…).
+		await page.route( url => decodeURIComponent( url.href ).includes( 'otter/v1/openai/generate' ), async( route ) => {
 
 			const request = route.request();
 			if ( 'POST' !== request.method() ) {
@@ -47,10 +48,10 @@ test.describe( 'AI Block', () => {
 		});
 
 		// Wait for the prompt list to load so embeddedPrompts is populated before "Generate".
-		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
-		await page.getByRole( 'button', { name: 'Generate' }).click();
-		await page.getByRole( 'button', { name: 'Replace' }).click();
+		await page.waitForResponse( r => decodeURIComponent( r.url() ).includes( 'otter/v1/openai/prompt' ) ).catch( () => null );
+		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
 
 		const blocks = await editor.getBlocks();
 
@@ -86,12 +87,12 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
-		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
-		await page.getByRole( 'button', { name: 'Generate' }).click();
-		await page.getByRole( 'button', { name: 'Replace' }).click();
+		await page.waitForResponse( r => decodeURIComponent( r.url() ).includes( 'otter/v1/openai/prompt' ) ).catch( () => null );
+		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
 
-		await expect( page.getByText( 'Target Block.' ) ).toBeHidden();
+		await expect( editor.canvas.getByText( 'Target Block.' ) ).toBeHidden();
 	});
 
 	test( 'insert below action', async({ editor, page }) => {
@@ -102,16 +103,16 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
-		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
-		await page.getByRole( 'button', { name: 'Generate' }).click();
-		await page.getByRole( 'button', { name: 'Insert below' }).click();
+		await page.waitForResponse( r => decodeURIComponent( r.url() ).includes( 'otter/v1/openai/prompt' ) ).catch( () => null );
+		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Insert below' }).click();
 
 		const blocks = await editor.getBlocks();
 
 		expect( blocks.some( block => 'themeisle-blocks/content-generator' === block.name ) ).toBe( true ); // The block is still present.
-		await expect( page.getByText( 'Discover the Next Frontier' ).nth( 0 ) ).toBeVisible(); // The header in the AI block content.
-		await expect( page.getByText( 'Discover the Next Frontier' ).nth( 1 ) ).toBeVisible(); // The header inserted below.
+		await expect( editor.canvas.getByText( 'Discover the Next Frontier' ).nth( 0 ) ).toBeVisible(); // The header in the AI block content.
+		await expect( editor.canvas.getByText( 'Discover the Next Frontier' ).nth( 1 ) ).toBeVisible(); // The header inserted below.
 	});
 
 	test( 'use last prompt on text transform actions from history list', async({ editor, page }) => {
@@ -123,6 +124,6 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
-		await expect( page.getByText( 'Expand or elaborate on the following: Make a nice text' ) ).toBeVisible();
+		await expect( editor.canvas.getByText( 'Expand or elaborate on the following: Make a nice text' ) ).toBeVisible();
 	});
 });

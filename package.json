@@ -16,6 +16,8 @@
 		"build-dev": "NODE_ENV=development npm run build",
 		"analyzer": "NODE_ANALYZER=true npm run build",
 		"lint": "wp-scripts lint-js ./src",
+		"lint:block-api": "node bin/check-block-api-version.mjs",
+		"create-block": "node bin/create-block.mjs",
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
 		"release": "semantic-release",

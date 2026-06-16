@@ -43,9 +43,9 @@ test.describe( 'AI Block via WP AI Client', () => {
 
 		// Wait for the prompt list to load so embeddedPrompts is populated before "Generate".
 		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about anything.' );
-		await page.getByRole( 'button', { name: 'Generate' }).click();
-		await page.getByRole( 'button', { name: 'Replace' }).click();
+		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about anything.' );
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
 
 		const blocks = await editor.getBlocks();
 
@@ -62,16 +62,16 @@ test.describe( 'AI Block via WP AI Client', () => {
 		});
 
 		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await page.getByPlaceholder( 'Start describing what form' ).type( 'A simple contact form.' );
-		await page.getByRole( 'button', { name: 'Generate' }).click();
+		await editor.canvas.getByPlaceholder( 'Start describing what form' ).type( 'A simple contact form.' );
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
 
 		// The mocked provider returns {"fields":[...]} via the forced-JSON path
 		// (functions/function_call → as_json_response → format: json), which
 		// the block parses into form field blocks for preview.
-		await expect( page.getByText( 'Full Name' ) ).toBeVisible();
-		await expect( page.getByText( 'Email Address' ) ).toBeVisible();
+		await expect( editor.canvas.getByText( 'Full Name' ) ).toBeVisible();
+		await expect( editor.canvas.getByText( 'Email Address' ) ).toBeVisible();
 
-		await page.getByRole( 'button', { name: 'Replace' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
 
 		const blocks = await editor.getBlocks();
 

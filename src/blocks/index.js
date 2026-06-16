@@ -15,8 +15,6 @@ import { dispatch, select, subscribe } from '@wordpress/data';
 
 import domReady from '@wordpress/dom-ready';
 
-import { createRoot } from '@wordpress/element';
-
 import { addFilter } from '@wordpress/hooks';
 
 /**
@@ -28,7 +26,10 @@ import {
 	otterIconColored as icon
 } from './helpers/icons.js';
 import { setUtm } from './helpers/helper-functions.js';
-import { GlobalStateMemory } from './helpers/block-utility';
+import {
+	GlobalStateMemory,
+	watchEditorIframeIconGradient
+} from './helpers/block-utility';
 
 updateCategory( 'themeisle-blocks', { icon });
 updateCategory( 'themeisle-woocommerce-blocks', { icon });
@@ -157,33 +158,7 @@ domReady( () => {
 		addCategory();
 	}, 500 );
 
-	if ( document.querySelector( 'svg.o-icon-gradient' ) ) {
-		return;
-	}
-
-	const gradient = document.createElement( 'DIV' );
-	gradient.setAttribute( 'style', 'height: 0; width: 0; overflow: hidden;' );
-	gradient.setAttribute( 'aria-hidden', 'true' );
-	document.querySelector( 'body' ).appendChild( gradient );
-
-	const root = createRoot( gradient );
-
-	root.render(
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			className="o-icon-gradient"
-			height="0"
-			width="0"
-			style={ { opacity: 0 } }
-		>
-			<defs>
-				<linearGradient id="o-icon-fill">
-					<stop offset="0%" stopColor="#ED6F57" stopOpacity="1" />
-					<stop offset="100%" stopColor="#F22B6C" stopOpacity="1" />
-				</linearGradient>
-			</defs>
-		</svg>
-	);
+	watchEditorIframeIconGradient();
 });
 
 window.otterStateMemory = new GlobalStateMemory();

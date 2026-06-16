@@ -56,6 +56,52 @@ test.describe( 'Slider Block', () => {
 		expect( sliderBlock.attributes.images.length ).toBeGreaterThan( 0 );
 	});
 
+	test( 'duplicate does not throw NotFoundError', async({ editor, page }) => {
+		const images = [
+			{
+				id: uploadedMedia.id,
+				url: uploadedMedia.source_url,
+				alt: uploadedMedia.alt_text
+			}
+		];
+
+		images.push( images[ 0 ] );
+
+		await editor.insertBlock({
+			name: 'themeisle-blocks/slider',
+			attributes: {
+				images
+			}
+		});
+
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 1 );
+
+		const errors = [];
+		const onConsole = msg => {
+			if ( 'error' === msg.type() ) {
+				errors.push( msg.text() );
+			}
+		};
+		const onPageError = err => errors.push( err.message );
+
+		page.on( 'console', onConsole );
+		page.on( 'pageerror', onPageError );
+
+		// The slider captures key events, so the Control+Shift+D shortcut is
+		// unreliable here; duplicate via the block toolbar instead.
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' } ).click();
+		await editor.clickBlockOptionsMenuItem( 'Duplicate' );
+
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 2 );
+		await page.waitForTimeout( 250 );
+
+		page.off( 'console', onConsole );
+		page.off( 'pageerror', onPageError );
+
+		const notFoundErrors = errors.filter( ( text ) => text?.includes( 'NotFoundError' ) || text?.includes( 'removeChild' ) );
+		expect( notFoundErrors ).toEqual([]);
+	});
+
 	test( 'check move buttons', async({ editor, page }) => {
 
 		const images = [
@@ -81,11 +127,10 @@ test.describe( 'Slider Block', () => {
 
 		expect( sliderBlock.attributes.images.length ).toBeGreaterThan( 0 );
 
-		// themeisle-blocks/slider opts out of the iframed canvas, so the block renders at page level.
-		await page.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).first().click();
-		await page.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).nth( 1 ).click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).first().click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).nth( 1 ).click();
 
-		await expect( page.locator( 'div:nth-child(2) > figure > .wp-block-themeisle-blocks-slider-item' ) ).toBeVisible();
+		await expect( editor.canvas.locator( 'div:nth-child(2) > figure > .wp-block-themeisle-blocks-slider-item' ) ).toBeVisible();
 	});
 
 	test( 'check frontend rendering and interaction', async({ page, editor }) => {

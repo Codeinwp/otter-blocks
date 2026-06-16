@@ -41,13 +41,13 @@ test.describe( 'AI surfaces without a configured backend', () => {
 		const aiClientSupported = await page.evaluate( () => Boolean( window.themeisleGutenberg?.aiClientSupported ) );
 
 		if ( aiClientSupported ) {
-			await expect( page.getByText( 'No AI provider is configured. Set one up under Settings > Connectors' ) ).toBeVisible();
-			await expect( page.getByRole( 'link', { name: 'Manage Connectors' }) ).toBeVisible();
+			await expect( editor.canvas.getByText( 'No AI provider is configured. Set one up under Settings > Connectors' ) ).toBeVisible();
+			await expect( editor.canvas.getByRole( 'link', { name: 'Manage Connectors' }) ).toBeVisible();
 		} else {
-			await expect( page.getByText( 'API Key not found. Please introduce the API Key' ) ).toBeVisible();
+			await expect( editor.canvas.getByText( 'API Key not found. Please introduce the API Key' ) ).toBeVisible();
 		}
 
-		await expect( page.getByPlaceholder( 'Start describing what content' ) ).toBeHidden();
+		await expect( editor.canvas.getByPlaceholder( 'Start describing what content' ) ).toBeHidden();
 	});
 
 	test( 'AI toolbar guides the user to set up a provider', async({ editor, page }) => {

@@ -32,6 +32,11 @@ const OPTION_WHITELIST = array(
 	'otter_iphub_api_key',
 	'themeisle_blocks_settings_onboarding',
 	'connectors_ai_openai_api_key',
+	'themeisle_google_map_block_api_key',
+	// Form block persists submissions config here; tests reset it to avoid
+	// cross-run accumulation that eventually fails REST schema validation.
+	'themeisle_blocks_form_emails',
+	'themeisle_blocks_form_fields_option',
 );
 
 /**

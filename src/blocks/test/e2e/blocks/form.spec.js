@@ -1,18 +1,27 @@
 /**
  * WordPress dependencies
  */
-import { test, expect } from '@wordpress/e2e-test-utils-playwright';
+import { expect } from '@wordpress/e2e-test-utils-playwright';
 
 /**
  * Internal dependencies
  */
+import { test } from '../fixtures';
 import { expectBlockByName, insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
 import { expectFormOptionSavedNotice, findSavedFormEmail, getSavedFormEmails, insertContactForm, openFormOptions, showFormOption } from '../helpers/forms';
 import { expectSuccessMessage, visibleText } from '../helpers/frontend';
 
 test.describe( 'Form Block', () => {
 
-	test.beforeEach( async({ admin }) => {
+	test.beforeEach( async({ admin, otterUtils }) => {
+		// Start each test from a clean form-options state. The form block appends
+		// to `themeisle_blocks_form_emails`, so without this the option accumulates
+		// across runs until it eventually fails REST schema validation (reads as null).
+		await otterUtils.setOptions({
+			themeisle_blocks_form_emails: [],
+			themeisle_blocks_form_fields_option: []
+		});
+
 		await admin.createNewPost();
 	});
 
