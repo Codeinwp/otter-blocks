@@ -8,7 +8,8 @@
 return array(
 	'title'      => __( 'Centered Hero', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'header' ),
-	'content'    => '<!-- wp:atomic-wind/box {"tagName":"section","align":"full","className":"bg-white px-6 pt-24 pb-20"} -->
+	'description' => __( 'Centered hero header above the fold with rating badge, headline, dual buttons and a browser dashboard mockup for landing page intro and product launch.', 'otter-blocks' ),
+	'content'  => '<!-- wp:atomic-wind/box {"tagName":"section","align":"full","className":"bg-white px-6 pt-24 pb-20"} -->
 <section class="wp-block-atomic-wind-box alignfull bg-white px-6 pt-24 pb-20"><!-- wp:atomic-wind/box {"className":"mx-auto flex max-w-4xl flex-col items-center gap-6 text-center"} -->
 <div class="wp-block-atomic-wind-box mx-auto flex max-w-4xl flex-col items-center gap-6 text-center"><!-- wp:atomic-wind/box {"className":"inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5"} -->
 <div class="wp-block-atomic-wind-box inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5"><!-- wp:atomic-wind/icon {"icon":"sparkles","className":"size-4 text-indigo-600"} /-->

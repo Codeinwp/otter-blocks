@@ -8,7 +8,8 @@
 return array(
 	'title'      => __( 'CTA Banner', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'call-to-action' ),
-	'content'    => '<!-- wp:atomic-wind/box {"tagName":"section","align":"full","className":"bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 px-6 py-24"} -->
+	'description' => __( 'Centered full-width gradient call-to-action banner with badge, headline and dual buttons for sign-up conversion, lead capture, and launch offers.', 'otter-blocks' ),
+	'content'  => '<!-- wp:atomic-wind/box {"tagName":"section","align":"full","className":"bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 px-6 py-24"} -->
 <section class="wp-block-atomic-wind-box alignfull bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 px-6 py-24"><!-- wp:atomic-wind/box {"className":"mx-auto flex max-w-3xl flex-col items-center gap-6 text-center"} -->
 <div class="wp-block-atomic-wind-box mx-auto flex max-w-3xl flex-col items-center gap-6 text-center"><!-- wp:atomic-wind/box {"className":"inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5"} -->
 <div class="wp-block-atomic-wind-box inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5"><!-- wp:atomic-wind/icon {"icon":"rocket","className":"size-4 text-white m-0"} /-->

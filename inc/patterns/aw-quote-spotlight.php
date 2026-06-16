@@ -8,7 +8,8 @@
 return array(
 	'title'      => __( 'Spotlight Quote', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'testimonials' ),
-	'content'    => '<!-- wp:atomic-wind/box {"tagName":"section","align":"full","className":"bg-slate-950 px-6 py-24"} -->
+	'description' => __( 'Centered dark testimonial spotlight with large pull quote, five-star rating and author avatar for customer review, social proof, and single quote feature.', 'otter-blocks' ),
+	'content'  => '<!-- wp:atomic-wind/box {"tagName":"section","align":"full","className":"bg-slate-950 px-6 py-24"} -->
 <section class="wp-block-atomic-wind-box alignfull bg-slate-950 px-6 py-24"><!-- wp:atomic-wind/box {"className":"mx-auto flex max-w-3xl flex-col items-center gap-8 text-center"} -->
 <div class="wp-block-atomic-wind-box mx-auto flex max-w-3xl flex-col items-center gap-8 text-center"><!-- wp:atomic-wind/box {"className":"flex size-14 items-center justify-center rounded-2xl bg-indigo-600/20"} -->
 <div class="wp-block-atomic-wind-box flex size-14 items-center justify-center rounded-2xl bg-indigo-600/20"><!-- wp:atomic-wind/icon {"icon":"quote","className":"size-7 text-indigo-400"} /--></div>

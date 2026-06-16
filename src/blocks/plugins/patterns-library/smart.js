@@ -488,11 +488,13 @@ export const createSearchIndex = ( patterns, categoryLabels ) => new Fuse(
 		title: pattern.title,
 		slug: getSlugWords( pattern ),
 		categories: pattern.categories.map( category => categoryLabels[ category ] || '' ).filter( Boolean ),
+		description: pattern.description || '',
 		text: getSearchText( pattern )
 	}) ),
 	{
 		keys: [
 			{ name: 'title', weight: 3 },
+			{ name: 'description', weight: 2 },
 			{ name: 'slug', weight: 1.5 },
 			{ name: 'categories', weight: 1.5 },
 			{ name: 'text', weight: 0.5 }
