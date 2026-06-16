@@ -998,9 +998,11 @@ class Form_Server {
 
 			$body = 'secret=' . rawurlencode( (string) $secret ) . '&response=' . rawurlencode( (string) $form_data->get_data_from_payload( 'token' ) );
 
+			// phpcs:disable WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
 			if ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
 				$body .= '&remoteip=' . rawurlencode( sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) );
 			}
+			// phpcs:enable WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
 
 			$resp = wp_remote_post(
 				$verify_url,
