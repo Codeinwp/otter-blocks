@@ -569,11 +569,13 @@ class Registration {
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
 					'reRecaptchaAPIURL'  => apply_filters( 'otter_blocks_recaptcha_api_url', 'https://www.google.com/recaptcha/api.js' ),
+					'turnstileSitekey'   => get_option( 'themeisle_cloudflare_turnstile_site_key' ),
+					'turnstileAPIURL'    => apply_filters( 'otter_blocks_turnstile_api_url', 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit' ),
 					'root'               => esc_url_raw( rest_url() ),
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
 						'submission'           => __( 'Form submission from', 'otter-blocks' ),
-						'captcha-not-loaded'   => __( 'Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' ),
+						'captcha-not-loaded'   => __( 'Captcha is not loaded. Please check your browser plugins to allow it.', 'otter-blocks' ),
 						'check-captcha'        => __( 'Please check the captcha.', 'otter-blocks' ),
 						'invalid-email'        => __( 'The email address is invalid!', 'otter-blocks' ),
 						'already-registered'   => __( 'The email was already registered!', 'otter-blocks' ),
@@ -767,6 +769,7 @@ class Registration {
 	public function register_blocks() {
 		$dynamic_blocks = array(
 			'about-author'         => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'form-captcha'         => '\ThemeIsle\GutenbergBlocks\Render\Form_Captcha_Block',
 			'form-nonce'           => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 			'google-map'           => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 			'leaflet-map'          => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
@@ -794,6 +797,7 @@ class Registration {
 			'flip',
 			'font-awesome-icons',
 			'form',
+			'form-captcha',
 			'form-input',
 			'form-nonce',
 			'form-textarea',

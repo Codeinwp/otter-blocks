@@ -1084,12 +1084,41 @@ class Form_Server {
 			$form_data->set_error( Form_Data_Response::ERROR_MISSING_CAPTCHA );
 		}
 
-		if ( $form_data->payload_has( 'token' ) && ! $form_data->has_error() ) {
-			$secret = get_option( 'themeisle_google_captcha_api_secret_key' );
-			$resp   = wp_remote_post(
-				apply_filters( 'otter_blocks_recaptcha_verify_url', 'https://www.google.com/recaptcha/api/siteverify' ),
+		if ( $form_options->form_has_captcha() && $form_data->payload_has( 'token' ) && ! $form_data->has_error() ) {
+
+			// The saved form options are authoritative; the payload value is only
+			// a fallback for forms saved before the provider was stored with them.
+			if ( $form_options->has_captcha_provider() ) {
+				$provider = $form_options->get_captcha_provider();
+			} else {
+				$provider = $form_data->payload_has( 'captchaProvider' ) ? sanitize_key( $form_data->get_data_from_payload( 'captchaProvider' ) ) : 'recaptcha';
+			}
+
+			if ( 'turnstile' === $provider ) {
+				$secret     = get_option( 'themeisle_cloudflare_turnstile_secret_key' );
+				$verify_url = apply_filters( 'otter_blocks_turnstile_verify_url', 'https://challenges.cloudflare.com/turnstile/v0/siteverify' );
+			} else {
+				$secret     = get_option( 'themeisle_google_captcha_api_secret_key' );
+				$verify_url = apply_filters( 'otter_blocks_recaptcha_verify_url', 'https://www.google.com/recaptcha/api/siteverify' );
+			}
+
+			if ( empty( $secret ) ) {
+				$form_data->set_error( Form_Data_Response::ERROR_CAPTCHA_NOT_CONFIGURED );
+				return $form_data;
+			}
+
+			$body = 'secret=' . rawurlencode( (string) $secret ) . '&response=' . rawurlencode( (string) $form_data->get_data_from_payload( 'token' ) );
+
+			// phpcs:disable WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+			if ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
+				$body .= '&remoteip=' . rawurlencode( sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) );
+			}
+			// phpcs:enable WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+
+			$resp = wp_remote_post(
+				$verify_url,
 				array(
-					'body'    => 'secret=' . $secret . '&response=' . $form_data->get_data_from_payload( 'token' ),
+					'body'    => $body,
 					'headers' => [
 						'Content-Type' => 'application/x-www-form-urlencoded',
 					],

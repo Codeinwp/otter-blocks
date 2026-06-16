@@ -48,6 +48,11 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private $http_filter = null;
 
 	/**
+	 * @var string[]
+	 */
+	private $http_requests = array();
+
+	/**
 	 * @var callable|null
 	 */
 	private $record_confirm_filter = null;
@@ -79,6 +84,7 @@ class Test_Form_Server extends WP_UnitTestCase {
 
 		$this->original_providers = $this->form_providers->providers;
 		$this->mail_requests      = array();
+		$this->http_requests      = array();
 
 		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option() ) );
 		update_option( 'themeisle_blocks_form_fields_option', array() );
@@ -121,6 +127,7 @@ class Test_Form_Server extends WP_UnitTestCase {
 		delete_option( 'themeisle_blocks_form_emails' );
 		delete_option( 'themeisle_blocks_form_fields_option' );
 		delete_option( 'themeisle_google_captcha_api_secret_key' );
+		delete_option( 'themeisle_cloudflare_turnstile_secret_key' );
 		delete_transient( 'contact_form_autoresponder_error' );
 		delete_transient( 'contact_form_alert_delivery_email' );
 		delete_transient( 'contact_form_alert_captcha_provider' );
@@ -1325,6 +1332,230 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure failed Turnstile verification blocks submission.
+	 */
+	public function test_frontend_submission_rejects_invalid_turnstile_token() {
+		$this->mock_turnstile( false );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'       => true,
+						'captchaProvider'  => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'invalid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN, $data['code'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure successful Turnstile verification allows the normal submit path.
+	 */
+	public function test_frontend_submission_accepts_valid_turnstile_token() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'valid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertSame( Form_Data_Response::SUCCESS_EMAIL_SEND, $data['code'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure the saved form provider wins over the payload one, so a client
+	 * cannot downgrade a Turnstile form to reCAPTCHA when both keys are set.
+	 */
+	public function test_frontend_submission_ignores_payload_captcha_provider_when_form_sets_one() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token'           => 'valid-token',
+						'captchaProvider' => 'recaptcha',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure the payload provider is still used for legacy forms saved before
+	 * the provider was part of the form options.
+	 */
+	public function test_frontend_submission_uses_payload_captcha_provider_for_legacy_forms() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha' => true,
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token'           => 'valid-token',
+						'captchaProvider' => 'turnstile',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure a captcha form with no API keys configured rejects the submission
+	 * without calling the verification service.
+	 */
+	public function test_frontend_submission_rejects_captcha_when_keys_not_configured() {
+		$this->http_filter = function ( $preempt, $args, $url ) {
+			$this->http_requests[] = $url;
+			return array(
+				'response' => array(
+					'code' => 200,
+				),
+				'body'     => wp_json_encode( array( 'success' => true ) ),
+			);
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'valid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_CAPTCHA_NOT_CONFIGURED, $data['code'] );
+		$this->assertEmpty( $this->http_requests );
+	}
+
+	/**
+	 * Ensure the visitor IP is forwarded to the verification service.
+	 */
+	public function test_frontend_submission_sends_remoteip_to_captcha_service() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.7';
+		$captured_body          = null;
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args ) use ( &$captured_body ) {
+				$captured_body = $args['body'];
+				return $preempt;
+			},
+			9,
+			2
+		);
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'valid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertStringContainsString( 'remoteip=203.0.113.7', $captured_body );
+	}
+
+	/**
 	 * Ensure temporary submissions validate but skip provider side effects.
 	 */
 	public function test_frontend_temporary_submission_skips_default_email() {
@@ -2155,7 +2386,32 @@ class Test_Form_Server extends WP_UnitTestCase {
 	 */
 	private function mock_captcha( $success ) {
 		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
-		$this->http_filter = function () use ( $success ) {
+		$this->http_filter = function ( $preempt, $args, $url ) use ( $success ) {
+			$this->http_requests[] = $url;
+			return array(
+				'response' => array(
+					'code' => 200,
+				),
+				'body'     => wp_json_encode(
+					array(
+						'success' => $success,
+					)
+				),
+			);
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+	}
+
+	/**
+	 * Mock Turnstile HTTP verification.
+	 *
+	 * @param bool $success Captcha success state.
+	 * @return void
+	 */
+	private function mock_turnstile( $success ) {
+		update_option( 'themeisle_cloudflare_turnstile_secret_key', 'turnstile-secret-key' );
+		$this->http_filter = function ( $preempt, $args, $url ) use ( $success ) {
+			$this->http_requests[] = $url;
 			return array(
 				'response' => array(
 					'code' => 200,

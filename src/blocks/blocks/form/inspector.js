@@ -257,23 +257,24 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 				) }
 			</ToolsPanelItem>
 
-			<ToolsPanelItem
-				hasValue={ () => true === attributes.hasCaptcha }
-				label={ __( 'Enable reCaptcha', 'otter-blocks' ) }
-				onSelect={ () => setAttributes({ hasCaptcha: true }) }
-				onDeselect={ () => setAttributes({ hasCaptcha: false }) }
-				isShownByDefault={ false }
-			>
-				<Notice
-					notice={
-						<div>
-							{ __( 'Captcha is activated. You can modify the API Keys in Integrations tab from Settings > Otter.', 'otter-blocks' ) }
-							<ExternalLink href={ ( window?.themeisleGutenberg?.optionsPath ) }>{ __( 'Go to Dashboard.', 'otter-blocks' ) }</ExternalLink>
-						</div>
-					}
-					variant="help"
-				/>
-			</ToolsPanelItem>
+			{ true === attributes.hasCaptcha && (
+				<ToolsPanelItem
+					hasValue={ () => true === attributes.hasCaptcha }
+					label={ __( 'Enable Captcha', 'otter-blocks' ) }
+					onDeselect={ () => setAttributes({ hasCaptcha: false }) }
+					isShownByDefault={ false }
+				>
+					<Notice
+						notice={
+							<div>
+								{ __( 'This setting is deprecated. Captcha has moved to its own block — once disabled, add captcha back by inserting the Captcha block inside the form. You can modify the API Keys in Integrations tab from Settings > Otter.', 'otter-blocks' ) }
+								<ExternalLink href={ ( window?.themeisleGutenberg?.optionsPath ) }>{ __( 'Go to Dashboard.', 'otter-blocks' ) }</ExternalLink>
+							</div>
+						}
+						variant="help"
+					/>
+				</ToolsPanelItem>
+			) }
 
 
 			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
