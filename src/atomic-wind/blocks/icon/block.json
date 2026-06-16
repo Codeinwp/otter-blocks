@@ -11,6 +11,14 @@
 		"icon": {
 			"type": "string",
 			"default": ""
+		},
+		"customSvgEnabled": {
+			"type": "boolean",
+			"default": false
+		},
+		"customSvg": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {

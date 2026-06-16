@@ -1,47 +1,166 @@
 /**
+ * External dependencies.
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
 
-import { parse } from '@wordpress/blocks';
+import {
+	useEffect,
+	useRef
+} from '@wordpress/element';
 
-import { BlockPreview } from '@wordpress/block-editor';
+import {
+	close,
+	Icon,
+	lock,
+	plus
+} from '@wordpress/icons';
 
-import { Button } from '@wordpress/components';
+/**
+ * Internal dependencies.
+ */
+import {
+	heartIcon,
+	heartFilledIcon
+} from '../../helpers/icons';
 
-const Preview = ({
-	content,
-	onBack,
-	onInsert
+import {
+	AsyncPreview,
+	ParsedPreview,
+	ProThumb,
+	QueuedPreview
+} from './template';
+
+import { previewAccent } from './accent';
+
+import { useAtomicCss } from './atomic';
+
+const SimilarCard = ({
+	pattern,
+	accent,
+	onClick
 }) => {
 	return (
-		<>
-			<div className="o-library__preview">
-				<BlockPreview
-					blocks={ parse( content ) }
-					viewportWidth={ 1400 }
-					additionalStyles={ [
-						{ css: ':root { --parent-vh: 850px; }' }
-					] }
-				/>
-			</div>
+		<button className="o-library__similar-card" onClick={ onClick }>
+			<span className="o-library__similar-thumb">
+				{ pattern.isPro
+					? <ProThumb pattern={ pattern } />
+					: <QueuedPreview pattern={ pattern } accent={ accent } /> }
+			</span>
 
-			<div className="o-library__modal__footer">
-				<Button
-					variant="tertiary"
-					onClick={ onBack }
-				>
-					{ __( 'Back', 'otter-blocks' ) }
-				</Button>
+			<span className="o-library__similar-name">{ pattern.title }</span>
+		</button>
+	);
+};
 
-				<Button
-					variant="primary"
-					onClick={ onInsert }
-				>
-					{ __( 'Insert', 'otter-blocks' ) }
-				</Button>
+const Preview = ({
+	pattern,
+	categoryLabel,
+	isPage = false,
+	isFavorite = false,
+	accent = null,
+	similar = [],
+	onFavorite,
+	onClose,
+	onInsert,
+	onPreviewOther
+}) => {
+	const isPro = Boolean( pattern.isPro );
+	const { pattern: derived, css: accentCss } = previewAccent( pattern, accent );
+	const { css: atomicCss, isReady: hasAtomicCss } = useAtomicCss( derived );
+
+	// Jumping between patterns via "More like this" keeps the modal mounted —
+	// start each pattern at the top of its preview.
+	const bodyRef = useRef( null );
+
+	useEffect( () => {
+		bodyRef.current?.scrollTo( 0, 0 );
+	}, [ pattern.name ]);
+
+	return (
+		<div className="o-library__pv-scrim" role="presentation" onClick={ onClose }>
+			<div
+				className="o-library__pv"
+				role="dialog"
+				aria-modal="true"
+				aria-label={ pattern.title }
+				onClick={ event => event.stopPropagation() }
+			>
+				<div className="o-library__pv-head">
+					<div>
+						<div className="o-library__pv-title">{ pattern.title }</div>
+						{ Boolean( categoryLabel ) && <div className="o-library__pv-cat">{ categoryLabel }</div> }
+					</div>
+
+					<div className="o-library__pv-actions">
+						<button
+							className={ classnames( 'o-library__iconbtn', { 'is-fav': isFavorite }) }
+							title={ isFavorite ? __( 'Remove from favorites', 'otter-blocks' ) : __( 'Add to favorites', 'otter-blocks' ) }
+							onClick={ onFavorite }
+						>
+							{ ( isFavorite ? heartFilledIcon : heartIcon )({ width: 20, height: 20 }) }
+						</button>
+
+						<button className="o-library__btn is-primary is-large" onClick={ onInsert }>
+							<Icon icon={ isPro ? lock : plus } size={ 20 } />
+							{ isPro ? __( 'Get with Otter Pro', 'otter-blocks' ) : __( 'Insert template', 'otter-blocks' ) }
+						</button>
+
+						<button
+							className="o-library__iconbtn"
+							title={ __( 'Close preview', 'otter-blocks' ) }
+							onClick={ onClose }
+						>
+							<Icon icon={ close } size={ 20 } />
+						</button>
+					</div>
+				</div>
+
+				<div className="o-library__pv-body" ref={ bodyRef }>
+					<div className={ classnames( 'o-library__pv-frame', { 'is-page': isPage, 'is-pro': isPro }) }>
+						{ /* Pro patterns ship no content — show the screenshot. */ }
+						{ isPro ? (
+							<ProThumb pattern={ pattern } />
+						) : /* Keyed per pattern: swapping blocks inside a live BlockPreview
+						     re-renders its iframe in place, flashing the whole frame white.
+						     Remounting through the async queue shows the skeleton instead. */
+						hasAtomicCss ? (
+							<AsyncPreview
+								key={ derived.name }
+								placeholder={ <div className="o-library__pv-skeleton" /> }
+							>
+								<ParsedPreview
+									pattern={ derived }
+									css={ [ atomicCss, accentCss ] }
+									placeholder={ <div className="o-library__pv-skeleton" /> }
+								/>
+							</AsyncPreview>
+						) : <div className="o-library__pv-skeleton" /> }
+					</div>
+
+					{ Boolean( similar.length ) && (
+						<div className="o-library__similar">
+							<div className="o-library__similar-head">{ __( 'More like this', 'otter-blocks' ) }</div>
+
+							<div className="o-library__similar-row">
+								{ similar.map( item => (
+									<SimilarCard
+										key={ item.name }
+										pattern={ item }
+										accent={ accent }
+										onClick={ () => onPreviewOther( item ) }
+									/>
+								) ) }
+							</div>
+						</div>
+					) }
+				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

@@ -367,6 +367,8 @@ const Inspector = ({
 		responsiveGetAttributes
 	} = useResponsiveAttributes( setAttributes );
 
+	const formContext = useContext( FormContext );
+
 	const {
 		listIDOptions,
 		setListIDOptions,
@@ -381,7 +383,7 @@ const Inspector = ({
 		children,
 		inputFieldActions,
 		hasInnerBlocks
-	} = useContext( FormContext );
+	} = formContext;
 
 	const inputFields = selectAllFieldsFromForm( children );
 
@@ -479,7 +481,7 @@ const Inspector = ({
 											/>,
 											formOptions,
 											setFormOption,
-											useContext( FormContext ),
+											formContext,
 											attributes
 										) }
 									</Fragment>

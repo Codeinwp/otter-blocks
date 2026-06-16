@@ -295,6 +295,7 @@ class Registration {
 				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true ),
 				'hasOpenAiKey'            => ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
 				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
+				'proPatterns'             => boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ) ? Patterns::get_upsell_patterns() : array(),
 			)
 		);
 

@@ -6,7 +6,7 @@ import { close, chevronLeft, chevronRight, copy, upload, undo } from '@wordpress
 import { createPortal, useState, useEffect, useRef, useCallback, memo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import blockIcon from '../blocks/icon';
-import { StateControls } from '../states';
+import { StateControls, hasStateConfig } from '../states';
 import { AnimationControls } from '../animations';
 
 const _decodeEl = document.createElement( 'textarea' );
@@ -492,16 +492,33 @@ const Panel = ( { onClose } ) => {
 						) }
 					</div>
 					<div className="aw-ce-tabs">
-						{ TABS.map( ( tab ) => (
-							<button
-								key={ tab.id }
-								type="button"
-								className={ `aw-ce-tab${ activeTab === tab.id ? ' is-active' : '' }` }
-								onClick={ () => setActiveTab( tab.id ) }
-							>
-								{ tab.label }
-							</button>
-						) ) }
+						{ TABS.map( ( tab ) => {
+							const showStateDot = tab.id === 'state' && hasStateConfig( selectedAttributes );
+							return (
+								<button
+									key={ tab.id }
+									type="button"
+									className={ `aw-ce-tab${ activeTab === tab.id ? ' is-active' : '' }` }
+									onClick={ () => setActiveTab( tab.id ) }
+								>
+									{ tab.label }
+									{ showStateDot && (
+										<span
+											aria-hidden="true"
+											style={ {
+												display: 'inline-block',
+												width: '6px',
+												height: '6px',
+												marginLeft: '5px',
+												borderRadius: '50%',
+												background: '#3858e9',
+												verticalAlign: 'middle',
+											} }
+										/>
+									) }
+								</button>
+							);
+						} ) }
 					</div>
 					<div className="aw-ce-classname-body">
 						{ renderTabContent() }
