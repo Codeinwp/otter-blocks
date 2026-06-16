@@ -30,7 +30,7 @@ import { createBlock, rawHandler } from '@wordpress/blocks';
 import Inspector from './inspector.js';
 import PromptPlaceholder from '../../components/prompt';
 import { parseFormPromptResponseToBlocks, tryParseResponse } from '../../helpers/prompt';
-import { useDispatch, useSelect, dispatch } from '@wordpress/data';
+import { useDispatch, useSelect, dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { insertBlockBelow, pullOtterPatterns } from '../../helpers/block-utility';
 
@@ -64,11 +64,13 @@ const ContentGenerator = ({
 
 	const [ prompt, setPrompt ] = useState( '' );
 
-	// Session key used ONLY as the dedup key for the AI generation tracking sets (never sent as a value).
+	// Dedup key for the AI outcome tracking sets (never sent as a value).
 	const trackingKey = attributes?.id ?? clientId;
 
-	// Tracks whether the generation was already accepted, so a later discard cannot clobber a prior accept.
 	const hasAccepted = useRef( false );
+	const hasOutput = useRef( false );
+	const attributesRef = useRef( attributes );
+	attributesRef.current = attributes;
 
 	const {
 		removeBlock,
@@ -166,16 +168,16 @@ const ContentGenerator = ({
 		const blocks = getBlocks( clientId );
 		const blocksToInsert = blocks.map( makeBlockCopy ).filter( Boolean );
 
-		// Track that the AI generation was kept by replacing the block.
-		hasAccepted.current = true;
-		window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: `outcome-${ allowedPromptID( attributes?.promptID ) }`, featureValue: 'replace' });
-
 		if ( attributes.replaceTargetBlock?.clientId ) {
 			replaceBlocks( attributes.replaceTargetBlock?.clientId, blocksToInsert );
 			removeBlock( clientId );
 		} else {
 			replaceBlocks( clientId, blocksToInsert );
 		}
+
+		// Track that the AI generation was kept, only after the replace actually ran.
+		hasAccepted.current = true;
+		window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: `outcome-${ allowedPromptID( attributes?.promptID ) }`, featureValue: 'replace' });
 	};
 
 	/**
@@ -184,11 +186,21 @@ const ContentGenerator = ({
 	const insertContentIntoPage = () => {
 		const blocks = getBlocks( clientId );
 
-		// Track that the AI generation was kept by inserting it into the page.
-		hasAccepted.current = true;
-		window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: `outcome-${ allowedPromptID( attributes?.promptID ) }`, featureValue: 'insert' });
+		// insertBlockBelow no-ops when the parent is template-locked, so mirror that check here and only
+		// treat this as a kept 'insert' when the insertion can actually happen.
+		const blockEditor = select( 'core/block-editor' );
+		const rootClientId = blockEditor?.getBlockRootClientId( clientId );
+		const canInsert = ! blockEditor?.getTemplateLock( rootClientId );
 
 		insertBlockBelow( clientId, blocks.map( makeBlockCopy ) );
+
+		if ( ! canInsert ) {
+			return;
+		}
+
+		// Track that the AI generation was kept, only after a real insertion happened.
+		hasAccepted.current = true;
+		window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: `outcome-${ allowedPromptID( attributes?.promptID ) }`, featureValue: 'insert' });
 	};
 
 	const { blockType, defaultVariation, variations } = useSelect(
@@ -297,6 +309,24 @@ const ContentGenerator = ({
 		}
 	}, [ attributes.replaceTargetBlock ]);
 
+	// Record a 'discard' only when an unaccepted generation's block was actually removed. A block still
+	// present in the store means the editor is just tearing down (navigation/close), not a real discard.
+	useEffect( () => {
+		return () => {
+			if ( hasAccepted.current || ! hasOutput.current ) {
+				return;
+			}
+
+			const blockEditor = select( 'core/block-editor' );
+
+			if ( ! blockEditor || blockEditor.getBlock( clientId ) ) {
+				return;
+			}
+
+			window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: `outcome-${ allowedPromptID( attributesRef.current?.promptID ) }`, featureValue: 'discard' });
+		};
+	}, []);
+
 	return (
 		<Fragment>
 			<Inspector
@@ -323,6 +353,7 @@ const ContentGenerator = ({
 							promptID={attributes.promptID}
 							trackingKey={trackingKey}
 							hasAcceptedRef={hasAccepted}
+							hasOutputRef={hasOutput}
 							title={PRESETS?.[attributes.promptID]?.title}
 							value={prompt}
 							onValueChange={setPrompt}

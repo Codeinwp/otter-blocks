@@ -37,23 +37,15 @@ type PromptPlaceholderProps = {
 	actionButtons?: ( props: {status?: string}) => ReactNode
 	resultHistory?: {result: string, meta: { usedToken: number, prompt: string }}[]
 
-	/**
-	 * Session key used ONLY as the dedup key for AI generation tracking sets (never sent as a value).
-	 */
+	// Dedup key for the AI outcome/retry tracking sets (never sent as a value).
 	trackingKey?: string
 
-	/**
-	 * Shared flag set by the parent when the generation is accepted, so a later discard cannot clobber it.
-	 */
+	// Refs shared with the parent block so accept/discard outcome tracking stays consistent across unmount.
 	hasAcceptedRef?: { current: boolean }
+	hasOutputRef?: { current: boolean }
 };
 
 export const openAiAPIKeyName = 'themeisle_open_ai_api_key';
-
-// Allowlist the prompt preset id so an arbitrary string can never reach the tracking wire.
-const allowedPromptID = ( promptID?: string ): string => {
-	return [ 'form', 'textTransformation', 'patternsPicker' ].includes( promptID ?? '' ) ? promptID! : 'other';
-};
 
 // Bucket the regenerate-retry count into a coarse, non-PII enum: '0' | '1' | '2-3' | '4+'.
 const retryBucket = ( count: number ): string => {
@@ -67,6 +59,20 @@ const retryBucket = ( count: number ): string => {
 		return '2-3';
 	}
 	return '4+';
+};
+
+// Rank for the high-water guard so a lower bucket never overwrites a higher one ('0' is never emitted).
+const retryRank = ( count: number ): number => {
+	if ( 1 > count ) {
+		return 0;
+	}
+	if ( 1 === count ) {
+		return 1;
+	}
+	if ( 4 > count ) {
+		return 2;
+	}
+	return 3;
 };
 
 const PromptBlockEditor = (
@@ -155,10 +161,12 @@ const PromptBlockEditor = (
 };
 
 const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
-	const { value, onValueChange, promptID, trackingKey, hasAcceptedRef } = props;
+	const { value, onValueChange, promptID, trackingKey, hasAcceptedRef, hasOutputRef } = props;
 
-	// Regenerate-retry counter for the current generation session (0 on the first generation).
 	const retryCount = useRef<number>( 0 );
+
+	// High-water mark of the highest retry bucket already emitted, so a lower bucket never overwrites it.
+	const maxRetryRank = useRef<number>( 0 );
 
 	const [ getOption, updateOption, status ] = useSettings();
 	const [ apiKey, setApiKey ] = useState<string | null>( null );
@@ -224,6 +232,11 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	useEffect( () => {
 		setResultHistoryIndex( resultHistory.length - 1 );
+
+		// Surface live output presence to the parent so it can tell a real discard from an empty block.
+		if ( hasOutputRef ) {
+			hasOutputRef.current = 0 < resultHistory.length;
+		}
 	}, [ resultHistory ]);
 
 	useEffect( () => {
@@ -283,9 +296,13 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 		setGenerationStatus( 'loading' );
 
-		// Track regenerate-retry depth: reset on the first generation, increment on each regenerate.
+		// New output supersedes any prior acceptance, so a discard of regenerated output is still captured.
+		if ( hasAcceptedRef ) {
+			hasAcceptedRef.current = false;
+		}
+
+		// Reset on a fresh generation, increment on regenerate; emitted on success below.
 		retryCount.current = regenerate ? retryCount.current + 1 : 0;
-		window.oTrk?.set( `ai-retries-${ trackingKey }`, { feature: 'ai-generation', featureComponent: 'regenerate-count', featureValue: retryBucket( retryCount.current ) });
 
 		const sendPrompt = regenerate ? sendPromptToOpenAIWithRegenerate : sendPromptToOpenAI;
 
@@ -311,7 +328,14 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				setErrorMessage( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
 				return;
 			}
-			
+
+			// Emit retry depth only on success, and only when it exceeds the high-water mark.
+			const currentRetryRank = retryRank( retryCount.current );
+			if ( currentRetryRank > maxRetryRank.current ) {
+				maxRetryRank.current = currentRetryRank;
+				window.oTrk?.set( `ai-retries-${ trackingKey }`, { feature: 'ai-generation', featureComponent: 'regenerate-count', featureValue: retryBucket( retryCount.current ) });
+			}
+
 			if ( regenerate ) {
 				const newResultHistory = [ ...resultHistory ];
 				newResultHistory[ resultHistoryIndex ] = {
@@ -430,12 +454,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 						}}
 						onClose={() => {
 
-							// Track that generated output was discarded (there was output to throw away),
-							// unless it was already accepted (a later discard must not clobber a prior accept).
-							if ( 0 < resultHistory?.length && ! hasAcceptedRef?.current ) {
-								window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: `outcome-${ allowedPromptID( promptID ) }`, featureValue: 'discard' });
-							}
-
+							// Discard is tracked on real block removal in ContentGenerator (covers all delete paths).
 							props.onClose?.();
 						}}
 						tokenUsageDescription={tokenUsageDescription}
