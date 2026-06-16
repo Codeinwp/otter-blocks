@@ -544,4 +544,40 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 
 		$this->assertTrue( $found, 'Pro form filter should append a meta_query clause matching the form value.' );
 	}
+
+	/**
+	 * Ensure the record edit screen persists edited field values.
+	 *
+	 * Exercised through the `save_post` hook so it stays valid regardless of which class
+	 * owns the callback.
+	 */
+	public function test_meta_box_save_persists_edited_field_value() {
+		wp_set_current_user( $this->admin_id );
+
+		$record_id = $this->create_record(
+			'unread',
+			array(
+				'inputs' => array(
+					'abcd1234' => array(
+						'label'    => 'Name',
+						'value'    => 'Old Value',
+						'type'     => 'text',
+						'metadata' => array(),
+					),
+				),
+			)
+		);
+
+		$_POST['action']              = 'editpost';
+		$_POST['_wpnonce']            = wp_create_nonce( 'update-post_' . $record_id );
+		$_POST['otter_meta_abcd1234'] = 'New Value';
+
+		do_action( 'save_post', $record_id, get_post( $record_id ) );
+
+		$meta = get_post_meta( $record_id, Form_Submissions::FORM_RECORD_META_KEY, true );
+
+		unset( $_POST['action'], $_POST['_wpnonce'], $_POST['otter_meta_abcd1234'] );
+
+		$this->assertSame( 'New Value', $meta['inputs']['abcd1234']['value'] );
+	}
 }
