@@ -57,7 +57,7 @@ test.describe( 'Sharing Icons', () => {
 			attributes
 		});
 
-		await expect( page.getByLabel( 'Block: Sharing Icons' ) ).toBeVisible();
+		await expect( editor.canvas.getByLabel( 'Block: Sharing Icons' ) ).toBeVisible();
 
 		await publishAndViewPost({ editor, page });
 
@@ -78,7 +78,7 @@ test.describe( 'Sharing Icons', () => {
 			attributes
 		});
 
-		await expect( page.getByLabel( 'Block: Sharing Icons' ) ).toBeVisible();
+		await expect( editor.canvas.getByLabel( 'Block: Sharing Icons' ) ).toBeVisible();
 
 		await page.locator( 'button:nth-child(6)' ).click(); // Hide Reddit icon using the Toolbar actions.
 

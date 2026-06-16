@@ -57,7 +57,7 @@ test.describe( 'AI Block', () => {
 		await generateTextTransformation( page );
 		await page.getByRole( 'button', { name: 'Replace', exact: true }).click();
 
-		await expect( page.getByText( 'Target Block.' ) ).toBeHidden();
+		await expect( editor.canvas.getByText( 'Target Block.' ) ).toBeHidden();
 	});
 
 	test( 'insert below action', async({ editor, page }) => {
@@ -80,6 +80,6 @@ test.describe( 'AI Block', () => {
 			}]
 		});
 
-		await expect( page.getByText( 'Expand or elaborate on the following: Make a nice text' ) ).toBeVisible();
+		await expect( editor.canvas.getByText( 'Expand or elaborate on the following: Make a nice text' ) ).toBeVisible();
 	});
 });

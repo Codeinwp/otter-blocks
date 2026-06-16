@@ -29,7 +29,7 @@ test.describe( 'Advanced Heading Block', () => {
 			name: 'themeisle-blocks/advanced-heading'
 		});
 
-		await page.getByRole( 'document', { name: 'Block: Advanced Heading' }).click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Advanced Heading' }).click();
 
 		const sidebarClass = await page.getByRole( 'button', { name: 'Settings', exact: true }).first().getAttribute( 'class' );
 		if ( ! sidebarClass.includes( 'is-pressed' ) ) {

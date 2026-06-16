@@ -14,7 +14,9 @@ const CONTACT_FORM_VARIATION = 'Contact form for clients';
 export async function insertContactForm({ editor, page, blockConfig = { name: FORM_BLOCK }}) {
 	const formBlock = await insertAndGetBlock( editor, page, blockConfig, FORM_BLOCK );
 
-	await page.getByRole( 'button', { name: CONTACT_FORM_VARIATION }).click();
+	// With block API v3 the editor canvas is iframed, so in-canvas elements
+	// must be queried through `editor.canvas` instead of `page`.
+	await editor.canvas.getByRole( 'button', { name: CONTACT_FORM_VARIATION }).click();
 
 	return formBlock;
 }
