@@ -397,18 +397,20 @@ class Patterns {
 		}
 
 		return array_values(
-			array_map(
-				function ( $pattern ) {
-					if ( empty( $pattern['slug'] ) ) {
-						return null;
-					}
+			array_filter(
+				array_map(
+					function ( $pattern ) {
+						if ( empty( $pattern['slug'] ) ) {
+							return null;
+						}
 
-					$pattern['name']  = 'otter-blocks/' . $pattern['slug'];
-					$pattern['isPro'] = true;
+						$pattern['name']  = 'otter-blocks/' . $pattern['slug'];
+						$pattern['isPro'] = true;
 
-					return $pattern;
-				},
-				array_filter( $manifest, 'is_array' )
+						return $pattern;
+					},
+					array_filter( $manifest, 'is_array' )
+				)
 			)
 		);
 	}
