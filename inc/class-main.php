@@ -567,9 +567,47 @@ class Main {
 		if ( version_compare( $db_version, OTTER_BLOCKS_VERSION, '<' ) ) {
 			Dashboard_Server::regenerate_styles();
 			do_action( 'otter_blocks_plugin_update' );
+
+			// Track update-breakage observability on plugin upgrade only (skip fresh installs where there is no prior version).
+			if ( ! empty( $db_version ) && '0' !== (string) $db_version ) {
+				$from = $this->coarsen_version( $db_version );
+				$to   = $this->coarsen_version( OTTER_BLOCKS_VERSION );
+				$wp   = $this->coarsen_version( get_bloginfo( 'version' ) );
+
+				Tracker::track(
+					array(
+						array(
+							'feature'          => 'lifecycle',
+							'featureComponent' => 'plugin-upgrade',
+							'featureValue'     => $from . '>' . $to,
+						),
+						array(
+							'feature'          => 'lifecycle',
+							'featureComponent' => 'wp-at-upgrade',
+							'featureValue'     => $wp,
+						),
+					)
+				);
+			}
 		}
 
 		return update_option( 'themeisle_blocks_db_version', OTTER_BLOCKS_VERSION );
+	}
+
+	/**
+	 * Coarsen a version string to MAJOR.MINOR.
+	 *
+	 * @param string $version The version string.
+	 * @return string
+	 * @since  3.1.12
+	 * @access private
+	 */
+	private function coarsen_version( $version ) {
+		$parts = explode( '.', (string) $version );
+		$major = isset( $parts[0] ) ? (int) $parts[0] : 0;
+		$minor = isset( $parts[1] ) ? (int) $parts[1] : 0;
+
+		return $major . '.' . $minor;
 	}
 
 	/**

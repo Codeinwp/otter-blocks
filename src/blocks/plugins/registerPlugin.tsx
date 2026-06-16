@@ -19,6 +19,7 @@ import './conditions/index.js';
 import './css-handler/index.js';
 import './data/index.js';
 import './data-logging/index.js';
+import './block-health/index.js';
 import './galley-extension/index.js';
 import './masonry-extension/index.js';
 import './image-extension/index.js';
