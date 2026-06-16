@@ -71,6 +71,7 @@ const Edit = ({
 	const { responsiveGetAttributes } = useResponsiveAttributes();
 
 	const mapRef = useRef( null );
+	const mapInstanceRef = useRef( null );
 	const [ map, setMap ] = useState( null );
 	const [ isAddingToLocationActive, setActiveAddingToLocation ] = useState( false );
 	const [ openMarker, setOpenMarker ] = useState( null );
@@ -186,7 +187,11 @@ const Edit = ({
 	const [ markersStore, dispatch ] = useReducer( markerReducer, [], () => []);
 	const createMap = () => {
 
-		if ( ! mapRef.current ) {
+		// Bail if the container is gone or a map already owns it. `copyScriptAssetToIframe`
+		// can flush its load callback more than once (e.g. React StrictMode double-invokes
+		// the init effect, queueing the callback twice), and Leaflet throws
+		// "Map container is already initialized" if `L.map()` runs on the same node twice.
+		if ( ! mapRef.current || mapInstanceRef.current ) {
 			return;
 		}
 
@@ -278,6 +283,7 @@ const Edit = ({
 
 		L.control.addmarker({ position: 'bottomleft' }).addTo( _map );
 
+		mapInstanceRef.current = _map;
 		setMap( _map );
 
 		// Render the saved markers
@@ -300,6 +306,13 @@ const Edit = ({
 		} else {
 			createMap();
 		}
+
+		// Tear down the Leaflet instance so the container can be re-initialized on a
+		// remount (StrictMode, device-preview iframe swap) without throwing.
+		return () => {
+			mapInstanceRef.current?.remove();
+			mapInstanceRef.current = null;
+		};
 	}, []);
 
 	/**
