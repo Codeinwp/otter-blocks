@@ -13,7 +13,7 @@ parameters:
 			path: inc/Tracker.php
 
 		-
-			rawMessage: 'Call to function is_array() with array<int|string, array{blockName: string, attrs: array, innerBlocks: array<array>, innerHTML: string, innerContent: array}> will always evaluate to true.'
+			rawMessage: 'Call to function is_array() with array<int|string, array{blockName: string|null, attrs: array, innerBlocks: array<array>, innerHTML: string, innerContent: array}> will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
 			count: 2
 			path: inc/class-base-css.php
@@ -91,12 +91,6 @@ parameters:
 			path: inc/class-base-css.php
 
 		-
-			rawMessage: 'Found usage of constant DOING_AJAX. Use wp_doing_ajax() instead.'
-			identifier: phpstanWP.wpConstant.fetch
-			count: 1
-			path: inc/class-blocks-animation.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Blocks_Animation::add_frontend_anim_inline_style() has no return type specified.'
 			identifier: missingType.return
 			count: 1
@@ -133,7 +127,7 @@ parameters:
 			path: inc/class-blocks-animation.php
 
 		-
-			rawMessage: 'Call to function is_array() with array<int|string, array{blockName: string, attrs: array, innerBlocks: array<array>, innerHTML: string, innerContent: array}> will always evaluate to true.'
+			rawMessage: 'Call to function is_array() with array<int|string, array{blockName: string|null, attrs: array, innerBlocks: array<array>, innerHTML: string, innerContent: array}> will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: inc/class-blocks-css.php
@@ -589,7 +583,7 @@ parameters:
 			path: inc/css/blocks/class-shared-css.php
 
 		-
-			rawMessage: 'Call to function is_array() with array<int|string, array{blockName: string, attrs: array, innerBlocks: array<array>, innerHTML: string, innerContent: array}> will always evaluate to true.'
+			rawMessage: 'Call to function is_array() with array<int|string, array{blockName: string|null, attrs: array, innerBlocks: array<array>, innerHTML: string, innerContent: array}> will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
 			count: 5
 			path: inc/css/class-block-frontend.php
@@ -703,7 +697,7 @@ parameters:
 			path: inc/css/class-block-frontend.php
 
 		-
-			rawMessage: 'Call to function is_array() with array<int|string, array{blockName: string, attrs: array, innerBlocks: array<array>, innerHTML: string, innerContent: array}> will always evaluate to true.'
+			rawMessage: 'Call to function is_array() with array<int|string, array{blockName: string|null, attrs: array, innerBlocks: array<array>, innerHTML: string, innerContent: array}> will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: inc/css/class-css-handler.php
@@ -723,12 +717,6 @@ parameters:
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::customize_widget_block_content() has parameter $block with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
-			count: 1
-			path: inc/css/class-css-handler.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::customize_widget_block_content() has parameter $instance with generic class WP_Widget but does not specify its types: T'
-			identifier: missingType.generics
 			count: 1
 			path: inc/css/class-css-handler.php
 
@@ -757,12 +745,6 @@ parameters:
 			path: inc/css/class-css-handler.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::insert_pattern() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/css/class-css-handler.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::mark_review_block_metadata() has no return type specified.'
 			identifier: missingType.return
 			count: 1
@@ -775,32 +757,14 @@ parameters:
 			path: inc/css/class-css-handler.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::save_block_meta() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/css/class-css-handler.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::save_css_file() has no return type specified.'
 			identifier: missingType.return
 			count: 1
 			path: inc/css/class-css-handler.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::save_post_meta() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/css/class-css-handler.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::save_widgets_styles() has no return type specified.'
 			identifier: missingType.return
-			count: 1
-			path: inc/css/class-css-handler.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::save_widgets_styles_rest() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
 			count: 1
 			path: inc/css/class-css-handler.php
 
@@ -931,12 +895,6 @@ parameters:
 			path: inc/integrations/api/form-request-data.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request::__construct() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/integrations/api/form-request-data.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request::are_payload_data_set() has parameter $keys with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -963,12 +921,6 @@ parameters:
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request::get_files_loaded_to_media_library() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
-			count: 1
-			path: inc/integrations/api/form-request-data.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request::get_request() return type with generic class WP_REST_Request does not specify its types: T'
-			identifier: missingType.generics
 			count: 1
 			path: inc/integrations/api/form-request-data.php
 
@@ -1023,12 +975,6 @@ parameters:
 		-
 			rawMessage: Property ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request::$metadata type has no value type specified in iterable type array.
 			identifier: missingType.iterableValue
-			count: 1
-			path: inc/integrations/api/form-request-data.php
-
-		-
-			rawMessage: 'Property ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request::$request with generic class WP_REST_Request does not specify its types: T'
-			identifier: missingType.generics
 			count: 1
 			path: inc/integrations/api/form-request-data.php
 
@@ -1501,12 +1447,6 @@ parameters:
 			path: inc/plugins/class-block-conditions.php
 
 		-
-			rawMessage: 'Found usage of constant DOING_AJAX. Use wp_doing_ajax() instead.'
-			identifier: phpstanWP.wpConstant.fetch
-			count: 1
-			path: inc/plugins/class-dashboard.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Dashboard::add_inline_css() has no return type specified.'
 			identifier: missingType.return
 			count: 1
@@ -1699,46 +1639,16 @@ parameters:
 			path: inc/plugins/class-dynamic-content.php
 
 		-
-			rawMessage: Action callback returns ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request but should not return anything.
-			identifier: return.void
-			count: 2
-			path: inc/plugins/class-form-submissions.php
-
-		-
-			rawMessage: 'Call to function method_exists() with ''\\ThemeIsle\\OtterPro…'' and ''is_thin_extension'' will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: inc/plugins/class-form-submissions.php
-
-		-
-			rawMessage: 'Call to function method_exists() with WP_Role and ''add_cap'' will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: inc/plugins/class-form-records-post-type.php
-
-		-
-			rawMessage: Instanceof between ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request and ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request will always evaluate to true.
-			identifier: instanceof.alwaysTrue
-			count: 2
-			path: inc/plugins/class-form-submissions.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::apply_hooks_on_draft_transition() has no return type specified.'
-			identifier: missingType.return
-			count: 1
-			path: inc/plugins/class-form-submissions.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::confirm_submission() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/plugins/class-form-submissions.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Export::export_submissions() has no return type specified.'
 			identifier: missingType.return
 			count: 1
 			path: inc/plugins/class-form-records-export.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Filters::get_filter() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-form-records-filters.php
 
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_bulk_actions() return type has no value type specified in iterable type array.'
@@ -1777,10 +1687,34 @@ parameters:
 			path: inc/plugins/class-form-records-list-table.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Filters::get_filter() return type has no value type specified in iterable type array.'
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Meta_Box::render_field() has parameter $field with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
-			path: inc/plugins/class-form-records-filters.php
+			path: inc/plugins/class-form-records-meta-box.php
+
+		-
+			rawMessage: 'Call to function method_exists() with WP_Role and ''add_cap'' will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/plugins/class-form-records-post-type.php
+
+		-
+			rawMessage: 'Call to function method_exists() with ''\\ThemeIsle\\OtterPro…'' and ''is_thin_extension'' will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/plugins/class-form-submissions.php
+
+		-
+			rawMessage: Instanceof between ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request and ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request will always evaluate to true.
+			identifier: instanceof.alwaysTrue
+			count: 2
+			path: inc/plugins/class-form-submissions.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::apply_hooks_on_draft_transition() has no return type specified.'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-form-submissions.php
 
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::handle_form_record_bulk_actions() has parameter $object_ids with no value type specified in iterable type array.'
@@ -1793,12 +1727,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: inc/plugins/class-form-submissions.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Meta_Box::render_field() has parameter $field with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: inc/plugins/class-form-records-meta-box.php
 
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::update_submission_dump_data() has no return type specified.'
@@ -1887,6 +1815,12 @@ parameters:
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Options_Settings::register_settings() has no return type specified.'
 			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-options-settings.php
+
+		-
+			rawMessage: Unable to resolve the template type T in call to function rest_sanitize_boolean
+			identifier: argument.templateType
 			count: 1
 			path: inc/plugins/class-options-settings.php
 
@@ -2185,18 +2119,6 @@ parameters:
 			path: inc/server/class-dashboard-server.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Dashboard_Server::rest_regenerate_styles() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-dashboard-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::get() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-dynamic-content-server.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::init() has no return type specified.'
 			identifier: missingType.return
 			count: 1
@@ -2218,24 +2140,6 @@ parameters:
 			rawMessage: Instanceof between ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request and ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request will always evaluate to true.
 			identifier: instanceof.alwaysTrue
 			count: 5
-			path: inc/server/class-form-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Form_Server::confirm_form_submission() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-form-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Form_Server::editor() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-form-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Form_Server::frontend() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
 			path: inc/server/class-form-server.php
 
 		-
@@ -2263,12 +2167,6 @@ parameters:
 			path: inc/server/class-form-server.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\FSE_Onboarding_Server::get_templates() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-fse-onboarding-server.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\FSE_Onboarding_Server::init() has no return type specified.'
 			identifier: missingType.return
 			count: 1
@@ -2279,18 +2177,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: inc/server/class-fse-onboarding-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Prompt_Server::forward_prompt() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-prompt-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Prompt_Server::get_prompts() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-prompt-server.php
 
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Prompt_Server::init() has no return type specified.'
@@ -2309,24 +2195,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: inc/server/class-prompt-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Prompt_Server::save_api_key() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-prompt-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Stripe_Server::get_price() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-stripe-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Stripe_Server::get_products() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-stripe-server.php
 
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Stripe_Server::init() has no return type specified.'
@@ -2349,18 +2217,6 @@ parameters:
 		-
 			rawMessage: 'Call to function is_string() with non-falsy-string will always evaluate to true.'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: inc/server/class-template-cloud-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server::add_source() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: inc/server/class-template-cloud-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server::remove_source() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
 			count: 1
 			path: inc/server/class-template-cloud-server.php
 
@@ -2683,12 +2539,6 @@ parameters:
 			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
 
 		-
-			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Dynamic_Content::evaluate_content_media_server() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
-			count: 1
-			path: plugins/otter-pro/inc/plugins/class-dynamic-content.php
-
-		-
 			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Dynamic_Content::get_acf() has parameter $data with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2787,12 +2637,6 @@ parameters:
 		-
 			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::apply_hooks_on_draft_transition() has no return type specified.'
 			identifier: missingType.return
-			count: 1
-			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
-
-		-
-			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::confirm_submission() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
 			count: 1
 			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
 
@@ -3103,6 +2947,12 @@ parameters:
 			path: plugins/otter-pro/inc/plugins/class-woocommerce-builder.php
 
 		-
+			rawMessage: Unable to resolve the template type T in call to function rest_sanitize_boolean
+			identifier: argument.templateType
+			count: 2
+			path: plugins/otter-pro/inc/plugins/class-woocommerce-builder.php
+
+		-
 			rawMessage: 'Method ThemeIsle\OtterPro\Render\Add_To_Cart_Button_Block::render() has parameter $attributes with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3327,12 +3177,6 @@ parameters:
 		-
 			rawMessage: 'Method ThemeIsle\OtterPro\Server\Live_Search_Server::prepare_search_query() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
-			count: 1
-			path: plugins/otter-pro/inc/server/class-live-search-server.php
-
-		-
-			rawMessage: 'Method ThemeIsle\OtterPro\Server\Live_Search_Server::search() has parameter $request with generic class WP_REST_Request but does not specify its types: T'
-			identifier: missingType.generics
 			count: 1
 			path: plugins/otter-pro/inc/server/class-live-search-server.php
 

@@ -3,7 +3,8 @@
   "phpVersion": "7.4",
   "testsEnvironment": false,
   "plugins": [
-    "."
+    ".",
+    "https://downloads.wordpress.org/plugin/ai-provider-for-openai.zip"
   ],
   "themes": [ "./test/emptytheme" ],
   "config": {

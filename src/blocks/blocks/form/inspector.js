@@ -214,6 +214,22 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
+				hasValue={ () => Boolean( formOptions.replyTo ) }
+				label={ __( 'Reply-To Email', 'otter-blocks' ) }
+				onDeselect={ () => setFormOption({ replyTo: '' }) }
+				isShownByDefault={ false }
+			>
+				<TextControl
+					label={ __( 'Reply-To Email', 'otter-blocks' ) }
+					placeholder={ __( 'e.g. contact@example.com', 'otter-blocks' ) }
+					type="email"
+					onChange={ replyTo => setFormOption({ replyTo }) }
+					value={ formOptions.replyTo }
+					help={ __( 'Replies to the notification email will go to this address. If empty, replies go to the email address the visitor entered in the form.', 'otter-blocks' ) }
+				/>
+			</ToolsPanelItem>
+
+			<ToolsPanelItem
 				hasValue={ () => Boolean( formOptions.redirectLink ) }
 				label={ __( 'Redirect on Submit', 'otter-blocks' ) }
 				onDeselect={ () => setFormOption({ redirectLink: '' }) }

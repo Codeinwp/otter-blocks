@@ -243,6 +243,236 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure a configured Reply-To address overrides the submitter email fallback.
+	 */
+	public function test_frontend_submission_uses_configured_reply_to_header() {
+		$this->mock_mail();
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'replyTo' => 'sales@example.com',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertContains( 'Reply-To: sales@example.com', $this->mail_requests[0]['headers'] );
+		$this->assertNotContains( 'Reply-To: ada@example.com', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
+	 * Ensure the Reply-To header defaults to the submitter email field when no option is set.
+	 */
+	public function test_frontend_submission_defaults_reply_to_to_submitter_email() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertContains( 'Reply-To: ada@example.com', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
+	 * Ensure no Reply-To header is added when there is no option and no email field.
+	 */
+	public function test_frontend_submission_omits_reply_to_without_email_field_or_option() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formInputsData' => array(
+							array(
+								'id'    => 'name-field',
+								'type'  => 'text',
+								'label' => 'Name',
+								'value' => 'Ada Lovelace',
+							),
+							array(
+								'id'    => 'phone-field',
+								'type'  => 'text',
+								'label' => 'Phone',
+								'value' => '555-0100',
+							),
+						),
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$reply_to_headers = array_filter(
+			$this->mail_requests[0]['headers'],
+			function ( $header ) {
+				return 0 === strpos( $header, 'Reply-To:' );
+			}
+		);
+		$this->assertEmpty( $reply_to_headers );
+	}
+
+	/**
+	 * Ensure an invalid Reply-To option falls back to the submitter email.
+	 */
+	public function test_frontend_submission_invalid_reply_to_falls_back_to_submitter_email() {
+		$this->mock_mail();
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'replyTo' => 'not-an-email',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertContains( 'Reply-To: ada@example.com', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
+	 * Ensure the Reply-To fallback uses the first email field when there are several.
+	 */
+	public function test_frontend_submission_reply_to_falls_back_to_first_email_field() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formInputsData' => array(
+							array(
+								'id'    => 'email-primary',
+								'type'  => 'email',
+								'label' => 'Email',
+								'value' => 'first@example.com',
+							),
+							array(
+								'id'    => 'email-secondary',
+								'type'  => 'email',
+								'label' => 'Backup Email',
+								'value' => 'second@example.com',
+							),
+						),
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertContains( 'Reply-To: first@example.com', $this->mail_requests[0]['headers'] );
+		$this->assertNotContains( 'Reply-To: second@example.com', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
+	 * Ensure a header injection attempt in the Reply-To option never reaches the mail headers.
+	 */
+	public function test_frontend_submission_reply_to_rejects_header_injection() {
+		$this->mock_mail();
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'replyTo' => "sales@example.com\r\nBcc: evil@attacker.com",
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		foreach ( $this->mail_requests[0]['headers'] as $header ) {
+			$this->assertStringNotContainsString( 'evil@attacker.com', $header );
+			$this->assertStringNotContainsString( "\r", $header );
+			$this->assertStringNotContainsString( "\n", $header );
+		}
+	}
+
+	/**
+	 * Ensure the Reply-To setter rejects raw values that are not a single valid email.
+	 *
+	 * This guards the path where the option store is written without the
+	 * register_setting sanitization, e.g. a direct database write.
+	 */
+	public function test_reply_to_setting_rejects_raw_invalid_values() {
+		$settings = new \ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data( array() );
+
+		$settings->set_reply_to( "ada@example.com\r\nBcc: evil@attacker.com" );
+		$this->assertFalse( $settings->has_reply_to() );
+		$this->assertSame( '', $settings->get_reply_to() );
+
+		$settings->set_reply_to( 'sales@example.com' );
+		$this->assertTrue( $settings->has_reply_to() );
+		$this->assertSame( 'sales@example.com', $settings->get_reply_to() );
+	}
+
+	/**
+	 * Ensure no Reply-To header is added when the option is invalid and there is no email field.
+	 */
+	public function test_frontend_submission_omits_reply_to_when_invalid_option_and_no_email_field() {
+		$this->mock_mail();
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'replyTo' => 'not-an-email',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formInputsData' => array(
+							array(
+								'id'    => 'name-field',
+								'type'  => 'text',
+								'label' => 'Name',
+								'value' => 'Ada Lovelace',
+							),
+							array(
+								'id'    => 'phone-field',
+								'type'  => 'text',
+								'label' => 'Phone',
+								'value' => '555-0100',
+							),
+						),
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$reply_to_headers = array_filter(
+			$this->mail_requests[0]['headers'],
+			function ( $header ) {
+				return 0 === strpos( $header, 'Reply-To:' );
+			}
+		);
+		$this->assertEmpty( $reply_to_headers );
+	}
+
+	/**
 	 * Ensure transient uploaded files are attached to the owner email.
 	 */
 	public function test_frontend_submission_attaches_transient_uploads_to_owner_email() {

@@ -520,6 +520,13 @@ class Form_Server {
 				}
 			}
 
+			// Replies go to the form submitter unless an explicit Reply-To is set.
+			$reply_to = $form_options->has_reply_to() ? $form_options->get_reply_to() : $this->get_email_from_form_input( $form_data );
+
+			if ( ! empty( $reply_to ) && is_email( $reply_to ) ) {
+				$headers[] = 'Reply-To: ' . sanitize_email( $reply_to );
+			}
+
 			$attachments = array();
 			if ( $form_data->has_uploaded_files() && ! $form_data->can_keep_uploaded_files() ) {
 				foreach ( $form_data->get_uploaded_files_path() as $file ) {

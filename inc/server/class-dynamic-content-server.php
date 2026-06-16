@@ -193,7 +193,7 @@ class Dynamic_Content_Server {
 			$fallback           = sanitize_text_field( $fallback );
 			$fallback_full_path = realpath( $fallback );
 
-			if ( false !== $fallback_full_path && 0 === strpos( $fallback_full_path, WP_CONTENT_DIR ) && @getimagesize( $fallback_full_path ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			if ( false !== $fallback_full_path && 0 === strpos( $fallback_full_path, trailingslashit( WP_CONTENT_DIR ) ) && @getimagesize( $fallback_full_path ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 				$path = $fallback_full_path;
 			}
 		}

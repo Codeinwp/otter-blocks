@@ -80,6 +80,7 @@ const formOptionsMap = {
 	fromEmail: 'fromEmail',
 	cc: 'cc',
 	bcc: 'bcc',
+	replyTo: 'replyTo',
 	autoresponder: 'autoresponder',
 	emailNotification: 'emailNotification',
 	webhookId: 'webhookId',
@@ -146,6 +147,7 @@ const Edit = ({
 		apiKey: undefined,
 		cc: undefined,
 		bcc: undefined,
+		replyTo: undefined,
 		autoresponder: undefined,
 		emailNotification: undefined
 	});
@@ -365,6 +367,7 @@ const Edit = ({
 			subject: wpOptions?.emailSubject,
 			cc: wpOptions?.cc,
 			bcc: wpOptions?.bcc,
+			replyTo: wpOptions?.replyTo,
 			submitMessage: wpOptions?.submitMessage,
 			errorMessage: wpOptions?.errorMessage,
 			provider: wpOptions?.integration?.provider,

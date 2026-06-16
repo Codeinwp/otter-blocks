@@ -115,6 +115,13 @@ class Form_Settings_Data {
 	private $bcc = '';
 
 	/**
+	 * The Reply-To email address.
+	 *
+	 * @var string
+	 */
+	private $reply_to = '';
+
+	/**
 	 * The autoresponder data.
 	 *
 	 * @var array
@@ -261,6 +268,9 @@ class Form_Settings_Data {
 				}
 				if ( isset( $form['bcc'] ) ) {
 					$integration->set_bcc( $form['bcc'] );
+				}
+				if ( isset( $form['replyTo'] ) ) {
+					$integration->set_reply_to( $form['replyTo'] );
 				}
 				if ( isset( $form['autoresponder'] ) && count( $form['autoresponder'] ) > 0 ) {
 					$integration->set_autoresponder( $form['autoresponder'] );
@@ -727,6 +737,39 @@ class Form_Settings_Data {
 	 */
 	public function set_bcc( $bcc ) {
 		$this->bcc = $bcc;
+		return $this;
+	}
+
+	/**
+	 * Get the Reply-To email address.
+	 *
+	 * @return string
+	 */
+	public function get_reply_to() {
+		return $this->reply_to;
+	}
+
+	/**
+	 * Check if it has a Reply-To email address.
+	 *
+	 * @return boolean
+	 */
+	public function has_reply_to() {
+		return ! empty( $this->reply_to );
+	}
+
+	/**
+	 * Set the Reply-To email address.
+	 *
+	 * @param string $reply_to The Reply-To email address.
+	 * @return Form_Settings_Data
+	 */
+	public function set_reply_to( $reply_to ) {
+		if ( filter_var( $reply_to, FILTER_VALIDATE_EMAIL ) !== false ) {
+			$this->reply_to = $reply_to;
+		} else {
+			$this->reply_to = '';
+		}
 		return $this;
 	}
 
