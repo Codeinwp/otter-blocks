@@ -97,10 +97,9 @@ const hexToOklch = ( hex ) => {
 		value = value.split( '' ).map( c => c + c ).join( '' );
 	}
 
-	const n = parseInt( value, 16 );
-	const r = srgbToLinear( ( n >> 16 ) & 255 );
-	const g = srgbToLinear( ( n >> 8 ) & 255 );
-	const b = srgbToLinear( n & 255 );
+	const r = srgbToLinear( parseInt( value.slice( 0, 2 ), 16 ) );
+	const g = srgbToLinear( parseInt( value.slice( 2, 4 ), 16 ) );
+	const b = srgbToLinear( parseInt( value.slice( 4, 6 ), 16 ) );
 
 	const l = Math.cbrt( 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b );
 	const m = Math.cbrt( 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b );

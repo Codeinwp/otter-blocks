@@ -128,18 +128,18 @@ const Preview = ({
 						) : /* Keyed per pattern: swapping blocks inside a live BlockPreview
 						     re-renders its iframe in place, flashing the whole frame white.
 						     Remounting through the async queue shows the skeleton instead. */
-						hasAtomicCss ? (
-							<AsyncPreview
-								key={ derived.name }
-								placeholder={ <div className="o-library__pv-skeleton" /> }
-							>
-								<ParsedPreview
-									pattern={ derived }
-									css={ [ atomicCss, accentCss ] }
+							hasAtomicCss ? (
+								<AsyncPreview
+									key={ derived.name }
 									placeholder={ <div className="o-library__pv-skeleton" /> }
-								/>
-							</AsyncPreview>
-						) : <div className="o-library__pv-skeleton" /> }
+								>
+									<ParsedPreview
+										pattern={ derived }
+										css={ [ atomicCss, accentCss ] }
+										placeholder={ <div className="o-library__pv-skeleton" /> }
+									/>
+								</AsyncPreview>
+							) : <div className="o-library__pv-skeleton" /> }
 					</div>
 
 					{ Boolean( similar.length ) && (
