@@ -81,11 +81,10 @@ test.describe( 'Slider Block', () => {
 
 		expect( sliderBlock.attributes.images.length ).toBeGreaterThan( 0 );
 
-		// themeisle-blocks/slider opts out of the iframed canvas, so the block renders at page level.
-		await page.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).first().click();
-		await page.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).nth( 1 ).click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).first().click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).nth( 1 ).click();
 
-		await expect( page.locator( 'div:nth-child(2) > figure > .wp-block-themeisle-blocks-slider-item' ) ).toBeVisible();
+		await expect( editor.canvas.locator( 'div:nth-child(2) > figure > .wp-block-themeisle-blocks-slider-item' ) ).toBeVisible();
 	});
 
 	test( 'check frontend rendering and interaction', async({ page, editor }) => {
