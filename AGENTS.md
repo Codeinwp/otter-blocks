@@ -58,7 +58,26 @@ composer run phpstan
 Configs:
 - Playwright: `src/blocks/test/e2e/playwright.config.js`
 - PHPUnit: `phpunit.xml`, `phpunit/multisite.xml`
-- wp-env: `.wp-env.override.json`
+- wp-env: `.wp-env.json` + gitignored `.wp-env.override.json`
+
+## wp-env Instance (Ports + Multi-Checkout)
+
+Single environment (`"testsEnvironment": false`): one `wordpress`/`cli`/`mysql` container set serves dev and all test suites. Never use `tests-wordpress`/`tests-cli` in `wp-env run`, never add `testsPort`/`env.tests` config (deprecated in wp-env >= 11).
+
+```bash
+npm run env:start    # reuse running instance, or pick a free port + start
+npm run env:stop
+npm run env:cleanup  # remove THIS checkout's containers/volumes (run before deleting a worktree)
+```
+
+`env:start` (`bin/wp-env-up.js`) handles everything: reuses a running instance, otherwise probes for a free port (default `8888`, scans upward) and pins it in the gitignored `.wp-env.override.json`. The Playwright configs read the same override file, so `npm run test:e2e:playwright` / `test:performance` follow the pinned port with no env var. Port precedence everywhere: `WP_BASE_URL` > `WP_ENV_PORT` > `.wp-env.override.json` > `8888`.
+
+If `env:start` is unavailable, the manual steps it automates:
+
+1. `npx wp-env status --json` — `"status": "running"` means reuse it; do not start a second one. (`wp-env install-path` was removed in wp-env >= 11 and exits 0 silently — don't use it for detection.)
+2. Pick a free port (`nc -z localhost <port>`; exit 0 = taken), pin it in `.wp-env.override.json` as `{ "port": <port> }`, then `npm run wp-env start`.
+
+Notes: `afterStart` (`bin/e2e-tests.sh`) seeds the AI key option. PHPUnit runs in the same instance (`wp-env run wordpress …`, PHPUnit lib mounted with `WP_TESTS_DIR` preset). Containers are namespaced per checkout — only host ports can conflict. Each worktree needs its own `npm ci && composer install && npm run build`. Login: `admin`/`password`. The root `docker-compose.yml` is legacy, not wp-env — ignore it.
 
 ## E2E Rules (Important)
 

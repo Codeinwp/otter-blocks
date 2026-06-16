@@ -45,7 +45,7 @@ test.describe( 'Accordion Block', () => {
 
 		const currentAccordionItems = accordionBlock.innerBlocks.length;
 
-		await page.getByRole( 'button', { name: 'Add Accordion Item' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Add Accordion Item' }).click();
 
 		accordionBlock = await expectBlockByName( editor, 'themeisle-blocks/accordion' );
 

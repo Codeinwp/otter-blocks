@@ -7,7 +7,7 @@ import {
 	TextControl,
 	FormTokenField,
 	ToggleControl,
-	Notice, SelectControl
+	Notice
 } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { Fragment } from '@wordpress/element';
@@ -33,12 +33,6 @@ const AutoresponderBody = ({ formOptions, setFormOption }) => {
 	return <AutoresponderBodyModal value={formOptions.autoresponder?.body} onChange={onChange} addExtraMargin={true} />;
 };
 
-const helpMessages = {
-	'database': __( 'Save form submissions to the database. You can see the submissions in Otter Blocks > Form Submissions on Dashboard Panel', 'otter-pro' ),
-	'email': __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-pro' ),
-	'database-email': __( 'Save the submissions to the database and notify also via email.', 'otter-pro' )
-};
-
 /**
  * Form Options
  *
@@ -54,44 +48,6 @@ const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) 
 	return (
 		<>
 			{Options}
-
-			<ToolsPanelItem
-				hasValue={ () => undefined !== formOptions.submissionsSaveLocation }
-				label={ __( 'Submissions', 'otter-pro' ) }
-				onDeselect={ () => setFormOption({ submissionsSaveLocation: undefined }) }
-				isShownByDefault={ true }
-			>
-				{Boolean( window.otterPro.isActive ) ? (
-					<SelectControl
-						label={ __( 'Save Location', 'otter-pro' ) }
-						value={ formOptions.submissionsSaveLocation ?? 'database-email' }
-						onChange={ submissionsSaveLocation => {
-							window.oTrk?.set( `${attributes.id}_save`, { feature: 'form-storing', featureComponent: 'save-location', featureValue: submissionsSaveLocation, groupID: attributes.id });
-							setFormOption({ submissionsSaveLocation });
-						} }
-						options={
-							[
-								{ label: __( 'Database', 'otter-pro' ), value: 'database' },
-								{ label: __( 'Email Only', 'otter-pro' ), value: 'email' },
-								{ label: __( 'Database and Email', 'otter-pro' ), value: 'database-email' }
-							]
-						}
-						help={ helpMessages?.[formOptions?.submissionsSaveLocation] ?? helpMessages.database }
-					/> ) : (
-					<div>
-						<OtterNotice
-							notice={__(
-								'You need to activate Otter Pro.',
-								'otter-pro'
-							)}
-							instructions={__(
-								'You need to activate your Otter Pro license to use Pro features of Form Block.',
-								'otter-pro'
-							)}
-						/>
-					</div>
-				)}
-			</ToolsPanelItem>
 
 			<ToolsPanelItem
 				hasValue={() =>

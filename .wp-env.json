@@ -1,42 +1,23 @@
 {
   "core": null,
+  "phpVersion": "7.4",
+  "testsEnvironment": false,
   "plugins": [
-    "."
+    ".",
+    "https://downloads.wordpress.org/plugin/ai-provider-for-openai.zip"
   ],
+  "themes": [ "./test/emptytheme" ],
   "config": {
     "WP_DEBUG": true,
-    "WP_DEBUG_DISPLAY": true,
+    "WP_DEBUG_LOG": true,
+    "WP_DEBUG_DISPLAY": false,
     "FS_METHOD": "direct",
-    "WP_DEFAULT_THEME": "twentytwentythree"
+    "WP_DEFAULT_THEME": "twentytwentythree",
+    "ENABLE_OTTER_PRO_DEV": true
   },
-  "phpVersion": "7.4",
-  "env": {
-    "development": {
-      "themes": [ "./test/emptytheme" ],
-        "mappings": {
-          "wp-content/themes/raft": "https://downloads.wordpress.org/theme/raft.zip"
-        }
-    },
-    "tests": {
-      "config": {
-        "WP_DEBUG": true,
-        "WP_DEBUG_LOG": true,
-        "WP_DEBUG_DISPLAY": false,
-        "ENABLE_OTTER_PRO_DEV": true
-      },
-      "plugins": [
-        "."
-      ],
-      "themes": [ "./test/emptytheme" ],
-        "mappings": {
-          "wp-content/mu-plugins": "./packages/e2e-tests/mu-plugins",
-          "wp-content/plugins/gutenberg-test-plugins": "./packages/e2e-tests/plugins",
-          "wp-content/themes/gutenberg-test-themes": "./test/gutenberg-test-themes",
-          "wp-content/themes/gutenberg-test-themes/twentytwentyone": "https://downloads.wordpress.org/theme/twentytwentyone.zip",
-          "wp-content/themes/gutenberg-test-themes/twentytwentythree": "https://downloads.wordpress.org/theme/twentytwentythree.zip",
-          "wp-content/themes/raft": "https://downloads.wordpress.org/theme/raft.zip"
-        }
-    }
+  "mappings": {
+    "wp-content/mu-plugins": "./packages/e2e-tests/mu-plugins",
+    "wp-content/themes/raft": "https://downloads.wordpress.org/theme/raft.zip"
   },
   "lifecycleScripts": {
     "afterStart": "bash bin/e2e-tests.sh"

@@ -33,19 +33,20 @@ class Form_Data_Response {
 	const ERROR_MALFORMED_REQUEST                 = '19';
 
 	// Request validation errors.
-	const ERROR_MISSING_DATA          = '101';
-	const ERROR_MISSING_CAPTCHA       = '102';
-	const ERROR_MISSING_NONCE         = '103';
-	const ERROR_MISSING_EMAIL         = '104';
-	const ERROR_FORM_ID_INVALID       = '105';
-	const ERROR_EMAIL_NOT_SEND        = '106';
-	const ERROR_MISSING_PROVIDER      = '107';
-	const ERROR_MISSING_API_KEY       = '108';
-	const ERROR_MISSING_MAIL_LIST_ID  = '109';
-	const ERROR_BOT_DETECTED          = '110';
-	const ERROR_FILES_METADATA_FORMAT = '111';
-	const ERROR_FILE_MISSING_BINARY   = '112';
-	const ERROR_MISSING_DUMP_DATA     = '113';
+	const ERROR_MISSING_DATA                 = '101';
+	const ERROR_MISSING_CAPTCHA              = '102';
+	const ERROR_MISSING_NONCE                = '103';
+	const ERROR_MISSING_EMAIL                = '104';
+	const ERROR_FORM_ID_INVALID              = '105';
+	const ERROR_EMAIL_NOT_SEND               = '106';
+	const ERROR_MISSING_PROVIDER             = '107';
+	const ERROR_MISSING_API_KEY              = '108';
+	const ERROR_MISSING_MAIL_LIST_ID         = '109';
+	const ERROR_BOT_DETECTED                 = '110';
+	const ERROR_FILES_METADATA_FORMAT        = '111';
+	const ERROR_FILE_MISSING_BINARY          = '112';
+	const ERROR_MISSING_DUMP_DATA            = '113';
+	const ERROR_CAPTCHA_PROVIDER_UNREACHABLE = '114';
 
 
 
@@ -60,6 +61,7 @@ class Form_Data_Response {
 	const ERROR_PROVIDER_DUPLICATED_EMAIL          = '208';
 	const ERROR_PROVIDER_CREDENTIAL_ERROR          = '209';
 	const ERROR_WEBHOOK_COULD_NOT_TRIGGER          = '210';
+	const ERROR_CAPTCHA_NOT_CONFIGURED             = '211';
 	const ERROR_RUNTIME_STRIPE_SESSION_VALIDATION  = '300';
 	const ERROR_STRIPE_CHECKOUT_SESSION_CREATION   = '301';
 	const ERROR_STRIPE_CHECKOUT_SESSION_NOT_FOUND  = '302';
@@ -371,7 +373,8 @@ class Form_Data_Response {
 			self::ERROR_MISSING_PROVIDER                   => __( 'Provider settings are missing.', 'otter-blocks' ),
 			self::ERROR_MISSING_API_KEY                    => __( 'API Key is missing from settings.', 'otter-blocks' ),
 			self::ERROR_MISSING_MAIL_LIST_ID               => __( 'API Key is missing.', 'otter-blocks' ),
-			self::ERROR_INVALID_CAPTCHA_TOKEN              => __( 'The reCaptcha token is invalid.', 'otter-blocks' ),
+			self::ERROR_INVALID_CAPTCHA_TOKEN              => __( 'The captcha token is invalid.', 'otter-blocks' ),
+			self::ERROR_CAPTCHA_NOT_CONFIGURED             => __( 'The captcha is not configured: the API keys are missing.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT    => __( 'The API key format is invalid.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED => __( 'The user with this email was already registered.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_EMAIL             => __( 'The email address is invalid.', 'otter-blocks' ),
@@ -390,6 +393,7 @@ class Form_Data_Response {
 			self::ERROR_MALFORMED_REQUEST                  => __( 'The request is malformed.', 'otter-blocks' ),
 			self::ERROR_WEBHOOK_COULD_NOT_TRIGGER          => __( 'The webhook could not be triggered.', 'otter-blocks' ),
 			self::ERROR_MISSING_DUMP_DATA                  => __( 'The form dump data is missing.', 'otter-blocks' ),
+			self::ERROR_CAPTCHA_PROVIDER_UNREACHABLE       => __( 'The captcha service could not be reached. The submission was saved, but it was not delivered.', 'otter-blocks' ),
 			self::ERROR_STRIPE_CHECKOUT_SESSION_CREATION   => __( 'The Stripe Checkout session could not be created.', 'otter-blocks' ),
 			self::ERROR_STRIPE_CHECKOUT_SESSION_NOT_FOUND  => __( 'The Stripe Checkout session was not found.', 'otter-blocks' ),
 			self::ERROR_STRIPE_PAYMENT_UNPAID              => __( 'The payment was not completed.', 'otter-blocks' ),

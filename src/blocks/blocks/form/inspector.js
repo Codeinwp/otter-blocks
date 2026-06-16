@@ -30,6 +30,7 @@ import {
 	Spinner,
 	TextControl,
 	TextareaControl,
+	ToggleControl,
 	FontSizePicker
 } from '@wordpress/components';
 
@@ -120,6 +121,23 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
+				hasValue={ () => undefined !== formOptions.emailNotification }
+				label={ __( 'Email Notification', 'otter-blocks' ) }
+				onDeselect={ () => setFormOption({ emailNotification: undefined }) }
+				isShownByDefault={ true }
+			>
+				<ToggleControl
+					label={ __( 'Email Notification', 'otter-blocks' ) }
+					checked={ formOptions.emailNotification ?? true }
+					onChange={ emailNotification => {
+						window.oTrk?.set( `${attributes.id}_notification`, { feature: 'form-storing', featureComponent: 'email-notification', featureValue: emailNotification, groupID: attributes.id });
+						setFormOption({ emailNotification });
+					} }
+					help={ __( 'Send an email to the site owner for each submission. Submissions are always saved in the Database — see them in Otter Blocks > Submissions.', 'otter-blocks' ) }
+				/>
+			</ToolsPanelItem>
+
+			<ToolsPanelItem
 				hasValue={ () => Boolean( formOptions.cc ) }
 				label={ __( 'CC', 'otter-blocks' ) }
 				onDeselect={ () => setFormOption({ cc: '' }) }
@@ -196,6 +214,22 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
+				hasValue={ () => Boolean( formOptions.replyTo ) }
+				label={ __( 'Reply-To Email', 'otter-blocks' ) }
+				onDeselect={ () => setFormOption({ replyTo: '' }) }
+				isShownByDefault={ false }
+			>
+				<TextControl
+					label={ __( 'Reply-To Email', 'otter-blocks' ) }
+					placeholder={ __( 'e.g. contact@example.com', 'otter-blocks' ) }
+					type="email"
+					onChange={ replyTo => setFormOption({ replyTo }) }
+					value={ formOptions.replyTo }
+					help={ __( 'Replies to the notification email will go to this address. If empty, replies go to the email address the visitor entered in the form.', 'otter-blocks' ) }
+				/>
+			</ToolsPanelItem>
+
+			<ToolsPanelItem
 				hasValue={ () => Boolean( formOptions.redirectLink ) }
 				label={ __( 'Redirect on Submit', 'otter-blocks' ) }
 				onDeselect={ () => setFormOption({ redirectLink: '' }) }
@@ -223,47 +257,28 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 				) }
 			</ToolsPanelItem>
 
-			<ToolsPanelItem
-				hasValue={ () => true === attributes.hasCaptcha }
-				label={ __( 'Enable reCaptcha', 'otter-blocks' ) }
-				onSelect={ () => setAttributes({ hasCaptcha: true }) }
-				onDeselect={ () => setAttributes({ hasCaptcha: false }) }
-				isShownByDefault={ false }
-			>
-				<Notice
-					notice={
-						<div>
-							{ __( 'Captcha is activated. You can modify the API Keys in Integrations tab from Settings > Otter.', 'otter-blocks' ) }
-							<ExternalLink href={ ( window?.themeisleGutenberg?.optionsPath ) }>{ __( 'Go to Dashboard.', 'otter-blocks' ) }</ExternalLink>
-						</div>
-					}
-					variant="help"
-				/>
-			</ToolsPanelItem>
+			{ true === attributes.hasCaptcha && (
+				<ToolsPanelItem
+					hasValue={ () => true === attributes.hasCaptcha }
+					label={ __( 'Enable Captcha', 'otter-blocks' ) }
+					onDeselect={ () => setAttributes({ hasCaptcha: false }) }
+					isShownByDefault={ false }
+				>
+					<Notice
+						notice={
+							<div>
+								{ __( 'This setting is deprecated. Captcha has moved to its own block — once disabled, add captcha back by inserting the Captcha block inside the form. You can modify the API Keys in Integrations tab from Settings > Otter.', 'otter-blocks' ) }
+								<ExternalLink href={ ( window?.themeisleGutenberg?.optionsPath ) }>{ __( 'Go to Dashboard.', 'otter-blocks' ) }</ExternalLink>
+							</div>
+						}
+						variant="help"
+					/>
+				</ToolsPanelItem>
+			) }
 
 
 			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
 				<Fragment>
-					<ToolsPanelItem
-						hasValue={ () => undefined !== formOptions.submissionsSaveLocation }
-						label={ __( 'Submissions', 'otter-blocks' ) }
-						onDeselect={ () => setFormOption({ submissionsSaveLocation: undefined }) }
-						isShownByDefault={ true }
-					>
-						<SelectControl
-							label={ __( 'Save Location', 'otter-blocks' ) }
-							value={ 'email' }
-							onChange={ () => {} }
-							options={
-								[
-									{ label: __( 'Database (Pro)', 'otter-blocks' ), value: 'database' },
-									{ label: __( 'Email Only', 'otter-blocks' ), value: 'email' },
-									{ label: __( 'Database and Email (Pro)', 'otter-blocks' ), value: 'database-email' }
-								]
-							}
-							help={ __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-blocks' ) }
-						/>
-					</ToolsPanelItem>
 					<ToolsPanelItem
 						hasValue={ () => false }
 						label={ __( 'Autoresponder', 'otter-blocks' ) }
@@ -620,16 +635,6 @@ const Inspector = ({
 															{ __( 'Add users to the contact list and skip email alerts for each submission. Ideal for news letter sign-up forms.', 'otter-blocks' ) }
 														</div>
 													) }
-
-													{
-														'subscribe' === formOptions.action &&
-														( 'email' === formOptions.submissionsSaveLocation || ! Boolean( window?.otterPro?.isActive ) ) &&
-														(
-															<div style={{ marginBottom: '10px' }}>
-																{ __( 'By skipping the email alerts you will lose the data from other fields. If this is a problem, we recommend switching to Database saving or using Submit & Subscribe Action', 'otter-blocks' ) }
-															</div>
-														)
-													}
 												</Fragment>
 											) }
 										</Fragment>
