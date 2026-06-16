@@ -292,17 +292,17 @@ const AIContentModal = ({
 							}
 						);
 
-						if ( response.error ) {
+						if ( ! response.ok ) {
 							throw new Error( response.error?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 						}
 
-						const result = response?.choices?.[0]?.message?.content;
+						const result = response.content;
 
 						if ( ! result ) {
-							throw new Error( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
+							throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
 						}
 
-						usedToken += response?.usage?.total_tokens ?? 0;
+						usedToken += response.usedTokens ?? 0;
 
 						return result;
 					}
@@ -378,16 +378,16 @@ const AIContentModal = ({
 				return;
 			}
 
-			if ( response.error ) {
+			if ( ! response.ok ) {
 				setError( response.error?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 				setStatus( 'error' );
 				return;
 			}
 
-			const result = response?.choices?.[0]?.message?.content;
+			const result = response.content;
 
 			if ( ! result ) {
-				setError( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
+				setError( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
 				setStatus( 'error' );
 				return;
 			}
@@ -395,7 +395,7 @@ const AIContentModal = ({
 			const historyItem: ResultHistoryItem = {
 				result,
 				meta: {
-					usedToken: response?.usage?.total_tokens ?? 0,
+					usedToken: response.usedTokens ?? 0,
 					prompt
 				}
 			};

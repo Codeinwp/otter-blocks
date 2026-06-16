@@ -25,6 +25,7 @@ import { BlockControls } from '@wordpress/block-editor';
  */
 import { aiGeneration } from '../../helpers/icons';
 import './editor.scss';
+import { isAIBackendConfigured } from '../../helpers/prompt';
 import useSettings from '../../helpers/use-settings';
 import { openAiAPIKeyName } from '../../components/prompt';
 import type { BlockProps } from '../../helpers/blocks';
@@ -63,7 +64,7 @@ const AIToolbarMenu = ({
 				( ! hasAPIKey ) && (
 					<MenuGroup>
 						<span className='o-menu-item-alignment' style={{ display: 'block', marginBottom: '10px' }}>
-							{ __( 'Please add your OpenAI API key in the AI settings.', 'otter-blocks' ) }
+							{ __( 'Please set up an AI provider in Integrations.', 'otter-blocks' ) }
 						</span>
 						<ExternalLink className='o-menu-item-alignment' href={ `${ window.themeisleGutenberg.optionsPath }#ai` } target="_blank" rel="noopener noreferrer">
 							{
@@ -168,7 +169,7 @@ const withAIToolbar = createHigherOrderComponent( BlockEdit => {
 		}, [ getOption, isMultipleSelection, props.name, selectedBlocks, settingsStatus ]);
 
 		const hasAPIKey = 'loaded' === settingsStatus && (
-			Boolean( window.themeisleGutenberg?.hasOpenAiKey ) ||
+			isAIBackendConfigured() ||
 			Boolean( getOption( openAiAPIKeyName ) )
 		);
 

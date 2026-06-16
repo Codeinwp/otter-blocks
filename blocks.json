@@ -84,6 +84,9 @@
 			"form/style.css": "blocks/blocks/form/style.scss"
 		}
 	},
+	"form-captcha": {
+		"block": "blocks/blocks/form/captcha/block.json"
+	},
 	"form-input": {
 		"block": "blocks/blocks/form/input/block.json"
 	},

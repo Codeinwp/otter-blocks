@@ -12,27 +12,57 @@ test.describe( 'Dashboard', () => {
 
 	test( 'check OpenAI API key test', async({ admin, otterUtils, page }) => {
 		// bin/e2e-tests.sh preseeds themeisle_open_ai_api_key, which makes the OpenAI input
-		// render with the masked-key placeholder. Clear it so the empty-state placeholder shows.
-		await otterUtils.setOptions({ themeisle_open_ai_api_key: '' });
+		// render with the masked-key placeholder. Clear it so the no-key state shows.
+		await otterUtils.setOptions({
+			themeisle_open_ai_api_key: '',
+			'connectors_ai_openai_api_key': ''
+		});
 		await admin.visitAdminPage( 'admin.php?page=otter' );
 
 		const aiTab = page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true });
 		await aiTab.click();
 
+		const aiClientSupported = await page.evaluate( () => Boolean( window.otterObj?.aiClientSupported ) );
 		const inputArea = page.getByPlaceholder( 'OpenAI API Key' );
-		await expect( inputArea ).toBeVisible();
-		await inputArea.fill( 'test' );
 
-		const save = page.getByRole( 'button', { name: 'Save', exact: true });
-		await save.click();
+		if ( aiClientSupported ) {
+			// On WP 7.0+ the legacy key input is deprecated: with no saved key it is
+			// hidden and the panel routes to the core Connectors flow.
+			await expect( inputArea ).toBeHidden();
+			// Scoped to the notice: WP mirrors notice text into the a11y-speak live region.
+			await expect( page.locator( '.components-notice' ).getByText( 'No AI provider is configured yet.' ) ).toBeVisible();
+			await expect( page.getByRole( 'link', { name: 'Manage Connectors' }) ).toBeVisible();
+		} else {
+			await expect( inputArea ).toBeVisible();
+			await inputArea.fill( 'test' );
 
-		const snackbar = page.getByTestId( 'snackbar' );
+			const save = page.getByRole( 'button', { name: 'Save', exact: true });
+			await save.click();
 
-		await expect( snackbar ).toBeVisible();
-		await expect( snackbar ).toContainText( 'Incorrect API key provided: test.' );
+			const snackbar = page.getByTestId( 'snackbar' );
+
+			await expect( snackbar ).toBeVisible();
+			await expect( snackbar ).toContainText( 'Incorrect API key provided: test.' );
+		}
 
 		// Restore the preseeded key for downstream tests that rely on it (AI toolbar actions etc.).
 		await otterUtils.setOptions({ themeisle_open_ai_api_key: PRESEEDED_OPENAI_KEY });
+	});
+
+	test( 'keep the OpenAI key input for users with a saved key', async({ admin, otterUtils, page }) => {
+		await otterUtils.setOptions({ themeisle_open_ai_api_key: PRESEEDED_OPENAI_KEY });
+		await admin.visitAdminPage( 'admin.php?page=otter' );
+
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
+
+		// The grandfathered input renders with the masked saved key as placeholder.
+		await expect( page.getByPlaceholder( /^sk_X+xx$/ ) ).toBeVisible();
+
+		const aiClientSupported = await page.evaluate( () => Boolean( window.otterObj?.aiClientSupported ) );
+
+		if ( aiClientSupported ) {
+			await expect( page.getByText( 'Legacy connection.' ) ).toBeVisible();
+		}
 	});
 
 	test( 'toggle AI Block Toolbar', async({ page, otterUtils }) => {

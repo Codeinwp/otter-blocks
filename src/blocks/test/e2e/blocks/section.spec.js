@@ -34,7 +34,7 @@ test.describe( 'Section Block', () => {
 			blockName: 'themeisle-blocks/advanced-columns'
 		});
 
-		await page.getByRole( 'button', { name: 'Single column' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Single column' }).click();
 
 		const sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
@@ -102,10 +102,10 @@ test.describe( 'Section Block', () => {
 			shortcut: '/section',
 			blockName: 'themeisle-blocks/advanced-columns'
 		});
-		await page.getByLabel( 'Single column' ).click();
-		await page.getByLabel( 'Add block' ).click();
+		await editor.canvas.getByLabel( 'Single column' ).click();
+		await editor.canvas.getByLabel( 'Add block' ).click();
 		await page.getByRole( 'option', { name: 'Paragraph' }).click();
-		await page.getByLabel( 'Empty block; start writing or' ).fill( 'Test' );
+		await editor.canvas.getByLabel( 'Empty block; start writing or' ).fill( 'Test' );
 		await page.getByLabel( 'Document Overview' ).click();
 		await page.getByRole( 'link', { name: 'Section', exact: true }).click();
 

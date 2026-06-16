@@ -38,9 +38,14 @@ process.env.WP_BASE_URL = WP_BASE_URL;
 
 const SERIAL_SPECS = [
 	'**/blocks/ai-toolbar.spec.js',
+	// Flips the AI backend + connector key options server-side; must not race parallel specs.
+	'**/blocks/ai-block-wp-client.spec.js',
+	'**/blocks/ai-block-legacy-openai.spec.js',
+	'**/blocks/ai-block-unconfigured.spec.js',
 	'**/blocks/block-conditions.spec.js',
 	'**/blocks/dashboard.spec.js',
 	'**/blocks/form.spec.js',
+	'**/blocks/form-turnstile.spec.js',
 	'**/blocks/onboarding.spec.js'
 ];
 

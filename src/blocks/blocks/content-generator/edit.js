@@ -122,20 +122,20 @@ const ContentGenerator = ({
 
 			const response = await sendBlockGenerationPrompt( instruction );
 
-			if ( response.error ) {
+			if ( ! response.ok ) {
 				aiDebug( `OpenAI request #${ requestCount } errored`, response.error );
 				throw new Error( response.error.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 			}
 
-			const content = response?.choices?.[0]?.message?.content;
+			const content = response.content;
 
 			if ( ! content ) {
 				aiDebug( `OpenAI request #${ requestCount } returned empty content` );
-				throw new Error( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
+				throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
 			}
 
-			usedToken += response?.usage?.total_tokens ?? 0;
-			aiDebug( `OpenAI request #${ requestCount } ok`, { tokens: response?.usage?.total_tokens ?? 0 });
+			usedToken += response.usedTokens ?? 0;
+			aiDebug( `OpenAI request #${ requestCount } ok`, { tokens: response.usedTokens ?? 0 });
 
 			return content;
 		};

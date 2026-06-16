@@ -33,15 +33,16 @@ test.describe( 'Countdown Block', () => {
 		const otterId = countdownBlock.attributes.id;
 
 		// Focus the block so its Inspector controls render.
-		await page.getByRole( 'document', { name: 'Block: Countdown' }).first().click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Countdown' }).first().click();
 
 		// The picker button is labelled "Select Date" only when no date is set; once Otter
 		// auto-fills a default future date, the same button shows the formatted date instead.
 		// Match by the stable wrapper class.
 		await page.locator( '.o-extend-btn' ).first().click();
 
-		// Use the spinbutton role: getByLabel matches substrings, so 'Day' also
-		// hits the calendar's "<date>. Today" button.
+		// Use the spinbutton role: a bare label match collides with the date-grid
+		// "<date>. Today" button (substring match) under strict selectors.
+
 		await page.getByRole( 'spinbutton', { name: 'Day' }).fill( '17' );
 		await page.getByRole( 'combobox', { name: 'Month' }).selectOption( 'August' );
 		await page.getByRole( 'spinbutton', { name: 'Year' }).fill( '2030' );
@@ -50,9 +51,9 @@ test.describe( 'Countdown Block', () => {
 
 		// Editor preview uses singular labels ("Day", "Hour", …); the frontend renders the
 		// pluralised form ("Days") once the countdown has a real value.
-		await expect( page.locator( '.otter-countdown__label' ).filter({ hasText: /^Day$/ }) ).toBeVisible();
+		await expect( editor.canvas.locator( '.otter-countdown__label' ).filter({ hasText: /^Day$/ }) ).toBeVisible();
 
-		await page.locator( '.editor-styles-wrapper' ).click();
+		await editor.canvas.locator( '.editor-styles-wrapper' ).click();
 		await publishAndViewPost({ editor, page });
 
 		expect( ( await page.$eval( `#${otterId}`, ( el ) => el.getAttribute( 'data-date' ) ) ).startsWith( '2030-08-17' ) ).toBeTruthy();

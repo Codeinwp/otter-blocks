@@ -45,6 +45,11 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private $http_filter = null;
 
 	/**
+	 * @var string[]
+	 */
+	private $http_requests = array();
+
+	/**
 	 * @var callable|null
 	 */
 	private $record_confirm_filter = null;
@@ -66,6 +71,7 @@ class Test_Form_Server extends WP_UnitTestCase {
 
 		$this->original_providers = $this->form_providers->providers;
 		$this->mail_requests      = array();
+		$this->http_requests      = array();
 
 		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option() ) );
 		update_option( 'themeisle_blocks_form_fields_option', array() );
@@ -96,6 +102,7 @@ class Test_Form_Server extends WP_UnitTestCase {
 		delete_option( 'themeisle_blocks_form_emails' );
 		delete_option( 'themeisle_blocks_form_fields_option' );
 		delete_option( 'themeisle_google_captcha_api_secret_key' );
+		delete_option( 'themeisle_cloudflare_turnstile_secret_key' );
 		delete_transient( 'contact_form_autoresponder_error' );
 
 		parent::tear_down();
@@ -213,6 +220,236 @@ class Test_Form_Server extends WP_UnitTestCase {
 		$this->assertContains( 'Cc: manager@example.com', $this->mail_requests[0]['headers'] );
 		$this->assertContains( 'Cc: qa@example.com', $this->mail_requests[0]['headers'] );
 		$this->assertContains( 'Bcc: archive@example.com', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
+	 * Ensure a configured Reply-To address overrides the submitter email fallback.
+	 */
+	public function test_frontend_submission_uses_configured_reply_to_header() {
+		$this->mock_mail();
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'replyTo' => 'sales@example.com',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertContains( 'Reply-To: sales@example.com', $this->mail_requests[0]['headers'] );
+		$this->assertNotContains( 'Reply-To: ada@example.com', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
+	 * Ensure the Reply-To header defaults to the submitter email field when no option is set.
+	 */
+	public function test_frontend_submission_defaults_reply_to_to_submitter_email() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertContains( 'Reply-To: ada@example.com', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
+	 * Ensure no Reply-To header is added when there is no option and no email field.
+	 */
+	public function test_frontend_submission_omits_reply_to_without_email_field_or_option() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formInputsData' => array(
+							array(
+								'id'    => 'name-field',
+								'type'  => 'text',
+								'label' => 'Name',
+								'value' => 'Ada Lovelace',
+							),
+							array(
+								'id'    => 'phone-field',
+								'type'  => 'text',
+								'label' => 'Phone',
+								'value' => '555-0100',
+							),
+						),
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$reply_to_headers = array_filter(
+			$this->mail_requests[0]['headers'],
+			function ( $header ) {
+				return 0 === strpos( $header, 'Reply-To:' );
+			}
+		);
+		$this->assertEmpty( $reply_to_headers );
+	}
+
+	/**
+	 * Ensure an invalid Reply-To option falls back to the submitter email.
+	 */
+	public function test_frontend_submission_invalid_reply_to_falls_back_to_submitter_email() {
+		$this->mock_mail();
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'replyTo' => 'not-an-email',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertContains( 'Reply-To: ada@example.com', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
+	 * Ensure the Reply-To fallback uses the first email field when there are several.
+	 */
+	public function test_frontend_submission_reply_to_falls_back_to_first_email_field() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formInputsData' => array(
+							array(
+								'id'    => 'email-primary',
+								'type'  => 'email',
+								'label' => 'Email',
+								'value' => 'first@example.com',
+							),
+							array(
+								'id'    => 'email-secondary',
+								'type'  => 'email',
+								'label' => 'Backup Email',
+								'value' => 'second@example.com',
+							),
+						),
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertContains( 'Reply-To: first@example.com', $this->mail_requests[0]['headers'] );
+		$this->assertNotContains( 'Reply-To: second@example.com', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
+	 * Ensure a header injection attempt in the Reply-To option never reaches the mail headers.
+	 */
+	public function test_frontend_submission_reply_to_rejects_header_injection() {
+		$this->mock_mail();
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'replyTo' => "sales@example.com\r\nBcc: evil@attacker.com",
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		foreach ( $this->mail_requests[0]['headers'] as $header ) {
+			$this->assertStringNotContainsString( 'evil@attacker.com', $header );
+			$this->assertStringNotContainsString( "\r", $header );
+			$this->assertStringNotContainsString( "\n", $header );
+		}
+	}
+
+	/**
+	 * Ensure the Reply-To setter rejects raw values that are not a single valid email.
+	 *
+	 * This guards the path where the option store is written without the
+	 * register_setting sanitization, e.g. a direct database write.
+	 */
+	public function test_reply_to_setting_rejects_raw_invalid_values() {
+		$settings = new \ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data( array() );
+
+		$settings->set_reply_to( "ada@example.com\r\nBcc: evil@attacker.com" );
+		$this->assertFalse( $settings->has_reply_to() );
+		$this->assertSame( '', $settings->get_reply_to() );
+
+		$settings->set_reply_to( 'sales@example.com' );
+		$this->assertTrue( $settings->has_reply_to() );
+		$this->assertSame( 'sales@example.com', $settings->get_reply_to() );
+	}
+
+	/**
+	 * Ensure no Reply-To header is added when the option is invalid and there is no email field.
+	 */
+	public function test_frontend_submission_omits_reply_to_when_invalid_option_and_no_email_field() {
+		$this->mock_mail();
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'replyTo' => 'not-an-email',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formInputsData' => array(
+							array(
+								'id'    => 'name-field',
+								'type'  => 'text',
+								'label' => 'Name',
+								'value' => 'Ada Lovelace',
+							),
+							array(
+								'id'    => 'phone-field',
+								'type'  => 'text',
+								'label' => 'Phone',
+								'value' => '555-0100',
+							),
+						),
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$reply_to_headers = array_filter(
+			$this->mail_requests[0]['headers'],
+			function ( $header ) {
+				return 0 === strpos( $header, 'Reply-To:' );
+			}
+		);
+		$this->assertEmpty( $reply_to_headers );
 	}
 
 	/**
@@ -473,6 +710,230 @@ class Test_Form_Server extends WP_UnitTestCase {
 
 		$this->assertTrue( $data['success'] );
 		$this->assertSame( Form_Data_Response::SUCCESS_EMAIL_SEND, $data['code'] );
+	}
+
+	/**
+	 * Ensure failed Turnstile verification blocks submission.
+	 */
+	public function test_frontend_submission_rejects_invalid_turnstile_token() {
+		$this->mock_turnstile( false );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'       => true,
+						'captchaProvider'  => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'invalid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN, $data['code'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure successful Turnstile verification allows the normal submit path.
+	 */
+	public function test_frontend_submission_accepts_valid_turnstile_token() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'valid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertSame( Form_Data_Response::SUCCESS_EMAIL_SEND, $data['code'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure the saved form provider wins over the payload one, so a client
+	 * cannot downgrade a Turnstile form to reCAPTCHA when both keys are set.
+	 */
+	public function test_frontend_submission_ignores_payload_captcha_provider_when_form_sets_one() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token'           => 'valid-token',
+						'captchaProvider' => 'recaptcha',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure the payload provider is still used for legacy forms saved before
+	 * the provider was part of the form options.
+	 */
+	public function test_frontend_submission_uses_payload_captcha_provider_for_legacy_forms() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha' => true,
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token'           => 'valid-token',
+						'captchaProvider' => 'turnstile',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertSame( 'https://challenges.cloudflare.com/turnstile/v0/siteverify', $this->http_requests[0] );
+	}
+
+	/**
+	 * Ensure a captcha form with no API keys configured rejects the submission
+	 * without calling the verification service.
+	 */
+	public function test_frontend_submission_rejects_captcha_when_keys_not_configured() {
+		$this->http_filter = function ( $preempt, $args, $url ) {
+			$this->http_requests[] = $url;
+			return array(
+				'response' => array(
+					'code' => 200,
+				),
+				'body'     => wp_json_encode( array( 'success' => true ) ),
+			);
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'valid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_CAPTCHA_NOT_CONFIGURED, $data['code'] );
+		$this->assertEmpty( $this->http_requests );
+	}
+
+	/**
+	 * Ensure the visitor IP is forwarded to the verification service.
+	 */
+	public function test_frontend_submission_sends_remoteip_to_captcha_service() {
+		$this->mock_mail();
+		$this->mock_turnstile( true );
+		$_SERVER['REMOTE_ADDR'] = '203.0.113.7';
+		$captured_body          = null;
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args ) use ( &$captured_body ) {
+				$captured_body = $args['body'];
+				return $preempt;
+			},
+			9,
+			2
+		);
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'hasCaptcha'      => true,
+						'captchaProvider' => 'turnstile',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'valid-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertStringContainsString( 'remoteip=203.0.113.7', $captured_body );
 	}
 
 	/**
@@ -1124,7 +1585,32 @@ class Test_Form_Server extends WP_UnitTestCase {
 	 */
 	private function mock_captcha( $success ) {
 		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
-		$this->http_filter = function () use ( $success ) {
+		$this->http_filter = function ( $preempt, $args, $url ) use ( $success ) {
+			$this->http_requests[] = $url;
+			return array(
+				'response' => array(
+					'code' => 200,
+				),
+				'body'     => wp_json_encode(
+					array(
+						'success' => $success,
+					)
+				),
+			);
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+	}
+
+	/**
+	 * Mock Turnstile HTTP verification.
+	 *
+	 * @param bool $success Captcha success state.
+	 * @return void
+	 */
+	private function mock_turnstile( $success ) {
+		update_option( 'themeisle_cloudflare_turnstile_secret_key', 'turnstile-secret-key' );
+		$this->http_filter = function ( $preempt, $args, $url ) use ( $success ) {
+			$this->http_requests[] = $url;
 			return array(
 				'response' => array(
 					'code' => 200,

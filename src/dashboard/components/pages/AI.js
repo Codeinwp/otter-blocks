@@ -14,6 +14,7 @@ import {
 	BaseControl,
 	Button,
 	ExternalLink,
+	Notice,
 	PanelBody,
 	PanelRow,
 	TextControl,
@@ -58,7 +59,13 @@ const AI = () => {
 	const hasInitializedActions = useRef( false );
 	const { createNotice } = useDispatch( 'core/notices' );
 
+	const aiClientSupported = Boolean( window.otterObj?.aiClientSupported );
+	const aiClientAvailable = Boolean( window.otterObj?.aiClientAvailable );
 	const hasStoredApiKey = hasSavedApiKey || 0 < getOption( 'themeisle_open_ai_api_key' )?.length;
+
+	// Toolbar actions apply to whichever backend is active: a configured
+	// Connectors provider or a saved legacy OpenAI key.
+	const hasConfiguredAI = aiClientAvailable || hasStoredApiKey;
 	const customActionCount = countCustomActions( toolbarActions );
 	const canAddCustomAction = customActionCount < MAX_CUSTOM_TOOLBAR_ACTIONS;
 	const showRestoreDefaults = hasMissingBuiltinActions( toolbarActions );
@@ -181,51 +188,98 @@ const AI = () => {
 	return (
 		<Fragment>
 			<PanelBody
-				title={ __( 'OpenAI Connection', 'otter-blocks' ) }
+				title={ __( 'AI Provider', 'otter-blocks' ) }
 			>
-				<PanelRow>
-					<BaseControl
-						label={ __( 'OpenAI API', 'otter-blocks' ) }
-						help={ __( 'Connect your OpenAI API key to use AI features in the block editor.', 'otter-blocks' ) }
-						id="otter-options-openai-api"
-						className="otter-button-field"
-					>
-						<TextControl
-							type="text"
-							label={ __( 'Secret Key', 'otter-blocks' ) }
-							value={ openAISecretKey }
-							placeholder={ maskOpenAISecretKey ? maskOpenAISecretKey : __( 'OpenAI API Key', 'otter-blocks' ) }
-							disabled={ 'saving' === status }
-							onChange={ value => setOpenAISecretKey( value ) }
-						/>
+				{ aiClientSupported && (
+					<PanelRow>
+						<BaseControl
+							label={ __( 'WordPress AI', 'otter-blocks' ) }
+							help={ __( 'Otter AI features use the AI providers configured under Settings > Connectors.', 'otter-blocks' ) }
+							id="otter-options-ai-backend"
+							className="otter-button-field"
+						>
+							<div className="otter-button-group">
+								<ExternalLink
+									href={ window.otterObj?.connectorsUrl }
+								>
+									{ __( 'Manage Connectors', 'otter-blocks' ) }
+								</ExternalLink>
+							</div>
+						</BaseControl>
+					</PanelRow>
+				) }
 
-						<div className="otter-button-group">
-							<Button
-								variant="secondary"
-								isSecondary
+				{ aiClientSupported && ! aiClientAvailable && ! hasStoredApiKey && (
+					<PanelRow>
+						<Notice
+							status="info"
+							isDismissible={ false }
+						>
+							{ __( 'No AI provider is configured yet. Set one up under Settings > Connectors to use Otter AI features.', 'otter-blocks' ) }
+						</Notice>
+					</PanelRow>
+				) }
+
+				{ aiClientSupported && ! aiClientAvailable && hasStoredApiKey && (
+					<PanelRow>
+						<Notice
+							status="warning"
+							isDismissible={ false }
+						>
+							{ __( 'No AI provider is configured under Settings > Connectors. Your OpenAI API key below is being used instead.', 'otter-blocks' ) }
+						</Notice>
+					</PanelRow>
+				) }
+
+				{ ( ! aiClientSupported || hasStoredApiKey ) && (
+					<PanelRow>
+						<BaseControl
+							label={ __( 'OpenAI API', 'otter-blocks' ) }
+							help={
+								aiClientSupported ?
+									__( 'Legacy connection. We recommend switching to WordPress AI under Settings > Connectors. Clearing the key removes this option.', 'otter-blocks' ) :
+									__( 'Connect your OpenAI API key to use AI features in the block editor.', 'otter-blocks' )
+							}
+							id="otter-options-openai-api"
+							className="otter-button-field"
+						>
+							<TextControl
+								type="text"
+								label={ __( 'Secret Key', 'otter-blocks' ) }
+								value={ openAISecretKey }
+								placeholder={ maskOpenAISecretKey ? maskOpenAISecretKey : __( 'OpenAI API Key', 'otter-blocks' ) }
 								disabled={ 'saving' === status }
-								onClick={ saveApiKey }
-							>
-								{ __( 'Save', 'otter-blocks' ) }
-							</Button>
+								onChange={ value => setOpenAISecretKey( value ) }
+							/>
 
-							<ExternalLink
-								href="https://platform.openai.com/account/api-keys"
-							>
-								{ __( 'Get API Key', 'otter-blocks' ) }
-							</ExternalLink>
+							<div className="otter-button-group">
+								<Button
+									variant="secondary"
+									isSecondary
+									disabled={ 'saving' === status }
+									onClick={ saveApiKey }
+								>
+									{ __( 'Save', 'otter-blocks' ) }
+								</Button>
 
-							<ExternalLink
-								href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
-							>
-								{ __( 'More Info', 'otter-blocks' ) }
-							</ExternalLink>
-						</div>
-					</BaseControl>
-				</PanelRow>
+								<ExternalLink
+									href="https://platform.openai.com/account/api-keys"
+								>
+									{ __( 'Get API Key', 'otter-blocks' ) }
+								</ExternalLink>
+
+								<ExternalLink
+									href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
+								>
+									{ __( 'More Info', 'otter-blocks' ) }
+								</ExternalLink>
+							</div>
+						</BaseControl>
+					</PanelRow>
+				) }
 			</PanelBody>
 
-			{ hasStoredApiKey && (
+			{ hasConfiguredAI && (
 				<PanelBody
 					title={ __( 'Toolbar Actions', 'otter-blocks' ) }
 					initialOpen={ true }

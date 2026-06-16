@@ -35,6 +35,14 @@ const OPTION_WHITELIST = array(
 	'themeisle_blocks_settings_block_ai_toolbar_module',
 	'otter_iphub_api_key',
 	'themeisle_blocks_settings_onboarding',
+	'themeisle_cloudflare_turnstile_site_key',
+	'themeisle_cloudflare_turnstile_secret_key',
+	'connectors_ai_openai_api_key',
+	'themeisle_google_map_block_api_key',
+	// Form block persists submissions config here; tests reset it to avoid
+	// cross-run accumulation that eventually fails REST schema validation.
+	'themeisle_blocks_form_emails',
+	'themeisle_blocks_form_fields_option',
 );
 
 /**
@@ -71,12 +79,38 @@ function stub_prompts() {
 			'otter_action_prompt' => 'Transform the following content',
 		),
 		array(
-			'otter_name' => 'form',
-			'model'      => 'gpt-3.5-turbo',
-			'messages'   => array(
+			'otter_name'    => 'form',
+			'model'         => 'gpt-3.5-turbo',
+			'messages'      => array(
 				array( 'role' => 'system', 'content' => 'You generate web form schemas.' ),
 				array( 'role' => 'user', 'content' => '{INSERT_TASK}' ),
 			),
+			// Forced function calling, mirroring the production template. On the
+			// legacy path OpenAI fills choices[0].message.function_call.arguments;
+			// on the `wp-ai-client` backend the adaptor translates this into a
+			// structured JSON response and reshapes the output the same way.
+			'functions'     => array(
+				array(
+					'name'       => 'create_form',
+					'parameters' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'fields' => array(
+								'type'  => 'array',
+								'items' => array(
+									'type'       => 'object',
+									'properties' => array(
+										'label'    => array( 'type' => 'string' ),
+										'type'     => array( 'type' => 'string' ),
+										'required' => array( 'type' => 'boolean' ),
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+			'function_call' => array( 'name' => 'create_form' ),
 		),
 		array(
 			'otter_name'      => 'patternsPicker',
@@ -253,6 +287,40 @@ function stub_openai_http_for_e2e( $preempt, $parsed_args, $url ) {
 
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e' );
 add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_openai_http_for_e2e', 10, 3 );
+
+/**
+ * Prevent external HTTP calls for captcha verification during E2E.
+ *
+ * @param mixed  $preempt Whether to preempt an HTTP request.
+ * @param array  $request HTTP request arguments.
+ * @param string $url The request URL.
+ * @return array|mixed
+ */
+function stub_captcha_http_verification_for_e2e( $preempt, $request, $url ) {
+	if ( null !== $preempt ) {
+		return $preempt;
+	}
+
+	if (
+		false !== strpos( $url, 'www.google.com/recaptcha/api/siteverify' ) ||
+		false !== strpos( $url, 'challenges.cloudflare.com/turnstile/v0/siteverify' )
+	) {
+		return array(
+			'response' => array(
+				'code' => 200,
+			),
+			'body'     => wp_json_encode(
+				array(
+					'success' => true,
+				)
+			),
+		);
+	}
+
+	return $preempt;
+}
+
+add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_captcha_http_verification_for_e2e', 10, 3 );
 
 add_action(
 	'rest_api_init',
