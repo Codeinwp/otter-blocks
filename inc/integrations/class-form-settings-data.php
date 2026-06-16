@@ -139,9 +139,22 @@ class Form_Settings_Data {
 	/**
 	 * The location where the submissions are saved.
 	 *
+	 * Legacy setting: submissions are now always saved to the database. Kept populated for
+	 * older Otter Pro builds that still read it; superseded by $email_notification.
+	 *
 	 * @var string
 	 */
 	private $submissions_save_location = '';
+
+	/**
+	 * Whether to send the owner an email notification for each submission.
+	 *
+	 * Replaces the save-location selector: database save is always on, only the email
+	 * notification is configurable.
+	 *
+	 * @var bool
+	 */
+	private $email_notification = true;
 
 	/**
 	 * The webhook ID.
@@ -288,6 +301,24 @@ class Form_Settings_Data {
 					}
 				} elseif ( Pro::is_pro_active() ) {
 					$integration->set_submissions_save_location( 'database-email' );
+				}
+
+				/**
+				 * Read-time migration of the legacy save-location setting: `email`,
+				 * `database-email` and empty/missing (email was the de facto behavior) map to
+				 * notification on, `database` maps to off. Legacy `database` only skipped the
+				 * owner email when Pro was active (the old gate was
+				 * `Pro::is_pro_active() && ! $can_send_email`), so without an active Pro
+				 * license the email was always sent and we keep the notification on. The
+				 * stored option is rewritten to the new `emailNotification` format when the
+				 * form is next saved in the editor.
+				 */
+				if ( isset( $form['emailNotification'] ) ) {
+					$integration->set_email_notification( filter_var( $form['emailNotification'], FILTER_VALIDATE_BOOLEAN ) );
+				} elseif ( ! empty( $form['submissionsSaveLocation'] ) && Pro::is_pro_active() ) {
+					$integration->set_email_notification( 'database' !== $form['submissionsSaveLocation'] );
+				} else {
+					$integration->set_email_notification( true );
 				}
 				$integration->set_meta( $form );
 				if ( isset( $form['webhookId'] ) ) {
@@ -839,6 +870,26 @@ class Form_Settings_Data {
 	 */
 	public function set_submissions_save_location( $submissions_save_location ) {
 		$this->submissions_save_location = $submissions_save_location;
+		return $this;
+	}
+
+	/**
+	 * Check if the owner email notification is enabled.
+	 *
+	 * @return bool
+	 */
+	public function has_email_notification() {
+		return $this->email_notification;
+	}
+
+	/**
+	 * Set whether the owner email notification is enabled.
+	 *
+	 * @param bool $email_notification Whether the notification is enabled.
+	 * @return $this
+	 */
+	public function set_email_notification( $email_notification ) {
+		$this->email_notification = (bool) $email_notification;
 		return $this;
 	}
 
