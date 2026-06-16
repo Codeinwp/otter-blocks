@@ -1,3 +1,4 @@
+// Legacy wrapper still used by Otter Pro condition controls (e.g. Time Recurring).
 .o-conditions {
 	margin-top: 10px;
 
@@ -9,42 +10,8 @@
 	}
 }
 
-.o-conditions__operator-wrapper {
-	position: relative;
-	height: 45px;
-	margin: 10px 0;
-
-	.o-conditions__operator-line {
-		position: absolute;
-		left: 50%;
-		top: 5px;
-		bottom: 5px;
-		width: 1px;
-		background: #d4d4d4;
-		z-index: 1;
-	}
-
-	.o-conditions__operator-word {
-		text-align: center;
-		height: 12px;
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: 50%;
-		margin-top: -10px;
-		z-index: 2;
-	
-		span {
-			color: #747d86;
-			text-transform: uppercase;
-			letter-spacing: 1px;
-			padding: 3px;
-			font-size: 11px;
-			background: #fff;
-		}
-	}
-}
-
+// Legacy class still used outside this panel by the Posts layout builder
+// (free upsell + pro custom field buttons).
 .o-conditions__add {
 	display: flex;
 	justify-content: center;
@@ -52,6 +19,374 @@
 	margin-top: 15px;
 }
 
+.o-conditions__intro {
+	margin: 0 0 12px;
+}
+
+// Dot shown in the panel title when the block has active conditions.
+.o-conditions__indicator {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	margin-left: 8px;
+	border-radius: 50%;
+	background: var( --wp-admin-theme-color, #3858e9 );
+	vertical-align: middle;
+}
+
+// Rule group card.
+.o-conditions__group {
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background: #fff;
+	overflow: hidden;
+}
+
+.o-conditions__group-header {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	padding: 6px 6px 6px 12px;
+	background: #fbfbfc;
+}
+
+.o-conditions__group.is-open .o-conditions__group-header {
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.o-conditions__group-main {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 1px;
+	border: none;
+	background: none;
+	padding: 2px 0;
+	margin: 0;
+	cursor: pointer;
+	text-align: left;
+	font-family: inherit;
+}
+
+.o-conditions__group-title {
+	font-size: 12px;
+	font-weight: 600;
+	color: #1e1e1e;
+}
+
+.o-conditions__group-summary {
+	font-size: 11px;
+	color: #757575;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.o-conditions__group-body {
+	padding: 4px;
+	display: flex;
+	flex-direction: column;
+}
+
+.o-conditions__group-header,
+.o-conditions__row-header {
+	.components-button.has-icon {
+		width: 28px;
+		min-width: 28px;
+		height: 28px;
+		padding: 0;
+		color: #757575;
+		flex: 0 0 auto;
+	}
+
+	.o-conditions__group-remove:hover,
+	.o-conditions__row-remove:hover {
+		color: #cc1818;
+	}
+}
+
+// Condition row.
+.o-conditions__row-header {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.o-conditions__row-main {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	border: none;
+	background: none;
+	margin: 0;
+	padding: 7px 6px;
+	border-radius: 2px;
+	cursor: pointer;
+	text-align: left;
+	font-family: inherit;
+
+	&:hover {
+		background: #f6f7f7;
+	}
+
+	&.is-static {
+		cursor: default;
+
+		&:hover {
+			background: none;
+		}
+	}
+}
+
+.o-conditions__row-icon {
+	width: 26px;
+	height: 26px;
+	border-radius: 4px;
+	flex: 0 0 auto;
+	display: grid;
+	place-items: center;
+	color: var(--wp-admin-theme-color, #3858e9);
+	background: #e9edfd;
+	background: color-mix(in srgb, var(--wp-admin-theme-color, #3858e9) 10%, #fff);
+
+	svg {
+		fill: currentColor;
+	}
+
+	&.is-empty {
+		color: #757575;
+		background: #f0f0f1;
+	}
+
+	&.is-add {
+		background: transparent;
+		border: 1px dashed #949494;
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+}
+
+.o-conditions__row-text {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.o-conditions__row-title {
+	font-size: 13px;
+	font-weight: 500;
+	color: #1e1e1e;
+}
+
+.o-conditions__row-value {
+	font-size: 11px;
+	color: #757575;
+	margin-top: 1px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	&.is-empty {
+		color: var(--wp-admin-theme-color, #3858e9);
+	}
+}
+
+.o-conditions__row-chevron {
+	flex: 0 0 auto;
+	color: #949494;
+	fill: currentColor;
+	transition: transform 0.18s ease;
+}
+
+.o-conditions__row.is-open .o-conditions__row-chevron {
+	transform: rotate(180deg);
+}
+
+.o-conditions__row-editor {
+	padding: 6px 6px 12px;
+}
+
+// blocks/editor.scss gives base controls in tools panel items 24px vertical
+// margins — too airy for the compact rule UI, so tighten it here.
+.components-tools-panel-item .o-conditions__group {
+	.components-base-control:not(.components-input-control) {
+		margin: 10px 0;
+	}
+}
+
+// FormTokenField renders no base-control wrapper, so the spacing rules above
+// never reach it — give it the same rhythm as the other controls.
+.o-conditions__group .components-form-token-field {
+	margin: 10px 0;
+}
+
+.o-conditions__group input[type="text"] {
+	min-height: 30px !important;
+}
+
+// AND / OR separators.
+.o-conditions__separator {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 6px 2px;
+}
+
+.o-conditions__separator-line {
+	flex: 1;
+	height: 1px;
+	background: #e0e0e0;
+}
+
+.o-conditions__separator-label {
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: #757575;
+	background: #f0f0f1;
+	padding: 0 8px;
+	border-radius: 9px;
+}
+
+// Add buttons.
+.o-conditions__picker {
+	width: 100%;
+}
+
+.o-conditions__add-condition {
+	width: 100%;
+	justify-content: flex-start;
+	gap: 9px;
+	height: auto;
+	padding: 7px 6px;
+	color: var(--wp-admin-theme-color, #3858e9);
+
+	&:hover .o-conditions__row-icon.is-add {
+		border-color: currentColor;
+	}
+}
+
+.o-conditions__add-group {
+	display: flex;
+	justify-content: center !important;
+	width: 100%;
+	margin-top: 14px;
+}
+
+// Searchable condition picker popover.
+.o-conditions-picker__popover {
+	.components-popover__content {
+		width: 272px;
+		padding: 0;
+		border-radius: 4px;
+	}
+}
+
+.o-conditions-picker {
+	display: flex;
+	flex-direction: column;
+
+	.components-search-control {
+		padding: 8px;
+		border-bottom: 1px solid #e0e0e0;
+	}
+}
+
+.o-conditions-picker__list {
+	overflow-y: auto;
+	max-height: 290px;
+	padding: 4px;
+}
+
+.o-conditions-picker__group-label {
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #949494;
+	padding: 10px 8px 4px;
+}
+
+.o-conditions-picker__item {
+	display: flex;
+	align-items: flex-start;
+	gap: 9px;
+	width: 100%;
+	text-align: left;
+	border: none;
+	background: none;
+	cursor: pointer;
+	padding: 7px 8px;
+	border-radius: 4px;
+	font-family: inherit;
+
+	.o-conditions__row-icon {
+		width: 24px;
+		height: 24px;
+	}
+
+	&:hover:not(.is-disabled),
+	&:focus-visible {
+		background: #f0f0f1;
+	}
+
+	&.is-disabled {
+		cursor: default;
+
+		.o-conditions-picker__item-label {
+			color: #757575;
+		}
+
+		.o-conditions__row-icon {
+			color: #757575;
+			background: #f0f0f1;
+		}
+	}
+}
+
+.o-conditions-picker__item-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.o-conditions-picker__item-label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	font-weight: 500;
+	color: #1e1e1e;
+
+	svg {
+		fill: currentColor;
+		flex: 0 0 auto;
+	}
+}
+
+.o-conditions-picker__item-help {
+	display: block;
+	font-size: 11px;
+	color: #757575;
+	margin-top: 1px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.o-conditions-picker__empty {
+	padding: 20px 12px;
+	text-align: center;
+	color: #757575;
+	font-size: 12px;
+	margin: 0;
+}
+
+// Indicator for blocks with conditions in the editor canvas.
 .block-editor-block-list__layout {
 	.block-editor-block-list__block {
 		&:not( .is-selected ) {
