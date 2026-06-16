@@ -87,8 +87,10 @@ test.describe( 'Slider Block', () => {
 		page.on( 'console', onConsole );
 		page.on( 'pageerror', onPageError );
 
+		// The slider opts out of the iframed canvas and captures key events, so the
+		// Control+Shift+D shortcut is unreliable here; duplicate via the block toolbar instead.
 		await page.getByRole( 'document', { name: 'Block: Image Slider' } ).click();
-		await page.keyboard.press( 'Control+Shift+D' );
+		await editor.clickBlockOptionsMenuItem( 'Duplicate' );
 
 		await expect( page.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 2 );
 		await page.waitForTimeout( 250 );
