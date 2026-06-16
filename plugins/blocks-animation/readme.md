@@ -1,7 +1,7 @@
 # Blocks Animation: CSS Animations for Gutenberg Blocks #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/)  
 **Tags:** animation, gutenberg blocks, css, effects, transitions  
-**Requires at least:** 6.2  
+**Requires at least:** 6.6  
 **Tested up to:** 7.0  
 **Requires PHP:** 5.4  
 **Stable tag:** 3.1.11  

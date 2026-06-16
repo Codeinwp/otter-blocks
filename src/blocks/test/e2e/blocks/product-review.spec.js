@@ -27,14 +27,14 @@ test.describe( 'Product Review Block', () => {
 	test( 'add value by typing', async({ editor, page }) => {
 		await editor.insertBlock({ name: 'themeisle-blocks/review' });
 
-		const title = page.getByRole( 'textbox', { name: 'Name of your product…' });
+		const title = editor.canvas.getByRole( 'textbox', { name: 'Name of your product…' });
 
 		await title.type( 'Test Product' );
 
 		// Check if the value is added in title
 		expect( await title.innerHTML() ).toBe( 'Test Product' );
 
-		const description = page.getByRole( 'textbox', { name: 'Product description or a small review…' });
+		const description = editor.canvas.getByRole( 'textbox', { name: 'Product description or a small review…' });
 
 		await description.type( 'Test Description' );
 
@@ -80,8 +80,8 @@ test.describe( 'Product Review Block', () => {
 		/**
 		 * Check new feature in display
 		 */
-		await expect( page.getByRole( 'document', { name: 'Block: Product Review' }).getByText( FEATURE_TITLE, { exact: true }) ).toBeVisible();
-		await expect( page.getByRole( 'document', { name: 'Block: Product Review' }).getByText( FEATURE_DESCRIPTION, { exact: true }) ).toBeVisible();
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Product Review' }).getByText( FEATURE_TITLE, { exact: true }) ).toBeVisible();
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Product Review' }).getByText( FEATURE_DESCRIPTION, { exact: true }) ).toBeVisible();
 	});
 
 	test( 'open in new tab', async({ editor, page }) => {
@@ -108,7 +108,7 @@ test.describe( 'Product Review Block', () => {
 	test( 'check description new lines preserved', async({ editor, page }) => {
 		await editor.insertBlock({ name: 'themeisle-blocks/review' });
 
-		const title = page.getByRole( 'textbox', { name: 'Name of your product…' });
+		const title = editor.canvas.getByRole( 'textbox', { name: 'Name of your product…' });
 
 		await title.type( 'Test Product' );
 
@@ -116,15 +116,15 @@ test.describe( 'Product Review Block', () => {
 		expect( await title.innerHTML() ).toBe( 'Test Product' );
 
 		// Add a multi line description
-		await page.getByLabel( 'Product description or a' ).click();
-		await page.getByLabel( 'Product description or a' ).fill( 'Product description' );
+		await editor.canvas.getByLabel( 'Product description or a' ).click();
+		await editor.canvas.getByLabel( 'Product description or a' ).fill( 'Product description' );
 		await page.keyboard.press( 'Enter' );
 		await page.keyboard.type( 'Line 1' );
 		await page.keyboard.press( 'Enter' );
 		await page.keyboard.type( 'Line 2' );
 
 		// Check if the value is added in description and is multiline
-		await expect( page.getByLabel( 'Product description or a' ) ).toContainText( 'Product description\nLine 1\nLine 2', { useInnerText: true });
+		await expect( editor.canvas.getByLabel( 'Product description or a' ) ).toContainText( 'Product description\nLine 1\nLine 2', { useInnerText: true });
 
 		await publishAndViewPost({ editor, page });
 
