@@ -16,8 +16,16 @@ import {
 	subscribe
 } from '@wordpress/data';
 
-if ( Boolean( window.themeisleGutenberg?.isBlockEditor ) && select( 'core/editor' ) ) {
-	let hasRun = false;
+const CHECK_DEBOUNCE_MS = 750;
+
+// Gate on the block-editor store, not window.themeisleGutenberg.isBlockEditor (which is post-editor only),
+// so the Site Editor / FSE / widgets — where broken blocks also surface — are covered.
+if ( select( 'core/block-editor' ) && select( 'core/blocks' ) ) {
+
+	const reportedSlugs = new Set();
+
+	let pageErrorReported = false;
+	let timeoutId = null;
 
 	const collectBlocks = ( blocks, acc ) => {
 		blocks.forEach( block => {
@@ -35,7 +43,6 @@ if ( Boolean( window.themeisleGutenberg?.isBlockEditor ) && select( 'core/editor
 		const { getBlockTypes } = select( 'core/blocks' );
 		const { getBlocks } = select( 'core/block-editor' );
 
-		// Set of Otter block names.
 		const otterBlocks = new Set(
 			getBlockTypes()
 				.filter( blockType => 'themeisle-blocks' === blockType.category )
@@ -47,13 +54,12 @@ if ( Boolean( window.themeisleGutenberg?.isBlockEditor ) && select( 'core/editor
 		const erroredOtterBlocks = new Set();
 
 		allBlocks.forEach( block => {
-			// Invalid Otter block (markup no longer matches the saved content).
 			if ( false === block.isValid && otterBlocks.has( block.name ) ) {
 				erroredOtterBlocks.add( block.name );
 				return;
 			}
 
-			// Missing block whose original type was an Otter block.
+			// A core/missing block whose original type was an Otter block.
 			if ( 'core/missing' === block.name ) {
 				const originalName = block.attributes?.originalName;
 
@@ -63,7 +69,17 @@ if ( Boolean( window.themeisleGutenberg?.isBlockEditor ) && select( 'core/editor
 			}
 		});
 
-		erroredOtterBlocks.forEach( blockSlug => {
+		const newlyErrored = [ ...erroredOtterBlocks ].filter(
+			blockSlug => ! reportedSlugs.has( blockSlug )
+		);
+
+		if ( 0 === newlyErrored.length ) {
+			return;
+		}
+
+		newlyErrored.forEach( blockSlug => {
+			reportedSlugs.add( blockSlug );
+
 			window.oTrk?.set( `block-render-error-${ blockSlug }`, {
 				feature: 'block-health',
 				featureComponent: 'render-error',
@@ -71,7 +87,9 @@ if ( Boolean( window.themeisleGutenberg?.isBlockEditor ) && select( 'core/editor
 			});
 		});
 
-		if ( 0 < erroredOtterBlocks.size ) {
+		if ( ! pageErrorReported ) {
+			pageErrorReported = true;
+
 			window.oTrk?.set( 'page-has-errored-block', {
 				feature: 'block-health',
 				featureComponent: 'page-error',
@@ -80,20 +98,31 @@ if ( Boolean( window.themeisleGutenberg?.isBlockEditor ) && select( 'core/editor
 		}
 	};
 
-	// Run once per editor session, after the editor is ready.
-	const unsubscribe = subscribe( () => {
-		if ( hasRun ) {
+	// Stay subscribed (debounced) so late/async-resolved breakage — Otter blocks inside reusable blocks
+	// or template-parts that resolve after first ready — is still caught; reportedSlugs prevents respam.
+	subscribe( () => {
+		const { getBlocks, __unstableIsEditorReady } = select( 'core/block-editor' );
+
+		// Don't depend solely on the unstable __unstableIsEditorReady: treat "has blocks" as ready too.
+		const blocks = getBlocks();
+		const hasBlocks = Array.isArray( blocks ) && 0 < blocks.length;
+		const editorReady = __unstableIsEditorReady ? __unstableIsEditorReady() : false;
+
+		if ( ! ( hasBlocks || editorReady ) ) {
 			return;
 		}
 
-		const { __unstableIsEditorReady } = select( 'core/editor' );
-
-		if ( ! ( __unstableIsEditorReady && __unstableIsEditorReady() ) ) {
+		if ( 'undefined' === typeof window.oTrk ) {
 			return;
 		}
 
-		hasRun = true;
-		unsubscribe();
-		checkBlockHealth();
+		if ( null !== timeoutId ) {
+			clearTimeout( timeoutId );
+		}
+
+		timeoutId = setTimeout( () => {
+			timeoutId = null;
+			checkBlockHealth();
+		}, CHECK_DEBOUNCE_MS );
 	});
 }

@@ -38,6 +38,7 @@ class Main {
 		add_filter( 'safe_style_css', array( $this, 'used_css_properties' ), 99 );
 		add_filter( 'wp_kses_allowed_html', array( $this, 'used_html_properties' ), 10, 2 );
 		add_action( 'init', array( $this, 'after_update_migration' ) );
+		add_action( 'admin_init', array( $this, 'flush_pending_upgrade_track' ) );
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
 			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ), PHP_INT_MAX ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
@@ -568,30 +569,59 @@ class Main {
 			Dashboard_Server::regenerate_styles();
 			do_action( 'otter_blocks_plugin_update' );
 
-			// Track update-breakage observability on plugin upgrade only (skip fresh installs where there is no prior version).
-			if ( ! empty( $db_version ) && '0' !== (string) $db_version ) {
-				$from = $this->coarsen_version( $db_version );
-				$to   = $this->coarsen_version( OTTER_BLOCKS_VERSION );
-				$wp   = $this->coarsen_version( get_bloginfo( 'version' ) );
-
-				Tracker::track(
+			// Persist the upgrade transition (skip fresh installs) and flush it later on a consented admin
+			// load, so it survives consent being off at upgrade time and avoids duplicate blocking POSTs.
+			if ( ! empty( $db_version ) ) {
+				update_option(
+					'otter_blocks_pending_upgrade_track',
 					array(
-						array(
-							'feature'          => 'lifecycle',
-							'featureComponent' => 'plugin-upgrade',
-							'featureValue'     => $from . '>' . $to,
-						),
-						array(
-							'feature'          => 'lifecycle',
-							'featureComponent' => 'wp-at-upgrade',
-							'featureValue'     => $wp,
-						),
-					)
+						'from' => $this->coarsen_version( $db_version ),
+						'to'   => $this->coarsen_version( OTTER_BLOCKS_VERSION ),
+						'wp'   => $this->coarsen_version( get_bloginfo( 'version' ) ),
+					),
+					false
 				);
 			}
 		}
 
 		return update_option( 'themeisle_blocks_db_version', OTTER_BLOCKS_VERSION );
+	}
+
+	/**
+	 * Send the upgrade transition captured at update time, once, when consent is granted.
+	 *
+	 * @return void
+	 * @since  3.1.12
+	 * @access public
+	 */
+	public function flush_pending_upgrade_track() {
+		$pending = get_option( 'otter_blocks_pending_upgrade_track', false );
+
+		if ( empty( $pending ) || ! is_array( $pending ) || ! isset( $pending['from'], $pending['to'], $pending['wp'] ) ) {
+			return;
+		}
+
+		if ( ! Tracker::has_consent() ) {
+			return;
+		}
+
+		Tracker::track(
+			array(
+				array(
+					'feature'          => 'lifecycle',
+					'featureComponent' => 'plugin-upgrade',
+					'featureValue'     => $pending['from'] . '>' . $pending['to'],
+				),
+				array(
+					'feature'          => 'lifecycle',
+					// WP version at first post-upgrade admin load (best-effort proxy for the WP version at upgrade time).
+					'featureComponent' => 'wp-at-upgrade',
+					'featureValue'     => $pending['wp'],
+				),
+			)
+		);
+
+		delete_option( 'otter_blocks_pending_upgrade_track' );
 	}
 
 	/**
@@ -604,7 +634,7 @@ class Main {
 	 */
 	private function coarsen_version( $version ) {
 		$parts = explode( '.', (string) $version );
-		$major = isset( $parts[0] ) ? (int) $parts[0] : 0;
+		$major = (int) $parts[0];
 		$minor = isset( $parts[1] ) ? (int) $parts[1] : 0;
 
 		return $major . '.' . $minor;
