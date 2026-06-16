@@ -250,11 +250,17 @@ class Form_Pro_Features {
 		}
 
 		try {
-			$form_options = $form_data->get_wp_options();
-			$can_delete   = ! $form_data->is_temporary();
+			$can_delete = ! $form_data->is_temporary();
 
-			if ( isset( $form_options ) ) {
-				$can_delete = 'email' === $form_options->get_submissions_save_location();
+			if ( method_exists( $form_data, 'has_record_id' ) ) {
+				// The Submission Record references the uploaded file paths; deleting them would orphan the Record.
+				$can_delete = $can_delete && ! $form_data->has_record_id();
+			} else {
+				// Older otter-blocks build: keep the legacy save-location behavior.
+				$form_options = $form_data->get_wp_options();
+				if ( isset( $form_options ) ) {
+					$can_delete = 'email' === $form_options->get_submissions_save_location();
+				}
 			}
 
 			if ( $can_delete && $form_data->has_uploaded_files() ) {

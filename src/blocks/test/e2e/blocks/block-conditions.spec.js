@@ -6,7 +6,7 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 /**
  * Internal dependencies
  */
-import { publishAndViewPost } from '../helpers/editor';
+import { publishAndViewPost, waitForEditorReady } from '../helpers/editor';
 import { tryLoginIn } from '../utils';
 
 test.describe( 'Block Conditions', () => {
@@ -25,6 +25,8 @@ test.describe( 'Block Conditions', () => {
 	});
 
 	test( 'check logged out users', async({ editor, page }) => {
+		await waitForEditorReady( page );
+
 		await editor.insertBlock({
 			name: 'core/image',
 			attributes: {

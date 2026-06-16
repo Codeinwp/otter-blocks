@@ -17,8 +17,8 @@ use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Utils;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
+use ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions;
 use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
-use ThemeIsle\GutenbergBlocks\Pro;
 use WP_Error;
 use WP_HTTP_Response;
 use WP_REST_Request;
@@ -65,6 +65,14 @@ class Form_Server {
 	 * Autoresponder Email Error Expiration Time
 	 */
 	const AUTO_RESPONDER_ERROR_EXPIRATION_TIME = WEEK_IN_SECONDS;
+
+	/**
+	 * Admin Alert cooldown for infrastructure failures (captcha provider, delivery).
+	 *
+	 * At most one alert per form per failure type within this window — the Records and
+	 * their Delivery Status remain the per-submission source of truth.
+	 */
+	const ADMIN_ALERT_EXPIRATION_TIME = HOUR_IN_SECONDS;
 
 	/**
 	 * Initialize the class
@@ -281,6 +289,10 @@ class Form_Server {
 		// Validate the form data.
 		$form_data = apply_filters( 'otter_form_validate_form', $form_data );
 
+		if ( ! ( $form_data instanceof Form_Data_Request ) ) {
+			$form_data = self::replace_corrupted_form_data( $request, $res );
+		}
+
 		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_data_from_payload( 'formOption' ) );
 		$form_data->set_form_options( $form_options );
 		$form_data = self::pull_fields_options_for_form( $form_data );
@@ -305,8 +317,8 @@ class Form_Server {
 
 			// Check if $form_data has function get_error_code. Otherwise, it will throw an error.
 			if ( ! ( $form_data instanceof Form_Data_Request ) ) {
-				$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
-				$res->add_reason( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
+				$form_data = self::replace_corrupted_form_data( $request, $res );
+				$form_data->set_form_options( $form_options );
 			}
 
 			if ( $res->has_error() || $form_data->has_error() ) {
@@ -314,26 +326,45 @@ class Form_Server {
 				do_action( 'otter_form_issues_handler', $form_data );
 			} else {
 
-				if ( ! empty( $form_options->get_redirect_link() ) ) {
-					$res->add_response_field( 'redirectLink', $form_options->get_redirect_link() );
-				}
+				/**
+				 * Persist the submission as a Record before attempting any delivery action,
+				 * so a delivery failure can no longer lose the submission. The save handler
+				 * stores the new Record ID on the form data.
+				 *
+				 * @param Form_Data_Request $form_data The form data.
+				 * @since 3.1
+				 */
+				do_action( 'otter_form_record_save', $form_data );
 
-				$this->apply_main_provider( $form_data ); // Send the data to the provider.
+				if ( $form_data->has_infrastructure_failure() ) {
 
-				do_action( 'otter_form_after_submit', $form_data );
-
-				if ( ! ( $form_data instanceof Form_Data_Request ) ) {
-					$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR )
-						->add_reason( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
-				}
-
-				if ( $form_data->has_error() ) {
-					$res->set_code( $form_data->get_error_code() )
+					// A dependent service is down: the Record was saved and marked failed, but the submission cannot be verified/delivered.
+					$res->set_code( $form_data->get_infrastructure_failure_code() )
 						->set_display_error( $form_options->get_error_message() );
+
 				} else {
-					$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND )
-						->set_success_message( $form_options->get_submit_message() )
-						->mark_as_success();
+
+					if ( ! empty( $form_options->get_redirect_link() ) ) {
+						$res->add_response_field( 'redirectLink', $form_options->get_redirect_link() );
+					}
+
+					$this->apply_main_provider( $form_data ); // Send the data to the provider.
+
+					do_action( 'otter_form_after_submit', $form_data );
+
+					if ( ! ( $form_data instanceof Form_Data_Request ) ) {
+						$form_data = self::replace_corrupted_form_data( $request, $res );
+						$form_data->set_form_options( $form_options );
+					}
+
+					if ( $form_data->has_error() ) {
+						$res->set_code( $form_data->get_error_code() )
+							->set_display_error( $form_options->get_error_message() );
+					} else {
+						$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND )
+							->set_success_message( $form_options->get_submit_message() )
+							->mark_as_success();
+					}
 				}
 			}
 		} catch ( Exception $e ) {
@@ -342,11 +373,32 @@ class Form_Server {
 			$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$form_data->add_warning( Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
 		} finally {
-			$form_data->append_metadata( $res );
+			if ( $form_data instanceof Form_Data_Request ) {
+				$form_data->append_metadata( $res );
+			}
 
 			do_action( 'otter_form_issues_handler', $form_data );
 			return $res->build_response();
 		}
+	}
+
+	/**
+	 * Replace a form data object that was corrupted by a third-party hook, so that a graceful runtime error response can be returned.
+	 *
+	 * @param WP_REST_Request    $request The original form request.
+	 * @param Form_Data_Response $res The response on which to record the runtime error.
+	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
+	 * @return Form_Data_Request A fresh form data object carrying the runtime error, safe for downstream calls.
+	 * @since 3.1
+	 */
+	private static function replace_corrupted_form_data( $request, $res ) {
+		$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR )
+			->add_reason( __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
+
+		$form_data = new Form_Data_Request( $request );
+		$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
+
+		return $form_data;
 	}
 
 	/**
@@ -415,9 +467,8 @@ class Form_Server {
 		try {
 			$form_options = $form_data->get_wp_options();
 
-			$can_send_email = substr( $form_options->get_submissions_save_location(), -strlen( 'email' ) ) === 'email';
-
-			if ( Pro::is_pro_active() && ! $can_send_email ) {
+			// The submission is already saved as a Record; the notification email is optional.
+			if ( ! $form_options->has_email_notification() ) {
 				return $form_data;
 			}
 
@@ -513,18 +564,10 @@ class Form_Server {
 				$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, __( 'Some hook is corrupting the Form processing pipeline.', 'otter-blocks' ) );
 			}
 
-			$send_email = false;
-
-			switch ( $form_data->get_error_code() ) {
-				case Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR:
-				case Form_Data_Response::ERROR_MISSING_EMAIL:
-				case Form_Data_Response::ERROR_RUNTIME_ERROR:
-					$send_email = true;
-					break;
-			}
+			$throttle_key        = '';
+			$throttle_expiration = self::ADMIN_ALERT_EXPIRATION_TIME;
 
 			if (
-				! $send_email &&
 				$form_data->has_warning() &&
 				$form_data->has_warning_codes(
 					array(
@@ -536,15 +579,83 @@ class Form_Server {
 				$key = $form_data->get_form_option_id() . '_autoresponder_error';
 
 				if ( false === get_transient( $key ) ) {
-					$send_email = true;
-					set_transient( $key, true, self::AUTO_RESPONDER_ERROR_EXPIRATION_TIME );
+					$throttle_key        = $key;
+					$throttle_expiration = self::AUTO_RESPONDER_ERROR_EXPIRATION_TIME;
 				}
 			}
 
-			if ( $send_email ) {
-				$this->send_error_email( $form_data );
+			if ( '' === $throttle_key && $form_data->has_infrastructure_failure() ) {
+				$throttle_key = $this->get_available_alert_throttle_key( $form_data, 'captcha_provider' );
+			}
+
+			$delivery_failure_actions = Form_Submissions::get_delivery_failure_actions();
+
+			if (
+				'' === $throttle_key &&
+				! $form_data->has_infrastructure_failure() &&
+				(
+					isset( $delivery_failure_actions[ $form_data->get_error_code() ] ) ||
+					$form_data->has_warning_codes( array_keys( $delivery_failure_actions ) )
+				)
+			) {
+				// Throttle each delivery action separately, so an alert for one action (e.g.: email) does not suppress the first alert for another (e.g.: webhook).
+				$throttle_key = $this->get_available_alert_throttle_key( $form_data, 'delivery_' . $this->get_failed_delivery_action( $form_data, $delivery_failure_actions ) );
+			}
+
+			// Start the cooldown only after the alert was actually delivered, so a failed alert does not burn the throttle window.
+			if ( '' !== $throttle_key && self::send_error_email( $form_data ) ) {
+				set_transient( $throttle_key, true, $throttle_expiration );
 			}
 		}
+	}
+
+	/**
+	 * Get the throttle key for an Admin Alert if its cooldown allows sending: at most one alert per form per failure type per hour.
+	 *
+	 * The caller must set the transient on the returned key only after the alert was successfully delivered.
+	 *
+	 * @param Form_Data_Request $form_data The form request data.
+	 * @param string            $type The failure type (e.g.: 'captcha_provider', 'delivery_email').
+	 * @return string The transient key for the alert, or an empty string when the alert is throttled.
+	 * @since 3.1
+	 */
+	private function get_available_alert_throttle_key( $form_data, $type ) {
+		$form_option_id = $form_data->get_form_option_id();
+
+		if ( empty( $form_option_id ) ) {
+			// Alerts without a form option id (e.g.: corrupted pipeline) get their own bucket instead of colliding with the per-form ones.
+			$form_option_id = 'global';
+		}
+
+		$key = $form_option_id . '_alert_' . $type;
+
+		if ( false !== get_transient( $key ) ) {
+			return '';
+		}
+
+		return $key;
+	}
+
+	/**
+	 * Get the delivery action whose failure triggered the Admin Alert.
+	 *
+	 * @param Form_Data_Request         $form_data The form request data.
+	 * @param array<int|string, string> $delivery_failure_actions Map of response error codes to delivery actions.
+	 * @return string The failed delivery action (e.g.: 'email', 'webhook', 'subscribe').
+	 * @since 3.1
+	 */
+	private function get_failed_delivery_action( $form_data, $delivery_failure_actions ) {
+		if ( isset( $delivery_failure_actions[ $form_data->get_error_code() ] ) ) {
+			return $delivery_failure_actions[ $form_data->get_error_code() ];
+		}
+
+		foreach ( $form_data->get_warning_codes() as $warning ) {
+			if ( isset( $warning['code'], $delivery_failure_actions[ $warning['code'] ] ) ) {
+				return $delivery_failure_actions[ $warning['code'] ];
+			}
+		}
+
+		return 'provider';
 	}
 
 	/**
@@ -680,7 +791,7 @@ class Form_Server {
 	 * Send an email about error, like: the integration api key is no longer valid.
 	 *
 	 * @param Form_Data_Request $form_data The form request data.
-	 * @return void
+	 * @return bool Whether the email was sent.
 	 * @since 2.0.3
 	 */
 	public static function send_error_email( $form_data ) {
@@ -691,7 +802,7 @@ class Form_Server {
 		$to      = sanitize_email( get_site_option( 'admin_email' ) );
 		$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
 		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
-		wp_mail( $to, $email_subject, $email_body, $headers );
+		return wp_mail( $to, $email_subject, $email_body, $headers );
 	}
 
 	/**
@@ -973,7 +1084,7 @@ class Form_Server {
 			$form_data->set_error( Form_Data_Response::ERROR_MISSING_CAPTCHA );
 		}
 
-		if ( $form_options->form_has_captcha() && $form_data->payload_has( 'token' ) ) {
+		if ( $form_options->form_has_captcha() && $form_data->payload_has( 'token' ) && ! $form_data->has_error() ) {
 
 			// The saved form options are authoritative; the payload value is only
 			// a fallback for forms saved before the provider was stored with them.
@@ -1014,8 +1125,16 @@ class Form_Server {
 				)
 			);
 
-			if ( is_wp_error( $resp ) ) {
-				$form_data->set_error( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN );
+			/**
+			 * A provider failure (unreachable service, timeout, 5xx) is not a verification failure:
+			 * the submission is saved and marked failed instead of being rejected.
+			 */
+			$response_code = wp_remote_retrieve_response_code( $resp );
+			if ( is_wp_error( $resp ) || 200 !== $response_code ) {
+				$form_data->mark_infrastructure_failure(
+					Form_Data_Response::ERROR_CAPTCHA_PROVIDER_UNREACHABLE,
+					is_wp_error( $resp ) ? $resp->get_error_message() : 'HTTP ' . $response_code
+				);
 				return $form_data;
 			}
 
