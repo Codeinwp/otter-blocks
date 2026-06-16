@@ -18,6 +18,7 @@ import {
 	PromptsData,
 	injectActionIntoPrompt,
 	injectConversationIntoPrompt,
+	isAIBackendConfigured,
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
@@ -133,7 +134,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	const [ generationStatus, setGenerationStatus ] = useState<'loading' | 'loaded' | 'error'>( 'loaded' );
 
-	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( window.themeisleGutenberg?.hasOpenAiKey ? 'present' : 'checking' );
+	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( isAIBackendConfigured() ? 'present' : 'checking' );
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
 
 	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number, prompt: string }}[]>( props.resultHistory ?? []);
@@ -259,14 +260,14 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			'otter_used_action': 'textTransformation' === promptID ? 'textTransformation::otter_action_prompt' : ( promptID ?? '' ),
 			'otter_user_content': value
 		}).then ( ( data ) => {
-			if ( data?.error ) {
+			if ( ! data.ok ) {
 				setGenerationStatus( 'error' );
 				setShowError( true );
 				setErrorMessage( `Error ${data.error.code} - ${data.error.message}` ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 				return;
 			}
 
-			const result = data?.choices?.[0]?.message?.function_call?.arguments ?? data?.choices?.[0]?.message?.content;
+			const result = data.content;
 
 			setGenerationStatus( 'loaded' );
 
@@ -275,13 +276,15 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				setErrorMessage( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
 				return;
 			}
+
+			const usedToken = data.usedTokens;
 			
 			if ( regenerate ) {
 				const newResultHistory = [ ...resultHistory ];
 				newResultHistory[ resultHistoryIndex ] = {
 					result,
 					meta: {
-						usedToken: data.usage.total_tokens,
+						usedToken,
 						prompt: value
 					}
 				};
@@ -290,7 +293,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				setResultHistory([ ...resultHistory, {
 					result,
 					meta: {
-						usedToken: data.usage.total_tokens,
+						usedToken,
 						prompt: value
 					}
 				}]);
@@ -298,16 +301,18 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 			}
 			
-			setTokenUsageDescription( __( 'Token used:', 'otter-blocks' ) + data.usage.total_tokens );
+			setTokenUsageDescription( __( 'Token used:', 'otter-blocks' ) + usedToken );
 			props.onPreview?.( result );
 		});
 	}
 
 	if ( 'present' !== apiKeyStatus ) {
+		const aiClientSupported = Boolean( window.themeisleGutenberg?.aiClientSupported );
+
 		return (
 			<Placeholder
 				className="prompt-placeholder"
-				label={ __( 'OpenAI API Key', 'otter-blocks' ) }
+				label={ aiClientSupported ? __( 'WordPress AI', 'otter-blocks' ) : __( 'OpenAI API Key', 'otter-blocks' ) }
 			>
 				{
 					'checking' === apiKeyStatus && (
@@ -319,7 +324,21 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				}
 
 				{
-					'missing' === apiKeyStatus && (
+					'missing' === apiKeyStatus && aiClientSupported && (
+						<Fragment>
+							<span>{ __( 'No AI provider is configured. Set one up under Settings > Connectors, then reload the editor.', 'otter-blocks' ) }</span>
+
+							<div className='o-info-row'>
+								<ExternalLink href={ window.themeisleGutenberg?.connectorsUrl ?? '' }>
+									{ __( 'Manage Connectors', 'otter-blocks' ) }
+								</ExternalLink>
+							</div>
+						</Fragment>
+					)
+				}
+
+				{
+					'missing' === apiKeyStatus && ! aiClientSupported && (
 						<Fragment>
 							<span>{ __( 'API Key not found. Please introduce the API Key', 'otter-blocks' ) }
 							</span>
