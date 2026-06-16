@@ -31,6 +31,7 @@ const OPTION_WHITELIST = array(
 	'themeisle_open_ai_api_key',
 	'otter_iphub_api_key',
 	'themeisle_blocks_settings_onboarding',
+	'themeisle_google_map_block_api_key',
 );
 
 /**
