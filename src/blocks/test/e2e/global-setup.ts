@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import { mkdirSync } from 'fs';
+import path from 'path';
 import { request } from '@playwright/test';
 import type { FullConfig } from '@playwright/test';
 
@@ -27,6 +29,10 @@ async function globalSetup( config: FullConfig ) {
 	const { storageState, baseURL } = config.projects[ 0 ].use;
 	const storageStatePath =
 		'string' === typeof storageState ? storageState : undefined;
+
+	if ( storageStatePath ) {
+		mkdirSync( path.dirname( storageStatePath ), { recursive: true } );
+	}
 
 	const requestContext = await request.newContext({
 		baseURL
