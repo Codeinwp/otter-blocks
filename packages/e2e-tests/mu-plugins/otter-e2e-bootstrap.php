@@ -33,6 +33,12 @@ const OPTION_WHITELIST = array(
 	'themeisle_blocks_settings_onboarding',
 	'themeisle_cloudflare_turnstile_site_key',
 	'themeisle_cloudflare_turnstile_secret_key',
+	'connectors_ai_openai_api_key',
+	'themeisle_google_map_block_api_key',
+	// Form block persists submissions config here; tests reset it to avoid
+	// cross-run accumulation that eventually fails REST schema validation.
+	'themeisle_blocks_form_emails',
+	'themeisle_blocks_form_fields_option',
 );
 
 /**
@@ -58,12 +64,38 @@ function stub_prompts() {
 			'otter_action_prompt' => 'Transform the following content',
 		),
 		array(
-			'otter_name' => 'form',
-			'model'      => 'gpt-3.5-turbo',
-			'messages'   => array(
+			'otter_name'    => 'form',
+			'model'         => 'gpt-3.5-turbo',
+			'messages'      => array(
 				array( 'role' => 'system', 'content' => 'You generate web form schemas.' ),
 				array( 'role' => 'user', 'content' => '{INSERT_TASK}' ),
 			),
+			// Forced function calling, mirroring the production template. On the
+			// legacy path OpenAI fills choices[0].message.function_call.arguments;
+			// on the `wp-ai-client` backend the adaptor translates this into a
+			// structured JSON response and reshapes the output the same way.
+			'functions'     => array(
+				array(
+					'name'       => 'create_form',
+					'parameters' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'fields' => array(
+								'type'  => 'array',
+								'items' => array(
+									'type'       => 'object',
+									'properties' => array(
+										'label'    => array( 'type' => 'string' ),
+										'type'     => array( 'type' => 'string' ),
+										'required' => array( 'type' => 'boolean' ),
+									),
+								),
+							),
+						),
+					),
+				),
+			),
+			'function_call' => array( 'name' => 'create_form' ),
 		),
 		array(
 			'otter_name'      => 'patternsPicker',
