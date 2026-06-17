@@ -137,6 +137,13 @@ class Form_Settings_Data {
 	private $autoresponder = array();
 
 	/**
+	 * The AI autoresponder data.
+	 *
+	 * @var array{enabled?: bool, prompt?: string}
+	 */
+	private $ai_autoresponder = array();
+
+	/**
 	 * The location where the submissions are saved.
 	 *
 	 * Legacy setting: submissions are now always saved to the database. Kept populated for
@@ -289,6 +296,9 @@ class Form_Settings_Data {
 				}
 				if ( isset( $form['autoresponder'] ) && count( $form['autoresponder'] ) > 0 ) {
 					$integration->set_autoresponder( $form['autoresponder'] );
+				}
+				if ( isset( $form['aiAutoresponder'] ) && is_array( $form['aiAutoresponder'] ) ) {
+					$integration->set_ai_autoresponder( $form['aiAutoresponder'] );
 				}
 				if ( isset( $form['integration'] ) ) {
 					$integration->extract_integration_data( $form['integration'] );
@@ -849,6 +859,38 @@ class Form_Settings_Data {
 	 */
 	public function set_autoresponder( $autoresponder ) {
 		$this->autoresponder = $autoresponder;
+		return $this;
+	}
+
+	/**
+	 * Check if the AI autoresponder is enabled and has a prompt.
+	 *
+	 * @return bool
+	 */
+	public function has_ai_autoresponder() {
+		return ! empty( $this->ai_autoresponder['enabled'] ) && ! empty( $this->ai_autoresponder['prompt'] );
+	}
+
+	/**
+	 * Get the AI autoresponder data.
+	 *
+	 * @return array{enabled: bool, prompt: string}
+	 */
+	public function get_ai_autoresponder() {
+		return array(
+			'enabled' => ! empty( $this->ai_autoresponder['enabled'] ),
+			'prompt'  => isset( $this->ai_autoresponder['prompt'] ) ? (string) $this->ai_autoresponder['prompt'] : '',
+		);
+	}
+
+	/**
+	 * Set the AI autoresponder data.
+	 *
+	 * @param array $ai_autoresponder The AI autoresponder data.
+	 * @return Form_Settings_Data
+	 */
+	public function set_ai_autoresponder( $ai_autoresponder ) {
+		$this->ai_autoresponder = is_array( $ai_autoresponder ) ? $ai_autoresponder : array();
 		return $this;
 	}
 

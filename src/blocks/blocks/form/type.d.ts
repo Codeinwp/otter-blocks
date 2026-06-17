@@ -66,6 +66,10 @@ export type FormOptions = {
 		subject?: string
 		body?: string
 	}
+	aiAutoresponder?: {
+		enabled?: boolean
+		prompt?: string
+	}
 	/** Legacy save-location value, migrated to `emailNotification` at read time. */
 	submissionsSaveLocation?: string
 	emailNotification?: boolean

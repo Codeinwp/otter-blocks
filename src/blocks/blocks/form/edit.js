@@ -83,6 +83,7 @@ const formOptionsMap = {
 	bcc: 'bcc',
 	replyTo: 'replyTo',
 	autoresponder: 'autoresponder',
+	aiAutoresponder: 'aiAutoresponder',
 	emailNotification: 'emailNotification',
 	webhookId: 'webhookId',
 	requiredFields: 'requiredFields'
@@ -150,6 +151,7 @@ const Edit = ({
 		bcc: undefined,
 		replyTo: undefined,
 		autoresponder: undefined,
+		aiAutoresponder: undefined,
 		emailNotification: undefined
 	});
 

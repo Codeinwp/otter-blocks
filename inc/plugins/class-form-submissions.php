@@ -43,6 +43,19 @@ class Form_Submissions {
 	const DELIVERY_ERRORS_META_KEY = 'otter_form_record_delivery_errors';
 
 	/**
+	 * AI Autoresponder audit meta key. Holds the generate/validate audit for the
+	 * AI autoresponder path: { generated_body, valid, reason, outcome, used_tokens }.
+	 */
+	const AI_AUTORESPONDER_META_KEY = 'otter_form_record_ai_autoresponder';
+
+	/**
+	 * Issues meta key. An array of every warning/error encountered during the
+	 * submission (e.g. AI autoresponder failures), regardless of whether it
+	 * counts as a delivery failure: [ { code, message } ].
+	 */
+	const ISSUES_META_KEY = 'otter_form_record_issues';
+
+	/**
 	 * Delivery status: all primary delivery actions succeeded.
 	 */
 	const DELIVERY_STATUS_COMPLETE = 'complete';
@@ -348,6 +361,14 @@ class Form_Submissions {
 			return;
 		}
 
+		if ( $form_data->has_metadata( self::AI_AUTORESPONDER_META_KEY ) ) {
+			$audit = $form_data->metadata[ self::AI_AUTORESPONDER_META_KEY ];
+
+			if ( is_array( $audit ) ) {
+				update_post_meta( $form_data->get_record_id(), self::AI_AUTORESPONDER_META_KEY, wp_slash( $audit ) );
+			}
+		}
+
 		$delivery_actions = self::get_delivery_failure_actions();
 
 		$errors = array();
@@ -388,6 +409,31 @@ class Form_Submissions {
 			empty( $errors ) ? self::DELIVERY_STATUS_COMPLETE : self::DELIVERY_STATUS_FAILED,
 			$errors
 		);
+
+		// Separately record EVERY issue (warnings + a blocking error), regardless of
+		// whether it counts as a delivery failure. AI autoresponder failures are
+		// surfaced here but intentionally do not fail delivery (the fallback is sent).
+		$issues = array();
+
+		foreach ( $form_data->get_warning_codes() as $warning ) {
+			$issues[] = array(
+				'code'    => $warning['code'],
+				'message' => ! empty( $warning['details'] ) ? $warning['details'] : Form_Data_Response::get_error_code_message( $warning['code'] ),
+			);
+		}
+
+		if ( $form_data->has_error() ) {
+			$issues[] = array(
+				'code'    => $form_data->get_error_code(),
+				'message' => Form_Data_Response::get_error_code_message( $form_data->get_error_code() ),
+			);
+		}
+
+		if ( empty( $issues ) ) {
+			delete_post_meta( $form_data->get_record_id(), self::ISSUES_META_KEY );
+		} else {
+			update_post_meta( $form_data->get_record_id(), self::ISSUES_META_KEY, wp_slash( $issues ) );
+		}
 	}
 
 	/**

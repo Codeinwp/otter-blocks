@@ -23,7 +23,7 @@ class Form_Records_Meta_Box {
 	 * @return void
 	 */
 	public function register() {
-		add_action( 'add_meta_boxes', array( $this, 'add_form_record_meta_box' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_form_record_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'handle_admin_menu' ) );
 		add_action( 'save_post', array( $this, 'form_record_save_meta_box' ), 10, 2 );
 	}
@@ -53,15 +53,41 @@ class Form_Records_Meta_Box {
 	/**
 	 * Add meta box for form record.
 	 *
+	 * @param string       $post_type The current post type.
+	 * @param WP_Post|null $post      The current post object.
 	 * @return void
 	 */
-	public function add_form_record_meta_box() {
+	public function add_form_record_meta_box( $post_type = '', $post = null ) {
 		add_meta_box(
 			'field_values_meta_box',
 			esc_html__( 'Submission Data', 'otter-blocks' ),
 			array( $this, 'fields_meta_box_markup' ),
 			Form_Submissions::FORM_RECORD_TYPE
 		);
+
+		// Only show the Errors box when this record actually has recorded issues.
+		$issues = ( $post instanceof \WP_Post ) ? get_post_meta( $post->ID, Form_Submissions::ISSUES_META_KEY, true ) : false;
+
+		if ( is_array( $issues ) && ! empty( $issues ) ) {
+			add_meta_box(
+				'form_record_errors_meta_box',
+				esc_html__( 'Errors', 'otter-blocks' ),
+				array( $this, 'errors_meta_box_markup' ),
+				Form_Submissions::FORM_RECORD_TYPE
+			);
+		}
+
+		// Only show the AI Autoresponder box when this record actually has AI audit data.
+		$ai_autoresponder = ( $post instanceof \WP_Post ) ? get_post_meta( $post->ID, Form_Submissions::AI_AUTORESPONDER_META_KEY, true ) : false;
+
+		if ( is_array( $ai_autoresponder ) && ! empty( $ai_autoresponder ) ) {
+			add_meta_box(
+				'ai_autoresponder_meta_box',
+				esc_html__( 'AI Autoresponder', 'otter-blocks' ),
+				array( $this, 'ai_autoresponder_meta_box_markup' ),
+				Form_Submissions::FORM_RECORD_TYPE
+			);
+		}
 
 		// this will replace the default publish box, that's why it's using its id.
 		add_meta_box(
@@ -71,6 +97,99 @@ class Form_Records_Meta_Box {
 			Form_Submissions::FORM_RECORD_TYPE,
 			'side'
 		);
+	}
+
+	/**
+	 * Render the Errors meta box listing every issue the submission encountered.
+	 *
+	 * @param WP_Post $post The form record post.
+	 * @return void
+	 */
+	public function errors_meta_box_markup( $post ) {
+		$issues = get_post_meta( $post->ID, Form_Submissions::ISSUES_META_KEY, true );
+
+		if ( ! is_array( $issues ) || empty( $issues ) ) {
+			return;
+		}
+		?>
+		<table class="widefat striped" style="border: none;">
+			<thead>
+				<tr>
+					<th style="width: 80px;"><?php echo esc_html__( 'Code', 'otter-blocks' ); ?></th>
+					<th><?php echo esc_html__( 'Message', 'otter-blocks' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $issues as $issue ) : ?>
+				<tr>
+					<td><code><?php echo esc_html( isset( $issue['code'] ) ? (string) $issue['code'] : '' ); ?></code></td>
+					<td><?php echo esc_html( isset( $issue['message'] ) ? $issue['message'] : '' ); ?></td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	/**
+	 * Render the AI Autoresponder audit meta box (read-only).
+	 *
+	 * @param WP_Post $post The form record post.
+	 * @return void
+	 */
+	public function ai_autoresponder_meta_box_markup( $post ) {
+		$ai_autoresponder = get_post_meta( $post->ID, Form_Submissions::AI_AUTORESPONDER_META_KEY, true );
+
+		if ( ! is_array( $ai_autoresponder ) || empty( $ai_autoresponder ) ) {
+			return;
+		}
+
+		$ai_outcome = isset( $ai_autoresponder['outcome'] ) ? $ai_autoresponder['outcome'] : '';
+		$ai_valid   = ! empty( $ai_autoresponder['valid'] );
+		$ai_reason  = isset( $ai_autoresponder['reason'] ) ? $ai_autoresponder['reason'] : '';
+		$ai_tokens  = isset( $ai_autoresponder['used_tokens'] ) ? (int) $ai_autoresponder['used_tokens'] : 0;
+		$ai_body    = isset( $ai_autoresponder['generated_body'] ) ? $ai_autoresponder['generated_body'] : '';
+
+		$ai_outcome_labels = array(
+			'ai'       => __( 'AI reply sent', 'otter-blocks' ),
+			'fallback' => __( 'Fallback message sent', 'otter-blocks' ),
+			'none'     => __( 'Nothing sent', 'otter-blocks' ),
+		);
+		$ai_outcome_label  = isset( $ai_outcome_labels[ $ai_outcome ] ) ? $ai_outcome_labels[ $ai_outcome ] : $ai_outcome;
+		?>
+		<table class="widefat striped" style="border: none;">
+			<tbody>
+				<tr>
+					<td style="width: 160px;"><strong><?php echo esc_html__( 'Outcome', 'otter-blocks' ); ?></strong></td>
+					<td><?php echo esc_html( $ai_outcome_label ); ?></td>
+				</tr>
+				<tr>
+					<td><strong><?php echo esc_html__( 'Verdict', 'otter-blocks' ); ?></strong></td>
+					<td><?php echo $ai_valid ? esc_html__( 'Valid', 'otter-blocks' ) : esc_html__( 'Invalid', 'otter-blocks' ); ?></td>
+				</tr>
+				<?php if ( '' !== $ai_reason ) : ?>
+				<tr>
+					<td><strong><?php echo esc_html__( 'Reason', 'otter-blocks' ); ?></strong></td>
+					<td><?php echo esc_html( $ai_reason ); ?></td>
+				</tr>
+				<?php endif; ?>
+				<tr>
+					<td><strong><?php echo esc_html__( 'Tokens used', 'otter-blocks' ); ?></strong></td>
+					<td><?php echo esc_html( (string) $ai_tokens ); ?></td>
+				</tr>
+				<?php if ( '' !== $ai_body ) : ?>
+				<tr>
+					<td style="vertical-align: top;"><strong><?php echo esc_html__( 'Generated reply', 'otter-blocks' ); ?></strong></td>
+					<td>
+						<div style="padding: 8px; background: #f6f7f7; border: 1px solid #dcdcde; border-radius: 2px;">
+							<?php echo wp_kses_post( wpautop( $ai_body ) ); ?>
+						</div>
+					</td>
+				</tr>
+				<?php endif; ?>
+			</tbody>
+		</table>
+		<?php
 	}
 
 	/**
