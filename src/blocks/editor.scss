@@ -146,6 +146,22 @@ svg.o-block-icon {
 	}
 }
 
+// Info notice on the Fallback message tab: spacing + inline icon.
+.o-autoresponder-fallback-notice.components-notice {
+	margin: 0 0 8px;
+
+	.components-notice__content {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.components-icon {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
+
 // "Reply with AI" toggle shown at the top of the AI Prompt tab while AI is off.
 .o-autoresponder-ai-toggle {
 	margin-bottom: 20px;

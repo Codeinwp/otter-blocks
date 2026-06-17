@@ -2,11 +2,13 @@ import { useRef, useState } from '@wordpress/element';
 import {
 	Button,
 	Disabled,
+	Icon,
 	Modal,
 	Notice,
 	TabPanel,
 	ToggleControl
 } from '@wordpress/components';
+import { info } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { RichTextEditor } from '../../../blocks/components';
 import MagicTagInput from './magic-tag-input';
@@ -180,8 +182,9 @@ const AutoresponderBodyModal = ({
 							) : (
 								<>
 									{ isAIEnabled && (
-										<Notice isDismissible={ false } status="info">
-											{ __( 'Sent as-is if an AI reply can\'t be generated.', 'otter-pro' ) }
+										<Notice isDismissible={ false } status="info" className="o-autoresponder-fallback-notice">
+											<Icon icon={ info } size={ 20 } />
+											<span>{ __( 'Sent as-is if an AI reply can\'t be generated.', 'otter-pro' ) }</span>
 										</Notice>
 									) }
 									<Disabled isDisabled={ disabled }>
