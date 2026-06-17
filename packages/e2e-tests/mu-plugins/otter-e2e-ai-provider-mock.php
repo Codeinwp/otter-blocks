@@ -48,6 +48,60 @@ const LEGACY_MOCK_KEY = 'sk-otter-e2e-legacy-mock';
 const LEGACY_EMPTY_MARKER = 'otter-e2e-empty';
 
 /**
+ * Whether an outbound request body is one of the content-generator block-
+ * generation phases. Both `block-generation.ts` prompts ask for strict JSON;
+ * the content-generator parses the model reply with `JSON.parse`, so the mock
+ * must answer with JSON (not HTML) or no blocks are produced.
+ *
+ * @param string $body Raw outbound request body.
+ * @return bool
+ */
+function is_block_generation_request( $body ) {
+	return false !== strpos( $body, 'planning the structure' )
+		|| false !== strpos( $body, 'Fill in the attributes' );
+}
+
+/**
+ * Deterministic `{ rationale, roots }` reply for the block-generation pipeline.
+ *
+ * Phase 1 (structure) plans a single heading; phase 3 (attributes) fills it
+ * with $headline so a spec can assert the rendered text. A lone core/heading
+ * survives `validateStructure`/`validateGeneratedBlocks` with no ancestor.
+ *
+ * @param string $body     Raw outbound request body (used to pick the phase).
+ * @param string $headline Heading text returned by the attribute phase.
+ * @return string JSON-encoded payload for the assistant message content.
+ */
+function block_generation_payload( $body, $headline ) {
+	if ( false !== strpos( $body, 'Fill in the attributes' ) ) {
+		return wp_json_encode(
+			array(
+				'rationale' => array( 'Deterministic E2E content.' ),
+				'roots'     => array(
+					array(
+						'name'        => 'core/heading',
+						'attributes'  => array( 'content' => $headline ),
+						'innerBlocks' => array(),
+					),
+				),
+			)
+		);
+	}
+
+	return wp_json_encode(
+		array(
+			'rationale' => array( 'Deterministic E2E structure.' ),
+			'roots'     => array(
+				array(
+					'name'        => 'core/heading',
+					'innerBlocks' => array(),
+				),
+			),
+		)
+	);
+}
+
+/**
  * Build a WP HTTP API response array with a JSON body.
  *
  * @param array<string, mixed> $data The response data.
@@ -93,8 +147,20 @@ function mock_openai_http( $preempt, $args, $url ) {
 
 	// Text generation: POST /v1/responses.
 	if ( false !== strpos( $url, '/responses' ) ) {
-		$body    = isset( $args['body'] ) && is_string( $args['body'] ) ? json_decode( $args['body'], true ) : array();
-		$is_json = isset( $body['text']['format']['type'] ) && 'json_schema' === $body['text']['format']['type'];
+		$raw_body = isset( $args['body'] ) && is_string( $args['body'] ) ? $args['body'] : '';
+		$body     = '' !== $raw_body ? json_decode( $raw_body, true ) : array();
+		$is_json  = isset( $body['text']['format']['type'] ) && 'json_schema' === $body['text']['format']['type'];
+
+		if ( $is_json ) {
+			$text = FORM_RESPONSE;
+		} elseif ( is_block_generation_request( $raw_body ) ) {
+			$headline = false !== stripos( $raw_body, 'space nation' )
+				? 'Discover the Next Frontier: Space Nation on the Rise'
+				: 'WP AI Client mock response';
+			$text     = block_generation_payload( $raw_body, $headline );
+		} else {
+			$text = TEXT_RESPONSE;
+		}
 
 		return respond(
 			array(
@@ -107,7 +173,7 @@ function mock_openai_http( $preempt, $args, $url ) {
 						'content' => array(
 							array(
 								'type' => 'output_text',
-								'text' => $is_json ? FORM_RESPONSE : TEXT_RESPONSE,
+								'text' => $text,
 							),
 						),
 					),
@@ -136,13 +202,17 @@ function mock_openai_http( $preempt, $args, $url ) {
 			return respond( array( 'choices' => array() ) );
 		}
 
+		$content = is_block_generation_request( $body )
+			? block_generation_payload( $body, 'Legacy OpenAI mock response' )
+			: LEGACY_TEXT_RESPONSE;
+
 		return respond(
 			array(
 				'choices' => array(
 					array(
 						'message' => array(
 							'role'    => 'assistant',
-							'content' => LEGACY_TEXT_RESPONSE,
+							'content' => $content,
 						),
 					),
 				),

@@ -244,24 +244,77 @@ function stub_openai_space_nation_content() {
 }
 
 /**
+ * Whether an outbound request body is a content-generator block-generation
+ * phase. `block-generation.ts` asks for strict JSON and parses the reply with
+ * `JSON.parse`, so the mock must answer with JSON (not HTML) here.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_block_generation_request( $request_body ) {
+	return false !== strpos( $request_body, 'planning the structure' )
+		|| false !== strpos( $request_body, 'Fill in the attributes' );
+}
+
+/**
+ * Deterministic `{ rationale, roots }` reply for the block-generation pipeline.
+ *
+ * Phase 1 (structure) plans a single heading; phase 3 (attributes) fills it
+ * with $headline so a spec can assert the rendered text. A lone core/heading
+ * survives `validateStructure`/`validateGeneratedBlocks` with no ancestor.
+ *
+ * @param string $request_body Raw outbound request body (used to pick the phase).
+ * @param string $headline     Heading text returned by the attribute phase.
+ * @return string JSON-encoded payload for the assistant message content.
+ */
+function stub_openai_block_generation_payload( $request_body, $headline ) {
+	if ( false !== strpos( $request_body, 'Fill in the attributes' ) ) {
+		return wp_json_encode(
+			array(
+				'rationale' => array( 'Deterministic E2E content.' ),
+				'roots'     => array(
+					array(
+						'name'        => 'core/heading',
+						'attributes'  => array( 'content' => $headline ),
+						'innerBlocks' => array(),
+					),
+				),
+			)
+		);
+	}
+
+	return wp_json_encode(
+		array(
+			'rationale' => array( 'Deterministic E2E structure.' ),
+			'roots'     => array(
+				array(
+					'name'        => 'core/heading',
+					'innerBlocks' => array(),
+				),
+			),
+		)
+	);
+}
+
+/**
  * Pick stub completion content based on the outbound OpenAI request body.
  *
  * @param string $request_body JSON-encoded chat completion request.
  * @return string
  */
 function stub_openai_completion_content( $request_body ) {
-	$payload = json_decode( $request_body, true );
+	$is_space_nation = false !== stripos( $request_body, 'space nation' );
 
-	if ( is_array( $payload ) && isset( $payload['messages'] ) && is_array( $payload['messages'] ) ) {
-		foreach ( $payload['messages'] as $message ) {
-			if ( ! is_array( $message ) || empty( $message['content'] ) ) {
-				continue;
-			}
+	if ( is_block_generation_request( $request_body ) ) {
+		$headline = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
 
-			if ( false !== stripos( $message['content'], 'space nation' ) ) {
-				return stub_openai_space_nation_content();
-			}
-		}
+		return stub_openai_block_generation_payload( $request_body, $headline );
+	}
+
+	if ( $is_space_nation ) {
+		return stub_openai_space_nation_content();
 	}
 
 	return '<p>Rewritten content for testing.</p>';
@@ -843,7 +896,11 @@ add_action(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'permission_callback' => __NAMESPACE__ . '\\require_admin',
 				'callback'            => function () {
-					delete_option( PRO_LICENSE_OPTION );
+					// Re-stub rather than delete: global-setup activates the Pro
+					// license once for the whole run, so reset() must restore that
+					// baseline. Deleting it deactivates Pro for every later spec and
+					// the Pro-gated Form tests (file field, export, …) then fail.
+					update_option( PRO_LICENSE_OPTION, stub_license_data() );
 					foreach ( OPTION_WHITELIST as $key ) {
 						delete_option( $key );
 					}
