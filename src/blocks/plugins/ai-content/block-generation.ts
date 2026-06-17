@@ -7,7 +7,6 @@ import { createBlock } from '@wordpress/blocks';
  * Internal dependencies.
  */
 import type { BlockProps } from '../../helpers/blocks';
-import { aiDebug } from './debug';
 
 type AttributeDefinition = Record<string, unknown>;
 
@@ -469,22 +468,12 @@ export const generateBlocksFromTask = async({
 	// Phase 1 — plan the structure with a slim, slug-only catalog.
 	const catalog = buildStructureCatalog( blockTypes );
 	const structurePrompt = buildStructurePrompt( task, catalog );
-	aiDebug( 'Phase 1: requesting structure', {
-		catalog: catalog.length,
-		of: blockTypes.length,
-		promptChars: structurePrompt.length
-	});
 
 	const structurePayload = parseModelPayload( await requestCompletion( structurePrompt ) );
 	const rawRoots = ( structurePayload.roots || [] ) as StructureNode[];
-	aiDebug( 'Phase 1: received skeleton', { roots: rawRoots.map( root => root?.name ) });
 
 	// Phase 2 — prune the skeleton to a structurally legal tree.
 	const validRoots = validateStructure( rawRoots, getBlockType, undefined, [], droppedRoots );
-	aiDebug( 'Phase 2: validated structure', {
-		kept: validRoots.map( root => root?.name ),
-		dropped: droppedRoots.length
-	});
 
 	// Phase 3 — fill attributes per root with the real schema, composing in order.
 	const blocks: BlockProps<unknown>[] = [];
@@ -496,16 +485,11 @@ export const generateBlocksFromTask = async({
 
 		const schema = buildAttributeSchema( blockTypes, slugs );
 		const attributePrompt = buildAttributePrompt( task, root, schema );
-		aiDebug( `Phase 3: filling root ${ index } "${ root.name }"`, {
-			slugs: slugs.size,
-			promptChars: attributePrompt.length
-		});
 
 		const filledPayload = parseModelPayload( await requestCompletion( attributePrompt ) );
 		const filledRoot = filledPayload.roots?.[0];
 
 		if ( ! filledRoot ) {
-			aiDebug( `Phase 3: root ${ index } returned no content, dropping` );
 			droppedRoots.push({ root: root as GeneratedBlockTree, errors: [ 'Attribute generation returned no block.' ] });
 			continue;
 		}
@@ -514,19 +498,12 @@ export const generateBlocksFromTask = async({
 		const validation = validateGeneratedBlocks( rootBlocks, getBlockType );
 
 		if ( ! validation.valid ) {
-			aiDebug( `Phase 3: root ${ index } invalid after fill, dropping`, validation.errors );
 			droppedRoots.push({ root: root as GeneratedBlockTree, errors: validation.errors });
 			continue;
 		}
 
-		aiDebug( `Phase 3: root ${ index } ready`, { blocks: rootBlocks.length });
 		blocks.push( ...rootBlocks );
 	}
-
-	aiDebug( 'Generation complete', {
-		blocks: blocks.map( block => block.name ),
-		dropped: droppedRoots.length
-	});
 
 	return {
 		blocks,

@@ -1,12 +1,5 @@
 jest.mock( '@wordpress/blocks', () => require( './mocks/wordpress-blocks' ) );
 
-// The engine emits step-by-step console logs in the browser; silence them here.
-jest.mock( '../../plugins/ai-content/debug', () => ({
-	aiDebug: () => {},
-	aiDebugStart: () => {},
-	aiDebugEnd: () => {}
-}) );
-
 import {
 	buildAttributeSchema,
 	buildStructureCatalog,
