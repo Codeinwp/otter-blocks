@@ -128,6 +128,15 @@ svg.o-block-icon {
 	}
 }
 
+// Prompt fields shown dimmed when "Reply with AI" is off (still visible for discovery).
+.o-autoresponder-prompt-fields {
+	margin-top: 16px;
+
+	&.is-dimmed {
+		opacity: 0.5;
+	}
+}
+
 .o-autoresponder-prompt {
 	&__label {
 		margin: 0 0 8px;

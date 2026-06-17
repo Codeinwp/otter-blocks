@@ -4,7 +4,8 @@ import {
 	Disabled,
 	Modal,
 	Notice,
-	TabPanel
+	TabPanel,
+	ToggleControl
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { RichTextEditor } from '../../../blocks/components';
@@ -73,6 +74,7 @@ const AIPromptTab = ({ prompt, onChange, tags, disabled }) => {
 								key={ tag.token }
 								variant="secondary"
 								isSmall
+								disabled={ disabled }
 								className="o-autoresponder-magic-tags__chip"
 								label={ sprintf(
 									// translators: %s: the form field label.
@@ -106,6 +108,7 @@ const AIPromptTab = ({ prompt, onChange, tags, disabled }) => {
  * @param {boolean}                               props.addExtraMargin   Whether to add extra margin to the trigger button.
  * @param {Object|undefined}                      props.aiAutoresponder  The AI autoresponder option.
  * @param {(value: Object) => void}               props.onChangeAIPrompt AI prompt change handler.
+ * @param {(enabled: boolean) => void}            props.onToggleAI       Handler to toggle "Reply with AI".
  * @param {Array<{token: string, label: string}>} props.magicTags        The magic tags to render as chips.
  * @param {boolean}                               props.disabled         Whether the modal contents are a disabled Pro preview.
  * @return {JSX.Element}
@@ -117,6 +120,7 @@ const AutoresponderBodyModal = ({
 	addExtraMargin,
 	aiAutoresponder,
 	onChangeAIPrompt,
+	onToggleAI,
 	magicTags = [],
 	disabled = false
 }) => {
@@ -154,22 +158,25 @@ const AutoresponderBodyModal = ({
 					>
 						{ tab => (
 							'ai-prompt' === tab.name ? (
-								<>
-									{ ! isAIEnabled && (
-										<Notice isDismissible={ false } status="warning">
-											{ __( '“Reply with AI” is off, so this prompt is not used. Turn it on to generate replies from submissions.', 'otter-pro' ) }
-										</Notice>
-									) }
-									{ /* Disable only the content, not the tab switcher. */ }
-									<Disabled isDisabled={ disabled }>
+								// Disable only the content, not the tab switcher.
+								<Disabled isDisabled={ disabled }>
+									{ /* In-modal toggle so the feature is discoverable without leaving the modal. */ }
+									<ToggleControl
+										label={ __( 'Reply with AI', 'otter-pro' ) }
+										help={ __( 'Let AI craft a personalized reply to each submission.', 'otter-pro' ) }
+										checked={ isAIEnabled }
+										onChange={ ( enabled ) => onToggleAI?.( enabled ) }
+									/>
+									{ /* When off, the fields stay visible but dimmed and disabled. */ }
+									<div className={ classNames( 'o-autoresponder-prompt-fields', { 'is-dimmed': ! isAIEnabled } ) }>
 										<AIPromptTab
 											prompt={ aiAutoresponder?.prompt }
 											onChange={ onChangeAIPrompt }
 											tags={ magicTags }
-											disabled={ disabled }
+											disabled={ disabled || ! isAIEnabled }
 										/>
-									</Disabled>
-								</>
+									</div>
+								</Disabled>
 							) : (
 								<>
 									{ isAIEnabled && (

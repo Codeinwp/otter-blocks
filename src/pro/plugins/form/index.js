@@ -103,6 +103,11 @@ const AutoresponderBody = ({ formOptions, setFormOption, magicTags, disabled }) 
 		setFormOption({ aiAutoresponder: { ...formOptions.aiAutoresponder, prompt }});
 	};
 
+	const onToggleAI = enabled => {
+		window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'reply-with-ai' });
+		setFormOption({ aiAutoresponder: { ...formOptions.aiAutoresponder, enabled }});
+	};
+
 	return (
 		<AutoresponderBodyModal
 			value={formOptions.autoresponder?.body}
@@ -110,6 +115,7 @@ const AutoresponderBody = ({ formOptions, setFormOption, magicTags, disabled }) 
 			addExtraMargin={true}
 			aiAutoresponder={formOptions.aiAutoresponder}
 			onChangeAIPrompt={onChangeAIPrompt}
+			onToggleAI={onToggleAI}
 			magicTags={magicTags}
 			disabled={disabled}
 		/>
