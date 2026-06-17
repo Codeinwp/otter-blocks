@@ -94,27 +94,28 @@ test.describe( 'Form Block - AI Autoresponder', () => {
 
 		await expect( dialog ).toBeVisible();
 
-		// Both tabs are always present; the AI Prompt tab is the second tab.
-		await expect( dialog.getByRole( 'tab', { name: 'Message' }) ).toBeVisible();
+		// AI Prompt is the first tab; both tabs are always present.
 		await expect( dialog.getByRole( 'tab', { name: 'AI Prompt' }) ).toBeVisible();
+		await expect( dialog.getByRole( 'tab', { name: 'Message' }) ).toBeVisible();
 
 		await dialog.getByRole( 'tab', { name: 'AI Prompt' }).click();
 
-		// The AI Prompt tab has its own "Reply with AI" toggle (off), and the prompt
-		// fields are visible but dimmed — no "off" notice anymore.
+		// While AI is off, the AI Prompt tab shows its own "Reply with AI" toggle at
+		// the top, with the prompt fields below visible but dimmed.
 		const modalToggle = dialog.getByRole( 'checkbox', { name: 'Reply with AI' });
 		await expect( modalToggle ).toBeVisible();
 		await expect( modalToggle ).not.toBeChecked();
 		await expect( dialog.locator( '.o-ar-input' ) ).toBeVisible();
 		await expect( dialog.locator( '.o-autoresponder-prompt-fields.is-dimmed' ) ).toBeVisible();
 
-		// Flipping the toggle in the modal enables it and removes the dimming.
+		// Flipping it on enables AI: the in-modal toggle disappears and the fields
+		// un-dim (you turn it off again from the sidebar).
 		await modalToggle.click();
-		await expect( modalToggle ).toBeChecked();
+		await expect( dialog.getByRole( 'checkbox', { name: 'Reply with AI' }) ).toHaveCount( 0 );
 		await expect( dialog.locator( '.o-autoresponder-prompt-fields.is-dimmed' ) ).toHaveCount( 0 );
 	});
 
-	test( 'toggling Reply with AI on (sidebar) relabels the first tab and checks the in-modal toggle', async({ editor, page }) => {
+	test( 'toggling Reply with AI on (sidebar) hides the in-modal toggle and un-dims the fields', async({ editor, page }) => {
 		await insertFormWithFields( editor );
 
 		const panel = await openAutoresponderPanel( page );
@@ -130,9 +131,9 @@ test.describe( 'Form Block - AI Autoresponder', () => {
 		await expect( dialog.getByRole( 'tab', { name: 'AI Prompt' }) ).toBeVisible();
 		await expect( dialog.getByRole( 'tab', { name: 'Fallback message' }) ).toBeVisible();
 
-		// The in-modal toggle reflects the sidebar state (checked) and fields are not dimmed.
+		// With AI on, the AI Prompt tab has no in-modal toggle and the fields are active.
 		await dialog.getByRole( 'tab', { name: 'AI Prompt' }).click();
-		await expect( dialog.getByRole( 'checkbox', { name: 'Reply with AI' }) ).toBeChecked();
+		await expect( dialog.getByRole( 'checkbox', { name: 'Reply with AI' }) ).toHaveCount( 0 );
 		await expect( dialog.locator( '.o-autoresponder-prompt-fields.is-dimmed' ) ).toHaveCount( 0 );
 	});
 
@@ -285,5 +286,6 @@ test.describe( 'Form Block - AI Autoresponder', () => {
 			await otterUtils.activatePro();
 		}
 	});
+
 
 });

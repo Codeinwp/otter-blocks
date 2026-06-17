@@ -147,12 +147,12 @@ const AutoresponderBodyModal = ({
 						className="o-autoresponder-tabs"
 						tabs={[
 							{
-								name: 'message',
-								title: isAIEnabled ? __( 'Fallback message', 'otter-pro' ) : __( 'Message', 'otter-pro' )
-							},
-							{
 								name: 'ai-prompt',
 								title: __( 'AI Prompt', 'otter-pro' )
+							},
+							{
+								name: 'message',
+								title: isAIEnabled ? __( 'Fallback message', 'otter-pro' ) : __( 'Message', 'otter-pro' )
 							}
 						]}
 					>
@@ -160,6 +160,18 @@ const AutoresponderBodyModal = ({
 							'ai-prompt' === tab.name ? (
 								// Disable only the content, not the tab switcher.
 								<Disabled isDisabled={ disabled }>
+									{ /* Toggle at the top while AI is off; once enabled it disappears
+									     (toggle off again from the sidebar). */ }
+									{ ! isAIEnabled && (
+										<div className="o-autoresponder-ai-toggle">
+											<ToggleControl
+												label={ __( 'Reply with AI', 'otter-pro' ) }
+												help={ __( 'Let AI craft a personalized reply to each submission.', 'otter-pro' ) }
+												checked={ isAIEnabled }
+												onChange={ ( enabled ) => onToggleAI?.( enabled ) }
+											/>
+										</div>
+									) }
 									{ /* When off, the fields stay visible but dimmed and disabled. */ }
 									<div className={ classNames( 'o-autoresponder-prompt-fields', { 'is-dimmed': ! isAIEnabled } ) }>
 										<AIPromptTab
@@ -167,15 +179,6 @@ const AutoresponderBodyModal = ({
 											onChange={ onChangeAIPrompt }
 											tags={ magicTags }
 											disabled={ disabled || ! isAIEnabled }
-										/>
-									</div>
-									{ /* Toggle at the bottom so the feature is discoverable from within the modal. */ }
-									<div className="o-autoresponder-ai-toggle">
-										<ToggleControl
-											label={ __( 'Reply with AI', 'otter-pro' ) }
-											help={ __( 'Let AI craft a personalized reply to each submission.', 'otter-pro' ) }
-											checked={ isAIEnabled }
-											onChange={ ( enabled ) => onToggleAI?.( enabled ) }
 										/>
 									</div>
 								</Disabled>

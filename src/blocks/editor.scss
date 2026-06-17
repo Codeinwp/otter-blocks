@@ -146,11 +146,11 @@ svg.o-block-icon {
 	}
 }
 
-// "Reply with AI" toggle pinned at the bottom of the AI Prompt tab.
+// "Reply with AI" toggle shown at the top of the AI Prompt tab while AI is off.
 .o-autoresponder-ai-toggle {
-	margin-top: 20px;
-	padding-top: 16px;
-	border-top: 1px solid #e0e0e0;
+	margin-bottom: 20px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 .o-autoresponder-prompt {
