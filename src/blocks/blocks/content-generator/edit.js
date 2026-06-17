@@ -22,7 +22,7 @@ import { Button, Disabled } from '@wordpress/components';
 import Inspector from './inspector.js';
 import PreviewBoundary from './preview-boundary.js';
 import PromptPlaceholder from '../../components/prompt';
-import { sendBlockGenerationPrompt } from '../../helpers/prompt';
+import { parseFormPromptResponseToBlocks, sendBlockGenerationPrompt } from '../../helpers/prompt';
 import { generateBlocksFromTask } from '../../plugins/ai-content/block-generation';
 
 /**
@@ -143,6 +143,23 @@ const ContentGenerator = ({
 		}
 	};
 
+	// The "form" prompt returns a structured `{ fields: [...] }` JSON payload that
+	// maps to Form field blocks, so it uses the embedded-prompt path (onPreview)
+	// instead of the free-form block generation pipeline.
+	const isFormPrompt = 'form' === attributes.promptID;
+
+	/**
+	 * Build a Form block from a form-prompt JSON response and preview it as inner blocks.
+	 *
+	 * @param {string} result The raw prompt response.
+	 */
+	const onPreview = ( result ) => {
+		const formFields = parseFormPromptResponseToBlocks( result );
+		const form = createBlock( 'themeisle-blocks/form', {}, formFields );
+
+		replaceInnerBlocks( clientId, [ form ]);
+	};
+
 	const actionButtons = ( props ) => (
 		<Button
 			variant="primary"
@@ -180,7 +197,8 @@ const ContentGenerator = ({
 					value={ prompt }
 					resultHistory={ attributes.resultHistory }
 					onValueChange={ setPrompt }
-					onGenerateBlocks={ onGenerateBlocks }
+					onGenerateBlocks={ isFormPrompt ? undefined : onGenerateBlocks }
+					onPreview={ isFormPrompt ? onPreview : undefined }
 					actionButtons={ actionButtons }
 					onClose={ () => removeBlock( clientId ) }
 					promptPlaceholder={ preset.placeholder }

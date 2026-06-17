@@ -36,20 +36,24 @@ test.describe( 'Accordion Block', () => {
 		expect( accordionBlock.innerBlocks.length ).toBeGreaterThan( 0 );
 	});
 
-	test( 'add new item via button', async({ editor, page }) => {
+	test( 'add new item via button', async({ editor }) => {
 		await editor.insertBlock({
 			name: 'themeisle-blocks/accordion'
 		});
 
-		let accordionBlock = await expectBlockByName( editor, 'themeisle-blocks/accordion' );
+		const accordionBlock = await expectBlockByName( editor, 'themeisle-blocks/accordion' );
 
 		const currentAccordionItems = accordionBlock.innerBlocks.length;
 
 		await editor.canvas.getByRole( 'button', { name: 'Add Accordion Item' }).click();
 
-		accordionBlock = await expectBlockByName( editor, 'themeisle-blocks/accordion' );
-
-		expect( accordionBlock.innerBlocks.length ).toBeGreaterThan( currentAccordionItems );
+		// The inserted item reaches the data store asynchronously, so poll instead of
+		// taking a single snapshot right after the click (otherwise flaky under load).
+		await expect.poll( async() => {
+			const blocks = await editor.getBlocks();
+			const block = blocks.find( ( b ) => 'themeisle-blocks/accordion' === b.name );
+			return block?.innerBlocks.length ?? 0;
+		}).toBeGreaterThan( currentAccordionItems );
 	});
 
 	test( 'show/hide with default content', async({ editor, page }) => {
