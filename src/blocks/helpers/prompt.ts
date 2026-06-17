@@ -220,7 +220,8 @@ export const BLOCK_GENERATION_MODEL = 'gpt-5-mini';
 const BLOCK_GENERATION_SYSTEM_PROMPT =
 	'You are a WordPress block generation engine. ' +
 	'Follow the schema described in the user message and reply with strict JSON only. ' +
-	'Do not include explanations, prose, or markdown code fences.';
+	'Do not include explanations, prose, or markdown code fences. ' +
+	'When the task is a design request, produce a clean, well-structured, visually appealing layout.';
 
 /**
  * Forward a self-contained block generation request to the OpenAI proxy.

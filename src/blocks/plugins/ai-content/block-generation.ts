@@ -188,6 +188,8 @@ const textAttributesOf = ( blockType: BlockTypeLike | undefined ): string[] => {
 /**
  * Phase 1 — build the slim structure catalog (slug + short description +
  * container hint). Core and Otter blocks pass the inserter/asset filter.
+ *
+ * @param blockTypes The registered block types to filter into the catalog.
  */
 export const buildStructureCatalog = (
 	blockTypes: BlockTypeLike[]
@@ -206,6 +208,9 @@ export const buildStructureCatalog = (
 /**
  * Phase 3 — build the attribute schema for the given slugs only, so the prompt
  * carries the real properties for the blocks that were actually chosen.
+ *
+ * @param blockTypes The registered block types.
+ * @param slugs      The block slugs actually used in the validated structure.
  */
 export const buildAttributeSchema = (
 	blockTypes: BlockTypeLike[],
@@ -328,6 +333,12 @@ export const validateGeneratedBlocks = (
  * Phase 2 — prune the model's skeleton down to a structurally legal tree using
  * the registry's nesting rules (registration, parent, ancestor, allowedBlocks).
  * Returns the cleaned tree; dropped nodes are collected with a reason.
+ *
+ * @param nodes        The model's raw structure nodes.
+ * @param getBlockType Resolver for a registered block type by name.
+ * @param parentName   The parent block slug, or undefined at the root.
+ * @param ancestors    The ancestor block slugs accumulated down the tree.
+ * @param dropped      Collects nodes removed during validation, with reasons.
  */
 export const validateStructure = (
 	nodes: StructureNode[],
@@ -417,6 +428,7 @@ const buildStructurePrompt = (
 		'Pick blocks from the catalog by slug and arrange them into a nested tree.',
 		'Only nest blocks inside a block whose "container" is true.',
 		'Do NOT include any attributes yet — only "name" (a catalog slug) and "innerBlocks".',
+		'If you use a form block, do NOT add a separate submit button or button block — the Otter Form already renders its own submit button.',
 		'Prefer simple, reusable structures. Keep the reasoning ordered and human-readable.',
 		'Return strict JSON: { "rationale": string[], "roots": [ { "name": string, "innerBlocks": [...] } ] }.',
 		'Block catalog (slug, description, container):',
