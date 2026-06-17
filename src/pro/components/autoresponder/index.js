@@ -128,6 +128,13 @@ const AutoresponderBodyModal = ({
 
 	const isAIEnabled = Boolean( aiAutoresponder?.enabled );
 
+	const aiPromptTab = { name: 'ai-prompt', title: __( 'AI Prompt', 'otter-pro' ) };
+	const messageTab  = { name: 'message', title: isAIEnabled ? __( 'Fallback message', 'otter-pro' ) : __( 'Message', 'otter-pro' ) };
+
+	// AI Prompt is the second tab by default, but moves to the first position once
+	// "Reply with AI" is on (so the active mode leads).
+	const tabs = isAIEnabled ? [ aiPromptTab, messageTab ] : [ messageTab, aiPromptTab ];
+
 	return (
 		<>
 			{ isOpen && (
@@ -145,33 +152,21 @@ const AutoresponderBodyModal = ({
 					) }
 					<TabPanel
 						className="o-autoresponder-tabs"
-						tabs={[
-							{
-								name: 'ai-prompt',
-								title: __( 'AI Prompt', 'otter-pro' )
-							},
-							{
-								name: 'message',
-								title: isAIEnabled ? __( 'Fallback message', 'otter-pro' ) : __( 'Message', 'otter-pro' )
-							}
-						]}
+						tabs={ tabs }
 					>
 						{ tab => (
 							'ai-prompt' === tab.name ? (
 								// Disable only the content, not the tab switcher.
 								<Disabled isDisabled={ disabled }>
-									{ /* Toggle at the top while AI is off; once enabled it disappears
-									     (toggle off again from the sidebar). */ }
-									{ ! isAIEnabled && (
-										<div className="o-autoresponder-ai-toggle">
-											<ToggleControl
-												label={ __( 'Reply with AI', 'otter-pro' ) }
-												help={ __( 'Let AI craft a personalized reply to each submission.', 'otter-pro' ) }
-												checked={ isAIEnabled }
-												onChange={ ( enabled ) => onToggleAI?.( enabled ) }
-											/>
-										</div>
-									) }
+									{ /* Toggle stays visible on and off, so the AI state is always clear. */ }
+									<div className="o-autoresponder-ai-toggle">
+										<ToggleControl
+											label={ __( 'Reply with AI', 'otter-pro' ) }
+											help={ __( 'Let AI craft a personalized reply to each submission.', 'otter-pro' ) }
+											checked={ isAIEnabled }
+											onChange={ ( enabled ) => onToggleAI?.( enabled ) }
+										/>
+									</div>
 									{ /* When off, the fields stay visible but dimmed and disabled. */ }
 									<div className={ classNames( 'o-autoresponder-prompt-fields', { 'is-dimmed': ! isAIEnabled } ) }>
 										<AIPromptTab

@@ -80,7 +80,7 @@ test.describe( 'Form Block - AI Autoresponder', () => {
 		await expect( toggle ).not.toBeChecked();
 	});
 
-	test( 'with AI off, the AI Prompt tab shows the in-modal toggle and dimmed fields; toggling it on un-dims', async({ editor, page }) => {
+	test( 'with AI off, Message is the first tab; the AI Prompt tab toggle stays visible and toggling on un-dims + reorders', async({ editor, page }) => {
 		await insertFormWithFields( editor );
 
 		const panel = await openAutoresponderPanel( page );
@@ -94,28 +94,28 @@ test.describe( 'Form Block - AI Autoresponder', () => {
 
 		await expect( dialog ).toBeVisible();
 
-		// AI Prompt is the first tab; both tabs are always present.
+		// While AI is off, AI Prompt is the SECOND tab (Message leads).
+		await expect( dialog.getByRole( 'tab' ).first() ).toHaveText( 'Message' );
 		await expect( dialog.getByRole( 'tab', { name: 'AI Prompt' }) ).toBeVisible();
-		await expect( dialog.getByRole( 'tab', { name: 'Message' }) ).toBeVisible();
 
 		await dialog.getByRole( 'tab', { name: 'AI Prompt' }).click();
 
-		// While AI is off, the AI Prompt tab shows its own "Reply with AI" toggle at
-		// the top, with the prompt fields below visible but dimmed.
+		// The toggle is shown (off) with the prompt fields below dimmed.
 		const modalToggle = dialog.getByRole( 'checkbox', { name: 'Reply with AI' });
 		await expect( modalToggle ).toBeVisible();
 		await expect( modalToggle ).not.toBeChecked();
 		await expect( dialog.locator( '.o-ar-input' ) ).toBeVisible();
 		await expect( dialog.locator( '.o-autoresponder-prompt-fields.is-dimmed' ) ).toBeVisible();
 
-		// Flipping it on enables AI: the in-modal toggle disappears and the fields
-		// un-dim (you turn it off again from the sidebar).
+		// Flipping it on: the toggle stays visible (now checked), fields un-dim, and
+		// AI Prompt becomes the first tab.
 		await modalToggle.click();
-		await expect( dialog.getByRole( 'checkbox', { name: 'Reply with AI' }) ).toHaveCount( 0 );
+		await expect( modalToggle ).toBeChecked();
 		await expect( dialog.locator( '.o-autoresponder-prompt-fields.is-dimmed' ) ).toHaveCount( 0 );
+		await expect( dialog.getByRole( 'tab' ).first() ).toHaveText( 'AI Prompt' );
 	});
 
-	test( 'toggling Reply with AI on (sidebar) hides the in-modal toggle and un-dims the fields', async({ editor, page }) => {
+	test( 'with AI on, AI Prompt is the first tab and the in-modal toggle stays visible and checked', async({ editor, page }) => {
 		await insertFormWithFields( editor );
 
 		const panel = await openAutoresponderPanel( page );
@@ -128,12 +128,14 @@ test.describe( 'Form Block - AI Autoresponder', () => {
 
 		await expect( dialog ).toBeVisible();
 
-		await expect( dialog.getByRole( 'tab', { name: 'AI Prompt' }) ).toBeVisible();
+		// AI Prompt leads when on; the other tab is the Fallback message.
+		await expect( dialog.getByRole( 'tab' ).first() ).toHaveText( 'AI Prompt' );
 		await expect( dialog.getByRole( 'tab', { name: 'Fallback message' }) ).toBeVisible();
 
-		// With AI on, the AI Prompt tab has no in-modal toggle and the fields are active.
-		await dialog.getByRole( 'tab', { name: 'AI Prompt' }).click();
-		await expect( dialog.getByRole( 'checkbox', { name: 'Reply with AI' }) ).toHaveCount( 0 );
+		// The in-modal toggle stays visible and checked; fields are active (not dimmed).
+		const modalToggle = dialog.getByRole( 'checkbox', { name: 'Reply with AI' });
+		await expect( modalToggle ).toBeVisible();
+		await expect( modalToggle ).toBeChecked();
 		await expect( dialog.locator( '.o-autoresponder-prompt-fields.is-dimmed' ) ).toHaveCount( 0 );
 	});
 
