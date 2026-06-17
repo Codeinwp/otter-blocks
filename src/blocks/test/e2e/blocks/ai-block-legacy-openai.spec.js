@@ -46,7 +46,7 @@ test.describe( 'AI Block via legacy OpenAI backend', () => {
 		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
 		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about anything.' );
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
-		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Done' }).click();
 
 		const blocks = await editor.getBlocks();
 
@@ -69,6 +69,6 @@ test.describe( 'AI Block via legacy OpenAI backend', () => {
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
 
 		await expect( editor.canvas.locator( '.components-notice__content' ) ).toContainText( 'OpenAI returned an empty response' );
-		await expect( editor.canvas.getByRole( 'button', { name: 'Replace' }) ).toBeHidden();
+		await expect( editor.canvas.getByRole( 'button', { name: 'Done' }) ).toBeHidden();
 	});
 });

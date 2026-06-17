@@ -45,7 +45,7 @@ test.describe( 'AI Block via WP AI Client', () => {
 		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
 		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about anything.' );
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
-		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Done' }).click();
 
 		const blocks = await editor.getBlocks();
 
@@ -71,7 +71,7 @@ test.describe( 'AI Block via WP AI Client', () => {
 		await expect( editor.canvas.getByText( 'Full Name' ) ).toBeVisible();
 		await expect( editor.canvas.getByText( 'Email Address' ) ).toBeVisible();
 
-		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Done' }).click();
 
 		const blocks = await editor.getBlocks();
 

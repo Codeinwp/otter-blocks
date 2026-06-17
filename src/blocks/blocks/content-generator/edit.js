@@ -25,7 +25,6 @@ import PromptPlaceholder from '../../components/prompt';
 import { sendBlockGenerationPrompt } from '../../helpers/prompt';
 import { generateBlocksFromTask } from '../../plugins/ai-content/block-generation';
 import { aiDebug, aiDebugEnd, aiDebugStart } from '../../plugins/ai-content/debug';
-import { insertBlockBelow } from '../../helpers/block-utility';
 
 /**
  * AI Block — Content Generator.
@@ -96,14 +95,6 @@ const ContentGenerator = ({
 	};
 
 	/**
-	 * Insert the blocks generated from the prompt response below the current block.
-	 */
-	const insertContentIntoPage = () => {
-		const blocks = getBlocks( clientId );
-		insertBlockBelow( clientId, blocks.map( makeBlockCopy ) );
-	};
-
-	/**
 	 * Run the block generation pipeline and preview the result as inner blocks.
 	 *
 	 * @param {string} task The user task describing the desired content.
@@ -171,22 +162,13 @@ const ContentGenerator = ({
 	};
 
 	const actionButtons = ( props ) => (
-		<Fragment>
-			<Button
-				variant="primary"
-				onClick={ replaceBlock }
-				disabled={ 'loading' === props.status }
-			>
-				{ __( 'Replace', 'otter-blocks' ) }
-			</Button>
-			<Button
-				variant="secondary"
-				onClick={ insertContentIntoPage }
-				disabled={ 'loading' === props.status }
-			>
-				{ __( 'Insert below', 'otter-blocks' ) }
-			</Button>
-		</Fragment>
+		<Button
+			variant="primary"
+			onClick={ replaceBlock }
+			disabled={ 'loading' === props.status }
+		>
+			{ __( 'Done', 'otter-blocks' ) }
+		</Button>
 	);
 
 	return (
