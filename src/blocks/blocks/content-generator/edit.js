@@ -153,6 +153,19 @@ const ContentGenerator = ({
 		</Button>
 	);
 
+	// Title and placeholder copy adapt to the prompt the block was inserted with.
+	const presets = {
+		form: {
+			title: __( 'AI Form generator', 'otter-blocks' ),
+			placeholder: __( 'Start describing what form you need…', 'otter-blocks' )
+		},
+		textTransformation: {
+			title: __( 'AI Content generator', 'otter-blocks' ),
+			placeholder: __( 'Start describing what content you need…', 'otter-blocks' )
+		}
+	};
+	const preset = presets[ attributes.promptID ] ?? presets.textTransformation;
+
 	return (
 		<Fragment>
 			<Inspector
@@ -163,14 +176,14 @@ const ContentGenerator = ({
 			<div { ...blockProps }>
 				<PromptPlaceholder
 					promptID={ attributes.promptID }
-					title={ __( 'AI Content generator', 'otter-blocks' ) }
+					title={ preset.title }
 					value={ prompt }
 					resultHistory={ attributes.resultHistory }
 					onValueChange={ setPrompt }
 					onGenerateBlocks={ onGenerateBlocks }
 					actionButtons={ actionButtons }
 					onClose={ () => removeBlock( clientId ) }
-					promptPlaceholder={ __( 'Start describing what content you need…', 'otter-blocks' ) }
+					promptPlaceholder={ preset.placeholder }
 				>
 					{
 						hasInnerBlocks ? (
