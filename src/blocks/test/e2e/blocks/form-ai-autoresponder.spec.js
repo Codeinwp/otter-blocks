@@ -289,5 +289,24 @@ test.describe( 'Form Block - AI Autoresponder', () => {
 		}
 	});
 
+	test( 'enabling Reply with AI on a form without an email field shows the email-required notice', async({ editor, page }) => {
+		// A form with no email field.
+		await editor.insertBlock({
+			name: FORM_BLOCK,
+			innerBlocks: [
+				{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name', type: 'text' } },
+				{ name: 'themeisle-blocks/form-nonce' }
+			]
+		});
+		await expectBlockByName( editor, FORM_BLOCK );
 
+		const panel = await openAutoresponderPanel( page );
+
+		// Enabling "Reply with AI" alone must surface the email-field requirement.
+		await panel.getByRole( 'checkbox', { name: 'Reply with AI' }).click();
+
+		await expect(
+			panel.getByText( 'you need to have at least one Email field', { exact: false }).first()
+		).toBeVisible();
+	});
 });

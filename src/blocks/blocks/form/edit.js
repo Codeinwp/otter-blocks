@@ -324,7 +324,7 @@ const Edit = ({
 			}
 		}
 
-		if ( formOptions.autoresponder || formOptions.provider || formOptions.listId || formOptions.action ) {
+		if ( formOptions.autoresponder || formOptions.aiAutoresponder?.enabled || formOptions.provider || formOptions.listId || formOptions.action ) {
 			const emailFields = findInnerBlocks(
 				children,
 				block => {
@@ -372,7 +372,7 @@ const Edit = ({
 			setShowDuplicatedMappedName( hasDuplicateMappedNames );
 		}
 
-	}, [ children, formOptions.autoresponder, formOptions.provider, formOptions.listId, formOptions.action, formOptions.webhookId ]);
+	}, [ children, formOptions.autoresponder, formOptions.aiAutoresponder?.enabled, formOptions.provider, formOptions.listId, formOptions.action, formOptions.webhookId ]);
 
 	/**
 	 * Get the data from the WP Options for the current form.
