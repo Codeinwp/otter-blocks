@@ -1459,12 +1459,6 @@ parameters:
 			path: inc/plugins/class-dashboard.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Dashboard::form_submissions_callback() has no return type specified.'
-			identifier: missingType.return
-			count: 1
-			path: inc/plugins/class-dashboard.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Dashboard::get_dashboard_data() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1645,6 +1639,102 @@ parameters:
 			path: inc/plugins/class-dynamic-content.php
 
 		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Export::export_submissions() has no return type specified.'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-form-records-export.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Filters::get_filter() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-form-records-filters.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_bulk_actions() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-form-records-list-table.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_columns() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-form-records-list-table.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_row_actions() has parameter $actions with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-form-records-list-table.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_row_actions() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-form-records-list-table.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::form_record_sortable_columns() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-form-records-list-table.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_List_Table::format_based_on_status() has no return type specified.'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-form-records-list-table.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Meta_Box::render_field() has parameter $field with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-form-records-meta-box.php
+
+		-
+			rawMessage: 'Call to function method_exists() with WP_Role and ''add_cap'' will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/plugins/class-form-records-post-type.php
+
+		-
+			rawMessage: 'Call to function method_exists() with ''\\ThemeIsle\\OtterPro…'' and ''is_thin_extension'' will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: inc/plugins/class-form-submissions.php
+
+		-
+			rawMessage: Instanceof between ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request and ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request will always evaluate to true.
+			identifier: instanceof.alwaysTrue
+			count: 2
+			path: inc/plugins/class-form-submissions.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::apply_hooks_on_draft_transition() has no return type specified.'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-form-submissions.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::handle_form_record_bulk_actions() has parameter $object_ids with no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: inc/plugins/class-form-submissions.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::move_old_stripe_draft_sessions_to_unread() has no return type specified.'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-form-submissions.php
+
+		-
+			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions::update_submission_dump_data() has no return type specified.'
+			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-form-submissions.php
+
+		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\FSE_Onboarding::get_templates() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1725,6 +1815,12 @@ parameters:
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Options_Settings::register_settings() has no return type specified.'
 			identifier: missingType.return
+			count: 1
+			path: inc/plugins/class-options-settings.php
+
+		-
+			rawMessage: Unable to resolve the template type T in call to function rest_sanitize_boolean
+			identifier: argument.templateType
 			count: 1
 			path: inc/plugins/class-options-settings.php
 
@@ -2623,16 +2719,16 @@ parameters:
 			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
 
 		-
-			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::transition_draft_to_read() has no return type specified.'
+			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::update_submission_dump_data() has no return type specified.'
 			identifier: missingType.return
 			count: 1
 			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
 
 		-
-			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Form_Emails_Storing::update_submission_dump_data() has no return type specified.'
-			identifier: missingType.return
+			rawMessage: 'Call to function method_exists() with ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request and ''has_record_id'' will always evaluate to true.'
+			identifier: function.alreadyNarrowedType
 			count: 1
-			path: plugins/otter-pro/inc/plugins/class-form-emails-storing.php
+			path: plugins/otter-pro/inc/plugins/class-form-pro-features.php
 
 		-
 			rawMessage: Instanceof between ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request and ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request will always evaluate to true.

@@ -83,7 +83,7 @@ const formOptionsMap = {
 	bcc: 'bcc',
 	replyTo: 'replyTo',
 	autoresponder: 'autoresponder',
-	submissionsSaveLocation: 'submissionsSaveLocation',
+	emailNotification: 'emailNotification',
 	webhookId: 'webhookId',
 	requiredFields: 'requiredFields'
 };
@@ -150,8 +150,11 @@ const Edit = ({
 		bcc: undefined,
 		replyTo: undefined,
 		autoresponder: undefined,
-		submissionsSaveLocation: undefined
+		emailNotification: undefined
 	});
+
+	// Once the user toggles Email Notification, a late or duplicate server load must not migrate the stored legacy value back over their choice (see parseDataFormOptions).
+	const notificationDirty = useRef( false );
 
 	const {
 		insertBlock,
@@ -162,6 +165,9 @@ const Edit = ({
 	} = useDispatch( 'core/block-editor' );
 
 	const setFormOption = option => {
+		if ( Object.prototype.hasOwnProperty.call( option, 'emailNotification' ) ) {
+			notificationDirty.current = true;
+		}
 		setFormOptions( options => ({ ...options, ...option }) );
 	};
 
@@ -379,7 +385,7 @@ const Edit = ({
 	 * @param wpOptions
 	 */
 	const parseDataFormOptions = wpOptions => {
-		setFormOptions({
+		setFormOptions( prev => ({
 			emailTo: wpOptions?.email,
 			fromName: wpOptions?.fromName,
 			fromEmail: wpOptions?.fromEmail,
@@ -397,10 +403,15 @@ const Edit = ({
 			hasCaptcha: wpOptions?.hasCaptcha,
 			autoresponder: wpOptions?.autoresponder,
 			autoresponderSubject: wpOptions?.autoresponderSubject,
-			submissionsSaveLocation: wpOptions?.submissionsSaveLocation,
+
+			/*
+			 * Read-time migration of the legacy save-location values: only `database` meant no email notification, and the email was skipped only when a Pro license was active (mirrors the PHP migration in Form_Settings_Data).
+			 * A late/duplicate load (the option name re-keys from the temporary to the canonical name during editor init, re-firing this fetch) must not overwrite a notification the user has already toggled, so keep the edited value once it is dirty.
+			 */
+			emailNotification: notificationDirty.current ? prev.emailNotification : ( wpOptions?.emailNotification ?? ( ( wpOptions?.submissionsSaveLocation && Boolean( window.otterPro?.isActive ) ) ? 'database' !== wpOptions.submissionsSaveLocation : true ) ),
 			webhookId: wpOptions?.webhookId,
 			requiredFields: wpOptions?.requiredFields
-		});
+		}) );
 	};
 
 	/**`
@@ -468,6 +479,14 @@ const Edit = ({
 			data.captchaProvider = hasCaptchaBlock ? captchaBlockProvider : 'recaptcha';
 		}
 
+		// Forward-compat with older Otter Pro bundles: their Save Location control writes `submissionsSaveLocation` to the form options state. When the user changed it, persist it and map it to the new `emailNotification` format (only `database` disabled the owner email). Otherwise rewrite away from the legacy key on save.
+		if ( undefined !== formOptions.submissionsSaveLocation ) {
+			data.submissionsSaveLocation = formOptions.submissionsSaveLocation;
+			data.emailNotification = 'database' !== formOptions.submissionsSaveLocation;
+		} else {
+			data.submissionsSaveLocation = undefined;
+		}
+
 		try {
 			( new DeferredWpOptionsSave() ).save(
 				'form_options',
@@ -476,7 +495,15 @@ const Edit = ({
 						return data;
 					}
 					Object.keys( data ).forEach( k => {
-						oldValue[k] = data[k];
+						if ( undefined !== data[k]) {
+							oldValue[k] = data[k];
+							return;
+						}
+
+						// An undefined value for a known option is a deliberate reset (e.g. a ToolsPanel deselect), so drop the stored value. The legacy save-location key is also dropped once the entry is rewritten to `emailNotification`.
+						if ( Object.prototype.hasOwnProperty.call( formOptionsMap, k ) || 'submissionsSaveLocation' === k ) {
+							delete oldValue[k];
+						}
 					});
 					return oldValue;
 				}, ( res, error ) => {

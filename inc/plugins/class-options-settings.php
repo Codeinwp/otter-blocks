@@ -420,6 +420,10 @@ class Options_Settings {
 								$item['submissionsSaveLocation'] = sanitize_text_field( $item['submissionsSaveLocation'] );
 							}
 
+							if ( isset( $item['emailNotification'] ) ) {
+								$item['emailNotification'] = rest_sanitize_boolean( $item['emailNotification'] );
+							}
+
 							if ( isset( $item['requiredFields'] ) ) {
 								if ( is_array( $item['requiredFields'] ) ) {
 									$item['requiredFields'] = array_map( 'sanitize_text_field', $item['requiredFields'] );
@@ -505,6 +509,9 @@ class Options_Settings {
 								),
 								'submissionsSaveLocation' => array(
 									'type' => 'string',
+								),
+								'emailNotification'       => array(
+									'type' => array( 'boolean', 'number', 'string' ),
 								),
 								'webhookId'               => array(
 									'type' => 'string',

@@ -8,6 +8,9 @@
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Providers;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
+use ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions;
+use ThemeIsle\GutenbergBlocks\Pro;
 use ThemeIsle\GutenbergBlocks\Server\Form_Server;
 
 /**
@@ -60,6 +63,16 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private $data_preparation_filter = null;
 
 	/**
+	 * @var callable|null
+	 */
+	private $after_submit_action = null;
+
+	/**
+	 * @var callable|null
+	 */
+	private $pro_license_filter = null;
+
+	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {
@@ -97,13 +110,27 @@ class Test_Form_Server extends WP_UnitTestCase {
 			remove_filter( 'otter_form_data_preparation', $this->data_preparation_filter, 10 );
 		}
 
+		if ( null !== $this->after_submit_action ) {
+			remove_action( 'otter_form_after_submit', $this->after_submit_action, 5 );
+			$this->after_submit_action = null;
+		}
+
+		if ( null !== $this->pro_license_filter ) {
+			remove_filter( 'product_otter_license_status', $this->pro_license_filter );
+			$this->pro_license_filter = null;
+		}
+
 		$this->form_providers->providers = $this->original_providers;
+
+		$this->cleanup_upload_fixtures();
 
 		delete_option( 'themeisle_blocks_form_emails' );
 		delete_option( 'themeisle_blocks_form_fields_option' );
 		delete_option( 'themeisle_google_captcha_api_secret_key' );
 		delete_option( 'themeisle_cloudflare_turnstile_secret_key' );
 		delete_transient( 'contact_form_autoresponder_error' );
+		delete_transient( 'contact_form_alert_delivery_email' );
+		delete_transient( 'contact_form_alert_captcha_provider' );
 
 		parent::tear_down();
 	}
@@ -504,7 +531,9 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure default email failures are returned with the configured display error.
+	 * Ensure default email failures are returned with the configured display error,
+	 * while the submission is still saved as a Record with a failed Delivery Status
+	 * and a throttled Admin Alert is sent.
 	 */
 	public function test_frontend_submission_returns_email_error_when_default_mail_fails() {
 		$this->mock_mail( false );
@@ -515,7 +544,597 @@ class Test_Form_Server extends WP_UnitTestCase {
 		$this->assertFalse( $data['success'] );
 		$this->assertSame( Form_Data_Response::ERROR_EMAIL_NOT_SEND, $data['code'] );
 		$this->assertSame( 'Could not submit.', $data['displayError'] );
+
+		// The failed owner email and the throttled admin alert.
+		$this->assertCount( 2, $this->mail_requests );
+
+		// The submission survives the delivery failure as a Record marked failed.
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( Form_Submissions::DELIVERY_STATUS_FAILED, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+
+		$errors = get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_ERRORS_META_KEY, true );
+		$this->assertSame( 'email', $errors[0]['action'] );
+	}
+
+	/**
+	 * Ensure a successful submission is saved as a Record with a complete Delivery Status.
+	 */
+	public function test_frontend_submission_saves_record_with_complete_delivery() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( 'unread', $records[0]->post_status );
+		$this->assertSame( Form_Submissions::DELIVERY_STATUS_COMPLETE, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+		$this->assertEmpty( get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_ERRORS_META_KEY, true ) );
+	}
+
+	/**
+	 * Ensure a captcha provider outage saves the Record, skips delivery and alerts the admin.
+	 */
+	public function test_frontend_submission_captcha_provider_failure_saves_record_and_skips_delivery() {
+		$this->mock_mail();
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+
+		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+		$this->http_filter = function () {
+			return new WP_Error( 'http_request_failed', 'Connection timed out.' );
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'captcha-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_CAPTCHA_PROVIDER_UNREACHABLE, $data['code'] );
+		$this->assertSame( 'Could not submit.', $data['displayError'] );
+
+		// Primary delivery is skipped: the only email is the throttled admin alert.
 		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( get_site_option( 'admin_email' ), $this->mail_requests[0]['to'] );
+
+		// The submission is not lost: a Record is saved and marked failed.
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( 'unread', $records[0]->post_status );
+		$this->assertSame( Form_Submissions::DELIVERY_STATUS_FAILED, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+
+		$errors = get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_ERRORS_META_KEY, true );
+		$this->assertSame( 'captcha', $errors[0]['action'] );
+	}
+
+	/**
+	 * Ensure repeated captcha provider outages do not re-alert through the delivery throttle.
+	 */
+	public function test_captcha_provider_outage_admin_alert_is_throttled_per_form() {
+		$this->mock_mail();
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+
+		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+		$this->http_filter = function () {
+			return new WP_Error( 'http_request_failed', 'Connection timed out.' );
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+
+		$request = $this->get_frontend_request(
+			array(
+				'payload' => array(
+					'token' => 'captcha-token',
+				),
+			)
+		);
+
+		$this->form_server->frontend( $request );
+		$this->assertCount( 1, $this->mail_requests );
+
+		$this->form_server->frontend( $request );
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertCount( 2, $this->get_form_records() );
+	}
+
+	/**
+	 * Ensure a captcha provider HTTP error (5xx) is treated as an infrastructure failure,
+	 * not a verification failure: the Record is saved and marked failed.
+	 */
+	public function test_captcha_provider_http_error_is_infrastructure_failure() {
+		$this->mock_mail();
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+
+		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+		$this->http_filter = function () {
+			return array(
+				'response' => array(
+					'code'    => 500,
+					'message' => 'Internal Server Error',
+				),
+				'headers'  => array(),
+				'body'     => 'Server Error',
+			);
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'captcha-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_CAPTCHA_PROVIDER_UNREACHABLE, $data['code'] );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( Form_Submissions::DELIVERY_STATUS_FAILED, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+
+		$errors = get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_ERRORS_META_KEY, true );
+		$this->assertSame( 'captcha', $errors[0]['action'] );
+		$this->assertStringContainsString( 'HTTP 500', $errors[0]['message'] );
+	}
+
+	/**
+	 * Ensure a captcha provider outage on a payment-gated submission saves a regular
+	 * (visible) Record instead of a draft — it never reaches payment.
+	 */
+	public function test_infrastructure_failure_on_temporary_submission_saves_visible_record() {
+		$this->mock_mail();
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+
+		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+		$this->http_filter = function () {
+			return new WP_Error( 'http_request_failed', 'Connection timed out.' );
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'captcha-token',
+					),
+				),
+				'temporary'
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_CAPTCHA_PROVIDER_UNREACHABLE, $data['code'] );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( 'unread', $records[0]->post_status );
+		$this->assertSame( Form_Submissions::DELIVERY_STATUS_FAILED, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+	}
+
+	/**
+	 * Ensure a marketing-provider subscribe failure marks the Record's Delivery Status
+	 * and sends a throttled delivery alert.
+	 */
+	public function test_subscribe_failure_marks_record_delivery_errors() {
+		$this->mock_mail();
+
+		$this->form_providers->providers['failing-provider'] = array(
+			'frontend' => array(
+				'submit' => function ( $form_data ) {
+					$form_data->set_error( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
+				},
+			),
+			'editor'   => array(),
+		);
+
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'integration' => array(
+							'provider' => 'failing-provider',
+							'apiKey'   => 'api-key',
+							'listId'   => 'list-id',
+						),
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR, $data['code'] );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( Form_Submissions::DELIVERY_STATUS_FAILED, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+
+		$errors = get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_ERRORS_META_KEY, true );
+		$this->assertSame( 'subscribe', $errors[0]['action'] );
+
+		// The throttled delivery alert went to the site admin.
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( get_site_option( 'admin_email' ), $this->mail_requests[0]['to'] );
+	}
+
+	/**
+	 * Data provider for every delivery-failure code in the shared action map.
+	 *
+	 * @return array<string, array{0: int|string, 1: string}>
+	 */
+	public function delivery_failure_actions_provider() {
+		$cases = array();
+
+		foreach ( Form_Submissions::get_delivery_failure_actions() as $code => $action ) {
+			$cases[ 'code_' . $code ] = array( $code, $action );
+		}
+
+		return $cases;
+	}
+
+	/**
+	 * Ensure every delivery-failure code maps to the expected action on the stored Record
+	 * after a frontend submission runs through the delivery pipeline.
+	 *
+	 * @dataProvider delivery_failure_actions_provider
+	 *
+	 * @param int|string $code The response error code.
+	 * @param string     $expected_action The delivery action label.
+	 */
+	public function test_delivery_failure_action_maps_to_record_meta( $code, $expected_action ) {
+		$overrides = $this->configure_delivery_failure_case( $code );
+
+		$this->form_server->frontend( $this->get_frontend_request( $overrides ) );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame(
+			Form_Submissions::DELIVERY_STATUS_FAILED,
+			get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true )
+		);
+
+		$errors = get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_ERRORS_META_KEY, true );
+		$this->assertSame( $expected_action, $errors[0]['action'] );
+		$this->assertSame( (string) $code, $errors[0]['code'] );
+	}
+
+	/**
+	 * Ensure a retained upload stored through the frontend pipeline is removed when the
+	 * Submission Record is permanently deleted.
+	 */
+	public function test_frontend_submission_with_retained_upload_deletes_file_on_record_delete() {
+		$this->mock_mail();
+
+		$path     = $this->create_upload_fixture( 'integration-upload.txt' );
+		$file_key = 'file-1';
+
+		$this->data_preparation_filter = function ( $form_data ) use ( $path, $file_key ) {
+			$form_data->set_keep_uploaded_files( true );
+			$form_data->set_uploaded_files_path(
+				array(
+					$file_key => array(
+						'file_path' => $path,
+						'file_type' => 'text/plain',
+					),
+				)
+			);
+
+			return $form_data;
+		};
+		add_filter( 'otter_form_data_preparation', $this->data_preparation_filter, 10 );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formInputsData' => array(
+							array(
+								'id'       => 'wp-block-themeisle-blocks-form-input-upload01',
+								'type'     => 'file',
+								'label'    => 'Upload',
+								'value'    => basename( $path ),
+								'metadata' => array(
+									'name'            => basename( $path ),
+									'size'            => (string) filesize( $path ),
+									'data'            => $file_key,
+									'fieldOptionName' => 'upload-field',
+								),
+							),
+						),
+					),
+				)
+			)
+		);
+
+		$this->assertTrue( $response->get_data()['success'] );
+		$this->assertFileExists( $path );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+
+		$meta     = get_post_meta( $records[0]->ID, Form_Submissions::FORM_RECORD_META_KEY, true );
+		$has_path = false;
+
+		foreach ( $meta['inputs'] as $input ) {
+			if ( ! empty( $input['path'] ) && $input['path'] === $path ) {
+				$has_path = true;
+				break;
+			}
+		}
+
+		$this->assertTrue( $has_path );
+
+		wp_delete_post( $records[0]->ID, true );
+
+		$this->assertFileDoesNotExist( $path );
+	}
+
+	/**
+	 * Ensure the delivery Admin Alert is throttled per form: a second failing submission
+	 * within the cooldown stores another Record but does not re-alert.
+	 */
+	public function test_delivery_admin_alert_is_throttled_per_form() {
+		// Cooldown starts only after the alert was successfully delivered.
+		$this->mock_mail(
+			function ( $atts ) {
+				return false !== strpos( $atts['subject'], 'An error with the Form blocks has occurred' );
+			}
+		);
+
+		$this->form_server->frontend( $this->get_frontend_request() );
+
+		// First failure: the failed owner email and the admin alert.
+		$this->assertCount( 2, $this->mail_requests );
+
+		$this->form_server->frontend( $this->get_frontend_request() );
+
+		// Second failure: only the owner email attempt — the alert is on cooldown.
+		$this->assertCount( 3, $this->mail_requests );
+		$this->assertCount( 2, $this->get_form_records() );
+	}
+
+	/**
+	 * Ensure a failed Admin Alert delivery does not burn the throttle window.
+	 */
+	public function test_delivery_admin_alert_throttle_starts_after_successful_send() {
+		$this->mock_mail( false );
+
+		$this->form_server->frontend( $this->get_frontend_request() );
+
+		// First failure: owner email and admin alert both attempted but not delivered.
+		$this->assertCount( 2, $this->mail_requests );
+
+		$this->form_server->frontend( $this->get_frontend_request() );
+
+		// Second failure: both are attempted again because the alert never succeeded.
+		$this->assertCount( 4, $this->mail_requests );
+		$this->assertCount( 2, $this->get_form_records() );
+	}
+
+	/**
+	 * Ensure the Admin Alert cooldowns are independent per failure type: a captcha-provider
+	 * alert does not suppress a delivery alert for the same form within the same hour.
+	 */
+	public function test_admin_alert_throttle_is_per_failure_type() {
+		// First submission: captcha provider outage → one captcha alert.
+		$this->mock_mail();
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+
+		update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+		$this->http_filter = function () {
+			return new WP_Error( 'http_request_failed', 'Connection timed out.' );
+		};
+		add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+
+		$this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'captcha-token',
+					),
+				)
+			)
+		);
+
+		$this->assertCount( 1, $this->mail_requests );
+
+		// Second submission on the same form: email delivery failure → its own alert still fires.
+		remove_filter( 'pre_http_request', $this->http_filter, 10 );
+		$this->http_filter = null;
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option() ) );
+
+		remove_filter( 'pre_wp_mail', $this->mail_filter, 10 );
+		$this->mock_mail( false );
+
+		$this->form_server->frontend( $this->get_frontend_request() );
+
+		// The failed owner email and the delivery alert, despite the active captcha cooldown.
+		$this->assertCount( 3, $this->mail_requests );
+	}
+
+	/**
+	 * Ensure a delivery handler that throws cannot lose the submission: the Record is
+	 * already saved and its Delivery Status is backfilled from the issues handler.
+	 */
+	public function test_delivery_handler_exception_marks_record_failed() {
+		$this->mock_mail();
+
+		$this->form_providers->providers['default']['frontend']['submit'] = function () {
+			throw new Exception( 'Provider exploded.' );
+		};
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_RUNTIME_ERROR, $data['code'] );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( Form_Submissions::DELIVERY_STATUS_FAILED, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+
+		$errors = get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_ERRORS_META_KEY, true );
+		$this->assertSame( 'provider', $errors[0]['action'] );
+	}
+
+	/**
+	 * Ensure the payment-gated flow keeps a single Record: a draft on submit, flipped to
+	 * unread on payment confirmation, with delivery running only after the confirmation.
+	 */
+	public function test_payment_gated_submission_creates_draft_and_confirms_without_duplicate() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend( $this->get_frontend_request( array(), 'temporary' ) );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+
+		// A draft Record exists, nothing has been delivered yet.
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( 'draft', $records[0]->post_status );
+		$this->assertCount( 0, $this->mail_requests );
+		$this->assertEmpty( get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+
+		// Payment confirmation flips the draft and re-fires the submit hooks.
+		wp_update_post(
+			array(
+				'ID'          => $records[0]->ID,
+				'post_status' => 'unread',
+			)
+		);
+
+		// Delivery ran exactly once and no second Record was created.
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( 'unread', $records[0]->post_status );
+		$this->assertSame( Form_Submissions::DELIVERY_STATUS_COMPLETE, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( 'forms@example.com', $this->mail_requests[0]['to'] );
+	}
+
+	/**
+	 * Ensure an invalid captcha token still rejects the submission with no Record.
+	 */
+	public function test_frontend_submission_invalid_captcha_token_rejects_without_record() {
+		$this->mock_mail();
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+		$this->mock_captcha( false );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'token' => 'captcha-token',
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN, $data['code'] );
+		$this->assertCount( 0, $this->get_form_records() );
+	}
+
+	/**
+	 * Ensure the email notification toggle suppresses the owner email but keeps the Record.
+	 */
+	public function test_frontend_submission_with_notification_off_saves_record_without_email() {
+		$this->mock_mail();
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'emailNotification' => false ) ) ) );
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertCount( 0, $this->mail_requests );
+
+		$records = $this->get_form_records();
+		$this->assertCount( 1, $records );
+		$this->assertSame( Form_Submissions::DELIVERY_STATUS_COMPLETE, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
+	}
+
+	/**
+	 * Ensure the legacy save-location values map to the Email Notification toggle at read time.
+	 */
+	public function test_legacy_save_location_maps_to_email_notification() {
+		$cases = array(
+			array( array( 'submissionsSaveLocation' => 'email' ), true ),
+			array( array( 'submissionsSaveLocation' => 'database-email' ), true ),
+			// Without Pro, legacy `database` still sent the owner email in production.
+			array( array( 'submissionsSaveLocation' => 'database' ), true ),
+			array( array( 'submissionsSaveLocation' => '' ), true ),
+			array( array(), true ),
+			array( array( 'emailNotification' => false ), false ),
+			array( array( 'emailNotification' => true ), true ),
+			// The new toggle wins over the legacy value once both are present.
+			array(
+				array(
+					'submissionsSaveLocation' => 'database',
+					'emailNotification'       => true,
+				),
+				true,
+			),
+		);
+
+		foreach ( $cases as $index => $case ) {
+			$option = $this->get_form_option( $case[0] );
+
+			if ( array_key_exists( 'submissionsSaveLocation', $case[0] ) && '' === $case[0]['submissionsSaveLocation'] ) {
+				$option['submissionsSaveLocation'] = '';
+			} elseif ( ! array_key_exists( 'submissionsSaveLocation', $case[0] ) ) {
+				unset( $option['submissionsSaveLocation'] );
+			}
+
+			update_option( 'themeisle_blocks_form_emails', array( $option ) );
+
+			$settings = Form_Settings_Data::get_form_setting_from_wordpress_options( 'contact_form' );
+			$this->assertSame( $case[1], $settings->has_email_notification(), 'Case #' . $index . ' failed.' );
+		}
+	}
+
+	/**
+	 * Ensure legacy `database` disables the Email Notification toggle only when Pro is active.
+	 */
+	public function test_legacy_database_save_location_disables_email_notification_when_pro_active() {
+		if ( ! Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		$this->mock_pro_active();
+
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'submissionsSaveLocation' => 'database',
+					)
+				),
+			)
+		);
+
+		$settings = Form_Settings_Data::get_form_setting_from_wordpress_options( 'contact_form' );
+
+		$this->assertFalse( $settings->has_email_notification() );
 	}
 
 	/**
@@ -1083,7 +1702,10 @@ class Test_Form_Server extends WP_UnitTestCase {
 		$this->assertFalse( $data['success'] );
 		$this->assertSame( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR, $data['code'] );
 		$this->assertSame( 'Could not submit.', $data['displayError'] );
-		$this->assertCount( 0, $this->mail_requests );
+
+		// No owner email — the only attempt is the throttled delivery Admin Alert.
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( get_site_option( 'admin_email' ), $this->mail_requests[0]['to'] );
 	}
 
 	/**
@@ -1546,6 +2168,155 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Configure mocks, options and request overrides for a delivery failure code.
+	 *
+	 * @param int|string $code The response error code.
+	 * @return array Request overrides for get_frontend_request().
+	 */
+	private function configure_delivery_failure_case( $code ) {
+		$code = (string) $code;
+
+		$subscribe_codes = array(
+			Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR,
+			Form_Data_Response::ERROR_PROVIDER_CREDENTIAL_ERROR,
+			Form_Data_Response::ERROR_PROVIDER_INVALID_KEY,
+			Form_Data_Response::ERROR_PROVIDER_INVALID_API_KEY_FORMAT,
+			Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL,
+			Form_Data_Response::ERROR_MISSING_EMAIL,
+		);
+
+		switch ( $code ) {
+			case Form_Data_Response::ERROR_EMAIL_NOT_SEND:
+				$this->mock_mail( false );
+				return array();
+
+			case Form_Data_Response::ERROR_CAPTCHA_PROVIDER_UNREACHABLE:
+				$this->mock_mail();
+				update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+				update_option( 'themeisle_google_captcha_api_secret_key', 'secret-key' );
+				$this->http_filter = function () {
+					return new WP_Error( 'http_request_failed', 'Connection timed out.' );
+				};
+				add_filter( 'pre_http_request', $this->http_filter, 10, 3 );
+
+				return array(
+					'payload' => array(
+						'token' => 'captcha-token',
+					),
+				);
+
+			case Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER:
+				$this->mock_mail();
+				$this->after_submit_action = function ( $form_data ) {
+					$form_data->add_warning( Form_Data_Response::ERROR_WEBHOOK_COULD_NOT_TRIGGER, 'Webhook endpoint unreachable.' );
+
+					return $form_data;
+				};
+				add_action( 'otter_form_after_submit', $this->after_submit_action, 5 );
+
+				return array();
+
+			case Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED:
+				$this->mock_mail();
+				update_option(
+					'themeisle_blocks_form_emails',
+					array(
+						$this->get_form_option(
+							array(
+								'integration' => array(
+									'provider' => 'missing-provider',
+									'apiKey'   => 'api-key',
+									'listId'   => 'list-id',
+								),
+							)
+						),
+					)
+				);
+
+				return array();
+
+			case Form_Data_Response::ERROR_RUNTIME_ERROR:
+				$this->mock_mail();
+				$this->form_providers->providers['default']['frontend']['submit'] = function () {
+					throw new Exception( 'Provider exploded.' );
+				};
+
+				return array();
+		}
+
+		if ( in_array( $code, $subscribe_codes, true ) ) {
+			$this->mock_mail();
+			$error_code = $code;
+
+			$this->form_providers->providers['failing-provider'] = array(
+				'frontend' => array(
+					'submit' => function ( $form_data ) use ( $error_code ) {
+						$form_data->set_error( $error_code );
+					},
+				),
+				'editor'   => array(),
+			);
+
+			update_option(
+				'themeisle_blocks_form_emails',
+				array(
+					$this->get_form_option(
+						array(
+							'integration' => array(
+								'provider' => 'failing-provider',
+								'apiKey'   => 'api-key',
+								'listId'   => 'list-id',
+							),
+						)
+					),
+				)
+			);
+
+			return array();
+		}
+
+		$this->fail( 'Unhandled delivery failure code: ' . $code );
+	}
+
+	/**
+	 * Create an upload fixture under uploads/otter-tests.
+	 *
+	 * @param string $name The file name.
+	 * @return string The absolute file path.
+	 */
+	private function create_upload_fixture( $name ) {
+		$uploads = wp_upload_dir();
+		wp_mkdir_p( $uploads['basedir'] . '/otter-tests' );
+
+		$path = $uploads['basedir'] . '/otter-tests/' . $name;
+		file_put_contents( $path, 'integration test file' );
+
+		return $path;
+	}
+
+	/**
+	 * Remove upload fixtures created during tests.
+	 *
+	 * @return void
+	 */
+	private function cleanup_upload_fixtures() {
+		$uploads = wp_upload_dir();
+		$dir     = $uploads['basedir'] . '/otter-tests';
+
+		if ( ! is_dir( $dir ) ) {
+			return;
+		}
+
+		foreach ( glob( $dir . '/*' ) as $file ) {
+			if ( is_file( $file ) ) {
+				wp_delete_file( $file );
+			}
+		}
+
+		@rmdir( $dir );
+	}
+
+	/**
 	 * Ensure the default provider is available when running this class directly.
 	 */
 	private function ensure_default_provider() {
@@ -1564,6 +2335,23 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Get all the stored Submission Records.
+	 *
+	 * @return WP_Post[]
+	 */
+	private function get_form_records() {
+		return get_posts(
+			array(
+				'post_type'   => Form_Submissions::FORM_RECORD_TYPE,
+				'post_status' => array( 'draft', 'unread', 'read' ),
+				'numberposts' => -1,
+				'orderby'     => 'ID',
+				'order'       => 'ASC',
+			)
+		);
+	}
+
+	/**
 	 * Mock wp_mail and capture calls.
 	 *
 	 * @param bool $result Mail result.
@@ -1572,9 +2360,22 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private function mock_mail( $result = true ) {
 		$this->mail_filter = function ( $preempt, $atts ) use ( $result ) {
 			$this->mail_requests[] = $atts;
-			return $result;
+			return is_callable( $result ) ? $result( $atts ) : $result;
 		};
 		add_filter( 'pre_wp_mail', $this->mail_filter, 10, 2 );
+	}
+
+	/**
+	 * Stub a valid Otter Pro license for read-time migration tests.
+	 *
+	 * @return void
+	 */
+	private function mock_pro_active() {
+		$this->pro_license_filter = function () {
+			return 'valid';
+		};
+
+		add_filter( 'product_otter_license_status', $this->pro_license_filter );
 	}
 
 	/**
