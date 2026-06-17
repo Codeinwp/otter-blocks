@@ -478,9 +478,9 @@ class Form_Pro_Features {
 			// silently aborting the autoresponder, and is recorded in the log.
 			$this->log_autoresponder_debug( sprintf( 'Exception while sending: %s in %s:%d', $e->getMessage(), $e->getFile(), $e->getLine() ) );
 			$form_data->add_warning( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_RUNTIME_ERROR, $e->getMessage() );
-		} finally {
-			return $form_data;
 		}
+
+		return $form_data;
 	}
 
 	/**
@@ -490,13 +490,13 @@ class Form_Pro_Features {
 	 * autoresponder body on any error or rejection. Records usage, a warning on
 	 * failure, and an audit array on the form data for the submission record.
 	 *
-	 * @param Form_Data_Request $form_data     The form data.
-	 * @param array             $autoresponder The autoresponder settings (subject/body).
+	 * @param Form_Data_Request    $form_data     The form data.
+	 * @param array<string, mixed> $autoresponder The autoresponder settings (subject/body).
 	 * @return string The email body to send. An empty string means: do not send.
 	 */
 	private function build_ai_autoresponder_body( $form_data, $autoresponder ) {
 		$ai         = $form_data->get_wp_options()->get_ai_autoresponder();
-		$raw_prompt = isset( $ai['prompt'] ) ? $ai['prompt'] : '';
+		$raw_prompt = $ai['prompt'];
 		$prompt     = $this->replace_magic_tags( $raw_prompt, $form_data->get_fields() );
 
 		// Diagnostics: show whether the magic-tag tokens were actually replaced.
@@ -688,7 +688,7 @@ class Form_Pro_Features {
 
 		$backend = \ThemeIsle\GutenbergBlocks\Server\AI_Backend_Resolver::resolve();
 
-		$this->log_autoresponder_debug( sprintf( 'AI backend resolved: %s (available=%s)', get_class( $backend ), method_exists( $backend, 'is_available' ) && $backend->is_available() ? 'yes' : 'no' ) );
+		$this->log_autoresponder_debug( sprintf( 'AI backend resolved: %s (available=%s)', get_class( $backend ), $backend->is_available() ? 'yes' : 'no' ) );
 
 		$result = $backend->generate( $payload );
 

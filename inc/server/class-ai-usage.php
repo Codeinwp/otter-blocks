@@ -35,10 +35,6 @@ class AI_Usage {
 	 * @return void
 	 */
 	public static function record( $action, $user_content ) {
-		if ( ! is_string( $action ) || ! is_string( $user_content ) ) {
-			return;
-		}
-
 		$action       = substr( sanitize_text_field( $action ), 0, 100 );
 		$user_content = substr( sanitize_textarea_field( $user_content ), 0, 1000 );
 

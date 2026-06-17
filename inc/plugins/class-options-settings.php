@@ -378,7 +378,7 @@ class Options_Settings {
 								$item['autoresponder']['subject'] = sanitize_text_field( $item['autoresponder']['subject'] );
 							}
 							if ( isset( $item['aiAutoresponder']['enabled'] ) ) {
-								$item['aiAutoresponder']['enabled'] = rest_sanitize_boolean( $item['aiAutoresponder']['enabled'] );
+								$item['aiAutoresponder']['enabled'] = ! empty( $item['aiAutoresponder']['enabled'] );
 							}
 							if ( isset( $item['aiAutoresponder']['prompt'] ) ) {
 								$item['aiAutoresponder']['prompt'] = sanitize_textarea_field( $item['aiAutoresponder']['prompt'] );

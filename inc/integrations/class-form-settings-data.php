@@ -886,11 +886,17 @@ class Form_Settings_Data {
 	/**
 	 * Set the AI autoresponder data.
 	 *
-	 * @param array $ai_autoresponder The AI autoresponder data.
+	 * @param mixed $ai_autoresponder The AI autoresponder data (normalized to enabled/prompt).
 	 * @return Form_Settings_Data
 	 */
 	public function set_ai_autoresponder( $ai_autoresponder ) {
-		$this->ai_autoresponder = is_array( $ai_autoresponder ) ? $ai_autoresponder : array();
+		$ai_autoresponder = is_array( $ai_autoresponder ) ? $ai_autoresponder : array();
+
+		$this->ai_autoresponder = array(
+			'enabled' => ! empty( $ai_autoresponder['enabled'] ),
+			'prompt'  => isset( $ai_autoresponder['prompt'] ) ? (string) $ai_autoresponder['prompt'] : '',
+		);
+
 		return $this;
 	}
 
