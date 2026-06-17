@@ -29,7 +29,7 @@ test.describe( 'Advanced Heading Block', () => {
 			name: 'themeisle-blocks/advanced-heading'
 		});
 
-		await page.getByRole( 'document', { name: 'Block: Advanced Heading' }).click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Advanced Heading' }).click();
 
 		const sidebarClass = await page.getByRole( 'button', { name: 'Settings', exact: true }).first().getAttribute( 'class' );
 		if ( ! sidebarClass.includes( 'is-pressed' ) ) {
@@ -63,6 +63,12 @@ test.describe( 'Advanced Heading Block', () => {
 
 		// Open the family font menu to start the fonts loading. Then close the panel and come back after some time.
 		await page.getByRole( 'button', { name: 'Font Family' }).click();
+
+		// Close the popover while the fonts load in the background. Rendering the
+		// full font list keeps the page busy on slow runners, which starves the
+		// actionability checks for the fills below.
+		await page.keyboard.press( 'Escape' );
+		await expect( page.locator( '.o-gfont-popover' ) ).toBeHidden();
 
 		// Fill the line height.
 		await page.getByLabel( 'Line Height' ).fill( '1.5' );

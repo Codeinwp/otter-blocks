@@ -44,8 +44,7 @@ test.describe( 'Tabs Block', () => {
 
 		const currentTabsItems = tabBlock.innerBlocks.length;
 
-		// themeisle-blocks/tabs opts out of the iframed canvas, so the block renders at page level.
-		await page.getByRole( 'document', { name: 'Block: Tabs' }).getByRole( 'button', { name: 'Add Tab' }).click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Tabs' }).getByRole( 'button', { name: 'Add Tab' }).click();
 
 		tabBlock = await expectBlockByName( editor, 'themeisle-blocks/tabs' );
 
@@ -75,8 +74,8 @@ test.describe( 'Tabs Block', () => {
 			name: 'themeisle-blocks/tabs'
 		});
 
-		await page.getByRole( 'textbox', { name: 'Add title…' }).first().fill( 'Tab 1000' );
+		await editor.canvas.getByRole( 'textbox', { name: 'Add title…' }).first().fill( 'Tab 1000' );
 
-		await expect( page.locator( 'div' ).filter({ hasText: /^Tab 1000$/ }).first() ).toBeVisible();
+		await expect( editor.canvas.locator( 'div' ).filter({ hasText: /^Tab 1000$/ }).first() ).toBeVisible();
 	});
 });

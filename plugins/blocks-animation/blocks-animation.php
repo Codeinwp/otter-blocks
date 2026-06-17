@@ -13,6 +13,7 @@
  * Version:           3.1.11
  * Author:            ThemeIsle
  * Author URI:        https://themeisle.com
+ * Requires at least: 6.6
  * License:           GPL-3.0+
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.txt
  * Text Domain:       blocks-animation

@@ -13,6 +13,7 @@ parameters:
 		- %currentWorkingDirectory%/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
 		- %currentWorkingDirectory%/vendor/php-stubs/acf-pro-stubs/acf-pro-stubs.php
 		- %currentWorkingDirectory%/vendor/wptt/webfont-loader/wptt-webfont-loader.php
+		- %currentWorkingDirectory%/tests/php/static-analysis-stubs/wordpress-constants.php
 		- %currentWorkingDirectory%/tests/php/static-analysis-stubs/otter.php
 		- %currentWorkingDirectory%/tests/php/static-analysis-stubs/learndash.php
 	dynamicConstantNames:
@@ -20,7 +21,10 @@ parameters:
 		- COOKIE_DOMAIN
 		- OTTER_BLOCKS_PRO_SUPPORT
 		- OTTER_BLOCKS_SHOW_NOTICES
+	ignoreErrors:
+		# WordPress core files required via ABSPATH are not resolvable during static analysis.
+		- identifier: requireOnce.fileNotFound
+		- identifier: includeOnce.fileNotFound
 includes:
-	- %currentWorkingDirectory%/vendor/szepeviktor/phpstan-wordpress/extension.neon
 	- %currentWorkingDirectory%/phpstan-baseline.neon
 	- phar://phpstan.phar/conf/bleedingEdge.neon

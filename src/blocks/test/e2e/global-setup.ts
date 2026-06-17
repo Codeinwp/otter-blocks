@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import { mkdirSync } from 'fs';
+import path from 'path';
 import { request } from '@playwright/test';
 import type { FullConfig } from '@playwright/test';
 
@@ -9,14 +11,34 @@ import type { FullConfig } from '@playwright/test';
  */
 import { RequestUtils } from '@wordpress/e2e-test-utils-playwright';
 
+async function assertWpEnvReady( requestContext: { get: ( url: string ) => Promise<{ ok: () => boolean; json: () => Promise<{ namespaces?: string[] }> }> }, baseURL: string ) {
+	const indexResponse = await requestContext.get( `${ baseURL }/wp-json/` );
+
+	if ( ! indexResponse.ok() ) {
+		throw new Error( `[Otter E2E] wp-env is not reachable at ${ baseURL }` );
+	}
+
+	const index = await indexResponse.json();
+
+	if ( ! index.namespaces?.includes( 'wp/v2' ) ) {
+		throw new Error( '[Otter E2E] wp-env REST API is missing the wp/v2 namespace.' );
+	}
+}
+
 async function globalSetup( config: FullConfig ) {
 	const { storageState, baseURL } = config.projects[ 0 ].use;
 	const storageStatePath =
 		'string' === typeof storageState ? storageState : undefined;
 
+	if ( storageStatePath ) {
+		mkdirSync( path.dirname( storageStatePath ), { recursive: true } );
+	}
+
 	const requestContext = await request.newContext({
 		baseURL
 	});
+
+	await assertWpEnvReady( requestContext, baseURL as string );
 
 	const r = await requestContext.head( baseURL );
 
@@ -42,8 +64,7 @@ async function globalSetup( config: FullConfig ) {
 		console.warn( '[Otter E2E] Pro stub activation failed — Pro-gated tests may fail:', error );
 	});
 
-	// Seed the prompts transient so the AI block doesn't try to fetch from themeisle.com
-	// and surface "Prompt not found" in the editor.
+	// Verify the test-only bootstrap is mounted in wp-env.
 	await requestUtils.rest({
 		method: 'POST',
 		path: '/otter-e2e/v1/prompts/seed'

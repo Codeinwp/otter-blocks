@@ -52,6 +52,14 @@ class Form_Settings_Data {
 	private $has_captcha = false;
 
 	/**
+	 * Captcha provider. Null until the form options are saved with one,
+	 * so legacy forms can be told apart from forms saved as reCaptcha.
+	 *
+	 * @var string|null
+	 */
+	private $captcha_provider = null;
+
+	/**
 	 * The metadata.
 	 *
 	 * @var array
@@ -115,6 +123,13 @@ class Form_Settings_Data {
 	private $bcc = '';
 
 	/**
+	 * The Reply-To email address.
+	 *
+	 * @var string
+	 */
+	private $reply_to = '';
+
+	/**
 	 * The autoresponder data.
 	 *
 	 * @var array
@@ -124,9 +139,22 @@ class Form_Settings_Data {
 	/**
 	 * The location where the submissions are saved.
 	 *
+	 * Legacy setting: submissions are now always saved to the database. Kept populated for
+	 * older Otter Pro builds that still read it; superseded by $email_notification.
+	 *
 	 * @var string
 	 */
 	private $submissions_save_location = '';
+
+	/**
+	 * Whether to send the owner an email notification for each submission.
+	 *
+	 * Replaces the save-location selector: database save is always on, only the email
+	 * notification is configurable.
+	 *
+	 * @var bool
+	 */
+	private $email_notification = true;
 
 	/**
 	 * The webhook ID.
@@ -152,6 +180,10 @@ class Form_Settings_Data {
 		$this->extract_integration_data( $integration_data );
 		if ( isset( $integration_data['hasCaptcha'] ) ) {
 			$this->set_captcha( $integration_data['hasCaptcha'] );
+		}
+
+		if ( isset( $integration_data['captchaProvider'] ) ) {
+			$this->set_captcha_provider( $integration_data['captchaProvider'] );
 		}
 
 		$this->set_meta( $integration_data );
@@ -225,6 +257,9 @@ class Form_Settings_Data {
 				if ( isset( $form['hasCaptcha'] ) ) {
 					$integration->set_captcha( $form['hasCaptcha'] );
 				}
+				if ( isset( $form['captchaProvider'] ) ) {
+					$integration->set_captcha_provider( $form['captchaProvider'] );
+				}
 				if ( isset( $form['redirectLink'] ) ) {
 					$integration->set_redirect_link( $form['redirectLink'] );
 				}
@@ -249,6 +284,9 @@ class Form_Settings_Data {
 				if ( isset( $form['bcc'] ) ) {
 					$integration->set_bcc( $form['bcc'] );
 				}
+				if ( isset( $form['replyTo'] ) ) {
+					$integration->set_reply_to( $form['replyTo'] );
+				}
 				if ( isset( $form['autoresponder'] ) && count( $form['autoresponder'] ) > 0 ) {
 					$integration->set_autoresponder( $form['autoresponder'] );
 				}
@@ -263,6 +301,24 @@ class Form_Settings_Data {
 					}
 				} elseif ( Pro::is_pro_active() ) {
 					$integration->set_submissions_save_location( 'database-email' );
+				}
+
+				/**
+				 * Read-time migration of the legacy save-location setting: `email`,
+				 * `database-email` and empty/missing (email was the de facto behavior) map to
+				 * notification on, `database` maps to off. Legacy `database` only skipped the
+				 * owner email when Pro was active (the old gate was
+				 * `Pro::is_pro_active() && ! $can_send_email`), so without an active Pro
+				 * license the email was always sent and we keep the notification on. The
+				 * stored option is rewritten to the new `emailNotification` format when the
+				 * form is next saved in the editor.
+				 */
+				if ( isset( $form['emailNotification'] ) ) {
+					$integration->set_email_notification( filter_var( $form['emailNotification'], FILTER_VALIDATE_BOOLEAN ) );
+				} elseif ( ! empty( $form['submissionsSaveLocation'] ) && Pro::is_pro_active() ) {
+					$integration->set_email_notification( 'database' !== $form['submissionsSaveLocation'] );
+				} else {
+					$integration->set_email_notification( true );
 				}
 				$integration->set_meta( $form );
 				if ( isset( $form['webhookId'] ) ) {
@@ -346,6 +402,21 @@ class Form_Settings_Data {
 	 */
 	public function set_captcha( $has_captcha ) {
 		$this->has_captcha = $has_captcha;
+		return $this;
+	}
+
+	/**
+	 * Set captcha provider.
+	 *
+	 * @param mixed $provider Provider slug, as received from the form options payload.
+	 * @return Form_Settings_Data
+	 * @since 3.1.12
+	 */
+	public function set_captcha_provider( $provider ) {
+		$provider = is_string( $provider ) ? sanitize_key( $provider ) : '';
+		$allowed  = array( 'recaptcha', 'turnstile' );
+
+		$this->captcha_provider = in_array( $provider, $allowed, true ) ? $provider : 'recaptcha';
 		return $this;
 	}
 
@@ -558,6 +629,26 @@ class Form_Settings_Data {
 	}
 
 	/**
+	 * Get captcha provider.
+	 *
+	 * @return string
+	 * @since 3.1.12
+	 */
+	public function get_captcha_provider() {
+		return null === $this->captcha_provider ? 'recaptcha' : $this->captcha_provider;
+	}
+
+	/**
+	 * Check if a captcha provider was saved with the form options.
+	 *
+	 * @return bool
+	 * @since 3.1.12
+	 */
+	public function has_captcha_provider() {
+		return null !== $this->captcha_provider;
+	}
+
+	/**
 	 * Get the redirect link.
 	 *
 	 * @return string
@@ -700,6 +791,39 @@ class Form_Settings_Data {
 	}
 
 	/**
+	 * Get the Reply-To email address.
+	 *
+	 * @return string
+	 */
+	public function get_reply_to() {
+		return $this->reply_to;
+	}
+
+	/**
+	 * Check if it has a Reply-To email address.
+	 *
+	 * @return boolean
+	 */
+	public function has_reply_to() {
+		return ! empty( $this->reply_to );
+	}
+
+	/**
+	 * Set the Reply-To email address.
+	 *
+	 * @param string $reply_to The Reply-To email address.
+	 * @return Form_Settings_Data
+	 */
+	public function set_reply_to( $reply_to ) {
+		if ( filter_var( $reply_to, FILTER_VALIDATE_EMAIL ) !== false ) {
+			$this->reply_to = $reply_to;
+		} else {
+			$this->reply_to = '';
+		}
+		return $this;
+	}
+
+	/**
 	 * Get the autoresponder.
 	 *
 	 * @return array
@@ -746,6 +870,26 @@ class Form_Settings_Data {
 	 */
 	public function set_submissions_save_location( $submissions_save_location ) {
 		$this->submissions_save_location = $submissions_save_location;
+		return $this;
+	}
+
+	/**
+	 * Check if the owner email notification is enabled.
+	 *
+	 * @return bool
+	 */
+	public function has_email_notification() {
+		return $this->email_notification;
+	}
+
+	/**
+	 * Set whether the owner email notification is enabled.
+	 *
+	 * @param bool $email_notification Whether the notification is enabled.
+	 * @return $this
+	 */
+	public function set_email_notification( $email_notification ) {
+		$this->email_notification = (bool) $email_notification;
 		return $this;
 	}
 

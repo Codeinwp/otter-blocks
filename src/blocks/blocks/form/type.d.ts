@@ -51,6 +51,7 @@ type Attributes = {
 export type FormOptions = {
 	form?: string
 	hasCaptcha?: boolean
+	captchaProvider?: string
 	email?: string
 	fromName?: string
 	fromEmail?: string
@@ -60,11 +61,14 @@ export type FormOptions = {
 	errorMessage?: string
 	cc?: string
 	bcc?: string
+	replyTo?: string
 	autoresponder?: {
 		subject?: string
 		body?: string
 	}
+	/** Legacy save-location value, migrated to `emailNotification` at read time. */
 	submissionsSaveLocation?: string
+	emailNotification?: boolean
 	webhookId?: string
 }
 

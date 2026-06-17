@@ -37,9 +37,18 @@ const WP_BASE_URL = process.env.WP_BASE_URL || `http://localhost:${ WP_ENV_PORT 
 process.env.WP_BASE_URL = WP_BASE_URL;
 
 const SERIAL_SPECS = [
+
+	// Flips the AI backend + connector key options server-side; must not race parallel specs.
+	'**/blocks/ai-block-wp-client.spec.js',
+	'**/blocks/ai-block-legacy-openai.spec.js',
+	'**/blocks/ai-block-unconfigured.spec.js',
 	'**/blocks/block-conditions.spec.js',
 	'**/blocks/dashboard.spec.js',
 	'**/blocks/form.spec.js',
+
+	// Mutates site-wide scenario state (mail/captcha modes, stored records) via the bootstrap mu-plugin.
+	'**/blocks/form-retention.spec.js',
+	'**/blocks/form-turnstile.spec.js',
 	'**/blocks/onboarding.spec.js'
 ];
 

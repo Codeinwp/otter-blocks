@@ -5,6 +5,11 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 test.describe( 'FSE Onboarding', () => {
 	test.beforeEach( async({ admin, page, requestUtils }) => {
+		/*
+		 * Activate the theme via the REST API instead of the themes.php UI.
+		 * Activating Raft from the UI redirects straight into the Theme Setup
+		 * onboarding screen, so waiting for the active theme card times out.
+		 */
 		await requestUtils.activateTheme( 'raft' );
 
 		await admin.visitAdminPage( 'site-editor.php?onboarding=true' );

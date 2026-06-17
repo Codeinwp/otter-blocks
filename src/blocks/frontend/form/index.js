@@ -1,7 +1,7 @@
 /**
  * Internal dependencies.
  */
-import { addCaptchaOnPage } from './captcha.js';
+import { addCaptchaOnPage, getCaptchaContainer } from './captcha.js';
 import DisplayFormMessage from './message.js';
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
@@ -382,8 +382,11 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	// Get the data from the form fields.
 	const { formFieldsData } = await extractFormFields( form );
 	const formIsEmpty = 2 > formFieldsData?.length;
-	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
+	const captchaContainer = getCaptchaContainer( form );
+	const hasCaptcha = Boolean( captchaContainer ) || form?.classList?.contains( 'has-captcha' );
 	const hasValidToken = id && window.themeisleGutenberg?.tokens?.[id]?.token;
+	const captchaProvider = captchaContainer?.dataset?.captchaProvider || 'recaptcha';
+	const captchaLoaded = 'turnstile' === captchaProvider ? window.hasOwnProperty( 'turnstile' ) : window.hasOwnProperty( 'grecaptcha' );
 	const spinner = makeSpinner( btn );
 	const isValidationSuccessful = validateInputs( form );
 
@@ -396,7 +399,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	const nonceFieldValue = extractNonceValue( form );
 
 	if ( hasCaptcha && ! hasValidToken ) {
-		const msg = ! window.hasOwnProperty( 'grecaptcha' ) ?
+		const msg = ! captchaLoaded ?
 			'captcha-not-loaded' :
 			'check-captcha';
 		displayMsg.pullMsg(
@@ -412,6 +415,9 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 		payload.formInputsData = formFieldsData;
 		if ( hasValidToken ) {
 			payload.token = window.themeisleGutenberg?.tokens?.[ id ].token;
+		}
+		if ( hasCaptcha ) {
+			payload.captchaProvider = captchaProvider;
 		}
 
 		/**
@@ -498,8 +504,8 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 				},
 				( res, displayMsg ) => {},
 				() => {
-					if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
-						window.themeisleGutenberg?.tokens?.[ id ].reset();
+					if ( window.themeisleGutenberg?.tokens?.[ id ]?.reset ) {
+						window.themeisleGutenberg.tokens[ id ].reset();
 					}
 					btn.disabled = false;
 					spinner.hide();
