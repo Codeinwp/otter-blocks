@@ -1,19 +1,5 @@
 /**
  * Track when Otter blocks are added to or removed from the editor.
- *
- * Mirrors the approach Feedzy uses (`js/FeedzyLoop/tracking.js`): subscribe to
- * the block-editor store, keep a per-type instance count for every Otter block
- * (the `themeisle-blocks` and `atomic-wind` categories), and on each (debounced)
- * change emit a signed-delta telemetry event through the already-initialised `window.oTrk`
- * accumulator (`tiTrk.with( 'otter' )`, set up in `../helpers`). The first
- * settled change only seeds the baseline, so blocks already present when a post
- * is opened are not reported as additions.
- *
- * The emitted event reuses the same `feature: 'block-usage'` shape Feedzy sends,
- * so Otter and Feedzy block usage line up under one schema in telemetry and this
- * does not collide with the existing per-block `action: 'block-created'` events.
- *
- * @package
  */
 
 /**
@@ -61,9 +47,7 @@ let isInitialized = false;
 
 /**
  * Count instances of every watched block in the post, including nested inner
- * blocks. Uses the block-editor `getGlobalBlockCount` selector, which is
- * memoized on block order, so the frequent attribute-only changes (typing)
- * return cached counts instead of forcing a full tree walk on every tick.
+ * blocks.
  *
  * @return {Object.<string, number>} Instance count keyed by block name.
  */
