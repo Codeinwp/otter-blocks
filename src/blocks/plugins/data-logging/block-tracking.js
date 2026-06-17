@@ -2,12 +2,12 @@
  * Track when Otter blocks are added to or removed from the editor.
  *
  * Mirrors the approach Feedzy uses (`js/FeedzyLoop/tracking.js`): subscribe to
- * the block-editor store, keep a per-type instance count for every block in the
- * `themeisle-blocks` category, and on each change emit a signed-delta telemetry
- * event through the already-initialised `window.oTrk` accumulator
- * (`tiTrk.with( 'otter' )`, set up in `../helpers`). The first store tick only
- * seeds the baseline, so blocks already present when a post is opened are not
- * reported as additions.
+ * the block-editor store, keep a per-type instance count for every Otter block
+ * (the `themeisle-blocks` and `atomic-wind` categories), and on each (debounced)
+ * change emit a signed-delta telemetry event through the already-initialised `window.oTrk`
+ * accumulator (`tiTrk.with( 'otter' )`, set up in `../helpers`). The first
+ * settled change only seeds the baseline, so blocks already present when a post
+ * is opened are not reported as additions.
  *
  * The emitted event reuses the same `feature: 'block-usage'` shape Feedzy sends,
  * so Otter and Feedzy block usage line up under one schema in telemetry and this
@@ -15,6 +15,11 @@
  *
  * @package
  */
+
+/**
+ * External dependencies.
+ */
+import { debounce } from 'lodash';
 
 /**
  * WordPress dependencies.
@@ -31,8 +36,16 @@ import domReady from '@wordpress/dom-ready';
 let blockCounts = {};
 
 /**
- * Block names in the `themeisle-blocks` category. Resolved lazily, once the
- * block types have been registered.
+ * Block categories tracked as Otter usage: the core Otter blocks and the
+ * Atomic Wind blocks.
+ *
+ * @type {string[]}
+ */
+const TRACKED_CATEGORIES = [ 'themeisle-blocks', 'atomic-wind' ];
+
+/**
+ * Block names in the tracked categories. Resolved lazily, once the block types
+ * have been registered.
  *
  * @type {string[]}
  */
@@ -47,24 +60,20 @@ let watchedBlockTypes = [];
 let isInitialized = false;
 
 /**
- * Recursively count instances of watched blocks, including nested inner blocks.
+ * Count instances of every watched block in the post, including nested inner
+ * blocks. Uses the block-editor `getGlobalBlockCount` selector, which is
+ * memoized on block order, so the frequent attribute-only changes (typing)
+ * return cached counts instead of forcing a full tree walk on every tick.
  *
  * @return {Object.<string, number>} Instance count keyed by block name.
  */
 const countBlocks = () => {
+	const { getGlobalBlockCount } = select( blockEditorStore );
 	const counts = {};
 
-	const walk = blocks => blocks.forEach( block => {
-		if ( watchedBlockTypes.includes( block.name ) ) {
-			counts[ block.name ] = ( counts[ block.name ] || 0 ) + 1;
-		}
-
-		if ( block.innerBlocks?.length ) {
-			walk( block.innerBlocks );
-		}
+	watchedBlockTypes.forEach( blockType => {
+		counts[ blockType ] = getGlobalBlockCount( blockType );
 	});
-
-	walk( select( blockEditorStore ).getBlocks() );
 
 	return counts;
 };
@@ -79,7 +88,7 @@ const updateBlockCounts = () => {
 	if ( 0 === watchedBlockTypes.length ) {
 		watchedBlockTypes = select( 'core/blocks' )
 			.getBlockTypes()
-			.filter( block => 'themeisle-blocks' === block.category )
+			.filter( block => TRACKED_CATEGORIES.includes( block.category ) )
 			.map( block => block.name );
 
 		if ( 0 === watchedBlockTypes.length ) {
@@ -121,8 +130,9 @@ if ( Boolean( window.themeisleGutenberg?.isBlockEditor ) ) {
 		}
 
 		// Delay so existing blocks are loaded before the baseline is taken.
+		// Debounce the diff so a burst of editor changes collapses into a single count instead of running on every tick.
 		setTimeout( () => {
-			subscribe( updateBlockCounts, blockEditorStore );
+			subscribe( debounce( updateBlockCounts, 1000 ), blockEditorStore );
 		}, 1000 );
 	});
 }
