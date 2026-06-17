@@ -109,24 +109,26 @@ const ContentGenerator = ({
 
 		const requestCompletion = async( instruction ) => {
 			requestCount++;
-			aiDebug( `OpenAI request #${ requestCount } (gpt-5-mini)`, { chars: instruction.length });
+			// Model/provider is resolved server-side (WP AI Client connector, or the
+			// legacy OpenAI key); the frontend doesn't know which, so don't label it.
+			aiDebug( `AI request #${ requestCount }`, { chars: instruction.length });
 
 			const response = await sendBlockGenerationPrompt( instruction );
 
 			if ( ! response.ok ) {
-				aiDebug( `OpenAI request #${ requestCount } errored`, response.error );
+				aiDebug( `AI request #${ requestCount } errored`, response.error );
 				throw new Error( response.error.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 			}
 
 			const content = response.content;
 
 			if ( ! content ) {
-				aiDebug( `OpenAI request #${ requestCount } returned empty content` );
+				aiDebug( `AI request #${ requestCount } returned empty content` );
 				throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
 			}
 
 			usedToken += response.usedTokens ?? 0;
-			aiDebug( `OpenAI request #${ requestCount } ok`, { tokens: response.usedTokens ?? 0 });
+			aiDebug( `AI request #${ requestCount } ok`, { tokens: response.usedTokens ?? 0 });
 
 			return content;
 		};
