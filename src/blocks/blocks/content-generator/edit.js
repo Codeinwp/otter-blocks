@@ -201,6 +201,7 @@ const ContentGenerator = ({
 					promptID={ attributes.promptID }
 					title={ __( 'AI Content generator', 'otter-blocks' ) }
 					value={ prompt }
+					resultHistory={ attributes.resultHistory }
 					onValueChange={ setPrompt }
 					onGenerateBlocks={ onGenerateBlocks }
 					actionButtons={ actionButtons }
