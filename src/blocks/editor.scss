@@ -128,13 +128,31 @@ svg.o-block-icon {
 	}
 }
 
+// Give the tab strip a baseline so the tabs read as proper tabs, not floating text.
+.o-autoresponder-tabs {
+	> .components-tab-panel__tabs {
+		border-bottom: 1px solid #e0e0e0;
+		margin-bottom: 20px;
+	}
+
+	.components-tab-panel__tabs-item {
+		// Sit the active tab's underline on top of the strip's baseline.
+		margin-bottom: -1px;
+	}
+}
+
 // Prompt fields shown dimmed when "Reply with AI" is off (still visible for discovery).
 .o-autoresponder-prompt-fields {
-	margin-top: 16px;
-
 	&.is-dimmed {
 		opacity: 0.5;
 	}
+}
+
+// "Reply with AI" toggle pinned at the bottom of the AI Prompt tab.
+.o-autoresponder-ai-toggle {
+	margin-top: 20px;
+	padding-top: 16px;
+	border-top: 1px solid #e0e0e0;
 }
 
 .o-autoresponder-prompt {
