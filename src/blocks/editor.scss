@@ -129,15 +129,13 @@ svg.o-block-icon {
 }
 
 // Give the tab strip a baseline so the tabs read as proper tabs, not floating text.
+// The baseline is drawn as an inset shadow at the tab-row's bottom edge, which is
+// the same edge WordPress draws the active-tab indicator on — so they align exactly
+// instead of producing two offset lines.
 .o-autoresponder-tabs {
 	> .components-tab-panel__tabs {
-		border-bottom: 1px solid #e0e0e0;
+		box-shadow: inset 0 -1px 0 0 #e0e0e0;
 		margin-bottom: 20px;
-	}
-
-	.components-tab-panel__tabs-item {
-		// Sit the active tab's underline on top of the strip's baseline.
-		margin-bottom: -1px;
 	}
 }
 
