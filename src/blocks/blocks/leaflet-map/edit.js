@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
  * WordPress dependencies
  */
 import {
+	isEqual,
 	isNumber,
 	merge
 } from 'lodash';
@@ -74,6 +75,10 @@ const Edit = ({
 	const mapInstanceRef = useRef( null );
 	const [ map, setMap ] = useState( null );
 	const [ isAddingToLocationActive, setActiveAddingToLocation ] = useState( false );
+
+	// Read by the once-bound Leaflet handlers in `createMap`, which would otherwise
+	// capture the initial `isAddingToLocationActive` value via a stale closure.
+	const isAddingRef = useRef( false );
 	const [ openMarker, setOpenMarker ] = useState( null );
 
 	/**
@@ -86,9 +91,14 @@ const Edit = ({
 	 */
 	const getLeaflet = () => getBlockWindow( mapRef ).L;
 
-	const createMarker = ( markerProps, dispatch ) => {
+	const createMarker = ( sourceProps, dispatch ) => {
 		const L = getLeaflet();
-		if ( L && map && dispatch && markerProps ) {
+		if ( L && map && dispatch && sourceProps ) {
+
+			// Own a private copy so reducer mutations (e.g. a drag's `moveend`) don't
+			// silently mutate the `attributes.markers` objects, which would hide the
+			// change from the persistence diff below.
+			const markerProps = { ...sourceProps };
 			markerProps.id ??= uuidv4();
 			markerProps.latitude ??= map.getCenter().lat;
 			markerProps.longitude ??= map.getCenter().lng;
@@ -136,7 +146,7 @@ const Edit = ({
 			return [ ...oldState, newMarker ];
 
 		case ActionType.ADD_MANUAL:
-			if ( isAddingToLocationActive ) {
+			if ( isAddingRef.current ) {
 				const newMarker = createMarker( action.marker, action.dispatch );
 				return [ ...oldState, newMarker ];
 			}
@@ -201,6 +211,15 @@ const Edit = ({
 			return ;
 		}
 
+		// Leaflet's CSS path-guessing heuristic is unreliable inside the iframed
+		// editor, so point the default marker icon at the bundled images explicitly.
+		const assetsPath = window.themeisleGutenberg?.assetsPath;
+		if ( assetsPath ) {
+			L.Icon.Default.imagePath = `${ assetsPath }/leaflet/images/`;
+		}
+
+		// `scrollZoom` defaults to true for blocks saved before the attribute existed.
+		const scrollZoom = false !== attributes.scrollZoom;
 
 		// Create the map
 		mapRef.current.innerHTML = '';
@@ -209,7 +228,12 @@ const Edit = ({
 		const _map = L.map(
 			mapRef.current,
 			{
-				gestureHandling: true,
+				maxZoom: 19,
+				scrollWheelZoom: scrollZoom,
+
+				// Gesture handling enforces the Ctrl/\u2318 + scroll requirement; turn it off
+				// together with scrollWheelZoom when scroll zoom is disabled.
+				gestureHandling: scrollZoom,
 				gestureHandlingOptions: {
 					text: {
 						touch: __( 'Use two fingers to move the map', 'otter-blocks' ),
@@ -224,7 +248,8 @@ const Edit = ({
 		// Add Open Street Map as source
 		L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-			subdomains: [ 'a', 'b', 'c' ]
+			subdomains: [ 'a', 'b', 'c' ],
+			maxZoom: 19
 		}).addTo( _map );
 
 		/**
@@ -266,7 +291,7 @@ const Edit = ({
 
 					// Do not sent this event to the rest of the components
 					L.DomEvent.stopPropagation( event );
-					setActiveAddingToLocation( ! isAddingToLocationActive );
+					setActiveAddingToLocation( ! isAddingRef.current );
 				});
 
 				button.title = __( 'Add marker on the map with a click', 'otter-blocks' );
@@ -337,6 +362,7 @@ const Edit = ({
 	 * Activate the visuals for the `Add Marker` button from the map
 	 */
 	useEffect( () => {
+		isAddingRef.current = isAddingToLocationActive;
 		mapRef.current?.classList.toggle( 'is-selecting-location', isAddingToLocationActive );
 	}, [ isAddingToLocationActive ]);
 
@@ -399,23 +425,28 @@ const Edit = ({
 				// Update the marker location
 				marker.setLatLng([ markerProps.latitude, markerProps.longitude ]);
 
-				// Update the title
+				// Update the hover tooltip
 				marker.closeTooltip();
 				marker.unbindTooltip();
-				marker.bindTooltip( markerProps.title, { direction: 'auto' });
+				if ( attributes.showMarkerTooltip && markerProps.title ) {
+					marker.bindTooltip( markerProps.title, { direction: 'auto' });
+				}
 
-				// Update the content of the Popup
+				// Always bind the popup in the editor: it hosts the Delete Marker control.
 				marker.closePopup();
 				marker.unbindPopup();
 				marker.bindPopup( createPopupContent( markerProps, dispatch ) );
 			});
 
 
-			if ( attributes.markers.length !== markersStore.length && map ) {
-				setAttributes({ markers: markersStore.map( ({ markerProps }) => markerProps ) });
+			// Persist any marker change — add, remove, or a drag that moved a pin —
+			// not just count changes, so dragged positions survive a save/reload.
+			const nextMarkers = markersStore.map( ({ markerProps }) => ({ ...markerProps }) );
+			if ( map && ! isEqual( attributes.markers, nextMarkers ) ) {
+				setAttributes({ markers: nextMarkers });
 			}
 		}
-	}, [ markersStore, map, attributes.markers ]);
+	}, [ markersStore, map, attributes.markers, attributes.showMarkerTooltip ]);
 
 	const blockProps = useBlockProps();
 

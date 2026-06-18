@@ -51,6 +51,14 @@
 		"draggable": {
 			"type": "boolean",
 			"default": true
+		},
+		"scrollZoom": {
+			"type": "boolean",
+			"default": true
+		},
+		"showMarkerTooltip": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {
