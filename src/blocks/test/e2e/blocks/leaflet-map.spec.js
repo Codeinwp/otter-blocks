@@ -168,6 +168,19 @@ test.describe( 'Maps (Leaflet) block', () => {
 		await expect( page.locator( '.leaflet-tooltip' ) ).toHaveText( 'Sagrada Familia', { timeout: 10_000 });
 	});
 
+	test( 'hover shows no tooltip when the tooltip toggle is off (default)', async({ editor, page }) => {
+		await insertMap( editor, { markers: [ marker() ] });
+		await editor.canvas.locator( '.leaflet-marker-icon' ).first().waitFor({ timeout: 20_000 });
+
+		await publishAndViewPost({ editor, page });
+
+		await page.locator( '.leaflet-marker-icon' ).first().hover();
+
+		// Give Leaflet a beat to open a tooltip, were one (incorrectly) bound.
+		await page.waitForTimeout( 400 );
+		await expect( page.locator( '.leaflet-tooltip' ) ).toHaveCount( 0 );
+	});
+
 	test( 'map can zoom in past the OSM native level 19', async({ editor, page }) => {
 
 		// Sit the map at zoom 19. With the old maxZoom of 19 the zoom-in control
