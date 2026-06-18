@@ -13,6 +13,8 @@ type ItemAttributes = CommonAttributes & {
     hasIcon: boolean
     iconType: string
     icon: string
+    iconId: number
+    iconAlt: string
     iconPrefix: string
 }
 

@@ -7,15 +7,22 @@ import { BlockPreview } from '@wordpress/block-editor';
 
 import { useSelect } from '@wordpress/data';
 
+/**
+ * Internal dependencies.
+ */
+import { resolvePatternBlocks } from '../../utils';
+
 const Homepage = () => {
 	const { template } = useSelect( select => {
 		const { getTemplate } = select( 'otter/onboarding' );
+		const core = select( 'core' );
+		const patterns = ( 'function' === typeof core?.getBlockPatterns ) ? ( core.getBlockPatterns() ?? []) : [];
 
 		const template = getTemplate({ slug: 'front-page' });
 		const parsedTemplate = template?.content?.raw ? parse( template?.content?.raw ) : [];
 
 		return {
-			template: parsedTemplate
+			template: resolvePatternBlocks( parsedTemplate, patterns )
 		};
 	});
 

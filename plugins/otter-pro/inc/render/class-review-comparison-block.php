@@ -105,7 +105,15 @@ class Review_Comparison_Block {
 
 			$table_images .= '<td>';
 			if ( isset( $block['attrs']['image'] ) ) {
-				$table_images .= '<img src="' . $block['attrs']['image']['url'] . '">';
+				$image_alt = '';
+
+				if ( ! empty( $block['attrs']['image']['alt'] ) ) {
+					$image_alt = $block['attrs']['image']['alt'];
+				} elseif ( ! empty( $block['attrs']['title'] ) ) {
+					$image_alt = $block['attrs']['title'];
+				}
+
+				$table_images .= '<img src="' . esc_url( $block['attrs']['image']['url'] ) . '" alt="' . esc_attr( $image_alt ) . '">';
 			}
 			$table_images .= '</td>';
 

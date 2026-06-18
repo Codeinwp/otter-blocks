@@ -14,10 +14,17 @@ import { BlockPreview } from '@wordpress/block-editor';
 
 import { Icon } from '@wordpress/components';
 
+import { useSelect } from '@wordpress/data';
+
 import {
 	useRef,
 	useMemo
 } from '@wordpress/element';
+
+/**
+ * Internal dependencies.
+ */
+import { resolvePatternBlocks } from '../utils';
 
 const TemplateSelector = ({
 	template,
@@ -28,9 +35,15 @@ const TemplateSelector = ({
 }) => {
 	const ref = useRef();
 
+	const patterns = useSelect( select => {
+		const core = select( 'core' );
+		return ( 'function' === typeof core?.getBlockPatterns ) ? ( core.getBlockPatterns() ?? []) : [];
+	}, []);
+
 	const parsedTemplate = useMemo( () => {
-		return isParsed ? template : ( template?.content?.raw ? parse( template?.content?.raw ) : []);
-	}, [ template, isParsed ]);
+		const blocks = isParsed ? template : ( template?.content?.raw ? parse( template?.content?.raw ) : []);
+		return resolvePatternBlocks( blocks, patterns );
+	}, [ template, isParsed, patterns ]);
 
 	return (
 		<div

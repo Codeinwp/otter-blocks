@@ -10,6 +10,7 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import metadata from './block.json';
 
+import deprecated from './deprecated.js';
 import edit from './edit.js';
 import save from './save.js';
 import { timelineIcon } from '../../../helpers/icons';
@@ -21,6 +22,7 @@ registerBlockType( name, {
 	title: __( 'Timeline Item', 'otter-blocks' ),
 	description: __( 'Organize your events in a timeline with the Timeline block. Powered by Otter.', 'otter-blocks' ),
 	icon: timelineIcon,
+	deprecated,
 	edit,
 	save,
 	example: {

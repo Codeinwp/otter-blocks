@@ -1,7 +1,10 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import {
+	__,
+	sprintf
+} from '@wordpress/i18n';
 
 import {
 	max,
@@ -30,6 +33,7 @@ import {
  * Internal dependencies
  */
 import {
+	AltTextControl,
 	ClearButton,
 	ImageGrid,
 	InspectorExtensions,
@@ -140,6 +144,41 @@ const Inspector = ({
 							attributes={ attributes }
 							onSelectImages={ onSelectImages }
 						/>
+
+						{ attributes.images.map( ( image, index ) => (
+							<div
+								key={ image.id ?? index }
+								style={ {
+									display: 'flex',
+									gap: '8px',
+									alignItems: 'flex-start',
+									marginTop: '16px'
+								} }
+							>
+								<img
+									src={ image.url }
+									alt=""
+									width="36"
+									height="36"
+									style={ {
+										objectFit: 'cover',
+										borderRadius: '2px',
+										flexShrink: 0,
+										marginTop: '24px'
+									} }
+								/>
+
+								<AltTextControl
+
+									// translators: %d: the position of the image in the slider.
+									label={ sprintf( __( 'Image %d alt text (alternative text)', 'otter-blocks' ), index + 1 ) }
+									value={ image.alt }
+									onChange={ alt => setAttributes({
+										images: attributes.images.map( ( img, i ) => index === i ? { ...img, alt } : img )
+									}) }
+								/>
+							</div>
+						) ) }
 					</PanelBody>
 
 					<PanelBody

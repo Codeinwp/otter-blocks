@@ -500,8 +500,19 @@ export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
 
 		const attrName = keys[mapViewToKey[currentView] ?? 0]?.split( '.' )[0];
 		const attr = { [attrName]: { ...oldAttr }};
+		const activePath = keys[mapViewToKey[currentView] ?? 0];
 
-		set( attr, keys[mapViewToKey[currentView] ?? 0], value );
+		set( attr, activePath, value );
+		if ( value === undefined ) {
+			unset( attr, activePath );
+		}
+		if ( 'object' === typeof attr[attrName] && attr[attrName] !== null ) {
+			for ( const key in attr[attrName] ) {
+				if ( attr[attrName][key] === undefined ) {
+					delete attr[attrName][key];
+				}
+			}
+		}
 
 		setAttributes( 'object' === typeof attr[attrName] && isEmpty( attr[attrName]) ? { [attrName]: undefined } : attr );
 	};

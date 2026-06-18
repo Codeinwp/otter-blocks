@@ -68,9 +68,9 @@ const Appearance = () => {
 	const onSelect = style => {
 		if ( 'default' === style ) {
 			setChangedData({
-				// eslint-disable-next-line camelcase
+				 
 				design_choices: {
-					// eslint-disable-next-line camelcase
+					 
 					palette: 'default'
 				}
 			});
@@ -83,9 +83,9 @@ const Appearance = () => {
 		}
 
 		setChangedData({
-			// eslint-disable-next-line camelcase
+			 
 			design_choices: {
-				// eslint-disable-next-line camelcase
+				 
 				palette: style.title
 			}
 		});

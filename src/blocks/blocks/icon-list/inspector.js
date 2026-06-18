@@ -59,13 +59,19 @@ const Inspector = ({
 		setAttributes({
 			defaultLibrary: value,
 			defaultIcon: undefined,
+			defaultIconId: undefined,
+			defaultIconAlt: undefined,
 			defaultPrefix: 'fas'
 		});
 	};
 
 	const changeIcon = value => {
 		if ( 'image' === attributes.defaultLibrary && value?.url ) {
-			return setAttributes({ defaultIcon: value.url });
+			return setAttributes({
+				defaultIcon: value.url,
+				defaultIconId: value.id,
+				defaultIconAlt: value.alt
+			});
 		}
 
 		if ( 'object' === typeof value ) {
@@ -180,6 +186,8 @@ const Inspector = ({
 									changeLibrary={ changeLibrary }
 									onChange={ changeIcon }
 									allowImage
+									imageAlt={ attributes.defaultIconAlt }
+									onAltChange={ defaultIconAlt => setAttributes({ defaultIconAlt }) }
 								/>
 							</Suspense>
 						</PanelBody>

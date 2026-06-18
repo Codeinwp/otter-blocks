@@ -174,35 +174,37 @@ const WelcomeGuide = () => {
 				{
 					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-finish.png' } />,
 					content: (
-						<Fragment>
-							<h1 className="o-welcome-guide__heading">{ __( 'Thank you for chosing Otter!', 'otter-blocks' ) }</h1>
+						<div className="o-welcome-guide__page-content--finish">
+							<h1 className="o-welcome-guide__heading">{ __( 'Thank you for choosing Otter!', 'otter-blocks' ) }</h1>
 
 							<p className="o-welcome-guide__text">{ __( 'Join Otter\'s mailing list to get first access to product updates, tutorials and promotions.', 'otter-blocks' ) }</p>
 
-							<TextControl
-								aria-label={ __( 'Enter your email', 'otter-blocks' ) }
-								type="email"
-								value={ email }
-								onChange={ setEmail }
-								className="o-welcome-guide__input"
-							/>
-
-							<CheckboxControl
-								label={ __( 'Yes, count me in!', 'otter-blocks' ) }
-								checked={ hasConsent }
-								onChange={ () => setConsent( ! hasConsent ) }
-								className="o-welcome-guide__input"
-							/>
-
-							{ 'yes' !== getOption( 'otter_blocks_logger_flag' ) && (
-								<CheckboxControl
-									label={ __( 'Become a contributor by opting in to our anonymous data tracking.', 'otter-blocks' ) }
-									checked={ canTrack }
-									onChange={ () => setTrack( ! canTrack )}
+							<div className="o-welcome-guide__form-fields">
+								<TextControl
+									aria-label={ __( 'Enter your email', 'otter-blocks' ) }
+									type="email"
+									value={ email }
+									onChange={ setEmail }
 									className="o-welcome-guide__input"
 								/>
-							) }
-						</Fragment>
+
+								<CheckboxControl
+									label={ __( 'Yes, count me in!', 'otter-blocks' ) }
+									checked={ hasConsent }
+									onChange={ () => setConsent( ! hasConsent ) }
+									className="o-welcome-guide__checkbox"
+								/>
+
+								{ 'yes' !== getOption( 'otter_blocks_logger_flag' ) && (
+									<CheckboxControl
+										label={ __( 'Become a contributor by opting in to our anonymous data tracking.', 'otter-blocks' ) }
+										checked={ canTrack }
+										onChange={ () => setTrack( ! canTrack )}
+										className="o-welcome-guide__checkbox"
+									/>
+								) }
+							</div>
+						</div>
 					)
 				}
 			] }

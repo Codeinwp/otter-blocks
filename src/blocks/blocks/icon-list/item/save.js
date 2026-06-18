@@ -30,7 +30,7 @@ const Save = ({
 		<div { ...blockProps }>
 			{
 				'image' === attributes.library && attributes.icon ? (
-					<img src={ attributes.icon } />
+					<img src={ attributes.icon } alt={ attributes.iconAlt || '' } />
 				) : (
 					'themeisle-icons' === attributes.library && attributes.icon ? (
 						<Icon

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { chevronLeft, chevronRight, edit } from '@wordpress/icons';
+import { chevronLeft, chevronRight, pencil } from '@wordpress/icons';
 
 /**
  * WordPress dependencies
@@ -48,7 +48,7 @@ const Controls = ({
 			<ToolbarGroup label={ __( 'Edit', 'otter-blocks' ) }>
 				<ToolbarButton
 					label={ __( 'Edit tab', 'otter-blocks' ) }
-					icon={ edit }
+					icon={ pencil }
 					iconSize={ 24 }
 					className="wp-block-themeisle-blocks-tabs-toolbar-edit"
 					onClick={ () => selectTab( selectedTab ) }

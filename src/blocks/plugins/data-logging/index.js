@@ -112,7 +112,7 @@ if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor'
 		}
 
 		const model = new window.wp.api.models.Settings({
-			// eslint-disable-next-line camelcase
+			 
 			otter_blocks_logger_data: dataLogging
 		});
 

@@ -1,122 +1,137 @@
-# Agent Workflow 
+# Agent Workflow (Compressed)
 
-## Project Overview
+## Repo + Scope
 
-Otter Blocks is a WordPress Gutenberg blocks page builder plugin. It's a monorepo containing:
-- **Otter Blocks** (main free plugin) — `otter-blocks.php`
-- **Otter Pro** (premium extension) — `plugins/otter-pro/`
-- **Blocks Animation** — `plugins/blocks-animation/`
-- **Blocks CSS** — `plugins/blocks-css/`
-- **Blocks Export/Import** — `plugins/blocks-export-import/`
+Otter Blocks monorepo:
+- Free plugin: `otter-blocks.php`
+- Pro: `plugins/otter-pro/`
+- Sister plugins: `plugins/blocks-animation/`, `plugins/blocks-css/`, `plugins/blocks-export-import/`
 
-Namespace: `ThemeIsle\GutenbergBlocks`. Requires WordPress 6.2+, PHP 7.4+ (platform target).
+Namespace: `ThemeIsle\GutenbergBlocks`  
+Minimums: WordPress `6.2+`, PHP `7.4+` (Composer platform target).
 
-## Build & Development Commands
+## Read First
+
+- Use `./docs/` for feature workflow/context before edits.
+- Prefer behavior-first changes + tests.
+
+## Core Commands
 
 ```bash
 # Setup
 npm ci && composer install
 
-# Development (watch mode)
-npm run start              # All configs with watch
-npm run dev:lite           # Watch lite blocks only
-npm run dev:pro            # Watch pro blocks only
+# Dev/build
+npm run start
+npm run dev:lite
+npm run dev:pro
+npm run build
+npm run prod:lite
+npm run prod:pro
+npm run prod:grunt
+npm run plugins
 
-# Production build
-npm run build              # Full production build (all configs in parallel)
-npm run prod:lite          # Lite blocks only
-npm run prod:pro           # Pro blocks only
-npm run prod:grunt         # SASS compilation via Grunt
-
-# Sister plugins build
-npm run plugins            # Build blocks-animation, blocks-css, blocks-export-import
-```
-
-## Testing
-
-```bash
-# JavaScript unit tests (Jest)
+# JS tests
 npm run test:unit
 npm run test:unit:watch
 
-# PHP unit tests (requires wp-env)
-npm run test:unit:php           # Starts wp-env + runs PHPUnit
-npm run test:unit:php:base      # PHPUnit only (if wp-env already running)
-npm run test:unit:php:multisite # Multisite PHPUnit tests
+# PHP tests
+npm run test:unit:php
+npm run test:unit:php:base
+npm run test:unit:php:multisite
 
-# E2E tests (Playwright)
+# E2E/perf
 npm run test:e2e:playwright
-npm run test:e2e:playwright-ui  # With UI
-
-# Performance tests
+npm run test:e2e:playwright:serial
+npm run test:e2e:playwright:parallel
+npm run test:e2e:playwright-ui
 npm run test:performance
+
+# Lint/format
+npm run lint
+npm run format
+composer run lint
+composer run format
+composer run phpstan
 ```
 
-PHPUnit config: `phpunit.xml` (single-site), `phpunit/multisite.xml`.
-Playwright config: `src/blocks/test/e2e/playwright.config.js`.
+Configs:
+- Playwright: `src/blocks/test/e2e/playwright.config.js`
+- PHPUnit: `phpunit.xml`, `phpunit/multisite.xml`
+- wp-env: `.wp-env.json` + gitignored `.wp-env.override.json`
 
-## Linting & Formatting
+## wp-env Instance (Ports + Multi-Checkout)
+
+Single environment (`"testsEnvironment": false`): one `wordpress`/`cli`/`mysql` container set serves dev and all test suites. Never use `tests-wordpress`/`tests-cli` in `wp-env run`, never add `testsPort`/`env.tests` config (deprecated in wp-env >= 11).
 
 ```bash
-# JavaScript
-npm run lint               # ESLint check
-npm run format             # ESLint autofix
-
-# PHP
-composer run lint          # PHPCS
-composer run format        # PHPCBF
-composer run phpstan       # PHPStan static analysis (uses phpstan.neon + baseline)
+npm run env:start    # reuse running instance, or pick a free port + start
+npm run env:stop
+npm run env:cleanup  # remove THIS checkout's containers/volumes (run before deleting a worktree)
 ```
 
-ESLint: WordPress preset with TypeScript (`.eslintrc`). PHPCS: WordPress-Core/Docs/Extra + VIP-Go (`phpcs.xml`).
+`env:start` (`bin/wp-env-up.js`) handles everything: reuses a running instance, otherwise probes for a free port (default `8888`, scans upward) and pins it in the gitignored `.wp-env.override.json`. The Playwright configs read the same override file, so `npm run test:e2e:playwright` / `test:performance` follow the pinned port with no env var. Port precedence everywhere: `WP_BASE_URL` > `WP_ENV_PORT` > `.wp-env.override.json` > `8888`.
 
-## Architecture
+If `env:start` is unavailable, the manual steps it automates:
 
-### Webpack Build Pipeline
+1. `npx wp-env status --json` — `"status": "running"` means reuse it; do not start a second one. (`wp-env install-path` was removed in wp-env >= 11 and exits 0 silently — don't use it for detection.)
+2. Pick a free port (`nc -z localhost <port>`; exit 0 = taken), pin it in `.wp-env.override.json` as `{ "port": <port> }`, then `npm run wp-env start`.
 
-Three webpack configs, all extending `@wordpress/scripts`:
-- `webpack.config.js` — Lite: dashboard, onboarding, animation frontend, and all free blocks
-- `webpack.config.pro.js` — Pro blocks and features
-- `webpack.config.plugins.js` — Sister plugins (animation, CSS, export-import)
+Notes: `afterStart` (`bin/e2e-tests.sh`) seeds the AI key option. PHPUnit runs in the same instance (`wp-env run wordpress …`, PHPUnit lib mounted with `WP_TESTS_DIR` preset). Containers are namespaced per checkout — only host ports can conflict. Each worktree needs its own `npm ci && composer install && npm run build`. Login: `admin`/`password`. The root `docker-compose.yml` is legacy, not wp-env — ignore it.
 
-Grunt handles SASS compilation and version bumping (`Gruntfile.js`).
+## E2E Rules (Important)
 
-### Block Metadata Registry
+- Split:
+  - `chromium-serial`: specs from `SERIAL_SPECS`, `workers: 1`
+  - `chromium-parallel`: everything else, workers from `E2E_WORKERS` (`CI ? 4 : 2`)
+- Add to `SERIAL_SPECS` only if shared WP state cannot be isolated (global options, auth/users, editor/theme global state, external state).
+- Do **not** use `test.describe.configure({ mode: 'serial' })` to force file-level serial; project split handles this.
+- Parallel-safe specs:
+  - no broad cleanup (`deleteAllPosts()`, `deleteAllMedia()`)
+  - create/clean only test-local resources
+  - do not depend on other specs
+  - prefer user-facing selectors (`getByRole`, labels, visible text)
+- CI: install Chromium and set `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=true`.
 
-`blocks.json` is the central manifest mapping every block to its `block.json` path and SCSS asset paths. Both webpack and Grunt read this file. Pro blocks are marked with `isPro: true`.
+## TDD + Test Quality
 
-### PHP Structure (`inc/`)
+- Use red -> green -> refactor loops.
+- Add one behavior test, fail first, implement minimum fix, repeat.
+- Keep tests on public behavior (editor/frontend/REST/public helpers), not private internals.
 
-- `class-main.php` — Singleton bootstrap, hooks, autoloading, SVG/MIME handling
-- `class-registration.php` — Block registration (WordPress native), asset enqueue, block categories (`themeisle-blocks`, `themeisle-woocommerce-blocks`), lazy-load dependencies
-- `class-pro.php` — Pro plugin loader
-- `class-patterns.php` — Pattern library
-- `css/` — CSS generation classes (`Block_Frontend`, `CSS_Handler`)
-- `plugins/` — Feature modules: Block_Conditions, Dynamic_Content, Dashboard, Stripe_API, Template_Cloud
-- `render/` — Dynamic block server-side renderers
-- `server/` — REST API endpoints
-- `integrations/` — Form provider integrations (email services)
+## Architecture Quick Map
 
-### JavaScript Structure (`src/`)
+- Build:
+  - `webpack.config.js` (lite/main)
+  - `webpack.config.pro.js` (pro)
+  - `webpack.config.plugins.js` (sister plugins)
+  - `Gruntfile.js` (SASS + version tasks)
+- Block registry: `blocks.json` (used by webpack + Grunt, includes `isPro`)
 
-- `src/blocks/blocks/` — Individual block implementations (edit.js, index.js, inspector.js, block.json)
-- `src/blocks/components/` — Shared React components
-- `src/blocks/frontend/` — Block frontend scripts (loaded on visitor-facing pages)
-- `src/blocks/plugins/` — Editor plugins (conditions, CSS, animations, copy-paste styles)
-- `src/blocks/helpers/` — Utility functions
-- `src/pro/` — Pro block implementations
-- `src/dashboard/` — Otter settings dashboard
-- `src/onboarding/` — Onboarding wizard
-- `src/animation/`, `src/css/`, `src/export-import/` — Sister plugin sources
+PHP (`inc/`):
+- bootstrap/registration: `class-main.php`, `class-registration.php`, `class-pro.php`, `class-patterns.php`
+- feature dirs: `css/`, `plugins/`, `render/`, `server/`, `integrations/`
 
-### Development Environment
+JS (`src/`):
+- blocks: `src/blocks/blocks/`
+- shared: `src/blocks/components/`, `src/blocks/helpers/`
+- editor plugins: `src/blocks/plugins/`
+- frontend scripts: `src/blocks/frontend/`
+- pro: `src/pro/`
+- dashboard/onboarding: `src/dashboard/`, `src/onboarding/`
+- sister plugins: `src/animation/`, `src/css/`, `src/export-import/`
 
-Uses `@wordpress/env` (wp-env). Config: `.wp-env.override.json`. Start with `npm run test:unit:php:setup` or `npx wp-env start`.
-
-## Key Conventions
+## Conventions
 
 - Text domains: `otter-blocks`, `otter-pro`, `blocks-animation`, `blocks-css`, `blocks-export-import`
-- Tab indentation (JS and PHP), single quotes, semicolons required (JS)
-- Block namespace: `themeisle-blocks/<block-name>` (e.g., `themeisle-blocks/accordion`)
-- PHP autoloading follows class file naming: `class-<name>.php`
-- Distribution via `npm run dist` (runs `bin/dist.sh`, creates ZIP artifacts filtered by `.distignore`)
+- JS/PHP: tabs; JS uses single quotes + semicolons.
+- Block namespace: `themeisle-blocks/<name>`
+- PHP class files: `class-<name>.php`
+- Dist: `npm run dist` (`bin/dist.sh`, `.distignore` filters)
+
+## PHP Bug-Fix Checklist
+
+1) Write failing test (TDD)  
+2) Implement smallest fix  
+3) Run: `composer run lint`, `composer run format`, `composer run phpstan`  
+4) Run relevant tests again

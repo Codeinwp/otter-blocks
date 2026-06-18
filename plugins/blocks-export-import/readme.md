@@ -1,10 +1,10 @@
 # Blocks Export Import – Backup & Move Gutenberg Blocks as JSON #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/)  
 **Tags:** gutenberg, blocks, export, import, json  
-**Requires at least:** 6.2      
+**Requires at least:** 6.6      
 **Tested up to:** 7.0  
 **Requires PHP:** 5.4    
-**Stable tag:** 3.1.10  
+**Stable tag:** 3.1.11  
 **License:** GPLv3    
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html    
 

@@ -21,31 +21,34 @@ class Form_Data_Response {
 	const SUCCESS_EMAIL_SEND      = '0';
 	const SUCCESS_USER_SUBSCRIBED = '1';
 
-	const ERROR_RUNTIME_ERROR                     = '10';
-	const ERROR_FILE_UPLOAD                       = '11';
-	const ERROR_FILE_UPLOAD_TYPE                  = '12';
-	const ERROR_FILE_UPLOAD_TYPE_WP               = '13';
-	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER      = '14';
-	const ERROR_FILE_UPLOAD_MAX_SIZE              = '15';
-	const ERROR_MISSING_FILE_FIELD_OPTION         = '16';
-	const ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD = '17';
-	const ERROR_AUTORESPONDER_COULD_NOT_SEND      = '18';
-	const ERROR_MALFORMED_REQUEST                 = '19';
+	const ERROR_RUNTIME_ERROR                      = '10';
+	const ERROR_FILE_UPLOAD                        = '11';
+	const ERROR_FILE_UPLOAD_TYPE                   = '12';
+	const ERROR_FILE_UPLOAD_TYPE_WP                = '13';
+	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER       = '14';
+	const ERROR_FILE_UPLOAD_MAX_SIZE               = '15';
+	const ERROR_MISSING_FILE_FIELD_OPTION          = '16';
+	const ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  = '17';
+	const ERROR_AUTORESPONDER_COULD_NOT_SEND       = '18';
+	const ERROR_MALFORMED_REQUEST                  = '19';
+	const ERROR_AUTORESPONDER_AI_GENERATION_FAILED = '20';
+	const ERROR_AUTORESPONDER_AI_VALIDATION_FAILED = '21';
 
 	// Request validation errors.
-	const ERROR_MISSING_DATA          = '101';
-	const ERROR_MISSING_CAPTCHA       = '102';
-	const ERROR_MISSING_NONCE         = '103';
-	const ERROR_MISSING_EMAIL         = '104';
-	const ERROR_FORM_ID_INVALID       = '105';
-	const ERROR_EMAIL_NOT_SEND        = '106';
-	const ERROR_MISSING_PROVIDER      = '107';
-	const ERROR_MISSING_API_KEY       = '108';
-	const ERROR_MISSING_MAIL_LIST_ID  = '109';
-	const ERROR_BOT_DETECTED          = '110';
-	const ERROR_FILES_METADATA_FORMAT = '111';
-	const ERROR_FILE_MISSING_BINARY   = '112';
-	const ERROR_MISSING_DUMP_DATA     = '113';
+	const ERROR_MISSING_DATA                 = '101';
+	const ERROR_MISSING_CAPTCHA              = '102';
+	const ERROR_MISSING_NONCE                = '103';
+	const ERROR_MISSING_EMAIL                = '104';
+	const ERROR_FORM_ID_INVALID              = '105';
+	const ERROR_EMAIL_NOT_SEND               = '106';
+	const ERROR_MISSING_PROVIDER             = '107';
+	const ERROR_MISSING_API_KEY              = '108';
+	const ERROR_MISSING_MAIL_LIST_ID         = '109';
+	const ERROR_BOT_DETECTED                 = '110';
+	const ERROR_FILES_METADATA_FORMAT        = '111';
+	const ERROR_FILE_MISSING_BINARY          = '112';
+	const ERROR_MISSING_DUMP_DATA            = '113';
+	const ERROR_CAPTCHA_PROVIDER_UNREACHABLE = '114';
 
 
 
@@ -60,6 +63,7 @@ class Form_Data_Response {
 	const ERROR_PROVIDER_DUPLICATED_EMAIL          = '208';
 	const ERROR_PROVIDER_CREDENTIAL_ERROR          = '209';
 	const ERROR_WEBHOOK_COULD_NOT_TRIGGER          = '210';
+	const ERROR_CAPTCHA_NOT_CONFIGURED             = '211';
 	const ERROR_RUNTIME_STRIPE_SESSION_VALIDATION  = '300';
 	const ERROR_STRIPE_CHECKOUT_SESSION_CREATION   = '301';
 	const ERROR_STRIPE_CHECKOUT_SESSION_NOT_FOUND  = '302';
@@ -364,14 +368,15 @@ class Form_Data_Response {
 			self::ERROR_MISSING_NONCE                      => __( 'Missing CSRF protection in form.', 'otter-blocks' ),
 			self::ERROR_MISSING_FILE_FIELD_OPTION          => __( 'The File Field is not registered. Please check the field in Editor.', 'otter-blocks' ),
 			self::ERROR_FORM_ID_INVALID                    => __( 'Form ID is invalid.', 'otter-blocks' ),
-			self::ERROR_EMAIL_NOT_SEND                     => __( 'Email could not be send. Might be an error with the service.', 'otter-blocks' ),
+			self::ERROR_EMAIL_NOT_SEND                     => __( 'Email could not be sent. Might be an error with the service.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_KEY               => __( 'Invalid service authentication credentials.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_NOT_REGISTERED            => __( 'The 3rd-party service is not registered.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_SUBSCRIBE_ERROR           => __( 'Error received from service when subscribing the user.', 'otter-blocks' ),
 			self::ERROR_MISSING_PROVIDER                   => __( 'Provider settings are missing.', 'otter-blocks' ),
 			self::ERROR_MISSING_API_KEY                    => __( 'API Key is missing from settings.', 'otter-blocks' ),
 			self::ERROR_MISSING_MAIL_LIST_ID               => __( 'API Key is missing.', 'otter-blocks' ),
-			self::ERROR_INVALID_CAPTCHA_TOKEN              => __( 'The reCaptcha token is invalid.', 'otter-blocks' ),
+			self::ERROR_INVALID_CAPTCHA_TOKEN              => __( 'The captcha token is invalid.', 'otter-blocks' ),
+			self::ERROR_CAPTCHA_NOT_CONFIGURED             => __( 'The captcha is not configured: the API keys are missing.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT    => __( 'The API key format is invalid.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED => __( 'The user with this email was already registered.', 'otter-blocks' ),
 			self::ERROR_PROVIDER_INVALID_EMAIL             => __( 'The email address is invalid.', 'otter-blocks' ),
@@ -379,17 +384,20 @@ class Form_Data_Response {
 			self::ERROR_BOT_DETECTED                       => __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ),
 			self::ERROR_FILES_METADATA_FORMAT              => __( 'The files metadata is invalid.', 'otter-blocks' ),
 			self::ERROR_FILE_UPLOAD                        => __( 'The files could not be uploaded.', 'otter-blocks' ),
-			self::ERROR_PROVIDER_CREDENTIAL_ERROR          => __( 'The Otter From Block service credentials are invalid.', 'otter-blocks' ),
+			self::ERROR_PROVIDER_CREDENTIAL_ERROR          => __( 'The Otter Form Block service credentials are invalid.', 'otter-blocks' ),
 			self::ERROR_FILE_UPLOAD_TYPE_WP                => __( 'The file type is not allowed by host provider.', 'otter-blocks' ),
 			self::ERROR_FILE_UPLOAD_TYPE                   => __( 'The file type is not allowed.', 'otter-blocks' ),
-			self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER       => __( 'The number of files is too big.', 'otter-blocks' ),
+			self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER       => __( 'The number of files is too large.', 'otter-blocks' ),
 			self::ERROR_FILE_UPLOAD_MAX_SIZE               => __( 'The file size exceed the limit.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the Form Block with Autoresponder activated.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
+			self::ERROR_AUTORESPONDER_AI_GENERATION_FAILED => __( 'The AI Autoresponder reply could not be generated. The fallback message was used.', 'otter-blocks' ),
+			self::ERROR_AUTORESPONDER_AI_VALIDATION_FAILED => __( 'The AI Autoresponder reply did not pass validation. The fallback message was used.', 'otter-blocks' ),
 			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
 			self::ERROR_MALFORMED_REQUEST                  => __( 'The request is malformed.', 'otter-blocks' ),
 			self::ERROR_WEBHOOK_COULD_NOT_TRIGGER          => __( 'The webhook could not be triggered.', 'otter-blocks' ),
 			self::ERROR_MISSING_DUMP_DATA                  => __( 'The form dump data is missing.', 'otter-blocks' ),
+			self::ERROR_CAPTCHA_PROVIDER_UNREACHABLE       => __( 'The captcha service could not be reached. The submission was saved, but it was not delivered.', 'otter-blocks' ),
 			self::ERROR_STRIPE_CHECKOUT_SESSION_CREATION   => __( 'The Stripe Checkout session could not be created.', 'otter-blocks' ),
 			self::ERROR_STRIPE_CHECKOUT_SESSION_NOT_FOUND  => __( 'The Stripe Checkout session was not found.', 'otter-blocks' ),
 			self::ERROR_STRIPE_PAYMENT_UNPAID              => __( 'The payment was not completed.', 'otter-blocks' ),

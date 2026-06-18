@@ -5,9 +5,9 @@
  * Adds Otter constants for PHPStan to use.
  */
 
-define( 'OTTER_BLOCKS_BASEFILE', __FILE__ );
-define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
-define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
+define( 'OTTER_BLOCKS_BASEFILE', dirname( __DIR__, 3 ) . '/otter-blocks.php' );
+define( 'OTTER_BLOCKS_URL', plugins_url( '/', OTTER_BLOCKS_BASEFILE ) );
+define( 'OTTER_BLOCKS_PATH', dirname( __DIR__, 3 ) );
 define( 'OTTER_BLOCKS_VERSION', '2.2.7' );
 define( 'OTTER_PRODUCT_SLUG', basename( OTTER_BLOCKS_PATH ) );
 

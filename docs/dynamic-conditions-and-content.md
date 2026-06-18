@@ -23,8 +23,8 @@ Extensions (Pro)
 
 | Feature | Editor | Backend |
 | :-- | :-- | :-- |
-| Dynamic Block Conditions | `./src/blocks/plugins/conditions` | `./plugins/otter-pro/class-block-conditions.php` |
-| Dynamic Content | `./src/blocks/pro/plugins/conditions` | `./plugins/otter-pro/class-dynamic-content.php` |
+| Dynamic Block Conditions | `./src/pro/plugins/conditions` | `./plugins/otter-pro/inc/plugins/class-block-conditions.php` |
+| Dynamic Content | `./src/pro/plugins/dynamic-content` | `./plugins/otter-pro/inc/plugins/class-dynamic-content.php` |
 
 
 ## How it works
@@ -41,7 +41,7 @@ The concept and workflow is simplistic. The hard part of this is making the eval
 - performance. This function is called for each block on the page with the given condition, so it needs to be as fast as possible.
 - stability. You need to handle the errors and do not let the page crash.
 
-To add a new condition outside Otter context (e.g.: making a custom plugin for extending functionality), you need to add a new function to filter `otter_blocks_evaluate_condition`. You can see an example in `./plugins/otter-pro/class-block-conditions.php`.
+To add a new condition outside Otter context (e.g.: making a custom plugin for extending functionality), you need to add a new function to filter `otter_blocks_evaluate_condition`. You can see an example in `./plugins/otter-pro/inc/plugins/class-block-conditions.php`.
 
 ### Dynamic Content
 

@@ -3,51 +3,35 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { insertBlockBySlash } from '../helpers/editor';
+
 test.describe( 'Block Tools', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
 	});
 
-	test( 'enable all and check if they are visible as default in Inspector', async({ editor, page }) => {
+	test( 'default tools (Animations / Custom CSS / Visibility Conditions) are visible in Inspector', async({ editor, page }) => {
 
-		// Create a Progress Block with the slash block shortcut.
-		await page.getByRole( 'button', { name: 'Otter Options' }).click( );
+		// In current Otter, Animations / Custom CSS / Visibility Conditions are enabled by default
+		// (managed via Block Tools > "Manage Default Tools" — they're locked in the Otter Options
+		// dropdown). The earlier "enable each via Otter Options" dance is no longer required.
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/progress-bar',
+			blockName: 'themeisle-blocks/progress-bar'
+		});
 
-		/**
-		 * Activate Custom CSS
-		 */
-		const customCSSContainer = await page.locator( 'div' ).filter({ hasText: /^Custom CSS$/ }).first();
-		await expect( customCSSContainer ).toBeVisible();
-		await customCSSContainer.getByLabel( 'Custom CSS' ).click();
-		expect( await customCSSContainer.locator( 'input' ).isChecked() ).toBeTruthy();
-
-		/**
-		 * Activate Animation
-		 */
-		const animationContainer = await page.locator( 'div' ).filter({ hasText: /^Animation$/ }).first();
-		await expect( animationContainer ).toBeVisible();
-		await animationContainer.getByLabel( 'Animation' ).click();
-		expect( await animationContainer.locator( 'input' ).isChecked() ).toBeTruthy();
-
-		/**
-		 * Activate Visibility Condition
-		 */
-		const visibilityConditionContainer = await page.locator( 'div' ).filter({ hasText: /^Visibility Condition$/ }).first();
-		await expect( visibilityConditionContainer ).toBeVisible();
-		await visibilityConditionContainer.getByLabel( 'Visibility Condition' ).click();
-		expect( await visibilityConditionContainer.locator( 'input' ).isChecked() ).toBeTruthy();
-
-		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/progress-bar' );
-		await page.keyboard.press( 'Enter' );
-
-		/**
-		 * Check if all the options are visible in Inspector
-		 */
-		await page.getByRole( 'button', { name: 'Settings', exact: true }).click();
-		await expect( await page.getByRole( 'button', { name: 'Animations' }) ).toBeVisible();
-		await expect( await page.getByRole( 'button', { name: 'Custom CSS' }) ).toBeVisible();
-		await expect( await page.getByRole( 'button', { name: 'Visibility Condition' }) ).toBeVisible();
+		// Each panel header is a generic button in the Inspector; assert all three are present.
+		const settingsBtn = page.getByRole( 'button', { name: 'Settings', exact: true }).first();
+		if ( ! ( await settingsBtn.getAttribute( 'class' ) || '' ).includes( 'is-pressed' ) ) {
+			await settingsBtn.click();
+		}
+		await expect( page.getByRole( 'button', { name: 'Animations' }) ).toBeVisible();
+		await expect( page.getByRole( 'button', { name: 'Custom CSS' }) ).toBeVisible();
+		await expect( page.getByRole( 'button', { name: 'Visibility Conditions' }) ).toBeVisible();
 	});
 });

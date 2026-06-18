@@ -11,6 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import metadata from './block.json';
 import edit from './edit.js';
 import save from './save.js';
+import deprecated from './deprecated.js';
 import { popupIcon as icon, popupScratch, popupWithForm, popupWithImageAndText } from '../../helpers/icons';
 
 const { name } = metadata;
@@ -27,6 +28,7 @@ registerBlockType( name, {
 	],
 	edit,
 	save,
+	deprecated,
 	example: {
 		attributes: {}
 	},
