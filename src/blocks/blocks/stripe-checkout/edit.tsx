@@ -326,7 +326,7 @@ const Edit = ({
 					<Fragment>
 						<div className="o-stripe-checkout">
 							{ undefined !== meta?.image && (
-								<img src={ meta.image } alt={ meta?.description } />
+								<img src={ meta.image } alt={ meta?.name } />
 							)}
 
 							<div className="o-stripe-checkout-description">

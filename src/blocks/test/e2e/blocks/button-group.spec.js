@@ -3,8 +3,13 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { publishAndViewPost } from '../helpers/editor';
+
 test.describe( 'Button Group', () => {
-	test.beforeEach( async({ admin, page }) => {
+	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
 	});
 
@@ -30,8 +35,7 @@ test.describe( 'Button Group', () => {
 			]
 		});
 
-		const postId = await editor.publishPost();
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
 		// Check CSS font properties
 		const btn = page.locator( 'a' ).filter({ hasText: 'Button 1' });

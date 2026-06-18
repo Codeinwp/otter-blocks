@@ -181,7 +181,7 @@ const applyProDefaults = ( attrs, value ) => {
 	}
 
 	if ( 'postMeta' === value ) {
-		// eslint-disable-next-line camelcase
+		 
 		attrs.meta_compare = 'is_true';
 	}
 
@@ -190,7 +190,7 @@ const applyProDefaults = ( attrs, value ) => {
 	}
 
 	if ( 'cookie' === value ) {
-		// eslint-disable-next-line camelcase
+		 
 		attrs.cookie_compare = 'is_true';
 	}
 

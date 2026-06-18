@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { SortableContainer } from 'react-sortable-hoc';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -29,7 +24,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * Internal dependencies.
  */
 import { SortableTab } from './components/sortable-tabs.js';
-import { InspectorHeader, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../../components/index.js';
+import { InspectorHeader, SortableVerticalList, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../../components/index.js';
 import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
 import { changeActiveStyle, getActiveStyle, isEmptyBox, objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
 import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
@@ -86,25 +81,7 @@ const Inspector = ({
 		deleteTab( tabId );
 	};
 
-	const TabsList = SortableContainer( ({ items }) => {
-		return (
-			<div>
-				{ items.map( ( tab, index ) => {
-					return (
-						<SortableTab
-							key={ tab.clientId }
-							tab={ tab }
-							index={ index }
-							deleteTab={ deleteWrapper }
-							selectTab={ selectTab }
-						/>
-					);
-				}) }
-			</div>
-		);
-	});
-
-	const onSortEnd = ({ oldIndex, newIndex }) => {
+	const onReorder = ( oldIndex, newIndex ) => {
 		moveTab( children[oldIndex].clientId, newIndex );
 	};
 
@@ -209,13 +186,21 @@ const Inspector = ({
 								<p>{ __( 'Press and hold to use drag and drop to sort the tabs', 'otter-blocks' ) }</p>
 
 								{ 0 < children?.length && (
-									<TabsList
+									<SortableVerticalList
 										items={ children }
-										onSortEnd={ onSortEnd }
-										useDragHandle
-										axis="y"
-										lockAxis="y"
-									/>
+										getItemId={ ( tab ) => tab.clientId }
+										onReorder={ onReorder }
+									>
+										{ ( tab ) => (
+											<SortableTab
+												key={ tab.clientId }
+												id={ tab.clientId }
+												tab={ tab }
+												deleteTab={ deleteWrapper }
+												selectTab={ selectTab }
+											/>
+										) }
+									</SortableVerticalList>
 								) }
 
 								<Button

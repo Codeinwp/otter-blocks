@@ -3,6 +3,11 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { expectBlockByName, insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
+
 test.describe( 'Countdown Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -11,14 +16,12 @@ test.describe( 'Countdown Block', () => {
 	test( 'can be created by typing "/countdown"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/countdown' );
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasCountdown = blocks.some( ( block ) => 'themeisle-blocks/countdown' === block.name );
-
-		expect( hasCountdown ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/countdown',
+			blockName: 'themeisle-blocks/countdown'
+		});
 	});
 
 	test( 'select a data and check the rendering', async({ editor, page }) => {
@@ -26,28 +29,35 @@ test.describe( 'Countdown Block', () => {
 			name: 'themeisle-blocks/countdown'
 		});
 
-		const countdownBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/countdown' === block.name );
+		const countdownBlock = await expectBlockByName( editor, 'themeisle-blocks/countdown' );
 		const otterId = countdownBlock.attributes.id;
 
-		await page.getByRole( 'button', { name: 'Select Date' }).click();
+		// Focus the block so its Inspector controls render.
+		await editor.canvas.getByRole( 'document', { name: 'Block: Countdown' }).first().click();
 
-		await page.getByLabel( 'Day' ).fill( '17' );
+		// The picker button is labelled "Select Date" only when no date is set; once Otter
+		// auto-fills a default future date, the same button shows the formatted date instead.
+		// Match by the stable wrapper class.
+		await page.locator( '.o-extend-btn' ).first().click();
+
+		// Use the spinbutton role: a bare label match collides with the date-grid
+		// "<date>. Today" button (substring match) under strict selectors.
+
+		await page.getByRole( 'spinbutton', { name: 'Day' }).fill( '17' );
 		await page.getByRole( 'combobox', { name: 'Month' }).selectOption( 'August' );
-		await page.getByLabel( 'Year' ).fill( '2030' );
+		await page.getByRole( 'spinbutton', { name: 'Year' }).fill( '2030' );
 
-		await page.getByLabel( 'Year' ).press( 'Enter' );
+		await page.getByRole( 'spinbutton', { name: 'Year' }).press( 'Enter' );
 
-		// If everything is ok, the day label text should be changed to "Days".
-		await expect( page.getByText( 'Days', { exact: true }) ).toBeVisible();
+		// Editor preview uses singular labels ("Day", "Hour", …); the frontend renders the
+		// pluralised form ("Days") once the countdown has a real value.
+		await expect( editor.canvas.locator( '.otter-countdown__label' ).filter({ hasText: /^Day$/ }) ).toBeVisible();
 
-		await page.locator( '.editor-styles-wrapper' ).click();
-		const postId = await editor.publishPost();
-
-		await page.goto( `/?p=${postId}` );
+		await editor.canvas.locator( '.editor-styles-wrapper' ).click();
+		await publishAndViewPost({ editor, page });
 
 		expect( ( await page.$eval( `#${otterId}`, ( el ) => el.getAttribute( 'data-date' ) ) ).startsWith( '2030-08-17' ) ).toBeTruthy();
 
-		// If everything is ok, the day label text should be changed to "Days".
 		await expect( page.getByText( 'Days', { exact: true }) ).toBeVisible();
 
 		// Capture the current value of the seconds.

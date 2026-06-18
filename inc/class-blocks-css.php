@@ -131,7 +131,7 @@ class Blocks_CSS {
 					}
 				}
 
-				$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
+				$templates_parts = get_block_templates( array( 'slug__in' => $slugs ), 'wp_template_part' );
 
 				foreach ( $templates_parts as $templates_part ) {
 					if ( ! empty( $templates_part->content ) && ! empty( $templates_part->slug ) && in_array( $templates_part->slug, $slugs ) ) {

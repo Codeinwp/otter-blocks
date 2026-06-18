@@ -3,6 +3,11 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
+
 test.describe( 'Live Search Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -11,19 +16,16 @@ test.describe( 'Live Search Block', () => {
 	test( 'can be created by typing "/live-search"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/live-search' );
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-
 		// Since Live Search is a variation of the Search block, we check for the Search block instead.
-		const hasSearch = blocks.some( ( block ) => 'core/search' === block.name );
-
-		expect( hasSearch ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/live-search',
+			blockName: 'core/search'
+		});
 	});
 
-	test( 'add a live search block inside a Popup and check results rendering', async({ admin, editor, page }) => {
+	test( 'add a live search block inside a Popup and check results rendering', async({ editor, page }) => {
 		await editor.insertBlock({
 			name: 'themeisle-blocks/popup',
 			innerBlocks: [
@@ -36,13 +38,11 @@ test.describe( 'Live Search Block', () => {
 			]
 		});
 
-		const postId = await editor.publishPost();
-
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
 		const input = page.locator( '.otter-popup__modal_body .o-live-search input' );
 
-		expect ( input ).toBeVisible();
+		await expect( input ).toBeVisible();
 
 		await input.fill( 'u' );
 

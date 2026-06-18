@@ -124,9 +124,15 @@ class Review_Block {
 			$html .= '	<div class="o-review__header_details ' . trim( esc_attr( $details_class ) ) . '">';
 			if ( isset( $attributes['image'] ) ) {
 				if ( isset( $attributes['image']['id'] ) && wp_attachment_is_image( $attributes['image']['id'] ) ) {
-					$html .= wp_get_attachment_image( $attributes['image']['id'], isset( $attributes['imageSize'] ) ? esc_attr( $attributes['imageSize'] ) : 'medium' );
+					// The alt stored on the block is editable in the inspector, so it wins over the Media Library one.
+					$html .= wp_get_attachment_image(
+						$attributes['image']['id'],
+						isset( $attributes['imageSize'] ) ? esc_attr( $attributes['imageSize'] ) : 'medium',
+						false,
+						array( 'alt' => isset( $attributes['image']['alt'] ) ? $attributes['image']['alt'] : '' )
+					);
 				} else {
-					$html .= '	<img src="' . esc_url( $attributes['image']['url'] ) . '" alt="' . esc_attr( $attributes['image']['alt'] ) . '"/>';
+					$html .= '	<img src="' . esc_url( $attributes['image']['url'] ) . '" alt="' . ( isset( $attributes['image']['alt'] ) ? esc_attr( $attributes['image']['alt'] ) : '' ) . '"/>';
 				}
 			}
 

@@ -8,6 +8,8 @@ type Attributes = {
 	library: string
 	iconPrefix: string
 	icon: string
+	iconId: number
+	iconAlt: string
 }
 
 export type IconListItemAttrs = Partial<Attributes>

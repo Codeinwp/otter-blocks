@@ -1,6 +1,7 @@
 import { createBlock } from '@wordpress/blocks';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
+import { __ } from '@wordpress/i18n';
 
 type OpenAiSettings = {
 	model?: string
@@ -14,34 +15,28 @@ type OpenAiSettings = {
 	stop?: string|string[]
 }
 
-type ChatResponse = {
-	choices: {
-		finish_reason: string,
-		index: number,
-		message: {
-			content: string,
-			role: string
-			function_call?: {
-				name: string
-				arguments: string
-			}
-		}
-	}[]
-	created: number
-	id: string
-	model: string
-	object: string
-	usage: {
-		completion_tokens: number,
-		prompt_tokens: number,
-		total_tokens: number
-	},
-	error?: {
-		code: string | null,
-		message: string
-		param: string | null
-		type: string
-	}
+type PromptRouteSuccess = {
+	content: string
+	usedTokens?: number
+	format?: 'text' | 'json' | string
+}
+
+export type PromptError = {
+	code: string | null
+	message: string
+	param?: string | null
+	type?: string
+}
+
+export type PromptResult = {
+	ok: true
+	content: string
+	usedTokens: number
+	raw: unknown
+} | {
+	ok: false
+	error: PromptError
+	raw?: unknown
 }
 
 type FormResponse = {
@@ -65,12 +60,12 @@ export type PromptData = {
 	otter_name: string
 	model: string
 	messages: PromptConversation[]
-	functions: {
+	functions?: {
 		name: string
 		description: string
 		parameters: any
-	}
-	function_call: {
+	}[]
+	function_call?: 'auto' | 'none' | {
 		[key: string]: string
 	}
 	[key: `otter_${string}`]: any
@@ -82,6 +77,52 @@ type PromptServerResponse = {
 	code: string
 	error: string
 	prompts: PromptsData
+}
+
+/**
+ * Whether the resolved AI backend can generate: the WP AI Client backend
+ * needs a configured provider; otherwise a legacy OpenAI key. Single gate
+ * shared by every editor surface so they cannot disagree.
+ *
+ * @return {boolean} Whether AI generation is configured.
+ */
+export function isAIBackendConfigured(): boolean {
+	return window.themeisleGutenberg?.aiClientActive
+		? Boolean( window.themeisleGutenberg?.hasAIProvider )
+		: Boolean( window.themeisleGutenberg?.hasOpenAiKey );
+}
+
+/**
+ * Convert the route response into the UI prompt contract.
+ *
+ * Both backends return the normalized `{ content, usedTokens, format }` shape
+ * (see AI_Response::success); errors arrive as thrown REST errors and are
+ * handled by the request catch block.
+ *
+ * @param {PromptRouteSuccess|unknown} response The raw route response.
+ * @return {PromptResult} Normalized prompt result.
+ */
+export function normalizePromptResponse( response: PromptRouteSuccess|unknown ): PromptResult {
+	const result = response as PromptRouteSuccess;
+
+	if ( 'string' === typeof result?.content ) {
+		return {
+			ok: true,
+			content: result.content,
+			usedTokens: result.usedTokens ?? 0,
+			raw: response
+		};
+	}
+
+	return {
+		ok: false,
+		error: {
+			code: 'invalid_response',
+			message: __( 'Received an unexpected response from the AI service. Please try again.', 'otter-blocks' ),
+			type: 'system'
+		},
+		raw: response
+	};
 }
 
 /**
@@ -132,13 +173,17 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 				})
 			});
 
-			return response as ChatResponse;
+			return normalizePromptResponse( response );
 		} catch ( e ) {
 			return {
+				ok: false,
 				error: {
-					code: 'system',
-					message: e.error?.message ?? e.error
-				}
+					code: e.code ?? e.error?.code ?? 'system',
+					message: e.message ?? e.error?.message ?? e.error ?? 'Something went wrong.',
+					param: e.data?.param ?? null,
+					type: e.data?.type ?? 'system'
+				},
+				raw: e
 			};
 		}
 
@@ -155,7 +200,7 @@ export const sendPromptToOpenAI = promptRequestBuilder();
  */
 export const sendPromptToOpenAIWithRegenerate = promptRequestBuilder({
 	temperature: 1.3,
-	// eslint-disable-next-line camelcase
+	 
 	stream: false
 });
 

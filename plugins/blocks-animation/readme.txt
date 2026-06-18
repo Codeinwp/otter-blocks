@@ -1,10 +1,10 @@
 === Blocks Animation: CSS Animations for Gutenberg Blocks ===
 Contributors: themeisle, hardeepasrani, mariamunteanu1
 Tags: animation, gutenberg blocks, css, effects, transitions
-Requires at least: 6.2
+Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 5.4
-Stable tag: 3.1.10
+Stable tag: 3.1.11
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 

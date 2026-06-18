@@ -4,10 +4,12 @@
 import { __ } from '@wordpress/i18n';
 import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
+	Disabled,
+	ExternalLink,
 	TextControl,
 	FormTokenField,
 	ToggleControl,
-	Notice, SelectControl
+	Notice
 } from '@wordpress/components';
 import { addFilter } from '@wordpress/hooks';
 import { Fragment } from '@wordpress/element';
@@ -16,28 +18,127 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import { Notice as OtterNotice } from '../../../blocks/components';
-import { FieldInputWidth, HideFieldLabelToggle, mappedNameInfo } from '../../../blocks/blocks/form/common';
-import { setSavedState } from '../../../blocks/helpers/helper-functions';
+import { FieldInputWidth, HideFieldLabelToggle, mappedNameInfo, selectAllFieldsFromForm } from '../../../blocks/blocks/form/common';
+import { setSavedState, setUtm } from '../../../blocks/helpers/helper-functions';
 import AutoresponderBodyModal from '../../components/autoresponder/index.js';
 import WebhookEditor from '../../components/webhook-editor';
 import attributes from '../../../blocks/blocks/lottie/attributes';
 
 // +-------------- Autoresponder --------------+
 
-const AutoresponderBody = ({ formOptions, setFormOption }) => {
+const fieldTypeNames = {
+	'text': __( 'Text Field', 'otter-pro' ),
+	'email': __( 'Email Field', 'otter-pro' ),
+	'date': __( 'Date Field', 'otter-pro' ),
+	'number': __( 'Number Field', 'otter-pro' ),
+	'textarea': __( 'Textarea Field', 'otter-pro' ),
+	'select': __( 'Select Field', 'otter-pro' ),
+	'checkbox': __( 'Checkbox Field', 'otter-pro' ),
+	'radio': __( 'Radio Field', 'otter-pro' ),
+	'file': __( 'File Field', 'otter-pro' ),
+	'url': __( 'URL Field', 'otter-pro' ),
+	'hidden': __( 'Hidden Field', 'otter-pro' ),
+	'stripe': __( 'Stripe Field', 'otter-pro' )
+};
+
+/**
+ * Resolve the field "type" name used to filter/label magic-tag chips.
+ *
+ * Mirrors `extractFieldName` in src/blocks/blocks/form/sortable-input-fields.tsx.
+ *
+ * @param {Object} inputField The form field inner block.
+ * @return {string} The field type name.
+ */
+const getFieldType = inputField => {
+	const tag = inputField?.name?.replace( 'themeisle-blocks/', '' );
+
+	if ( 'form-input' === tag || 'form-multiple-choice' === tag ) {
+		return inputField?.attributes?.type ?? 'text';
+	}
+
+	if ( 'form-file' === tag ) {
+		return 'file';
+	}
+
+	if ( 'form-hidden-field' === tag ) {
+		return 'hidden';
+	}
+
+	if ( 'form-stripe-field' === tag ) {
+		return 'stripe';
+	}
+
+	return 'textarea';
+};
+
+/**
+ * Build the magic-tag list from the form's inner blocks.
+ *
+ * The inserted token is `%<fieldId>%` (the same token the autoresponder body uses), while the
+ * chip label is the friendly field name. Fields of type `file`, `stripe` and `hidden` are excluded.
+ *
+ * @param {Array} children The form block inner blocks.
+ * @return {Array<{token: string, label: string}>} The magic tags.
+ */
+const getMagicTags = children => {
+	return selectAllFieldsFromForm( children ?? [])
+		.map( ({ inputField }) => inputField )
+		.filter( Boolean )
+		.filter( inputField => ! [ 'file', 'stripe', 'hidden' ].includes( getFieldType( inputField ) ) )
+		.filter( inputField => inputField?.attributes?.id )
+		.map( inputField => ({
+			token: `%${ inputField.attributes.id }%`,
+			label: inputField?.attributes?.label || fieldTypeNames[ getFieldType( inputField ) ] || __( 'Field', 'otter-pro' )
+		}) );
+};
+
+const AutoresponderBody = ({ formOptions, setFormOption, magicTags, disabled }) => {
 	const onChange = body => {
 		window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'body' });
 		setFormOption({ autoresponder: { ...formOptions.autoresponder, body }});
 	};
 
-	return <AutoresponderBodyModal value={formOptions.autoresponder?.body} onChange={onChange} addExtraMargin={true} />;
+	const onChangeAIPrompt = prompt => {
+		window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'ai-prompt' });
+		setFormOption({ aiAutoresponder: { ...formOptions.aiAutoresponder, prompt }});
+	};
+
+	const onToggleAI = enabled => {
+		window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'reply-with-ai' });
+		setFormOption({ aiAutoresponder: { ...formOptions.aiAutoresponder, enabled }});
+	};
+
+	return (
+		<AutoresponderBodyModal
+			value={formOptions.autoresponder?.body}
+			onChange={onChange}
+			addExtraMargin={true}
+			aiAutoresponder={formOptions.aiAutoresponder}
+			onChangeAIPrompt={onChangeAIPrompt}
+			onToggleAI={onToggleAI}
+			magicTags={magicTags}
+			disabled={disabled}
+		/>
+	);
 };
 
-const helpMessages = {
-	'database': __( 'Save form submissions to the database. You can see the submissions in Otter Blocks > Form Submissions on Dashboard Panel', 'otter-pro' ),
-	'email': __( 'The submissions are send only via email. No data will be saved on the server, use this option to handle sensitive data.', 'otter-pro' ),
-	'database-email': __( 'Save the submissions to the database and notify also via email.', 'otter-pro' )
-};
+/**
+ * Upsell notice shown under a disabled Pro preview, linking to the upgrade page.
+ *
+ * @param {Object} props
+ * @param {string} props.area The UTM content area identifier.
+ * @return {JSX.Element}
+ */
+const ProUpsellNotice = ({ area }) => (
+	<OtterNotice
+		notice={
+			<ExternalLink href={ setUtm( window.themeisleGutenberg?.upgradeLink ?? '#', area ) }>
+				{ __( 'Unlock this with Otter Pro.', 'otter-pro' ) }
+			</ExternalLink>
+		}
+		variant="upsell"
+	/>
+);
 
 /**
  * Form Options
@@ -51,142 +152,101 @@ const helpMessages = {
  */
 const FormOptions = ( Options, formOptions, setFormOption, config, attributes ) => {
 
+	const magicTags = getMagicTags( config?.children );
+	const isPro = Boolean( window.otterPro?.isActive );
+
 	return (
 		<>
 			{Options}
 
 			<ToolsPanelItem
-				hasValue={ () => undefined !== formOptions.submissionsSaveLocation }
-				label={ __( 'Submissions', 'otter-pro' ) }
-				onDeselect={ () => setFormOption({ submissionsSaveLocation: undefined }) }
-				isShownByDefault={ true }
-			>
-				{Boolean( window.otterPro.isActive ) ? (
-					<SelectControl
-						label={ __( 'Save Location', 'otter-pro' ) }
-						value={ formOptions.submissionsSaveLocation ?? 'database-email' }
-						onChange={ submissionsSaveLocation => {
-							window.oTrk?.set( `${attributes.id}_save`, { feature: 'form-storing', featureComponent: 'save-location', featureValue: submissionsSaveLocation, groupID: attributes.id });
-							setFormOption({ submissionsSaveLocation });
-						} }
-						options={
-							[
-								{ label: __( 'Database', 'otter-pro' ), value: 'database' },
-								{ label: __( 'Email Only', 'otter-pro' ), value: 'email' },
-								{ label: __( 'Database and Email', 'otter-pro' ), value: 'database-email' }
-							]
-						}
-						help={ helpMessages?.[formOptions?.submissionsSaveLocation] ?? helpMessages.database }
-					/> ) : (
-					<div>
-						<OtterNotice
-							notice={__(
-								'You need to activate Otter Pro.',
-								'otter-pro'
-							)}
-							instructions={__(
-								'You need to activate your Otter Pro license to use Pro features of Form Block.',
-								'otter-pro'
-							)}
-						/>
-					</div>
-				)}
-			</ToolsPanelItem>
-
-			<ToolsPanelItem
 				hasValue={() =>
 					undefined !== formOptions.autoresponder?.subject ||
-					undefined !== formOptions.autoresponder?.body
+					undefined !== formOptions.autoresponder?.body ||
+					undefined !== formOptions.aiAutoresponder
 				}
 				label={__( 'Autoresponder', 'otter-pro' )}
-				onDeselect={() => setFormOption({ autoresponder: undefined })}
+				onDeselect={() => setFormOption({ autoresponder: undefined, aiAutoresponder: undefined })}
 			>
-				{Boolean( window.otterPro.isActive ) ? (
-					<>
-						<TextControl
-							label={__( 'Autoresponder Subject', 'otter-pro' )}
-							placeholder={__(
-								'Confirmation of your subscription',
-								'otter-pro'
-							)}
-							value={formOptions.autoresponder?.subject}
-							onChange={( subject ) => {
-								window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'subject', groupID: attributes.id });
-								setFormOption({
-									autoresponder: {
-										...formOptions.autoresponder,
-										subject
-									}
-								});
-							}}
-							help={__(
-								'Enter the subject of the autoresponder email.',
-								'otter-pro'
-							)}
-						/>
+				<Disabled isDisabled={ ! isPro }>
+					<TextControl
+						label={__( 'Autoresponder Subject', 'otter-pro' )}
+						placeholder={__(
+							'Confirmation of your subscription',
+							'otter-pro'
+						)}
+						value={formOptions.autoresponder?.subject}
+						onChange={( subject ) => {
+							window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'subject', groupID: attributes.id });
+							setFormOption({
+								autoresponder: {
+									...formOptions.autoresponder,
+									subject
+								}
+							});
+						}}
+						help={__(
+							'Enter the subject of the autoresponder email.',
+							'otter-pro'
+						)}
+					/>
 
-						<AutoresponderBody
-							formOptions={formOptions}
-							setFormOption={setFormOption}
-						/>
+					<ToggleControl
+						label={__( 'Reply with AI', 'otter-pro' )}
+						help={__(
+							'Let AI craft a personalized reply to each submission.',
+							'otter-pro'
+						)}
+						checked={Boolean( formOptions.aiAutoresponder?.enabled )}
+						onChange={( enabled ) => {
+							window.oTrk?.add({ feature: 'form-autoresponder', featureComponent: 'reply-with-ai', groupID: attributes.id });
+							setFormOption({
+								aiAutoresponder: {
+									...formOptions.aiAutoresponder,
+									enabled
+								}
+							});
+						}}
+					/>
+				</Disabled>
 
-						{
-							config?.showAutoResponderNotice && (
-								<Notice isDismissible={false} status={'info'}>
-									{
-										__( 'In order for Autoresponder to work, you need to have at least one Email field in Form.', 'otter-pro' )
-									}
-								</Notice>
-							)
-						}
+				<AutoresponderBody
+					formOptions={formOptions}
+					setFormOption={setFormOption}
+					magicTags={magicTags}
+					disabled={ ! isPro }
+				/>
 
-					</>
-				) : (
-					<div>
-						<OtterNotice
-							notice={__(
-								'You need to activate Otter Pro.',
-								'otter-pro'
-							)}
-							instructions={__(
-								'You need to activate your Otter Pro license to use Pro features of Form Block.',
-								'otter-pro'
-							)}
-						/>
-					</div>
-				)}
+				{
+					isPro && config?.showAutoResponderNotice && (
+						<Notice isDismissible={false} status={'info'}>
+							{
+								__( 'In order for Autoresponder to work, you need to have at least one Email field in Form.', 'otter-pro' )
+							}
+						</Notice>
+					)
+				}
+
+				{ ! isPro && <ProUpsellNotice area="formautoresponder" /> }
 			</ToolsPanelItem>
 			<ToolsPanelItem
 				hasValue={() => formOptions?.webhookId }
 				label={__( 'Webhook', 'otter-pro' )}
 				onDeselect={() => setFormOption({ webhookId: undefined })}
 			>
-				{Boolean( window.otterPro.isActive ) ? (
-					<>
-						<WebhookEditor
-							webhookId={formOptions.webhookId}
-							onChange={( webhookId ) => {
-								window.oTrk?.add({ feature: 'form-webhook', featureComponent: 'webhook-set', groupID: attributes.id });
-								setFormOption({
-									webhookId
-								});
-							}}
-						/>
-					</>
-				) : (
-					<div>
-						<OtterNotice
-							notice={__(
-								'You need to activate Otter Pro.',
-								'otter-pro'
-							)}
-							instructions={__(
-								'You need to activate your Otter Pro license to use Pro features of Form Block.',
-								'otter-pro'
-							)}
-						/>
-					</div>
-				)}
+				<Disabled isDisabled={ ! isPro }>
+					<WebhookEditor
+						webhookId={formOptions.webhookId}
+						onChange={( webhookId ) => {
+							window.oTrk?.add({ feature: 'form-webhook', featureComponent: 'webhook-set', groupID: attributes.id });
+							setFormOption({
+								webhookId
+							});
+						}}
+					/>
+				</Disabled>
+
+				{ ! isPro && <ProUpsellNotice area="formwebhook" /> }
 			</ToolsPanelItem>
 		</>
 	);

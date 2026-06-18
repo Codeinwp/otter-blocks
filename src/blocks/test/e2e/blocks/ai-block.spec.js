@@ -6,8 +6,10 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 test.describe( 'AI Block', () => {
 	test.beforeEach( async({ admin, page }) => {
 
-		// Mock the api response of the otter/v1/generate endpoint for `textTransformation`.
-		await page.route( '**/index.php?rest_route=%2Fotter%2Fv1%2Fgenerate&_locale=user', async( route ) => {
+		// Mock the api response of the otter/v1/openai/generate endpoint for `textTransformation`.
+		// Match on the decoded URL so it works with both pretty permalinks
+		// (/wp-json/otter/v1/…) and plain permalinks (/?rest_route=%2Fotter%2Fv1%2F…).
+		await page.route( url => decodeURIComponent( url.href ).includes( 'otter/v1/openai/generate' ), async( route ) => {
 
 			const request = route.request();
 			if ( 'POST' !== request.method() ) {
@@ -19,32 +21,16 @@ test.describe( 'AI Block', () => {
 				return route.continue();
 			}
 
+			// The route returns Otter's normalized AI response contract
+			// (see AI_Response::success), not the raw OpenAI body.
 			await route.fulfill({
 				status: 200,
 				contentType: 'application/json',
 				body: JSON.stringify(
 					{
-						'id': 'chatcmpl-9oWud5dugI37NCO4ZIUFH2GRFJ9Z4',
-						'object': 'chat.completion',
-						'created': 1721829943,
-						'model': 'gpt-3.5-turbo-0125',
-						'choices': [
-							{
-								'index': 0,
-								'message': {
-									'role': 'assistant',
-									'content': '<h1><strong>Discover the Next Frontier: Space Nation on the Rise<\/strong><\/h1>\n\n<p>Are you ready to embark on a journey to a new world beyond our wildest dreams? Look no further than the rapidly emerging Space Nation that is captivating the imaginations of millions. From groundbreaking technologies to bold explorations, this cosmic civilization is redefining what it means to reach for the stars.<\/p>\n\n<h2><em>Unveiling the Wonders of Space Nation<\/em><\/h2>\n\n<p>Peer into the future and witness the awe-inspiring advancements taking place in this celestial realm. With each innovation, Space Nation pushes the boundaries of possibility, offering a glimpse into a future where the impossible becomes reality.<\/p>\n\n<h2><em>Join the Movement<\/em><\/h2>\n\n<p>Don\'t miss your chance to be part of history in the making. Whether you are an aspiring pioneer or a curious observer, there is a place for you in the unfolding saga of Space Nation. Embrace the spirit of exploration and venture into a realm where the skies are no longer the limit.<\/p>\n\n<h3><strong>Why Space Nation?<\/strong><\/h3>\n\n<ul>\n  <li>Experience groundbreaking technologies shaping the future<\/li>\n  <li>Witness bold explorations into the unknown<\/li>\n  <li>Join a community of visionaries and trailblazers<\/li>\n<\/ul>\n\n<h3><strong>Take Action Today<\/strong><\/h3>\n\n<p>Ready to embark on an adventure that transcends the confines of Earth? Step into the world of Space Nation and dare to dream beyond the stars.<\/p>'
-								},
-								'logprobs': null,
-								'finish_reason': 'stop'
-							}
-						],
-						'usage': {
-							'prompt_tokens': 331,
-							'completion_tokens': 338,
-							'total_tokens': 669
-						},
-						'system_fingerprint': null
+						'content': '<h1><strong>Discover the Next Frontier: Space Nation on the Rise<\/strong><\/h1>\n\n<p>Are you ready to embark on a journey to a new world beyond our wildest dreams? Look no further than the rapidly emerging Space Nation that is captivating the imaginations of millions. From groundbreaking technologies to bold explorations, this cosmic civilization is redefining what it means to reach for the stars.<\/p>\n\n<h2><em>Unveiling the Wonders of Space Nation<\/em><\/h2>\n\n<p>Peer into the future and witness the awe-inspiring advancements taking place in this celestial realm. With each innovation, Space Nation pushes the boundaries of possibility, offering a glimpse into a future where the impossible becomes reality.<\/p>\n\n<h2><em>Join the Movement<\/em><\/h2>\n\n<p>Don\'t miss your chance to be part of history in the making. Whether you are an aspiring pioneer or a curious observer, there is a place for you in the unfolding saga of Space Nation. Embrace the spirit of exploration and venture into a realm where the skies are no longer the limit.<\/p>\n\n<h3><strong>Why Space Nation?<\/strong><\/h3>\n\n<ul>\n  <li>Experience groundbreaking technologies shaping the future<\/li>\n  <li>Witness bold explorations into the unknown<\/li>\n  <li>Join a community of visionaries and trailblazers<\/li>\n<\/ul>\n\n<h3><strong>Take Action Today<\/strong><\/h3>\n\n<p>Ready to embark on an adventure that transcends the confines of Earth? Step into the world of Space Nation and dare to dream beyond the stars.<\/p>',
+						'usedTokens': 669,
+						'format': 'text'
 					}
 				)
 			});
@@ -61,14 +47,16 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
-		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
-		await page.getByRole( 'button', { name: 'Generate' }).click();
-		await page.getByRole( 'button', { name: 'Replace' }).click();
+		// Wait for the prompt list to load so embeddedPrompts is populated before "Generate".
+		await page.waitForResponse( r => decodeURIComponent( r.url() ).includes( 'otter/v1/openai/prompt' ) ).catch( () => null );
+		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
 
 		const blocks = await editor.getBlocks();
 
 		expect( blocks.every( block => 'themeisle-blocks/content-generator' !== block.name ) ).toBe( true );
-		await expect( page.getByText( 'Discover the Next Frontier' ) ).toBeVisible();
+		await expect( editor.canvas.getByText( 'Discover the Next Frontier' ) ).toBeVisible();
 	});
 
 	test( 'replace target block', async({ editor, page }) => {
@@ -99,11 +87,12 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
-		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
-		await page.getByRole( 'button', { name: 'Generate' }).click();
-		await page.getByRole( 'button', { name: 'Replace' }).click();
+		await page.waitForResponse( r => decodeURIComponent( r.url() ).includes( 'otter/v1/openai/prompt' ) ).catch( () => null );
+		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
 
-		await expect( page.getByText( 'Target Block.' ) ).toBeHidden();
+		await expect( editor.canvas.getByText( 'Target Block.' ) ).toBeHidden();
 	});
 
 	test( 'insert below action', async({ editor, page }) => {
@@ -114,15 +103,16 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
-		await page.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
-		await page.getByRole( 'button', { name: 'Generate' }).click();
-		await page.getByRole( 'button', { name: 'Insert below' }).click();
+		await page.waitForResponse( r => decodeURIComponent( r.url() ).includes( 'otter/v1/openai/prompt' ) ).catch( () => null );
+		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Insert below' }).click();
 
 		const blocks = await editor.getBlocks();
 
 		expect( blocks.some( block => 'themeisle-blocks/content-generator' === block.name ) ).toBe( true ); // The block is still present.
-		await expect( page.getByText( 'Discover the Next Frontier' ).nth( 0 ) ).toBeVisible(); // The header in the AI block content.
-		await expect( page.getByText( 'Discover the Next Frontier' ).nth( 1 ) ).toBeVisible(); // The header inserted below.
+		await expect( editor.canvas.getByText( 'Discover the Next Frontier' ).nth( 0 ) ).toBeVisible(); // The header in the AI block content.
+		await expect( editor.canvas.getByText( 'Discover the Next Frontier' ).nth( 1 ) ).toBeVisible(); // The header inserted below.
 	});
 
 	test( 'use last prompt on text transform actions from history list', async({ editor, page }) => {
@@ -134,6 +124,6 @@ test.describe( 'AI Block', () => {
 			}
 		});
 
-		await expect( page.getByText( 'Expand or elaborate on the following: Make a nice text' ) ).toBeVisible();
+		await expect( editor.canvas.getByText( 'Expand or elaborate on the following: Make a nice text' ) ).toBeVisible();
 	});
 });

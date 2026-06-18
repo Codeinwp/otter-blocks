@@ -395,6 +395,71 @@
 						}
 					}
 				}
+
+				.otter-youtube-card {
+					.otter-youtube-card__thumbnail {
+						position: relative;
+						display: block;
+						margin-bottom: 15px;
+						border-radius: 8px;
+						overflow: hidden;
+						border: 1px solid #d6e2ed;
+
+						&::after {
+							content: '';
+							position: absolute;
+							inset: 0;
+							background: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.2) 100%);
+							pointer-events: none;
+						}
+
+						img {
+							display: block;
+							width: 100%;
+							height: auto;
+							aspect-ratio: 16 / 9;
+							object-fit: cover;
+						}
+					}
+
+					.otter-youtube-card__play-button {
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						z-index: 1;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						width: 64px;
+						height: 46px;
+						border-radius: 14px;
+						background: rgba(255, 0, 0, 0.92);
+						box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+						transform: translate(-50%, -50%);
+						pointer-events: none;
+					}
+
+					.otter-youtube-card__play-icon {
+						width: 0;
+						height: 0;
+						margin-left: 4px;
+						border-top: 10px solid transparent;
+						border-bottom: 10px solid transparent;
+						border-left: 16px solid #fff;
+					}
+
+					.otter-youtube-card__content {
+						margin-bottom: 15px;
+					}
+
+					.otter-youtube-card__title {
+						margin: 0 0 10px 0;
+						font-size: 14px;
+						color: var(--o-dash-block-text);
+						line-height: 1.5;
+						font-weight: 500;
+					}
+				}
 			}
 		}
 

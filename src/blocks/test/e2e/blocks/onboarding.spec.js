@@ -4,19 +4,13 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 test.describe( 'FSE Onboarding', () => {
-	test.beforeEach( async({ admin, page }) => {
-		const slug = 'raft';
-
-		await admin.visitAdminPage( 'themes.php' );
-
-		const activateButton = await page.$(
-			`div[data-slug="${ slug }"] .button.activate`
-		);
-
-		if ( activateButton ) {
-			await page.click( `div[data-slug="${ slug }"] .button.activate` );
-			await page.waitForSelector( `div[data-slug="${ slug }"].active` );
-		}
+	test.beforeEach( async({ admin, page, requestUtils }) => {
+		/*
+		 * Activate the theme via the REST API instead of the themes.php UI.
+		 * Activating Raft from the UI redirects straight into the Theme Setup
+		 * onboarding screen, so waiting for the active theme card times out.
+		 */
+		await requestUtils.activateTheme( 'raft' );
 
 		await admin.visitAdminPage( 'site-editor.php?onboarding=true' );
 
@@ -65,8 +59,8 @@ test.describe( 'FSE Onboarding', () => {
 		await siteTitle.type( ourTitle );
 
 		const title = await page.evaluate( () => {
-			const title = document.querySelector( '.o-main iframe' ).contentWindow.document.querySelector( '[aria-label="Site title text"]' ).innerHTML;
-			return title;
+			const iframeTitle = document.querySelector( '.o-main iframe' ).contentWindow.document.querySelector( '[aria-label="Site title text"]' ).innerHTML;
+			return iframeTitle;
 		});
 
 		expect( title ).toBe( ourTitle );
@@ -185,13 +179,13 @@ test.describe( 'FSE Onboarding', () => {
 		};
 
 		const templates = await page.evaluate( () => {
-			const templates = document.querySelectorAll( '.o-templates .o-templates__item' );
+			const templateItems = document.querySelectorAll( '.o-templates .o-templates__item' );
 
-			for ( let i = 0; i < templates.length; i++ ) {
-				templates[i].click();
+			for ( let i = 0; i < templateItems.length; i++ ) {
+				templateItems[i].click();
 			}
 
-			return templates;
+			return templateItems;
 		});
 
 		expect( await getSelectedTemplates()?.length ).toBe( templates.length );

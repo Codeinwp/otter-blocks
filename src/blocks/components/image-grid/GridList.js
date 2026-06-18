@@ -1,19 +1,29 @@
 /**
  * External dependencies
  */
-import arrayMove from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
-import { useRef, useState } from '@wordpress/element';
+import {
+	Icon,
+	plus
+} from '@wordpress/icons';
+
+import { __ } from '@wordpress/i18n';
+
+import { useMemo, useState } from '@wordpress/element';
+
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import SortableList from './SortableList.js';
+import { SortableGrid } from '../sortable/index.js';
+import SortableItem from './SortableItem.js';
 
 const GridList = ({
 	attributes,
@@ -23,20 +33,31 @@ const GridList = ({
 	const [ selectedItems, setSelectedItems ] = useState([]);
 	const [ isSorting, setIsSorting ] = useState( false );
 	const [ sortingItemKey, setSortingItemKey ] = useState( null );
-	const containerRef = useRef( null );
 
-	const handleUpdateBeforeSortStart = ({ index }) => {
-		return new Promise( resolve => {
-			setIsSorting( true );
-			setSortingItemKey( attributes.images[ index ]);
-			resolve();
+	// The same attachment can appear more than once in the grid, so the
+	// attachment id alone is not a unique sortable id; suffix repeats.
+	const itemIds = useMemo( () => {
+		const seen = {};
+
+		return attributes.images.map( ( item ) => {
+			const count = seen[ item.id ] = ( seen[ item.id ] ?? 0 ) + 1;
+			return 1 === count ? `${ item.id }` : `${ item.id }-${ count }`;
 		});
+	}, [ attributes.images ]);
+
+	const handleDragStart = ( index ) => {
+		setIsSorting( true );
+		setSortingItemKey( attributes.images[ index ] );
 	};
 
-	const onSortEnd = ({
-		oldIndex,
-		newIndex
-	}) => {
+	const handleReorder = ({ oldIndex, newIndex, cancelled }) => {
+		setIsSorting( false );
+		setSortingItemKey( null );
+
+		if ( cancelled || oldIndex === newIndex ) {
+			return;
+		}
+
 		let newItems = arrayMove( attributes.images, oldIndex, newIndex );
 
 		if ( selectedItems.length ) {
@@ -47,24 +68,8 @@ const GridList = ({
 			];
 		}
 
-		setIsSorting( false );
-		setSortingItemKey( null );
 		setSelectedItems([]);
 		onSelectImages( newItems );
-
-		// Remove all extra nodes that react-sortable-hoc adds to the DOM but doesn't remove after sorting is done.
-		document.querySelectorAll( '.o-images-grid-component__image' ).forEach( node => {
-			if ( ! containerRef.current?.container.contains?.( node ) ) {
-
-				// Hide the node until it can be removed to prevent a flash of unstyled content.
-				node.style.display = 'none';
-				setTimeout( () => {
-
-					// Remove the node after a short delay to allow the transition to finish.
-					node.remove();
-				}, 250 );
-			}
-		});
 	};
 
 	const handleItemSelect = item => {
@@ -78,15 +83,7 @@ const GridList = ({
 		setSelectedItems( items );
 	};
 
-	const handleShouldCancelStart = event => {
-		if ( ! event.target.sortableInfo ) {
-			return false;
-		}
-
-		const items = attributes.images;
-
-		const item = items[event.target.sortableInfo.index];
-
+	const isItemDisabled = item => {
 		if ( ! selectedItems.length ) {
 			return false;
 		}
@@ -95,24 +92,48 @@ const GridList = ({
 	};
 
 	return (
-		<SortableList
+		<div
 			className={ classnames(
 				'o-images-grid-component',
 				{ 'is-single': 1 === attributes.images.length }
 			) }
-			open={ open }
-			items={ attributes.images }
-			onItemSelect={ handleItemSelect }
-			selectedItems={ selectedItems }
-			isSorting={ isSorting }
-			sortingItemKey={ sortingItemKey }
-			shouldCancelStart={ handleShouldCancelStart }
-			updateBeforeSortStart={ handleUpdateBeforeSortStart }
-			onSortEnd={ onSortEnd }
-			distance={ 3 }
-			axis="xy"
-			ref={ containerRef }
-		/>
+			tabIndex="0"
+		>
+			<SortableGrid
+				items={ attributes.images }
+				getItemId={ ( item, index ) => itemIds[ index ] }
+				onDragStart={ handleDragStart }
+				onReorder={ handleReorder }
+				activationDistance={ 3 }
+				isItemDisabled={ isItemDisabled }
+			>
+				{ ( item, index, id, disabled ) => {
+					const isSelected = selectedItems.includes( item );
+					const itemIsBeingDragged = sortingItemKey === item;
+
+					return (
+						<SortableItem
+							key={ `image-${ id }` }
+							id={ id }
+							value={ item }
+							selected={ isSelected }
+							dragging={ itemIsBeingDragged }
+							sorting={ isSorting }
+							selectedItemsCount={ selectedItems.length }
+							onClick={ handleItemSelect }
+							disabled={ disabled }
+						/>
+					);
+				} }
+			</SortableGrid>
+
+			<Button
+				label={ __( 'Add Images', 'otter-blocks' ) }
+				icon={ <Icon icon={ plus } /> }
+				isPrimary
+				onClick={ open }
+			/>
+		</div>
 	);
 };
 

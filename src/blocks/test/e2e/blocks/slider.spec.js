@@ -4,13 +4,16 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import path from 'path';
 
+/**
+ * Internal dependencies
+ */
+import { expectBlockByName, insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
+
 test.describe( 'Slider Block', () => {
 
 	let uploadedMedia;
 
 	test.beforeAll( async({ requestUtils }) => {
-		await requestUtils.deleteAllMedia();
-
 		uploadedMedia = await requestUtils.uploadMedia(
 			path.resolve(
 				process.cwd(),
@@ -23,28 +26,18 @@ test.describe( 'Slider Block', () => {
 		await admin.createNewPost();
 	});
 
-	test.afterEach( async({ requestUtils }) => {
-		await requestUtils.deleteAllPosts();
-	});
-
-	test.afterAll( async({ requestUtils }) => {
-		await requestUtils.deleteAllMedia();
-	});
-
 	test( 'can be created by typing "/slider"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/slider' );
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasSlider = blocks.some( ( block ) => 'themeisle-blocks/slider' === block.name );
-
-		expect( hasSlider ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/slider',
+			blockName: 'themeisle-blocks/slider'
+		});
 	});
 
-	test( 'insert with images', async({ editor, page }) => {
+	test( 'insert with images', async({ editor }) => {
 		await editor.insertBlock({
 			name: 'themeisle-blocks/slider',
 			attributes: {
@@ -58,9 +51,55 @@ test.describe( 'Slider Block', () => {
 			}
 		});
 
-		const sliderBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/slider' === block.name );
+		const sliderBlock = await expectBlockByName( editor, 'themeisle-blocks/slider' );
 
 		expect( sliderBlock.attributes.images.length ).toBeGreaterThan( 0 );
+	});
+
+	test( 'duplicate does not throw NotFoundError', async({ editor, page }) => {
+		const images = [
+			{
+				id: uploadedMedia.id,
+				url: uploadedMedia.source_url,
+				alt: uploadedMedia.alt_text
+			}
+		];
+
+		images.push( images[ 0 ] );
+
+		await editor.insertBlock({
+			name: 'themeisle-blocks/slider',
+			attributes: {
+				images
+			}
+		});
+
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 1 );
+
+		const errors = [];
+		const onConsole = msg => {
+			if ( 'error' === msg.type() ) {
+				errors.push( msg.text() );
+			}
+		};
+		const onPageError = err => errors.push( err.message );
+
+		page.on( 'console', onConsole );
+		page.on( 'pageerror', onPageError );
+
+		// The slider captures key events, so the Control+Shift+D shortcut is
+		// unreliable here; duplicate via the block toolbar instead.
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' } ).click();
+		await editor.clickBlockOptionsMenuItem( 'Duplicate' );
+
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' } ) ).toHaveCount( 2 );
+		await page.waitForTimeout( 250 );
+
+		page.off( 'console', onConsole );
+		page.off( 'pageerror', onPageError );
+
+		const notFoundErrors = errors.filter( ( text ) => text?.includes( 'NotFoundError' ) || text?.includes( 'removeChild' ) );
+		expect( notFoundErrors ).toEqual([]);
 	});
 
 	test( 'check move buttons', async({ editor, page }) => {
@@ -84,14 +123,14 @@ test.describe( 'Slider Block', () => {
 			}
 		});
 
-		const sliderBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/slider' === block.name );
+		const sliderBlock = await expectBlockByName( editor, 'themeisle-blocks/slider' );
 
 		expect( sliderBlock.attributes.images.length ).toBeGreaterThan( 0 );
 
-		await page.getByRole( 'document', { name: 'Block: Slider' }).getByRole( 'button' ).first().click();
-		await page.getByRole( 'document', { name: 'Block: Slider' }).getByRole( 'button' ).nth( 1 ).click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).first().click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' }).getByRole( 'button' ).nth( 1 ).click();
 
-		await expect( page.locator( 'div:nth-child(2) > figure > .wp-block-themeisle-blocks-slider-item' ) ).toBeVisible();
+		await expect( editor.canvas.locator( 'div:nth-child(2) > figure > .wp-block-themeisle-blocks-slider-item' ) ).toBeVisible();
 	});
 
 	test( 'check frontend rendering and interaction', async({ page, editor }) => {
@@ -114,13 +153,10 @@ test.describe( 'Slider Block', () => {
 			}
 		});
 
-		const postId = await editor.publishPost();
+		await publishAndViewPost({ editor, page });
 
-		await page.goto( `/?p=${postId}` );
-
-		expect( await page.locator( '.wp-block-themeisle-blocks-slider img' ).count() ).toBe( 4 );
-
-		await page.waitForTimeout( 500 );
+		await expect( page.locator( '.wp-block-themeisle-blocks-slider img' ) ).toHaveCount( 4 );
+		await expect( page.locator( '.glide__arrows > button:nth-child(2)' ) ).toBeVisible();
 
 		let hasError = false;
 		page.on( 'console', msg => {

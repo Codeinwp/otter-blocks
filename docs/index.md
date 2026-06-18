@@ -1,7 +1,7 @@
 # Gutenberg Blocks
  
 Otter Blocks
-- [Environment installation](environment.md)	
+- [Environment installation](environment-installation.md)	
 - [Handbook](handbook.md)
 - [Otter Family Plugins](otter-family-plugins.md)
 - [Project Structure](project-structure.md)

@@ -11,6 +11,7 @@ use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\Gut
 use ThemeIsle\GutenbergBlocks\Plugins\Dashboard;
 use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
 use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
+use ThemeIsle\GutenbergBlocks\Server\AI_Client_Adaptor;
 
 /**
  * Class Registration.
@@ -247,6 +248,8 @@ class Registration {
 
 		global $wp_roles;
 
+		$is_wp_ai_backend = AI_Client_Adaptor::BACKEND_WP === AI_Client_Adaptor::resolve_backend();
+
 		wp_localize_script(
 			'otter-blocks',
 			'themeisleGutenberg',
@@ -293,12 +296,14 @@ class Registration {
 				'version'                 => OTTER_BLOCKS_VERSION,
 				'isRTL'                   => is_rtl(),
 				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true ),
-				'hasOpenAiKey'            => ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
+				'hasOpenAiKey'            => $is_wp_ai_backend || ! empty( get_option( 'themeisle_open_ai_api_key' ) ),
+				'aiClientActive'          => $is_wp_ai_backend,
+				'aiClientSupported'       => function_exists( 'wp_ai_client_prompt' ),
+				'hasAIProvider'           => AI_Client_Adaptor::is_available(),
+				'connectorsUrl'           => esc_url( admin_url( 'options-connectors.php' ) ),
 				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
 			)
 		);
-
-		wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
 
 		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( Dashboard::class, 'get_survey_metadata' ), 10, 2 );
 		do_action( 'themeisle_internal_page', OTTER_PRODUCT_SLUG, 'editor' );
@@ -340,6 +345,23 @@ class Registration {
 		global $wp_query, $wp_registered_sidebars;
 
 		if ( is_admin() ) {
+			// In the editor (including the iframed canvas) enqueue the editor
+			// styles on `enqueue_block_assets` so WordPress loads them into the
+			// iframe natively. Enqueuing on `enqueue_block_editor_assets` would
+			// load them only in the parent document, and WordPress 6.9+ warns
+			// when it copies such styles into the iframe.
+			//
+			// Scripts enqueued here would also be injected into the iframe
+			// natively (via `_wp_get_iframed_editor_assets()`), but the iframe
+			// assets are resolved once on editor load, with no way to add them
+			// later. Heavy per-block scripts (Leaflet, Lottie, Glide) are
+			// therefore NOT enqueued here — they would load in every editor
+			// session regardless of the blocks used. Instead they are copied
+			// into the iframe on demand by `copyScriptAssetToIframe()` in
+			// `src/blocks/helpers/block-utility.js`, which keeps them lazy at
+			// the cost of client-side readiness tracking.
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+			wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
 			return;
 		}
 
@@ -547,11 +569,13 @@ class Registration {
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
 					'reRecaptchaAPIURL'  => apply_filters( 'otter_blocks_recaptcha_api_url', 'https://www.google.com/recaptcha/api.js' ),
+					'turnstileSitekey'   => get_option( 'themeisle_cloudflare_turnstile_site_key' ),
+					'turnstileAPIURL'    => apply_filters( 'otter_blocks_turnstile_api_url', 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit' ),
 					'root'               => esc_url_raw( rest_url() ),
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
 						'submission'           => __( 'Form submission from', 'otter-blocks' ),
-						'captcha-not-loaded'   => __( 'Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' ),
+						'captcha-not-loaded'   => __( 'Captcha is not loaded. Please check your browser plugins to allow it.', 'otter-blocks' ),
 						'check-captcha'        => __( 'Please check the captcha.', 'otter-blocks' ),
 						'invalid-email'        => __( 'The email address is invalid!', 'otter-blocks' ),
 						'already-registered'   => __( 'The email was already registered!', 'otter-blocks' ),
@@ -745,6 +769,7 @@ class Registration {
 	public function register_blocks() {
 		$dynamic_blocks = array(
 			'about-author'         => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'form-captcha'         => '\ThemeIsle\GutenbergBlocks\Render\Form_Captcha_Block',
 			'form-nonce'           => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 			'google-map'           => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 			'leaflet-map'          => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
@@ -772,6 +797,7 @@ class Registration {
 			'flip',
 			'font-awesome-icons',
 			'form',
+			'form-captcha',
 			'form-input',
 			'form-nonce',
 			'form-textarea',

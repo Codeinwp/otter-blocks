@@ -13,6 +13,7 @@ window.otterComponents.Notice = Notice;
 window.otterComponents.useInspectorSlot = useInspectorSlot;
 window.otterComponents.CategoriesFieldToken = CategoriesFieldToken;
 
+export { default as AltTextControl } from './alt-text-control/index.js';
 export { default as BackgroundOverlayControl } from './background-overlay-control/index.js';
 export { default as BackgroundSelectorControl } from './background-selector-control/index.js';
 export { default as BoxShadowControl } from './box-shadow-control/index.js';
@@ -44,5 +45,11 @@ export {
 export { default as SyncColorPanel } from './sync-color-panel/';
 export { default as SyncControlDropdown } from './sync-control-dropdown/index';
 export { default as ToogleGroupControl } from './toogle-group-control/index.js';
+export {
+	SortableVerticalList,
+	SortableGrid,
+	SortableDragHandle,
+	useSortableRow
+} from './sortable/index.js';
 
 export { default as PrmptPlaceholder } from './prompt';

@@ -146,17 +146,17 @@ const ProductsMultiselect = ( props ) => {
 			isResolving
 		} = select( COLLECTIONS_STORE_KEY );
 
-		// eslint-disable-next-line camelcase
-		const productsError = getCollectionError?.( '/wc/store', 'products', { per_page: 0 });
+		 
+		const productsError = getCollectionError?.( '/wc/store', 'products', { 'per_page': 100 });
 
-		const products = productsError ? [] : ( getCollection?.( '/wc/store', 'products', { 'per_page': 0 }) ?? [])?.map( result => ({
+		const products = productsError ? [] : ( getCollection?.( '/wc/store', 'products', { 'per_page': 100 }) ?? [])?.map( result => ({
 			value: result.id,
 			label: decodeEntities( result.name )
 		}) );
 
 		return {
 			products,
-			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products', { 'per_page': 0 }])
+			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products', { 'per_page': 100 }])
 		};
 	}, []);
 
@@ -189,7 +189,7 @@ const CategoriesMultiselect = ( props ) => {
 			isResolving
 		} = select( COLLECTIONS_STORE_KEY );
 
-		// eslint-disable-next-line camelcase
+		 
 		const categoriesError = getCollectionError( '/wc/store', 'products/categories' );
 
 		const categories = categoriesError ? [] : ( getCollection( '/wc/store', 'products/categories' ) ?? [])?.map( result => ({
@@ -232,7 +232,7 @@ const TagsMultiselect = ( props ) => {
 			isResolving
 		} = select( COLLECTIONS_STORE_KEY );
 
-		// eslint-disable-next-line camelcase
+		 
 		const tagsError = getCollectionError( '/wc/store', 'products/tags' );
 
 		const tags = tagsError ? [] : ( getCollection( '/wc/store', 'products/tags' ) ?? [])?.map( result => ({
@@ -275,7 +275,7 @@ const WooAttributes = ( props ) => {
 			isResolving
 		} = select( COLLECTIONS_STORE_KEY );
 
-		// eslint-disable-next-line camelcase
+		 
 		const attributesError = getCollectionError( '/wc/store', 'products/attributes' );
 
 		const attributes = attributesError ? [] : ( getCollection( '/wc/store', 'products/attributes' ) ?? [])?.map( result => ({

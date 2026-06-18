@@ -214,7 +214,7 @@ const Sidebar = () => {
 		});
 
 		const model = new window.wp.api.models.Settings({
-			// eslint-disable-next-line camelcase
+			 
 			themeisle_blocks_settings_global_defaults: JSON.stringify( filterDefault )
 		});
 

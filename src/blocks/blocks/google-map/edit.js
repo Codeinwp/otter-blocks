@@ -85,7 +85,7 @@ const Edit = ({
 
 		window.isMapLoaded = window.isMapLoaded || false;
 		window[ `removeMarker_${ clientId.substr( 0, 8 ) }` ] = removeMarker;
-		// eslint-disable-next-line camelcase
+		 
 		window.gm_authFailure = function() {
 			setAPISaved( false );
 			setErrorState( true );
@@ -103,7 +103,7 @@ const Edit = ({
 	}, []);
 
 	useEffect( () => {
-		if ( false !== isAPISaved && undefined !== window.google ) {
+		if ( false !== isAPISaved && undefined !== window.google && null !== mapRef.current ) {
 			mapRef.current.setOptions({
 				mapTypeControl: isSelected ? true : attributes.mapTypeControl,
 				zoomControl: isSelected ? true : attributes.zoomControl,
@@ -139,22 +139,32 @@ const Edit = ({
 	const [ errorState, setErrorState ] = useState( false );
 
 	const enqueueScript = api => {
-		if ( ! window.isMapLoaded ) {
-			window.isMapLoaded = true;
-			linkRef.current.onload = () => {
-				const script = document.getElementById( 'themeisle-google-map-api-loading' );
-				script.id = 'themeisle-google-map-api';
-				setDisplayMap( true );
-			};
-			linkRef.current.src = `https://maps.googleapis.com/maps/api/js?key=${ api }&libraries=places&cache=${ Math.random() }`;
-			document.head.appendChild( linkRef.current );
-		}
-
-		const loaded = document.getElementById( 'themeisle-google-map-api' );
-
-		if ( loaded ) {
+		// The API is already fully loaded (e.g. by another Map block) - just render.
+		if ( undefined !== window.google && undefined !== window.google.maps ) {
 			setDisplayMap( true );
+			return;
 		}
+
+		// Another Map block is already loading the script - wait for it to finish
+		// instead of trying to load it again. Without this, every block after the
+		// first one would never receive the load event and `mapRef` would stay null.
+		const loading = document.getElementById( 'themeisle-google-map-api-loading' ) || document.getElementById( 'themeisle-google-map-api' );
+
+		if ( loading ) {
+			loading.addEventListener( 'load', () => setDisplayMap( true ) );
+			return;
+		}
+
+		window.isMapLoaded = true;
+		linkRef.current.onload = () => {
+			const script = document.getElementById( 'themeisle-google-map-api-loading' );
+			if ( script ) {
+				script.id = 'themeisle-google-map-api';
+			}
+			setDisplayMap( true );
+		};
+		linkRef.current.src = `https://maps.googleapis.com/maps/api/js?key=${ api }&libraries=places&cache=${ Math.random() }`;
+		document.head.appendChild( linkRef.current );
 	};
 
 	const initMap = () => {
@@ -421,7 +431,7 @@ const Edit = ({
 			setSaving( true );
 
 			const model = new window.wp.api.models.Settings({
-				// eslint-disable-next-line camelcase
+				 
 				themeisle_google_map_block_api_key: api
 			});
 

@@ -39,6 +39,8 @@ import {
  */
 import './editor.scss';
 
+import AltTextControl from '../alt-text-control/index.js';
+
 // @ts-ignore
 import data from '../../../../assets/fontawesome/fa-icons.json';
 import themeIsleIcons from './../../helpers/themeisle-icons.js';
@@ -78,7 +80,9 @@ const IconPickerControl = ({
 	changeLibrary,
 	onChange,
 	allowImage = false,
-	allowThemeisleIcons = true
+	allowThemeisleIcons = true,
+	imageAlt,
+	onAltChange
 }) => {
 	const instanceId = useInstanceId( IconPickerControl );
 
@@ -245,7 +249,7 @@ const IconPickerControl = ({
 											}}
 										>
 											{ isURL ? (
-												<img src={ icon } width="130px" />
+												<img src={ icon } alt="" width="130px" />
 											) : (
 												<span>
 													{ __( 'Please select an image.', 'otter-blocks' ) }
@@ -264,6 +268,13 @@ const IconPickerControl = ({
 									value={ icon }
 									onSelect={ onChange }
 								/>
+
+								{ icon && isURL && onAltChange && (
+									<AltTextControl
+										value={ imageAlt }
+										onChange={ onAltChange }
+									/>
+								) }
 							</Fragment>
 						) }
 					</Fragment>
