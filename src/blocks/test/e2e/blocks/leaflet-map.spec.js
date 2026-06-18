@@ -74,6 +74,57 @@ test.describe( 'Maps (Leaflet) block', () => {
 			.toBe( 1 );
 	});
 
+	test( 'markers are draggable in the editor', async({ editor }) => {
+		await insertMap( editor, { markers: [ marker() ] });
+
+		// Leaflet adds this class only when the marker is created with draggable:true.
+		// Paired with the persistence test below, this guards both halves of
+		// drag-to-refine (the gesture itself can't be simulated headlessly).
+		const icon = editor.canvas.locator( '.leaflet-marker-icon' ).first();
+		await expect( icon ).toBeVisible({ timeout: 20_000 });
+		await expect( icon ).toHaveClass( /leaflet-marker-draggable/ );
+	});
+
+	test( 'the map initialises promptly after Leaflet loads', async({ editor, page }) => {
+		await insertMap( editor, { markers: [] });
+		await editor.canvas.locator( '.leaflet-container' ).waitFor({ timeout: 20_000 });
+
+		// Delay Leaflet so it becomes available well after DOMReady; the init poll
+		// interval then dominates the gap between "Leaflet ready" and "map created".
+		// The old 2s poll blows past the threshold here; the 100ms poll stays under it.
+		await page.route( '**/assets/leaflet/leaflet.js', async( route ) => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
+			await route.continue();
+		});
+
+		// Stamp, before any page script runs, when window.L appears and when the
+		// placeholder becomes a Leaflet container.
+		await page.addInitScript( () => {
+			window.__mapTiming = {};
+			const iv = setInterval( () => {
+				if ( window.L && undefined === window.__mapTiming.leaflet ) {
+					window.__mapTiming.leaflet = performance.now();
+				}
+				const el = document.querySelector( '.wp-block-themeisle-blocks-leaflet-map.leaflet-container' );
+				if ( el && undefined === window.__mapTiming.map ) {
+					window.__mapTiming.map = performance.now();
+					clearInterval( iv );
+				}
+			}, 10 );
+		});
+
+		await publishAndViewPost({ editor, page });
+
+		const gap = await page
+			.waitForFunction( () => {
+				const t = window.__mapTiming;
+				return t && undefined !== t.leaflet && undefined !== t.map ? t.map - t.leaflet : false;
+			}, { timeout: 20_000 })
+			.then( ( handle ) => handle.jsonValue() );
+
+		expect( gap ).toBeLessThan( 1000 );
+	});
+
 	// Editing a marker's coordinates persists. This exercises the same UPDATE →
 	// reducer → setAttributes path a drag-to-refine uses; before the fix it only
 	// persisted on marker count changes, so edits (and drags) were silently lost.
