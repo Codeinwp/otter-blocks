@@ -240,4 +240,85 @@ test.describe( 'Content Slider Block', () => {
 		await expect( track.locator( '.wp-block-themeisle-blocks-button-group .wp-block-button__link' ) ).toContainText( 'Otter button slide' );
 		await expect( track.locator( '.wp-block-themeisle-blocks-accordion' ) ).toContainText( 'Otter accordion slide' );
 	});
+
+	test( 'renders diverse core blocks and a content-heavy slide', async({ editor, page }) => {
+		const listItem = content => ({ name: 'core/list-item', attributes: { content } });
+		const paragraph = content => ({ name: 'core/paragraph', attributes: { content } });
+
+		await editor.insertBlock({
+			name: BLOCK,
+			innerBlocks: [
+				// Slide 1 — a mix of core blocks.
+				{
+					name: 'core/group',
+					attributes: { className: 'core-mix-slide', layout: { type: 'constrained' } },
+					innerBlocks: [
+						{ name: 'core/heading', attributes: { content: 'Core mix heading', level: 2 } },
+						{ name: 'core/image', attributes: { url: 'https://s.w.org/images/core/5.3/MtBlanc1.jpg', alt: 'Peak' } },
+						paragraph( 'An intro paragraph for the core mix slide.' ),
+						{ name: 'core/list', innerBlocks: [ listItem( 'Alpha' ), listItem( 'Beta' ), listItem( 'Gamma' ) ] },
+						{ name: 'core/quote', innerBlocks: [ paragraph( 'A quoted line of text.' ) ] },
+						{ name: 'core/buttons', innerBlocks: [ { name: 'core/button', attributes: { text: 'Core button' } } ] }
+					]
+				},
+
+				// Slide 2 — content-heavy: many blocks nested inside one slide.
+				{
+					name: 'core/group',
+					attributes: { className: 'huge-slide', layout: { type: 'constrained' } },
+					innerBlocks: [
+						{ name: 'core/heading', attributes: { content: 'Content-heavy slide', level: 2 } },
+						...Array.from({ length: 10 }, ( _, i ) => paragraph( `Body paragraph number ${ i + 1 } with a sentence of content.` ) ),
+						{ name: 'core/list', innerBlocks: Array.from({ length: 8 }, ( _, i ) => listItem( `Feature ${ i + 1 }` ) ) },
+						{
+							name: 'core/columns',
+							innerBlocks: [
+								{ name: 'core/column', innerBlocks: [ paragraph( 'Left column copy.' ) ] },
+								{ name: 'core/column', innerBlocks: [ paragraph( 'Middle column copy.' ) ] },
+								{ name: 'core/column', innerBlocks: [ paragraph( 'Right column copy.' ) ] }
+							]
+						},
+						{ name: 'core/quote', innerBlocks: [ paragraph( 'A closing pull quote.' ) ] }
+					]
+				},
+
+				// Slide 3 — core and Otter blocks together in one slide.
+				{
+					name: 'core/group',
+					attributes: { className: 'mixed-slide', layout: { type: 'constrained' } },
+					innerBlocks: [
+						{ name: 'core/heading', attributes: { content: 'Mixed slide', level: 3 } },
+						{ name: 'themeisle-blocks/advanced-heading', attributes: { content: 'Otter advanced heading', tag: 'h4' } },
+						{ name: 'themeisle-blocks/button-group', innerBlocks: [ { name: 'themeisle-blocks/button', attributes: { text: 'Otter CTA', link: 'https://example.com' } } ] }
+					]
+				}
+			]
+		});
+
+		await publishAndViewPost({ editor, page });
+
+		const track = page.locator( '.o-content-track' );
+		await expect( track.locator( '> *' ) ).toHaveCount( 3 );
+
+		// Slide 1 — core blocks render.
+		const coreMix = track.locator( '.core-mix-slide' );
+		await expect( coreMix.locator( 'h2.wp-block-heading' ) ).toContainText( 'Core mix heading' );
+		await expect( coreMix.locator( '.wp-block-image img' ) ).toBeVisible();
+		await expect( coreMix.locator( '.wp-block-list li' ) ).toContainText([ 'Alpha', 'Beta', 'Gamma' ]);
+		await expect( coreMix.locator( '.wp-block-quote' ) ).toContainText( 'A quoted line of text.' );
+		await expect( coreMix.locator( '.wp-block-button__link' ) ).toContainText( 'Core button' );
+
+		// Slide 2 — the content-heavy slide renders all of its blocks.
+		const huge = track.locator( '.huge-slide' );
+		expect( await huge.locator( 'p' ).count() ).toBeGreaterThanOrEqual( 10 );
+		await expect( huge.locator( '.wp-block-list li' ) ).toHaveCount( 8 );
+		await expect( huge.locator( '.wp-block-columns .wp-block-column' ) ).toHaveCount( 3 );
+		await expect( huge.locator( '.wp-block-quote' ) ).toContainText( 'A closing pull quote.' );
+
+		// Slide 3 — core + Otter blocks coexist in one slide.
+		const mixed = track.locator( '.mixed-slide' );
+		await expect( mixed.locator( 'h3.wp-block-heading' ) ).toContainText( 'Mixed slide' );
+		await expect( mixed.locator( '.wp-block-themeisle-blocks-advanced-heading' ) ).toContainText( 'Otter advanced heading' );
+		await expect( mixed.locator( '.wp-block-themeisle-blocks-button-group .wp-block-button__link' ) ).toContainText( 'Otter CTA' );
+	});
 });
