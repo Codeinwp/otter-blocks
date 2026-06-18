@@ -6,13 +6,13 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { Fragment, useState } from '@wordpress/element';
+import { Fragment, useRef, useState } from '@wordpress/element';
 
 import { createBlock } from '@wordpress/blocks';
 
 import { useDispatch, useSelect } from '@wordpress/data';
 
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { Button, Disabled } from '@wordpress/components';
 
@@ -21,6 +21,7 @@ import { Button, Disabled } from '@wordpress/components';
  */
 import Inspector from './inspector.js';
 import PreviewBoundary from './preview-boundary.js';
+import GenerationPlanView from './generation-plan.js';
 import PromptPlaceholder from '../../components/prompt';
 import { parseFormPromptResponseToBlocks, sendBlockGenerationPrompt } from '../../helpers/prompt';
 import { generateBlocksFromTask } from '../../plugins/ai-content/block-generation';
@@ -44,10 +45,20 @@ const ContentGenerator = ({
 
 	const [ prompt, setPrompt ] = useState( '' );
 
+	// Plan + per-section progress, surfaced as the page builds section by section.
+	const [ plan, setPlan ] = useState( null );
+	const [ sections, setSections ] = useState( [] );
+
+	// Monotonic id so callbacks from a superseded run (regenerate / close) are ignored,
+	// and an accumulator so each finished root can be inserted progressively.
+	const generationIdRef = useRef( 0 );
+	const accumulatedRef = useRef( [] );
+
 	const {
 		removeBlock,
 		replaceInnerBlocks,
-		replaceBlocks
+		replaceBlocks,
+		__unstableMarkNextChangeAsNotPersistent
 	} = useDispatch( 'core/block-editor' );
 
 	const { hasInnerBlocks, getBlocks, blockTypes } = useSelect(
@@ -99,8 +110,42 @@ const ContentGenerator = ({
 	 * @param {string} task The user task describing the desired content.
 	 * @return {Promise<{result: string, usedToken: number}|{error: string}>} The pipeline outcome.
 	 */
+	/**
+	 * Derive a readable section title from an outline root.
+	 *
+	 * @param {import('../../plugins/ai-content/block-generation').StructureNode} root  The outline root.
+	 * @param {number}                                                            index The root index, used for a fallback label.
+	 * @return {string} The section title.
+	 */
+	const sectionTitle = ( root, index ) => {
+		if ( root?.notes ) {
+			return root.notes.length > 60 ? `${ root.notes.slice( 0, 59 ).trimEnd() }…` : root.notes;
+		}
+		const name = ( root?.name ?? '' ).replace( /^[a-z-]+\//, '' ).replace( /-/g, ' ' );
+
+		// translators: %d: section number
+		return name || sprintf( __( 'Section %d', 'otter-blocks' ), index + 1 );
+	};
+
+	/**
+	 * Progressively insert the accumulated blocks without polluting the undo stack —
+	 * the only persistent change is the user's final "Done".
+	 */
+	const previewAccumulated = () => {
+		__unstableMarkNextChangeAsNotPersistent?.();
+		replaceInnerBlocks( clientId, accumulatedRef.current.map( makeBlockCopy ).filter( Boolean ) );
+	};
+
 	const onGenerateBlocks = async( task ) => {
 		let usedToken = 0;
+
+		// Start a fresh run: invalidate prior callbacks and clear any previous preview.
+		const generationId = ++generationIdRef.current;
+		const isStale = () => generationId !== generationIdRef.current;
+		accumulatedRef.current = [];
+		setPlan( null );
+		setSections( [] );
+		previewAccumulated();
 
 		const requestCompletion = async( instruction ) => {
 			const response = await sendBlockGenerationPrompt( instruction );
@@ -109,7 +154,7 @@ const ContentGenerator = ({
 				throw new Error( response.error.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 			}
 
-			const content = response.content;
+			const { content } = response;
 
 			if ( ! content ) {
 				throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
@@ -120,18 +165,57 @@ const ContentGenerator = ({
 			return content;
 		};
 
+		const onPlanReady = ( generationPlan ) => {
+			if ( isStale() ) {
+				return;
+			}
+
+			setPlan( generationPlan );
+			setSections(
+				( generationPlan.roots ?? [] ).map( ( root, index ) => ({
+					title: sectionTitle( root, index ),
+					status: 0 === index ? 'building' : 'pending'
+				}) )
+			);
+		};
+
+		const onRootComplete = ({ rootIndex, totalRoots, blocks: rootBlocks }) => {
+			if ( isStale() ) {
+				return;
+			}
+
+			if ( rootBlocks.length ) {
+				accumulatedRef.current = [ ...accumulatedRef.current, ...rootBlocks ];
+				previewAccumulated();
+			}
+
+			setSections( ( current ) => current.map( ( section, index ) => {
+				if ( index === rootIndex ) {
+					return { ...section, status: rootBlocks.length ? 'done' : 'failed' };
+				}
+				if ( index === rootIndex + 1 && rootIndex + 1 < totalRoots ) {
+					return { ...section, status: 'building' };
+				}
+				return section;
+			}) );
+		};
+
 		try {
 			const generation = await generateBlocksFromTask({
 				task,
 				blockTypes,
-				requestCompletion
+				requestCompletion,
+				onPlanReady,
+				onRootComplete
 			});
+
+			if ( isStale() ) {
+				return { error: __( 'Generation was superseded.', 'otter-blocks' ) };
+			}
 
 			if ( ! generation.blocks.length ) {
 				return { error: __( 'Could not generate valid blocks. Please try a simpler prompt.', 'otter-blocks' ) };
 			}
-
-			replaceInnerBlocks( clientId, generation.blocks );
 
 			const result = generation.rationale.length
 				? generation.rationale.join( '\n' )
@@ -202,6 +286,9 @@ const ContentGenerator = ({
 					actionButtons={ actionButtons }
 					onClose={ () => removeBlock( clientId ) }
 					promptPlaceholder={ preset.placeholder }
+					progressContent={ ! isFormPrompt && plan ? (
+						<GenerationPlanView plan={ plan } sections={ sections } />
+					) : undefined }
 				>
 					{
 						hasInnerBlocks ? (

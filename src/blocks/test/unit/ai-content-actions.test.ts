@@ -55,14 +55,15 @@ describe( 'ai-content actions', () => {
 		expect( filterToolbarActionsForBlocks( actions, [ 'core/paragraph' ] )[0].id ).toBe( 'rewrite' );
 	});
 
-	it( 'maps richtext availability to paragraph and heading blocks', () => {
+	it( 'shows richtext and any actions on text blocks', () => {
 		const actions = normalizeToolbarActions([
 			{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false, availability: 'richtext' },
 			{ id: 'custom-table', title: 'Convert to table', prompt: 'Convert', enabled: true, custom: true, availability: 'any' }
 		]);
 
-		expect( filterToolbarActionsForBlocks( actions, [ 'core/paragraph' ] ).map( ( action ) => action.id ) ).toEqual([ 'rewrite' ]);
-		expect( filterToolbarActionsForBlocks( actions, [ 'core/heading' ] ).map( ( action ) => action.id ) ).toEqual([ 'rewrite' ]);
+		// "Any block" actions are available everywhere, including rich text blocks.
+		expect( filterToolbarActionsForBlocks( actions, [ 'core/paragraph' ] ).map( ( action ) => action.id ) ).toEqual([ 'rewrite', 'custom-table' ]);
+		expect( filterToolbarActionsForBlocks( actions, [ 'core/heading' ] ).map( ( action ) => action.id ) ).toEqual([ 'rewrite', 'custom-table' ]);
 	});
 
 	it( 'maps any availability to non-text blocks', () => {
@@ -394,8 +395,8 @@ describe( 'extractBlockAttributeDefinitions', () => {
 				name: 'themeisle-blocks/form',
 				attributes: {},
 				innerBlocks: [
-					{ clientId: 'input', name: 'themeisle-blocks/form-input', attributes: {} },
-					{ clientId: 'textarea', name: 'themeisle-blocks/form-textarea', attributes: {} }
+					{ clientId: 'input', name: 'themeisle-blocks/form-input', attributes: {}},
+					{ clientId: 'textarea', name: 'themeisle-blocks/form-textarea', attributes: {}}
 				]
 			}
 		];

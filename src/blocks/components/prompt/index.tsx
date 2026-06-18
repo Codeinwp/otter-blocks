@@ -46,6 +46,14 @@ type PromptPlaceholderProps = {
 	 * string is only used for the history/token display.
 	 */
 	onGenerateBlocks?: ( task: string, regenerate: boolean ) => Promise<{ result: string, usedToken: number } | { error: string }>
+
+	/**
+	 * Optional content rendered alongside the prompt while generating (and after),
+	 * independent of the result history. The AI Block uses it to show the
+	 * generation plan and per-section progress during the first run, before any
+	 * result history exists.
+	 */
+	progressContent?: ReactNode
 };
 
 export const openAiAPIKeyName = 'themeisle_open_ai_api_key';
@@ -501,6 +509,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 					/>
 				)
 			}
+
+			{ props.progressContent }
 
 			{
 				showError && (
