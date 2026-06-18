@@ -129,7 +129,7 @@ const Inspector = ({
 					value={ attributes.zoom }
 					onChange={ zoom => setAttributes({ zoom }) }
 					min={ 0 }
-					max={ 20 }
+					max={ 21 }
 				/>
 
 				<ResponsiveControl

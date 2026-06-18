@@ -167,4 +167,20 @@ test.describe( 'Maps (Leaflet) block', () => {
 		await page.locator( '.leaflet-marker-icon' ).first().hover();
 		await expect( page.locator( '.leaflet-tooltip' ) ).toHaveText( 'Sagrada Familia', { timeout: 10_000 });
 	});
+
+	test( 'hover tooltip is hidden once the click popup opens', async({ editor, page }) => {
+		await insertMap( editor, { markers: [ marker() ], showMarkerTooltip: true });
+		await editor.canvas.locator( '.leaflet-marker-icon' ).first().waitFor({ timeout: 20_000 });
+
+		await publishAndViewPost({ editor, page });
+
+		const icon = page.locator( '.leaflet-marker-icon' ).first();
+		await icon.hover();
+		await expect( page.locator( '.leaflet-tooltip' ) ).toBeVisible();
+
+		// Clicking opens the popup; the duplicate hover tooltip should disappear.
+		await icon.click();
+		await expect( page.locator( '.leaflet-popup' ) ).toBeVisible();
+		await expect( page.locator( '.leaflet-tooltip' ) ).toHaveCount( 0 );
+	});
 });

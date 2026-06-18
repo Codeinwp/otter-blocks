@@ -35,13 +35,20 @@ const createMarker = ( markerProps, attributes ) => {
 
 	const hasTitle = Boolean( markerProps.title );
 	const hasContent = hasTitle || Boolean( markerProps.description );
+	const showTooltip = attributes.showMarkerTooltip && hasTitle;
 
-	if ( attributes.showMarkerTooltip && hasTitle ) {
+	if ( showTooltip ) {
 		markerMap.bindTooltip( markerProps.title, { direction: 'auto' });
 	}
 
 	if ( hasContent ) {
 		markerMap.bindPopup( createPopupContent( markerProps ) );
+
+		// Hide the hover tooltip while the click popup is open so the same title
+		// isn't shown twice; it returns on hover once the popup closes.
+		if ( showTooltip ) {
+			markerMap.on( 'popupopen', () => markerMap.closeTooltip() );
+		}
 	}
 
 	return markerMap;
@@ -62,7 +69,7 @@ const createLeafletMap = ( container, attributes ) => {
 
 	// Create the map
 	const map = window.L.map( container, {
-		maxZoom: 19,
+		maxZoom: 21,
 		zoomControl: attributes.zoomControl,
 		dragging: attributes.draggable,
 		scrollWheelZoom: scrollZoom,
@@ -78,10 +85,13 @@ const createLeafletMap = ( container, attributes ) => {
 			}
 		}
 	});
+	// OSM serves tiles up to zoom 19; overzoom (maxNativeZoom) upscales them so
+	// users can zoom in as far as other OSM plugins.
 	window.L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 		subdomains: [ 'a', 'b', 'c' ],
-		maxZoom: 19
+		maxNativeZoom: 19,
+		maxZoom: 21
 	}).addTo( map );
 
 	// Set the view

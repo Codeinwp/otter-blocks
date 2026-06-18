@@ -131,6 +131,10 @@ const Edit = ({
 				setOpenMarker( markerProps.id );
 			});
 
+			// Hide the hover tooltip while the click popup is open so the same title
+			// isn't shown twice (no-op when no tooltip is bound).
+			markerMap.on( 'popupopen', () => markerMap.closeTooltip() );
+
 			markerMap.markerProps = markerProps;
 
 			return markerMap;
@@ -228,7 +232,7 @@ const Edit = ({
 		const _map = L.map(
 			mapRef.current,
 			{
-				maxZoom: 19,
+				maxZoom: 21,
 				scrollWheelZoom: scrollZoom,
 
 				// Gesture handling enforces the Ctrl/\u2318 + scroll requirement; turn it off
@@ -245,11 +249,14 @@ const Edit = ({
 		);
 
 
-		// Add Open Street Map as source
+		// Add Open Street Map as source. OSM serves tiles up to zoom 19; allow a
+		// couple of extra levels via overzoom (maxNativeZoom) so users can zoom in
+		// as far as other OSM plugins, upscaling the level-19 tiles past that point.
 		L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: [ 'a', 'b', 'c' ],
-			maxZoom: 19
+			maxNativeZoom: 19,
+			maxZoom: 21
 		}).addTo( _map );
 
 		/**
