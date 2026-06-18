@@ -29,6 +29,12 @@
 		},
 		"icon": {
 			"type": "string"
+		},
+		"iconId": {
+			"type": "number"
+		},
+		"iconAlt": {
+			"type": "string"
 		}
 	}
 }

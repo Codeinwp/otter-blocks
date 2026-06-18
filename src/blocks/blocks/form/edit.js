@@ -83,6 +83,7 @@ const formOptionsMap = {
 	bcc: 'bcc',
 	replyTo: 'replyTo',
 	autoresponder: 'autoresponder',
+	aiAutoresponder: 'aiAutoresponder',
 	emailNotification: 'emailNotification',
 	webhookId: 'webhookId',
 	requiredFields: 'requiredFields'
@@ -150,6 +151,7 @@ const Edit = ({
 		bcc: undefined,
 		replyTo: undefined,
 		autoresponder: undefined,
+		aiAutoresponder: undefined,
 		emailNotification: undefined
 	});
 
@@ -322,7 +324,7 @@ const Edit = ({
 			}
 		}
 
-		if ( formOptions.autoresponder || formOptions.provider || formOptions.listId || formOptions.action ) {
+		if ( formOptions.autoresponder || formOptions.aiAutoresponder?.enabled || formOptions.provider || formOptions.listId || formOptions.action ) {
 			const emailFields = findInnerBlocks(
 				children,
 				block => {
@@ -370,7 +372,7 @@ const Edit = ({
 			setShowDuplicatedMappedName( hasDuplicateMappedNames );
 		}
 
-	}, [ children, formOptions.autoresponder, formOptions.provider, formOptions.listId, formOptions.action, formOptions.webhookId ]);
+	}, [ children, formOptions.autoresponder, formOptions.aiAutoresponder?.enabled, formOptions.provider, formOptions.listId, formOptions.action, formOptions.webhookId ]);
 
 	/**
 	 * Get the data from the WP Options for the current form.

@@ -6,6 +6,7 @@ import { close, chevronLeft, chevronRight, copy, upload, undo } from '@wordpress
 import { createPortal, useState, useEffect, useRef, useCallback, memo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import blockIcon from '../blocks/icon';
+import { getStructuralLabel, toPlainText } from '../blocks/labels';
 import { StateControls, hasStateConfig } from '../states';
 import { AnimationControls } from '../animations';
 
@@ -15,16 +16,20 @@ function decodeEntities( html ) {
 	return _decodeEl.value;
 }
 
+// RichTextData.toPlainText() output is already decoded; only raw strings
+// still carry entities.
+function previewText( value ) {
+	const plain = toPlainText( value );
+	const text = typeof value === 'string' ? decodeEntities( plain ) : plain;
+	return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
+}
+
 function getTextPreview( block ) {
 	if ( block.name === 'atomic-wind/text' ) {
-		const raw = block.attributes?.content || '';
-		const text = decodeEntities( raw.replace( /<[^>]+>/g, '' ) ).trim();
-		return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
+		return previewText( block.attributes?.content );
 	}
 	if ( block.name === 'atomic-wind/link' && block.attributes?.mode !== 'inner-blocks' ) {
-		const raw = block.attributes?.content || '';
-		const text = decodeEntities( raw.replace( /<[^>]+>/g, '' ) ).trim();
-		return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
+		return previewText( block.attributes?.text );
 	}
 	return '';
 }
@@ -39,9 +44,9 @@ const TreeNode = memo( ( { block, depth, selectedId, onSelect, collapsed, onTogg
 	const title = useSelect(
 		( select ) => {
 			const type = select( blocksStore ).getBlockType( block.name );
-			return type ? type.title : block.name;
+			return getStructuralLabel( block.name, block.attributes ) || ( type ? type.title : block.name );
 		},
-		[ block.name ]
+		[ block.name, block.attributes ]
 	);
 
 	const hasChildren = block.innerBlocks && block.innerBlocks.length > 0;
@@ -132,7 +137,7 @@ const Panel = ( { onClose } ) => {
 			if ( ! block ) {return { selectedTitle: '', selectedPreview: '', selectedAttributes: {}};}
 			const type = select( blocksStore ).getBlockType( block.name );
 			return {
-				selectedTitle: type ? type.title : block.name,
+				selectedTitle: getStructuralLabel( block.name, block.attributes ) || ( type ? type.title : block.name ),
 				selectedPreview: getTextPreview( block ),
 				selectedAttributes: block.attributes || {},
 			};

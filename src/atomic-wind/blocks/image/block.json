@@ -27,6 +27,9 @@
 		"className": {
 			"type": "string",
 			"default": "w-full"
+		},
+		"metadata": {
+			"type": "object"
 		}
 	},
 	"supports": {

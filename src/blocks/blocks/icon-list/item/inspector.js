@@ -27,7 +27,11 @@ const Inspector = ({
 }) => {
 	const changeIcon = value => {
 		if ( 'image' === attributes.library && value?.url ) {
-			return setAttributes({ icon: value.url });
+			return setAttributes({
+				icon: value.url,
+				iconId: value.id,
+				iconAlt: value.alt
+			});
 		}
 
 		if ( 'object' === typeof value ) {
@@ -44,6 +48,8 @@ const Inspector = ({
 		setAttributes({
 			library: value,
 			icon: undefined,
+			iconId: undefined,
+			iconAlt: undefined,
 			iconPrefix: 'fab'
 		});
 	};
@@ -61,6 +67,8 @@ const Inspector = ({
 					changeLibrary={ changeLibrary }
 					onChange={ changeIcon }
 					allowImage
+					imageAlt={ attributes.iconAlt }
+					onAltChange={ iconAlt => setAttributes({ iconAlt }) }
 				/>
 			</PanelBody>
 
