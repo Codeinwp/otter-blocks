@@ -168,6 +168,20 @@ test.describe( 'Maps (Leaflet) block', () => {
 		await expect( page.locator( '.leaflet-tooltip' ) ).toHaveText( 'Sagrada Familia', { timeout: 10_000 });
 	});
 
+	test( 'map can zoom in past the OSM native level 19', async({ editor, page }) => {
+
+		// Sit the map at zoom 19. With the old maxZoom of 19 the zoom-in control
+		// would be disabled here; overzoom (maxZoom 21) keeps it enabled.
+		await insertMap( editor, { markers: [], zoom: 19 });
+		await editor.canvas.locator( '.leaflet-container' ).waitFor({ timeout: 20_000 });
+
+		await publishAndViewPost({ editor, page });
+
+		const zoomIn = page.locator( '.leaflet-control-zoom-in' );
+		await expect( zoomIn ).toBeVisible({ timeout: 20_000 });
+		await expect( zoomIn ).not.toHaveClass( /leaflet-disabled/ );
+	});
+
 	test( 'hover tooltip is hidden once the click popup opens', async({ editor, page }) => {
 		await insertMap( editor, { markers: [ marker() ], showMarkerTooltip: true });
 		await editor.canvas.locator( '.leaflet-marker-icon' ).first().waitFor({ timeout: 20_000 });
