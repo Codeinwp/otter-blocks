@@ -450,7 +450,25 @@ test.describe( 'Form submission retention', () => {
 		// Wait out the anti-spam minimum fill time.
 		await page.waitForTimeout( 5000 );
 
+		// Capture the actual submission request so we can assert the wire payload, not just
+		// the persisted result. The frontend posts a multipart body whose `form_data` part
+		// is the JSON `{ handler, payload }` built from extractFormFields.
+		const submitRequestPromise = page.waitForRequest( request =>
+			request.url().includes( 'otter/v1/form/frontend' ) && 'POST' === request.method()
+		);
+
 		await page.getByRole( 'button', { name: 'Submit' }).click();
+
+		const submitRequest = await submitRequestPromise;
+		const sentBody = submitRequest.postData() || '';
+		const sentJson = sentBody.match( /name="form_data"[\r\n]+([\s\S]*?)[\r\n]+--/ );
+		const sentFields = sentJson ? ( JSON.parse( sentJson[1] )?.payload?.formInputsData ?? [] ) : [];
+
+		// The request sends the multiple-choice field under its plain label, asterisk-free.
+		const sentChoice = sentFields.find( field => field.value?.includes( 'Option A' ) );
+		expect( sentChoice ).toBeTruthy();
+		expect( sentChoice.label ).toBe( 'Choose' );
+		sentFields.forEach( field => expect( field.label ?? '' ).not.toContain( '*' ) );
 
 		// The submission is persisted as a Record before delivery, regardless of email outcome.
 		await expect( page.locator( '.o-form-server-response' ) ).toBeVisible();
