@@ -125,6 +125,97 @@ export function normalizePromptResponse( response: PromptRouteSuccess|unknown ):
 	};
 }
 
+/*
+ * Transient backend failures we should retry: gateway/timeout statuses, the WP
+ * AI Client's network-error code, and cURL/timeout phrasing in the message. A
+ * reasoning model behind /v1/responses can blow past the backend's 30s cURL
+ * timeout and surface as a 502, which a quick retry usually rides out.
+ */
+const TRANSIENT_PROMPT_CODES = new Set([ 'prompt_network_error', 'http_request_failed', 'fetch_error', 'timeout' ]);
+const TRANSIENT_PROMPT_STATUSES = new Set([ 408, 425, 429, 500, 502, 503, 504 ]);
+const TRANSIENT_PROMPT_MESSAGE = /tim(?:e|ed)\s?out|timeout|cURL error 28|network error|temporarily unavailable|bad gateway|gateway time/i;
+
+/**
+ * Decide whether a failed prompt result is a transient backend error worth
+ * retrying (vs. a permanent one like a bad key or invalid request).
+ *
+ * @param {PromptResult} result The normalized prompt result.
+ * @return {boolean} True when the failure looks transient.
+ */
+export function isTransientPromptError( result: PromptResult ): boolean {
+	if ( result.ok ) {
+		return false;
+	}
+
+	const code = result.error.code ?? '';
+	if ( TRANSIENT_PROMPT_CODES.has( code ) ) {
+		return true;
+	}
+
+	const raw = result.raw as { data?: { status?: number }, status?: number } | undefined;
+	const status = raw?.data?.status ?? raw?.status;
+	if ( 'number' === typeof status && TRANSIENT_PROMPT_STATUSES.has( status ) ) {
+		return true;
+	}
+
+	return TRANSIENT_PROMPT_MESSAGE.test( result.error.message ?? '' );
+}
+
+const sleep = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
+
+/**
+ * Run a prompt request, retrying transient backend failures with exponential
+ * backoff. The last result is returned whether it succeeded or not.
+ *
+ * @param {() => Promise<PromptResult>}            attempt   The single-attempt request.
+ * @param {{retries?: number, baseDelay?: number}} [options] Retry tuning.
+ * @return {Promise<PromptResult>}                           The final prompt result.
+ */
+export async function withPromptRetry(
+	attempt: () => Promise<PromptResult>,
+	{ retries = 2, baseDelay = 600 }: { retries?: number, baseDelay?: number } = {}
+): Promise<PromptResult> {
+	let result = await attempt();
+
+	for ( let i = 0; i < retries && isTransientPromptError( result ); i++ ) {
+		await sleep( baseDelay * Math.pow( 2, i ) );
+		result = await attempt();
+	}
+
+	return result;
+}
+
+/**
+ * Single POST to the generation proxy, normalized into a PromptResult. Network
+ * and HTTP errors are caught and shaped so callers (and the retry helper) get a
+ * consistent failure object instead of a thrown error.
+ *
+ * @param {Record<string, unknown>} payload The request body to forward.
+ * @return {Promise<PromptResult>} The normalized result.
+ */
+async function postGenerate( payload: Record<string, unknown> ): Promise<PromptResult> {
+	try {
+		const response = await apiFetch({
+			path: addQueryArgs( '/otter/v1/openai/generate', {}),
+			method: 'POST',
+			body: JSON.stringify( payload )
+		});
+
+		return normalizePromptResponse( response );
+	} catch ( e ) {
+		return {
+			ok: false,
+			error: {
+				code: e.code ?? e.error?.code ?? 'system',
+				message: e.message ?? e.error?.message ?? e.error ?? 'Something went wrong.',
+				param: e.data?.param ?? null,
+				type: e.data?.type ?? 'system'
+			},
+			raw: e
+		};
+	}
+}
+
 /**
  * Create a prompt request emebdded with the given settings.
  *
@@ -162,31 +253,13 @@ function promptRequestBuilder( settings?: OpenAiSettings ) {
 			return obj;
 		}
 
-		try {
-			const response = await apiFetch({
-				path: addQueryArgs( '/otter/v1/openai/generate', {}),
-				method: 'POST',
-				body: JSON.stringify({
-					...( metadata ?? {}),
-					...( removeOtterKeys( body ) ),
-					...settings
-				})
-			});
+		const payload = {
+			...( metadata ?? {}),
+			...( removeOtterKeys( body ) ),
+			...settings
+		};
 
-			return normalizePromptResponse( response );
-		} catch ( e ) {
-			return {
-				ok: false,
-				error: {
-					code: e.code ?? e.error?.code ?? 'system',
-					message: e.message ?? e.error?.message ?? e.error ?? 'Something went wrong.',
-					param: e.data?.param ?? null,
-					type: e.data?.type ?? 'system'
-				},
-				raw: e
-			};
-		}
-
+		return withPromptRetry( () => postGenerate( payload ) );
 	};
 }
 
@@ -230,36 +303,19 @@ const BLOCK_GENERATION_SYSTEM_PROMPT =
  * @return Normalized prompt result (see normalizePromptResponse).
  */
 export async function sendBlockGenerationPrompt( instruction: string ): Promise<PromptResult> {
-	try {
-		const response = await apiFetch({
-			path: addQueryArgs( '/otter/v1/openai/generate', {}),
-			method: 'POST',
-			body: JSON.stringify({
-				otter_used_action: 'blockGeneration',
-				otter_user_content: instruction,
-				model: BLOCK_GENERATION_MODEL,
-				messages: [
-					{ role: 'system', content: BLOCK_GENERATION_SYSTEM_PROMPT },
-					{ role: 'user', content: instruction }
-				],
-				response_format: { type: 'json_object' },
-				stream: false
-			})
-		});
+	const payload = {
+		otter_used_action: 'blockGeneration',
+		otter_user_content: instruction,
+		model: BLOCK_GENERATION_MODEL,
+		messages: [
+			{ role: 'system', content: BLOCK_GENERATION_SYSTEM_PROMPT },
+			{ role: 'user', content: instruction }
+		],
+		response_format: { type: 'json_object' },
+		stream: false
+	};
 
-		return normalizePromptResponse( response );
-	} catch ( e ) {
-		return {
-			ok: false,
-			error: {
-				code: e.code ?? e.error?.code ?? 'system',
-				message: e.message ?? e.error?.message ?? e.error ?? 'Something went wrong.',
-				param: e.data?.param ?? null,
-				type: e.data?.type ?? 'system'
-			},
-			raw: e
-		};
-	}
+	return withPromptRetry( () => postGenerate( payload ) );
 }
 
 const fieldMapping = {

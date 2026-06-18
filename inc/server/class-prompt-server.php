@@ -215,7 +215,37 @@ class Prompt_Server {
 		$body = array_diff_key( $body, $otter_data );
 
 		$backend = AI_Backend_Resolver::resolve();
-		$result  = $backend->generate( $body );
+
+		/**
+		 * Filter the HTTP timeout (in seconds) for AI generation requests.
+		 *
+		 * The WordPress AI Client sends provider requests with a 30s timeout,
+		 * which reasoning models on the OpenAI /v1/responses endpoint regularly
+		 * exceed (cURL error 28). Raise it to match the bring-your-own-key
+		 * backend so long generations have time to complete.
+		 *
+		 * @param int $timeout Timeout in seconds.
+		 */
+		$timeout = (int) apply_filters( 'otter_ai_request_timeout', 2 * MINUTE_IN_SECONDS );
+
+		$raise_timeout = static function ( $args ) use ( $timeout ) {
+			$current = isset( $args['timeout'] ) ? (int) $args['timeout'] : 0;
+			if ( $current < $timeout ) {
+				$args['timeout'] = $timeout;
+			}
+			return $args;
+		};
+
+		// Scope the raised timeout to just this generation request. A long timeout is
+		// intentional here: AI generation runs in a dedicated REST request, not a
+		// page load, and reasoning models can take well over the 30s default.
+		add_filter( 'http_request_args', $raise_timeout, 100 ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.http_request_args
+
+		try {
+			$result = $backend->generate( $body );
+		} finally {
+			remove_filter( 'http_request_args', $raise_timeout, 100 );
+		}
 
 		if ( is_wp_error( $result ) ) {
 			return $result;
