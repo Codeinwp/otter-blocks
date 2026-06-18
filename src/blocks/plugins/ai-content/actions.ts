@@ -248,22 +248,19 @@ export const filterToolbarActionsForBlocks = (
 	blockNames: string[]
 ): AIToolbarAction[] => {
 	const allRichText = blockNames.every( isRichTextBlock );
-	const allNonRichText = blockNames.every( ( name ) => ! isRichTextBlock( name ) );
 
 	return actions.filter( ( action ) => {
 		if ( ! action.enabled ) {
 			return false;
 		}
 
-		if ( allRichText ) {
-			return 'richtext' === action.availability;
+		// "Any block" actions are available on every block, including text.
+		if ( 'any' === action.availability ) {
+			return true;
 		}
 
-		if ( allNonRichText ) {
-			return 'any' === action.availability;
-		}
-
-		return false;
+		// Text-only actions require every selected block to be rich text.
+		return allRichText;
 	});
 };
 
