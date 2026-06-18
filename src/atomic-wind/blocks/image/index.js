@@ -3,6 +3,7 @@ import metadata from './block.json';
 import icon from '../icon';
 import edit from './edit';
 import save from './save';
+import { imageLabel } from '../labels';
 
 const { name, ...settings } = metadata;
 
@@ -11,4 +12,5 @@ registerBlockType( name, {
 	icon,
 	edit,
 	save,
+	__experimentalLabel: imageLabel,
 } );

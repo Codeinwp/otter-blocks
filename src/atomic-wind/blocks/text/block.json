@@ -17,6 +17,9 @@
 			"source": "rich-text",
 			"selector": "[data-rich-text]",
 			"role": "content"
+		},
+		"metadata": {
+			"type": "object"
 		}
 	},
 	"supports": {
