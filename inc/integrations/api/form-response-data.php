@@ -21,16 +21,18 @@ class Form_Data_Response {
 	const SUCCESS_EMAIL_SEND      = '0';
 	const SUCCESS_USER_SUBSCRIBED = '1';
 
-	const ERROR_RUNTIME_ERROR                     = '10';
-	const ERROR_FILE_UPLOAD                       = '11';
-	const ERROR_FILE_UPLOAD_TYPE                  = '12';
-	const ERROR_FILE_UPLOAD_TYPE_WP               = '13';
-	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER      = '14';
-	const ERROR_FILE_UPLOAD_MAX_SIZE              = '15';
-	const ERROR_MISSING_FILE_FIELD_OPTION         = '16';
-	const ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD = '17';
-	const ERROR_AUTORESPONDER_COULD_NOT_SEND      = '18';
-	const ERROR_MALFORMED_REQUEST                 = '19';
+	const ERROR_RUNTIME_ERROR                      = '10';
+	const ERROR_FILE_UPLOAD                        = '11';
+	const ERROR_FILE_UPLOAD_TYPE                   = '12';
+	const ERROR_FILE_UPLOAD_TYPE_WP                = '13';
+	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER       = '14';
+	const ERROR_FILE_UPLOAD_MAX_SIZE               = '15';
+	const ERROR_MISSING_FILE_FIELD_OPTION          = '16';
+	const ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  = '17';
+	const ERROR_AUTORESPONDER_COULD_NOT_SEND       = '18';
+	const ERROR_MALFORMED_REQUEST                  = '19';
+	const ERROR_AUTORESPONDER_AI_GENERATION_FAILED = '20';
+	const ERROR_AUTORESPONDER_AI_VALIDATION_FAILED = '21';
 
 	// Request validation errors.
 	const ERROR_MISSING_DATA                 = '101';
@@ -389,6 +391,8 @@ class Form_Data_Response {
 			self::ERROR_FILE_UPLOAD_MAX_SIZE               => __( 'The file size exceed the limit.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_MISSING_EMAIL_FIELD  => __( 'The email field is missing from the Form Block with Autoresponder activated.', 'otter-blocks' ),
 			self::ERROR_AUTORESPONDER_COULD_NOT_SEND       => __( 'The email from Autoresponder could not be sent.', 'otter-blocks' ),
+			self::ERROR_AUTORESPONDER_AI_GENERATION_FAILED => __( 'The AI Autoresponder reply could not be generated. The fallback message was used.', 'otter-blocks' ),
+			self::ERROR_AUTORESPONDER_AI_VALIDATION_FAILED => __( 'The AI Autoresponder reply did not pass validation. The fallback message was used.', 'otter-blocks' ),
 			self::ERROR_FILE_MISSING_BINARY                => __( 'The file data is missing.', 'otter-blocks' ),
 			self::ERROR_MALFORMED_REQUEST                  => __( 'The request is malformed.', 'otter-blocks' ),
 			self::ERROR_WEBHOOK_COULD_NOT_TRIGGER          => __( 'The webhook could not be triggered.', 'otter-blocks' ),

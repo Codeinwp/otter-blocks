@@ -116,6 +116,150 @@ svg.o-block-icon {
 	margin-top: 10px;
 }
 
+// Keep the message modal a consistent width so switching tabs doesn't resize it.
+.components-modal__frame.o-autoresponder-modal {
+	.o-autoresponder-tabs {
+		margin-top: 4px;
+	}
+
+	// Give the AI-on tab content breathing room below the tab strip.
+	.components-tab-panel__tab-content {
+		padding-top: 16px;
+	}
+}
+
+// Give the tab strip a baseline so the tabs read as proper tabs, not floating text.
+// The baseline is drawn as an inset shadow at the tab-row's bottom edge, which is
+// the same edge WordPress draws the active-tab indicator on — so they align exactly
+// instead of producing two offset lines.
+.o-autoresponder-tabs {
+	> .components-tab-panel__tabs {
+		box-shadow: inset 0 -1px 0 0 #e0e0e0;
+		margin-bottom: 5px;
+	}
+}
+
+// Prompt fields shown dimmed when "Reply with AI" is off (still visible for discovery).
+.o-autoresponder-prompt-fields {
+	&.is-dimmed {
+		opacity: 0.5;
+	}
+}
+
+// Info notice on the Fallback message tab: spacing + inline icon.
+.o-autoresponder-fallback-notice.components-notice {
+	margin: 0 0 8px;
+
+	.components-notice__content {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.components-icon {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
+
+// "Reply with AI" toggle shown at the top of the AI Prompt tab while AI is off.
+.o-autoresponder-ai-toggle {
+	margin-bottom: 20px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.o-autoresponder-prompt {
+	&__label {
+		margin: 0 0 8px;
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.2px;
+		text-transform: uppercase;
+	}
+
+	&__help {
+		margin: 8px 0 0;
+		color: #757575;
+		font-size: 12px;
+		line-height: 1.5;
+	}
+}
+
+// Custom contentEditable prompt input with inline magic-tag chips.
+.o-ar-input {
+	min-height: 96px;
+	padding: 12px 14px;
+	border: 1px solid #949494;
+	border-radius: 2px;
+	font-size: 13px;
+	line-height: 1.8;
+	white-space: pre-wrap;
+	word-break: break-word;
+	cursor: text;
+
+	&:focus {
+		border-color: #2271b1;
+		box-shadow: 0 0 0 1px #2271b1;
+		outline: 2px solid transparent;
+	}
+
+	&:empty::before {
+		content: attr(data-placeholder);
+		color: #757575;
+		pointer-events: none;
+	}
+}
+
+.o-ar-chip {
+	display: inline-block;
+	padding: 0 8px;
+	margin: 0 1px;
+	background: #f0f6fc;
+	border: 1px solid #c5d9ed;
+	border-radius: 10px;
+	color: #2271b1;
+	font-size: 12px;
+	line-height: 1.7;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.o-autoresponder-magic-tags {
+	margin-top: 16px;
+
+	&__title {
+		margin: 0 0 8px;
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.2px;
+		text-transform: uppercase;
+	}
+
+	&__list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	&__chip.components-button {
+		height: 28px;
+		min-height: 28px;
+		padding: 0 10px;
+		font-size: 12px;
+		line-height: 1;
+		border-radius: 2px;
+	}
+
+	&__help {
+		margin: 10px 0 0;
+		color: #757575;
+		font-size: 12px;
+		line-height: 1.5;
+	}
+}
+
 .o-webhook-headers {
 	display: flex;
 	flex-direction: column;
