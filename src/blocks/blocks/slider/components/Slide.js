@@ -83,7 +83,6 @@ const Slide = ({
 					className="wp-block-themeisle-blocks-slider-item"
 					src={ image.url }
 					alt={ image.alt }
-					title={ image.alt }
 					data-id={ image.id }
 				/>
 
