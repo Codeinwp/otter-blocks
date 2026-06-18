@@ -200,4 +200,44 @@ test.describe( 'Content Slider Block', () => {
 		await page.locator( '.o-content-arrow--next' ).click({ clickCount: 3 });
 		expect( errors ).toEqual([]);
 	});
+
+	test( 'renders other Otter blocks as slides', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: BLOCK,
+			innerBlocks: [
+				{
+					name: 'themeisle-blocks/advanced-heading',
+					attributes: { content: 'Otter heading slide', tag: 'h3' }
+				},
+				{
+					name: 'themeisle-blocks/button-group',
+					innerBlocks: [
+						{
+							name: 'themeisle-blocks/button',
+							attributes: { text: 'Otter button slide', link: 'https://example.com' }
+						}
+					]
+				},
+				{
+					name: 'themeisle-blocks/accordion',
+					innerBlocks: [
+						{
+							name: 'themeisle-blocks/accordion-item',
+							attributes: { title: 'Otter accordion slide' }
+						}
+					]
+				}
+			]
+		});
+
+		await publishAndViewPost({ editor, page });
+
+		const track = page.locator( '.o-content-track' );
+
+		// Each Otter block is a direct child (slide) and renders its own markup.
+		await expect( track.locator( '> *' ) ).toHaveCount( 3 );
+		await expect( track.locator( '.wp-block-themeisle-blocks-advanced-heading' ) ).toContainText( 'Otter heading slide' );
+		await expect( track.locator( '.wp-block-themeisle-blocks-button-group .wp-block-button__link' ) ).toContainText( 'Otter button slide' );
+		await expect( track.locator( '.wp-block-themeisle-blocks-accordion' ) ).toContainText( 'Otter accordion slide' );
+	});
 });
