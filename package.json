@@ -16,6 +16,8 @@
 		"build-dev": "NODE_ENV=development npm run build",
 		"analyzer": "NODE_ANALYZER=true npm run build",
 		"lint": "wp-scripts lint-js ./src",
+		"lint:block-api": "node bin/check-block-api-version.mjs",
+		"create-block": "node bin/create-block.mjs",
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
 		"release": "semantic-release",
@@ -35,17 +37,20 @@
 		"test:performance:debug": "wp-scripts test-playwright --config src/blocks/test/performance/playwright.config.ts --debug",
 		"test:unit:php:setup": "wp-env start",
 		"test:unit:php:setup:debug": "wp-env start --xdebug",
-		"test:unit:php:base": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' tests-wordpress vendor/bin/phpunit -c phpunit.xml --verbose",
+		"test:unit:php:base": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' wordpress vendor/bin/phpunit -c phpunit.xml --verbose",
 		"test:unit:php": "npm-run-all test:unit:php:setup test:unit:php:base",
 		"test:unit:php:debug": "npm-run-all test:unit:php:setup:debug test:unit:php:base",
-		"test:unit:php:multisite:base": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' tests-wordpress vendor/bin/phpunit -c phpunit/multisite.xml --verbose",
+		"test:unit:php:multisite:base": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' wordpress vendor/bin/phpunit -c phpunit/multisite.xml --verbose",
 		"test:unit:php:multisite": "npm-run-all test:unit:php:setup test:unit:php:multisite:base",
 		"test:unit:php:multisite:debug": "npm-run-all test:unit:php:setup:debug test:unit:php:multisite:base",
 		"test:php": "npm-run-all lint:php test:unit:php",
-		"test:php:watch": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' tests-cli composer run-script test:watch",
+		"test:php:watch": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script test:watch",
 		"lint:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script lint",
 		"format:php": "wp-env run --env-cwd='wp-content/plugins/otter-blocks' cli composer run-script format",
 		"wp-env": "wp-env",
+		"env:start": "node bin/wp-env-up.js",
+		"env:stop": "wp-env stop",
+		"env:cleanup": "wp-env cleanup",
 		"build:makepot": "docker run --user root --rm --volume \"$(pwd):/var/www/html/otter-blocks\" wordpress:cli bash -c 'php -d memory_limit=512M \"$(which wp)\" --version --allow-root && wp i18n make-pot otter-blocks ./otter-blocks/languages/otter-pro.pot --include=\"otter-pro,build/pro,inc\" --allow-root --domain=otter-pro --headers={\\\"Last-Translator\\\":\\\"friends@themeisle.com\\\"\\,\\\"Report-Msgid-Bugs-To\\\":\\\"https://github.com/Codeinwp/otter-blocks/issues\\\"\\,\\\"Project-Id-Version\\\":\\\"Otter-Blocks\\\"\\,\\\"POT-Creation-Date\\\":\\\"\\\"}'",
 		"update-icons:atomic-wind": "bash bin/update-atomic-wind-icons.sh",
 		"plugins:sdk:update": "composer require codeinwp/themeisle-sdk --update-with-dependencies --no-install --working-dir=./plugins/blocks-animation && composer require codeinwp/themeisle-sdk --update-with-dependencies --no-install --working-dir=./plugins/blocks-css"
@@ -70,8 +75,10 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
+		"@dnd-kit/core": "^6.3.1",
+		"@dnd-kit/sortable": "^10.0.0",
+		"@dnd-kit/utilities": "^3.2.2",
 		"@wordpress/icons": "^13.1.0",
-		"array-move": "^4.0.0",
 		"classnames": "^2.5.1",
 		"currency-symbol-map": "^5.1.0",
 		"deepmerge": "^4.3.1",
@@ -79,7 +86,6 @@
 		"hex-rgba": "^1.0.2",
 		"object-hash": "^3.0.0",
 		"react-intersection-observer": "^9.13.0",
-		"react-sortable-hoc": "^2.0.0",
 		"react-visibility-sensor": "^5.1.1",
 		"tailwindcss": "^4.3.0",
 		"uuid": "^14.0.0"
@@ -123,9 +129,5 @@
 	},
 	"optionalDependencies": {
 		"fsevents": "^2.3.3"
-	},
-	"overrides": {
-		"react": "^17.0.0",
-		"react-dom": "^17.0.0"
 	}
 }

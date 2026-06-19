@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e8d70f2d8a417bf424124979faf853b",
+    "content-hash": "b41cfd1bb81a9d4f8ed32b2381a22d65",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.51",
+            "version": "3.3.52",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "bb2a8414b0418b18c68c9ff1df3d7fb10467928d"
+                "reference": "d1ae68cbd4f84934b4d982e9eeff317b9f4c814a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/bb2a8414b0418b18c68c9ff1df3d7fb10467928d",
-                "reference": "bb2a8414b0418b18c68c9ff1df3d7fb10467928d",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/d1ae68cbd4f84934b4d982e9eeff317b9f4c814a",
+                "reference": "d1ae68cbd4f84934b4d982e9eeff317b9f4c814a",
                 "shasum": ""
             },
             "require-dev": {
@@ -43,9 +43,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.51"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.52"
             },
-            "time": "2026-03-30T07:58:49+00:00"
+            "time": "2026-05-14T19:43:56+00:00"
         },
         {
             "name": "enshrined/svg-sanitize",
@@ -992,20 +992,20 @@
         },
         {
             "name": "php-stubs/acf-pro-stubs",
-            "version": "v6.5.0",
+            "version": "v6.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/acf-pro-stubs.git",
-                "reference": "e54ba80a945fd1f6c9ebe761e3f19992fbaedb39"
+                "reference": "b22454992d9651cd837439a2c1073a0955b68d94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/e54ba80a945fd1f6c9ebe761e3f19992fbaedb39",
-                "reference": "e54ba80a945fd1f6c9ebe761e3f19992fbaedb39",
+                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/b22454992d9651cd837439a2c1073a0955b68d94",
+                "reference": "b22454992d9651cd837439a2c1073a0955b68d94",
                 "shasum": ""
             },
             "require": {
-                "php-stubs/wordpress-stubs": "^4.7 || ^5.0 || ^6.0"
+                "php-stubs/wordpress-stubs": "^4.7 || ^5.0 || ^6.0 || ^7.0"
             },
             "require-dev": {
                 "php": "~7.1 || ^8.0",
@@ -1038,22 +1038,22 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/acf-pro-stubs/issues",
-                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v6.5.0"
+                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v6.8.2"
             },
-            "time": "2025-09-05T00:47:01+00:00"
+            "time": "2026-06-01T12:08:34+00:00"
         },
         {
             "name": "php-stubs/woocommerce-stubs",
-            "version": "v9.9.5",
+            "version": "v10.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/woocommerce-stubs.git",
-                "reference": "3f4d4e14afe6150569bd96cf14e8a17a84812447"
+                "reference": "9d59e65dcabc18153c243cb9acd85fc88ef40589"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/3f4d4e14afe6150569bd96cf14e8a17a84812447",
-                "reference": "3f4d4e14afe6150569bd96cf14e8a17a84812447",
+                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/9d59e65dcabc18153c243cb9acd85fc88ef40589",
+                "reference": "9d59e65dcabc18153c243cb9acd85fc88ef40589",
                 "shasum": ""
             },
             "require": {
@@ -1082,22 +1082,22 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
-                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v9.9.5"
+                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v10.8.0"
             },
-            "time": "2025-07-14T17:12:48+00:00"
+            "time": "2026-05-27T11:46:50+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",
-            "version": "v6.8.2",
+            "version": "v7.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "9c8e22e437463197c1ec0d5eaa9ddd4a0eb6d7f8"
+                "reference": "d74b963ed4f47303859bf73c741c80f554c83dc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/9c8e22e437463197c1ec0d5eaa9ddd4a0eb6d7f8",
-                "reference": "9c8e22e437463197c1ec0d5eaa9ddd4a0eb6d7f8",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/d74b963ed4f47303859bf73c741c80f554c83dc6",
+                "reference": "d74b963ed4f47303859bf73c741c80f554c83dc6",
                 "shasum": ""
             },
             "conflict": {
@@ -1107,10 +1107,11 @@
                 "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
                 "nikic/php-parser": "^5.5",
                 "php": "^7.4 || ^8.0",
-                "php-stubs/generator": "^0.8.3",
-                "phpdocumentor/reflection-docblock": "^5.4.1",
+                "php-stubs/generator": "^0.8.6",
+                "phpdocumentor/reflection-docblock": "^6.0",
                 "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^9.5",
+                "symfony/polyfill-php80": "*",
                 "szepeviktor/phpcs-psr-12-neutron-hybrid-ruleset": "^1.1.1",
                 "wp-coding-standards/wpcs": "3.1.0 as 2.3.0"
             },
@@ -1133,9 +1134,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
-                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.8.2"
+                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v7.0.0"
             },
-            "time": "2025-07-16T06:41:00+00:00"
+            "time": "2026-05-21T21:41:34+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
@@ -2995,69 +2996,6 @@
             "time": "2025-11-04T16:30:35+00:00"
         },
         {
-            "name": "szepeviktor/phpstan-wordpress",
-            "version": "v2.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/szepeviktor/phpstan-wordpress.git",
-                "reference": "aa722f037b2d034828cd6c55ebe9e5c74961927e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/szepeviktor/phpstan-wordpress/zipball/aa722f037b2d034828cd6c55ebe9e5c74961927e",
-                "reference": "aa722f037b2d034828cd6c55ebe9e5c74961927e",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.4 || ^8.0",
-                "php-stubs/wordpress-stubs": "^6.6.2",
-                "phpstan/phpstan": "^2.0"
-            },
-            "require-dev": {
-                "composer/composer": "^2.1.14",
-                "composer/semver": "^3.4",
-                "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-                "php-parallel-lint/php-parallel-lint": "^1.1",
-                "phpstan/phpstan-strict-rules": "^2.0",
-                "phpunit/phpunit": "^9.0",
-                "szepeviktor/phpcs-psr-12-neutron-hybrid-ruleset": "^1.0",
-                "wp-coding-standards/wpcs": "3.1.0 as 2.3.0"
-            },
-            "suggest": {
-                "swissspidy/phpstan-no-private": "Detect usage of internal core functions, classes and methods"
-            },
-            "type": "phpstan-extension",
-            "extra": {
-                "phpstan": {
-                    "includes": [
-                        "extension.neon"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "SzepeViktor\\PHPStan\\WordPress\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "WordPress extensions for PHPStan",
-            "keywords": [
-                "PHPStan",
-                "code analyse",
-                "code analysis",
-                "static analysis",
-                "wordpress"
-            ],
-            "support": {
-                "issues": "https://github.com/szepeviktor/phpstan-wordpress/issues",
-                "source": "https://github.com/szepeviktor/phpstan-wordpress/tree/v2.0.3"
-            },
-            "time": "2025-09-14T02:58:22+00:00"
-        },
-        {
             "name": "theseer/tokenizer",
             "version": "1.2.3",
             "source": {
@@ -3255,7 +3193,14 @@
             "time": "2025-02-09T18:58:54+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "php-stubs/wordpress-stubs",
+            "version": "7.0.0.0",
+            "alias": "6.8.2",
+            "alias_normalized": "6.8.2.0"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {},
     "prefer-stable": true,

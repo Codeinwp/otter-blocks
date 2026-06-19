@@ -47,7 +47,8 @@ class Live_Search {
 			$post_types_data = 'data-post-types=' . wp_json_encode( $block['attrs']['otterSearchQuery']['post_type'] );
 
 			if ( count( $block['attrs']['otterSearchQuery']['post_type'] ) === 1 && in_array( 'post', $block['attrs']['otterSearchQuery']['post_type'] ) ) {
-				$post_types_data .= ' data-cat="' . esc_attr( $block['attrs']['otterSearchQuery']['cat'] ) . '"';
+				$cat              = isset( $block['attrs']['otterSearchQuery']['cat'] ) ? $block['attrs']['otterSearchQuery']['cat'] : '';
+				$post_types_data .= ' data-cat="' . esc_attr( $cat ) . '"';
 			}
 		}
 

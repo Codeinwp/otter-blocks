@@ -28,6 +28,7 @@ import Placeholder from './placeholder.js';
 import Inspector from './inspector.js';
 import Slide from './components/Slide.js';
 import SliderControls from './components/slider-controls.js';
+import { safeGlideDestroy } from './glide-utils.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import {
 	blockInit,
@@ -107,7 +108,7 @@ const Edit = ({
 
 		return () => {
 			if ( attributes?.images?.length ) {
-				sliderRef?.current?.destroy();
+				safeGlideDestroy( sliderRef?.current );
 			}
 			initObserver.current?.disconnect();
 		};
@@ -135,7 +136,7 @@ const Edit = ({
 
 		// Clean up old references.
 		if ( Boolean( sliderRef.current ) ) {
-			sliderRef.current?.destroy?.();
+			safeGlideDestroy( sliderRef.current );
 			sliderRef.current = undefined;
 		}
 

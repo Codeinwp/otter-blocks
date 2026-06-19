@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
-	"apiVersion": 2,
+	"apiVersion": 3,
 	"name": "themeisle-blocks/icon-list",
 	"title": "Icon List",
 	"category": "themeisle-blocks",
@@ -22,6 +22,12 @@
 		"defaultIcon": {
 			"type": "string",
 			"default": "check"
+		},
+		"defaultIconId": {
+			"type": "number"
+		},
+		"defaultIconAlt": {
+			"type": "string"
 		},
 		"defaultContentColor": {
 			"type": "string"

@@ -138,6 +138,7 @@ class StripeHttpClientMock implements ClientInterface
 				'object' => 'price',
 				'active' => true,
 				'billing_scheme' => 'per_unit',
+				'type' => 'one_time',
 			]
 		);
 	}
@@ -147,6 +148,11 @@ class StripeHttpClientMock implements ClientInterface
 		return json_encode(
 			[
 				'object' => 'object',
+
+				// Top-level fields read by Form_Pro_Features::create_stripe_session().
+				'id' => 'sess_create_1',
+				'url' => 'https://checkout.stripe.com/c/pay/sess_create_1',
+				'payment_intent' => 'pi_create_1',
 				'data'   => [
 					'id' => 'sess_1',
 					'status' => 'created'
@@ -175,6 +181,29 @@ class StripeHttpClientMock implements ClientInterface
 				return json_encode( array_merge( $base, array(
 					'id'          => 'sess_wrong_price_product',
 					'success_url' => 'https://example.com/success?product_id=prod_1',
+				) ) );
+
+			case 'sess_unpaid':
+				return json_encode( array_merge( $base, array(
+					'id'             => 'sess_unpaid',
+					'status'         => 'open',
+					'payment_status' => 'unpaid',
+				) ) );
+
+			case 'sess_no_record':
+				return json_encode( array_merge( $base, array(
+					'id'       => 'sess_no_record',
+					'metadata' => array( 'unrelated' => 'value' ),
+				) ) );
+
+			case 'sess_with_record':
+				// The record is created by the test, which publishes its ID through this global.
+				return json_encode( array_merge( $base, array(
+					'id'       => 'sess_with_record',
+					'metadata' => array(
+						'otter_form_record_id' => strval( isset( $GLOBALS['otter_test_stripe_record_id'] ) ? $GLOBALS['otter_test_stripe_record_id'] : '0' ),
+						'otter_redirect_link'  => 'https://example.com/thanks',
+					),
 				) ) );
 
 			default:

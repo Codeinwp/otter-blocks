@@ -29,10 +29,9 @@ import {
 	switchFormFieldTo
 } from '../common';
 import { FormContext } from '../edit.js';
-import { HTMLAnchorControl } from '../../../components';
+import { HTMLAnchorControl, SortableVerticalList } from '../../../components';
 import { isString } from 'lodash';
-import { SortableContainer } from 'react-sortable-hoc';
-import { arrayMoveImmutable as arrayMove } from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 
 const styles = [
 	{
@@ -107,19 +106,49 @@ const Inspector = ({
 						id="otter-form-multiple-choice-options"
 						label={ __( 'Options', 'otter-blocks' ) }
 					>
-						<ChoiceList
-							options={ options }
-							attributes={ attributes }
-							setAttributes={ setAttributes }
-							useDragHandle
-							axis="y"
-							lockAxis="y"
-							onSortEnd={ ({ oldIndex, newIndex }) => {
-								let o = [ ...options ];
-								o = arrayMove( o, oldIndex, newIndex );
-								setAttributes({ options: o });
+						<SortableVerticalList
+							items={ options }
+							getItemId={ ( _option, index ) => `option-${ index }` }
+							onReorder={ ( oldIndex, newIndex ) => {
+								setAttributes({ options: arrayMove( [ ...options ], oldIndex, newIndex ) });
 							} }
-						/>
+						>
+							{ ( tab, index ) => (
+								<SortableChoiceItem
+									key={ `option-${ index }` }
+									id={ `option-${ index }` }
+									tab={ tab }
+									setAsDefault={ () => {
+										const updatedOptions = options.map( ( item, i ) => {
+											const updatedItem = { ...item };
+											if (
+												( 'select' === attributes.type || 'radio' === attributes.type ) &&
+												i !== index
+											) {
+												updatedItem.isDefault = false;
+											}
+											if ( i === index ) {
+												updatedItem.isDefault = ! Boolean( item.isDefault );
+											}
+											return updatedItem;
+										});
+
+										setAttributes({ options: updatedOptions });
+									} }
+									deleteTab={ () => {
+										const o = [ ...options ];
+										o.splice( index, 1 );
+										setAttributes({ options: o });
+									} }
+									onLabelChange={ ( value ) => {
+										const o = [ ...options ];
+										o[index] = { ...o[index], content: value };
+										setAttributes({ options: o });
+									} }
+									useRadio={ 'select' === attributes.type || 'radio' === attributes.type }
+								/>
+							) }
+						</SortableVerticalList>
 						<Button
 							isSecondary
 							className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
@@ -201,51 +230,5 @@ const Inspector = ({
 		</Fragment>
 	);
 };
-
-// Move ChoiceList outside of the Inspector component
-const ChoiceList = SortableContainer( ( { options, attributes, setAttributes } ) => {
-	return (
-		<div>
-			{
-				options?.map(
-					( tab, index ) => (
-						<SortableChoiceItem
-							key={index}
-							index={index}
-							tab={tab}
-							setAsDefault={() => {
-								const updatedOptions = options.map( ( item, i ) => {
-									const updatedItem = { ...item };
-									if (
-										( 'select' === attributes.type || 'radio' === attributes.type ) &&
-										i !== index
-									) {
-										updatedItem.isDefault = false;
-									}
-									if ( i === index ) {
-										updatedItem.isDefault = ! Boolean( item.isDefault );
-									}
-									return updatedItem;
-								});
-
-								setAttributes({ options: updatedOptions });
-							}}
-							deleteTab={() => {
-								const o = [ ...options ];
-								o.splice( index, 1 );
-								setAttributes({ options: o });
-							}}
-							onLabelChange={( value ) => {
-								const o = [ ...options ];
-								o[index] = { ...o[index], content: value };
-								setAttributes({ options: o });
-							}}
-							useRadio={'select' === attributes.type || 'radio' === attributes.type}
-						/>
-					) )
-			}
-		</div>
-	);
-});
 
 export default Inspector;

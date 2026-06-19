@@ -29,7 +29,7 @@ test.describe( 'Advanced Heading Block', () => {
 			name: 'themeisle-blocks/advanced-heading'
 		});
 
-		await page.getByRole( 'document', { name: 'Block: Advanced Heading' }).click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Advanced Heading' }).click();
 
 		const sidebarClass = await page.getByRole( 'button', { name: 'Settings', exact: true }).first().getAttribute( 'class' );
 		if ( ! sidebarClass.includes( 'is-pressed' ) ) {
@@ -43,8 +43,9 @@ test.describe( 'Advanced Heading Block', () => {
 		await page.getByRole( 'button', { name: 'Set custom size' }).click();
 
 		// Select font size — the input is labelled "Font size" in WP 7.0 (was "Custom" previously).
-		// Scope to the numeric input because the wrapping fieldset also carries the same label.
-		await page.locator( 'input[type="number"][id="inspector-input-control-0"]' ).fill( '16' );
+		// The spinbutton role targets the numeric input; the wrapping fieldset
+		// carries the same label but has no spinbutton role.
+		await page.getByRole( 'spinbutton', { name: 'Font size' }).fill( '16' );
 
 		// Open the menu for more options.
 		await page.getByRole( 'button', { name: 'View options' }).click();
@@ -62,6 +63,12 @@ test.describe( 'Advanced Heading Block', () => {
 
 		// Open the family font menu to start the fonts loading. Then close the panel and come back after some time.
 		await page.getByRole( 'button', { name: 'Font Family' }).click();
+
+		// Close the popover while the fonts load in the background. Rendering the
+		// full font list keeps the page busy on slow runners, which starves the
+		// actionability checks for the fills below.
+		await page.keyboard.press( 'Escape' );
+		await expect( page.locator( '.o-gfont-popover' ) ).toBeHidden();
 
 		// Fill the line height.
 		await page.getByLabel( 'Line Height' ).fill( '1.5' );

@@ -74,6 +74,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content',
 			'\ThemeIsle\GutenbergBlocks\Plugins\FSE_Onboarding',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Stripe_API',
 			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',

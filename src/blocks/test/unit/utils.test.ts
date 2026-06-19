@@ -1,3 +1,12 @@
+jest.mock( '@wordpress/blocks', () => ({
+	parse: jest.fn( () => [] )
+}) );
+
+jest.mock( '@wordpress/data', () => ({
+	dispatch: jest.fn( () => ({}) ),
+	select: jest.fn( () => ({}) )
+}) );
+
 import { findBlock } from '../../../onboarding/utils';
 
 describe( 'findBlock', () => {

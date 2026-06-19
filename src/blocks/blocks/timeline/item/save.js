@@ -26,7 +26,7 @@ const Save = ({
 					{
 						attributes.hasIcon && (
 							'image' === attributes.iconType && attributes.icon ? (
-								<img src={ attributes.icon } />
+								<img src={ attributes.icon } alt={ attributes.iconAlt || '' } />
 							) : (
 								'themeisle-icons' === attributes.iconType && attributes.icon && Icon !== undefined ? (
 									<Icon/>

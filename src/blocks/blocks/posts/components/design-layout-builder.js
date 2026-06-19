@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { arrayMoveImmutable as arrayMove } from 'array-move';
+import { arrayMove } from '@dnd-kit/sortable';
 
 import classnames from 'classnames';
 
@@ -55,9 +55,8 @@ const LayoutBuilder = ({
 	attributes,
 	setAttributes
 }) => {
-	const onSortEnd = ({ oldIndex, newIndex }) => {
-		const template = arrayMove( attributes.template, oldIndex, newIndex );
-		setAttributes({ template });
+	const onReorder = ( oldIndex, newIndex ) => {
+		setAttributes({ template: arrayMove( attributes.template, oldIndex, newIndex ) });
 	};
 	return (
 		<Fragment>
@@ -77,10 +76,7 @@ const LayoutBuilder = ({
 				<SortableList
 					attributes={ attributes }
 					setAttributes={ setAttributes }
-					onSortEnd={ onSortEnd }
-					useDragHandle
-					axis="y"
-					lockAxis="y"
+					onReorder={ onReorder }
 				/>
 
 				{ applyFilters( 'otter.postsBlock.sortableContainer', <ProFeatures />, attributes, setAttributes ) }

@@ -5,6 +5,8 @@ type Attributes= {
 	defaultLibrary: string
 	defaultPrefix: string
 	defaultIcon: string
+	defaultIconId: number
+	defaultIconAlt: string
 	defaultContentColor: string
 	defaultIconColor: string
 	defaultIconSize: number
