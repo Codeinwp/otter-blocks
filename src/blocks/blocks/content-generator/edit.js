@@ -6,32 +6,59 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { Fragment, useRef, useState } from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 
 import { createBlock } from '@wordpress/blocks';
 
 import { useDispatch, useSelect } from '@wordpress/data';
 
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
-import { Button, Disabled } from '@wordpress/components';
+import { Button, Disabled, Placeholder, TextareaControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import Inspector from './inspector.js';
 import PreviewBoundary from './preview-boundary.js';
-import GenerationPlanView from './generation-plan.js';
 import PromptPlaceholder from '../../components/prompt';
-import { parseFormPromptResponseToBlocks, sendBlockGenerationPrompt } from '../../helpers/prompt';
-import { generateBlocksFromTask } from '../../plugins/ai-content/block-generation';
+import { aiGeneration as icon } from '../../helpers/icons.js';
+import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
+import AIContentModal from '../../plugins/ai-content/modal';
+
+/**
+ * The synthetic action used to drive the generation modal from the AI Block. It
+ * reuses the block-generation path (`availability: 'any'`) but in create mode,
+ * so there is no source block to transform — the result replaces the AI Block.
+ */
+const CREATE_ACTION = {
+	id: 'otter-create-section',
+	title: __( 'AI Content generator', 'otter-blocks' ),
+	prompt: '',
+	enabled: true,
+	custom: false,
+	availability: 'any',
+	type: 'prompt'
+};
+
+/**
+ * Starter prompts shown in the block, since the first interaction happens here
+ * (the modal auto-generates once opened).
+ */
+const PROMPT_CHIPS = [
+	{ label: __( 'Hero', 'otter-blocks' ), prompt: __( 'A bold hero section with a headline, short subheading and two call-to-action buttons.', 'otter-blocks' ) },
+	{ label: __( 'Features', 'otter-blocks' ), prompt: __( 'A features section with three columns, each with an icon, title and short description.', 'otter-blocks' ) },
+	{ label: __( 'Pricing', 'otter-blocks' ), prompt: __( 'A pricing section with three plans and a highlighted recommended plan.', 'otter-blocks' ) },
+	{ label: __( 'Testimonials', 'otter-blocks' ), prompt: __( 'A testimonials section with three customer quotes and names.', 'otter-blocks' ) },
+	{ label: __( 'Call to action', 'otter-blocks' ), prompt: __( 'A call-to-action section with a short persuasive headline and a single button.', 'otter-blocks' ) }
+];
 
 /**
  * AI Block — Content Generator.
  *
- * Turns a free-form task into validated Gutenberg blocks through the block
- * generation pipeline (catalog → generate → validate → repair), then previews
- * them as inner blocks so they can be inserted or used to replace the block.
+ * For free-form content it launches the AI generation modal (prompt → preview →
+ * Done), which replaces this block with the generated section. The "form" prompt
+ * keeps its inline preview path since it maps a structured payload to a Form.
  *
  * @param {import('./types').ContentGeneratorProps} props
  */
@@ -44,35 +71,31 @@ const ContentGenerator = ({
 	const blockProps = useBlockProps();
 
 	const [ prompt, setPrompt ] = useState( '' );
-
-	// Plan + per-section progress, surfaced as the page builds section by section.
-	const [ plan, setPlan ] = useState( null );
-	const [ sections, setSections ] = useState( [] );
-
-	// Monotonic id so callbacks from a superseded run (regenerate / close) are ignored,
-	// and an accumulator so each finished root can be inserted progressively.
-	const generationIdRef = useRef( 0 );
-	const accumulatedRef = useRef( [] );
+	const [ scope, setScope ] = useState( 'section' );
+	const [ isModalOpen, setModalOpen ] = useState( false );
 
 	const {
 		removeBlock,
 		replaceInnerBlocks,
-		replaceBlocks,
-		__unstableMarkNextChangeAsNotPersistent
+		replaceBlocks
 	} = useDispatch( 'core/block-editor' );
 
-	const { hasInnerBlocks, getBlocks, blockTypes } = useSelect(
+	const { hasInnerBlocks, getBlocks } = useSelect(
 		select => {
 			const { getBlocks } = select( 'core/block-editor' );
 
 			return {
 				hasInnerBlocks: getBlocks?.( clientId ).length,
-				getBlocks,
-				blockTypes: select( 'core/blocks' )?.getBlockTypes?.() ?? []
+				getBlocks
 			};
 		},
 		[ clientId ]
 	);
+
+	// The "form" prompt returns a structured `{ fields: [...] }` JSON payload that
+	// maps to Form field blocks, so it uses the embedded-prompt path (onPreview)
+	// instead of the free-form generation modal.
+	const isFormPrompt = 'form' === attributes.promptID;
 
 	/**
 	 * Create a copy of the block and its inner blocks.
@@ -90,7 +113,7 @@ const ContentGenerator = ({
 	};
 
 	/**
-	 * Replace the block with the blocks generated from the prompt response.
+	 * Replace the block with the blocks generated from the form prompt response.
 	 */
 	const replaceBlock = () => {
 		const blocks = getBlocks( clientId );
@@ -103,134 +126,6 @@ const ContentGenerator = ({
 			replaceBlocks( clientId, blocksToInsert );
 		}
 	};
-
-	/**
-	 * Run the block generation pipeline and preview the result as inner blocks.
-	 *
-	 * @param {string} task The user task describing the desired content.
-	 * @return {Promise<{result: string, usedToken: number}|{error: string}>} The pipeline outcome.
-	 */
-	/**
-	 * Derive a readable section title from an outline root.
-	 *
-	 * @param {import('../../plugins/ai-content/block-generation').StructureNode} root  The outline root.
-	 * @param {number}                                                            index The root index, used for a fallback label.
-	 * @return {string} The section title.
-	 */
-	const sectionTitle = ( root, index ) => {
-		if ( root?.notes ) {
-			return root.notes.length > 60 ? `${ root.notes.slice( 0, 59 ).trimEnd() }…` : root.notes;
-		}
-		const name = ( root?.name ?? '' ).replace( /^[a-z-]+\//, '' ).replace( /-/g, ' ' );
-
-		// translators: %d: section number
-		return name || sprintf( __( 'Section %d', 'otter-blocks' ), index + 1 );
-	};
-
-	/**
-	 * Progressively insert the accumulated blocks without polluting the undo stack —
-	 * the only persistent change is the user's final "Done".
-	 */
-	const previewAccumulated = () => {
-		__unstableMarkNextChangeAsNotPersistent?.();
-		replaceInnerBlocks( clientId, accumulatedRef.current.map( makeBlockCopy ).filter( Boolean ) );
-	};
-
-	const onGenerateBlocks = async( task ) => {
-		let usedToken = 0;
-
-		// Start a fresh run: invalidate prior callbacks and clear any previous preview.
-		const generationId = ++generationIdRef.current;
-		const isStale = () => generationId !== generationIdRef.current;
-		accumulatedRef.current = [];
-		setPlan( null );
-		setSections( [] );
-		previewAccumulated();
-
-		const requestCompletion = async( instruction ) => {
-			const response = await sendBlockGenerationPrompt( instruction );
-
-			if ( ! response.ok ) {
-				throw new Error( response.error.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
-			}
-
-			const { content } = response;
-
-			if ( ! content ) {
-				throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
-			}
-
-			usedToken += response.usedTokens ?? 0;
-
-			return content;
-		};
-
-		const onPlanReady = ( generationPlan ) => {
-			if ( isStale() ) {
-				return;
-			}
-
-			setPlan( generationPlan );
-			setSections(
-				( generationPlan.roots ?? [] ).map( ( root, index ) => ({
-					title: sectionTitle( root, index ),
-					status: 0 === index ? 'building' : 'pending'
-				}) )
-			);
-		};
-
-		const onRootComplete = ({ rootIndex, totalRoots, blocks: rootBlocks }) => {
-			if ( isStale() ) {
-				return;
-			}
-
-			if ( rootBlocks.length ) {
-				accumulatedRef.current = [ ...accumulatedRef.current, ...rootBlocks ];
-				previewAccumulated();
-			}
-
-			setSections( ( current ) => current.map( ( section, index ) => {
-				if ( index === rootIndex ) {
-					return { ...section, status: rootBlocks.length ? 'done' : 'failed' };
-				}
-				if ( index === rootIndex + 1 && rootIndex + 1 < totalRoots ) {
-					return { ...section, status: 'building' };
-				}
-				return section;
-			}) );
-		};
-
-		try {
-			const generation = await generateBlocksFromTask({
-				task,
-				blockTypes,
-				requestCompletion,
-				onPlanReady,
-				onRootComplete
-			});
-
-			if ( isStale() ) {
-				return { error: __( 'Generation was superseded.', 'otter-blocks' ) };
-			}
-
-			if ( ! generation.blocks.length ) {
-				return { error: __( 'Could not generate valid blocks. Please try a simpler prompt.', 'otter-blocks' ) };
-			}
-
-			const result = generation.rationale.length
-				? generation.rationale.join( '\n' )
-				: __( 'Generated content is ready.', 'otter-blocks' );
-
-			return { result, usedToken };
-		} catch ( e ) {
-			return { error: e?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) };
-		}
-	};
-
-	// The "form" prompt returns a structured `{ fields: [...] }` JSON payload that
-	// maps to Form field blocks, so it uses the embedded-prompt path (onPreview)
-	// instead of the free-form block generation pipeline.
-	const isFormPrompt = 'form' === attributes.promptID;
 
 	/**
 	 * Build a Form block from a form-prompt JSON response and preview it as inner blocks.
@@ -254,19 +149,44 @@ const ContentGenerator = ({
 		</Button>
 	);
 
-	// Title and placeholder copy adapt to the prompt the block was inserted with.
-	const presets = {
-		form: {
-			title: __( 'AI Form generator', 'otter-blocks' ),
-			placeholder: __( 'Start describing what form you need…', 'otter-blocks' )
-		},
-		textTransformation: {
-			title: __( 'AI Content generator', 'otter-blocks' ),
-			placeholder: __( 'Start describing what content you need…', 'otter-blocks' )
-		}
-	};
-	const preset = presets[ attributes.promptID ] ?? presets.textTransformation;
+	// Form path keeps the inline prompt + preview experience.
+	if ( isFormPrompt ) {
+		return (
+			<Fragment>
+				<Inspector
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+				/>
 
+				<div { ...blockProps }>
+					<PromptPlaceholder
+						promptID={ attributes.promptID }
+						title={ __( 'AI Form generator', 'otter-blocks' ) }
+						value={ prompt }
+						resultHistory={ attributes.resultHistory }
+						onValueChange={ setPrompt }
+						onPreview={ onPreview }
+						actionButtons={ actionButtons }
+						onClose={ () => removeBlock( clientId ) }
+						promptPlaceholder={ __( 'Start describing what form you need…', 'otter-blocks' ) }
+					>
+						{
+							hasInnerBlocks ? (
+								<PreviewBoundary>
+									<Disabled>
+										<InnerBlocks renderAppender={ false } />
+									</Disabled>
+								</PreviewBoundary>
+							) : ''
+						}
+					</PromptPlaceholder>
+				</div>
+			</Fragment>
+		);
+	}
+
+	// Content path: a compact launcher that opens the generation modal. The modal
+	// generates, previews and (on Done) replaces this block with the result.
 	return (
 		<Fragment>
 			<Inspector
@@ -275,32 +195,84 @@ const ContentGenerator = ({
 			/>
 
 			<div { ...blockProps }>
-				<PromptPlaceholder
-					promptID={ attributes.promptID }
-					title={ preset.title }
-					value={ prompt }
-					resultHistory={ attributes.resultHistory }
-					onValueChange={ setPrompt }
-					onGenerateBlocks={ isFormPrompt ? undefined : onGenerateBlocks }
-					onPreview={ isFormPrompt ? onPreview : undefined }
-					actionButtons={ actionButtons }
-					onClose={ () => removeBlock( clientId ) }
-					promptPlaceholder={ preset.placeholder }
-					progressContent={ ! isFormPrompt && plan ? (
-						<GenerationPlanView plan={ plan } sections={ sections } />
-					) : undefined }
+				<Placeholder
+					icon={ icon }
+					label={ __( 'AI Content generator', 'otter-blocks' ) }
+					instructions={ __( 'Describe a section and Otter AI will build it with your blocks & theme styles.', 'otter-blocks' ) }
+					className="o-ai-create-card"
 				>
-					{
-						hasInnerBlocks ? (
-							<PreviewBoundary>
-								<Disabled>
-									<InnerBlocks renderAppender={ false } />
-								</Disabled>
-							</PreviewBoundary>
-						) : ''
-					}
-				</PromptPlaceholder>
+					<div className="o-ai-create-card__scope">
+						<Button
+							variant={ 'section' === scope ? 'primary' : 'secondary' }
+							isSmall
+							onClick={ () => setScope( 'section' ) }
+						>
+							{ __( 'Section', 'otter-blocks' ) }
+						</Button>
+						<Button
+							variant={ 'page' === scope ? 'primary' : 'secondary' }
+							isSmall
+							onClick={ () => setScope( 'page' ) }
+						>
+							{ __( 'Full page', 'otter-blocks' ) }
+						</Button>
+					</div>
+
+					<TextareaControl
+						value={ prompt }
+						onChange={ setPrompt }
+						placeholder={ __( 'e.g. A hero section for a dental clinic with a heading and two buttons', 'otter-blocks' ) }
+						rows={ 2 }
+						__nextHasNoMarginBottom
+					/>
+
+					<div className="o-ai-create-card__chips">
+						{ PROMPT_CHIPS.map( ( chipItem ) => (
+							<Button
+								key={ chipItem.label }
+								variant="tertiary"
+								isSmall
+								onClick={ () => setPrompt( chipItem.prompt ) }
+							>
+								{ chipItem.label }
+							</Button>
+						) ) }
+					</div>
+
+					<div className="o-ai-create-card__actions">
+						<Button
+							variant="primary"
+							disabled={ ! prompt.trim() }
+							onClick={ () => setModalOpen( true ) }
+						>
+							{ __( 'Generate', 'otter-blocks' ) }
+						</Button>
+						<Button
+							variant="tertiary"
+							onClick={ () => removeBlock( clientId ) }
+						>
+							{ __( 'Cancel', 'otter-blocks' ) }
+						</Button>
+					</div>
+				</Placeholder>
 			</div>
+
+			{ isModalOpen && (
+				<AIContentModal
+					isOpen={ isModalOpen }
+					mode="create"
+					autoGenerate
+					initialScope={ scope }
+					onClose={ () => setModalOpen( false ) }
+					actions={ [ CREATE_ACTION ] }
+					initialActionId={ CREATE_ACTION.id }
+					initialPrompt={ prompt }
+					selectedBlocks={ [] }
+					isMultipleSelection={ false }
+					singleClientId={ clientId }
+					selectedClientIds={ [ clientId ] }
+				/>
+			) }
 		</Fragment>
 	);
 };

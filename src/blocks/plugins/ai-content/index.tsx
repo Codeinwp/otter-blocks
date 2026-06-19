@@ -38,6 +38,11 @@ import {
 import AIContentModal from './modal';
 import { extractBlockTextContent } from './apply-content';
 
+// Stable empty array so useSelect returns a referentially-equal value across
+// renders (a fresh `[]` would fail useSelect's equality check on every block).
+const EMPTY_BLOCKS: BlockProps<unknown>[] = [];
+const EMPTY_IDS: string[] = [];
+
 type AIToolbarMenuProps = {
 	hasAPIKey: boolean;
 	toolbarActions: AIToolbarAction[];
@@ -116,42 +121,47 @@ const withAIToolbar = createHigherOrderComponent( BlockEdit => {
 		const [ modalActionId, setModalActionId ] = useState<string | undefined>();
 		const [ modalInitialPrompt, setModalInitialPrompt ] = useState<string | undefined>();
 
+		// Only return store-memoized/stable values here. Building arrays inside
+		// useSelect (e.g. clientIds.map(getBlock)) yields a new reference every
+		// call and trips useSelect's equality check for every block on the page,
+		// which floods the console and degrades the editor. `activeBlocks` is
+		// derived below with useMemo instead.
 		const {
 			canUse,
-			isMultipleSelection,
 			selectedBlocks,
 			selectedClientIds,
-			activeBlocks
+			currentBlock
 		} = useSelect( ( select ) => {
 
 			const canUseToolbar = Boolean( window.themeisleGutenberg?.hasModule?.aiToolbar );
 
 			if ( ! canUseToolbar ) {
 				return {
-					canUse: canUseToolbar,
-					isMultipleSelection: false,
-					selectedBlocks: [],
-					selectedClientIds: [],
-					activeBlocks: []
+					canUse: false,
+					selectedBlocks: EMPTY_BLOCKS,
+					selectedClientIds: EMPTY_IDS,
+					currentBlock: null
 				};
 			}
 
 			const blockEditor = select( 'core/block-editor' );
-			const selectedBlocks: {name: string; clientId: string; [key: string]: any}[] = blockEditor?.getMultiSelectedBlocks() ?? [];
-			const selectedClientIds = blockEditor?.getMultiSelectedBlockClientIds() ?? [];
-			const clientIds = 0 < selectedClientIds.length ? selectedClientIds : ( props.clientId ? [ props.clientId ] : [] );
-			const activeBlocks = clientIds
-				.map( ( clientId ) => blockEditor?.getBlock( clientId ) )
-				.filter( Boolean );
 
 			return {
-				canUse: canUseToolbar,
-				isMultipleSelection: 1 < selectedBlocks.length,
-				selectedBlocks,
-				selectedClientIds,
-				activeBlocks
+				canUse: true,
+				selectedBlocks: blockEditor?.getMultiSelectedBlocks() ?? EMPTY_BLOCKS,
+				selectedClientIds: blockEditor?.getMultiSelectedBlockClientIds() ?? EMPTY_IDS,
+				currentBlock: props.clientId ? blockEditor?.getBlock( props.clientId ) : null
 			};
 		}, [ props.clientId ]);
+
+		const isMultipleSelection = 1 < selectedBlocks.length;
+
+		const activeBlocks = useMemo( () => {
+			if ( 0 < selectedClientIds.length ) {
+				return selectedBlocks;
+			}
+			return currentBlock ? [ currentBlock ] : EMPTY_BLOCKS;
+		}, [ selectedBlocks, selectedClientIds, currentBlock ]);
 
 		const applicableActions = useMemo( () => {
 			if ( 'loading' === settingsStatus ) {

@@ -16,18 +16,65 @@
     text-transform: uppercase;
 }
 
+$o-ai-accent: #e25563;
+$o-ai-border: #e0e0e0;
+$o-ai-muted: #757575;
+$o-ai-segment-bg: #f0f0f1;
+
 .o-ai-content-modal__dialog {
-    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 960px;
+    height: 84vh;
+    max-height: 90vh;
+
+    // Quiet the default modal chrome and let the body breathe.
+    .components-modal__header {
+        flex: 0 0 auto;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .components-modal__header-heading {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    // Column layout so the body fills the height and the footer stays at the
+    // bottom; the scroll lives on the inner region. Column direction keeps every
+    // child full-width (a row default is what collapsed the content before).
+    // `flex: 1; min-height: 0` bounds the height so the inner region can scroll
+    // instead of the whole modal growing.
+    .components-modal__content {
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
+        flex-direction: column;
+        overflow: hidden;
+        padding-bottom: 0;
+    }
 }
 
 .o-ai-content-modal__body {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    flex: 1;
+    min-height: 0;
 
     .components-base-control {
         margin-bottom: 0;
     }
+}
+
+// Scrollable region — everything above the footer.
+.o-ai-content-modal__scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 16px;
 }
 
 .o-ai-content-modal__label {
@@ -35,11 +82,82 @@
     margin-bottom: 8px;
     font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: #757575;
+    color: $o-ai-muted;
 }
 
+// Prompt row — sparkle + textarea + Generate, presented as one control.
+.o-ai-content-modal__prompt-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 8px 12px;
+    border: 1px solid #dcdcde;
+    border-radius: 10px;
+    background: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus-within {
+        border-color: var(--wp-admin-theme-color, #3858e9);
+        box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
+    }
+}
+
+.o-ai-content-modal__prompt-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: $o-ai-accent;
+
+    svg {
+        width: 22px;
+        height: 22px;
+        fill: currentColor;
+    }
+}
+
+.o-ai-content-modal__prompt-input {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    .components-base-control__field {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    textarea {
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        padding: 6px 0 !important;
+        resize: none;
+        min-height: 34px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+.o-ai-content-modal__generate {
+    flex-shrink: 0;
+    align-self: stretch;
+}
+
+.o-ai-content-modal__tones {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.o-ai-content-modal__tone-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+// Side-by-side panels for the text-transform actions.
 .o-ai-content-modal__panels {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -53,42 +171,172 @@
 .o-ai-content-modal__text {
     min-height: 120px;
     padding: 12px 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid $o-ai-border;
+    border-radius: 8px;
     background: #f6f7f7;
     font-size: 14px;
     line-height: 1.6;
 }
 
+// Generated-section preview.
+.o-ai-content-modal__preview {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.o-ai-content-modal__preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.o-ai-content-modal__viewport {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 8px;
+    background: $o-ai-segment-bg;
+}
+
+.o-ai-content-modal__preview-canvas {
+    border: 1px solid $o-ai-border;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
 .o-ai-content-modal__placeholder {
-    color: #757575;
+    display: block;
+    padding: 40px 16px;
+    text-align: center;
+    color: $o-ai-muted;
+    border: 1px dashed #dcdcde;
+    border-radius: 10px;
 }
 
 .o-ai-content-modal__loading {
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 28px 16px;
+    color: #50575e;
 }
 
-.o-ai-content-modal__tones {
+// Generating state — animated AI spark + phase label + progress bar.
+@keyframes o-ai-gen-twinkle {
+    0%, 100% { transform: scale( 1 ); opacity: 0.8; }
+    50% { transform: scale( 1.18 ); opacity: 1; }
+}
+
+@keyframes o-ai-gen-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba( $o-ai-accent, 0.0 ); }
+    50% { box-shadow: 0 0 0 6px rgba( $o-ai-accent, 0.10 ); }
+}
+
+@keyframes o-ai-gen-slide {
+    0% { transform: translateX( -100% ); }
+    100% { transform: translateX( 320% ); }
+}
+
+.o-ai-gen {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid #ececf1;
+    border-radius: 12px;
+    background:
+        radial-gradient( 120% 140% at 0% 0%, rgba( $o-ai-accent, 0.06 ), transparent 60% ),
+        linear-gradient( 180deg, #fbfbfe 0%, #f5f6fb 100% );
+
+    &__spark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        color: $o-ai-accent;
+        background: rgba( $o-ai-accent, 0.12 );
+        animation: o-ai-gen-twinkle 1.6s ease-in-out infinite, o-ai-gen-glow 1.6s ease-in-out infinite;
+
+        svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+    }
+
+    &__body {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    &__label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #1e1e1e;
+        letter-spacing: 0.01em;
+    }
+
+    &__bar {
+        position: relative;
+        height: 6px;
+        border-radius: 999px;
+        background: #e7e7ee;
+        overflow: hidden;
+    }
+
+    &__bar-fill {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient( 90deg, $o-ai-accent, #3858e9 );
+        transition: width 0.45s ease;
+    }
+
+    &__bar.is-indeterminate &__bar-fill {
+        width: 38%;
+        animation: o-ai-gen-slide 1.25s ease-in-out infinite;
+    }
 }
 
-.o-ai-content-modal__tone-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+@media ( prefers-reduced-motion: reduce ) {
+    .o-ai-gen__spark {
+        animation: none;
+    }
+
+    .o-ai-gen__bar.is-indeterminate .o-ai-gen__bar-fill {
+        animation: none;
+        width: 100%;
+        opacity: 0.5;
+    }
 }
 
+// Footer — Done + Regenerate (left, with token count), version nav (right).
+// Sticks to the bottom of the modal's scroll area so the actions stay reachable;
+// the solid background + the content's zeroed bottom padding stop anything from
+// peeking past it as the preview scrolls.
 .o-ai-content-modal__footer {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #ddd;
+    padding: 16px 0;
+    border-top: 1px solid #f0f0f0;
+    background: var( --wp-components-color-background, #fff );
+}
+
+.o-ai-content-modal__footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .o-ai-content-modal__footer-actions {
@@ -102,9 +350,11 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    color: #50575e;
+    font-variant-numeric: tabular-nums;
 }
 
 .o-ai-content-modal__tokens {
-    color: #757575;
+    color: $o-ai-muted;
     font-size: 12px;
 }

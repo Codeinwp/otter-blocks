@@ -31,6 +31,71 @@
 	}
 }
 
+.o-ai-create-card {
+
+	// Stack the controls so scope, prompt, chips and actions each get their own line.
+	.components-placeholder__fieldset {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0;
+	}
+
+	// Let the prompt field use the full width of the placeholder.
+	.components-base-control,
+	.components-base-control__field,
+	.components-textarea-control,
+	textarea {
+		width: 100%;
+	}
+
+	&__scope {
+		display: inline-flex;
+		gap: 2px;
+		padding: 2px;
+		margin-bottom: 10px;
+		border-radius: 8px;
+		background: #f0f0f1;
+
+		.components-button {
+			border-radius: 6px;
+
+			&.is-secondary {
+				box-shadow: none;
+				background: transparent;
+				color: #50575e;
+			}
+		}
+	}
+
+	&__chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin-top: 10px;
+
+		.components-button.is-tertiary {
+			height: auto;
+			padding: 3px 12px;
+			border: 1px solid #dcdcde;
+			border-radius: 999px;
+			color: #50575e;
+
+			&:hover:not( :disabled ) {
+				background: transparent;
+				border-color: var(--wp-admin-theme-color, #3858e9);
+				color: var(--wp-admin-theme-color, #3858e9);
+			}
+		}
+	}
+
+	&__actions {
+		display: flex;
+		flex-direction: row;
+		gap: 8px;
+		margin-top: 14px;
+	}
+}
+
 .o-ai-plan {
 	display: flex;
 	flex-direction: column;
