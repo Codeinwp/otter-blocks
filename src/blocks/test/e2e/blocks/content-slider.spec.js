@@ -125,6 +125,41 @@ test.describe( 'Content Slider Block', () => {
 		await expect( dots.nth( 0 ) ).toHaveClass( /o-content-dot--active/ );
 	});
 
+	test( 'arrow keys inside a form field edit text instead of navigating slides', async({ editor, page }) => {
+
+		// A form field as a slide needs Left/Right for its own caret movement;
+		// the slider must not hijack those keys when focus is inside the field.
+		await editor.insertBlock({
+			name: BLOCK,
+			attributes: { loop: true },
+			innerBlocks: [
+				{
+					name: 'themeisle-blocks/form',
+					innerBlocks: [
+						{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name', type: 'text' } }
+					]
+				},
+				{ name: 'core/paragraph', attributes: { content: 'Second slide' } }
+			]
+		});
+		await publishAndViewPost({ editor, page });
+
+		const dots = page.locator( '.o-content-dots .o-content-dot' );
+		await expect( dots.nth( 0 ) ).toHaveClass( /o-content-dot--active/ );
+
+		const input = page.locator( '.o-content-track input[type="text"]' ).first();
+		await input.fill( 'abc' );
+
+		// Caret sits after "abc"; ArrowLeft should move it within the field.
+		await input.press( 'ArrowLeft' );
+
+		// The slide did not change (the key was not hijacked by the slider).
+		await expect( dots.nth( 0 ) ).toHaveClass( /o-content-dot--active/ );
+
+		// The caret moved left inside the field instead of being suppressed.
+		expect( await input.evaluate( el => el.selectionStart ) ).toBe( 2 );
+	});
+
 	test( 'showArrows and showDots toggles hide chrome', async({ editor, page }) => {
 		await editor.insertBlock( sliderWithSlides( 2, { showArrows: false, showDots: false }) );
 		await publishAndViewPost({ editor, page });

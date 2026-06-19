@@ -101,14 +101,25 @@ const initSlider = ( slider ) => {
 		{ passive: true }
 	);
 
+	// Arrow keys navigate slides, but inner controls (form fields, editable
+	// content, selects) need them for their own caret/option movement, so the
+	// slider only claims the keys when focus is not inside such an element.
+	const isFromInteractiveElement = ( target ) => {
+		const el = target?.closest?.( 'input, textarea, select, [contenteditable=""], [contenteditable="true"]' );
+		return Boolean( el );
+	};
+
 	slider.addEventListener( 'keydown', ( event ) => {
-		if ( 'ArrowLeft' === event.key ) {
-			event.preventDefault();
-			goTo( current - 1 );
-		} else if ( 'ArrowRight' === event.key ) {
-			event.preventDefault();
-			goTo( current + 1 );
+		if ( 'ArrowLeft' !== event.key && 'ArrowRight' !== event.key ) {
+			return;
 		}
+
+		if ( isFromInteractiveElement( event.target ) ) {
+			return;
+		}
+
+		event.preventDefault();
+		goTo( 'ArrowLeft' === event.key ? current - 1 : current + 1 );
 	});
 
 	let timer = null;
