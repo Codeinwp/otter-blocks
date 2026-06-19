@@ -292,7 +292,12 @@ const Edit = ({
 		L.Control.AddMarker = L.Control.extend({
 			onAdd: () => {
 				const button = L.DomUtil.create( 'button', 'wp-block-themeisle-blocks-leaflet-map-marker-button' );
-				const span = L.DomUtil.create( 'span', 'dashicons dashicons-sticky', button );
+				button.type = 'button';
+
+				// Render an inline SVG marker icon instead of a Dashicon: the iframed
+				// editor canvas (apiVersion 3) does not load the Dashicons font, so a
+				// `dashicons` glyph renders as an empty box.
+				button.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" /></svg>';
 
 				L.DomEvent.on( button, 'click', ( event ) => {
 
@@ -302,7 +307,7 @@ const Edit = ({
 				});
 
 				button.title = __( 'Add marker on the map with a click', 'otter-blocks' );
-				button.appendChild( span );
+				button.setAttribute( 'aria-label', __( 'Add marker on the map with a click', 'otter-blocks' ) );
 
 				return button;
 			},
