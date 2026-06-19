@@ -25,6 +25,31 @@ class Dashboard {
 	protected static $instance = null;
 
 	/**
+	 * Transient key for the cached Otter pages count.
+	 *
+	 * @var string
+	 */
+	const PAGES_COUNT_CACHE_KEY = 'otter_blocks_pages_with_css_count';
+
+	/**
+	 * Post meta keys used as markers that a page uses Otter blocks.
+	 *
+	 * @var string[]
+	 */
+	const PAGES_COUNT_META_KEYS = array(
+		'_themeisle_gutenberg_block_stylesheet',
+		'_themeisle_gutenberg_block_styles',
+		'_atomic_wind_css',
+	);
+
+	/**
+	 * Largest exact page count we display; above this the heading shows "100+".
+	 *
+	 * @var int
+	 */
+	const PAGES_COUNT_DISPLAY_CAP = 100;
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -40,6 +65,175 @@ class Dashboard {
 		}
 
 		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( __CLASS__, 'get_survey_metadata' ), 10, 2 );
+
+		add_filter( 'themeisle_sdk_labels', array( $this, 'filter_uninstall_feedback_labels' ) );
+		
+		add_action( 'otter_pro_uninstall_feedback_popup_header_after_heading', [ $this, 'uninstall_feedback_popup_after_heading' ] );
+		add_action( 'otter_blocks_uninstall_feedback_popup_header_after_heading', [ $this, 'uninstall_feedback_popup_after_heading' ] );
+
+		add_action( 'added_post_meta', array( $this, 'maybe_invalidate_pages_count_cache' ), 10, 4 );
+		add_action( 'updated_post_meta', array( $this, 'maybe_invalidate_pages_count_cache' ), 10, 4 );
+		add_action( 'deleted_post_meta', array( $this, 'maybe_invalidate_pages_count_cache' ), 10, 4 );
+	}
+
+	/**
+	 * Customize Themeisle SDK uninstall feedback labels for Otter.
+	 *
+	 * @param array<string, mixed> $labels SDK labels.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function filter_uninstall_feedback_labels( $labels ) {
+		$count = $this->get_number_of_pages();
+
+		// Leave the default heading untouched when no pages use Otter blocks.
+		if ( $count < 1 ) {
+			return $labels;
+		}
+
+		$display = $count > self::PAGES_COUNT_DISPLAY_CAP
+			? self::PAGES_COUNT_DISPLAY_CAP . '+'
+			: (string) $count;
+
+		/* translators: %s: number of pages */
+		$labels['uninstall']['heading_plugin'] = sprintf( __( 'You are using Otter Blocks on %s pages. Uninstalling may break parts of your site.', 'otter-blocks' ), $display );
+
+		return $labels;
+	}
+
+	/**
+	 * Count pages that use Otter blocks, inferred from generated CSS post meta.
+	 *
+	 * Stops counting one past the display cap so large sites avoid a full-table
+	 * aggregate; callers treat a result above the cap as "many".
+	 *
+	 * @return int
+	 */
+	private function get_number_of_pages() {
+		$cached = get_transient( self::PAGES_COUNT_CACHE_KEY );
+
+		if ( false !== $cached ) {
+			return (int) $cached;
+		}
+
+		global $wpdb;
+
+		$limit = self::PAGES_COUNT_DISPLAY_CAP + 1;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$post_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT pm.post_id
+				FROM {$wpdb->postmeta} pm
+				INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+				WHERE p.post_status NOT IN ( 'trash', 'auto-draft' )
+				AND p.post_type IN ( 'page', 'post' )
+				AND pm.meta_key IN ( %s, %s, %s )
+				AND pm.meta_value != ''
+				LIMIT %d",
+				self::PAGES_COUNT_META_KEYS[0],
+				self::PAGES_COUNT_META_KEYS[1],
+				self::PAGES_COUNT_META_KEYS[2],
+				$limit
+			)
+		);
+
+		$result = count( $post_ids );
+
+		set_transient( self::PAGES_COUNT_CACHE_KEY, $result, DAY_IN_SECONDS );
+
+		return $result;
+	}
+
+
+	/**
+	 * Inline styles and header links for the Otter uninstall feedback popup.
+	 *
+	 * Fires inside `.popup--header`, right after the heading, via the SDK
+	 * `{product_key}_uninstall_feedback_popup_header_after_heading` action.
+	 *
+	 * @return void
+	 */
+	public function uninstall_feedback_popup_after_heading() {
+		static $printed_style = false;
+
+		// Leave the modal untouched when no pages use Otter blocks.
+		if ( $this->get_number_of_pages() < 1 ) {
+			return;
+		}
+
+		$documentation_url = Pro::get_docs_url();
+		$support_url       = Pro::is_pro_active()
+			? 'https://store.themeisle.com/'
+			: 'https://wordpress.org/support/plugin/otter-blocks/';
+		?>
+		<div class="otter-uninstall-header__links">
+			<a href="<?php echo esc_url( $documentation_url ); ?>" target="_blank" rel="noopener noreferrer">
+				<?php esc_html_e( 'Documentation', 'otter-blocks' ); ?>
+			</a>
+			<a href="<?php echo esc_url( $support_url ); ?>" target="_blank" rel="noopener noreferrer">
+				<?php esc_html_e( 'Get Support', 'otter-blocks' ); ?>
+			</a>
+		</div>
+		<?php
+
+		if ( $printed_style ) {
+			return;
+		}
+
+		$printed_style = true;
+		?>
+		<style>
+			#otter-blocks_uninstall_feedback_popup .popup--header h5 {
+				text-align: left;
+				padding-bottom: 0;
+			}
+			
+			/* Header links injected after the heading */
+			.otter-uninstall-header__links {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 24px;
+				margin-top: 12px;
+				padding: 0 15px 15px;
+			}
+
+			.otter-uninstall-header__links a,
+			.otter-uninstall-header__links a:hover,
+			.otter-uninstall-header__links a:focus,
+			.otter-uninstall-header__links a:active {
+				color: #fff;
+				font-size: 14px;
+				font-weight: 600;
+				text-decoration: underline;
+				text-underline-offset: 3px;
+				box-shadow: none;
+				outline: none;
+			}
+
+			.otter-uninstall-header__links a:hover {
+				opacity: .85;
+			}
+		</style>
+		<?php
+	}
+
+	/**
+	 * Invalidate the pages count cache when Otter CSS meta changes.
+	 *
+	 * @param int    $meta_id    Meta ID.
+	 * @param int    $object_id  Post ID.
+	 * @param string $meta_key   Meta key.
+	 * @param mixed  $meta_value Meta value.
+	 *
+	 * @return void
+	 */
+	public function maybe_invalidate_pages_count_cache( $meta_id, $object_id, $meta_key, $meta_value ) {
+		unset( $meta_id, $object_id, $meta_value );
+
+		if ( in_array( $meta_key, self::PAGES_COUNT_META_KEYS, true ) ) {
+			delete_transient( self::PAGES_COUNT_CACHE_KEY );
+		}
 	}
 
 	/**
