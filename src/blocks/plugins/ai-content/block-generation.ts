@@ -85,6 +85,17 @@ export type AttributeSchemaEntry = {
 	attributes: string[];
 };
 
+/**
+ * A resolved editor palette color, as returned by
+ * `select( 'core/block-editor' ).getSettings().colors`. The model is told to
+ * reference these exact slugs so generated colors actually resolve in the theme.
+ */
+export type ThemeColor = {
+	name?: string;
+	slug: string;
+	color: string;
+};
+
 export type BlockValidationResult = {
 	valid: boolean;
 	errors: string[];
@@ -119,6 +130,7 @@ export type RootCompletion = {
 type GenerateBlocksFromTaskArgs = {
 	task: string;
 	blockTypes: BlockTypeLike[];
+	themeColors?: ThemeColor[];
 	requestCompletion: ( prompt: string ) => Promise<string>;
 	onPlanReady?: ( plan: GenerationPlan ) => void;
 	onRootComplete?: ( completion: RootCompletion ) => void;
@@ -221,7 +233,13 @@ const trimDescription = ( description: string ) => {
 
 const textAttributesOf = ( blockType: BlockTypeLike | undefined ): string[] => {
 	return Object.entries( blockType?.attributes || {})
-		.filter( ( [ , attr ] ) => isTextAttribute( attr ) )
+		.filter( ( [ attrName, attr ] ) => {
+			if ( 'core/paragraph' === blockType?.name && 'align' === attrName ) {
+				return false;
+			}
+
+			return isTextAttribute( attr );
+		})
 		.map( ( [ attrName ] ) => attrName );
 };
 
@@ -283,6 +301,30 @@ const getAllowedAttributes = (
 	return allowed;
 };
 
+const normalizeGeneratedAttributes = (
+	blockName: string,
+	attributes: Record<string, unknown>
+) => {
+	if ( 'core/paragraph' !== blockName || 'string' !== typeof attributes.align ) {
+		return attributes;
+	}
+
+	const { align, style, ...normalized } = attributes;
+	const existingStyle = isObject( style ) ? style : {};
+	const existingTypography = isObject( existingStyle.typography ) ? existingStyle.typography : {};
+
+	return {
+		...normalized,
+		style: {
+			...existingStyle,
+			typography: {
+				...existingTypography,
+				textAlign: align
+			}
+		}
+	};
+};
+
 export const jsonTreeToBlocks = (
 	trees: GeneratedBlockTree[],
 	getBlockType: GetBlockType
@@ -292,7 +334,10 @@ export const jsonTreeToBlocks = (
 		.map( tree => {
 			const blockType = getBlockType( tree.name );
 			const innerBlocks = jsonTreeToBlocks( tree.innerBlocks || [], getBlockType );
-			const attributes = getAllowedAttributes( tree.attributes, blockType );
+			const attributes = normalizeGeneratedAttributes(
+				tree.name,
+				getAllowedAttributes( tree.attributes, blockType )
+			);
 
 			if ( ! blockType ) {
 				return {
@@ -308,6 +353,29 @@ export const jsonTreeToBlocks = (
 				innerBlocks as Parameters<typeof createBlock>[2]
 			) as BlockProps<unknown>;
 		});
+};
+
+export const sanitizeGeneratedBlocks = (
+	blocks: BlockProps<unknown>[],
+	getBlockType: GetBlockType
+): BlockProps<unknown>[] => {
+	return ( blocks || []).map( block => {
+		const blockType = getBlockType( block.name );
+		const attributes = normalizeGeneratedAttributes(
+			block.name,
+			getAllowedAttributes( block.attributes, blockType )
+		);
+		const innerBlocks = sanitizeGeneratedBlocks(
+			( block.innerBlocks || []) as BlockProps<unknown>[],
+			getBlockType
+		);
+
+		return {
+			...block,
+			attributes,
+			innerBlocks
+		};
+	});
 };
 
 const validateBlockTree = (
@@ -526,17 +594,33 @@ const formatSchemaForPrompt = ( schema: AttributeSchemaEntry[] ): string => {
 		.join( '\n' );
 };
 
+/*
+ * The theme palette, one color per line as `slug (#hex) — Name`. Listing the
+ * real slugs lets the model reference colors that actually resolve in the theme
+ * instead of inventing slugs from a free-text palette.
+ */
+const formatPaletteForPrompt = ( colors: ThemeColor[] ): string => {
+	return colors
+		.filter( color => color?.slug && color?.color )
+		.map( color => `${ color.slug } (${ color.color })${ color.name ? ` — ${ color.name }` : '' }` )
+		.join( '\n' );
+};
+
 const ATOMIC_WIND_STRUCTURE_HINT = 'The catalog includes Atomic Wind primitives (atomic-wind/box, atomic-wind/text, atomic-wind/icon, atomic-wind/link). These are low-level building blocks: "box" is a flexible container that nests any block, while text, icon and link hold the content. Compose them when the task needs a custom or complex layout that the higher-level blocks cannot express — combined, they can build almost any structure.';
 
 const buildPlanPrompt = (
 	task: string,
 	catalog: StructureCatalogEntry[],
-	atomicAvailable: boolean
+	atomicAvailable: boolean,
+	themeColors: ThemeColor[]
 ) => {
+	const palette = formatPaletteForPrompt( themeColors );
+
 	return [
 		'You are planning a WordPress block layout for a user task. Produce a plan, not the final content yet.',
 		'First decide the mission: 1–2 sentences describing what the finished result should look like and achieve.',
 		'Then commit to a design direction the whole layout will share: an overall style, a palette of 3–5 colors, a border radius/roundness, a spacing rhythm, and a typography feel.',
+		...( palette ? [ `Build the palette ONLY from these theme color slugs — pick 3–5 and list them by slug, do not invent color names:\n${ palette }` ] : []),
 		'Then outline the page as top-level sections (roots). Pick blocks from the catalog by slug and arrange them into a nested tree.',
 		'Only nest blocks inside a block whose slug is marked [container].',
 		'Do NOT include any attributes yet — only "name" (a catalog slug), an optional "notes" string on each root, and "innerBlocks".',
@@ -581,9 +665,11 @@ const buildAttributePrompt = (
 	root: StructureNode,
 	schema: AttributeSchemaEntry[],
 	rootUsesAtomic: boolean,
-	plan: GenerationPlan
+	plan: GenerationPlan,
+	themeColors: ThemeColor[]
 ) => {
 	const design = formatDesignForPrompt( plan.design );
+	const palette = formatPaletteForPrompt( themeColors );
 
 	return [
 		'Fill in the attributes for this validated WordPress block structure. It is one section of a larger page.',
@@ -593,6 +679,9 @@ const buildAttributePrompt = (
 		'Keep the exact same tree of slugs and nesting — do not add, remove, or reorder blocks.',
 		'Write specific, on-topic content for the user task into every text attribute (e.g. content, value, title, label). Each block must get unique, meaningful text — never repeat boilerplate or leave placeholder/sample text.',
 		'Use ONLY the attributes listed for each slug. Do not invent attributes, clientIds, or rendered HTML.',
+		...( palette
+			? [ `Color attributes (backgroundColor, textColor) MUST use one of these exact theme color slugs — never invent a slug:\n${ palette }` ]
+			: [] ),
 		'When a block exposes color attributes (e.g. background, text, or accent colors), apply the design direction\'s palette so the result looks polished instead of bland. Keep the palette coherent across the whole layout and ensure text stays readable against its background. Leave the remaining styling attributes (sizes, CSS) untouched unless essential.',
 		...( rootUsesAtomic ? [ ATOMIC_WIND_ATTRIBUTE_HINT ] : [] ),
 		'Return strict JSON: { "rationale": string[], "roots": [ { "name": string, "attributes": object, "innerBlocks": [...] } ] }.',
@@ -608,6 +697,7 @@ const buildAttributePrompt = (
 export const generateBlocksFromTask = async({
 	task,
 	blockTypes,
+	themeColors = [],
 	requestCompletion,
 	onPlanReady,
 	onRootComplete
@@ -618,7 +708,7 @@ export const generateBlocksFromTask = async({
 
 	// Phase 1 — plan the mission, design direction and section outline.
 	const catalog = buildStructureCatalog( blockTypes );
-	const planPrompt = buildPlanPrompt( task, catalog, atomicAvailable );
+	const planPrompt = buildPlanPrompt( task, catalog, atomicAvailable, themeColors );
 
 	const plan = parsePlanPayload( await requestCompletion( planPrompt ) );
 
@@ -638,7 +728,7 @@ export const generateBlocksFromTask = async({
 
 		const schema = buildAttributeSchema( blockTypes, slugs );
 		const rootUsesAtomic = [ ...slugs ].some( slug => slug.startsWith( 'atomic-wind/' ) );
-		const attributePrompt = buildAttributePrompt( task, root, schema, rootUsesAtomic, plan );
+		const attributePrompt = buildAttributePrompt( task, root, schema, rootUsesAtomic, plan, themeColors );
 
 		const filledPayload = parseModelPayload( await requestCompletion( attributePrompt ) );
 		const filledRoot = filledPayload.roots?.[0];

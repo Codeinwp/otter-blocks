@@ -39,6 +39,9 @@ const OPTION_WHITELIST = array(
 	'themeisle_cloudflare_turnstile_secret_key',
 	'connectors_ai_openai_api_key',
 	'themeisle_google_map_block_api_key',
+	// Gates registration of the Atomic Wind blocks (atomic-wind/*); tests that
+	// generate or insert those blocks flip this on before loading the editor.
+	'themeisle_blocks_settings_atomic_wind_blocks',
 	// Form block persists submissions config here; tests reset it to avoid
 	// cross-run accumulation that eventually fails REST schema validation.
 	'themeisle_blocks_form_emails',

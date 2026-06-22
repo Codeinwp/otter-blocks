@@ -28,6 +28,7 @@ $o-ai-segment-bg: #f0f0f1;
     max-width: 960px;
     height: 84vh;
     max-height: 90vh;
+    overflow: hidden;
 
     // Quiet the default modal chrome and let the body breathe.
     .components-modal__header {
@@ -53,13 +54,21 @@ $o-ai-segment-bg: #f0f0f1;
         overflow: hidden;
         padding-bottom: 0;
     }
+
+    .components-modal__children-container {
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
+        flex-direction: column;
+    }
 }
 
 .o-ai-content-modal__body {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
+    overflow: hidden;
 
     .components-base-control {
         margin-bottom: 0;
@@ -68,7 +77,7 @@ $o-ai-segment-bg: #f0f0f1;
 
 // Scrollable region — everything above the footer.
 .o-ai-content-modal__scroll {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-height: 0;
     overflow-y: auto;
     display: flex;
@@ -145,10 +154,22 @@ $o-ai-segment-bg: #f0f0f1;
     align-self: stretch;
 }
 
+.o-ai-content-modal__prompt-actions {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
 .o-ai-content-modal__tones {
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.o-ai-content-modal__tones .o-ai-content-modal__prompt-actions {
+    align-self: flex-end;
 }
 
 .o-ai-content-modal__tone-pills {
@@ -336,6 +357,8 @@ $o-ai-segment-bg: #f0f0f1;
 .o-ai-content-modal__footer-left {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
     gap: 6px;
 }
 
@@ -354,7 +377,283 @@ $o-ai-segment-bg: #f0f0f1;
     font-variant-numeric: tabular-nums;
 }
 
+.o-ai-content-modal__footer-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-left: auto;
+}
+
 .o-ai-content-modal__tokens {
+    align-self: center;
     color: $o-ai-muted;
     font-size: 12px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Section-generation experience (create mode) — custom modal chrome.
+ * ------------------------------------------------------------------ */
+
+$o-ai-primary: #3858e9;
+
+.o-ai-content-modal__dialog.is-section-mode {
+    width: min(1020px, 96vw);
+    max-width: min(1020px, 96vw);
+    height: min(720px, 92vh);
+    max-height: 92vh;
+
+    // We render our own header/footer; let the section fill the dialog flush.
+    .components-modal__content {
+        padding: 0;
+    }
+}
+
+.o-ai-section {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+    background: #fff;
+}
+
+// Header — brand, status pill, close.
+.o-ai-section__header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    height: 60px;
+    padding: 0 16px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.o-ai-section__brand-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+    background: #f3e9e0;
+    color: $o-ai-accent;
+
+    svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+    }
+}
+
+.o-ai-section__brand {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.o-ai-section__brand-title {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #1e1e1e;
+}
+
+.o-ai-section__brand-subtitle {
+    display: block;
+    margin-top: 1px;
+    font-size: 12px;
+    line-height: 1.2;
+    color: #8b8d91;
+}
+
+.o-ai-section__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    flex: 0 0 auto;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #5b626a;
+    background: #f3f4f6;
+}
+
+.o-ai-section__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #c4c7cc;
+}
+
+.o-ai-section__status.is-ready .o-ai-section__status-dot {
+    background: $o-ai-primary;
+}
+
+.o-ai-section__status.is-busy .o-ai-section__status-dot {
+    background: $o-ai-accent;
+    animation: o-ai-gen-twinkle 1.2s ease-in-out infinite;
+}
+
+.o-ai-section__status.is-error .o-ai-section__status-dot {
+    background: #d63638;
+}
+
+.o-ai-section__close.components-button {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    margin-left: 4px;
+    color: #5b626a;
+}
+
+// Canvas — scrollable preview stage on a muted background.
+.o-ai-section__canvas {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 26px;
+    background: #f0f0f1;
+}
+
+// The framed device preview, centered on the stage.
+.o-ai-section__frame {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+
+    &.is-mobile {
+        max-width: 390px;
+    }
+}
+
+.o-ai-section__placeholder {
+    margin: auto;
+    padding: 48px 24px;
+    text-align: center;
+    color: $o-ai-muted;
+    border: 1px dashed #cdd0d6;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+// Refine / prompt bar.
+.o-ai-section__refine {
+    flex: 0 0 auto;
+    padding: 13px 16px;
+    border-top: 1px solid #e8e8e8;
+    background: #fff;
+}
+
+.o-ai-section__refine-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 6px 6px 12px;
+    border: 1px solid #cdd0d6;
+    border-radius: 10px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus-within {
+        border-color: $o-ai-primary;
+        box-shadow: 0 0 0 1px $o-ai-primary;
+    }
+}
+
+.o-ai-section__refine-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: $o-ai-accent;
+
+    svg {
+        width: 19px;
+        height: 19px;
+        fill: currentColor;
+    }
+}
+
+.o-ai-section__refine-input {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    .components-base-control__field {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    textarea {
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        padding: 6px 0 !important;
+        resize: none;
+        min-height: 32px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+.o-ai-section__refine-submit.components-button {
+    flex: 0 0 auto;
+    justify-content: center;
+}
+
+// Footer — version stepper + tokens (left), Discard / Insert (right).
+.o-ai-section__footer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 16px;
+    border-top: 1px solid #e3e4e6;
+    background: #fafafa;
+}
+
+.o-ai-section__footer-left,
+.o-ai-section__footer-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.o-ai-section__versions {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #d8dbe0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.o-ai-section__version-count {
+    padding: 0 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 32px;
+    white-space: nowrap;
+    color: #1e1e1e;
+    border-left: 1px solid #ededed;
+    border-right: 1px solid #ededed;
+    font-variant-numeric: tabular-nums;
+}
+
+.o-ai-section__tokens {
+    font-size: 12.5px;
+    color: #8b8d91;
+    white-space: nowrap;
 }

@@ -14,11 +14,13 @@ import {
 	TextareaControl
 } from '@wordpress/components';
 
+import { cloneBlock } from '@wordpress/blocks';
+
 import { safeHTML } from '@wordpress/dom';
 
 import { BlockPreview } from '@wordpress/block-editor';
 
-import { desktop, mobile, redo, undo } from '@wordpress/icons';
+import { close, desktop, mobile, redo, undo } from '@wordpress/icons';
 
 import { useDispatch, useSelect } from '@wordpress/data';
 
@@ -61,7 +63,9 @@ import {
 	resolveBlockContentForPrompt
 } from './apply-content';
 import {
-	generateBlocksFromTask
+	generateBlocksFromTask,
+	sanitizeGeneratedBlocks,
+	validateGeneratedBlocks
 } from './block-generation';
 import type { BlockGenerationResult } from './block-generation';
 
@@ -129,6 +133,13 @@ const AIContentModal = ({
 		[]
 	);
 
+	// The resolved theme palette ([{ name, slug, color }]) — fed to the generator
+	// so colors reference real theme slugs instead of invented ones.
+	const themeColors = useSelect(
+		select => ( select( 'core/block-editor' ) as { getSettings?: () => { colors?: { name?: string; slug: string; color: string }[] } } )?.getSettings?.()?.colors ?? [],
+		[]
+	);
+
 	const [ selectedActionId, setSelectedActionId ] = useState( initialActionId || actions[0]?.id || '' );
 	const [ tone, setTone ] = useState<string | null>( null );
 	const [ status, setStatus ] = useState<'idle' | 'loading' | 'error' | 'loaded'>( 'idle' );
@@ -140,6 +151,10 @@ const AIContentModal = ({
 	// The generated blocks are previewed progressively as each section completes.
 	const [ liveBlocks, setLiveBlocks ] = useState<BlockProps<unknown>[]>([]);
 	const [ viewport, setViewport ] = useState<'desktop' | 'mobile'>( 'desktop' );
+
+	// The bottom bar doubles as prompt and refine input: while a result exists it
+	// holds the refine delta, which is appended to the prompt on regenerate.
+	const [ refineInput, setRefineInput ] = useState( '' );
 
 	// Coarse progress that drives the dynamic loading label (planning → building).
 	const [ progress, setProgress ] = useState<{ phase: 'idle' | 'planning' | 'building'; done: number; total: number }>({ phase: 'idle', done: 0, total: 0 });
@@ -295,7 +310,9 @@ const AIContentModal = ({
 		return buildEmbeddedPromptFromTask( resolvedPrompt );
 	};
 
-	const generateContent = async( regenerate = false ) => {
+	const generateContent = async( regenerate = false, overridePrompt?: string ) => {
+		const activePrompt = overridePrompt ?? prompt;
+
 		if ( ! hasAPIKey ) {
 			setError( __( 'No OpenAI API key detected. Please add your key.', 'otter-blocks' ) );
 			setStatus( 'error' );
@@ -323,7 +340,7 @@ const AIContentModal = ({
 		try {
 			if ( 'any' === selectedAction?.availability ) {
 				let usedToken = 0;
-				const baseTask = replaceMagicTags( prompt, {
+				const baseTask = replaceMagicTags( activePrompt, {
 					...blockContext,
 					tone: tone || undefined
 				});
@@ -345,6 +362,7 @@ const AIContentModal = ({
 				const generation = await generateBlocksFromTask({
 					task,
 					blockTypes,
+					themeColors,
 					onPlanReady: ( plan ) => {
 						if ( isStale() ) {
 							return;
@@ -398,7 +416,7 @@ const AIContentModal = ({
 				const historyItem: ResultHistoryItem = {
 					meta: {
 						usedToken,
-						prompt
+						prompt: activePrompt
 					},
 					generatedBlocks: generation.blocks,
 					generationRationale: generation.rationale,
@@ -515,13 +533,44 @@ const AIContentModal = ({
 			return;
 		}
 
-		const blocks = currentGeneratedBlocks?.length ?
-			currentGeneratedBlocks :
-			applyGeneratedContent(
-				currentResult || '',
-				selectedBlocks,
-				selectedAction?.availability ?? 'richtext'
+		if ( ! replaceClientIds.length || replaceClientIds.some( clientId => ! clientId ) ) {
+			createNotice(
+				'error',
+				__( 'Could not find the block to replace. Please close the modal and try again.', 'otter-blocks' ),
+				{
+					type: 'snackbar',
+					isDismissible: true
+				}
 			);
+			return;
+		}
+
+		let blocks: BlockProps<unknown>[] = [];
+
+		try {
+			blocks = currentGeneratedBlocks?.length ?
+				currentGeneratedBlocks :
+				applyGeneratedContent(
+					currentResult || '',
+					selectedBlocks,
+					selectedAction?.availability ?? 'richtext'
+				);
+		} catch {
+			createNotice(
+				'error',
+				__( 'Could not prepare the generated content. Please regenerate it and try again.', 'otter-blocks' ),
+				{
+					type: 'snackbar',
+					isDismissible: true
+				}
+			);
+			return;
+		}
+
+		blocks = sanitizeGeneratedBlocks(
+			blocks,
+			( name ) => blockTypes.find( blockType => blockType.name === name )
+		);
 
 		if ( ! blocks.length ) {
 			createNotice(
@@ -535,8 +584,43 @@ const AIContentModal = ({
 			return;
 		}
 
-		replaceBlocks( replaceClientIds, blocks );
-		onClose();
+		const validation = validateGeneratedBlocks(
+			blocks,
+			( name ) => blockTypes.find( blockType => blockType.name === name )
+		);
+
+		if ( ! validation.valid ) {
+			createNotice(
+				'error',
+				__( 'The generated content is not valid for this editor. Please regenerate it and try again.', 'otter-blocks' ),
+				{
+					type: 'snackbar',
+					isDismissible: true
+				}
+			);
+			return;
+		}
+
+		// The generated blocks are the same instances rendered live in BlockPreview.
+		// Hand the editor fresh, decoupled blocks with new clientIds so inserting
+		// them can't collide with the preview tree's block identities.
+		const blocksToInsert = blocks.map(
+			( block ) => cloneBlock( block as Parameters<typeof cloneBlock>[0] )
+		);
+
+		try {
+			replaceBlocks( replaceClientIds, blocksToInsert );
+			onClose();
+		} catch {
+			createNotice(
+				'error',
+				__( 'Could not insert the generated content. Please regenerate it and try again.', 'otter-blocks' ),
+				{
+					type: 'snackbar',
+					isDismissible: true
+				}
+			);
+		}
 	};
 
 	if ( ! isOpen || ! selectedAction ) {
@@ -547,6 +631,48 @@ const AIContentModal = ({
 
 	// Lock the modal while generating so a stray click-outside/Esc can't discard work.
 	const isGenerating = 'loading' === status;
+
+	// The bottom bar generates from scratch until a result exists, then refines:
+	// the typed delta is appended to the running prompt and regenerated as a new
+	// version, reusing the generate pipeline.
+	const handleSectionSubmit = () => {
+		if ( isGenerating ) {
+			return;
+		}
+
+		if ( hasResult ) {
+			const delta = refineInput.trim();
+			if ( ! delta ) {
+				return;
+			}
+			const combined = `${ prompt }\n\n${ delta }`;
+			setPrompt( combined );
+			setRefineInput( '' );
+			generateContent( true, combined );
+			return;
+		}
+
+		if ( ! prompt.trim() ) {
+			return;
+		}
+		generateContent( false );
+	};
+
+	const sectionSubmitDisabled = ! hasAPIKey || isGenerating ||
+		( hasResult ? ! refineInput.trim() : ! prompt.trim() );
+
+	const sectionStatus = ( () => {
+		if ( isGenerating ) {
+			return { kind: 'busy', label: loadingLabel };
+		}
+		if ( 'error' === status ) {
+			return { kind: 'error', label: __( 'Generation failed', 'otter-blocks' ) };
+		}
+		if ( hasResult ) {
+			return { kind: 'ready', label: __( 'Ready to insert', 'otter-blocks' ) };
+		}
+		return { kind: 'idle', label: __( 'Describe a section', 'otter-blocks' ) };
+	} )();
 
 	return (
 		<Modal
@@ -560,269 +686,460 @@ const AIContentModal = ({
 			shouldCloseOnClickOutside={ ! isGenerating }
 			shouldCloseOnEsc={ ! isGenerating }
 			overlayClassName="o-ai-content-modal"
-			className="o-ai-content-modal__dialog"
+			className={ `o-ai-content-modal__dialog${ isBlockGeneration ? ' is-section-mode' : '' }` }
+			__experimentalHideHeader={ isBlockGeneration }
 		>
-			<div className="o-ai-content-modal__body">
-				<div className="o-ai-content-modal__scroll">
-					{ ! hasAPIKey && (
-						<Notice status="warning" isDismissible={ false }>
-							{ __( 'Please add your OpenAI API key in the AI settings.', 'otter-blocks' ) }{ ' ' }
-							<ExternalLink href={ `${ window.themeisleGutenberg?.optionsPath }#ai` }>
-								{ __( 'Go to Dashboard', 'otter-blocks' ) }
-							</ExternalLink>
-						</Notice>
-					) }
-
-					{ actions.length > 1 && (
-						<SelectControl
-							label={ __( 'Action', 'otter-blocks' ) }
-							value={ selectedActionId }
-							options={ actions.map( ( action ) => ({
-								label: action.title,
-								value: action.id
-							}) ) }
-							onChange={ ( value ) => {
-								setSelectedActionId( value );
-							} }
-						/>
-					) }
-
-					{ 'tone' === selectedAction.type ? (
-						<div className="o-ai-content-modal__tones">
-							<span className="o-ai-content-modal__label">
-								{
-									'translate' === selectedAction.id
-										? __( 'Language', 'otter-blocks' )
-										: __( 'Tone', 'otter-blocks' )
-								}
-							</span>
-							<div className="o-ai-content-modal__tone-pills">
-								{
-									toneOptions.map( ( toneOption ) => (
-										<Button
-											key={ toneOption }
-											variant={ tone === toneOption ? 'primary' : 'secondary' }
-											isSmall
-											onClick={ () => {
-												setTone( toneOption );
-												setPrompt( getActionPrompt( selectedAction, toneOption ) );
-												markDirty();
-											} }
-										>
-											{ toneOption }
-										</Button>
-									) )
-								}
-							</div>
-							<Button
-								variant="primary"
-								className="o-ai-content-modal__generate"
-								disabled={ ! hasAPIKey || 'loading' === status || ! canSubmit }
-								isBusy={ 'loading' === status }
-								onClick={ () => generateContent( false ) }
-							>
-								{ __( 'Generate', 'otter-blocks' ) }
-							</Button>
+			{ isBlockGeneration ? (
+				<div className="o-ai-section">
+					<div className="o-ai-section__header">
+						<span className="o-ai-section__brand-icon" aria-hidden="true">
+							<Icon icon={ aiGeneration } />
+						</span>
+						<div className="o-ai-section__brand">
+							<span className="o-ai-section__brand-title">{ __( 'Otter AI Section', 'otter-blocks' ) }</span>
+							<span className="o-ai-section__brand-subtitle">{ __( 'Builds with your blocks & theme styles', 'otter-blocks' ) }</span>
 						</div>
-					) : (
-						<div className="o-ai-content-modal__prompt-row">
-							<span className="o-ai-content-modal__prompt-icon" aria-hidden="true">
+						<span className={ `o-ai-section__status is-${ sectionStatus.kind }` }>
+							<span className="o-ai-section__status-dot" aria-hidden="true" />
+							{ sectionStatus.label }
+						</span>
+						<Button
+							icon={ close }
+							label={ __( 'Close', 'otter-blocks' ) }
+							className="o-ai-section__close"
+							disabled={ isGenerating }
+							onClick={ onClose }
+						/>
+					</div>
+
+					<div className="o-ai-section__canvas">
+						{ ! hasAPIKey && (
+							<Notice status="warning" isDismissible={ false }>
+								{ __( 'Please add your OpenAI API key in the AI settings.', 'otter-blocks' ) }{ ' ' }
+								<ExternalLink href={ `${ window.themeisleGutenberg?.optionsPath }#ai` }>
+									{ __( 'Go to Dashboard', 'otter-blocks' ) }
+								</ExternalLink>
+							</Notice>
+						) }
+
+						{ 'loading' === status && (
+							<div className="o-ai-gen" role="status" aria-live="polite">
+								<span className="o-ai-gen__spark" aria-hidden="true">
+									<Icon icon={ aiGeneration } />
+								</span>
+								<div className="o-ai-gen__body">
+									<span className="o-ai-gen__label">{ loadingLabel }</span>
+									<div className={ `o-ai-gen__bar${ isPlanning ? ' is-indeterminate' : '' }` }>
+										<span
+											className="o-ai-gen__bar-fill"
+											style={ isPlanning ? undefined : { width: `${ generationPercent }%` } }
+										/>
+									</div>
+								</div>
+							</div>
+						) }
+
+						{ 'error' === status && error && (
+							<Notice status="error" isDismissible={ false }>{ error }</Notice>
+						) }
+
+						{ previewBlocks.length > 0 ? (
+							<div className={ `o-ai-section__frame is-${ viewport }` }>
+								<BlockPreview blocks={ previewBlocks } viewportWidth={ previewWidth } />
+							</div>
+						) : ( 'loading' !== status && 'error' !== status && (
+							<div className="o-ai-section__placeholder">
+								{ __( 'Describe a section below and generate a preview.', 'otter-blocks' ) }
+							</div>
+						) ) }
+
+						{ hasResult && Boolean( currentGenerationDiagnostics?.droppedRoots.length ) && (
+							<Notice status="warning" isDismissible={ false }>
+								{
+									sprintf(
+									// translators: %d: number of generated roots that could not be validated.
+										__( '%d generated block group could not be validated and was skipped.', 'otter-blocks' ),
+										currentGenerationDiagnostics?.droppedRoots.length || 0
+									)
+								}
+							</Notice>
+						) }
+					</div>
+
+					<div className="o-ai-section__refine">
+						<div className="o-ai-section__refine-field">
+							<span className="o-ai-section__refine-icon" aria-hidden="true">
 								<Icon icon={ aiGeneration } />
 							</span>
 							<TextareaControl
-								className="o-ai-content-modal__prompt-input"
+								className="o-ai-section__refine-input"
 								label={ __( 'Prompt', 'otter-blocks' ) }
 								hideLabelFromVision
-								placeholder={ __( 'Describe what you want to generate…', 'otter-blocks' ) }
-								value={ prompt }
+								placeholder={
+									hasResult
+										? __( 'Ask Otter AI to refine — e.g. make the headline shorter, use a darker theme…', 'otter-blocks' )
+										: __( 'Describe the section you want to generate…', 'otter-blocks' )
+								}
+								value={ hasResult ? refineInput : prompt }
 								rows={ 1 }
 								onChange={ ( value ) => {
-									setPrompt( value );
-									markDirty();
+									if ( hasResult ) {
+										setRefineInput( value );
+									} else {
+										setPrompt( value );
+										markDirty();
+									}
 								} }
 								__nextHasNoMarginBottom
 							/>
 							<Button
 								variant="primary"
-								className="o-ai-content-modal__generate"
-								disabled={ ! hasAPIKey || 'loading' === status || ! canSubmit }
-								isBusy={ 'loading' === status }
-								onClick={ () => generateContent( false ) }
+								className="o-ai-section__refine-submit"
+								disabled={ sectionSubmitDisabled }
+								isBusy={ isGenerating }
+								onClick={ handleSectionSubmit }
 							>
-								{ __( 'Generate', 'otter-blocks' ) }
+								{ hasResult ? __( 'Refine', 'otter-blocks' ) : __( 'Generate', 'otter-blocks' ) }
 							</Button>
 						</div>
-					) }
+					</div>
 
-					{ isBlockGeneration ? (
-						<div className="o-ai-content-modal__preview">
-							<div className="o-ai-content-modal__preview-header">
-								<span className="o-ai-content-modal__label">{ __( 'Preview', 'otter-blocks' ) }</span>
-								<div className="o-ai-content-modal__viewport">
+					<div className="o-ai-section__footer">
+						<div className="o-ai-section__footer-left">
+							{ hasResult && 1 < resultHistory.length && (
+								<div className="o-ai-section__versions">
 									<Button
-										icon={ desktop }
-										isSmall
-										isPressed={ 'desktop' === viewport }
-										label={ __( 'Desktop', 'otter-blocks' ) }
-										onClick={ () => setViewport( 'desktop' ) }
+										icon={ undo }
+										label={ __( 'Previous version', 'otter-blocks' ) }
+										disabled={ 0 === resultHistoryIndex }
+										onClick={ () => setResultHistoryIndex( ( prev ) => Math.max( 0, prev - 1 ) ) }
 									/>
-									<Button
-										icon={ mobile }
-										isSmall
-										isPressed={ 'mobile' === viewport }
-										label={ __( 'Mobile', 'otter-blocks' ) }
-										onClick={ () => setViewport( 'mobile' ) }
-									/>
-								</div>
-							</div>
-
-							{ 'loading' === status && (
-								<div className="o-ai-gen" role="status" aria-live="polite">
-									<span className="o-ai-gen__spark" aria-hidden="true">
-										<Icon icon={ aiGeneration } />
+									<span className="o-ai-section__version-count">
+										{
+											sprintf(
+												// translators: %1$d: current version number, %2$d: total versions.
+												__( 'Version %1$d of %2$d', 'otter-blocks' ),
+												resultHistoryIndex + 1,
+												resultHistory.length
+											)
+										}
 									</span>
-									<div className="o-ai-gen__body">
-										<span className="o-ai-gen__label">{ loadingLabel }</span>
-										<div className={ `o-ai-gen__bar${ isPlanning ? ' is-indeterminate' : '' }` }>
-											<span
-												className="o-ai-gen__bar-fill"
-												style={ isPlanning ? undefined : { width: `${ generationPercent }%` } }
-											/>
-										</div>
-									</div>
+									<Button
+										icon={ redo }
+										label={ __( 'Next version', 'otter-blocks' ) }
+										disabled={ resultHistoryIndex >= resultHistory.length - 1 }
+										onClick={ () => setResultHistoryIndex( ( prev ) => Math.min( resultHistory.length - 1, prev + 1 ) ) }
+									/>
 								</div>
 							) }
 
-							{ 'error' === status && error && (
-								<Notice status="error" isDismissible={ false }>{ error }</Notice>
-							) }
-
-							{ previewBlocks.length > 0 && (
-								<div className="o-ai-content-modal__preview-canvas">
-									<BlockPreview blocks={ previewBlocks } viewportWidth={ previewWidth } />
-								</div>
-							) }
-
-							{ hasResult && Boolean( currentGenerationDiagnostics?.droppedRoots.length ) && (
-								<Notice status="warning" isDismissible={ false }>
+							{ undefined !== tokenUsage && ! isDirty && (
+								<span className="o-ai-section__tokens">
 									{
 										sprintf(
-										// translators: %d: number of generated roots that could not be validated.
-											__( '%d generated block group could not be validated and was skipped.', 'otter-blocks' ),
-											currentGenerationDiagnostics?.droppedRoots.length || 0
+											// translators: %d: number of used tokens.
+											__( 'Used tokens: %d', 'otter-blocks' ),
+											tokenUsage
 										)
 									}
-								</Notice>
-							) }
-
-							{ ! hasResult && 'loading' !== status && 'error' !== status && 0 === previewBlocks.length && (
-								<span className="o-ai-content-modal__placeholder">
-									{ __( 'Describe a section and click Generate.', 'otter-blocks' ) }
 								</span>
 							) }
 						</div>
-					) : (
-						<div className="o-ai-content-modal__panels">
-							<div className="o-ai-content-modal__panel">
-								<span className="o-ai-content-modal__label">{ __( 'Original', 'otter-blocks' ) }</span>
-								<div
-									className="o-ai-content-modal__text"
-									dangerouslySetInnerHTML={{ __html: safeHTML( originalContent ) }}
-								/>
-							</div>
 
-							<div className="o-ai-content-modal__panel">
-								<span className="o-ai-content-modal__label">{ __( 'Suggestion', 'otter-blocks' ) }</span>
-								<div className="o-ai-content-modal__text">
-									{ 'loading' === status && (
-										<div className="o-ai-content-modal__loading">
-											<Spinner />
-											<span>{ __( 'Generating…', 'otter-blocks' ) }</span>
-										</div>
-									) }
-
-									{ 'error' === status && error && (
-										<Notice status="error" isDismissible={ false }>
-											{ error }
-										</Notice>
-									) }
-
-									{ hasResult && currentResult && (
-										<div dangerouslySetInnerHTML={{ __html: safeHTML( currentResult ) }} />
-									) }
-
-									{ ! hasResult && 'loading' !== status && 'error' !== status && (
-										<span className="o-ai-content-modal__placeholder">
-											{
-												isDirty
-													? __( 'Adjust the prompt and click Generate.', 'otter-blocks' )
-													: __( 'Generated content will appear here.', 'otter-blocks' )
-											}
-										</span>
-									) }
-								</div>
-							</div>
-						</div>
-					) }
-				</div>
-
-				<div className="o-ai-content-modal__footer">
-					<div className="o-ai-content-modal__footer-left">
-						<div className="o-ai-content-modal__footer-actions">
+						<div className="o-ai-section__footer-right">
+							<Button
+								variant="secondary"
+								disabled={ isGenerating }
+								onClick={ onClose }
+							>
+								{ __( 'Discard', 'otter-blocks' ) }
+							</Button>
 							<Button
 								variant="primary"
-								disabled={ ! hasResult || 'loading' === status }
+								disabled={ ! hasResult || isGenerating }
 								onClick={ handleApply }
 							>
-								{ __( 'Done', 'otter-blocks' ) }
-							</Button>
-
-							<Button
-								variant="tertiary"
-								className="o-ai-content-modal__regenerate"
-								disabled={ ! hasResult || 'loading' === status }
-								onClick={ () => generateContent( true ) }
-							>
-								{ __( 'Regenerate', 'otter-blocks' ) }
+								{ __( 'Insert section', 'otter-blocks' ) }
 							</Button>
 						</div>
+					</div>
+				</div>
+			) : (
+				<div className="o-ai-content-modal__body">
+					<div className="o-ai-content-modal__scroll">
+						{ ! hasAPIKey && (
+							<Notice status="warning" isDismissible={ false }>
+								{ __( 'Please add your OpenAI API key in the AI settings.', 'otter-blocks' ) }{ ' ' }
+								<ExternalLink href={ `${ window.themeisleGutenberg?.optionsPath }#ai` }>
+									{ __( 'Go to Dashboard', 'otter-blocks' ) }
+								</ExternalLink>
+							</Notice>
+						) }
 
-						{ undefined !== tokenUsage && ! isDirty && (
-							<span className="o-ai-content-modal__tokens">
-								{
-									sprintf(
-										// translators: %d: number of used tokens.
-										__( 'Used tokens: %d', 'otter-blocks' ),
-										tokenUsage
-									)
-								}
-							</span>
+						{ actions.length > 1 && (
+							<SelectControl
+								label={ __( 'Action', 'otter-blocks' ) }
+								value={ selectedActionId }
+								options={ actions.map( ( action ) => ({
+									label: action.title,
+									value: action.id
+								}) ) }
+								onChange={ ( value ) => {
+									setSelectedActionId( value );
+								} }
+							/>
+						) }
+
+						{ 'tone' === selectedAction.type ? (
+							<div className="o-ai-content-modal__tones">
+								<span className="o-ai-content-modal__label">
+									{
+										'translate' === selectedAction.id
+											? __( 'Language', 'otter-blocks' )
+											: __( 'Tone', 'otter-blocks' )
+									}
+								</span>
+								<div className="o-ai-content-modal__tone-pills">
+									{
+										toneOptions.map( ( toneOption ) => (
+											<Button
+												key={ toneOption }
+												variant={ tone === toneOption ? 'primary' : 'secondary' }
+												isSmall
+												onClick={ () => {
+													setTone( toneOption );
+													setPrompt( getActionPrompt( selectedAction, toneOption ) );
+													markDirty();
+												} }
+											>
+												{ toneOption }
+											</Button>
+										) )
+									}
+								</div>
+								<div className="o-ai-content-modal__prompt-actions">
+									<Button
+										variant="primary"
+										className="o-ai-content-modal__generate"
+										disabled={ ! hasAPIKey || 'loading' === status || ! canSubmit }
+										isBusy={ 'loading' === status }
+										onClick={ () => generateContent( false ) }
+									>
+										{ __( 'Generate', 'otter-blocks' ) }
+									</Button>
+								</div>
+							</div>
+						) : (
+							<div className="o-ai-content-modal__prompt-row">
+								<span className="o-ai-content-modal__prompt-icon" aria-hidden="true">
+									<Icon icon={ aiGeneration } />
+								</span>
+								<TextareaControl
+									className="o-ai-content-modal__prompt-input"
+									label={ __( 'Prompt', 'otter-blocks' ) }
+									hideLabelFromVision
+									placeholder={ __( 'Describe what you want to generate…', 'otter-blocks' ) }
+									value={ prompt }
+									rows={ 1 }
+									onChange={ ( value ) => {
+										setPrompt( value );
+										markDirty();
+									} }
+									__nextHasNoMarginBottom
+								/>
+								<div className="o-ai-content-modal__prompt-actions">
+									<Button
+										variant="primary"
+										className="o-ai-content-modal__generate"
+										disabled={ ! hasAPIKey || 'loading' === status || ! canSubmit }
+										isBusy={ 'loading' === status }
+										onClick={ () => generateContent( false ) }
+									>
+										{ __( 'Generate', 'otter-blocks' ) }
+									</Button>
+								</div>
+							</div>
+						) }
+
+						{ isBlockGeneration ? (
+							<div className="o-ai-content-modal__preview">
+								<div className="o-ai-content-modal__preview-header">
+									<span className="o-ai-content-modal__label">{ __( 'Preview', 'otter-blocks' ) }</span>
+									<div className="o-ai-content-modal__viewport">
+										<Button
+											icon={ desktop }
+											isSmall
+											isPressed={ 'desktop' === viewport }
+											label={ __( 'Desktop', 'otter-blocks' ) }
+											onClick={ () => setViewport( 'desktop' ) }
+										/>
+										<Button
+											icon={ mobile }
+											isSmall
+											isPressed={ 'mobile' === viewport }
+											label={ __( 'Mobile', 'otter-blocks' ) }
+											onClick={ () => setViewport( 'mobile' ) }
+										/>
+									</div>
+								</div>
+
+								{ 'loading' === status && (
+									<div className="o-ai-gen" role="status" aria-live="polite">
+										<span className="o-ai-gen__spark" aria-hidden="true">
+											<Icon icon={ aiGeneration } />
+										</span>
+										<div className="o-ai-gen__body">
+											<span className="o-ai-gen__label">{ loadingLabel }</span>
+											<div className={ `o-ai-gen__bar${ isPlanning ? ' is-indeterminate' : '' }` }>
+												<span
+													className="o-ai-gen__bar-fill"
+													style={ isPlanning ? undefined : { width: `${ generationPercent }%` } }
+												/>
+											</div>
+										</div>
+									</div>
+								) }
+
+								{ 'error' === status && error && (
+									<Notice status="error" isDismissible={ false }>{ error }</Notice>
+								) }
+
+								{ previewBlocks.length > 0 && (
+									<div className="o-ai-content-modal__preview-canvas">
+										<BlockPreview blocks={ previewBlocks } viewportWidth={ previewWidth } />
+									</div>
+								) }
+
+								{ hasResult && Boolean( currentGenerationDiagnostics?.droppedRoots.length ) && (
+									<Notice status="warning" isDismissible={ false }>
+										{
+											sprintf(
+												// translators: %d: number of generated roots that could not be validated.
+												__( '%d generated block group could not be validated and was skipped.', 'otter-blocks' ),
+												currentGenerationDiagnostics?.droppedRoots.length || 0
+											)
+										}
+									</Notice>
+								) }
+
+								{ ! hasResult && 'loading' !== status && 'error' !== status && 0 === previewBlocks.length && (
+									<span className="o-ai-content-modal__placeholder">
+										{ __( 'Describe a section and click Generate.', 'otter-blocks' ) }
+									</span>
+								) }
+							</div>
+						) : (
+							<div className="o-ai-content-modal__panels">
+								<div className="o-ai-content-modal__panel">
+									<span className="o-ai-content-modal__label">{ __( 'Original', 'otter-blocks' ) }</span>
+									<div
+										className="o-ai-content-modal__text"
+										dangerouslySetInnerHTML={{ __html: safeHTML( originalContent ) }}
+									/>
+								</div>
+
+								<div className="o-ai-content-modal__panel">
+									<span className="o-ai-content-modal__label">{ __( 'Suggestion', 'otter-blocks' ) }</span>
+									<div className="o-ai-content-modal__text">
+										{ 'loading' === status && (
+											<div className="o-ai-content-modal__loading">
+												<Spinner />
+												<span>{ __( 'Generating…', 'otter-blocks' ) }</span>
+											</div>
+										) }
+
+										{ 'error' === status && error && (
+											<Notice status="error" isDismissible={ false }>
+												{ error }
+											</Notice>
+										) }
+
+										{ hasResult && currentResult && (
+											<div dangerouslySetInnerHTML={{ __html: safeHTML( currentResult ) }} />
+										) }
+
+										{ ! hasResult && 'loading' !== status && 'error' !== status && (
+											<span className="o-ai-content-modal__placeholder">
+												{
+													isDirty
+														? __( 'Adjust the prompt and click Generate.', 'otter-blocks' )
+														: __( 'Generated content will appear here.', 'otter-blocks' )
+												}
+											</span>
+										) }
+									</div>
+								</div>
+							</div>
 						) }
 					</div>
 
-					{ hasResult && ! isDirty && 1 < resultHistory.length && (
-						<div className="o-ai-content-modal__history">
-							<Button
-								variant="tertiary"
-								icon={ undo }
-								label={ __( 'Previous version', 'otter-blocks' ) }
-								disabled={ 0 === resultHistoryIndex }
-								onClick={ () => setResultHistoryIndex( ( prev ) => Math.max( 0, prev - 1 ) ) }
-							/>
-							<span>
-								{ resultHistoryIndex + 1 } / { resultHistory.length }
-							</span>
-							<Button
-								variant="tertiary"
-								icon={ redo }
-								label={ __( 'Next version', 'otter-blocks' ) }
-								disabled={ resultHistoryIndex >= resultHistory.length - 1 }
-								onClick={ () => setResultHistoryIndex( ( prev ) => Math.min( resultHistory.length - 1, prev + 1 ) ) }
-							/>
+					<div className="o-ai-content-modal__footer">
+						<div className="o-ai-content-modal__footer-left">
+							<div className="o-ai-content-modal__footer-actions">
+								<Button
+									variant="primary"
+									disabled={ ! hasResult || 'loading' === status }
+									onClick={ handleApply }
+								>
+									{ __( 'Done', 'otter-blocks' ) }
+								</Button>
+
+								<Button
+									variant="tertiary"
+									className="o-ai-content-modal__regenerate"
+									disabled={ ! hasResult || 'loading' === status }
+									onClick={ () => generateContent( true ) }
+								>
+									{ __( 'Regenerate', 'otter-blocks' ) }
+								</Button>
+
+								{ undefined !== tokenUsage && ! isDirty && (
+									<span className="o-ai-content-modal__tokens">
+										{
+											sprintf(
+											// translators: %d: number of used tokens.
+												__( 'Used tokens: %d', 'otter-blocks' ),
+												tokenUsage
+											)
+										}
+									</span>
+								) }
+							</div>
 						</div>
-					) }
+
+						<div className="o-ai-content-modal__footer-right">
+							{ hasResult && ! isDirty && 1 < resultHistory.length && (
+								<div className="o-ai-content-modal__history">
+									<Button
+										variant="tertiary"
+										icon={ undo }
+										label={ __( 'Previous version', 'otter-blocks' ) }
+										disabled={ 0 === resultHistoryIndex }
+										onClick={ () => setResultHistoryIndex( ( prev ) => Math.max( 0, prev - 1 ) ) }
+									/>
+									<span>
+										{ resultHistoryIndex + 1 } / { resultHistory.length }
+									</span>
+									<Button
+										variant="tertiary"
+										icon={ redo }
+										label={ __( 'Next version', 'otter-blocks' ) }
+										disabled={ resultHistoryIndex >= resultHistory.length - 1 }
+										onClick={ () => setResultHistoryIndex( ( prev ) => Math.min( resultHistory.length - 1, prev + 1 ) ) }
+									/>
+								</div>
+							) }
+
+							<Button
+								variant="tertiary"
+								onClick={ onClose }
+							>
+								{ __( 'Close', 'otter-blocks' ) }
+							</Button>
+						</div>
+					</div>
 				</div>
-			</div>
+			) }
 		</Modal>
 	);
 };
