@@ -44,11 +44,8 @@
 				cursor: pointer;
 			}
 
-			.dashicons {
-				&:before {
-					content: "\f109";
-				}
-				color: #fff;
+			svg {
+				fill: #fff;
 			}
 		}
 	}
@@ -66,6 +63,9 @@
 	position: absolute;
 	bottom: 26px;
 	left: 0px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	&:hover {
 		cursor: pointer;
@@ -74,18 +74,17 @@
 			cursor: pointer;
 		}
 
-		.dashicons {
-			&:before {
-				content: "\f109";
-			}
+		svg {
+			fill: #000000;
 		}
 	}
 
-	.dashicons {
-		color: #666666;
+	svg {
+		display: block;
+		fill: #666666;
 
 		&:hover {
-			color: #000000;
+			fill: #000000;
 		}
 	}
 }
