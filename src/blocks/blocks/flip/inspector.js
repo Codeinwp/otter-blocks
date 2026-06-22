@@ -46,6 +46,7 @@ import {
  * Internal dependencies
  */
 import {
+	AltTextControl,
 	BackgroundSelectorControl,
 	ButtonToggleControl,
 	ControlPanelControl,
@@ -240,6 +241,11 @@ const Inspector = ({
 													>
 														{ __( 'Remove image', 'otter-blocks' ) }
 													</Button>
+
+													<AltTextControl
+														value={ attributes.frontMedia?.alt }
+														onChange={ alt => setAttributes({ frontMedia: { ...attributes.frontMedia, alt } }) }
+													/>
 												</BaseControl>
 											) }
 										</BaseControl>

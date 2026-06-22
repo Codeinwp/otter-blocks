@@ -4,6 +4,11 @@ jest.mock( 'uuid', () => ({
 
 jest.mock( '@wordpress/blocks', () => require( './mocks/wordpress-blocks' ) );
 
+jest.mock( '@wordpress/data', () => ({
+	dispatch: jest.fn( () => ({}) ),
+	select: jest.fn( () => ({}) )
+}) );
+
 import { findBlock } from '../../../onboarding/utils';
 
 describe( 'findBlock', () => {

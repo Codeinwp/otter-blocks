@@ -398,6 +398,12 @@ class Options_Settings {
 							if ( isset( $item['autoresponder']['subject'] ) ) {
 								$item['autoresponder']['subject'] = sanitize_text_field( $item['autoresponder']['subject'] );
 							}
+							if ( isset( $item['aiAutoresponder']['enabled'] ) ) {
+								$item['aiAutoresponder']['enabled'] = ! empty( $item['aiAutoresponder']['enabled'] );
+							}
+							if ( isset( $item['aiAutoresponder']['prompt'] ) ) {
+								$item['aiAutoresponder']['prompt'] = sanitize_textarea_field( $item['aiAutoresponder']['prompt'] );
+							}
 							if ( isset( $item['submitMessage'] ) ) {
 								$item['submitMessage'] = sanitize_text_field( $item['submitMessage'] );
 							}
@@ -486,6 +492,17 @@ class Options_Settings {
 											'type' => 'string',
 										),
 										'body'    => array(
+											'type' => 'string',
+										),
+									),
+								),
+								'aiAutoresponder'         => array(
+									'type'       => 'object',
+									'properties' => array(
+										'enabled' => array(
+											'type' => 'boolean',
+										),
+										'prompt'  => array(
 											'type' => 'string',
 										),
 									),

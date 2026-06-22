@@ -24,9 +24,46 @@
         padding: 0 32px;
     }
 
+    .o-welcome-guide__page-content--finish {
+        .o-welcome-guide__text {
+            margin-bottom: 20px;
+        }
+    }
+
+    .o-welcome-guide__form-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 0 32px 12px;
+    }
+
     .o-welcome-guide__input {
         font-size: 13px;
-        padding: 0 32px;
+        padding: 0;
+        margin: 0;
+
+        .components-base-control__field {
+            margin-bottom: 0;
+        }
+    }
+
+    .o-welcome-guide__checkbox {
+        padding: 0;
+        margin: 0;
+
+        .components-base-control__field {
+            margin-bottom: 0;
+        }
+
+        .components-checkbox-control__input-container {
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .components-checkbox-control__label {
+            line-height: 1.5;
+            margin-top: 1px;
+        }
     }
 
     .components-external-link {
