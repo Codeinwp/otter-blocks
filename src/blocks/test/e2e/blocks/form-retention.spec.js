@@ -396,4 +396,96 @@ test.describe( 'Form submission retention', () => {
 		await expect( page.locator( '#submitpost .metadata' ) ).toContainText( 'Failed' );
 		await expect( page.locator( '#submitpost .metadata li' ).first() ).toContainText( 'email' );
 	});
+
+	test( 'required multiple-choice field stores its label without the asterisk', async({ editor, page, otterUtils }) => {
+		// Regression for the required-field asterisk leaking into the stored/emailed label.
+		// The required sign must render in its own span so the frontend extracts only the
+		// label text (`.otter-form-input-label__label`) when building the submission payload.
+		await editor.insertBlock({
+			name: 'themeisle-blocks/form',
+			innerBlocks: [
+				{
+					name: 'themeisle-blocks/form-input',
+					attributes: { label: 'Name', type: 'text', isRequired: true }
+				},
+				{
+					name: 'themeisle-blocks/form-input',
+					attributes: { label: 'Email', type: 'email', isRequired: true }
+				},
+				{ name: 'themeisle-blocks/form-nonce' },
+				{
+					name: 'themeisle-blocks/form-multiple-choice',
+					attributes: {
+						label: 'Choose',
+						type: 'checkbox',
+						isRequired: true,
+						options: [
+							{ isDefault: false, content: 'Option A' },
+							{ isDefault: false, content: 'Option B' }
+						]
+					}
+				}
+			]
+		});
+
+		const formBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
+		const formId = formBlock.attributes.id;
+
+		const postId = await publishPostReliable( editor, page );
+
+		// Clear the mail log of anything the publish flow may have attempted.
+		await otterUtils.setMailMode( 'ok' );
+
+		await page.goto( `/?p=${postId}` );
+
+		// The required asterisk renders in the UI, in a span separate from the label text.
+		const choiceLabel = page.locator( '.wp-block-themeisle-blocks-form-multiple-choice .otter-form-input-label' );
+		await expect( choiceLabel.locator( '.otter-form-input-label__label' ) ).toHaveText( 'Choose' );
+		await expect( choiceLabel.locator( '.required' ) ).toHaveText( '*' );
+
+		await page.getByLabel( 'Name*' ).fill( 'Ada E2E' );
+		await page.getByLabel( 'Email*' ).fill( 'ada@example.com' );
+		await page.getByLabel( 'Option A' ).check();
+
+		// Wait out the anti-spam minimum fill time.
+		await page.waitForTimeout( 5000 );
+
+		// Capture the actual submission request so we can assert the wire payload, not just
+		// the persisted result. The frontend posts a multipart body whose `form_data` part
+		// is the JSON `{ handler, payload }` built from extractFormFields.
+		const submitRequestPromise = page.waitForRequest( request =>
+			request.url().includes( 'otter/v1/form/frontend' ) && 'POST' === request.method()
+		);
+
+		await page.getByRole( 'button', { name: 'Submit' }).click();
+
+		const submitRequest = await submitRequestPromise;
+		const sentBody = submitRequest.postData() || '';
+		const sentJson = sentBody.match( /name="form_data"[\r\n]+([\s\S]*?)[\r\n]+--/ );
+		const sentFields = sentJson ? ( JSON.parse( sentJson[1] )?.payload?.formInputsData ?? [] ) : [];
+
+		// The request sends the multiple-choice field under its plain label, asterisk-free.
+		const sentChoice = sentFields.find( field => field.value?.includes( 'Option A' ) );
+		expect( sentChoice ).toBeTruthy();
+		expect( sentChoice.label ).toBe( 'Choose' );
+		sentFields.forEach( field => expect( field.label ?? '' ).not.toContain( '*' ) );
+
+		// The submission is persisted as a Record before delivery, regardless of email outcome.
+		await expect( page.locator( '.o-form-server-response' ) ).toBeVisible();
+
+		await expect.poll(
+			async() => ( await otterUtils.getFormRecords() ).filter( record => record.form === formId ).length,
+			{ timeout: 10_000 }
+		).toBe( 1 );
+
+		const records = ( await otterUtils.getFormRecords() ).filter( record => record.form === formId );
+
+		// The multiple-choice field is stored under its plain label, without the asterisk.
+		const choiceInput = records[0].inputs.find( input => input.value?.includes( 'Option A' ) );
+		expect( choiceInput ).toBeTruthy();
+		expect( choiceInput.label ).toBe( 'Choose' );
+
+		// No field label (the required Name/Email included) may carry the required marker.
+		records[0].inputs.forEach( input => expect( input.label ).not.toContain( '*' ) );
+	});
 });
