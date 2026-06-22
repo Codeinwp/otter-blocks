@@ -26,8 +26,6 @@ class Product_Images_Block {
 			return;
 		}
 
-		ob_start();
-
 		global $product;
 
 		if ( ! $product ) {
@@ -38,6 +36,7 @@ class Product_Images_Block {
 			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
 		}
 
+		ob_start();
 		woocommerce_show_product_images();
 		woocommerce_show_product_sale_flash();
 

@@ -26,13 +26,13 @@ class Product_Related_Products_Block {
 			return;
 		}
 
-		ob_start();
-
 		global $product;
 
 		if ( ! $product ) {
 			return;
 		}
+
+		ob_start();
 		woocommerce_output_related_products();
 		$output = ob_get_clean();
 		return $output;

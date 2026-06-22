@@ -26,8 +26,6 @@ class Product_Tabs_Block {
 			return;
 		}
 
-		ob_start();
-
 		global $product;
 
 		if ( ! $product ) {
@@ -42,8 +40,10 @@ class Product_Tabs_Block {
 			} 
 		);
 
+		ob_start();
 		woocommerce_output_product_data_tabs();
 		$output = ob_get_clean();
+
 		return $output;
 	}
 }
