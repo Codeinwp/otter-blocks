@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { test, expect } from '../fixtures';
+import { insertParagraphAndOpenAiToolbar } from '../helpers/ai-toolbar';
 
 /**
  * Regression test for the AI "Insert section" crash.
@@ -308,6 +309,80 @@ test.describe( 'AI Block — Insert section', () => {
 		// A silent crash blanks the canvas; this heading must still render.
 		await expect(
 			editor.canvas.getByText( 'Three key product benefits' )
+		).toBeVisible();
+	});
+});
+
+/**
+ * The faithful reproduction: drive the real AI toolbar → generate → Insert
+ * section flow. This replaces the *selected block* while the modal and its live
+ * BlockPreview unmount — the one interaction the store-only cases above can't
+ * cover. The AI stub returns an Atomic Wind features tree (see the e2e
+ * bootstrap), so the inserted blocks match what the model produces in prod.
+ */
+test.describe( 'AI Toolbar — section insertion (full modal)', () => {
+	const PRESEEDED_OPENAI_KEY = 'sk_XXXXXXXXXXXXXXXXXXXXXXxx';
+
+	test.beforeEach( async({ admin, otterUtils }) => {
+		await otterUtils.reset();
+		await otterUtils.setAtomicWindBlocks( true ).catch( () => null );
+		await otterUtils.setOptions({
+			themeisle_open_ai_api_key: PRESEEDED_OPENAI_KEY,
+			themeisle_blocks_settings_block_ai_toolbar_module: true,
+
+			// An "any" action makes the modal render the section-generation UI.
+			themeisle_blocks_settings_ai_toolbar_actions: [
+				{
+					id: 'generate-section',
+					title: 'Generate Section',
+					prompt: 'Create a features section about our product.',
+					enabled: true,
+					custom: true,
+					availability: 'any',
+					type: 'prompt'
+				}
+			]
+		});
+		await otterUtils.seedPrompts();
+		await admin.createNewPost();
+	});
+
+	test.afterEach( async({ otterUtils }) => {
+		await otterUtils.setAtomicWindBlocks( false ).catch( () => null );
+	});
+
+	test( 'generating and inserting an Atomic Wind section does not crash the editor', async({ editor, page }) => {
+
+		// Skip cleanly where Atomic Wind could not be registered (env mu-plugin
+		// out of sync / option not settable).
+		const atomicRegistered = await page.evaluate(
+			() => Boolean( window.wp?.blocks?.getBlockType?.( 'atomic-wind/box' ) )
+		);
+		test.skip( ! atomicRegistered, 'Atomic Wind blocks are not registered in this environment.' );
+
+		await insertParagraphAndOpenAiToolbar( page, editor, 'Replace me with a section.' );
+		await page.getByRole( 'menuitem', { name: 'Generate Section' }).click();
+
+		const dialog = page.getByRole( 'dialog' );
+		await expect( dialog ).toBeVisible();
+
+		await dialog.getByRole( 'button', { name: 'Generate', exact: true }).click();
+
+		// Result ready → Insert section enables. Generation is two stubbed phases.
+		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
+		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+		await insertButton.click();
+
+		// The modal closes and the editor stays alive.
+		await expect( dialog ).toBeHidden();
+		await expect(
+			page.getByText( 'The editor has encountered an unexpected error', { exact: false })
+		).toBeHidden();
+
+		// The selected block was replaced and the generated section rendered.
+		await expect( editor.canvas.getByText( 'Replace me with a section.' ) ).toBeHidden();
+		await expect(
+			editor.canvas.getByText( 'Rewritten content for testing.' ).first()
 		).toBeVisible();
 	});
 });

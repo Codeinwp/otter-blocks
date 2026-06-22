@@ -255,8 +255,68 @@ function stub_openai_space_nation_content() {
  * @return bool
  */
 function is_block_generation_request( $request_body ) {
-	return false !== strpos( $request_body, 'planning the structure' )
+	return false !== strpos( $request_body, 'planning a WordPress block layout' )
+		|| false !== strpos( $request_body, 'planning the structure' )
 		|| false !== strpos( $request_body, 'Fill in the attributes' );
+}
+
+/**
+ * A deterministic Atomic Wind "features" tree used to exercise the section
+ * insertion path with the real atomic-wind/* + core/icon blocks (and the
+ * icon slugs that 404 via /wp/v2/icons). Returned only when the Atomic Wind
+ * option is enabled, so generic block-generation tests keep the lone heading.
+ *
+ * @param string $headline        Heading text the attribute phase fills in.
+ * @param bool   $with_attributes Whether to include attributes (phase 3) or
+ *                                just the slug/nesting skeleton (phase 1).
+ * @return array<string, mixed> `{ rationale, roots }` payload.
+ */
+function atomic_wind_features_payload( $headline, $with_attributes ) {
+	$icons = array( 'zap', 'shield-check', 'sparkles' );
+
+	$columns = array();
+	foreach ( $icons as $icon ) {
+		$icon_block = array( 'name' => 'atomic-wind/icon', 'innerBlocks' => array() );
+		$heading    = array( 'name' => 'core/heading', 'innerBlocks' => array() );
+		$paragraph  = array( 'name' => 'core/paragraph', 'innerBlocks' => array() );
+
+		if ( $with_attributes ) {
+			$icon_block['attributes'] = array( 'icon' => $icon, 'className' => 'h-14 w-14 rounded-[18px] p-3' );
+			$heading['attributes']    = array( 'content' => $headline, 'level' => 3, 'className' => 'text-xl font-semibold' );
+			$paragraph['attributes']  = array( 'content' => 'Bring routine tasks into one clear flow.', 'className' => 'text-base opacity-75' );
+		}
+
+		$box = array(
+			'name'        => 'atomic-wind/box',
+			'innerBlocks' => array( $icon_block, $heading, $paragraph ),
+		);
+		if ( $with_attributes ) {
+			$box['attributes'] = array( 'tagName' => 'article', 'className' => 'flex h-full flex-col gap-6 rounded-[22px] bg-[#FFFFFF] p-8' );
+		}
+
+		$column = array( 'name' => 'core/column', 'innerBlocks' => array( $box ) );
+		if ( $with_attributes ) {
+			$column['attributes'] = array( 'verticalAlignment' => 'top', 'width' => '33.33%' );
+		}
+
+		$columns[] = $column;
+	}
+
+	$columns_block = array( 'name' => 'core/columns', 'innerBlocks' => $columns );
+	$root          = array( 'name' => 'core/group', 'innerBlocks' => array( $columns_block ) );
+
+	if ( $with_attributes ) {
+		$columns_block['attributes'] = array( 'verticalAlignment' => 'top', 'align' => 'wide' );
+		$root['attributes']          = array( 'tagName' => 'section', 'align' => 'full', 'backgroundColor' => 'accent-5', 'textColor' => 'contrast' );
+		$root['innerBlocks']         = array( $columns_block );
+	} else {
+		$root['notes'] = 'Three-card features section with an icon, title and short description per card.';
+	}
+
+	return array(
+		'rationale' => array( 'Deterministic E2E Atomic Wind features section.' ),
+		'roots'     => array( $root ),
+	);
 }
 
 /**
@@ -271,7 +331,15 @@ function is_block_generation_request( $request_body ) {
  * @return string JSON-encoded payload for the assistant message content.
  */
 function stub_openai_block_generation_payload( $request_body, $headline ) {
-	if ( false !== strpos( $request_body, 'Fill in the attributes' ) ) {
+	$is_attribute_phase = false !== strpos( $request_body, 'Fill in the attributes' );
+
+	// When Atomic Wind is enabled, return a rich atomic-wind/* tree so the
+	// section-insertion E2E exercises the real blocks instead of a lone heading.
+	if ( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) ) {
+		return wp_json_encode( atomic_wind_features_payload( $headline, $is_attribute_phase ) );
+	}
+
+	if ( $is_attribute_phase ) {
 		return wp_json_encode(
 			array(
 				'rationale' => array( 'Deterministic E2E content.' ),
