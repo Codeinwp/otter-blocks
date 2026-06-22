@@ -147,6 +147,7 @@ const BlocksImporter = ({
 				notices={ noticeUI }
 			>
 				<FormFileUpload
+					__next40pxDefaultSize
 					accept="text/json"
 					onChange={ ( e ) => uploadImport( e.target.files ) }
 					isSecondary

@@ -25,7 +25,7 @@ import { useSelect } from '@wordpress/data';
 
 import {
 	format,
-	__experimentalGetSettings
+	getSettings
 } from '@wordpress/date';
 
 import { Fragment } from '@wordpress/element';
@@ -69,7 +69,7 @@ const DateRange = ({
 	value,
 	onChange
 }) => {
-	const settings = __experimentalGetSettings();
+	const settings = getSettings();
 
 	return (
 		<BaseControl

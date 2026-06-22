@@ -99,15 +99,16 @@ const Edit = ({
 			getDefaultBlockVariation
 		} = select( 'core/blocks' );
 
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const editor = select( 'core/editor' );
+		const deviceType = editor?.getDeviceType ? editor.getDeviceType() : false;
 
 		return {
 			sectionBlock: getBlock( clientId ),
 			children: getBlock( clientId )?.innerBlocks || [],
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false,
+			isViewportAvailable: deviceType ? true : false,
+			isPreviewDesktop: deviceType ? 'Desktop' === deviceType : false,
+			isPreviewTablet: deviceType ? 'Tablet' === deviceType : false,
+			isPreviewMobile: deviceType ? 'Mobile' === deviceType : false,
 			blockType: getBlockType( name ),
 			defaultVariation: getDefaultBlockVariation( name, 'block' ),
 			variations: getBlockVariations( name, 'block' ).filter( ({ isDefault }) => ! isDefault )

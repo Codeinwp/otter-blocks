@@ -17,8 +17,8 @@ import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFr
  */
 export const useResponsiveAttributes = ( setAttributes = () => {}) => useSelect( select => {
 	const { getView } = select( 'themeisle-gutenberg/data' );
-	const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-	const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+	const editor = select( 'core/editor' );
+	const view = editor?.getDeviceType ? editor.getDeviceType() : getView();
 
 	return {
 		responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),

@@ -313,7 +313,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 			}
 
 			const selectedBlocks: {name: string; [key: string]: any}[] = select( 'core/block-editor' )?.getMultiSelectedBlocks() ?? [];
-			const hiddenBlocks: string[] = select( 'core/preferences' )?.get( 'core/edit-post', 'hiddenBlockTypes' ) ?? [];
+			const hiddenBlocks: string[] = select( 'core/preferences' )?.get( 'core', 'hiddenBlockTypes' ) ?? [];
 
 			return {
 				isMultipleSelection: 1 < selectedBlocks.length,

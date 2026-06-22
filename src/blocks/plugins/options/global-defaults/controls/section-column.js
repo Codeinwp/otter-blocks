@@ -24,8 +24,8 @@ const SectionColumn = ({
 	changeConfig
 }) => {
 	const getView = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
-		return __experimentalGetPreviewDeviceType();
+		const editor = select( 'core/editor' );
+		return editor?.getDeviceType ? editor.getDeviceType() : 'Desktop';
 	}, []);
 
 	const getPadding = () => {
