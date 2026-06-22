@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
  * WordPress dependencies
  */
 import {
+	isEqual,
 	isNumber,
 	merge
 } from 'lodash';
@@ -74,6 +75,10 @@ const Edit = ({
 	const mapInstanceRef = useRef( null );
 	const [ map, setMap ] = useState( null );
 	const [ isAddingToLocationActive, setActiveAddingToLocation ] = useState( false );
+
+	// Read by the once-bound Leaflet handlers in `createMap`, which would otherwise
+	// capture the initial `isAddingToLocationActive` value via a stale closure.
+	const isAddingRef = useRef( false );
 	const [ openMarker, setOpenMarker ] = useState( null );
 
 	/**
@@ -86,9 +91,14 @@ const Edit = ({
 	 */
 	const getLeaflet = () => getBlockWindow( mapRef ).L;
 
-	const createMarker = ( markerProps, dispatch ) => {
+	const createMarker = ( sourceProps, dispatch ) => {
 		const L = getLeaflet();
-		if ( L && map && dispatch && markerProps ) {
+		if ( L && map && dispatch && sourceProps ) {
+
+			// Own a private copy so reducer mutations (e.g. a drag's `moveend`) don't
+			// silently mutate the `attributes.markers` objects, which would hide the
+			// change from the persistence diff below.
+			const markerProps = { ...sourceProps };
 			markerProps.id ??= uuidv4();
 			markerProps.latitude ??= map.getCenter().lat;
 			markerProps.longitude ??= map.getCenter().lng;
@@ -121,6 +131,10 @@ const Edit = ({
 				setOpenMarker( markerProps.id );
 			});
 
+			// Hide the hover tooltip while the click popup is open so the same title
+			// isn't shown twice (no-op when no tooltip is bound).
+			markerMap.on( 'popupopen', () => markerMap.closeTooltip() );
+
 			markerMap.markerProps = markerProps;
 
 			return markerMap;
@@ -136,7 +150,7 @@ const Edit = ({
 			return [ ...oldState, newMarker ];
 
 		case ActionType.ADD_MANUAL:
-			if ( isAddingToLocationActive ) {
+			if ( isAddingRef.current ) {
 				const newMarker = createMarker( action.marker, action.dispatch );
 				return [ ...oldState, newMarker ];
 			}
@@ -201,6 +215,15 @@ const Edit = ({
 			return ;
 		}
 
+		// Leaflet's CSS path-guessing heuristic is unreliable inside the iframed
+		// editor, so point the default marker icon at the bundled images explicitly.
+		const assetsPath = window.themeisleGutenberg?.assetsPath;
+		if ( assetsPath ) {
+			L.Icon.Default.imagePath = `${ assetsPath }/leaflet/images/`;
+		}
+
+		// `scrollZoom` defaults to true for blocks saved before the attribute existed.
+		const scrollZoom = false !== attributes.scrollZoom;
 
 		// Create the map
 		mapRef.current.innerHTML = '';
@@ -209,7 +232,12 @@ const Edit = ({
 		const _map = L.map(
 			mapRef.current,
 			{
-				gestureHandling: true,
+				maxZoom: 21,
+				scrollWheelZoom: scrollZoom,
+
+				// Gesture handling enforces the Ctrl/\u2318 + scroll requirement; turn it off
+				// together with scrollWheelZoom when scroll zoom is disabled.
+				gestureHandling: scrollZoom,
 				gestureHandlingOptions: {
 					text: {
 						touch: __( 'Use two fingers to move the map', 'otter-blocks' ),
@@ -221,10 +249,14 @@ const Edit = ({
 		);
 
 
-		// Add Open Street Map as source
+		// Add Open Street Map as source. OSM serves tiles up to zoom 19; allow a
+		// couple of extra levels via overzoom (maxNativeZoom) so users can zoom in
+		// as far as other OSM plugins, upscaling the level-19 tiles past that point.
 		L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-			subdomains: [ 'a', 'b', 'c' ]
+			subdomains: [ 'a', 'b', 'c' ],
+			maxNativeZoom: 19,
+			maxZoom: 21
 		}).addTo( _map );
 
 		/**
@@ -260,17 +292,22 @@ const Edit = ({
 		L.Control.AddMarker = L.Control.extend({
 			onAdd: () => {
 				const button = L.DomUtil.create( 'button', 'wp-block-themeisle-blocks-leaflet-map-marker-button' );
-				const span = L.DomUtil.create( 'span', 'dashicons dashicons-sticky', button );
+				button.type = 'button';
+
+				// Render an inline SVG marker icon instead of a Dashicon: the iframed
+				// editor canvas (apiVersion 3) does not load the Dashicons font, so a
+				// `dashicons` glyph renders as an empty box.
+				button.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" /></svg>';
 
 				L.DomEvent.on( button, 'click', ( event ) => {
 
 					// Do not sent this event to the rest of the components
 					L.DomEvent.stopPropagation( event );
-					setActiveAddingToLocation( ! isAddingToLocationActive );
+					setActiveAddingToLocation( ! isAddingRef.current );
 				});
 
 				button.title = __( 'Add marker on the map with a click', 'otter-blocks' );
-				button.appendChild( span );
+				button.setAttribute( 'aria-label', __( 'Add marker on the map with a click', 'otter-blocks' ) );
 
 				return button;
 			},
@@ -337,6 +374,7 @@ const Edit = ({
 	 * Activate the visuals for the `Add Marker` button from the map
 	 */
 	useEffect( () => {
+		isAddingRef.current = isAddingToLocationActive;
 		mapRef.current?.classList.toggle( 'is-selecting-location', isAddingToLocationActive );
 	}, [ isAddingToLocationActive ]);
 
@@ -399,23 +437,28 @@ const Edit = ({
 				// Update the marker location
 				marker.setLatLng([ markerProps.latitude, markerProps.longitude ]);
 
-				// Update the title
+				// Update the hover tooltip
 				marker.closeTooltip();
 				marker.unbindTooltip();
-				marker.bindTooltip( markerProps.title, { direction: 'auto' });
+				if ( attributes.showMarkerTooltip && markerProps.title ) {
+					marker.bindTooltip( markerProps.title, { direction: 'auto' });
+				}
 
-				// Update the content of the Popup
+				// Always bind the popup in the editor: it hosts the Delete Marker control.
 				marker.closePopup();
 				marker.unbindPopup();
 				marker.bindPopup( createPopupContent( markerProps, dispatch ) );
 			});
 
 
-			if ( attributes.markers.length !== markersStore.length && map ) {
-				setAttributes({ markers: markersStore.map( ({ markerProps }) => markerProps ) });
+			// Persist any marker change — add, remove, or a drag that moved a pin —
+			// not just count changes, so dragged positions survive a save/reload.
+			const nextMarkers = markersStore.map( ({ markerProps }) => ({ ...markerProps }) );
+			if ( map && ! isEqual( attributes.markers, nextMarkers ) ) {
+				setAttributes({ markers: nextMarkers });
 			}
 		}
-	}, [ markersStore, map, attributes.markers ]);
+	}, [ markersStore, map, attributes.markers, attributes.showMarkerTooltip ]);
 
 	const blockProps = useBlockProps();
 

@@ -58,7 +58,7 @@ class Leaflet_Map_Block {
 		$output .= '<script type="text/javascript">' . "\n";
 		$output .= '	/* <![CDATA[ */' . "\n";
 		$output .= '		if ( ! window.themeisleLeafletMaps ) window.themeisleLeafletMaps =[];' . "\n";
-		$output .= '		window.themeisleLeafletMaps.push( { container: "' . esc_attr( $id ) . '", attributes: ' . wp_json_encode( $attributes ) . ' } );' . "\n";
+		$output .= '		window.themeisleLeafletMaps.push( { container: "' . esc_attr( $id ) . '", attributes: ' . wp_json_encode( $attributes ) . ', imagePath: "' . esc_url( OTTER_BLOCKS_URL . 'assets/leaflet/images/' ) . '" } );' . "\n";
 		$output .= '	/* ]]> */' . "\n";
 		$output .= '</script>' . "\n";
 
