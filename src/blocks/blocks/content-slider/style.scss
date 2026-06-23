@@ -1,0 +1,31 @@
+@import 'chrome';
+
+.wp-block-themeisle-blocks-content-slider {
+	.o-content-track {
+		display: flex;
+		gap: var(--o-gap, 0px);
+		height: var(--o-height, auto);
+		overflow-x: auto;
+		overflow-y: hidden;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		> * {
+			flex: 0 0 calc((100% - (var(--o-per-view, 1) - 1) * var(--o-gap, 0px)) / var(--o-per-view, 1));
+			margin: 0;
+			scroll-snap-align: start;
+		}
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.wp-block-themeisle-blocks-content-slider .o-content-track {
+		scroll-behavior: auto;
+	}
+}

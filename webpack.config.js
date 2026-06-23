@@ -188,6 +188,7 @@ module.exports = [
 			'leaflet-gesture-handling': './src/blocks/frontend/leaflet-map/leaflet-gesture-handling.js',
 			maps: './src/blocks/frontend/google-map/index.js',
 			slider: './src/blocks/frontend/slider/index.js',
+			'content-slider': './src/blocks/frontend/content-slider/index.js',
 			'progress-bar': './src/blocks/frontend/progress-bar/index.js',
 			'circle-counter': './src/blocks/frontend/circle-counter/index.js',
 			lottie: './src/blocks/frontend/lottie/index.js',
