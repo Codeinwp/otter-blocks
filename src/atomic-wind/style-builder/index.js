@@ -1,11 +1,16 @@
+/**
+ * Persist the compiled atomic-wind CSS to post meta.
+ */
+function signalDone() {
+	document.dispatchEvent( new CustomEvent( 'atomic-wind:css-saved' ) );
+}
+
 document.addEventListener( 'atomic-wind:css-ready', () => {
 	const styleTag = document.getElementById( 'atomic-wind-tailwind' );
-	if ( ! styleTag ) {
-		return;
-	}
+	const css = styleTag ? styleTag.textContent : '';
 
-	const css = styleTag.textContent;
 	if ( ! css || ! window.atomicWindStyleBuilder ) {
+		signalDone();
 		return;
 	}
 
@@ -19,5 +24,5 @@ document.addEventListener( 'atomic-wind:css-ready', () => {
 			css,
 			postId: parseInt( window.atomicWindStyleBuilder.postId, 10 ),
 		} ),
-	} ).catch( () => {} );
+	} ).catch( () => {} ).finally( signalDone );
 } );

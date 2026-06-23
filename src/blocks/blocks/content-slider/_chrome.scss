@@ -1,0 +1,60 @@
+// :where() keeps specificity at zero so chrome never competes with slide content.
+:where(.o-content-slider) {
+	position: relative;
+
+	.o-content-arrows {
+		pointer-events: none;
+	}
+
+	:is(.o-content-arrow, .o-content-dot) {
+		padding: 0;
+		border: 0;
+		cursor: pointer;
+		border-radius: 50%;
+	}
+
+	.o-content-arrow {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		pointer-events: auto;
+		color: var(--o-arrow-color, #ffffff);
+		background: var(--o-arrow-bg, rgba(0, 0, 0, 0.5));
+
+		&--prev {
+			left: 10px;
+		}
+
+		&--next {
+			right: 10px;
+
+			svg {
+				transform: rotate(180deg);
+			}
+		}
+	}
+
+	.o-content-dots {
+		display: flex;
+		justify-content: center;
+		gap: 8px;
+		margin-top: 12px;
+		padding: 0;
+	}
+
+	.o-content-dot {
+		width: 10px;
+		height: 10px;
+		background: var(--o-dot-color, rgba(0, 0, 0, 0.3));
+		transition: background-color 0.15s ease;
+
+		&--active {
+			background: var(--o-dot-active-color, #000000);
+		}
+	}
+}

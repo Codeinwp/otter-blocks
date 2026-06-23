@@ -3,168 +3,1423 @@
 		color: #000;
 		box-shadow: inset 0 0 0 1px #000, 0 0 0 #000;
 	}
+}
 
-	&__modal {
-		.components-modal__header {
-			border-bottom-color: #ddd;
-		}
+.o-library__overlay {
+	background: rgba( 14, 17, 24, 0.5 );
+}
 
-		&__sidebar {
-			bottom: 0;
-			left: 0;
-			overflow-x: visible;
-			overflow-y: scroll;
-			padding: 24px 32px 32px;
-			position: absolute;
-			top: 72px;
-			width: 280px;
+// Modal shell.
+.o-library__modal {
+	--o-accent: var( --wp-admin-theme-color, #3858e9 );
+	--o-ink: #1e1e1e;
+	--o-ink2: #6c7178;
+	--o-line: #e3e5e8;
+	--o-line2: #f0f1f3;
+	--o-paper: #fff;
+	--o-panel: #f6f7f8;
+	--o-hover: #f1f2f4;
 
-			&__heading {
-				text-transform: uppercase;
-				font-weight: bold;
-				font-size: 12px;
-				margin-top: 2em;
-			}
+	width: 90vw;
+	height: 90vh;
+	max-width: none;
+	max-height: none;
+	border-radius: 16px;
+	color: var( --o-ink );
+	font-size: 14px;
 
-			.components-button {
-				height: 48px;
-				text-align: left;
-				width: 100%;
-			}
-		}
-
-		&__content {
-			margin-left: 280px;
-			padding: 24px 0 32px;
-
-			&__actions {
-				display: flex;
-				justify-content: space-between;
-				background: #fff;
-				margin-left: -4px;
-				padding: 10px 0 10px 3px;
-				position: sticky;
-				top: -4px;
-				width: calc(100% + 6px);
-				z-index: 10;
-			}
-
-			&__grid {
-				display: grid;
-				grid-template-columns: 1fr 1fr 1fr;
-				gap: 2rem;
-
-				&.is-2-column {
-					grid-template-columns: 1fr 1fr;
-				}
-
-				&.is-4-column {
-					grid-template-columns: 1fr 1fr 1fr 1fr;
-				}
-			}
-		}
-
-		&__footer {
-			bottom: 0;
-			overflow-x: visible;
-			position: absolute;
-			left: 0;
-			padding: 24px;
-			width: 100%;
-			background: #fff;
-			border: 1px solid #e0e0e0;
-			box-shadow: 0 0 0 1px #e0e0e0;
-			display: flex;
-			justify-content: flex-end;
-			z-index: 9;
-		}
-	}
-
-	&__preview {
-		.block-editor-block-preview__content {
-			max-height: none !important;
-
-			iframe {
-				max-height: none !important;
-			}
-		}
-	}
-
-	&__template {
-		border: 1px solid #e0e0e0;
-		box-shadow: 0 0 0 1px #e0e0e0;
-		border-radius: 4px;
-		overflow: hidden;
-		position: relative;
-		gap: 0px;
-		display: grid;
-		grid-template-rows: 1fr 48px;
-
-		&__preview {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			min-height: 200px;
-			cursor: pointer;
-		}
-
-		&__actions {
-			display: grid;
-			align-items: center;
-			padding: 6px 12px;
-			border-top: 2px solid #e0e0e0;
-			grid-template-columns: 30px 1fr 110px;
-
-			.components-base-control__field {
-				margin-bottom: 0;
-			}
-
-			&__title {
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-
-			&__button {
-				display: flex;
-				gap: 12px;
-
-				.is-favorite {
-					svg {
-						fill: #ff8787;
-					}
-				}
-			}
-		}
-	}
-
-	&__tc-placeholder {
-		border: 2px dashed #e5e7eb;
-		border-radius: 8px;
-		padding: 20px 15px;
+	.components-modal__content {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		border-radius: inherit;
+		position: relative;
+	}
+
+	// WP wraps children in an extra div; keep the flex height chain intact
+	// so the sidebar and patterns area can scroll.
+	.components-modal__children-container {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	button {
+		font-family: inherit;
+	}
+}
+
+.o-library__head {
+	height: 68px;
+	flex: 0 0 68px;
+	padding: 0 24px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid var( --o-line );
+}
+
+.o-library__brand {
+	display: flex;
+	align-items: center;
+	gap: 13px;
+
+	h1 {
+		font-size: 19px;
+		font-weight: 600;
+		margin: 0;
+		letter-spacing: -0.01em;
+	}
+}
+
+.o-library__logo {
+	width: 46px;
+	height: 46px;
+	flex: 0 0 auto;
+	border-radius: 12px;
+	overflow: hidden;
+	display: grid;
+	place-items: center;
+	background: #e8d3c9;
+	box-shadow: inset 0 0 0 1px rgba( 0, 0, 0, 0.06 );
+
+	svg {
+		width: auto;
+		height: 80%;
+	}
+}
+
+.o-library__body {
+	flex: 1;
+	display: flex;
+	min-height: 0;
+}
+
+// Sidebar.
+.o-library__sidebar {
+	width: 264px;
+	flex: 0 0 264px;
+	border-right: 1px solid var( --o-line );
+	display: flex;
+	flex-direction: column;
+	padding: 16px 0;
+	overflow: hidden;
+}
+
+.o-library__seg-wrap {
+	margin: 0 16px 12px;
+	display: flex;
+	gap: 3px;
+	background: var( --o-panel );
+	border: 1px solid var( --o-line );
+	border-radius: 9px;
+	padding: 3px;
+}
+
+.o-library__seg {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	height: 34px;
+	border: none;
+	background: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 600;
+	color: var( --o-ink2 );
+
+	svg {
+		fill: currentColor;
+	}
+
+	&:hover {
+		color: var( --o-ink );
+	}
+
+	&.is-active {
+		background: var( --o-paper );
+		color: var( --o-ink );
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.1 );
+	}
+}
+
+.o-library__nav {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding: 6px 12px;
+}
+
+.o-library__cat {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 10px;
+	border: none;
+	background: none;
+	border-radius: 7px;
+	cursor: pointer;
+	color: var( --o-ink );
+	font-size: 13px;
+	text-align: left;
+
+	&:hover {
+		background: var( --o-hover );
+	}
+
+	&.is-active {
+		background: color-mix( in srgb, var( --o-accent ) 13%, transparent );
+		color: var( --o-accent );
+		font-weight: 600;
+
+		.o-library__count {
+			color: var( --o-accent );
+		}
+	}
+
+	&.is-collection {
+		padding-left: 10px;
+	}
+
+	// Loading placeholder rows are inert — drop the pointer affordances.
+	&.is-skeleton {
+		cursor: default;
+
+		&:hover {
+			background: none;
+		}
+	}
+}
+
+.o-library__cat-label {
+	flex: 0 1 auto;
+	min-width: 0;
+}
+
+.o-library__count {
+	margin-left: auto;
+	font-size: 11px;
+	color: var( --o-ink2 );
+	font-variant-numeric: tabular-nums;
+}
+
+// Pro lock shown right after a Pro-only collection's title.
+.o-library__coll-lock {
+	display: inline-flex;
+	align-items: center;
+	margin-left: 5px;
+	color: #ed6f57;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.o-library__group {
+	margin-top: 6px;
+}
+
+.o-library__group-head {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	padding: 8px 6px 4px;
+	border: none;
+	background: none;
+	cursor: pointer;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var( --o-ink2 );
+
+	svg {
+		margin-left: -5px;
+		opacity: 0.7;
+		fill: currentColor;
+		transition: transform 0.15s;
+	}
+
+	&.is-static {
+		cursor: default;
+		padding-left: 10px;
+	}
+}
+
+.o-library__group-body {
+	display: flex;
+	flex-direction: column;
+
+	.o-library__cat:not( .is-collection ) {
+		padding-left: 22px;
+	}
+}
+
+.o-library__accent {
+	margin: 14px 16px 0;
+	padding-top: 14px;
+	border-top: 1px solid var( --o-line );
+}
+
+.o-library__accent-head {
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var( --o-ink2 );
+	margin-bottom: 9px;
+}
+
+.o-library__accent-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.o-library__swatch-wrap {
+	position: relative;
+	display: inline-flex;
+}
+
+.o-library__accent-popover .components-popover__content {
+	padding: 8px;
+	border-radius: 10px;
+}
+
+.o-library__swatch {
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	border: 1px solid rgba( 0, 0, 0, 0.15 );
+	padding: 0;
+	cursor: pointer;
+	position: relative;
+	flex: 0 0 auto;
+
+	&.is-default {
+		background:
+			linear-gradient(
+				to top left,
+				transparent calc( 50% - 1px ),
+				rgba( 0, 0, 0, 0.35 ) calc( 50% - 1px ),
+				rgba( 0, 0, 0, 0.35 ) calc( 50% + 1px ),
+				transparent calc( 50% + 1px )
+			),
+			var( --o-paper );
+	}
+
+	&.is-custom:not( .is-active ) {
+		background: conic-gradient( #f43f5e, #f59e0b, #10b981, #3b82f6, #8b5cf6, #f43f5e );
+	}
+
+	&.is-active {
+		box-shadow:
+			0 0 0 2px var( --o-paper ),
+			0 0 0 4px var( --o-accent );
+	}
+
+	&:hover:not( .is-active ) {
+		box-shadow:
+			0 0 0 2px var( --o-paper ),
+			0 0 0 4px var( --o-line );
+	}
+}
+
+.o-library__upsell {
+	margin: 14px 16px 0;
+	display: flex;
+	align-items: center;
+	gap: 11px;
+	text-decoration: none;
+	padding: 13px;
+	border-radius: 11px;
+	color: var( --o-ink );
+	background: color-mix( in srgb, var( --o-accent ) 8%, var( --o-paper ) );
+	border: 1px solid color-mix( in srgb, var( --o-accent ) 24%, transparent );
+
+	&:hover {
+		background: color-mix( in srgb, var( --o-accent ) 13%, var( --o-paper ) );
+		color: var( --o-ink );
+	}
+
+	svg {
+		fill: var( --o-accent );
+		flex: 0 0 auto;
+	}
+
+	div {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.3;
+	}
+
+	strong {
+		font-size: 13px;
+	}
+
+	span {
+		font-size: 11.5px;
+		color: var( --o-ink2 );
+	}
+}
+
+// Main area / topbar.
+.o-library__main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	position: relative;
+}
+
+// Placeholder cards shown while patterns resolve. They reuse the card frame
+// and shimmer so the loading state mirrors the grid that replaces it, rather
+// than a centered spinner the eye has to re-anchor away from.
+.o-library__card.is-skeleton {
+	pointer-events: none;
+
+	&:hover {
+		border-color: var( --o-line );
+		box-shadow: none;
+		transform: none;
+	}
+}
+
+.o-library__skeleton-line {
+	height: 11px;
+	border-radius: 4px;
+	background: linear-gradient( 100deg, var( --o-hover ) 40%, color-mix( in srgb, var( --o-hover ) 45%, #fff ) 50%, var( --o-hover ) 60% );
+	background-size: 200% 100%;
+	animation: o-library-shimmer 1.4s linear infinite;
+
+	&.is-short {
+		width: 55%;
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
+		background: var( --o-hover );
+	}
+}
+
+// Generic shimmer block. Stands in for the search field, filter controls,
+// refine tags, sidebar category rows and accent swatches while patterns
+// resolve — sized inline at each call site so it matches the control it
+// replaces and the layout doesn't shift once the real UI mounts.
+.o-library__shimmer {
+	display: inline-block;
+	flex: 0 0 auto;
+	background: linear-gradient( 100deg, var( --o-hover ) 40%, color-mix( in srgb, var( --o-hover ) 45%, #fff ) 50%, var( --o-hover ) 60% );
+	background-size: 200% 100%;
+	animation: o-library-shimmer 1.4s linear infinite;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
+		background: var( --o-hover );
+	}
+}
+
+.o-library__topbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px 14px;
+	padding: 16px 24px 13px;
+	border-bottom: 1px solid var( --o-line );
+}
+
+.o-library__searchwrap {
+	flex: 1 1 280px;
+	max-width: 440px;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	height: 38px;
+	padding: 0 12px;
+	border: 1px solid var( --o-line );
+	border-radius: 9px;
+	background: var( --o-paper );
+
+	> svg {
+		fill: var( --o-ink2 );
+		flex: 0 0 auto;
+	}
+
+	&:focus-within {
+		border-color: var( --o-accent );
+		box-shadow: 0 0 0 1px var( --o-accent );
+	}
+}
+
+// High specificity to beat wp-admin's input[type="search"] styles.
+.o-library__searchwrap input.o-library__search {
+	flex: 1;
+	height: 100%;
+	min-height: 0;
+	padding: 0;
+	border: none;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+	outline: none;
+	font-size: 14px;
+	line-height: normal;
+	color: var( --o-ink );
+	min-width: 0;
+
+	&::placeholder {
+		color: var( --o-ink2 );
+	}
+
+	&:focus {
+		border: none;
+		box-shadow: none;
+		outline: none;
+	}
+
+	&::-webkit-search-cancel-button {
+		display: none;
+	}
+}
+
+.o-library__clear {
+	border: none;
+	background: none;
+	color: var( --o-ink2 );
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+	padding: 2px;
+	border-radius: 4px;
+
+	svg {
+		fill: currentColor;
+	}
+
+	&:hover {
+		background: var( --o-hover );
+		color: var( --o-ink );
+	}
+}
+
+.o-library__filters {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-left: auto;
+}
+
+.o-library__chip {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	height: 34px;
+	padding: 0 13px;
+	border: 1px solid var( --o-line );
+	border-radius: 8px;
+	background: var( --o-paper );
+	color: var( --o-ink );
+	font-size: 13px;
+	font-weight: 500;
+	cursor: pointer;
+
+	svg {
+		fill: currentColor;
+	}
+
+	&:hover {
+		background: var( --o-hover );
+	}
+
+	&.is-on {
+		border-color: var( --o-accent );
+		color: var( --o-accent );
+		background: color-mix( in srgb, var( --o-accent ) 8%, transparent );
 
 		svg {
-			fill: #9ca3af;
-			margin-bottom: 16px;
+			fill: #e5484d;
+		}
+	}
+}
+
+.o-library__chip-count {
+	background: var( --o-accent );
+	color: #fff;
+	border-radius: 10px;
+	font-size: 11px;
+	font-weight: 600;
+	padding: 1px 7px;
+}
+
+.o-library__sep {
+	width: 1px;
+	height: 24px;
+	background: var( --o-line );
+}
+
+select.o-library__sort {
+	height: 34px;
+	padding: 0 24px 0 8px;
+	border: 1px solid var( --o-line );
+	border-radius: 8px;
+	background-color: var( --o-paper );
+	color: var( --o-ink );
+	font-size: 13px;
+	cursor: pointer;
+	line-height: 1;
+}
+
+.o-library__colsbtn.components-button.has-icon {
+	width: 38px;
+	height: 34px;
+	min-width: 38px;
+	border: 1px solid var( --o-line );
+	border-radius: 8px;
+	background: var( --o-paper );
+	color: var( --o-ink2 );
+
+	&:hover {
+		background: var( --o-hover );
+		color: var( --o-ink );
+	}
+}
+
+.o-library__resultline {
+	flex-basis: 100%;
+	font-size: 13px;
+	color: var( --o-ink2 );
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+
+	strong {
+		color: var( --o-ink );
+	}
+}
+
+.o-library__understood {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
+	color: var( --o-accent );
+}
+
+.o-library__understood-label {
+	font-size: 12px;
+	color: var( --o-ink2 );
+}
+
+.o-library__token {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	height: 24px;
+	padding: 0 5px 0 9px;
+	border: 1px solid color-mix( in srgb, var( --o-accent ) 36%, transparent );
+	border-radius: 6px;
+	background: color-mix( in srgb, var( --o-accent ) 9%, transparent );
+	color: var( --o-accent );
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+
+	svg {
+		fill: currentColor;
+		opacity: 0.65;
+	}
+
+	&:hover {
+		background: color-mix( in srgb, var( --o-accent ) 16%, transparent );
+
+		svg {
+			opacity: 1;
+		}
+	}
+}
+
+// Refine tag row.
+.o-library__tagrow {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 10px 24px;
+	overflow-x: auto;
+	border-bottom: 1px solid var( --o-line2 );
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+.o-library__tagrow-label {
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var( --o-ink2 );
+	flex: 0 0 auto;
+	margin-right: 3px;
+}
+
+.o-library__tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	height: 28px;
+	padding: 0 11px;
+	flex: 0 0 auto;
+	border: 1px solid var( --o-line );
+	border-radius: 999px;
+	background: var( --o-paper );
+	color: var( --o-ink );
+	font-size: 12.5px;
+	font-weight: 500;
+	cursor: pointer;
+	white-space: nowrap;
+
+	&:hover {
+		background: var( --o-hover );
+	}
+
+	&.is-on {
+		border-color: var( --o-accent );
+		color: var( --o-accent );
+		background: color-mix( in srgb, var( --o-accent ) 9%, transparent );
+		font-weight: 600;
+
+		.o-library__tag-count {
+			color: var( --o-accent );
+		}
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: default;
+
+		&:hover {
+			background: var( --o-paper );
+		}
+	}
+
+	// On narrower screens the refine row gets crowded — drop the style facets
+	// (Classic / Glass / Editorial …) first; tone, free/pro and layout stay.
+	@media ( max-width: 1080px ) {
+		&.is-style {
+			display: none;
+		}
+	}
+}
+
+.o-library__tag-count {
+	font-size: 11px;
+	color: var( --o-ink2 );
+	font-variant-numeric: tabular-nums;
+}
+
+.o-library__tag-dot {
+	width: 11px;
+	height: 11px;
+	border-radius: 50%;
+	flex: 0 0 auto;
+	box-shadow: inset 0 0 0 1px rgba( 15, 20, 35, 0.18 );
+
+	&.is-dark {
+		background: #1d1f25;
+	}
+
+	&.is-light {
+		background: #ffffff;
+	}
+}
+
+// Grid + cards.
+.o-library__scroll {
+	flex: 1;
+	overflow-y: auto;
+	padding: 22px 24px 36px;
+}
+
+.o-library__grid {
+	display: grid;
+	grid-template-columns: repeat( var( --o-lib-cols, 3 ), minmax( 0, 1fr ) );
+	gap: 20px;
+}
+
+.o-library__card {
+	border: 1px solid var( --o-line );
+	border-radius: 11px;
+	overflow: hidden;
+	background: var( --o-paper );
+	transition: box-shadow 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+
+	&:hover {
+		border-color: color-mix( in srgb, var( --o-accent ) 45%, var( --o-line ) );
+		box-shadow: 0 8px 24px rgba( 15, 20, 35, 0.12 );
+		transform: translateY( -3px );
+
+		.o-library__card-overlay {
+			opacity: 1;
 		}
 
-		h2 {
-			font-size: 18px;
-			margin: 0 0 12px;
+		.o-library__fav {
+			opacity: 1;
 		}
+	}
+}
 
-		p {
-			font-size: 14px;
-			margin: 0;
-			text-align: center;
-		}
+.o-library__thumb {
+	position: relative;
+	aspect-ratio: 16 / 10;
+	background: #fff;
+	overflow: hidden;
+	border-bottom: 1px solid var( --o-line2 );
+	cursor: pointer;
 
-		a {
-			font-size: 14px;
-			text-decoration: none !important;
+	// BlockPreview is transform-scaled, so it paints on its own compositing
+	// layer and escapes the card's rounded-corner clip — `overflow: hidden`
+	// alone lets the preview bleed past the card's rounded top corners. Round
+	// the thumb itself (card radius minus the 1px border) so the clip lands on
+	// the element directly wrapping the preview. The is-page rule below
+	// re-asserts the same value for clarity.
+	border-radius: 10px 10px 0 0;
+
+	// Column, not row: BlockPreview renders a zero-height resize-observer
+	// div as a sibling of the preview container, which would become a
+	// half-width flex item in a row.
+	display: flex;
+	flex-direction: column;
+
+	// Center short patterns inside the fixed-ratio crop; `safe` keeps
+	// taller-than-tile previews pinned to the top where supported.
+	justify-content: center;
+	justify-content: safe center;
+
+	// Fill the crop so the overlaid skeleton covers the whole tile while
+	// the preview boots.
+	.o-library__live {
+		min-height: 100%;
+	}
+}
+
+// Wraps a live BlockPreview so the placeholder can stay on top until the
+// blocks have actually painted inside the iframe (see ParsedPreview).
+.o-library__live {
+	position: relative;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: inherit;
+
+	.block-editor-block-preview__container {
+		width: 100%;
+	}
+
+	// Until the iframe has painted, keep it invisible and out of flow so
+	// the placeholder alone sets the size.
+	&:not( .is-ready ) .block-editor-block-preview__container {
+		position: absolute;
+		inset: 0 0 auto;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	// Applying the animation only here (not on mount) makes it start the
+	// moment is-ready lands, crossfading skeleton into preview.
+	&.is-ready .block-editor-block-preview__container {
+		animation: o-library-fade 0.18s ease;
+	}
+}
+
+// Pro upsell cards carry no content — they show a static screenshot (served
+// from a swappable base URL) in place of the live BlockPreview.
+.o-library__shot {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+}
+
+// Shown until a real screenshot is hosted: a tinted card with the title.
+.o-library__shot.is-fallback {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 22px;
+	text-align: center;
+	background: linear-gradient(
+		135deg,
+		hsl( calc( var( --o-lib-hue, 240 ) * 1deg ) 58% 56% ),
+		hsl( calc( ( var( --o-lib-hue, 240 ) + 42 ) * 1deg ) 56% 42% )
+	);
+
+	span {
+		font-size: 15px;
+		font-weight: 600;
+		line-height: 1.3;
+		color: #fff;
+		text-shadow: 0 1px 2px rgba( 0, 0, 0, 0.28 );
+	}
+}
+
+// "Pro" badge pinned to the thumbnail corner. Sits above the screenshot but
+// below the hover overlay's action buttons.
+.o-library__pro-badge {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	z-index: 2;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 5px 11px 5px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #fff;
+	background: #ed6f57;
+	box-shadow: 0 1px 3px rgba( 15, 20, 35, 0.25 );
+	pointer-events: none;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+// Full-page templates get a taller, portrait-ish crop, anchored to the
+// top of the page since they always overflow the tile.
+.o-library__card.is-page .o-library__thumb {
+	aspect-ratio: 4 / 5;
+	justify-content: flex-start;
+
+	// Size containment so the hover tour below can measure the crop in cqh.
+	container-type: size;
+
+	// As a flex item the preview would shrink to the crop height (its
+	// min-height floor), zeroing the tour distance — keep its natural,
+	// taller-than-crop height so there is something to scroll through.
+	.o-library__live {
+		flex-shrink: 0;
+	}
+
+	// Pro upsell screenshot: drop the cover-crop so the image keeps its
+	// full natural height (taller than the tile) and there is something for
+	// the hover tour below to scroll through, just like the live preview.
+	// The fallback tile keeps filling the crop.
+	.o-library__shot:not( .is-fallback ) {
+		height: auto;
+		object-fit: contain;
+		flex-shrink: 0;
+	}
+}
+
+// Hovering a page card tours the whole page: the preview (or Pro screenshot)
+// glides down — the element translates up until its bottom edge meets the
+// crop — then returns quickly on mouse-out. Gated on is-ready so the skeleton
+// never slides, and the entry delay keeps casual mouse passes from starting
+// the tour.
+@media ( prefers-reduced-motion: no-preference ) {
+	.o-library__card.is-page .o-library__live.is-ready,
+	.o-library__card.is-page .o-library__shot:not( .is-fallback ) {
+		transition: transform 0.7s ease;
+	}
+
+	.o-library__card.is-page .o-library__thumb:hover .o-library__live.is-ready,
+	.o-library__card.is-page .o-library__thumb:hover .o-library__shot:not( .is-fallback ) {
+		// min() guards the odd page shorter than its crop.
+		transform: translateY( min( 0px, 100cqh - 100% ) );
+		transition: transform 2.5s ease-in-out 0.25s;
+	}
+}
+
+// Shown while a card (or the preview modal) waits for its turn in the
+// preview render queue.
+.o-library__thumb-skeleton,
+.o-library__pv-skeleton {
+	background: linear-gradient( 100deg, var( --o-hover ) 40%, color-mix( in srgb, var( --o-hover ) 45%, #fff ) 50%, var( --o-hover ) 60% );
+	background-size: 200% 100%;
+	animation: o-library-shimmer 1.4s linear infinite;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
+		background: var( --o-hover );
+	}
+}
+
+.o-library__thumb-skeleton {
+	position: absolute;
+	inset: 0;
+}
+
+.o-library__pv-skeleton {
+	width: 100%;
+	aspect-ratio: 16 / 10;
+}
+
+@keyframes o-library-shimmer {
+	to {
+		background-position: -200% 0;
+	}
+}
+
+@keyframes o-library-fade {
+	from {
+		opacity: 0;
+	}
+}
+
+.o-library__card-overlay {
+	position: absolute;
+	inset: 0;
+
+	// Above BlockPreview's own ::after overlay (z-index 1), which otherwise swallows clicks.
+	z-index: 2;
+	background: rgba( 18, 21, 28, 0.56 );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	opacity: 0;
+	transition: opacity 0.16s ease;
+}
+
+// On page cards a full scrim would hide the very tour the hover scroll
+// provides — keep the page visible and anchor the actions on a readable
+// gradient along the bottom edge instead.
+.o-library__card.is-page .o-library__card-overlay {
+	background: linear-gradient( to top, rgba( 18, 21, 28, 0.68 ), rgba( 18, 21, 28, 0 ) 42% );
+	align-items: flex-end;
+	padding-bottom: 16px;
+}
+
+.o-library__fav {
+	position: absolute;
+	top: 9px;
+	right: 9px;
+	width: 31px;
+	height: 31px;
+	border-radius: 2px;
+	border: none;
+	background: rgba( 18, 21, 28, 0.42 );
+	display: grid;
+	place-items: center;
+	cursor: pointer;
+	z-index: 3;
+	opacity: 0;
+	transition: opacity 0.16s ease, background 0.16s ease;
+
+	svg {
+		fill: #fff;
+	}
+
+	&:hover {
+		background: rgba( 18, 21, 28, 0.66 );
+	}
+
+	&.is-on {
+		opacity: 1;
+		background: rgba( 255, 255, 255, 0.94 );
+
+		svg {
+			fill: #e5484d;
 		}
+	}
+}
+
+.o-library__card-foot {
+	padding: 11px 13px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.o-library__card-name {
+	font-size: 13px;
+	font-weight: 600;
+	color: var( --o-ink );
+	line-height: 1.25;
+}
+
+.o-library__card-cat {
+	font-size: 11.5px;
+	color: var( --o-ink2 );
+}
+
+// Buttons.
+.o-library__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	height: 34px;
+	padding: 0 14px;
+
+	// Match the 2px radius of wp-components buttons.
+	border-radius: 2px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	border: 1px solid transparent;
+	white-space: nowrap;
+
+	svg {
+		fill: currentColor;
+	}
+
+	&.is-primary {
+		background: var( --o-accent );
+		color: #fff;
+
+		&:hover {
+			filter: brightness( 0.93 );
+		}
+	}
+
+	&.is-ghost {
+		background: var( --o-paper );
+		color: var( --o-ink );
+		border-color: var( --o-line );
+
+		&:hover {
+			background: var( --o-hover );
+		}
+	}
+
+	&.is-ondark {
+		background: rgba( 255, 255, 255, 0.14 );
+		color: #fff;
+		border-color: rgba( 255, 255, 255, 0.34 );
+
+		&:hover {
+			background: rgba( 255, 255, 255, 0.26 );
+		}
+	}
+
+	&.is-large {
+		height: 40px;
+		padding: 0 18px;
+		font-size: 14px;
+	}
+}
+
+.o-library__iconbtn {
+	width: 36px;
+	height: 36px;
+	border-radius: 2px;
+	border: none;
+	background: none;
+	color: var( --o-ink2 );
+	display: grid;
+	place-items: center;
+	cursor: pointer;
+
+	svg {
+		fill: currentColor;
+	}
+
+	&:hover {
+		background: var( --o-hover );
+		color: var( --o-ink );
+	}
+
+	// Favorited state in the preview modal — heart matches the card hearts.
+	&.is-fav,
+	&.is-fav:hover {
+		color: #e5484d;
+	}
+}
+
+// Preview overlay.
+.o-library__pv-scrim {
+	position: absolute;
+	inset: 0;
+	background: rgba( 10, 12, 16, 0.62 );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 40px;
+	z-index: 50;
+	animation: o-library-fade 0.18s ease;
+}
+
+@keyframes o-library-fade {
+	from {
+		opacity: 0;
+	}
+}
+
+.o-library__pv {
+	width: min( 980px, 92% );
+	max-height: 92%;
+	background: var( --o-paper );
+	border-radius: 14px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 30px 90px rgba( 0, 0, 0, 0.45 );
+	animation: o-library-pop 0.2s ease;
+}
+
+@keyframes o-library-pop {
+	from {
+		transform: scale( 0.97 );
+		opacity: 0;
+	}
+}
+
+.o-library__pv-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 20px;
+	border-bottom: 1px solid var( --o-line );
+}
+
+.o-library__pv-title {
+	font-size: 16px;
+	font-weight: 700;
+}
+
+.o-library__pv-cat {
+	font-size: 13px;
+	color: var( --o-ink2 );
+	margin-top: 2px;
+}
+
+.o-library__pv-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.o-library__pv-body {
+	padding: 30px;
+	overflow: auto;
+	background: var( --o-panel );
+}
+
+.o-library__pv-frame {
+	width: 100%;
+	border-radius: 9px;
+	overflow: auto;
+	border: 1px solid var( --o-line );
+	background: #fff;
+	box-shadow: 0 10px 36px rgba( 0, 0, 0, 0.14 );
+
+	&.is-page {
+		max-width: 720px;
+		margin: 0 auto;
+	}
+
+	.block-editor-block-preview__content {
+		max-height: none !important;
+
+		iframe {
+			max-height: none !important;
+		}
+	}
+
+	// Pro preview shows the screenshot at its natural height inside the frame.
+	&.is-pro .o-library__shot {
+		height: auto;
+		object-fit: contain;
+	}
+
+	&.is-pro .o-library__shot.is-fallback {
+		aspect-ratio: 16 / 9;
+	}
+}
+
+.o-library__similar {
+	margin-top: 22px;
+}
+
+.o-library__similar-head {
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var( --o-ink2 );
+	margin-bottom: 10px;
+}
+
+.o-library__similar-row {
+	display: grid;
+	grid-template-columns: repeat( 4, 1fr );
+	gap: 12px;
+}
+
+.o-library__similar-card {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	padding: 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+	text-align: left;
+
+	&:hover .o-library__similar-thumb {
+		border-color: color-mix( in srgb, var( --o-accent ) 45%, var( --o-line ) );
+		box-shadow: 0 4px 14px rgba( 15, 20, 35, 0.1 );
+	}
+}
+
+.o-library__similar-thumb {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	justify-content: safe center;
+	width: 100%;
+	aspect-ratio: 16 / 10;
+	border-radius: 8px;
+	overflow: hidden;
+	border: 1px solid var( --o-line );
+	background: #fff;
+	transition: border-color 0.14s, box-shadow 0.14s;
+
+	.o-library__live {
+		min-height: 100%;
+	}
+}
+
+.o-library__similar-name {
+	font-size: 12px;
+	font-weight: 600;
+	color: var( --o-ink );
+	line-height: 1.3;
+}
+
+// Empty state.
+.o-library__empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 84px 20px;
+	text-align: center;
+	color: var( --o-ink2 );
+
+	svg {
+		fill: #c7ccd4;
+	}
+
+	h3 {
+		margin: 10px 0 0;
+		color: var( --o-ink );
+		font-size: 18px;
+	}
+
+	p {
+		margin: 0 0 12px;
+	}
+}
+
+// Template Cloud placeholder.
+.o-library__tc-placeholder {
+	border: 2px dashed #e5e7eb;
+	border-radius: 8px;
+	margin: 24px;
+	padding: 20px 15px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	svg {
+		fill: #9ca3af;
+		margin-bottom: 16px;
+	}
+
+	h2 {
+		font-size: 18px;
+		margin: 0 0 12px;
+	}
+
+	p {
+		font-size: 14px;
+		margin: 0;
+		text-align: center;
+	}
+
+	a {
+		font-size: 14px;
+		text-decoration: none !important;
+	}
+}
+
+// Atomic Wind enable gate (shown when the blocks are disabled).
+.o-library__gate {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 48px 24px;
+	text-align: center;
+
+	.o-library__gate-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 72px;
+		height: 72px;
+		margin-bottom: 8px;
+		border-radius: 50%;
+		background: var( --o-hover );
+
+		svg {
+			fill: var( --o-accent );
+		}
+	}
+
+	h2 {
+		margin: 0;
+		font-size: 20px;
+		color: var( --o-ink );
+	}
+
+	p {
+		max-width: 420px;
+		margin: 0 0 12px;
+		font-size: 14px;
+		line-height: 1.5;
+		color: var( --o-ink2 );
+	}
+
+	.o-library__gate-action {
+		justify-content: center;
+	}
+}
+
+// Scrollbars.
+.o-library__scroll,
+.o-library__sidebar,
+.o-library__pv-body {
+	&::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: color-mix( in srgb, var( --o-ink2 ) 40%, transparent );
+		border-radius: 6px;
+		border: 3px solid transparent;
+		background-clip: padding-box;
 	}
 }

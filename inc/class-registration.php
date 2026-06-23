@@ -53,6 +53,7 @@ class Registration {
 	 */
 	public static $scripts_loaded = array(
 		'circle-counter'    => false,
+		'content-slider'    => false,
 		'countdown'         => false,
 		'form'              => false,
 		'google-map'        => false,
@@ -302,6 +303,7 @@ class Registration {
 				'hasAIProvider'           => AI_Client_Adaptor::is_available(),
 				'connectorsUrl'           => esc_url( admin_url( 'options-connectors.php' ) ),
 				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
+				'proPatterns'             => boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ) ? Patterns::get_upsell_patterns() : array(),
 			)
 		);
 
@@ -666,6 +668,29 @@ class Registration {
 			);
 		}
 
+		if ( ! self::$scripts_loaded['content-slider'] && has_block( 'themeisle-blocks/content-slider', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/content-slider.asset.php';
+
+			wp_register_script(
+				'otter-content-slider',
+				OTTER_BLOCKS_URL . 'build/blocks/content-slider.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-content-slider', 'defer', true );
+
+			wp_localize_script(
+				'otter-content-slider',
+				'themeisleGutenbergContentSlider',
+				array(
+					/* translators: %d: slide number. */
+					'goToSlide' => __( 'Go to slide %d', 'otter-blocks' ),
+				)
+			);
+		}
+
 		if ( ! self::$scripts_loaded['tabs'] && has_block( 'themeisle-blocks/tabs', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
 			wp_register_script( 'otter-tabs', OTTER_BLOCKS_URL . 'build/blocks/tabs.js', $asset_file['dependencies'], $asset_file['version'], true );
@@ -793,6 +818,7 @@ class Registration {
 			'button',
 			'button-group',
 			'circle-counter',
+			'content-slider',
 			'countdown',
 			'flip',
 			'font-awesome-icons',

@@ -364,6 +364,26 @@ async function build( kind ) {
 	sheet.textContent = scopedCss;
 }
 
+// Lets other editor features (the Design Library pattern previews) generate
+// unscoped Tailwind CSS for an arbitrary class list. Kept separate from the
+// canvas compiler: it must not pollute the canvas sheet, and canvas full
+// rebuilds reset that compiler, which would drop classes fed in here. The
+// compiler is cumulative — each call returns the full stylesheet for every
+// class passed so far, so callers can use the result as-is.
+let apiCompiler;
+
+window.atomicWindGenerateCss = async ( classNames ) => {
+	if ( ! apiCompiler ) {
+		apiCompiler = tailwindcss.compile(
+			'@import "tailwindcss" important;\n',
+			{ base: '/', loadStylesheet, loadModule }
+		);
+	}
+
+	const instance = await apiCompiler;
+	return instance.build( Array.from( new Set( classNames ) ) );
+};
+
 function rebuild( kind ) {
 	buildQueue = buildQueue
 		.then( async () => {
