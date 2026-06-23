@@ -51,6 +51,9 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		$this->reset_in_query( false );
+		if ( WP_Block_Type_Registry::get_instance()->is_registered( 'atomic-wind/icon' ) ) {
+			unregister_block_type( 'atomic-wind/icon' );
+		}
 		parent::tear_down();
 	}
 
@@ -78,6 +81,45 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 			'attrs'       => $attrs,
 			'innerBlocks' => array(),
 		);
+	}
+
+	/**
+	 * Helper: render the Atomic Wind icon block file with attributes.
+	 *
+	 * @param array $attributes Block attributes.
+	 * @return string
+	 */
+	private function render_icon_block( $attributes ) {
+		if ( WP_Block_Type_Registry::get_instance()->is_registered( 'atomic-wind/icon' ) ) {
+			unregister_block_type( 'atomic-wind/icon' );
+		}
+
+		register_block_type(
+			'atomic-wind/icon',
+			array(
+				'attributes'      => array(
+					'icon'             => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'customSvgEnabled' => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+					'customSvg'        => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+				),
+				'render_callback' => function ( $attributes ) {
+					ob_start();
+					include OTTER_BLOCKS_PATH . '/src/atomic-wind/blocks/icon/render.php';
+					return ob_get_clean();
+				},
+			)
+		);
+
+		return render_block( $this->make_block( 'atomic-wind/icon', $attributes ) );
 	}
 
 	// -------------------------------------------------------
@@ -123,6 +165,89 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 		$this->assertSame( 'atomic-wind', $result[0]['slug'] );
 		$this->assertCount( 2, $result );
+	}
+
+	// -------------------------------------------------------
+	// icon render
+	// -------------------------------------------------------
+
+	public function test_icon_block_renders_legacy_lucide_icon() {
+		$result = $this->render_icon_block(
+			array(
+				'icon' => 'zap',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<path ', $result );
+	}
+
+	public function test_icon_block_renders_default_lucide_icon_when_empty() {
+		$result = $this->render_icon_block(
+			array(
+				'icon' => '',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<circle ', $result );
+	}
+
+	public function test_icon_block_renders_custom_svg_when_enabled() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10" fill="none"><path d="M1 1h8v8H1z" stroke="currentColor"/></svg>',
+				'icon'             => 'zap',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( 'viewBox="0 0 10 10"', $result );
+		$this->assertStringContainsString( 'd="M1 1h8v8H1z"', $result );
+	}
+
+	public function test_icon_block_sanitizes_custom_svg() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10" onload="alert(1)"><script>alert(1)</script><image href="https://example.com/x.png"/><path d="M0 0h10" onclick="alert(2)"/></svg>',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<path ', $result );
+		$this->assertStringNotContainsString( '<script', $result );
+		$this->assertStringNotContainsString( '<image', $result );
+		$this->assertStringNotContainsString( 'onload', $result );
+		$this->assertStringNotContainsString( 'onclick', $result );
+		$this->assertStringNotContainsString( 'example.com', $result );
+	}
+
+	public function test_icon_block_ignores_custom_svg_when_toggle_is_off() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => false,
+				'customSvg'        => '<svg viewBox="0 0 10 10"><script>alert(1)</script></svg>',
+				'icon'             => 'zap',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<path ', $result );
+		$this->assertStringNotContainsString( '<script', $result );
+	}
+
+	public function test_icon_block_returns_empty_for_invalid_custom_svg() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<div><script>alert(1)</script></div>',
+				'icon'             => 'zap',
+			)
+		);
+
+		$this->assertSame( '', $result );
 	}
 
 	// -------------------------------------------------------
