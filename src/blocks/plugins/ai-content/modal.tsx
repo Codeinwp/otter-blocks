@@ -20,7 +20,7 @@ import { safeHTML } from '@wordpress/dom';
 
 import { BlockPreview } from '@wordpress/block-editor';
 
-import { close, desktop, mobile, redo, undo } from '@wordpress/icons';
+import { chevronLeft, chevronRight, close, desktop, mobile } from '@wordpress/icons';
 
 import { useDispatch, useSelect } from '@wordpress/data';
 
@@ -254,6 +254,37 @@ const AIContentModal = ({
 	const previewWidth = 'mobile' === viewport ? 360 : 1280;
 	const canSubmit = 'tone' === selectedAction?.type ? Boolean( tone ) : Boolean( prompt.trim() );
 	const hasResult = 0 < resultHistory.length && ! isDirty;
+	const hasPreviousVersion = 0 < resultHistoryIndex;
+	const hasNextVersion = resultHistoryIndex < resultHistory.length - 1;
+
+	const versionControl = hasResult ? (
+		<div className="o-ai-version-control">
+			<Button
+				className="o-ai-version-control__button"
+				icon={ chevronLeft }
+				label={ __( 'Previous version', 'otter-blocks' ) }
+				disabled={ ! hasPreviousVersion }
+				onClick={ () => setResultHistoryIndex( ( prev ) => Math.max( 0, prev - 1 ) ) }
+			/>
+			<span className="o-ai-version-control__count">
+				{
+					sprintf(
+						// translators: %1$d: current version number, %2$d: total versions.
+						__( 'Version %1$d of %2$d', 'otter-blocks' ),
+						resultHistoryIndex + 1,
+						resultHistory.length
+					)
+				}
+			</span>
+			<Button
+				className="o-ai-version-control__button"
+				icon={ chevronRight }
+				label={ __( 'Next version', 'otter-blocks' ) }
+				disabled={ ! hasNextVersion }
+				onClick={ () => setResultHistoryIndex( ( prev ) => Math.min( resultHistory.length - 1, prev + 1 ) ) }
+			/>
+		</div>
+	) : null;
 
 	// Phase-aware loading copy for block generation (planning → per-section build).
 	const isPlanning = 'building' !== progress.phase || 0 === progress.total;
@@ -815,32 +846,7 @@ const AIContentModal = ({
 
 					<div className="o-ai-section__footer">
 						<div className="o-ai-section__footer-left">
-							{ hasResult && 1 < resultHistory.length && (
-								<div className="o-ai-section__versions">
-									<Button
-										icon={ undo }
-										label={ __( 'Previous version', 'otter-blocks' ) }
-										disabled={ 0 === resultHistoryIndex }
-										onClick={ () => setResultHistoryIndex( ( prev ) => Math.max( 0, prev - 1 ) ) }
-									/>
-									<span className="o-ai-section__version-count">
-										{
-											sprintf(
-												// translators: %1$d: current version number, %2$d: total versions.
-												__( 'Version %1$d of %2$d', 'otter-blocks' ),
-												resultHistoryIndex + 1,
-												resultHistory.length
-											)
-										}
-									</span>
-									<Button
-										icon={ redo }
-										label={ __( 'Next version', 'otter-blocks' ) }
-										disabled={ resultHistoryIndex >= resultHistory.length - 1 }
-										onClick={ () => setResultHistoryIndex( ( prev ) => Math.min( resultHistory.length - 1, prev + 1 ) ) }
-									/>
-								</div>
-							) }
+							{ versionControl }
 
 							{ undefined !== tokenUsage && ! isDirty && (
 								<span className="o-ai-section__tokens">
@@ -1117,27 +1123,7 @@ const AIContentModal = ({
 						</div>
 
 						<div className="o-ai-content-modal__footer-right">
-							{ hasResult && ! isDirty && 1 < resultHistory.length && (
-								<div className="o-ai-content-modal__history">
-									<Button
-										variant="tertiary"
-										icon={ undo }
-										label={ __( 'Previous version', 'otter-blocks' ) }
-										disabled={ 0 === resultHistoryIndex }
-										onClick={ () => setResultHistoryIndex( ( prev ) => Math.max( 0, prev - 1 ) ) }
-									/>
-									<span>
-										{ resultHistoryIndex + 1 } / { resultHistory.length }
-									</span>
-									<Button
-										variant="tertiary"
-										icon={ redo }
-										label={ __( 'Next version', 'otter-blocks' ) }
-										disabled={ resultHistoryIndex >= resultHistory.length - 1 }
-										onClick={ () => setResultHistoryIndex( ( prev ) => Math.min( resultHistory.length - 1, prev + 1 ) ) }
-									/>
-								</div>
-							) }
+							{ versionControl }
 
 							<Button
 								variant="tertiary"

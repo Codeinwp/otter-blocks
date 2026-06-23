@@ -459,6 +459,7 @@ test.describe( 'AI Toolbar — section insertion (full modal)', () => {
 
 		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
 		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+		await expect( dialog.getByText( 'Version 1 of 1' ) ).toBeVisible();
 
 		await dialog.getByRole( 'button', { name: 'Discard' }).click();
 
@@ -494,6 +495,7 @@ test.describe( 'AI Toolbar — section insertion (full modal)', () => {
 
 		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
 		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+		await expect( dialog.getByText( 'Version 1 of 1' ) ).toBeVisible();
 		await insertButton.click();
 
 		await expect( dialog ).toBeHidden();
