@@ -120,18 +120,19 @@ test.describe( 'Alt attributes', () => {
 			]
 		});
 
-		// themeisle-blocks/icon-list is apiVersion 2, which opts the post editor out of the iframed canvas, so blocks render at page level.
-		const icons = page.locator( '.wp-block-themeisle-blocks-icon-list-item img' );
+		const editorIcons = editor.canvas.locator( '.wp-block-themeisle-blocks-icon-list-item img' );
 
-		await expect( icons ).toHaveCount( 2 );
-		await expect( icons.first() ).toHaveAttribute( 'alt', 'Parent default alt' );
-		await expect( icons.nth( 1 ) ).toHaveAttribute( 'alt', 'Item override alt' );
+		await expect( editorIcons ).toHaveCount( 2 );
+		await expect( editorIcons.first() ).toHaveAttribute( 'alt', 'Parent default alt' );
+		await expect( editorIcons.nth( 1 ) ).toHaveAttribute( 'alt', 'Item override alt' );
 
 		await publishAndViewPost({ editor, page });
 
-		await expect( icons ).toHaveCount( 2 );
-		await expect( icons.first() ).toHaveAttribute( 'alt', 'Parent default alt' );
-		await expect( icons.nth( 1 ) ).toHaveAttribute( 'alt', 'Item override alt' );
+		const frontendIcons = page.locator( '.wp-block-themeisle-blocks-icon-list-item img' );
+
+		await expect( frontendIcons ).toHaveCount( 2 );
+		await expect( frontendIcons.first() ).toHaveAttribute( 'alt', 'Parent default alt' );
+		await expect( frontendIcons.nth( 1 ) ).toHaveAttribute( 'alt', 'Item override alt' );
 	});
 
 	test( 'Icon List image icon alt is editable from the inspector', async({ editor, page }) => {
@@ -151,8 +152,7 @@ test.describe( 'Alt attributes', () => {
 			]
 		});
 
-		// themeisle-blocks/icon-list is apiVersion 2, which opts the post editor out of the iframed canvas, so blocks render at page level.
-		await page.getByRole( 'document', { name: 'Block: Icon List Item' }).click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Icon List Item' }).click();
 		await editor.openDocumentSettingsSidebar();
 
 		const altField = page.getByLabel( 'Alt text (alternative text)' );
@@ -267,8 +267,7 @@ test.describe( 'Alt attributes', () => {
 			}
 		});
 
-		// themeisle-blocks/slider opts out of the iframed canvas, so the block renders at page level.
-		await page.getByRole( 'document', { name: 'Block: Image Slider' }).click();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Image Slider' }).click();
 		await editor.openDocumentSettingsSidebar();
 		await page.getByRole( 'button', { name: 'Images' }).click();
 
@@ -289,8 +288,8 @@ test.describe( 'Alt attributes', () => {
 <!-- /wp:themeisle-blocks/slider -->
 ` );
 
-		await expect( page.getByRole( 'button', { name: 'Attempt Block Recovery' }) ).toHaveCount( 0 );
-		await expect( page.locator( '.wp-block-themeisle-blocks-slider-item' ).first() ).toBeVisible();
+		await expect( editor.canvas.getByRole( 'button', { name: 'Attempt Block Recovery' }) ).toHaveCount( 0 );
+		await expect( editor.canvas.locator( '.wp-block-themeisle-blocks-slider-item' ).first() ).toBeVisible();
 
 		// Touch the block so the post re-serializes with the current save (no title on img).
 		await selectBlockByName( page, 'themeisle-blocks/slider' );
@@ -361,9 +360,8 @@ test.describe( 'Alt attributes', () => {
 <!-- /wp:themeisle-blocks/icon-list -->
 ` );
 
-		// themeisle-blocks/icon-list is apiVersion 2, which opts the post editor out of the iframed canvas, so blocks render at page level.
-		await expect( page.getByRole( 'button', { name: 'Attempt Block Recovery' }) ).toHaveCount( 0 );
-		await expect( page.getByRole( 'document', { name: 'Block: Icon List Item' }).locator( 'img' ) ).toBeVisible();
+		await expect( editor.canvas.getByRole( 'button', { name: 'Attempt Block Recovery' }) ).toHaveCount( 0 );
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Icon List Item' }).locator( 'img' ) ).toBeVisible();
 
 		// The migrated block re-serializes with an explicit empty (decorative) alt.
 		expect( await editor.getEditedPostContent() ).toContain( 'alt=""' );
