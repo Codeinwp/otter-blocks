@@ -13,6 +13,8 @@ test.describe( 'Section Block', () => {
 		await admin.createNewPost();
 	});
 
+	// Arrow-key navigation for Otter blocks is covered in keyboard-navigation.spec.js.
+
 	test( 'can be created by typing "/section"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
