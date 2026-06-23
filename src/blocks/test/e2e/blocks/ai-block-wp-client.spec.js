@@ -41,11 +41,18 @@ test.describe( 'AI Block via WP AI Client', () => {
 			}
 		});
 
-		// Wait for the prompt list to load so embeddedPrompts is populated before "Generate".
-		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about anything.' );
+		await editor.canvas
+			.getByPlaceholder( 'e.g. A hero section for a dental clinic with a heading and two buttons' )
+			.fill( 'Write about anything.' );
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
-		await editor.canvas.getByRole( 'button', { name: 'Done' }).click();
+
+		const dialog = page.getByRole( 'dialog' );
+		await expect( dialog ).toBeVisible();
+
+		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
+		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+		await insertButton.click();
+		await expect( dialog ).toBeHidden();
 
 		const blocks = await editor.getBlocks();
 

@@ -185,6 +185,57 @@ test.describe( 'AI Block — Insert section', () => {
 		).toBeVisible();
 	});
 
+	test( 'inserting generated form content does not trigger a Form inspector hook warning', async({ editor, page }) => {
+		const hookWarnings = [];
+		const pageErrors = [];
+
+		page.on( 'console', message => {
+			const text = message.text();
+			if ( text.includes( 'React has detected a change in the order of Hooks' ) ) {
+				hookWarnings.push( text );
+			}
+		});
+		page.on( 'pageerror', error => pageErrors.push( error.message ) );
+
+		await editor.insertBlock({
+			name: 'core/paragraph',
+			attributes: { content: 'Target block.' }
+		});
+
+		const inserted = await page.evaluate( () => {
+			const { createBlock, cloneBlock } = window.wp.blocks;
+			const blockEditor = window.wp.data.dispatch( 'core/block-editor' );
+			const target = window.wp.data.select( 'core/block-editor' ).getBlocks()[ 0 ];
+
+			const form = createBlock(
+				'themeisle-blocks/form',
+				{},
+				[
+					createBlock( 'themeisle-blocks/form-input', { label: 'Name', type: 'text' }),
+					createBlock( 'themeisle-blocks/form-input', { label: 'Email', type: 'email' }),
+					createBlock( 'themeisle-blocks/form-textarea', { label: 'Message' })
+				]
+			);
+			const formToInsert = cloneBlock( form );
+
+			blockEditor.replaceBlocks( target.clientId, [ formToInsert ]);
+			blockEditor.selectBlock( formToInsert.clientId );
+
+			return { rootName: formToInsert.name };
+		});
+
+		expect( inserted.rootName ).toBe( 'themeisle-blocks/form' );
+
+		await expect( page.getByText( 'Form Options' ) ).toBeVisible({ timeout: 20000 });
+		await expect( page.getByText( 'Email To' ).first() ).toBeVisible();
+
+		await expect(
+			page.getByText( 'The editor has encountered an unexpected error', { exact: false })
+		).toBeHidden();
+		expect( hookWarnings ).toEqual([]);
+		expect( pageErrors ).toEqual([]);
+	});
+
 	test( 'inserting a generated section with icon/atomic blocks does not crash the editor', async({ editor, page, admin, otterUtils }) => {
 
 		// Atomic Wind blocks only register when their option is on. Flip it, then
@@ -384,5 +435,77 @@ test.describe( 'AI Toolbar — section insertion (full modal)', () => {
 		await expect(
 			editor.canvas.getByText( 'Rewritten content for testing.' ).first()
 		).toBeVisible();
+	});
+
+	test( 'closing the AI Block generator after generation does not crash the editor', async({ editor, page }) => {
+		const pageErrors = [];
+		page.on( 'pageerror', error => pageErrors.push( error.message ) );
+
+		await editor.insertBlock({
+			name: 'themeisle-blocks/content-generator',
+			attributes: {
+				promptID: 'section'
+			}
+		});
+
+		await editor.canvas
+			.getByPlaceholder( 'e.g. A hero section for a dental clinic with a heading and two buttons' )
+			.fill( 'A feature section for a project management app.' );
+
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
+
+		const dialog = page.getByRole( 'dialog' );
+		await expect( dialog ).toBeVisible();
+
+		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
+		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+
+		await dialog.getByRole( 'button', { name: 'Discard' }).click();
+
+		await expect( dialog ).toBeHidden();
+		await expect(
+			page.getByText( 'The editor has encountered an unexpected error', { exact: false })
+		).toBeHidden();
+
+		const blocks = await editor.getBlocks();
+		expect( blocks.every( block => 'themeisle-blocks/content-generator' !== block.name ) ).toBe( true );
+		expect( pageErrors ).toEqual([]);
+	});
+
+	test( 'inserting from the AI Block generator does not run discard cleanup after apply', async({ editor, page }) => {
+		const pageErrors = [];
+		page.on( 'pageerror', error => pageErrors.push( error.message ) );
+
+		await editor.insertBlock({
+			name: 'themeisle-blocks/content-generator',
+			attributes: {
+				promptID: 'section'
+			}
+		});
+
+		await editor.canvas
+			.getByPlaceholder( 'e.g. A hero section for a dental clinic with a heading and two buttons' )
+			.fill( 'A feature section for a project management app.' );
+
+		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
+
+		const dialog = page.getByRole( 'dialog' );
+		await expect( dialog ).toBeVisible();
+
+		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
+		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+		await insertButton.click();
+
+		await expect( dialog ).toBeHidden();
+		await expect(
+			page.getByText( 'The editor has encountered an unexpected error', { exact: false })
+		).toBeHidden();
+
+		const blocks = await editor.getBlocks();
+		expect( blocks.every( block => 'themeisle-blocks/content-generator' !== block.name ) ).toBe( true );
+		await expect(
+			editor.canvas.getByText( 'Rewritten content for testing.' ).first()
+		).toBeVisible();
+		expect( pageErrors ).toEqual([]);
 	});
 });

@@ -83,6 +83,8 @@ type ResultHistoryItem = {
 type AIContentModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
+	onApplyComplete?: () => void;
+	onApplyBlocks?: ( blocks: BlockProps<unknown>[] ) => void;
 	actions: AIToolbarAction[];
 	initialActionId?: string;
 	initialPrompt?: string;
@@ -113,6 +115,8 @@ type AIContentModalProps = {
 const AIContentModal = ({
 	isOpen,
 	onClose,
+	onApplyComplete,
+	onApplyBlocks,
 	actions,
 	initialActionId,
 	initialPrompt,
@@ -609,8 +613,13 @@ const AIContentModal = ({
 		);
 
 		try {
+			if ( onApplyBlocks ) {
+				onApplyBlocks( blocksToInsert );
+				return;
+			}
+
 			replaceBlocks( replaceClientIds, blocksToInsert );
-			onClose();
+			( onApplyComplete ?? onClose )();
 		} catch {
 			createNotice(
 				'error',

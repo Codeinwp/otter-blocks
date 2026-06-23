@@ -57,7 +57,8 @@ const LEGACY_EMPTY_MARKER = 'otter-e2e-empty';
  * @return bool
  */
 function is_block_generation_request( $body ) {
-	return false !== strpos( $body, 'planning the structure' )
+	return false !== strpos( $body, 'planning a WordPress block layout' )
+		|| false !== strpos( $body, 'planning the structure' )
 		|| false !== strpos( $body, 'Fill in the attributes' );
 }
 

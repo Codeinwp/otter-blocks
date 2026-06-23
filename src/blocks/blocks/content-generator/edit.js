@@ -75,18 +75,33 @@ const ContentGenerator = ({
 	const [ isModalOpen, setModalOpen ] = useState( false );
 
 	const {
+		insertBlocks,
 		removeBlock,
 		replaceInnerBlocks,
 		replaceBlocks
 	} = useDispatch( 'core/block-editor' );
 
-	const { hasInnerBlocks, getBlocks } = useSelect(
+	const {
+		hasInnerBlocks,
+		getBlocks,
+		getBlockRootClientId,
+		getBlockIndex,
+		getTemplateLock
+	} = useSelect(
 		select => {
-			const { getBlocks } = select( 'core/block-editor' );
+			const {
+				getBlocks,
+				getBlockRootClientId,
+				getBlockIndex,
+				getTemplateLock
+			} = select( 'core/block-editor' );
 
 			return {
 				hasInnerBlocks: getBlocks?.( clientId ).length,
-				getBlocks
+				getBlocks,
+				getBlockRootClientId,
+				getBlockIndex,
+				getTemplateLock
 			};
 		},
 		[ clientId ]
@@ -148,6 +163,26 @@ const ContentGenerator = ({
 			{ __( 'Done', 'otter-blocks' ) }
 		</Button>
 	);
+
+	const closeGenerationModal = () => {
+		removeBlock( clientId );
+	};
+
+	const applyGeneratedBlocks = ( blocksToInsert ) => {
+		setModalOpen( false );
+
+		window.requestAnimationFrame( () => {
+			const rootClientId = getBlockRootClientId( clientId );
+			const index = getBlockIndex( clientId, rootClientId );
+
+			if ( 0 > index || getTemplateLock( rootClientId ) ) {
+				return;
+			}
+
+			insertBlocks( blocksToInsert, index, rootClientId );
+			removeBlock( clientId, false );
+		});
+	};
 
 	// Form path keeps the inline prompt + preview experience.
 	if ( isFormPrompt ) {
@@ -263,7 +298,8 @@ const ContentGenerator = ({
 					mode="create"
 					autoGenerate
 					initialScope={ scope }
-					onClose={ () => setModalOpen( false ) }
+					onClose={ closeGenerationModal }
+					onApplyBlocks={ applyGeneratedBlocks }
 					actions={ [ CREATE_ACTION ] }
 					initialActionId={ CREATE_ACTION.id }
 					initialPrompt={ prompt }
