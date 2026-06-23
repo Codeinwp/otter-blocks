@@ -1,13 +1,40 @@
 import {
 	useBlockProps,
 	InspectorControls,
+	MediaUpload,
+	MediaUploadCheck,
 	MediaPlaceholder,
 	MediaReplaceFlow,
 	BlockControls,
 } from '@wordpress/block-editor';
-import { PanelBody, TextControl } from '@wordpress/components';
+import {
+	BaseControl,
+	Button,
+	PanelBody,
+	TextControl,
+} from '@wordpress/components';
+import { useInstanceId } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import useQueryPreview from '../../query/use-query-preview';
+
+const IMAGE_PREVIEW_STYLE = {
+	display: 'block',
+	width: '100%',
+	height: '120px',
+	objectFit: 'contain',
+	boxSizing: 'border-box',
+	backgroundColor: '#f6f7f7',
+	border: '1px solid #ddd',
+	borderRadius: '2px',
+	marginBottom: '8px',
+};
+
+const IMAGE_ACTIONS_STYLE = {
+	display: 'flex',
+	gap: '8px',
+	flexWrap: 'wrap',
+	marginBottom: '16px',
+};
 
 function getFeaturedImageUrl( post ) {
 	if ( ! post ) {
@@ -34,10 +61,89 @@ function getAuthorAvatarUrl( post ) {
 	return '';
 }
 
+function ImageSettings( { id, url, alt, onSelectImage, setAttributes } ) {
+	const instanceId = useInstanceId( ImageSettings );
+	const imageControlId = `atomic-wind-image-control-${ instanceId }`;
+
+	return (
+		<InspectorControls>
+			<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
+				<BaseControl
+					id={ imageControlId }
+					label={ __( 'Image', 'otter-blocks' ) }
+				>
+					{ url && (
+						<img
+							src={ url }
+							alt={ alt || '' }
+							style={ IMAGE_PREVIEW_STYLE }
+						/>
+					) }
+
+					<div style={ IMAGE_ACTIONS_STYLE }>
+						<MediaUploadCheck>
+							<MediaUpload
+								onSelect={ onSelectImage }
+								allowedTypes={ [ 'image' ] }
+								value={ id }
+								render={ ( { open } ) => (
+									<Button
+										isSecondary
+										onClick={ open }
+									>
+										{ url
+											? __( 'Replace image', 'otter-blocks' )
+											: __( 'Select image', 'otter-blocks' )
+										}
+									</Button>
+								) }
+							/>
+						</MediaUploadCheck>
+
+						{ url && (
+							<Button
+								isSecondary
+								onClick={ () => setAttributes( {
+									id: undefined,
+									url: undefined,
+									alt: '',
+								} ) }
+							>
+								{ __( 'Remove image', 'otter-blocks' ) }
+							</Button>
+						) }
+					</div>
+				</BaseControl>
+
+				<TextControl
+					label={ __( 'Image URL', 'otter-blocks' ) }
+					value={ url || '' }
+					onChange={ ( value ) =>
+						setAttributes( { url: value, id: undefined } )
+					}
+				/>
+				<TextControl
+					label={ __( 'Alt Text', 'otter-blocks' ) }
+					value={ alt || '' }
+					onChange={ ( value ) =>
+						setAttributes( { alt: value } )
+					}
+				/>
+			</PanelBody>
+		</InspectorControls>
+	);
+}
+
 export default function Edit( { attributes, setAttributes, clientId } ) {
 	const { id, url, alt, postField } = attributes;
 	const blockProps = useBlockProps();
 	const { isActive, post } = useQueryPreview( clientId, postField );
+	const selectImage = ( media ) =>
+		setAttributes( {
+			id: media.id,
+			url: media.url || media.source_url,
+			alt: media.alt || media.alt_text || '',
+		} );
 
 	if ( isActive ) {
 		const previewUrl = postField === 'author_avatar'
@@ -70,13 +176,7 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 		return (
 			<div { ...blockProps }>
 				<MediaPlaceholder
-					onSelect={ ( media ) =>
-						setAttributes( {
-							id: media.id,
-							url: media.url,
-							alt: media.alt || '',
-						} )
-					}
+					onSelect={ selectImage }
 					allowedTypes={ [ 'image' ] }
 					labels={ {
 						title: __( 'Image', 'otter-blocks' ),
@@ -86,17 +186,13 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 						),
 					} }
 				/>
-				<InspectorControls>
-					<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
-						<TextControl
-							label={ __( 'Image URL', 'otter-blocks' ) }
-							value={ url || '' }
-							onChange={ ( value ) =>
-								setAttributes( { url: value, id: undefined } )
-							}
-						/>
-					</PanelBody>
-				</InspectorControls>
+				<ImageSettings
+					id={ id }
+					url={ url }
+					alt={ alt }
+					onSelectImage={ selectImage }
+					setAttributes={ setAttributes }
+				/>
 			</div>
 		);
 	}
@@ -108,33 +204,16 @@ export default function Edit( { attributes, setAttributes, clientId } ) {
 					mediaId={ id }
 					mediaURL={ url }
 					allowedTypes={ [ 'image' ] }
-					onSelect={ ( media ) =>
-						setAttributes( {
-							id: media.id,
-							url: media.url,
-							alt: media.alt || '',
-						} )
-					}
+					onSelect={ selectImage }
 				/>
 			</BlockControls>
-			<InspectorControls>
-				<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
-					<TextControl
-						label={ __( 'Image URL', 'otter-blocks' ) }
-						value={ url }
-						onChange={ ( value ) =>
-							setAttributes( { url: value, id: undefined } )
-						}
-					/>
-					<TextControl
-						label={ __( 'Alt Text', 'otter-blocks' ) }
-						value={ alt }
-						onChange={ ( value ) =>
-							setAttributes( { alt: value } )
-						}
-					/>
-				</PanelBody>
-			</InspectorControls>
+			<ImageSettings
+				id={ id }
+				url={ url }
+				alt={ alt }
+				onSelectImage={ selectImage }
+				setAttributes={ setAttributes }
+			/>
 			<img { ...blockProps } src={ url } alt={ alt } />
 		</>
 	);

@@ -4,6 +4,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, RangeControl, ToggleControl, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
 
 
 const POST_FIELD_OPTIONS = {
@@ -123,21 +124,24 @@ const withQueryControls = createHigherOrderComponent( ( BlockEdit ) => {
 		const isBox = props.name === 'atomic-wind/box';
 		const hasPostFieldOptions = POST_FIELD_OPTIONS.hasOwnProperty( props.name );
 
-		const postTypes = useSelect( ( select ) => {
+		const postTypeRecords = useSelect( ( select ) => {
 			if ( ! isBox ) {
+				return null;
+			}
+			return select( 'core' ).getPostTypes( { per_page: -1 } );
+		}, [ isBox ] );
+
+		const postTypes = useMemo( () => {
+			if ( ! postTypeRecords ) {
 				return [];
 			}
-			const types = select( 'core' ).getPostTypes( { per_page: -1 } );
-			if ( ! types ) {
-				return [];
-			}
-			return types
+			return postTypeRecords
 				.filter( ( type ) => type.viewable )
 				.map( ( type ) => ( {
 					label: type.labels.singular_name,
 					value: type.slug,
 				} ) );
-		}, [ isBox ] );
+		}, [ postTypeRecords ] );
 
 		const [ taxSlug, termSlug ] = ( attributes.queryTaxonomy || '' ).split( ':' );
 

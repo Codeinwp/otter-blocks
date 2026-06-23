@@ -303,6 +303,7 @@ class Registration {
 				'hasAIProvider'           => AI_Client_Adaptor::is_available(),
 				'connectorsUrl'           => esc_url( admin_url( 'options-connectors.php' ) ),
 				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
+				'proPatterns'             => boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ) ? Patterns::get_upsell_patterns() : array(),
 			)
 		);
 
