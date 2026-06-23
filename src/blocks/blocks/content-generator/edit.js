@@ -71,7 +71,7 @@ const ContentGenerator = ({
 	const blockProps = useBlockProps();
 
 	const [ prompt, setPrompt ] = useState( '' );
-	const [ scope, setScope ] = useState( 'section' );
+	const [ scope ] = useState( 'section' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
 
 	const {
@@ -236,23 +236,6 @@ const ContentGenerator = ({
 					instructions={ __( 'Describe a section and Otter AI will build it with your blocks & theme styles.', 'otter-blocks' ) }
 					className="o-ai-create-card"
 				>
-					<div className="o-ai-create-card__scope">
-						<Button
-							variant={ 'section' === scope ? 'primary' : 'secondary' }
-							isSmall
-							onClick={ () => setScope( 'section' ) }
-						>
-							{ __( 'Section', 'otter-blocks' ) }
-						</Button>
-						<Button
-							variant={ 'page' === scope ? 'primary' : 'secondary' }
-							isSmall
-							onClick={ () => setScope( 'page' ) }
-						>
-							{ __( 'Full page', 'otter-blocks' ) }
-						</Button>
-					</div>
-
 					<TextareaControl
 						value={ prompt }
 						onChange={ setPrompt }

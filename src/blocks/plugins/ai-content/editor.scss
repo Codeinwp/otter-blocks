@@ -556,8 +556,12 @@ $o-ai-primary: #3858e9;
     background: #f0f0f1;
 }
 
-// The framed device preview, centered on the stage.
+// The framed device preview, centered on the stage. `flex: 0 0 auto` keeps the
+// frame at the BlockPreview's full (scaled) height instead of being shrunk to
+// fit the flex column — otherwise a tall section is clipped and can't scroll.
+// The canvas (overflow: auto) is the scroll container.
 .o-ai-section__frame {
+    flex: 0 0 auto;
     width: 100%;
     max-width: 1100px;
     margin: 0 auto;

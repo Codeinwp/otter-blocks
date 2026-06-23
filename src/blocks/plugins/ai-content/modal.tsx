@@ -64,10 +64,11 @@ import {
 } from './apply-content';
 import {
 	generateBlocksFromTask,
+	refineGeneratedBlocks,
 	sanitizeGeneratedBlocks,
 	validateGeneratedBlocks
 } from './block-generation';
-import type { BlockGenerationResult } from './block-generation';
+import type { BlockGenerationResult, PatternLike } from './block-generation';
 
 type ResultHistoryItem = {
 	result?: string;
@@ -144,6 +145,13 @@ const AIContentModal = ({
 		[]
 	);
 
+	// Registered block patterns (Otter + theme). Fed to the generator in create
+	// mode so it can reuse matching patterns instead of building every section.
+	const blockPatterns = useSelect(
+		select => ( select( 'core' ) as { getBlockPatterns?: () => PatternLike[] } )?.getBlockPatterns?.() ?? [],
+		[]
+	);
+
 	const [ selectedActionId, setSelectedActionId ] = useState( initialActionId || actions[0]?.id || '' );
 	const [ tone, setTone ] = useState<string | null>( null );
 	const [ status, setStatus ] = useState<'idle' | 'loading' | 'error' | 'loaded'>( 'idle' );
@@ -161,7 +169,7 @@ const AIContentModal = ({
 	const [ refineInput, setRefineInput ] = useState( '' );
 
 	// Coarse progress that drives the dynamic loading label (planning → building).
-	const [ progress, setProgress ] = useState<{ phase: 'idle' | 'planning' | 'building'; done: number; total: number }>({ phase: 'idle', done: 0, total: 0 });
+	const [ progress, setProgress ] = useState<{ phase: 'idle' | 'planning' | 'briefing' | 'selecting' | 'outlining' | 'building' | 'polishing' | 'refining'; done: number; total: number }>({ phase: 'idle', done: 0, total: 0 });
 
 	// Scope (Section / Full page) is chosen in the block; the modal just consumes it.
 	const scope = initialScope;
@@ -286,10 +294,19 @@ const AIContentModal = ({
 		</div>
 	) : null;
 
-	// Phase-aware loading copy for block generation (planning → per-section build).
+	// Phase-aware loading copy. The pattern-aware pipeline reports briefing →
+	// selecting → outlining before the per-section build; the catalog pipeline
+	// only reports planning → build. All non-build phases show indeterminate.
 	const isPlanning = 'building' !== progress.phase || 0 === progress.total;
+	const phaseLabels: Record<string, string> = {
+		briefing: __( 'Sketching the layout…', 'otter-blocks' ),
+		selecting: __( 'Matching your patterns…', 'otter-blocks' ),
+		outlining: __( 'Outlining new sections…', 'otter-blocks' ),
+		polishing: __( 'Polishing the details…', 'otter-blocks' ),
+		refining: __( 'Refining your design…', 'otter-blocks' )
+	};
 	const loadingLabel = isPlanning
-		? __( 'Planning your layout…', 'otter-blocks' )
+		? ( phaseLabels[ progress.phase ] ?? __( 'Planning your layout…', 'otter-blocks' ) )
 		: sprintf(
 			// translators: %1$d: current section number, %2$d: total number of sections.
 			__( 'Designing section %1$d of %2$d…', 'otter-blocks' ),
@@ -345,7 +362,7 @@ const AIContentModal = ({
 		return buildEmbeddedPromptFromTask( resolvedPrompt );
 	};
 
-	const generateContent = async( regenerate = false, overridePrompt?: string ) => {
+	const generateContent = async( regenerate = false, overridePrompt?: string, refineInstruction?: string ) => {
 		const activePrompt = overridePrompt ?? prompt;
 
 		if ( ! hasAPIKey ) {
@@ -380,63 +397,98 @@ const AIContentModal = ({
 					tone: tone || undefined
 				});
 
-				let task = baseTask;
-				if ( isCreateMode && 'page' === scope ) {
-					// translators: %s: the user's prompt describing the page.
-					task = sprintf( __( 'Create a complete landing page composed of multiple coherent sections for: %s', 'otter-blocks' ), baseTask );
-				} else if ( isCreateMode ) {
-					// translators: %s: the user's prompt describing the section.
-					task = sprintf( __( 'Create a single, self-contained section for: %s', 'otter-blocks' ), baseTask );
-				}
+				// Block generation ships its own catalog + strict-JSON schema in the
+				// prompt, so it must NOT reuse the server `textTransformation`
+				// template, whose system prompt forces plain HTML output. Use the
+				// self-contained JSON endpoint instead. Shared by generate + refine.
+				const requestCompletion = async( requestPrompt: string ) => {
+					const response = await sendBlockGenerationPrompt( requestPrompt );
 
-				// Reset the live preview for this run; it fills in section by section.
-				setLiveBlocks([]);
-				setProgress({ phase: 'planning', done: 0, total: 0 });
-				const accumulated: BlockProps<unknown>[] = [];
-
-				const generation = await generateBlocksFromTask({
-					task,
-					blockTypes,
-					themeColors,
-					onPlanReady: ( plan ) => {
-						if ( isStale() ) {
-							return;
-						}
-						setProgress({ phase: 'building', done: 0, total: plan.roots?.length ?? 0 });
-					},
-					onRootComplete: ({ rootIndex, blocks: rootBlocks }) => {
-						if ( isStale() ) {
-							return;
-						}
-						setProgress( ( prev ) => ({ ...prev, done: rootIndex + 1 }) );
-						if ( ! rootBlocks.length ) {
-							return;
-						}
-						accumulated.push( ...rootBlocks );
-						setLiveBlocks([ ...accumulated ]);
-					},
-					requestCompletion: async( requestPrompt ) => {
-						// Block generation ships its own catalog + strict-JSON schema in
-						// the prompt, so it must NOT reuse the server `textTransformation`
-						// template, whose system prompt forces plain HTML output. Use the
-						// self-contained JSON endpoint instead.
-						const response = await sendBlockGenerationPrompt( requestPrompt );
-
-						if ( ! response.ok ) {
-							throw new Error( response.error?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
-						}
-
-						const result = response.content;
-
-						if ( ! result ) {
-							throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
-						}
-
-						usedToken += response.usedTokens ?? 0;
-
-						return result;
+					if ( ! response.ok ) {
+						throw new Error( response.error?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 					}
-				});
+
+					const result = response.content;
+
+					if ( ! result ) {
+						throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
+					}
+
+					usedToken += response.usedTokens ?? 0;
+
+					return result;
+				};
+
+				let generation;
+
+				if ( refineInstruction && currentGeneratedBlocks?.length ) {
+					// Refine the existing result: keep showing it while the model
+					// applies the requested change to that exact block tree.
+					setLiveBlocks( currentGeneratedBlocks );
+					setProgress({ phase: 'refining', done: 0, total: 0 });
+
+					generation = await refineGeneratedBlocks({
+						task: baseTask,
+						instruction: refineInstruction,
+						baseBlocks: currentGeneratedBlocks,
+						blockTypes,
+						themeColors,
+						requestCompletion,
+						onPhase: ( phase ) => {
+							if ( isStale() ) {
+								return;
+							}
+							setProgress( ( prev ) => ({ ...prev, phase }) );
+						}
+					});
+				} else {
+					let task = baseTask;
+					if ( isCreateMode && 'page' === scope ) {
+						// translators: %s: the user's prompt describing the page.
+						task = sprintf( __( 'Create a complete landing page composed of multiple coherent sections for: %s', 'otter-blocks' ), baseTask );
+					} else if ( isCreateMode ) {
+						// translators: %s: the user's prompt describing the section.
+						task = sprintf( __( 'Create a single, self-contained section for: %s', 'otter-blocks' ), baseTask );
+					}
+
+					// Reset the live preview for this run; it fills in section by section.
+					setLiveBlocks([]);
+					setProgress({ phase: 'planning', done: 0, total: 0 });
+					const accumulated: BlockProps<unknown>[] = [];
+
+					generation = await generateBlocksFromTask({
+						task,
+						blockTypes,
+						themeColors,
+
+						// Pattern reuse only applies to create mode (whole sections/pages).
+						patterns: isCreateMode ? blockPatterns : undefined,
+						onPhase: ( phase ) => {
+							if ( isStale() ) {
+								return;
+							}
+							setProgress( ( prev ) => ({ ...prev, phase }) );
+						},
+						onPlanReady: ( plan ) => {
+							if ( isStale() ) {
+								return;
+							}
+							setProgress({ phase: 'building', done: 0, total: plan.roots?.length ?? 0 });
+						},
+						onRootComplete: ({ rootIndex, blocks: rootBlocks }) => {
+							if ( isStale() ) {
+								return;
+							}
+							setProgress( ( prev ) => ({ ...prev, done: rootIndex + 1 }) );
+							if ( ! rootBlocks.length ) {
+								return;
+							}
+							accumulated.push( ...rootBlocks );
+							setLiveBlocks([ ...accumulated ]);
+						},
+						requestCompletion
+					});
+				}
 
 				if ( isStale() ) {
 					return;
@@ -673,8 +725,9 @@ const AIContentModal = ({
 	const isGenerating = 'loading' === status;
 
 	// The bottom bar generates from scratch until a result exists, then refines:
-	// the typed delta is appended to the running prompt and regenerated as a new
-	// version, reusing the generate pipeline.
+	// the typed delta is applied to the current result as an edit (the existing
+	// blocks are the reference), stored as a new version. The running prompt keeps
+	// the accumulated goal for context across successive refines.
 	const handleSectionSubmit = () => {
 		if ( isGenerating ) {
 			return;
@@ -685,10 +738,10 @@ const AIContentModal = ({
 			if ( ! delta ) {
 				return;
 			}
-			const combined = `${ prompt }\n\n${ delta }`;
-			setPrompt( combined );
+			const goal = prompt;
+			setPrompt( `${ prompt }\n\n${ delta }` );
 			setRefineInput( '' );
-			generateContent( true, combined );
+			generateContent( true, goal, delta );
 			return;
 		}
 
