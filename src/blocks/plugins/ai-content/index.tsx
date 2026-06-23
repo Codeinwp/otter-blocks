@@ -203,57 +203,55 @@ const withAIToolbar = createHigherOrderComponent( BlockEdit => {
 				<BlockEdit { ...props } />
 				{
 					showToolbar && (
-						<Fragment>
-							<BlockControls group="other">
-								<ToolbarItem>
-									{
-										( toolbarItemProps ) => (
-											<Dropdown
-												popoverProps={{
-													placement: 'bottom-start',
-													className: 'o-ai-toolbar-dropdown'
-												}}
-												renderToggle={ ( { isOpen, onToggle } ) => (
-													<ToolbarButton
-														{ ...toolbarItemProps }
-														icon={ aiGeneration }
-														label={ __( 'Otter AI Content', 'otter-blocks' ) }
-														onClick={ onToggle }
-														aria-expanded={ isOpen }
-													/>
-												) }
-												renderContent={ ( { onClose } ) => (
-													<AIToolbarMenu
-														hasAPIKey={ hasAPIKey }
-														toolbarActions={ toolbarActions }
-														activeBlocks={ activeBlocks as BlockProps<unknown>[] }
-														onOpenAction={ openModal }
-														onCloseDropdown={ onClose }
-													/>
-												) }
-											/>
-										)
-									}
-								</ToolbarItem>
-							</BlockControls>
-
-							{
-								isModalOpen && (
-									<AIContentModal
-										isOpen={ isModalOpen }
-										onClose={ () => setIsModalOpen( false ) }
-										actions={ toolbarActions }
-										initialPrompt={ modalInitialPrompt }
-										autoGenerate={ modalAutoGenerate }
-										selectedBlocks={ activeBlocks as BlockProps<unknown>[] }
-										isMultipleSelection={ isMultipleSelection }
-										singleClientId={ props.clientId }
-										selectedClientIds={ selectedClientIds }
-									/>
-								)
-							}
-						</Fragment>
-					) }
+						<BlockControls group="other">
+							<ToolbarItem>
+								{
+									( toolbarItemProps ) => (
+										<Dropdown
+											popoverProps={{
+												placement: 'bottom-start',
+												className: 'o-ai-toolbar-dropdown'
+											}}
+											renderToggle={ ( { isOpen, onToggle } ) => (
+												<ToolbarButton
+													{ ...toolbarItemProps }
+													icon={ aiGeneration }
+													label={ __( 'Otter AI Content', 'otter-blocks' ) }
+													onClick={ onToggle }
+													aria-expanded={ isOpen }
+												/>
+											) }
+											renderContent={ ( { onClose } ) => (
+												<AIToolbarMenu
+													hasAPIKey={ hasAPIKey }
+													toolbarActions={ toolbarActions }
+													activeBlocks={ activeBlocks as BlockProps<unknown>[] }
+													onOpenAction={ openModal }
+													onCloseDropdown={ onClose }
+												/>
+											) }
+										/>
+									)
+								}
+							</ToolbarItem>
+						</BlockControls>
+					)
+				}
+				{
+					isModalOpen && (
+						<AIContentModal
+							isOpen={ isModalOpen }
+							onClose={ () => setIsModalOpen( false ) }
+							actions={ toolbarActions }
+							initialPrompt={ modalInitialPrompt }
+							autoGenerate={ modalAutoGenerate }
+							selectedBlocks={ activeBlocks as BlockProps<unknown>[] }
+							isMultipleSelection={ isMultipleSelection }
+							singleClientId={ props.clientId }
+							selectedClientIds={ selectedClientIds }
+						/>
+					)
+				}
 			</Fragment>
 		);
 	};

@@ -74,6 +74,8 @@ type GenerationProgress = {
 type AIContentModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
+	/** When set, footer Discard uses this instead of {@link onClose}. */
+	onDiscard?: () => void;
 	onApplyComplete?: () => void;
 	onApplyBlocks?: ( blocks: BlockProps<unknown>[] ) => void;
 
@@ -105,6 +107,7 @@ type AIContentModalProps = {
 const AIContentModal = ({
 	isOpen,
 	onClose,
+	onDiscard,
 	onApplyComplete,
 	onApplyBlocks,
 	actions,
@@ -533,6 +536,44 @@ const AIContentModal = ({
 		generateContent( false );
 	};
 
+	const showRefineQuickActions = 0 < actions.length && ! isGenerating &&
+		( hasResult || hasSelection || 0 < previewBlocks.length );
+
+	const handleClose = () => {
+		if ( isGenerating ) {
+			return;
+		}
+
+		onClose();
+	};
+
+	const handleDiscard = () => {
+		if ( isGenerating ) {
+			return;
+		}
+
+		( onDiscard ?? onClose )();
+	};
+
+	const handleQuickAction = ( action: AIToolbarAction ) => {
+		if ( isGenerating || ! hasAPIKey ) {
+			return;
+		}
+
+		const forceEdit = hasSelection && ! isCreateMode;
+
+		if ( hasResult ) {
+			const goal = prompt;
+			setPrompt( `${ goal }\n\n${ action.prompt }` );
+			setRefineInput( '' );
+			generateContent( true, goal, action.prompt, forceEdit );
+			return;
+		}
+
+		setPrompt( action.prompt );
+		generateContent( false, action.prompt, undefined, forceEdit );
+	};
+
 	const sectionSubmitDisabled = ! hasAPIKey || isGenerating ||
 		( hasResult ? ! refineInput.trim() : ! prompt.trim() );
 
@@ -571,11 +612,7 @@ const AIContentModal = ({
 	return (
 		<Modal
 			title={ __( 'Otter AI Section', 'otter-blocks' ) }
-			onRequestClose={ () => {
-				if ( ! isGenerating ) {
-					onClose();
-				}
-			} }
+			onRequestClose={ handleClose }
 			isDismissible={ ! isGenerating }
 			shouldCloseOnClickOutside={ ! isGenerating }
 			shouldCloseOnEsc={ ! isGenerating }
@@ -610,7 +647,7 @@ const AIContentModal = ({
 						label={ __( 'Close', 'otter-blocks' ) }
 						className="o-ai-section__close"
 						disabled={ isGenerating }
-						onClick={ onClose }
+						onClick={ handleClose }
 					/>
 				</div>
 
@@ -664,15 +701,7 @@ const AIContentModal = ({
 											key={ action.id }
 											variant="secondary"
 											isSmall
-											onClick={ () => {
-												setPrompt( action.prompt );
-												generateContent(
-													false,
-													action.prompt,
-													undefined,
-													hasSelection && ! isCreateMode
-												);
-											} }
+											onClick={ () => handleQuickAction( action ) }
 										>
 											{ action.title }
 										</Button>
@@ -704,6 +733,23 @@ const AIContentModal = ({
 						}
 					} }
 				>
+					{
+						showRefineQuickActions && (
+							<div className="o-ai-section__refine-chips">
+								{ actions.map( ( action ) => (
+									<Button
+										key={ action.id }
+										variant="secondary"
+										isSmall
+										disabled={ ! hasAPIKey }
+										onClick={ () => handleQuickAction( action ) }
+									>
+										{ action.title }
+									</Button>
+								) ) }
+							</div>
+						)
+					}
 					<div className="o-ai-section__refine-field">
 						<span className="o-ai-section__refine-icon" aria-hidden="true">
 							<Icon icon={ aiGeneration } />
@@ -757,7 +803,7 @@ const AIContentModal = ({
 						<Button
 							variant="secondary"
 							disabled={ isGenerating }
-							onClick={ onClose }
+							onClick={ handleDiscard }
 						>
 							{ __( 'Discard', 'otter-blocks' ) }
 						</Button>

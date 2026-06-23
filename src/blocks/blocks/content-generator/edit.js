@@ -6,7 +6,7 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { Fragment, useState } from '@wordpress/element';
+import { Fragment, useMemo, useState } from '@wordpress/element';
 
 import { createBlock } from '@wordpress/blocks';
 
@@ -25,6 +25,13 @@ import PromptPlaceholder from '../../components/prompt';
 import { aiGeneration as icon } from '../../helpers/icons.js';
 import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
 import AIContentModal from '../../plugins/ai-content/modal';
+import useSettings from '../../helpers/use-settings';
+import {
+	DEFAULT_BUILTIN_ACTIONS,
+	getEnabledActions,
+	getToolbarActionsFromSettings,
+	normalizeToolbarActions
+} from '../../plugins/ai-content/actions';
 
 /**
  * Starter prompts shown in the block, since the first interaction happens here
@@ -58,6 +65,19 @@ const ContentGenerator = ({
 	const [ prompt, setPrompt ] = useState( '' );
 	const [ scope ] = useState( 'section' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
+	const [ getOption, _, settingsStatus ] = useSettings();
+
+	const toolbarActions = useMemo( () => {
+		if ( 'loading' === settingsStatus ) {
+			return getEnabledActions( DEFAULT_BUILTIN_ACTIONS );
+		}
+
+		return getEnabledActions(
+			normalizeToolbarActions(
+				getToolbarActionsFromSettings( getOption )
+			)
+		);
+	}, [ getOption, settingsStatus ] );
 
 	const {
 		insertBlocks,
@@ -150,6 +170,11 @@ const ContentGenerator = ({
 	);
 
 	const closeGenerationModal = () => {
+		setModalOpen( false );
+	};
+
+	const discardGenerationModal = () => {
+		setModalOpen( false );
 		removeBlock( clientId );
 	};
 
@@ -267,8 +292,9 @@ const ContentGenerator = ({
 					autoGenerate
 					initialScope={ scope }
 					onClose={ closeGenerationModal }
+					onDiscard={ discardGenerationModal }
 					onApplyBlocks={ applyGeneratedBlocks }
-					actions={ [] }
+					actions={ toolbarActions }
 					initialPrompt={ prompt }
 					selectedBlocks={ [] }
 					isMultipleSelection={ false }
