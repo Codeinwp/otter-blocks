@@ -202,6 +202,10 @@ function stub_wp_mail_for_e2e( $short_circuit, $atts = array() ) {
 
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e', 10, 2 );
 
+// Skip the themeisle-sdk survey (Formbricks) + tracking scripts in e2e so their
+// network errors don't pollute the console. Bails Script_loader::setup_actions().
+add_filter( 'themeisle_sdk_script_setup', '__return_true' );
+
 /**
  * Mock the reCAPTCHA verification endpoint per the captcha scenario mode, so specs can
  * exercise the provider-failure (infrastructure failure) and invalid-token paths without
