@@ -32,6 +32,14 @@ export type AttributePatch = {
 	attributes: Record<string, unknown>;
 };
 
+type BlockTypeLike = {
+	attributes?: Record<string, Record<string, unknown>>;
+} | undefined;
+
+type GetBlockType = ( name: string ) => BlockTypeLike;
+
+const TEXT_ATTR_ALIASES = [ 'content', 'text', 'value', 'title', 'label' ] as const;
+
 /**
  * The id of the child at `index` under `prefix` — the single source of truth for
  * the index-path scheme, so every walker produces matching ids.
@@ -111,6 +119,101 @@ export const patchesToMap = ( patches: AttributePatch[] ): Record<string, Record
 		acc[ patch.id ] = patch.attributes;
 		return acc;
 	}, {});
+};
+
+/**
+ * Map id-path nodes to block slugs for patch normalization.
+ */
+export const buildIdToBlockNameMap = ( nodes: IdentifiedNode[] ): Record<string, string> => {
+	const map: Record<string, string> = {};
+
+	const walk = ( list: IdentifiedNode[] ) => {
+		for ( const node of list ) {
+			map[ node.id ] = node.name;
+
+			if ( node.innerBlocks?.length ) {
+				walk( node.innerBlocks );
+			}
+		}
+	};
+
+	walk( nodes );
+
+	return map;
+};
+
+/**
+ * Remap common model mistakes (e.g. `text` on a block that uses `content`) and
+ * drop keys that are not registered on the block type.
+ */
+export const normalizePatchAttributes = (
+	blockName: string,
+	attributes: Record<string, unknown>,
+	getBlockType: GetBlockType
+): Record<string, unknown> => {
+	const blockType = getBlockType( blockName );
+
+	if ( ! blockType?.attributes ) {
+		return {};
+	}
+
+	const allowed = blockType.attributes;
+	const normalized: Record<string, unknown> = { ...attributes };
+
+	for ( const [ key, value ] of Object.entries( attributes ) ) {
+		if ( key in allowed ) {
+			continue;
+		}
+
+		const aliasTarget = TEXT_ATTR_ALIASES.find(
+			( candidate ) => candidate in allowed && candidate !== key
+		);
+
+		if ( aliasTarget ) {
+			normalized[ aliasTarget ] = value;
+			delete normalized[ key ];
+		}
+	}
+
+	const filtered: Record<string, unknown> = {};
+
+	for ( const [ key, value ] of Object.entries( normalized ) ) {
+		if ( key in allowed ) {
+			filtered[ key ] = value;
+		}
+	}
+
+	return filtered;
+};
+
+/**
+ * Merge patches onto live editor blocks by index-path id, preserving clientIds
+ * and nesting so parent/child context stays intact on apply.
+ */
+export const applyPatchesToBlocks = (
+	baseBlocks: BlockProps<unknown>[],
+	patches: AttributePatch[],
+	prefix = ''
+): BlockProps<unknown>[] => {
+	const patchesById = patchesToMap( patches );
+
+	return ( baseBlocks || [] ).map( ( block, index ) => {
+		const id = childId( prefix, index );
+		const patchAttributes = patchesById[ id ];
+		const innerBlocks = applyPatchesToBlocks(
+			( block.innerBlocks || [] ) as BlockProps<unknown>[],
+			patches,
+			id
+		);
+
+		return {
+			...block,
+			attributes: patchAttributes
+				? { ...( block.attributes || {}), ...patchAttributes }
+				: ( block.attributes || {}),
+			innerBlocks
+		};
+	});
 };
 
 /**

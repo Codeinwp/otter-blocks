@@ -75,6 +75,31 @@ const blockTypes = [
 		supports: {
 			inserter: false
 		}
+	},
+	{
+		name: 'themeisle-blocks/button-group',
+		title: 'Button Group',
+		description: 'A group of buttons.',
+		attributes: {
+			id: { type: 'string' }
+		},
+		allowedBlocks: [ 'themeisle-blocks/button' ],
+		supports: {
+			inserter: true
+		}
+	},
+	{
+		name: 'themeisle-blocks/button',
+		title: 'Button',
+		description: 'A single button.',
+		attributes: {
+			id: { type: 'string' },
+			text: { type: 'string', source: 'html', selector: 'span' }
+		},
+		parent: [ 'themeisle-blocks/button-group' ],
+		supports: {
+			inserter: true
+		}
 	}
 ];
 
@@ -87,7 +112,9 @@ describe( 'AI block generation engine', () => {
 		expect( catalog.map( entry => entry.slug ) ).toEqual([
 			'core/paragraph',
 			'themeisle-blocks/advanced-columns',
-			'themeisle-blocks/advanced-column'
+			'themeisle-blocks/advanced-column',
+			'themeisle-blocks/button-group',
+			'themeisle-blocks/button'
 		]);
 
 		// Paragraph is not a container; the section (allowedBlocks) and column
@@ -741,6 +768,41 @@ describe( 'AI block generation engine', () => {
 		});
 
 		expect( result.blocks ).toBe( base );
+	});
+
+	it( 'refine: patches a child-only block selected in the editor (e.g. Otter button)', async() => {
+		const base = [{
+			clientId: 'btn-1',
+			name: 'themeisle-blocks/button',
+			attributes: { text: 'Old label' },
+			innerBlocks: []
+		}];
+
+		const completion = jest.fn().mockResolvedValueOnce( JSON.stringify({
+			patches: [{ id: '0', attributes: { text: 'Start Building Today — Get the Guide' }}]
+		}) );
+
+		const result = await refineGeneratedBlocks({
+			task: 'Rewrite the button label.',
+			instruction: 'Rewrite the button label.',
+			baseBlocks: base,
+			blockTypes,
+			requestCompletion: completion
+		});
+
+		expect( result.blocks[0].clientId ).toBe( 'btn-1' );
+		expect( result.blocks[0].attributes?.text ).toBe( 'Start Building Today — Get the Guide' );
+		expect( result.diagnostics.droppedRoots ).toHaveLength( 0 );
+	});
+
+	it( 'validate: allows root blocks that require a parent when replacing in the editor', () => {
+		const blocks = jsonTreeToBlocks(
+			[{ name: 'themeisle-blocks/button', attributes: { text: 'Click me' }}],
+			getBlockType
+		);
+
+		expect( validateGeneratedBlocks( blocks, getBlockType ).valid ).toBe( false );
+		expect( validateGeneratedBlocks( blocks, getBlockType, { skipRootParentChecks: true }).valid ).toBe( true );
 	});
 
 	it( 'repair loop: re-prompts with validation errors and recovers a section', async() => {

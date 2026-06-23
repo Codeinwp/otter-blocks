@@ -649,7 +649,8 @@ export const popupWithImageAndText = (
 
 );
 
-export const aiGeneration = (
+export function AIGenerationIcon() {
+	return (
 	<SVG data-target="generator-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: 'transparent' }}>
 		<Path d="M6 17V21" stroke="url(#paint0_linear_3599_37937)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 		<Path d="M4 19H8" stroke="url(#paint1_linear_3599_37937)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -714,6 +715,12 @@ export const aiGeneration = (
 			</LinearGradient>
 		</Defs>
 	</SVG>
+	);
+}
+
+/** Static element for {@link Icon} and legacy call sites. */
+export const aiGeneration = (
+	<AIGenerationIcon />
 );
 
 export const formAiGeneration = (

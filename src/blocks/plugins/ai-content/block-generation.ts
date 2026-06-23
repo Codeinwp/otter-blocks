@@ -10,14 +10,19 @@ import type { BlockProps } from '../../helpers/blocks';
 import { isObject, parseJsonResponse, toStringArray } from './json-utils';
 import {
 	applyAttributePatches,
+	applyPatchesToBlocks,
 	attachIds,
 	blocksToTrees,
+	buildIdToBlockNameMap,
+	normalizePatchAttributes,
 	parsePatchPayload,
 	patchesToMap
 } from './block-patches';
 import type { IdentifiedNode } from './block-patches';
 import { findQualityIssues, formatIssuesForPrompt } from './quality-checks';
 import type { QualityIssue } from './quality-checks';
+import { formatSessionHistoryForPrompt } from './session-history';
+import { PIPELINE_STEP } from './prompts/phases';
 
 type AttributeDefinition = Record<string, unknown>;
 
@@ -174,6 +179,11 @@ export type ThemeColor = {
 	color: string;
 };
 
+export type ValidateBlocksOptions = {
+	/** Root blocks replaced in-place in the editor may omit a parent in the tree. */
+	skipRootParentChecks?: boolean;
+};
+
 export type BlockValidationResult = {
 	valid: boolean;
 	errors: string[];
@@ -219,6 +229,13 @@ type GenerateBlocksFromTaskArgs = {
 	requestCompletion: ( prompt: string ) => Promise<string>;
 
 	/**
+	 * The user's earlier chat requests this session (oldest first), threaded into
+	 * the planning prompt so a follow-up generation stays consistent with intent
+	 * expressed in previous turns.
+	 */
+	history?: string[];
+
+	/**
 	 * Coarse pipeline phase, for driving the loading copy: 'briefing' →
 	 * 'selecting' → 'outlining' → 'building' → 'polishing'. 'refining' is used by
 	 * the standalone refine pass.
@@ -236,6 +253,17 @@ type RefineBlocksArgs = {
 	themeColors?: ThemeColor[];
 	requestCompletion: ( prompt: string ) => Promise<string>;
 	onPhase?: ( phase: 'refining' ) => void;
+
+	/**
+	 * Optional serialized markup + schema context for the selection.
+	 */
+	referenceContext?: string;
+
+	/**
+	 * The user's earlier chat requests this session (oldest first), threaded into
+	 * the refine prompt so the model can resolve follow-up references.
+	 */
+	history?: string[];
 };
 
 const PATTERN_CATALOG_MAX = 60;
@@ -513,7 +541,8 @@ const validateBlockTree = (
 	getBlockType: GetBlockType,
 	parentName: string | undefined,
 	ancestors: string[],
-	errors: string[]
+	errors: string[],
+	options: ValidateBlocksOptions = {}
 ) => {
 	const blockType = getBlockType( block.name );
 
@@ -522,7 +551,7 @@ const validateBlockTree = (
 		return;
 	}
 
-	if ( blockType.parent?.length && ! parentName ) {
+	if ( blockType.parent?.length && ! parentName && ! options.skipRootParentChecks ) {
 		errors.push( `${ block.name } requires parent ${ blockType.parent.join( ', ' ) }.` );
 	}
 
@@ -546,19 +575,21 @@ const validateBlockTree = (
 			getBlockType,
 			block.name,
 			[ ...ancestors, block.name ],
-			errors
+			errors,
+			options
 		);
 	}
 };
 
 export const validateGeneratedBlocks = (
 	blocks: BlockProps<unknown>[],
-	getBlockType: GetBlockType
+	getBlockType: GetBlockType,
+	options: ValidateBlocksOptions = {}
 ): BlockValidationResult => {
 	const errors: string[] = [];
 
 	for ( const block of blocks ) {
-		validateBlockTree( block, getBlockType, undefined, [], errors );
+		validateBlockTree( block, getBlockType, undefined, [], errors, options );
 	}
 
 	return {
@@ -719,18 +750,28 @@ const formatPaletteForPrompt = ( colors: ThemeColor[] ): string => {
 		.join( '\n' );
 };
 
+/*
+ * The conversation memory: the user's earlier requests this session, oldest
+ * first. Threaded into the planning and refine prompts so follow-up turns stay
+ * consistent and the model can resolve references like "make that shorter" or
+ * "go back to the previous style".
+ */
+const formatHistoryForPrompt = formatSessionHistoryForPrompt;
+
 const ATOMIC_WIND_STRUCTURE_HINT = 'The catalog includes Atomic Wind primitives (atomic-wind/box, atomic-wind/text, atomic-wind/icon, atomic-wind/link). These are low-level building blocks: "box" is a flexible container that nests any block, while text, icon and link hold the content. Combined, they can build almost any structure. Use the higher-level blocks for common patterns, but reach for these primitives whenever they let you craft a more polished, custom, or distinctive design — they are a first-class option, not just a fallback.';
 
 const buildPlanPrompt = (
 	task: string,
 	catalog: StructureCatalogEntry[],
 	atomicAvailable: boolean,
-	themeColors: ThemeColor[]
+	themeColors: ThemeColor[],
+	history?: string[]
 ) => {
 	const palette = formatPaletteForPrompt( themeColors );
 
 	return [
-		'You are planning a WordPress block layout for a user task. Produce a plan, not the final content yet.',
+		PIPELINE_STEP.PLAN,
+		...formatHistoryForPrompt( history ),
 		'First decide the mission: 1–2 sentences describing what the finished result should look like and achieve.',
 		'Then commit to a design direction the whole layout will share: an overall style, a palette of 3–5 colors, a border radius/roundness, a spacing rhythm, and a typography feel.',
 		...( palette ? [ `Build the palette ONLY from these theme color slugs — pick 3–5 and list them by slug, do not invent color names:\n${ palette }` ] : []),
@@ -785,7 +826,7 @@ const buildAttributePrompt = (
 	const palette = formatPaletteForPrompt( themeColors );
 
 	return [
-		'Fill in the attributes for this validated WordPress block structure. It is one section of a larger page.',
+		PIPELINE_STEP.CONSTRUCT,
 		...( plan.mission ? [ `Overall mission: ${ plan.mission }` ] : [] ),
 		...( design ? [ `Design direction — apply it consistently across the layout: ${ design }.` ] : [] ),
 		...( root.notes ? [ `This section's intent: ${ root.notes }` ] : [] ),
@@ -954,12 +995,14 @@ const formatPatternCatalogForPrompt = ( catalog: PatternCatalogEntry[] ): string
 const buildLayoutBriefPrompt = (
 	task: string,
 	atomicAvailable: boolean,
-	themeColors: ThemeColor[]
+	themeColors: ThemeColor[],
+	history?: string[]
 ) => {
 	const palette = formatPaletteForPrompt( themeColors );
 
 	return [
-		'You are planning the general layout for a WordPress page or section. Do NOT pick blocks or write content yet — only the high-level shape.',
+		PIPELINE_STEP.BRIEF,
+		...formatHistoryForPrompt( history ),
 		'Decide the mission: 1–2 sentences describing what the finished result should look like and achieve.',
 		'Commit to a design direction the whole layout will share: an overall style, a palette of 3–5 colors, a border radius/roundness, a spacing rhythm, and a typography feel.',
 		...( palette ? [ `Build the palette ONLY from these theme color slugs — pick 3–5 and list them by slug, do not invent color names:\n${ palette }` ] : []),
@@ -977,7 +1020,8 @@ const buildPatternSelectionPrompt = (
 	patternCatalog: PatternCatalogEntry[]
 ) => {
 	return [
-		'You are composing a page from a library of prebuilt patterns. For each planned section, choose the SINGLE pattern that best fits its intent, or null if no pattern is a good fit.',
+		PIPELINE_STEP.PATTERN_SEARCH,
+		'For each planned section, choose the SINGLE pattern that best fits its intent, or null if no pattern is a good fit.',
 		'Choose a pattern only when it genuinely matches the section\'s purpose. When nothing fits, set patternName to null so the section can be custom-built instead — do not force a poor match.',
 		'You may add a short "note" explaining the choice or what the pattern is missing for this section.',
 		'Mission for context: ' + ( brief.mission || '(none)' ),
@@ -997,7 +1041,7 @@ const buildMissingOutlinePrompt = (
 	atomicAvailable: boolean
 ) => {
 	return [
-		'Outline ONLY the following sections as WordPress block structures. These are the sections with no suitable prebuilt pattern.',
+		PIPELINE_STEP.STRUCTURE_GAPS,
 		...( brief.mission ? [ `Overall mission: ${ brief.mission }` ] : [] ),
 		'For each section, pick blocks from the catalog by slug and arrange them into a nested tree.',
 		'Only nest blocks inside a block whose slug is marked [container].',
@@ -1028,7 +1072,7 @@ const buildPatternRewritePrompt = (
 	const palette = formatPaletteForPrompt( themeColors );
 
 	return [
-		'This is a prebuilt section from a pattern library. Rewrite its TEXT content so it fits the user task, while keeping the exact same structure, blocks, nesting and styling.',
+		PIPELINE_STEP.PATTERN_REWRITE,
 		...( plan.mission ? [ `Overall mission: ${ plan.mission }` ] : [] ),
 		...( design ? [ `Design direction — stay consistent with it: ${ design }.` ] : [] ),
 		...( intent ? [ `This section's intent: ${ intent }` ] : [] ),
@@ -1055,14 +1099,19 @@ const buildRefinePrompt = (
 	idTree: IdentifiedNode[],
 	schema: AttributeSchemaEntry[],
 	rootUsesAtomic: boolean,
-	themeColors: ThemeColor[]
+	themeColors: ThemeColor[],
+	history?: string[],
+	referenceContext?: string
 ) => {
 	const palette = formatPaletteForPrompt( themeColors );
 
 	return [
-		'You are refining an existing WordPress block layout. Below is the current design as a tree of blocks, each with a unique "id", its block "name" and its current "attributes".',
+		PIPELINE_STEP.EDIT,
+		'Below is the current design as a tree of blocks, each with a unique "id", its block "name" and its current "attributes".',
 		'Apply ONLY the requested change. Do NOT modify any block the change does not require, and do NOT add, remove, or reorder blocks.',
 		...( task ? [ `Overall goal for context: ${ task }` ] : [] ),
+		...formatHistoryForPrompt( history ),
+		...( referenceContext ? [ 'Reference markup and schema:', referenceContext ] : [] ),
 		`Requested change: ${ instruction }`,
 		'Return a minimal list of patches: for each block you must change, give its "id" and ONLY the attributes that change, with their new values. Omit every block you are not changing.',
 		'When changing an object-valued attribute (e.g. "style"), return the COMPLETE new value of that attribute, not a partial fragment.',
@@ -1209,7 +1258,8 @@ const buildQualityFixPrompt = (
 	const palette = formatPaletteForPrompt( themeColors );
 
 	return [
-		'You are fixing quality issues in an existing WordPress block layout. Below is the current design as a tree of blocks, each with a unique "id", "name" and "attributes".',
+		PIPELINE_STEP.POLISH,
+		'Below is the current design as a tree of blocks, each with a unique "id", "name" and "attributes".',
 		'Apply the smallest attribute changes that resolve the listed issues. Do NOT change anything else, and do NOT add, remove, or reorder blocks.',
 		'Issues to fix, one per line as `block-id: problem`:',
 		formatIssuesForPrompt( issues ),
@@ -1278,6 +1328,7 @@ const generateFromCatalog = async({
 	blockTypes,
 	themeColors = [],
 	requestCompletion,
+	history,
 	onPhase,
 	onPlanReady,
 	onRootComplete
@@ -1288,7 +1339,7 @@ const generateFromCatalog = async({
 
 	// Phase 1 — plan the mission, design direction and section outline.
 	const catalog = buildStructureCatalog( blockTypes );
-	const planPrompt = buildPlanPrompt( task, catalog, atomicAvailable, themeColors );
+	const planPrompt = buildPlanPrompt( task, catalog, atomicAvailable, themeColors, history );
 
 	const plan = parsePlanPayload( await requestCompletion( planPrompt ) );
 
@@ -1351,6 +1402,7 @@ const generateWithPatterns = async({
 	themeColors = [],
 	patterns = [],
 	requestCompletion,
+	history,
 	onPhase,
 	onPlanReady,
 	onRootComplete
@@ -1361,11 +1413,11 @@ const generateWithPatterns = async({
 
 	// Req 1 — the high-level layout brief (mission, design, conceptual sections).
 	onPhase?.( 'briefing' );
-	const brief = parseLayoutBrief( await requestCompletion( buildLayoutBriefPrompt( task, atomicAvailable, themeColors ) ) );
+	const brief = parseLayoutBrief( await requestCompletion( buildLayoutBriefPrompt( task, atomicAvailable, themeColors, history ) ) );
 
 	// A brief with no sections can still be salvaged by the catalog path.
 	if ( ! brief.sections.length ) {
-		return generateFromCatalog({ task, blockTypes, themeColors, requestCompletion, onPlanReady, onRootComplete });
+		return generateFromCatalog({ task, blockTypes, themeColors, requestCompletion, history, onPlanReady, onRootComplete });
 	}
 
 	const patternsByName = patterns.reduce<Record<string, PatternLike>>( ( acc, pattern ) => {
@@ -1555,6 +1607,8 @@ export const refineGeneratedBlocks = async({
 	blockTypes,
 	themeColors = [],
 	requestCompletion,
+	referenceContext,
+	history,
 	onPhase
 }: RefineBlocksArgs ): Promise<BlockGenerationResult> => {
 	const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
@@ -1575,8 +1629,11 @@ export const refineGeneratedBlocks = async({
 
 	onPhase?.( 'refining' );
 
+	const idTree = attachIds( trees );
+	const idToBlockName = buildIdToBlockNameMap( idTree );
+
 	const patches = parsePatchPayload( await requestCompletion(
-		buildRefinePrompt( task, instruction, attachIds( trees ), schema, rootUsesAtomic, themeColors )
+		buildRefinePrompt( task, instruction, idTree, schema, rootUsesAtomic, themeColors, history, referenceContext )
 	) );
 
 	// No actionable patch — leave the current result untouched.
@@ -1584,11 +1641,24 @@ export const refineGeneratedBlocks = async({
 		return { blocks: baseBlocks, plan: emptyPlan, rationale: [], diagnostics: { droppedRoots: [] }};
 	}
 
-	// Patches only change attributes on existing blocks, so the structure is
-	// preserved exactly; jsonTreeToBlocks re-filters attributes to the registry.
-	const patchedTrees = applyAttributePatches( trees, patchesToMap( patches ) );
-	const blocks = jsonTreeToBlocks( patchedTrees, getBlockType );
-	const validation = validateGeneratedBlocks( blocks, getBlockType );
+	const normalizedPatches = patches
+		.map( ( patch ) => ({
+			id: patch.id,
+			attributes: normalizePatchAttributes(
+				idToBlockName[ patch.id ] || '',
+				patch.attributes,
+				getBlockType
+			)
+		}) )
+		.filter( ( patch ) => Object.keys( patch.attributes ).length );
+
+	if ( ! normalizedPatches.length ) {
+		return { blocks: baseBlocks, plan: emptyPlan, rationale: [], diagnostics: { droppedRoots: [] }};
+	}
+
+	// Preserve editor clientIds and nesting; only attributes change.
+	const blocks = applyPatchesToBlocks( baseBlocks, normalizedPatches );
+	const validation = validateGeneratedBlocks( blocks, getBlockType, { skipRootParentChecks: true } );
 
 	if ( ! validation.valid ) {
 		return {

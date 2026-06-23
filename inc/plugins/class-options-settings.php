@@ -932,20 +932,6 @@ class Options_Settings {
 							'custom'       => array(
 								'type' => 'boolean',
 							),
-							'availability' => array(
-								'type' => 'string',
-								'enum' => array( 'richtext', 'any' ),
-							),
-							'type'         => array(
-								'type' => 'string',
-								'enum' => array( 'prompt', 'tone' ),
-							),
-							'tones'        => array(
-								'type'  => 'array',
-								'items' => array(
-									'type' => 'string',
-								),
-							),
 						),
 					),
 				),
@@ -1080,78 +1066,60 @@ class Options_Settings {
 	public static function get_default_prompt_actions() {
 		return array(
 			array(
-				'id'           => 'rewrite',
-				'title'        => __( 'Rewrite', 'otter-blocks' ),
-				'prompt'       => __( "Rewrite this block for clarity and flow:\n\n{block_content}", 'otter-blocks' ),
-				'enabled'      => true,
-				'custom'       => false,
-				'availability' => 'richtext',
-				'type'         => 'prompt',
+				'id'      => 'rewrite',
+				'title'   => __( 'Rewrite', 'otter-blocks' ),
+				'prompt'  => __( 'Rewrite this for clarity and flow.', 'otter-blocks' ),
+				'enabled' => true,
+				'custom'  => false,
 			),
 			array(
-				'id'           => 'summarize',
-				'title'        => __( 'Summarize', 'otter-blocks' ),
-				'prompt'       => __( "Summarize this block concisely:\n\n{block_content}", 'otter-blocks' ),
-				'enabled'      => true,
-				'custom'       => false,
-				'availability' => 'richtext',
-				'type'         => 'prompt',
+				'id'      => 'summarize',
+				'title'   => __( 'Summarize', 'otter-blocks' ),
+				'prompt'  => __( 'Summarize this concisely.', 'otter-blocks' ),
+				'enabled' => true,
+				'custom'  => false,
 			),
 			array(
-				'id'           => 'expand',
-				'title'        => __( 'Expand', 'otter-blocks' ),
-				'prompt'       => __( "Expand this block with useful supporting detail:\n\n{block_content}", 'otter-blocks' ),
-				'enabled'      => true,
-				'custom'       => false,
-				'availability' => 'richtext',
-				'type'         => 'prompt',
+				'id'      => 'expand',
+				'title'   => __( 'Expand', 'otter-blocks' ),
+				'prompt'  => __( 'Expand this with useful supporting detail.', 'otter-blocks' ),
+				'enabled' => true,
+				'custom'  => false,
 			),
 			array(
-				'id'           => 'shorten',
-				'title'        => __( 'Shorten', 'otter-blocks' ),
-				'prompt'       => __( "Make this block shorter while preserving the key meaning:\n\n{block_content}", 'otter-blocks' ),
-				'enabled'      => true,
-				'custom'       => false,
-				'availability' => 'richtext',
-				'type'         => 'prompt',
+				'id'      => 'shorten',
+				'title'   => __( 'Shorten', 'otter-blocks' ),
+				'prompt'  => __( 'Make this shorter while preserving the key meaning.', 'otter-blocks' ),
+				'enabled' => true,
+				'custom'  => false,
 			),
 			array(
-				'id'           => 'translate',
-				'title'        => __( 'Translate', 'otter-blocks' ),
-				'prompt'       => __( "Translate this block into {tone}:\n\n{block_content}", 'otter-blocks' ),
-				'enabled'      => true,
-				'custom'       => false,
-				'availability' => 'richtext',
-				'type'         => 'tone',
-				'tones'        => array( __( 'English', 'otter-blocks' ), __( 'Spanish', 'otter-blocks' ), __( 'French', 'otter-blocks' ), __( 'German', 'otter-blocks' ), __( 'Italian', 'otter-blocks' ), __( 'Portuguese', 'otter-blocks' ), __( 'Romanian', 'otter-blocks' ) ),
+				'id'      => 'translate',
+				'title'   => __( 'Translate', 'otter-blocks' ),
+				'prompt'  => __( 'Translate this into English.', 'otter-blocks' ),
+				'enabled' => true,
+				'custom'  => false,
 			),
 			array(
-				'id'           => 'tone',
-				'title'        => __( 'Change Tone', 'otter-blocks' ),
-				'prompt'       => __( "Rewrite this block in a {tone} tone:\n\n{block_content}", 'otter-blocks' ),
-				'enabled'      => true,
-				'custom'       => false,
-				'availability' => 'richtext',
-				'type'         => 'tone',
-				'tones'        => array( __( 'Professional', 'otter-blocks' ), __( 'Casual', 'otter-blocks' ), __( 'Friendly', 'otter-blocks' ), __( 'Confident', 'otter-blocks' ), __( 'Formal', 'otter-blocks' ), __( 'Empathetic', 'otter-blocks' ) ),
+				'id'      => 'tone',
+				'title'   => __( 'Change Tone', 'otter-blocks' ),
+				'prompt'  => __( 'Rewrite this in a more professional tone.', 'otter-blocks' ),
+				'enabled' => true,
+				'custom'  => false,
 			),
 			array(
-				'id'           => 'grammar',
-				'title'        => __( 'Fix Grammar', 'otter-blocks' ),
-				'prompt'       => __( "Correct spelling and grammar mistakes in this block while keeping the original tone:\n\n{block_content}", 'otter-blocks' ),
-				'enabled'      => true,
-				'custom'       => false,
-				'availability' => 'richtext',
-				'type'         => 'prompt',
+				'id'      => 'grammar',
+				'title'   => __( 'Fix Grammar', 'otter-blocks' ),
+				'prompt'  => __( 'Fix any spelling and grammar mistakes, keeping the original tone.', 'otter-blocks' ),
+				'enabled' => true,
+				'custom'  => false,
 			),
 			array(
-				'id'           => 'simplify',
-				'title'        => __( 'Simplify', 'otter-blocks' ),
-				'prompt'       => __( "Simplify this block so it is easier to read:\n\n{block_content}", 'otter-blocks' ),
-				'enabled'      => true,
-				'custom'       => false,
-				'availability' => 'richtext',
-				'type'         => 'prompt',
+				'id'      => 'simplify',
+				'title'   => __( 'Simplify', 'otter-blocks' ),
+				'prompt'  => __( 'Simplify this so it is easier to read.', 'otter-blocks' ),
+				'enabled' => true,
+				'custom'  => false,
 			),
 		);
 	}
@@ -1216,22 +1184,6 @@ class Options_Settings {
 				if ( empty( $action['id'] ) ) {
 					$action['id'] = self::generate_custom_toolbar_action_id();
 				}
-			}
-
-			$availability           = isset( $item['availability'] ) ? sanitize_key( $item['availability'] ) : 'richtext';
-			$action['availability'] = in_array( $availability, array( 'richtext', 'any' ), true ) ? $availability : 'richtext';
-			$type                   = isset( $item['type'] ) ? sanitize_key( $item['type'] ) : 'prompt';
-			$action['type']         = in_array( $type, array( 'prompt', 'tone' ), true ) ? $type : 'prompt';
-
-			if ( isset( $item['tones'] ) && is_array( $item['tones'] ) ) {
-				$action['tones'] = array_values(
-					array_map(
-						function ( $tone ) {
-							return sanitize_text_field( $tone );
-						},
-						$item['tones']
-					)
-				);
 			}
 
 			$sanitized[] = $action;

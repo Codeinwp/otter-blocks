@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies.
  */
-import { parse, rawHandler, serialize } from '@wordpress/blocks';
+import { cloneBlock, parse, rawHandler, serialize } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
 
 /**
@@ -15,8 +15,6 @@ const RICHTEXT_BLOCKS = [
 ];
 
 const EDITOR_INTERNAL_ATTR_KEYS = new Set([ 'source', 'selector', 'attribute', 'role', 'meta' ]);
-
-const STRUCTURAL_BLOCK_INSTRUCTION = 'Return the result using WordPress Gutenberg block comment syntax (<!-- wp:block-name {"attr":...} -->). Preserve every block from the input: same block types, same instance ids in attributes, and the same order. Do not add or remove blocks. Only update textual attributes such as label, placeholder, or paragraph content.';
 
 type BlockTypeLike = {
 	attributes?: Record<string, Record<string, unknown>>
@@ -35,14 +33,20 @@ export type BlockTreeNode = {
 	innerBlocks?: Record<string, BlockTreeNode>;
 };
 
-export type BlockContentContext = {
-	blockContent: string;
-	blockMarkup?: string;
-	blockAttributes?: string;
-};
-
 export const isRichTextBlock = ( blockName?: string ) => {
 	return Boolean( blockName && RICHTEXT_BLOCKS.includes( blockName ) );
+};
+
+/**
+ * Deep-clone editor blocks (attributes + innerBlocks) for modal preview and edit
+ * references. BlockPreview needs detached copies with fresh clientIds.
+ *
+ * @param blocks Blocks from the editor selection or a prior result.
+ */
+export const cloneBlocksForPreview = ( blocks: BlockProps<unknown>[] ): BlockProps<unknown>[] => {
+	return ( blocks || [] ).map( ( block ) =>
+		cloneBlock( block as Parameters<typeof cloneBlock>[0] )
+	);
 };
 
 export const collectBlockNames = ( blocks: BlockProps<unknown>[] ): string[] => {
@@ -193,36 +197,43 @@ export const extractBlockAttributeDefinitions = (
 	return payload ? JSON.stringify( payload, null, 2 ) : '';
 };
 
-export const resolveBlockMarkupForPrompt = (
-	context: Pick<BlockContentContext, 'blockMarkup' | 'blockAttributes'>
+/**
+ * Build the default context the chat attaches for the selected block(s): the
+ * serialized block markup plus a schema map deduplicated by block type and the
+ * instance tree of the selection and its inner blocks. This replaces magic tags
+ * — the model receives the structure of any block type automatically.
+ *
+ * @param {import('../../helpers/blocks').BlockProps<unknown>[]} blocks       The selected blocks.
+ * @param {GetBlockType}                                         getBlockType Optional block-type resolver.
+ * @return {string} The context message, or an empty string when there is nothing to describe.
+ */
+export const buildBlockContextMessage = (
+	blocks: BlockProps<unknown>[],
+	getBlockType?: GetBlockType
 ): string => {
-	if ( ! context.blockMarkup?.trim() ) {
+	if ( ! blocks?.length ) {
 		return '';
 	}
 
-	const parts = [ context.blockMarkup ];
+	const markup = extractBlockMarkup( blocks );
+	const resolveBlockType: GetBlockType = getBlockType ?? ( ( name ) => select( 'core/blocks' )?.getBlockType( name ) );
+	const payload = buildBlockSchemaPayload( blocks, resolveBlockType );
 
-	if ( context.blockAttributes?.trim() ) {
-		parts.push( '', 'Block schema:', context.blockAttributes );
+	const parts: string[] = [];
+
+	if ( markup.trim() ) {
+		parts.push( 'Selected block markup (Gutenberg block comment syntax):', markup );
+	}
+
+	if ( payload ) {
+		parts.push(
+			'',
+			'Block schema (deduplicated by block type) and the instance tree of the selection and its inner blocks:',
+			JSON.stringify( payload, null, 2 )
+		);
 	}
 
 	return parts.join( '\n' );
-};
-
-export const resolveBlockContentForPrompt = ( context: BlockContentContext ): string => {
-	const textContent = context.blockContent?.trim() ?? '';
-
-	if ( textContent ) {
-		return context.blockContent;
-	}
-
-	const markupBundle = resolveBlockMarkupForPrompt( context );
-
-	if ( ! markupBundle ) {
-		return context.blockContent || '';
-	}
-
-	return `${ markupBundle }\n\n${ STRUCTURAL_BLOCK_INSTRUCTION }`;
 };
 
 export const extractBlockTextContent = ( source: BlockProps<unknown> | BlockProps<unknown>[] ): string => {
@@ -319,6 +330,84 @@ export const applyGeneratedContent = (
 	}
 
 	return preservePlainTextAsBlock( generatedHtml, sourceBlocks );
+};
+
+const mergeAllowedAttributes = (
+	targetAttributes: Record<string, unknown> | undefined,
+	previewAttributes: Record<string, unknown> | undefined,
+	blockType: BlockTypeLike
+): Record<string, unknown> => {
+	const base = { ...( targetAttributes || {}) };
+
+	if ( ! previewAttributes || ! blockType?.attributes ) {
+		return base;
+	}
+
+	for ( const [ key, value ] of Object.entries( previewAttributes ) ) {
+		if ( key in blockType.attributes ) {
+			base[ key ] = value;
+		}
+	}
+
+	return base;
+};
+
+/**
+ * Whether two block trees share the same slug nesting (same shape, no add/remove).
+ */
+export const blocksStructureMatches = (
+	editorBlocks: BlockProps<unknown>[],
+	previewBlocks: BlockProps<unknown>[]
+): boolean => {
+	if ( editorBlocks.length !== previewBlocks.length ) {
+		return false;
+	}
+
+	return editorBlocks.every( ( editorBlock, index ) => {
+		const previewBlock = previewBlocks[ index ];
+
+		if ( ! previewBlock || editorBlock.name !== previewBlock.name ) {
+			return false;
+		}
+
+		return blocksStructureMatches(
+			( editorBlock.innerBlocks || [] ) as BlockProps<unknown>[],
+			( previewBlock.innerBlocks || [] ) as BlockProps<unknown>[]
+		);
+	});
+};
+
+/**
+ * Copy attributes from the preview clone onto live editor blocks, preserving
+ * editor clientIds and nesting. Used when transform edits keep the same shape.
+ */
+export const mergePreviewCloneOntoBlocks = (
+	editorBlocks: BlockProps<unknown>[],
+	previewBlocks: BlockProps<unknown>[],
+	getBlockType: GetBlockType
+): BlockProps<unknown>[] => {
+	if ( ! blocksStructureMatches( editorBlocks, previewBlocks ) ) {
+		return previewBlocks;
+	}
+
+	return editorBlocks.map( ( editorBlock, index ) => {
+		const previewBlock = previewBlocks[ index ];
+		const blockType = getBlockType( editorBlock.name || '' );
+
+		return {
+			...editorBlock,
+			attributes: mergeAllowedAttributes(
+				editorBlock.attributes as Record<string, unknown> | undefined,
+				previewBlock.attributes as Record<string, unknown> | undefined,
+				blockType
+			),
+			innerBlocks: mergePreviewCloneOntoBlocks(
+				( editorBlock.innerBlocks || [] ) as BlockProps<unknown>[],
+				( previewBlock.innerBlocks || [] ) as BlockProps<unknown>[],
+				getBlockType
+			)
+		};
+	});
 };
 
 export const getSelectedBlockClientIds = (

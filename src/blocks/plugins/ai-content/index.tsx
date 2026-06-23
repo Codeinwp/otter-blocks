@@ -4,11 +4,12 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	DropdownMenu,
+	Dropdown,
+	ExternalLink,
 	MenuGroup,
 	MenuItem,
-	ToolbarGroup,
-	ExternalLink
+	ToolbarButton,
+	ToolbarItem
 } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -31,7 +32,7 @@ import { openAiAPIKeyName } from '../../components/prompt';
 import type { BlockProps } from '../../helpers/blocks';
 import {
 	AIToolbarAction,
-	filterToolbarActionsForBlocks,
+	getEnabledActions,
 	getToolbarActionsFromSettings,
 	normalizeToolbarActions
 } from './actions';
@@ -47,7 +48,7 @@ type AIToolbarMenuProps = {
 	hasAPIKey: boolean;
 	toolbarActions: AIToolbarAction[];
 	activeBlocks: BlockProps<unknown>[];
-	onOpenAction: ( actionId?: string, initialPrompt?: string ) => void;
+	onOpenAction: ( actionId?: string, initialPrompt?: string, autoGenerate?: boolean ) => void;
 	onCloseDropdown: () => void;
 };
 
@@ -58,8 +59,8 @@ const AIToolbarMenu = ({
 	onOpenAction,
 	onCloseDropdown
 }: AIToolbarMenuProps ) => {
-	const openAction = ( actionId?: string, initialPrompt?: string ) => {
-		onOpenAction( actionId, initialPrompt );
+	const openAction = ( actionId?: string, initialPrompt?: string, autoGenerate = false ) => {
+		onOpenAction( actionId, initialPrompt, autoGenerate );
 		onCloseDropdown();
 	};
 
@@ -79,18 +80,22 @@ const AIToolbarMenu = ({
 					</MenuGroup>
 				)
 			}
-			<MenuGroup>
-				{
-					toolbarActions.map( ( action ) => (
-						<MenuItem
-							key={ action.id }
-							onClick={ () => openAction( action.id ) }
-						>
-							{ action.title }
-						</MenuItem>
-					) )
-				}
-			</MenuGroup>
+			{
+				0 < toolbarActions.length && (
+					<MenuGroup>
+						{
+							toolbarActions.map( ( action ) => (
+								<MenuItem
+									key={ action.id }
+									onClick={ () => openAction( action.id, undefined, true ) }
+								>
+									{ action.title }
+								</MenuItem>
+							) )
+						}
+					</MenuGroup>
+				)
+			}
 			<MenuGroup>
 				<MenuItem onClick={ () => openAction( toolbarActions[0]?.id, extractBlockTextContent( activeBlocks ) ) }>
 					{ __( 'Use as prompt', 'otter-blocks' ) }
@@ -118,8 +123,8 @@ const withAIToolbar = createHigherOrderComponent( BlockEdit => {
 	return props => {
 		const [ getOption, _, settingsStatus ] = useSettings();
 		const [ isModalOpen, setIsModalOpen ] = useState( false );
-		const [ modalActionId, setModalActionId ] = useState<string | undefined>();
 		const [ modalInitialPrompt, setModalInitialPrompt ] = useState<string | undefined>();
+		const [ modalAutoGenerate, setModalAutoGenerate ] = useState( false );
 
 		// Only return store-memoized/stable values here. Building arrays inside
 		// useSelect (e.g. clientIds.map(getBlock)) yields a new reference every
@@ -163,20 +168,17 @@ const withAIToolbar = createHigherOrderComponent( BlockEdit => {
 			return currentBlock ? [ currentBlock ] : EMPTY_BLOCKS;
 		}, [ selectedBlocks, selectedClientIds, currentBlock ]);
 
-		const applicableActions = useMemo( () => {
+		const toolbarActions = useMemo( () => {
 			if ( 'loading' === settingsStatus ) {
 				return [];
 			}
 
-			const actions = normalizeToolbarActions(
-				getToolbarActionsFromSettings( getOption ) as Parameters<typeof normalizeToolbarActions>[0]
+			return getEnabledActions(
+				normalizeToolbarActions(
+					getToolbarActionsFromSettings( getOption ) as Parameters<typeof normalizeToolbarActions>[0]
+				)
 			);
-			const blockNames = isMultipleSelection
-				? selectedBlocks.map( ( block ) => block.name )
-				: [ props.name ];
-
-			return filterToolbarActionsForBlocks( actions, blockNames );
-		}, [ getOption, isMultipleSelection, props.name, selectedBlocks, settingsStatus ]);
+		}, [ getOption, settingsStatus ]);
 
 		const hasAPIKey = 'loaded' === settingsStatus && (
 			isAIBackendConfigured() ||
@@ -187,11 +189,12 @@ const withAIToolbar = createHigherOrderComponent( BlockEdit => {
 			? selectedBlocks.some( ( block ) => block.clientId === props.clientId )
 			: props.isSelected;
 
-		const showToolbar = canUse && 0 < applicableActions.length && isBlockSelected;
+		const showToolbar = canUse && isBlockSelected;
 
-		const openModal = ( actionId?: string, initialPrompt?: string ) => {
-			setModalActionId( actionId );
-			setModalInitialPrompt( initialPrompt );
+		const openModal = ( actionId?: string, initialPrompt?: string, autoGenerate = false ) => {
+			const action = toolbarActions.find( ( item ) => item.id === actionId );
+			setModalInitialPrompt( initialPrompt ?? action?.prompt ?? '' );
+			setModalAutoGenerate( autoGenerate );
 			setIsModalOpen( true );
 		};
 
@@ -202,24 +205,36 @@ const withAIToolbar = createHigherOrderComponent( BlockEdit => {
 					showToolbar && (
 						<Fragment>
 							<BlockControls group="other">
-								<ToolbarGroup>
-									<DropdownMenu
-										icon={ aiGeneration }
-										label={ __( 'Otter AI Content', 'otter-blocks' ) }
-									>
-										{
-											({ onClose }) => (
-												<AIToolbarMenu
-													hasAPIKey={ hasAPIKey }
-													toolbarActions={ applicableActions }
-													activeBlocks={ activeBlocks as BlockProps<unknown>[] }
-													onOpenAction={ openModal }
-													onCloseDropdown={ onClose }
-												/>
-											)
-										}
-									</DropdownMenu>
-								</ToolbarGroup>
+								<ToolbarItem>
+									{
+										( toolbarItemProps ) => (
+											<Dropdown
+												popoverProps={{
+													placement: 'bottom-start',
+													className: 'o-ai-toolbar-dropdown'
+												}}
+												renderToggle={ ( { isOpen, onToggle } ) => (
+													<ToolbarButton
+														{ ...toolbarItemProps }
+														icon={ aiGeneration }
+														label={ __( 'Otter AI Content', 'otter-blocks' ) }
+														onClick={ onToggle }
+														aria-expanded={ isOpen }
+													/>
+												) }
+												renderContent={ ( { onClose } ) => (
+													<AIToolbarMenu
+														hasAPIKey={ hasAPIKey }
+														toolbarActions={ toolbarActions }
+														activeBlocks={ activeBlocks as BlockProps<unknown>[] }
+														onOpenAction={ openModal }
+														onCloseDropdown={ onClose }
+													/>
+												) }
+											/>
+										)
+									}
+								</ToolbarItem>
 							</BlockControls>
 
 							{
@@ -227,9 +242,9 @@ const withAIToolbar = createHigherOrderComponent( BlockEdit => {
 									<AIContentModal
 										isOpen={ isModalOpen }
 										onClose={ () => setIsModalOpen( false ) }
-										actions={ applicableActions }
-										initialActionId={ modalActionId }
+										actions={ toolbarActions }
 										initialPrompt={ modalInitialPrompt }
+										autoGenerate={ modalAutoGenerate }
 										selectedBlocks={ activeBlocks as BlockProps<unknown>[] }
 										isMultipleSelection={ isMultipleSelection }
 										singleClientId={ props.clientId }

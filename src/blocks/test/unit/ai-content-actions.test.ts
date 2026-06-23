@@ -9,22 +9,19 @@ import {
 	countCustomActions,
 	createCustomAction,
 	DEFAULT_BUILTIN_ACTIONS,
-	filterToolbarActionsForBlocks,
-	getActionPrompt,
+	getEnabledActions,
 	getToolbarActionsFromSettings,
 	mergeBuiltinDefaults,
 	normalizeToolbarAction,
-	normalizeToolbarActions,
-	replaceMagicTags
+	normalizeToolbarActions
 } from '../../plugins/ai-content/actions';
 
 import {
 	applyGeneratedContent,
+	buildBlockContextMessage,
 	collectBlockNames,
 	extractBlockAttributeDefinitions,
 	parseGeneratedContent,
-	resolveBlockContentForPrompt,
-	resolveBlockMarkupForPrompt,
 	type BlockSchemaPayload
 } from '../../plugins/ai-content/apply-content';
 
@@ -32,62 +29,39 @@ describe( 'ai-content actions', () => {
 	it( 'normalizes legacy { title, prompt } settings', () => {
 		const action = normalizeToolbarAction({
 			title: 'Fix Grammar',
-			prompt: 'Fix any grammatical errors in the following: {text_input}'
+			prompt: 'Fix any grammatical errors in the following.'
 		}, 0 );
 
 		expect( action ).toMatchObject({
 			title: 'Fix Grammar',
-			prompt: 'Fix any grammatical errors in the following: {text_input}',
+			prompt: 'Fix any grammatical errors in the following.',
 			enabled: true,
-			custom: true,
-			availability: 'richtext',
-			type: 'prompt'
+			custom: true
 		});
 	});
 
-	it( 'filters disabled actions from the toolbar', () => {
+	it( 'returns only the enabled actions as quick-start chips', () => {
 		const actions = normalizeToolbarActions([
-			{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false, availability: 'richtext' },
-			{ id: 'summarize', title: 'Summarize', prompt: 'Summarize', enabled: false, custom: false, availability: 'richtext' }
+			{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false },
+			{ id: 'summarize', title: 'Summarize', prompt: 'Summarize', enabled: false, custom: false }
 		]);
 
-		expect( filterToolbarActionsForBlocks( actions, [ 'core/paragraph' ] ) ).toHaveLength( 1 );
-		expect( filterToolbarActionsForBlocks( actions, [ 'core/paragraph' ] )[0].id ).toBe( 'rewrite' );
+		expect( getEnabledActions( actions ).map( ( action ) => action.id ) ).toEqual([ 'rewrite' ]);
 	});
 
-	it( 'shows richtext and any actions on text blocks', () => {
-		const actions = normalizeToolbarActions([
-			{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false, availability: 'richtext' },
-			{ id: 'custom-table', title: 'Convert to table', prompt: 'Convert', enabled: true, custom: true, availability: 'any' }
-		]);
-
-		// "Any block" actions are available everywhere, including rich text blocks.
-		expect( filterToolbarActionsForBlocks( actions, [ 'core/paragraph' ] ).map( ( action ) => action.id ) ).toEqual([ 'rewrite', 'custom-table' ]);
-		expect( filterToolbarActionsForBlocks( actions, [ 'core/heading' ] ).map( ( action ) => action.id ) ).toEqual([ 'rewrite', 'custom-table' ]);
-	});
-
-	it( 'maps any availability to non-text blocks', () => {
-		const actions = normalizeToolbarActions([
-			{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false, availability: 'richtext' },
-			{ id: 'custom-table', title: 'Convert to table', prompt: 'Convert', enabled: true, custom: true, availability: 'any' }
-		]);
-
-		expect( filterToolbarActionsForBlocks( actions, [ 'core/list' ] ).map( ( action ) => action.id ) ).toEqual([ 'custom-table' ]);
-	});
-
-	it( 'creates custom actions with defaults', () => {
+	it( 'creates custom actions with plain-text defaults', () => {
 		const action = createCustomAction();
 
 		expect( action.custom ).toBe( true );
 		expect( action.enabled ).toBe( true );
-		expect( action.availability ).toBe( 'richtext' );
-		expect( action.prompt ).toContain( '{block_content}' );
+		expect( action.prompt ).toBeTruthy();
+		expect( action.prompt ).not.toContain( '{' );
 	});
 
 	it( 'counts custom actions', () => {
 		const actions = normalizeToolbarActions([
-			{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false, availability: 'richtext' },
-			{ id: 'custom-1', title: 'Custom', prompt: 'Custom', enabled: true, custom: true, availability: 'richtext' }
+			{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false },
+			{ id: 'custom-1', title: 'Custom', prompt: 'Custom', enabled: true, custom: true }
 		]);
 
 		expect( countCustomActions( actions ) ).toBe( 1 );
@@ -95,7 +69,7 @@ describe( 'ai-content actions', () => {
 
 	it( 'merges missing built-in defaults', () => {
 		const actions = normalizeToolbarActions([
-			{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false, availability: 'richtext' }
+			{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false }
 		]);
 
 		const merged = mergeBuiltinDefaults( actions );
@@ -107,45 +81,13 @@ describe( 'ai-content actions', () => {
 	it( 'reads canonical toolbar actions from settings', () => {
 		const getOption = ( key: string ) => {
 			if ( AI_TOOLBAR_ACTIONS_OPTION === key ) {
-				return [{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false, availability: 'richtext' }];
+				return [{ id: 'rewrite', title: 'Rewrite', prompt: 'Rewrite', enabled: true, custom: false }];
 			}
 
 			return [];
 		};
 
 		expect( getToolbarActionsFromSettings( getOption ) ).toHaveLength( 1 );
-	});
-
-	it( 'keeps block magic tags when resolving the tone in tone prompts', () => {
-		const toneAction = normalizeToolbarAction({
-			id: 'tone',
-			title: 'Change Tone',
-			prompt: 'Rewrite this block in a {tone} tone:\n\n{block_content}',
-			enabled: true,
-			custom: false,
-			availability: 'richtext',
-			type: 'tone'
-		}, 0 );
-
-		const prompt = getActionPrompt( toneAction, 'Professional' );
-
-		expect( prompt ).toContain( 'Professional' );
-		expect( prompt ).not.toContain( '{tone}' );
-		expect( prompt ).toContain( '{block_content}' );
-	});
-
-	it( 'returns the raw template when no tone is selected', () => {
-		const toneAction = normalizeToolbarAction({
-			id: 'tone',
-			title: 'Change Tone',
-			prompt: 'Rewrite this block in a {tone} tone:\n\n{block_content}',
-			enabled: true,
-			custom: false,
-			availability: 'richtext',
-			type: 'tone'
-		}, 0 );
-
-		expect( getActionPrompt( toneAction ) ).toBe( toneAction.prompt );
 	});
 
 	it( 'generates unique ids for custom actions', () => {
@@ -158,7 +100,7 @@ describe( 'ai-content actions', () => {
 
 	it( 'avoids id collisions when normalizing actions without ids', () => {
 		const actions = normalizeToolbarActions([
-			{ id: 'custom-1', title: 'Saved', prompt: 'Saved', enabled: true, custom: true, availability: 'richtext' },
+			{ id: 'custom-1', title: 'Saved', prompt: 'Saved', enabled: true, custom: true },
 			{ title: 'No Id A', prompt: 'A' },
 			{ title: 'No Id B', prompt: 'B' }
 		]);
@@ -169,97 +111,13 @@ describe( 'ai-content actions', () => {
 		expect( ids ).toContain( 'custom-1' );
 	});
 
-	it( 'ships translate as a tone-style language picker', () => {
+	it( 'ships translate as a plain quick-start action (no magic tags or tone pills)', () => {
 		const translate = DEFAULT_BUILTIN_ACTIONS.find( ( action ) => 'translate' === action.id );
 
 		expect( translate ).toBeDefined();
-		expect( translate?.type ).toBe( 'tone' );
-		expect( translate?.prompt ).toBe( 'Translate this block into {tone}:\n\n{block_content}' );
-		expect( translate?.tones ).toEqual([ 'English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Romanian' ]);
-	});
-
-	it( 'replaces magic tags in prompts', () => {
-		const prompt = replaceMagicTags(
-			'Rewrite in a {tone} tone for {block_type}:\n\n{block_content}\n\n{block_markup}',
-			{
-				blockContent: 'Hello world',
-				blockMarkup: '<p>Hello world</p>',
-				blockAttributes: '{ "paragraph-1": { "type": "core/paragraph" } }',
-				blockType: 'paragraph',
-				tone: 'Professional'
-			}
-		);
-
-		expect( prompt ).toContain( 'Professional' );
-		expect( prompt ).toContain( 'paragraph' );
-		expect( prompt ).toContain( 'Hello world' );
-		expect( prompt ).toContain( '<p>Hello world</p>' );
-		expect( prompt ).toContain( 'Block schema:' );
-	});
-
-	it( 'appends attribute definitions to {block_markup}', () => {
-		const markup = '<!-- wp:themeisle-blocks/form -->';
-		const attrDefs = '{ "form-1": { "type": "themeisle-blocks/form" } }';
-
-		const prompt = replaceMagicTags(
-			'Rebuild:\n\n{block_markup}',
-			{
-				blockContent: '',
-				blockMarkup: markup,
-				blockAttributes: attrDefs
-			}
-		);
-
-		expect( prompt ).toContain( markup );
-		expect( prompt ).toContain( 'Block schema:' );
-		expect( prompt ).toContain( attrDefs );
-		expect( prompt ).not.toContain( 'WordPress Gutenberg block comment syntax' );
-	});
-
-	it( 'resolves {block_content} to markup bundle for structural blocks', () => {
-		const formMarkup = '<!-- wp:themeisle-blocks/form -->';
-		const attrDefs = '{ "themeisle-blocks/form-input": { "label": { "type": "string" } } }';
-
-		const prompt = replaceMagicTags(
-			'Improve this form:\n\n{block_content}',
-			{
-				blockContent: '',
-				blockMarkup: formMarkup,
-				blockAttributes: attrDefs
-			}
-		);
-
-		expect( prompt ).toContain( formMarkup );
-		expect( prompt ).toContain( 'Block schema:' );
-		expect( prompt ).toContain( attrDefs );
-		expect( prompt ).toContain( 'WordPress Gutenberg block comment syntax' );
-	});
-
-	it( 'keeps {block_content} as plain text for richtext blocks', () => {
-		const prompt = replaceMagicTags(
-			'Rewrite:\n\n{block_content}',
-			{
-				blockContent: 'Hello world',
-				blockMarkup: '<!-- wp:paragraph --><p>Hello world</p><!-- /wp:paragraph -->',
-				blockAttributes: '{ "core/paragraph": { "content": { "type": "string" } } }'
-			}
-		);
-
-		expect( prompt ).toBe( 'Rewrite:\n\nHello world' );
-	});
-
-	it( 'resolves {block_attributes} independently from {block_content}', () => {
-		const attrDefs = '{ "themeisle-blocks/form": { "id": { "type": "string" } } }';
-
-		const prompt = replaceMagicTags(
-			'Attributes:\n{block_attributes}',
-			{
-				blockContent: '',
-				blockAttributes: attrDefs
-			}
-		);
-
-		expect( prompt ).toBe( `Attributes:\n${ attrDefs }` );
+		expect( translate?.prompt ).not.toContain( '{' );
+		expect( translate ).not.toHaveProperty( 'tones' );
+		expect( translate ).not.toHaveProperty( 'type' );
 	});
 });
 
@@ -313,47 +171,47 @@ describe( 'parseGeneratedContent', () => {
 	});
 });
 
-describe( 'resolveBlockMarkupForPrompt', () => {
-	it( 'returns markup with attribute definitions', () => {
-		const markup = '<!-- wp:themeisle-blocks/form -->';
-		const attrs = '{ "form-1": { "type": "themeisle-blocks/form" } }';
+describe( 'buildBlockContextMessage', () => {
+	const mockGetBlockType = ( name: string ) => {
+		const schemas: Record<string, { attributes: Record<string, Record<string, unknown>> }> = {
+			'themeisle-blocks/form': {
+				attributes: { id: { type: 'string' } }
+			},
+			'themeisle-blocks/form-input': {
+				attributes: { label: { type: 'string' } }
+			}
+		};
 
-		const resolved = resolveBlockMarkupForPrompt({
-			blockMarkup: markup,
-			blockAttributes: attrs
-		});
+		return schemas[ name ];
+	};
 
-		expect( resolved ).toContain( markup );
-		expect( resolved ).toContain( 'Block schema:' );
-		expect( resolved ).toContain( attrs );
-	});
-});
-
-describe( 'resolveBlockContentForPrompt', () => {
-	it( 'returns richtext content without markup or definitions', () => {
-		const resolved = resolveBlockContentForPrompt({
-			blockContent: 'Hello world',
-			blockMarkup: '<!-- wp:paragraph --><p>Hello world</p><!-- /wp:paragraph -->',
-			blockAttributes: '{ "core/paragraph": {} }'
-		});
-
-		expect( resolved ).toBe( 'Hello world' );
+	it( 'returns an empty string when there are no blocks', () => {
+		expect( buildBlockContextMessage([], mockGetBlockType ) ).toBe( '' );
 	});
 
-	it( 'returns markup bundle when richtext content is empty', () => {
-		const markup = '<!-- wp:themeisle-blocks/form -->';
-		const attrs = '{ "themeisle-blocks/form-input": { "label": { "type": "string" } } }';
+	it( 'includes a schema map deduplicated by block type for the selection and inner blocks', () => {
+		const blocks = [
+			{
+				clientId: 'form',
+				name: 'themeisle-blocks/form',
+				attributes: { id: 'form-1' },
+				innerBlocks: [
+					{ clientId: 'input-a', name: 'themeisle-blocks/form-input', attributes: { id: 'input-name' }},
+					{ clientId: 'input-b', name: 'themeisle-blocks/form-input', attributes: { id: 'input-email' }}
+				]
+			}
+		];
 
-		const resolved = resolveBlockContentForPrompt({
-			blockContent: '',
-			blockMarkup: markup,
-			blockAttributes: attrs
-		});
+		const message = buildBlockContextMessage( blocks, mockGetBlockType );
 
-		expect( resolved ).toContain( markup );
-		expect( resolved ).toContain( 'Block schema:' );
-		expect( resolved ).toContain( attrs );
-		expect( resolved ).toContain( 'WordPress Gutenberg block comment syntax' );
+		expect( message ).toContain( 'Block schema' );
+		expect( message ).toContain( 'themeisle-blocks/form' );
+
+		// The repeated input type contributes a single schema entry (deduplicated),
+		// while its instances remain distinct in the tree.
+		expect( message.match( /"label"/g ) ).toHaveLength( 1 );
+		expect( message ).toContain( 'input-name' );
+		expect( message ).toContain( 'input-email' );
 	});
 });
 

@@ -187,26 +187,17 @@ class Test_Options_Settings extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The translate default reuses the tone mechanism with a language list.
+	 * Built-in default prompts are plain instructions with no magic tags.
 	 */
-	public function test_prompt_actions_translate_default_is_tone_type_with_languages() {
-		$defaults  = Options_Settings::get_default_prompt_actions();
-		$translate = null;
+	public function test_prompt_actions_defaults_are_plain_prompts() {
+		$defaults = Options_Settings::get_default_prompt_actions();
 
 		foreach ( $defaults as $action ) {
-			if ( 'translate' === $action['id'] ) {
-				$translate = $action;
-				break;
-			}
+			$this->assertArrayNotHasKey( 'availability', $action );
+			$this->assertArrayNotHasKey( 'type', $action );
+			$this->assertArrayNotHasKey( 'tones', $action );
+			$this->assertStringNotContainsString( '{', $action['prompt'] );
 		}
-
-		$this->assertNotNull( $translate );
-		$this->assertSame( 'tone', $translate['type'] );
-		$this->assertSame( "Translate this block into {tone}:\n\n{block_content}", $translate['prompt'] );
-		$this->assertSame(
-			array( 'English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Romanian' ),
-			$translate['tones']
-		);
 	}
 
 	/**
@@ -230,14 +221,13 @@ class Test_Options_Settings extends WP_UnitTestCase {
 		$this->assertSame( 'Fix Grammar', $sanitized[0]['title'] );
 		$this->assertSame( 'Fix any grammatical errors in the following: {text_input}', $sanitized[0]['prompt'] );
 		$this->assertTrue( $sanitized[0]['enabled'] );
-		$this->assertSame( 'richtext', $sanitized[0]['availability'] );
 		$this->assertTrue( $sanitized[0]['custom'] );
 	}
 
 	/**
-	 * Disabled actions and availability survive sanitization.
+	 * Disabled actions survive sanitization; legacy magic-tag fields are dropped.
 	 */
-	public function test_prompt_actions_sanitize_preserves_enabled_and_availability() {
+	public function test_prompt_actions_sanitize_preserves_enabled_and_drops_legacy_fields() {
 		$registered_settings = get_registered_settings();
 		$callback            = $registered_settings['themeisle_blocks_settings_prompt_actions']['sanitize_callback'];
 
@@ -247,28 +237,19 @@ class Test_Options_Settings extends WP_UnitTestCase {
 				array(
 					'id'           => 'rewrite',
 					'title'        => 'Rewrite',
-					'prompt'       => 'Rewrite this block for clarity and flow:\n\n{block_content}',
+					'prompt'       => 'Rewrite this for clarity and flow.',
 					'enabled'      => false,
 					'custom'       => false,
 					'availability' => 'any',
 					'type'         => 'prompt',
 				),
-				array(
-					'id'      => 'tone',
-					'title'   => 'Change Tone',
-					'prompt'  => 'Rewrite this block in a {tone} tone:\n\n{block_content}',
-					'enabled' => true,
-					'custom'  => false,
-					'type'    => 'tone',
-					'tones'   => array( 'Professional', 'Casual<script>' ),
-				),
 			)
 		);
 
 		$this->assertFalse( $sanitized[0]['enabled'] );
-		$this->assertSame( 'any', $sanitized[0]['availability'] );
-		$this->assertSame( 'tone', $sanitized[1]['type'] );
-		$this->assertSame( array( 'Professional', 'Casual' ), $sanitized[1]['tones'] );
+		$this->assertArrayNotHasKey( 'availability', $sanitized[0] );
+		$this->assertArrayNotHasKey( 'type', $sanitized[0] );
+		$this->assertArrayNotHasKey( 'tones', $sanitized[0] );
 	}
 
 	/**

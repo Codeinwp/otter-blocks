@@ -27,21 +27,6 @@ import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
 import AIContentModal from '../../plugins/ai-content/modal';
 
 /**
- * The synthetic action used to drive the generation modal from the AI Block. It
- * reuses the block-generation path (`availability: 'any'`) but in create mode,
- * so there is no source block to transform — the result replaces the AI Block.
- */
-const CREATE_ACTION = {
-	id: 'otter-create-section',
-	title: __( 'AI Content generator', 'otter-blocks' ),
-	prompt: '',
-	enabled: true,
-	custom: false,
-	availability: 'any',
-	type: 'prompt'
-};
-
-/**
  * Starter prompts shown in the block, since the first interaction happens here
  * (the modal auto-generates once opened).
  */
@@ -283,8 +268,7 @@ const ContentGenerator = ({
 					initialScope={ scope }
 					onClose={ closeGenerationModal }
 					onApplyBlocks={ applyGeneratedBlocks }
-					actions={ [ CREATE_ACTION ] }
-					initialActionId={ CREATE_ACTION.id }
+					actions={ [] }
 					initialPrompt={ prompt }
 					selectedBlocks={ [] }
 					isMultipleSelection={ false }

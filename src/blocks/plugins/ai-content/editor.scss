@@ -244,99 +244,19 @@ $o-ai-segment-bg: #f0f0f1;
     color: #50575e;
 }
 
-// Generating state — animated AI spark + phase label + progress bar.
 @keyframes o-ai-gen-twinkle {
     0%, 100% { transform: scale( 1 ); opacity: 0.8; }
     50% { transform: scale( 1.18 ); opacity: 1; }
 }
 
-@keyframes o-ai-gen-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba( $o-ai-accent, 0.0 ); }
-    50% { box-shadow: 0 0 0 6px rgba( $o-ai-accent, 0.10 ); }
+@keyframes o-ai-canvas-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
-@keyframes o-ai-gen-slide {
-    0% { transform: translateX( -100% ); }
-    100% { transform: translateX( 320% ); }
-}
-
-.o-ai-gen {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 18px;
-    border: 1px solid #ececf1;
-    border-radius: 12px;
-    background:
-        radial-gradient( 120% 140% at 0% 0%, rgba( $o-ai-accent, 0.06 ), transparent 60% ),
-        linear-gradient( 180deg, #fbfbfe 0%, #f5f6fb 100% );
-
-    &__spark {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-        border-radius: 50%;
-        color: $o-ai-accent;
-        background: rgba( $o-ai-accent, 0.12 );
-        animation: o-ai-gen-twinkle 1.6s ease-in-out infinite, o-ai-gen-glow 1.6s ease-in-out infinite;
-
-        svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-        }
-    }
-
-    &__body {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    &__label {
-        font-size: 14px;
-        font-weight: 500;
-        color: #1e1e1e;
-        letter-spacing: 0.01em;
-    }
-
-    &__bar {
-        position: relative;
-        height: 6px;
-        border-radius: 999px;
-        background: #e7e7ee;
-        overflow: hidden;
-    }
-
-    &__bar-fill {
-        display: block;
-        height: 100%;
-        border-radius: 999px;
-        background: linear-gradient( 90deg, $o-ai-accent, #3858e9 );
-        transition: width 0.45s ease;
-    }
-
-    &__bar.is-indeterminate &__bar-fill {
-        width: 38%;
-        animation: o-ai-gen-slide 1.25s ease-in-out infinite;
-    }
-}
-
-@media ( prefers-reduced-motion: reduce ) {
-    .o-ai-gen__spark {
-        animation: none;
-    }
-
-    .o-ai-gen__bar.is-indeterminate .o-ai-gen__bar-fill {
-        animation: none;
-        width: 100%;
-        opacity: 0.5;
-    }
+@keyframes o-ai-skeleton-pulse {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.9; }
 }
 
 // Footer — Done + Regenerate (left, with token count), version nav (right).
@@ -465,18 +385,19 @@ $o-ai-primary: #3858e9;
 
 .o-ai-section__brand-icon {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     width: 34px;
     height: 34px;
     flex: 0 0 auto;
     border-radius: 8px;
     background: #f3e9e0;
+    overflow: hidden;
     color: $o-ai-accent;
 
     svg {
-        width: 20px;
-        height: 20px;
+        width: 27px;
+        height: 31px;
         fill: currentColor;
     }
 }
@@ -543,6 +464,27 @@ $o-ai-primary: #3858e9;
     color: #5b626a;
 }
 
+.o-ai-section__context-toggle.components-button {
+    height: auto;
+    padding: 0;
+    font-size: 12px;
+}
+
+.o-ai-section__context-preview {
+    flex: 0 0 auto;
+    max-height: 180px;
+    margin: 0;
+    padding: 12px 16px;
+    overflow: auto;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #50575e;
+    background: #f6f7f8;
+    border-bottom: 1px solid #e8e8e8;
+}
+
 // Canvas — scrollable preview stage on a muted background.
 .o-ai-section__canvas {
     position: relative;
@@ -551,9 +493,23 @@ $o-ai-primary: #3858e9;
     overflow: auto;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
     gap: 14px;
     padding: 26px;
     background: #f0f0f1;
+
+    &.is-loading {
+        background-color: #ececee;
+        background-image: linear-gradient(
+            110deg,
+            #ececee 0%,
+            #f5f5f6 18%,
+            #ececee 36%
+        );
+        background-size: 200% 100%;
+        animation: o-ai-canvas-shimmer 2.4s ease-in-out infinite;
+    }
 }
 
 // The framed device preview, centered on the stage. `flex: 0 0 auto` keeps the
@@ -571,8 +527,20 @@ $o-ai-primary: #3858e9;
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 
-    &.is-mobile {
-        max-width: 390px;
+    &.is-live {
+        opacity: 0.85;
+    }
+}
+
+.o-ai-section__frame-inner {
+    width: 1240px;
+    zoom: 0.49;
+
+    // Firefox does not support zoom; scale instead.
+    @supports not ( zoom: 0.49 ) {
+        zoom: unset;
+        transform: scale( 0.49 );
+        transform-origin: top center;
     }
 }
 
@@ -584,6 +552,79 @@ $o-ai-primary: #3858e9;
     border: 1px dashed #cdd0d6;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.6);
+}
+
+.o-ai-section__loading {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.o-ai-section__loading-frame {
+    padding: 48px 56px 40px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+.o-ai-section__loading-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 520px;
+    margin: 0 auto 28px;
+}
+
+.o-ai-section__loading-bar,
+.o-ai-section__loading-block {
+    display: block;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #e8eaed 0%, #f3f4f6 50%, #e8eaed 100%);
+    background-size: 200% 100%;
+    animation: o-ai-canvas-shimmer 2s ease-in-out infinite, o-ai-skeleton-pulse 2s ease-in-out infinite;
+}
+
+.o-ai-section__loading-bar {
+    height: 12px;
+    width: 100%;
+
+    &.is-title {
+        height: 22px;
+        width: 72%;
+    }
+
+    &.is-short {
+        width: 48%;
+    }
+}
+
+.o-ai-section__loading-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.o-ai-section__loading-block {
+    height: 88px;
+}
+
+.o-ai-section__loading-label {
+    margin: 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: #5b626a;
+}
+
+.o-ai-section__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
 }
 
 // Refine / prompt bar.
@@ -670,8 +711,51 @@ $o-ai-primary: #3858e9;
     min-width: 0;
 }
 
-.o-ai-section__tokens {
+.o-ai-section__prompt-echo {
+    flex: 1 1 auto;
+    min-width: 0;
     font-size: 12.5px;
     color: #8b8d91;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@keyframes oai-modalin {
+    from {
+        opacity: 0;
+        transform: translateY( 12px ) scale( 0.98 );
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY( 0 ) scale( 1 );
+    }
+}
+
+@keyframes oai-verin {
+    from {
+        opacity: 0;
+        transform: translateY( 8px );
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY( 0 );
+    }
+}
+
+.o-ai-content-modal__dialog.is-section-mode {
+    animation: oai-modalin 0.22s ease;
+}
+
+.o-ai-section__frame {
+    animation: oai-verin 0.2s ease;
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+    .o-ai-content-modal__dialog.is-section-mode,
+    .o-ai-section__frame {
+        animation: none;
+    }
 }

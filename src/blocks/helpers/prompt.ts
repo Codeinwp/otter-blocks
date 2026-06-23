@@ -290,21 +290,21 @@ export const BLOCK_GENERATION_MODEL = 'gpt-5-mini';
  * `textTransformation` template, whose system prompt forces plain HTML output.
  * Instead we forward a self-contained request to the same OpenAI proxy.
  */
-const BLOCK_GENERATION_SYSTEM_PROMPT =
-	'You are a WordPress block generation engine. ' +
-	'Follow the schema described in the user message and reply with strict JSON only. ' +
-	'Do not include explanations, prose, or markdown code fences. ' +
-	'When the task is a design request, produce a clean, well-structured, visually appealing layout.';
+import { BLOCK_GENERATION_SYSTEM_PROMPT } from '../plugins/ai-content/prompts/system';
+
+export { BLOCK_GENERATION_SYSTEM_PROMPT };
 
 /**
  * Forward a self-contained block generation request to the OpenAI proxy.
  *
  * @param instruction Fully-built generation prompt (catalog + task + schema).
+ * @param usedAction  Audit label recorded by AI_Usage ('blockGeneration' for the
+ *                    AI block pipeline, 'aiChat' for the conversational modal).
  * @return Normalized prompt result (see normalizePromptResponse).
  */
-export async function sendBlockGenerationPrompt( instruction: string ): Promise<PromptResult> {
+export async function sendBlockGenerationPrompt( instruction: string, usedAction = 'blockGeneration' ): Promise<PromptResult> {
 	const payload = {
-		otter_used_action: 'blockGeneration',
+		otter_used_action: usedAction,
 		otter_user_content: instruction,
 		model: BLOCK_GENERATION_MODEL,
 		messages: [
