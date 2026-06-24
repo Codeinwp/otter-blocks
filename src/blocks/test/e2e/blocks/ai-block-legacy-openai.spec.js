@@ -3,6 +3,8 @@
  */
 import { test, expect } from '../fixtures';
 
+const SECTION_PLACEHOLDER = 'e.g. A hero section for a dental clinic with a heading and two buttons';
+
 /**
  * AI Block through Otter's legacy OpenAI backend (`openai-key` setting).
  *
@@ -42,11 +44,14 @@ test.describe( 'AI Block via legacy OpenAI backend', () => {
 			}
 		});
 
-		// Wait for the prompt list to load so embeddedPrompts is populated before "Generate".
 		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about anything.' );
+		await editor.canvas.getByPlaceholder( SECTION_PLACEHOLDER ).fill( 'Write about anything.' );
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
-		await editor.canvas.getByRole( 'button', { name: 'Done' }).click();
+
+		const dialog = page.getByRole( 'dialog' );
+		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
+		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+		await insertButton.click();
 
 		const blocks = await editor.getBlocks();
 
@@ -65,10 +70,11 @@ test.describe( 'AI Block via legacy OpenAI backend', () => {
 		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
 
 		// The marker makes the server-side mock return a completion with no choices.
-		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'otter-e2e-empty' );
+		await editor.canvas.getByPlaceholder( SECTION_PLACEHOLDER ).fill( 'otter-e2e-empty' );
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
 
-		await expect( editor.canvas.locator( '.components-notice__content' ) ).toContainText( 'OpenAI returned an empty response' );
-		await expect( editor.canvas.getByRole( 'button', { name: 'Done' }) ).toBeHidden();
+		const dialog = page.getByRole( 'dialog' );
+		await expect( dialog.getByText( 'OpenAI returned an empty response' ) ).toBeVisible({ timeout: 30000 });
+		await expect( dialog.getByRole( 'button', { name: 'Insert section' }) ).toBeDisabled();
 	});
 });

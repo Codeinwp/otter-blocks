@@ -3,30 +3,37 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+const SECTION_PLACEHOLDER = 'e.g. A hero section for a dental clinic with a heading and two buttons';
+
 test.describe( 'AI Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
-	});
+	} );
 
 	test( 'replace action', async({ editor, page }) => {
-		const aiBlock = await editor.insertBlock({
+		await editor.insertBlock({
 			name: 'themeisle-blocks/content-generator',
 			attributes: {
 				promptID: 'textTransformation'
 			}
 		});
 
-		// Wait for the prompt list to load so embeddedPrompts is populated before "Generate".
 		await page.waitForResponse( r => decodeURIComponent( r.url() ).includes( 'otter/v1/openai/prompt' ) ).catch( () => null );
-		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await editor.canvas.getByPlaceholder( SECTION_PLACEHOLDER ).fill( 'Write about Space nation on the rise.' );
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
-		await editor.canvas.getByRole( 'button', { name: 'Done' }).click();
+
+		const dialog = page.getByRole( 'dialog' );
+		await expect( dialog ).toBeVisible();
+
+		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
+		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+		await insertButton.click();
 
 		const blocks = await editor.getBlocks();
 
 		expect( blocks.every( block => 'themeisle-blocks/content-generator' !== block.name ) ).toBe( true );
 		await expect( editor.canvas.getByText( 'Discover the Next Frontier' ) ).toBeVisible();
-	});
+	} );
 
 	test( 'replace target block', async({ editor, page }) => {
 
@@ -45,7 +52,7 @@ test.describe( 'AI Block', () => {
 		expect( name ).toBe( 'core/paragraph' );
 
 		// Create the AI Block linked to the target block.
-		const aiBlock = await editor.insertBlock({
+		await editor.insertBlock({
 			name: 'themeisle-blocks/content-generator',
 			attributes: {
 				promptID: 'textTransformation',
@@ -57,22 +64,14 @@ test.describe( 'AI Block', () => {
 		});
 
 		await page.waitForResponse( r => decodeURIComponent( r.url() ).includes( 'otter/v1/openai/prompt' ) ).catch( () => null );
-		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about Space nation on the rise.' );
+		await editor.canvas.getByPlaceholder( SECTION_PLACEHOLDER ).fill( 'Write about Space nation on the rise.' );
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
-		await editor.canvas.getByRole( 'button', { name: 'Done' }).click();
+
+		const dialog = page.getByRole( 'dialog' );
+		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
+		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+		await insertButton.click();
 
 		await expect( editor.canvas.getByText( 'Target Block.' ) ).toBeHidden();
-	});
-
-	test( 'use last prompt on text transform actions from history list', async({ editor, page }) => {
-		const aiBlock = await editor.insertBlock({
-			name: 'themeisle-blocks/content-generator',
-			attributes: {
-				promptID: 'textTransformation',
-				resultHistory: [{ result: '\u003ch2\u003eUnlock the Power of Words\u003c/h2\u003e\n\u003cp\u003eAre you ready to captivate your audience and drive conversions like never before? Let me weave magic with words that resonate, inspire, and persuade. From attention-grabbing headlines to compelling calls-to-action, I\'ve got you covered. Let\'s elevate your content and unleash its full potential.\u003c/p\u003e', meta: { usedToken: 380, prompt: 'Expand or elaborate on the following: Make a nice text' }}]
-			}
-		});
-
-		await expect( editor.canvas.getByText( 'Expand or elaborate on the following: Make a nice text' ) ).toBeVisible();
-	});
-});
+	} );
+} );

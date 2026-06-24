@@ -56,10 +56,135 @@ const LEGACY_EMPTY_MARKER = 'otter-e2e-empty';
  * @param string $body Raw outbound request body.
  * @return bool
  */
+function is_catalog_plan_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: OUTLINE (catalog)' )
+		|| false !== strpos( $body, 'planning a WordPress block layout' )
+		|| false !== strpos( $body, 'planning the structure' );
+}
+
+function is_layout_brief_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: OUTLINE —' );
+}
+
+function is_construct_request( $body ) {
+	return false !== strpos( $body, 'Fill in the attributes' )
+		|| false !== strpos( $body, 'Pipeline step: CONSTRUCT' );
+}
+
 function is_block_generation_request( $body ) {
-	return false !== strpos( $body, 'planning a WordPress block layout' )
-		|| false !== strpos( $body, 'planning the structure' )
-		|| false !== strpos( $body, 'Fill in the attributes' );
+	return is_catalog_plan_request( $body )
+		|| is_construct_request( $body )
+		|| false !== strpos( $body, 'Pipeline step: STRUCTURE GAPS' );
+}
+
+/**
+ * Whether the outbound body is an attribute-patch edit (toolbar rewrite, refine).
+ *
+ * @param string $body Raw outbound request body.
+ * @return bool
+ */
+function is_edit_patch_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: EDIT' );
+}
+
+function is_polish_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: POLISH' );
+}
+
+function stub_tool_call_payload( $body ) {
+	if ( false !== strpos( $body, 'hasReferenceBlocks: true' )
+		&& false !== strpos( $body, 'preferLocalTools: true' ) ) {
+		return wp_json_encode(
+			array(
+				'tool'   => 'patch',
+				'reason' => 'Deterministic E2E edit tool call.',
+				'args'   => array( 'patches' => array() ),
+			)
+		);
+	}
+
+	return wp_json_encode(
+		array(
+			'tool'   => 'generate',
+			'reason' => 'Deterministic E2E generate tool call.',
+			'args'   => array(),
+		)
+	);
+}
+
+function stub_layout_brief_payload() {
+	return wp_json_encode(
+		array(
+			'mission'  => '',
+			'design'   => (object) array(),
+			'sections' => array(),
+		)
+	);
+}
+
+/**
+ * Deterministic patch JSON for edit/refine requests.
+ *
+ * @param string $body     Raw outbound request body.
+ * @param string $headline Replacement copy for the first patched block.
+ * @return string JSON-encoded `{ patches: [...] }` payload.
+ */
+function edit_patch_payload( $body, $headline ) {
+	if ( preg_match( '/"id"\s*:\s*"([^"]+)"/', $body, $matches ) ) {
+		return wp_json_encode(
+			array(
+				'patches' => array(
+					array(
+						'id'         => $matches[1],
+						'attributes' => array( 'content' => $headline ),
+					),
+				),
+			)
+		);
+	}
+
+	return wp_json_encode( array( 'patches' => array() ) );
+}
+
+/**
+ * Pick deterministic assistant text for a mocked OpenAI request.
+ *
+ * @param string $body             Raw outbound request body.
+ * @param string $block_headline   Default heading copy for block-generation stubs.
+ * @return string
+ */
+function mock_assistant_content( $body, $block_headline = 'WP AI Client mock response' ) {
+	$is_space_nation = false !== stripos( $body, 'space nation' );
+
+	if ( is_layout_brief_request( $body ) ) {
+		return stub_layout_brief_payload();
+	}
+
+	if ( false !== strpos( $body, 'Pipeline step: TOOL_CALL' ) ) {
+		return stub_tool_call_payload( $body );
+	}
+
+	if ( is_polish_request( $body ) ) {
+		return wp_json_encode( array( 'patches' => array() ) );
+	}
+
+	if ( is_block_generation_request( $body ) ) {
+		$headline = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: $block_headline;
+
+		return block_generation_payload( $body, $headline );
+	}
+
+	if ( is_edit_patch_request( $body ) ) {
+		$headline = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return edit_patch_payload( $body, $headline );
+	}
+
+	return TEXT_RESPONSE;
 }
 
 /**
@@ -74,7 +199,7 @@ function is_block_generation_request( $body ) {
  * @return string JSON-encoded payload for the assistant message content.
  */
 function block_generation_payload( $body, $headline ) {
-	if ( false !== strpos( $body, 'Fill in the attributes' ) ) {
+	if ( is_construct_request( $body ) ) {
 		return wp_json_encode(
 			array(
 				'rationale' => array( 'Deterministic E2E content.' ),
@@ -154,11 +279,12 @@ function mock_openai_http( $preempt, $args, $url ) {
 
 		if ( $is_json ) {
 			$text = FORM_RESPONSE;
-		} elseif ( is_block_generation_request( $raw_body ) ) {
-			$headline = false !== stripos( $raw_body, 'space nation' )
-				? 'Discover the Next Frontier: Space Nation on the Rise'
-				: 'WP AI Client mock response';
-			$text     = block_generation_payload( $raw_body, $headline );
+		} elseif ( is_layout_brief_request( $raw_body )
+			|| false !== strpos( $raw_body, 'Pipeline step: TOOL_CALL' )
+			|| is_block_generation_request( $raw_body )
+			|| is_edit_patch_request( $raw_body )
+			|| is_polish_request( $raw_body ) ) {
+			$text = mock_assistant_content( $raw_body );
 		} else {
 			$text = TEXT_RESPONSE;
 		}
@@ -203,8 +329,12 @@ function mock_openai_http( $preempt, $args, $url ) {
 			return respond( array( 'choices' => array() ) );
 		}
 
-		$content = is_block_generation_request( $body )
-			? block_generation_payload( $body, 'Legacy OpenAI mock response' )
+		$content = is_layout_brief_request( $body )
+			|| false !== strpos( $body, 'Pipeline step: TOOL_CALL' )
+			|| is_block_generation_request( $body )
+			|| is_edit_patch_request( $body )
+			|| is_polish_request( $body )
+			? mock_assistant_content( $body, 'Legacy OpenAI mock response' )
 			: LEGACY_TEXT_RESPONSE;
 
 		return respond(

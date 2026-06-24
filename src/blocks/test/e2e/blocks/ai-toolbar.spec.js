@@ -52,9 +52,10 @@ test.describe( 'AI Toolbar', () => {
 
 		await page.getByRole( 'menuitem', { name: 'Rewrite' }).click();
 
-		await expect( page.getByRole( 'dialog' ) ).toBeVisible();
-		await expect( page.getByRole( 'heading', { name: 'Rewrite' }) ).toBeVisible();
-		await expect( page.getByText( 'Hello world.' ) ).toBeVisible();
+		const dialog = page.getByRole( 'dialog' );
+		await expect( dialog ).toBeVisible();
+		await expect( dialog.getByText( 'Otter AI Section' ) ).toBeVisible();
+		await expect( editor.canvas.getByText( 'Hello world.' ) ).toBeVisible();
 	});
 
 	test( 'does not list disabled toolbar actions', async({ admin, editor, otterUtils, page }) => {
@@ -89,13 +90,14 @@ test.describe( 'AI Toolbar', () => {
 
 		await page.getByRole( 'menuitem', { name: 'Rewrite' }).click();
 
-		await page.waitForResponse( ( response ) => response.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await page.getByRole( 'button', { name: 'Run' }).click();
-		await expect( page.getByText( 'Rewritten content for testing.' ) ).toBeVisible({ timeout: 15000 });
+		const dialog = page.getByRole( 'dialog' );
+		await expect( dialog ).toBeVisible();
 
-		await page.getByRole( 'button', { name: 'Apply' }).click();
+		const applyButton = dialog.getByRole( 'button', { name: 'Apply' });
+		await expect( applyButton ).toBeEnabled({ timeout: 30000 });
+		await applyButton.click();
 
-		await expect( page.getByRole( 'dialog' ) ).toBeHidden();
+		await expect( dialog ).toBeHidden();
 		await expect( editor.canvas.getByText( 'Rewritten content for testing.' ) ).toBeVisible();
 		await expect( editor.canvas.getByText( 'Original paragraph content.' ) ).toBeHidden();
 	});

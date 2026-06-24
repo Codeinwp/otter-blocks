@@ -417,9 +417,7 @@ test.describe( 'AI Toolbar — section insertion (full modal)', () => {
 		const dialog = page.getByRole( 'dialog' );
 		await expect( dialog ).toBeVisible();
 
-		await dialog.getByRole( 'button', { name: 'Run', exact: true }).click();
-
-		// Result ready → Insert section enables. Generation is two stubbed phases.
+		// Toolbar actions auto-generate on open; wait for the stubbed pipeline to finish.
 		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
 		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
 		await insertButton.click();
@@ -459,7 +457,7 @@ test.describe( 'AI Toolbar — section insertion (full modal)', () => {
 
 		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
 		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
-		await expect( dialog.getByText( 'Version 1 of 1' ) ).toBeVisible();
+		await expect( dialog.getByText( 'Step 1 of 1' ) ).toBeVisible();
 
 		await dialog.getByRole( 'button', { name: 'Discard' }).click();
 
@@ -495,7 +493,7 @@ test.describe( 'AI Toolbar — section insertion (full modal)', () => {
 
 		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
 		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
-		await expect( dialog.getByText( 'Version 1 of 1' ) ).toBeVisible();
+		await expect( dialog.getByText( 'Step 1 of 1' ) ).toBeVisible();
 		await insertButton.click();
 
 		await expect( dialog ).toBeHidden();

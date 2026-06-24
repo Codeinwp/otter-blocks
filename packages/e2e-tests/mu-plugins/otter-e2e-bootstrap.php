@@ -256,10 +256,123 @@ function stub_openai_space_nation_content() {
  * @param string $request_body Raw outbound request body.
  * @return bool
  */
+function is_catalog_plan_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: OUTLINE (catalog)' )
+		|| false !== strpos( $request_body, 'planning a WordPress block layout' )
+		|| false !== strpos( $request_body, 'planning the structure' );
+}
+
+/**
+ * Whether the outbound body is the pattern-aware layout brief step.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_layout_brief_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: OUTLINE —' );
+}
+
+/**
+ * Whether the outbound body is a construct / attribute-fill phase.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_construct_request( $request_body ) {
+	return false !== strpos( $request_body, 'Fill in the attributes' )
+		|| false !== strpos( $request_body, 'Pipeline step: CONSTRUCT' );
+}
+
 function is_block_generation_request( $request_body ) {
-	return false !== strpos( $request_body, 'planning a WordPress block layout' )
-		|| false !== strpos( $request_body, 'planning the structure' )
-		|| false !== strpos( $request_body, 'Fill in the attributes' );
+	return is_catalog_plan_request( $request_body )
+		|| is_construct_request( $request_body )
+		|| false !== strpos( $request_body, 'Pipeline step: STRUCTURE GAPS' );
+}
+
+/**
+ * Whether the outbound body is an attribute-patch edit (toolbar rewrite, refine).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_edit_patch_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: EDIT' );
+}
+
+/**
+ * Whether the outbound body is the quality-polish patch pass.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_polish_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: POLISH' );
+}
+
+/**
+ * Deterministic tool-call JSON for the agent planner step.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return string JSON-encoded tool call.
+ */
+function stub_tool_call_payload( $request_body ) {
+	if ( false !== strpos( $request_body, 'hasReferenceBlocks: true' )
+		&& false !== strpos( $request_body, 'preferLocalTools: true' ) ) {
+		return wp_json_encode(
+			array(
+				'tool'   => 'patch',
+				'reason' => 'Deterministic E2E edit tool call.',
+				'args'   => array( 'patches' => array() ),
+			)
+		);
+	}
+
+	return wp_json_encode(
+		array(
+			'tool'   => 'generate',
+			'reason' => 'Deterministic E2E generate tool call.',
+			'args'   => array(),
+		)
+	);
+}
+
+/**
+ * Empty layout brief so pattern-aware create flows fall back to the catalog path.
+ *
+ * @return string JSON-encoded layout brief.
+ */
+function stub_layout_brief_payload() {
+	return wp_json_encode(
+		array(
+			'mission'  => '',
+			'design'   => (object) array(),
+			'sections' => array(),
+		)
+	);
+}
+
+/**
+ * Deterministic patch JSON for edit/refine requests.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @param string $headline     Replacement copy for the first patched block.
+ * @return string JSON-encoded `{ patches: [...] }` payload.
+ */
+function stub_edit_patch_payload( $request_body, $headline ) {
+	if ( preg_match( '/"id"\s*:\s*"([^"]+)"/', $request_body, $matches ) ) {
+		return wp_json_encode(
+			array(
+				'patches' => array(
+					array(
+						'id'         => $matches[1],
+						'attributes' => array( 'content' => $headline ),
+					),
+				),
+			)
+		);
+	}
+
+	return wp_json_encode( array( 'patches' => array() ) );
 }
 
 /**
@@ -333,7 +446,7 @@ function atomic_wind_features_payload( $headline, $with_attributes ) {
  * @return string JSON-encoded payload for the assistant message content.
  */
 function stub_openai_block_generation_payload( $request_body, $headline ) {
-	$is_attribute_phase = false !== strpos( $request_body, 'Fill in the attributes' );
+	$is_attribute_phase = is_construct_request( $request_body );
 
 	// When Atomic Wind is enabled, return a rich atomic-wind/* tree so the
 	// section-insertion E2E exercises the real blocks instead of a lone heading.
@@ -378,6 +491,18 @@ function stub_openai_block_generation_payload( $request_body, $headline ) {
 function stub_openai_completion_content( $request_body ) {
 	$is_space_nation = false !== stripos( $request_body, 'space nation' );
 
+	if ( is_layout_brief_request( $request_body ) ) {
+		return stub_layout_brief_payload();
+	}
+
+	if ( false !== strpos( $request_body, 'Pipeline step: TOOL_CALL' ) ) {
+		return stub_tool_call_payload( $request_body );
+	}
+
+	if ( is_polish_request( $request_body ) ) {
+		return wp_json_encode( array( 'patches' => array() ) );
+	}
+
 	if ( is_block_generation_request( $request_body ) ) {
 		$headline = $is_space_nation
 			? 'Discover the Next Frontier: Space Nation on the Rise'
@@ -386,11 +511,32 @@ function stub_openai_completion_content( $request_body ) {
 		return stub_openai_block_generation_payload( $request_body, $headline );
 	}
 
+	if ( is_edit_patch_request( $request_body ) ) {
+		$headline = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return stub_edit_patch_payload( $request_body, $headline );
+	}
+
 	if ( $is_space_nation ) {
 		return stub_openai_space_nation_content();
 	}
 
 	return '<p>Rewritten content for testing.</p>';
+}
+
+/**
+ * Pick stub content for the /otter/v1/openai/generate REST short-circuit.
+ *
+ * @param string $request_body Raw REST request body.
+ * @return array<string, mixed> Normalized AI_Response envelope.
+ */
+function stub_openai_generate_from_request( $request_body ) {
+	$content = stub_openai_completion_content( $request_body );
+	$format  = ( '{' === substr( ltrim( $content ), 0, 1 ) ) ? 'json' : 'text';
+
+	return \ThemeIsle\GutenbergBlocks\Server\AI_Response::success( $content, 30, $format );
 }
 
 /**
@@ -575,7 +721,9 @@ function stub_openai_generate_route( $result, $server, $request ) {
 		return $result;
 	}
 
-	return rest_ensure_response( stub_openai_generate_response() );
+	$body = $request->get_body();
+
+	return rest_ensure_response( stub_openai_generate_from_request( is_string( $body ) ? $body : '' ) );
 }
 
 add_filter( 'rest_pre_dispatch', __NAMESPACE__ . '\\stub_openai_generate_route', 10, 3 );
