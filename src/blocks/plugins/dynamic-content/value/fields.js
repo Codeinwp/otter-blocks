@@ -17,6 +17,7 @@ import {
 	ExternalLink,
 	SelectControl,
 	TextControl,
+	ToggleControl,
 	PanelBody,
 	Spinner
 } from '@wordpress/components';
@@ -41,7 +42,8 @@ import { getQueryStringFromObject, setUtm } from '../../../helpers/helper-functi
 let hasSettingsPanel = [
 	'postExcerpt',
 	'date',
-	'time'
+	'time',
+	'archiveTitle'
 ];
 
 const dateFormats = {
@@ -237,6 +239,29 @@ const Fields = ({
 									type="text"
 									value={ attributes.timeCustom || '' }
 									onChange={ timeCustom => changeAttributes({ timeCustom }) }
+								/>
+							) }
+						</Fragment>
+					) }
+
+					{ 'archiveTitle' === attributes.type && (
+						<Fragment>
+							<ToggleControl
+								label={ __( 'Override Archive Title Prefix', 'otter-blocks' ) }
+								help={ __( 'Replace the default WordPress archive title prefix (e.g. "Category:") with a custom value, or leave the field empty to remove the prefix entirely.', 'otter-blocks' ) }
+								checked={ 'true' === attributes.archiveTitleOverridePrefix }
+								onChange={ () => changeAttributes({
+									archiveTitleOverridePrefix: 'true' === attributes.archiveTitleOverridePrefix ? undefined : 'true',
+									archiveTitlePrefix: 'true' === attributes.archiveTitleOverridePrefix ? undefined : attributes.archiveTitlePrefix
+								}) }
+							/>
+
+							{ 'true' === attributes.archiveTitleOverridePrefix && (
+								<TextControl
+									label={ __( 'Archive Title Prefix', 'otter-blocks' ) }
+									type="text"
+									value={ attributes.archiveTitlePrefix || '' }
+									onChange={ archiveTitlePrefix => changeAttributes({ archiveTitlePrefix }) }
 								/>
 							) }
 						</Fragment>

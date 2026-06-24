@@ -92,7 +92,7 @@ class Dynamic_Content {
 	 */
 	public static function dynamic_content_regex() {
 		// Todo: Improve this Regex, it can't go on for like this. Soon it will be longer than the available space in the universe!!!
-		return '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-parameter=["\'](?P<parameter>[^"\'<>]+)["\']|data-format=["\'](?P<format>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|data-taxonomy=["\'](?P<taxonomy>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+		return '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-parameter=["\'](?P<parameter>[^"\'<>]+)["\']|data-format=["\'](?P<format>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|data-taxonomy=["\'](?P<taxonomy>[^"\'<>]+)["\']|data-archive-title-override-prefix=["\'](?P<archiveTitleOverridePrefix>[^"\'<>]+)["\']|data-archive-title-prefix=["\'](?P<archiveTitlePrefix>[^"\'<>]*)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 	}
 
 	/**
@@ -512,7 +512,7 @@ class Dynamic_Content {
 		}
 
 		if ( 'archiveTitle' === $data['type'] ) {
-			return get_the_archive_title();
+			return $this->get_archive_title( $data );
 		}
 
 		if ( 'archiveDescription' === $data['type'] ) {
@@ -642,6 +642,33 @@ class Dynamic_Content {
 		}
 
 		return esc_html( $email );
+	}
+
+	/**
+	 * Get Archive Title.
+	 *
+	 * @param array< string, mixed > $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_archive_title( $data ) {
+		$override = isset( $data['archiveTitleOverridePrefix'] ) ? $data['archiveTitleOverridePrefix'] : '';
+
+		if ( 'true' !== $override && true !== $override && '1' !== $override ) {
+			return get_the_archive_title();
+		}
+
+		$custom_prefix = isset( $data['archiveTitlePrefix'] ) ? (string) $data['archiveTitlePrefix'] : '';
+
+		$filter = function () use ( $custom_prefix ) {
+			return $custom_prefix;
+		};
+
+		add_filter( 'get_the_archive_title_prefix', $filter );
+		$title = get_the_archive_title();
+		remove_filter( 'get_the_archive_title_prefix', $filter );
+
+		return $title;
 	}
 
 	/**
