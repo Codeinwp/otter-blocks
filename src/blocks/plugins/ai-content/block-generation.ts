@@ -19,6 +19,11 @@ import {
 	patchesToMap
 } from './block-patches';
 import type { IdentifiedNode } from './block-patches';
+import {
+	applyStructureEdits,
+	hasStructureEdits,
+	parseStructureEditPayload
+} from './structure-edits';
 import { findQualityIssues, formatIssuesForPrompt } from './quality-checks';
 import type { QualityIssue } from './quality-checks';
 import { formatSessionHistoryForPrompt } from './session-history';
@@ -265,6 +270,8 @@ type RefineBlocksArgs = {
 	 */
 	history?: string[];
 };
+
+type StructureEditBlocksArgs = RefineBlocksArgs;
 
 const PATTERN_CATALOG_MAX = 60;
 
@@ -1128,6 +1135,36 @@ const buildRefinePrompt = (
 	].join( '\n\n' );
 };
 
+const buildStructureEditPrompt = (
+	task: string,
+	instruction: string,
+	idTree: IdentifiedNode[],
+	catalog: StructureCatalogEntry[],
+	history?: string[],
+	referenceContext?: string
+) => {
+	return [
+		PIPELINE_STEP.STRUCTURE_EDIT,
+		'Below is the current block tree. Each node has a unique "id", block "name", and current "attributes".',
+		'Apply ONLY the structural change requested. Keep every unrelated block, attribute, and position unchanged.',
+		'Do NOT redesign the layout or return a full block tree.',
+		...( task ? [ `Overall goal for context: ${ task }` ] : [] ),
+		...formatHistoryForPrompt( history ),
+		...( referenceContext ? [ 'Reference markup and schema:', referenceContext ] : [] ),
+		`Requested change: ${ instruction }`,
+		'Return the smallest valid operation set:',
+		'- "remove": block ids to delete (removing a parent removes its subtree).',
+		'- "insert": { "parentId": string, "index": number, "block": { "name", "attributes", "innerBlocks" } }. Use "" as parentId for root-level siblings.',
+		'- "move": { "id", "parentId", "index" } to reposition an existing block.',
+		'When inserting, fill attributes with concise on-topic copy. Use only catalog slugs.',
+		'Return strict JSON: { "remove"?: string[], "insert"?: [...], "move"?: [...] }.',
+		'Block catalog:',
+		formatCatalogForPrompt( catalog ),
+		'Current tree:',
+		JSON.stringify( idTree )
+	].join( '\n\n' );
+};
+
 const parseLayoutBrief = ( response: string ): LayoutBrief => {
 	const parsed = parseJsonResponse( response );
 
@@ -1666,6 +1703,65 @@ export const refineGeneratedBlocks = async({
 			plan: emptyPlan,
 			rationale: [],
 			diagnostics: { droppedRoots: [{ root: { name: 'refine', innerBlocks: [] }, errors: validation.errors }] }
+		};
+	}
+
+	return {
+		blocks,
+		plan: emptyPlan,
+		rationale: [],
+		diagnostics: { droppedRoots: [] }
+	};
+};
+
+/*
+ * Apply a local structural change (remove / insert / move) without rebuilding
+ * the layout. Falls back to the previous blocks when the response is empty or
+ * invalid.
+ */
+export const structureEditBlocks = async({
+	task,
+	instruction,
+	baseBlocks,
+	blockTypes,
+	requestCompletion,
+	referenceContext,
+	history,
+	onPhase
+}: StructureEditBlocksArgs ): Promise<BlockGenerationResult> => {
+	const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
+	const emptyPlan: GenerationPlan = { mission: '', design: {}, rationale: [], roots: [] };
+	const trees = blocksToTrees( baseBlocks );
+
+	if ( ! trees.length ) {
+		return { blocks: baseBlocks, plan: emptyPlan, rationale: [], diagnostics: { droppedRoots: [] }};
+	}
+
+	onPhase?.( 'refining' );
+
+	const idTree = attachIds( trees );
+	const catalog = buildStructureCatalog( blockTypes );
+	const payload = parseStructureEditPayload( await requestCompletion(
+		buildStructureEditPrompt( task, instruction, idTree, catalog, history, referenceContext )
+	) );
+
+	if ( ! hasStructureEdits( payload ) ) {
+		return { blocks: baseBlocks, plan: emptyPlan, rationale: [], diagnostics: { droppedRoots: [] }};
+	}
+
+	const blocks = applyStructureEdits(
+		baseBlocks,
+		payload,
+		( insertTrees ) => jsonTreeToBlocks( insertTrees, getBlockType )
+	);
+	const validation = validateGeneratedBlocks( blocks, getBlockType, { skipRootParentChecks: true } );
+
+	if ( ! validation.valid ) {
+		return {
+			blocks: baseBlocks,
+			plan: emptyPlan,
+			rationale: [],
+			diagnostics: { droppedRoots: [{ root: { name: 'structure-edit', innerBlocks: [] }, errors: validation.errors }] }
 		};
 	}
 

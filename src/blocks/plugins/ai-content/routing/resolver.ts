@@ -3,6 +3,7 @@ import { buildRoutePrompt } from '../prompts/route';
 import { classifyGenerationIntent } from './heuristics';
 import type {
 	AgentMode,
+	GenerationRoute,
 	ResolveGenerationRouteArgs,
 	RouteDecision,
 	RouteSource
@@ -22,57 +23,33 @@ export const parseRouteResponse = ( response: string ): AgentMode | null => {
 	return null;
 };
 
-const toDecision = ( mode: AgentMode, source: RouteSource ): RouteDecision => ({
-	mode,
-	route: agentModeToRoute( mode ),
+const toDecision = ( route: GenerationRoute, source: RouteSource ): RouteDecision => ({
+	mode: routeToAgentMode( route ),
+	route,
 	source
 });
 
 const resolveWithoutModel = ( args: ResolveGenerationRouteArgs ): RouteDecision => {
-	const route = classifyGenerationIntent( args );
-	return toDecision( routeToAgentMode( route ), 'heuristic' );
+	return toDecision( classifyGenerationIntent( args ), 'heuristic' );
 };
 
 /**
- * Decide edit (patch) vs generate (full pipeline). Uses a small model call when
- * possible, with deterministic shortcuts and regex fallback for stability.
+ * Decide edit (patch) vs generate (full pipeline) using deterministic heuristics.
+ * Skips a separate routing model call for speed and simpler UX.
  */
 export const resolveGenerationRoute = async(
 	args: ResolveGenerationRouteArgs
 ): Promise<RouteDecision> => {
 	if ( args.forceRoute ) {
-		return toDecision( args.forceRoute, 'heuristic' );
+		return toDecision( agentModeToRoute( args.forceRoute ), 'heuristic' );
 	}
 
 	if ( ! args.hasReferenceBlocks ) {
-		return toDecision( 'generate', 'heuristic' );
+		return toDecision( 'full', 'heuristic' );
 	}
 
 	if ( args.isCreateMode && ! args.isExplicitRefine ) {
-		return toDecision( 'generate', 'heuristic' );
-	}
-
-	if ( ! args.requestCompletion ) {
-		return resolveWithoutModel( args );
-	}
-
-	try {
-		const response = await args.requestCompletion( buildRoutePrompt( args ) );
-		const mode = parseRouteResponse( response );
-
-		if ( mode ) {
-			if ( 'generate' === mode && args.preferEdit ) {
-				const heuristicRoute = classifyGenerationIntent( args );
-
-				if ( 'patch' === heuristicRoute ) {
-					return toDecision( 'edit', 'heuristic' );
-				}
-			}
-
-			return toDecision( mode, 'model' );
-		}
-	} catch {
-		// Fall through to heuristics.
+		return toDecision( 'full', 'heuristic' );
 	}
 
 	return resolveWithoutModel( args );

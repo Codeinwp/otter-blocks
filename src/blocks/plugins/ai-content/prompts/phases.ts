@@ -11,5 +11,6 @@ export const PIPELINE_STEP = {
 	CONSTRUCT: 'Pipeline step: CONSTRUCT — fill attributes and copy for this section; keep slugs and nesting exactly as given.',
 	PATTERN_REWRITE: 'Pipeline step: CONSTRUCT (pattern) — rewrite text in place; preserve structure and non-text attributes.',
 	EDIT: 'Pipeline step: EDIT — return minimal attribute patches only; do not rebuild or restructure the tree.',
+	STRUCTURE_EDIT: 'Pipeline step: STRUCTURE_EDIT — return only the structural operations needed (remove, insert, move). Do not rebuild the whole layout or rewrite unrelated blocks.',
 	POLISH: 'Pipeline step: POLISH — patch only the listed quality issues; change nothing else.'
 } as const;

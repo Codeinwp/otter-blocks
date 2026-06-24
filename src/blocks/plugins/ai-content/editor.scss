@@ -470,13 +470,6 @@ $o-ai-primary: #3858e9;
     color: #5b626a;
 }
 
-.o-ai-section__context-toggle.components-button {
-    height: auto;
-    margin-left: auto;
-    padding: 0 0 0 4px;
-    font-size: 12px;
-}
-
 .o-ai-section__quick-action {
     display: inline-flex;
     align-items: center;
@@ -525,21 +518,6 @@ $o-ai-primary: #3858e9;
     justify-content: flex-start;
     margin-top: 0;
     margin-bottom: 10px;
-}
-
-.o-ai-section__context-preview {
-    flex: 0 0 auto;
-    max-height: 180px;
-    margin: 0;
-    padding: 12px 16px;
-    overflow: auto;
-    font-size: 12px;
-    line-height: 1.5;
-    white-space: pre-wrap;
-    word-break: break-word;
-    color: #50575e;
-    background: #f6f7f8;
-    border-bottom: 1px solid #e8e8e8;
 }
 
 // Canvas — scrollable preview stage on a muted background.

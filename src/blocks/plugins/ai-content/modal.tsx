@@ -37,7 +37,6 @@ import useSettings from '../../helpers/use-settings';
 import type { BlockProps } from '../../helpers/blocks';
 import { AIToolbarAction } from './actions';
 import {
-	buildBlockContextMessage,
 	blocksStructureMatches,
 	cloneBlocksForPreview,
 	getSelectedBlockClientIds,
@@ -51,14 +50,15 @@ import type { BlockGenerationResult, PatternLike } from './block-generation';
 import { getTrackingFeatureValue, runAgentTurn } from './agent';
 import { extractPromptHistory } from './session-history';
 
-import type { AgentMode } from './routing/types';
+import type { GenerationRoute } from './routing/types';
 
 const EMPTY_PREVIEW_BLOCKS: BlockProps<unknown>[] = [];
 
-type ResultHistoryItem = {
+type Turn = {
 	meta: {
 		usedToken: number;
 		prompt: string;
+		route: GenerationRoute;
 	};
 	generatedBlocks: BlockProps<unknown>[];
 	generationRationale?: string[];
@@ -66,7 +66,6 @@ type ResultHistoryItem = {
 };
 
 type GenerationProgress = {
-	phase: 'idle' | 'planning' | 'briefing' | 'selecting' | 'outlining' | 'building' | 'polishing' | 'refining';
 	done: number;
 	total: number;
 };
@@ -161,20 +160,24 @@ const AIContentModal = ({
 		[]
 	);
 
-	const [ prompt, setPrompt ] = useState( initialPrompt ?? '' );
-	const [ refineInput, setRefineInput ] = useState( '' );
+	const [ instruction, setInstruction ] = useState( () => {
+		if ( autoGenerate ) {
+			return '';
+		}
+
+		return initialPrompt?.trim() ?? '';
+	} );
 	const [ status, setStatus ] = useState<'idle' | 'loading' | 'error' | 'loaded'>( 'idle' );
 	const [ error, setError ] = useState<string | undefined>();
-	const [ resultHistory, setResultHistory ] = useState<ResultHistoryItem[]>([]);
-	const [ resultHistoryIndex, setResultHistoryIndex ] = useState( 0 );
-	const [ isDirty, setIsDirty ] = useState( true );
+	const [ turns, setTurns ] = useState<Turn[]>([]);
+	const [ activeTurnIndex, setActiveTurnIndex ] = useState( 0 );
 	const [ liveBlocks, setLiveBlocks ] = useState<BlockProps<unknown>[]>([]);
-	const [ progress, setProgress ] = useState<GenerationProgress>({ phase: 'idle', done: 0, total: 0 });
-	const [ showContext, setShowContext ] = useState( false );
+	const [ progress, setProgress ] = useState<GenerationProgress>({ done: 0, total: 0 });
 
 	const isMountedRef = useRef( true );
 	const generationIdRef = useRef( 0 );
 	const abortControllerRef = useRef<AbortController | null>( null );
+	const previousTurnIndexRef = useRef( activeTurnIndex );
 
 	useEffect( () => {
 		isMountedRef.current = true;
@@ -185,14 +188,18 @@ const AIContentModal = ({
 		};
 	}, []);
 
+	useEffect( () => {
+		if ( previousTurnIndexRef.current === activeTurnIndex ) {
+			return;
+		}
+
+		previousTurnIndexRef.current = activeTurnIndex;
+		setInstruction( '' );
+	}, [ activeTurnIndex ] );
+
 	const getBlockType = useMemo(
 		() => ( name: string ) => blockTypes.find( ( blockType ) => blockType.name === name ),
 		[ blockTypes ]
-	);
-
-	const contextMessage = useMemo(
-		() => buildBlockContextMessage( pinnedPreviewClone, getBlockType ),
-		[ pinnedPreviewClone, getBlockType ]
 	);
 
 	const hasAPIKey = Boolean(
@@ -200,12 +207,12 @@ const AIContentModal = ({
 		getOption( openAiAPIKeyName )
 	);
 
-	const currentGeneratedBlocks = resultHistory[ resultHistoryIndex ]?.generatedBlocks;
-	const currentGenerationDiagnostics = resultHistory[ resultHistoryIndex ]?.generationDiagnostics;
-	const currentPromptEcho = resultHistory[ resultHistoryIndex ]?.meta?.prompt;
-	const hasResult = 0 < resultHistory.length && ! isDirty;
-	const hasPreviousVersion = 0 < resultHistoryIndex;
-	const hasNextVersion = resultHistoryIndex < resultHistory.length - 1;
+	const currentTurn = turns[ activeTurnIndex ];
+	const currentGeneratedBlocks = currentTurn?.generatedBlocks;
+	const currentGenerationDiagnostics = currentTurn?.generationDiagnostics;
+	const hasTurns = 0 < turns.length;
+	const canUndoTurn = 0 < activeTurnIndex;
+	const canRedoTurn = activeTurnIndex < turns.length - 1;
 	const isGenerating = 'loading' === status;
 	const previewWidth = 1240;
 
@@ -216,88 +223,79 @@ const AIContentModal = ({
 		previewBlocks = currentGeneratedBlocks;
 	} else if ( liveBlocks.length ) {
 		previewBlocks = liveBlocks;
-	} else if ( hasSelection && ! hasResult ) {
+	} else if ( hasSelection ) {
 		previewBlocks = pinnedPreviewClone;
 	}
 
 	const replaceClientIds = getSelectedBlockClientIds( isMultipleSelection, selectedClientIds, singleClientId );
 
-	const isPlanning = 'building' !== progress.phase || 0 === progress.total;
-	const phaseLabels: Record<string, string> = {
-		briefing: __( 'Sketching the layout…', 'otter-blocks' ),
-		selecting: __( 'Matching your patterns…', 'otter-blocks' ),
-		outlining: __( 'Outlining new sections…', 'otter-blocks' ),
-		polishing: __( 'Polishing the details…', 'otter-blocks' ),
-		refining: __( 'Applying your changes…', 'otter-blocks' )
-	};
-	const loadingLabel = isPlanning
-		? ( phaseLabels[ progress.phase ] ?? __( 'Thinking…', 'otter-blocks' ) )
-		: sprintf(
-			// translators: %1$d: current section number, %2$d: total number of sections.
-			__( 'Designing section %1$d of %2$d…', 'otter-blocks' ),
-			Math.min( progress.done + 1, progress.total ),
-			progress.total
-		);
+	const loadingLabel = __( 'Updating…', 'otter-blocks' );
 
-	const markDirty = () => {
+	const abortInFlightGeneration = () => {
 		generationIdRef.current++;
 		abortControllerRef.current?.abort();
 		abortControllerRef.current = null;
-		setIsDirty( true );
-		setStatus( 'idle' );
+
+		if ( isGenerating ) {
+			setStatus( 0 < turns.length ? 'loaded' : 'idle' );
+			setLiveBlocks([]);
+			setProgress({ done: 0, total: 0 });
+		}
 	};
 
 	const stopGeneration = () => {
-		generationIdRef.current++;
-		abortControllerRef.current?.abort();
-		abortControllerRef.current = null;
-		setStatus( 0 < resultHistory.length ? 'loaded' : 'idle' );
+		abortInFlightGeneration();
 		setError( undefined );
-		setLiveBlocks( [] );
-		setProgress({ phase: 'idle', done: 0, total: 0 });
 	};
 
-	const versionControl = hasResult ? (
+	const turnNavigation = hasTurns ? (
 		<div className="o-ai-version-control">
 			<Button
 				className="o-ai-version-control__button"
 				icon={ chevronLeft }
-				label={ __( 'Previous version', 'otter-blocks' ) }
-				disabled={ ! hasPreviousVersion }
-				onClick={ () => setResultHistoryIndex( ( prev ) => Math.max( 0, prev - 1 ) ) }
+				label={ __( 'Undo', 'otter-blocks' ) }
+				disabled={ ! canUndoTurn || isGenerating }
+				onClick={ () => setActiveTurnIndex( ( prev ) => Math.max( 0, prev - 1 ) ) }
 			/>
 			<span className="o-ai-version-control__count">
 				{
 					sprintf(
-						// translators: %1$d: current version number, %2$d: total versions.
-						__( 'Version %1$d of %2$d', 'otter-blocks' ),
-						resultHistoryIndex + 1,
-						resultHistory.length
+						// translators: %1$d: current step number, %2$d: total steps.
+						__( 'Step %1$d of %2$d', 'otter-blocks' ),
+						activeTurnIndex + 1,
+						turns.length
 					)
 				}
 			</span>
 			<Button
 				className="o-ai-version-control__button"
 				icon={ chevronRight }
-				label={ __( 'Next version', 'otter-blocks' ) }
-				disabled={ ! hasNextVersion }
-				onClick={ () => setResultHistoryIndex( ( prev ) => Math.min( resultHistory.length - 1, prev + 1 ) ) }
+				label={ __( 'Redo', 'otter-blocks' ) }
+				disabled={ ! canRedoTurn || isGenerating }
+				onClick={ () => setActiveTurnIndex( ( prev ) => Math.min( turns.length - 1, prev + 1 ) ) }
 			/>
 		</div>
 	) : null;
 
 	const generateContent = async(
-		regenerate = false,
-		overridePrompt?: string,
-		refineInstruction?: string,
+		instructionOverride?: string,
 		forceEditRoute = false
 	) => {
-		const activePrompt = ( overridePrompt ?? prompt ).trim();
-		const instruction = refineInstruction?.trim() || activePrompt;
+		const turnInstruction = ( instructionOverride ?? instruction ).trim();
 
-		if ( ! instruction ) {
+		if ( ! turnInstruction ) {
 			return;
 		}
+
+		setInstruction( '' );
+
+		const priorTurns = turns.slice( 0, activeTurnIndex + 1 );
+		const isFollowUp = 0 < priorTurns.length;
+		const refineInstruction = isFollowUp ? turnInstruction : undefined;
+		const activePrompt = isFollowUp
+			? ( priorTurns[ 0 ]?.meta.prompt ?? turnInstruction )
+			: turnInstruction;
+		const routeInstruction = refineInstruction || activePrompt;
 
 		if ( ! hasAPIKey ) {
 			setError( __( 'No AI provider detected. Please configure one in the AI settings.', 'otter-blocks' ) );
@@ -341,21 +339,21 @@ const AIContentModal = ({
 			return response.content;
 		};
 
-		const sessionHistory = extractPromptHistory( resultHistory );
+		const sessionHistory = extractPromptHistory( priorTurns );
 		const referenceBlocks = currentGeneratedBlocks?.length
 			? currentGeneratedBlocks
 			: pinnedPreviewClone;
 		const accumulated: BlockProps<unknown>[] = [];
 		const preferEdit = ! isCreateMode && 0 < referenceBlocks.length;
-		const forceRoute: AgentMode | undefined = forceEditRoute || ( preferEdit && autoGenerate )
-			? 'edit'
+		const forceRoute = forceEditRoute || ( preferEdit && autoGenerate )
+			? 'edit' as const
 			: undefined;
 
 		setLiveBlocks( referenceBlocks );
 
 		try {
 			const { generation, decision } = await runAgentTurn({
-				instruction,
+				instruction: routeInstruction,
 				activePrompt,
 				refineInstruction,
 				referenceBlocks,
@@ -369,14 +367,12 @@ const AIContentModal = ({
 				requestCompletion,
 				forceRoute,
 				preferEdit,
-				onPhase: ( phase ) => {
-					if ( ! isStale() ) {
-						setProgress( ( prev ) => ({ ...prev, phase }) );
-					}
+				onPhase: () => {
+					// Single loading state in the UI — phases are internal only.
 				},
 				onPlanReady: ( plan ) => {
 					if ( ! isStale() ) {
-						setProgress({ phase: 'building', done: 0, total: plan.roots?.length ?? 0 });
+						setProgress({ done: 0, total: plan.roots?.length ?? 0 });
 					}
 				},
 				onRootComplete: ({ rootIndex, blocks: rootBlocks }) => {
@@ -412,28 +408,25 @@ const AIContentModal = ({
 				return;
 			}
 
-			const historyItem: ResultHistoryItem = {
+			const turn: Turn = {
 				meta: {
 					usedToken,
-					prompt: refineInstruction ? `${ activePrompt }\n\n${ refineInstruction }` : activePrompt
+					prompt: turnInstruction,
+					route: decision.route
 				},
 				generatedBlocks: cloneBlocksForPreview( generation.blocks ),
 				generationRationale: generation.rationale,
 				generationDiagnostics: generation.diagnostics
 			};
 
-			if ( regenerate ) {
-				setResultHistory( ( prev ) => {
-					const next = [ ...prev, historyItem ];
-					setResultHistoryIndex( next.length - 1 );
-					return next;
-				});
-			} else {
-				setResultHistory([ historyItem ]);
-				setResultHistoryIndex( 0 );
-			}
+			setTurns( ( prev ) => {
+				const base = prev.slice( 0, activeTurnIndex + 1 );
+				const next = [ ...base, turn ];
+				setActiveTurnIndex( next.length - 1 );
+				return next;
+			});
 
-			setIsDirty( false );
+			setInstruction( '' );
 			setStatus( 'loaded' );
 			setLiveBlocks([]);
 			abortControllerRef.current = null;
@@ -452,9 +445,7 @@ const AIContentModal = ({
 	useEffect( () => {
 		if ( autoGenerate && hasAPIKey && ( initialPrompt ?? '' ).trim() ) {
 			generateContent(
-				false,
-				undefined,
-				undefined,
+				( initialPrompt ?? '' ).trim(),
 				hasSelection && ! isCreateMode
 			);
 		}
@@ -547,26 +538,17 @@ const AIContentModal = ({
 			return;
 		}
 
-		if ( hasResult ) {
-			const delta = refineInput.trim();
-			if ( ! delta ) {
-				return;
-			}
-			const goal = prompt;
-			setPrompt( `${ prompt }\n\n${ delta }` );
-			setRefineInput( '' );
-			generateContent( true, goal, delta );
+		const turnInstruction = instruction.trim();
+		if ( ! turnInstruction ) {
 			return;
 		}
 
-		if ( ! prompt.trim() ) {
-			return;
-		}
-		generateContent( false );
+		setInstruction( '' );
+		generateContent( turnInstruction );
 	};
 
 	const showRefineQuickActions = 0 < actions.length && ! isGenerating &&
-		( hasResult || hasSelection || 0 < previewBlocks.length );
+		( hasTurns || hasSelection || 0 < previewBlocks.length );
 
 	const handleClose = () => {
 		if ( isGenerating ) {
@@ -589,13 +571,7 @@ const AIContentModal = ({
 			return;
 		}
 
-		if ( hasResult ) {
-			setRefineInput( action.prompt );
-			return;
-		}
-
-		setPrompt( action.prompt );
-		markDirty();
+		setInstruction( action.prompt );
 	};
 
 	const quickActionsRow = 0 < actions.length ? (
@@ -614,18 +590,29 @@ const AIContentModal = ({
 		</div>
 	) : null;
 
-	const sectionSubmitDisabled = ! hasAPIKey || isGenerating ||
-		( hasResult ? ! refineInput.trim() : ! prompt.trim() );
+	const sectionSubmitDisabled = ! hasAPIKey || isGenerating || ! instruction.trim();
 
 	const sectionStatus = ( () => {
 		if ( isGenerating ) {
 			return { kind: 'busy', label: loadingLabel };
 		}
 		if ( 'error' === status ) {
-			return { kind: 'error', label: __( 'Generation failed', 'otter-blocks' ) };
+			return { kind: 'error', label: __( 'Update failed', 'otter-blocks' ) };
 		}
-		if ( hasResult ) {
-			return { kind: 'ready', label: __( 'Ready to insert', 'otter-blocks' ) };
+		if ( hasTurns ) {
+			const route = currentTurn?.meta.route;
+			let readyLabel = __( 'Updated — ready to apply', 'otter-blocks' );
+
+			if ( 'patch' === route ) {
+				readyLabel = __( 'Edited — ready to apply', 'otter-blocks' );
+			} else if ( 'structure' === route ) {
+				readyLabel = __( 'Restructured — ready to apply', 'otter-blocks' );
+			}
+
+			return {
+				kind: 'ready',
+				label: readyLabel
+			};
 		}
 		if ( hasSelection ) {
 			return {
@@ -645,7 +632,14 @@ const AIContentModal = ({
 		applyLabel = 'page' === scope ? __( 'Insert page', 'otter-blocks' ) : __( 'Insert section', 'otter-blocks' );
 	}
 
-	const placeholderText = hasSelection
+	const placeholderPrompt = currentTurn?.meta?.prompt?.trim() ?? '';
+	const inputPlaceholder = placeholderPrompt
+		? placeholderPrompt
+		: hasSelection
+			? __( 'Ask Otter AI to change the selected block(s)…', 'otter-blocks' )
+			: __( 'Describe what you want to build…', 'otter-blocks' );
+
+	const emptyCanvasText = hasSelection
 		? __( 'Describe how Otter AI should change the selected block(s), or pick a quick action below.', 'otter-blocks' )
 		: __( 'Describe the section you want to generate, or pick a quick action below.', 'otter-blocks' );
 
@@ -672,15 +666,6 @@ const AIContentModal = ({
 					<span className={ `o-ai-section__status is-${ sectionStatus.kind }` }>
 						<span className="o-ai-section__status-dot" aria-hidden="true" />
 						{ sectionStatus.label }
-						{ Boolean( contextMessage ) && (
-							<Button
-								variant="link"
-								className="o-ai-section__context-toggle"
-								onClick={ () => setShowContext( ( prev ) => ! prev ) }
-							>
-								{ showContext ? __( 'Hide', 'otter-blocks' ) : __( 'View', 'otter-blocks' ) }
-							</Button>
-						) }
 					</span>
 					<Button
 						icon={ close }
@@ -690,10 +675,6 @@ const AIContentModal = ({
 						onClick={ handleClose }
 					/>
 				</div>
-
-				{ showContext && Boolean( contextMessage ) && (
-					<pre className="o-ai-section__context-preview">{ contextMessage }</pre>
-				) }
 
 				<div className={ `o-ai-section__canvas${ isGenerating && ! previewBlocks.length ? ' is-loading' : '' }` }>
 					{ ! hasAPIKey && (
@@ -733,12 +714,12 @@ const AIContentModal = ({
 						</div>
 					) : ( 'error' !== status && (
 						<div className="o-ai-section__placeholder">
-							<p>{ placeholderText }</p>
+							<p>{ emptyCanvasText }</p>
 							{ quickActionsRow }
 						</div>
 					) ) ) }
 
-					{ hasResult && Boolean( currentGenerationDiagnostics?.droppedRoots.length ) && (
+					{ hasTurns && Boolean( currentGenerationDiagnostics?.droppedRoots.length ) && (
 						<Notice status="warning" isDismissible={ false }>
 							{
 								sprintf(
@@ -768,24 +749,18 @@ const AIContentModal = ({
 							<Icon icon={ aiGeneration } />
 						</span>
 						<TextareaControl
+							key={ `o-ai-input-${ turns.length }-${ activeTurnIndex }` }
 							className="o-ai-section__refine-input"
 							label={ __( 'Prompt', 'otter-blocks' ) }
 							hideLabelFromVision
-							placeholder={
-								hasResult
-									? ( currentPromptEcho || __( 'Ask Otter AI to refine — e.g. make the headline shorter, use a darker theme…', 'otter-blocks' ) )
-									: hasSelection
-										? __( 'Ask Otter AI to change the selected block(s)…', 'otter-blocks' )
-										: __( 'Describe what you want to build…', 'otter-blocks' )
-							}
-							value={ hasResult ? refineInput : prompt }
+							placeholder={ inputPlaceholder }
+							value={ instruction }
 							rows={ 1 }
 							onChange={ ( value ) => {
-								if ( hasResult ) {
-									setRefineInput( value );
-								} else {
-									setPrompt( value );
-									markDirty();
+								setInstruction( value );
+
+								if ( ! hasTurns && isGenerating ) {
+									abortInFlightGeneration();
 								}
 							} }
 							__nextHasNoMarginBottom
@@ -797,14 +772,14 @@ const AIContentModal = ({
 							isBusy={ false }
 							onClick={ isGenerating ? stopGeneration : handleSectionSubmit }
 						>
-							{ isGenerating ? __( 'Stop', 'otter-blocks' ) : ( hasResult ? __( 'Refine', 'otter-blocks' ) : __( 'Generate', 'otter-blocks' ) ) }
+							{ isGenerating ? __( 'Stop', 'otter-blocks' ) : __( 'Run', 'otter-blocks' ) }
 						</Button>
 					</div>
 				</div>
 
 				<div className="o-ai-section__footer">
 					<div className="o-ai-section__footer-left">
-						{ versionControl }
+						{ turnNavigation }
 					</div>
 
 					<div className="o-ai-section__footer-right">
@@ -817,7 +792,7 @@ const AIContentModal = ({
 						</Button>
 						<Button
 							variant="primary"
-							disabled={ ! hasResult || isGenerating }
+							disabled={ ! hasTurns || isGenerating }
 							onClick={ handleApply }
 						>
 							{ applyLabel }

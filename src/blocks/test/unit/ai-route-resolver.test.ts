@@ -42,13 +42,22 @@ describe( 'AI intent routing heuristics', () => {
 		}) ).toBe( 'patch' );
 	});
 
-	it( 'uses the full pipeline for structural changes', () => {
+	it( 'uses the structure path for local block removals', () => {
+		expect( classifyGenerationIntent({
+			instruction: 'Remove the second image',
+			hasReferenceBlocks: true,
+			isCreateMode: false,
+			isExplicitRefine: false
+		}) ).toBe( 'structure' );
+	});
+
+	it( 'uses the structure path for adding a block to the existing layout', () => {
 		expect( classifyGenerationIntent({
 			instruction: 'Add a new pricing column',
 			hasReferenceBlocks: true,
 			isCreateMode: false,
 			isExplicitRefine: false
-		}) ).toBe( 'full' );
+		}) ).toBe( 'structure' );
 	});
 
 	it( 'uses the full pipeline for the first create-mode generation', () => {
@@ -77,14 +86,18 @@ describe( 'AI route resolver', () => {
 		}) ).resolves.toMatchObject({ mode: 'generate', route: 'full', source: 'heuristic' });
 	});
 
-	it( 'uses the model decision when available', async() => {
+	it( 'uses heuristics for transform edits without a routing model call', async() => {
+		const requestCompletion = jest.fn( async() => '{"mode":"edit","reason":"text change"}' );
+
 		await expect( resolveGenerationRoute({
 			instruction: 'Make the headline shorter',
 			hasReferenceBlocks: true,
 			isCreateMode: false,
 			isExplicitRefine: false,
-			requestCompletion: async() => '{"mode":"edit","reason":"text change"}'
-		}) ).resolves.toMatchObject({ mode: 'edit', route: 'patch', source: 'model' });
+			requestCompletion
+		}) ).resolves.toMatchObject({ mode: 'edit', route: 'patch', source: 'heuristic' });
+
+		expect( requestCompletion ).not.toHaveBeenCalled();
 	});
 
 	it( 'falls back to heuristics when model output is invalid', async() => {
@@ -112,14 +125,18 @@ describe( 'AI route resolver', () => {
 		expect( requestCompletion ).not.toHaveBeenCalled();
 	});
 
-	it( 'prefers edit when the model chooses generate but heuristics say patch', async() => {
+	it( 'uses heuristics for color tweaks without a routing model call', async() => {
+		const requestCompletion = jest.fn( async() => '{"mode":"generate","reason":"unsure"}' );
+
 		await expect( resolveGenerationRoute({
 			instruction: 'Change the headline color to blue',
 			hasReferenceBlocks: true,
 			isCreateMode: false,
 			isExplicitRefine: false,
 			preferEdit: true,
-			requestCompletion: async() => '{"mode":"generate","reason":"unsure"}'
+			requestCompletion
 		}) ).resolves.toMatchObject({ mode: 'edit', route: 'patch', source: 'heuristic' });
+
+		expect( requestCompletion ).not.toHaveBeenCalled();
 	});
 });

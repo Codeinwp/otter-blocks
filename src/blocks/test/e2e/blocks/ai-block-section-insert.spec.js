@@ -417,7 +417,7 @@ test.describe( 'AI Toolbar — section insertion (full modal)', () => {
 		const dialog = page.getByRole( 'dialog' );
 		await expect( dialog ).toBeVisible();
 
-		await dialog.getByRole( 'button', { name: 'Generate', exact: true }).click();
+		await dialog.getByRole( 'button', { name: 'Run', exact: true }).click();
 
 		// Result ready → Insert section enables. Generation is two stubbed phases.
 		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });

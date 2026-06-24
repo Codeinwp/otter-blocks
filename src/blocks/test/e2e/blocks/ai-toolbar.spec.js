@@ -90,7 +90,7 @@ test.describe( 'AI Toolbar', () => {
 		await page.getByRole( 'menuitem', { name: 'Rewrite' }).click();
 
 		await page.waitForResponse( ( response ) => response.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await page.getByRole( 'button', { name: 'Generate' }).click();
+		await page.getByRole( 'button', { name: 'Run' }).click();
 		await expect( page.getByText( 'Rewritten content for testing.' ) ).toBeVisible({ timeout: 15000 });
 
 		await page.getByRole( 'button', { name: 'Apply' }).click();

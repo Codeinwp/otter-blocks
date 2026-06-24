@@ -1,4 +1,4 @@
-export type GenerationRoute = 'patch' | 'full';
+export type GenerationRoute = 'patch' | 'structure' | 'full';
 export type AgentMode = 'edit' | 'generate';
 export type RouteSource = 'model' | 'heuristic';
 
@@ -26,9 +26,9 @@ export type RouteDecision = {
 };
 
 export const agentModeToRoute = ( mode: AgentMode ): GenerationRoute => {
-	return 'edit' === mode ? 'patch' : 'full';
+	return 'generate' === mode ? 'full' : 'patch';
 };
 
 export const routeToAgentMode = ( route: GenerationRoute ): AgentMode => {
-	return 'patch' === route ? 'edit' : 'generate';
+	return 'full' === route ? 'generate' : 'edit';
 };

@@ -5,7 +5,25 @@ import { buildBlockContextMessage } from '../apply-content';
 import { resolveGenerationRoute } from '../routing';
 import { runEditTurn } from './run-edit';
 import { runGenerateTurn } from './run-generate';
+import { runStructureEditTurn } from './run-structure-edit';
 import type { RunTurnArgs, RunTurnResult } from './types';
+
+const runLocalEditTurn = async( args: RunTurnArgs ) => {
+	args.onPhase?.( 'refining' );
+
+	return runEditTurn({
+		instruction: args.instruction,
+		activePrompt: args.activePrompt,
+		baseBlocks: args.referenceBlocks,
+		sessionHistory: args.sessionHistory,
+		blockTypes: args.blockTypes,
+		themeColors: args.themeColors,
+		getBlockType: args.getBlockType,
+		referenceContext: buildBlockContextMessage( args.referenceBlocks, args.getBlockType ),
+		requestCompletion: args.requestCompletion,
+		onPhase: args.onPhase
+	});
+};
 
 /**
  * Run one user turn serially: route → edit OR generate → result.
@@ -23,10 +41,8 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 		preferEdit: args.preferEdit
 	});
 
-	if ( 'patch' === decision.route && args.referenceBlocks.length ) {
-		args.onPhase?.( 'refining' );
-
-		const generation = await runEditTurn({
+	if ( 'structure' === decision.route && args.referenceBlocks.length ) {
+		const generation = await runStructureEditTurn({
 			instruction: args.instruction,
 			activePrompt: args.activePrompt,
 			baseBlocks: args.referenceBlocks,
@@ -38,6 +54,12 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 			requestCompletion: args.requestCompletion,
 			onPhase: args.onPhase
 		});
+
+		return { generation, decision };
+	}
+
+	if ( 'patch' === decision.route && args.referenceBlocks.length ) {
+		const generation = await runLocalEditTurn( args );
 
 		return { generation, decision };
 	}
@@ -66,6 +88,10 @@ export const getTrackingFeatureValue = (
 	refineInstruction?: string,
 	hasGeneratedResult?: boolean
 ): string => {
+	if ( 'structure' === decision.route ) {
+		return `structure:${ decision.source }`;
+	}
+
 	if ( 'patch' === decision.route ) {
 		const action = refineInstruction || hasGeneratedResult ? 'refine' : 'edit';
 		return `${ action }:${ decision.route }:${ decision.source }`;
