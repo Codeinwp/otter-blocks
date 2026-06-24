@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.52",
+            "version": "3.3.54",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "d1ae68cbd4f84934b4d982e9eeff317b9f4c814a"
+                "reference": "095c2d0f1388af0b0196c492a7f79e2fd092dab1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/d1ae68cbd4f84934b4d982e9eeff317b9f4c814a",
-                "reference": "d1ae68cbd4f84934b4d982e9eeff317b9f4c814a",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/095c2d0f1388af0b0196c492a7f79e2fd092dab1",
+                "reference": "095c2d0f1388af0b0196c492a7f79e2fd092dab1",
                 "shasum": ""
             },
             "require-dev": {
@@ -43,9 +43,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.52"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.54"
             },
-            "time": "2026-05-14T19:43:56+00:00"
+            "time": "2026-06-23T13:43:47+00:00"
         },
         {
             "name": "enshrined/svg-sanitize",
@@ -3210,5 +3210,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
