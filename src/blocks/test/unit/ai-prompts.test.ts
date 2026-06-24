@@ -30,6 +30,6 @@ describe( 'AI prompts', () => {
 		expect( prompt ).toContain( PIPELINE_STEP.ROUTE );
 		expect( prompt ).toContain( 'Make it shorter' );
 		expect( prompt ).toContain( 'Write a hero' );
-		expect( prompt ).toContain( '"mode": "edit" | "generate"' );
+		expect( prompt ).toContain( '"mode": "edit" | "structure" | "generate"' );
 	});
 });

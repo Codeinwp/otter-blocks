@@ -28,6 +28,7 @@ import { findQualityIssues, formatIssuesForPrompt } from './quality-checks';
 import type { QualityIssue } from './quality-checks';
 import { formatSessionHistoryForPrompt } from './session-history';
 import { PIPELINE_STEP } from './prompts/phases';
+import { buildBlockIndex, formatBlockIndexForPrompt } from './block-index';
 
 type AttributeDefinition = Record<string, unknown>;
 
@@ -206,6 +207,8 @@ export type BlockGenerationResult = {
 	diagnostics: {
 		droppedRoots: DroppedGeneratedRoot[];
 	};
+	/** Token-limited search hits for the rolling agent context domain. */
+	contextPayload?: import( './agent-context' ).AgentContextPayload;
 };
 
 /**
@@ -1107,15 +1110,18 @@ const buildRefinePrompt = (
 	schema: AttributeSchemaEntry[],
 	rootUsesAtomic: boolean,
 	themeColors: ThemeColor[],
+	getBlockType: GetBlockType,
 	history?: string[],
 	referenceContext?: string
 ) => {
 	const palette = formatPaletteForPrompt( themeColors );
+	const blockIndex = formatBlockIndexForPrompt( buildBlockIndex( idTree, getBlockType ) );
 
 	return [
 		PIPELINE_STEP.EDIT,
 		'Below is the current design as a tree of blocks, each with a unique "id", its block "name" and its current "attributes".',
 		'Apply ONLY the requested change. Do NOT modify any block the change does not require, and do NOT add, remove, or reorder blocks.',
+		...( blockIndex ? [ blockIndex ] : [] ),
 		...( task ? [ `Overall goal for context: ${ task }` ] : [] ),
 		...formatHistoryForPrompt( history ),
 		...( referenceContext ? [ 'Reference markup and schema:', referenceContext ] : [] ),
@@ -1140,14 +1146,18 @@ const buildStructureEditPrompt = (
 	instruction: string,
 	idTree: IdentifiedNode[],
 	catalog: StructureCatalogEntry[],
+	getBlockType: GetBlockType,
 	history?: string[],
 	referenceContext?: string
 ) => {
+	const blockIndex = formatBlockIndexForPrompt( buildBlockIndex( idTree, getBlockType ) );
+
 	return [
 		PIPELINE_STEP.STRUCTURE_EDIT,
 		'Below is the current block tree. Each node has a unique "id", block "name", and current "attributes".',
 		'Apply ONLY the structural change requested. Keep every unrelated block, attribute, and position unchanged.',
 		'Do NOT redesign the layout or return a full block tree.',
+		...( blockIndex ? [ blockIndex ] : [] ),
 		...( task ? [ `Overall goal for context: ${ task }` ] : [] ),
 		...formatHistoryForPrompt( history ),
 		...( referenceContext ? [ 'Reference markup and schema:', referenceContext ] : [] ),
@@ -1157,6 +1167,7 @@ const buildStructureEditPrompt = (
 		'- "insert": { "parentId": string, "index": number, "block": { "name", "attributes", "innerBlocks" } }. Use "" as parentId for root-level siblings.',
 		'- "move": { "id", "parentId", "index" } to reposition an existing block.',
 		'When inserting, fill attributes with concise on-topic copy. Use only catalog slugs.',
+		'For removals, return ONLY the ids in "remove" — never regenerate sibling blocks.',
 		'Return strict JSON: { "remove"?: string[], "insert"?: [...], "move"?: [...] }.',
 		'Block catalog:',
 		formatCatalogForPrompt( catalog ),
@@ -1621,6 +1632,106 @@ const generateWithPatterns = async({
 	};
 };
 
+type AdaptPatternToTaskArgs = {
+	patternName: string;
+	task: string;
+	patterns: PatternLike[];
+	blockTypes: BlockTypeLike[];
+	themeColors?: ThemeColor[];
+	requestCompletion: ( prompt: string ) => Promise<string>;
+	onPhase?: ( phase: 'building' | 'polishing' ) => void;
+};
+
+/**
+ * Start from a library pattern and rewrite its copy/styles to fit the task.
+ * Keeps structure intact — faster than a full catalog generate when a pattern fits.
+ */
+export const adaptPatternToTask = async({
+	patternName,
+	task,
+	patterns,
+	blockTypes,
+	themeColors = [],
+	requestCompletion,
+	onPhase
+}: AdaptPatternToTaskArgs ): Promise<BlockGenerationResult> => {
+	const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
+	const emptyPlan: GenerationPlan = { mission: task, design: {}, rationale: [], roots: [] };
+	const droppedRoots: DroppedGeneratedRoot[] = [];
+	const patternsByName = patterns.reduce<Record<string, PatternLike>>( ( acc, pattern ) => {
+		if ( pattern?.name ) {
+			acc[ pattern.name ] = pattern;
+		}
+		return acc;
+	}, {} );
+	const pattern = patternsByName[ patternName ];
+	const trees = pattern ? patternToTrees( pattern, patternsByName ) : [];
+	const validTrees = trees.filter( ( tree ) =>
+		validateGeneratedBlocks( jsonTreeToBlocks([ tree ], getBlockType ), getBlockType ).valid
+	);
+
+	if ( ! validTrees.length ) {
+		return {
+			blocks: [],
+			plan: emptyPlan,
+			rationale: [],
+			diagnostics: {
+				droppedRoots: [{
+					root: { name: patternName || 'pattern', innerBlocks: [] },
+					errors: [ `Pattern "${ patternName }" is unavailable or invalid.` ]
+				}]
+			}
+		};
+	}
+
+	onPhase?.( 'building' );
+
+	const plan: GenerationPlan = { mission: task, design: {}, rationale: [], roots: [] };
+	const blocks: BlockProps<unknown>[] = [];
+
+	for ( const seed of validTrees ) {
+		const slugs = new Set<string>();
+		collectSlugsFromTree( seed, slugs );
+		const schema = buildAttributeSchema( blockTypes, slugs );
+		const rootUsesAtomic = [ ...slugs ].some( ( slug ) => slug.startsWith( 'atomic-wind/' ) );
+		const rewritePrompt = buildPatternRewritePrompt( task, seed, schema, rootUsesAtomic, plan, task, themeColors );
+		let { blocks: rootBlocks, errors } = await fillRootFromCompletion( rewritePrompt, requestCompletion, getBlockType );
+
+		if ( ! rootBlocks.length ) {
+			const verbatim = jsonTreeToBlocks([ seed ], getBlockType );
+
+			if ( validateGeneratedBlocks( verbatim, getBlockType ).valid ) {
+				rootBlocks = verbatim;
+				errors = [];
+			}
+		}
+
+		if ( rootBlocks.length ) {
+			blocks.push( ...rootBlocks );
+			continue;
+		}
+
+		droppedRoots.push({
+			root: seed,
+			errors: errors.length ? errors : [ 'Pattern rewrite returned no block.' ]
+		});
+	}
+
+	let finalBlocks = blocks;
+
+	if ( finalBlocks.length ) {
+		onPhase?.( 'polishing' );
+		finalBlocks = await applyQualityFixes( finalBlocks, blockTypes, themeColors, requestCompletion, getBlockType );
+	}
+
+	return {
+		blocks: finalBlocks,
+		plan: emptyPlan,
+		rationale: [ `Adapted pattern: ${ patternName }` ],
+		diagnostics: { droppedRoots }
+	};
+};
+
 export const generateBlocksFromTask = async(
 	args: GenerateBlocksFromTaskArgs
 ): Promise<BlockGenerationResult> => {
@@ -1670,7 +1781,7 @@ export const refineGeneratedBlocks = async({
 	const idToBlockName = buildIdToBlockNameMap( idTree );
 
 	const patches = parsePatchPayload( await requestCompletion(
-		buildRefinePrompt( task, instruction, idTree, schema, rootUsesAtomic, themeColors, history, referenceContext )
+		buildRefinePrompt( task, instruction, idTree, schema, rootUsesAtomic, themeColors, getBlockType, history, referenceContext )
 	) );
 
 	// No actionable patch — leave the current result untouched.
@@ -1742,7 +1853,7 @@ export const structureEditBlocks = async({
 	const idTree = attachIds( trees );
 	const catalog = buildStructureCatalog( blockTypes );
 	const payload = parseStructureEditPayload( await requestCompletion(
-		buildStructureEditPrompt( task, instruction, idTree, catalog, history, referenceContext )
+		buildStructureEditPrompt( task, instruction, idTree, catalog, getBlockType, history, referenceContext )
 	) );
 
 	if ( ! hasStructureEdits( payload ) ) {

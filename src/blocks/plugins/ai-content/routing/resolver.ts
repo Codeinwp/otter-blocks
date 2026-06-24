@@ -16,7 +16,7 @@ export const parseRouteResponse = ( response: string ): AgentMode | null => {
 	const parsed = parseJsonResponse( response );
 	const mode = parsed?.mode;
 
-	if ( 'edit' === mode || 'generate' === mode ) {
+	if ( 'edit' === mode || 'structure' === mode || 'generate' === mode ) {
 		return mode;
 	}
 
@@ -41,7 +41,22 @@ export const resolveGenerationRoute = async(
 	args: ResolveGenerationRouteArgs
 ): Promise<RouteDecision> => {
 	if ( args.forceRoute ) {
-		return toDecision( agentModeToRoute( args.forceRoute ), 'heuristic' );
+		if ( 'generate' === args.forceRoute ) {
+			return toDecision( 'full', 'heuristic' );
+		}
+
+		if ( 'structure' === args.forceRoute ) {
+			return toDecision( 'structure', 'heuristic' );
+		}
+
+		// Local edit — pick patch, structure, or list; never full regen.
+		const localRoute = classifyGenerationIntent( args );
+
+		if ( 'full' === localRoute ) {
+			return toDecision( 'patch', 'heuristic' );
+		}
+
+		return toDecision( localRoute, 'heuristic' );
 	}
 
 	if ( ! args.hasReferenceBlocks ) {

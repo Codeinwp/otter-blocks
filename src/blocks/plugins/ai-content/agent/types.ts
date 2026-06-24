@@ -1,12 +1,16 @@
 import type { BlockProps } from '../../helpers/blocks';
 import type {
 	BlockGenerationResult,
+	GeneratedBlockTree,
 	GenerationPlan,
 	PatternLike,
 	RootCompletion,
 	ThemeColor
 } from '../block-generation';
+import type { AgentContextEntry, AgentSessionContext } from '../agent-context';
 import type { RouteDecision } from '../routing/types';
+import type { AgentToolCall } from '../operations/types';
+import type { SessionTurnMemory } from '../session-memory';
 
 export type RequestCompletion = ( prompt: string ) => Promise<string>;
 
@@ -34,6 +38,8 @@ export type RunTurnArgs = {
 	refineInstruction?: string;
 	referenceBlocks: BlockProps<unknown>[];
 	sessionHistory: string[];
+	sessionMemory?: SessionTurnMemory[];
+	agentContext?: AgentSessionContext;
 	blockTypes: BlockTypeLike[];
 	themeColors: ThemeColor[];
 	patterns?: PatternLike[];
@@ -41,7 +47,7 @@ export type RunTurnArgs = {
 	scope: 'section' | 'page';
 	getBlockType: GetBlockType;
 	requestCompletion: RequestCompletion;
-	forceRoute?: 'edit' | 'generate';
+	forceRoute?: 'edit' | 'structure' | 'generate';
 	preferEdit?: boolean;
 	onPhase?: ( phase: GenerationPhase ) => void;
 	onPlanReady?: ( plan: GenerationPlan ) => void;
@@ -51,6 +57,11 @@ export type RunTurnArgs = {
 export type RunTurnResult = {
 	generation: BlockGenerationResult;
 	decision: RouteDecision;
+	toolCall: AgentToolCall;
+	removedBlocks?: Record<string, GeneratedBlockTree>;
+	/** Search artifact from this turn, stored in session context for later turns. */
+	contextEntry?: AgentContextEntry;
+	agentContext: AgentSessionContext;
 };
 
 export type EditTurnArgs = Pick<

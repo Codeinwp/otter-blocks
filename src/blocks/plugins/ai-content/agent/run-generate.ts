@@ -46,7 +46,7 @@ export const runGenerateTurn = async( args: GenerateTurnArgs ) => {
 		task: buildGenerateTask( args ),
 		blockTypes: args.blockTypes,
 		themeColors: args.themeColors,
-		patterns: args.isCreateMode ? args.patterns : undefined,
+		patterns: args.patterns?.length ? args.patterns : undefined,
 		history: args.sessionHistory,
 		requestCompletion: args.requestCompletion,
 		onPhase: ( phase ) => args.onPhase?.( phase ),

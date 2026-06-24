@@ -48,8 +48,13 @@ import {
 } from './block-generation';
 import type { BlockGenerationResult, PatternLike } from './block-generation';
 import { getTrackingFeatureValue, runAgentTurn } from './agent';
+import { buildSessionMemory, summarizeToolOperation } from './session-memory';
 import { extractPromptHistory } from './session-history';
+import type { AgentToolName } from './operations/types';
+import type { SessionOperationLog } from './session-memory';
 
+import { buildAgentContext } from './agent-context';
+import type { AgentContextEntry } from './agent-context';
 import type { GenerationRoute } from './routing/types';
 
 const EMPTY_PREVIEW_BLOCKS: BlockProps<unknown>[] = [];
@@ -59,6 +64,10 @@ type Turn = {
 		usedToken: number;
 		prompt: string;
 		route: GenerationRoute;
+		tool?: AgentToolName;
+		operation?: SessionOperationLog;
+		removedBlocks?: Record<string, import('./block-generation').GeneratedBlockTree>;
+		contextEntry?: AgentContextEntry;
 	};
 	generatedBlocks: BlockProps<unknown>[];
 	generationRationale?: string[];
@@ -340,6 +349,8 @@ const AIContentModal = ({
 		};
 
 		const sessionHistory = extractPromptHistory( priorTurns );
+		const sessionMemory = buildSessionMemory( priorTurns );
+		const agentContext = buildAgentContext( priorTurns );
 		const referenceBlocks = currentGeneratedBlocks?.length
 			? currentGeneratedBlocks
 			: pinnedPreviewClone;
@@ -352,15 +363,17 @@ const AIContentModal = ({
 		setLiveBlocks( referenceBlocks );
 
 		try {
-			const { generation, decision } = await runAgentTurn({
+			const { generation, decision, toolCall, removedBlocks, contextEntry } = await runAgentTurn({
 				instruction: routeInstruction,
 				activePrompt,
 				refineInstruction,
 				referenceBlocks,
 				sessionHistory,
+				sessionMemory,
+				agentContext,
 				blockTypes,
 				themeColors,
-				patterns: isCreateMode ? blockPatterns : undefined,
+				patterns: isCreateMode || ! referenceBlocks.length ? blockPatterns : undefined,
 				isCreateMode,
 				scope,
 				getBlockType,
@@ -412,7 +425,11 @@ const AIContentModal = ({
 				meta: {
 					usedToken,
 					prompt: turnInstruction,
-					route: decision.route
+					route: decision.route,
+					tool: toolCall.tool,
+					operation: summarizeToolOperation( toolCall.tool, toolCall.args ),
+					removedBlocks,
+					contextEntry
 				},
 				generatedBlocks: cloneBlocksForPreview( generation.blocks ),
 				generationRationale: generation.rationale,
@@ -607,6 +624,12 @@ const AIContentModal = ({
 				readyLabel = __( 'Edited — ready to apply', 'otter-blocks' );
 			} else if ( 'structure' === route ) {
 				readyLabel = __( 'Restructured — ready to apply', 'otter-blocks' );
+			} else if ( 'list' === route ) {
+				readyLabel = __( 'Block list ready', 'otter-blocks' );
+			} else if ( 'history' === route ) {
+				readyLabel = __( 'Session history ready', 'otter-blocks' );
+			} else if ( 'pattern' === route ) {
+				readyLabel = __( 'Pattern match ready', 'otter-blocks' );
 			}
 
 			return {
@@ -688,6 +711,12 @@ const AIContentModal = ({
 
 					{ 'error' === status && error && (
 						<Notice status="error" isDismissible={ false }>{ error }</Notice>
+					) }
+
+					{ ( 'list' === currentTurn?.meta.route || 'history' === currentTurn?.meta.route || 'pattern' === currentTurn?.meta.route ) && Boolean( currentTurn?.generationRationale?.length ) && (
+						<Notice status="info" isDismissible={ false } className="o-ai-section__block-list">
+							{ currentTurn?.generationRationale?.join( '\n' ) }
+						</Notice>
 					) }
 
 					{ previewBlocks.length > 0 ? (

@@ -1,5 +1,5 @@
-export type GenerationRoute = 'patch' | 'structure' | 'full';
-export type AgentMode = 'edit' | 'generate';
+export type GenerationRoute = 'patch' | 'structure' | 'list' | 'history' | 'pattern' | 'full';
+export type AgentMode = 'edit' | 'structure' | 'generate';
 export type RouteSource = 'model' | 'heuristic';
 
 export type ClassifyGenerationIntentArgs = {
@@ -26,9 +26,40 @@ export type RouteDecision = {
 };
 
 export const agentModeToRoute = ( mode: AgentMode ): GenerationRoute => {
-	return 'generate' === mode ? 'full' : 'patch';
+	if ( 'generate' === mode ) {
+		return 'full';
+	}
+
+	if ( 'structure' === mode ) {
+		return 'structure';
+	}
+
+	return 'patch';
 };
 
 export const routeToAgentMode = ( route: GenerationRoute ): AgentMode => {
-	return 'full' === route ? 'generate' : 'edit';
+	if ( 'full' === route ) {
+		return 'generate';
+	}
+
+	if ( 'structure' === route ) {
+		return 'structure';
+	}
+
+	if ( 'list' === route ) {
+		return 'edit';
+	}
+
+	if ( 'history' === route ) {
+		return 'edit';
+	}
+
+	if ( 'pattern' === route ) {
+		return 'edit';
+	}
+
+	return 'edit';
 };
+
+/** Routes that mutate blocks locally without the full generate pipeline. */
+export const LOCAL_ROUTES: GenerationRoute[] = [ 'patch', 'structure' ];

@@ -14,50 +14,13 @@ describe( 'AI intent routing heuristics', () => {
 		}) ).toBe( 'full' );
 	});
 
-	it( 'uses the fast patch path for content edits on a selection', () => {
+	it( 'defaults to patch when blocks exist and no create-mode first build', () => {
 		expect( classifyGenerationIntent({
 			instruction: 'Make the headline shorter',
 			hasReferenceBlocks: true,
 			isCreateMode: false,
 			isExplicitRefine: false
 		}) ).toBe( 'patch' );
-	});
-
-	it( 'uses the full pipeline for redesign requests', () => {
-		expect( classifyGenerationIntent({
-			instruction: 'Redesign this section completely from scratch',
-			hasReferenceBlocks: true,
-			isCreateMode: false,
-			isExplicitRefine: true
-		}) ).toBe( 'full' );
-	});
-
-	it( 'uses the fast patch path for explicit refine follow-ups', () => {
-		expect( classifyGenerationIntent({
-			instruction: 'Use a darker background',
-			taskContext: 'Hero for a SaaS product',
-			hasReferenceBlocks: true,
-			isCreateMode: true,
-			isExplicitRefine: true
-		}) ).toBe( 'patch' );
-	});
-
-	it( 'uses the structure path for local block removals', () => {
-		expect( classifyGenerationIntent({
-			instruction: 'Remove the second image',
-			hasReferenceBlocks: true,
-			isCreateMode: false,
-			isExplicitRefine: false
-		}) ).toBe( 'structure' );
-	});
-
-	it( 'uses the structure path for adding a block to the existing layout', () => {
-		expect( classifyGenerationIntent({
-			instruction: 'Add a new pricing column',
-			hasReferenceBlocks: true,
-			isCreateMode: false,
-			isExplicitRefine: false
-		}) ).toBe( 'structure' );
 	});
 
 	it( 'uses the full pipeline for the first create-mode generation', () => {
@@ -68,11 +31,31 @@ describe( 'AI intent routing heuristics', () => {
 			isExplicitRefine: false
 		}) ).toBe( 'full' );
 	});
+
+	it( 'uses patch for explicit refine follow-ups', () => {
+		expect( classifyGenerationIntent({
+			instruction: 'Use a darker background',
+			taskContext: 'Hero for a SaaS product',
+			hasReferenceBlocks: true,
+			isCreateMode: true,
+			isExplicitRefine: true
+		}) ).toBe( 'patch' );
+	});
+
+	it( 'does not depend on English keywords for routing', () => {
+		expect( classifyGenerationIntent({
+			instruction: 'Ajoute une barre de progression en bas',
+			hasReferenceBlocks: true,
+			isCreateMode: false,
+			isExplicitRefine: false
+		}) ).toBe( 'patch' );
+	});
 });
 
 describe( 'AI route resolver', () => {
 	it( 'parses model route JSON', () => {
 		expect( parseRouteResponse( '{"mode":"edit","reason":"copy tweak"}' ) ).toBe( 'edit' );
+		expect( parseRouteResponse( '{"mode":"structure","reason":"remove block"}' ) ).toBe( 'structure' );
 		expect( parseRouteResponse( '{"mode":"generate"}' ) ).toBe( 'generate' );
 		expect( parseRouteResponse( '{"mode":"unknown"}' ) ).toBeNull();
 	});
@@ -86,7 +69,7 @@ describe( 'AI route resolver', () => {
 		}) ).resolves.toMatchObject({ mode: 'generate', route: 'full', source: 'heuristic' });
 	});
 
-	it( 'uses heuristics for transform edits without a routing model call', async() => {
+	it( 'defaults transform edits to patch without a routing model call', async() => {
 		const requestCompletion = jest.fn( async() => '{"mode":"edit","reason":"text change"}' );
 
 		await expect( resolveGenerationRoute({
@@ -100,21 +83,36 @@ describe( 'AI route resolver', () => {
 		expect( requestCompletion ).not.toHaveBeenCalled();
 	});
 
-	it( 'falls back to heuristics when model output is invalid', async() => {
+	it( 'falls back to full generation on first create-mode build', async() => {
 		await expect( resolveGenerationRoute({
 			instruction: 'Redesign this section completely from scratch',
 			hasReferenceBlocks: true,
-			isCreateMode: false,
-			isExplicitRefine: true,
+			isCreateMode: true,
+			isExplicitRefine: false,
 			requestCompletion: async() => 'not json'
 		}) ).resolves.toMatchObject({ mode: 'generate', route: 'full', source: 'heuristic' });
 	});
 
-	it( 'honours forceRoute without calling the model', async() => {
+	it( 'honours forceRoute structure directly', async() => {
 		const requestCompletion = jest.fn();
 
 		await expect( resolveGenerationRoute({
-			instruction: 'Build a brand-new landing page',
+			instruction: 'Remove the second image',
+			hasReferenceBlocks: true,
+			isCreateMode: false,
+			isExplicitRefine: false,
+			forceRoute: 'structure',
+			requestCompletion
+		}) ).resolves.toMatchObject({ mode: 'structure', route: 'structure', source: 'heuristic' });
+
+		expect( requestCompletion ).not.toHaveBeenCalled();
+	});
+
+	it( 'honours forceRoute edit without full regen for ambiguous instructions', async() => {
+		const requestCompletion = jest.fn();
+
+		await expect( resolveGenerationRoute({
+			instruction: 'Make it pop',
 			hasReferenceBlocks: true,
 			isCreateMode: false,
 			isExplicitRefine: false,
@@ -125,7 +123,7 @@ describe( 'AI route resolver', () => {
 		expect( requestCompletion ).not.toHaveBeenCalled();
 	});
 
-	it( 'uses heuristics for color tweaks without a routing model call', async() => {
+	it( 'defaults preferEdit transforms to patch without a routing model call', async() => {
 		const requestCompletion = jest.fn( async() => '{"mode":"generate","reason":"unsure"}' );
 
 		await expect( resolveGenerationRoute({

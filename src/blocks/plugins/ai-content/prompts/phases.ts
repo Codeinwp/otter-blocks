@@ -3,7 +3,8 @@
  * in the serial pipeline.
  */
 export const PIPELINE_STEP = {
-	ROUTE: 'Pipeline step: ROUTE — decide whether this request needs a fast EDIT (patch existing blocks) or full GENERATE (layout pipeline).',
+	TOOL_CALL: 'Pipeline step: TOOL_CALL — pick exactly one editor tool and return its args. Never return a full block tree.',
+	ROUTE: 'Pipeline step: ROUTE — decide whether this request needs a fast EDIT (patch attributes), STRUCTURE (add/remove/move blocks), LIST (inspect blocks), or full GENERATE (layout pipeline).',
 	PLAN: 'Pipeline step: OUTLINE (catalog) — plan block slugs and nesting only; attributes are filled in a later CONSTRUCT step.',
 	BRIEF: 'Pipeline step: OUTLINE — plan conceptual sections and shared design direction only; no block slugs or content yet.',
 	PATTERN_SEARCH: 'Pipeline step: SEARCH — choose at most one pattern per section from the library catalog; use exact pattern names only.',
@@ -12,5 +13,6 @@ export const PIPELINE_STEP = {
 	PATTERN_REWRITE: 'Pipeline step: CONSTRUCT (pattern) — rewrite text in place; preserve structure and non-text attributes.',
 	EDIT: 'Pipeline step: EDIT — return minimal attribute patches only; do not rebuild or restructure the tree.',
 	STRUCTURE_EDIT: 'Pipeline step: STRUCTURE_EDIT — return only the structural operations needed (remove, insert, move). Do not rebuild the whole layout or rewrite unrelated blocks.',
+	LIST: 'Pipeline step: LIST — inspect the block index provided; no changes.',
 	POLISH: 'Pipeline step: POLISH — patch only the listed quality issues; change nothing else.'
 } as const;
