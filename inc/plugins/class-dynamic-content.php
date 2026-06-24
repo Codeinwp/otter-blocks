@@ -658,9 +658,9 @@ class Dynamic_Content {
 			return get_the_archive_title();
 		}
 
-		$custom_prefix = isset( $data['archiveTitlePrefix'] ) ? (string) $data['archiveTitlePrefix'] : '';
+		$custom_prefix = isset( $data['archiveTitlePrefix'] ) ? sanitize_text_field( (string) $data['archiveTitlePrefix'] ) : '';
 
-		$filter = function () use ( $custom_prefix ) {
+		$filter = function ( $prefix ) use ( $custom_prefix ) {
 			return $custom_prefix;
 		};
 

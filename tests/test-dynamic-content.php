@@ -44,6 +44,20 @@ class TestDynamicContent extends WP_UnitTestCase
 	protected $post_id;
 
 	/**
+	 * The test category ID.
+	 *
+	 * @var int
+	 */
+	protected $category_id;
+
+	/**
+	 * The test category slug.
+	 *
+	 * @var string
+	 */
+	protected $category_slug;
+
+	/**
 	 * Set up the test.
 	 */
 	public function set_up() {
@@ -413,6 +427,38 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * Test the Archive Title query with the prefix override attributes.
+	 */
+	public function test_archive_title_with_prefix_override() {
+		$archive_title_query = '<p><o-dynamic data-type="archiveTitle" data-archive-title-override-prefix="true" data-archive-title-prefix="Topic:">Archive Title</o-dynamic></p>';
+
+		$result = array();
+		$num    = Dynamic_Content::parse_dynamic_content_query( $archive_title_query, $result );
+		$this->assertTrue( boolval( $num ) );
+		$result = $result[0];
+
+		$this->assertEquals( 'archiveTitle', $result['type'] );
+		$this->assertEquals( 'true', $result['archiveTitleOverridePrefix'] );
+		$this->assertEquals( 'Topic:', $result['archiveTitlePrefix'] );
+	}
+
+	/**
+	 * Test the Archive Title query with the override flag enabled and an empty prefix.
+	 */
+	public function test_archive_title_with_empty_prefix_override() {
+		$archive_title_query = '<p><o-dynamic data-type="archiveTitle" data-archive-title-override-prefix="true" data-archive-title-prefix="">Archive Title</o-dynamic></p>';
+
+		$result = array();
+		$num    = Dynamic_Content::parse_dynamic_content_query( $archive_title_query, $result );
+		$this->assertTrue( boolval( $num ) );
+		$result = $result[0];
+
+		$this->assertEquals( 'archiveTitle', $result['type'] );
+		$this->assertEquals( 'true', $result['archiveTitleOverridePrefix'] );
+		$this->assertSame( '', $result['archiveTitlePrefix'] );
+	}
+
+	/**
 	 * Test the Archive Description query.
 	 */
 	public function test_archive_description() {
@@ -655,6 +701,82 @@ class TestDynamicContent extends WP_UnitTestCase
 		$result                   = $this->dynamic_content->apply_dynamic_content( $author_description_query );
 
 		$this->assertEquals( '<p></p>', $result );
+	}
+
+	/**
+	 * Test the Archive Title evaluation with the default WordPress prefix.
+	 */
+	public function test_archive_title_evaluation_default_prefix() {
+		// Navigate to the category archive so get_the_archive_title() resolves.
+		$this->go_to( get_category_link( $this->category_id ) );
+
+		$archive_title_query = '<p><o-dynamic data-type="archiveTitle">Archive Title</o-dynamic></p>';
+		$result              = $this->dynamic_content->apply_dynamic_content( $archive_title_query );
+
+		// Default WordPress prefix for category archives must be preserved.
+		$this->assertStringContainsString( 'Category:', $result );
+		$this->assertStringContainsString( 'Test Category', $result );
+	}
+
+	/**
+	 * Test the Archive Title evaluation when the override flag is enabled with a custom prefix.
+	 */
+	public function test_archive_title_evaluation_with_custom_prefix() {
+		// Navigate to the category archive so get_the_archive_title() resolves.
+		$this->go_to( get_category_link( $this->category_id ) );
+
+		$archive_title_query = '<p><o-dynamic data-type="archiveTitle" data-archive-title-override-prefix="true" data-archive-title-prefix="Topic:">Archive Title</o-dynamic></p>';
+		$result              = $this->dynamic_content->apply_dynamic_content( $archive_title_query );
+
+		// Custom prefix should replace the default "Category:" prefix.
+		$this->assertStringContainsString( 'Topic:', $result );
+		$this->assertStringNotContainsString( 'Category:', $result );
+		$this->assertStringContainsString( 'Test Category', $result );
+	}
+
+	/**
+	 * Test the Archive Title evaluation when the override flag is enabled with an empty prefix.
+	 */
+	public function test_archive_title_evaluation_with_empty_prefix() {
+		// Navigate to the category archive so get_the_archive_title() resolves.
+		$this->go_to( get_category_link( $this->category_id ) );
+
+		$archive_title_query = '<p><o-dynamic data-type="archiveTitle" data-archive-title-override-prefix="true" data-archive-title-prefix="">Archive Title</o-dynamic></p>';
+		$result              = $this->dynamic_content->apply_dynamic_content( $archive_title_query );
+
+		// Empty prefix should strip the default WordPress prefix entirely.
+		$this->assertStringNotContainsString( 'Category:', $result );
+		$this->assertStringContainsString( 'Test Category', $result );
+	}
+
+	/**
+	 * Test that the Archive Title prefix filter is removed after the dynamic value is rendered.
+	 */
+	public function test_archive_title_evaluation_does_not_leak_filter() {
+		// Navigate to the category archive so get_the_archive_title() resolves.
+		$this->go_to( get_category_link( $this->category_id ) );
+
+		$archive_title_query = '<p><o-dynamic data-type="archiveTitle" data-archive-title-override-prefix="true" data-archive-title-prefix="Topic:">Archive Title</o-dynamic></p>';
+		$this->dynamic_content->apply_dynamic_content( $archive_title_query );
+
+		// After rendering, a subsequent call to get_the_archive_title() must return
+		// the default WordPress prefix (proving the temporary filter was removed).
+		$this->assertStringContainsString( 'Category:', get_the_archive_title() );
+	}
+
+	/**
+	 * Test that the Archive Title is unchanged when the override flag is not "true".
+	 */
+	public function test_archive_title_evaluation_override_flag_off() {
+		// Navigate to the category archive so get_the_archive_title() resolves.
+		$this->go_to( get_category_link( $this->category_id ) );
+
+		// The override flag is missing here, so the custom prefix must be ignored.
+		$archive_title_query = '<p><o-dynamic data-type="archiveTitle" data-archive-title-prefix="Topic:">Archive Title</o-dynamic></p>';
+		$result              = $this->dynamic_content->apply_dynamic_content( $archive_title_query );
+
+		$this->assertStringContainsString( 'Category:', $result );
+		$this->assertStringNotContainsString( 'Topic:', $result );
 	}
 	
 	/**
