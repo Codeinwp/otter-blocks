@@ -13,6 +13,8 @@ type Attributes = {
 	heightMobile: number
 	draggable: boolean
 	zoomControl: boolean
+	scrollZoom: boolean
+	showMarkerTooltip: boolean
 	markers: {
 		id: string
 		latitude: number

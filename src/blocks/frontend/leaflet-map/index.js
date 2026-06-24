@@ -30,11 +30,26 @@ const createPopupContent = ( markerProps ) => {
 	return container;
 };
 
-const createMarker = ( markerProps ) => {
+const createMarker = ( markerProps, attributes ) => {
 	const markerMap = window.L.marker([ markerProps.latitude, markerProps.longitude ]);
 
-	markerMap.bindTooltip( markerProps.title, { direction: 'auto' });
-	markerMap.bindPopup( createPopupContent( markerProps ) );
+	const hasTitle = Boolean( markerProps.title );
+	const hasContent = hasTitle || Boolean( markerProps.description );
+	const showTooltip = attributes.showMarkerTooltip && hasTitle;
+
+	if ( showTooltip ) {
+		markerMap.bindTooltip( markerProps.title, { direction: 'auto' });
+	}
+
+	if ( hasContent ) {
+		markerMap.bindPopup( createPopupContent( markerProps ) );
+
+		// Hide the hover tooltip while the click popup is open so the same title
+		// isn't shown twice; it returns on hover once the popup closes.
+		if ( showTooltip ) {
+			markerMap.on( 'popupopen', () => markerMap.closeTooltip() );
+		}
+	}
 
 	return markerMap;
 };
@@ -49,11 +64,19 @@ const createLeafletMap = ( container, attributes ) => {
 	// Add the height of the map first
 	container.classList.add( 'wp-block-themeisle-leaflet-blocks-map' );
 
+	// `scrollZoom` defaults to true for blocks saved before the attribute existed.
+	const scrollZoom = false !== attributes.scrollZoom;
+
 	// Create the map
 	const map = window.L.map( container, {
+		maxZoom: 21,
 		zoomControl: attributes.zoomControl,
 		dragging: attributes.draggable,
-		gestureHandling: attributes.draggable,
+		scrollWheelZoom: scrollZoom,
+
+		// Gesture handling enforces the Ctrl/\u2318 + scroll requirement; turn it off
+		// together with scrollWheelZoom when scroll zoom is disabled.
+		gestureHandling: attributes.draggable && scrollZoom,
 		gestureHandlingOptions: {
 			text: {
 				touch: 'Use two fingers to move the map',
@@ -62,16 +85,20 @@ const createLeafletMap = ( container, attributes ) => {
 			}
 		}
 	});
+	// OSM serves tiles up to zoom 19; overzoom (maxNativeZoom) upscales them so
+	// users can zoom in as far as other OSM plugins.
 	window.L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-		subdomains: [ 'a', 'b', 'c' ]
+		subdomains: [ 'a', 'b', 'c' ],
+		maxNativeZoom: 19,
+		maxZoom: 21
 	}).addTo( map );
 
 	// Set the view
 	map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom || 15 );
 
 	// Add the markers
-	attributes.markers.map( ( markerProps ) => createMarker( markerProps ) ).forEach( ( marker ) => {
+	attributes.markers.map( ( markerProps ) => createMarker( markerProps, attributes ) ).forEach( ( marker ) => {
 		map.addLayer( marker );
 	});
 
@@ -94,10 +121,20 @@ domReady( () => {
 			mapElem.style.backgroundColor = '#ccc';
 		});
 
+	// The `leaflet` script loads `async`, so its order relative to this script is
+	// not guaranteed. Poll on a short interval so the map appears as soon as Leaflet
+	// is ready, with an attempt cap so it gives up instead of looping forever.
+	const POLL_INTERVAL = 100;
+	const MAX_ATTEMPTS = 100; // ~10s
+	let attempts = 0;
+
 	const checker = setInterval(
 		() => {
 			if ( ! window.L ) {
-				console.warn( 'The leaflet script did not load on the page! Waiting for loading.' );
+				if ( ++attempts >= MAX_ATTEMPTS ) {
+					clearInterval( checker );
+					console.warn( 'The leaflet script did not load on the page!' );
+				}
 				return;
 			}
 
@@ -105,6 +142,13 @@ domReady( () => {
 
 			const idAttrMapping = Array.from( window.themeisleLeafletMaps )
 				.reduce( ( acc, x ) => {
+
+					// Point Leaflet's default marker icon at the bundled images so
+					// markers render instead of showing broken-image placeholders.
+					if ( x.imagePath ) {
+						window.L.Icon.Default.imagePath = x.imagePath;
+					}
+
 					acc[x.container] = x.attributes;
 					return acc;
 				}, {});
@@ -118,6 +162,6 @@ domReady( () => {
 					}
 				});
 		},
-		2_000
+		POLL_INTERVAL
 	);
 });
