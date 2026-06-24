@@ -12,6 +12,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use ThemeIsle\GutenbergBlocks\Plugins\Options_Settings;
+
 /**
  * Class AI_Client_Adaptor
  */
@@ -30,6 +32,13 @@ class AI_Client_Adaptor {
 	 * @var string
 	 */
 	const BACKEND_OTTER_OPENAI = 'legacy';
+
+	/**
+	 * Default HTTP timeout (seconds) for a single AI provider request.
+	 *
+	 * @var int
+	 */
+	const DEFAULT_REQUEST_TIMEOUT = 300;
 
 	/**
 	 * Cached availability result for the current request.
@@ -87,6 +96,25 @@ class AI_Client_Adaptor {
 	}
 
 	/**
+	 * HTTP timeout in seconds for Otter AI generation requests.
+	 *
+	 * @return int
+	 */
+	public static function get_request_timeout_seconds() {
+		/**
+		 * Filter the HTTP timeout (in seconds) for AI generation requests.
+		 *
+		 * Slow provider models (OpenRouter, reasoning endpoints) and Otter's
+		 * multi-step block pipeline can exceed two minutes per call.
+		 *
+		 * @param int $timeout Timeout in seconds.
+		 */
+		$timeout = (int) apply_filters( 'otter_ai_request_timeout', self::DEFAULT_REQUEST_TIMEOUT );
+
+		return max( 0, $timeout );
+	}
+
+	/**
 	 * Run an OpenAI chat-completions payload through the WP AI Client.
 	 *
 	 * @param array<string, mixed> $payload The OpenAI-format payload (already stripped of `otter_*` keys).
@@ -103,6 +131,9 @@ class AI_Client_Adaptor {
 			if ( null === $builder ) {
 				return $this->error_response( 'no_ai_provider', __( 'No AI provider is configured. Add an API key under Settings → Connectors in your WordPress dashboard.', 'otter-blocks' ), 400 );
 			}
+
+			$builder = $this->apply_request_timeout( $builder );
+			$builder = $this->apply_wp_client_preferences( $builder );
 
 			$messages = isset( $payload['messages'] ) && is_array( $payload['messages'] ) ? $payload['messages'] : array();
 
@@ -435,5 +466,80 @@ class AI_Client_Adaptor {
 	 */
 	protected function make_builder() {
 		return function_exists( 'wp_ai_client_prompt' ) ? wp_ai_client_prompt() : null;
+	}
+
+	/**
+	 * Apply Otter's HTTP timeout to the WP AI Client builder.
+	 *
+	 * @param \WP_AI_Client_Prompt_Builder $builder The prompt builder.
+	 * @return \WP_AI_Client_Prompt_Builder
+	 */
+	protected function apply_request_timeout( $builder ) {
+		$timeout = self::get_request_timeout_seconds();
+
+		if ( 0 === $timeout || ! class_exists( '\WordPress\AiClient\Providers\Http\DTO\RequestOptions' ) ) {
+			return $builder;
+		}
+
+		return $builder->using_request_options(
+			\WordPress\AiClient\Providers\Http\DTO\RequestOptions::fromArray(
+				array(
+					\WordPress\AiClient\Providers\Http\DTO\RequestOptions::KEY_TIMEOUT => (float) $timeout,
+				)
+			)
+		);
+	}
+
+	/**
+	 * Apply Otter's saved WordPress AI Client provider/model preferences.
+	 *
+	 * @param \WP_AI_Client_Prompt_Builder $builder The prompt builder.
+	 * @return \WP_AI_Client_Prompt_Builder
+	 */
+	protected function apply_wp_client_preferences( $builder ) {
+		$config   = Options_Settings::get_ai_wp_client_config();
+		$provider = $config['provider'];
+		$model    = $config['model'];
+
+		if ( '' !== $provider && '' !== $model ) {
+			$provider_model = $this->get_wp_client_provider_model( $provider, $model );
+
+			if ( null !== $provider_model ) {
+				return $builder->using_model( $provider_model );
+			}
+		}
+
+		if ( '' !== $provider ) {
+			$builder = $builder->using_provider( $provider );
+		}
+
+		if ( '' !== $model ) {
+			if ( '' !== $provider ) {
+				$builder = $builder->using_model_preference( array( $provider, $model ) );
+			} else {
+				$builder = $builder->using_model_preference( $model );
+			}
+		}
+
+		return $builder;
+	}
+
+	/**
+	 * Resolve a configured provider/model pair to a model instance.
+	 *
+	 * @param string $provider Provider ID.
+	 * @param string $model    Model ID.
+	 * @return object|null Model instance or null when unavailable.
+	 */
+	protected function get_wp_client_provider_model( $provider, $model ) {
+		if ( ! class_exists( '\WordPress\AiClient\AiClient' ) ) {
+			return null;
+		}
+
+		try {
+			return \WordPress\AiClient\AiClient::defaultRegistry()->getProviderModel( $provider, $model );
+		} catch ( \Throwable $e ) {
+			return null;
+		}
 	}
 }

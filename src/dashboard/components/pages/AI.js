@@ -17,6 +17,7 @@ import {
 	Notice,
 	PanelBody,
 	PanelRow,
+	SelectControl,
 	TextControl,
 	__experimentalHStack as HStack
 } from '@wordpress/components';
@@ -49,6 +50,8 @@ import {
 
 const maskApiKey = ( apiKey ) => apiKey.slice( 0, 3 ) + 'X'.repeat( apiKey.length - 8 ) + apiKey.slice( -4 );
 
+const AI_WP_CLIENT_OPTION = 'themeisle_blocks_settings_ai_wp_client';
+
 const AI = () => {
 	const [ getOption, updateOption, status ] = useSettings();
 	const [ openAISecretKey, setOpenAISecretKey ] = useState( '' );
@@ -56,7 +59,11 @@ const AI = () => {
 	const [ hasSavedApiKey, setHasSavedApiKey ] = useState( false );
 	const [ toolbarActions, setToolbarActions ] = useState( [] );
 	const [ savedActionsSnapshot, setSavedActionsSnapshot ] = useState( '' );
+	const [ aiProviders, setAiProviders ] = useState( [] );
+	const [ wpAiProvider, setWpAiProvider ] = useState( '' );
+	const [ wpAiModel, setWpAiModel ] = useState( '' );
 	const hasInitializedActions = useRef( false );
+	const hasInitializedWpAi = useRef( false );
 	const { createNotice } = useDispatch( 'core/notices' );
 
 	const aiClientSupported = Boolean( window.otterObj?.aiClientSupported );
@@ -92,6 +99,60 @@ const AI = () => {
 		setToolbarActions( actions );
 		setSavedActionsSnapshot( JSON.stringify( actions ) );
 	}, [ status ]);
+
+	useEffect( () => {
+		if ( ! aiClientAvailable ) {
+			return;
+		}
+
+		apiFetch({
+			path: '/ai/v1/providers?capability=text_generation'
+		}).then( ( data ) => {
+			setAiProviders( Array.isArray( data ) ? data : [] );
+		}).catch( () => {
+			setAiProviders( [] );
+		});
+	}, [ aiClientAvailable ]);
+
+	useEffect( () => {
+		if ( hasInitializedWpAi.current || 'loaded' !== status ) {
+			return;
+		}
+
+		const config = getOption( AI_WP_CLIENT_OPTION ) || {};
+
+		setWpAiProvider( config.provider || '' );
+		setWpAiModel( config.model || '' );
+		hasInitializedWpAi.current = true;
+	}, [ status, getOption ]);
+
+	const selectedAiProvider = aiProviders.find( ( item ) => item.id === wpAiProvider );
+	const catalogModelOptions = ( selectedAiProvider?.models ?? [] ).map( ( model ) => ({
+		label: model.name || model.id,
+		value: model.id
+	}));
+	const modelOptions = [
+		{
+			label: __( 'Auto', 'otter-blocks' ),
+			value: ''
+		},
+		...catalogModelOptions,
+		...( wpAiModel && ! catalogModelOptions.some( ( option ) => option.value === wpAiModel ) ? [{
+			label: wpAiModel,
+			value: wpAiModel
+		}] : [])
+	];
+
+	const saveWpAiSettings = () => {
+		updateOption(
+			AI_WP_CLIENT_OPTION,
+			{
+				provider: wpAiProvider,
+				model: wpAiModel
+			},
+			__( 'AI provider settings saved.', 'otter-blocks' )
+		);
+	};
 
 	const saveApiKey = async() => {
 		try {
@@ -209,6 +270,60 @@ const AI = () => {
 					</PanelRow>
 				) }
 
+				{ aiClientSupported && aiClientAvailable && (
+					<Fragment>
+						<PanelRow>
+							<SelectControl
+								label={ __( 'AI provider', 'otter-blocks' ) }
+								help={ __( 'Auto uses the first configured connector.', 'otter-blocks' ) }
+								value={ wpAiProvider }
+								options={ [
+									{
+										label: __( 'Auto', 'otter-blocks' ),
+										value: ''
+									},
+									...aiProviders.map( ( item ) => ({
+										label: item.name || item.id,
+										value: item.id
+									}))
+								] }
+								disabled={ 'saving' === status }
+								onChange={ ( value ) => {
+									setWpAiProvider( value );
+									setWpAiModel( '' );
+								} }
+							/>
+						</PanelRow>
+
+						{ 1 < modelOptions.length && (
+							<PanelRow>
+								<SelectControl
+									label={ __( 'Model', 'otter-blocks' ) }
+									help={ __( 'Only models from the connector catalog. Leave on Auto to let WordPress choose.', 'otter-blocks' ) }
+									value={ wpAiModel }
+									options={ modelOptions }
+									disabled={ 'saving' === status }
+									onChange={ setWpAiModel }
+								/>
+							</PanelRow>
+						) }
+
+						<PanelRow>
+							<Button
+								variant="secondary"
+								disabled={ 'saving' === status }
+								onClick={ saveWpAiSettings }
+							>
+								{ __( 'Save provider settings', 'otter-blocks' ) }
+							</Button>
+						</PanelRow>
+
+						<PanelRow>
+							<hr className="otter-ai-provider__delimiter" />
+						</PanelRow>
+					</Fragment>
+				) }
+
 				{ aiClientSupported && ! aiClientAvailable && ! hasStoredApiKey && (
 					<PanelRow>
 						<Notice
@@ -234,7 +349,11 @@ const AI = () => {
 				{ ( ! aiClientSupported || hasStoredApiKey ) && (
 					<PanelRow>
 						<BaseControl
-							label={ __( 'OpenAI API', 'otter-blocks' ) }
+							label={
+								aiClientSupported ?
+									__( 'OpenAI API (Deprecated)', 'otter-blocks' ) :
+									__( 'OpenAI API', 'otter-blocks' )
+							}
 							help={
 								aiClientSupported ?
 									__( 'Legacy connection. We recommend switching to WordPress AI under Settings > Connectors. Clearing the key removes this option.', 'otter-blocks' ) :

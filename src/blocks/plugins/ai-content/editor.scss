@@ -477,6 +477,56 @@ $o-ai-primary: #3858e9;
     font-size: 12px;
 }
 
+.o-ai-section__quick-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 6px 14px;
+    border: 1px solid #dde0e4;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    color: #5b626a;
+    background: #f3f4f6;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover:not(:disabled) {
+        color: #1e1e1e;
+        background: #ebecef;
+        border-color: #cdd1d6;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $o-ai-primary;
+        outline-offset: 1px;
+    }
+
+    &:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+}
+
+.o-ai-section__quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.o-ai-section__refine .o-ai-section__quick-actions {
+    justify-content: flex-start;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
 .o-ai-section__context-preview {
     flex: 0 0 auto;
     max-height: 180px;
@@ -626,27 +676,12 @@ $o-ai-primary: #3858e9;
     color: #5b626a;
 }
 
-.o-ai-section__chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 16px;
-}
-
 // Refine / prompt bar.
 .o-ai-section__refine {
     flex: 0 0 auto;
     padding: 13px 16px;
     border-top: 1px solid #e8e8e8;
     background: #fff;
-}
-
-.o-ai-section__refine-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 10px;
 }
 
 .o-ai-section__refine-field {
@@ -700,7 +735,8 @@ $o-ai-primary: #3858e9;
     }
 }
 
-.o-ai-section__refine-submit.components-button {
+.o-ai-section__refine-submit.components-button,
+.o-ai-section__refine-stop.components-button {
     flex: 0 0 auto;
     justify-content: center;
 }
@@ -723,16 +759,6 @@ $o-ai-primary: #3858e9;
     align-items: center;
     gap: 12px;
     min-width: 0;
-}
-
-.o-ai-section__prompt-echo {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-size: 12.5px;
-    color: #8b8d91;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 @keyframes oai-modalin {

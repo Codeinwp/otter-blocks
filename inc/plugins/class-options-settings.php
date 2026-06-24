@@ -26,6 +26,11 @@ class Options_Settings {
 	const AI_TOOLBAR_ACTIONS_MIGRATED_OPTION = 'themeisle_blocks_ai_toolbar_actions_migrated';
 
 	/**
+	 * WordPress AI Client provider/model preferences for Otter AI features.
+	 */
+	const AI_WP_CLIENT_OPTION = 'themeisle_blocks_settings_ai_wp_client';
+
+	/**
 	 * Legacy AI toolbar actions option.
 	 */
 	const LEGACY_TOOLBAR_ACTIONS_OPTION = 'themeisle_blocks_settings_prompt_actions';
@@ -961,6 +966,34 @@ class Options_Settings {
 			)
 		);
 
+		register_setting(
+			'themeisle_blocks_settings',
+			self::AI_WP_CLIENT_OPTION,
+			array(
+				'type'              => 'object',
+				'description'       => __( 'WordPress AI Client provider and model preferences for Otter AI features.', 'otter-blocks' ),
+				'sanitize_callback' => array( $this, 'sanitize_ai_wp_client_settings' ),
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'provider' => array(
+								'type'    => 'string',
+								'default' => '',
+							),
+							'model'    => array(
+								'type'    => 'string',
+								'default' => '',
+							),
+						),
+					),
+				),
+				'default'           => array(
+					'provider' => '',
+					'model'    => '',
+				),
+			)
+		);
 
 		register_setting(
 			'themeisle_blocks_settings',
@@ -1315,6 +1348,57 @@ class Options_Settings {
 		}
 
 		return self::get_default_prompt_actions();
+	}
+
+	/**
+	 * Sanitize WordPress AI Client provider/model settings.
+	 *
+	 * @param mixed $value Raw option value.
+	 * @return array{provider: string, model: string}
+	 */
+	public function sanitize_ai_wp_client_settings( $value ) {
+		$sanitized = array(
+			'provider' => '',
+			'model'    => '',
+		);
+
+		if ( ! is_array( $value ) ) {
+			return $sanitized;
+		}
+
+		if ( isset( $value['provider'] ) && is_string( $value['provider'] ) ) {
+			$sanitized['provider'] = sanitize_key( $value['provider'] );
+		}
+
+		if ( isset( $value['model'] ) && is_string( $value['model'] ) ) {
+			$sanitized['model'] = sanitize_text_field( $value['model'] );
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Get saved WordPress AI Client provider/model preferences for Otter AI.
+	 *
+	 * Empty provider means auto-select among configured connectors.
+	 * Empty model means auto-select within the chosen provider.
+	 *
+	 * @return array{provider: string, model: string}
+	 */
+	public static function get_ai_wp_client_config() {
+		$stored = get_option( self::AI_WP_CLIENT_OPTION, array() );
+
+		if ( ! is_array( $stored ) ) {
+			return array(
+				'provider' => '',
+				'model'    => '',
+			);
+		}
+
+		return array(
+			'provider' => isset( $stored['provider'] ) && is_string( $stored['provider'] ) ? sanitize_key( $stored['provider'] ) : '',
+			'model'    => isset( $stored['model'] ) && is_string( $stored['model'] ) ? sanitize_text_field( $stored['model'] ) : '',
+		);
 	}
 
 	/**

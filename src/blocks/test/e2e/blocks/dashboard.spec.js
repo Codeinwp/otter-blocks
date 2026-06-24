@@ -62,6 +62,7 @@ test.describe( 'Dashboard', () => {
 
 		if ( aiClientSupported ) {
 			await expect( page.getByText( 'Legacy connection.' ) ).toBeVisible();
+			await expect( page.getByText( 'OpenAI API (Deprecated)' ) ).toBeVisible();
 		}
 	});
 

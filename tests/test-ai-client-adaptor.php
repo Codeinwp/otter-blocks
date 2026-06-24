@@ -10,6 +10,7 @@ use ThemeIsle\GutenbergBlocks\Server\AI_Backend_Resolver;
 use ThemeIsle\GutenbergBlocks\Server\AI_Response;
 use ThemeIsle\GutenbergBlocks\Server\Otter_OpenAI_Backend;
 use ThemeIsle\GutenbergBlocks\Server\Prompt_Server;
+use ThemeIsle\GutenbergBlocks\Plugins\Options_Settings;
 use ThemeIsle\GutenbergBlocks\Tests\Fake_AI_Backend;
 use ThemeIsle\GutenbergBlocks\Tests\Fake_AI_Result;
 use ThemeIsle\GutenbergBlocks\Tests\Spy_AI_Builder;
@@ -45,6 +46,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		remove_all_filters( 'pre_http_request' );
 		delete_option( 'themeisle_open_ai_api_key' );
 		delete_option( 'themeisle_otter_ai_usage' );
+		delete_option( Options_Settings::AI_WP_CLIENT_OPTION );
 		reset_ai_adaptor_cache();
 		parent::tear_down();
 	}
@@ -211,6 +213,71 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		$this->assertSame( array( 0.5 ), $builder->get_call_args( 'using_top_p' ) );
 		$this->assertSame( array( 'END' ), $builder->get_call_args( 'using_stop_sequences' ) );
 		$this->assertFalse( $builder->was_called( 'using_model' ) );
+		$this->assertFalse( $builder->was_called( 'using_model_preference' ) );
+	}
+
+	/**
+	 * Otter's generation timeout is applied to the WP AI Client builder.
+	 */
+	public function test_generate_applies_request_timeout() {
+		add_filter( 'otter_ai_request_timeout', static fn() => 300 );
+
+		$adaptor = $this->make_adaptor();
+
+		$adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Hello',
+					),
+				),
+			)
+		);
+
+		$builder = $adaptor->builder;
+
+		if ( class_exists( '\WordPress\AiClient\Providers\Http\DTO\RequestOptions' ) ) {
+			$this->assertTrue( $builder->was_called( 'using_request_options' ) );
+			$options = $builder->get_call_args( 'using_request_options' )[0];
+			$this->assertSame( 300.0, $options->getTimeout() );
+		} else {
+			$this->assertFalse( $builder->was_called( 'using_request_options' ) );
+		}
+
+		remove_all_filters( 'otter_ai_request_timeout' );
+	}
+
+	/**
+	 * Saved provider/model preferences are applied to the WP AI Client builder.
+	 */
+	public function test_generate_applies_saved_provider_and_model() {
+		update_option(
+			Options_Settings::AI_WP_CLIENT_OPTION,
+			array(
+				'provider' => 'openrouter',
+				'model'    => 'openai/gpt-4o-mini',
+			)
+		);
+
+		$adaptor = $this->make_adaptor();
+
+		$adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Hello',
+					),
+				),
+			)
+		);
+
+		$builder = $adaptor->builder;
+
+		$this->assertTrue( $builder->was_called( 'using_model' ) );
+		$this->assertSame( array( $adaptor->provider_model ), $builder->get_call_args( 'using_model' ) );
+		$this->assertFalse( $builder->was_called( 'using_provider' ) );
 		$this->assertFalse( $builder->was_called( 'using_model_preference' ) );
 	}
 

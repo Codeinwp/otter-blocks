@@ -39,6 +39,29 @@ export type PromptResult = {
 	raw?: unknown
 }
 
+type PromptRequestOptions = {
+	signal?: AbortSignal
+}
+
+const createAbortedPromptResult = (): PromptResult => ({
+	ok: false,
+	error: {
+		code: 'aborted',
+		message: __( 'The request was cancelled.', 'otter-blocks' ),
+		type: 'abort'
+	}
+});
+
+/**
+ * Whether a prompt result represents a user- or client-initiated abort.
+ *
+ * @param {PromptResult} result Normalized prompt result.
+ * @return {boolean} True when the request was aborted.
+ */
+export function isPromptAborted( result: PromptResult ): boolean {
+	return ! result.ok && 'aborted' === result.error.code;
+}
+
 type FormResponse = {
 	fields: {
 		label: string
@@ -173,16 +196,48 @@ const sleep = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve,
  */
 export async function withPromptRetry(
 	attempt: () => Promise<PromptResult>,
-	{ retries = 2, baseDelay = 600 }: { retries?: number, baseDelay?: number } = {}
+	{ retries = 2, baseDelay = 600, signal }: { retries?: number, baseDelay?: number, signal?: AbortSignal } = {}
 ): Promise<PromptResult> {
+	if ( signal?.aborted ) {
+		return createAbortedPromptResult();
+	}
+
 	let result = await attempt();
+
+	if ( isPromptAborted( result ) ) {
+		return result;
+	}
 
 	for ( let i = 0; i < retries && isTransientPromptError( result ); i++ ) {
 		await sleep( baseDelay * Math.pow( 2, i ) );
+
+		if ( signal?.aborted ) {
+			return createAbortedPromptResult();
+		}
+
 		result = await attempt();
+
+		if ( isPromptAborted( result ) ) {
+			return result;
+		}
 	}
 
 	return result;
+}
+
+/**
+ * Remove client-side model pins when the WP AI Client backend is active.
+ *
+ * @param {Record<string, unknown>} payload Request body.
+ * @return {Record<string, unknown>} Payload without a model field.
+ */
+function stripClientModelSelection( payload: Record<string, unknown> ): Record<string, unknown> {
+	if ( ! window.themeisleGutenberg?.aiClientActive || ! Object.prototype.hasOwnProperty.call( payload, 'model' ) ) {
+		return payload;
+	}
+
+	const { model, ...rest } = payload;
+	return rest;
 }
 
 /**
@@ -193,16 +248,27 @@ export async function withPromptRetry(
  * @param {Record<string, unknown>} payload The request body to forward.
  * @return {Promise<PromptResult>} The normalized result.
  */
-async function postGenerate( payload: Record<string, unknown> ): Promise<PromptResult> {
+async function postGenerate( payload: Record<string, unknown>, signal?: AbortSignal ): Promise<PromptResult> {
+	if ( signal?.aborted ) {
+		return createAbortedPromptResult();
+	}
+
+	const requestPayload = stripClientModelSelection( payload );
+
 	try {
 		const response = await apiFetch({
 			path: addQueryArgs( '/otter/v1/openai/generate', {}),
 			method: 'POST',
-			body: JSON.stringify( payload )
+			body: JSON.stringify( requestPayload ),
+			signal
 		});
 
 		return normalizePromptResponse( response );
 	} catch ( e ) {
+		if ( signal?.aborted || 'AbortError' === e?.name ) {
+			return createAbortedPromptResult();
+		}
+
 		return {
 			ok: false,
 			error: {
@@ -277,13 +343,6 @@ export const sendPromptToOpenAIWithRegenerate = promptRequestBuilder({
 	stream: false
 });
 
-/**
- * Model used by the AI Block generation pipeline.
- *
- * Kept as a single constant so it can be bumped without touching the engine.
- */
-export const BLOCK_GENERATION_MODEL = 'gpt-5-mini';
-
 /*
  * The block generation pipeline ships its own instructions (block catalog +
  * strict JSON schema) inside the prompt, so it must NOT reuse the server-side
@@ -297,16 +356,23 @@ export { BLOCK_GENERATION_SYSTEM_PROMPT };
 /**
  * Forward a self-contained block generation request to the OpenAI proxy.
  *
+ * Model selection is server-side: WordPress AI Client preferences on the WP
+ * path, or the legacy OpenAI backend default when no key-based override exists.
+ *
  * @param instruction Fully-built generation prompt (catalog + task + schema).
  * @param usedAction  Audit label recorded by AI_Usage ('blockGeneration' for the
  *                    AI block pipeline, 'aiChat' for the conversational modal).
  * @return Normalized prompt result (see normalizePromptResponse).
  */
-export async function sendBlockGenerationPrompt( instruction: string, usedAction = 'blockGeneration' ): Promise<PromptResult> {
-	const payload = {
+export async function sendBlockGenerationPrompt(
+	instruction: string,
+	usedAction = 'blockGeneration',
+	options: PromptRequestOptions = {}
+): Promise<PromptResult> {
+	const { signal } = options;
+	const payload: Record<string, unknown> = {
 		otter_used_action: usedAction,
 		otter_user_content: instruction,
-		model: BLOCK_GENERATION_MODEL,
 		messages: [
 			{ role: 'system', content: BLOCK_GENERATION_SYSTEM_PROMPT },
 			{ role: 'user', content: instruction }
@@ -315,7 +381,7 @@ export async function sendBlockGenerationPrompt( instruction: string, usedAction
 		stream: false
 	};
 
-	return withPromptRetry( () => postGenerate( payload ) );
+	return withPromptRetry( () => postGenerate( payload, signal ), { signal } );
 }
 
 const fieldMapping = {

@@ -885,6 +885,14 @@
 	}
 }
 
+#otter .otter-ai-provider__delimiter {
+	width: 100%;
+	height: 1px;
+	margin: 4px 0 8px;
+	border: 0;
+	background: #e2e4e7;
+}
+
 #otter .otter-ai-toolbar-actions {
 	&__list {
 		gap: 10px;

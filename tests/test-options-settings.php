@@ -414,4 +414,60 @@ class Test_Options_Settings extends WP_UnitTestCase {
 		$this->assertCount( 1, $actions );
 		$this->assertSame( 'custom-test', $actions[0]['id'] );
 	}
+
+	/**
+	 * AI WP client settings sanitize provider and model fields.
+	 */
+	public function test_sanitize_ai_wp_client_settings() {
+		$sanitized = $this->options_settings->sanitize_ai_wp_client_settings(
+			array(
+				'provider' => 'OpenRouter',
+				'model'    => ' openai/gpt-4o-mini ',
+			)
+		);
+
+		$this->assertSame(
+			array(
+				'provider' => 'openrouter',
+				'model'    => 'openai/gpt-4o-mini',
+			),
+			$sanitized
+		);
+
+		$with_colon = $this->options_settings->sanitize_ai_wp_client_settings(
+			array(
+				'provider' => 'openrouter',
+				'model'    => 'cohere/north-mini-code:free',
+			)
+		);
+
+		$this->assertSame(
+			array(
+				'provider' => 'openrouter',
+				'model'    => 'cohere/north-mini-code:free',
+			),
+			$with_colon
+		);
+	}
+
+	/**
+	 * AI WP client config reads saved option values.
+	 */
+	public function test_get_ai_wp_client_config() {
+		update_option(
+			Options_Settings::AI_WP_CLIENT_OPTION,
+			array(
+				'provider' => 'openrouter',
+				'model'    => 'anthropic/claude-3.5-sonnet',
+			)
+		);
+
+		$this->assertSame(
+			array(
+				'provider' => 'openrouter',
+				'model'    => 'anthropic/claude-3.5-sonnet',
+			),
+			Options_Settings::get_ai_wp_client_config()
+		);
+	}
 }

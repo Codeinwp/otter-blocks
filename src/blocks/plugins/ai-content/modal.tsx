@@ -32,7 +32,7 @@ import {
  */
 import { openAiAPIKeyName } from '../../components/prompt';
 import { aiGeneration, otterMascot } from '../../helpers/icons';
-import { sendBlockGenerationPrompt } from '../../helpers/prompt';
+import { sendBlockGenerationPrompt, isPromptAborted } from '../../helpers/prompt';
 import useSettings from '../../helpers/use-settings';
 import type { BlockProps } from '../../helpers/blocks';
 import { AIToolbarAction } from './actions';
@@ -174,12 +174,14 @@ const AIContentModal = ({
 
 	const isMountedRef = useRef( true );
 	const generationIdRef = useRef( 0 );
+	const abortControllerRef = useRef<AbortController | null>( null );
 
 	useEffect( () => {
 		isMountedRef.current = true;
 
 		return () => {
 			isMountedRef.current = false;
+			abortControllerRef.current?.abort();
 		};
 	}, []);
 
@@ -239,8 +241,20 @@ const AIContentModal = ({
 
 	const markDirty = () => {
 		generationIdRef.current++;
+		abortControllerRef.current?.abort();
+		abortControllerRef.current = null;
 		setIsDirty( true );
 		setStatus( 'idle' );
+	};
+
+	const stopGeneration = () => {
+		generationIdRef.current++;
+		abortControllerRef.current?.abort();
+		abortControllerRef.current = null;
+		setStatus( 0 < resultHistory.length ? 'loaded' : 'idle' );
+		setError( undefined );
+		setLiveBlocks( [] );
+		setProgress({ phase: 'idle', done: 0, total: 0 });
 	};
 
 	const versionControl = hasResult ? (
@@ -294,12 +308,26 @@ const AIContentModal = ({
 		const generationId = ++generationIdRef.current;
 		const isStale = () => ! isMountedRef.current || generationId !== generationIdRef.current;
 
+		abortControllerRef.current?.abort();
+		const abortController = new AbortController();
+		abortControllerRef.current = abortController;
+
 		setStatus( 'loading' );
 		setError( undefined );
 
 		let usedToken = 0;
 		const requestCompletion = async( requestPrompt: string ): Promise<string> => {
-			const response = await sendBlockGenerationPrompt( requestPrompt, 'aiChat' );
+			if ( abortController.signal.aborted || isStale() ) {
+				throw new DOMException( 'Aborted', 'AbortError' );
+			}
+
+			const response = await sendBlockGenerationPrompt( requestPrompt, 'aiChat', {
+				signal: abortController.signal
+			});
+
+			if ( abortController.signal.aborted || isStale() || isPromptAborted( response ) ) {
+				throw new DOMException( 'Aborted', 'AbortError' );
+			}
 
 			if ( ! response.ok ) {
 				throw new Error( response.error?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
@@ -408,8 +436,9 @@ const AIContentModal = ({
 			setIsDirty( false );
 			setStatus( 'loaded' );
 			setLiveBlocks([]);
+			abortControllerRef.current = null;
 		} catch ( e ) {
-			if ( isStale() ) {
+			if ( isStale() || 'AbortError' === ( e as Error )?.name ) {
 				return;
 			}
 
@@ -555,24 +584,35 @@ const AIContentModal = ({
 		( onDiscard ?? onClose )();
 	};
 
-	const handleQuickAction = ( action: AIToolbarAction ) => {
+	const insertQuickAction = ( action: AIToolbarAction ) => {
 		if ( isGenerating || ! hasAPIKey ) {
 			return;
 		}
 
-		const forceEdit = hasSelection && ! isCreateMode;
-
 		if ( hasResult ) {
-			const goal = prompt;
-			setPrompt( `${ goal }\n\n${ action.prompt }` );
-			setRefineInput( '' );
-			generateContent( true, goal, action.prompt, forceEdit );
+			setRefineInput( action.prompt );
 			return;
 		}
 
 		setPrompt( action.prompt );
-		generateContent( false, action.prompt, undefined, forceEdit );
+		markDirty();
 	};
+
+	const quickActionsRow = 0 < actions.length ? (
+		<div className="o-ai-section__quick-actions">
+			{ actions.map( ( action ) => (
+				<button
+					key={ action.id }
+					type="button"
+					className="o-ai-section__quick-action"
+					disabled={ ! hasAPIKey || isGenerating }
+					onClick={ () => insertQuickAction( action ) }
+				>
+					{ action.title }
+				</button>
+			) ) }
+		</div>
+	) : null;
 
 	const sectionSubmitDisabled = ! hasAPIKey || isGenerating ||
 		( hasResult ? ! refineInput.trim() : ! prompt.trim() );
@@ -694,20 +734,7 @@ const AIContentModal = ({
 					) : ( 'error' !== status && (
 						<div className="o-ai-section__placeholder">
 							<p>{ placeholderText }</p>
-							{ 0 < actions.length && (
-								<div className="o-ai-section__chips">
-									{ actions.map( ( action ) => (
-										<Button
-											key={ action.id }
-											variant="secondary"
-											isSmall
-											onClick={ () => handleQuickAction( action ) }
-										>
-											{ action.title }
-										</Button>
-									) ) }
-								</div>
-							) }
+							{ quickActionsRow }
 						</div>
 					) ) ) }
 
@@ -734,21 +761,7 @@ const AIContentModal = ({
 					} }
 				>
 					{
-						showRefineQuickActions && (
-							<div className="o-ai-section__refine-chips">
-								{ actions.map( ( action ) => (
-									<Button
-										key={ action.id }
-										variant="secondary"
-										isSmall
-										disabled={ ! hasAPIKey }
-										onClick={ () => handleQuickAction( action ) }
-									>
-										{ action.title }
-									</Button>
-								) ) }
-							</div>
-						)
+						showRefineQuickActions && quickActionsRow
 					}
 					<div className="o-ai-section__refine-field">
 						<span className="o-ai-section__refine-icon" aria-hidden="true">
@@ -760,7 +773,7 @@ const AIContentModal = ({
 							hideLabelFromVision
 							placeholder={
 								hasResult
-									? __( 'Ask Otter AI to refine — e.g. make the headline shorter, use a darker theme…', 'otter-blocks' )
+									? ( currentPromptEcho || __( 'Ask Otter AI to refine — e.g. make the headline shorter, use a darker theme…', 'otter-blocks' ) )
 									: hasSelection
 										? __( 'Ask Otter AI to change the selected block(s)…', 'otter-blocks' )
 										: __( 'Describe what you want to build…', 'otter-blocks' )
@@ -778,13 +791,13 @@ const AIContentModal = ({
 							__nextHasNoMarginBottom
 						/>
 						<Button
-							variant="primary"
-							className="o-ai-section__refine-submit"
-							disabled={ sectionSubmitDisabled }
-							isBusy={ isGenerating }
-							onClick={ handleSectionSubmit }
+							variant={ isGenerating ? 'secondary' : 'primary' }
+							className={ isGenerating ? 'o-ai-section__refine-stop' : 'o-ai-section__refine-submit' }
+							disabled={ ! isGenerating && sectionSubmitDisabled }
+							isBusy={ false }
+							onClick={ isGenerating ? stopGeneration : handleSectionSubmit }
 						>
-							{ hasResult ? __( 'Refine', 'otter-blocks' ) : __( 'Generate', 'otter-blocks' ) }
+							{ isGenerating ? __( 'Stop', 'otter-blocks' ) : ( hasResult ? __( 'Refine', 'otter-blocks' ) : __( 'Generate', 'otter-blocks' ) ) }
 						</Button>
 					</div>
 				</div>
@@ -792,11 +805,6 @@ const AIContentModal = ({
 				<div className="o-ai-section__footer">
 					<div className="o-ai-section__footer-left">
 						{ versionControl }
-						{ currentPromptEcho && (
-							<span className="o-ai-section__prompt-echo" title={ currentPromptEcho }>
-								{ currentPromptEcho }
-							</span>
-						) }
 					</div>
 
 					<div className="o-ai-section__footer-right">

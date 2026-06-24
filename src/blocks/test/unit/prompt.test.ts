@@ -1,4 +1,5 @@
 import { createBlock } from '@wordpress/blocks';
+import apiFetch from '@wordpress/api-fetch';
 import {
 	editLastConversation,
 	injectActionIntoPrompt,
@@ -6,6 +7,7 @@ import {
 	isTransientPromptError,
 	normalizePromptResponse,
 	parseFormPromptResponseToBlocks,
+	sendBlockGenerationPrompt,
 	tryInjectIntoTemplate,
 	tryParseResponse,
 	withPromptRetry
@@ -268,6 +270,22 @@ describe( 'prompt helpers', () => {
 			}) ).toBe( false );
 
 			expect( isTransientPromptError({ ok: true, content: 'hi', usedTokens: 1, raw: {}}) ).toBe( false );
+		});
+	});
+
+	describe( 'sendBlockGenerationPrompt', () => {
+		it( 'does not include a model field in the request body', async() => {
+			( apiFetch as jest.Mock ).mockResolvedValue({
+				content: '{}',
+				usedTokens: 1
+			});
+
+			window.themeisleGutenberg = { aiClientActive: true };
+
+			await sendBlockGenerationPrompt( 'Build a hero section', 'aiChat' );
+
+			const body = JSON.parse( ( apiFetch as jest.Mock ).mock.calls[0][0].body );
+			expect( body.model ).toBeUndefined();
 		});
 	});
 
