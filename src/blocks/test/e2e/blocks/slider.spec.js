@@ -26,13 +26,13 @@ test.describe( 'Slider Block', () => {
 		await admin.createNewPost();
 	});
 
-	test( 'can be created by typing "/slider"', async({ editor, page }) => {
+	test( 'can be created by typing "/image slider"', async({ editor, page }) => {
 
-		// Create a Progress Block with the slash block shortcut.
+		// Create an Image Slider block with the slash block shortcut.
 		await insertBlockBySlash({
 			editor,
 			page,
-			shortcut: '/slider',
+			shortcut: '/image slider',
 			blockName: 'themeisle-blocks/slider'
 		});
 	});
