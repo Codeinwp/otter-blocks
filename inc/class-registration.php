@@ -761,6 +761,8 @@ class Registration {
 	 * @access  public
 	 */
 	public function enqueue_block_styles( $post ) {
+		$asset_file = null;
+
 		foreach ( self::$blocks as $block ) {
 			if ( in_array( $block, self::$styles_loaded ) || ! has_block( 'themeisle-blocks/' . $block, $post ) ) {
 				continue;
@@ -788,7 +790,11 @@ class Registration {
 				continue;
 			}
 
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+			// Read the shared asset file once, lazily — only when a matching
+			// block is actually present — instead of on every loop iteration.
+			if ( null === $asset_file ) {
+				$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+			}
 
 			$deps = array();
 
@@ -897,6 +903,10 @@ class Registration {
 			)
 		);
 
+		// All blocks share the same generated asset file (version/deps); read it
+		// once here instead of re-including it on every loop iteration.
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+
 		foreach ( self::$blocks as $block ) {
 			$block_path   = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
 			$editor_style = OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/editor.css';
@@ -914,8 +924,6 @@ class Registration {
 			if ( false === $metadata ) {
 				continue;
 			}
-
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 
 			$deps = array();
 
