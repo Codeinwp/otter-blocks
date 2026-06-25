@@ -147,9 +147,7 @@ const Library = ({ onClose }) => {
 		return {
 			clientID: getSelectedBlockClientId(),
 			favorites: get('themeisle/otter-blocks', 'patterns-favorites') || [],
-			// Clamp to the menu's range: 5 columns used to be offered, so the
-			// stored preference may exceed the current maximum.
-			columns: Math.min(get('themeisle/otter-blocks', 'patterns-columns') || 3, 4),
+			columns: get('themeisle/otter-blocks', 'patterns-columns') || 3,
 			accent: get('themeisle/otter-blocks', 'patterns-accent') || null,
 		};
 	}, []);
