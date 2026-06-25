@@ -29,13 +29,31 @@ import './keyboard-navigation/index.js';
 // We disable the copy-paste plugin for now.
 // import './copy-paste/index.js';
 import './sticky/index.js';
-import './dynamic-content/index.js';
 import './welcome-guide/index.js';
 import './feedback/index.js';
 import './otter-tools-inspector/index';
 import './live-search/index.js';
 import './upsell-block/index.js';
-import './ai-content/index.tsx';
+
+/**
+ * Optional modules are loaded on demand, gated on their settings toggle, so
+ * their code is only downloaded and parsed when the module is enabled instead
+ * of on every editor load.
+ *
+ * `conditions` is intentionally kept as a static import above: it registers a
+ * `blocks.registerBlockType` attribute filter (`otterConditions`) that must be
+ * in place before core blocks register during editor bootstrap — a timing an
+ * async chunk cannot guarantee, and missing it would strip saved conditions.
+ * The modules below only register late-safe hooks (RichText formats,
+ * `editor.BlockEdit` / `editor.MediaUpload` filters), so deferring them is safe.
+ */
+if ( window.themeisleGutenberg?.hasModule?.dynamicContent ) {
+	import( /* webpackChunkName: "dynamic-content" */ './dynamic-content/index.js' );
+}
+
+if ( window.themeisleGutenberg?.hasModule?.aiToolbar ) {
+	import( /* webpackChunkName: "ai-content" */ './ai-content/index.tsx' );
+}
 
 const icon = <Icon icon={ otterIcon } />;
 
