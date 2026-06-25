@@ -241,6 +241,32 @@ class Registration {
 
 		wp_set_script_translations( 'otter-blocks', 'otter-blocks' );
 
+		// The Patterns Library (Design Library) is a separate bundle so it — and
+		// its fuse.js / react-intersection-observer dependencies — only load when
+		// the module is enabled, instead of being parsed on every editor load.
+		if ( boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ) ) {
+			$patterns_asset = include OTTER_BLOCKS_PATH . '/build/patterns-library/index.asset.php';
+
+			wp_enqueue_script(
+				'otter-patterns-library',
+				OTTER_BLOCKS_URL . 'build/patterns-library/index.js',
+				array_merge( $patterns_asset['dependencies'], array( 'otter-blocks' ) ),
+				$patterns_asset['version'],
+				true
+			);
+
+			wp_set_script_translations( 'otter-patterns-library', 'otter-blocks' );
+
+			if ( file_exists( OTTER_BLOCKS_PATH . '/build/patterns-library/index.css' ) ) {
+				wp_enqueue_style(
+					'otter-patterns-library',
+					OTTER_BLOCKS_URL . 'build/patterns-library/index.css',
+					array(),
+					$patterns_asset['version']
+				);
+			}
+		}
+
 		if ( defined( 'THEMEISLE_GUTENBERG_GOOGLE_MAPS_API' ) ) {
 			$api = THEMEISLE_GUTENBERG_GOOGLE_MAPS_API;
 		} else {

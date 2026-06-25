@@ -171,6 +171,31 @@ module.exports = [
 	},
 	{
 
+		// PATTERNS LIBRARY (Design Library)
+		//
+		// Split out of the main `blocks` bundle so this tree — plus its
+		// `fuse.js` and `react-intersection-observer` dependencies, which are
+		// used nowhere else — is only downloaded/parsed when the Patterns
+		// Library module is enabled, instead of on every editor load.
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			index: './src/blocks/plugins/patterns-library/index.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/patterns-library' )
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
+	},
+	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
