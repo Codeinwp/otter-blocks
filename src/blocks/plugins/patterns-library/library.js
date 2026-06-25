@@ -119,6 +119,10 @@ const isPackCategory = (name) => name.endsWith('-pack');
 
 const isCloudCategory = (name) => name.startsWith('ti-tc-');
 
+// A pattern's stable identity: the slug stays constant when it switches from an
+// upsell (`otter-blocks/<slug>`) to the real Pro version (`otter-pro/<slug>`).
+const slugOf = (name) => (name || '').split('/').pop();
+
 const isPagePattern = (pattern) =>
 	pattern.categories.some(
 		(category) => isPackCategory(category) || 'pages' === category,
@@ -147,9 +151,7 @@ const Library = ({ onClose }) => {
 		return {
 			clientID: getSelectedBlockClientId(),
 			favorites: get('themeisle/otter-blocks', 'patterns-favorites') || [],
-			// Clamp to the menu's range: 5 columns used to be offered, so the
-			// stored preference may exceed the current maximum.
-			columns: Math.min(get('themeisle/otter-blocks', 'patterns-columns') || 3, 4),
+			columns: get('themeisle/otter-blocks', 'patterns-columns') || 3,
 			accent: get('themeisle/otter-blocks', 'patterns-accent') || null,
 		};
 	}, []);
@@ -168,21 +170,31 @@ const Library = ({ onClose }) => {
 	const setAccent = (value) =>
 		set('themeisle/otter-blocks', 'patterns-accent', value);
 
+	// Match by slug so a pattern favorited as an upsell stays favorited once Pro
+	// registers it; the stored value keeps its original full name.
 	const toggleFavorite = useCallback(
-		(pattern) => {
-			if (favorites.includes(pattern)) {
+		(name) => {
+			const slug = slugOf(name);
+
+			if (favorites.some((favorite) => slugOf(favorite) === slug)) {
 				set(
 					'themeisle/otter-blocks',
 					'patterns-favorites',
-					favorites.filter((name) => name !== pattern),
+					favorites.filter((favorite) => slugOf(favorite) !== slug),
 				);
 			} else {
 				set('themeisle/otter-blocks', 'patterns-favorites', [
 					...favorites,
-					pattern,
+					name,
 				]);
 			}
 		},
+		[ favorites ],
+	);
+
+	// Slug set for favorite membership checks across the library.
+	const favoriteSlugs = useMemo(
+		() => new Set(favorites.map(slugOf)),
 		[ favorites ],
 	);
 
@@ -234,8 +246,6 @@ const Library = ({ onClose }) => {
 		[],
 	);
 
-	const slugOf = (name) => (name || '').split('/').pop();
-
 	const patterns = useMemo(() => {
 		const registeredSlugs = new Set(
 			registeredPatterns.map((pattern) => slugOf(pattern.name)),
@@ -248,6 +258,22 @@ const Library = ({ onClose }) => {
 			),
 		];
 	}, [ registeredPatterns, proUpsells ]);
+
+	// A stored favorite can point at a pattern that's neither registered nor an
+	// upsell anymore; it can't render when filtered, so count only favorites
+	// (by slug) that still resolve to a known pattern.
+	const favCount = useMemo(() => {
+		const known = new Set(patterns.map((pattern) => slugOf(pattern.name)));
+		let count = 0;
+
+		favoriteSlugs.forEach((slug) => {
+			if (known.has(slug)) {
+				count++;
+			}
+		});
+
+		return count;
+	}, [ patterns, favoriteSlugs ]);
 
 	const { sectionGroups, collections, tcCategories, categoryLabels } =
     useMemo(() => {
@@ -422,7 +448,7 @@ const Library = ({ onClose }) => {
 
 		// Everything except the tag facets: these always constrain the counts.
 		const base = scope
-			.filter((pattern) => !favOnly || favorites.includes(pattern.name))
+			.filter((pattern) => !favOnly || favoriteSlugs.has(slugOf(pattern.name)))
 			.filter((pattern) =>
 				parsed.tokens.every((token) => matchToken(pattern, token)),
 			)
@@ -446,7 +472,7 @@ const Library = ({ onClose }) => {
 
 			return { ...tag, count, disabled: 0 === count };
 		});
-	}, [ scope, favOnly, favorites, parsed, textMatches, activeTags ]);
+	}, [ scope, favOnly, favoriteSlugs, parsed, textMatches, activeTags ]);
 
 	// Clear tag selections when the scope changes.
 	useEffect(() => {
@@ -493,7 +519,7 @@ const Library = ({ onClose }) => {
 
 	const filteredPatterns = useMemo(() => {
 		let result = scope
-			.filter((pattern) => !favOnly || favorites.includes(pattern.name))
+			.filter((pattern) => !favOnly || favoriteSlugs.has(slugOf(pattern.name)))
 			.filter((pattern) =>
 				parsed.tokens.every((token) => matchToken(pattern, token)),
 			)
@@ -513,7 +539,7 @@ const Library = ({ onClose }) => {
 		}
 
 		return result;
-	}, [ scope, parsed, activeTags, favOnly, favorites, sort, textMatches ]);
+	}, [ scope, parsed, activeTags, favOnly, favoriteSlugs, sort, textMatches ]);
 
 	// "More like this" suggestions for the preview overlay.
 	const similarPatterns = useMemo(() => {
@@ -741,7 +767,7 @@ const Library = ({ onClose }) => {
 										query={query}
 										setQuery={setQuery}
 										count={filteredPatterns.length}
-										favCount={favorites.length}
+										favCount={favCount}
 										favOnly={favOnly}
 										setFavOnly={setFavOnly}
 										sort={sort}
@@ -789,7 +815,7 @@ const Library = ({ onClose }) => {
 													pattern={pattern}
 													categoryLabel={primaryCategoryLabel(pattern)}
 													isPage={isPage}
-													isFavorite={favorites.includes(pattern.name)}
+													isFavorite={favoriteSlugs.has(slugOf(pattern.name))}
 													accent={accent}
 													onInsert={insertPattern}
 													onPreview={setPreview}
@@ -810,7 +836,7 @@ const Library = ({ onClose }) => {
 					pattern={preview}
 					categoryLabel={primaryCategoryLabel(preview)}
 					isPage={isPagePattern(preview)}
-					isFavorite={favorites.includes(preview.name)}
+					isFavorite={favoriteSlugs.has(slugOf(preview.name))}
 					accent={accent}
 					similar={similarPatterns}
 					onFavorite={() => toggleFavorite(preview.name)}
