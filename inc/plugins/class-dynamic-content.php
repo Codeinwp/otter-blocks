@@ -647,7 +647,7 @@ class Dynamic_Content {
 	/**
 	 * Get Archive Title.
 	 *
-	 * @param array $data Dynamic Data.
+	 * @param array<string, mixed> $data Dynamic Data.
 	 *
 	 * @return string
 	 */
