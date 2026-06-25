@@ -1,11 +1,7 @@
 /**
- * Font Awesome icon metadata loader.
- *
- * The icon metadata JSON is ~143KB. Importing it statically pulls the whole
- * file into the main editor bundle, where it is downloaded and parsed on every
- * editor load even when no icon is ever inserted. Loading it through a dynamic
- * import keeps it in its own chunk that is fetched once — and only when an icon
- * picker (or an icon-driven block such as the accordion) actually needs it.
+ * Lazy loader for the ~143KB Font Awesome icon metadata. A dynamic import keeps
+ * it out of the editor bundle, in its own chunk fetched only when an icon picker
+ * (or icon-driven block) needs it.
  */
 
 const PREFIX_BY_STYLE = {
@@ -18,9 +14,7 @@ let rawCache = null;
 let rawRequest = null;
 
 /**
- * Lazily load the raw Font Awesome icon map (keyed by icon name).
- *
- * The result is cached so the chunk is fetched and parsed at most once.
+ * Lazily load the raw icon map (keyed by name); cached after first load.
  *
  * @return {Promise<Record<string, { unicode: string, label: string, styles: Record<string, string> }>>}
  */

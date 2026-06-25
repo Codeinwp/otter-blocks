@@ -36,16 +36,12 @@ import './live-search/index.js';
 import './upsell-block/index.js';
 
 /**
- * Optional modules are loaded on demand, gated on their settings toggle, so
- * their code is only downloaded and parsed when the module is enabled instead
- * of on every editor load.
+ * Load optional modules on demand, gated on their toggle, so they're only
+ * fetched when enabled.
  *
- * `conditions` is intentionally kept as a static import above: it registers a
- * `blocks.registerBlockType` attribute filter (`otterConditions`) that must be
- * in place before core blocks register during editor bootstrap — a timing an
- * async chunk cannot guarantee, and missing it would strip saved conditions.
- * The modules below only register late-safe hooks (RichText formats,
- * `editor.BlockEdit` / `editor.MediaUpload` filters), so deferring them is safe.
+ * `conditions` stays a static import above: its `blocks.registerBlockType`
+ * filter must run before core blocks register, which an async chunk can't
+ * guarantee. The modules below only add late-safe hooks, so deferring is fine.
  */
 if ( window.themeisleGutenberg?.hasModule?.dynamicContent ) {
 	import( /* webpackChunkName: "dynamic-content" */ './dynamic-content/index.js' );

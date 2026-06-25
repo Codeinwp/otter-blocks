@@ -98,8 +98,7 @@ const Edit = ({
 		]);
 	}, [ attributes.fontSize, attributes.fontFamily, attributes.fontVariant, attributes.fontStyle, attributes.textTransform, attributes.letterSpacing ]);
 
-	// The Font Awesome icon map is loaded lazily (it is ~143KB); the icon CSS is
-	// (re)generated once it resolves and whenever the selected icons change.
+	// Load the ~143KB icon map lazily; regenerate icon CSS once it resolves.
 	const [ faIcons, setFaIcons ] = useState( null );
 	useEffect( () => {
 		let isMounted = true;

@@ -241,9 +241,7 @@ class Registration {
 
 		wp_set_script_translations( 'otter-blocks', 'otter-blocks' );
 
-		// The Patterns Library (Design Library) is a separate bundle so it — and
-		// its fuse.js / react-intersection-observer dependencies — only load when
-		// the module is enabled, instead of being parsed on every editor load.
+		// Separate bundle: loads only when the Patterns Library module is on.
 		if ( boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ) ) {
 			$patterns_asset = include OTTER_BLOCKS_PATH . '/build/patterns-library/index.asset.php';
 
@@ -790,8 +788,7 @@ class Registration {
 				continue;
 			}
 
-			// Read the shared asset file once, lazily — only when a matching
-			// block is actually present — instead of on every loop iteration.
+			// Read the shared asset file once, only when a matching block exists.
 			if ( null === $asset_file ) {
 				$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 			}
@@ -903,8 +900,7 @@ class Registration {
 			)
 		);
 
-		// All blocks share the same generated asset file (version/deps); read it
-		// once here instead of re-including it on every loop iteration.
+		// Shared asset file (version/deps) for all blocks — read once, not per block.
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 
 		foreach ( self::$blocks as $block ) {
