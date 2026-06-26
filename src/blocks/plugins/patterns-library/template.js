@@ -49,7 +49,7 @@ export const AsyncPreview = BlockPreview.Async || ( ({ children }) => children )
 // the modal when it mounts inside a BlockPreview — never preview it.
 export const UPSELL_BLOCK = 'themeisle-blocks/patterns-upsell';
 
-const Skeleton = () => <div className="o-library__thumb-skeleton" />;
+export const Skeleton = () => <div className="o-library__thumb-skeleton" />;
 
 // A stable hue per pattern name, for the screenshot placeholder gradient.
 const hueFromName = ( name = '' ) => {

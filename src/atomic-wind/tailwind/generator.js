@@ -25,6 +25,17 @@ const stylesheetMap = {
 	'./utilities.css': { path: 'virtual:tailwindcss/utilities.css', content: assets.utilities },
 };
 
+// One compiler per frame would exhaust the renderer (the editor injects this
+// script into the canvas and every preview iframe). Run the full pipeline only
+// in the top frame; it already styles the canvas via resolveEditorContext().
+function isTopFrame() {
+	try {
+		return window.self === window.top;
+	} catch ( error ) {
+		return false;
+	}
+}
+
 let compiler;
 const classes = new Set();
 let buildQueue = Promise.resolve();
@@ -395,7 +406,7 @@ function rebuild( kind ) {
 		.catch( console.error );
 }
 
-document.addEventListener( 'DOMContentLoaded', () => {
+function bootstrap() {
 	let retries = 0;
 	const maxRetries = 20;
 
@@ -423,4 +434,84 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	};
 
 	waitForEditorContext();
-} );
+}
+
+// Style a preview iframe by borrowing the top frame's shared compiler instead
+// of building a local one. The canvas iframe is excluded (top frame styles it).
+function bootstrapPreviewFrame() {
+	if ( ( window.name || '' ).startsWith( 'editor-canvas' ) ) {
+		return;
+	}
+
+	let queue = Promise.resolve();
+	let pending = false;
+
+	const apply = () => {
+		pending = false;
+
+		let generate;
+		try {
+			generate = window.top && window.top.atomicWindGenerateCss;
+		} catch ( error ) {
+			// Cross-origin parent.
+			return;
+		}
+
+		if ( 'function' !== typeof generate ) {
+			return;
+		}
+
+		const found = new Set();
+		for ( const el of document.querySelectorAll( '[class]' ) ) {
+			for ( const c of el.classList ) {
+				found.add( c );
+			}
+		}
+
+		if ( 0 === found.size ) {
+			return;
+		}
+
+		queue = queue
+			.then( () => generate( Array.from( found ) ) )
+			.then( ( css ) => {
+				ensureStyleTag( document );
+				sheet.textContent = css;
+			} )
+			.catch( () => {} );
+	};
+
+	const schedule = () => {
+		if ( pending ) {
+			return;
+		}
+		pending = true;
+		( window.requestAnimationFrame || window.setTimeout )( apply );
+	};
+
+	schedule();
+
+	// Parent injects markup after load; regenerate when it arrives. Body only,
+	// so our own <head> style writes can't retrigger this.
+	const observer = new MutationObserver( schedule );
+	observer.observe( document.body, {
+		attributes: true,
+		attributeFilter: [ 'class' ],
+		childList: true,
+		subtree: true,
+	} );
+}
+
+function start() {
+	if ( isTopFrame() ) {
+		bootstrap();
+	} else {
+		bootstrapPreviewFrame();
+	}
+}
+
+if ( document.readyState === 'loading' ) {
+	document.addEventListener( 'DOMContentLoaded', start );
+} else {
+	start();
+}
