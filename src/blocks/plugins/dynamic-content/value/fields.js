@@ -17,6 +17,7 @@ import {
 	ExternalLink,
 	SelectControl,
 	TextControl,
+	ToggleControl,
 	PanelBody,
 	Spinner
 } from '@wordpress/components';
@@ -41,7 +42,8 @@ import { getQueryStringFromObject, setUtm } from '../../../helpers/helper-functi
 let hasSettingsPanel = [
 	'postExcerpt',
 	'date',
-	'time'
+	'time',
+	'archiveTitle'
 ];
 
 const dateFormats = {
@@ -240,6 +242,15 @@ const Fields = ({
 								/>
 							) }
 						</Fragment>
+					) }
+
+					{ 'archiveTitle' === attributes.type && (
+						<ToggleControl
+							label={ __( 'Remove Title Prefix', 'otter-blocks' ) }
+							help={ __( 'Display only the term name, removing prefixes such as "Category:", "Tag:", or "Author:".', 'otter-blocks' ) }
+							checked={ Boolean( attributes.hidePrefix ) && 'false' !== attributes.hidePrefix }
+							onChange={ value => changeAttributes({ hidePrefix: value ? '1' : undefined }) }
+						/>
 					) }
 
 					{ applyFilters( 'otter.dynamicContent.text.controls', '', attributes, changeAttributes ) }
