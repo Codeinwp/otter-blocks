@@ -1,0 +1,15 @@
+// Editor-only styles. Active slide is shown via a scoped nth-child <style> from edit.js.
+
+@import 'chrome';
+
+.o-content-slider.is-editor {
+	.o-content-track {
+		display: block;
+		overflow: visible;
+		scroll-snap-type: none;
+
+		> [data-block] {
+			margin: 0;
+		}
+	}
+}

@@ -48,7 +48,8 @@ export const format = {
 		metaKey: 'data-meta-key',
 		parameter: 'data-parameter',
 		format: 'data-format',
-		taxonomy: 'data-taxonomy'
+		taxonomy: 'data-taxonomy',
+		hidePrefix: 'data-hide-prefix'
 	},
 	edit
 };
@@ -82,7 +83,7 @@ const withDynamicConditions = createHigherOrderComponent( BlockEdit => {
 
 			elements.forEach( element => {
 				const context = select( 'core/editor' ).getCurrentPostId();
-				const attrs = pick( Object.assign({ context }, element.dataset ), [ 'type', 'context', 'before', 'after', 'length', 'dateType', 'dateFormat', 'dateCustom', 'timeType', 'timeFormat', 'timeCustom', 'termType', 'termSeparator', 'metaKey', 'taxonomy' ]);
+				const attrs = pick( Object.assign({ context }, element.dataset ), [ 'type', 'context', 'before', 'after', 'length', 'dateType', 'dateFormat', 'dateCustom', 'timeType', 'timeFormat', 'timeCustom', 'termType', 'termSeparator', 'metaKey', 'taxonomy', 'hidePrefix' ]);
 
 				if ( 'postContent' === attrs.type ) {
 					return;
