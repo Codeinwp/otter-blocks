@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies.
  */
-import { cloneBlock, parse, rawHandler, serialize } from '@wordpress/blocks';
+import { cloneBlock, serialize } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
 
 /**
@@ -47,26 +47,6 @@ export const cloneBlocksForPreview = ( blocks: BlockProps<unknown>[] ): BlockPro
 	return ( blocks || [] ).map( ( block ) =>
 		cloneBlock( block as Parameters<typeof cloneBlock>[0] )
 	);
-};
-
-export const collectBlockNames = ( blocks: BlockProps<unknown>[] ): string[] => {
-	const names = new Set<string>();
-
-	const walk = ( blockList: BlockProps<unknown>[] ) => {
-		for ( const block of blockList ) {
-			if ( block.name ) {
-				names.add( block.name );
-			}
-
-			if ( block.innerBlocks?.length ) {
-				walk( block.innerBlocks as BlockProps<unknown>[] );
-			}
-		}
-	};
-
-	walk( blocks );
-
-	return [ ...names ];
 };
 
 const sanitizeAttributeDefinition = ( attr: Record<string, unknown> ): Record<string, unknown> => {
@@ -187,16 +167,6 @@ export const buildBlockSchemaPayload = (
 	};
 };
 
-export const extractBlockAttributeDefinitions = (
-	blocks: BlockProps<unknown>[],
-	getBlockType?: GetBlockType
-): string => {
-	const resolveBlockType: GetBlockType = getBlockType ?? ( ( name ) => select( 'core/blocks' )?.getBlockType( name ) );
-	const payload = buildBlockSchemaPayload( blocks, resolveBlockType );
-
-	return payload ? JSON.stringify( payload, null, 2 ) : '';
-};
-
 /**
  * Build the default context the chat attaches for the selected block(s): the
  * serialized block markup plus a schema map deduplicated by block type and the
@@ -260,76 +230,6 @@ export const extractBlockMarkup = ( blocks: BlockProps<unknown>[] ): string => {
 	} catch {
 		return '';
 	}
-};
-
-export const extractBlockTypes = ( blocks: BlockProps<unknown>[] ): string => {
-	return blocks.map( ( block ) => block.name?.replace( 'core/', '' ) || block.name ).join( ', ' );
-};
-
-export const parseGeneratedHtml = ( html: string ) => {
-	return rawHandler({
-		HTML: html
-	});
-};
-
-/**
- * Parse AI-generated content into blocks. Tries the WordPress block parser
- * first (handles `<!-- wp:xxx -->` comment syntax), then falls back to
- * {@link parseGeneratedHtml} for raw HTML.
- *
- * @param {string} html Generated HTML or block markup.
- */
-export const parseGeneratedContent = ( html: string ) => {
-	const blocks = parse( html );
-
-	if ( blocks.length ) {
-		return blocks;
-	}
-
-	return parseGeneratedHtml( html );
-};
-
-export const preservePlainTextAsBlock = (
-	generatedHtml: string,
-	sourceBlocks: BlockProps<unknown>[]
-) => {
-	const plainText = generatedHtml.replace( /<[^>]+>/g, '' ).trim();
-
-	if ( plainText && plainText === generatedHtml.trim() && 1 === sourceBlocks.length ) {
-		const source = sourceBlocks[0];
-
-		if ( 'core/paragraph' === source.name ) {
-			return parseGeneratedHtml( `<p>${ plainText }</p>` );
-		}
-
-		if ( 'core/heading' === source.name ) {
-			const level = ( source.attributes?.level as number ) || 2;
-			return parseGeneratedHtml( `<h${ level }>${ plainText }</h${ level }>` );
-		}
-	}
-
-	return parseGeneratedContent( generatedHtml );
-};
-
-/**
- * Apply generated content to blocks, routing through the appropriate parser
- * based on the action's availability. "Any block" actions skip the
- * plain-text-wrapping logic so structural rebuilds survive deserialization.
- *
- * @param {string}                                               generatedHtml Generated content from the model.
- * @param {import('../../helpers/blocks').BlockProps<unknown>[]} sourceBlocks  Selected source blocks.
- * @param {'richtext'|'any'}                                     availability  Action availability scope.
- */
-export const applyGeneratedContent = (
-	generatedHtml: string,
-	sourceBlocks: BlockProps<unknown>[],
-	availability: 'richtext' | 'any'
-) => {
-	if ( 'any' === availability ) {
-		return parseGeneratedContent( generatedHtml );
-	}
-
-	return preservePlainTextAsBlock( generatedHtml, sourceBlocks );
 };
 
 const mergeAllowedAttributes = (

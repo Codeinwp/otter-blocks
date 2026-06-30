@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "themeisle-blocks/content-generator",
-	"title": "AI Block (Beta)",
+	"title": "AI Block",
 	"category": "themeisle-blocks",
 	"description": "Generate content for your block with AI.",
 	"keywords": [

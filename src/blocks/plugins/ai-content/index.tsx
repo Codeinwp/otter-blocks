@@ -98,7 +98,7 @@ const AIToolbarMenu = ({
 			}
 			<MenuGroup>
 				<MenuItem onClick={ () => openAction( toolbarActions[0]?.id, extractBlockTextContent( activeBlocks ) ) }>
-					{ __( 'Use as prompt', 'otter-blocks' ) }
+					{ __( 'Edit with AI', 'otter-blocks' ) }
 				</MenuItem>
 			</MenuGroup>
 			<MenuGroup>
