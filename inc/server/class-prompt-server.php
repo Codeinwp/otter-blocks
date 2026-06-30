@@ -188,6 +188,45 @@ class Prompt_Server {
 	}
 
 	/**
+	 * Whether AI prompt debug logging is enabled.
+	 *
+	 * Off by default. Enable by defining `OTTER_AI_DEBUG` truthy (e.g. in
+	 * wp-config.php) or via the `otter_ai_debug` filter. Falls back to WP_DEBUG.
+	 *
+	 * @return bool
+	 */
+	private function ai_debug_enabled() {
+		$enabled = ( defined( 'OTTER_AI_DEBUG' ) && OTTER_AI_DEBUG ) || ( defined( 'WP_DEBUG' ) && WP_DEBUG );
+
+		return (bool) apply_filters( 'otter_ai_debug', $enabled );
+	}
+
+	/**
+	 * Log an AI prompt debug payload.
+	 *
+	 * Sends to Laravel Herd's dump server when available (the global `dump()`
+	 * helper Herd injects), and always mirrors a compact line to the PHP error
+	 * log so it shows up in WP's debug.log regardless of environment.
+	 *
+	 * @param string $label Short label for the payload.
+	 * @param mixed  $data  Data to log.
+	 * @return void
+	 */
+	private function ai_debug_log( $label, $data ) {
+		if ( ! $this->ai_debug_enabled() ) {
+			return;
+		}
+
+		// Laravel Herd dump server — captures global dump()/dd() calls.
+		if ( function_exists( 'dump' ) ) {
+			dump( array( 'otter-ai' => $label, 'data' => $data ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+		}
+
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( '[Otter AI] ' . $label . ' ' . wp_json_encode( $data ) );
+	}
+
+	/**
 	 * Forward the prompt to OpenAI API.
 	 *
 	 * @param \WP_REST_Request $request Request object.
@@ -201,6 +240,8 @@ class Prompt_Server {
 		if ( ! is_array( $body ) ) {
 			return new \WP_Error( 'rest_invalid_json', __( 'Invalid prompt request body.', 'otter-blocks' ), array( 'status' => 400 ) );
 		}
+
+		$this->ai_debug_log( 'forward_prompt: request messages', isset( $body['messages'] ) ? $body['messages'] : $body );
 
 		// Extract the data from keys that start with 'otter_'.
 		$otter_data = array_filter(
@@ -238,12 +279,16 @@ class Prompt_Server {
 		}
 
 		if ( is_wp_error( $result ) ) {
+			$this->ai_debug_log( 'forward_prompt: backend WP_Error', array( 'code' => $result->get_error_code(), 'message' => $result->get_error_message() ) );
 			return $result;
 		}
 
 		if ( ! AI_Response::is_valid( $result ) ) {
+			$this->ai_debug_log( 'forward_prompt: invalid backend response', $result );
 			return AI_Response::error( 'invalid_backend_response', __( 'The AI backend returned an invalid response.', 'otter-blocks' ), 'otter', 502 );
 		}
+
+		$this->ai_debug_log( 'forward_prompt: backend response', $result );
 
 		$this->record_prompt_usage( $otter_data );
 

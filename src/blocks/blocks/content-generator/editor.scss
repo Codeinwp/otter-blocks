@@ -88,6 +88,51 @@
 		}
 	}
 
+	&__colors {
+		width: 100%;
+		margin-top: 14px;
+	}
+
+	&__colors-head {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 12px;
+	}
+
+	&__swatches {
+		display: inline-flex;
+		flex: 0 0 auto;
+		transition: opacity 0.15s ease;
+
+		&.is-off {
+			opacity: 0.35;
+			filter: grayscale( 1 );
+		}
+	}
+
+	&__swatch {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		border: 1px solid rgba( 0, 0, 0, 0.1 );
+		box-shadow: 0 0 0 2px #fff;
+
+		// Overlap the swatches into a tidy stack.
+		& + & {
+			margin-left: -6px;
+		}
+	}
+
+	&__colors-toggle {
+		margin-bottom: 0;
+	}
+
+	&__option {
+		width: 100%;
+		margin-top: 14px;
+	}
+
 	&__actions {
 		display: flex;
 		flex-direction: row;

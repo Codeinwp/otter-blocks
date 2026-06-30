@@ -14,7 +14,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 
 import { __ } from '@wordpress/i18n';
 
-import { Button, Disabled, Placeholder, TextareaControl } from '@wordpress/components';
+import { Button, Disabled, Placeholder, TextareaControl, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -25,6 +25,7 @@ import PromptPlaceholder from '../../components/prompt';
 import { aiGeneration as icon } from '../../helpers/icons.js';
 import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
 import AIContentModal from '../../plugins/ai-content/modal';
+import EnableAtomicWind from '../../plugins/patterns-library/enableAtomicWind';
 import useSettings from '../../helpers/use-settings';
 import {
 	DEFAULT_BUILTIN_ACTIONS,
@@ -63,9 +64,24 @@ const ContentGenerator = ({
 	const blockProps = useBlockProps();
 
 	const [ prompt, setPrompt ] = useState( '' );
-	const [ scope ] = useState( 'section' );
+	const [ scope, setScope ] = useState( 'section' );
+	const [ includeColors, setIncludeColors ] = useState( true );
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const [ getOption, _, settingsStatus ] = useSettings();
+
+	// The theme's editor palette — previewed in the card so the user can see what
+	// would be sent, and toggle it off to let the model pick its own colors.
+	const themeColors = useSelect(
+		select => select( 'core/block-editor' )?.getSettings?.()?.colors ?? [],
+		[]
+	);
+
+	// Generation is locked to Atomic Wind primitives, so the blocks must be
+	// registered. When they aren't, the card is replaced by an enable gate.
+	const isAtomicWindAvailable = useSelect(
+		select => Boolean( select( 'core/blocks' )?.getBlockType?.( 'atomic-wind/box' ) ),
+		[]
+	);
 
 	const toolbarActions = useMemo( () => {
 		if ( 'loading' === settingsStatus ) {
@@ -230,6 +246,35 @@ const ContentGenerator = ({
 		);
 	}
 
+	// Generation is locked to Atomic Wind primitives. When those blocks are
+	// disabled there's nothing to build with, so swap the card for the same
+	// enable gate the Design Library uses (one-click enable, then reload).
+	if ( ! isAtomicWindAvailable ) {
+		return (
+			<Fragment>
+				<Inspector
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+				/>
+
+				<div { ...blockProps }>
+					<EnableAtomicWind
+						title={ __( 'Atomic Wind blocks are required', 'otter-blocks' ) }
+						description={ __( 'The AI content generator builds with Otter\'s Atomic Wind blocks, which are currently disabled. Enable them to generate sections and pages.', 'otter-blocks' ) }
+					/>
+					<div className="o-ai-create-card__actions">
+						<Button
+							variant="tertiary"
+							onClick={ () => removeBlock( clientId ) }
+						>
+							{ __( 'Cancel', 'otter-blocks' ) }
+						</Button>
+					</div>
+				</div>
+			</Fragment>
+		);
+	}
+
 	// Content path: a compact launcher that opens the generation modal. The modal
 	// generates, previews and (on Done) replaces this block with the result.
 	return (
@@ -243,9 +288,28 @@ const ContentGenerator = ({
 				<Placeholder
 					icon={ icon }
 					label={ __( 'AI Content generator', 'otter-blocks' ) }
-					instructions={ __( 'Describe a section and Otter AI will build it with your blocks & theme styles.', 'otter-blocks' ) }
+					instructions={ 'page' === scope
+						? __( 'Describe a page and Otter AI will build it with your blocks & theme styles.', 'otter-blocks' )
+						: __( 'Describe a section and Otter AI will build it with your blocks & theme styles.', 'otter-blocks' ) }
 					className="o-ai-create-card"
 				>
+					<div className="o-ai-create-card__scope" role="group" aria-label={ __( 'What to generate', 'otter-blocks' ) }>
+						<Button
+							variant={ 'section' === scope ? 'primary' : 'secondary' }
+							isSmall
+							onClick={ () => setScope( 'section' ) }
+						>
+							{ __( 'Section', 'otter-blocks' ) }
+						</Button>
+						<Button
+							variant={ 'page' === scope ? 'primary' : 'secondary' }
+							isSmall
+							onClick={ () => setScope( 'page' ) }
+						>
+							{ __( 'Full page', 'otter-blocks' ) }
+						</Button>
+					</div>
+
 					<TextareaControl
 						value={ prompt }
 						onChange={ setPrompt }
@@ -267,13 +331,40 @@ const ContentGenerator = ({
 						) ) }
 					</div>
 
+					{ 0 < themeColors.length && (
+						<div className="o-ai-create-card__colors">
+							<div className="o-ai-create-card__colors-head">
+								<div
+									className={ `o-ai-create-card__swatches${ includeColors ? '' : ' is-off' }` }
+									aria-hidden="true"
+								>
+									{ themeColors.slice( 0, 8 ).map( ( color ) => (
+										<span
+											key={ color.slug ?? color.color }
+											className="o-ai-create-card__swatch"
+											style={ { backgroundColor: color.color } }
+											title={ color.name ?? color.slug }
+										/>
+									) ) }
+								</div>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									className="o-ai-create-card__colors-toggle"
+									label={ __( 'Use my theme colors', 'otter-blocks' ) }
+									checked={ includeColors }
+									onChange={ setIncludeColors }
+								/>
+							</div>
+						</div>
+					) }
+
 					<div className="o-ai-create-card__actions">
 						<Button
 							variant="primary"
 							disabled={ ! prompt.trim() }
 							onClick={ () => setModalOpen( true ) }
 						>
-							{ __( 'Generate', 'otter-blocks' ) }
+							{ 'page' === scope ? __( 'Generate page', 'otter-blocks' ) : __( 'Generate section', 'otter-blocks' ) }
 						</Button>
 						<Button
 							variant="tertiary"
@@ -295,6 +386,7 @@ const ContentGenerator = ({
 					onDiscard={ discardGenerationModal }
 					onApplyBlocks={ applyGeneratedBlocks }
 					actions={ toolbarActions }
+					includeThemeColors={ includeColors }
 					initialPrompt={ prompt }
 					selectedBlocks={ [] }
 					isMultipleSelection={ false }

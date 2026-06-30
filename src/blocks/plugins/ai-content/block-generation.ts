@@ -1,34 +1,15 @@
 /**
  * WordPress dependencies.
  */
-import { createBlock, parse } from '@wordpress/blocks';
+import { createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies.
  */
 import type { BlockProps } from '../../helpers/blocks';
 import { isObject, parseJsonResponse, toStringArray } from './json-utils';
-import {
-	applyAttributePatches,
-	applyPatchesToBlocks,
-	attachIds,
-	blocksToTrees,
-	buildIdToBlockNameMap,
-	normalizePatchAttributes,
-	parsePatchPayload,
-	patchesToMap
-} from './block-patches';
-import type { IdentifiedNode } from './block-patches';
-import {
-	applyStructureEdits,
-	hasStructureEdits,
-	parseStructureEditPayload
-} from './structure-edits';
-import { findQualityIssues, formatIssuesForPrompt } from './quality-checks';
-import type { QualityIssue } from './quality-checks';
 import { formatSessionHistoryForPrompt } from './session-history';
 import { PIPELINE_STEP } from './prompts/phases';
-import { buildBlockIndex, formatBlockIndexForPrompt } from './block-index';
 
 type AttributeDefinition = Record<string, unknown>;
 
@@ -98,6 +79,24 @@ export type GenerationPlan = {
 	roots: StructureNode[];
 };
 
+/** One section brief from the page-outline step: a label and its intent, no blocks. */
+export type SectionBrief = {
+	title: string;
+	notes?: string;
+};
+
+/**
+ * The lightweight page-outline output: the shared mission/design/rationale plus an
+ * ordered list of section briefs. No block slugs or nesting — those are chosen per
+ * section in a later step, so this call stays small.
+ */
+export type PageOutline = {
+	mission: string;
+	design: DesignDirection;
+	rationale: string[];
+	sections: SectionBrief[];
+};
+
 /**
  * A registered block pattern, as returned by `select( 'core' ).getBlockPatterns()`.
  * Only the fields the generator reads are typed.
@@ -112,58 +111,6 @@ export type PatternLike = {
 	blockTypes?: string[];
 };
 
-/**
- * Req 2 — the slim pattern catalog handed to the model: enough to pick a pattern
- * by name without shipping the (large) serialized content.
- */
-export type PatternCatalogEntry = {
-	name: string;
-	title: string;
-	description: string;
-	categories: string[];
-};
-
-/**
- * Req 1 — a conceptual section in the layout brief: a stable id and an intent
- * sentence. No block slugs yet; that comes from patterns (Req 2) or the gap
- * outline (Req 3).
- */
-export type LayoutSection = {
-	id: string;
-	intent: string;
-};
-
-/**
- * Req 1 output — the high-level brief: mission, shared design direction and the
- * ordered conceptual section list.
- */
-export type LayoutBrief = {
-	mission: string;
-	design: DesignDirection;
-	sections: LayoutSection[];
-};
-
-/**
- * Req 2 output — the model's pattern choice for one section. `patternName` is
- * null when no library pattern fits and the section must be generated instead.
- */
-export type PatternAssignment = {
-	sectionId: string;
-	patternName: string | null;
-	note?: string;
-};
-
-/**
- * Req 4 — one section of the combined draft, before the attribute/rewrite phase.
- * Pattern-sourced roots carry their parsed tree (with attributes) as `seed`;
- * generated roots carry only the slug outline.
- */
-export type DraftRoot = {
-	source: 'pattern' | 'generated';
-	sectionId: string;
-	node: StructureNode;
-	seed?: GeneratedBlockTree;
-};
 
 /**
  * Phase 3 — the real attribute schema for the block types actually used in a
@@ -207,8 +154,6 @@ export type BlockGenerationResult = {
 	diagnostics: {
 		droppedRoots: DroppedGeneratedRoot[];
 	};
-	/** Token-limited search hits for the rolling agent context domain. */
-	contextPayload?: import( './agent-context' ).AgentContextPayload;
 };
 
 /**
@@ -244,39 +189,19 @@ type GenerateBlocksFromTaskArgs = {
 	history?: string[];
 
 	/**
-	 * Coarse pipeline phase, for driving the loading copy: 'briefing' →
-	 * 'selecting' → 'outlining' → 'building' → 'polishing'. 'refining' is used by
-	 * the standalone refine pass.
+	 * Generation scope. 'page' builds a full multi-section page; to keep any single
+	 * model call small enough to come back cleanly, a page is planned as
+	 * lightweight section briefs first, then each section is outlined and filled on
+	 * its own call. 'section' (the default) plans and fills one section in the
+	 * original single-outline flow.
 	 */
-	onPhase?: ( phase: 'briefing' | 'selecting' | 'outlining' | 'building' | 'polishing' | 'refining' ) => void;
+	scope?: 'section' | 'page';
+
+	/** Coarse pipeline phase, for driving the loading copy. */
+	onPhase?: ( phase: 'planning' | 'refining' ) => void;
 	onPlanReady?: ( plan: GenerationPlan ) => void;
 	onRootComplete?: ( completion: RootCompletion ) => void;
 };
-
-type RefineBlocksArgs = {
-	task: string;
-	instruction: string;
-	baseBlocks: BlockProps<unknown>[];
-	blockTypes: BlockTypeLike[];
-	themeColors?: ThemeColor[];
-	requestCompletion: ( prompt: string ) => Promise<string>;
-	onPhase?: ( phase: 'refining' ) => void;
-
-	/**
-	 * Optional serialized markup + schema context for the selection.
-	 */
-	referenceContext?: string;
-
-	/**
-	 * The user's earlier chat requests this session (oldest first), threaded into
-	 * the refine prompt so the model can resolve follow-up references.
-	 */
-	history?: string[];
-};
-
-type StructureEditBlocksArgs = RefineBlocksArgs;
-
-const PATTERN_CATALOG_MAX = 60;
 
 type ModelGenerationPayload = {
 	rationale?: string[];
@@ -307,7 +232,10 @@ const KNOWN_CONTAINERS = new Set([
 	'themeisle-blocks/timeline-item',
 	'themeisle-blocks/accordion-item',
 	'themeisle-blocks/tabs-item',
-	'themeisle-blocks/flip'
+	'themeisle-blocks/flip',
+	// The Atomic Wind layout primitive — every section, row and card is a box,
+	// and it holds its inner primitives without advertising allowedBlocks.
+	'atomic-wind/box'
 ]);
 
 /*
@@ -348,6 +276,12 @@ const isCatalogBlockAllowed = ( blockType: BlockTypeLike ) => {
 		return false;
 	}
 
+	// The Atomic Wind primitives are the entire generation vocabulary — never let
+	// the asset/service filter drop one (e.g. atomic-wind/image matches "image").
+	if ( blockType.name.startsWith( 'atomic-wind/' ) ) {
+		return true;
+	}
+
 	// Match against the block name only. Titles are translated and prone to
 	// substring false positives (e.g. "Profile" contains "file").
 	return ! ASSET_OR_SERVICE_BLOCK_PATTERN.test( blockType.name );
@@ -383,7 +317,9 @@ const textAttributesOf = ( blockType: BlockTypeLike | undefined ): string[] => {
 
 /**
  * Phase 1 — build the slim structure catalog (slug + short description +
- * container hint). Core and Otter blocks pass the inserter/asset filter.
+ * container hint). Generation is Atomic-Wind-only, so the catalog is the
+ * `atomic-wind/*` primitives exclusively — every other block type is excluded so
+ * the model is never shown a block it shouldn't use.
  *
  * @param blockTypes The registered block types to filter into the catalog.
  */
@@ -394,6 +330,7 @@ export const buildStructureCatalog = (
 
 	return blockTypes
 		.filter( isCatalogBlockAllowed )
+		.filter( blockType => blockType.name.startsWith( 'atomic-wind/' ) )
 		.map( blockType => ({
 			slug: blockType.name,
 			description: trimDescription( blockType.description || '' ),
@@ -417,36 +354,6 @@ export const buildAttributeSchema = (
 		.map( blockType => ({
 			slug: blockType.name,
 			attributes: textAttributesOf( blockType )
-		}) );
-};
-
-/*
- * Every author-settable attribute name on a block, excluding internal roles
- * (local/meta). Refine needs the full surface (colors, sizes, style, …), not
- * just text, so the model knows the real attribute name to patch.
- */
-const editableAttributesOf = ( blockType: BlockTypeLike | undefined ): string[] => {
-	return Object.entries( blockType?.attributes || {})
-		.filter( ( [ , attr ] ) => 'local' !== attr?.role && 'meta' !== attr?.role )
-		.map( ( [ attrName ] ) => attrName );
-};
-
-/**
- * Build the full settable-attribute schema for the given slugs — used by refine,
- * where any attribute (not just text) may need to change.
- *
- * @param blockTypes The registered block types.
- * @param slugs      The block slugs present in the result being refined.
- */
-export const buildFullAttributeSchema = (
-	blockTypes: BlockTypeLike[],
-	slugs: Set<string>
-): AttributeSchemaEntry[] => {
-	return blockTypes
-		.filter( blockType => slugs.has( blockType.name ) )
-		.map( blockType => ({
-			slug: blockType.name,
-			attributes: editableAttributesOf( blockType )
 		}) );
 };
 
@@ -725,9 +632,75 @@ const parsePlanPayload = ( response: string ): GenerationPlan => {
 	};
 };
 
+/**
+ * Parse the page-outline step: mission, design, rationale and a list of section
+ * briefs. Tolerant — anything unparseable yields zero sections so the caller can
+ * fall back to the single-outline flow.
+ *
+ * @param response The raw model response for the page-outline prompt.
+ */
+const parsePageOutline = ( response: string ): PageOutline => {
+	const parsed = parseJsonResponse( response );
+
+	if ( ! parsed ) {
+		return { mission: '', design: {}, rationale: [], sections: [] };
+	}
+
+	const sections = Array.isArray( parsed.sections )
+		? parsed.sections
+			.filter( isObject )
+			.map( ( entry ) => ({
+				title: 'string' === typeof entry.title ? entry.title : '',
+				notes: 'string' === typeof entry.notes ? entry.notes : undefined
+			}) )
+			.filter( ( section ) => section.title || section.notes )
+		: [];
+
+	return {
+		mission: 'string' === typeof parsed.mission ? parsed.mission : '',
+		design: parseDesignDirection( parsed.design ),
+		rationale: toStringArray( parsed.rationale ),
+		sections
+	};
+};
+
 const collectSlugs = ( node: StructureNode, slugs: Set<string> ) => {
 	slugs.add( node.name );
 	( node.innerBlocks || []).forEach( inner => collectSlugs( inner, slugs ) );
+};
+
+/*
+ * The way a section's tree balloons is a long run of same-slug siblings — a
+ * gallery's tiles, a grid's cards, a list's rows. Each extra item multiplies the
+ * copy + classes the CONSTRUCT step must emit in one response, and that is what
+ * tips a section over the upstream size limit (the reply comes back non-JSON).
+ * Cap each such run to a representative few so no single section can grow large
+ * enough to fail, regardless of what the outline asked for.
+ */
+const MAX_REPEATED_SIBLINGS = 4;
+
+const capSectionSize = ( node: StructureNode ): StructureNode => {
+	const children = node.innerBlocks ?? [];
+
+	if ( ! children.length ) {
+		return node;
+	}
+
+	const kept: StructureNode[] = [];
+	const seenBySlug: Record<string, number> = {};
+
+	for ( const child of children ) {
+		const seen = ( seenBySlug[ child.name ] ?? 0 ) + 1;
+		seenBySlug[ child.name ] = seen;
+
+		// Trim only the surplus repeats of one slug at this level; the first few
+		// (the representative set) are kept and recursed into.
+		if ( seen <= MAX_REPEATED_SIBLINGS ) {
+			kept.push( capSectionSize( child ) );
+		}
+	}
+
+	return { ...node, innerBlocks: kept };
 };
 
 /*
@@ -768,12 +741,18 @@ const formatPaletteForPrompt = ( colors: ThemeColor[] ): string => {
  */
 const formatHistoryForPrompt = formatSessionHistoryForPrompt;
 
-const ATOMIC_WIND_STRUCTURE_HINT = 'The catalog includes Atomic Wind primitives (atomic-wind/box, atomic-wind/text, atomic-wind/icon, atomic-wind/link). These are low-level building blocks: "box" is a flexible container that nests any block, while text, icon and link hold the content. Combined, they can build almost any structure. Use the higher-level blocks for common patterns, but reach for these primitives whenever they let you craft a more polished, custom, or distinctive design — they are a first-class option, not just a fallback.';
+/*
+ * Keep any one section small enough that its single CONSTRUCT call (which must
+ * fill copy + classes for the whole tree at once) stays well under upstream
+ * size/latency limits. A sprawling section is the thing that comes back non-JSON.
+ */
+const SECTION_SIZE_HINT = 'Keep this section compact: prefer a small, focused block tree over a sprawling one. For any repeating group (gallery, grid, cards, testimonials, logos, steps), include only 3–4 representative items — never a long list. A lean section that reads well beats an exhaustive one.';
+
+const ATOMIC_WIND_FORCE_HINT = 'Build the ENTIRE structure exclusively from Atomic Wind primitives: atomic-wind/box, atomic-wind/text, atomic-wind/icon, atomic-wind/link and atomic-wind/image. Use atomic-wind/box for every section, row, card and container, and nest the content primitives inside it — a box can reproduce any layout, so do NOT use any other block type from the catalog. Give each top-level section box "align":"full" and its own padding (e.g. "px-6 py-24"), then constrain and center its content with an inner box (e.g. "mx-auto max-w-5xl flex flex-col items-center gap-8 text-center"). Space children with the parent box\'s flex/grid "gap" — not element margins.';
 
 const buildPlanPrompt = (
 	task: string,
 	catalog: StructureCatalogEntry[],
-	atomicAvailable: boolean,
 	themeColors: ThemeColor[],
 	history?: string[]
 ) => {
@@ -791,7 +770,8 @@ const buildPlanPrompt = (
 		'Each root\'s "notes" should state that section\'s intent plus any structure or styling guidance for it (e.g. "hero with headline + CTA, use the primary color").',
 		'If you use a form block, do NOT add a separate submit button or button block — the Otter Form already renders its own submit button.',
 		'Prefer simple, reusable structures. Keep the reasoning ordered and human-readable.',
-		...( atomicAvailable ? [ ATOMIC_WIND_STRUCTURE_HINT ] : [] ),
+		SECTION_SIZE_HINT,
+		ATOMIC_WIND_FORCE_HINT,
 		'Return strict JSON: { "mission": string, "design": { "style": string, "palette": string[], "borderRadius": string, "spacing": string, "typography": string }, "rationale": string[], "roots": [ { "name": string, "notes": string, "innerBlocks": [...] } ] }.',
 		'Block catalog, one per line as `slug: description`. A slug marked [container] can hold inner blocks:',
 		formatCatalogForPrompt( catalog ),
@@ -822,13 +802,61 @@ const formatDesignForPrompt = ( design: DesignDirection ): string => {
 	return parts.join( '; ' );
 };
 
-const ATOMIC_WIND_ATTRIBUTE_HINT = 'Atomic Wind blocks (atomic-wind/*) are styled entirely with Tailwind CSS utility classes set on their "className" attribute — e.g. "flex flex-col gap-6 p-8 rounded-xl bg-slate-900 text-white", including arbitrary values like "bg-[#0f172a]" or "w-[320px]". For these blocks, write Tailwind utility classes into "className" to create the visual design (layout, spacing, colors, typography); do NOT put prose into "className". Use "tagName" to pick the right semantic element (section, header, nav, article, etc.). Keep the palette coherent and text readable against its background.';
+export const ATOMIC_WIND_ATTRIBUTE_HINT = [
+	'Atomic Wind blocks (atomic-wind/*) are styled entirely with Tailwind v4 utility classes set on their "className" attribute — layout, spacing, color and typography — e.g. "flex flex-col gap-6 p-8 rounded-xl bg-slate-900 text-white". Any valid Tailwind v4 utility works, including arbitrary values ("bg-[#0f172a]", "w-[320px]"), gradients ("bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950"), opacity ("bg-white/10", "border-white/20"), state and group variants ("transition hover:bg-violet-200", "group", "group-hover:grayscale-0"), responsive prefixes ("md:grid-cols-3", "md:text-7xl") and sizing ("size-6", "aspect-square").',
+	'Rules for atomic-wind blocks:',
+	'- Always add "m-0" to every atomic-wind/text, atomic-wind/image and atomic-wind/icon className. Spacing comes from the parent box\'s gap; without "m-0" the site theme reintroduces heading/paragraph margins on the frontend (they show only after insertion, not in preview).',
+	'- atomic-wind/icon renders its own SVG from a Lucide icon name in kebab-case set in its "icon" attribute (e.g. "star", "check", "arrow-right", "sparkles", "menu"). Style it with size/color utilities ("size-6 text-indigo-500") and give it no text content.',
+	'- Use "tagName" to pick the right semantic element (section, header, nav, article for boxes; h1–h3, p, span, div for text).',
+	'- Never put prose into "className". Keep the palette coherent and text readable against its background.'
+].join( '\n' );
+
+/*
+ * One validated Atomic Wind section (adapted from the design library's
+ * 08-aw-gradient-hero pattern) expressed in the exact { name, attributes,
+ * innerBlocks } shape the CONSTRUCT step must return. Shown as a few-shot so the
+ * model copies real, working className combinations (gradient section, badge with
+ * icon, responsive heading, gap spacing, "m-0" on text, dual CTAs) instead of
+ * inventing markup. The model adapts the structure and copy to the task.
+ */
+const ATOMIC_WIND_EXAMPLE_TREE = {
+	name: 'atomic-wind/box',
+	attributes: { tagName: 'section', align: 'full', className: 'bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 px-6 py-28' },
+	innerBlocks: [ {
+		name: 'atomic-wind/box',
+		attributes: { className: 'mx-auto flex max-w-5xl flex-col items-center gap-8 text-center' },
+		innerBlocks: [ {
+			name: 'atomic-wind/box',
+			attributes: { className: 'inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5' },
+			innerBlocks: [
+				{ name: 'atomic-wind/icon', attributes: { icon: 'sparkles', className: 'size-4 text-violet-300' }, innerBlocks: [] },
+				{ name: 'atomic-wind/text', attributes: { tagName: 'span', content: 'Now in public beta', className: 'm-0 text-sm font-medium text-violet-200' }, innerBlocks: [] }
+			]
+		}, {
+			name: 'atomic-wind/text',
+			attributes: { tagName: 'h1', content: 'Your data, finally fluent.', className: 'm-0 text-5xl font-bold tracking-tight text-white md:text-7xl' },
+			innerBlocks: []
+		}, {
+			name: 'atomic-wind/text',
+			attributes: { content: 'Pulse turns raw product events into answers your whole team can read — no SQL, no waiting.', className: 'm-0 max-w-2xl text-lg leading-relaxed text-indigo-200' },
+			innerBlocks: []
+		}, {
+			name: 'atomic-wind/box',
+			attributes: { className: 'mt-2 flex flex-wrap justify-center gap-4' },
+			innerBlocks: [
+				{ name: 'atomic-wind/link', attributes: { url: '#signup', text: 'Start free', className: 'inline-block rounded-full bg-white px-8 py-4 text-sm font-bold text-slate-950 transition hover:bg-violet-200' }, innerBlocks: [] },
+				{ name: 'atomic-wind/link', attributes: { url: '#demo', text: 'Watch the demo', className: 'inline-block rounded-full border border-white/30 px-8 py-4 text-sm font-bold text-white transition hover:bg-white/10' }, innerBlocks: [] }
+			]
+		} ]
+	} ]
+};
+
+const ATOMIC_WIND_EXAMPLE = `Reference example — a well-formed Atomic Wind section in this exact output shape. Adapt its structure, classes and palette to the current task; do NOT copy its wording:\n${ JSON.stringify( ATOMIC_WIND_EXAMPLE_TREE ) }`;
 
 const buildAttributePrompt = (
 	task: string,
 	root: StructureNode,
 	schema: AttributeSchemaEntry[],
-	rootUsesAtomic: boolean,
 	plan: GenerationPlan,
 	themeColors: ThemeColor[]
 ) => {
@@ -847,7 +875,8 @@ const buildAttributePrompt = (
 			? [ `Color attributes (backgroundColor, textColor) MUST use one of these exact theme color slugs — never invent a slug:\n${ palette }` ]
 			: [] ),
 		'When a block exposes color attributes (e.g. background, text, or accent colors), apply the design direction\'s palette so the result looks polished instead of bland. Keep the palette coherent across the whole layout and ensure text stays readable against its background. Leave the remaining styling attributes (sizes, CSS) untouched unless essential.',
-		...( rootUsesAtomic ? [ ATOMIC_WIND_ATTRIBUTE_HINT ] : [] ),
+		ATOMIC_WIND_ATTRIBUTE_HINT,
+		ATOMIC_WIND_EXAMPLE,
 		'Return strict JSON: { "rationale": string[], "roots": [ { "name": string, "attributes": object, "innerBlocks": [...] } ] }.',
 		'Allowed attributes, one per line as `slug: attr1, attr2, ...`:',
 		formatSchemaForPrompt( schema ),
@@ -859,375 +888,62 @@ const buildAttributePrompt = (
 };
 
 /*
- * ---------------------------------------------------------------------------
- * Pattern-aware pipeline (Req 1–5): brief → pattern selection → gap outline →
- * combine → per-section fill. All helpers below are only used when the caller
- * passes a non-empty `patterns` list; the catalog-only path is untouched.
- * ---------------------------------------------------------------------------
+ * Full-page step 1 — the lightweight page outline. Plans the mission, a shared
+ * design direction and an ordered list of section briefs (title + intent) with NO
+ * blocks, so the response stays small. The catalog is deliberately omitted here.
  */
-
-/*
- * Patterns to offer the model: Otter patterns (the `otter-blocks` category) plus
- * the active theme's patterns. Core's bundled/remote patterns are skipped — they
- * lean on blocks outside our catalog and bloat the prompt.
- */
-const isOfferablePattern = ( pattern: PatternLike ): boolean => {
-	if ( ! pattern?.name || ! pattern?.content ) {
-		return false;
-	}
-
-	if ( pattern.categories?.includes( 'otter-blocks' ) ) {
-		return true;
-	}
-
-	const { source } = pattern;
-
-	// Theme-registered patterns have source 'theme'; plugin-registered ones often
-	// have no source. Anything explicitly from core / the pattern directory is out.
-	return 'theme' === source || ! source;
-};
-
-/**
- * Req 2 — build the slim pattern catalog (name + title + short description +
- * categories) from the offerable patterns, capped to keep the prompt small.
- *
- * @param patterns The registered patterns from `getBlockPatterns()`.
- */
-export const buildPatternCatalog = (
-	patterns: PatternLike[]
-): PatternCatalogEntry[] => {
-	return ( patterns || [])
-		.filter( isOfferablePattern )
-		.slice( 0, PATTERN_CATALOG_MAX )
-		.map( pattern => ({
-			name: pattern.name,
-			title: ( pattern.title || pattern.name ).trim(),
-			description: trimDescription( pattern.description || '' ),
-			categories: pattern.categories || []
-		}) );
-};
-
-type ParsedBlock = {
-	name: string;
-	attributes?: Record<string, unknown>;
-	innerBlocks?: ParsedBlock[];
-};
-
-/*
- * Inline `core/pattern` references by splicing in the parsed content of the
- * pattern they point to, mirroring `resolvePatternBlocks` in onboarding/utils.
- * The depth guard breaks pattern-in-pattern cycles.
- */
-const resolvePatternRefs = (
-	blocks: ParsedBlock[],
-	patternsByName: Record<string, PatternLike>,
-	depth = 0
-): ParsedBlock[] => {
-	if ( ! Array.isArray( blocks ) || 4 < depth ) {
-		return blocks || [];
-	}
-
-	return blocks.flatMap( block => {
-		if ( ! block ) {
-			return [];
-		}
-
-		if ( 'core/pattern' === block.name ) {
-			const slug = block.attributes?.slug as string | undefined;
-			const pattern = slug ? patternsByName[ slug ] : undefined;
-
-			if ( pattern?.content ) {
-				return resolvePatternRefs( parse( pattern.content ) as ParsedBlock[], patternsByName, depth + 1 );
-			}
-
-			return [];
-		}
-
-		if ( block.innerBlocks?.length ) {
-			return [{
-				...block,
-				innerBlocks: resolvePatternRefs( block.innerBlocks, patternsByName, depth + 1 )
-			}];
-		}
-
-		return [ block ];
-	});
-};
-
-const blockToTree = ( block: ParsedBlock ): GeneratedBlockTree => ({
-	name: block.name,
-	attributes: block.attributes || {},
-	innerBlocks: ( block.innerBlocks || []).map( blockToTree )
-});
-
-/**
- * Parse a pattern's serialized content into attribute-carrying block trees,
- * resolving any nested `core/pattern` references along the way.
- *
- * @param pattern        The chosen pattern.
- * @param patternsByName All patterns, keyed by name, for resolving references.
- */
-export const patternToTrees = (
-	pattern: PatternLike,
-	patternsByName: Record<string, PatternLike>
-): GeneratedBlockTree[] => {
-	if ( ! pattern?.content ) {
-		return [];
-	}
-
-	const parsed = resolvePatternRefs( parse( pattern.content ) as ParsedBlock[], patternsByName );
-
-	return parsed
-		.filter( block => block?.name )
-		.map( blockToTree );
-};
-
-const collectSlugsFromTree = ( tree: GeneratedBlockTree, slugs: Set<string> ) => {
-	slugs.add( tree.name );
-	( tree.innerBlocks || []).forEach( inner => collectSlugsFromTree( inner, slugs ) );
-};
-
-const formatSectionsForPrompt = ( sections: LayoutSection[] ): string => {
-	return sections
-		.map( section => `${ section.id }: ${ section.intent }` )
-		.join( '\n' );
-};
-
-const formatPatternCatalogForPrompt = ( catalog: PatternCatalogEntry[] ): string => {
-	return catalog
-		.map( entry => {
-			const categories = entry.categories.length ? ` [${ entry.categories.join( ', ' ) }]` : '';
-			return `${ entry.name }: ${ entry.title } — ${ entry.description }${ categories }`;
-		})
-		.join( '\n' );
-};
-
-const buildLayoutBriefPrompt = (
+const buildPageOutlinePrompt = (
 	task: string,
-	atomicAvailable: boolean,
 	themeColors: ThemeColor[],
 	history?: string[]
 ) => {
 	const palette = formatPaletteForPrompt( themeColors );
 
 	return [
-		PIPELINE_STEP.BRIEF,
+		PIPELINE_STEP.PAGE_OUTLINE,
 		...formatHistoryForPrompt( history ),
-		'Decide the mission: 1–2 sentences describing what the finished result should look like and achieve.',
-		'Commit to a design direction the whole layout will share: an overall style, a palette of 3–5 colors, a border radius/roundness, a spacing rhythm, and a typography feel.',
+		'First decide the mission: 1–2 sentences describing what the finished page should look like and achieve.',
+		'Then commit to a design direction the whole page will share: an overall style, a palette of 3–5 colors, a border radius/roundness, a spacing rhythm, and a typography feel.',
 		...( palette ? [ `Build the palette ONLY from these theme color slugs — pick 3–5 and list them by slug, do not invent color names:\n${ palette }` ] : []),
-		'Outline the result as an ordered list of conceptual sections (e.g. hero, features, testimonials, pricing, call to action). For a single-section task, return exactly one section.',
-		'Each section needs a short stable "id" (kebab-case, e.g. "hero") and an "intent" sentence describing its purpose and any structure/styling guidance.',
-		...( atomicAvailable ? [ 'Low-level Atomic Wind primitives are available downstream for custom layouts; you do not need to mention them here.' ] : [] ),
-		'Return strict JSON: { "mission": string, "design": { "style": string, "palette": string[], "borderRadius": string, "spacing": string, "typography": string }, "sections": [ { "id": string, "intent": string } ] }.',
+		'Then break the page into an ordered list of sections. For each section give a short "title" (e.g. "Hero", "Gallery", "Pricing") and a "notes" string describing that section\'s intent plus any structure or styling guidance for it. Do NOT choose blocks or nesting yet — each section is outlined and built on its own in later steps.',
+		'Include only the sections the task calls for; keep the page focused and coherent.',
+		'Return strict JSON: { "mission": string, "design": { "style": string, "palette": string[], "borderRadius": string, "spacing": string, "typography": string }, "rationale": string[], "sections": [ { "title": string, "notes": string } ] }.',
 		'Task:',
 		task
 	].join( '\n\n' );
 };
 
-const buildPatternSelectionPrompt = (
-	brief: LayoutBrief,
-	patternCatalog: PatternCatalogEntry[]
-) => {
-	return [
-		PIPELINE_STEP.PATTERN_SEARCH,
-		'For each planned section, choose the SINGLE pattern that best fits its intent, or null if no pattern is a good fit.',
-		'Choose a pattern only when it genuinely matches the section\'s purpose. When nothing fits, set patternName to null so the section can be custom-built instead — do not force a poor match.',
-		'You may add a short "note" explaining the choice or what the pattern is missing for this section.',
-		'Mission for context: ' + ( brief.mission || '(none)' ),
-		'Planned sections, one per line as `id: intent`:',
-		formatSectionsForPrompt( brief.sections ),
-		'Pattern library, one per line as `name: title — description [categories]`. Use the exact `name` when choosing:',
-		formatPatternCatalogForPrompt( patternCatalog ),
-		'Return strict JSON: { "assignments": [ { "sectionId": string, "patternName": string | null, "note": string } ] }.'
-	].join( '\n\n' );
-};
-
-const buildMissingOutlinePrompt = (
+/*
+ * Full-page step 2 — outline ONE section's block structure. Given the shared
+ * mission/design and a single section brief, the model picks catalog slugs and
+ * nesting for just that section, so no call ever serializes the whole page tree.
+ */
+const buildSectionStructurePrompt = (
 	task: string,
-	brief: LayoutBrief,
-	missingSections: LayoutSection[],
+	section: SectionBrief,
 	catalog: StructureCatalogEntry[],
-	atomicAvailable: boolean
+	plan: GenerationPlan
 ) => {
+	const design = formatDesignForPrompt( plan.design );
+
 	return [
-		PIPELINE_STEP.STRUCTURE_GAPS,
-		...( brief.mission ? [ `Overall mission: ${ brief.mission }` ] : [] ),
-		'For each section, pick blocks from the catalog by slug and arrange them into a nested tree.',
+		PIPELINE_STEP.SECTION_OUTLINE,
+		...( plan.mission ? [ `Overall page mission: ${ plan.mission }` ] : [] ),
+		...( design ? [ `Shared design direction — keep this section consistent with it: ${ design }.` ] : [] ),
+		`This section is "${ section.title }"${ section.notes ? `: ${ section.notes }` : '' }.`,
+		'Choose blocks from the catalog by slug and arrange them into a nested tree for THIS section only.',
 		'Only nest blocks inside a block whose slug is marked [container].',
-		'Do NOT include any attributes yet — only "sectionId" (matching the given id), "name" (a catalog slug), an optional "notes" string, and "innerBlocks".',
-		'Each root\'s "notes" should restate that section\'s intent plus any structure or styling guidance.',
+		'Do NOT include any attributes yet — only "name" (a catalog slug), an optional "notes" string, and "innerBlocks".',
 		'If you use a form block, do NOT add a separate submit button or button block — the Otter Form already renders its own submit button.',
-		...( atomicAvailable ? [ ATOMIC_WIND_STRUCTURE_HINT ] : [] ),
-		'Sections to outline, one per line as `id: intent`:',
-		formatSectionsForPrompt( missingSections ),
-		'Return strict JSON: { "roots": [ { "sectionId": string, "name": string, "notes": string, "innerBlocks": [...] } ] }.',
+		'Prefer simple, reusable structures.',
+		SECTION_SIZE_HINT,
+		ATOMIC_WIND_FORCE_HINT,
+		'Return strict JSON: { "roots": [ { "name": string, "notes": string, "innerBlocks": [...] } ] } containing exactly one root — this section.',
 		'Block catalog, one per line as `slug: description`. A slug marked [container] can hold inner blocks:',
 		formatCatalogForPrompt( catalog ),
 		'Task:',
 		task
 	].join( '\n\n' );
-};
-
-const buildPatternRewritePrompt = (
-	task: string,
-	seed: GeneratedBlockTree,
-	schema: AttributeSchemaEntry[],
-	rootUsesAtomic: boolean,
-	plan: GenerationPlan,
-	intent: string | undefined,
-	themeColors: ThemeColor[]
-) => {
-	const design = formatDesignForPrompt( plan.design );
-	const palette = formatPaletteForPrompt( themeColors );
-
-	return [
-		PIPELINE_STEP.PATTERN_REWRITE,
-		...( plan.mission ? [ `Overall mission: ${ plan.mission }` ] : [] ),
-		...( design ? [ `Design direction — stay consistent with it: ${ design }.` ] : [] ),
-		...( intent ? [ `This section's intent: ${ intent }` ] : [] ),
-		'Keep the exact same tree of slugs and nesting — do not add, remove, or reorder blocks.',
-		'Replace only the text attributes (e.g. content, value, title, label) with specific, on-topic copy for the task. Each block must get unique, meaningful text — never leave the original demo/placeholder text.',
-		'Preserve every non-text attribute exactly as given (layout, sizes, CSS, classNames). Use ONLY the attributes listed for each slug; do not invent attributes or rendered HTML.',
-		...( palette
-			? [ `If you adjust color attributes (backgroundColor, textColor), use ONLY these exact theme color slugs — never invent a slug:\n${ palette }` ]
-			: [] ),
-		...( rootUsesAtomic ? [ ATOMIC_WIND_ATTRIBUTE_HINT ] : [] ),
-		'Return strict JSON: { "rationale": string[], "roots": [ { "name": string, "attributes": object, "innerBlocks": [...] } ] }.',
-		'Allowed attributes, one per line as `slug: attr1, attr2, ...`:',
-		formatSchemaForPrompt( schema ),
-		'Current section (with its existing attributes) to rewrite:',
-		JSON.stringify( seed ),
-		'Task:',
-		task
-	].join( '\n\n' );
-};
-
-const buildRefinePrompt = (
-	task: string,
-	instruction: string,
-	idTree: IdentifiedNode[],
-	schema: AttributeSchemaEntry[],
-	rootUsesAtomic: boolean,
-	themeColors: ThemeColor[],
-	getBlockType: GetBlockType,
-	history?: string[],
-	referenceContext?: string
-) => {
-	const palette = formatPaletteForPrompt( themeColors );
-	const blockIndex = formatBlockIndexForPrompt( buildBlockIndex( idTree, getBlockType ) );
-
-	return [
-		PIPELINE_STEP.EDIT,
-		'Below is the current design as a tree of blocks, each with a unique "id", its block "name" and its current "attributes".',
-		'Apply ONLY the requested change. Do NOT modify any block the change does not require, and do NOT add, remove, or reorder blocks.',
-		...( blockIndex ? [ blockIndex ] : [] ),
-		...( task ? [ `Overall goal for context: ${ task }` ] : [] ),
-		...formatHistoryForPrompt( history ),
-		...( referenceContext ? [ 'Reference markup and schema:', referenceContext ] : [] ),
-		`Requested change: ${ instruction }`,
-		'Return a minimal list of patches: for each block you must change, give its "id" and ONLY the attributes that change, with their new values. Omit every block you are not changing.',
-		'When changing an object-valued attribute (e.g. "style"), return the COMPLETE new value of that attribute, not a partial fragment.',
-		'Use ONLY attributes that exist for that block (see the list below). Do not invent attributes, ids, blocks, or rendered HTML.',
-		...( palette
-			? [ `For color attributes, prefer one of these theme color slugs; if the requested color is not in the palette, you may use a hex value:\n${ palette }` ]
-			: [] ),
-		...( rootUsesAtomic ? [ ATOMIC_WIND_ATTRIBUTE_HINT ] : [] ),
-		'Return strict JSON: { "patches": [ { "id": string, "attributes": object } ] }.',
-		'Settable attributes per block, one per line as `slug: attr1, attr2, ...`:',
-		formatSchemaForPrompt( schema ),
-		'Current design:',
-		JSON.stringify( idTree )
-	].join( '\n\n' );
-};
-
-const buildStructureEditPrompt = (
-	task: string,
-	instruction: string,
-	idTree: IdentifiedNode[],
-	catalog: StructureCatalogEntry[],
-	getBlockType: GetBlockType,
-	history?: string[],
-	referenceContext?: string
-) => {
-	const blockIndex = formatBlockIndexForPrompt( buildBlockIndex( idTree, getBlockType ) );
-
-	return [
-		PIPELINE_STEP.STRUCTURE_EDIT,
-		'Below is the current block tree. Each node has a unique "id", block "name", and current "attributes".',
-		'Apply ONLY the structural change requested. Keep every unrelated block, attribute, and position unchanged.',
-		'Do NOT redesign the layout or return a full block tree.',
-		...( blockIndex ? [ blockIndex ] : [] ),
-		...( task ? [ `Overall goal for context: ${ task }` ] : [] ),
-		...formatHistoryForPrompt( history ),
-		...( referenceContext ? [ 'Reference markup and schema:', referenceContext ] : [] ),
-		`Requested change: ${ instruction }`,
-		'Return the smallest valid operation set:',
-		'- "remove": block ids to delete (removing a parent removes its subtree).',
-		'- "insert": { "parentId": string, "index": number, "block": { "name", "attributes", "innerBlocks" } }. Use "" as parentId for root-level siblings.',
-		'- "move": { "id", "parentId", "index" } to reposition an existing block.',
-		'When inserting, fill attributes with concise on-topic copy. Use only catalog slugs.',
-		'For removals, return ONLY the ids in "remove" — never regenerate sibling blocks.',
-		'Return strict JSON: { "remove"?: string[], "insert"?: [...], "move"?: [...] }.',
-		'Block catalog:',
-		formatCatalogForPrompt( catalog ),
-		'Current tree:',
-		JSON.stringify( idTree )
-	].join( '\n\n' );
-};
-
-const parseLayoutBrief = ( response: string ): LayoutBrief => {
-	const parsed = parseJsonResponse( response );
-
-	if ( ! parsed ) {
-		return { mission: '', design: {}, sections: [] };
-	}
-
-	const sections = ( Array.isArray( parsed.sections ) ? parsed.sections : [])
-		.filter( isObject )
-		.map( ( section, index ) => ({
-			id: 'string' === typeof section.id && section.id.trim() ? section.id.trim() : `section-${ index + 1 }`,
-			intent: 'string' === typeof section.intent ? section.intent : ''
-		}) );
-
-	return {
-		mission: 'string' === typeof parsed.mission ? parsed.mission : '',
-		design: parseDesignDirection( parsed.design ),
-		sections
-	};
-};
-
-const parsePatternAssignments = ( response: string ): PatternAssignment[] => {
-	const parsed = parseJsonResponse( response );
-
-	if ( ! parsed || ! Array.isArray( parsed.assignments ) ) {
-		return [];
-	}
-
-	return parsed.assignments
-		.filter( isObject )
-		.map( assignment => ({
-			sectionId: 'string' === typeof assignment.sectionId ? assignment.sectionId : '',
-			patternName: 'string' === typeof assignment.patternName ? assignment.patternName : null,
-			note: 'string' === typeof assignment.note ? assignment.note : undefined
-		}) )
-		.filter( assignment => assignment.sectionId );
-};
-
-type OutlineRoot = StructureNode & { sectionId?: string };
-
-const parseOutlineRoots = ( response: string ): OutlineRoot[] => {
-	const parsed = parseJsonResponse( response );
-
-	if ( ! parsed || ! Array.isArray( parsed.roots ) ) {
-		return [];
-	}
-
-	return ( parsed.roots.filter( isObject ) as Record<string, unknown>[] )
-		.map( root => ({
-			...( root as unknown as StructureNode ),
-			sectionId: 'string' === typeof root.sectionId ? root.sectionId : undefined
-		}) );
 };
 
 /*
@@ -1259,7 +975,7 @@ const fillRootFromCompletion = async (
 // How many times a failed section is re-attempted with the errors fed back.
 const REPAIR_ATTEMPTS = 2;
 
-const buildRepairFeedback = ( errors: string[] ): string => {
+export const buildRepairFeedback = ( errors: string[] ): string => {
 	return [
 		'Your previous attempt produced an invalid block structure. Fix these problems and return the corrected JSON in the exact same format:',
 		errors.map( error => `- ${ error }` ).join( '\n' )
@@ -1294,143 +1010,122 @@ const fillRootWithRepair = async (
 	return result;
 };
 
-// How many fix passes the deterministic quality critic runs at most.
-const QUALITY_FIX_ATTEMPTS = 2;
-
-const buildQualityFixPrompt = (
-	idTree: IdentifiedNode[],
-	issues: QualityIssue[],
-	schema: AttributeSchemaEntry[],
-	themeColors: ThemeColor[]
-): string => {
-	const palette = formatPaletteForPrompt( themeColors );
-
-	return [
-		PIPELINE_STEP.POLISH,
-		'Below is the current design as a tree of blocks, each with a unique "id", "name" and "attributes".',
-		'Apply the smallest attribute changes that resolve the listed issues. Do NOT change anything else, and do NOT add, remove, or reorder blocks.',
-		'Issues to fix, one per line as `block-id: problem`:',
-		formatIssuesForPrompt( issues ),
-		...( palette
-			? [ `For color attributes, use one of these theme color slugs; if a needed color is not in the palette, you may use a hex value:\n${ palette }` ]
-			: [] ),
-		'When changing an object-valued attribute (e.g. "style"), return the COMPLETE new value, not a fragment.',
-		'Return strict JSON: { "patches": [ { "id": string, "attributes": object } ] }. Omit blocks you are not changing.',
-		'Settable attributes per block, one per line as `slug: attr1, attr2, ...`:',
-		formatSchemaForPrompt( schema ),
-		'Current design:',
-		JSON.stringify( idTree )
-	].join( '\n\n' );
+/*
+ * The shared state a single section needs to be filled: where to look up block
+ * types, where to record drops, and how to talk to the model. Kept in one object
+ * so the section path and the page path drive the CONSTRUCT step identically.
+ */
+type SectionFillContext = {
+	task: string;
+	blockTypes: BlockTypeLike[];
+	themeColors: ThemeColor[];
+	requestCompletion: ( prompt: string ) => Promise<string>;
+	getBlockType: GetBlockType;
+	droppedRoots: DroppedGeneratedRoot[];
+	onRootComplete?: ( completion: RootCompletion ) => void;
 };
 
 /*
- * Deterministic quality critic + fix loop: find issues with no model (contrast,
- * off-palette, duplicate/placeholder/empty copy, missing alt), ask the model to
- * patch only those, and re-check. Bounded by QUALITY_FIX_ATTEMPTS. Each pass is
- * validated; an invalid patch set is discarded so the result never degrades.
+ * A user-initiated cancellation, surfaced by the request layer as an AbortError.
+ * It must propagate so generation actually stops — never be swallowed as a
+ * "dropped section" the way a real generation failure is.
  */
-const applyQualityFixes = async (
-	blocks: BlockProps<unknown>[],
-	blockTypes: BlockTypeLike[],
-	themeColors: ThemeColor[],
-	requestCompletion: ( prompt: string ) => Promise<string>,
-	getBlockType: GetBlockType
-): Promise<BlockProps<unknown>[]> => {
-	let current = blocks;
+const isAbortError = ( error: unknown ): boolean =>
+	Boolean( error ) && 'AbortError' === ( error as { name?: string } )?.name;
 
-	for ( let attempt = 0; attempt < QUALITY_FIX_ATTEMPTS; attempt++ ) {
-		const issues = findQualityIssues( current, { themeColors });
-
-		if ( ! issues.length ) {
-			break;
-		}
-
-		const trees = blocksToTrees( current );
-		const slugs = new Set<string>();
-		trees.forEach( tree => collectSlugsFromTree( tree, slugs ) );
-
-		const schema = buildFullAttributeSchema( blockTypes, slugs );
-		const patches = parsePatchPayload( await requestCompletion(
-			buildQualityFixPrompt( attachIds( trees ), issues, schema, themeColors )
-		) );
-
-		if ( ! patches.length ) {
-			break;
-		}
-
-		const patched = jsonTreeToBlocks( applyAttributePatches( trees, patchesToMap( patches ) ), getBlockType );
-
-		// Never let a fix pass break a valid layout.
-		if ( ! validateGeneratedBlocks( patched, getBlockType ).valid ) {
-			break;
-		}
-
-		current = patched;
-	}
-
-	return current;
+/*
+ * Record a section that failed outright (e.g. the request errored / came back
+ * non-JSON) so the build can drop it and carry on with the rest of the page.
+ */
+const dropSection = (
+	ctx: SectionFillContext,
+	label: string,
+	notes: string | undefined,
+	index: number,
+	totalRoots: number,
+	message: string
+): void => {
+	ctx.droppedRoots.push({ root: { name: label } as GeneratedBlockTree, errors: [ message ] });
+	ctx.onRootComplete?.({ rootIndex: index, totalRoots, blocks: [], notes });
 };
 
-const generateFromCatalog = async({
-	task,
-	blockTypes,
-	themeColors = [],
-	requestCompletion,
-	history,
-	onPhase,
-	onPlanReady,
-	onRootComplete
-}: GenerateBlocksFromTaskArgs): Promise<BlockGenerationResult> => {
+/*
+ * CONSTRUCT one validated section: build its attribute schema from the slugs it
+ * uses, fill attributes (with the repair loop), and report completion. Returns the
+ * section's blocks, or [] when it was dropped. Shared by the single-section and
+ * the full-page flows so both fill sections the exact same way.
+ */
+const fillSection = async (
+	root: StructureNode,
+	index: number,
+	totalRoots: number,
+	plan: GenerationPlan,
+	ctx: SectionFillContext
+): Promise<BlockProps<unknown>[]> => {
+	const slugs = new Set<string>();
+	collectSlugs( root, slugs );
+
+	const schema = buildAttributeSchema( ctx.blockTypes, slugs );
+	const attributePrompt = buildAttributePrompt( ctx.task, root, schema, plan, ctx.themeColors );
+
+	const { blocks: rootBlocks, errors } = await fillRootWithRepair( attributePrompt, ctx.requestCompletion, ctx.getBlockType );
+
+	if ( ! rootBlocks.length ) {
+		const dropped = { root: root as GeneratedBlockTree, errors: errors.length ? errors : [ 'Attribute generation returned no block.' ] };
+		ctx.droppedRoots.push( dropped );
+		ctx.onRootComplete?.({ rootIndex: index, totalRoots, blocks: [], notes: root.notes, dropped });
+		return [];
+	}
+
+	ctx.onRootComplete?.({ rootIndex: index, totalRoots, blocks: rootBlocks, notes: root.notes });
+	return rootBlocks;
+};
+
+const generateFromCatalog = async( args: GenerateBlocksFromTaskArgs ): Promise<BlockGenerationResult> => {
+	const { task, blockTypes, themeColors = [], requestCompletion, history, onPlanReady } = args;
 	const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
 	const droppedRoots: DroppedGeneratedRoot[] = [];
-	const atomicAvailable = blockTypes.some( blockType => blockType.name.startsWith( 'atomic-wind/' ) );
 
 	// Phase 1 — plan the mission, design direction and section outline.
 	const catalog = buildStructureCatalog( blockTypes );
-	const planPrompt = buildPlanPrompt( task, catalog, atomicAvailable, themeColors, history );
+	const planPrompt = buildPlanPrompt( task, catalog, themeColors, history );
 
 	const plan = parsePlanPayload( await requestCompletion( planPrompt ) );
 
-	// Phase 2 — prune the outline to a structurally legal tree (notes preserved).
-	const validRoots = validateStructure( plan.roots, getBlockType, undefined, [], droppedRoots );
+	// Phase 2 — prune the outline to a structurally legal tree (notes preserved),
+	// then cap any oversized repeated runs so a section can't be too big to fill.
+	const validRoots = validateStructure( plan.roots, getBlockType, undefined, [], droppedRoots ).map( capSectionSize );
 
 	onPlanReady?.({ ...plan, roots: validRoots });
 
 	// Phase 3 — fill attributes per root, trickling the plan into each call, and
 	// report each finished section so callers can insert it progressively.
+	const ctx: SectionFillContext = {
+		task, blockTypes, themeColors, requestCompletion, getBlockType, droppedRoots, onRootComplete: args.onRootComplete
+	};
 	const blocks: BlockProps<unknown>[] = [];
 
 	for ( let index = 0; index < validRoots.length; index++ ) {
 		const root = validRoots[ index ];
-		const slugs = new Set<string>();
-		collectSlugs( root, slugs );
 
-		const schema = buildAttributeSchema( blockTypes, slugs );
-		const rootUsesAtomic = [ ...slugs ].some( slug => slug.startsWith( 'atomic-wind/' ) );
-		const attributePrompt = buildAttributePrompt( task, root, schema, rootUsesAtomic, plan, themeColors );
-
-		const { blocks: rootBlocks, errors } = await fillRootWithRepair( attributePrompt, requestCompletion, getBlockType );
-
-		if ( ! rootBlocks.length ) {
-			const dropped = { root: root as GeneratedBlockTree, errors: errors.length ? errors : [ 'Attribute generation returned no block.' ] };
-			droppedRoots.push( dropped );
-			onRootComplete?.({ rootIndex: index, totalRoots: validRoots.length, blocks: [], notes: root.notes, dropped });
+		if ( ! root ) {
 			continue;
 		}
 
-		blocks.push( ...rootBlocks );
-		onRootComplete?.({ rootIndex: index, totalRoots: validRoots.length, blocks: rootBlocks, notes: root.notes });
-	}
+		try {
+			blocks.push( ...await fillSection( root, index, validRoots.length, plan, ctx ) );
+		} catch ( error ) {
+			if ( isAbortError( error ) ) {
+				throw error;
+			}
 
-	// Deterministic quality critic + fix pass (contrast/palette/copy/essentials).
-	let finalBlocks = blocks;
-	if ( finalBlocks.length ) {
-		onPhase?.( 'polishing' );
-		finalBlocks = await applyQualityFixes( finalBlocks, blockTypes, themeColors, requestCompletion, getBlockType );
+			// A failed section is dropped, not fatal — keep whatever else builds.
+			dropSection( ctx, root.name, root.notes, index, validRoots.length, ( error as Error )?.message ?? 'Section generation failed.' );
+		}
 	}
 
 	return {
-		blocks: finalBlocks,
+		blocks,
 		plan,
 		rationale: plan.rationale,
 		diagnostics: {
@@ -1440,191 +1135,131 @@ const generateFromCatalog = async({
 };
 
 /*
- * Pattern-aware orchestrator. Runs the full Req 1–5 flow and falls back to
- * generating any section the model could not match (or whose chosen pattern
- * pruned away) so the page is never left with a hole.
+ * Run an async worker over items with at most `limit` in flight at once, keeping
+ * results in input order. Workers must handle their own errors — a thrown worker
+ * rejects the whole batch.
  */
-const generateWithPatterns = async({
-	task,
-	blockTypes,
-	themeColors = [],
-	patterns = [],
-	requestCompletion,
-	history,
-	onPhase,
-	onPlanReady,
-	onRootComplete
-}: GenerateBlocksFromTaskArgs): Promise<BlockGenerationResult> => {
+const mapWithConcurrency = async <T, R>(
+	items: T[],
+	limit: number,
+	worker: ( item: T, index: number ) => Promise<R>
+): Promise<R[]> => {
+	const results: R[] = new Array( items.length );
+	let cursor = 0;
+
+	const run = async (): Promise<void> => {
+		while ( cursor < items.length ) {
+			const index = cursor++;
+			// index is in-bounds by the loop guard.
+			results[ index ] = await worker( items[ index ] as T, index );
+		}
+	};
+
+	const pool = Array.from( { length: Math.max( 1, Math.min( limit, items.length ) ) }, run );
+	await Promise.all( pool );
+
+	return results;
+};
+
+/*
+ * How many section chains build at once on the full-page flow. Bounded so a big
+ * page never fires a dozen simultaneous requests (also kinder to rate limits); the
+ * browser caps concurrent connections per host on top of this.
+ */
+const SECTION_CONCURRENCY = 3;
+
+/*
+ * Full-page flow. A single OUTLINE call for an entire page emits the whole nested
+ * tree at once and reliably trips upstream size/timeout limits (the response comes
+ * back non-JSON). Instead: plan the page as lightweight section briefs, then
+ * outline + construct each section on its own (outline → construct) chain. Those
+ * chains are independent once the page plan exists, so they run concurrently and
+ * are assembled in section order — turning wall-clock from the sum of all sections
+ * into roughly the slowest single one. Falls back to the single-outline flow if
+ * the page outline yields no usable sections.
+ */
+const generatePageFromCatalog = async( args: GenerateBlocksFromTaskArgs ): Promise<BlockGenerationResult> => {
+	const { task, blockTypes, themeColors = [], requestCompletion, history, onPlanReady } = args;
 	const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
 	const droppedRoots: DroppedGeneratedRoot[] = [];
-	const atomicAvailable = blockTypes.some( blockType => blockType.name.startsWith( 'atomic-wind/' ) );
+	const catalog = buildStructureCatalog( blockTypes );
 
-	// Req 1 — the high-level layout brief (mission, design, conceptual sections).
-	onPhase?.( 'briefing' );
-	const brief = parseLayoutBrief( await requestCompletion( buildLayoutBriefPrompt( task, atomicAvailable, themeColors, history ) ) );
+	// Step 1 — the small page outline: mission, design and ordered section briefs.
+	const outline = parsePageOutline( await requestCompletion( buildPageOutlinePrompt( task, themeColors, history ) ) );
 
-	// A brief with no sections can still be salvaged by the catalog path.
-	if ( ! brief.sections.length ) {
-		return generateFromCatalog({ task, blockTypes, themeColors, requestCompletion, history, onPlanReady, onRootComplete });
+	// No usable section list — fall back to the proven single-outline flow rather
+	// than fail outright.
+	if ( ! outline.sections.length ) {
+		return generateFromCatalog( args );
 	}
 
-	const patternsByName = patterns.reduce<Record<string, PatternLike>>( ( acc, pattern ) => {
-		if ( pattern?.name ) {
-			acc[ pattern.name ] = pattern;
-		}
-		return acc;
-	}, {});
+	const plan: GenerationPlan = {
+		mission: outline.mission,
+		design: outline.design,
+		rationale: outline.rationale,
+		roots: outline.sections.map( ( section ) => ({ name: section.title, notes: section.notes }) )
+	};
 
-	const plan: GenerationPlan = { mission: brief.mission, design: brief.design, rationale: [], roots: [] };
+	// Report the section count up front so the progress UI knows the total.
+	onPlanReady?.( plan );
 
-	// Req 2 — let the model assign a library pattern to each section, or null.
-	onPhase?.( 'selecting' );
-	const patternCatalog = buildPatternCatalog( patterns );
-	const assignments = patternCatalog.length
-		? parsePatternAssignments( await requestCompletion( buildPatternSelectionPrompt( brief, patternCatalog ) ) )
-		: [];
+	const ctx: SectionFillContext = {
+		task, blockTypes, themeColors, requestCompletion, getBlockType, droppedRoots, onRootComplete: args.onRootComplete
+	};
+	const total = outline.sections.length;
+	let aborted = false;
 
-	const assignmentBySection = assignments.reduce<Record<string, PatternAssignment>>( ( acc, assignment ) => {
-		acc[ assignment.sectionId ] = assignment;
-		return acc;
-	}, {});
-
-	// Resolve each chosen pattern to attribute-carrying trees up front, so a
-	// pattern that prunes to nothing falls back to generation as a "missing"
-	// section instead of leaving a gap.
-	const patternTreesBySection: Record<string, GeneratedBlockTree[]> = {};
-	const missingSections: LayoutSection[] = [];
-
-	for ( const section of brief.sections ) {
-		const patternName = assignmentBySection[ section.id ]?.patternName;
-		const pattern = patternName ? patternsByName[ patternName ] : undefined;
-		const trees = pattern ? patternToTrees( pattern, patternsByName ) : [];
-
-		// Keep only structurally valid trees (drops patterns using blocks we
-		// cannot render). A pattern that survives at least one root is reused.
-		const validTrees = trees.filter( tree => validateGeneratedBlocks( jsonTreeToBlocks([ tree ], getBlockType ), getBlockType ).valid );
-
-		if ( validTrees.length ) {
-			patternTreesBySection[ section.id ] = validTrees;
-		} else {
-			missingSections.push( section );
-		}
-	}
-
-	// Req 3 — outline the sections with no usable pattern, in one batched call.
-	onPhase?.( 'outlining' );
-	const outlineBySection: Record<string, StructureNode[]> = {};
-
-	if ( missingSections.length ) {
-		const catalog = buildStructureCatalog( blockTypes );
-		const outlineRoots = parseOutlineRoots(
-			await requestCompletion( buildMissingOutlinePrompt( task, brief, missingSections, catalog, atomicAvailable ) )
-		);
-
-		// Map each outlined root back to its section, defaulting to the first
-		// missing section when the model omits the id.
-		for ( let index = 0; index < outlineRoots.length; index++ ) {
-			const root = outlineRoots[ index ];
-			const sectionId = root.sectionId && missingSections.some( section => section.id === root.sectionId )
-				? root.sectionId
-				: missingSections[0].id;
-
-			if ( ! outlineBySection[ sectionId ] ) {
-				outlineBySection[ sectionId ] = [];
-			}
-
-			outlineBySection[ sectionId ].push({ name: root.name, notes: root.notes, innerBlocks: root.innerBlocks });
-		}
-	}
-
-	// Req 4 — combine patterns and generated outlines into one ordered draft.
-	const draftRoots: DraftRoot[] = [];
-
-	for ( const section of brief.sections ) {
-		const patternTrees = patternTreesBySection[ section.id ];
-
-		if ( patternTrees?.length ) {
-			// Each tree already passed full structural validation above, so it is
-			// reused as-is; `node` only carries the slug + intent for reporting.
-			patternTrees.forEach( tree => draftRoots.push({
-				source: 'pattern',
-				sectionId: section.id,
-				node: { name: tree.name, notes: section.intent },
-				seed: tree
-			}) );
-			continue;
+	// Step 2 — build one section: outline → cap → construct. A section that fails
+	// (its outline or construct errors / comes back non-JSON) is dropped and the
+	// build carries on; a user abort flags the whole run to stop. Errors are caught
+	// here, never rethrown, so one section can't reject the concurrent batch.
+	const buildSection = async( section: SectionBrief | undefined, index: number ): Promise<BlockProps<unknown>[]> => {
+		if ( ! section || aborted ) {
+			return [];
 		}
 
-		const outline = outlineBySection[ section.id ];
-		if ( ! outline?.length ) {
-			continue;
-		}
+		try {
+			const structurePrompt = buildSectionStructurePrompt( task, section, catalog, plan );
+			const structurePayload = parsePlanPayload( await requestCompletion( structurePrompt ) );
 
-		const validRoots = validateStructure( outline, getBlockType, undefined, [], droppedRoots );
-		validRoots.forEach( root => draftRoots.push({ source: 'generated', sectionId: section.id, node: root }) );
-	}
+			const droppedBefore = droppedRoots.length;
+			const validRoots = validateStructure( structurePayload.roots, getBlockType, undefined, [], droppedRoots );
+			const root = validRoots[ 0 ] ? capSectionSize( validRoots[ 0 ] ) : undefined;
 
-	onPlanReady?.({ ...plan, roots: draftRoots.map( draft => draft.node ) });
-
-	// Req 5 — fill/rewrite each section in order, reporting progress per root.
-	onPhase?.( 'building' );
-	const blocks: BlockProps<unknown>[] = [];
-
-	for ( let index = 0; index < draftRoots.length; index++ ) {
-		const draft = draftRoots[ index ];
-		const intent = brief.sections.find( section => section.id === draft.sectionId )?.intent;
-		const slugs = new Set<string>();
-
-		let rootBlocks: BlockProps<unknown>[] = [];
-		let errors: string[] = [];
-
-		if ( 'pattern' === draft.source && draft.seed ) {
-			collectSlugsFromTree( draft.seed, slugs );
-			const schema = buildAttributeSchema( blockTypes, slugs );
-			const rootUsesAtomic = [ ...slugs ].some( slug => slug.startsWith( 'atomic-wind/' ) );
-			const rewritePrompt = buildPatternRewritePrompt( task, draft.seed, schema, rootUsesAtomic, plan, intent, themeColors );
-
-			( { blocks: rootBlocks, errors } = await fillRootFromCompletion( rewritePrompt, requestCompletion, getBlockType ) );
-
-			// The rewrite is best-effort: if it fails validation, fall back to the
-			// pattern verbatim so the section still appears (with its demo text).
-			if ( ! rootBlocks.length ) {
-				const verbatim = jsonTreeToBlocks([ draft.seed ], getBlockType );
-				if ( validateGeneratedBlocks( verbatim, getBlockType ).valid ) {
-					rootBlocks = verbatim;
-					errors = [];
+			if ( ! root ) {
+				// Record the lost section (unless validateStructure already did) so the
+				// "skipped" diagnostic and the progress step both account for it.
+				if ( droppedRoots.length === droppedBefore ) {
+					dropSection( ctx, section.title, section.notes, index, total, 'Section outline produced no valid structure.' );
+				} else {
+					args.onRootComplete?.({ rootIndex: index, totalRoots: total, blocks: [], notes: section.notes });
 				}
+				return [];
 			}
-		} else {
-			collectSlugs( draft.node, slugs );
-			const schema = buildAttributeSchema( blockTypes, slugs );
-			const rootUsesAtomic = [ ...slugs ].some( slug => slug.startsWith( 'atomic-wind/' ) );
-			const attributePrompt = buildAttributePrompt( task, draft.node, schema, rootUsesAtomic, plan, themeColors );
 
-			( { blocks: rootBlocks, errors } = await fillRootWithRepair( attributePrompt, requestCompletion, getBlockType ) );
+			return await fillSection( root, index, total, plan, ctx );
+		} catch ( error ) {
+			if ( isAbortError( error ) ) {
+				aborted = true;
+				return [];
+			}
+
+			dropSection( ctx, section.title, section.notes, index, total, ( error as Error )?.message ?? 'Section generation failed.' );
+			return [];
 		}
+	};
 
-		if ( ! rootBlocks.length ) {
-			const dropped = { root: draft.node as GeneratedBlockTree, errors: errors.length ? errors : [ 'Section generation returned no block.' ] };
-			droppedRoots.push( dropped );
-			onRootComplete?.({ rootIndex: index, totalRoots: draftRoots.length, blocks: [], notes: draft.node.notes, dropped });
-			continue;
-		}
+	// Build the sections concurrently (bounded) and assemble them in section order.
+	const perSection = await mapWithConcurrency( outline.sections, SECTION_CONCURRENCY, buildSection );
 
-		blocks.push( ...rootBlocks );
-		onRootComplete?.({ rootIndex: index, totalRoots: draftRoots.length, blocks: rootBlocks, notes: draft.node.notes });
-	}
-
-	// Deterministic quality critic + fix pass (contrast/palette/copy/essentials).
-	let finalBlocks = blocks;
-	if ( finalBlocks.length ) {
-		onPhase?.( 'polishing' );
-		finalBlocks = await applyQualityFixes( finalBlocks, blockTypes, themeColors, requestCompletion, getBlockType );
+	// A cancellation mid-batch unwinds the turn rather than returning a partial.
+	if ( aborted ) {
+		throw Object.assign( new Error( 'Aborted' ), { name: 'AbortError' } );
 	}
 
 	return {
-		blocks: finalBlocks,
-		plan: { ...plan, roots: draftRoots.map( draft => draft.node ) },
+		blocks: perSection.flat(),
+		plan,
 		rationale: plan.rationale,
 		diagnostics: {
 			droppedRoots
@@ -1632,254 +1267,17 @@ const generateWithPatterns = async({
 	};
 };
 
-type AdaptPatternToTaskArgs = {
-	patternName: string;
-	task: string;
-	patterns: PatternLike[];
-	blockTypes: BlockTypeLike[];
-	themeColors?: ThemeColor[];
-	requestCompletion: ( prompt: string ) => Promise<string>;
-	onPhase?: ( phase: 'building' | 'polishing' ) => void;
-};
-
-/**
- * Start from a library pattern and rewrite its copy/styles to fit the task.
- * Keeps structure intact — faster than a full catalog generate when a pattern fits.
- */
-export const adaptPatternToTask = async({
-	patternName,
-	task,
-	patterns,
-	blockTypes,
-	themeColors = [],
-	requestCompletion,
-	onPhase
-}: AdaptPatternToTaskArgs ): Promise<BlockGenerationResult> => {
-	const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
-	const emptyPlan: GenerationPlan = { mission: task, design: {}, rationale: [], roots: [] };
-	const droppedRoots: DroppedGeneratedRoot[] = [];
-	const patternsByName = patterns.reduce<Record<string, PatternLike>>( ( acc, pattern ) => {
-		if ( pattern?.name ) {
-			acc[ pattern.name ] = pattern;
-		}
-		return acc;
-	}, {} );
-	const pattern = patternsByName[ patternName ];
-	const trees = pattern ? patternToTrees( pattern, patternsByName ) : [];
-	const validTrees = trees.filter( ( tree ) =>
-		validateGeneratedBlocks( jsonTreeToBlocks([ tree ], getBlockType ), getBlockType ).valid
-	);
-
-	if ( ! validTrees.length ) {
-		return {
-			blocks: [],
-			plan: emptyPlan,
-			rationale: [],
-			diagnostics: {
-				droppedRoots: [{
-					root: { name: patternName || 'pattern', innerBlocks: [] },
-					errors: [ `Pattern "${ patternName }" is unavailable or invalid.` ]
-				}]
-			}
-		};
-	}
-
-	onPhase?.( 'building' );
-
-	const plan: GenerationPlan = { mission: task, design: {}, rationale: [], roots: [] };
-	const blocks: BlockProps<unknown>[] = [];
-
-	for ( const seed of validTrees ) {
-		const slugs = new Set<string>();
-		collectSlugsFromTree( seed, slugs );
-		const schema = buildAttributeSchema( blockTypes, slugs );
-		const rootUsesAtomic = [ ...slugs ].some( ( slug ) => slug.startsWith( 'atomic-wind/' ) );
-		const rewritePrompt = buildPatternRewritePrompt( task, seed, schema, rootUsesAtomic, plan, task, themeColors );
-		let { blocks: rootBlocks, errors } = await fillRootFromCompletion( rewritePrompt, requestCompletion, getBlockType );
-
-		if ( ! rootBlocks.length ) {
-			const verbatim = jsonTreeToBlocks([ seed ], getBlockType );
-
-			if ( validateGeneratedBlocks( verbatim, getBlockType ).valid ) {
-				rootBlocks = verbatim;
-				errors = [];
-			}
-		}
-
-		if ( rootBlocks.length ) {
-			blocks.push( ...rootBlocks );
-			continue;
-		}
-
-		droppedRoots.push({
-			root: seed,
-			errors: errors.length ? errors : [ 'Pattern rewrite returned no block.' ]
-		});
-	}
-
-	let finalBlocks = blocks;
-
-	if ( finalBlocks.length ) {
-		onPhase?.( 'polishing' );
-		finalBlocks = await applyQualityFixes( finalBlocks, blockTypes, themeColors, requestCompletion, getBlockType );
-	}
-
-	return {
-		blocks: finalBlocks,
-		plan: emptyPlan,
-		rationale: [ `Adapted pattern: ${ patternName }` ],
-		diagnostics: { droppedRoots }
-	};
-};
 
 export const generateBlocksFromTask = async(
 	args: GenerateBlocksFromTaskArgs
 ): Promise<BlockGenerationResult> => {
-	if ( args.patterns?.length ) {
-		return generateWithPatterns( args );
+	// Full pages fan out into per-section calls so no single request has to carry
+	// the whole page tree; a single section keeps the proven single-outline flow.
+	// The Atomic Wind force directive keeps either path on primitives when set.
+	if ( 'page' === args.scope ) {
+		return generatePageFromCatalog( args );
 	}
 
 	return generateFromCatalog( args );
 };
 
-/*
- * Refine an existing generation result: the current blocks are handed to the
- * model as the reference, and only the requested change is applied in a single
- * pass. The previous result is kept untouched when the edit can't be parsed or
- * fails validation, so a bad refine never destroys a good layout.
- */
-export const refineGeneratedBlocks = async({
-	task,
-	instruction,
-	baseBlocks,
-	blockTypes,
-	themeColors = [],
-	requestCompletion,
-	referenceContext,
-	history,
-	onPhase
-}: RefineBlocksArgs ): Promise<BlockGenerationResult> => {
-	const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
-	const emptyPlan: GenerationPlan = { mission: '', design: {}, rationale: [], roots: [] };
-
-	const trees = blocksToTrees( baseBlocks );
-
-	// Nothing to refine against — let the result stand.
-	if ( ! trees.length ) {
-		return { blocks: baseBlocks, plan: emptyPlan, rationale: [], diagnostics: { droppedRoots: [] }};
-	}
-
-	const slugs = new Set<string>();
-	trees.forEach( tree => collectSlugsFromTree( tree, slugs ) );
-
-	const schema = buildFullAttributeSchema( blockTypes, slugs );
-	const rootUsesAtomic = [ ...slugs ].some( slug => slug.startsWith( 'atomic-wind/' ) );
-
-	onPhase?.( 'refining' );
-
-	const idTree = attachIds( trees );
-	const idToBlockName = buildIdToBlockNameMap( idTree );
-
-	const patches = parsePatchPayload( await requestCompletion(
-		buildRefinePrompt( task, instruction, idTree, schema, rootUsesAtomic, themeColors, getBlockType, history, referenceContext )
-	) );
-
-	// No actionable patch — leave the current result untouched.
-	if ( ! patches.length ) {
-		return { blocks: baseBlocks, plan: emptyPlan, rationale: [], diagnostics: { droppedRoots: [] }};
-	}
-
-	const normalizedPatches = patches
-		.map( ( patch ) => ({
-			id: patch.id,
-			attributes: normalizePatchAttributes(
-				idToBlockName[ patch.id ] || '',
-				patch.attributes,
-				getBlockType
-			)
-		}) )
-		.filter( ( patch ) => Object.keys( patch.attributes ).length );
-
-	if ( ! normalizedPatches.length ) {
-		return { blocks: baseBlocks, plan: emptyPlan, rationale: [], diagnostics: { droppedRoots: [] }};
-	}
-
-	// Preserve editor clientIds and nesting; only attributes change.
-	const blocks = applyPatchesToBlocks( baseBlocks, normalizedPatches );
-	const validation = validateGeneratedBlocks( blocks, getBlockType, { skipRootParentChecks: true } );
-
-	if ( ! validation.valid ) {
-		return {
-			blocks: baseBlocks,
-			plan: emptyPlan,
-			rationale: [],
-			diagnostics: { droppedRoots: [{ root: { name: 'refine', innerBlocks: [] }, errors: validation.errors }] }
-		};
-	}
-
-	return {
-		blocks,
-		plan: emptyPlan,
-		rationale: [],
-		diagnostics: { droppedRoots: [] }
-	};
-};
-
-/*
- * Apply a local structural change (remove / insert / move) without rebuilding
- * the layout. Falls back to the previous blocks when the response is empty or
- * invalid.
- */
-export const structureEditBlocks = async({
-	task,
-	instruction,
-	baseBlocks,
-	blockTypes,
-	requestCompletion,
-	referenceContext,
-	history,
-	onPhase
-}: StructureEditBlocksArgs ): Promise<BlockGenerationResult> => {
-	const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
-	const emptyPlan: GenerationPlan = { mission: '', design: {}, rationale: [], roots: [] };
-	const trees = blocksToTrees( baseBlocks );
-
-	if ( ! trees.length ) {
-		return { blocks: baseBlocks, plan: emptyPlan, rationale: [], diagnostics: { droppedRoots: [] }};
-	}
-
-	onPhase?.( 'refining' );
-
-	const idTree = attachIds( trees );
-	const catalog = buildStructureCatalog( blockTypes );
-	const payload = parseStructureEditPayload( await requestCompletion(
-		buildStructureEditPrompt( task, instruction, idTree, catalog, getBlockType, history, referenceContext )
-	) );
-
-	if ( ! hasStructureEdits( payload ) ) {
-		return { blocks: baseBlocks, plan: emptyPlan, rationale: [], diagnostics: { droppedRoots: [] }};
-	}
-
-	const blocks = applyStructureEdits(
-		baseBlocks,
-		payload,
-		( insertTrees ) => jsonTreeToBlocks( insertTrees, getBlockType )
-	);
-	const validation = validateGeneratedBlocks( blocks, getBlockType, { skipRootParentChecks: true } );
-
-	if ( ! validation.valid ) {
-		return {
-			blocks: baseBlocks,
-			plan: emptyPlan,
-			rationale: [],
-			diagnostics: { droppedRoots: [{ root: { name: 'structure-edit', innerBlocks: [] }, errors: validation.errors }] }
-		};
-	}
-
-	return {
-		blocks,
-		plan: emptyPlan,
-		rationale: [],
-		diagnostics: { droppedRoots: [] }
-	};
-};

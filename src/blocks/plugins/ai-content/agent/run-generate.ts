@@ -48,6 +48,7 @@ export const runGenerateTurn = async( args: GenerateTurnArgs ) => {
 		themeColors: args.themeColors,
 		patterns: args.patterns?.length ? args.patterns : undefined,
 		history: args.sessionHistory,
+		scope: args.isCreateMode ? args.scope : 'section',
 		requestCompletion: args.requestCompletion,
 		onPhase: ( phase ) => args.onPhase?.( phase ),
 		onPlanReady: args.onPlanReady,
