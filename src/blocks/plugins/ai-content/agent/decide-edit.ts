@@ -10,7 +10,6 @@
  */
 import { parseJsonResponse } from '../json-utils';
 import { PIPELINE_STEP } from '../prompts/phases';
-import { aiDebug } from '../debug';
 import type { EditKind, RequestCompletion } from './types';
 
 // Built-in quick actions whose intent is unambiguous — skip the model round-trip
@@ -66,7 +65,6 @@ export const decideEditKind = async( args: {
 	requestCompletion: RequestCompletion;
 } ): Promise<{ kind: EditKind; reason: string }> => {
 	if ( looksLikeTextEdit( args.instruction ) ) {
-		aiDebug( 'decider: fast-path → text', { instruction: args.instruction } );
 		return { kind: 'text', reason: 'Recognized text-only quick action.' };
 	}
 
@@ -79,11 +77,9 @@ export const decideEditKind = async( args: {
 	const reason = parsed && 'string' === typeof parsed.reason ? String( parsed.reason ) : '';
 
 	if ( 'text' === kind || 'style' === kind || 'redesign' === kind ) {
-		aiDebug( `decider: model → ${ kind }`, { reason } );
 		return { kind: kind as EditKind, reason };
 	}
 
 	// Anything unrecognized falls back to a full rewrite — the safe superset.
-	aiDebug( 'decider: unclassified → redesign (fallback)', { rawKind: kind, reason } );
 	return { kind: 'redesign', reason: reason || 'Unclassified request.' };
 };

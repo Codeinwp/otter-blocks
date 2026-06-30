@@ -18,7 +18,6 @@ import { parseJsonResponse } from '../json-utils';
 import { formatSessionHistoryForPrompt } from '../session-history';
 import { PIPELINE_STEP } from '../prompts/phases';
 import type { AgentToolCall, RouteDecision } from './types';
-import { aiDebug } from '../debug';
 import { applyTextNodes, collectTextNodes } from './text-nodes';
 import type { RunTurnArgs, RunTurnResult } from './types';
 
@@ -161,8 +160,6 @@ export const runBlockRewriteTurn = async(
 	for ( let i = 0; i < REWRITE_REPAIR_ATTEMPTS; i++ ) {
 		const prompt = 0 === i ? basePrompt : `${ basePrompt }\n\n${ buildRepairFeedback( attempt.errors ) }`;
 		attempt = await requestRewrite( args, prompt );
-
-		aiDebug( `rewrite: editKind=${ editKind } · attempt ${ i + 1 } · ${ attempt.blocks.length } block(s) · ${ attempt.errors.length } error(s)`, { summary: attempt.summary } );
 
 		if ( attempt.blocks.length && ! attempt.errors.length ) {
 			break;

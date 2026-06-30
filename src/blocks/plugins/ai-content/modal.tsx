@@ -41,7 +41,6 @@ import {
 	getSelectedBlockClientIds,
 	mergePreviewCloneOntoBlocks
 } from './apply-content';
-import { aiDebug, aiDebugGroup, detectPipelineStep } from './debug';
 import {
 	sanitizeGeneratedBlocks,
 	validateGeneratedBlocks
@@ -541,18 +540,10 @@ const AIContentModal = ({
 		setError( undefined );
 
 		let usedToken = 0;
-		let callIndex = 0;
 		const requestCompletion = async( requestPrompt: string ): Promise<string> => {
 			if ( abortController.signal.aborted || isStale() ) {
 				throw new DOMException( 'Aborted', 'AbortError' );
 			}
-
-			const step = detectPipelineStep( requestPrompt );
-			const thisCall = ++callIndex;
-			aiDebugGroup( `→ call #${ thisCall } prompt [${ step }]`, () => {
-				// eslint-disable-next-line no-console
-				console.log( requestPrompt );
-			} );
 
 			const response = await sendBlockGenerationPrompt( requestPrompt, 'aiChat', {
 				signal: abortController.signal
@@ -563,19 +554,12 @@ const AIContentModal = ({
 			}
 
 			if ( ! response.ok ) {
-				aiDebug( `✗ call #${ thisCall } error [${ step }]`, response.error );
 				throw new Error( response.error?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 			}
 
 			if ( ! response.content ) {
-				aiDebug( `✗ call #${ thisCall } empty response [${ step }]` );
 				throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
 			}
-
-			aiDebugGroup( `← call #${ thisCall } response [${ step }] · ${ response.usedTokens ?? 0 } tokens`, () => {
-				// eslint-disable-next-line no-console
-				console.log( response.content );
-			} );
 
 			usedToken += response.usedTokens ?? 0;
 			return response.content;
@@ -603,15 +587,6 @@ const AIContentModal = ({
 		}
 
 		setLiveBlocks( referenceBlocks );
-
-		aiDebugGroup( `▶ turn start · ${ referenceBlocks.length } selected block(s) · ${ isCreateMode ? 'create' : 'edit' } mode`, () => {
-			aiDebug( 'instruction', routeInstruction );
-			aiDebug( 'activePrompt', activePrompt );
-			aiDebug( 'forceRoute', forceRoute ?? '(auto)' );
-			aiDebug( 'pageStyleDigest', pageStyleDigest ?? '(none)' );
-			// eslint-disable-next-line no-console
-			console.log( '%cselected markup:', 'font-weight:600', '\n' + serialize( referenceBlocks as unknown as Parameters<typeof serialize>[0] ) );
-		} );
 
 		try {
 			const { generation, decision, toolCall } = await runAgentTurn({
@@ -663,18 +638,6 @@ const AIContentModal = ({
 					Boolean( currentGeneratedBlocks?.length )
 				)
 			}, { consent: true });
-
-			aiDebugGroup( `■ turn result · route=${ decision.route } · tool=${ toolCall.tool } · ${ generation.blocks.length } block(s)`, () => {
-				aiDebug( 'rationale', generation.rationale );
-				const dropped = generation.diagnostics?.droppedRoots ?? [];
-				if ( dropped.length ) {
-					aiDebug( '⚠ INVALID MARKUP — validation errors', dropped );
-				} else {
-					aiDebug( '✓ markup valid', true );
-				}
-				// eslint-disable-next-line no-console
-				console.log( '%cresult markup:', 'font-weight:600', '\n' + ( generation.blocks.length ? serialize( generation.blocks as unknown as Parameters<typeof serialize>[0] ) : '(empty)' ) );
-			} );
 
 			if ( isStale() ) {
 				return;

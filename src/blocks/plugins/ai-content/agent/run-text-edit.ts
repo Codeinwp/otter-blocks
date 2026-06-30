@@ -12,7 +12,6 @@ import { parseJsonResponse } from '../json-utils';
 import { formatSessionHistoryForPrompt } from '../session-history';
 import { PIPELINE_STEP } from '../prompts/phases';
 import type { BlockProps } from '../../../helpers/blocks';
-import { aiDebug } from '../debug';
 import { applyTextNodes, collectTextNodes } from './text-nodes';
 import type { TextNode } from './text-nodes';
 import type { RouteDecision, RunTurnArgs, RunTurnResult } from './types';
@@ -65,14 +64,11 @@ export const runTextEditTurn = async( args: RunTurnArgs ): Promise<RunTurnResult
 
 	const nodes: TextNode[] = collectTextNodes( args.referenceBlocks, args.getBlockType );
 
-	aiDebug( `text-edit: collected ${ nodes.length } text fragment(s)`, nodes.map( ( node ) => ({ path: node.path.join( '.' ), key: node.key, value: node.value }) ) );
-
 	const decision: RouteDecision = { mode: 'edit', route: 'text', source: 'model' };
 
 	// No editable text in the selection — nothing a text edit can do. Surface as
 	// a no-op failure so the caller can fall back (e.g. to a rewrite).
 	if ( ! nodes.length ) {
-		aiDebug( 'text-edit: NO fragments → falling back to rewrite (selected content has no editable text attributes)' );
 		return {
 			generation: {
 				blocks: [],
@@ -95,9 +91,6 @@ export const runTextEditTurn = async( args: RunTurnArgs ): Promise<RunTurnResult
 	);
 
 	const items = parseItems( response, nodes.length );
-	const changed = items.filter( ( value ) => 'string' === typeof value ).length;
-
-	aiDebug( `text-edit: model returned ${ changed }/${ nodes.length } usable fragment(s)`, items );
 
 	const blocks: BlockProps<unknown>[] = applyTextNodes( args.referenceBlocks, nodes, items );
 

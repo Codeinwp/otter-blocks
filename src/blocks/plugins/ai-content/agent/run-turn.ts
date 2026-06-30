@@ -20,7 +20,6 @@ import { decideEditKind } from './decide-edit';
 import { runGenerateTurn } from './run-generate';
 import { runBlockRewriteTurn } from './run-rewrite';
 import { runTextEditTurn } from './run-text-edit';
-import { aiDebug } from '../debug';
 import type { RouteDecision, RunTurnArgs, RunTurnResult } from './types';
 
 /**
@@ -32,8 +31,6 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 
 	// GENERATE — net-new content, create mode, or an explicit generate request.
 	if ( ! hasSelection || args.isCreateMode || 'generate' === args.forceRoute ) {
-		aiDebug( 'route: generate', { hasSelection, isCreateMode: args.isCreateMode, forceRoute: args.forceRoute } );
-
 		const generation = await runGenerateTurn({
 			activePrompt: args.activePrompt,
 			referenceBlocks: args.referenceBlocks,
@@ -65,8 +62,6 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 		requestCompletion: args.requestCompletion
 	} );
 
-	aiDebug( `route: edit → ${ kind }`, { instruction: args.instruction } );
-
 	if ( 'text' === kind ) {
 		const textResult = await runTextEditTurn( args );
 
@@ -76,7 +71,6 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 			return textResult;
 		}
 
-		aiDebug( 'route: text produced nothing → falling back to redesign rewrite' );
 		return runBlockRewriteTurn( args, 'redesign' );
 	}
 
