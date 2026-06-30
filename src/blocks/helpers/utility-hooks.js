@@ -3,7 +3,7 @@
  */
 import { useSelect } from '@wordpress/data';
 
-import { useEffect } from '@wordpress/element';
+import { useEffect, useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -15,16 +15,19 @@ import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFr
  *
  * @param {Function} setAttributes - The setAttributes function from the block.
  */
-export const useResponsiveAttributes = ( setAttributes = () => {}) => useSelect( select => {
-	const { getView } = select( 'themeisle-gutenberg/data' );
-	const editor = select( 'core/editor' );
-	const view = editor?.getDeviceType ? editor.getDeviceType() : getView();
+export const useResponsiveAttributes = ( setAttributes = () => {}) => {
+	const view = useSelect( ( select ) => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const editor = select( 'core/editor' );
 
-	return {
+		return editor?.getDeviceType ? editor.getDeviceType() : getView();
+	}, [] );
+
+	return useMemo( () => ( {
 		responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
 		responsiveGetAttributes: buildResponsiveGetAttributes( view )
-	};
-}, []);
+	} ), [ setAttributes, view ] );
+};
 
 /**
  * Utility hook to get/set dark background class.
