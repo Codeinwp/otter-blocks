@@ -251,10 +251,9 @@ class Registration {
 
 		$is_wp_ai_backend = AI_Client_Adaptor::BACKEND_WP === AI_Client_Adaptor::resolve_backend();
 
-		wp_localize_script(
-			'otter-blocks',
-			'themeisleGutenberg',
-			array(
+		$can_track = 'yes' === get_option( 'otter_blocks_logger_flag', false );
+
+		$themeisle_gutenberg = array(
 				'hasNeve'                 => defined( 'NEVE_VERSION' ),
 				'hasPro'                  => Pro::is_pro_installed(),
 				'isProActive'             => Pro::is_pro_active(),
@@ -270,7 +269,7 @@ class Registration {
 				'themeDefaults'           => Main::get_global_defaults(),
 				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
 				'isWPVIP'                 => function_exists( 'is_wpcom_vip' ),
-				'canTrack'                => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
+				'canTrack'                => $can_track ? true : false,
 				'userRoles'               => $wp_roles->roles,
 				'isBlockEditor'           => 'post' === $current_screen->base,
 				'postTypes'               => get_post_types(
@@ -304,7 +303,25 @@ class Registration {
 				'connectorsUrl'           => esc_url( admin_url( 'options-connectors.php' ) ),
 				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
 				'proPatterns'             => boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ) ? Patterns::get_upsell_patterns() : array(),
-			)
+		);
+
+		if ( $can_track ) {
+			$themeisle_gutenberg['telemetry'] = array(
+				'loggerData'    => get_option(
+					'otter_blocks_logger_data',
+					array(
+						'blocks'    => array(),
+						'templates' => array(),
+					)
+				),
+				'firstSaveDone' => (bool) get_option( 'otter_activation_first_save', false ),
+			);
+		}
+
+		wp_localize_script(
+			'otter-blocks',
+			'themeisleGutenberg',
+			$themeisle_gutenberg
 		);
 
 		add_filter( 'themeisle-sdk/survey/' . OTTER_PRODUCT_SLUG, array( Dashboard::class, 'get_survey_metadata' ), 10, 2 );

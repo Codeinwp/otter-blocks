@@ -41,6 +41,9 @@ const OPTION_WHITELIST = array(
 	'themeisle_blocks_form_fields_option',
 	'themeisle_blocks_settings_patterns_library',
 	'themeisle_blocks_settings_atomic_wind_blocks',
+	'otter_blocks_logger_flag',
+	'otter_blocks_logger_data',
+	'otter_activation_first_save',
 );
 
 /**
