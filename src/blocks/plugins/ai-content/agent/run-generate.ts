@@ -33,6 +33,10 @@ const buildGenerateTask = ( args: GenerateTurnArgs ): string => {
 		task = `${ task }\n\nReference — current block markup and schema:\n${ referenceContext }`;
 	}
 
+	if ( args.pageStyleDigest ) {
+		task = `${ task }\n\n${ args.pageStyleDigest }`;
+	}
+
 	return task;
 };
 

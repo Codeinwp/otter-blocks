@@ -41,6 +41,7 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 			blockTypes: args.blockTypes,
 			themeColors: args.themeColors,
 			patterns: args.patterns,
+			pageStyleDigest: args.pageStyleDigest,
 			isCreateMode: args.isCreateMode,
 			scope: args.scope,
 			getBlockType: args.getBlockType,

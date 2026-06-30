@@ -38,12 +38,20 @@ import {
  * Starter prompts shown in the block, since the first interaction happens here
  * (the modal auto-generates once opened).
  */
-const PROMPT_CHIPS = [
+const SECTION_PROMPT_CHIPS = [
 	{ label: __( 'Hero', 'otter-blocks' ), prompt: __( 'A bold hero section with a headline, short subheading and two call-to-action buttons.', 'otter-blocks' ) },
 	{ label: __( 'Features', 'otter-blocks' ), prompt: __( 'A features section with three columns, each with an icon, title and short description.', 'otter-blocks' ) },
 	{ label: __( 'Pricing', 'otter-blocks' ), prompt: __( 'A pricing section with three plans and a highlighted recommended plan.', 'otter-blocks' ) },
 	{ label: __( 'Testimonials', 'otter-blocks' ), prompt: __( 'A testimonials section with three customer quotes and names.', 'otter-blocks' ) },
 	{ label: __( 'Call to action', 'otter-blocks' ), prompt: __( 'A call-to-action section with a short persuasive headline and a single button.', 'otter-blocks' ) }
+];
+
+const PAGE_PROMPT_CHIPS = [
+	{ label: __( 'Landing page', 'otter-blocks' ), prompt: __( 'A complete landing page with a hero, feature highlights, testimonials and a closing call to action.', 'otter-blocks' ) },
+	{ label: __( 'About', 'otter-blocks' ), prompt: __( 'An about page with a company story, mission statement and a team section.', 'otter-blocks' ) },
+	{ label: __( 'Pricing', 'otter-blocks' ), prompt: __( 'A pricing page with a plan comparison, a highlighted recommended plan and an FAQ.', 'otter-blocks' ) },
+	{ label: __( 'Contact', 'otter-blocks' ), prompt: __( 'A contact page with a contact form, business details and a map.', 'otter-blocks' ) },
+	{ label: __( 'FAQ', 'otter-blocks' ), prompt: __( 'An FAQ page with grouped questions and answers and a call to action.', 'otter-blocks' ) }
 ];
 
 /**
@@ -66,6 +74,7 @@ const ContentGenerator = ({
 	const [ prompt, setPrompt ] = useState( '' );
 	const [ scope, setScope ] = useState( 'section' );
 	const [ includeColors, setIncludeColors ] = useState( true );
+	const [ matchPageStyle, setMatchPageStyle ] = useState( true );
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const [ getOption, _, settingsStatus ] = useSettings();
 
@@ -289,8 +298,8 @@ const ContentGenerator = ({
 					icon={ icon }
 					label={ __( 'AI Content generator', 'otter-blocks' ) }
 					instructions={ 'page' === scope
-						? __( 'Describe a page and Otter AI will build it with your blocks & theme styles.', 'otter-blocks' )
-						: __( 'Describe a section and Otter AI will build it with your blocks & theme styles.', 'otter-blocks' ) }
+						? __( 'Describe a page and Otter AI will build it.', 'otter-blocks' )
+						: __( 'Describe a section and Otter AI will build it.', 'otter-blocks' ) }
 					className="o-ai-create-card"
 				>
 					<div className="o-ai-create-card__scope" role="group" aria-label={ __( 'What to generate', 'otter-blocks' ) }>
@@ -313,13 +322,15 @@ const ContentGenerator = ({
 					<TextareaControl
 						value={ prompt }
 						onChange={ setPrompt }
-						placeholder={ __( 'e.g. A hero section for a dental clinic with a heading and two buttons', 'otter-blocks' ) }
-						rows={ 2 }
+						placeholder={ 'page' === scope
+							? __( 'e.g. A landing page for a dental clinic with a hero, services and pricing', 'otter-blocks' )
+							: __( 'e.g. A hero section for a dental clinic with a heading and two buttons', 'otter-blocks' ) }
+						rows={ 3 }
 						__nextHasNoMarginBottom
 					/>
 
 					<div className="o-ai-create-card__chips">
-						{ PROMPT_CHIPS.map( ( chipItem ) => (
+						{ ( 'page' === scope ? PAGE_PROMPT_CHIPS : SECTION_PROMPT_CHIPS ).map( ( chipItem ) => (
 							<Button
 								key={ chipItem.label }
 								variant="tertiary"
@@ -331,9 +342,16 @@ const ContentGenerator = ({
 						) ) }
 					</div>
 
-					{ 0 < themeColors.length && (
-						<div className="o-ai-create-card__colors">
-							<div className="o-ai-create-card__colors-head">
+					<div className="o-ai-create-card__settings">
+						{ 0 < themeColors.length && (
+							<div className="o-ai-create-card__setting-row">
+								<ToggleControl
+									__nextHasNoMarginBottom
+									className="o-ai-create-card__setting-toggle"
+									label={ __( 'Use my theme colors', 'otter-blocks' ) }
+									checked={ includeColors }
+									onChange={ setIncludeColors }
+								/>
 								<div
 									className={ `o-ai-create-card__swatches${ includeColors ? '' : ' is-off' }` }
 									aria-hidden="true"
@@ -347,16 +365,20 @@ const ContentGenerator = ({
 										/>
 									) ) }
 								</div>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									className="o-ai-create-card__colors-toggle"
-									label={ __( 'Use my theme colors', 'otter-blocks' ) }
-									checked={ includeColors }
-									onChange={ setIncludeColors }
-								/>
 							</div>
+						) }
+
+						<div className="o-ai-create-card__setting-row">
+							<ToggleControl
+								__nextHasNoMarginBottom
+								className="o-ai-create-card__setting-toggle"
+								label={ __( 'Match current page style', 'otter-blocks' ) }
+								help={ __( 'Reuse the styling and tone of the blocks already on this page.', 'otter-blocks' ) }
+								checked={ matchPageStyle }
+								onChange={ setMatchPageStyle }
+							/>
 						</div>
-					) }
+					</div>
 
 					<div className="o-ai-create-card__actions">
 						<Button
@@ -387,6 +409,7 @@ const ContentGenerator = ({
 					onApplyBlocks={ applyGeneratedBlocks }
 					actions={ toolbarActions }
 					includeThemeColors={ includeColors }
+					includePageContext={ matchPageStyle }
 					initialPrompt={ prompt }
 					selectedBlocks={ [] }
 					isMultipleSelection={ false }

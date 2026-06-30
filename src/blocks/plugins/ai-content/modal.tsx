@@ -50,6 +50,7 @@ import type { BlockGenerationResult } from './block-generation';
 import { getTrackingFeatureValue, runAgentTurn } from './agent';
 import type { AgentToolName, GenerationRoute } from './agent';
 import { extractPromptHistory } from './session-history';
+import { buildPageStyleDigest } from './page-style';
 import { LivePreview } from '../patterns-library/template';
 import { useAtomicCssForContent } from '../patterns-library/atomic';
 
@@ -127,6 +128,14 @@ type AIContentModalProps = {
 	 * palette is withheld and the model picks its own colors. Defaults to true.
 	 */
 	includeThemeColors?: boolean;
+
+	/**
+	 * Whether a digest of the current page's Atomic Wind style conventions is sent
+	 * to the model so a newly created section matches the existing page. Only
+	 * applies to create mode; no-ops when the page has too little signal. Defaults
+	 * to true.
+	 */
+	includePageContext?: boolean;
 };
 
 const AIContentModal = ({
@@ -144,7 +153,8 @@ const AIContentModal = ({
 	mode = 'transform',
 	autoGenerate = false,
 	initialScope = 'section',
-	includeThemeColors = true
+	includeThemeColors = true,
+	includePageContext = true
 }: AIContentModalProps ) => {
 	const isCreateMode = 'create' === mode;
 	const scope = initialScope;
@@ -192,6 +202,27 @@ const AIContentModal = ({
 	const themeColors = useSelect(
 		select => ( select( 'core/block-editor' ) as { getSettings?: () => { colors?: { name?: string; slug: string; color: string }[] } } )?.getSettings?.()?.colors ?? [],
 		[]
+	);
+
+	// The current page's top-level blocks, used to derive the style digest so a
+	// freshly created section matches what is already on the page. Only read in
+	// create mode (an edit already has the live section as context).
+	const pageBlocks = useSelect(
+		select => ( isCreateMode ? ( select( 'core/block-editor' ) as { getBlocks?: () => BlockProps<unknown>[] } )?.getBlocks?.() ?? [] : [] ),
+		[ isCreateMode ]
+	);
+
+	// Built once per turn-open from the live page, excluding the in-place
+	// generator block so its placeholder never feeds back into its own digest.
+	const pageStyleDigest = useMemo(
+		() => {
+			if ( ! isCreateMode || ! includePageContext || ! pageBlocks.length ) {
+				return undefined;
+			}
+
+			return buildPageStyleDigest( pageBlocks, { excludeClientIds: singleClientId ? [ singleClientId ] : [] } ) ?? undefined;
+		},
+		[ isCreateMode, includePageContext, pageBlocks, singleClientId ]
 	);
 
 	const [ instruction, setInstruction ] = useState( () => {
@@ -577,6 +608,7 @@ const AIContentModal = ({
 			aiDebug( 'instruction', routeInstruction );
 			aiDebug( 'activePrompt', activePrompt );
 			aiDebug( 'forceRoute', forceRoute ?? '(auto)' );
+			aiDebug( 'pageStyleDigest', pageStyleDigest ?? '(none)' );
 			// eslint-disable-next-line no-console
 			console.log( '%cselected markup:', 'font-weight:600', '\n' + serialize( referenceBlocks as unknown as Parameters<typeof serialize>[0] ) );
 		} );
@@ -590,6 +622,7 @@ const AIContentModal = ({
 				sessionHistory,
 				blockTypes,
 				themeColors: includeThemeColors ? themeColors : [],
+				pageStyleDigest,
 				isCreateMode,
 				scope,
 				getBlockType,

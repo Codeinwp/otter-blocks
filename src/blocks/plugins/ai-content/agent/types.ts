@@ -55,6 +55,10 @@ export type RunTurnArgs = {
 	blockTypes: BlockTypeLike[];
 	themeColors: ThemeColor[];
 	patterns?: PatternLike[];
+	// Compact digest of the current page's Atomic Wind style conventions, used to
+	// keep a freshly generated section coherent with the rest of the page. Empty
+	// when the page has too little signal or the user opted out.
+	pageStyleDigest?: string;
 	isCreateMode: boolean;
 	scope: 'section' | 'page';
 	getBlockType: GetBlockType;
@@ -79,6 +83,7 @@ export type GenerateTurnArgs = Pick<
 	| 'blockTypes'
 	| 'themeColors'
 	| 'patterns'
+	| 'pageStyleDigest'
 	| 'isCreateMode'
 	| 'scope'
 	| 'getBlockType'
