@@ -3,6 +3,8 @@
  */
 import classnames from 'classnames';
 
+import { useInView } from 'react-intersection-observer';
+
 /**
  * WordPress dependencies.
  */
@@ -32,7 +34,8 @@ import {
 	AsyncPreview,
 	ParsedPreview,
 	ProThumb,
-	QueuedPreview
+	QueuedPreview,
+	Skeleton
 } from './template';
 
 import { previewAccent } from './accent';
@@ -44,12 +47,22 @@ const SimilarCard = ({
 	accent,
 	onClick
 }) => {
+	// Defer each card's BlockPreview until it nears the viewport, so opening the
+	// dialog doesn't mount every preview at once and stall the first paint.
+	const { ref, inView } = useInView({
+		threshold: 0,
+		rootMargin: '200px',
+		triggerOnce: true
+	});
+
+	const thumb = pattern.isPro
+		? <ProThumb pattern={ pattern } />
+		: <QueuedPreview pattern={ pattern } accent={ accent } />;
+
 	return (
-		<button className="o-library__similar-card" onClick={ onClick }>
+		<button className="o-library__similar-card" onClick={ onClick } ref={ ref }>
 			<span className="o-library__similar-thumb">
-				{ pattern.isPro
-					? <ProThumb pattern={ pattern } />
-					: <QueuedPreview pattern={ pattern } accent={ accent } /> }
+				{ inView ? thumb : <Skeleton /> }
 			</span>
 
 			<span className="o-library__similar-name">{ pattern.title }</span>

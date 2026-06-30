@@ -413,6 +413,40 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * Test the Archive Title query with the prefix removed.
+	 */
+	public function test_archive_title_hide_prefix() {
+		$archive_title_query = '<p><o-dynamic data-type="archiveTitle" data-hide-prefix="1">Archive Title</o-dynamic></p>';
+
+		$result = array();
+		$num    = Dynamic_Content::parse_dynamic_content_query( $archive_title_query, $result );
+		$this->assertTrue( boolval( $num ) );
+		$result = $result[0];
+
+		$this->assertEquals( 'archiveTitle', $result['type'] );
+		$this->assertEquals( '1', $result['hidePrefix'] );
+	}
+
+	/**
+	 * Test the Archive Title evaluation on a category archive.
+	 */
+	public function test_archive_title_evaluation() {
+		$this->go_to( get_term_link( $this->category_id, 'category' ) );
+
+		// Default behaviour keeps the prefix.
+		$with_prefix_query = '<p><o-dynamic data-type="archiveTitle">Archive Title</o-dynamic></p>';
+		$with_prefix       = $this->dynamic_content->apply_dynamic_content( $with_prefix_query );
+		$this->assertStringContainsString( 'Test Category', $with_prefix );
+		$this->assertStringContainsString( 'Category:', $with_prefix );
+
+		// Enabling the toggle strips the prefix and leaves only the term name.
+		$no_prefix_query = '<p><o-dynamic data-type="archiveTitle" data-hide-prefix="1">Archive Title</o-dynamic></p>';
+		$no_prefix       = $this->dynamic_content->apply_dynamic_content( $no_prefix_query );
+		$this->assertEquals( '<p>Test Category</p>', $no_prefix );
+		$this->assertStringNotContainsString( 'Category:', $no_prefix );
+	}
+
+	/**
 	 * Test the Archive Description query.
 	 */
 	public function test_archive_description() {

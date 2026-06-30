@@ -1282,6 +1282,7 @@ select.o-library__sort {
 }
 
 .o-library__similar-thumb {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
