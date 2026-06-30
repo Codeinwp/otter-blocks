@@ -6,6 +6,7 @@
  */
 
 use ThemeIsle\GutenbergBlocks\Plugins\Atomic_Wind_Blocks;
+use ThemeIsle\GutenbergBlocks\Plugins\Options_Settings;
 
 /**
  * Atomic Wind Blocks test case.
@@ -152,6 +153,30 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		);
 		$this->assertNotFalse(
 			has_filter( 'block_categories_all', array( $this->instance, 'register_category' ) )
+		);
+	}
+
+	public function test_run_registers_hooks_after_default_for_fresh_install() {
+		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
+		delete_option( 'themeisle_blocks_settings_atomic_wind_defaulted' );
+		update_option( 'otter_blocks_install', time() - HOUR_IN_SECONDS );
+
+		( new Options_Settings() )->maybe_default_atomic_wind_blocks();
+
+		$this->assertTrue( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
+	}
+
+	public function test_run_bails_for_old_install_without_saved_option_after_default() {
+		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
+		delete_option( 'themeisle_blocks_settings_atomic_wind_defaulted' );
+		update_option( 'otter_blocks_install', time() - ( 2 * DAY_IN_SECONDS ) );
+
+		( new Options_Settings() )->maybe_default_atomic_wind_blocks();
+
+		$this->instance->run();
+
+		$this->assertFalse(
+			has_filter( 'render_block', array( $this->instance, 'render_animation_attrs' ) )
 		);
 	}
 
