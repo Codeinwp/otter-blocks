@@ -17,11 +17,8 @@ import { insertContactForm } from '../helpers/forms';
 import { expectBlockByName } from '../helpers/editor';
 
 test.describe( 'Block API v3 editor canvas', () => {
-	test.beforeEach( async({ admin }) => {
+	test.beforeEach( async({ admin, page }) => {
 		await admin.createNewPost();
-	});
-
-	test( 'uses the iframed editor canvas', async({ page }) => {
 		await expectIframedEditorCanvas( page );
 	});
 

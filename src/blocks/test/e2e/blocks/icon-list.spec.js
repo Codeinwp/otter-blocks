@@ -10,12 +10,6 @@ import { expectBlockByName } from '../helpers/editor';
 
 const ITEM = 'themeisle-blocks/icon-list-item';
 
-const getItems = async ( editor ) => {
-	const blocks = await editor.getBlocks();
-	const list = blocks.find( ( b ) => 'themeisle-blocks/icon-list' === b.name );
-	return ( list?.innerBlocks ?? [] );
-};
-
 test.describe( 'Icon List', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -29,7 +23,8 @@ test.describe( 'Icon List', () => {
 		await editor.insertBlock({ name: 'themeisle-blocks/icon-list' });
 		await expectBlockByName( editor, 'themeisle-blocks/icon-list' );
 
-		const before = await getItems( editor );
+		const blocks = await editor.getBlocks();
+		const before = blocks.find( ( b ) => 'themeisle-blocks/icon-list' === b.name )?.innerBlocks ?? [];
 		expect( before.length ).toBe( 3 );
 
 		// Place the caret inside the first item's editable text, then replace it with
@@ -44,7 +39,8 @@ test.describe( 'Icon List', () => {
 		await page.keyboard.press( 'ArrowLeft' );
 		await page.keyboard.press( 'Enter' );
 
-		const after = await getItems( editor );
+		const afterBlocks = await editor.getBlocks();
+		const after = afterBlocks.find( ( b ) => 'themeisle-blocks/icon-list' === b.name )?.innerBlocks ?? [];
 		expect( after.length ).toBe( 4 );
 
 		// Every child must remain an icon-list item (not converted to a paragraph).

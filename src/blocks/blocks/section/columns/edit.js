@@ -81,10 +81,7 @@ const Edit = ({
 
 	const {
 		sectionBlock,
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile,
+		deviceType,
 		children,
 		variations,
 		defaultVariation
@@ -105,10 +102,7 @@ const Edit = ({
 		return {
 			sectionBlock: getBlock( clientId ),
 			children: getBlock( clientId )?.innerBlocks || [],
-			isViewportAvailable: deviceType ? true : false,
-			isPreviewDesktop: deviceType ? 'Desktop' === deviceType : false,
-			isPreviewTablet: deviceType ? 'Tablet' === deviceType : false,
-			isPreviewMobile: deviceType ? 'Mobile' === deviceType : false,
+			deviceType,
 			blockType: getBlockType( name ),
 			defaultVariation: getDefaultBlockVariation( name, 'block' ),
 			variations: getBlockVariations( name, 'block' ).filter( ({ isDefault }) => ! isDefault )
@@ -186,10 +180,10 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
+	if ( deviceType && ! isMobile ) {
+		isDesktop = 'Desktop' === deviceType;
+		isTablet = 'Tablet' === deviceType;
+		isMobile = 'Mobile' === deviceType;
 	}
 
 	// +-------------------------------- DIVIDER SIZE --------------------------------+

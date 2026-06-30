@@ -61,10 +61,7 @@ const Edit = ({
 		adjacentBlock,
 		parentBlock,
 		hasInnerBlocks,
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile
+		deviceType
 	} = useSelect( select => {
 		const {
 			getAdjacentBlockClientId,
@@ -85,10 +82,7 @@ const Edit = ({
 			adjacentBlock,
 			parentBlock,
 			hasInnerBlocks,
-			isViewportAvailable: deviceType ? true : false,
-			isPreviewDesktop: deviceType ? 'Desktop' === deviceType : false,
-			isPreviewTablet: deviceType ? 'Tablet' === deviceType : false,
-			isPreviewMobile: deviceType ? 'Mobile' === deviceType : false
+			deviceType
 		};
 	}, []);
 
@@ -149,10 +143,10 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
+	if ( deviceType && ! isMobile ) {
+		isDesktop = 'Desktop' === deviceType;
+		isTablet = 'Tablet' === deviceType;
+		isMobile = 'Mobile' === deviceType;
 	}
 	const { layout, layoutTablet, layoutMobile } = parentBlock.attributes;
 	const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );

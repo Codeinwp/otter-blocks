@@ -142,3 +142,40 @@ export async function publishAndViewPost({ editor, page, query = '', waitAfterPu
 
 	return postId;
 }
+
+/**
+ * Select a block by name anywhere in the block tree.
+ *
+ * @param {import('@playwright/test').Page} page      The page.
+ * @param {string}                          blockName Block name to select.
+ * @return {Promise<string>} The selected block clientId.
+ */
+export async function selectBlockByName( page, blockName ) {
+	return page.evaluate( name => {
+		const findBlock = blocks => {
+			for ( const block of blocks ) {
+				if ( block.name === name ) {
+					return block;
+				}
+
+				const inner = findBlock( block.innerBlocks || [] );
+
+				if ( inner ) {
+					return inner;
+				}
+			}
+
+			return null;
+		};
+
+		const block = findBlock( window.wp.data.select( 'core/block-editor' ).getBlocks() );
+
+		if ( ! block ) {
+			throw new Error( `Block not found: ${ name }` );
+		}
+
+		window.wp.data.dispatch( 'core/block-editor' ).selectBlock( block.clientId );
+
+		return block.clientId;
+	}, blockName );
+}

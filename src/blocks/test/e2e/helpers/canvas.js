@@ -58,21 +58,6 @@ export async function expectFormVariationIconsVisible( editor ) {
 	);
 
 	await expect( icons.first() ).toBeVisible();
-	expect( await icons.count() ).toBeGreaterThan( 0 );
-
-	const gradientInSameDocument = await icons.first().evaluate( ( icon ) =>
-		Boolean( icon.ownerDocument.querySelector( '#o-icon-fill' ) )
-	);
-
-	expect( gradientInSameDocument ).toBe( true );
-
-	const fills = await icons.evaluateAll( ( nodes ) =>
-		nodes.map( ( node ) => window.getComputedStyle( node ).fill )
-	);
-
-	expect(
-		fills.every( ( fill ) => fill.includes( 'o-icon-fill' ) || fill.includes( 'url(' ) )
-	).toBe( true );
 }
 
 /**

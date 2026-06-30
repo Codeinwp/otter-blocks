@@ -261,29 +261,7 @@ function stub_openai_generate_response() {
 				'index'         => 0,
 				'message'       => array(
 					'role'    => 'assistant',
-					'content' => '<h1><strong>Discover the Next Frontier: Space Nation on the Rise</strong></h1>
-
-<p>Are you ready to embark on a journey to a new world beyond our wildest dreams? Look no further than the rapidly emerging Space Nation that is captivating the imaginations of millions. From groundbreaking technologies to bold explorations, this cosmic civilization is redefining what it means to reach for the stars.</p>
-
-<h2><em>Unveiling the Wonders of Space Nation</em></h2>
-
-<p>Peer into the future and witness the awe-inspiring advancements taking place in this celestial realm. With each innovation, Space Nation pushes the boundaries of possibility, offering a glimpse into a future where the impossible becomes reality.</p>
-
-<h2><em>Join the Movement</em></h2>
-
-<p>Don\'t miss your chance to be part of history in the making. Whether you are an aspiring pioneer or a curious observer, there is a place for you in the unfolding saga of Space Nation. Embrace the spirit of exploration and venture into a realm where the skies are no longer the limit.</p>
-
-<h3><strong>Why Space Nation?</strong></h3>
-
-<ul>
-  <li>Experience groundbreaking technologies shaping the future</li>
-  <li>Witness bold explorations into the unknown</li>
-  <li>Join a community of visionaries and trailblazers</li>
-</ul>
-
-<h3><strong>Take Action Today</strong></h3>
-
-<p>Ready to embark on an adventure that transcends the confines of Earth? Step into the world of Space Nation and dare to dream beyond the stars.</p>',
+					'content' => '<p>E2E stub</p>',
 				),
 				'logprobs'      => null,
 				'finish_reason' => 'stop',

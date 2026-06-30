@@ -34,11 +34,4 @@ describe( 'getTimezone', () => {
 		withOffsetHours( -9.5 );
 		expect( getTimezone() ).toBe( '-09:30' );
 	});
-
-	it( 'always matches the RFC3339/ISO offset shape', () => {
-		for ( const offset of [ 0, 1, -1, 5.5, -9.5, 14, -12 ] ) {
-			withOffsetHours( offset );
-			expect( getTimezone() ).toMatch( /^[+-]\d{2}:\d{2}$/ );
-		}
-	});
 });

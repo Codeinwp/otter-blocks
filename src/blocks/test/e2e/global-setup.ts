@@ -40,12 +40,6 @@ async function globalSetup( config: FullConfig ) {
 
 	await assertWpEnvReady( requestContext, baseURL as string );
 
-	const r = await requestContext.head( baseURL );
-
-	if ( r.headers().link === undefined ) {
-		console.warn( '[Warning] No links header found. The connection might be invalid.' );
-	}
-
 	const requestUtils = new RequestUtils( requestContext, {
 		storageStatePath
 	});

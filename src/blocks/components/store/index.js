@@ -10,13 +10,6 @@ const DEFAULT_STATE = {
 	}
 };
 
-const ACTION_TYPES = {
-	SET_POSTS_SLUGS: 'SET_POSTS_SLUGS',
-	SET_POSTS_USED_SLUGS: 'SET_POSTS_USED_SLUGS',
-	SET_ONLY_ONE_SLUG: 'SET_ONLY_ONE_SLUG',
-	REMOVE_POSTS_USED_SLUGS: 'REMOVE_POSTS_USED_SLUGS'
-};
-
 /**
  * General store used by the other components
  * Reference: https://github.com/WordPress/gutenberg/tree/master/packages/data
@@ -24,7 +17,7 @@ const ACTION_TYPES = {
 
 const reducer = ( state = DEFAULT_STATE, action ) => {
 	switch ( action.type ) {
-	case ACTION_TYPES.SET_POSTS_SLUGS:
+	case 'SET_POSTS_SLUGS':
 		return {
 			...state,
 			posts: {
@@ -32,7 +25,7 @@ const reducer = ( state = DEFAULT_STATE, action ) => {
 				slugs: action.slugs
 			}
 		};
-	case ACTION_TYPES.SET_POSTS_USED_SLUGS:
+	case 'SET_POSTS_USED_SLUGS':
 		return {
 			...state,
 			posts: {
@@ -40,7 +33,7 @@ const reducer = ( state = DEFAULT_STATE, action ) => {
 				usedSlugs: [ ...state.posts.usedSlugs, ...action.slugs ]
 			}
 		};
-	case ACTION_TYPES.SET_ONLY_ONE_SLUG:
+	case 'SET_ONLY_ONE_SLUG':
 		return {
 			...state,
 			posts: {
@@ -48,7 +41,7 @@ const reducer = ( state = DEFAULT_STATE, action ) => {
 				usedSlugs: [ action.slug ]
 			}
 		};
-	case ACTION_TYPES.REMOVE_POSTS_USED_SLUGS:
+	case 'REMOVE_POSTS_USED_SLUGS':
 		return {
 			...state,
 			posts: {
@@ -68,25 +61,25 @@ const reducer = ( state = DEFAULT_STATE, action ) => {
 const actions = {
 	setPostsSlugs( newSlugs ) {
 		return {
-			type: ACTION_TYPES.SET_POSTS_SLUGS,
+			type: 'SET_POSTS_SLUGS',
 			slugs: newSlugs
 		};
 	},
 	setPostsUsedSlugs( slugs ) {
 		return {
-			type: ACTION_TYPES.SET_POSTS_USED_SLUGS,
+			type: 'SET_POSTS_USED_SLUGS',
 			slugs
 		};
 	},
 	setOnlyOneSlug( slug ) {
 		return {
-			type: ACTION_TYPES.SET_ONLY_ONE_SLUG,
+			type: 'SET_ONLY_ONE_SLUG',
 			slug
 		};
 	},
 	removePostsUsedSlugs( slugs ) {
 		return {
-			type: ACTION_TYPES.REMOVE_POSTS_USED_SLUGS,
+			type: 'REMOVE_POSTS_USED_SLUGS',
 			slugs
 		};
 	}
