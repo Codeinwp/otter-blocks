@@ -26,13 +26,13 @@ class Product_Upsells_Block {
 			return;
 		}
 
-		ob_start();
-
 		global $product;
 
 		if ( ! $product ) {
 			return;
 		}
+
+		ob_start();
 		woocommerce_upsell_display();
 		$output = ob_get_clean();
 		return $output;

@@ -26,13 +26,13 @@ class Product_Meta_Block {
 			return;
 		}
 
-		ob_start();
-
 		global $product;
 
 		if ( ! $product ) {
 			return;
 		}
+
+		ob_start();
 		woocommerce_template_single_meta();
 		$output = ob_get_clean();
 		return $output;

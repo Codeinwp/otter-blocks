@@ -26,13 +26,13 @@ class Product_Add_To_Cart_Block {
 			return;
 		}
 
-		ob_start();
-
 		global $product;
 
 		if ( ! $product ) {
 			return;
 		}
+
+		ob_start();
 		woocommerce_template_single_add_to_cart();
 		$output = ob_get_clean();
 		return $output;
