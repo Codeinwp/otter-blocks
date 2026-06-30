@@ -703,7 +703,7 @@ describe( 'AI block generation engine', () => {
 		]);
 	});
 
-	it( 'always forces Atomic Wind primitives in the plan prompt', () => {
+	it( 'forces Atomic Wind primitives in the plan prompt, allowing only the form/map exceptions', () => {
 		const atomicBlockTypes = [
 			{ name: 'atomic-wind/box', title: 'Box', description: 'A box.', attributes: {}, supports: { inserter: true }},
 			{ name: 'atomic-wind/text', title: 'Text', description: 'Text.', attributes: { content: { type: 'string', source: 'html' } }, supports: { inserter: true }}
@@ -719,10 +719,33 @@ describe( 'AI block generation engine', () => {
 			requestCompletion: completion
 		}).then( () => {
 			const planPrompt = completion.mock.calls[0][0];
-			// The plan forces atomic primitives and never steers to Otter/core.
-			expect( planPrompt ).toContain( 'exclusively from Atomic Wind primitives' );
+			// The plan steers to atomic primitives and never to generic Otter/core,
+			// but permits the curated form/map blocks when the task calls for them.
+			expect( planPrompt ).toContain( 'Build the structure from Atomic Wind primitives' );
 			expect( planPrompt ).not.toContain( 'Prefer Otter blocks' );
 			expect( planPrompt ).toContain( 'atomic-wind/box' );
+			expect( planPrompt ).toContain( 'themeisle-blocks/leaflet-map' );
 		});
+	});
+
+	it( 'includes the curated form and map blocks in the structure catalog', () => {
+		const catalog = buildStructureCatalog([
+			{ name: 'atomic-wind/box', description: 'A box.', supports: { inserter: true }, allowedBlocks: [] },
+			{ name: 'themeisle-blocks/form', description: 'A form.', supports: { inserter: true } },
+			{ name: 'themeisle-blocks/form-input', description: 'An input.', supports: { inserter: true }, ancestor: [ 'themeisle-blocks/form' ] },
+			{ name: 'themeisle-blocks/leaflet-map', description: 'A map.', supports: { inserter: true } },
+			// Excluded: not atomic-wind and not in the curated extras.
+			{ name: 'themeisle-blocks/google-map', description: 'A keyed map.', supports: { inserter: true } },
+			{ name: 'core/paragraph', description: 'A paragraph.', supports: { inserter: true } }
+		]);
+
+		const slugs = catalog.map( ( entry ) => entry.slug );
+
+		expect( slugs ).toContain( 'themeisle-blocks/form' );
+		expect( slugs ).toContain( 'themeisle-blocks/leaflet-map' );
+		expect( slugs ).not.toContain( 'themeisle-blocks/google-map' );
+		expect( slugs ).not.toContain( 'core/paragraph' );
+		// The form is detected as a container (its input declares it as an ancestor).
+		expect( catalog.find( ( entry ) => 'themeisle-blocks/form' === entry.slug )?.container ).toBe( true );
 	});
 });

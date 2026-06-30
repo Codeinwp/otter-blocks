@@ -239,6 +239,24 @@ const KNOWN_CONTAINERS = new Set([
 ]);
 
 /*
+ * Non-Atomic-Wind blocks the generator may use in addition to the primitives,
+ * for things the primitives can't express: a working contact form and a map.
+ * Curated on purpose — the map is the no-API-key Leaflet block, and the form is
+ * limited to the field types the model can author from text attributes alone.
+ */
+const GENERATION_EXTRA_BLOCKS = new Set([
+	'themeisle-blocks/form',
+	'themeisle-blocks/form-input',
+	'themeisle-blocks/form-textarea',
+	'themeisle-blocks/form-multiple-choice',
+	'themeisle-blocks/leaflet-map'
+]);
+
+const isGenerationBlock = ( blockType: BlockTypeLike ): boolean => {
+	return blockType.name.startsWith( 'atomic-wind/' ) || GENERATION_EXTRA_BLOCKS.has( blockType.name );
+};
+
+/*
  * Any block that another block declares as its `parent` or `ancestor` is, by
  * definition, a container. This auto-detects most layout blocks (timeline,
  * accordion, tabs, sections, forms, …) without a hardcoded list.
@@ -276,9 +294,10 @@ const isCatalogBlockAllowed = ( blockType: BlockTypeLike ) => {
 		return false;
 	}
 
-	// The Atomic Wind primitives are the entire generation vocabulary — never let
-	// the asset/service filter drop one (e.g. atomic-wind/image matches "image").
-	if ( blockType.name.startsWith( 'atomic-wind/' ) ) {
+	// The Atomic Wind primitives are the generation vocabulary, plus the curated
+	// extras (form, map) — never let the asset/service filter drop one (e.g.
+	// atomic-wind/image matches "image", themeisle-blocks/leaflet-map matches "map").
+	if ( isGenerationBlock( blockType ) ) {
 		return true;
 	}
 
@@ -317,9 +336,9 @@ const textAttributesOf = ( blockType: BlockTypeLike | undefined ): string[] => {
 
 /**
  * Phase 1 — build the slim structure catalog (slug + short description +
- * container hint). Generation is Atomic-Wind-only, so the catalog is the
- * `atomic-wind/*` primitives exclusively — every other block type is excluded so
- * the model is never shown a block it shouldn't use.
+ * container hint). The vocabulary is the `atomic-wind/*` primitives plus the
+ * curated extras (form, map); every other block type is excluded so the model is
+ * never shown a block it shouldn't use.
  *
  * @param blockTypes The registered block types to filter into the catalog.
  */
@@ -330,7 +349,7 @@ export const buildStructureCatalog = (
 
 	return blockTypes
 		.filter( isCatalogBlockAllowed )
-		.filter( blockType => blockType.name.startsWith( 'atomic-wind/' ) )
+		.filter( isGenerationBlock )
 		.map( blockType => ({
 			slug: blockType.name,
 			description: trimDescription( blockType.description || '' ),
@@ -748,7 +767,7 @@ const formatHistoryForPrompt = formatSessionHistoryForPrompt;
  */
 const SECTION_SIZE_HINT = 'Keep this section compact: prefer a small, focused block tree over a sprawling one. For any repeating group (gallery, grid, cards, testimonials, logos, steps), include only 3–4 representative items — never a long list. A lean section that reads well beats an exhaustive one.';
 
-const ATOMIC_WIND_FORCE_HINT = 'Build the ENTIRE structure exclusively from Atomic Wind primitives: atomic-wind/box, atomic-wind/text, atomic-wind/icon, atomic-wind/link and atomic-wind/image. Use atomic-wind/box for every section, row, card and container, and nest the content primitives inside it — a box can reproduce any layout, so do NOT use any other block type from the catalog. Give each top-level section box "align":"full" and its own padding (e.g. "px-6 py-24"), then constrain and center its content with an inner box (e.g. "mx-auto max-w-5xl flex flex-col items-center gap-8 text-center"). Space children with the parent box\'s flex/grid "gap" — not element margins.';
+const ATOMIC_WIND_FORCE_HINT = 'Build the structure from Atomic Wind primitives: atomic-wind/box, atomic-wind/text, atomic-wind/icon, atomic-wind/link and atomic-wind/image. Use atomic-wind/box for every section, row, card and container, and nest the content primitives inside it — a box can reproduce any layout, so do NOT use other block types for layout or content. The ONLY exceptions, used solely when the task explicitly calls for them: a contact form — themeisle-blocks/form holding themeisle-blocks/form-input, themeisle-blocks/form-textarea and/or themeisle-blocks/form-multiple-choice children — and a map — themeisle-blocks/leaflet-map. Wrap either inside an atomic-wind/box so its surrounding layout, heading and spacing still come from primitives. Give each top-level section box "align":"full" and its own padding (e.g. "px-6 py-24"), then constrain and center its content with an inner box (e.g. "mx-auto max-w-5xl flex flex-col items-center gap-8 text-center"). Space children with the parent box\'s flex/grid "gap" — not element margins.';
 
 const buildPlanPrompt = (
 	task: string,
@@ -808,7 +827,9 @@ export const ATOMIC_WIND_ATTRIBUTE_HINT = [
 	'- Always add "m-0" to every atomic-wind/text, atomic-wind/image and atomic-wind/icon className. Spacing comes from the parent box\'s gap; without "m-0" the site theme reintroduces heading/paragraph margins on the frontend (they show only after insertion, not in preview).',
 	'- atomic-wind/icon renders its own SVG from a Lucide icon name in kebab-case set in its "icon" attribute (e.g. "star", "check", "arrow-right", "sparkles", "menu"). Style it with size/color utilities ("size-6 text-indigo-500") and give it no text content.',
 	'- Use "tagName" to pick the right semantic element (section, header, nav, article for boxes; h1–h3, p, span, div for text).',
-	'- Never put prose into "className". Keep the palette coherent and text readable against its background.'
+	'- Never put prose into "className". Keep the palette coherent and text readable against its background.',
+	'- For a form: themeisle-blocks/form contains one themeisle-blocks/form-input per field — set its "label", "placeholder" and "type" ("text", "email", "tel", …) — plus a themeisle-blocks/form-textarea (set "label"/"placeholder") for messages. The form renders its own submit button, so do not add one. Leave provider/email settings unset; the user configures delivery after insertion.',
+	'- For a map: themeisle-blocks/leaflet-map needs no API key. Set "location" to a human-readable address string (e.g. "350 5th Ave, New York, NY"); leave latitude/longitude unset. Give it a height via the surrounding box or its own attributes.'
 ].join( '\n' );
 
 /*

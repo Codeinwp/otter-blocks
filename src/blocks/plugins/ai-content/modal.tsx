@@ -904,9 +904,6 @@ const AIContentModal = ({
 	const sectionSubmitDisabled = ! hasAPIKey || isGenerating || ! instruction.trim();
 
 	const sectionStatus = ( () => {
-		if ( isGenerating ) {
-			return { kind: 'busy', label: loadingLabel };
-		}
 		if ( 'error' === status ) {
 			return { kind: 'error', label: __( 'Update failed', 'otter-blocks' ) };
 		}
@@ -1009,10 +1006,15 @@ const AIContentModal = ({
 						<span className="o-ai-section__brand-title" title={ brandTitle }>{ brandTitle }</span>
 						<span className="o-ai-section__brand-subtitle" title={ brandSubtitle }>{ brandSubtitle }</span>
 					</div>
-					<span className={ `o-ai-section__status is-${ sectionStatus.kind }` }>
-						<span className="o-ai-section__status-dot" aria-hidden="true" />
-						{ sectionStatus.label }
-					</span>
+					{ /* While generating, the centered overlay pill owns the progress
+					     status — so the header chip would just echo it. Keep the chip
+					     for the resting states only. */ }
+					{ ! isGenerating && (
+						<span className={ `o-ai-section__status is-${ sectionStatus.kind }` }>
+							<span className="o-ai-section__status-dot" aria-hidden="true" />
+							{ sectionStatus.label }
+						</span>
+					) }
 					<Button
 						icon={ close }
 						label={ __( 'Close', 'otter-blocks' ) }
