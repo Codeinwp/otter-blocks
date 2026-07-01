@@ -8,6 +8,7 @@ import { expect } from '@wordpress/e2e-test-utils-playwright';
  */
 import { test } from '../fixtures';
 import { expectBlockByName, insertBlockBySlash, publishAndViewPost, publishPostReliable } from '../helpers/editor';
+import { insertEmptyFormBlock } from '../helpers/canvas';
 import { expectFormOptionSavedNotice, findSavedFormEmail, getSavedFormEmails, insertContactForm, openFormOptions, showFormOption } from '../helpers/forms';
 import { expectSuccessMessage, visibleText } from '../helpers/frontend';
 
@@ -34,6 +35,17 @@ test.describe( 'Form Block', () => {
 			shortcut: '/form',
 			blockName: 'themeisle-blocks/form'
 		});
+	});
+
+	test( 'Create Form With AI toolbar inserts a content generator block', async({ editor, page }) => {
+		await insertEmptyFormBlock( editor );
+
+		await editor.canvas.getByRole( 'document', { name: 'Block: Form' }).click();
+		await page.getByRole( 'button', { name: 'Create Form With AI' }).click();
+
+		const blocks = await editor.getBlocks();
+
+		expect( blocks.some( ( block ) => 'themeisle-blocks/content-generator' === block.name ) ).toBe( true );
 	});
 
 	test( 'click on the first variation and check if it has content', async({ editor, page }) => {
