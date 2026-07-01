@@ -230,6 +230,12 @@ class AI_Client_Adaptor {
 			// translate it to the AI Client's structured JSON response.
 			$forced_function = $this->get_forced_function( $payload );
 
+			// `response_format: { type: 'json_object' }` is the other way Otter asks
+			// for JSON (the block-generation pipeline uses it). Without this the AI
+			// Client would ignore it and the model could wrap its JSON in prose,
+			// breaking the strict parse on the client.
+			$wants_json = isset( $payload['response_format']['type'] ) && 'json_object' === $payload['response_format']['type'];
+
 			if ( null !== $forced_function ) {
 				$schema = isset( $forced_function['parameters'] ) && is_array( $forced_function['parameters'] ) ? $forced_function['parameters'] : null;
 
@@ -238,6 +244,8 @@ class AI_Client_Adaptor {
 				}
 
 				$builder = $builder->as_json_response( $schema );
+			} elseif ( $wants_json ) {
+				$builder = $builder->as_json_response();
 			}
 
 			$result = $builder->generate_text_result();
@@ -262,12 +270,58 @@ class AI_Client_Adaptor {
 			return AI_Response::success(
 				$text,
 				$usage->getTotalTokens(),
-				null !== $forced_function ? 'json' : 'text'
+				( null !== $forced_function || $wants_json ) ? 'json' : 'text'
 			);
 		} catch ( \Exception $e ) {
-			$code = $e instanceof \RuntimeException ? 'empty_response' : 'wp_ai_client_error';
-			return $this->error_response( $code, $e->getMessage(), 502 );
+			if ( $e instanceof \RuntimeException ) {
+				return $this->error_response( 'empty_response', $e->getMessage(), 502 );
+			}
+
+			// The provider (or a proxy in front of it) can fail with a raw HTTP
+			// error body — e.g. an nginx "502 Bad Gateway" HTML page. The AI Client
+			// surfaces that body verbatim in the exception message, so passing it
+			// through would show markup to the user and hide the real, retryable
+			// nature of the failure. Classify it into a clean transient error.
+			list( $code, $message, $status ) = $this->classify_provider_exception( $e );
+
+			return $this->error_response( $code, $message, $status );
 		}
+	}
+
+	/**
+	 * Turn a provider/transport exception into a clean [code, message, status]
+	 * triple, never leaking a raw HTTP error body (HTML gateway pages, stack-like
+	 * dumps) to the client. Gateway and timeout failures are mapped to the
+	 * statuses the client already treats as transient so the request auto-retries.
+	 *
+	 * @param \Exception $e The caught exception.
+	 * @return array{0:string,1:string,2:int} The [code, message, status] triple.
+	 */
+	private function classify_provider_exception( $e ) {
+		$raw = (string) $e->getMessage();
+
+		// A bad-gateway body (HTML or the literal phrase) — the provider or its
+		// upstream proxy was briefly unavailable.
+		if ( false !== stripos( $raw, '<html' ) || false !== stripos( $raw, 'bad gateway' ) || false !== stripos( $raw, '502' ) ) {
+			return array( 'bad_gateway', __( 'The AI provider was temporarily unavailable (bad gateway). Please try again.', 'otter-blocks' ), 502 );
+		}
+
+		// A timeout — the model took longer than the request budget allowed.
+		if ( preg_match( '/tim(?:e|ed)\s?out|timeout|cURL error 28|gateway time|504/i', $raw ) ) {
+			return array( 'provider_timeout', __( 'The AI request took too long and timed out. Try again, or narrow the selection so there is less to generate.', 'otter-blocks' ), 504 );
+		}
+
+		// Anything else: keep the provider's wording, but strip any markup and cap
+		// the length so a stray body can never reach the UI as-is.
+		$clean = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $raw ) ) );
+
+		if ( '' === $clean ) {
+			$clean = __( 'The AI provider returned an unexpected error. Please try again.', 'otter-blocks' );
+		} elseif ( strlen( $clean ) > 300 ) {
+			$clean = substr( $clean, 0, 297 ) . '…';
+		}
+
+		return array( 'wp_ai_client_error', $clean, 502 );
 	}
 
 	/**

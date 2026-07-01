@@ -332,6 +332,31 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
+	 * response_format: { type: 'json_object' } (no forced function) must enable
+	 * schema-less JSON output — this is how the block-generation pipeline asks
+	 * for JSON, and ignoring it let the model wrap prose around its reply.
+	 */
+	public function test_generate_forces_json_from_response_format() {
+		$adaptor = $this->make_adaptor( new Fake_AI_Result( '{"markup":"..."}' ) );
+
+		$response = $adaptor->generate(
+			array(
+				'messages'        => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Rewrite this section',
+					),
+				),
+				'response_format' => array( 'type' => 'json_object' ),
+			)
+		);
+
+		$this->assertTrue( $adaptor->builder->was_called( 'as_json_response' ) );
+		$this->assertSame( array(), $adaptor->builder->get_call_args( 'as_json_response' ) );
+		$this->assertSame( 'json', $response['format'] );
+	}
+
+	/**
 	 * Nested object schemas gain additionalProperties: false for strict json_schema.
 	 */
 	public function test_generate_normalizes_nested_json_schema() {
@@ -719,6 +744,61 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		$this->assertSame( 'empty_response', $response->get_error_code() );
 		$this->assertSame( 502, $response->get_error_data()['status'] );
 		$this->assertSame( 'wp_ai_client', $response->get_error_data()['type'] );
+	}
+
+	/**
+	 * A raw nginx "502 Bad Gateway" HTML body surfacing in the AI Client exception
+	 * must never reach the client verbatim: it is classified into a clean,
+	 * transient bad_gateway error so the UI shows a message (not markup) and the
+	 * request auto-retries.
+	 */
+	public function test_generate_sanitizes_gateway_html_error() {
+		$html                  = "<html>\n<head><title>502 Bad Gateway</title></head>\n<body>\n<center><h1>502 Bad Gateway</h1></center>\n<hr><center>nginx/1.25.4</center>\n</body>\n</html>";
+		$result                = new Fake_AI_Result();
+		$result->throw_exception = new \Exception( $html );
+		$adaptor               = $this->make_adaptor( $result );
+
+		$response = $adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Rewrite this section',
+					),
+				),
+			)
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'bad_gateway', $response->get_error_code() );
+		$this->assertSame( 502, $response->get_error_data()['status'] );
+		// The raw markup must not leak into the user-facing message.
+		$this->assertStringNotContainsString( '<html', $response->get_error_message() );
+		$this->assertStringNotContainsString( 'nginx', $response->get_error_message() );
+	}
+
+	/**
+	 * A provider timeout is classified as a 504 timeout so the client retries it.
+	 */
+	public function test_generate_classifies_provider_timeout() {
+		$result                  = new Fake_AI_Result();
+		$result->throw_exception = new \Exception( 'cURL error 28: Operation timed out after 60001 milliseconds' );
+		$adaptor                 = $this->make_adaptor( $result );
+
+		$response = $adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Generate a page',
+					),
+				),
+			)
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'provider_timeout', $response->get_error_code() );
+		$this->assertSame( 504, $response->get_error_data()['status'] );
 	}
 
 	/**
