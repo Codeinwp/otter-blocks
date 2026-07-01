@@ -778,7 +778,7 @@ export function insertBlockBelow( clientId, block ) {
 
 export class GlobalStateMemory {
 	constructor() {
-		this.states = {};
+		this.states = Object.create( null );
 		window.addEventListener( 'message', this.handleMessage.bind( this ) );
 	}
 
@@ -793,7 +793,7 @@ export class GlobalStateMemory {
 
 			if ( 'set' === action ) {
 				if ( this.states[location] === undefined ) {
-					this.states[location] = {};
+					this.states[location] = Object.create( null );
 				}
 
 				this.states[location][key] = value;
