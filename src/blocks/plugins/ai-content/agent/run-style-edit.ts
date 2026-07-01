@@ -1,14 +1,8 @@
 /**
- * Style-only edit turn. Sends just each block's style attributes (never the
- * markup) and writes the transformed values back into a clone of the original
- * blocks. The result is guaranteed to be the same blocks — same layout, same
- * nesting, same copy — with only their styling changed. The model cannot add,
- * remove, or reword anything because it never sees or returns any markup or text.
- *
- * This is the style analog of run-text-edit, and it exists to keep a recolor /
- * restyle off the whole-markup REWRITE path: the response is bounded by the
- * number of style attributes (not the full serialized tree), so it never
- * truncates or trips the upstream size/latency limit that a large rewrite hits.
+ * Style-only edit turn. Sends just each block's style attributes (never markup
+ * or text) and splices the transformed values back into a clone of the original
+ * blocks, so layout, nesting, and copy can't change. Keeps recolors/restyles off
+ * the whole-markup REWRITE path, whose response bloats past the size/latency limit.
  */
 import { validateGeneratedBlocks } from '../block-generation';
 import type { ThemeColor } from '../block-generation';
@@ -72,8 +66,7 @@ const parseItems = ( response: string, expected: number ): ( Record<string, unkn
 		return [];
 	}
 
-	// Map positionally; ignore anything beyond the expected count and keep
-	// originals (undefined) for anything short or non-object.
+	// Map positionally; undefined for anything short or non-object.
 	return Array.from( { length: expected }, ( _unused, index ) => {
 		const value = items[ index ];
 
@@ -88,8 +81,7 @@ export const runStyleEditTurn = async( args: RunTurnArgs ): Promise<RunTurnResul
 
 	const decision: RouteDecision = { mode: 'edit', route: 'style', source: 'model' };
 
-	// No styled elements in the selection — nothing a style-attribute edit can do.
-	// Surface as a no-op so the caller can fall back to a full rewrite.
+	// No styled elements — no-op so the caller can fall back to a full rewrite.
 	if ( ! nodes.length ) {
 		return {
 			generation: {

@@ -1,18 +1,13 @@
 /**
- * Style-attribute extraction and splicing for style-only edits (recolor, restyle,
- * respacing, …). The style analog of text-nodes: instead of round-tripping the
- * whole block markup — which lets the model add, drop, or restructure blocks and
- * balloons the response past the upstream size/latency limit — we pull out only
- * each block's STYLE-BEARING attributes, transform those, and write them back
- * into a clone of the original blocks. Nesting, text, and every non-style
- * attribute are preserved byte-for-byte because we never send them to the model.
+ * Style-attribute extraction and splicing for style-only edits. The style analog
+ * of text-nodes: pull out only each block's style-bearing attributes, transform
+ * them, and write them back onto a clone — text, nesting, and non-style attributes
+ * stay untouched because the model never sees them. Avoids round-tripping whole
+ * markup, which bloats the response past the size/latency limit.
  *
- * Coverage is not limited to atomic-wind's `className`: it also picks up the
- * standard WordPress style attributes (`style`, `backgroundColor`, `textColor`,
- * `fontSize`, …) and any attribute a classic/Otter block *declares* whose name
- * looks like styling (`headingColor`, `padding`, `borderRadius`, …). A block that
- * exposes no style attributes at all yields no node, so the caller falls back to
- * the full rewrite.
+ * Coverage: atomic-wind `className`, standard WP style attributes, and any declared
+ * attribute whose name looks like styling. A block with none yields no node, so the
+ * caller falls back to the full rewrite.
  */
 import type { BlockProps } from '../../../helpers/blocks';
 import type { GetBlockType } from './types';
@@ -22,37 +17,30 @@ import { cloneBlocksForPreview } from '../apply-content';
 // Attribute "sources" that hold user-facing copy — never sent to a style edit.
 const TEXT_SOURCES = new Set( [ 'html', 'rich-text', 'text' ] );
 
-// Standard WordPress style attributes, always included when a block declares
-// them (some — like `style` — don't match the name pattern below).
+// Standard WP style attributes (some, like `style`, don't match the name RE below).
 const STANDARD_STYLE_KEYS = new Set( [
 	'className', 'style', 'backgroundColor', 'textColor', 'gradient',
 	'fontSize', 'fontFamily', 'borderColor', 'align', 'textAlign'
 ] );
 
-// A declared attribute whose NAME looks like styling. Catches the flat attributes
-// classic Otter blocks use (headingColor, highlightBackground, paddingTop,
-// fontVariant, borderRadius, boxShadow, …).
+// A declared attribute whose name looks like styling — catches classic Otter's
+// flat attrs (headingColor, paddingTop, borderRadius, ...).
 const STYLE_NAME_RE = /color|background|gradient|font|padding|margin|border|radius|shadow|width|height|align|opacity|spacing/i;
 
-// Responsive variants (paddingTablet, fontSizeMobile) are skipped — the base
-// value usually cascades, and echoing every breakpoint back only bloats the
-// response and risks malformed nested objects.
-// ponytail: base attrs only. If a restyle needs to target a specific breakpoint,
-// that block falls through to the full rewrite.
+// Responsive variants (paddingTablet, fontSizeMobile) are skipped — the base value
+// usually cascades, and echoing every breakpoint bloats the response.
+// base attrs only; a breakpoint-specific restyle falls to the full rewrite.
 const RESPONSIVE_SUFFIX_RE = /(?:Tablet|Mobile)$/;
 
-// A single element's editable style bundle: where it lives (positional path), a
-// short semantic label for the model's context, and the current values of just
-// its style attributes.
+// One element's editable style bundle: positional path, a semantic label, and the
+// current values of just its style attributes.
 export type StyleNode = {
 	path: number[];
 	label: string;
 	attrs: Record<string, unknown>;
 };
 
-// A short, human-legible label so the model knows what it is styling — the
-// block's semantic tag when set (section, h2, article, span…), otherwise the
-// un-namespaced slug (box, text, link, advanced-heading…).
+// Human-legible label: the block's tagName when set, else the un-namespaced slug.
 const labelFor = ( block: BlockProps<unknown> ): string => {
 	const tagName = ( block.attributes as Record<string, unknown> | undefined )?.tagName;
 
@@ -63,8 +51,7 @@ const labelFor = ( block: BlockProps<unknown> ): string => {
 	return String( block.name ).replace( /^.*\//, '' );
 };
 
-// The style attribute keys a block type declares, in a stable order so
-// extraction and write-back always line up.
+// The style attribute keys a block type declares, sorted so extraction and write-back line up.
 const styleKeysFor = ( blockName: string, getBlockType: GetBlockType ): string[] => {
 	const attributes = getBlockType( blockName )?.attributes ?? {};
 
@@ -81,8 +68,7 @@ const styleKeysFor = ( blockName: string, getBlockType: GetBlockType ): string[]
 		} );
 };
 
-// Whether a value is worth sending: skip undefined/null, blank strings, and empty
-// objects, so the bundle only carries styling the block actually has set.
+// Worth sending? Skip null/undefined, blank strings, and empty objects.
 const isMeaningful = ( value: unknown ): boolean => {
 	if ( undefined === value || null === value ) {
 		return false;
@@ -100,9 +86,11 @@ const isMeaningful = ( value: unknown ): boolean => {
 };
 
 /**
- * Depth-first list of every block that carries at least one set style attribute,
- * in a deterministic order. Each node holds only that block's style values —
- * never its text or structure.
+ * Depth-first list of blocks carrying at least one set style attribute. Each node
+ * holds only style values, never text or structure.
+ * @param blocks
+ * @param getBlockType
+ * @param path
  */
 export const collectStyleNodes = (
 	blocks: BlockProps<unknown>[],
@@ -160,10 +148,12 @@ const blockAtPath = (
 };
 
 /**
- * Write transformed style bundles back onto a fresh clone of the selection. Only
- * the keys we originally sent for a node are merged — the model can neither
- * invent new attributes nor touch text/structure — and a missing/blank/wrong-type
- * value leaves that attribute untouched.
+ * Write transformed style bundles back onto a clone of the selection. Only the keys
+ * we originally sent are merged (no invented attributes, no text/structure change);
+ * a missing/blank/wrong-type value leaves that attribute untouched.
+ * @param blocks
+ * @param nodes
+ * @param values
  */
 export const applyStyleNodes = (
 	blocks: BlockProps<unknown>[],
@@ -195,8 +185,7 @@ export const applyStyleNodes = (
 
 			const value = next[ key ];
 
-			// className must never be blanked; other keys accept any non-null value
-			// (string, number, object) as long as the model returned it.
+			// className must never be blanked; other keys accept any non-null value.
 			if ( 'className' === key ) {
 				if ( 'string' === typeof value && value.trim() ) {
 					merged[ key ] = value.trim();

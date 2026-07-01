@@ -1,12 +1,8 @@
 /**
- * Meaningful failure states for the AI content modal.
- *
- * The backend already normalizes every failure into a `PromptError` (code, type,
- * message) with the HTTP status tucked into `raw` — see helpers/prompt.ts. This
- * module turns that raw metadata into a small, human-readable `AIError` the modal
- * can show inline: a short actionable message plus whether re-running the same
- * prompt is worth a Retry (transient/output problems) or not (config problems the
- * user must fix first).
+ * Failure states for the AI content modal. Turns the backend's normalized
+ * PromptError (code, type, message, HTTP status in `raw`; see helpers/prompt.ts)
+ * into a small AIError: a human-readable message plus whether re-running the same
+ * prompt is worth a Retry.
  */
 import { __ } from '@wordpress/i18n';
 import type { PromptError } from '../../helpers/prompt';

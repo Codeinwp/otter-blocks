@@ -153,13 +153,10 @@ export function normalizePromptResponse( response: PromptRouteSuccess|unknown ):
  * AI Client's network-error code, and cURL/timeout phrasing in the message. A
  * reasoning model behind /v1/responses can blow past the backend's 30s cURL
  * timeout and surface as a 502, which a quick retry usually rides out.
- */
-/*
- * `invalid_json`/`rest_invalid_json` land here because a web server or proxy in
- * front of WordPress (or the AI gateway) can answer a slow request with a raw
- * HTML error page — an nginx "502 Bad Gateway", say. apiFetch fails to parse it
- * as JSON and throws with no HTTP status, so a quick retry (the blip is usually
- * momentary) is the only signal we have to ride it out.
+ *
+ * invalid_json/rest_invalid_json land here too: a proxy can answer a slow request
+ * with a raw HTML error page apiFetch fails to parse (no HTTP status), so the retry
+ * is the only signal we have.
  */
 const TRANSIENT_PROMPT_CODES = new Set([ 'prompt_network_error', 'http_request_failed', 'fetch_error', 'timeout', 'invalid_json', 'rest_invalid_json' ]);
 const TRANSIENT_PROMPT_STATUSES = new Set([ 408, 425, 429, 500, 502, 503, 504 ]);
@@ -385,11 +382,6 @@ export async function sendBlockGenerationPrompt(
 			{ role: 'user', content: instruction }
 		],
 		response_format: { type: 'json_object' },
-		// A whole-markup rewrite echoes the entire selection back as one JSON
-		// string (a 3-card section is already ~3k output tokens). Without an
-		// explicit cap the reply rides the provider default, truncates, and
-		// fails to parse. ponytail: 8192 covers current sections/pages with
-		// headroom; raise if selections routinely exceed it.
 		max_tokens: 8192,
 		stream: false
 	};

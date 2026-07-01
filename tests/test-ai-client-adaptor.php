@@ -332,9 +332,8 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
-	 * response_format: { type: 'json_object' } (no forced function) must enable
-	 * schema-less JSON output — this is how the block-generation pipeline asks
-	 * for JSON, and ignoring it let the model wrap prose around its reply.
+	 * response_format json_object (no forced function) must enable schema-less JSON
+	 * output — how the block-generation pipeline asks for JSON.
 	 */
 	public function test_generate_forces_json_from_response_format() {
 		$adaptor = $this->make_adaptor( new Fake_AI_Result( '{"markup":"..."}' ) );
@@ -747,10 +746,8 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A raw nginx "502 Bad Gateway" HTML body surfacing in the AI Client exception
-	 * must never reach the client verbatim: it is classified into a clean,
-	 * transient bad_gateway error so the UI shows a message (not markup) and the
-	 * request auto-retries.
+	 * A raw nginx 502 HTML body in the AI Client exception must be classified into a
+	 * clean, transient bad_gateway error — never surfaced verbatim.
 	 */
 	public function test_generate_sanitizes_gateway_html_error() {
 		$html                  = "<html>\n<head><title>502 Bad Gateway</title></head>\n<body>\n<center><h1>502 Bad Gateway</h1></center>\n<hr><center>nginx/1.25.4</center>\n</body>\n</html>";

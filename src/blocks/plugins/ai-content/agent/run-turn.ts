@@ -1,26 +1,18 @@
 /**
- * One user turn, reduced to three predictable paths:
+ * One user turn, reduced to a few predictable paths:
  *
- *   GENERATE   — no selection (or create / forced generate). Builds new blocks
- *                with the catalog pipeline (plan → construct → quality). This is
- *                the proven path.
- *   TEXT edit  — a selection whose request only changes wording. We send just
- *                the text fragments and splice them back; layout and styles are
- *                never sent and cannot change. No "huge chunks".
- *   STYLE edit — a selection whose request only changes the look. We send just
- *                each block's style attributes (className for atomic-wind, plus
- *                `style`/color/spacing/font attrs for classic & core blocks) and
- *                splice the transformed values back; markup, text, and structure
- *                are never sent and cannot change. Falls back to a full rewrite
- *                when a block exposes no style attributes.
- *   BLOCK edit — a selection whose request rebuilds it ('redesign'). Full-markup
- *                rewrite, rebuilt through the same validate/repair/quality
- *                machinery as generation.
+ *   GENERATE   — no selection (or create / forced generate). Builds new blocks via
+ *                the catalog pipeline (plan → construct → quality).
+ *   TEXT edit  — request only changes wording. Sends just the text fragments and
+ *                splices them back; layout and styles never change.
+ *   STYLE edit — request only changes the look. Sends just each block's style
+ *                attributes and splices them back; markup/text/structure never
+ *                change. Falls back to a full rewrite when a block has no style attrs.
+ *   BLOCK edit — request rebuilds the selection ('redesign'). Full-markup rewrite
+ *                through the same validate/repair/quality machinery as generation.
  *
- * A single cheap DECIDE_EDIT step classifies a selection into text/style/
- * redesign. There is no tool-calling layer, no routing layer, and no search/
- * replan loop — the path is decided directly from the request and whether a
- * selection exists.
+ * A single cheap DECIDE_EDIT step classifies the selection; no tool-calling,
+ * routing, or search/replan layer.
  */
 import { decideEditKind } from './decide-edit';
 import { runGenerateTurn } from './run-generate';
@@ -36,13 +28,10 @@ import type { RouteDecision, RunTurnArgs, RunTurnResult } from './types';
 export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> => {
 	const hasSelection = Boolean( args.referenceBlocks?.length );
 
-	// GENERATE — net-new content: a fresh build with nothing to edit yet (no
-	// reference blocks) or an explicit generate request. NOTE: we intentionally do
-	// NOT force-generate for every create-mode turn. The FIRST create turn has no
-	// reference blocks (→ generates here anyway), but a follow-up in the SAME modal
-	// carries the just-generated result as reference blocks and a refine
-	// instruction — it must fall through to the edit classifier below so the edit
-	// actually applies, instead of silently rebuilding from the original prompt.
+	// GENERATE — net-new content: no reference blocks, or an explicit generate
+	// request. We do NOT force-generate every create-mode turn: a follow-up in the
+	// same modal carries the generated result as reference blocks and must fall
+	// through to the edit classifier, not silently rebuild from the original prompt.
 	if ( ! hasSelection || 'generate' === args.forceRoute ) {
 		const generation = await runGenerateTurn({
 			activePrompt: args.activePrompt,
@@ -78,8 +67,7 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 	if ( 'text' === kind ) {
 		const textResult = await runTextEditTurn( args );
 
-		// Selection had no editable text — fall back to a full rewrite so the
-		// request still does something useful.
+		// No editable text — fall back to a full rewrite.
 		if ( textResult.generation.blocks.length ) {
 			return textResult;
 		}
@@ -90,9 +78,7 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 	if ( 'style' === kind ) {
 		const styleResult = await runStyleEditTurn( args );
 
-		// Selection had no className to restyle (e.g. classic blocks that carry
-		// color elsewhere) — fall back to the full-markup style rewrite, which
-		// still guarantees copy is preserved.
+		// No className to restyle — fall back to the full-markup style rewrite (copy preserved).
 		if ( styleResult.generation.blocks.length ) {
 			return styleResult;
 		}

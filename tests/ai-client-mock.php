@@ -198,9 +198,8 @@ namespace ThemeIsle\GutenbergBlocks\Tests {
 		public $throw_on_text = false;
 
 		/**
-		 * A transport/provider exception toText() should throw, if any. Used to
-		 * simulate a raw HTTP error body (e.g. an nginx 502 page) surfacing in the
-		 * AI Client exception message.
+		 * Exception for toText() to throw, simulating a raw HTTP error body (e.g. an
+		 * nginx 502 page) in the AI Client exception message.
 		 *
 		 * @var \Exception|null
 		 */

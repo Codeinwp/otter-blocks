@@ -238,8 +238,7 @@ const AIContentModal = ({
 	// the request is in flight so the user sees what's running instead of an empty
 	// field they can type into. Cleared whenever generation stops.
 	const [ runningPrompt, setRunningPrompt ] = useState( '' );
-	// The classified failure of the last run (message + whether a Retry is worth
-	// offering). Kept alongside the (preserved) prompt so the user can retry.
+	// The classified failure of the last run; kept with the preserved prompt for Retry.
 	const [ errorInfo, setErrorInfo ] = useState<AIError | undefined>();
 	const [ turns, setTurns ] = useState<Turn[]>([]);
 	const [ activeTurnIndex, setActiveTurnIndex ] = useState( 0 );
@@ -250,13 +249,11 @@ const AIContentModal = ({
 	const generationIdRef = useRef( 0 );
 	const abortControllerRef = useRef<AbortController | null>( null );
 	const previousTurnIndexRef = useRef( activeTurnIndex );
-	// The exact arguments of the last run, so Retry can replay it verbatim (the
-	// surrounding turn state is unchanged on failure, so a replay is faithful).
+	// The last run's args, so Retry can replay it verbatim (turn state is unchanged on failure).
 	const lastAttemptRef = useRef<{ prompt: string; forceEditRoute: boolean } | undefined>();
 
-	// Brief highlight of the prompt field after a quick-action pill fills it in, so
-	// the user notices their prompt box was just populated (the field is below the
-	// pills and easy to miss). Cleared on a timer.
+	// Brief highlight of the prompt field after a quick-action pill fills it in, so the
+	// user notices it was populated (the field is below the pills). Cleared on a timer.
 	const [ promptPulse, setPromptPulse ] = useState( false );
 	const pulseTimerRef = useRef<ReturnType<typeof setTimeout>>();
 	const pulseRafRef = useRef<number>( 0 );
@@ -527,16 +524,14 @@ const AIContentModal = ({
 
 		setInstruction( '' );
 
-		// Remember this run so a failure can be retried verbatim (the surrounding
-		// turn state is unchanged on failure, so replaying it is faithful).
+		// Remember this run so a failure can be retried verbatim.
 		lastAttemptRef.current = { prompt: turnInstruction, forceEditRoute };
 
 		const generationId = ++generationIdRef.current;
 		const isStale = () => ! isMountedRef.current || generationId !== generationIdRef.current;
 
-		// Enter the error state, keep the typed prompt in the box, and record the
-		// classified failure so the inline strip below the field can show it (and
-		// offer Retry). Never clobbers a newer run's state.
+		// Enter the error state, keep the prompt in the box, and record the classified
+		// failure for the inline strip (offers Retry). Never clobbers a newer run's state.
 		const failWith = ( aiFailure: AIError ) => {
 			if ( isStale() ) {
 				return;
@@ -587,8 +582,7 @@ const AIContentModal = ({
 			}
 
 			if ( ! response.ok ) {
-				// Carry the backend's code/status so the catch site can classify it
-				// into a meaningful, actionable message.
+				// Carry the backend's code/status so the catch site can classify it.
 				const raw = response.raw as { data?: { status?: number }, status?: number } | undefined;
 				throw new PromptRequestError( response.error, raw?.data?.status ?? raw?.status );
 			}
@@ -717,8 +711,7 @@ const AIContentModal = ({
 		}
 	};
 
-	// Replay the last failed run verbatim — the prompt is still in the box and the
-	// turn state is unchanged, so this is a faithful retry.
+	// Replay the last failed run verbatim (prompt and turn state are unchanged).
 	const retryGeneration = () => {
 		const attempt = lastAttemptRef.current;
 		if ( isGenerating || ! attempt ) {
@@ -888,9 +881,8 @@ const AIContentModal = ({
 
 		setInstruction( action.prompt );
 
-		// Flash the prompt field and drop the cursor into it so the update is
-		// obvious. Toggle off → on across a frame so a repeated pill click restarts
-		// the animation instead of it appearing to do nothing.
+		// Flash the prompt field and focus it. Toggle off→on across a frame so a repeated
+		// pill click restarts the animation instead of appearing to do nothing.
 		setPromptPulse( false );
 		cancelAnimationFrame( pulseRafRef.current );
 		clearTimeout( pulseTimerRef.current );
@@ -919,9 +911,8 @@ const AIContentModal = ({
 
 	const sectionSubmitDisabled = ! hasAPIKey || isGenerating || ! instruction.trim();
 
-	// When a run failed and the prompt still matches what failed, the primary
-	// action becomes "Retry" — visually identical to "Run" — and replays the
-	// attempt. Editing the prompt makes it a new request, so it reverts to "Run".
+	// A failed run whose prompt is still unchanged turns the primary button into
+	// "Retry" (identical to Run); editing the prompt reverts it to a new "Run".
 	const canRetry = 'error' === status &&
 		Boolean( errorInfo?.retryable ) &&
 		Boolean( lastAttemptRef.current ) &&
@@ -1062,10 +1053,8 @@ const AIContentModal = ({
 
 					{ showPreview ? (
 						<div className={ `o-ai-section__frame${ isGenerating ? ' is-live' : '' }${ 'page' === scope ? ' is-page' : '' }` }>
-							{ /* Cap the preview at a fixed height and scroll the section
-							     inside this wrapper — the frame itself stays put so a tall
-							     preview never grows the modal, and the shimmer overlay below
-							     only ever covers the visible area (not a huge off-screen run). */ }
+							{ /* Scroll the preview inside this wrapper so a tall preview never grows the
+							     modal, and the shimmer overlay only covers the visible area. */ }
 							<div className="o-ai-section__scroll">
 								<LivePreview
 									blocks={ previewBlocks }
@@ -1174,9 +1163,8 @@ const AIContentModal = ({
 						</Button>
 					</div>
 
-					{ /* Soft error card, flush under the prompt box — the prompt itself
-					     is preserved so the primary button turns into "Retry" (same as
-					     Run) until the prompt is edited. */ }
+					{ /* Soft error card under the prompt box; the prompt is preserved so the
+					     primary button becomes "Retry" until it is edited. */ }
 					{ showError && (
 						<div className="o-ai-section__error" role="alert">
 							<Icon className="o-ai-section__error-icon" icon={ warning } size={ 18 } />

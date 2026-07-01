@@ -230,10 +230,8 @@ class AI_Client_Adaptor {
 			// translate it to the AI Client's structured JSON response.
 			$forced_function = $this->get_forced_function( $payload );
 
-			// `response_format: { type: 'json_object' }` is the other way Otter asks
-			// for JSON (the block-generation pipeline uses it). Without this the AI
-			// Client would ignore it and the model could wrap its JSON in prose,
-			// breaking the strict parse on the client.
+			// The block-generation pipeline asks for JSON via response_format; without
+			// this the model can wrap its JSON in prose and break the client's parse.
 			$wants_json = isset( $payload['response_format']['type'] ) && 'json_object' === $payload['response_format']['type'];
 
 			if ( null !== $forced_function ) {
@@ -277,11 +275,8 @@ class AI_Client_Adaptor {
 				return $this->error_response( 'empty_response', $e->getMessage(), 502 );
 			}
 
-			// The provider (or a proxy in front of it) can fail with a raw HTTP
-			// error body — e.g. an nginx "502 Bad Gateway" HTML page. The AI Client
-			// surfaces that body verbatim in the exception message, so passing it
-			// through would show markup to the user and hide the real, retryable
-			// nature of the failure. Classify it into a clean transient error.
+			// The exception message can be a raw HTTP error body (e.g. an nginx 502
+			// HTML page). Classify it into a clean, retryable error instead.
 			list( $code, $message, $status ) = $this->classify_provider_exception( $e );
 
 			return $this->error_response( $code, $message, $status );
@@ -289,10 +284,9 @@ class AI_Client_Adaptor {
 	}
 
 	/**
-	 * Turn a provider/transport exception into a clean [code, message, status]
-	 * triple, never leaking a raw HTTP error body (HTML gateway pages, stack-like
-	 * dumps) to the client. Gateway and timeout failures are mapped to the
-	 * statuses the client already treats as transient so the request auto-retries.
+	 * Classify a provider exception into a clean [code, message, status] triple,
+	 * never leaking a raw HTTP error body. Gateway/timeout failures use transient
+	 * statuses so the client auto-retries.
 	 *
 	 * @param \Exception $e The caught exception.
 	 * @return array{0:string,1:string,2:int} The [code, message, status] triple.
@@ -300,8 +294,7 @@ class AI_Client_Adaptor {
 	private function classify_provider_exception( $e ) {
 		$raw = (string) $e->getMessage();
 
-		// A bad-gateway body (HTML or the literal phrase) — the provider or its
-		// upstream proxy was briefly unavailable.
+		// Bad gateway — provider or its proxy was briefly unavailable.
 		if ( false !== stripos( $raw, '<html' ) || false !== stripos( $raw, 'bad gateway' ) || false !== stripos( $raw, '502' ) ) {
 			return array( 'bad_gateway', __( 'The AI provider was temporarily unavailable (bad gateway). Please try again.', 'otter-blocks' ), 502 );
 		}
@@ -311,8 +304,7 @@ class AI_Client_Adaptor {
 			return array( 'provider_timeout', __( 'The AI request took too long and timed out. Try again, or narrow the selection so there is less to generate.', 'otter-blocks' ), 504 );
 		}
 
-		// Anything else: keep the provider's wording, but strip any markup and cap
-		// the length so a stray body can never reach the UI as-is.
+		// Else: keep the provider's wording, but strip markup and cap the length.
 		$clean = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $raw ) ) );
 
 		if ( '' === $clean ) {

@@ -38,25 +38,21 @@ type RewritePromptArgs = {
 	themeColors: ThemeColor[];
 	hasAtomic: boolean;
 	/**
-	 * JSON attribute schema (deduplicated by block type) for every block type in
-	 * the selection, so the model knows the full set of valid attributes it may
-	 * set — not just the ones already present in the markup. Empty when the
-	 * selection yields no schema.
+	 * JSON attribute schema (deduped by block type) for the selection, so the model
+	 * knows every valid attribute it may set — not just those already in the markup.
 	 */
 	blockSchema?: string;
 	/**
-	 * 'style' constrains the rewrite to visual/layout changes and forbids text
-	 * edits (text is also re-injected after, as a guarantee). 'redesign' allows
-	 * any change to structure, content, and styling.
+	 * 'style' constrains the rewrite to visual/layout changes and forbids text edits
+	 * (text is re-injected after as a guarantee); 'redesign' allows any change.
 	 */
 	editKind?: 'style' | 'redesign';
 };
 
 /**
- * Full-markup rewrite prompt. Sends the entire serialized selection and asks for
- * the entire updated markup back — the model has full fidelity on complex,
- * deeply-nested blocks (forms, columns, Atomic Wind) and we never reconstruct
- * the tree from positional patches.
+ * Full-markup rewrite prompt: sends the entire serialized selection and asks for the
+ * entire updated markup back — full fidelity on complex nested blocks, no
+ * reconstructing the tree from positional patches.
  */
 export const buildBlockRewritePrompt = ( args: RewritePromptArgs ): string => {
 	const palette = formatPalette( args.themeColors );
@@ -102,9 +98,9 @@ type RewriteAttempt = {
 };
 
 /**
- * Request one rewrite, rebuild it through createBlock (so attributes drive the
- * saved markup and minor literal-HTML drift is healed), and validate. Returns
- * the blocks plus any validation errors so the caller can repair-loop.
+ * Request one rewrite, rebuild it through createBlock (attributes drive the saved
+ * markup, healing literal-HTML drift), and validate. Returns blocks + validation
+ * errors for the caller's repair loop.
  */
 const requestRewrite = async(
 	args: RunTurnArgs,
@@ -133,11 +129,9 @@ const requestRewrite = async(
 };
 
 /**
- * Run one block edit by rewriting the whole selection's markup. Robust for both
- * simple and complex/nested selections, and now built on the SAME machinery as
- * generation: a validate→repair loop turns most invalid first attempts into
- * valid output, and the deterministic quality gate polishes contrast/palette/
- * copy/alt issues without ever degrading a valid layout. A 'style' edit also
+ * Run one block edit by rewriting the whole selection's markup — robust for simple
+ * and complex/nested selections. Built on the same machinery as generation: a
+ * validate→repair loop plus the deterministic quality gate. A 'style' edit also
  * force-restores the original copy so styling changes can never reword anything.
  */
 export const runBlockRewriteTurn = async(
@@ -149,9 +143,8 @@ export const runBlockRewriteTurn = async(
 	const markup = serialize( args.referenceBlocks as Parameters<typeof serialize>[ 0 ] );
 	const hasAtomic = markup.includes( 'atomic-wind/' );
 
-	// The attribute schema for every block type in the selection (including nested
-	// ones), so the rewrite can use the full valid attribute set — not only what
-	// the current markup happens to expose.
+	// Attribute schema for every block type in the selection (incl. nested), so the
+	// rewrite can use the full valid attribute set — not just what the markup exposes.
 	const schemaPayload = buildBlockSchemaPayload( args.referenceBlocks, args.getBlockType );
 	const blockSchema = schemaPayload && Object.keys( schemaPayload.schemas ).length
 		? JSON.stringify( schemaPayload.schemas, null, 2 )
@@ -205,10 +198,9 @@ export const runBlockRewriteTurn = async(
 		};
 	}
 
-	// A styling edit must never change copy. If the result keeps the same text
-	// shape (same number of fragments), force the original text back in so a
-	// stray reword from the model can't leak through. If the shape changed we
-	// leave the model's output as-is rather than mis-map fragments.
+	// A styling edit must never change copy. If the text shape is unchanged (same
+	// fragment count) force the original text back in; if it changed, leave the
+	// model's output rather than mis-map fragments.
 	if ( 'style' === editKind ) {
 		const before = collectTextNodes( args.referenceBlocks, args.getBlockType );
 		const after = collectTextNodes( blocks, args.getBlockType );
