@@ -13,8 +13,8 @@ describe( 'buildBlockRewritePrompt', () => {
 
 	it( 'includes the selection attribute schema when provided', () => {
 		const blockSchema = JSON.stringify({
-			'themeisle-blocks/form': { id: { type: 'string' } },
-			'themeisle-blocks/form-input': { label: { type: 'string' } }
+			'themeisle-blocks/form': { id: { type: 'string' }},
+			'themeisle-blocks/form-input': { label: { type: 'string' }}
 		}, null, 2 );
 
 		const prompt = buildBlockRewritePrompt({ ...base, blockSchema });

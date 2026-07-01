@@ -67,7 +67,11 @@ const RETRYABLE: Record<AIErrorKind, boolean> = {
 	unknown: true
 };
 
-/** Build an AIError from a known kind, with an optional message override. */
+/**
+ * Build an AIError from a known kind, with an optional message override.
+ * @param kind
+ * @param message
+ */
 export const aiError = ( kind: AIErrorKind, message?: string ): AIError => ( {
 	kind,
 	message: message || MESSAGES[ kind ],

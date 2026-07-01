@@ -42,6 +42,7 @@ const buildGenerateTask = ( args: GenerateTurnArgs ): string => {
 
 /**
  * Serial generate workflow: outline → search → construct → validate.
+ * @param args
  */
 export const runGenerateTurn = async( args: GenerateTurnArgs ) => {
 	args.onPhase?.( 'planning' );

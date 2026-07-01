@@ -24,6 +24,7 @@ import type { RouteDecision, RunTurnArgs, RunTurnResult } from './types';
 /**
  * Run one user turn. Picks GENERATE for net-new content, or classifies a
  * selection edit into a text splice or a block rewrite.
+ * @param args
  */
 export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> => {
 	const hasSelection = Boolean( args.referenceBlocks?.length );
@@ -92,6 +93,9 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 /**
  * Tracking feature value for analytics. Routes after the collapse are: full
  * (generate), text, style, and rewrite (redesign).
+ * @param decision
+ * @param refineInstruction
+ * @param hasGeneratedResult
  */
 export const getTrackingFeatureValue = (
 	decision: RouteDecision,

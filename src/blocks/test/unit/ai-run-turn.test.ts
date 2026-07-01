@@ -11,8 +11,8 @@ const referenceBlocks = [
 
 const getBlockType = ( ( name: string ) => (
 	'core/paragraph' === name
-		? { name, attributes: { content: { source: 'html' } } }
-		: { name, attributes: {} }
+		? { name, attributes: { content: { source: 'html' }}}
+		: { name, attributes: {}}
 ) ) as unknown as RunTurnArgs['getBlockType'];
 
 const baseArgs = ( overrides: Partial<RunTurnArgs> = {} ): RunTurnArgs => ( {

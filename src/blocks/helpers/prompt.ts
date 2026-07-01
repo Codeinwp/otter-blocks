@@ -250,6 +250,7 @@ function stripClientModelSelection( payload: Record<string, unknown> ): Record<s
  * consistent failure object instead of a thrown error.
  *
  * @param {Record<string, unknown>} payload The request body to forward.
+ * @param                           signal
  * @return {Promise<PromptResult>} The normalized result.
  */
 async function postGenerate( payload: Record<string, unknown>, signal?: AbortSignal ): Promise<PromptResult> {
@@ -366,6 +367,7 @@ export { BLOCK_GENERATION_SYSTEM_PROMPT };
  * @param instruction Fully-built generation prompt (catalog + task + schema).
  * @param usedAction  Audit label recorded by AI_Usage ('blockGeneration' for the
  *                    AI block pipeline, 'aiChat' for the conversational modal).
+ * @param options
  * @return Normalized prompt result (see normalizePromptResponse).
  */
 export async function sendBlockGenerationPrompt(

@@ -76,6 +76,9 @@ const textKeysFor = ( blockName: string, getBlockType: GetBlockType ): string[] 
  * Depth-first list of every editable text fragment in the selection, in a
  * deterministic order. Empty/whitespace-only fragments are skipped so the model
  * never has to echo blanks back.
+ * @param blocks
+ * @param getBlockType
+ * @param path
  */
 export const collectTextNodes = (
 	blocks: BlockProps<unknown>[],
@@ -131,6 +134,9 @@ const blockAtPath = (
  * clone keeps the exact structure (only clientIds change), so the nodes' paths
  * stay valid and only the named text attributes are replaced. Any missing or
  * non-string replacement leaves the original text untouched.
+ * @param blocks
+ * @param nodes
+ * @param values
  */
 export const applyTextNodes = (
 	blocks: BlockProps<unknown>[],

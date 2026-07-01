@@ -53,6 +53,7 @@ type RewritePromptArgs = {
  * Full-markup rewrite prompt: sends the entire serialized selection and asks for the
  * entire updated markup back — full fidelity on complex nested blocks, no
  * reconstructing the tree from positional patches.
+ * @param args
  */
 export const buildBlockRewritePrompt = ( args: RewritePromptArgs ): string => {
 	const palette = formatPalette( args.themeColors );
@@ -101,6 +102,8 @@ type RewriteAttempt = {
  * Request one rewrite, rebuild it through createBlock (attributes drive the saved
  * markup, healing literal-HTML drift), and validate. Returns blocks + validation
  * errors for the caller's repair loop.
+ * @param args
+ * @param prompt
  */
 const requestRewrite = async(
 	args: RunTurnArgs,
@@ -133,6 +136,8 @@ const requestRewrite = async(
  * and complex/nested selections. Built on the same machinery as generation: a
  * validate→repair loop plus the deterministic quality gate. A 'style' edit also
  * force-restores the original copy so styling changes can never reword anything.
+ * @param args
+ * @param editKind
  */
 export const runBlockRewriteTurn = async(
 	args: RunTurnArgs,
@@ -177,11 +182,11 @@ export const runBlockRewriteTurn = async(
 		}
 	}
 
-	const summary = attempt.summary;
+	const { summary } = attempt;
 	const toolCall: AgentToolCall = { tool: route, reason: summary };
 	const rationale = summary ? [ summary ] : [];
 
-	let blocks = attempt.blocks;
+	let { blocks } = attempt;
 
 	if ( ! blocks.length ) {
 		// Nothing parseable came back — surface as a failed turn so the modal
@@ -220,7 +225,7 @@ export const runBlockRewriteTurn = async(
 			diagnostics: {
 				droppedRoots: validation.valid
 					? []
-					: [ { root: { name: 'rewrite', innerBlocks: [] }, errors: validation.errors } ]
+					: [{ root: { name: 'rewrite', innerBlocks: [] }, errors: validation.errors }]
 			}
 		},
 		decision,

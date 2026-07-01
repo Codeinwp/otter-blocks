@@ -32,7 +32,7 @@ const selection = () => [
 				attributes: {
 					content: 'Start with the essentials.',
 					backgroundColor: 'accent',
-					style: { color: { text: '#3f3a37' } }
+					style: { color: { text: '#3f3a37' }}
 				},
 				innerBlocks: []
 			}
@@ -43,14 +43,14 @@ const selection = () => [
 // Declares the style + text attributes each block type exposes.
 const getBlockType = ( ( name: string ) => {
 	if ( 'core/paragraph' === name ) {
-		return { name, attributes: { content: { source: 'html' }, backgroundColor: { type: 'string' }, style: { type: 'object' }, className: { type: 'string' } } };
+		return { name, attributes: { content: { source: 'html' }, backgroundColor: { type: 'string' }, style: { type: 'object' }, className: { type: 'string' }}};
 	}
 
 	if ( 'themeisle-blocks/advanced-heading' === name ) {
-		return { name, attributes: { content: { source: 'html' }, tagName: { type: 'string' }, headingColor: { type: 'string' }, fontSize: { type: 'number' }, padding: { type: 'number' }, paddingTablet: { type: 'number' } } };
+		return { name, attributes: { content: { source: 'html' }, tagName: { type: 'string' }, headingColor: { type: 'string' }, fontSize: { type: 'number' }, padding: { type: 'number' }, paddingTablet: { type: 'number' }}};
 	}
 
-	return { name, attributes: { tagName: { type: 'string' }, className: { type: 'string' } } };
+	return { name, attributes: { tagName: { type: 'string' }, className: { type: 'string' }}};
 } ) as unknown as RunTurnArgs['getBlockType'];
 
 const baseArgs = ( overrides: Partial<RunTurnArgs> = {} ): RunTurnArgs => ( {
@@ -82,7 +82,7 @@ describe( 'style-nodes', () => {
 		expect( nodes[ 1 ].attrs ).not.toHaveProperty( 'paddingTablet' );
 
 		// core → color slug + nested style object
-		expect( nodes[ 2 ].attrs ).toEqual( { backgroundColor: 'accent', style: { color: { text: '#3f3a37' } } } );
+		expect( nodes[ 2 ].attrs ).toEqual( { backgroundColor: 'accent', style: { color: { text: '#3f3a37' }}} );
 	} );
 
 	it( 'applies only the keys it sent, preserves text/structure, and never invents attributes', () => {
@@ -125,7 +125,7 @@ describe( 'buildStyleEditPrompt', () => {
 			nodes,
 			instruction: 'Recolor it.',
 			sessionHistory: [],
-			themeColors: [ { slug: 'accent', color: '#C6C2DC', name: 'Twilight lilac' } ] as never,
+			themeColors: [{ slug: 'accent', color: '#C6C2DC', name: 'Twilight lilac' }] as never,
 			hasAtomic: true
 		} );
 
@@ -145,7 +145,7 @@ describe( 'runStyleEditTurn', () => {
 			items: [
 				{ className: 'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]' },
 				{ headingColor: '#2A3A5C', fontSize: 40, padding: 12 },
-				{ backgroundColor: 'accent', style: { color: { text: '#2A3A5C' } } }
+				{ backgroundColor: 'accent', style: { color: { text: '#2A3A5C' }}}
 			]
 		}) );
 
@@ -163,8 +163,8 @@ describe( 'runStyleEditTurn', () => {
 	} );
 
 	it( 'returns no blocks when the selection has no style attributes (caller falls back)', async() => {
-		const bare = [ { name: 'core/spacer', attributes: { height: undefined }, innerBlocks: [] } ] as unknown as BlockProps<unknown>[];
-		const bareType = ( ( name: string ) => ( { name, attributes: { anchor: { type: 'string' } } } ) ) as unknown as RunTurnArgs['getBlockType'];
+		const bare = [{ name: 'core/spacer', attributes: { height: undefined }, innerBlocks: [] }] as unknown as BlockProps<unknown>[];
+		const bareType = ( ( name: string ) => ( { name, attributes: { anchor: { type: 'string' }}} ) ) as unknown as RunTurnArgs['getBlockType'];
 		const result = await runStyleEditTurn( baseArgs({ referenceBlocks: bare, getBlockType: bareType }) );
 
 		expect( result.generation.blocks.length ).toBe( 0 );
@@ -179,7 +179,7 @@ describe( 'runAgentTurn — style routing', () => {
 			.mockResolvedValueOnce( JSON.stringify({ items: [
 				{ className: 'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]' },
 				{ headingColor: '#2A3A5C', fontSize: 40, padding: 12 },
-				{ backgroundColor: 'accent', style: { color: { text: '#2A3A5C' } } }
+				{ backgroundColor: 'accent', style: { color: { text: '#2A3A5C' }}}
 			] }) );
 
 		const result = await runAgentTurn( baseArgs({

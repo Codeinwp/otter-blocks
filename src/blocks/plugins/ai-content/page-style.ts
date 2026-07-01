@@ -142,9 +142,10 @@ const topTokens = ( tally: Map<string, number> ): string[] => {
 /**
  * Build the page-style digest for inclusion in a generation prompt.
  *
- * @param blocks  Top-level blocks of the current page.
- * @param options Optional `excludeClientIds` (e.g. the in-place generator block)
- *                whose subtree should not contribute to the digest.
+ * @param blocks                   Top-level blocks of the current page.
+ * @param options                  Optional `excludeClientIds` (e.g. the in-place generator block)
+ *                                 whose subtree should not contribute to the digest.
+ * @param options.excludeClientIds
  * @return The digest string, or null when the page lacks enough Atomic Wind
  *         signal (see {@link PAGE_STYLE_MIN_BLOCKS}) to be worth matching.
  */

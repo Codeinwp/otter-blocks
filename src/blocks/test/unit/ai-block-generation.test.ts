@@ -105,8 +105,8 @@ const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType
 describe( 'AI block generation engine', () => {
 	it( 'phase 1: builds a slim, Atomic-Wind-only catalog with slug, trimmed description and container hint', () => {
 		const catalog = buildStructureCatalog([
-			{ name: 'atomic-wind/box', title: 'Box', description: 'A layout container. '.repeat( 10 ), attributes: { tagName: { type: 'string' } }, supports: { inserter: true }},
-			{ name: 'atomic-wind/text', title: 'Text', description: 'A text primitive.', attributes: { content: { type: 'string', source: 'html' } }, supports: { inserter: true }},
+			{ name: 'atomic-wind/box', title: 'Box', description: 'A layout container. '.repeat( 10 ), attributes: { tagName: { type: 'string' }}, supports: { inserter: true }},
+			{ name: 'atomic-wind/text', title: 'Text', description: 'A text primitive.', attributes: { content: { type: 'string', source: 'html' }}, supports: { inserter: true }},
 			// Core + Otter blocks are excluded entirely — generation is atomic-only.
 			...blockTypes
 		]);
@@ -538,12 +538,12 @@ describe( 'AI block generation engine', () => {
 
 			if ( prompt.includes( 'SECTION_OUTLINE' ) ) {
 				const title = prompt.includes( '"Hero"' ) ? 'Hero' : 'Contact';
-				return JSON.stringify({ roots: [ { name: 'core/paragraph', notes: `SECTION:${ title }` } ] });
+				return JSON.stringify({ roots: [{ name: 'core/paragraph', notes: `SECTION:${ title }` }] });
 			}
 
 			// CONSTRUCT — the root's notes ("SECTION:…") are echoed in the prompt.
 			const content = prompt.includes( 'SECTION:Hero' ) ? 'Welcome to the cabin.' : 'Reach us anytime.';
-			return JSON.stringify({ roots: [ { name: 'core/paragraph', attributes: { content } } ] });
+			return JSON.stringify({ roots: [{ name: 'core/paragraph', attributes: { content }}] });
 		});
 
 		const result = await generateBlocksFromTask({
@@ -579,14 +579,14 @@ describe( 'AI block generation engine', () => {
 		const sixColumns = Array.from( { length: 7 }, () => ({ name: 'themeisle-blocks/advanced-column' }) );
 
 		const completion = jest.fn()
-			.mockResolvedValueOnce( JSON.stringify({ mission: '', sections: [ { title: 'Gallery' } ] }) )
-			.mockResolvedValueOnce( JSON.stringify({ roots: [ { name: 'themeisle-blocks/advanced-columns', innerBlocks: sixColumns } ] }) )
+			.mockResolvedValueOnce( JSON.stringify({ mission: '', sections: [{ title: 'Gallery' }] }) )
+			.mockResolvedValueOnce( JSON.stringify({ roots: [{ name: 'themeisle-blocks/advanced-columns', innerBlocks: sixColumns }] }) )
 			.mockResolvedValueOnce( JSON.stringify({
-				roots: [ {
+				roots: [{
 					name: 'themeisle-blocks/advanced-columns',
 					attributes: {},
-					innerBlocks: Array.from( { length: 4 }, () => ({ name: 'themeisle-blocks/advanced-column', attributes: { width: 25 } }) )
-				} ]
+					innerBlocks: Array.from( { length: 4 }, () => ({ name: 'themeisle-blocks/advanced-column', attributes: { width: 25 }}) )
+				}]
 			}) );
 
 		await generateBlocksFromTask({
@@ -612,7 +612,7 @@ describe( 'AI block generation engine', () => {
 			if ( prompt.includes( 'PAGE_OUTLINE' ) ) {
 				return JSON.stringify({
 					mission: '',
-					sections: [ { title: 'Hero' }, { title: 'Gallery' }, { title: 'Contact' } ]
+					sections: [{ title: 'Hero' }, { title: 'Gallery' }, { title: 'Contact' }]
 				});
 			}
 
@@ -621,11 +621,11 @@ describe( 'AI block generation engine', () => {
 					throw new Error( 'rest_invalid_json' );
 				}
 				const title = prompt.includes( '"Hero"' ) ? 'Hero' : 'Contact';
-				return JSON.stringify({ roots: [ { name: 'core/paragraph', notes: `SECTION:${ title }` } ] });
+				return JSON.stringify({ roots: [{ name: 'core/paragraph', notes: `SECTION:${ title }` }] });
 			}
 
 			const content = prompt.includes( 'SECTION:Hero' ) ? 'Hero copy.' : 'Contact copy.';
-			return JSON.stringify({ roots: [ { name: 'core/paragraph', attributes: { content } } ] });
+			return JSON.stringify({ roots: [{ name: 'core/paragraph', attributes: { content }}] });
 		});
 
 		const result = await generateBlocksFromTask({
@@ -650,7 +650,7 @@ describe( 'AI block generation engine', () => {
 		const abort = Object.assign( new Error( 'Aborted' ), { name: 'AbortError' } );
 
 		const completion = jest.fn()
-			.mockResolvedValueOnce( JSON.stringify({ mission: '', sections: [ { title: 'Hero' } ] }) )
+			.mockResolvedValueOnce( JSON.stringify({ mission: '', sections: [{ title: 'Hero' }] }) )
 			.mockRejectedValueOnce( abort );
 
 		await expect( generateBlocksFromTask({
@@ -667,8 +667,8 @@ describe( 'AI block generation engine', () => {
 			.mockResolvedValueOnce( JSON.stringify({ mission: '', sections: [] }) )
 
 			// Fallback single-outline PLAN + CONSTRUCT.
-			.mockResolvedValueOnce( JSON.stringify({ mission: '', roots: [ { name: 'core/paragraph', notes: 'A line.' } ] }) )
-			.mockResolvedValueOnce( JSON.stringify({ roots: [ { name: 'core/paragraph', attributes: { content: 'Fallback copy.' } } ] }) );
+			.mockResolvedValueOnce( JSON.stringify({ mission: '', roots: [{ name: 'core/paragraph', notes: 'A line.' }] }) )
+			.mockResolvedValueOnce( JSON.stringify({ roots: [{ name: 'core/paragraph', attributes: { content: 'Fallback copy.' }}] }) );
 
 		const result = await generateBlocksFromTask({
 			task: 'A page that degrades.',
@@ -706,12 +706,12 @@ describe( 'AI block generation engine', () => {
 	it( 'forces Atomic Wind primitives in the plan prompt, allowing only the form/map exceptions', () => {
 		const atomicBlockTypes = [
 			{ name: 'atomic-wind/box', title: 'Box', description: 'A box.', attributes: {}, supports: { inserter: true }},
-			{ name: 'atomic-wind/text', title: 'Text', description: 'Text.', attributes: { content: { type: 'string', source: 'html' } }, supports: { inserter: true }}
+			{ name: 'atomic-wind/text', title: 'Text', description: 'Text.', attributes: { content: { type: 'string', source: 'html' }}, supports: { inserter: true }}
 		];
 
 		const completion = jest.fn()
-			.mockResolvedValueOnce( JSON.stringify({ mission: '', roots: [ { name: 'atomic-wind/box', notes: 'A box.', innerBlocks: [ { name: 'atomic-wind/text' } ] } ] }) )
-			.mockResolvedValueOnce( JSON.stringify({ roots: [ { name: 'atomic-wind/box', attributes: {}, innerBlocks: [ { name: 'atomic-wind/text', attributes: { content: 'Hi.' } } ] } ] }) );
+			.mockResolvedValueOnce( JSON.stringify({ mission: '', roots: [{ name: 'atomic-wind/box', notes: 'A box.', innerBlocks: [{ name: 'atomic-wind/text' }] }] }) )
+			.mockResolvedValueOnce( JSON.stringify({ roots: [{ name: 'atomic-wind/box', attributes: {}, innerBlocks: [{ name: 'atomic-wind/text', attributes: { content: 'Hi.' }}] }] }) );
 
 		return generateBlocksFromTask({
 			task: 'A simple section.',
@@ -731,12 +731,12 @@ describe( 'AI block generation engine', () => {
 	it( 'includes the curated form and map blocks in the structure catalog', () => {
 		const catalog = buildStructureCatalog([
 			{ name: 'atomic-wind/box', description: 'A box.', supports: { inserter: true }, allowedBlocks: [] },
-			{ name: 'themeisle-blocks/form', description: 'A form.', supports: { inserter: true } },
+			{ name: 'themeisle-blocks/form', description: 'A form.', supports: { inserter: true }},
 			{ name: 'themeisle-blocks/form-input', description: 'An input.', supports: { inserter: true }, ancestor: [ 'themeisle-blocks/form' ] },
-			{ name: 'themeisle-blocks/leaflet-map', description: 'A map.', supports: { inserter: true } },
+			{ name: 'themeisle-blocks/leaflet-map', description: 'A map.', supports: { inserter: true }},
 			// Excluded: not atomic-wind and not in the curated extras.
-			{ name: 'themeisle-blocks/google-map', description: 'A keyed map.', supports: { inserter: true } },
-			{ name: 'core/paragraph', description: 'A paragraph.', supports: { inserter: true } }
+			{ name: 'themeisle-blocks/google-map', description: 'A keyed map.', supports: { inserter: true }},
+			{ name: 'core/paragraph', description: 'A paragraph.', supports: { inserter: true }}
 		]);
 
 		const slugs = catalog.map( ( entry ) => entry.slug );

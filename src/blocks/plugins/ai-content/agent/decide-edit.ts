@@ -59,6 +59,10 @@ export const buildDeciderPrompt = ( instruction: string, taskContext?: string ):
 /**
  * Decide how an edit should be applied. Uses a fast deterministic path for the
  * obvious text quick-actions, and a small model call otherwise.
+ * @param args
+ * @param args.instruction
+ * @param args.taskContext
+ * @param args.requestCompletion
  */
 export const decideEditKind = async( args: {
 	instruction: string;

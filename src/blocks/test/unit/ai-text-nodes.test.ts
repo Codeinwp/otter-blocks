@@ -21,12 +21,12 @@ jest.mock( '@wordpress/blocks', () => ({
 
 // Block-type registry: which attributes are editable rich text.
 const SCHEMAS: Record<string, Record<string, Record<string, unknown>>> = {
-	'core/heading': { content: { source: 'rich-text' }, level: { type: 'number' }, textColor: { type: 'string' } },
-	'core/paragraph': { content: { source: 'html' }, backgroundColor: { type: 'string' } },
-	'core/button': { text: { source: 'html' }, url: { type: 'string', source: 'attribute' } },
+	'core/heading': { content: { source: 'rich-text' }, level: { type: 'number' }, textColor: { type: 'string' }},
+	'core/paragraph': { content: { source: 'html' }, backgroundColor: { type: 'string' }},
+	'core/button': { text: { source: 'html' }, url: { type: 'string', source: 'attribute' }},
 	'core/buttons': {},
-	'core/group': { tagName: { type: 'string' }, backgroundColor: { type: 'string' } },
-	'core/image': { url: { type: 'string' }, alt: { type: 'string', source: 'attribute', attribute: 'alt' } }
+	'core/group': { tagName: { type: 'string' }, backgroundColor: { type: 'string' }},
+	'core/image': { url: { type: 'string' }, alt: { type: 'string', source: 'attribute', attribute: 'alt' }}
 };
 
 const getBlockType = ( name: string ) => ( SCHEMAS[ name ] ? { name, attributes: SCHEMAS[ name ] } : undefined );
@@ -62,7 +62,7 @@ describe( 'collectTextNodes', () => {
 		] );
 		expect( nodes.map( ( n ) => n.key ) ).toEqual( [ 'content', 'content', 'text' ] );
 		// Paths address the right blocks (group→heading, group→paragraph, group→buttons→button).
-		expect( nodes.map( ( n ) => n.path ) ).toEqual( [ [ 0, 0 ], [ 0, 1 ], [ 0, 2, 0 ] ] );
+		expect( nodes.map( ( n ) => n.path ) ).toEqual( [[ 0, 0 ], [ 0, 1 ], [ 0, 2, 0 ]] );
 	} );
 
 	it( 'ignores non-text attributes (colors, urls, levels) and attribute-sourced strings', () => {
@@ -77,7 +77,7 @@ describe( 'collectTextNodes', () => {
 	} );
 
 	it( 'skips empty/whitespace fragments', () => {
-		const tree = [ { clientId: 'p', name: 'core/paragraph', attributes: { content: '   ' }, innerBlocks: [] } ];
+		const tree = [{ clientId: 'p', name: 'core/paragraph', attributes: { content: '   ' }, innerBlocks: [] }];
 		expect( collectTextNodes( tree as any, getBlockType ) ).toHaveLength( 0 );
 	} );
 } );
@@ -134,12 +134,12 @@ describe( 'applyTextNodes', () => {
 			}
 		}
 
-		const tree = [ {
+		const tree = [{
 			clientId: 'h',
 			name: 'core/heading',
 			attributes: { content: new FakeRichText( 'Bonjour <em>le</em> monde' ), level: 2 },
 			innerBlocks: []
-		} ];
+		}];
 
 		const nodes = collectTextNodes( tree as any, getBlockType );
 		expect( nodes.map( ( n ) => n.value ) ).toEqual( [ 'Bonjour <em>le</em> monde' ] );

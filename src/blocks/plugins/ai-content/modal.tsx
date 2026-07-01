@@ -57,15 +57,20 @@ import { useAtomicCssForContent } from '../patterns-library/atomic';
 
 const EMPTY_PREVIEW_BLOCKS: BlockProps<unknown>[] = [];
 
-/** Cheap stable hash (djb2) so identical preview markup reuses its generated CSS. */
+/**
+ * Cheap stable hash so identical preview markup reuses its generated CSS.
+ * @param value
+ */
+// The textbook `hash * 31 + charCode` string hash, bounded by a modulo so it
+// stays a small integer (same idiom as hueFromName in the patterns library).
 const hashString = ( value: string ): string => {
-	let hash = 5381;
+	let hash = 0;
 
 	for ( let index = 0; index < value.length; index++ ) {
-		hash = ( ( hash << 5 ) + hash + value.charCodeAt( index ) ) | 0;
+		hash = ( hash * 31 + value.charCodeAt( index ) ) % 2147483647;
 	}
 
-	return ( hash >>> 0 ).toString( 36 );
+	return hash.toString( 36 );
 };
 
 type Turn = {
@@ -172,10 +177,10 @@ const AIContentModal = ({
 			// user can step back to the unedited selection and compare it against
 			// each generated version. (Create mode has no original to compare to.)
 			if ( ! isCreateMode && clone.length ) {
-				setTurns([ {
+				setTurns([{
 					meta: { usedToken: 0, prompt: '', route: 'rewrite', isOriginal: true, previewKey: 'original' },
 					generatedBlocks: clone
-				} ]);
+				}]);
 			} else {
 				setTurns([]);
 			}

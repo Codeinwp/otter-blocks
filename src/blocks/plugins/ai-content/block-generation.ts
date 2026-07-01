@@ -844,10 +844,10 @@ export const ATOMIC_WIND_ATTRIBUTE_HINT = [
 const ATOMIC_WIND_EXAMPLE_TREE = {
 	name: 'atomic-wind/box',
 	attributes: { tagName: 'section', align: 'full', className: 'bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 px-6 py-28' },
-	innerBlocks: [ {
+	innerBlocks: [{
 		name: 'atomic-wind/box',
 		attributes: { className: 'mx-auto flex max-w-5xl flex-col items-center gap-8 text-center' },
-		innerBlocks: [ {
+		innerBlocks: [{
 			name: 'atomic-wind/box',
 			attributes: { className: 'inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5' },
 			innerBlocks: [
@@ -869,8 +869,8 @@ const ATOMIC_WIND_EXAMPLE_TREE = {
 				{ name: 'atomic-wind/link', attributes: { url: '#signup', text: 'Start free', className: 'inline-block rounded-full bg-white px-8 py-4 text-sm font-bold text-slate-950 transition hover:bg-violet-200' }, innerBlocks: [] },
 				{ name: 'atomic-wind/link', attributes: { url: '#demo', text: 'Watch the demo', className: 'inline-block rounded-full border border-white/30 px-8 py-4 text-sm font-bold text-white transition hover:bg-white/10' }, innerBlocks: [] }
 			]
-		} ]
-	} ]
+		}]
+	}]
 };
 
 const ATOMIC_WIND_EXAMPLE = `Reference example — a well-formed Atomic Wind section in this exact output shape. Adapt its structure, classes and palette to the current task; do NOT copy its wording:\n${ JSON.stringify( ATOMIC_WIND_EXAMPLE_TREE ) }`;
@@ -1204,7 +1204,6 @@ const generatePageFromCatalog = async( args: GenerateBlocksFromTaskArgs ): Promi
 	const { task, blockTypes, themeColors = [], requestCompletion, history, onPlanReady } = args;
 	const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
 	const droppedRoots: DroppedGeneratedRoot[] = [];
-	const catalog = buildStructureCatalog( blockTypes );
 
 	// Step 1 — the small page outline: mission, design and ordered section briefs.
 	const outline = parsePageOutline( await requestCompletion( buildPageOutlinePrompt( task, themeColors, history ) ) );
@@ -1214,6 +1213,8 @@ const generatePageFromCatalog = async( args: GenerateBlocksFromTaskArgs ): Promi
 	if ( ! outline.sections.length ) {
 		return generateFromCatalog( args );
 	}
+
+	const catalog = buildStructureCatalog( blockTypes );
 
 	const plan: GenerationPlan = {
 		mission: outline.mission,

@@ -110,7 +110,7 @@ export const runTextEditTurn = async( args: RunTurnArgs ): Promise<RunTurnResult
 			diagnostics: {
 				droppedRoots: validation.valid
 					? []
-					: [ { root: { name: 'text', innerBlocks: [] }, errors: validation.errors } ]
+					: [{ root: { name: 'text', innerBlocks: [] }, errors: validation.errors }]
 			}
 		},
 		decision,

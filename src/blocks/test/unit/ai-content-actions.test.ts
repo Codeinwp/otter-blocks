@@ -120,10 +120,10 @@ describe( 'buildBlockContextMessage', () => {
 	const mockGetBlockType = ( name: string ) => {
 		const schemas: Record<string, { attributes: Record<string, Record<string, unknown>> }> = {
 			'themeisle-blocks/form': {
-				attributes: { id: { type: 'string' } }
+				attributes: { id: { type: 'string' }}
 			},
 			'themeisle-blocks/form-input': {
-				attributes: { label: { type: 'string' } }
+				attributes: { label: { type: 'string' }}
 			}
 		};
 

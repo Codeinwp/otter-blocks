@@ -254,6 +254,8 @@ const mergeAllowedAttributes = (
 
 /**
  * Whether two block trees share the same slug nesting (same shape, no add/remove).
+ * @param editorBlocks
+ * @param previewBlocks
  */
 export const blocksStructureMatches = (
 	editorBlocks: BlockProps<unknown>[],
@@ -280,6 +282,9 @@ export const blocksStructureMatches = (
 /**
  * Copy attributes from the preview clone onto live editor blocks, preserving
  * editor clientIds and nesting. Used when transform edits keep the same shape.
+ * @param editorBlocks
+ * @param previewBlocks
+ * @param getBlockType
  */
 export const mergePreviewCloneOntoBlocks = (
 	editorBlocks: BlockProps<unknown>[],
