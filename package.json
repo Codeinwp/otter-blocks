@@ -125,7 +125,7 @@
 		"replace-in-file": "^8.2.0",
 		"semantic-release": "^19.0.5",
 		"semantic-release-slack-bot": "^3.5.2",
-		"simple-statistics": "^7.8.9",
+		"simple-statistics": "^7.9.2",
 		"typescript": "^6.0.3"
 	},
 	"optionalDependencies": {
