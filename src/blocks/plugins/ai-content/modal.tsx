@@ -15,7 +15,7 @@ import {
 
 import { cloneBlock, serialize } from '@wordpress/blocks';
 
-import { chevronLeft, chevronRight, close, warning } from '@wordpress/icons';
+import { chevronLeft, chevronRight, close } from '@wordpress/icons';
 
 import { useDispatch, useSelect } from '@wordpress/data';
 
@@ -1171,7 +1171,6 @@ const AIContentModal = ({
 					     primary button becomes "Retry" until it is edited. */ }
 					{ showError && (
 						<div className="o-ai-section__error" role="alert">
-							<Icon className="o-ai-section__error-icon" icon={ warning } size={ 18 } />
 							<span className="o-ai-section__error-text">{ errorInfo?.message }</span>
 						</div>
 					) }

@@ -11,7 +11,7 @@ import { insertParagraphAndOpenAiToolbar } from '../helpers/ai-toolbar';
  * mounts; it's a non-fatal internal warning — the editor never actually crashes
  * (the "unexpected error" overlay assertions still catch a real crash).
  */
-const IGNORED_PAGE_ERRORS = [ "Failed to execute 'observe' on 'MutationObserver'" ];
+const IGNORED_PAGE_ERRORS = [ 'Failed to execute \'observe\' on \'MutationObserver\'' ];
 
 const realPageErrors = ( errors ) =>
 	errors.filter( ( message ) => ! IGNORED_PAGE_ERRORS.some( ( ignored ) => message.includes( ignored ) ) );
