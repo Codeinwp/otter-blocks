@@ -25,6 +25,14 @@ export type FormRecord = {
  * Helpers backed by the `otter-e2e/v1` REST namespace exposed by
  * `packages/e2e-tests/mu-plugins/otter-e2e-bootstrap.php`.
  */
+export type MigrationStatus = {
+	version: string;
+	install: number;
+	ranMigrations: string[];
+	atomicWind: boolean | null;
+	atomicWindUnset: boolean;
+};
+
 export type OtterUtils = {
 	activatePro: () => Promise<unknown>;
 	deactivatePro: () => Promise<unknown>;
@@ -55,6 +63,12 @@ export type OtterUtils = {
 
 	/** Hard-delete all Submission Records. */
 	cleanupFormRecords: () => Promise<unknown>;
+
+	/** Reset SDK migration state for Atomic Wind defaulting E2E. */
+	resetMigrations: ( options?: { installOffsetSeconds?: number } ) => Promise<{ ok: boolean; status: MigrationStatus }>;
+
+	/** Read SDK migration / Atomic Wind option state. */
+	getMigrationStatus: () => Promise<MigrationStatus>;
 };
 
 export const test = base.extend<{ otterUtils: OtterUtils }>({
@@ -82,7 +96,9 @@ export const test = base.extend<{ otterUtils: OtterUtils }>({
 				return response.nonce;
 			},
 			getFormRecords: () => call( 'form/records' ) as Promise<FormRecord[]>,
-			cleanupFormRecords: () => call( 'form/records/cleanup' )
+			cleanupFormRecords: () => call( 'form/records/cleanup' ),
+			resetMigrations: ( options = {} ) => call( 'migrations/reset', options ) as Promise<{ ok: boolean; status: MigrationStatus }>,
+			getMigrationStatus: () => call( 'migrations/status' ) as Promise<MigrationStatus>
 		});
 	}
 });

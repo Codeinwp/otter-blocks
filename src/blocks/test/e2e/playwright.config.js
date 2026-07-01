@@ -51,7 +51,8 @@ const SERIAL_SPECS = [
 	'**/blocks/form-retention.spec.js',
 	'**/blocks/form-turnstile.spec.js',
 	'**/blocks/onboarding.spec.js',
-	'**/blocks/design-library.spec.js'
+	'**/blocks/design-library.spec.js',
+	'**/blocks/atomic-wind-migration.spec.js'
 ];
 
 const config = defineConfig({
