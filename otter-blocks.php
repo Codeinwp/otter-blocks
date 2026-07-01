@@ -52,6 +52,13 @@ add_filter(
 );
 
 add_filter(
+	'otter-blocks_sdk_migrations_path',
+	function () {
+		return OTTER_BLOCKS_PATH . '/inc/migrations';
+	}
+);
+
+add_filter(
 	'otter_blocks_welcome_metadata',
 	function () {
 		return [

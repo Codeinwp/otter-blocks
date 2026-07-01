@@ -6,7 +6,8 @@
  */
 
 use ThemeIsle\GutenbergBlocks\Plugins\Atomic_Wind_Blocks;
-use ThemeIsle\GutenbergBlocks\Plugins\Options_Settings;
+use ThemeisleSDK\Modules\Migrator;
+use ThemeisleSDK\Product;
 
 /**
  * Atomic Wind Blocks test case.
@@ -158,20 +159,26 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 	public function test_run_registers_hooks_after_default_for_fresh_install() {
 		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
-		delete_option( 'themeisle_blocks_settings_atomic_wind_defaulted' );
+		delete_option( 'otter_blocks_ran_migrations' );
 		update_option( 'otter_blocks_install', time() - HOUR_IN_SECONDS );
 
-		( new Options_Settings() )->maybe_default_atomic_wind_blocks();
+		$migrator = new Migrator( Product::get( OTTER_BLOCKS_BASEFILE ) );
+		$migrator->load( Product::get( OTTER_BLOCKS_BASEFILE ) );
+		do_action( 'themeisle_sdk_update_otter-blocks', '', OTTER_BLOCKS_VERSION, OTTER_BLOCKS_BASEFILE );
+		$migrator->run_pending();
 
 		$this->assertTrue( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
 	}
 
 	public function test_run_bails_for_old_install_without_saved_option_after_default() {
 		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
-		delete_option( 'themeisle_blocks_settings_atomic_wind_defaulted' );
+		delete_option( 'otter_blocks_ran_migrations' );
 		update_option( 'otter_blocks_install', time() - ( 2 * DAY_IN_SECONDS ) );
 
-		( new Options_Settings() )->maybe_default_atomic_wind_blocks();
+		$migrator = new Migrator( Product::get( OTTER_BLOCKS_BASEFILE ) );
+		$migrator->load( Product::get( OTTER_BLOCKS_BASEFILE ) );
+		do_action( 'themeisle_sdk_update_otter-blocks', '', OTTER_BLOCKS_VERSION, OTTER_BLOCKS_BASEFILE );
+		$migrator->run_pending();
 
 		$this->instance->run();
 

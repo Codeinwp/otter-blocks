@@ -8,6 +8,7 @@ parameters:
 		- %currentWorkingDirectory%/plugins/blocks-animation/blocks-animation.php
 	scanDirectories:
 		- %currentWorkingDirectory%/vendor/stripe/stripe-php
+		- %currentWorkingDirectory%/vendor/codeinwp/themeisle-sdk/src
 	bootstrapFiles:
 		- %currentWorkingDirectory%/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
 		- %currentWorkingDirectory%/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
