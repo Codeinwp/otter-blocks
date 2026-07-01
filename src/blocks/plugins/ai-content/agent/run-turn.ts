@@ -7,9 +7,13 @@
  *   TEXT edit  — a selection whose request only changes wording. We send just
  *                the text fragments and splice them back; layout and styles are
  *                never sent and cannot change. No "huge chunks".
- *   BLOCK edit — a selection whose request changes styling/layout ('style') or
- *                rebuilds it ('redesign'). Full-markup rewrite, rebuilt through
- *                the same validate/repair/quality machinery as generation.
+ *   STYLE edit — a selection whose request only changes the look. We send just
+ *                each block's className and splice the transformed classes back;
+ *                markup, text, and structure are never sent and cannot change.
+ *                Falls back to a full rewrite when nothing carries a className.
+ *   BLOCK edit — a selection whose request rebuilds it ('redesign'). Full-markup
+ *                rewrite, rebuilt through the same validate/repair/quality
+ *                machinery as generation.
  *
  * A single cheap DECIDE_EDIT step classifies a selection into text/style/
  * redesign. There is no tool-calling layer, no routing layer, and no search/
@@ -19,6 +23,7 @@
 import { decideEditKind } from './decide-edit';
 import { runGenerateTurn } from './run-generate';
 import { runBlockRewriteTurn } from './run-rewrite';
+import { runStyleEditTurn } from './run-style-edit';
 import { runTextEditTurn } from './run-text-edit';
 import type { RouteDecision, RunTurnArgs, RunTurnResult } from './types';
 
@@ -80,7 +85,20 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 		return runBlockRewriteTurn( args, 'redesign' );
 	}
 
-	return runBlockRewriteTurn( args, 'style' === kind ? 'style' : 'redesign' );
+	if ( 'style' === kind ) {
+		const styleResult = await runStyleEditTurn( args );
+
+		// Selection had no className to restyle (e.g. classic blocks that carry
+		// color elsewhere) — fall back to the full-markup style rewrite, which
+		// still guarantees copy is preserved.
+		if ( styleResult.generation.blocks.length ) {
+			return styleResult;
+		}
+
+		return runBlockRewriteTurn( args, 'style' );
+	}
+
+	return runBlockRewriteTurn( args, 'redesign' );
 };
 
 /**

@@ -17,5 +17,6 @@ export const PIPELINE_STEP = {
 	// EDIT
 	DECIDE_EDIT: 'Pipeline step: DECIDE_EDIT — classify whether the request changes the text, the styling/layout, or needs a full redesign. Return only the classification.',
 	TEXT_EDIT: 'Pipeline step: TEXT_EDIT — you are given an ordered list of text fragments from one block selection; apply the requested change to each and return the same number of fragments in the same order. Do not touch layout or styles.',
+	STYLE_EDIT: 'Pipeline step: STYLE_EDIT — you are given an ordered list of elements with their current CSS classNames from one block selection; apply the requested styling change to each and return the same number of classNames in the same order. Do not touch the text or the block structure.',
 	REWRITE: 'Pipeline step: REWRITE — you are given the complete current block markup; return the complete updated block markup with the requested change applied.'
 } as const;

@@ -11,7 +11,7 @@ describe( 'AI prompts', () => {
 
 	it( 'defines exactly the collapsed pipeline steps', () => {
 		expect( Object.keys( PIPELINE_STEP ).sort() ).toEqual(
-			[ 'CONSTRUCT', 'DECIDE_EDIT', 'PAGE_OUTLINE', 'PLAN', 'REWRITE', 'SECTION_OUTLINE', 'TEXT_EDIT' ]
+			[ 'CONSTRUCT', 'DECIDE_EDIT', 'PAGE_OUTLINE', 'PLAN', 'REWRITE', 'SECTION_OUTLINE', 'STYLE_EDIT', 'TEXT_EDIT' ]
 		);
 	});
 
@@ -22,6 +22,7 @@ describe( 'AI prompts', () => {
 		expect( PIPELINE_STEP.SECTION_OUTLINE ).toContain( 'SECTION_OUTLINE' );
 		expect( PIPELINE_STEP.DECIDE_EDIT ).toContain( 'DECIDE_EDIT' );
 		expect( PIPELINE_STEP.TEXT_EDIT ).toContain( 'TEXT_EDIT' );
+		expect( PIPELINE_STEP.STYLE_EDIT ).toContain( 'STYLE_EDIT' );
 		expect( PIPELINE_STEP.REWRITE ).toContain( 'REWRITE' );
 	});
 });
