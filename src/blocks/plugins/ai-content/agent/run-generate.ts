@@ -33,11 +33,16 @@ const buildGenerateTask = ( args: GenerateTurnArgs ): string => {
 		task = `${ task }\n\nReference — current block markup and schema:\n${ referenceContext }`;
 	}
 
+	if ( args.pageStyleDigest ) {
+		task = `${ task }\n\n${ args.pageStyleDigest }`;
+	}
+
 	return task;
 };
 
 /**
  * Serial generate workflow: outline → search → construct → validate.
+ * @param args
  */
 export const runGenerateTurn = async( args: GenerateTurnArgs ) => {
 	args.onPhase?.( 'planning' );
@@ -48,6 +53,7 @@ export const runGenerateTurn = async( args: GenerateTurnArgs ) => {
 		themeColors: args.themeColors,
 		patterns: args.patterns?.length ? args.patterns : undefined,
 		history: args.sessionHistory,
+		scope: args.isCreateMode ? args.scope : 'section',
 		requestCompletion: args.requestCompletion,
 		onPhase: ( phase ) => args.onPhase?.( phase ),
 		onPlanReady: args.onPlanReady,

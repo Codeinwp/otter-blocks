@@ -445,7 +445,7 @@ const Inspector = ({
 								{ ! attributes.product && attributes.image && (
 									<AltTextControl
 										value={ attributes.image.alt }
-										onChange={ alt => setAttributes({ image: { ...attributes.image, alt } }) }
+										onChange={ alt => setAttributes({ image: { ...attributes.image, alt }}) }
 									/>
 								) }
 							</BaseControl>

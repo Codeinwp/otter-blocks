@@ -153,8 +153,12 @@ export function normalizePromptResponse( response: PromptRouteSuccess|unknown ):
  * AI Client's network-error code, and cURL/timeout phrasing in the message. A
  * reasoning model behind /v1/responses can blow past the backend's 30s cURL
  * timeout and surface as a 502, which a quick retry usually rides out.
+ *
+ * invalid_json/rest_invalid_json land here too: a proxy can answer a slow request
+ * with a raw HTML error page apiFetch fails to parse (no HTTP status), so the retry
+ * is the only signal we have.
  */
-const TRANSIENT_PROMPT_CODES = new Set([ 'prompt_network_error', 'http_request_failed', 'fetch_error', 'timeout' ]);
+const TRANSIENT_PROMPT_CODES = new Set([ 'prompt_network_error', 'http_request_failed', 'fetch_error', 'timeout', 'invalid_json', 'rest_invalid_json' ]);
 const TRANSIENT_PROMPT_STATUSES = new Set([ 408, 425, 429, 500, 502, 503, 504 ]);
 const TRANSIENT_PROMPT_MESSAGE = /tim(?:e|ed)\s?out|timeout|cURL error 28|network error|temporarily unavailable|bad gateway|gateway time/i;
 
@@ -246,6 +250,7 @@ function stripClientModelSelection( payload: Record<string, unknown> ): Record<s
  * consistent failure object instead of a thrown error.
  *
  * @param {Record<string, unknown>} payload The request body to forward.
+ * @param                           signal
  * @return {Promise<PromptResult>} The normalized result.
  */
 async function postGenerate( payload: Record<string, unknown>, signal?: AbortSignal ): Promise<PromptResult> {
@@ -362,6 +367,7 @@ export { BLOCK_GENERATION_SYSTEM_PROMPT };
  * @param instruction Fully-built generation prompt (catalog + task + schema).
  * @param usedAction  Audit label recorded by AI_Usage ('blockGeneration' for the
  *                    AI block pipeline, 'aiChat' for the conversational modal).
+ * @param options
  * @return Normalized prompt result (see normalizePromptResponse).
  */
 export async function sendBlockGenerationPrompt(
@@ -378,6 +384,7 @@ export async function sendBlockGenerationPrompt(
 			{ role: 'user', content: instruction }
 		],
 		response_format: { type: 'json_object' },
+		max_tokens: 8192,
 		stream: false
 	};
 

@@ -1,144 +1,39 @@
 /**
- * Internal dependencies.
+ * One user turn, reduced to a few predictable paths:
+ *
+ *   GENERATE   — no selection (or create / forced generate). Builds new blocks via
+ *                the catalog pipeline (plan → construct → quality).
+ *   TEXT edit  — request only changes wording. Sends just the text fragments and
+ *                splices them back; layout and styles never change.
+ *   STYLE edit — request only changes the look. Sends just each block's style
+ *                attributes and splices them back; markup/text/structure never
+ *                change. Falls back to a full rewrite when a block has no style attrs.
+ *   BLOCK edit — request rebuilds the selection ('redesign'). Full-markup rewrite
+ *                through the same validate/repair/quality machinery as generation.
+ *
+ * A single cheap DECIDE_EDIT step classifies the selection; no tool-calling,
+ * routing, or search/replan layer.
  */
-import {
-	appendAgentContextEntry,
-	buildContextEntryFromPayload,
-	emptyAgentContext,
-	type AgentContextEntry,
-	type AgentContextPayload,
-	type AgentSessionContext
-} from '../agent-context';
-import { buildBlockContextMessage } from '../apply-content';
-import { adaptPatternToTask } from '../block-generation';
-import { hasStructureEdits } from '../structure-edits';
-import { executeToolCall, planToolCall } from '../operations';
-import type { AdaptPatternToolArgs, PatchToolArgs } from '../operations';
-import {
-	captureRemovedBlockSnapshots,
-	summarizeToolOperation
-} from '../session-memory';
-import { runEditTurn } from './run-edit';
+import { decideEditKind } from './decide-edit';
 import { runGenerateTurn } from './run-generate';
-import { runStructureEditTurn } from './run-structure-edit';
-import type { RunTurnArgs, RunTurnResult } from './types';
-
-const hasPatchArgs = ( args: PatchToolArgs ): boolean => {
-	return Boolean( args.patches?.length );
-};
-
-const executeCtx = ( args: RunTurnArgs ) => ({
-	baseBlocks: args.referenceBlocks,
-	getBlockType: args.getBlockType,
-	blockTypes: args.blockTypes,
-	sessionMemory: args.sessionMemory,
-	patterns: args.patterns
-});
-
-const nextContextStep = ( args: RunTurnArgs ): number => ( args.sessionMemory?.length ?? 0 ) + 1;
-
-const stashSearchContext = (
-	args: RunTurnArgs,
-	agentContext: AgentSessionContext,
-	contextPayload?: AgentContextPayload
-): { agentContext: AgentSessionContext; contextEntry?: AgentContextEntry } => {
-	if ( ! contextPayload ) {
-		return { agentContext };
-	}
-
-	const contextEntry: AgentContextEntry = buildContextEntryFromPayload(
-		nextContextStep( args ),
-		contextPayload
-	);
-
-	return {
-		agentContext: appendAgentContextEntry( agentContext, contextEntry ),
-		contextEntry
-	};
-};
-
-const replanAfterSearch = async(
-	args: RunTurnArgs,
-	agentContext: AgentSessionContext,
-	searchResult: ReturnType<typeof executeToolCall>
-) => {
-	const stash = stashSearchContext( args, agentContext, searchResult?.contextPayload );
-
-	return {
-		...await planToolCall({ ...args, agentContext: stash.agentContext }),
-		agentContext: stash.agentContext,
-		contextEntry: stash.contextEntry
-	};
-};
+import { runBlockRewriteTurn } from './run-rewrite';
+import { runStyleEditTurn } from './run-style-edit';
+import { runTextEditTurn } from './run-text-edit';
+import type { RouteDecision, RunTurnArgs, RunTurnResult } from './types';
 
 /**
- * Run one user turn: AI tool call → optional search replan → local execution.
+ * Run one user turn. Picks GENERATE for net-new content, or classifies a
+ * selection edit into a text splice or a block rewrite.
+ * @param args
  */
 export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> => {
-	let agentContext = args.agentContext ?? emptyAgentContext();
-	let contextEntry: AgentContextEntry | undefined;
+	const hasSelection = Boolean( args.referenceBlocks?.length );
 
-	let { toolCall, decision } = await planToolCall({ ...args, agentContext });
-
-	if ( 'search_blocks' === toolCall.tool ) {
-		const searchResult = executeToolCall( toolCall, executeCtx( args ) );
-		const replan = await replanAfterSearch( args, agentContext, searchResult );
-
-		agentContext = replan.agentContext;
-		contextEntry = replan.contextEntry ?? contextEntry;
-		toolCall = replan.toolCall;
-		decision = replan.decision;
-	}
-
-	if ( 'search_history' === toolCall.tool ) {
-		const searchResult = executeToolCall( toolCall, executeCtx( args ) );
-		const replan = await replanAfterSearch( args, agentContext, searchResult );
-
-		agentContext = replan.agentContext;
-		contextEntry = replan.contextEntry ?? contextEntry;
-		toolCall = replan.toolCall;
-		decision = replan.decision;
-	}
-
-	if ( 'search_patterns' === toolCall.tool ) {
-		const searchResult = executeToolCall( toolCall, executeCtx( args ) );
-		const replan = await replanAfterSearch( args, agentContext, searchResult );
-
-		agentContext = replan.agentContext;
-		contextEntry = replan.contextEntry ?? contextEntry;
-		toolCall = replan.toolCall;
-		decision = replan.decision;
-	}
-
-	let removedBlocks: RunTurnResult['removedBlocks'];
-
-	if ( 'structure' === toolCall.tool && 'remove' in toolCall.args && toolCall.args.remove?.length ) {
-		removedBlocks = captureRemovedBlockSnapshots( args.referenceBlocks, toolCall.args.remove );
-	}
-
-	if ( 'adapt_pattern' === toolCall.tool ) {
-		const patternArgs = toolCall.args as AdaptPatternToolArgs;
-		const generation = await adaptPatternToTask({
-			patternName: patternArgs.patternName,
-			task: args.activePrompt,
-			patterns: args.patterns || [],
-			blockTypes: args.blockTypes,
-			themeColors: args.themeColors,
-			requestCompletion: args.requestCompletion,
-			onPhase: ( phase ) => args.onPhase?.( phase )
-		});
-
-		return {
-			generation,
-			decision,
-			toolCall,
-			removedBlocks,
-			contextEntry,
-			agentContext
-		};
-	}
-
-	if ( 'generate' === toolCall.tool ) {
+	// GENERATE — net-new content: no reference blocks, or an explicit generate
+	// request. We do NOT force-generate every create-mode turn: a follow-up in the
+	// same modal carries the generated result as reference blocks and must fall
+	// through to the edit classifier, not silently rebuild from the original prompt.
+	if ( ! hasSelection || 'generate' === args.forceRoute ) {
 		const generation = await runGenerateTurn({
 			activePrompt: args.activePrompt,
 			referenceBlocks: args.referenceBlocks,
@@ -146,6 +41,7 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 			blockTypes: args.blockTypes,
 			themeColors: args.themeColors,
 			patterns: args.patterns,
+			pageStyleDigest: args.pageStyleDigest,
 			isCreateMode: args.isCreateMode,
 			scope: args.scope,
 			getBlockType: args.getBlockType,
@@ -157,124 +53,68 @@ export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> =
 
 		return {
 			generation,
-			decision,
-			toolCall,
-			removedBlocks,
-			contextEntry,
-			agentContext
+			decision: { mode: 'generate', route: 'full', source: 'model' },
+			toolCall: { tool: 'generate', reason: '' }
 		};
 	}
 
-	const executed = executeToolCall( toolCall, executeCtx( args ) );
+	// Selection edit — classify what actually changes, then route.
+	const { kind } = await decideEditKind( {
+		instruction: args.instruction,
+		taskContext: args.activePrompt,
+		requestCompletion: args.requestCompletion
+	} );
 
-	if ( executed ) {
-		return {
-			generation: executed,
-			decision,
-			toolCall,
-			removedBlocks,
-			contextEntry,
-			agentContext
-		};
+	if ( 'text' === kind ) {
+		const textResult = await runTextEditTurn( args );
+
+		// No editable text — fall back to a full rewrite.
+		if ( textResult.generation.blocks.length ) {
+			return textResult;
+		}
+
+		return runBlockRewriteTurn( args, 'redesign' );
 	}
 
-	// Heuristic fallback when the tool was chosen but args were not parseable.
-	if ( 'patch' === toolCall.tool && ! hasPatchArgs( toolCall.args as PatchToolArgs ) ) {
-		args.onPhase?.( 'refining' );
+	if ( 'style' === kind ) {
+		const styleResult = await runStyleEditTurn( args );
 
-		const generation = await runEditTurn({
-			instruction: args.instruction,
-			activePrompt: args.activePrompt,
-			baseBlocks: args.referenceBlocks,
-			sessionHistory: args.sessionHistory,
-			blockTypes: args.blockTypes,
-			themeColors: args.themeColors,
-			getBlockType: args.getBlockType,
-			referenceContext: buildBlockContextMessage( args.referenceBlocks, args.getBlockType ),
-			requestCompletion: args.requestCompletion,
-			onPhase: args.onPhase
-		});
+		// No className to restyle — fall back to the full-markup style rewrite (copy preserved).
+		if ( styleResult.generation.blocks.length ) {
+			return styleResult;
+		}
 
-		return {
-			generation,
-			decision,
-			toolCall,
-			removedBlocks,
-			contextEntry,
-			agentContext
-		};
+		return runBlockRewriteTurn( args, 'style' );
 	}
 
-	if ( 'structure' === toolCall.tool && ! hasStructureEdits( toolCall.args ) ) {
-		const generation = await runStructureEditTurn({
-			instruction: args.instruction,
-			activePrompt: args.activePrompt,
-			baseBlocks: args.referenceBlocks,
-			sessionHistory: args.sessionHistory,
-			blockTypes: args.blockTypes,
-			themeColors: args.themeColors,
-			getBlockType: args.getBlockType,
-			referenceContext: buildBlockContextMessage( args.referenceBlocks, args.getBlockType ),
-			requestCompletion: args.requestCompletion,
-			onPhase: args.onPhase
-		});
-
-		return {
-			generation,
-			decision,
-			toolCall,
-			removedBlocks,
-			contextEntry,
-			agentContext
-		};
-	}
-
-	return {
-		generation: {
-			blocks: args.referenceBlocks,
-			plan: { mission: '', design: {}, rationale: [], roots: [] },
-			rationale: [],
-			diagnostics: { droppedRoots: [] }
-		},
-		decision,
-		toolCall,
-		removedBlocks,
-		contextEntry,
-		agentContext
-	};
+	return runBlockRewriteTurn( args, 'redesign' );
 };
 
-/** Build operation log for modal session storage. */
-export const buildSessionOperationFromTool = ( toolCall: RunTurnResult['toolCall'] ) => {
-	return summarizeToolOperation( toolCall.tool, toolCall.args );
-};
-
+/**
+ * Tracking feature value for analytics. Routes after the collapse are: full
+ * (generate), text, style, and rewrite (redesign).
+ * @param decision
+ * @param refineInstruction
+ * @param hasGeneratedResult
+ */
 export const getTrackingFeatureValue = (
-	decision: RunTurnResult['decision'],
+	decision: RouteDecision,
 	refineInstruction?: string,
 	hasGeneratedResult?: boolean
 ): string => {
 	const prefix = 'model' === decision.source ? 'tool' : 'tool-fallback';
 
-	if ( 'history' === decision.route ) {
-		return `${ prefix }:search_history`;
+	if ( 'text' === decision.route ) {
+		return `${ prefix }:text`;
 	}
 
-	if ( 'pattern' === decision.route ) {
-		return `${ prefix }:pattern`;
+	if ( 'style' === decision.route ) {
+		return `${ prefix }:style`;
 	}
 
-	if ( 'list' === decision.route ) {
-		return `${ prefix }:list`;
-	}
-
-	if ( 'structure' === decision.route ) {
-		return `${ prefix }:structure`;
-	}
-
-	if ( 'patch' === decision.route ) {
+	if ( 'rewrite' === decision.route ) {
 		const action = refineInstruction || hasGeneratedResult ? 'refine' : 'edit';
-		return `${ prefix }:${ action }:patch`;
+		return `${ prefix }:${ action }:rewrite`;
 	}
 
 	return `${ prefix }:generate`;

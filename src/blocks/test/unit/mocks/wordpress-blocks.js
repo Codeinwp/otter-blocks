@@ -91,8 +91,15 @@ const serializeBlock = ( block ) => {
 	return `<!-- wp:${ serializedName }${ attrs } -->${ inner }<!-- /wp:${ serializedName } -->`;
 };
 
+const cloneBlock = ( block, mergeAttributes = {} ) => ({
+	...block,
+	attributes: { ...( block.attributes || {} ), ...mergeAttributes },
+	innerBlocks: ( block.innerBlocks || [] ).map( ( inner ) => cloneBlock( inner ) )
+});
+
 module.exports = {
 	createBlock,
+	cloneBlock,
 	parse: parseBlockMarkup,
 	rawHandler,
 	serialize: jest.fn( blocks => ( blocks || [] ).map( serializeBlock ).join( '' ) )

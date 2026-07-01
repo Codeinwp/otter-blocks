@@ -16,7 +16,7 @@
     text-transform: uppercase;
 }
 
-$o-ai-accent: #e25563;
+$o-ai-accent: var(--wp-admin-theme-color, #3858e9);
 $o-ai-border: #e0e0e0;
 $o-ai-muted: #757575;
 $o-ai-segment-bg: #f0f0f1;
@@ -41,11 +41,8 @@ $o-ai-segment-bg: #f0f0f1;
         font-weight: 600;
     }
 
-    // Column layout so the body fills the height and the footer stays at the
-    // bottom; the scroll lives on the inner region. Column direction keeps every
-    // child full-width (a row default is what collapsed the content before).
-    // `flex: 1; min-height: 0` bounds the height so the inner region can scroll
-    // instead of the whole modal growing.
+    // Column layout keeps children full-width and lets the inner region (not the
+    // whole modal) take the scroll; `flex: 1; min-height: 0` bounds the height.
     .components-modal__content {
         display: flex;
         flex: 1 1 auto;
@@ -254,15 +251,8 @@ $o-ai-segment-bg: #f0f0f1;
     100% { background-position: -200% 0; }
 }
 
-@keyframes o-ai-skeleton-pulse {
-    0%, 100% { opacity: 0.45; }
-    50% { opacity: 0.9; }
-}
-
-// Footer — Done + Regenerate (left, with token count), version nav (right).
-// Sticks to the bottom of the modal's scroll area so the actions stay reachable;
-// the solid background + the content's zeroed bottom padding stop anything from
-// peeking past it as the preview scrolls.
+// Footer — actions left, version nav right. Solid background so scrolling
+// content never peeks past it.
 .o-ai-content-modal__footer {
     flex: 0 0 auto;
     display: flex;
@@ -355,8 +345,9 @@ $o-ai-primary: #3858e9;
 .o-ai-content-modal__dialog.is-section-mode {
     width: min(1020px, 96vw);
     max-width: min(1020px, 96vw);
-    height: min(720px, 92vh);
-    max-height: 92vh;
+    // Hug the content but cap at the viewport; the canvas takes any overflow.
+    height: auto;
+    max-height: 90vh;
 
     // We render our own header/footer; let the section fill the dialog flush.
     .components-modal__content {
@@ -413,6 +404,10 @@ $o-ai-primary: #3858e9;
     font-weight: 600;
     line-height: 1.2;
     color: #1e1e1e;
+    // Keep the fixed-height header to one line; the full text is in the title attr.
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .o-ai-section__brand-subtitle {
@@ -421,6 +416,9 @@ $o-ai-primary: #3858e9;
     font-size: 12px;
     line-height: 1.2;
     color: #8b8d91;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .o-ai-section__status {
@@ -428,8 +426,6 @@ $o-ai-primary: #3858e9;
     align-items: center;
     gap: 8px;
     flex: 0 1 auto;
-    max-width: min( 22rem, 42vw );
-    min-width: 11.5rem;
     padding: 6px 14px;
     border-radius: 999px;
     font-size: 12px;
@@ -520,62 +516,231 @@ $o-ai-primary: #3858e9;
     margin-bottom: 10px;
 }
 
-// Canvas — scrollable preview stage on a muted background.
+// Canvas — the preview stage on a muted background. Does NOT scroll itself; the
+// scroll lives inside the frame (see .o-ai-section__scroll).
 .o-ai-section__canvas {
     position: relative;
-    flex: 1 1 0;
+    flex: 1 1 auto;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
     gap: 14px;
     padding: 26px;
     background: #f0f0f1;
-
-    &.is-loading {
-        background-color: #ececee;
-        background-image: linear-gradient(
-            110deg,
-            #ececee 0%,
-            #f5f5f6 18%,
-            #ececee 36%
-        );
-        background-size: 200% 100%;
-        animation: o-ai-canvas-shimmer 2.4s ease-in-out infinite;
-    }
 }
 
-// The framed device preview, centered on the stage. `flex: 0 0 auto` keeps the
-// frame at the BlockPreview's full (scaled) height instead of being shrunk to
-// fit the flex column — otherwise a tall section is clipped and can't scroll.
-// The canvas (overflow: auto) is the scroll container.
+// The framed preview, centered on the stage. BlockPreview scales its own iframe
+// from viewportWidth down to this width.
 .o-ai-section__frame {
-    flex: 0 0 auto;
+    position: relative;
+    flex: 0 1 auto;
     width: 100%;
     max-width: 1100px;
+    // A fixed 16:9 viewport; `max-height: 100%` caps it to the canvas and the
+    // inner scroll region takes any overflow.
+    aspect-ratio: 16 / 9;
+    max-height: 100%;
+    min-height: 0;
     margin: 0 auto;
     background: #fff;
     border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.12);
     overflow: hidden;
 
+    // Full-page builds preview in a narrower, page-like column.
+    &.is-page {
+        max-width: 760px;
+    }
+
+    // Dim slightly while roots are still streaming in.
     &.is-live {
-        opacity: 0.85;
+        opacity: 0.92;
+    }
+
+    .block-editor-block-preview__content {
+        max-height: none !important;
+
+        iframe {
+            max-height: none !important;
+        }
     }
 }
 
-.o-ai-section__frame-inner {
-    width: 1240px;
-    zoom: 0.49;
+// The only scroll container in the stage: fills the fixed 16:9 frame and takes
+// the scroll, so a tall section stays contained (and the shimmer overlay, pinned
+// to the non-scrolling frame, stays over the visible area).
+.o-ai-section__scroll {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+}
 
-    // Firefox does not support zoom; scale instead.
-    @supports not ( zoom: 0.49 ) {
-        zoom: unset;
-        transform: scale( 0.49 );
-        transform-origin: top center;
+// Translucent "updating" overlay shown over the live preview during an edit —
+// the current layout stays visible underneath while a sweep + pulse signal work.
+.o-ai-section__updating {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(1px);
+    overflow: hidden;
+    pointer-events: none;
+
+    // Diagonal shimmer sweeping across the frame.
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            110deg,
+            rgba(255, 255, 255, 0) 30%,
+            rgba(56, 88, 233, 0.18) 50%,
+            rgba(255, 255, 255, 0) 70%
+        );
+        background-size: 220% 100%;
+        animation: o-ai-updating-sweep 1.6s ease-in-out infinite;
+    }
+}
+
+.o-ai-section__updating-label {
+    position: relative;
+    z-index: 1;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(30, 30, 30, 0.82);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    animation: o-ai-updating-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes o-ai-updating-sweep {
+    0% {
+        background-position: 130% 0;
+    }
+
+    100% {
+        background-position: -30% 0;
+    }
+}
+
+@keyframes o-ai-updating-pulse {
+    0%,
+    100% {
+        opacity: 0.78;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+// Wraps the live BlockPreview so the skeleton holds until the iframe has painted,
+// then crossfades in — otherwise the preview flashes white while the iframe boots.
+.o-ai-section__live {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .block-editor-block-preview__container {
+        width: 100%;
+    }
+
+    // Before paint, keep it out of flow so the skeleton alone sets the size.
+    &:not( .is-ready ) .block-editor-block-preview__container {
+        position: absolute;
+        inset: 0 0 auto;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &.is-ready .block-editor-block-preview__container {
+        animation: o-ai-preview-fade 0.18s ease;
+    }
+}
+
+// "Section forming" skeleton — shown over a booting preview and as the first-build
+// loading state. Centered like a hero so it reads as a section taking shape.
+.o-ai-section__skeleton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 340px;
+    padding: 64px 48px;
+    box-sizing: border-box;
+}
+
+// The individual shimmering bars.
+.o-ai-section__sk-bar {
+    display: block;
+    border-radius: 6px;
+    background: linear-gradient(
+        100deg,
+        #e4e4e7 40%,
+        #f3f3f5 50%,
+        #e4e4e7 60%
+    );
+    background-size: 200% 100%;
+    animation: o-ai-canvas-shimmer 1.4s linear infinite;
+
+    @media ( prefers-reduced-motion: reduce ) {
+        animation: none;
+        background: #e4e4e7;
+    }
+}
+
+.o-ai-section__sk-eyebrow {
+    width: 90px;
+    height: 12px;
+    border-radius: 999px;
+}
+
+.o-ai-section__sk-title {
+    width: min( 70%, 520px );
+    height: 30px;
+}
+
+.o-ai-section__sk-line {
+    width: min( 58%, 440px );
+    height: 14px;
+
+    &.is-short {
+        width: min( 42%, 320px );
+    }
+}
+
+.o-ai-section__sk-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.o-ai-section__sk-btn {
+    width: 134px;
+    height: 42px;
+    border-radius: 8px;
+
+    &.is-ghost {
+        width: 116px;
+        opacity: 0.55;
+    }
+}
+
+@keyframes o-ai-preview-fade {
+    from {
+        opacity: 0;
     }
 }
 
@@ -590,68 +755,14 @@ $o-ai-primary: #3858e9;
 }
 
 .o-ai-section__loading {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
+    min-height: 0;
     width: 100%;
     max-width: 1100px;
     margin: auto;
-}
-
-.o-ai-section__loading-frame {
-    padding: 48px 56px 40px;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
-}
-
-.o-ai-section__loading-skeleton {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    max-width: 520px;
-    margin: 0 auto 28px;
-}
-
-.o-ai-section__loading-bar,
-.o-ai-section__loading-block {
-    display: block;
-    border-radius: 6px;
-    background: linear-gradient(90deg, #e8eaed 0%, #f3f4f6 50%, #e8eaed 100%);
-    background-size: 200% 100%;
-    animation: o-ai-canvas-shimmer 2s ease-in-out infinite, o-ai-skeleton-pulse 2s ease-in-out infinite;
-}
-
-.o-ai-section__loading-bar {
-    height: 12px;
-    width: 100%;
-
-    &.is-title {
-        height: 22px;
-        width: 72%;
-    }
-
-    &.is-short {
-        width: 48%;
-    }
-}
-
-.o-ai-section__loading-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 8px;
-}
-
-.o-ai-section__loading-block {
-    height: 88px;
-}
-
-.o-ai-section__loading-label {
-    margin: 0;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 500;
-    color: #5b626a;
 }
 
 // Refine / prompt bar.
@@ -689,6 +800,15 @@ $o-ai-primary: #3858e9;
         height: 19px;
         fill: currentColor;
     }
+
+    // The busy spinner reads as the same accent as the sparkle icon it replaces.
+    .components-spinner__indicator {
+        stroke: $o-ai-accent;
+    }
+
+    .components-spinner__track {
+        stroke: rgba( 56, 88, 233, 0.15 );
+    }
 }
 
 .o-ai-section__refine-input {
@@ -707,9 +827,41 @@ $o-ai-primary: #3858e9;
         background: transparent !important;
         padding: 6px 0 !important;
         resize: none;
-        min-height: 32px;
+        min-height: 48px;
         font-size: 14px;
         line-height: 1.5;
+    }
+
+    // The disabled field still shows the running prompt — keep it legible
+    // (browsers otherwise fade disabled text).
+    textarea:disabled {
+        opacity: 1;
+        color: #1e1e1e;
+        -webkit-text-fill-color: #1e1e1e;
+        cursor: default;
+    }
+}
+
+// Busy / locked state — a muted, greyed field with a "not-allowed" cursor makes
+// it clear the prompt can't be edited while a generation is in flight.
+.o-ai-section__refine-field.is-busy {
+    background: #f5f6f7;
+    border-color: #e0e2e6;
+    box-shadow: none;
+    cursor: not-allowed;
+
+    // Spinner sized to match the sparkle icon it replaces.
+    .o-ai-section__refine-icon .components-spinner {
+        margin: 0;
+        width: 19px;
+        height: 19px;
+    }
+
+    .o-ai-section__refine-input textarea {
+        background: transparent !important;
+        color: #6b7280;
+        -webkit-text-fill-color: #6b7280;
+        cursor: not-allowed;
     }
 }
 
@@ -717,6 +869,99 @@ $o-ai-primary: #3858e9;
 .o-ai-section__refine-stop.components-button {
     flex: 0 0 auto;
     justify-content: center;
+}
+
+// Stop = a filled danger button while generating (overrides WP's secondary +
+// destructive outline) so cancelling reads clearly as an interrupt.
+.o-ai-section__refine-stop.components-button.is-destructive {
+    background: #d63638;
+    color: #fff;
+    box-shadow: none;
+
+    &:not( :disabled ):hover,
+    &:not( :disabled ):focus {
+        background: #b32d2e;
+        color: #fff;
+        box-shadow: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid rgba( 214, 54, 56, 0.5 );
+        outline-offset: 1px;
+    }
+}
+
+// Soft inline failure card under the prompt box — a tinted rounded panel, not the
+// heavy WP <Notice>. Carries only the message; Retry lives on the primary button.
+.o-ai-section__error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 9px 12px;
+    border: 1px solid #f1c7c8;
+    border-radius: 9px;
+    background: #fdf4f4;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #8a2b2c;
+    animation: o-ai-error-in 0.18s ease;
+}
+
+.o-ai-section__error-icon {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    fill: #cc1818;
+}
+
+.o-ai-section__error-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-top: 1px;
+}
+
+@keyframes o-ai-error-in {
+    from {
+        opacity: 0;
+        transform: translateY( -3px );
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY( 0 );
+    }
+}
+
+// Soft red frame on the prompt box while an error shows; the blue focus ring
+// still wins on click.
+.o-ai-section__refine-field.has-error {
+    border-color: #eab8b9;
+
+    &:not( :focus-within ) {
+        box-shadow: 0 0 0 1px rgba( 204, 24, 24, 0.12 );
+    }
+}
+
+// A quick-action pill just filled the prompt: brief accent pulse so the
+// easily-missed field visibly reacts.
+.o-ai-section__refine-field.is-pulsing {
+    animation: o-ai-prompt-pulse 1s ease;
+
+    @media ( prefers-reduced-motion: reduce ) {
+        animation: none;
+    }
+}
+
+@keyframes o-ai-prompt-pulse {
+    0% {
+        border-color: $o-ai-primary;
+        box-shadow: 0 0 0 3px rgba( 56, 88, 233, 0.22 );
+    }
+
+    100% {
+        border-color: #cdd0d6;
+        box-shadow: 0 0 0 3px rgba( 56, 88, 233, 0 );
+    }
 }
 
 // Footer — version stepper + tokens (left), Discard / Insert (right).

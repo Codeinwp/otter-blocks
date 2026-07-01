@@ -17,11 +17,22 @@ import useSettings from '../../helpers/use-settings';
 const ATOMIC_WIND_OPTION = 'themeisle_blocks_settings_atomic_wind_blocks';
 
 /**
- * Gate shown in place of the library when the Atomic Wind blocks — which every
- * template is built on — are disabled. Lets the user flip the setting in one
- * click, then asks for the reload the new block registrations need to load.
+ * Gate shown in place of a feature when the Atomic Wind blocks it depends on are
+ * disabled. Lets the user flip the setting in one click, then asks for the reload
+ * the new block registrations need to load. Copy is overridable so the same gate
+ * can front the Design Library, the AI generator, or anything else atomic-only.
+ *
+ * @param {Object} props
+ * @param {string} [props.title]       Heading shown before enabling.
+ * @param {string} [props.description] Body copy shown before enabling.
  */
-const EnableAtomicWind = () => {
+const EnableAtomicWind = ({
+	title = __('Atomic Wind blocks are required', 'otter-blocks'),
+	description = __(
+		'The Design Library is built on Otter\'s Atomic Wind blocks, which are currently disabled. Enable them to browse and insert templates.',
+		'otter-blocks',
+	),
+} = {}) => {
 	const [ , updateOption, status ] = useSettings();
 	const [ enabled, setEnabled ] = useState(false);
 
@@ -45,13 +56,8 @@ const EnableAtomicWind = () => {
 
 			{!enabled ? (
 				<>
-					<h2>{__('Atomic Wind blocks are required', 'otter-blocks')}</h2>
-					<p>
-						{__(
-							'The Design Library is built on Otter\'s Atomic Wind blocks, which are currently disabled. Enable them to browse and insert templates.',
-							'otter-blocks',
-						)}
-					</p>
+					<h2>{title}</h2>
+					<p>{description}</p>
 					<Button
 						variant="primary"
 						className="o-library__gate-action"
@@ -69,7 +75,7 @@ const EnableAtomicWind = () => {
 					<h2>{__('Almost there — reload to continue', 'otter-blocks')}</h2>
 					<p>
 						{__(
-							'Atomic Wind blocks are now enabled. Reload the editor to load them, then reopen the Design Library. Save any pending changes first.',
+							'Atomic Wind blocks are now enabled. Reload the editor to load them. Save any pending changes first.',
 							'otter-blocks',
 						)}
 					</p>

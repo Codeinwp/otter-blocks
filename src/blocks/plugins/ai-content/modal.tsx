@@ -9,14 +9,13 @@ import {
 	Icon,
 	Modal,
 	Notice,
+	Spinner,
 	TextareaControl
 } from '@wordpress/components';
 
-import { cloneBlock } from '@wordpress/blocks';
+import { cloneBlock, serialize } from '@wordpress/blocks';
 
-import { BlockPreview } from '@wordpress/block-editor';
-
-import { chevronLeft, chevronRight, close } from '@wordpress/icons';
+import { chevronLeft, chevronRight, close, warning } from '@wordpress/icons';
 
 import { useDispatch, useSelect } from '@wordpress/data';
 
@@ -46,18 +45,33 @@ import {
 	sanitizeGeneratedBlocks,
 	validateGeneratedBlocks
 } from './block-generation';
-import type { BlockGenerationResult, PatternLike } from './block-generation';
+import type { BlockGenerationResult } from './block-generation';
 import { getTrackingFeatureValue, runAgentTurn } from './agent';
-import { buildSessionMemory, summarizeToolOperation } from './session-memory';
+import type { AgentToolName, GenerationRoute } from './agent';
+import { aiError, describePromptError, PromptRequestError } from './errors';
+import type { AIError } from './errors';
 import { extractPromptHistory } from './session-history';
-import type { AgentToolName } from './operations/types';
-import type { SessionOperationLog } from './session-memory';
-
-import { buildAgentContext } from './agent-context';
-import type { AgentContextEntry } from './agent-context';
-import type { GenerationRoute } from './routing/types';
+import { buildPageStyleDigest } from './page-style';
+import { LivePreview } from '../patterns-library/template';
+import { useAtomicCssForContent } from '../patterns-library/atomic';
 
 const EMPTY_PREVIEW_BLOCKS: BlockProps<unknown>[] = [];
+
+/**
+ * Cheap stable hash so identical preview markup reuses its generated CSS.
+ * @param value
+ */
+// The textbook `hash * 31 + charCode` string hash, bounded by a modulo so it
+// stays a small integer (same idiom as hueFromName in the patterns library).
+const hashString = ( value: string ): string => {
+	let hash = 0;
+
+	for ( let index = 0; index < value.length; index++ ) {
+		hash = ( hash * 31 + value.charCodeAt( index ) ) % 2147483647;
+	}
+
+	return hash.toString( 36 );
+};
 
 type Turn = {
 	meta: {
@@ -65,9 +79,13 @@ type Turn = {
 		prompt: string;
 		route: GenerationRoute;
 		tool?: AgentToolName;
-		operation?: SessionOperationLog;
-		removedBlocks?: Record<string, import('./block-generation').GeneratedBlockTree>;
-		contextEntry?: AgentContextEntry;
+		/**
+		 * The unedited selection captured when an edit session opens, kept as the
+		 * first history step so the user can step back and compare before/after.
+		 */
+		isOriginal?: boolean;
+		/** Stable key for the live preview crossfade — see previewKey below. */
+		previewKey?: string;
 	};
 	generatedBlocks: BlockProps<unknown>[];
 	generationRationale?: string[];
@@ -110,6 +128,20 @@ type AIContentModalProps = {
 
 	/** The generation scope chosen before opening (the block owns Section/Full page). */
 	initialScope?: 'section' | 'page';
+
+	/**
+	 * Whether the theme's color palette is sent to the model. When false the
+	 * palette is withheld and the model picks its own colors. Defaults to true.
+	 */
+	includeThemeColors?: boolean;
+
+	/**
+	 * Whether a digest of the current page's Atomic Wind style conventions is sent
+	 * to the model so a newly created section matches the existing page. Only
+	 * applies to create mode; no-ops when the page has too little signal. Defaults
+	 * to true.
+	 */
+	includePageContext?: boolean;
 };
 
 const AIContentModal = ({
@@ -126,7 +158,9 @@ const AIContentModal = ({
 	selectedClientIds,
 	mode = 'transform',
 	autoGenerate = false,
-	initialScope = 'section'
+	initialScope = 'section',
+	includeThemeColors = true,
+	includePageContext = true
 }: AIContentModalProps ) => {
 	const isCreateMode = 'create' === mode;
 	const scope = initialScope;
@@ -136,9 +170,21 @@ const AIContentModal = ({
 
 	useEffect( () => {
 		if ( isOpen && ! wasOpenRef.current ) {
-			setPinnedPreviewClone(
-				selectedBlocks.length ? cloneBlocksForPreview( selectedBlocks ) : EMPTY_PREVIEW_BLOCKS
-			);
+			const clone = selectedBlocks.length ? cloneBlocksForPreview( selectedBlocks ) : EMPTY_PREVIEW_BLOCKS;
+			setPinnedPreviewClone( clone );
+
+			// Edit session — seed an "Original" baseline as history step 1 so the
+			// user can step back to the unedited selection and compare it against
+			// each generated version. (Create mode has no original to compare to.)
+			if ( ! isCreateMode && clone.length ) {
+				setTurns([{
+					meta: { usedToken: 0, prompt: '', route: 'rewrite', isOriginal: true, previewKey: 'original' },
+					generatedBlocks: clone
+				}]);
+			} else {
+				setTurns([]);
+			}
+			setActiveTurnIndex( 0 );
 		}
 
 		wasOpenRef.current = isOpen;
@@ -164,9 +210,25 @@ const AIContentModal = ({
 		[]
 	);
 
-	const blockPatterns = useSelect(
-		select => ( select( 'core' ) as { getBlockPatterns?: () => PatternLike[] } )?.getBlockPatterns?.() ?? [],
-		[]
+	// The current page's top-level blocks, used to derive the style digest so a
+	// freshly created section matches what is already on the page. Only read in
+	// create mode (an edit already has the live section as context).
+	const pageBlocks = useSelect(
+		select => ( isCreateMode ? ( select( 'core/block-editor' ) as { getBlocks?: () => BlockProps<unknown>[] } )?.getBlocks?.() ?? [] : [] ),
+		[ isCreateMode ]
+	);
+
+	// Built once per turn-open from the live page, excluding the in-place
+	// generator block so its placeholder never feeds back into its own digest.
+	const pageStyleDigest = useMemo(
+		() => {
+			if ( ! isCreateMode || ! includePageContext || ! pageBlocks.length ) {
+				return undefined;
+			}
+
+			return buildPageStyleDigest( pageBlocks, { excludeClientIds: singleClientId ? [ singleClientId ] : [] } ) ?? undefined;
+		},
+		[ isCreateMode, includePageContext, pageBlocks, singleClientId ]
 	);
 
 	const [ instruction, setInstruction ] = useState( () => {
@@ -177,7 +239,12 @@ const AIContentModal = ({
 		return initialPrompt?.trim() ?? '';
 	} );
 	const [ status, setStatus ] = useState<'idle' | 'loading' | 'error' | 'loaded'>( 'idle' );
-	const [ error, setError ] = useState<string | undefined>();
+	// The prompt currently being generated — shown (read-only) in the input while
+	// the request is in flight so the user sees what's running instead of an empty
+	// field they can type into. Cleared whenever generation stops.
+	const [ runningPrompt, setRunningPrompt ] = useState( '' );
+	// The classified failure of the last run; kept with the preserved prompt for Retry.
+	const [ errorInfo, setErrorInfo ] = useState<AIError | undefined>();
 	const [ turns, setTurns ] = useState<Turn[]>([]);
 	const [ activeTurnIndex, setActiveTurnIndex ] = useState( 0 );
 	const [ liveBlocks, setLiveBlocks ] = useState<BlockProps<unknown>[]>([]);
@@ -187,6 +254,15 @@ const AIContentModal = ({
 	const generationIdRef = useRef( 0 );
 	const abortControllerRef = useRef<AbortController | null>( null );
 	const previousTurnIndexRef = useRef( activeTurnIndex );
+	// The last run's args, so Retry can replay it verbatim (turn state is unchanged on failure).
+	const lastAttemptRef = useRef<{ prompt: string; forceEditRoute: boolean } | undefined>();
+
+	// Brief highlight of the prompt field after a quick-action pill fills it in, so the
+	// user notices it was populated (the field is below the pills). Cleared on a timer.
+	const [ promptPulse, setPromptPulse ] = useState( false );
+	const pulseTimerRef = useRef<ReturnType<typeof setTimeout>>();
+	const pulseRafRef = useRef<number>( 0 );
+	const refineFieldRef = useRef<HTMLDivElement>( null );
 
 	useEffect( () => {
 		isMountedRef.current = true;
@@ -194,6 +270,8 @@ const AIContentModal = ({
 		return () => {
 			isMountedRef.current = false;
 			abortControllerRef.current?.abort();
+			clearTimeout( pulseTimerRef.current );
+			cancelAnimationFrame( pulseRafRef.current );
 		};
 	}, []);
 
@@ -205,6 +283,14 @@ const AIContentModal = ({
 		previousTurnIndexRef.current = activeTurnIndex;
 		setInstruction( '' );
 	}, [ activeTurnIndex ] );
+
+	// Drop the read-only running prompt the moment generation stops (done, error,
+	// or aborted) so the field returns to a normal, editable state.
+	useEffect( () => {
+		if ( 'loading' !== status ) {
+			setRunningPrompt( '' );
+		}
+	}, [ status ] );
 
 	const getBlockType = useMemo(
 		() => ( name: string ) => blockTypes.find( ( blockType ) => blockType.name === name ),
@@ -220,25 +306,165 @@ const AIContentModal = ({
 	const currentGeneratedBlocks = currentTurn?.generatedBlocks;
 	const currentGenerationDiagnostics = currentTurn?.generationDiagnostics;
 	const hasTurns = 0 < turns.length;
+	// The seeded "Original" baseline (edit sessions) is a history step but not a
+	// generated result — distinguish it so the ready/apply UI reflects real edits.
+	const hasOriginalTurn = Boolean( turns[ 0 ]?.meta.isOriginal );
+	const hasRealTurns = turns.some( ( turn ) => ! turn.meta.isOriginal );
+	const isViewingOriginal = Boolean( currentTurn?.meta.isOriginal );
 	const canUndoTurn = 0 < activeTurnIndex;
 	const canRedoTurn = activeTurnIndex < turns.length - 1;
 	const isGenerating = 'loading' === status;
-	const previewWidth = 1240;
+	const previewWidth = 1400;
 
-	let previewBlocks: BlockProps<unknown>[] = [];
-	if ( isGenerating && liveBlocks.length ) {
-		previewBlocks = liveBlocks;
-	} else if ( currentGeneratedBlocks?.length ) {
-		previewBlocks = currentGeneratedBlocks;
-	} else if ( liveBlocks.length ) {
-		previewBlocks = liveBlocks;
-	} else if ( hasSelection ) {
-		previewBlocks = pinnedPreviewClone;
+	const previewBlocks = useMemo<BlockProps<unknown>[]>( () => {
+		if ( isGenerating && liveBlocks.length ) {
+			return liveBlocks;
+		}
+		if ( currentGeneratedBlocks?.length ) {
+			return currentGeneratedBlocks;
+		}
+		if ( liveBlocks.length ) {
+			return liveBlocks;
+		}
+		if ( hasSelection ) {
+			return pinnedPreviewClone;
+		}
+		return EMPTY_PREVIEW_BLOCKS;
+	}, [ isGenerating, liveBlocks, currentGeneratedBlocks, hasSelection, pinnedPreviewClone ]);
+
+	// A live preview, like the pattern library's: hold a shimmer skeleton over
+	// the BlockPreview until its iframe has actually painted, then crossfade
+	// (see LivePreview). The key stays stable across a generation's live→done
+	// transition (the finished turn stores the same id), so completing a build
+	// updates in place instead of remounting and flashing the skeleton; undo /
+	// redo to another turn keys differently and crossfades cleanly.
+	const previewKey = isGenerating
+		? `g${ generationIdRef.current }`
+		: ( currentTurn?.meta.previewKey ?? ( hasSelection ? 'selection' : 'preview' ) );
+
+	// Atomic Wind blocks are styled by JIT-generated Tailwind CSS that a preview
+	// iframe never gets on its own — generate it from the live markup and inject
+	// it, exactly as the pattern library does for Atomic Wind patterns.
+	const atomicContent = useMemo(
+		() => ( previewBlocks.length ? serialize( previewBlocks as unknown as Parameters<typeof serialize>[0] ) : '' ),
+		[ previewBlocks ]
+	);
+	const atomicCacheKey = useMemo( () => `ai-live:${ hashString( atomicContent ) }`, [ atomicContent ] );
+	const { css: atomicCss, isReady: atomicReady } = useAtomicCssForContent( atomicContent, atomicCacheKey );
+
+	// Keep the last generated stylesheet on screen while the next chunk's CSS is
+	// still generating, so streaming roots never strobe between styled and
+	// unstyled. Reset when the shown preview changes (new turn / undo / redo).
+	const lastAtomicCssRef = useRef( '' );
+	if ( atomicCss ) {
+		lastAtomicCssRef.current = atomicCss;
 	}
+
+	useEffect( () => {
+		lastAtomicCssRef.current = '';
+	}, [ previewKey ] );
+
+	const needsAtomic = atomicContent.includes( 'atomic-wind/' );
+	const displayAtomicCss = atomicCss || lastAtomicCssRef.current;
+
+	// Reveal once there is something to show; for Atomic Wind, hold the skeleton
+	// until the first stylesheet is ready so the section never paints unstyled.
+	const showPreview = 0 < previewBlocks.length &&
+		( ! needsAtomic || atomicReady || Boolean( lastAtomicCssRef.current ) );
 
 	const replaceClientIds = getSelectedBlockClientIds( isMultipleSelection, selectedClientIds, singleClientId );
 
-	const loadingLabel = __( 'Updating…', 'otter-blocks' );
+	// Every edit rewrites the COMPLETE selected markup — including everything
+	// nested inside a selected container. The top-level count ("1 block") hides
+	// that, so a Translate on a section silently rewrites its whole subtree. Walk
+	// the selection to report the real scope (total blocks + a type breakdown) so
+	// applying to a container is explicit, never a surprise.
+	const selectionScope = useMemo( () => {
+		const counts: Record<string, number> = {};
+		let total = 0;
+
+		const walk = ( list: BlockProps<unknown>[] ) => {
+			list.forEach( ( block ) => {
+				if ( ! block?.name ) {
+					return;
+				}
+
+				total++;
+				counts[ block.name ] = ( counts[ block.name ] ?? 0 ) + 1;
+
+				if ( block.innerBlocks?.length ) {
+					walk( block.innerBlocks as BlockProps<unknown>[] );
+				}
+			} );
+		};
+
+		walk( pinnedPreviewClone );
+
+		const rootCount = pinnedPreviewClone.length;
+		const blockTitle = ( name: string ) => getBlockType( name )?.title ?? name;
+
+		const breakdown = Object.entries( counts )
+			.sort( ( a, b ) => b[ 1 ] - a[ 1 ] )
+			.map( ( [ name, count ] ) => ( 1 < count ? `${ count } × ${ blockTitle( name ) }` : blockTitle( name ) ) );
+
+		return {
+			total,
+			rootCount,
+			nestedCount: Math.max( 0, total - rootCount ),
+			breakdown,
+			rootTitle: 1 === rootCount ? blockTitle( pinnedPreviewClone[ 0 ]?.name ?? '' ) : __( 'selection', 'otter-blocks' )
+		};
+	}, [ pinnedPreviewClone, getBlockType ] );
+
+	const scopeNoun = 'page' === scope
+		? __( 'page', 'otter-blocks' )
+		: __( 'section', 'otter-blocks' );
+
+	// A label that tracks what's actually happening: editing existing content,
+	// outlining a fresh build, or filling each section of it in turn.
+	const loadingLabel = useMemo( () => {
+		// Editing — a selection tweak, or a follow-up change to a built result.
+		if ( hasTurns || ( hasSelection && ! isCreateMode ) ) {
+			return __( 'Updating…', 'otter-blocks' );
+		}
+
+		// Fresh build: before the plan lands there are no roots yet (planning);
+		// after, we report progress as each section is filled.
+		if ( 0 < progress.total ) {
+			return sprintf(
+				// translators: %1$d: current section number; %2$d: total sections.
+				__( 'Building section %1$d of %2$d…', 'otter-blocks' ),
+				Math.min( progress.done + 1, progress.total ),
+				progress.total
+			);
+		}
+
+		return sprintf(
+			// translators: %s: "page" or "section".
+			__( 'Planning your %s…', 'otter-blocks' ),
+			scopeNoun
+		);
+	}, [ hasTurns, hasSelection, isCreateMode, progress.total, progress.done, scopeNoun ] );
+
+	const modalTitle = 'page' === scope
+		? __( 'Otter AI Page', 'otter-blocks' )
+		: __( 'Otter AI Section', 'otter-blocks' );
+
+	// A structured "section forming" skeleton — eyebrow, title, two text lines and
+	// a couple of buttons, centered like a real hero. Reused as the live preview's
+	// boot placeholder and as the first-build loading state.
+	const sectionSkeleton = (
+		<div className="o-ai-section__skeleton" aria-hidden="true">
+			<span className="o-ai-section__sk-bar o-ai-section__sk-eyebrow" />
+			<span className="o-ai-section__sk-bar o-ai-section__sk-title" />
+			<span className="o-ai-section__sk-bar o-ai-section__sk-line" />
+			<span className="o-ai-section__sk-bar o-ai-section__sk-line is-short" />
+			<span className="o-ai-section__sk-actions">
+				<span className="o-ai-section__sk-bar o-ai-section__sk-btn" />
+				<span className="o-ai-section__sk-bar o-ai-section__sk-btn is-ghost" />
+			</span>
+		</div>
+	);
 
 	const abortInFlightGeneration = () => {
 		generationIdRef.current++;
@@ -246,7 +472,7 @@ const AIContentModal = ({
 		abortControllerRef.current = null;
 
 		if ( isGenerating ) {
-			setStatus( 0 < turns.length ? 'loaded' : 'idle' );
+			setStatus( hasRealTurns ? 'loaded' : 'idle' );
 			setLiveBlocks([]);
 			setProgress({ done: 0, total: 0 });
 		}
@@ -254,32 +480,37 @@ const AIContentModal = ({
 
 	const stopGeneration = () => {
 		abortInFlightGeneration();
-		setError( undefined );
+		setErrorInfo( undefined );
 	};
 
-	const turnNavigation = hasTurns ? (
+	// The original sits at index 0 (edit sessions); number the real edits from 1 so
+	// the stepper reads "Original ‹ › Edit 1 of N" rather than counting the baseline.
+	const editStepOffset = hasOriginalTurn ? 1 : 0;
+	const stepLabel = isViewingOriginal
+		? __( 'Original', 'otter-blocks' )
+		: sprintf(
+			// translators: %1$d: current step number, %2$d: total steps.
+			__( 'Step %1$d of %2$d', 'otter-blocks' ),
+			activeTurnIndex + 1 - editStepOffset,
+			turns.length - editStepOffset
+		);
+
+	const turnNavigation = hasRealTurns ? (
 		<div className="o-ai-version-control">
 			<Button
 				className="o-ai-version-control__button"
 				icon={ chevronLeft }
-				label={ __( 'Undo', 'otter-blocks' ) }
+				label={ __( 'Previous', 'otter-blocks' ) }
 				disabled={ ! canUndoTurn || isGenerating }
 				onClick={ () => setActiveTurnIndex( ( prev ) => Math.max( 0, prev - 1 ) ) }
 			/>
 			<span className="o-ai-version-control__count">
-				{
-					sprintf(
-						// translators: %1$d: current step number, %2$d: total steps.
-						__( 'Step %1$d of %2$d', 'otter-blocks' ),
-						activeTurnIndex + 1,
-						turns.length
-					)
-				}
+				{ stepLabel }
 			</span>
 			<Button
 				className="o-ai-version-control__button"
 				icon={ chevronRight }
-				label={ __( 'Redo', 'otter-blocks' ) }
+				label={ __( 'Next', 'otter-blocks' ) }
 				disabled={ ! canRedoTurn || isGenerating }
 				onClick={ () => setActiveTurnIndex( ( prev ) => Math.min( turns.length - 1, prev + 1 ) ) }
 			/>
@@ -298,7 +529,29 @@ const AIContentModal = ({
 
 		setInstruction( '' );
 
-		const priorTurns = turns.slice( 0, activeTurnIndex + 1 );
+		// Remember this run so a failure can be retried verbatim.
+		lastAttemptRef.current = { prompt: turnInstruction, forceEditRoute };
+
+		const generationId = ++generationIdRef.current;
+		const isStale = () => ! isMountedRef.current || generationId !== generationIdRef.current;
+
+		// Enter the error state, keep the prompt in the box, and record the classified
+		// failure for the inline strip (offers Retry). Never clobbers a newer run's state.
+		const failWith = ( aiFailure: AIError ) => {
+			if ( isStale() ) {
+				return;
+			}
+			setStatus( 'error' );
+			setErrorInfo( aiFailure );
+			setLiveBlocks([]);
+			setInstruction( turnInstruction );
+		};
+
+		// The seeded "Original" baseline is history, not a prior generation — exclude
+		// it so the first real edit is treated as an initial edit, not a refine.
+		const priorTurns = turns
+			.slice( 0, activeTurnIndex + 1 )
+			.filter( ( turn ) => ! turn.meta.isOriginal );
 		const isFollowUp = 0 < priorTurns.length;
 		const refineInstruction = isFollowUp ? turnInstruction : undefined;
 		const activePrompt = isFollowUp
@@ -307,20 +560,17 @@ const AIContentModal = ({
 		const routeInstruction = refineInstruction || activePrompt;
 
 		if ( ! hasAPIKey ) {
-			setError( __( 'No AI provider detected. Please configure one in the AI settings.', 'otter-blocks' ) );
-			setStatus( 'error' );
+			failWith( aiError( 'no-provider' ) );
 			return;
 		}
-
-		const generationId = ++generationIdRef.current;
-		const isStale = () => ! isMountedRef.current || generationId !== generationIdRef.current;
 
 		abortControllerRef.current?.abort();
 		const abortController = new AbortController();
 		abortControllerRef.current = abortController;
 
 		setStatus( 'loading' );
-		setError( undefined );
+		setRunningPrompt( turnInstruction );
+		setErrorInfo( undefined );
 
 		let usedToken = 0;
 		const requestCompletion = async( requestPrompt: string ): Promise<string> => {
@@ -337,11 +587,13 @@ const AIContentModal = ({
 			}
 
 			if ( ! response.ok ) {
-				throw new Error( response.error?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
+				// Carry the backend's code/status so the catch site can classify it.
+				const raw = response.raw as { data?: { status?: number }, status?: number } | undefined;
+				throw new PromptRequestError( response.error, raw?.data?.status ?? raw?.status );
 			}
 
 			if ( ! response.content ) {
-				throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
+				throw new PromptRequestError( { code: 'empty_response', message: __( 'The AI service returned an empty response.', 'otter-blocks' ), type: 'system' } );
 			}
 
 			usedToken += response.usedTokens ?? 0;
@@ -349,31 +601,38 @@ const AIContentModal = ({
 		};
 
 		const sessionHistory = extractPromptHistory( priorTurns );
-		const sessionMemory = buildSessionMemory( priorTurns );
-		const agentContext = buildAgentContext( priorTurns );
 		const referenceBlocks = currentGeneratedBlocks?.length
 			? currentGeneratedBlocks
 			: pinnedPreviewClone;
-		const accumulated: BlockProps<unknown>[] = [];
+		// Sections can finish out of order (the page flow builds them concurrently),
+		// so hold each completed section in its own slot keyed by rootIndex and
+		// rebuild the live preview in section order — never in completion order.
+		const sectionSlots: BlockProps<unknown>[][] = [];
 		const preferEdit = ! isCreateMode && 0 < referenceBlocks.length;
-		const forceRoute = forceEditRoute || ( preferEdit && autoGenerate )
-			? 'edit' as const
-			: undefined;
+
+		// A fresh create (not a follow-up refine) always runs through the generate
+		// pipeline so the build starts from a clean plan rather than editing.
+		const forceGenerate = isCreateMode && ! isFollowUp;
+
+		let forceRoute: 'edit' | 'generate' | undefined;
+		if ( forceEditRoute || ( preferEdit && autoGenerate ) ) {
+			forceRoute = 'edit';
+		} else if ( forceGenerate ) {
+			forceRoute = 'generate';
+		}
 
 		setLiveBlocks( referenceBlocks );
 
 		try {
-			const { generation, decision, toolCall, removedBlocks, contextEntry } = await runAgentTurn({
+			const { generation, decision, toolCall } = await runAgentTurn({
 				instruction: routeInstruction,
 				activePrompt,
 				refineInstruction,
 				referenceBlocks,
 				sessionHistory,
-				sessionMemory,
-				agentContext,
 				blockTypes,
-				themeColors,
-				patterns: isCreateMode || ! referenceBlocks.length ? blockPatterns : undefined,
+				themeColors: includeThemeColors ? themeColors : [],
+				pageStyleDigest,
 				isCreateMode,
 				scope,
 				getBlockType,
@@ -388,14 +647,19 @@ const AIContentModal = ({
 						setProgress({ done: 0, total: plan.roots?.length ?? 0 });
 					}
 				},
-				onRootComplete: ({ rootIndex, blocks: rootBlocks }) => {
+				onRootComplete: ({ rootIndex, totalRoots, blocks: rootBlocks }) => {
 					if ( isStale() ) {
 						return;
 					}
-					setProgress( ( prev ) => ({ ...prev, done: rootIndex + 1 }) );
-					if ( rootBlocks.length ) {
-						accumulated.push( ...rootBlocks );
-						setLiveBlocks([ ...accumulated ]);
+					// Count finished sections (success or dropped); they may arrive in
+					// any order under concurrent builds.
+					setProgress( ( prev ) => ({ done: prev.done + 1, total: totalRoots || prev.total }) );
+					sectionSlots[ rootIndex ] = rootBlocks;
+					// flat() skips empty slots and dropped ([]) sections, leaving the
+					// completed sections concatenated in section order.
+					const ordered = sectionSlots.flat();
+					if ( ordered.length ) {
+						setLiveBlocks( ordered );
 					}
 				}
 			});
@@ -415,9 +679,7 @@ const AIContentModal = ({
 			}
 
 			if ( ! generation.blocks.length ) {
-				setError( __( 'Could not produce a valid result. Please try rephrasing your request.', 'otter-blocks' ) );
-				setStatus( 'error' );
-				setLiveBlocks([]);
+				failWith( aiError( 'invalid-output' ) );
 				return;
 			}
 
@@ -427,9 +689,7 @@ const AIContentModal = ({
 					prompt: turnInstruction,
 					route: decision.route,
 					tool: toolCall.tool,
-					operation: summarizeToolOperation( toolCall.tool, toolCall.args ),
-					removedBlocks,
-					contextEntry
+					previewKey: `g${ generationId }`
 				},
 				generatedBlocks: cloneBlocksForPreview( generation.blocks ),
 				generationRationale: generation.rationale,
@@ -452,27 +712,55 @@ const AIContentModal = ({
 				return;
 			}
 
-			const message = ( e as Error )?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' );
-			setError( message );
-			setStatus( 'error' );
-			setLiveBlocks([]);
+			failWith( describePromptError( e ) );
 		}
 	};
 
+	// Replay the last failed run verbatim (prompt and turn state are unchanged).
+	const retryGeneration = () => {
+		const attempt = lastAttemptRef.current;
+		if ( isGenerating || ! attempt ) {
+			return;
+		}
+		generateContent( attempt.prompt, attempt.forceEditRoute );
+	};
+
+	// Auto-run for toolbar quick actions (autoGenerate). We must NOT fire on the
+	// raw mount: `pinnedPreviewClone` is populated by the sibling effect above and
+	// its setState hasn't committed yet on the first render, so `hasSelection`
+	// would still be false and the turn would wrongly route to GENERATE (building
+	// new content) instead of editing the selection. Wait until the selection
+	// clone has settled, then fire exactly once.
+	const autoRanRef = useRef( false );
 	useEffect( () => {
-		if ( autoGenerate && hasAPIKey && ( initialPrompt ?? '' ).trim() ) {
-			generateContent(
-				( initialPrompt ?? '' ).trim(),
-				hasSelection && ! isCreateMode
-			);
+		if ( autoRanRef.current ) {
+			return;
 		}
 
-		// Run once on mount.
+		if ( ! autoGenerate || ! hasAPIKey || ! ( initialPrompt ?? '' ).trim() ) {
+			return;
+		}
+
+		// There is a selection to edit but its clone hasn't committed yet — wait
+		// for the next render rather than running against an empty reference.
+		if ( ! isCreateMode && 0 < selectedBlocks.length && ! hasSelection ) {
+			return;
+		}
+
+		autoRanRef.current = true;
+		generateContent(
+			( initialPrompt ?? '' ).trim(),
+			hasSelection && ! isCreateMode
+		);
+
+		// generateContent is intentionally omitted; the ref guards single-firing.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [ autoGenerate, hasAPIKey, initialPrompt, isCreateMode, hasSelection, selectedBlocks.length ]);
 
 	const handleApply = () => {
-		if ( ! currentGeneratedBlocks?.length ) {
+		// The "Original" step is the unedited baseline for comparison — there's
+		// nothing to apply from it.
+		if ( isViewingOriginal || ! currentGeneratedBlocks?.length ) {
 			return;
 		}
 
@@ -505,8 +793,16 @@ const AIContentModal = ({
 			return;
 		}
 
+		// The rewrite / text / style paths already return complete, canonical blocks
+		// for the whole selection (text & style are clones of the original with only
+		// copy or styling changed), so replace wholesale — skip the positional
+		// clone-merge, which matches by index and would overwrite the AI's changes
+		// with the original attributes.
+		const wholesaleRoutes = [ 'rewrite', 'text', 'style' ];
+		const isRewriteResult = wholesaleRoutes.includes( currentTurn?.meta.route ?? '' );
 		const canMergeFromPreviewClone = ! isCreateMode &&
 			! onApplyBlocks &&
+			! isRewriteResult &&
 			0 < pinnedPreviewClone.length &&
 			blocksStructureMatches( pinnedPreviewClone, blocks );
 
@@ -589,6 +885,17 @@ const AIContentModal = ({
 		}
 
 		setInstruction( action.prompt );
+
+		// Flash the prompt field and focus it. Toggle off→on across a frame so a repeated
+		// pill click restarts the animation instead of appearing to do nothing.
+		setPromptPulse( false );
+		cancelAnimationFrame( pulseRafRef.current );
+		clearTimeout( pulseTimerRef.current );
+		pulseRafRef.current = requestAnimationFrame( () => {
+			setPromptPulse( true );
+			refineFieldRef.current?.querySelector( 'textarea' )?.focus();
+		} );
+		pulseTimerRef.current = setTimeout( () => setPromptPulse( false ), 1100 );
 	};
 
 	const quickActionsRow = 0 < actions.length ? (
@@ -609,28 +916,30 @@ const AIContentModal = ({
 
 	const sectionSubmitDisabled = ! hasAPIKey || isGenerating || ! instruction.trim();
 
+	// A failed run whose prompt is still unchanged turns the primary button into
+	// "Retry" (identical to Run); editing the prompt reverts it to a new "Run".
+	const canRetry = 'error' === status &&
+		Boolean( errorInfo?.retryable ) &&
+		Boolean( lastAttemptRef.current ) &&
+		instruction.trim() === ( lastAttemptRef.current?.prompt ?? '' );
+
+	const showError = 'error' === status && Boolean( errorInfo ) && ! isGenerating;
+
 	const sectionStatus = ( () => {
-		if ( isGenerating ) {
-			return { kind: 'busy', label: loadingLabel };
-		}
 		if ( 'error' === status ) {
 			return { kind: 'error', label: __( 'Update failed', 'otter-blocks' ) };
 		}
-		if ( hasTurns ) {
+		if ( isViewingOriginal ) {
+			return {
+				kind: 'idle',
+				label: __( 'Original — before your edits', 'otter-blocks' )
+			};
+		}
+		if ( hasRealTurns ) {
 			const route = currentTurn?.meta.route;
-			let readyLabel = __( 'Updated — ready to apply', 'otter-blocks' );
-
-			if ( 'patch' === route ) {
-				readyLabel = __( 'Edited — ready to apply', 'otter-blocks' );
-			} else if ( 'structure' === route ) {
-				readyLabel = __( 'Restructured — ready to apply', 'otter-blocks' );
-			} else if ( 'list' === route ) {
-				readyLabel = __( 'Block list ready', 'otter-blocks' );
-			} else if ( 'history' === route ) {
-				readyLabel = __( 'Session history ready', 'otter-blocks' );
-			} else if ( 'pattern' === route ) {
-				readyLabel = __( 'Pattern match ready', 'otter-blocks' );
-			}
+			const readyLabel = 'full' === route
+				? __( 'Generated — ready to apply', 'otter-blocks' )
+				: __( 'Updated — ready to apply', 'otter-blocks' );
 
 			return {
 				kind: 'ready',
@@ -641,9 +950,9 @@ const AIContentModal = ({
 			return {
 				kind: 'idle',
 				label: sprintf(
-					// translators: %d: number of selected blocks attached as context.
-					_n( '%d block attached', '%d blocks attached', pinnedPreviewClone.length, 'otter-blocks' ),
-					pinnedPreviewClone.length
+					// translators: %d: total number of blocks (including nested) in scope.
+					_n( '%d block in scope', '%d blocks in scope', selectionScope.total, 'otter-blocks' ),
+					selectionScope.total
 				)
 			};
 		}
@@ -653,6 +962,14 @@ const AIContentModal = ({
 	let applyLabel = __( 'Apply', 'otter-blocks' );
 	if ( onApplyBlocks ) {
 		applyLabel = 'page' === scope ? __( 'Insert page', 'otter-blocks' ) : __( 'Insert section', 'otter-blocks' );
+	} else if ( hasSelection && ! isCreateMode && 0 < selectionScope.nestedCount ) {
+		// Reinforce that Apply replaces the whole selected container, not just the
+		// block the user clicked into.
+		applyLabel = sprintf(
+			// translators: %s: selected block title (e.g. "Group", "selection").
+			__( 'Apply to %s', 'otter-blocks' ),
+			selectionScope.rootTitle
+		);
 	}
 
 	const placeholderPrompt = currentTurn?.meta?.prompt?.trim() ?? '';
@@ -666,9 +983,34 @@ const AIContentModal = ({
 		? __( 'Describe how Otter AI should change the selected block(s), or pick a quick action below.', 'otter-blocks' )
 		: __( 'Describe the section you want to generate, or pick a quick action below.', 'otter-blocks' );
 
+	// When editing a real selection, the header carries the scope context instead
+	// of a standalone notice: the title reads "Otter AI · Editing the selected X
+	// (N blocks)" and the subtitle explains what edits do. Otherwise it stays the
+	// plain create branding.
+	const isEditingSelection = hasSelection && ! isCreateMode && 0 < selectionScope.nestedCount;
+
+	const brandTitle = isEditingSelection
+		? sprintf(
+			// translators: %1$s: product name "Otter AI"; %2$s: selected block title (e.g. "Group"); %3$d: total block count.
+			_n(
+				'%1$s · Editing the selected %2$s (%3$d block)',
+				'%1$s · Editing the selected %2$s (%3$d blocks)',
+				selectionScope.total,
+				'otter-blocks'
+			),
+			__( 'Otter AI', 'otter-blocks' ),
+			selectionScope.rootTitle,
+			selectionScope.total
+		)
+		: modalTitle;
+
+	const brandSubtitle = isEditingSelection
+		? __( 'Text & styling edits keep the layout; only a redesign changes the structure.', 'otter-blocks' )
+		: __( 'Builds with your blocks & theme styles', 'otter-blocks' );
+
 	return (
 		<Modal
-			title={ __( 'Otter AI Section', 'otter-blocks' ) }
+			title={ modalTitle }
 			onRequestClose={ handleClose }
 			isDismissible={ ! isGenerating }
 			shouldCloseOnClickOutside={ ! isGenerating }
@@ -683,13 +1025,18 @@ const AIContentModal = ({
 						{ otterMascot({}) }
 					</span>
 					<div className="o-ai-section__brand">
-						<span className="o-ai-section__brand-title">{ __( 'Otter AI Section', 'otter-blocks' ) }</span>
-						<span className="o-ai-section__brand-subtitle">{ __( 'Builds with your blocks & theme styles', 'otter-blocks' ) }</span>
+						<span className="o-ai-section__brand-title" title={ brandTitle }>{ brandTitle }</span>
+						<span className="o-ai-section__brand-subtitle" title={ brandSubtitle }>{ brandSubtitle }</span>
 					</div>
-					<span className={ `o-ai-section__status is-${ sectionStatus.kind }` }>
-						<span className="o-ai-section__status-dot" aria-hidden="true" />
-						{ sectionStatus.label }
-					</span>
+					{ /* While generating, the centered overlay pill owns the progress
+					     status — so the header chip would just echo it. Keep the chip
+					     for the resting states only. */ }
+					{ ! isGenerating && (
+						<span className={ `o-ai-section__status is-${ sectionStatus.kind }` }>
+							<span className="o-ai-section__status-dot" aria-hidden="true" />
+							{ sectionStatus.label }
+						</span>
+					) }
 					<Button
 						icon={ close }
 						label={ __( 'Close', 'otter-blocks' ) }
@@ -699,7 +1046,7 @@ const AIContentModal = ({
 					/>
 				</div>
 
-				<div className={ `o-ai-section__canvas${ isGenerating && ! previewBlocks.length ? ' is-loading' : '' }` }>
+				<div className="o-ai-section__canvas">
 					{ ! hasAPIKey && (
 						<Notice status="warning" isDismissible={ false }>
 							{ __( 'Please add an AI provider in the AI settings.', 'otter-blocks' ) }{ ' ' }
@@ -709,44 +1056,50 @@ const AIContentModal = ({
 						</Notice>
 					) }
 
-					{ 'error' === status && error && (
-						<Notice status="error" isDismissible={ false }>{ error }</Notice>
-					) }
-
-					{ ( 'list' === currentTurn?.meta.route || 'history' === currentTurn?.meta.route || 'pattern' === currentTurn?.meta.route ) && Boolean( currentTurn?.generationRationale?.length ) && (
-						<Notice status="info" isDismissible={ false } className="o-ai-section__block-list">
-							{ currentTurn?.generationRationale?.join( '\n' ) }
-						</Notice>
-					) }
-
-					{ previewBlocks.length > 0 ? (
-						<div className={ `o-ai-section__frame${ isGenerating ? ' is-live' : '' }` }>
-							<div className="o-ai-section__frame-inner">
-								<BlockPreview blocks={ previewBlocks } viewportWidth={ previewWidth } />
+					{ showPreview ? (
+						<div className={ `o-ai-section__frame${ isGenerating ? ' is-live' : '' }${ 'page' === scope ? ' is-page' : '' }` }>
+							{ /* Scroll the preview inside this wrapper so a tall preview never grows the
+							     modal, and the shimmer overlay only covers the visible area. */ }
+							<div className="o-ai-section__scroll">
+								<LivePreview
+									blocks={ previewBlocks }
+									previewKey={ previewKey }
+									css={ displayAtomicCss ? [ displayAtomicCss ] : [] }
+									viewportWidth={ previewWidth }
+									className="o-ai-section__live"
+									normalizeViewport
+									placeholder={ sectionSkeleton }
+								/>
 							</div>
+
+							{ /* Translucent shimmer over the current preview while the
+							     update is in flight — the existing layout stays visible
+							     underneath so the change reads as an in-place edit. */ }
+							{ isGenerating && (
+								<div className="o-ai-section__updating" role="status" aria-live="polite">
+									<span className="o-ai-section__updating-label">{ loadingLabel }</span>
+								</div>
+							) }
 						</div>
 					) : ( isGenerating ? (
-						<div className="o-ai-section__loading" role="status" aria-live="polite">
-							<div className="o-ai-section__loading-frame">
-								<div className="o-ai-section__loading-skeleton" aria-hidden="true">
-									<span className="o-ai-section__loading-bar is-title" />
-									<span className="o-ai-section__loading-bar" />
-									<span className="o-ai-section__loading-bar is-short" />
-									<div className="o-ai-section__loading-row">
-										<span className="o-ai-section__loading-block" />
-										<span className="o-ai-section__loading-block" />
-										<span className="o-ai-section__loading-block" />
-									</div>
+						<div className="o-ai-section__loading">
+							<div className={ `o-ai-section__frame is-live${ 'page' === scope ? ' is-page' : '' }` }>
+								{ sectionSkeleton }
+
+								{ /* Same centered "updating" pill as the in-place edit
+								     overlay, so the very first build matches every
+								     later step instead of dropping the label below. */ }
+								<div className="o-ai-section__updating" role="status" aria-live="polite">
+									<span className="o-ai-section__updating-label">{ loadingLabel }</span>
 								</div>
-								<p className="o-ai-section__loading-label">{ loadingLabel }</p>
 							</div>
 						</div>
-					) : ( 'error' !== status && (
+					) : (
 						<div className="o-ai-section__placeholder">
 							<p>{ emptyCanvasText }</p>
 							{ quickActionsRow }
 						</div>
-					) ) ) }
+					) ) }
 
 					{ hasTurns && Boolean( currentGenerationDiagnostics?.droppedRoots.length ) && (
 						<Notice status="warning" isDismissible={ false }>
@@ -773,9 +1126,12 @@ const AIContentModal = ({
 					{
 						showRefineQuickActions && quickActionsRow
 					}
-					<div className="o-ai-section__refine-field">
+					<div
+						ref={ refineFieldRef }
+						className={ `o-ai-section__refine-field${ isGenerating ? ' is-busy' : '' }${ promptPulse ? ' is-pulsing' : '' }${ showError ? ' has-error' : '' }` }
+					>
 						<span className="o-ai-section__refine-icon" aria-hidden="true">
-							<Icon icon={ aiGeneration } />
+							{ isGenerating ? <Spinner /> : <Icon icon={ aiGeneration } /> }
 						</span>
 						<TextareaControl
 							key={ `o-ai-input-${ turns.length }-${ activeTurnIndex }` }
@@ -783,27 +1139,43 @@ const AIContentModal = ({
 							label={ __( 'Prompt', 'otter-blocks' ) }
 							hideLabelFromVision
 							placeholder={ inputPlaceholder }
-							value={ instruction }
-							rows={ 1 }
-							onChange={ ( value ) => {
-								setInstruction( value );
-
-								if ( ! hasTurns && isGenerating ) {
-									abortInFlightGeneration();
-								}
-							} }
+							value={ isGenerating ? runningPrompt : instruction }
+							rows={ 2 }
+							disabled={ isGenerating }
+							readOnly={ isGenerating }
+							onChange={ ( value ) => setInstruction( value ) }
 							__nextHasNoMarginBottom
 						/>
 						<Button
 							variant={ isGenerating ? 'secondary' : 'primary' }
+							isDestructive={ isGenerating }
 							className={ isGenerating ? 'o-ai-section__refine-stop' : 'o-ai-section__refine-submit' }
-							disabled={ ! isGenerating && sectionSubmitDisabled }
+							disabled={ ! isGenerating && ! canRetry && sectionSubmitDisabled }
 							isBusy={ false }
-							onClick={ isGenerating ? stopGeneration : handleSectionSubmit }
+							onClick={ () => {
+								if ( isGenerating ) {
+									stopGeneration();
+								} else if ( canRetry ) {
+									retryGeneration();
+								} else {
+									handleSectionSubmit();
+								}
+							} }
 						>
-							{ isGenerating ? __( 'Stop', 'otter-blocks' ) : __( 'Run', 'otter-blocks' ) }
+							{ isGenerating
+								? __( 'Stop', 'otter-blocks' )
+								: ( canRetry ? __( 'Retry', 'otter-blocks' ) : __( 'Run', 'otter-blocks' ) ) }
 						</Button>
 					</div>
+
+					{ /* Soft error card under the prompt box; the prompt is preserved so the
+					     primary button becomes "Retry" until it is edited. */ }
+					{ showError && (
+						<div className="o-ai-section__error" role="alert">
+							<Icon className="o-ai-section__error-icon" icon={ warning } size={ 18 } />
+							<span className="o-ai-section__error-text">{ errorInfo?.message }</span>
+						</div>
+					) }
 				</div>
 
 				<div className="o-ai-section__footer">
@@ -821,7 +1193,7 @@ const AIContentModal = ({
 						</Button>
 						<Button
 							variant="primary"
-							disabled={ ! hasTurns || isGenerating }
+							disabled={ ! hasRealTurns || isGenerating || isViewingOriginal }
 							onClick={ handleApply }
 						>
 							{ applyLabel }

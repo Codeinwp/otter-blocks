@@ -5,11 +5,6 @@
 
 export const SESSION_HISTORY_LIMIT = 3;
 
-export type SessionHistoryEntry = {
-	prompt: string;
-	mode?: 'edit' | 'generate';
-};
-
 /**
  * Keep only the most recent entries (oldest dropped first).
  *

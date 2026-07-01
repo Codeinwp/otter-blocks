@@ -8,10 +8,10 @@ import {
 describe( 'session history', () => {
 	it( 'keeps only the last three prompts', () => {
 		expect( extractPromptHistory([
-			{ meta: { prompt: 'one' } },
-			{ meta: { prompt: 'two' } },
-			{ meta: { prompt: 'three' } },
-			{ meta: { prompt: 'four' } }
+			{ meta: { prompt: 'one' }},
+			{ meta: { prompt: 'two' }},
+			{ meta: { prompt: 'three' }},
+			{ meta: { prompt: 'four' }}
 		]) ).toEqual([ 'two', 'three', 'four' ]);
 	});
 

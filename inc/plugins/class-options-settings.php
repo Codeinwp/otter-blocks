@@ -922,19 +922,19 @@ class Options_Settings {
 					'items' => array(
 						'type'       => 'object',
 						'properties' => array(
-							'id'           => array(
+							'id'      => array(
 								'type' => 'string',
 							),
-							'title'        => array(
+							'title'   => array(
 								'type' => 'string',
 							),
-							'prompt'       => array(
+							'prompt'  => array(
 								'type' => 'string',
 							),
-							'enabled'      => array(
+							'enabled' => array(
 								'type' => 'boolean',
 							),
-							'custom'       => array(
+							'custom'  => array(
 								'type' => 'boolean',
 							),
 						),

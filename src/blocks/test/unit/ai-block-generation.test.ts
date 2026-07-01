@@ -2,12 +2,9 @@ jest.mock( '@wordpress/blocks', () => require( './mocks/wordpress-blocks' ) );
 
 import {
 	buildAttributeSchema,
-	buildPatternCatalog,
 	buildStructureCatalog,
 	generateBlocksFromTask,
 	jsonTreeToBlocks,
-	patternToTrees,
-	refineGeneratedBlocks,
 	sanitizeGeneratedBlocks,
 	validateGeneratedBlocks,
 	validateStructure
@@ -106,25 +103,25 @@ const blockTypes = [
 const getBlockType = ( name: string ) => blockTypes.find( blockType => blockType.name === name );
 
 describe( 'AI block generation engine', () => {
-	it( 'phase 1: builds a slim structure catalog with slug, trimmed description and container hint', () => {
-		const catalog = buildStructureCatalog( blockTypes );
-
-		expect( catalog.map( entry => entry.slug ) ).toEqual([
-			'core/paragraph',
-			'themeisle-blocks/advanced-columns',
-			'themeisle-blocks/advanced-column',
-			'themeisle-blocks/button-group',
-			'themeisle-blocks/button'
+	it( 'phase 1: builds a slim, Atomic-Wind-only catalog with slug, trimmed description and container hint', () => {
+		const catalog = buildStructureCatalog([
+			{ name: 'atomic-wind/box', title: 'Box', description: 'A layout container. '.repeat( 10 ), attributes: { tagName: { type: 'string' }}, supports: { inserter: true }},
+			{ name: 'atomic-wind/text', title: 'Text', description: 'A text primitive.', attributes: { content: { type: 'string', source: 'html' }}, supports: { inserter: true }},
+			// Core + Otter blocks are excluded entirely — generation is atomic-only.
+			...blockTypes
 		]);
 
-		// Paragraph is not a container; the section (allowedBlocks) and column
-		// (known container) are.
-		expect( catalog[0]).toMatchObject({ slug: 'core/paragraph', container: false });
-		expect( catalog[1].container ).toBe( true );
-		expect( catalog[2].container ).toBe( true );
+		expect( catalog.map( entry => entry.slug ) ).toEqual([
+			'atomic-wind/box',
+			'atomic-wind/text'
+		]);
+
+		// The box is the layout container; the text primitive is not.
+		expect( catalog[0]).toMatchObject({ slug: 'atomic-wind/box', container: true });
+		expect( catalog[1]).toMatchObject({ slug: 'atomic-wind/text', container: false });
 
 		// Descriptions are trimmed and never carry attribute noise.
-		expect( catalog[1].description.length ).toBeLessThanOrEqual( 100 );
+		expect( catalog[0].description.length ).toBeLessThanOrEqual( 100 );
 		expect( catalog[0]).not.toHaveProperty( 'attributes' );
 	});
 
@@ -477,324 +474,6 @@ describe( 'AI block generation engine', () => {
 		expect( result.diagnostics.droppedRoots ).toHaveLength( 1 );
 	});
 
-	it( 'pattern catalog: keeps Otter and theme patterns, drops core/remote and content-less ones', () => {
-		const catalog = buildPatternCatalog([
-			{ name: 'otter/hero', title: 'Hero', description: 'A hero.', categories: [ 'otter-blocks' ], content: 'x' },
-			{ name: 'theme/cta', title: 'CTA', description: 'A CTA.', categories: [ 'featured' ], source: 'theme', content: 'x' },
-			{ name: 'core/quote', title: 'Quote', description: 'A quote.', categories: [ 'text' ], source: 'core', content: 'x' },
-			{ name: 'plugin/cards', title: 'Cards', description: 'Cards.', content: 'x' }, // no source → kept
-			{ name: 'otter/empty', title: 'Empty', categories: [ 'otter-blocks' ], content: '' } // no content → dropped
-		]);
-
-		expect( catalog.map( entry => entry.name ) ).toEqual([ 'otter/hero', 'theme/cta', 'plugin/cards' ]);
-		expect( catalog[0]).toMatchObject({ name: 'otter/hero', title: 'Hero', description: 'A hero.', categories: [ 'otter-blocks' ] });
-	});
-
-	it( 'patternToTrees: parses content into attribute-carrying trees and inlines pattern references', () => {
-		const patternsByName = {
-			'ref/inner': {
-				name: 'ref/inner',
-				content: '<!-- wp:paragraph {"content":"Inner"} --><p>Inner</p><!-- /wp:paragraph -->'
-			}
-		};
-
-		const trees = patternToTrees(
-			{ name: 'outer', content: '<!-- wp:pattern {"slug":"ref/inner"} --><!-- /wp:pattern -->' },
-			patternsByName as never
-		);
-
-		expect( trees ).toEqual([
-			{ name: 'core/paragraph', attributes: { content: 'Inner' }, innerBlocks: [] }
-		]);
-	});
-
-	it( 'pattern pipeline: briefs, picks a matching pattern, and rewrites its copy', async() => {
-		const onPhase = jest.fn();
-
-		const completion = jest.fn()
-
-			// Req 1 — layout brief with a single conceptual section.
-			.mockResolvedValueOnce( JSON.stringify({
-				mission: 'Convert visitors.',
-				design: { style: 'modern' },
-				sections: [{ id: 'hero', intent: 'A bold hero.' }]
-			}) )
-
-			// Req 2 — assign the hero pattern to the hero section.
-			.mockResolvedValueOnce( JSON.stringify({
-				assignments: [{ sectionId: 'hero', patternName: 'otter/hero' }]
-			}) )
-
-			// Req 5 — rewrite the pattern's text (no Req 3 outline: nothing missing).
-			.mockResolvedValueOnce( JSON.stringify({
-				roots: [{ name: 'core/paragraph', attributes: { content: 'Rewritten hero.' }}]
-			}) );
-
-		const result = await generateBlocksFromTask({
-			task: 'A hero section.',
-			blockTypes,
-			patterns: [
-				{
-					name: 'otter/hero',
-					title: 'Hero',
-					description: 'A hero section.',
-					categories: [ 'otter-blocks' ],
-					content: '<!-- wp:paragraph {"content":"Demo hero"} --><p>Demo hero</p><!-- /wp:paragraph -->'
-				}
-			],
-			requestCompletion: completion,
-			onPhase
-		});
-
-		// brief + selection + rewrite — no outline call when nothing is missing.
-		expect( completion ).toHaveBeenCalledTimes( 3 );
-		expect( result.blocks.map( block => block.name ) ).toEqual([ 'core/paragraph' ]);
-		expect( result.blocks[0].attributes?.content ).toBe( 'Rewritten hero.' );
-
-		// The rewrite prompt is seeded with the pattern's current copy.
-		expect( completion.mock.calls[2][0] ).toContain( 'Demo hero' );
-
-		expect( onPhase.mock.calls.map( call => call[0]) ).toEqual(
-			expect.arrayContaining([ 'briefing', 'selecting', 'building' ])
-		);
-	});
-
-	it( 'pattern pipeline: outlines and generates the sections with no matching pattern', async() => {
-		const completion = jest.fn()
-
-			// Req 1 — two conceptual sections.
-			.mockResolvedValueOnce( JSON.stringify({
-				mission: 'A landing page.',
-				design: {},
-				sections: [
-					{ id: 'hero', intent: 'A hero.' },
-					{ id: 'contact', intent: 'A contact prompt.' }
-				]
-			}) )
-
-			// Req 2 — hero gets a pattern, contact has none.
-			.mockResolvedValueOnce( JSON.stringify({
-				assignments: [
-					{ sectionId: 'hero', patternName: 'otter/hero' },
-					{ sectionId: 'contact', patternName: null }
-				]
-			}) )
-
-			// Req 3 — outline only the missing 'contact' section.
-			.mockResolvedValueOnce( JSON.stringify({
-				roots: [{ sectionId: 'contact', name: 'core/paragraph', notes: 'Contact.' }]
-			}) )
-
-			// Req 5 — rewrite the hero pattern (sections fill in brief order).
-			.mockResolvedValueOnce( JSON.stringify({
-				roots: [{ name: 'core/paragraph', attributes: { content: 'Hero copy.' }}]
-			}) )
-
-			// Req 5 — fill the generated contact section.
-			.mockResolvedValueOnce( JSON.stringify({
-				roots: [{ name: 'core/paragraph', attributes: { content: 'Reach us.' }}]
-			}) );
-
-		const result = await generateBlocksFromTask({
-			task: 'A landing page.',
-			blockTypes,
-			patterns: [
-				{
-					name: 'otter/hero',
-					title: 'Hero',
-					description: 'A hero section.',
-					categories: [ 'otter-blocks' ],
-					content: '<!-- wp:paragraph {"content":"Demo hero"} --><p>Demo hero</p><!-- /wp:paragraph -->'
-				}
-			],
-			requestCompletion: completion
-		});
-
-		// brief + selection + outline + 2 fills.
-		expect( completion ).toHaveBeenCalledTimes( 5 );
-		expect( result.blocks.map( block => block.attributes?.content ) ).toEqual([ 'Hero copy.', 'Reach us.' ]);
-	});
-
-	it( 'pattern pipeline: falls back to generation when a chosen pattern uses unsupported blocks', async() => {
-		const completion = jest.fn()
-
-			.mockResolvedValueOnce( JSON.stringify({
-				mission: 'A page.',
-				design: {},
-				sections: [{ id: 'hero', intent: 'A hero.' }]
-			}) )
-
-			// The model picks a pattern whose content is an unregistered block.
-			.mockResolvedValueOnce( JSON.stringify({
-				assignments: [{ sectionId: 'hero', patternName: 'otter/broken' }]
-			}) )
-
-			// The broken pattern prunes away → hero becomes a "missing" section to outline.
-			.mockResolvedValueOnce( JSON.stringify({
-				roots: [{ sectionId: 'hero', name: 'core/paragraph', notes: 'Hero.' }]
-			}) )
-
-			// Fill the now-generated hero section.
-			.mockResolvedValueOnce( JSON.stringify({
-				roots: [{ name: 'core/paragraph', attributes: { content: 'Generated hero.' }}]
-			}) );
-
-		const result = await generateBlocksFromTask({
-			task: 'A hero.',
-			blockTypes,
-			patterns: [
-				{
-					name: 'otter/broken',
-					title: 'Broken',
-					description: 'Uses an unsupported block.',
-					categories: [ 'otter-blocks' ],
-					content: '<!-- wp:acme/unregistered --><!-- /wp:acme/unregistered -->'
-				}
-			],
-			requestCompletion: completion
-		});
-
-		// brief + selection + outline + fill (the pattern was unusable).
-		expect( completion ).toHaveBeenCalledTimes( 4 );
-		expect( result.blocks.map( block => block.attributes?.content ) ).toEqual([ 'Generated hero.' ]);
-	});
-
-	it( 'refine: patches only the targeted block and leaves siblings byte-for-byte identical', async() => {
-		const base = jsonTreeToBlocks(
-			[
-				{ name: 'core/paragraph', attributes: { content: 'Keep this exactly.' }},
-				{ name: 'core/paragraph', attributes: { content: 'Old second line.' }}
-			],
-			getBlockType
-		);
-
-		// The model is handed the current tree (ids + attributes) and the instruction.
-		const completion = jest.fn().mockResolvedValueOnce( JSON.stringify({
-			patches: [{ id: '1', attributes: { content: 'New second line.' }}]
-		}) );
-
-		const result = await refineGeneratedBlocks({
-			task: 'A hero section.',
-			instruction: 'rewrite the second paragraph',
-			baseBlocks: base,
-			blockTypes,
-			requestCompletion: completion
-		});
-
-		expect( completion ).toHaveBeenCalledTimes( 1 );
-		expect( completion.mock.calls[0][0] ).toContain( 'Old second line.' );
-		expect( completion.mock.calls[0][0] ).toContain( 'rewrite the second paragraph' );
-
-		// First paragraph untouched, second patched — structure preserved.
-		expect( result.blocks.map( block => block.attributes?.content ) ).toEqual([
-			'Keep this exactly.',
-			'New second line.'
-		]);
-	});
-
-	it( 'refine: targets a nested block by its id path and preserves the surrounding structure', async() => {
-		const base = jsonTreeToBlocks(
-			[
-				{
-					name: 'themeisle-blocks/advanced-columns',
-					attributes: { id: 'section-1' },
-					innerBlocks: [
-						{
-							name: 'themeisle-blocks/advanced-column',
-							attributes: { id: 'col-1', width: 50 },
-							innerBlocks: [
-								{ name: 'core/paragraph', attributes: { content: 'Original nested copy.' }}
-							]
-						}
-					]
-				}
-			],
-			getBlockType
-		);
-
-		const completion = jest.fn().mockResolvedValueOnce( JSON.stringify({
-			patches: [{ id: '0.0.0', attributes: { content: 'Refined nested copy.' }}]
-		}) );
-
-		const result = await refineGeneratedBlocks({
-			task: '',
-			instruction: 'tweak the nested paragraph',
-			baseBlocks: base,
-			blockTypes,
-			requestCompletion: completion
-		});
-
-		const paragraph = result.blocks[0].innerBlocks?.[0].innerBlocks?.[0];
-		expect( paragraph?.attributes?.content ).toBe( 'Refined nested copy.' );
-
-		// Ancestors keep their attributes exactly.
-		expect( result.blocks[0].attributes?.id ).toBe( 'section-1' );
-		expect( result.blocks[0].innerBlocks?.[0].attributes ).toEqual({ id: 'col-1', width: 50 });
-	});
-
-	it( 'refine: leaves the result untouched when there are no patches', async() => {
-		const base = jsonTreeToBlocks(
-			[{ name: 'core/paragraph', attributes: { content: 'Unchanged.' }}],
-			getBlockType
-		);
-
-		const completion = jest.fn().mockResolvedValueOnce( JSON.stringify({ patches: [] }) );
-
-		const result = await refineGeneratedBlocks({
-			task: '',
-			instruction: 'do nothing applicable',
-			baseBlocks: base,
-			blockTypes,
-			requestCompletion: completion
-		});
-
-		expect( result.blocks ).toBe( base );
-	});
-
-	it( 'refine: keeps the original result when the response is unparseable', async() => {
-		const base = jsonTreeToBlocks(
-			[{ name: 'core/paragraph', attributes: { content: 'Untouched.' }}],
-			getBlockType
-		);
-
-		const completion = jest.fn().mockResolvedValueOnce( 'not json at all' );
-
-		const result = await refineGeneratedBlocks({
-			task: '',
-			instruction: 'anything',
-			baseBlocks: base,
-			blockTypes,
-			requestCompletion: completion
-		});
-
-		expect( result.blocks ).toBe( base );
-	});
-
-	it( 'refine: patches a child-only block selected in the editor (e.g. Otter button)', async() => {
-		const base = [{
-			clientId: 'btn-1',
-			name: 'themeisle-blocks/button',
-			attributes: { text: 'Old label' },
-			innerBlocks: []
-		}];
-
-		const completion = jest.fn().mockResolvedValueOnce( JSON.stringify({
-			patches: [{ id: '0', attributes: { text: 'Start Building Today — Get the Guide' }}]
-		}) );
-
-		const result = await refineGeneratedBlocks({
-			task: 'Rewrite the button label.',
-			instruction: 'Rewrite the button label.',
-			baseBlocks: base,
-			blockTypes,
-			requestCompletion: completion
-		});
-
-		expect( result.blocks[0].clientId ).toBe( 'btn-1' );
-		expect( result.blocks[0].attributes?.text ).toBe( 'Start Building Today — Get the Guide' );
-		expect( result.diagnostics.droppedRoots ).toHaveLength( 0 );
-	});
-
 	it( 'validate: allows root blocks that require a parent when replacing in the editor', () => {
 		const blocks = jsonTreeToBlocks(
 			[{ name: 'themeisle-blocks/button', attributes: { text: 'Click me' }}],
@@ -837,54 +516,236 @@ describe( 'AI block generation engine', () => {
 		expect( result.diagnostics.droppedRoots ).toHaveLength( 0 );
 	});
 
-	it( 'quality pass: fixes a low-contrast section with an attribute patch', async() => {
-		const completion = jest.fn()
+	it( 'page scope: splits into a page outline then per-section outline + construct', async() => {
+		const onRootComplete = jest.fn();
+		const onPlanReady = jest.fn();
 
-			// Plan.
-			.mockResolvedValueOnce( JSON.stringify({
-				mission: '',
-				roots: [{ name: 'core/paragraph', notes: 'A line.' }]
-			}) )
+		// Sections build concurrently, so calls interleave — answer by content, not
+		// call order. SECTION_OUTLINE tags the root with its section; CONSTRUCT reads
+		// that tag back so each section gets its own copy regardless of timing.
+		const completion = jest.fn( async( prompt: string ) => {
+			if ( prompt.includes( 'PAGE_OUTLINE' ) ) {
+				return JSON.stringify({
+					mission: 'A cozy cabin page.',
+					design: { style: 'frosted', palette: [ 'primary' ] },
+					rationale: [ 'Hero then contact.' ],
+					sections: [
+						{ title: 'Hero', notes: 'Big welcome.' },
+						{ title: 'Contact', notes: 'A way to reach us.' }
+					]
+				});
+			}
 
-			// Fill returns readable copy but an unreadable color pair.
-			.mockResolvedValueOnce( JSON.stringify({
-				roots: [{
-					name: 'core/paragraph',
-					attributes: { content: 'A clear sentence of copy.', style: { color: { background: '#888888', text: '#777777' }}}
-				}]
-			}) )
+			if ( prompt.includes( 'SECTION_OUTLINE' ) ) {
+				const title = prompt.includes( '"Hero"' ) ? 'Hero' : 'Contact';
+				return JSON.stringify({ roots: [{ name: 'core/paragraph', notes: `SECTION:${ title }` }] });
+			}
 
-			// Quality fix pass: patch the contrast issue on block id "0".
-			.mockResolvedValueOnce( JSON.stringify({
-				patches: [{ id: '0', attributes: { style: { color: { background: '#ffffff', text: '#111111' }}}}]
-			}) );
+			// CONSTRUCT — the root's notes ("SECTION:…") are echoed in the prompt.
+			const content = prompt.includes( 'SECTION:Hero' ) ? 'Welcome to the cabin.' : 'Reach us anytime.';
+			return JSON.stringify({ roots: [{ name: 'core/paragraph', attributes: { content }}] });
+		});
 
 		const result = await generateBlocksFromTask({
-			task: 'A paragraph.',
+			task: 'A mountain cabin page.',
+			scope: 'page',
+			blockTypes,
+			requestCompletion: completion,
+			onPlanReady,
+			onRootComplete
+		});
+
+		// One page outline + (outline + construct) per section = 5 calls. No single
+		// call ever carries the whole page tree.
+		expect( completion ).toHaveBeenCalledTimes( 5 );
+		expect( completion.mock.calls[0][0] ).toContain( 'Pipeline step: PAGE_OUTLINE' );
+		expect( completion.mock.calls.some( ( call ) => call[0].includes( 'Pipeline step: SECTION_OUTLINE' ) && call[0].includes( '"Hero"' ) ) ).toBe( true );
+		expect( completion.mock.calls.filter( ( call ) => call[0].includes( 'Pipeline step: CONSTRUCT' ) ) ).toHaveLength( 2 );
+
+		// Progress total is the section count, reported up front and once per section.
+		expect( onPlanReady.mock.calls[0][0].roots ).toHaveLength( 2 );
+		expect( onRootComplete ).toHaveBeenCalledTimes( 2 );
+
+		// Assembled in section order even though the sections built concurrently.
+		expect( result.blocks.map( block => block.attributes?.content ) ).toEqual([
+			'Welcome to the cabin.',
+			'Reach us anytime.'
+		]);
+		expect( result.plan.mission ).toBe( 'A cozy cabin page.' );
+	});
+
+	it( 'caps an oversized repeated run so the CONSTRUCT fills only a representative few', async() => {
+		// SECTION_OUTLINE returns a gallery-like run of 7 same-slug siblings.
+		const sixColumns = Array.from( { length: 7 }, () => ({ name: 'themeisle-blocks/advanced-column' }) );
+
+		const completion = jest.fn()
+			.mockResolvedValueOnce( JSON.stringify({ mission: '', sections: [{ title: 'Gallery' }] }) )
+			.mockResolvedValueOnce( JSON.stringify({ roots: [{ name: 'themeisle-blocks/advanced-columns', innerBlocks: sixColumns }] }) )
+			.mockResolvedValueOnce( JSON.stringify({
+				roots: [{
+					name: 'themeisle-blocks/advanced-columns',
+					attributes: {},
+					innerBlocks: Array.from( { length: 4 }, () => ({ name: 'themeisle-blocks/advanced-column', attributes: { width: 25 }}) )
+				}]
+			}) );
+
+		await generateBlocksFromTask({
+			task: 'A gallery with too many tiles.',
+			scope: 'page',
 			blockTypes,
 			requestCompletion: completion
 		});
 
-		// plan + fill + one quality fix pass.
-		expect( completion ).toHaveBeenCalledTimes( 3 );
-
-		// The fix prompt carries the contrast issue keyed by block id.
-		expect( completion.mock.calls[2][0] ).toContain( 'low text contrast' );
-
-		const style = result.blocks[0].attributes?.style as { color?: { text?: string } };
-		expect( style?.color?.text ).toBe( '#111111' );
+		// The CONSTRUCT prompt (call #3) carries the capped structure — 4 columns,
+		// not the 7 the outline produced.
+		const constructPrompt = completion.mock.calls[2][0];
+		const columnCount = ( constructPrompt.match( /themeisle-blocks\/advanced-column"/g ) || [] ).length;
+		expect( columnCount ).toBe( 4 );
 	});
 
-	it( 'keeps catalog blocks whose names only contain asset keywords as substrings', () => {
+	it( 'page scope: drops a section whose call throws and keeps building the rest', async() => {
+		const onRootComplete = jest.fn();
+
+		// Content-aware (sections build concurrently): the Gallery's SECTION_OUTLINE
+		// throws; the others succeed and carry their own copy.
+		const completion = jest.fn( async( prompt: string ) => {
+			if ( prompt.includes( 'PAGE_OUTLINE' ) ) {
+				return JSON.stringify({
+					mission: '',
+					sections: [{ title: 'Hero' }, { title: 'Gallery' }, { title: 'Contact' }]
+				});
+			}
+
+			if ( prompt.includes( 'SECTION_OUTLINE' ) ) {
+				if ( prompt.includes( '"Gallery"' ) ) {
+					throw new Error( 'rest_invalid_json' );
+				}
+				const title = prompt.includes( '"Hero"' ) ? 'Hero' : 'Contact';
+				return JSON.stringify({ roots: [{ name: 'core/paragraph', notes: `SECTION:${ title }` }] });
+			}
+
+			const content = prompt.includes( 'SECTION:Hero' ) ? 'Hero copy.' : 'Contact copy.';
+			return JSON.stringify({ roots: [{ name: 'core/paragraph', attributes: { content }}] });
+		});
+
+		const result = await generateBlocksFromTask({
+			task: 'A page with a flaky section.',
+			scope: 'page',
+			blockTypes,
+			requestCompletion: completion,
+			onRootComplete
+		});
+
+		// The two healthy sections survive in order; the failing one is dropped.
+		expect( result.blocks.map( block => block.attributes?.content ) ).toEqual([ 'Hero copy.', 'Contact copy.' ]);
+		expect( result.diagnostics.droppedRoots ).toHaveLength( 1 );
+		expect( result.diagnostics.droppedRoots[0].errors[0] ).toContain( 'rest_invalid_json' );
+
+		// Every section still reports a progress step, including the dropped one.
+		expect( onRootComplete ).toHaveBeenCalledTimes( 3 );
+		expect( onRootComplete.mock.calls.filter( ( call ) => 0 === call[0].blocks.length ) ).toHaveLength( 1 );
+	});
+
+	it( 'page scope: a user abort propagates instead of being swallowed as a dropped section', async() => {
+		const abort = Object.assign( new Error( 'Aborted' ), { name: 'AbortError' } );
+
+		const completion = jest.fn()
+			.mockResolvedValueOnce( JSON.stringify({ mission: '', sections: [{ title: 'Hero' }] }) )
+			.mockRejectedValueOnce( abort );
+
+		await expect( generateBlocksFromTask({
+			task: 'A page the user cancels.',
+			scope: 'page',
+			blockTypes,
+			requestCompletion: completion
+		}) ).rejects.toMatchObject({ name: 'AbortError' });
+	});
+
+	it( 'page scope: falls back to the single-outline flow when the page outline has no sections', async() => {
+		const completion = jest.fn()
+			// PAGE_OUTLINE returns no usable sections → fall back.
+			.mockResolvedValueOnce( JSON.stringify({ mission: '', sections: [] }) )
+
+			// Fallback single-outline PLAN + CONSTRUCT.
+			.mockResolvedValueOnce( JSON.stringify({ mission: '', roots: [{ name: 'core/paragraph', notes: 'A line.' }] }) )
+			.mockResolvedValueOnce( JSON.stringify({ roots: [{ name: 'core/paragraph', attributes: { content: 'Fallback copy.' }}] }) );
+
+		const result = await generateBlocksFromTask({
+			task: 'A page that degrades.',
+			scope: 'page',
+			blockTypes,
+			requestCompletion: completion
+		});
+
+		expect( completion.mock.calls[1][0] ).toContain( 'OUTLINE (catalog)' );
+		expect( result.blocks.map( block => block.attributes?.content ) ).toEqual([ 'Fallback copy.' ]);
+	});
+
+	it( 'is atomic-only: excludes core and Otter blocks and keeps every Atomic Wind primitive', () => {
 		const catalog = buildStructureCatalog([
-			{ name: 'acme/profile-card', title: 'Profile Card', attributes: {}, supports: { inserter: true }},
-			{ name: 'acme/sitemap-links', title: 'Sitemap Links', attributes: {}, supports: { inserter: true }},
-			{ name: 'core/image', title: 'Image', attributes: {}, supports: { inserter: true }}
+			{ name: 'core/paragraph', title: 'Paragraph', attributes: {}, supports: { inserter: true }},
+			{ name: 'themeisle-blocks/advanced-heading', title: 'Heading', attributes: {}, supports: { inserter: true }},
+			{ name: 'atomic-wind/box', title: 'Box', attributes: {}, supports: { inserter: true }},
+			{ name: 'atomic-wind/text', title: 'Text', attributes: {}, supports: { inserter: true }},
+			{ name: 'atomic-wind/icon', title: 'Icon', attributes: {}, supports: { inserter: true }},
+			{ name: 'atomic-wind/link', title: 'Link', attributes: {}, supports: { inserter: true }},
+			// Matches the asset/service filter on "image" — must still survive
+			// because it is an Atomic Wind primitive.
+			{ name: 'atomic-wind/image', title: 'Image', attributes: {}, supports: { inserter: true }}
 		]);
 
 		expect( catalog.map( entry => entry.slug ) ).toEqual([
-			'acme/profile-card',
-			'acme/sitemap-links'
+			'atomic-wind/box',
+			'atomic-wind/text',
+			'atomic-wind/icon',
+			'atomic-wind/link',
+			'atomic-wind/image'
 		]);
+	});
+
+	it( 'forces Atomic Wind primitives in the plan prompt, allowing only the form/map exceptions', () => {
+		const atomicBlockTypes = [
+			{ name: 'atomic-wind/box', title: 'Box', description: 'A box.', attributes: {}, supports: { inserter: true }},
+			{ name: 'atomic-wind/text', title: 'Text', description: 'Text.', attributes: { content: { type: 'string', source: 'html' }}, supports: { inserter: true }}
+		];
+
+		const completion = jest.fn()
+			.mockResolvedValueOnce( JSON.stringify({ mission: '', roots: [{ name: 'atomic-wind/box', notes: 'A box.', innerBlocks: [{ name: 'atomic-wind/text' }] }] }) )
+			.mockResolvedValueOnce( JSON.stringify({ roots: [{ name: 'atomic-wind/box', attributes: {}, innerBlocks: [{ name: 'atomic-wind/text', attributes: { content: 'Hi.' }}] }] }) );
+
+		return generateBlocksFromTask({
+			task: 'A simple section.',
+			blockTypes: atomicBlockTypes,
+			requestCompletion: completion
+		}).then( () => {
+			const planPrompt = completion.mock.calls[0][0];
+			// The plan steers to atomic primitives and never to generic Otter/core,
+			// but permits the curated form/map blocks when the task calls for them.
+			expect( planPrompt ).toContain( 'Build the structure from Atomic Wind primitives' );
+			expect( planPrompt ).not.toContain( 'Prefer Otter blocks' );
+			expect( planPrompt ).toContain( 'atomic-wind/box' );
+			expect( planPrompt ).toContain( 'themeisle-blocks/leaflet-map' );
+		});
+	});
+
+	it( 'includes the curated form and map blocks in the structure catalog', () => {
+		const catalog = buildStructureCatalog([
+			{ name: 'atomic-wind/box', description: 'A box.', supports: { inserter: true }, allowedBlocks: [] },
+			{ name: 'themeisle-blocks/form', description: 'A form.', supports: { inserter: true }},
+			{ name: 'themeisle-blocks/form-input', description: 'An input.', supports: { inserter: true }, ancestor: [ 'themeisle-blocks/form' ] },
+			{ name: 'themeisle-blocks/leaflet-map', description: 'A map.', supports: { inserter: true }},
+			// Excluded: not atomic-wind and not in the curated extras.
+			{ name: 'themeisle-blocks/google-map', description: 'A keyed map.', supports: { inserter: true }},
+			{ name: 'core/paragraph', description: 'A paragraph.', supports: { inserter: true }}
+		]);
+
+		const slugs = catalog.map( ( entry ) => entry.slug );
+
+		expect( slugs ).toContain( 'themeisle-blocks/form' );
+		expect( slugs ).toContain( 'themeisle-blocks/leaflet-map' );
+		expect( slugs ).not.toContain( 'themeisle-blocks/google-map' );
+		expect( slugs ).not.toContain( 'core/paragraph' );
+		// The form is detected as a container (its input declares it as an ancestor).
+		expect( catalog.find( ( entry ) => 'themeisle-blocks/form' === entry.slug )?.container ).toBe( true );
 	});
 });

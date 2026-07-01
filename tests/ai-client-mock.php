@@ -198,6 +198,14 @@ namespace ThemeIsle\GutenbergBlocks\Tests {
 		public $throw_on_text = false;
 
 		/**
+		 * Exception for toText() to throw, simulating a raw HTTP error body (e.g. an
+		 * nginx 502 page) in the AI Client exception message.
+		 *
+		 * @var \Exception|null
+		 */
+		public $throw_exception = null;
+
+		/**
 		 * Constructor.
 		 *
 		 * @param string $text The text content.
@@ -222,6 +230,10 @@ namespace ThemeIsle\GutenbergBlocks\Tests {
 		 * @return string
 		 */
 		public function toText() {
+			if ( null !== $this->throw_exception ) {
+				throw $this->throw_exception;
+			}
+
 			if ( $this->throw_on_text ) {
 				throw new \RuntimeException( 'No text content available in the result.' );
 			}

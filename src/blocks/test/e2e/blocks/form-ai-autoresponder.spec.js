@@ -294,7 +294,7 @@ test.describe( 'Form Block - AI Autoresponder', () => {
 		await editor.insertBlock({
 			name: FORM_BLOCK,
 			innerBlocks: [
-				{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name', type: 'text' } },
+				{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name', type: 'text' }},
 				{ name: 'themeisle-blocks/form-nonce' }
 			]
 		});

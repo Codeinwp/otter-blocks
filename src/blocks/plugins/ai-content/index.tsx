@@ -80,6 +80,11 @@ const AIToolbarMenu = ({
 					</MenuGroup>
 				)
 			}
+			<MenuGroup>
+				<MenuItem onClick={ () => openAction( toolbarActions[0]?.id, extractBlockTextContent( activeBlocks ) ) }>
+					{ __( 'Edit with AI', 'otter-blocks' ) }
+				</MenuItem>
+			</MenuGroup>
 			{
 				0 < toolbarActions.length && (
 					<MenuGroup>
@@ -96,11 +101,6 @@ const AIToolbarMenu = ({
 					</MenuGroup>
 				)
 			}
-			<MenuGroup>
-				<MenuItem onClick={ () => openAction( toolbarActions[0]?.id, extractBlockTextContent( activeBlocks ) ) }>
-					{ __( 'Use as prompt', 'otter-blocks' ) }
-				</MenuItem>
-			</MenuGroup>
 			<MenuGroup>
 				<ExternalLink className='o-menu-item-alignment' href={ `${ window.themeisleGutenberg?.optionsPath }#ai` } rel="noopener noreferrer">
 					{
