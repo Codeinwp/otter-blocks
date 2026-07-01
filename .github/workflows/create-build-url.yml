@@ -24,8 +24,22 @@ jobs:
         run: composer install --no-dev --prefer-dist --no-progress --no-suggest
       - name: Install npm deps
         run: npm ci
-      - name: Set version to Stable Tag
-        run: npm run grunt:version
+      - name: Retrieve branch name
+        id: retrieve-branch-name
+        run: echo "branch_name=$(REF=${GITHUB_HEAD_REF:-$GITHUB_REF} && echo ${REF#refs/heads/} | sed 's/\//-/g')" >> "$GITHUB_OUTPUT"
+      - name: Retrieve git SHA-8 string
+        id: retrieve-git-sha-8
+        run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> "$GITHUB_OUTPUT"
+      - name: Set PR dev version
+        run: |
+          BASE=$(node -p "require('./package.json').version")
+          IFS=. read -r MAJOR MINOR PATCH <<< "${BASE%%-*}"
+          BRANCH="${{ steps.retrieve-branch-name.outputs.branch_name }}"
+          BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9-]/-/g' | cut -c1-24)
+          SHA="${{ steps.retrieve-git-sha-8.outputs.sha8 }}"
+          VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))-${BRANCH}.${SHA}"
+          echo "PR dev version: ${VERSION}"
+          npx grunt version::${VERSION}
       - name: Build files
         run: npm run build
       - name: Create zip
@@ -36,12 +50,6 @@ jobs:
         run: npm run build-dev
       - name: Create zip
         run: npm run dist-dev
-      - name: Retrieve branch name
-        id: retrieve-branch-name
-        run: echo "::set-output name=branch_name::$(REF=${GITHUB_HEAD_REF:-$GITHUB_REF} && echo ${REF#refs/heads/} | sed 's/\//-/g')"
-      - name: Retrieve git SHA-8 string
-        id: retrieve-git-sha-8
-        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
       - name: Upload Latest Version to S3
         uses: jakejarvis/s3-sync-action@master
         with:
