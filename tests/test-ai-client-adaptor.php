@@ -938,7 +938,8 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 			'otter_ai_otter_openai_request_args',
 			function ( $args, $payload ) use ( &$filter_saw_authorization ) {
 				$filter_saw_authorization = isset( $args['headers']['Authorization'] );
-				$args['timeout']                         = 123;
+				// Above the request-timeout floor forward_prompt() enforces, so it passes through unchanged.
+				$args['timeout']                         = 600;
 				$args['headers']['Authorization']        = 'Bearer sk-override';
 				$args['headers']['X-Otter-Test-Model'] = $payload['model'];
 				$args['sslverify']                       = false;
@@ -998,7 +999,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 
 		$this->assertSame( 'gpt-test-model', $sent_body['model'] );
 		$this->assertTrue( $filter_saw_authorization );
-		$this->assertSame( 123, $captured_args['timeout'] );
+		$this->assertSame( 600, $captured_args['timeout'] );
 		$this->assertSame( 'Bearer sk-override', $captured_args['headers']['Authorization'] );
 		$this->assertSame( 'gpt-test-model', $captured_args['headers']['X-Otter-Test-Model'] );
 

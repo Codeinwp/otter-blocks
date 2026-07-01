@@ -191,11 +191,8 @@ class AI_Client_Adaptor {
 			}
 
 			if ( ! empty( $history ) ) {
-				// The wordpress-stubs @method tag resolves `Message` in the global namespace instead of WordPress\AiClient\Messages\DTO.
-				// phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
-				// @phpstan-ignore argument.type (generator quirk)
-				$builder = $builder->with_history( ...$history );
-				// phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
+				// The wordpress-stubs @method tag under-qualifies the Message type (generator quirk).
+				$builder = $builder->with_history( ...$history ); /* @phpstan-ignore argument.type */
 			}
 
 			$builder = $builder->with_text( $prompt_text );
@@ -527,13 +524,14 @@ class AI_Client_Adaptor {
 			return $builder;
 		}
 
-		return $builder->using_request_options(
-			\WordPress\AiClient\Providers\Http\DTO\RequestOptions::fromArray(
-				array(
-					\WordPress\AiClient\Providers\Http\DTO\RequestOptions::KEY_TIMEOUT => (float) $timeout,
-				)
+		$options = \WordPress\AiClient\Providers\Http\DTO\RequestOptions::fromArray(
+			array(
+				\WordPress\AiClient\Providers\Http\DTO\RequestOptions::KEY_TIMEOUT => (float) $timeout,
 			)
 		);
+
+		// The wordpress-stubs @method tag under-qualifies the RequestOptions type (generator quirk).
+		return $builder->using_request_options( $options ); /* @phpstan-ignore argument.type */
 	}
 
 	/**
