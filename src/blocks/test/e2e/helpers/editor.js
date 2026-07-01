@@ -174,7 +174,7 @@ export async function switchEditorView( page, view ) {
  * Find a nested block by name in the current editor tree.
  *
  * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor    The editor utils.
- * @param {string}                                               blockName Block name.
+ * @param {string}                                                blockName Block name.
  * @return {Promise<object|undefined>}
  */
 export async function getNestedBlockByName( editor, blockName ) {
