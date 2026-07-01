@@ -25,6 +25,9 @@ test.describe( 'AI Block via legacy OpenAI backend', () => {
 			'themeisle_open_ai_api_key': LEGACY_MOCK_KEY,
 			'connectors_ai_openai_api_key': ''
 		});
+		// The content-generator block renders an enable-gate (no prompt field)
+		// unless the Atomic Wind blocks it builds with are registered.
+		await otterUtils.setAtomicWindBlocks( true );
 		await otterUtils.seedPrompts();
 
 		await admin.createNewPost();
@@ -34,6 +37,7 @@ test.describe( 'AI Block via legacy OpenAI backend', () => {
 		await otterUtils.setOptions({
 			'themeisle_open_ai_api_key': PRESEEDED_OPENAI_KEY
 		});
+		await otterUtils.setAtomicWindBlocks( false );
 	});
 
 	test( 'generates content through the legacy backend without route mocks', async({ editor, page }) => {
@@ -74,7 +78,7 @@ test.describe( 'AI Block via legacy OpenAI backend', () => {
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
 
 		const dialog = page.getByRole( 'dialog' );
-		await expect( dialog.getByText( 'OpenAI returned an empty response' ) ).toBeVisible({ timeout: 30000 });
+		await expect( dialog.getByText( 'The AI service returned an empty response' ) ).toBeVisible({ timeout: 30000 });
 		await expect( dialog.getByRole( 'button', { name: 'Insert section' }) ).toBeDisabled();
 	});
 });

@@ -207,6 +207,15 @@ const ContentGenerator = ({
 		setModalOpen( false );
 
 		window.requestAnimationFrame( () => {
+			// When the AI block is linked to a target block (the toolbar
+			// "replace" action), swap the target for the generated blocks and
+			// drop the AI block itself — mirroring the form path's replaceBlock.
+			if ( attributes.replaceTargetBlock?.clientId ) {
+				replaceBlocks( attributes.replaceTargetBlock.clientId, blocksToInsert );
+				removeBlock( clientId, false );
+				return;
+			}
+
 			const rootClientId = getBlockRootClientId( clientId );
 			const index = getBlockIndex( clientId, rootClientId );
 

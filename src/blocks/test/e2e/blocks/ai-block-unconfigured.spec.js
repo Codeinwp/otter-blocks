@@ -18,6 +18,9 @@ test.describe( 'AI surfaces without a configured backend', () => {
 			'themeisle_open_ai_api_key': '',
 			'connectors_ai_openai_api_key': ''
 		});
+		// The content-generator block renders an enable-gate (no prompt field)
+		// unless the Atomic Wind blocks it builds with are registered.
+		await otterUtils.setAtomicWindBlocks( true );
 		await otterUtils.seedPrompts();
 
 		await admin.createNewPost();
@@ -27,6 +30,7 @@ test.describe( 'AI surfaces without a configured backend', () => {
 		await otterUtils.setOptions({
 			'themeisle_open_ai_api_key': PRESEEDED_OPENAI_KEY
 		});
+		await otterUtils.setAtomicWindBlocks( false );
 	});
 
 	test( 'AI Block generation modal warns when no provider is configured', async({ editor, page }) => {

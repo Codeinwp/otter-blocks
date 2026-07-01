@@ -91,6 +91,76 @@ function is_polish_request( $body ) {
 	return false !== strpos( $body, 'Pipeline step: POLISH' );
 }
 
+function is_decide_edit_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: DECIDE_EDIT' );
+}
+
+function is_text_edit_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: TEXT_EDIT' );
+}
+
+function is_style_edit_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: STYLE_EDIT' );
+}
+
+function is_rewrite_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: REWRITE' );
+}
+
+function decide_edit_payload() {
+	return wp_json_encode(
+		array(
+			'kind'   => 'redesign',
+			'reason' => 'Deterministic E2E edit classification.',
+		)
+	);
+}
+
+/**
+ * Deterministic TEXT_EDIT reply: the transformed copy once per fragment, matching
+ * the count the prompt asks for so run-text-edit's positional mapping lines up.
+ *
+ * @param string $body        Raw outbound request body.
+ * @param string $replacement Copy to write into every fragment.
+ * @return string JSON-encoded `{ items: string[] }` payload.
+ */
+function text_edit_payload( $body, $replacement ) {
+	$count = 1;
+
+	if ( preg_match( '/JSON array of (\d+) strings/', $body, $matches ) ) {
+		$count = max( 1, (int) $matches[1] );
+	}
+
+	return wp_json_encode( array( 'items' => array_fill( 0, $count, $replacement ) ) );
+}
+
+/**
+ * Deterministic STYLE_EDIT reply: no-op (empty items leaves attributes untouched).
+ *
+ * @return string JSON-encoded `{ items: array }` payload.
+ */
+function style_edit_payload() {
+	return wp_json_encode( array( 'items' => array() ) );
+}
+
+/**
+ * Deterministic REWRITE reply: a serialized paragraph carrying the replacement
+ * copy, which run-rewrite parses back into blocks.
+ *
+ * @param string $replacement Copy for the rewritten block.
+ * @return string JSON-encoded `{ summary, markup }` payload.
+ */
+function rewrite_payload( $replacement ) {
+	$markup = '<!-- wp:paragraph --><p>' . $replacement . '</p><!-- /wp:paragraph -->';
+
+	return wp_json_encode(
+		array(
+			'summary' => 'Deterministic E2E rewrite.',
+			'markup'  => $markup,
+		)
+	);
+}
+
 function stub_tool_call_payload( $body ) {
 	if ( false !== strpos( $body, 'hasReferenceBlocks: true' )
 		&& false !== strpos( $body, 'preferLocalTools: true' ) ) {
@@ -166,6 +236,30 @@ function mock_assistant_content( $body, $block_headline = 'WP AI Client mock res
 
 	if ( is_polish_request( $body ) ) {
 		return wp_json_encode( array( 'patches' => array() ) );
+	}
+
+	if ( is_decide_edit_request( $body ) ) {
+		return decide_edit_payload();
+	}
+
+	if ( is_text_edit_request( $body ) ) {
+		$replacement = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return text_edit_payload( $body, $replacement );
+	}
+
+	if ( is_style_edit_request( $body ) ) {
+		return style_edit_payload();
+	}
+
+	if ( is_rewrite_request( $body ) ) {
+		$replacement = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return rewrite_payload( $replacement );
 	}
 
 	if ( is_block_generation_request( $body ) ) {
@@ -283,7 +377,11 @@ function mock_openai_http( $preempt, $args, $url ) {
 			|| false !== strpos( $raw_body, 'Pipeline step: TOOL_CALL' )
 			|| is_block_generation_request( $raw_body )
 			|| is_edit_patch_request( $raw_body )
-			|| is_polish_request( $raw_body ) ) {
+			|| is_polish_request( $raw_body )
+			|| is_decide_edit_request( $raw_body )
+			|| is_text_edit_request( $raw_body )
+			|| is_style_edit_request( $raw_body )
+			|| is_rewrite_request( $raw_body ) ) {
 			$text = mock_assistant_content( $raw_body );
 		} else {
 			$text = TEXT_RESPONSE;
@@ -334,6 +432,10 @@ function mock_openai_http( $preempt, $args, $url ) {
 			|| is_block_generation_request( $body )
 			|| is_edit_patch_request( $body )
 			|| is_polish_request( $body )
+			|| is_decide_edit_request( $body )
+			|| is_text_edit_request( $body )
+			|| is_style_edit_request( $body )
+			|| is_rewrite_request( $body )
 			? mock_assistant_content( $body, 'Legacy OpenAI mock response' )
 			: LEGACY_TEXT_RESPONSE;
 

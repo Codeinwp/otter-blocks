@@ -18,6 +18,9 @@ test.describe( 'AI Block via WP AI Client', () => {
 		await otterUtils.setOptions({
 			'connectors_ai_openai_api_key': 'sk-otter-e2e-mock'
 		});
+		// The content-generator block renders an enable-gate (no prompt field)
+		// unless the Atomic Wind blocks it builds with are registered.
+		await otterUtils.setAtomicWindBlocks( true );
 		await otterUtils.seedPrompts();
 
 		await admin.createNewPost();
@@ -31,6 +34,7 @@ test.describe( 'AI Block via WP AI Client', () => {
 		await otterUtils.setOptions({
 			'connectors_ai_openai_api_key': ''
 		});
+		await otterUtils.setAtomicWindBlocks( false );
 	});
 
 	test( 'generates content through the WP AI Client without route mocks', async({ editor, page }) => {

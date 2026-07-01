@@ -310,6 +310,109 @@ function is_polish_request( $request_body ) {
 }
 
 /**
+ * Whether the outbound body is the edit-classifier step (DECIDE_EDIT).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_decide_edit_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: DECIDE_EDIT' );
+}
+
+/**
+ * Whether the outbound body is a text-only edit (TEXT_EDIT: transform fragments).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_text_edit_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: TEXT_EDIT' );
+}
+
+/**
+ * Whether the outbound body is a style-only edit (STYLE_EDIT: restyle elements).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_style_edit_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: STYLE_EDIT' );
+}
+
+/**
+ * Whether the outbound body is a full-markup rewrite (REWRITE).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_rewrite_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: REWRITE' );
+}
+
+/**
+ * Deterministic DECIDE_EDIT classification. 'redesign' is the safe superset — it
+ * routes to the full-markup rewrite, which the mock also stubs.
+ *
+ * @return string JSON-encoded `{ kind, reason }` payload.
+ */
+function stub_decide_edit_payload() {
+	return wp_json_encode(
+		array(
+			'kind'   => 'redesign',
+			'reason' => 'Deterministic E2E edit classification.',
+		)
+	);
+}
+
+/**
+ * Deterministic TEXT_EDIT reply: the transformed copy once per fragment, matching
+ * the count the prompt asks for so run-text-edit's positional mapping lines up.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @param string $replacement  Copy to write into every fragment.
+ * @return string JSON-encoded `{ items: string[] }` payload.
+ */
+function stub_text_edit_payload( $request_body, $replacement ) {
+	$count = 1;
+
+	if ( preg_match( '/JSON array of (\d+) strings/', $request_body, $matches ) ) {
+		$count = max( 1, (int) $matches[1] );
+	}
+
+	return wp_json_encode( array( 'items' => array_fill( 0, $count, $replacement ) ) );
+}
+
+/**
+ * Deterministic STYLE_EDIT reply: no-op. Returning an empty items array leaves
+ * every element's attributes untouched (run-style-edit keeps the original when an
+ * item is missing), which is enough to exercise the style route without asserting
+ * a specific restyle.
+ *
+ * @return string JSON-encoded `{ items: array }` payload.
+ */
+function stub_style_edit_payload() {
+	return wp_json_encode( array( 'items' => array() ) );
+}
+
+/**
+ * Deterministic REWRITE reply: a single serialized paragraph carrying the
+ * replacement copy, which run-rewrite parses back into blocks.
+ *
+ * @param string $replacement Copy for the rewritten block.
+ * @return string JSON-encoded `{ summary, markup }` payload.
+ */
+function stub_rewrite_payload( $replacement ) {
+	$markup = '<!-- wp:paragraph --><p>' . $replacement . '</p><!-- /wp:paragraph -->';
+
+	return wp_json_encode(
+		array(
+			'summary' => 'Deterministic E2E rewrite.',
+			'markup'  => $markup,
+		)
+	);
+}
+
+/**
  * Deterministic tool-call JSON for the agent planner step.
  *
  * @param string $request_body Raw outbound request body.
@@ -501,6 +604,30 @@ function stub_openai_completion_content( $request_body ) {
 
 	if ( is_polish_request( $request_body ) ) {
 		return wp_json_encode( array( 'patches' => array() ) );
+	}
+
+	if ( is_decide_edit_request( $request_body ) ) {
+		return stub_decide_edit_payload();
+	}
+
+	if ( is_text_edit_request( $request_body ) ) {
+		$replacement = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return stub_text_edit_payload( $request_body, $replacement );
+	}
+
+	if ( is_style_edit_request( $request_body ) ) {
+		return stub_style_edit_payload();
+	}
+
+	if ( is_rewrite_request( $request_body ) ) {
+		$replacement = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return stub_rewrite_payload( $replacement );
 	}
 
 	if ( is_block_generation_request( $request_body ) ) {

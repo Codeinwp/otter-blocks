@@ -269,7 +269,6 @@ const AIContentModal = ({
 
 		return () => {
 			isMountedRef.current = false;
-			abortControllerRef.current?.abort();
 			clearTimeout( pulseTimerRef.current );
 			cancelAnimationFrame( pulseRafRef.current );
 		};

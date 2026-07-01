@@ -1,13 +1,20 @@
 /**
- * WordPress dependencies
+ * Internal dependencies
  */
-import { test, expect } from '@wordpress/e2e-test-utils-playwright';
+import { test, expect } from '../fixtures';
 
 const SECTION_PLACEHOLDER = 'e.g. A hero section for a dental clinic with a heading and two buttons';
 
 test.describe( 'AI Block', () => {
-	test.beforeEach( async({ admin }) => {
+	test.beforeEach( async({ admin, otterUtils }) => {
+		// The content-generator block renders an enable-gate (no prompt field)
+		// unless the Atomic Wind blocks it builds with are registered.
+		await otterUtils.setAtomicWindBlocks( true );
 		await admin.createNewPost();
+	} );
+
+	test.afterEach( async({ otterUtils }) => {
+		await otterUtils.setAtomicWindBlocks( false );
 	} );
 
 	test( 'replace action', async({ editor, page }) => {
@@ -32,7 +39,9 @@ test.describe( 'AI Block', () => {
 		const blocks = await editor.getBlocks();
 
 		expect( blocks.every( block => 'themeisle-blocks/content-generator' !== block.name ) ).toBe( true );
-		await expect( editor.canvas.getByText( 'Discover the Next Frontier' ) ).toBeVisible();
+		// The deterministic mock builds a multi-column section that repeats the
+		// headline, so match the first occurrence rather than a single element.
+		await expect( editor.canvas.getByText( 'Discover the Next Frontier' ).first() ).toBeVisible();
 	} );
 
 	test( 'replace target block', async({ editor, page }) => {
