@@ -1,34 +1,57 @@
 jest.mock( '@wordpress/blocks', () => require( './mocks/wordpress-blocks' ) );
 
-import { collectClassNodes, applyClassNodes } from '../../plugins/ai-content/agent/class-nodes';
+import { collectStyleNodes, applyStyleNodes, styleNodeChanged } from '../../plugins/ai-content/agent/style-nodes';
 import { buildStyleEditPrompt, runStyleEditTurn } from '../../plugins/ai-content/agent/run-style-edit';
 import { runAgentTurn } from '../../plugins/ai-content/agent/run-turn';
 import type { RunTurnArgs } from '../../plugins/ai-content/agent/types';
 import type { BlockProps } from '../../helpers/blocks';
 
-// A small atomic-wind selection: a section box → heading + paragraph. Every block
-// carries a className; the paragraph also carries copy the style edit must not see.
+// A mixed selection: an atomic-wind box (styles via className) → a classic Otter
+// heading (styles via flat attributes + responsive variants) and a core paragraph
+// (styles via the `style` object + a color slug). Every block also carries copy
+// the style edit must never see.
 const selection = () => [
 	{
 		name: 'atomic-wind/box',
 		attributes: { tagName: 'section', className: 'px-8 py-24 bg-white text-[#171717]' },
 		innerBlocks: [
-			{ name: 'atomic-wind/text', attributes: { tagName: 'h2', className: 'm-0 text-4xl text-[#171717]', content: 'Compare plans' }, innerBlocks: [] },
-			{ name: 'atomic-wind/text', attributes: { className: 'm-0 text-sm text-[#3f3a37]', content: 'Start with the essentials.' }, innerBlocks: [] },
-			// A block with no className is skipped by the collector.
-			{ name: 'atomic-wind/spacer', attributes: {}, innerBlocks: [] }
+			{
+				name: 'themeisle-blocks/advanced-heading',
+				attributes: {
+					tagName: 'h2',
+					content: 'Compare plans',
+					headingColor: '#171717',
+					fontSize: 40,
+					padding: 12,
+					paddingTablet: 8 // responsive → must be excluded
+				},
+				innerBlocks: []
+			},
+			{
+				name: 'core/paragraph',
+				attributes: {
+					content: 'Start with the essentials.',
+					backgroundColor: 'accent',
+					style: { color: { text: '#3f3a37' } }
+				},
+				innerBlocks: []
+			}
 		]
 	}
 ] as unknown as BlockProps<unknown>[];
 
-const getBlockType = ( ( name: string ) => ( {
-	name,
-	attributes: {
-		className: { type: 'string' },
-		tagName: { type: 'string' },
-		content: { source: 'html' }
+// Declares the style + text attributes each block type exposes.
+const getBlockType = ( ( name: string ) => {
+	if ( 'core/paragraph' === name ) {
+		return { name, attributes: { content: { source: 'html' }, backgroundColor: { type: 'string' }, style: { type: 'object' }, className: { type: 'string' } } };
 	}
-} ) ) as unknown as RunTurnArgs['getBlockType'];
+
+	if ( 'themeisle-blocks/advanced-heading' === name ) {
+		return { name, attributes: { content: { source: 'html' }, tagName: { type: 'string' }, headingColor: { type: 'string' }, fontSize: { type: 'number' }, padding: { type: 'number' }, paddingTablet: { type: 'number' } } };
+	}
+
+	return { name, attributes: { tagName: { type: 'string' }, className: { type: 'string' } } };
+} ) as unknown as RunTurnArgs['getBlockType'];
 
 const baseArgs = ( overrides: Partial<RunTurnArgs> = {} ): RunTurnArgs => ( {
 	instruction: 'Recolor this in the brand palette.',
@@ -44,40 +67,60 @@ const baseArgs = ( overrides: Partial<RunTurnArgs> = {} ): RunTurnArgs => ( {
 	...overrides
 } );
 
-describe( 'class-nodes', () => {
-	it( 'collects only blocks with a non-empty className, in DFS order, with a label', () => {
-		const nodes = collectClassNodes( selection(), getBlockType );
+describe( 'style-nodes', () => {
+	it( 'collects style attributes across atomic, classic, and core blocks — never text or responsive variants', () => {
+		const nodes = collectStyleNodes( selection(), getBlockType );
 
-		expect( nodes.map( ( node ) => node.label ) ).toEqual( [ 'section', 'h2', 'text' ] );
-		expect( nodes.map( ( node ) => node.path ) ).toEqual( [ [ 0 ], [ 0, 0 ], [ 0, 1 ] ] );
-		expect( nodes[ 0 ].className ).toBe( 'px-8 py-24 bg-white text-[#171717]' );
+		expect( nodes.map( ( node ) => node.label ) ).toEqual( [ 'section', 'h2', 'paragraph' ] );
+
+		// atomic-wind → className only
+		expect( nodes[ 0 ].attrs ).toEqual( { className: 'px-8 py-24 bg-white text-[#171717]' } );
+
+		// classic Otter → flat style attrs, but NOT content and NOT the *Tablet variant
+		expect( nodes[ 1 ].attrs ).toEqual( { headingColor: '#171717', fontSize: 40, padding: 12 } );
+		expect( nodes[ 1 ].attrs ).not.toHaveProperty( 'content' );
+		expect( nodes[ 1 ].attrs ).not.toHaveProperty( 'paddingTablet' );
+
+		// core → color slug + nested style object
+		expect( nodes[ 2 ].attrs ).toEqual( { backgroundColor: 'accent', style: { color: { text: '#3f3a37' } } } );
 	} );
 
-	it( 'applies new classNames positionally and preserves everything else', () => {
-		const nodes = collectClassNodes( selection(), getBlockType );
-		const result = applyClassNodes( selection(), nodes, [
-			'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]',
-			undefined, // keep original
-			'   ' // blank → keep original
+	it( 'applies only the keys it sent, preserves text/structure, and never invents attributes', () => {
+		const nodes = collectStyleNodes( selection(), getBlockType );
+		const result = applyStyleNodes( selection(), nodes, [
+			{ className: 'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]' },
+			{ headingColor: '#2A3A5C', fontSize: 40, padding: 12, sneaky: 'nope' }, // extra key ignored
+			undefined // keep original
 		] );
 
 		const section = result[ 0 ];
 		const [ heading, paragraph ] = section.innerBlocks as BlockProps<unknown>[];
+		const headingAttrs = heading.attributes as Record<string, unknown>;
+		const paragraphAttrs = paragraph.attributes as Record<string, unknown>;
 
-		// First changed, the other two untouched.
 		expect( ( section.attributes as Record<string, unknown> ).className ).toBe( 'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]' );
-		expect( ( heading.attributes as Record<string, unknown> ).className ).toBe( 'm-0 text-4xl text-[#171717]' );
-		expect( ( paragraph.attributes as Record<string, unknown> ).className ).toBe( 'm-0 text-sm text-[#3f3a37]' );
+		expect( headingAttrs.headingColor ).toBe( '#2A3A5C' );
+		expect( headingAttrs ).not.toHaveProperty( 'sneaky' ); // invented key rejected
+		expect( headingAttrs.paddingTablet ).toBe( 8 ); // untouched attribute survives
 
-		// Text/structure survive byte-for-byte — the model never saw them.
-		expect( ( paragraph.attributes as Record<string, unknown> ).content ).toBe( 'Start with the essentials.' );
-		expect( ( section.innerBlocks as unknown[] ).length ).toBe( 3 );
+		// Copy and structure survive byte-for-byte — the model never saw them.
+		expect( headingAttrs.content ).toBe( 'Compare plans' );
+		expect( paragraphAttrs.content ).toBe( 'Start with the essentials.' );
+		expect( paragraphAttrs.backgroundColor ).toBe( 'accent' ); // undefined → kept
+	} );
+
+	it( 'styleNodeChanged only flags a real value change on a sent key', () => {
+		const [ , headingNode ] = collectStyleNodes( selection(), getBlockType );
+
+		expect( styleNodeChanged( headingNode, { headingColor: '#2A3A5C', fontSize: 40, padding: 12 } ) ).toBe( true );
+		expect( styleNodeChanged( headingNode, { headingColor: '#171717', fontSize: 40, padding: 12 } ) ).toBe( false );
+		expect( styleNodeChanged( headingNode, undefined ) ).toBe( false );
 	} );
 } );
 
 describe( 'buildStyleEditPrompt', () => {
-	it( 'sends classNames + labels but never the copy, and asks for a fixed count', () => {
-		const nodes = collectClassNodes( selection(), getBlockType );
+	it( 'sends style attrs + labels but never the copy, and asks for a fixed count', () => {
+		const nodes = collectStyleNodes( selection(), getBlockType );
 		const prompt = buildStyleEditPrompt( {
 			nodes,
 			instruction: 'Recolor it.',
@@ -88,21 +131,21 @@ describe( 'buildStyleEditPrompt', () => {
 
 		expect( prompt ).toContain( 'Return EXACTLY 3 items' );
 		expect( prompt ).toContain( 'accent (#C6C2DC) — Twilight lilac' );
-		expect( prompt ).toContain( 'Atomic Wind blocks' );
+		expect( prompt ).toContain( 'headingColor' );
 		expect( prompt ).toContain( 'px-8 py-24 bg-white' );
-		// The block copy must not leak into a style-only prompt.
+		// Block copy must not leak into a style-only prompt.
 		expect( prompt ).not.toContain( 'Compare plans' );
 		expect( prompt ).not.toContain( 'Start with the essentials' );
 	} );
 } );
 
 describe( 'runStyleEditTurn', () => {
-	it( 'applies the returned classNames and reports the style route', async() => {
+	it( 'applies the returned style attrs and reports the style route', async() => {
 		const requestCompletion = jest.fn( async() => JSON.stringify({
 			items: [
-				'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]',
-				'm-0 text-4xl text-[#2A3A5C]',
-				'm-0 text-sm text-[#2A3A5C]'
+				{ className: 'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]' },
+				{ headingColor: '#2A3A5C', fontSize: 40, padding: 12 },
+				{ backgroundColor: 'accent', style: { color: { text: '#2A3A5C' } } }
 			]
 		}) );
 
@@ -113,29 +156,30 @@ describe( 'runStyleEditTurn', () => {
 		expect( ( section.attributes as Record<string, unknown> ).className ).toBe( 'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]' );
 		expect( result.generation.rationale ).toEqual( [ 'Restyled 3 elements.' ] );
 
-		// It never asked the model for markup — only the className list.
+		// It never asked the model for markup — only the attribute bundles.
 		const sent = String( requestCompletion.mock.calls[ 0 ][ 0 ] );
 		expect( sent ).toContain( 'STYLE_EDIT' );
 		expect( sent ).not.toContain( '<!-- wp:' );
 	} );
 
-	it( 'returns no blocks when the selection has no classNames (caller falls back)', async() => {
-		const bare = [ { name: 'atomic-wind/spacer', attributes: {}, innerBlocks: [] } ] as unknown as BlockProps<unknown>[];
-		const result = await runStyleEditTurn( baseArgs({ referenceBlocks: bare }) );
+	it( 'returns no blocks when the selection has no style attributes (caller falls back)', async() => {
+		const bare = [ { name: 'core/spacer', attributes: { height: undefined }, innerBlocks: [] } ] as unknown as BlockProps<unknown>[];
+		const bareType = ( ( name: string ) => ( { name, attributes: { anchor: { type: 'string' } } } ) ) as unknown as RunTurnArgs['getBlockType'];
+		const result = await runStyleEditTurn( baseArgs({ referenceBlocks: bare, getBlockType: bareType }) );
 
 		expect( result.generation.blocks.length ).toBe( 0 );
 	} );
 } );
 
 describe( 'runAgentTurn — style routing', () => {
-	it( 'routes a style edit through the className splice, not a markup rewrite', async() => {
+	it( 'routes a style edit through the attribute splice, not a markup rewrite', async() => {
 		// First call is the decider (→ style); second is the style edit itself.
 		const requestCompletion = jest.fn()
 			.mockResolvedValueOnce( JSON.stringify({ kind: 'style', reason: 'color change' }) )
 			.mockResolvedValueOnce( JSON.stringify({ items: [
-				'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]',
-				'm-0 text-4xl text-[#2A3A5C]',
-				'm-0 text-sm text-[#2A3A5C]'
+				{ className: 'px-8 py-24 bg-[#C6C2DC] text-[#2A3A5C]' },
+				{ headingColor: '#2A3A5C', fontSize: 40, padding: 12 },
+				{ backgroundColor: 'accent', style: { color: { text: '#2A3A5C' } } }
 			] }) );
 
 		const result = await runAgentTurn( baseArgs({

@@ -8,9 +8,11 @@
  *                the text fragments and splice them back; layout and styles are
  *                never sent and cannot change. No "huge chunks".
  *   STYLE edit — a selection whose request only changes the look. We send just
- *                each block's className and splice the transformed classes back;
- *                markup, text, and structure are never sent and cannot change.
- *                Falls back to a full rewrite when nothing carries a className.
+ *                each block's style attributes (className for atomic-wind, plus
+ *                `style`/color/spacing/font attrs for classic & core blocks) and
+ *                splice the transformed values back; markup, text, and structure
+ *                are never sent and cannot change. Falls back to a full rewrite
+ *                when a block exposes no style attributes.
  *   BLOCK edit — a selection whose request rebuilds it ('redesign'). Full-markup
  *                rewrite, rebuilt through the same validate/repair/quality
  *                machinery as generation.

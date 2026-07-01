@@ -41,11 +41,8 @@ $o-ai-segment-bg: #f0f0f1;
         font-weight: 600;
     }
 
-    // Column layout so the body fills the height and the footer stays at the
-    // bottom; the scroll lives on the inner region. Column direction keeps every
-    // child full-width (a row default is what collapsed the content before).
-    // `flex: 1; min-height: 0` bounds the height so the inner region can scroll
-    // instead of the whole modal growing.
+    // Column layout keeps children full-width and lets the inner region (not the
+    // whole modal) take the scroll; `flex: 1; min-height: 0` bounds the height.
     .components-modal__content {
         display: flex;
         flex: 1 1 auto;
@@ -254,10 +251,8 @@ $o-ai-segment-bg: #f0f0f1;
     100% { background-position: -200% 0; }
 }
 
-// Footer — Done + Regenerate (left, with token count), version nav (right).
-// Sticks to the bottom of the modal's scroll area so the actions stay reachable;
-// the solid background + the content's zeroed bottom padding stop anything from
-// peeking past it as the preview scrolls.
+// Footer — actions left, version nav right. Solid background so scrolling
+// content never peeks past it.
 .o-ai-content-modal__footer {
     flex: 0 0 auto;
     display: flex;
@@ -350,9 +345,7 @@ $o-ai-primary: #3858e9;
 .o-ai-content-modal__dialog.is-section-mode {
     width: min(1020px, 96vw);
     max-width: min(1020px, 96vw);
-    // Grow to fit the content, but never taller than the viewport. When the
-    // preview is short the modal hugs it; when it's tall the dialog caps at 90vh
-    // and the canvas (overflow: auto) takes the scroll.
+    // Hug the content but cap at the viewport; the canvas takes any overflow.
     height: auto;
     max-height: 90vh;
 
@@ -523,15 +516,13 @@ $o-ai-primary: #3858e9;
     margin-bottom: 10px;
 }
 
-// Canvas — scrollable preview stage on a muted background.
+// Canvas — the preview stage on a muted background. Does NOT scroll itself; the
+// scroll lives inside the frame (see .o-ai-section__scroll).
 .o-ai-section__canvas {
     position: relative;
-    // `auto` basis lets the canvas size to its content so the modal grows only as
-    // tall as the preview; once the dialog hits its 90vh cap this shrinks and the
-    // canvas scrolls instead of pushing the footer off-screen.
     flex: 1 1 auto;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 14px;
@@ -539,19 +530,18 @@ $o-ai-primary: #3858e9;
     background: #f0f0f1;
 }
 
-// Scope notice: shown when the selection is a container, so the user knows an
-// edit (Translate, Rewrite, …) rewrites the whole nested subtree — not just the
-// block they clicked into. Sits at the top of the canvas, above the preview.
-// The framed preview, centered on the stage. `flex: 0 0 auto` keeps the frame
-// at the BlockPreview's full (scaled) height instead of being shrunk to fit the
-// flex column — otherwise a tall section is clipped and can't scroll. The canvas
-// (overflow: auto) is the scroll container. BlockPreview scales its own iframe
-// from viewportWidth down to this width, so no manual zoom hack is needed.
+// The framed preview, centered on the stage. BlockPreview scales its own iframe
+// from viewportWidth down to this width.
 .o-ai-section__frame {
     position: relative;
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     width: 100%;
     max-width: 1100px;
+    // A fixed 16:9 viewport; `max-height: 100%` caps it to the canvas and the
+    // inner scroll region takes any overflow.
+    aspect-ratio: 16 / 9;
+    max-height: 100%;
+    min-height: 0;
     margin: 0 auto;
     background: #fff;
     border: 1px solid #e0e0e0;
@@ -578,28 +568,19 @@ $o-ai-primary: #3858e9;
     }
 }
 
-// The internal scroll region: caps the preview at a fixed height and takes the
-// scroll itself, so a tall section stays contained here instead of growing the
-// modal. The frame (position: relative, overflow: hidden) does NOT scroll, which
-// keeps the shimmer overlay pinned over the visible area rather than stretched
-// across the full off-screen height.
+// The only scroll container in the stage: fills the fixed 16:9 frame and takes
+// the scroll, so a tall section stays contained (and the shimmer overlay, pinned
+// to the non-scrolling frame, stays over the visible area).
 .o-ai-section__scroll {
     width: 100%;
-    max-height: 60vh;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
-
-    // Full-page previews are taller and page-like — give them a little more room
-    // before scrolling kicks in.
-    .o-ai-section__frame.is-page & {
-        max-height: 68vh;
-    }
 }
 
-// Translucent "updating" overlay shown over the live preview during any edit.
-// The current layout stays visible underneath; a soft sweep + pulse signals work
-// in progress without hiding what's being changed.
+// Translucent "updating" overlay shown over the live preview during an edit —
+// the current layout stays visible underneath while a sweep + pulse signal work.
 .o-ai-section__updating {
     position: absolute;
     inset: 0;
@@ -663,10 +644,8 @@ $o-ai-primary: #3858e9;
     }
 }
 
-// Wraps the live BlockPreview so the skeleton stays on top until the iframe has
-// actually painted, then crossfades in (mirrors .o-library__live; see
-// LivePreview). Without this the preview shows a white rectangle while the
-// iframe boots and styles load.
+// Wraps the live BlockPreview so the skeleton holds until the iframe has painted,
+// then crossfades in — otherwise the preview flashes white while the iframe boots.
 .o-ai-section__live {
     position: relative;
     width: 100%;
@@ -677,8 +656,7 @@ $o-ai-primary: #3858e9;
         width: 100%;
     }
 
-    // Until the iframe has painted, keep it invisible and out of flow so the
-    // skeleton alone sets the size.
+    // Before paint, keep it out of flow so the skeleton alone sets the size.
     &:not( .is-ready ) .block-editor-block-preview__container {
         position: absolute;
         inset: 0 0 auto;
@@ -691,9 +669,8 @@ $o-ai-primary: #3858e9;
     }
 }
 
-// Structured "section forming" skeleton — shown over a booting preview and as
-// the first-build loading state. Centered like a real hero so it reads as a
-// section taking shape rather than a blank shimmering block.
+// "Section forming" skeleton — shown over a booting preview and as the first-build
+// loading state. Centered like a hero so it reads as a section taking shape.
 .o-ai-section__skeleton {
     display: flex;
     flex-direction: column;
@@ -778,7 +755,8 @@ $o-ai-primary: #3858e9;
 }
 
 .o-ai-section__loading {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
+    min-height: 0;
     width: 100%;
     max-width: 1100px;
     margin: auto;
@@ -823,8 +801,7 @@ $o-ai-primary: #3858e9;
         fill: currentColor;
     }
 
-    // The busy spinner should read as the same accent as the sparkle icon it
-    // replaces — pin the moving indicator to the accent, keep a faint track.
+    // The busy spinner reads as the same accent as the sparkle icon it replaces.
     .components-spinner__indicator {
         stroke: $o-ai-accent;
     }
@@ -855,8 +832,8 @@ $o-ai-primary: #3858e9;
         line-height: 1.5;
     }
 
-    // While generating the field is disabled but still shows the running prompt —
-    // keep it legible (browsers otherwise grey out / fade disabled text).
+    // The disabled field still shows the running prompt — keep it legible
+    // (browsers otherwise fade disabled text).
     textarea:disabled {
         opacity: 1;
         color: #1e1e1e;
@@ -865,16 +842,15 @@ $o-ai-primary: #3858e9;
     }
 }
 
-// Busy / locked state — make it unmistakable that the prompt can't be edited
-// while a generation is in flight: a muted, greyed field, a "not-allowed" cursor
-// across the whole box, and the running prompt shown in a read-only grey.
+// Busy / locked state — a muted, greyed field with a "not-allowed" cursor makes
+// it clear the prompt can't be edited while a generation is in flight.
 .o-ai-section__refine-field.is-busy {
     background: #f5f6f7;
     border-color: #e0e2e6;
     box-shadow: none;
     cursor: not-allowed;
 
-    // The spinner sits where the sparkle icon was, sized to match it.
+    // Spinner sized to match the sparkle icon it replaces.
     .o-ai-section__refine-icon .components-spinner {
         margin: 0;
         width: 19px;
@@ -895,8 +871,8 @@ $o-ai-primary: #3858e9;
     justify-content: center;
 }
 
-// Stop = a filled danger button while generating, so cancelling reads clearly as
-// a destructive/interrupt action. Overrides WP's secondary + destructive outline.
+// Stop = a filled danger button while generating (overrides WP's secondary +
+// destructive outline) so cancelling reads clearly as an interrupt.
 .o-ai-section__refine-stop.components-button.is-destructive {
     background: #d63638;
     color: #fff;
@@ -915,9 +891,8 @@ $o-ai-primary: #3858e9;
     }
 }
 
-// Soft inline failure card, flush under the prompt box — a gently tinted rounded
-// panel, deliberately not the heavy boxed WP <Notice>. The Retry action lives on
-// the primary button (which turns into "Retry"), so this only carries the message.
+// Soft inline failure card under the prompt box — a tinted rounded panel, not the
+// heavy WP <Notice>. Carries only the message; Retry lives on the primary button.
 .o-ai-section__error {
     display: flex;
     align-items: flex-start;
@@ -957,8 +932,8 @@ $o-ai-primary: #3858e9;
     }
 }
 
-// Tie the failure to its source: a soft red frame on the prompt box while an
-// error is showing. The focus ring (blue) still wins when the user clicks in.
+// Soft red frame on the prompt box while an error shows; the blue focus ring
+// still wins on click.
 .o-ai-section__refine-field.has-error {
     border-color: #eab8b9;
 
@@ -967,8 +942,8 @@ $o-ai-primary: #3858e9;
     }
 }
 
-// Quick-action pill just filled the prompt: a brief accent pulse + focus ring so
-// the (easily-missed) field visibly reacts.
+// A quick-action pill just filled the prompt: brief accent pulse so the
+// easily-missed field visibly reacts.
 .o-ai-section__refine-field.is-pulsing {
     animation: o-ai-prompt-pulse 1s ease;
 

@@ -47,10 +47,11 @@ export const buildDeciderPrompt = ( instruction: string, taskContext?: string ):
 		'Classify the request into exactly one kind:',
 		[
 			'- "text": only the wording/copy should change. Examples: translate, fix grammar, rephrase, change tone, shorten, expand, summarize. Layout, structure, and styles stay identical.',
-			'- "style": only the visual styling/layout should change. Examples: change color, background, spacing, padding, alignment, size, font, borders, make it a card. The wording stays identical.',
-			'- "redesign": the structure or content should be rebuilt. Examples: redesign this, rebuild it, add/remove blocks, turn it into a different section, generate new content.'
+			'- "style": only the visual styling of the elements that ALREADY EXIST should change — no element is added or removed. Examples: change color, background, spacing, padding, alignment, size, font, borders, rounded corners; add a shadow/border/padding to something already there. The wording and the set of blocks stay identical.',
+			'- "redesign": the block structure changes — a new element or layer is added, or blocks are removed, reordered, or rebuilt. Examples: redesign or rebuild it; add or remove a section/column/button/icon/divider/badge; add an OVERLAY or tint layer between a background and its content; turn it into a different section; generate new content.'
 		].join( '\n' ),
-		'When unsure between "text" and "style", pick the one the request most directly asks for. Only pick "redesign" when the request clearly wants new structure or new content.',
+		'Adding a NEW element or layer is always "redesign", even when it sounds visual: "add a dark overlay", "add a divider", "add a badge", "add a button" each introduce a new block. Choose "style" only when a visual property is applied to existing elements ("add a shadow", "add a border", "add more padding") without introducing any new element.',
+		'When unsure between "text" and "style", pick the one the request most directly asks for.',
 		'Return strict JSON: { "kind": "text" | "style" | "redesign", "reason": string (short) }.'
 	].join( '\n\n' );
 };

@@ -30,4 +30,20 @@ describe( 'buildBlockRewritePrompt', () => {
 
 		expect( prompt ).not.toContain( 'Attribute schema for every block type in the selection' );
 	});
+
+	it( 'teaches the atomic-wind overlay idiom so an "add overlay" redesign builds a real layer', () => {
+		const prompt = buildBlockRewritePrompt({ ...base, hasAtomic: true, editKind: 'redesign' });
+
+		// The idiom: an empty, absolutely-positioned box with a translucent bg,
+		// above which the content is lifted with z-index.
+		expect( prompt ).toContain( 'Overlay / tint over a background' );
+		expect( prompt ).toContain( 'absolute inset-0' );
+		expect( prompt ).toContain( 'relative z-10' );
+	});
+
+	it( 'omits the atomic-wind hint when the selection is not atomic-wind', () => {
+		const prompt = buildBlockRewritePrompt({ ...base, hasAtomic: false });
+
+		expect( prompt ).not.toContain( 'Overlay / tint over a background' );
+	});
 });
