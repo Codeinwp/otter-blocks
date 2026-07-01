@@ -29,8 +29,14 @@ import type { RouteDecision, RunTurnArgs, RunTurnResult } from './types';
 export const runAgentTurn = async( args: RunTurnArgs ): Promise<RunTurnResult> => {
 	const hasSelection = Boolean( args.referenceBlocks?.length );
 
-	// GENERATE — net-new content, create mode, or an explicit generate request.
-	if ( ! hasSelection || args.isCreateMode || 'generate' === args.forceRoute ) {
+	// GENERATE — net-new content: a fresh build with nothing to edit yet (no
+	// reference blocks) or an explicit generate request. NOTE: we intentionally do
+	// NOT force-generate for every create-mode turn. The FIRST create turn has no
+	// reference blocks (→ generates here anyway), but a follow-up in the SAME modal
+	// carries the just-generated result as reference blocks and a refine
+	// instruction — it must fall through to the edit classifier below so the edit
+	// actually applies, instead of silently rebuilding from the original prompt.
+	if ( ! hasSelection || 'generate' === args.forceRoute ) {
 		const generation = await runGenerateTurn({
 			activePrompt: args.activePrompt,
 			referenceBlocks: args.referenceBlocks,

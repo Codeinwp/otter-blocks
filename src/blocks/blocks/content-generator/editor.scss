@@ -87,8 +87,8 @@
 		color: #18181b;
 
 		&:focus {
-			border-color: #e25563;
-			box-shadow: 0 0 0 1px #e25563;
+			border-color: var( --wp-admin-theme-color, #3858e9 );
+			box-shadow: 0 0 0 1px var( --wp-admin-theme-color, #3858e9 );
 			outline: none;
 		}
 	}
@@ -117,7 +117,7 @@
 
 			&.is-primary {
 				background: #fff;
-				color: #e25563;
+				color: var( --wp-admin-theme-color, #3858e9 );
 				box-shadow: 0 1px 2px rgba( 16, 18, 30, 0.12 );
 			}
 		}
@@ -139,9 +139,9 @@
 			color: #3f3f46;
 
 			&:hover:not( :disabled ) {
-				background: #fff5f6;
-				border-color: #f0b7be;
-				color: #e25563;
+				background: transparent;
+				border-color: var( --wp-admin-theme-color, #3858e9 );
+				color: var( --wp-admin-theme-color, #3858e9 );
 			}
 		}
 	}
@@ -190,12 +190,9 @@
 		}
 
 		.components-form-toggle {
+			// Put the switch to the right of the label. The checked colour comes
+			// from WP's default toggle styling (the admin accent).
 			order: 2;
-
-			&.is-checked .components-form-toggle__track {
-				background-color: #e25563;
-				border-color: #e25563;
-			}
 		}
 
 		// The help sits below the row as a BaseControl sibling. WP indents it to
@@ -247,18 +244,8 @@
 			font-size: 14px;
 			font-weight: 600;
 			border-radius: 10px;
-			background: #e25563;
-			box-shadow: 0 1px 2px rgba( 226, 85, 99, 0.4 );
-
-			&:hover:not( :disabled ) {
-				background: #cf4453;
-			}
-
-			&:disabled {
-				background: #f0b7be;
-				color: #fff;
-				box-shadow: none;
-			}
+			// Colour, hover and disabled states come from WP's is-primary button
+			// styling (the admin accent) — only the shape is customised here.
 		}
 
 		.components-button.is-tertiary {

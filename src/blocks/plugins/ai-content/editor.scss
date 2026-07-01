@@ -16,7 +16,7 @@
     text-transform: uppercase;
 }
 
-$o-ai-accent: #e25563;
+$o-ai-accent: var(--wp-admin-theme-color, #3858e9);
 $o-ai-border: #e0e0e0;
 $o-ai-muted: #757575;
 $o-ai-segment-bg: #f0f0f1;
@@ -578,6 +578,25 @@ $o-ai-primary: #3858e9;
     }
 }
 
+// The internal scroll region: caps the preview at a fixed height and takes the
+// scroll itself, so a tall section stays contained here instead of growing the
+// modal. The frame (position: relative, overflow: hidden) does NOT scroll, which
+// keeps the shimmer overlay pinned over the visible area rather than stretched
+// across the full off-screen height.
+.o-ai-section__scroll {
+    width: 100%;
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+
+    // Full-page previews are taller and page-like — give them a little more room
+    // before scrolling kicks in.
+    .o-ai-section__frame.is-page & {
+        max-height: 68vh;
+    }
+}
+
 // Translucent "updating" overlay shown over the live preview during any edit.
 // The current layout stays visible underneath; a soft sweep + pulse signals work
 // in progress without hiding what's being changed.
@@ -601,7 +620,7 @@ $o-ai-primary: #3858e9;
         background: linear-gradient(
             110deg,
             rgba(255, 255, 255, 0) 30%,
-            rgba(226, 85, 99, 0.18) 50%,
+            rgba(56, 88, 233, 0.18) 50%,
             rgba(255, 255, 255, 0) 70%
         );
         background-size: 220% 100%;
@@ -803,6 +822,16 @@ $o-ai-primary: #3858e9;
         height: 19px;
         fill: currentColor;
     }
+
+    // The busy spinner should read as the same accent as the sparkle icon it
+    // replaces — pin the moving indicator to the accent, keep a faint track.
+    .components-spinner__indicator {
+        stroke: $o-ai-accent;
+    }
+
+    .components-spinner__track {
+        stroke: rgba( 56, 88, 233, 0.15 );
+    }
 }
 
 .o-ai-section__refine-input {
@@ -827,7 +856,7 @@ $o-ai-primary: #3858e9;
     }
 
     // While generating the field is disabled but still shows the running prompt —
-    // keep it fully legible (browsers otherwise grey out / fade disabled text).
+    // keep it legible (browsers otherwise grey out / fade disabled text).
     textarea:disabled {
         opacity: 1;
         color: #1e1e1e;
@@ -836,17 +865,128 @@ $o-ai-primary: #3858e9;
     }
 }
 
-// Busy state: the spinner sits where the sparkle icon was, sized to match it.
-.o-ai-section__refine-field.is-busy .o-ai-section__refine-icon .components-spinner {
-    margin: 0;
-    width: 19px;
-    height: 19px;
+// Busy / locked state — make it unmistakable that the prompt can't be edited
+// while a generation is in flight: a muted, greyed field, a "not-allowed" cursor
+// across the whole box, and the running prompt shown in a read-only grey.
+.o-ai-section__refine-field.is-busy {
+    background: #f5f6f7;
+    border-color: #e0e2e6;
+    box-shadow: none;
+    cursor: not-allowed;
+
+    // The spinner sits where the sparkle icon was, sized to match it.
+    .o-ai-section__refine-icon .components-spinner {
+        margin: 0;
+        width: 19px;
+        height: 19px;
+    }
+
+    .o-ai-section__refine-input textarea {
+        background: transparent !important;
+        color: #6b7280;
+        -webkit-text-fill-color: #6b7280;
+        cursor: not-allowed;
+    }
 }
 
 .o-ai-section__refine-submit.components-button,
 .o-ai-section__refine-stop.components-button {
     flex: 0 0 auto;
     justify-content: center;
+}
+
+// Stop = a filled danger button while generating, so cancelling reads clearly as
+// a destructive/interrupt action. Overrides WP's secondary + destructive outline.
+.o-ai-section__refine-stop.components-button.is-destructive {
+    background: #d63638;
+    color: #fff;
+    box-shadow: none;
+
+    &:not( :disabled ):hover,
+    &:not( :disabled ):focus {
+        background: #b32d2e;
+        color: #fff;
+        box-shadow: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid rgba( 214, 54, 56, 0.5 );
+        outline-offset: 1px;
+    }
+}
+
+// Soft inline failure card, flush under the prompt box — a gently tinted rounded
+// panel, deliberately not the heavy boxed WP <Notice>. The Retry action lives on
+// the primary button (which turns into "Retry"), so this only carries the message.
+.o-ai-section__error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 9px 12px;
+    border: 1px solid #f1c7c8;
+    border-radius: 9px;
+    background: #fdf4f4;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #8a2b2c;
+    animation: o-ai-error-in 0.18s ease;
+}
+
+.o-ai-section__error-icon {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    fill: #cc1818;
+}
+
+.o-ai-section__error-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-top: 1px;
+}
+
+@keyframes o-ai-error-in {
+    from {
+        opacity: 0;
+        transform: translateY( -3px );
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY( 0 );
+    }
+}
+
+// Tie the failure to its source: a soft red frame on the prompt box while an
+// error is showing. The focus ring (blue) still wins when the user clicks in.
+.o-ai-section__refine-field.has-error {
+    border-color: #eab8b9;
+
+    &:not( :focus-within ) {
+        box-shadow: 0 0 0 1px rgba( 204, 24, 24, 0.12 );
+    }
+}
+
+// Quick-action pill just filled the prompt: a brief accent pulse + focus ring so
+// the (easily-missed) field visibly reacts.
+.o-ai-section__refine-field.is-pulsing {
+    animation: o-ai-prompt-pulse 1s ease;
+
+    @media ( prefers-reduced-motion: reduce ) {
+        animation: none;
+    }
+}
+
+@keyframes o-ai-prompt-pulse {
+    0% {
+        border-color: $o-ai-primary;
+        box-shadow: 0 0 0 3px rgba( 56, 88, 233, 0.22 );
+    }
+
+    100% {
+        border-color: #cdd0d6;
+        box-shadow: 0 0 0 3px rgba( 56, 88, 233, 0 );
+    }
 }
 
 // Footer — version stepper + tokens (left), Discard / Insert (right).

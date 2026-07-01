@@ -14,6 +14,7 @@ import {
 } from '../block-generation';
 import type { BlockProps } from '../../../helpers/blocks';
 import type { GeneratedBlockTree, ThemeColor } from '../block-generation';
+import { buildBlockSchemaPayload } from '../apply-content';
 import { parseJsonResponse } from '../json-utils';
 import { formatSessionHistoryForPrompt } from '../session-history';
 import { PIPELINE_STEP } from '../prompts/phases';
@@ -36,6 +37,13 @@ type RewritePromptArgs = {
 	sessionHistory: string[];
 	themeColors: ThemeColor[];
 	hasAtomic: boolean;
+	/**
+	 * JSON attribute schema (deduplicated by block type) for every block type in
+	 * the selection, so the model knows the full set of valid attributes it may
+	 * set — not just the ones already present in the markup. Empty when the
+	 * selection yields no schema.
+	 */
+	blockSchema?: string;
 	/**
 	 * 'style' constrains the rewrite to visual/layout changes and forbids text
 	 * edits (text is also re-injected after, as a guarantee). 'redesign' allows
@@ -60,6 +68,7 @@ export const buildBlockRewritePrompt = ( args: RewritePromptArgs ): string => {
 		'Below is the COMPLETE current block markup — serialized blocks with their comment delimiters. Treat it as the full, authoritative source of truth, including every nested block and attribute.',
 		'Current block markup:',
 		args.markup,
+		...( args.blockSchema ? [ `Attribute schema for every block type in the selection (deduplicated by type) — the full set of valid attributes you may set on each, beyond those already present in the markup:\n${ args.blockSchema }` ] : [] ),
 		...( args.taskContext && args.taskContext !== args.instruction ? [ `Original task for context: ${ args.taskContext }` ] : [] ),
 		`Apply this change: ${ args.instruction }`,
 		'Rules:',
@@ -74,7 +83,7 @@ export const buildBlockRewritePrompt = ( args: RewritePromptArgs ): string => {
 					'- Change only what the request requires; preserve all other blocks, their attributes, nesting, and text exactly as given.',
 					'- You may add, remove, reorder, or re-nest blocks when the request calls for it.'
 				] ),
-			'- Keep each block comment\'s JSON attributes consistent with its HTML so every block stays valid. Use only block types and attributes that already appear in the markup or are standard for those blocks; never invent block types or attributes.'
+			'- Keep each block comment\'s JSON attributes consistent with its HTML so every block stays valid. Use only block types already in the markup and attributes valid for them (see the attribute schema above); never invent block types or attributes.'
 		].join( '\n' ),
 		...( palette ? [ `When the change involves colors, prefer these theme color slugs where they fit:\n${ palette }` ] : [] ),
 		...( args.hasAtomic ? [ ATOMIC_WIND_ATTRIBUTE_HINT ] : [] ),
@@ -140,6 +149,14 @@ export const runBlockRewriteTurn = async(
 	const markup = serialize( args.referenceBlocks as Parameters<typeof serialize>[ 0 ] );
 	const hasAtomic = markup.includes( 'atomic-wind/' );
 
+	// The attribute schema for every block type in the selection (including nested
+	// ones), so the rewrite can use the full valid attribute set — not only what
+	// the current markup happens to expose.
+	const schemaPayload = buildBlockSchemaPayload( args.referenceBlocks, args.getBlockType );
+	const blockSchema = schemaPayload && Object.keys( schemaPayload.schemas ).length
+		? JSON.stringify( schemaPayload.schemas, null, 2 )
+		: '';
+
 	const basePrompt = buildBlockRewritePrompt({
 		markup,
 		instruction: args.instruction,
@@ -147,6 +164,7 @@ export const runBlockRewriteTurn = async(
 		sessionHistory: args.sessionHistory,
 		themeColors: args.themeColors,
 		hasAtomic,
+		blockSchema,
 		editKind
 	});
 

@@ -15,7 +15,7 @@ import {
 
 import { cloneBlock, serialize } from '@wordpress/blocks';
 
-import { chevronLeft, chevronRight, close } from '@wordpress/icons';
+import { chevronLeft, chevronRight, close, warning } from '@wordpress/icons';
 
 import { useDispatch, useSelect } from '@wordpress/data';
 
@@ -48,6 +48,8 @@ import {
 import type { BlockGenerationResult } from './block-generation';
 import { getTrackingFeatureValue, runAgentTurn } from './agent';
 import type { AgentToolName, GenerationRoute } from './agent';
+import { aiError, describePromptError, PromptRequestError } from './errors';
+import type { AIError } from './errors';
 import { extractPromptHistory } from './session-history';
 import { buildPageStyleDigest } from './page-style';
 import { LivePreview } from '../patterns-library/template';
@@ -236,7 +238,9 @@ const AIContentModal = ({
 	// the request is in flight so the user sees what's running instead of an empty
 	// field they can type into. Cleared whenever generation stops.
 	const [ runningPrompt, setRunningPrompt ] = useState( '' );
-	const [ error, setError ] = useState<string | undefined>();
+	// The classified failure of the last run (message + whether a Retry is worth
+	// offering). Kept alongside the (preserved) prompt so the user can retry.
+	const [ errorInfo, setErrorInfo ] = useState<AIError | undefined>();
 	const [ turns, setTurns ] = useState<Turn[]>([]);
 	const [ activeTurnIndex, setActiveTurnIndex ] = useState( 0 );
 	const [ liveBlocks, setLiveBlocks ] = useState<BlockProps<unknown>[]>([]);
@@ -246,6 +250,17 @@ const AIContentModal = ({
 	const generationIdRef = useRef( 0 );
 	const abortControllerRef = useRef<AbortController | null>( null );
 	const previousTurnIndexRef = useRef( activeTurnIndex );
+	// The exact arguments of the last run, so Retry can replay it verbatim (the
+	// surrounding turn state is unchanged on failure, so a replay is faithful).
+	const lastAttemptRef = useRef<{ prompt: string; forceEditRoute: boolean } | undefined>();
+
+	// Brief highlight of the prompt field after a quick-action pill fills it in, so
+	// the user notices their prompt box was just populated (the field is below the
+	// pills and easy to miss). Cleared on a timer.
+	const [ promptPulse, setPromptPulse ] = useState( false );
+	const pulseTimerRef = useRef<ReturnType<typeof setTimeout>>();
+	const pulseRafRef = useRef<number>( 0 );
+	const refineFieldRef = useRef<HTMLDivElement>( null );
 
 	useEffect( () => {
 		isMountedRef.current = true;
@@ -253,6 +268,8 @@ const AIContentModal = ({
 		return () => {
 			isMountedRef.current = false;
 			abortControllerRef.current?.abort();
+			clearTimeout( pulseTimerRef.current );
+			cancelAnimationFrame( pulseRafRef.current );
 		};
 	}, []);
 
@@ -461,7 +478,7 @@ const AIContentModal = ({
 
 	const stopGeneration = () => {
 		abortInFlightGeneration();
-		setError( undefined );
+		setErrorInfo( undefined );
 	};
 
 	// The original sits at index 0 (edit sessions); number the real edits from 1 so
@@ -510,6 +527,26 @@ const AIContentModal = ({
 
 		setInstruction( '' );
 
+		// Remember this run so a failure can be retried verbatim (the surrounding
+		// turn state is unchanged on failure, so replaying it is faithful).
+		lastAttemptRef.current = { prompt: turnInstruction, forceEditRoute };
+
+		const generationId = ++generationIdRef.current;
+		const isStale = () => ! isMountedRef.current || generationId !== generationIdRef.current;
+
+		// Enter the error state, keep the typed prompt in the box, and record the
+		// classified failure so the inline strip below the field can show it (and
+		// offer Retry). Never clobbers a newer run's state.
+		const failWith = ( aiFailure: AIError ) => {
+			if ( isStale() ) {
+				return;
+			}
+			setStatus( 'error' );
+			setErrorInfo( aiFailure );
+			setLiveBlocks([]);
+			setInstruction( turnInstruction );
+		};
+
 		// The seeded "Original" baseline is history, not a prior generation — exclude
 		// it so the first real edit is treated as an initial edit, not a refine.
 		const priorTurns = turns
@@ -523,13 +560,9 @@ const AIContentModal = ({
 		const routeInstruction = refineInstruction || activePrompt;
 
 		if ( ! hasAPIKey ) {
-			setError( __( 'No AI provider detected. Please configure one in the AI settings.', 'otter-blocks' ) );
-			setStatus( 'error' );
+			failWith( aiError( 'no-provider' ) );
 			return;
 		}
-
-		const generationId = ++generationIdRef.current;
-		const isStale = () => ! isMountedRef.current || generationId !== generationIdRef.current;
 
 		abortControllerRef.current?.abort();
 		const abortController = new AbortController();
@@ -537,7 +570,7 @@ const AIContentModal = ({
 
 		setStatus( 'loading' );
 		setRunningPrompt( turnInstruction );
-		setError( undefined );
+		setErrorInfo( undefined );
 
 		let usedToken = 0;
 		const requestCompletion = async( requestPrompt: string ): Promise<string> => {
@@ -554,11 +587,14 @@ const AIContentModal = ({
 			}
 
 			if ( ! response.ok ) {
-				throw new Error( response.error?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
+				// Carry the backend's code/status so the catch site can classify it
+				// into a meaningful, actionable message.
+				const raw = response.raw as { data?: { status?: number }, status?: number } | undefined;
+				throw new PromptRequestError( response.error, raw?.data?.status ?? raw?.status );
 			}
 
 			if ( ! response.content ) {
-				throw new Error( __( 'Empty response from the AI service. Please try again.', 'otter-blocks' ) );
+				throw new PromptRequestError( { code: 'empty_response', message: __( 'The AI service returned an empty response.', 'otter-blocks' ), type: 'system' } );
 			}
 
 			usedToken += response.usedTokens ?? 0;
@@ -644,9 +680,7 @@ const AIContentModal = ({
 			}
 
 			if ( ! generation.blocks.length ) {
-				setError( __( 'Could not produce a valid result. Please try rephrasing your request.', 'otter-blocks' ) );
-				setStatus( 'error' );
-				setLiveBlocks([]);
+				failWith( aiError( 'invalid-output' ) );
 				return;
 			}
 
@@ -679,11 +713,18 @@ const AIContentModal = ({
 				return;
 			}
 
-			const message = ( e as Error )?.message ?? __( 'Something went wrong. Please try again.', 'otter-blocks' );
-			setError( message );
-			setStatus( 'error' );
-			setLiveBlocks([]);
+			failWith( describePromptError( e ) );
 		}
+	};
+
+	// Replay the last failed run verbatim — the prompt is still in the box and the
+	// turn state is unchanged, so this is a faithful retry.
+	const retryGeneration = () => {
+		const attempt = lastAttemptRef.current;
+		if ( isGenerating || ! attempt ) {
+			return;
+		}
+		generateContent( attempt.prompt, attempt.forceEditRoute );
 	};
 
 	// Auto-run for toolbar quick actions (autoGenerate). We must NOT fire on the
@@ -846,6 +887,18 @@ const AIContentModal = ({
 		}
 
 		setInstruction( action.prompt );
+
+		// Flash the prompt field and drop the cursor into it so the update is
+		// obvious. Toggle off → on across a frame so a repeated pill click restarts
+		// the animation instead of it appearing to do nothing.
+		setPromptPulse( false );
+		cancelAnimationFrame( pulseRafRef.current );
+		clearTimeout( pulseTimerRef.current );
+		pulseRafRef.current = requestAnimationFrame( () => {
+			setPromptPulse( true );
+			refineFieldRef.current?.querySelector( 'textarea' )?.focus();
+		} );
+		pulseTimerRef.current = setTimeout( () => setPromptPulse( false ), 1100 );
 	};
 
 	const quickActionsRow = 0 < actions.length ? (
@@ -865,6 +918,16 @@ const AIContentModal = ({
 	) : null;
 
 	const sectionSubmitDisabled = ! hasAPIKey || isGenerating || ! instruction.trim();
+
+	// When a run failed and the prompt still matches what failed, the primary
+	// action becomes "Retry" — visually identical to "Run" — and replays the
+	// attempt. Editing the prompt makes it a new request, so it reverts to "Run".
+	const canRetry = 'error' === status &&
+		Boolean( errorInfo?.retryable ) &&
+		Boolean( lastAttemptRef.current ) &&
+		instruction.trim() === ( lastAttemptRef.current?.prompt ?? '' );
+
+	const showError = 'error' === status && Boolean( errorInfo ) && ! isGenerating;
 
 	const sectionStatus = ( () => {
 		if ( 'error' === status ) {
@@ -997,21 +1060,23 @@ const AIContentModal = ({
 						</Notice>
 					) }
 
-					{ 'error' === status && error && (
-						<Notice status="error" isDismissible={ false }>{ error }</Notice>
-					) }
-
 					{ showPreview ? (
 						<div className={ `o-ai-section__frame${ isGenerating ? ' is-live' : '' }${ 'page' === scope ? ' is-page' : '' }` }>
-							<LivePreview
-								blocks={ previewBlocks }
-								previewKey={ previewKey }
-								css={ displayAtomicCss ? [ displayAtomicCss ] : [] }
-								viewportWidth={ previewWidth }
-								className="o-ai-section__live"
-								normalizeViewport
-								placeholder={ sectionSkeleton }
-							/>
+							{ /* Cap the preview at a fixed height and scroll the section
+							     inside this wrapper — the frame itself stays put so a tall
+							     preview never grows the modal, and the shimmer overlay below
+							     only ever covers the visible area (not a huge off-screen run). */ }
+							<div className="o-ai-section__scroll">
+								<LivePreview
+									blocks={ previewBlocks }
+									previewKey={ previewKey }
+									css={ displayAtomicCss ? [ displayAtomicCss ] : [] }
+									viewportWidth={ previewWidth }
+									className="o-ai-section__live"
+									normalizeViewport
+									placeholder={ sectionSkeleton }
+								/>
+							</div>
 
 							{ /* Translucent shimmer over the current preview while the
 							     update is in flight — the existing layout stays visible
@@ -1035,12 +1100,12 @@ const AIContentModal = ({
 								</div>
 							</div>
 						</div>
-					) : ( 'error' !== status && (
+					) : (
 						<div className="o-ai-section__placeholder">
 							<p>{ emptyCanvasText }</p>
 							{ quickActionsRow }
 						</div>
-					) ) ) }
+					) ) }
 
 					{ hasTurns && Boolean( currentGenerationDiagnostics?.droppedRoots.length ) && (
 						<Notice status="warning" isDismissible={ false }>
@@ -1067,7 +1132,10 @@ const AIContentModal = ({
 					{
 						showRefineQuickActions && quickActionsRow
 					}
-					<div className={ `o-ai-section__refine-field${ isGenerating ? ' is-busy' : '' }` }>
+					<div
+						ref={ refineFieldRef }
+						className={ `o-ai-section__refine-field${ isGenerating ? ' is-busy' : '' }${ promptPulse ? ' is-pulsing' : '' }${ showError ? ' has-error' : '' }` }
+					>
 						<span className="o-ai-section__refine-icon" aria-hidden="true">
 							{ isGenerating ? <Spinner /> : <Icon icon={ aiGeneration } /> }
 						</span>
@@ -1086,14 +1154,35 @@ const AIContentModal = ({
 						/>
 						<Button
 							variant={ isGenerating ? 'secondary' : 'primary' }
+							isDestructive={ isGenerating }
 							className={ isGenerating ? 'o-ai-section__refine-stop' : 'o-ai-section__refine-submit' }
-							disabled={ ! isGenerating && sectionSubmitDisabled }
+							disabled={ ! isGenerating && ! canRetry && sectionSubmitDisabled }
 							isBusy={ false }
-							onClick={ isGenerating ? stopGeneration : handleSectionSubmit }
+							onClick={ () => {
+								if ( isGenerating ) {
+									stopGeneration();
+								} else if ( canRetry ) {
+									retryGeneration();
+								} else {
+									handleSectionSubmit();
+								}
+							} }
 						>
-							{ isGenerating ? __( 'Stop', 'otter-blocks' ) : __( 'Run', 'otter-blocks' ) }
+							{ isGenerating
+								? __( 'Stop', 'otter-blocks' )
+								: ( canRetry ? __( 'Retry', 'otter-blocks' ) : __( 'Run', 'otter-blocks' ) ) }
 						</Button>
 					</div>
+
+					{ /* Soft error card, flush under the prompt box — the prompt itself
+					     is preserved so the primary button turns into "Retry" (same as
+					     Run) until the prompt is edited. */ }
+					{ showError && (
+						<div className="o-ai-section__error" role="alert">
+							<Icon className="o-ai-section__error-icon" icon={ warning } size={ 18 } />
+							<span className="o-ai-section__error-text">{ errorInfo?.message }</span>
+						</div>
+					) }
 				</div>
 
 				<div className="o-ai-section__footer">

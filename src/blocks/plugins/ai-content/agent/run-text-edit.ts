@@ -92,6 +92,12 @@ export const runTextEditTurn = async( args: RunTurnArgs ): Promise<RunTurnResult
 
 	const items = parseItems( response, nodes.length );
 
+	// How many fragments the model actually changed — a string that differs from
+	// the original. Drives the "Updated text in N places" rationale below.
+	const changed = items.reduce( ( count, value, index ) => (
+		'string' === typeof value && value !== nodes[ index ]?.value ? count + 1 : count
+	), 0 );
+
 	const blocks: BlockProps<unknown>[] = applyTextNodes( args.referenceBlocks, nodes, items );
 
 	const validation = validateGeneratedBlocks( blocks, args.getBlockType, { skipRootParentChecks: true } );
