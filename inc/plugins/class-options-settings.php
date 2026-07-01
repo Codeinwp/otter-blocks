@@ -26,9 +26,31 @@ class Options_Settings {
 	 * Initialize the class
 	 */
 	public function init() {
+		$this->maybe_default_atomic_wind_blocks();
 		add_action( 'init', array( $this, 'register_settings' ), 99 );
 		add_action( 'init', array( $this, 'default_block' ), 99 );
 		add_action( 'init', array( $this, 'register_meta' ), 19 );
+	}
+
+	/**
+	 * Enable Atomic Wind for fresh Otter installs that never set the option.
+	 *
+	 * @return void
+	 */
+	public function maybe_default_atomic_wind_blocks() {
+		if ( get_option( 'themeisle_blocks_settings_atomic_wind_defaulted', false ) ) {
+			return;
+		}
+
+		if ( 'NOT_SET' === get_option( 'themeisle_blocks_settings_atomic_wind_blocks', 'NOT_SET' ) ) {
+			$installed = (int) get_option( 'otter_blocks_install', 0 );
+
+			if ( 0 === $installed || $installed > ( time() - DAY_IN_SECONDS ) ) {
+				add_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
+			}
+		}
+
+		update_option( 'themeisle_blocks_settings_atomic_wind_defaulted', true );
 	}
 
 	/**

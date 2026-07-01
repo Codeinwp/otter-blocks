@@ -44,18 +44,6 @@ const OPTION_WHITELIST = array(
 );
 
 /**
- * SDK migration state keys used by the Atomic Wind default migration E2E.
- *
- * @var string[]
- */
-const MIGRATION_OPTION_KEYS = array(
-	'otter-blocks_version',
-	'otter_blocks_install',
-	'otter_blocks_ran_migrations',
-	'themeisle_blocks_settings_atomic_wind_blocks',
-);
-
-/**
  * Transient that inc/server/class-prompt-server.php reads first; if it's set we never hit themeisle.com.
  */
 const PROMPTS_TRANSIENT = 'otter_prompts';
@@ -714,68 +702,6 @@ add_action(
 				'permission_callback' => __NAMESPACE__ . '\\require_admin',
 				'callback'            => function () {
 					return rest_ensure_response( array( 'deleted' => cleanup_form_records() ) );
-				},
-			)
-		);
-
-		register_rest_route(
-			REST_NAMESPACE,
-			'/migrations/reset',
-			array(
-				'methods'             => \WP_REST_Server::CREATABLE,
-				'permission_callback' => __NAMESPACE__ . '\\require_admin',
-				'callback'            => function ( \WP_REST_Request $request ) {
-					foreach ( MIGRATION_OPTION_KEYS as $key ) {
-						delete_option( $key );
-					}
-
-					$install_offset = $request->get_param( 'installOffsetSeconds' );
-					$install_offset = is_numeric( $install_offset ) ? (int) $install_offset : HOUR_IN_SECONDS;
-
-					update_option( 'otter_blocks_install', time() - $install_offset );
-
-					// This REST request already booted WordPress and may have stored
-					// the SDK version during init — clear it again so the next admin
-					// page load is treated as the version bump that runs migrations.
-					delete_option( 'otter-blocks_version' );
-
-					$atomic_wind = get_option( 'themeisle_blocks_settings_atomic_wind_blocks', 'NOT_SET' );
-
-					return rest_ensure_response(
-						array(
-							'ok'                   => true,
-							'installOffsetSeconds' => $install_offset,
-							'status'               => array(
-								'version'         => get_option( 'otter-blocks_version', '' ),
-								'install'         => (int) get_option( 'otter_blocks_install', 0 ),
-								'ranMigrations'   => get_option( 'otter_blocks_ran_migrations', array() ),
-								'atomicWind'      => 'NOT_SET' === $atomic_wind ? null : (bool) $atomic_wind,
-								'atomicWindUnset' => 'NOT_SET' === $atomic_wind,
-							),
-						)
-					);
-				},
-			)
-		);
-
-		register_rest_route(
-			REST_NAMESPACE,
-			'/migrations/status',
-			array(
-				'methods'             => \WP_REST_Server::CREATABLE,
-				'permission_callback' => __NAMESPACE__ . '\\require_admin',
-				'callback'            => function () {
-					$atomic_wind = get_option( 'themeisle_blocks_settings_atomic_wind_blocks', 'NOT_SET' );
-
-					return rest_ensure_response(
-						array(
-							'version'         => get_option( 'otter-blocks_version', '' ),
-							'install'         => (int) get_option( 'otter_blocks_install', 0 ),
-							'ranMigrations'   => get_option( 'otter_blocks_ran_migrations', array() ),
-							'atomicWind'      => 'NOT_SET' === $atomic_wind ? null : (bool) $atomic_wind,
-							'atomicWindUnset' => 'NOT_SET' === $atomic_wind,
-						)
-					);
 				},
 			)
 		);
