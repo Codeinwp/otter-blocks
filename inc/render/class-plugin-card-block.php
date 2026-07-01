@@ -110,6 +110,16 @@ class Plugin_Card_Block {
 
 		$slug = $request;
 
+		$cache_key = 'otter_plugin_card_' . sanitize_key( $slug );
+		$cached    = get_transient( $cache_key );
+
+		if ( false !== $cached ) {
+			$return['success'] = true;
+			$return['data']    = $cached;
+
+			return $return;
+		}
+
 		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
 		$request = array(
@@ -139,6 +149,8 @@ class Plugin_Card_Block {
 
 			return $return;
 		}
+
+		set_transient( $cache_key, $results, 12 * HOUR_IN_SECONDS );
 
 		$return['success'] = true;
 

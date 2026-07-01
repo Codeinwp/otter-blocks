@@ -29,14 +29,27 @@ import './keyboard-navigation/index.js';
 // We disable the copy-paste plugin for now.
 // import './copy-paste/index.js';
 import './sticky/index.js';
-import './dynamic-content/index.js';
 import './welcome-guide/index.js';
 import './feedback/index.js';
 import './otter-tools-inspector/index';
 import './live-search/index.js';
 import './upsell-block/index.js';
-import './ai-content/index.tsx';
-import './patterns-library/index.js';
+
+/**
+ * Load optional modules on demand, gated on their toggle, so they're only
+ * fetched when enabled.
+ *
+ * `conditions` stays a static import above: its `blocks.registerBlockType`
+ * filter must run before core blocks register, which an async chunk can't
+ * guarantee. The modules below only add late-safe hooks, so deferring is fine.
+ */
+if ( window.themeisleGutenberg?.hasModule?.dynamicContent ) {
+	import( /* webpackChunkName: "dynamic-content" */ './dynamic-content/index.js' );
+}
+
+if ( window.themeisleGutenberg?.hasModule?.aiToolbar ) {
+	import( /* webpackChunkName: "ai-content" */ './ai-content/index.tsx' );
+}
 
 const icon = <Icon icon={ otterIcon } />;
 
