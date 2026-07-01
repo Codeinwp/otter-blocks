@@ -42,4 +42,5 @@ tsconfig.json
 /plugins
 /docs
 /build/pro/
+*.map
 AGENTS.md
