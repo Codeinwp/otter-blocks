@@ -5,8 +5,7 @@
  * @package gutenberg-blocks
  */
 
-use ThemeisleSDK\Modules\Migrator;
-use ThemeisleSDK\Product;
+require_once dirname( __FILE__ ) . '/php/migration-test-helper.php';
 
 /**
  * Otter SDK migration tests.
@@ -29,23 +28,6 @@ class Test_Migrations extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Run pending Otter SDK migrations as on an admin upgrade.
-	 *
-	 * @return void
-	 */
-	private function run_otter_migrations() {
-		$product  = Product::get( OTTER_BLOCKS_BASEFILE );
-		$migrator = new Migrator( $product );
-		$migrator->load( $product );
-
-		if ( ! did_action( 'themeisle_sdk_update_otter-blocks' ) ) {
-			do_action( 'themeisle_sdk_update_otter-blocks', '', OTTER_BLOCKS_VERSION, OTTER_BLOCKS_BASEFILE );
-		}
-
-		$migrator->run_pending();
-	}
-
-	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {
@@ -59,7 +41,7 @@ class Test_Migrations extends WP_UnitTestCase {
 	public function test_default_atomic_wind_migration_enables_for_fresh_install() {
 		update_option( 'otter_blocks_install', time() - HOUR_IN_SECONDS );
 
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->assertTrue( get_option( 'themeisle_blocks_settings_atomic_wind_blocks' ) );
 		$this->assertContains( self::DEFAULT_ATOMIC_WIND_MIGRATION, get_option( 'otter_blocks_ran_migrations', array() ) );
@@ -71,7 +53,7 @@ class Test_Migrations extends WP_UnitTestCase {
 	public function test_default_atomic_wind_migration_skips_old_installs() {
 		update_option( 'otter_blocks_install', time() - ( 2 * DAY_IN_SECONDS ) );
 
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->assertFalse( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
 		$this->assertNotContains( self::DEFAULT_ATOMIC_WIND_MIGRATION, get_option( 'otter_blocks_ran_migrations', array() ) );
@@ -81,7 +63,7 @@ class Test_Migrations extends WP_UnitTestCase {
 	 * Missing install timestamp should not opt fresh sites in blindly.
 	 */
 	public function test_default_atomic_wind_migration_skips_when_install_timestamp_missing() {
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->assertFalse( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
 	}
@@ -93,7 +75,7 @@ class Test_Migrations extends WP_UnitTestCase {
 		update_option( 'otter_blocks_install', time() - HOUR_IN_SECONDS );
 		add_option( 'themeisle_blocks_settings_atomic_wind_blocks', '' );
 
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->assertFalse( (bool) get_option( 'themeisle_blocks_settings_atomic_wind_blocks' ) );
 	}
@@ -104,12 +86,12 @@ class Test_Migrations extends WP_UnitTestCase {
 	public function test_default_atomic_wind_migration_does_not_reenable_after_user_disables() {
 		update_option( 'otter_blocks_install', time() - HOUR_IN_SECONDS );
 
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 		$this->assertTrue( get_option( 'themeisle_blocks_settings_atomic_wind_blocks' ) );
 
 		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
 
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->assertFalse( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
 	}
@@ -121,7 +103,7 @@ class Test_Migrations extends WP_UnitTestCase {
 		update_option( 'otter_blocks_install', time() - ( 2 * DAY_IN_SECONDS ) );
 		update_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
 
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->assertTrue( get_option( 'themeisle_blocks_settings_atomic_wind_blocks' ) );
 	}
@@ -132,10 +114,10 @@ class Test_Migrations extends WP_UnitTestCase {
 	public function test_default_atomic_wind_migration_runs_once() {
 		update_option( 'otter_blocks_install', time() - HOUR_IN_SECONDS );
 
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
 
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->assertFalse( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
 	}
@@ -146,7 +128,7 @@ class Test_Migrations extends WP_UnitTestCase {
 	public function test_default_atomic_wind_migration_skips_install_at_one_day_boundary() {
 		update_option( 'otter_blocks_install', time() - DAY_IN_SECONDS );
 
-		$this->run_otter_migrations();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->assertFalse( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
 	}

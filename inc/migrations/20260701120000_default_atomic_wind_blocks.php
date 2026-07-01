@@ -7,28 +7,35 @@
 
 use ThemeisleSDK\Modules\Abstract_Migration;
 
-return new class() extends Abstract_Migration {
+if ( ! class_exists( 'Otter_Migration_Default_Atomic_Wind_Blocks', false ) ) {
 	/**
-	 * Only default the setting when Otter was installed recently and never saved.
-	 *
-	 * @return bool
+	 * Default Atomic Wind blocks for fresh Otter installs.
 	 */
-	public function should_run() {
-		if ( 'NOT_SET' !== get_option( 'themeisle_blocks_settings_atomic_wind_blocks', 'NOT_SET' ) ) {
-			return false;
+	class Otter_Migration_Default_Atomic_Wind_Blocks extends Abstract_Migration {
+		/**
+		 * Only default the setting when Otter was installed recently and never saved.
+		 *
+		 * @return bool
+		 */
+		public function should_run() {
+			if ( 'NOT_SET' !== get_option( 'themeisle_blocks_settings_atomic_wind_blocks', 'NOT_SET' ) ) {
+				return false;
+			}
+
+			$installed = (int) get_option( 'otter_blocks_install', 0 );
+
+			return $installed > 0 && $installed > ( time() - DAY_IN_SECONDS );
 		}
 
-		$installed = (int) get_option( 'otter_blocks_install', 0 );
-
-		return $installed > 0 && $installed > ( time() - DAY_IN_SECONDS );
+		/**
+		 * Turn on Atomic Wind blocks for eligible fresh installs.
+		 *
+		 * @return void
+		 */
+		public function up() {
+			add_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
+		}
 	}
+}
 
-	/**
-	 * Turn on Atomic Wind blocks for eligible fresh installs.
-	 *
-	 * @return void
-	 */
-	public function up() {
-		add_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
-	}
-};
+return new Otter_Migration_Default_Atomic_Wind_Blocks();

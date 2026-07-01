@@ -6,8 +6,8 @@
  */
 
 use ThemeIsle\GutenbergBlocks\Plugins\Atomic_Wind_Blocks;
-use ThemeisleSDK\Modules\Migrator;
-use ThemeisleSDK\Product;
+
+require_once dirname( __FILE__ ) . '/php/migration-test-helper.php';
 
 /**
  * Atomic Wind Blocks test case.
@@ -162,10 +162,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		delete_option( 'otter_blocks_ran_migrations' );
 		update_option( 'otter_blocks_install', time() - HOUR_IN_SECONDS );
 
-		$migrator = new Migrator( Product::get( OTTER_BLOCKS_BASEFILE ) );
-		$migrator->load( Product::get( OTTER_BLOCKS_BASEFILE ) );
-		do_action( 'themeisle_sdk_update_otter-blocks', '', OTTER_BLOCKS_VERSION, OTTER_BLOCKS_BASEFILE );
-		$migrator->run_pending();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->assertTrue( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
 	}
@@ -175,10 +172,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		delete_option( 'otter_blocks_ran_migrations' );
 		update_option( 'otter_blocks_install', time() - ( 2 * DAY_IN_SECONDS ) );
 
-		$migrator = new Migrator( Product::get( OTTER_BLOCKS_BASEFILE ) );
-		$migrator->load( Product::get( OTTER_BLOCKS_BASEFILE ) );
-		do_action( 'themeisle_sdk_update_otter-blocks', '', OTTER_BLOCKS_VERSION, OTTER_BLOCKS_BASEFILE );
-		$migrator->run_pending();
+		otter_test_run_default_atomic_wind_migration();
 
 		$this->instance->run();
 
