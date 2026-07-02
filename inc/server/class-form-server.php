@@ -820,7 +820,7 @@ class Form_Server {
 			// Sent the form date to the admin site as a default behaviour.
 			$to = sanitize_email( get_site_option( 'admin_email' ) );
 			if ( $form_data->payload_has( 'to' ) && '' !== $form_data->get_data_from_payload( 'to' ) ) {
-				$to = $form_data->get_data_from_payload( 'to' );
+				$to = sanitize_email( $form_data->get_data_from_payload( 'to' ) );
 			}
 			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . get_bloginfo( 'name', 'display' ) . '<' . $to . '>' );
 			// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail

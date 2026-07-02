@@ -53,6 +53,56 @@ class Test_SVG_Upload extends WP_UnitTestCase {
 		$this->assertTrue( strpos( $contents, '<script>' ) === false );
 	}
 
+	/**
+	 * A form-uploaded SVG must be sanitized based on its real content, even when the
+	 * client-supplied metadata name claims a different (non-SVG) extension.
+	 */
+	public function test_save_file_from_field_sanitizes_svg_regardless_of_metadata_name() {
+		wp_set_current_user( 1 );
+
+		// Allow the SVG sideload without registering Main's sanitizing prefilter,
+		// so this test exercises Form_Utils' own sanitization only.
+		$allow_svg = function ( $mimes ) {
+			$mimes['svg'] = 'image/svg+xml';
+			return $mimes;
+		};
+		$fix_ext = function ( $data, $file, $filename ) {
+			if ( '.svg' === substr( $filename, -4 ) ) {
+				$data['ext']  = 'svg';
+				$data['type'] = 'image/svg+xml';
+			}
+			return $data;
+		};
+		add_filter( 'upload_mimes', $allow_svg );
+		add_filter( 'wp_check_filetype_and_ext', $fix_ext, 10, 3 );
+
+		// Simulate a host where Main's global sanitizing prefilter is absent (e.g. VIP,
+		// or unhooked by a third party). Hooks are restored automatically in teardown.
+		remove_all_filters( 'wp_handle_sideload_prefilter' );
+
+		$file  = $this->handle_upload( __DIR__ . '/assets/xss.svg' );
+		$field = array(
+			'metadata' => array(
+				'name' => 'harmless.png', // Client lies: real upload below is an SVG.
+				'data' => 'file-0',
+			),
+		);
+		$files = array( 'file-0' => $file );
+
+		$result = \ThemeIsle\GutenbergBlocks\Integration\Form_Utils::save_file_from_field( $field, $files );
+
+		remove_filter( 'upload_mimes', $allow_svg );
+		remove_filter( 'wp_check_filetype_and_ext', $fix_ext, 10 );
+
+		$this->assertTrue( $result['success'], isset( $result['error'] ) ? (string) $result['error'] : 'upload failed' );
+		$contents = file_get_contents( $result['file_path'] );
+		$this->assertStringNotContainsString( '<script>', $contents );
+
+		if ( ! empty( $result['file_path'] ) && file_exists( $result['file_path'] ) ) {
+			unlink( $result['file_path'] );
+		}
+	}
+
 	public function test_non_svg_upload_sanitization() {
 		// Set the user as the current user.
 		wp_set_current_user( 1 );

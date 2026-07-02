@@ -118,6 +118,28 @@ class Test_Template_Cloud extends WP_UnitTestCase {
 		$this->assertFalse( $result );
 	}
 
+	/**
+	 * The source-validation request must not disable TLS certificate verification.
+	 */
+	public function test_validate_source_does_not_disable_ssl_verification() {
+		$reflection = new ReflectionClass( $this->server );
+		$method     = $reflection->getMethod( 'validate_source_and_get_name' );
+		$method->setAccessible( true );
+
+		$captured = array();
+		add_filter( 'pre_http_request', function ( $preempt, $args, $url ) use ( &$captured ) {
+			$captured = $args;
+			return array(
+				'response' => array( 'code' => 200 ),
+				'body'     => json_encode( array( 'success' => true, 'key_name' => 'Name' ) ),
+			);
+		}, 10, 3 );
+
+		$method->invoke( $this->server, 'https://example.com', 'test-key' );
+
+		$this->assertNotFalse( $captured['sslverify'] );
+	}
+
 	public function test_remove_source() {
 		$sources = [
 			[
