@@ -121,7 +121,7 @@ class Pro {
 	 * @return  string
 	 */
 	public static function get_docs_url() {
-		return 'https://bit.ly/otter-docs';
+		return 'https://docs.themeisle.com/article/1478-otter-blocks-documentation';
 	}
 
 	/**
