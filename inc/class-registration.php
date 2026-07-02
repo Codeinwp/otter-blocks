@@ -83,6 +83,21 @@ class Registration {
 	public static $is_fa_loaded = false;
 
 	/**
+	 * Get the decoded global defaults for the editor, always as an object.
+	 *
+	 * The option can exist as an empty string or corrupt JSON, which json_decode
+	 * turns into null — and a null localized value crashes every block's Edit
+	 * component when the editor reads per-block defaults from it.
+	 *
+	 * @return object
+	 */
+	public static function get_editor_global_defaults() {
+		$defaults = json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) );
+
+		return is_object( $defaults ) ? $defaults : new \stdClass();
+	}
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -290,7 +305,7 @@ class Registration {
 				'optionsPath'             => admin_url( 'admin.php?page=otter' ),
 				'mapsAPI'                 => $api,
 				'hasStripeAPI'            => Stripe_API::has_keys(),
-				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
+				'globalDefaults'          => self::get_editor_global_defaults(),
 				'themeDefaults'           => Main::get_global_defaults(),
 				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
 				'isWPVIP'                 => function_exists( 'is_wpcom_vip' ),

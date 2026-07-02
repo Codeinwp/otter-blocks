@@ -37,6 +37,7 @@ jest.mock( '@wordpress/data', () => ({
 }) );
 
 import {
+	addGlobalDefaults,
 	buildGetSyncValue,
 	getDefaultValue,
 	getDefaultValueByField,
@@ -51,6 +52,54 @@ describe( 'block utility lightweight helpers', () => {
 			blockIDs: [],
 			globalDefaults: {}
 		};
+	});
+
+	describe( 'addGlobalDefaults', () => {
+		it( 'is a no-op when globalDefaults is null (empty or corrupt option)', () => {
+			( window as any ).themeisleGutenberg.globalDefaults = null;
+			const setAttributes = jest.fn();
+
+			expect( () =>
+				addGlobalDefaults({}, setAttributes, 'themeisle-blocks/button-group', {})
+			).not.toThrow();
+			expect( setAttributes ).not.toHaveBeenCalled();
+		});
+
+		it( 'applies global defaults to attributes still at their block defaults', () => {
+			( window as any ).themeisleGutenberg.globalDefaults = {
+				'themeisle-blocks/button-group': {
+					fontSize: '20px'
+				}
+			};
+			const setAttributes = jest.fn();
+
+			addGlobalDefaults(
+				{ fontSize: undefined },
+				setAttributes,
+				'themeisle-blocks/button-group',
+				{ fontSize: { default: undefined } }
+			);
+
+			expect( setAttributes ).toHaveBeenCalledWith({ fontSize: '20px' });
+		});
+
+		it( 'does not override attributes the user already changed', () => {
+			( window as any ).themeisleGutenberg.globalDefaults = {
+				'themeisle-blocks/button-group': {
+					fontSize: '20px'
+				}
+			};
+			const setAttributes = jest.fn();
+
+			addGlobalDefaults(
+				{ fontSize: '36px' },
+				setAttributes,
+				'themeisle-blocks/button-group',
+				{ fontSize: { default: undefined } }
+			);
+
+			expect( setAttributes ).toHaveBeenCalledWith({});
+		});
 	});
 
 	describe( 'getDefaultValue', () => {

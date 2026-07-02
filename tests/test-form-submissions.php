@@ -9,6 +9,7 @@ use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Export;
+use ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Filters;
 use ThemeIsle\GutenbergBlocks\Plugins\Form_Records_Post_Type;
 use ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions;
 use ThemeIsle\GutenbergBlocks\Tests\StripeHttpClientMock;
@@ -57,6 +58,8 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		unset( $_REQUEST[ Form_Submissions::FORM_RECORD_TYPE ], $_REQUEST['_wpnonce'], $_REQUEST['post'] );
+		unset( $_POST['action'], $_POST['_wpnonce'], $_POST['_nonce'] );
+		unset( $_GET['post_type'], $_GET['filter_action'], $_GET['filters_nonce'], $_GET['otter_form_filter'], $_REQUEST['otter_form_filter'] );
 		unset( $GLOBALS['otter_test_stripe_record_id'] );
 		unset( $GLOBALS['otter_legacy_store_called'] );
 
@@ -608,5 +611,280 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		$output = ob_get_clean();
 
 		$this->assertStringContainsString( 'Failed', $output );
+	}
+
+	/**
+	 * Ensure record deletion never deletes files outside the uploads directory,
+	 * even when the stored path uses traversal to point there.
+	 */
+	public function test_permanent_delete_never_touches_files_outside_uploads() {
+		$uploads      = wp_upload_dir();
+		$outside_path = dirname( $uploads['basedir'] ) . '/otter-outside-uploads.txt';
+		file_put_contents( $outside_path, 'must survive' );
+
+		wp_mkdir_p( $uploads['basedir'] . '/otter-tests' );
+		$traversal = $uploads['basedir'] . '/otter-tests/../../' . basename( $outside_path );
+		$record_id = $this->create_record( 'unread', $this->get_file_record_meta( $traversal ) );
+
+		try {
+			wp_delete_post( $record_id, true );
+			$this->assertFileExists( $outside_path );
+		} finally {
+			@unlink( $outside_path );
+		}
+	}
+
+	/**
+	 * Ensure the record edit-screen save handler dies on an invalid nonce.
+	 */
+	public function test_meta_box_save_rejects_invalid_nonce() {
+		wp_set_current_user( $this->admin_id );
+		$record_id = $this->create_record();
+
+		$_POST['action']   = 'editpost';
+		$_POST['_wpnonce'] = 'invalid-nonce';
+
+		$this->expectException( 'WPDieException' );
+		$this->expectExceptionMessage( 'Nonce not verified.' );
+
+		do_action( 'save_post', $record_id, get_post( $record_id ) );
+	}
+
+	/**
+	 * Ensure a valid nonce is not enough: the user must be able to edit the record.
+	 */
+	public function test_meta_box_save_requires_edit_capability() {
+		wp_set_current_user( $this->editor_id );
+		$record_id = $this->create_record();
+
+		$_POST['action']   = 'editpost';
+		$_POST['_wpnonce'] = wp_create_nonce( 'update-post_' . $record_id );
+
+		$this->expectException( 'WPDieException' );
+		$this->expectExceptionMessage( 'User cannot edit this post.' );
+
+		do_action( 'save_post', $record_id, get_post( $record_id ) );
+	}
+
+	/**
+	 * Ensure backslashes in an edited field value survive the save round-trip
+	 * (the handler wp_slash()es the meta because update_post_meta unslashes it).
+	 */
+	public function test_meta_box_save_preserves_backslashes() {
+		wp_set_current_user( $this->admin_id );
+
+		$record_id = $this->create_record(
+			'unread',
+			array(
+				'inputs' => array(
+					'slash123' => array(
+						'label'    => 'Path',
+						'value'    => 'old',
+						'type'     => 'text',
+						'metadata' => array(),
+					),
+				),
+			)
+		);
+
+		$value = 'C:\Users\test\file.txt';
+
+		$_POST['action']              = 'editpost';
+		$_POST['_wpnonce']            = wp_create_nonce( 'update-post_' . $record_id );
+		$_POST['otter_meta_slash123'] = wp_slash( $value );
+
+		do_action( 'save_post', $record_id, get_post( $record_id ) );
+
+		$meta = get_post_meta( $record_id, Form_Submissions::FORM_RECORD_META_KEY, true );
+
+		unset( $_POST['otter_meta_slash123'] );
+
+		$this->assertSame( $value, $meta['inputs']['slash123']['value'] );
+	}
+
+	/**
+	 * Ensure the list-table filter leaves the query untouched when Pro is not active,
+	 * even with otherwise valid filter parameters.
+	 */
+	public function test_filter_query_untouched_without_pro() {
+		$this->assertFalse( \ThemeIsle\GutenbergBlocks\Pro::is_pro_active() );
+
+		set_current_screen( 'edit-' . Form_Submissions::FORM_RECORD_TYPE );
+
+		global $pagenow;
+		$previous_pagenow = $pagenow;
+		$pagenow          = 'edit.php';
+
+		$_GET['post_type']             = Form_Submissions::FORM_RECORD_TYPE;
+		$_GET['filter_action']         = 'Filter';
+		$_GET['filters_nonce']         = wp_create_nonce( 'filter' );
+		$_GET['otter_form_filter']     = 'guard-form';
+		$_REQUEST['otter_form_filter'] = 'guard-form';
+
+		$query        = new WP_Query();
+		$query->query = array( 'post_type' => Form_Submissions::FORM_RECORD_TYPE );
+
+		// Called directly: `parse_query` is fired as an action by core, so other
+		// void-returning callbacks would break an apply_filters() chain.
+		$result = ( new Form_Records_Filters() )->form_record_filter_query( $query );
+
+		$pagenow = $previous_pagenow;
+
+		$this->assertArrayNotHasKey( 'meta_query', $result->query_vars );
+	}
+
+	/**
+	 * Ensure the list-table filter leaves the query untouched when the nonce is invalid,
+	 * even with Pro active.
+	 */
+	public function test_filter_query_untouched_with_invalid_nonce() {
+		if ( ! \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		$license = function () {
+			return 'valid';
+		};
+		add_filter( 'product_otter_license_status', $license );
+
+		set_current_screen( 'edit-' . Form_Submissions::FORM_RECORD_TYPE );
+
+		global $pagenow;
+		$previous_pagenow = $pagenow;
+		$pagenow          = 'edit.php';
+
+		$_GET['post_type']             = Form_Submissions::FORM_RECORD_TYPE;
+		$_GET['filter_action']         = 'Filter';
+		$_GET['filters_nonce']         = 'invalid-nonce';
+		$_GET['otter_form_filter']     = 'guard-form';
+		$_REQUEST['otter_form_filter'] = 'guard-form';
+
+		$query        = new WP_Query();
+		$query->query = array( 'post_type' => Form_Submissions::FORM_RECORD_TYPE );
+
+		$result = ( new Form_Records_Filters() )->form_record_filter_query( $query );
+
+		remove_filter( 'product_otter_license_status', $license );
+		$pagenow = $previous_pagenow;
+
+		$this->assertArrayNotHasKey( 'meta_query', $result->query_vars );
+	}
+
+	/**
+	 * Ensure bulk export dies on an invalid nonce even with Pro active and an admin user.
+	 */
+	public function test_export_rejects_invalid_nonce() {
+		if ( ! \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		add_filter( 'product_otter_license_status', array( $this, 'valid_license' ) );
+
+		wp_set_current_user( $this->admin_id );
+		$_POST['_nonce'] = 'invalid-nonce';
+
+		$this->expectException( 'WPDieException' );
+		$this->expectExceptionMessage( 'Invalid nonce.' );
+
+		( new Form_Records_Export() )->export_submissions();
+	}
+
+	/**
+	 * Ensure bulk export requires manage_options, even with Pro active and a valid nonce.
+	 */
+	public function test_export_requires_manage_options() {
+		if ( ! \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		add_filter( 'product_otter_license_status', array( $this, 'valid_license' ) );
+
+		wp_set_current_user( $this->editor_id );
+		$_POST['_nonce'] = wp_create_nonce( 'otter_form_export_submissions' );
+
+		$this->expectException( 'WPDieException' );
+		$this->expectExceptionMessage( 'You are not allowed to export submissions.' );
+
+		( new Form_Records_Export() )->export_submissions();
+	}
+
+	/**
+	 * Ensure the list-table bulk actions match the current status view.
+	 */
+	public function test_list_table_bulk_actions_follow_status_view() {
+		$hook = 'bulk_actions-edit-' . Form_Submissions::FORM_RECORD_TYPE;
+
+		$this->assertSame( array( 'trash', 'unread', 'read' ), array_keys( apply_filters( $hook, array() ) ) );
+
+		$_GET['post_status'] = 'unread';
+		$this->assertSame( array( 'trash', 'read' ), array_keys( apply_filters( $hook, array() ) ) );
+
+		$_GET['post_status'] = 'read';
+		$this->assertSame( array( 'trash', 'unread' ), array_keys( apply_filters( $hook, array() ) ) );
+
+		$_GET['post_status'] = 'trash';
+		$this->assertSame( array( 'untrash', 'delete' ), array_keys( apply_filters( $hook, array() ) ) );
+
+		unset( $_GET['post_status'] );
+	}
+
+	/**
+	 * Ensure the row actions swap read/unread based on the record status and
+	 * carry the nonce the row-action handler verifies.
+	 */
+	public function test_list_table_row_actions_follow_record_status() {
+		$defaults = array(
+			'edit'                => 'Edit',
+			'inline hide-if-no-js' => 'Quick Edit',
+		);
+
+		// Non-record posts keep their actions untouched.
+		$post_id = self::factory()->post->create();
+		$this->assertSame( $defaults, apply_filters( 'post_row_actions', $defaults, get_post( $post_id ) ) );
+
+		$unread  = $this->create_record( 'unread' );
+		$actions = apply_filters( 'post_row_actions', $defaults, get_post( $unread ) );
+
+		$this->assertArrayNotHasKey( 'edit', $actions );
+		$this->assertArrayNotHasKey( 'inline hide-if-no-js', $actions );
+		$this->assertArrayHasKey( 'view', $actions );
+		$this->assertArrayHasKey( 'read', $actions );
+		$this->assertArrayNotHasKey( 'unread', $actions );
+		$this->assertStringContainsString(
+			wp_create_nonce( 'read-' . Form_Submissions::FORM_RECORD_TYPE . '_' . $unread ),
+			$actions['read']
+		);
+
+		$read    = $this->create_record( 'read' );
+		$actions = apply_filters( 'post_row_actions', $defaults, get_post( $read ) );
+
+		$this->assertArrayHasKey( 'unread', $actions );
+		$this->assertArrayNotHasKey( 'read', $actions );
+	}
+
+	/**
+	 * Ensure the form column links to the source page anchor when Pro is not active.
+	 */
+	public function test_list_table_form_column_links_to_post_anchor_without_pro() {
+		$this->assertFalse( \ThemeIsle\GutenbergBlocks\Pro::is_pro_active() );
+
+		$record_id = $this->create_record();
+
+		ob_start();
+		do_action( 'manage_' . Form_Submissions::FORM_RECORD_TYPE . '_posts_custom_column', 'form', $record_id );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'https://example.com/cap#cap-form', $output );
+		// Unread rows render bold.
+		$this->assertStringContainsString( '<strong>', $output );
+	}
+
+	/**
+	 * License filter callback (a method so tear_down survives wp_die tests; WP resets filters between tests).
+	 *
+	 * @return string
+	 */
+	public function valid_license() {
+		return 'valid';
 	}
 }
