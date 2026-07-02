@@ -119,8 +119,8 @@ class Review_Comparison_Block {
 
 			$table_title .= '<td>';
 			if ( isset( $block['attrs']['title'] ) ) {
-				$table_title .= '<a href="' . get_the_permalink( intval( $id[0] ) ) . '" target="_blank">';
-				$table_title .= $block['attrs']['title'] ? $block['attrs']['title'] : __( 'Untitled review', 'otter-pro' );
+				$table_title .= '<a href="' . esc_url( get_the_permalink( intval( $id[0] ) ) ) . '" target="_blank">';
+				$table_title .= esc_html( $block['attrs']['title'] ? $block['attrs']['title'] : __( 'Untitled review', 'otter-pro' ) );
 				$table_title .= '</a>';
 			}
 			$table_title .= '</td>';
@@ -130,9 +130,9 @@ class Review_Comparison_Block {
 				$currency = Review_Block::get_currency( isset( $block['attrs']['currency'] ) ? $block['attrs']['currency'] : 'USD' );
 
 				if ( isset( $block['attrs']['discounted'] ) ) {
-					$table_price .= '<del>' . $currency . $block['attrs']['price'] . '</del> ' . $currency . $block['attrs']['discounted'];
+					$table_price .= '<del>' . $currency . esc_html( $block['attrs']['price'] ) . '</del> ' . $currency . esc_html( $block['attrs']['discounted'] );
 				} else {
-					$table_price .= $currency . $block['attrs']['price'];
+					$table_price .= $currency . esc_html( $block['attrs']['price'] );
 				}
 			} else {
 				$table_price .= '-';
@@ -143,14 +143,14 @@ class Review_Comparison_Block {
 
 			$table_description .= '<td>';
 			if ( isset( $block['attrs']['description'] ) ) {
-				$table_description .= $block['attrs']['description'];
+				$table_description .= wp_kses_post( $block['attrs']['description'] );
 			}
 			$table_description .= '</td>';
 
 			$table_features .= '<td>';
 			foreach ( $features as $feature ) {
 				$table_features .= '<div class="o-review-comparison_rating_container">';
-				$table_features .= '	<div class="o-review-comparison_rating_title">' . $feature['title'] . '</div>';
+				$table_features .= '	<div class="o-review-comparison_rating_title">' . esc_html( $feature['title'] ) . '</div>';
 				$table_features .= '	<div class="o-review-comparison_ratings">' . $this->get_stars( $feature['rating'] / 2 ) . '</div>';
 				$table_features .= '</div>';
 			}

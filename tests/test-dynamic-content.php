@@ -718,4 +718,157 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		$this->assertStringContainsString( '<p>This is ' . $this->post_id . $padding . '</p><p>post</p>', $result );
 	}
+
+	/**
+	 * A fallback image path outside the uploads directory must be rejected
+	 * (prevents reading arbitrary images elsewhere under wp-content).
+	 */
+	public function test_get_safe_fallback_path_rejects_outside_uploads() {
+		$outside = trailingslashit( WP_CONTENT_DIR ) . 'otter-fallback-outside.png';
+		copy( __DIR__ . '/assets/test-img.png', $outside );
+
+		$result = \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::get_safe_fallback_path( $outside );
+
+		unlink( $outside );
+
+		$this->assertEquals( '', $result );
+	}
+
+	/**
+	 * A fallback image inside the uploads directory is still accepted (feature intact).
+	 */
+	public function test_get_safe_fallback_path_allows_inside_uploads() {
+		$uploads = wp_get_upload_dir();
+		$inside  = trailingslashit( $uploads['basedir'] ) . 'otter-fallback-inside.png';
+		copy( __DIR__ . '/assets/test-img.png', $inside );
+
+		$expected = realpath( $inside );
+		$result   = \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::get_safe_fallback_path( $inside );
+
+		unlink( $inside );
+
+		$this->assertEquals( $expected, $result );
+	}
+
+	/**
+	 * A traversal path resolving outside wp-content is rejected.
+	 */
+	public function test_get_safe_fallback_path_rejects_traversal() {
+		$result = \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::get_safe_fallback_path( '/etc/passwd' );
+		$this->assertEquals( '', $result );
+	}
+
+	/**
+	 * A non-IP forwarded header must not be returned (it flows into an outbound URL).
+	 */
+	public function test_get_client_ip_rejects_non_ip_forwarded_header() {
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = 'evil.com/../../inject';
+		$ip                              = \ThemeIsle\OtterPro\Plugins\Dynamic_Content::get_client_ip();
+		unset( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+
+		$this->assertEquals( '', $ip );
+	}
+
+	/**
+	 * A forwarded list yields the first valid client IP.
+	 */
+	public function test_get_client_ip_extracts_first_valid_ip_from_list() {
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = '203.0.113.7, 10.0.0.1';
+		$ip                              = \ThemeIsle\OtterPro\Plugins\Dynamic_Content::get_client_ip();
+		unset( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+
+		$this->assertEquals( '203.0.113.7', $ip );
+	}
+
+	/**
+	 * Author meta must never expose the author's password hash.
+	 */
+	public function test_author_meta_does_not_leak_password_hash() {
+		$password = get_the_author_meta( 'user_pass', $this->user_id );
+		$this->assertNotEmpty( $password );
+
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'authorMeta',
+				'context' => $this->post_id,
+				'metaKey' => 'user_pass',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertStringNotContainsString( $password, $result );
+	}
+
+	/**
+	 * Author meta still returns allowed public fields.
+	 */
+	public function test_author_meta_returns_allowed_field() {
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'authorMeta',
+				'context' => $this->post_id,
+				'metaKey' => 'display_name',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertEquals( 'test_user_deletion', $result );
+	}
+
+	/**
+	 * Post meta must not expose protected (underscore-prefixed) keys.
+	 */
+	public function test_post_meta_does_not_leak_protected_key() {
+		update_post_meta( $this->post_id, '_secret_key', 'super-secret-value' );
+
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'postMeta',
+				'context' => $this->post_id,
+				'metaKey' => '_secret_key',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertStringNotContainsString( 'super-secret-value', $result );
+	}
+
+	/**
+	 * Post meta still returns allowed public custom fields.
+	 */
+	public function test_post_meta_returns_allowed_key() {
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'postMeta',
+				'context' => $this->post_id,
+				'metaKey' => 'test_meta',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertEquals( 'test', $result );
+	}
+
+	/**
+	 * Logged-in user meta must not expose protected user secrets.
+	 */
+	public function test_logged_in_user_meta_does_not_leak_session_tokens() {
+		wp_set_current_user( $this->user_id );
+		update_user_meta( $this->user_id, 'session_tokens', 'secret-token-data' );
+
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'loggedInUserMeta',
+				'metaKey' => 'session_tokens',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertStringNotContainsString( 'secret-token-data', $result );
+	}
 }

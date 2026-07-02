@@ -187,6 +187,28 @@ class Dynamic_Content {
 	}
 
 	/**
+	 * Whether a meta key is protected and must never be exposed through dynamic content.
+	 *
+	 * Blocks WordPress protected (underscore-prefixed) meta and sensitive user fields,
+	 * since these getters can be reached for any published post without authentication.
+	 *
+	 * @param string $key Meta key.
+	 *
+	 * @return bool
+	 */
+	public static function is_protected_meta_key( $key ) {
+		$key = (string) $key;
+
+		if ( '' === $key || '_' === $key[0] ) {
+			return true;
+		}
+
+		$protected = array( 'user_pass', 'user_activation_key', 'session_tokens' );
+
+		return in_array( strtolower( $key ), $protected, true );
+	}
+
+	/**
 	 * Get Post Meta.
 	 *
 	 * @param array $data Dynamic Data.
@@ -197,7 +219,7 @@ class Dynamic_Content {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		$meta    = '';
 
-		if ( isset( $data['metaKey'] ) ) {
+		if ( isset( $data['metaKey'] ) && ! self::is_protected_meta_key( $data['metaKey'] ) ) {
 			$meta = get_post_meta( $data['context'], esc_html( $data['metaKey'] ), true );
 		}
 
@@ -447,7 +469,11 @@ class Dynamic_Content {
 	 */
 	public function get_author_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ), intval( get_post_field( 'post_author', $data['context'] ) ) );
+		$meta    = '';
+
+		if ( isset( $data['metaKey'] ) && ! self::is_protected_meta_key( $data['metaKey'] ) ) {
+			$meta = get_the_author_meta( esc_html( $data['metaKey'] ), intval( get_post_field( 'post_author', $data['context'] ) ) );
+		}
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
@@ -466,7 +492,11 @@ class Dynamic_Content {
 	public function get_loggedin_meta( $data ) {
 		$user_id = get_current_user_id();
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_user_meta( $user_id, esc_html( $data['metaKey'] ), true );
+		$meta    = '';
+
+		if ( isset( $data['metaKey'] ) && ! self::is_protected_meta_key( $data['metaKey'] ) ) {
+			$meta = get_user_meta( $user_id, esc_html( $data['metaKey'] ), true );
+		}
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
@@ -554,7 +584,12 @@ class Dynamic_Content {
 			$ipaddress = '';
 		}
 		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
-		return $ipaddress;
+
+		// Forwarded headers may carry a comma-separated list; validate the first entry
+		// so a spoofed or malformed value cannot flow into the outbound geolocation URL.
+		$ipaddress = trim( explode( ',', $ipaddress )[0] );
+
+		return filter_var( $ipaddress, FILTER_VALIDATE_IP ) ? $ipaddress : '';
 	}
 
 	/**
