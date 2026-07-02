@@ -1,12 +1,12 @@
-=== Otter Blocks - Gutenberg Blocks, Page Builder for Gutenberg Editor & FSE ===
+=== Otter – Page Builder Blocks & Extensions for Gutenberg ===
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 5.6
 Stable tag: 3.1.11
-License: GPLv3
-License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Quickly create WordPress pages with 20+ blocks, 100+ ready-to-import designs, and advanced editor extensions. It’s website building, Lego-style!
 
