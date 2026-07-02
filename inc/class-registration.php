@@ -92,7 +92,9 @@ class Registration {
 	 * @return object
 	 */
 	public static function get_editor_global_defaults() {
-		return json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ) ?? new \stdClass();
+		$defaults = json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) );
+
+		return is_object( $defaults ) ? $defaults : new \stdClass();
 	}
 
 	/**
