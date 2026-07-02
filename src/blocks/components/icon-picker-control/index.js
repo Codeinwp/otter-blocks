@@ -41,8 +41,7 @@ import './editor.scss';
 
 import AltTextControl from '../alt-text-control/index.js';
 
-// @ts-ignore
-import data from '../../../../assets/fontawesome/fa-icons.json';
+import { loadFontAwesomeIconsList } from '../../helpers/fontawesome-icons.js';
 import themeIsleIcons from './../../helpers/themeisle-icons.js';
 
 const FontAwesomeIconsList = ({
@@ -87,36 +86,17 @@ const IconPickerControl = ({
 	const instanceId = useInstanceId( IconPickerControl );
 
 	useEffect( () => {
-		const icons = [];
+		let isMounted = true;
 
-		Object.keys( data ).forEach( i => {
-			Object.keys( data[i].styles ).forEach( o => {
-				let prefix = '';
-
-				switch ( data[i].styles[o]) {
-				case 'brands':
-					prefix = 'fab';
-					break;
-				case 'solid':
-					prefix = 'fas';
-					break;
-				case 'regular':
-					prefix = 'far';
-					break;
-				default:
-					prefix = 'fas';
-				}
-
-				icons.push({
-					name: i,
-					unicode: data[i].unicode,
-					prefix,
-					label: data[i].label
-				});
-			});
+		loadFontAwesomeIconsList().then( loadedIcons => {
+			if ( isMounted ) {
+				setIcons( loadedIcons );
+			}
 		});
 
-		setIcons( icons );
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const [ isURL, setIsUrl ] = useState( false );
@@ -294,7 +274,7 @@ const IconPickerControl = ({
 							/>
 
 							<div className="components-popover__items">
-								{ selectedIcons.map( ( i, index ) => {
+								{ ( selectedIcons || [] ).map( ( i, index ) => {
 									if ( 'fontawesome' === library && ( ! search || i.name.match( search.toLowerCase() ) || i.label.toLowerCase().match( search.toLowerCase() ) ) ) {
 										return (
 											<FontAwesomeIconsList
@@ -346,36 +326,13 @@ export const IconPickerToolbarControl = ({
 	setAttributes
 }) => {
 	useEffect( () => {
-		const icons = [];
+		let isMounted = true;
 
-		Object.keys( data ).forEach( i => {
-			Object.keys( data[i].styles ).forEach( o => {
-				let prefix = '';
-
-				switch ( data[i].styles[o]) {
-				case 'brands':
-					prefix = 'fab';
-					break;
-				case 'solid':
-					prefix = 'fas';
-					break;
-				case 'regular':
-					prefix = 'far';
-					break;
-				default:
-					prefix = 'fas';
-				}
-
-				icons.push({
-					name: i,
-					unicode: data[i].unicode,
-					prefix,
-					label: data[i].label
-				});
-			});
+		loadFontAwesomeIconsList().then( loadedIcons => {
+			if ( isMounted ) {
+				setIcons( loadedIcons );
+			}
 		});
-
-		setIcons( icons );
 
 		if ( classes ) {
 			const classList = classes.split( ' ' );
@@ -393,6 +350,10 @@ export const IconPickerToolbarControl = ({
 				setIcon( icon );
 			}
 		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const [ search, setSearch ] = useState( '' );
@@ -476,7 +437,7 @@ export const IconPickerToolbarControl = ({
 								</MenuItem>
 							) }
 
-							{ icons.map( (i, index) => {
+							{ ( icons || [] ).map( (i, index) => {
 								if ( ! search || i.name.match( search.toLowerCase() ) || i.label.toLowerCase().match( search.toLowerCase() ) ) {
 									return (
 										<FontAwesomeIconsList

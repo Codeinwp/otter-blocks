@@ -171,6 +171,28 @@ module.exports = [
 	},
 	{
 
+		// PATTERNS LIBRARY (Design Library)
+		// Own bundle so this tree and its fuse.js / react-intersection-observer
+		// deps load only when the module is enabled, not on every editor load.
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			index: './src/blocks/plugins/patterns-library/index.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/patterns-library' )
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
+	},
+	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
