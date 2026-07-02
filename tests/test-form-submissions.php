@@ -809,6 +809,77 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the list-table bulk actions match the current status view.
+	 */
+	public function test_list_table_bulk_actions_follow_status_view() {
+		$hook = 'bulk_actions-edit-' . Form_Submissions::FORM_RECORD_TYPE;
+
+		$this->assertSame( array( 'trash', 'unread', 'read' ), array_keys( apply_filters( $hook, array() ) ) );
+
+		$_GET['post_status'] = 'unread';
+		$this->assertSame( array( 'trash', 'read' ), array_keys( apply_filters( $hook, array() ) ) );
+
+		$_GET['post_status'] = 'read';
+		$this->assertSame( array( 'trash', 'unread' ), array_keys( apply_filters( $hook, array() ) ) );
+
+		$_GET['post_status'] = 'trash';
+		$this->assertSame( array( 'untrash', 'delete' ), array_keys( apply_filters( $hook, array() ) ) );
+
+		unset( $_GET['post_status'] );
+	}
+
+	/**
+	 * Ensure the row actions swap read/unread based on the record status and
+	 * carry the nonce the row-action handler verifies.
+	 */
+	public function test_list_table_row_actions_follow_record_status() {
+		$defaults = array(
+			'edit'                => 'Edit',
+			'inline hide-if-no-js' => 'Quick Edit',
+		);
+
+		// Non-record posts keep their actions untouched.
+		$post_id = self::factory()->post->create();
+		$this->assertSame( $defaults, apply_filters( 'post_row_actions', $defaults, get_post( $post_id ) ) );
+
+		$unread  = $this->create_record( 'unread' );
+		$actions = apply_filters( 'post_row_actions', $defaults, get_post( $unread ) );
+
+		$this->assertArrayNotHasKey( 'edit', $actions );
+		$this->assertArrayNotHasKey( 'inline hide-if-no-js', $actions );
+		$this->assertArrayHasKey( 'view', $actions );
+		$this->assertArrayHasKey( 'read', $actions );
+		$this->assertArrayNotHasKey( 'unread', $actions );
+		$this->assertStringContainsString(
+			wp_create_nonce( 'read-' . Form_Submissions::FORM_RECORD_TYPE . '_' . $unread ),
+			$actions['read']
+		);
+
+		$read    = $this->create_record( 'read' );
+		$actions = apply_filters( 'post_row_actions', $defaults, get_post( $read ) );
+
+		$this->assertArrayHasKey( 'unread', $actions );
+		$this->assertArrayNotHasKey( 'read', $actions );
+	}
+
+	/**
+	 * Ensure the form column links to the source page anchor when Pro is not active.
+	 */
+	public function test_list_table_form_column_links_to_post_anchor_without_pro() {
+		$this->assertFalse( \ThemeIsle\GutenbergBlocks\Pro::is_pro_active() );
+
+		$record_id = $this->create_record();
+
+		ob_start();
+		do_action( 'manage_' . Form_Submissions::FORM_RECORD_TYPE . '_posts_custom_column', 'form', $record_id );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'https://example.com/cap#cap-form', $output );
+		// Unread rows render bold.
+		$this->assertStringContainsString( '<strong>', $output );
+	}
+
+	/**
 	 * License filter callback (a method so tear_down survives wp_die tests; WP resets filters between tests).
 	 *
 	 * @return string
