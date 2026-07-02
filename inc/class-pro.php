@@ -348,7 +348,7 @@ class Pro {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'dismiss_otter_notice' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'dismiss_otter_notice' ) ) {
 			return;
 		}
 

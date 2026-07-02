@@ -539,17 +539,17 @@ class Dynamic_Content {
 		$ipaddress = '';
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
 		if ( isset( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-			$ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+			$ipaddress = sanitize_text_field( wp_unslash( $_SERVER['HTTP_CLIENT_IP'] ) );
 		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-			$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			$ipaddress = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
 		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED'] ) ) {
-			$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+			$ipaddress = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED'] ) );
 		} elseif ( isset( $_SERVER['HTTP_FORWARDED_FOR'] ) ) {
-			$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+			$ipaddress = sanitize_text_field( wp_unslash( $_SERVER['HTTP_FORWARDED_FOR'] ) );
 		} elseif ( isset( $_SERVER['HTTP_FORWARDED'] ) ) {
-			$ipaddress = $_SERVER['HTTP_FORWARDED'];
+			$ipaddress = sanitize_text_field( wp_unslash( $_SERVER['HTTP_FORWARDED'] ) );
 		} elseif ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
-			$ipaddress = $_SERVER['REMOTE_ADDR'];
+			$ipaddress = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
 		} else {
 			$ipaddress = '';
 		}
