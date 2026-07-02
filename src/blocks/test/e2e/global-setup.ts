@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { execSync } from 'child_process';
 import { mkdirSync } from 'fs';
 import path from 'path';
 import { request } from '@playwright/test';
@@ -11,8 +12,18 @@ import type { FullConfig } from '@playwright/test';
  */
 import { RequestUtils } from '@wordpress/e2e-test-utils-playwright';
 
-async function assertWpEnvReady( requestContext: { get: ( url: string ) => Promise<{ ok: () => boolean; json: () => Promise<{ namespaces?: string[] }> }> }, baseURL: string ) {
-	const indexResponse = await requestContext.get( `${ baseURL }/wp-json/` );
+async function assertWpEnvReady( requestContext: { get: ( url: string ) => Promise<{ ok: () => boolean; headers: () => Record<string, string>; json: () => Promise<{ namespaces?: string[] }> }> }, baseURL: string ) {
+	let indexResponse = await requestContext.get( `${ baseURL }/wp-json/` );
+
+	/*
+	 * The single-environment PHPUnit suite reinstalls WordPress over the shared
+	 * wp-env site, which drops the permalink structure and makes /wp-json/ serve
+	 * the homepage HTML. Restore it once and retry before failing.
+	 */
+	if ( indexResponse.ok() && ! ( indexResponse.headers()['content-type'] ?? '' ).includes( 'application/json' ) ) {
+		execSync( 'npx wp-env run cli -- wp rewrite structure /%postname%/', { stdio: 'ignore' });
+		indexResponse = await requestContext.get( `${ baseURL }/wp-json/` );
+	}
 
 	if ( ! indexResponse.ok() ) {
 		throw new Error( `[Otter E2E] wp-env is not reachable at ${ baseURL }` );
