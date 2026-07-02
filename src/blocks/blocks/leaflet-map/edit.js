@@ -105,7 +105,7 @@ const Edit = ({
 			markerProps.title ??= __( 'Add a title', 'otter-blocks' );
 			markerProps.description ??= '';
 
-			const markerMap = L.marker([ markerProps.latitude, markerProps.longitude ] || map.getCenter(), {
+			const markerMap = L.marker([ markerProps.latitude, markerProps.longitude ], {
 				draggable: true
 			});
 

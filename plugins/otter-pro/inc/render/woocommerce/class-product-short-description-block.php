@@ -26,13 +26,13 @@ class Product_Short_Description_Block {
 			return;
 		}
 
-		ob_start();
-
 		global $product;
 
 		if ( ! $product ) {
 			return;
 		}
+
+		ob_start();
 		woocommerce_template_single_excerpt();
 		$output = ob_get_clean();
 		return $output;

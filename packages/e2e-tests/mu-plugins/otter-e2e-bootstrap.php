@@ -181,6 +181,7 @@ function stub_wp_mail_for_e2e( $short_circuit, $atts = array() ) {
 	$log[] = array(
 		'to'      => isset( $atts['to'] ) ? $atts['to'] : '',
 		'subject' => isset( $atts['subject'] ) ? $atts['subject'] : '',
+		'headers' => isset( $atts['headers'] ) ? $atts['headers'] : array(),
 	);
 	update_option( MAIL_LOG_OPTION, $log, false );
 

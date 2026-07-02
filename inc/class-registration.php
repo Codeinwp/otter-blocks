@@ -83,6 +83,21 @@ class Registration {
 	public static $is_fa_loaded = false;
 
 	/**
+	 * Get the decoded global defaults for the editor, always as an object.
+	 *
+	 * The option can exist as an empty string or corrupt JSON, which json_decode
+	 * turns into null — and a null localized value crashes every block's Edit
+	 * component when the editor reads per-block defaults from it.
+	 *
+	 * @return object
+	 */
+	public static function get_editor_global_defaults() {
+		$defaults = json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) );
+
+		return is_object( $defaults ) ? $defaults : new \stdClass();
+	}
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -241,6 +256,30 @@ class Registration {
 
 		wp_set_script_translations( 'otter-blocks', 'otter-blocks' );
 
+		// Separate bundle: loads only when the Patterns Library module is on.
+		if ( boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ) ) {
+			$patterns_asset = include OTTER_BLOCKS_PATH . '/build/patterns-library/index.asset.php';
+
+			wp_enqueue_script(
+				'otter-patterns-library',
+				OTTER_BLOCKS_URL . 'build/patterns-library/index.js',
+				array_merge( $patterns_asset['dependencies'], array( 'otter-blocks' ) ),
+				$patterns_asset['version'],
+				true
+			);
+
+			wp_set_script_translations( 'otter-patterns-library', 'otter-blocks' );
+
+			if ( file_exists( OTTER_BLOCKS_PATH . '/build/patterns-library/index.css' ) ) {
+				wp_enqueue_style(
+					'otter-patterns-library',
+					OTTER_BLOCKS_URL . 'build/patterns-library/index.css',
+					array(),
+					$patterns_asset['version']
+				);
+			}
+		}
+
 		if ( defined( 'THEMEISLE_GUTENBERG_GOOGLE_MAPS_API' ) ) {
 			$api = THEMEISLE_GUTENBERG_GOOGLE_MAPS_API;
 		} else {
@@ -266,7 +305,7 @@ class Registration {
 				'optionsPath'             => admin_url( 'admin.php?page=otter' ),
 				'mapsAPI'                 => $api,
 				'hasStripeAPI'            => Stripe_API::has_keys(),
-				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
+				'globalDefaults'          => self::get_editor_global_defaults(),
 				'themeDefaults'           => Main::get_global_defaults(),
 				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
 				'isWPVIP'                 => function_exists( 'is_wpcom_vip' ),
@@ -735,6 +774,8 @@ class Registration {
 	 * @access  public
 	 */
 	public function enqueue_block_styles( $post ) {
+		$asset_file = null;
+
 		foreach ( self::$blocks as $block ) {
 			if ( in_array( $block, self::$styles_loaded ) || ! has_block( 'themeisle-blocks/' . $block, $post ) ) {
 				continue;
@@ -762,7 +803,10 @@ class Registration {
 				continue;
 			}
 
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+			// Read the shared asset file once, only when a matching block exists.
+			if ( null === $asset_file ) {
+				$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+			}
 
 			$deps = array();
 
@@ -871,6 +915,9 @@ class Registration {
 			)
 		);
 
+		// Shared asset file (version/deps) for all blocks — read once, not per block.
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+
 		foreach ( self::$blocks as $block ) {
 			$block_path   = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
 			$editor_style = OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/editor.css';
@@ -888,8 +935,6 @@ class Registration {
 			if ( false === $metadata ) {
 				continue;
 			}
-
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 
 			$deps = array();
 

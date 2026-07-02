@@ -44,8 +44,11 @@ window.themeisleGutenberg.blockIDs ??= [];
 export const addGlobalDefaults = ( attributes, setAttributes, name, defaultAttributes ) => {
 
 	// Check if the globals default are available and its values are different from the base values.
-	if ( undefined !== window.themeisleGutenberg?.globalDefaults && ! isEqual( globalDefaultsBlocksAttrs[name], window.themeisleGutenberg.globalDefaults[name]) ) {
-		const defaultGlobalAttrs = { ...window.themeisleGutenberg.globalDefaults[name] };
+	// Optional chaining throughout: a corrupt/empty option localizes globalDefaults as null.
+	const globalDefaults = window.themeisleGutenberg?.globalDefaults?.[ name ];
+
+	if ( globalDefaults && ! isEqual( globalDefaultsBlocksAttrs[name], globalDefaults ) ) {
+		const defaultGlobalAttrs = { ...globalDefaults };
 
 		const attrs = Object.keys( defaultGlobalAttrs )
 			.filter( attr => isEqual( attributes[ attr ], defaultAttributes[ attr ]?.default ) ) // Keep only the properties with the default value.
@@ -778,7 +781,7 @@ export function insertBlockBelow( clientId, block ) {
 
 export class GlobalStateMemory {
 	constructor() {
-		this.states = {};
+		this.states = Object.create( null );
 		window.addEventListener( 'message', this.handleMessage.bind( this ) );
 	}
 
@@ -793,7 +796,7 @@ export class GlobalStateMemory {
 
 			if ( 'set' === action ) {
 				if ( this.states[location] === undefined ) {
-					this.states[location] = {};
+					this.states[location] = Object.create( null );
 				}
 
 				this.states[location][key] = value;

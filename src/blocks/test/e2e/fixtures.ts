@@ -6,6 +6,7 @@ import { test as base, expect } from '@wordpress/e2e-test-utils-playwright';
 export type MailLogEntry = {
 	to: string | string[];
 	subject: string;
+	headers: string | string[];
 };
 
 export type FormRecord = {
