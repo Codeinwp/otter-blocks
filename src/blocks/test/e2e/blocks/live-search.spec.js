@@ -51,4 +51,38 @@ test.describe( 'Live Search Block', () => {
 		const width = await container.evaluate( node => node.offsetWidth );
 		expect( width ).toBeGreaterThan( 0 );
 	});
+
+	test( 'post-only search query without a category renders cleanly', async({ editor, page }) => {
+		const errors = [];
+		page.on( 'pageerror', error => errors.push( error.message ) );
+		page.on( 'console', message => {
+			if ( 'error' === message.type() ) {
+				errors.push( message.text() );
+			}
+		});
+
+		// Regression: a post-only query with no 'cat' key used to raise an
+		// undefined-array-key PHP warning while rendering the block.
+		await editor.insertBlock({
+			name: 'core/search',
+			attributes: {
+				otterIsLive: true,
+				otterSearchQuery: {
+					'post_type': [ 'post' ]
+				}
+			}
+		});
+
+		await publishAndViewPost({ editor, page });
+
+		await expect( page.locator( 'body' ) ).not.toContainText( 'Undefined array key' );
+
+		const input = page.locator( '.o-live-search input[type="search"]' );
+		await expect( input ).toBeVisible();
+
+		await input.fill( 'u' );
+		await expect( page.locator( '.o-live-search .container-wrap' ) ).toBeVisible();
+
+		expect( errors ).toEqual([]);
+	});
 });
