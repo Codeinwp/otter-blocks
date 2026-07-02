@@ -108,9 +108,36 @@ test.describe( 'Button Group', () => {
 		await expect( btn ).toHaveCSS( 'text-transform', 'uppercase' );
 	});
 
+	test( 'editor survives an empty global defaults option', async({ admin, editor, page, requestUtils }) => {
+		// Regression: an empty-string option json_decode()s to null server-side and
+		// used to crash every newly inserted Otter block's Edit component.
+		await requestUtils.rest({
+			method: 'POST',
+			path: '/wp/v2/settings',
+			data: { themeisle_blocks_settings_global_defaults: '' }
+		});
+
+		// A fresh editor load so the poisoned option gets localized.
+		await admin.createNewPost();
+
+		await editor.insertBlock({
+			name: 'themeisle-blocks/button-group',
+			innerBlocks: [
+				{
+					name: 'themeisle-blocks/button',
+					attributes: { text: 'Still alive' }
+				}
+			]
+		});
+
+		// The block renders instead of falling into the block crash boundary.
+		await expect( editor.canvas.getByText( 'Still alive' ) ).toBeVisible();
+		await expect( editor.canvas.locator( '.block-editor-warning' ) ).toHaveCount( 0 );
+	});
+
 	// Global defaults persist site-wide; reset them so other specs are unaffected.
-	// Must be '{}', not '': the editor bootstrap json_decode()s the raw option and
-	// a null result crashes every Otter block's Edit component.
+	// Must be '{}', not '': on unfixed builds the editor bootstrap json_decode()s
+	// the raw option and a null result crashes every Otter block's Edit component.
 	test.afterEach( async({ requestUtils }) => {
 		await requestUtils.rest({
 			method: 'POST',
