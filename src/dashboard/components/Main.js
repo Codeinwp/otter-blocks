@@ -53,7 +53,7 @@ const Main = ({
 		case 'integrations':
 			return (
 				<div className="otter-left">
-					<Integrations/>
+					<Integrations setTab={ setTab }/>
 				</div>
 			);
 		case 'ai':

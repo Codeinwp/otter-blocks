@@ -305,6 +305,11 @@
 						margin-bottom: 10px;
 					}
 
+					// The flex row above squeezes SelectControl's stacked label onto two lines.
+					&.components-select-control .components-base-control__field {
+						display: block;
+					}
+
 					&.otter-button-field {
 						width: 100%;
 

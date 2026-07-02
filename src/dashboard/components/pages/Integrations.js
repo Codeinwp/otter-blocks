@@ -28,7 +28,7 @@ import { applyFilters } from '@wordpress/hooks';
 import useSettings from '../../../blocks/helpers/use-settings.js';
 import TCPanel from '../template-cloud/TCPanel';
 
-const Integrations = () => {
+const Integrations = ({ setTab }) => {
 	const [ getOption, updateOption, status ] = useSettings();
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
@@ -280,9 +280,12 @@ const Integrations = () => {
 					<BaseControl
 						help={ __( 'OpenAI settings and AI toolbar actions have moved to the AI tab.', 'otter-blocks' ) }
 					>
-						<ExternalLink href={ `${ window.themeisleGutenberg?.optionsPath || window.otterObj?.optionsPath }#ai` }>
+						<Button
+							variant="link"
+							onClick={ () => setTab( 'ai' ) }
+						>
 							{ __( 'Go to AI Settings', 'otter-blocks' ) }
-						</ExternalLink>
+						</Button>
 					</BaseControl>
 				</PanelRow>
 			</PanelBody>
