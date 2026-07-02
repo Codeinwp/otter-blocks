@@ -215,7 +215,27 @@ class Prompt_Server {
 		$body = array_diff_key( $body, $otter_data );
 
 		$backend = AI_Backend_Resolver::resolve();
-		$result  = $backend->generate( $body );
+
+		$timeout = AI_Client_Adaptor::get_request_timeout_seconds();
+
+		$raise_timeout = static function ( $args ) use ( $timeout ) {
+			$current = isset( $args['timeout'] ) ? (int) $args['timeout'] : 0;
+			if ( $current < $timeout ) {
+				$args['timeout'] = $timeout;
+			}
+			return $args;
+		};
+
+		// Scope the raised timeout to just this generation request. A long timeout is
+		// intentional here: AI generation runs in a dedicated REST request, not a
+		// page load, and reasoning models can take well over the 30s default.
+		add_filter( 'http_request_args', $raise_timeout, 100 ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.http_request_args
+
+		try {
+			$result = $backend->generate( $body );
+		} finally {
+			remove_filter( 'http_request_args', $raise_timeout, 100 );
+		}
 
 		if ( is_wp_error( $result ) ) {
 			return $result;

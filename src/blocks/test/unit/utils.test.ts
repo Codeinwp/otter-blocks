@@ -1,6 +1,8 @@
-jest.mock( '@wordpress/blocks', () => ({
-	parse: jest.fn( () => [] )
+jest.mock( 'uuid', () => ({
+	v4: () => 'mocked-uuid'
 }) );
+
+jest.mock( '@wordpress/blocks', () => require( './mocks/wordpress-blocks' ) );
 
 jest.mock( '@wordpress/data', () => ({
 	dispatch: jest.fn( () => ({}) ),

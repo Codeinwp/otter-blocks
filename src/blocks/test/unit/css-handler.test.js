@@ -65,7 +65,7 @@ const loadCssHandler = ({ apiFetchImplementation, editorState = {}, widgetsState
 	}), { virtual: true } );
 
 	window.themeisleGutenberg = { isBlockEditor: true };
-	window.oTrk = { base: { uploadEvents: jest.fn() } };
+	window.oTrk = { base: { uploadEvents: jest.fn() }};
 
 	require( '../../plugins/css-handler' );
 

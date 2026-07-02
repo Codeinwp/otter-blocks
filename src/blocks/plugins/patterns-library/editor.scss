@@ -1364,8 +1364,15 @@ select.o-library__sort {
 	}
 }
 
-// Atomic Wind enable gate (shown when the blocks are disabled).
+// Atomic Wind enable gate (shown when the blocks are disabled). Carries its own
+// theme vars so it renders correctly both inside the library modal and when
+// reused standalone (e.g. the AI content generator block on the canvas).
 .o-library__gate {
+	--o-accent: var( --wp-admin-theme-color, #3858e9 );
+	--o-ink: #1e1e1e;
+	--o-ink2: #6c7178;
+	--o-hover: #f1f2f4;
+
 	flex: 1;
 	display: flex;
 	flex-direction: column;

@@ -104,15 +104,52 @@ export const parsePattern = ( pattern ) => {
 	return parsedBlocks.get( pattern.name );
 };
 
-// Patterns whose preview has painted once this session.
+// Previews (by key) whose iframe has painted once this session.
 const renderedOnce = new Set();
 
-// Mounting a BlockPreview doesn't mean it has painted: the iframe boots,
-// styles are cloned in and the blocks portal in over several frames, all
-// showing as a white rectangle. Keep the iframe hidden with the placeholder
-// on top until the block layout actually exists inside the iframe document,
-// then crossfade (see .o-library__live in editor.scss).
-export const ParsedPreview = ({ pattern, css = [], placeholder = <Skeleton /> }) => {
+// Wraps a live BlockPreview so the placeholder can stay on top until the
+// blocks have actually painted inside the iframe. Mounting a BlockPreview
+// doesn't mean it has painted: the iframe boots, styles are cloned in and the
+// blocks portal in over several frames, all showing as a white rectangle. Keep
+// the iframe hidden with the placeholder on top until the block layout actually
+// exists inside the iframe document, then crossfade (see .o-library__live in
+// editor.scss). Reusable across the pattern library and the AI section preview
+// — callers that already hold parsed blocks (instead of a pattern) pass them in
+// directly with a stable previewKey to key the crossfade.
+// A realistic on-screen aspect for full-viewport sections. Inside a BlockPreview
+// the iframe auto-grows to its content, so `100vh` / `min-h-screen` resolve
+// against that grown height — a "full screen" hero renders far too tall (and, for
+// a beat before layout settles, too short). Remap the common full-viewport height
+// utilities to a height derived from the preview width so the section keeps a
+// believable screen aspect. (Partial arbitrary values like min-h-[80vh] are left
+// alone — there's no static way to scale an arbitrary vh value.)
+const SCREEN_ASPECT_RATIO = 16 / 10;
+
+const buildViewportHeightCss = ( viewportWidth ) => {
+	const screenHeight = Math.round( viewportWidth / SCREEN_ASPECT_RATIO );
+	const props = { 'min-h': 'min-height', 'h': 'height', 'max-h': 'max-height' };
+	const fullValues = [ 'screen', '[100vh]', '[100svh]', '[100dvh]', '[100lvh]' ];
+	const escapeClass = ( value ) => value.replace( /[[\]]/g, ( char ) => '\\' + char );
+
+	const rules = [];
+	for ( const [ prefix, prop ] of Object.entries( props ) ) {
+		for ( const value of fullValues ) {
+			rules.push( `.${ escapeClass( `${ prefix }-${ value }` ) }{${ prop }:${ screenHeight }px!important}` );
+		}
+	}
+
+	return rules.join( '\n' );
+};
+
+export const LivePreview = ({
+	blocks,
+	previewKey,
+	css = /** @type {Array} */ ( [] ),
+	viewportWidth = 1400,
+	placeholder = <Skeleton />,
+	className = 'o-library__live',
+	normalizeViewport = false
+}) => {
 	const containerRef = useRef( null );
 	const [ isReady, setIsReady ] = useState( false );
 
@@ -142,7 +179,7 @@ export const ParsedPreview = ({ pattern, css = [], placeholder = <Skeleton /> })
 
 			if ( hasLayout && hasStyles ) {
 				clearTimeout( deadline );
-				renderedOnce.add( pattern.name );
+				renderedOnce.add( previewKey );
 				setIsReady( true );
 				return;
 			}
@@ -156,18 +193,24 @@ export const ParsedPreview = ({ pattern, css = [], placeholder = <Skeleton /> })
 			clearTimeout( deadline );
 			cancelAnimationFrame( frame );
 		};
-	}, [ pattern.name ]);
+	}, [ previewKey ]);
 
 	const styles = css.filter( Boolean ).map( value => ({ css: value }) );
 
+	// Preview-only: keep full-viewport sections at a realistic aspect (frontend
+	// keeps its real vh — this stylesheet is never inserted there).
+	if ( normalizeViewport ) {
+		styles.push({ css: buildViewportHeightCss( viewportWidth ) });
+	}
+
 	return (
 		<div
-			className={ classnames( 'o-library__live', { 'is-ready': isReady }) }
+			className={ classnames( className, { 'is-ready': isReady }) }
 			ref={ containerRef }
 		>
 			<BlockPreview
-				blocks={ parsePattern( pattern ) }
-				viewportWidth={ pattern.viewportWidth || 1400 }
+				blocks={ blocks }
+				viewportWidth={ viewportWidth }
 				additionalStyles={ styles.length ? styles : undefined }
 			/>
 
@@ -175,6 +218,16 @@ export const ParsedPreview = ({ pattern, css = [], placeholder = <Skeleton /> })
 		</div>
 	);
 };
+
+export const ParsedPreview = ({ pattern, css = [], placeholder = <Skeleton /> }) => (
+	<LivePreview
+		blocks={ parsePattern( pattern ) }
+		previewKey={ pattern.name }
+		css={ css }
+		viewportWidth={ pattern.viewportWidth || 1400 }
+		placeholder={ placeholder }
+	/>
+);
 
 // Shows a skeleton until the idle queue reaches this preview, then parses
 // and renders it — both the parse and the iframe mount happen off the
