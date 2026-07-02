@@ -88,7 +88,7 @@
 		"object-hash": "^3.0.0",
 		"react-intersection-observer": "^9.13.0",
 		"react-visibility-sensor": "^5.1.1",
-		"tailwindcss": "^4.3.0",
+		"tailwindcss": "^4.3.2",
 		"uuid": "^14.0.0"
 	},
 	"devDependencies": {
