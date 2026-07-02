@@ -718,4 +718,96 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		$this->assertStringContainsString( '<p>This is ' . $this->post_id . $padding . '</p><p>post</p>', $result );
 	}
+
+	/**
+	 * Author meta must never expose the author's password hash.
+	 */
+	public function test_author_meta_does_not_leak_password_hash() {
+		$password = get_the_author_meta( 'user_pass', $this->user_id );
+		$this->assertNotEmpty( $password );
+
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'authorMeta',
+				'context' => $this->post_id,
+				'metaKey' => 'user_pass',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertStringNotContainsString( $password, $result );
+	}
+
+	/**
+	 * Author meta still returns allowed public fields.
+	 */
+	public function test_author_meta_returns_allowed_field() {
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'authorMeta',
+				'context' => $this->post_id,
+				'metaKey' => 'display_name',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertEquals( 'test_user_deletion', $result );
+	}
+
+	/**
+	 * Post meta must not expose protected (underscore-prefixed) keys.
+	 */
+	public function test_post_meta_does_not_leak_protected_key() {
+		update_post_meta( $this->post_id, '_secret_key', 'super-secret-value' );
+
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'postMeta',
+				'context' => $this->post_id,
+				'metaKey' => '_secret_key',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertStringNotContainsString( 'super-secret-value', $result );
+	}
+
+	/**
+	 * Post meta still returns allowed public custom fields.
+	 */
+	public function test_post_meta_returns_allowed_key() {
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'postMeta',
+				'context' => $this->post_id,
+				'metaKey' => 'test_meta',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertEquals( 'test', $result );
+	}
+
+	/**
+	 * Logged-in user meta must not expose protected user secrets.
+	 */
+	public function test_logged_in_user_meta_does_not_leak_session_tokens() {
+		wp_set_current_user( $this->user_id );
+		update_user_meta( $this->user_id, 'session_tokens', 'secret-token-data' );
+
+		$result = $this->dynamic_content_pro->evaluate_content(
+			'fallback',
+			array(
+				'type'    => 'loggedInUserMeta',
+				'metaKey' => 'session_tokens',
+				'default' => 'fallback',
+			)
+		);
+
+		$this->assertStringNotContainsString( 'secret-token-data', $result );
+	}
 }
