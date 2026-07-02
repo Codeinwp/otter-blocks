@@ -7,6 +7,8 @@
 
 use ThemeIsle\GutenbergBlocks\Plugins\Atomic_Wind_Blocks;
 
+require_once dirname( __FILE__ ) . '/php/migration-test-helper.php';
+
 /**
  * Atomic Wind Blocks test case.
  */
@@ -32,6 +34,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
+		$this->unregister_atomic_wind_blocks();
 		$this->instance = new Atomic_Wind_Blocks();
 		$this->post_id  = $this->factory()->post->create(
 			array(
@@ -51,10 +54,19 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		$this->reset_in_query( false );
-		if ( WP_Block_Type_Registry::get_instance()->is_registered( 'atomic-wind/icon' ) ) {
-			unregister_block_type( 'atomic-wind/icon' );
-		}
+		$this->unregister_atomic_wind_blocks();
 		parent::tear_down();
+	}
+
+	/**
+	 * Helper: remove Atomic Wind blocks from the global registry.
+	 */
+	private function unregister_atomic_wind_blocks() {
+		foreach ( array_keys( WP_Block_Type_Registry::get_instance()->get_all_registered() ) as $name ) {
+			if ( 0 === strpos( $name, 'atomic-wind/' ) ) {
+				unregister_block_type( $name );
+			}
+		}
 	}
 
 	/**
@@ -152,6 +164,30 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		);
 		$this->assertNotFalse(
 			has_filter( 'block_categories_all', array( $this->instance, 'register_category' ) )
+		);
+	}
+
+	public function test_run_registers_hooks_after_default_for_fresh_install() {
+		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
+		delete_option( 'themeisle_blocks_settings_atomic_wind_defaulted' );
+		update_option( 'otter_blocks_install', time() - HOUR_IN_SECONDS );
+
+		otter_test_maybe_default_atomic_wind_blocks();
+
+		$this->assertTrue( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
+	}
+
+	public function test_run_bails_for_old_install_without_saved_option_after_default() {
+		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
+		delete_option( 'themeisle_blocks_settings_atomic_wind_defaulted' );
+		update_option( 'otter_blocks_install', time() - ( 2 * DAY_IN_SECONDS ) );
+
+		otter_test_maybe_default_atomic_wind_blocks();
+
+		$this->instance->run();
+
+		$this->assertFalse(
+			has_filter( 'render_block', array( $this->instance, 'render_animation_attrs' ) )
 		);
 	}
 
@@ -1000,8 +1036,6 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	// -------------------------------------------------------
 
 	public function test_run_registers_warm_template_redirect() {
-		// Blocks may already be registered by an earlier run() in the suite.
-		$this->setExpectedIncorrectUsage( 'WP_Block_Type_Registry::register' );
 		update_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
 
 		$this->instance->run();

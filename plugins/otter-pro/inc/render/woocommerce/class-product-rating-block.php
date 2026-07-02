@@ -26,17 +26,21 @@ class Product_Rating_Block {
 			return;
 		}
 
-		ob_start();
+		$is_editor_preview = defined( 'REST_REQUEST' ) && REST_REQUEST;
 
 		global $product;
 
 		if ( ! $product ) {
-			return;
+			return $is_editor_preview ? __( 'Your product ratings will display here.', 'otter-pro' ) : '';
 		}
+
+		$show_placeholder = $is_editor_preview || current_user_can( 'edit_post', $product->get_id() );
+
+		ob_start();
 		woocommerce_template_single_rating();
 		$output = ob_get_clean();
 
-		if ( empty( $output ) ) {
+		if ( empty( $output ) && $show_placeholder ) {
 			$output = __( 'Your product ratings will display here.', 'otter-pro' );
 		}
 		return $output;
