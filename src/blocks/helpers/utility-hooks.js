@@ -3,7 +3,7 @@
  */
 import { useSelect } from '@wordpress/data';
 
-import { useEffect } from '@wordpress/element';
+import { useEffect, useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -15,16 +15,25 @@ import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFr
  *
  * @param {Function} setAttributes - The setAttributes function from the block.
  */
-export const useResponsiveAttributes = ( setAttributes = () => {}) => useSelect( select => {
-	const { getView } = select( 'themeisle-gutenberg/data' );
-	const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-	const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+export const useResponsiveAttributes = ( setAttributes = () => {}) => {
 
-	return {
+	// Return only the current view (a primitive) from useSelect, so its value is
+	// referentially stable across renders. Building the get/set helpers inside
+	// useSelect produced new function references every call, which tripped
+	// useSelect's equality check for every block on the page.
+	const view = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const editPost = select( 'core/edit-post' );
+		const getPreviewDeviceType = editPost ? editPost.__experimentalGetPreviewDeviceType : undefined;
+
+		return getPreviewDeviceType ? getPreviewDeviceType() : getView();
+	}, []);
+
+	return useMemo( () => ({
 		responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
 		responsiveGetAttributes: buildResponsiveGetAttributes( view )
-	};
-}, []);
+	}), [ view, setAttributes ]);
+};
 
 /**
  * Utility hook to get/set dark background class.

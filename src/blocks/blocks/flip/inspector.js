@@ -244,7 +244,7 @@ const Inspector = ({
 
 													<AltTextControl
 														value={ attributes.frontMedia?.alt }
-														onChange={ alt => setAttributes({ frontMedia: { ...attributes.frontMedia, alt } }) }
+														onChange={ alt => setAttributes({ frontMedia: { ...attributes.frontMedia, alt }}) }
 													/>
 												</BaseControl>
 											) }

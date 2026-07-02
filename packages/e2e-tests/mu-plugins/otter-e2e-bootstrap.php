@@ -29,12 +29,19 @@ const PRO_LICENSE_OPTION = 'otter_pro_license_data';
  */
 const OPTION_WHITELIST = array(
 	'themeisle_open_ai_api_key',
+	'themeisle_blocks_settings_prompt_actions',
+	'themeisle_blocks_settings_ai_toolbar_actions',
+	'themeisle_blocks_ai_toolbar_actions_migrated',
+	'themeisle_blocks_settings_block_ai_toolbar_module',
 	'otter_iphub_api_key',
 	'themeisle_blocks_settings_onboarding',
 	'themeisle_cloudflare_turnstile_site_key',
 	'themeisle_cloudflare_turnstile_secret_key',
 	'connectors_ai_openai_api_key',
 	'themeisle_google_map_block_api_key',
+	// Gates registration of the Atomic Wind blocks (atomic-wind/*); tests that
+	// generate or insert those blocks flip this on before loading the editor.
+	'themeisle_blocks_settings_atomic_wind_blocks',
 	// Form block persists submissions config here; tests reset it to avoid
 	// cross-run accumulation that eventually fails REST schema validation.
 	'themeisle_blocks_form_emails',
@@ -47,6 +54,17 @@ const OPTION_WHITELIST = array(
  * Transient that inc/server/class-prompt-server.php reads first; if it's set we never hit themeisle.com.
  */
 const PROMPTS_TRANSIENT = 'otter_prompts';
+
+/**
+ * OpenAI chat completions endpoint used by inc/server/class-prompt-server.php.
+ */
+const OPENAI_COMPLETIONS_URL = 'https://api.openai.com/v1/chat/completions';
+
+/**
+ * Prefix shared by bin/e2e-tests.sh and Playwright fixtures for the fake OpenAI key.
+ * Real keys are never stubbed; dashboard tests can still assert validation errors for keys like "test".
+ */
+const OPENAI_STUB_KEY_PREFIX = 'sk_XXXXXXXXX';
 
 /**
  * Mail scenario state: 'ok' (default, pretend-send) or 'fail' (every wp_mail fails).
@@ -203,7 +221,522 @@ function stub_wp_mail_for_e2e( $short_circuit, $atts = array() ) {
 	return true;
 }
 
+/**
+ * Whether the stored OpenAI key is the E2E stub (not a real secret).
+ *
+ * @param string $api_key OpenAI API key option value.
+ * @return bool
+ */
+function is_e2e_openai_stub_key( $api_key ) {
+	return is_string( $api_key ) && 0 === strpos( $api_key, OPENAI_STUB_KEY_PREFIX );
+}
+
+/**
+ * HTML content returned for content-generator block E2E tests.
+ *
+ * @return string
+ */
+function stub_openai_space_nation_content() {
+	return '<h1><strong>Discover the Next Frontier: Space Nation on the Rise</strong></h1>'
+		. '<p>Are you ready to embark on a journey to a new world beyond our wildest dreams? Look no further than the rapidly emerging Space Nation that is captivating the imaginations of millions. From groundbreaking technologies to bold explorations, this cosmic civilization is redefining what it means to reach for the stars.</p>'
+		. '<h2><em>Unveiling the Wonders of Space Nation</em></h2>'
+		. '<p>Peer into the future and witness the awe-inspiring advancements taking place in this celestial realm. With each innovation, Space Nation pushes the boundaries of possibility, offering a glimpse into a future where the impossible becomes reality.</p>'
+		. '<h2><em>Join the Movement</em></h2>'
+		. '<p>Don\'t miss your chance to be part of history in the making. Whether you are an aspiring pioneer or a curious observer, there is a place for you in the unfolding saga of Space Nation. Embrace the spirit of exploration and venture into a realm where the skies are no longer the limit.</p>'
+		. '<h3><strong>Why Space Nation?</strong></h3>'
+		. '<ul><li>Experience groundbreaking technologies shaping the future</li><li>Witness bold explorations into the unknown</li><li>Join a community of visionaries and trailblazers</li></ul>'
+		. '<h3><strong>Take Action Today</strong></h3>'
+		. '<p>Ready to embark on an adventure that transcends the confines of Earth? Step into the world of Space Nation and dare to dream beyond the stars.</p>';
+}
+
+/**
+ * Whether an outbound request body is a content-generator block-generation
+ * phase. `block-generation.ts` asks for strict JSON and parses the reply with
+ * `JSON.parse`, so the mock must answer with JSON (not HTML) here.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_catalog_plan_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: OUTLINE (catalog)' )
+		|| false !== strpos( $request_body, 'planning a WordPress block layout' )
+		|| false !== strpos( $request_body, 'planning the structure' );
+}
+
+/**
+ * Whether the outbound body is the pattern-aware layout brief step.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_layout_brief_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: OUTLINE —' );
+}
+
+/**
+ * Whether the outbound body is a construct / attribute-fill phase.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_construct_request( $request_body ) {
+	return false !== strpos( $request_body, 'Fill in the attributes' )
+		|| false !== strpos( $request_body, 'Pipeline step: CONSTRUCT' );
+}
+
+function is_block_generation_request( $request_body ) {
+	return is_catalog_plan_request( $request_body )
+		|| is_construct_request( $request_body )
+		|| false !== strpos( $request_body, 'Pipeline step: STRUCTURE GAPS' );
+}
+
+/**
+ * Whether the outbound body is an attribute-patch edit (toolbar rewrite, refine).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_edit_patch_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: EDIT' );
+}
+
+/**
+ * Whether the outbound body is the quality-polish patch pass.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_polish_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: POLISH' );
+}
+
+/**
+ * Whether the outbound body is the edit-classifier step (DECIDE_EDIT).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_decide_edit_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: DECIDE_EDIT' );
+}
+
+/**
+ * Whether the outbound body is a text-only edit (TEXT_EDIT: transform fragments).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_text_edit_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: TEXT_EDIT' );
+}
+
+/**
+ * Whether the outbound body is a style-only edit (STYLE_EDIT: restyle elements).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_style_edit_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: STYLE_EDIT' );
+}
+
+/**
+ * Whether the outbound body is a full-markup rewrite (REWRITE).
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return bool
+ */
+function is_rewrite_request( $request_body ) {
+	return false !== strpos( $request_body, 'Pipeline step: REWRITE' );
+}
+
+/**
+ * Deterministic DECIDE_EDIT classification. 'redesign' is the safe superset — it
+ * routes to the full-markup rewrite, which the mock also stubs.
+ *
+ * @return string JSON-encoded `{ kind, reason }` payload.
+ */
+function stub_decide_edit_payload() {
+	return wp_json_encode(
+		array(
+			'kind'   => 'redesign',
+			'reason' => 'Deterministic E2E edit classification.',
+		)
+	);
+}
+
+/**
+ * Deterministic TEXT_EDIT reply: the transformed copy once per fragment, matching
+ * the count the prompt asks for so run-text-edit's positional mapping lines up.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @param string $replacement  Copy to write into every fragment.
+ * @return string JSON-encoded `{ items: string[] }` payload.
+ */
+function stub_text_edit_payload( $request_body, $replacement ) {
+	$count = 1;
+
+	if ( preg_match( '/JSON array of (\d+) strings/', $request_body, $matches ) ) {
+		$count = max( 1, (int) $matches[1] );
+	}
+
+	return wp_json_encode( array( 'items' => array_fill( 0, $count, $replacement ) ) );
+}
+
+/**
+ * Deterministic STYLE_EDIT reply: no-op. Returning an empty items array leaves
+ * every element's attributes untouched (run-style-edit keeps the original when an
+ * item is missing), which is enough to exercise the style route without asserting
+ * a specific restyle.
+ *
+ * @return string JSON-encoded `{ items: array }` payload.
+ */
+function stub_style_edit_payload() {
+	return wp_json_encode( array( 'items' => array() ) );
+}
+
+/**
+ * Deterministic REWRITE reply: a single serialized paragraph carrying the
+ * replacement copy, which run-rewrite parses back into blocks.
+ *
+ * @param string $replacement Copy for the rewritten block.
+ * @return string JSON-encoded `{ summary, markup }` payload.
+ */
+function stub_rewrite_payload( $replacement ) {
+	$markup = '<!-- wp:paragraph --><p>' . $replacement . '</p><!-- /wp:paragraph -->';
+
+	return wp_json_encode(
+		array(
+			'summary' => 'Deterministic E2E rewrite.',
+			'markup'  => $markup,
+		)
+	);
+}
+
+/**
+ * Deterministic tool-call JSON for the agent planner step.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @return string JSON-encoded tool call.
+ */
+function stub_tool_call_payload( $request_body ) {
+	if ( false !== strpos( $request_body, 'hasReferenceBlocks: true' )
+		&& false !== strpos( $request_body, 'preferLocalTools: true' ) ) {
+		return wp_json_encode(
+			array(
+				'tool'   => 'patch',
+				'reason' => 'Deterministic E2E edit tool call.',
+				'args'   => array( 'patches' => array() ),
+			)
+		);
+	}
+
+	return wp_json_encode(
+		array(
+			'tool'   => 'generate',
+			'reason' => 'Deterministic E2E generate tool call.',
+			'args'   => array(),
+		)
+	);
+}
+
+/**
+ * Empty layout brief so pattern-aware create flows fall back to the catalog path.
+ *
+ * @return string JSON-encoded layout brief.
+ */
+function stub_layout_brief_payload() {
+	return wp_json_encode(
+		array(
+			'mission'  => '',
+			'design'   => (object) array(),
+			'sections' => array(),
+		)
+	);
+}
+
+/**
+ * Deterministic patch JSON for edit/refine requests.
+ *
+ * @param string $request_body Raw outbound request body.
+ * @param string $headline     Replacement copy for the first patched block.
+ * @return string JSON-encoded `{ patches: [...] }` payload.
+ */
+function stub_edit_patch_payload( $request_body, $headline ) {
+	if ( preg_match( '/"id"\s*:\s*"([^"]+)"/', $request_body, $matches ) ) {
+		return wp_json_encode(
+			array(
+				'patches' => array(
+					array(
+						'id'         => $matches[1],
+						'attributes' => array( 'content' => $headline ),
+					),
+				),
+			)
+		);
+	}
+
+	return wp_json_encode( array( 'patches' => array() ) );
+}
+
+/**
+ * A deterministic Atomic Wind "features" tree used to exercise the section
+ * insertion path with the real atomic-wind/* + core/icon blocks (and the
+ * icon slugs that 404 via /wp/v2/icons). Returned only when the Atomic Wind
+ * option is enabled, so generic block-generation tests keep the lone heading.
+ *
+ * @param string $headline        Heading text the attribute phase fills in.
+ * @param bool   $with_attributes Whether to include attributes (phase 3) or
+ *                                just the slug/nesting skeleton (phase 1).
+ * @return array<string, mixed> `{ rationale, roots }` payload.
+ */
+function atomic_wind_features_payload( $headline, $with_attributes ) {
+	$icons = array( 'zap', 'shield-check', 'sparkles' );
+
+	$columns = array();
+	foreach ( $icons as $icon ) {
+		$icon_block = array( 'name' => 'atomic-wind/icon', 'innerBlocks' => array() );
+		$heading    = array( 'name' => 'core/heading', 'innerBlocks' => array() );
+		$paragraph  = array( 'name' => 'core/paragraph', 'innerBlocks' => array() );
+
+		if ( $with_attributes ) {
+			$icon_block['attributes'] = array( 'icon' => $icon, 'className' => 'h-14 w-14 rounded-[18px] p-3' );
+			$heading['attributes']    = array( 'content' => $headline, 'level' => 3, 'className' => 'text-xl font-semibold' );
+			$paragraph['attributes']  = array( 'content' => 'Bring routine tasks into one clear flow.', 'className' => 'text-base opacity-75' );
+		}
+
+		$box = array(
+			'name'        => 'atomic-wind/box',
+			'innerBlocks' => array( $icon_block, $heading, $paragraph ),
+		);
+		if ( $with_attributes ) {
+			$box['attributes'] = array( 'tagName' => 'article', 'className' => 'flex h-full flex-col gap-6 rounded-[22px] bg-[#FFFFFF] p-8' );
+		}
+
+		$column = array( 'name' => 'core/column', 'innerBlocks' => array( $box ) );
+		if ( $with_attributes ) {
+			$column['attributes'] = array( 'verticalAlignment' => 'top', 'width' => '33.33%' );
+		}
+
+		$columns[] = $column;
+	}
+
+	$columns_block = array( 'name' => 'core/columns', 'innerBlocks' => $columns );
+	$root          = array( 'name' => 'core/group', 'innerBlocks' => array( $columns_block ) );
+
+	if ( $with_attributes ) {
+		$columns_block['attributes'] = array( 'verticalAlignment' => 'top', 'align' => 'wide' );
+		$root['attributes']          = array( 'tagName' => 'section', 'align' => 'full', 'backgroundColor' => 'accent-5', 'textColor' => 'contrast' );
+		$root['innerBlocks']         = array( $columns_block );
+	} else {
+		$root['notes'] = 'Three-card features section with an icon, title and short description per card.';
+	}
+
+	return array(
+		'rationale' => array( 'Deterministic E2E Atomic Wind features section.' ),
+		'roots'     => array( $root ),
+	);
+}
+
+/**
+ * Deterministic `{ rationale, roots }` reply for the block-generation pipeline.
+ *
+ * Phase 1 (structure) plans a single heading; phase 3 (attributes) fills it
+ * with $headline so a spec can assert the rendered text. A lone core/heading
+ * survives `validateStructure`/`validateGeneratedBlocks` with no ancestor.
+ *
+ * @param string $request_body Raw outbound request body (used to pick the phase).
+ * @param string $headline     Heading text returned by the attribute phase.
+ * @return string JSON-encoded payload for the assistant message content.
+ */
+function stub_openai_block_generation_payload( $request_body, $headline ) {
+	$is_attribute_phase = is_construct_request( $request_body );
+
+	// When Atomic Wind is enabled, return a rich atomic-wind/* tree so the
+	// section-insertion E2E exercises the real blocks instead of a lone heading.
+	if ( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) ) {
+		return wp_json_encode( atomic_wind_features_payload( $headline, $is_attribute_phase ) );
+	}
+
+	if ( $is_attribute_phase ) {
+		return wp_json_encode(
+			array(
+				'rationale' => array( 'Deterministic E2E content.' ),
+				'roots'     => array(
+					array(
+						'name'        => 'core/heading',
+						'attributes'  => array( 'content' => $headline ),
+						'innerBlocks' => array(),
+					),
+				),
+			)
+		);
+	}
+
+	return wp_json_encode(
+		array(
+			'rationale' => array( 'Deterministic E2E structure.' ),
+			'roots'     => array(
+				array(
+					'name'        => 'core/heading',
+					'innerBlocks' => array(),
+				),
+			),
+		)
+	);
+}
+
+/**
+ * Pick stub completion content based on the outbound OpenAI request body.
+ *
+ * @param string $request_body JSON-encoded chat completion request.
+ * @return string
+ */
+function stub_openai_completion_content( $request_body ) {
+	$is_space_nation = false !== stripos( $request_body, 'space nation' );
+
+	if ( is_layout_brief_request( $request_body ) ) {
+		return stub_layout_brief_payload();
+	}
+
+	if ( false !== strpos( $request_body, 'Pipeline step: TOOL_CALL' ) ) {
+		return stub_tool_call_payload( $request_body );
+	}
+
+	if ( is_polish_request( $request_body ) ) {
+		return wp_json_encode( array( 'patches' => array() ) );
+	}
+
+	if ( is_decide_edit_request( $request_body ) ) {
+		return stub_decide_edit_payload();
+	}
+
+	if ( is_text_edit_request( $request_body ) ) {
+		$replacement = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return stub_text_edit_payload( $request_body, $replacement );
+	}
+
+	if ( is_style_edit_request( $request_body ) ) {
+		return stub_style_edit_payload();
+	}
+
+	if ( is_rewrite_request( $request_body ) ) {
+		$replacement = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return stub_rewrite_payload( $replacement );
+	}
+
+	if ( is_block_generation_request( $request_body ) ) {
+		$headline = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return stub_openai_block_generation_payload( $request_body, $headline );
+	}
+
+	if ( is_edit_patch_request( $request_body ) ) {
+		$headline = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return stub_edit_patch_payload( $request_body, $headline );
+	}
+
+	if ( $is_space_nation ) {
+		return stub_openai_space_nation_content();
+	}
+
+	return '<p>Rewritten content for testing.</p>';
+}
+
+/**
+ * Pick stub content for the /otter/v1/openai/generate REST short-circuit.
+ *
+ * @param string $request_body Raw REST request body.
+ * @return array<string, mixed> Normalized AI_Response envelope.
+ */
+function stub_openai_generate_from_request( $request_body ) {
+	$content = stub_openai_completion_content( $request_body );
+	$format  = ( '{' === substr( ltrim( $content ), 0, 1 ) ) ? 'json' : 'text';
+
+	return \ThemeIsle\GutenbergBlocks\Server\AI_Response::success( $content, 30, $format );
+}
+
+/**
+ * Build a wp_remote_* response array for a stubbed OpenAI completion.
+ *
+ * @param string $content Assistant message content.
+ * @return array<string, mixed>
+ */
+function stub_openai_http_response( $content ) {
+	return array(
+		'headers'  => array(),
+		'body'     => wp_json_encode(
+			array(
+				'id'                 => 'chatcmpl-e2e-stub',
+				'object'             => 'chat.completion',
+				'created'            => 1721829943,
+				'model'              => 'gpt-3.5-turbo-0125',
+				'choices'            => array(
+					array(
+						'index'         => 0,
+						'message'       => array(
+							'role'    => 'assistant',
+							'content' => $content,
+						),
+						'logprobs'      => null,
+						'finish_reason' => 'stop',
+					),
+				),
+				'usage'              => array(
+					'prompt_tokens'     => 20,
+					'completion_tokens' => 10,
+					'total_tokens'      => 30,
+				),
+				'system_fingerprint' => null,
+			)
+		),
+		'response' => array(
+			'code'    => 200,
+			'message' => 'OK',
+		),
+		'cookies'  => array(),
+		'filename' => null,
+	);
+}
+
+/**
+ * Short-circuit OpenAI HTTP calls when the E2E stub API key is configured.
+ *
+ * @param false|array|WP_Error $preempt     A preemptive return value.
+ * @param array                $parsed_args Request arguments.
+ * @param string               $url         Request URL.
+ * @return false|array|WP_Error
+ */
+function stub_openai_http_for_e2e( $preempt, $parsed_args, $url ) {
+	if ( false !== $preempt || OPENAI_COMPLETIONS_URL !== $url ) {
+		return $preempt;
+	}
+
+	$api_key = get_option( 'themeisle_open_ai_api_key' );
+
+	if ( ! is_e2e_openai_stub_key( $api_key ) ) {
+		return $preempt;
+	}
+
+	$request_body = isset( $parsed_args['body'] ) ? $parsed_args['body'] : '';
+	$content      = stub_openai_completion_content( $request_body );
+
+	return stub_openai_http_response( $content );
+}
+
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e', 10, 2 );
+add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_openai_http_for_e2e', 10, 3 );
 
 // Skip the themeisle-sdk survey (Formbricks) + tracking scripts in e2e so their
 // network errors don't pollute the console. Bails Script_loader::setup_actions().
@@ -316,7 +849,9 @@ function stub_openai_generate_route( $result, $server, $request ) {
 		return $result;
 	}
 
-	return rest_ensure_response( stub_openai_generate_response() );
+	$body = $request->get_body();
+
+	return rest_ensure_response( stub_openai_generate_from_request( is_string( $body ) ? $body : '' ) );
 }
 
 add_filter( 'rest_pre_dispatch', __NAMESPACE__ . '\\stub_openai_generate_route', 10, 3 );
@@ -714,10 +1249,16 @@ add_action(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'permission_callback' => __NAMESPACE__ . '\\require_admin',
 				'callback'            => function () {
-					delete_option( PRO_LICENSE_OPTION );
+					// Re-stub rather than delete: global-setup activates the Pro
+					// license once for the whole run, so reset() must restore that
+					// baseline. Deleting it deactivates Pro for every later spec and
+					// the Pro-gated Form tests (file field, export, …) then fail.
+					update_option( PRO_LICENSE_OPTION, stub_license_data() );
 					foreach ( OPTION_WHITELIST as $key ) {
 						delete_option( $key );
 					}
+					delete_option( 'themeisle_blocks_settings_ai_toolbar_actions' );
+					delete_option( 'themeisle_blocks_ai_toolbar_actions_migrated' );
 					delete_transient( PROMPTS_TRANSIENT );
 					delete_transient( 'otter_prompts_timeout' );
 					delete_option( MAIL_MODE_OPTION );

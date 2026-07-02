@@ -31,6 +31,323 @@
 	}
 }
 
+.o-ai-create-card {
+
+	// The placeholder itself becomes a centered, self-contained card.
+	&.components-placeholder {
+		max-width: 560px;
+		margin: 0 auto;
+		padding: 22px 24px 24px;
+		border: 1px solid #ececef;
+		border-radius: 16px;
+		background: #fff;
+		box-shadow: 0 1px 2px rgba( 16, 18, 30, 0.04 ), 0 12px 32px -8px rgba( 16, 18, 30, 0.14 );
+		color: #18181b;
+	}
+
+	.components-placeholder__label {
+		gap: 10px;
+		margin-bottom: 0;
+		font-size: 16px;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		color: #18181b;
+	}
+
+	.components-placeholder__instructions {
+		margin: 4px 0 0;
+		font-size: 14px;
+		line-height: 1.5;
+		color: #71717a;
+	}
+
+	// Stack the controls so scope, prompt, chips, settings and actions each get
+	// their own line with even rhythm.
+	.components-placeholder__fieldset {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 12px;
+		margin-top: 12px;
+	}
+
+	.components-base-control,
+	.components-base-control__field,
+	.components-textarea-control,
+	textarea {
+		width: 100%;
+	}
+
+	textarea {
+		min-height: 84px;
+		padding: 13px 14px;
+		border: 1px solid #e4e4e7;
+		border-radius: 11px;
+		font-size: 14px;
+		line-height: 1.5;
+		color: #18181b;
+
+		&:focus {
+			border-color: var( --wp-admin-theme-color, #3858e9 );
+			box-shadow: 0 0 0 1px var( --wp-admin-theme-color, #3858e9 );
+			outline: none;
+		}
+	}
+
+	// Segmented control (Section / Full page).
+	&__scope {
+		display: inline-flex;
+		align-self: flex-start;
+		gap: 2px;
+		padding: 3px;
+		border-radius: 10px;
+		background: #f4f4f5;
+
+		.components-button {
+			height: auto;
+			padding: 7px 16px;
+			font-size: 14px;
+			font-weight: 600;
+			border-radius: 8px;
+
+			&.is-secondary {
+				box-shadow: none;
+				background: transparent;
+				color: #71717a;
+			}
+
+			&.is-primary {
+				background: #fff;
+				color: var( --wp-admin-theme-color, #3858e9 );
+				box-shadow: 0 1px 2px rgba( 16, 18, 30, 0.12 );
+			}
+		}
+	}
+
+	// Suggestion chips.
+	&__chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+
+		.components-button.is-tertiary {
+			height: auto;
+			padding: 8px 16px;
+			border: 1px solid #e4e4e7;
+			border-radius: 999px;
+			font-size: 13px;
+			font-weight: 500;
+			color: #3f3f46;
+
+			&:hover:not( :disabled ) {
+				background: transparent;
+				border-color: var( --wp-admin-theme-color, #3858e9 );
+				color: var( --wp-admin-theme-color, #3858e9 );
+			}
+		}
+	}
+
+	// Settings group — a bordered box of divided toggle rows.
+	&__settings {
+		border: 1px solid #ececef;
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	&__setting-row {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 14px 16px;
+
+		& + & {
+			border-top: 1px solid #f0f0f2;
+		}
+	}
+
+	// Lay the WP toggle out the mockup's way: label (+ help) on the left, switch
+	// pushed to the right; brand the checked state.
+	&__setting-toggle.components-toggle-control {
+		width: 100%;
+		margin-bottom: 0;
+
+		.components-base-control__field,
+		.components-flex {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 14px;
+			margin-bottom: 0;
+		}
+
+		.components-toggle-control__label,
+		> .components-base-control__field > label,
+		label {
+			order: 1;
+			flex: 1 1 auto;
+			font-size: 14px;
+			font-weight: 500;
+			color: #18181b;
+		}
+
+		.components-form-toggle {
+			// Put the switch to the right of the label. The checked colour comes
+			// from WP's default toggle styling (the admin accent).
+			order: 2;
+		}
+
+		// The help sits below the row as a BaseControl sibling. WP indents it to
+		// align under a left-hand toggle; since we moved the toggle to the right,
+		// pull it back flush-left so it lines up with the title above it.
+		.components-base-control__help {
+			margin: 4px 0 0;
+			margin-inline-start: 0;
+			padding-inline-start: 0;
+			font-size: 13px;
+			line-height: 1.45;
+			color: #a1a1aa;
+		}
+
+		.components-toggle-control__help {
+			margin-inline-start: 0;
+			padding-inline-start: 0;
+		}
+	}
+
+	&__swatches {
+		display: inline-flex;
+		gap: 6px;
+		transition: opacity 0.15s ease;
+
+		&.is-off {
+			opacity: 0.35;
+			filter: grayscale( 1 );
+		}
+	}
+
+	&__swatch {
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		box-shadow: inset 0 0 0 1px rgba( 16, 18, 30, 0.12 );
+	}
+
+	// Footer — Generate + Cancel.
+	&__actions {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 8px;
+
+		.components-button.is-primary {
+			height: auto;
+			padding: 11px 20px;
+			font-size: 14px;
+			font-weight: 600;
+			border-radius: 10px;
+			// Colour, hover and disabled states come from WP's is-primary button
+			// styling (the admin accent) — only the shape is customised here.
+		}
+
+		.components-button.is-tertiary {
+			height: auto;
+			padding: 11px 16px;
+			font-size: 14px;
+			font-weight: 500;
+			color: #52525b;
+		}
+	}
+}
+
+.o-ai-plan {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 12px;
+	margin: 10px 0;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	background-color: #f7f7f7;
+
+	&__label {
+		display: block;
+		font-size: 11px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: #757575;
+		margin-bottom: 4px;
+	}
+
+	&__mission p {
+		margin: 0;
+		font-size: 13px;
+		line-height: 1.5;
+	}
+
+	&__palette {
+		display: flex;
+		flex-direction: row;
+		gap: 6px;
+		margin-bottom: 8px;
+	}
+
+	&__swatch {
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		border: 1px solid rgba(0, 0, 0, 0.1);
+	}
+
+	&__outline {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	&__section {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 8px;
+		font-size: 13px;
+
+		&.is-pending {
+			color: #949494;
+		}
+
+		&.is-failed {
+			color: #cc1818;
+		}
+	}
+
+	&__section-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 20px;
+		height: 20px;
+
+		.components-spinner {
+			margin: 0;
+		}
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	&__dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background-color: currentColor;
+		opacity: 0.5;
+	}
+}
+
 .o-tracking-consent-toggle {
 	display: flex;
 	flex-direction: row;

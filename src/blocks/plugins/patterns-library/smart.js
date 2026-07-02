@@ -487,7 +487,7 @@ export const createSearchIndex = ( patterns, categoryLabels ) => new Fuse(
 		name: pattern.name,
 		title: pattern.title,
 		slug: getSlugWords( pattern ),
-		categories: pattern.categories.map( category => categoryLabels[ category ] || '' ).filter( Boolean ),
+		categories: ( pattern.categories || [] ).map( category => categoryLabels[ category ] || '' ).filter( Boolean ),
 		description: pattern.description || '',
 		text: getSearchText( pattern )
 	}) ),

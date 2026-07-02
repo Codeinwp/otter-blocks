@@ -37,6 +37,23 @@ type PromptPlaceholderProps = {
 	onPreview?: ( result: string ) => void
 	actionButtons?: ( props: {status?: string}) => ReactNode
 	resultHistory?: {result: string, meta: { usedToken: number, prompt: string }}[]
+
+	/**
+	 * Optional generation override. When provided, the prompt submit bypasses the
+	 * built-in single-shot OpenAI call and delegates to this handler (used by the
+	 * AI Block to run the multi-step block generation pipeline). The handler is
+	 * responsible for inserting the generated blocks; the returned `result`
+	 * string is only used for the history/token display.
+	 */
+	onGenerateBlocks?: ( task: string, regenerate: boolean ) => Promise<{ result: string, usedToken: number } | { error: string }>
+
+	/**
+	 * Optional content rendered alongside the prompt while generating (and after),
+	 * independent of the result history. The AI Block uses it to show the
+	 * generation plan and per-section progress during the first run, before any
+	 * result history exists.
+	 */
+	progressContent?: ReactNode
 };
 
 export const openAiAPIKeyName = 'themeisle_open_ai_api_key';
@@ -217,6 +234,51 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 	}, [ resultHistoryIndex, resultHistory ]);
 
 	function onPromptSubmit( regenerate = false ) {
+
+		// Block generation pipeline path: the parent owns the request loop and
+		// block insertion. We only manage the loading state and history here.
+		if ( props.onGenerateBlocks ) {
+			if ( 'present' !== apiKeyStatus ) {
+				setShowError( true );
+				setErrorMessage( __( 'API Key not found. Please add your API Key in the settings page.', 'otter-blocks' ) );
+				return;
+			}
+
+			setGenerationStatus( 'loading' );
+			window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'block-pipeline', featureValue: value }, { consent: true });
+
+			props.onGenerateBlocks( value, regenerate ).then( ( outcome ) => {
+				if ( 'error' in outcome ) {
+					setGenerationStatus( 'error' );
+					setShowError( true );
+					setErrorMessage( outcome.error || __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
+					return;
+				}
+
+				setGenerationStatus( 'loaded' );
+
+				const historyItem = {
+					result: outcome.result,
+					meta: {
+						usedToken: outcome.usedToken,
+						prompt: value
+					}
+				};
+
+				if ( regenerate ) {
+					const newResultHistory = [ ...resultHistory ];
+					newResultHistory[ resultHistoryIndex ] = historyItem;
+					setResultHistory( newResultHistory );
+				} else {
+					setResultHistory([ ...resultHistory, historyItem ]);
+					setResultHistoryIndex( resultHistory.length );
+				}
+
+				setTokenUsageDescription( __( 'Token used:', 'otter-blocks' ) + outcome.usedToken );
+			});
+
+			return;
+		}
 
 		let embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
 
@@ -447,6 +509,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 					/>
 				)
 			}
+
+			{ props.progressContent }
 
 			{
 				showError && (
