@@ -279,7 +279,7 @@ class Block_Conditions {
 		$cookie = '';
 
 		if ( isset( $_COOKIE[ $condition['cookie_key'] ] ) ) { // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
-			$cookie = esc_attr( sanitize_text_field( wp_unslash( $_COOKIE[ $condition['cookie_key'] ] ) ) ); // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
+			$cookie = sanitize_text_field( wp_unslash( $_COOKIE[ $condition['cookie_key'] ] ) ); // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
 		}
 
 		if ( 'is_true' === $condition['cookie_compare'] ) {

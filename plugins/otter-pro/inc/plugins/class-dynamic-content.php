@@ -223,7 +223,7 @@ class Dynamic_Content {
 			return $default;
 		}
 
-		$field_key = esc_html( $data['metaKey'] );
+		$field_key = sanitize_text_field( $data['metaKey'] );
 		$meta      = get_field( $field_key, $data['context'] );
 
 		// Get the ACF repeater's sub-field value.
