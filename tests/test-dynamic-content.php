@@ -720,6 +720,45 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * A fallback image path outside the uploads directory must be rejected
+	 * (prevents reading arbitrary images elsewhere under wp-content).
+	 */
+	public function test_get_safe_fallback_path_rejects_outside_uploads() {
+		$outside = trailingslashit( WP_CONTENT_DIR ) . 'otter-fallback-outside.png';
+		copy( __DIR__ . '/assets/test-img.png', $outside );
+
+		$result = \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::get_safe_fallback_path( $outside );
+
+		unlink( $outside );
+
+		$this->assertEquals( '', $result );
+	}
+
+	/**
+	 * A fallback image inside the uploads directory is still accepted (feature intact).
+	 */
+	public function test_get_safe_fallback_path_allows_inside_uploads() {
+		$uploads = wp_get_upload_dir();
+		$inside  = trailingslashit( $uploads['basedir'] ) . 'otter-fallback-inside.png';
+		copy( __DIR__ . '/assets/test-img.png', $inside );
+
+		$expected = realpath( $inside );
+		$result   = \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::get_safe_fallback_path( $inside );
+
+		unlink( $inside );
+
+		$this->assertEquals( $expected, $result );
+	}
+
+	/**
+	 * A traversal path resolving outside wp-content is rejected.
+	 */
+	public function test_get_safe_fallback_path_rejects_traversal() {
+		$result = \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::get_safe_fallback_path( '/etc/passwd' );
+		$this->assertEquals( '', $result );
+	}
+
+	/**
 	 * Author meta must never expose the author's password hash.
 	 */
 	public function test_author_meta_does_not_leak_password_hash() {
