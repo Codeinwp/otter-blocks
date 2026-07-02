@@ -584,7 +584,12 @@ class Dynamic_Content {
 			$ipaddress = '';
 		}
 		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
-		return $ipaddress;
+
+		// Forwarded headers may carry a comma-separated list; validate the first entry
+		// so a spoofed or malformed value cannot flow into the outbound geolocation URL.
+		$ipaddress = trim( explode( ',', $ipaddress )[0] );
+
+		return filter_var( $ipaddress, FILTER_VALIDATE_IP ) ? $ipaddress : '';
 	}
 
 	/**

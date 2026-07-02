@@ -759,6 +759,28 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * A non-IP forwarded header must not be returned (it flows into an outbound URL).
+	 */
+	public function test_get_client_ip_rejects_non_ip_forwarded_header() {
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = 'evil.com/../../inject';
+		$ip                              = \ThemeIsle\OtterPro\Plugins\Dynamic_Content::get_client_ip();
+		unset( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+
+		$this->assertEquals( '', $ip );
+	}
+
+	/**
+	 * A forwarded list yields the first valid client IP.
+	 */
+	public function test_get_client_ip_extracts_first_valid_ip_from_list() {
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = '203.0.113.7, 10.0.0.1';
+		$ip                              = \ThemeIsle\OtterPro\Plugins\Dynamic_Content::get_client_ip();
+		unset( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+
+		$this->assertEquals( '203.0.113.7', $ip );
+	}
+
+	/**
 	 * Author meta must never expose the author's password hash.
 	 */
 	public function test_author_meta_does_not_leak_password_hash() {
