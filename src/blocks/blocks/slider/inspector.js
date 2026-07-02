@@ -169,9 +169,12 @@ const Inspector = ({
 								/>
 
 								<AltTextControl
+									label={ sprintf(
 
-									// translators: %d: the position of the image in the slider.
-									label={ sprintf( __( 'Image %d alt text (alternative text)', 'otter-blocks' ), index + 1 ) }
+										/* translators: %d: the position of the image in the slider. */
+										__( 'Image %d alt text (alternative text)', 'otter-blocks' ),
+										index + 1
+									) }
 									value={ image.alt }
 									onChange={ alt => setAttributes({
 										images: attributes.images.map( ( img, i ) => index === i ? { ...img, alt } : img )
