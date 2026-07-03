@@ -1009,6 +1009,66 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The legacy backend renames max_tokens to max_completion_tokens, which
+	 * GPT-5/o-series models require on the chat-completions endpoint.
+	 */
+	public function test_otter_openai_renames_max_tokens() {
+		$this->force_availability( false );
+		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
+
+		$captured_args = array();
+
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) use ( &$captured_args ) {
+				if ( Otter_OpenAI_Backend::BASE_URL === $url ) {
+					$captured_args = $args;
+					return array(
+						'headers'  => array(),
+						'body'     => wp_json_encode(
+							array(
+								'choices' => array(
+									array(
+										'message' => array(
+											'role'    => 'assistant',
+											'content' => 'Response.',
+										),
+									),
+								),
+							)
+						),
+						'response' => array(
+							'code'    => 200,
+							'message' => 'OK',
+						),
+					);
+				}
+
+				return $preempt;
+			},
+			10,
+			3
+		);
+
+		$this->dispatch_generate(
+			array(
+				'messages'   => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Hello',
+					),
+				),
+				'max_tokens' => 8192,
+			)
+		);
+
+		$sent_body = json_decode( $captured_args['body'], true );
+
+		$this->assertArrayNotHasKey( 'max_tokens', $sent_body );
+		$this->assertSame( 8192, $sent_body['max_completion_tokens'] );
+	}
+
+	/**
 	 * Otter OpenAI response filters can post-process the decoded response body.
 	 */
 	public function test_otter_openai_filters_response() {
