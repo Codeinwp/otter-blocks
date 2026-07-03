@@ -1,4 +1,4 @@
-=== Otter – Page Builder Blocks & Extensions for Gutenberg ===
+=== Otter Blocks - Gutenberg Blocks, Page Builder for Gutenberg Editor & FSE ===
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
