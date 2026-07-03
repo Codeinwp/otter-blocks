@@ -80,7 +80,7 @@ test.describe( 'Sharing Icons', () => {
 
 		await expect( editor.canvas.getByLabel( 'Block: Sharing Icons' ) ).toBeVisible();
 
-		await page.locator( 'button:nth-child(6)' ).click(); // Hide Reddit icon using the Toolbar actions.
+		await page.getByRole( 'button', { name: 'Display Reddit' }).click(); // Hide Reddit icon using the Toolbar actions.
 
 		await publishAndViewPost({ editor, page });
 

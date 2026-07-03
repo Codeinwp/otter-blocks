@@ -10,6 +10,7 @@ import {
 	BaseControl,
 	Button,
 	Dropdown,
+	ToolbarButton,
 	ToolbarGroup
 } from '@wordpress/components';
 
@@ -83,7 +84,7 @@ export const StyleSwitcherBlockControl = ({
 					contentClassName="otter-styles-popover-content"
 					position="bottom center"
 					renderToggle={ ({ isOpen, onToggle }) => (
-						<Button
+						<ToolbarButton
 							className="components-dropdown-menu__toggle"
 							icon={ 'admin-appearance' }
 							onClick={ onToggle }
@@ -93,7 +94,7 @@ export const StyleSwitcherBlockControl = ({
 							showTooltip={ true }
 						>
 							<span className="components-dropdown-menu__indicator" />
-						</Button>
+						</ToolbarButton>
 					) }
 					renderContent={ () => (
 						<Fragment>
