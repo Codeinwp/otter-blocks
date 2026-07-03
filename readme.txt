@@ -5,8 +5,8 @@ Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 5.6
 Stable tag: 3.1.11
-License: GPLv3
-License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Quickly create WordPress pages with 20+ blocks, 100+ ready-to-import designs, and advanced editor extensions. It’s website building, Lego-style!
 

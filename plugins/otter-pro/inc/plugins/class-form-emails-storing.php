@@ -541,7 +541,7 @@ class Form_Emails_Storing {
 			return $query;
 		}
 
-		if ( ! is_admin() || ! isset( $_GET['post_type'] ) || self::FORM_RECORD_TYPE !== $_GET['post_type'] ) {
+		if ( ! is_admin() || ! isset( $_GET['post_type'] ) || self::FORM_RECORD_TYPE !== sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $query;
 		}
 
@@ -1413,7 +1413,7 @@ class Form_Emails_Storing {
 	 * Export submissions with ajax.
 	 */
 	public function export_submissions() {
-		$nonce = isset( $_POST['_nonce'] ) ? sanitize_text_field( $_POST['_nonce'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$nonce = isset( $_POST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_nonce'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! wp_verify_nonce( $nonce, 'otter_form_export_submissions' ) ) {
 			wp_die( esc_html( __( 'Invalid nonce.', 'otter-pro' ) ) );
 		}

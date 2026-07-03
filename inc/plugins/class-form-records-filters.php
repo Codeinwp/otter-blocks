@@ -83,7 +83,7 @@ class Form_Records_Filters {
 			return $query;
 		}
 
-		if ( ! is_admin() || ! isset( $_GET['post_type'] ) || Form_Submissions::FORM_RECORD_TYPE !== $_GET['post_type'] ) {
+		if ( ! is_admin() || ! isset( $_GET['post_type'] ) || Form_Submissions::FORM_RECORD_TYPE !== sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return $query;
 		}
 
