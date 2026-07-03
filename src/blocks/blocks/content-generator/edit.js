@@ -170,6 +170,8 @@ const ContentGenerator = ({
 		} else {
 			replaceBlocks( clientId, blocksToInsert );
 		}
+
+		window.oTrk?.set( `ai-outcome-${ clientId }`, { feature: 'ai-generation', featureComponent: 'outcome-form', featureValue: 'replace' });
 	};
 
 	/**
@@ -246,7 +248,12 @@ const ContentGenerator = ({
 						onValueChange={ setPrompt }
 						onPreview={ onPreview }
 						actionButtons={ actionButtons }
-						onClose={ () => removeBlock( clientId ) }
+						onClose={ () => {
+							if ( hasInnerBlocks ) {
+								window.oTrk?.set( `ai-outcome-${ clientId }`, { feature: 'ai-generation', featureComponent: 'outcome-form', featureValue: 'discard' });
+							}
+							removeBlock( clientId );
+						} }
 						promptPlaceholder={ __( 'Start describing what form you need…', 'otter-blocks' ) }
 					>
 						{
