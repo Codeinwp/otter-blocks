@@ -136,10 +136,10 @@ test.describe( 'Content Slider Block', () => {
 				{
 					name: 'themeisle-blocks/form',
 					innerBlocks: [
-						{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name', type: 'text' } }
+						{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name', type: 'text' }}
 					]
 				},
-				{ name: 'core/paragraph', attributes: { content: 'Second slide' } }
+				{ name: 'core/paragraph', attributes: { content: 'Second slide' }}
 			]
 		});
 		await publishAndViewPost({ editor, page });
@@ -277,8 +277,8 @@ test.describe( 'Content Slider Block', () => {
 	});
 
 	test( 'renders diverse core blocks and a content-heavy slide', async({ editor, page }) => {
-		const listItem = content => ({ name: 'core/list-item', attributes: { content } });
-		const paragraph = content => ({ name: 'core/paragraph', attributes: { content } });
+		const listItem = content => ({ name: 'core/list-item', attributes: { content }});
+		const paragraph = content => ({ name: 'core/paragraph', attributes: { content }});
 
 		await editor.insertBlock({
 			name: BLOCK,
@@ -286,23 +286,23 @@ test.describe( 'Content Slider Block', () => {
 				// Slide 1 — a mix of core blocks.
 				{
 					name: 'core/group',
-					attributes: { className: 'core-mix-slide', layout: { type: 'constrained' } },
+					attributes: { className: 'core-mix-slide', layout: { type: 'constrained' }},
 					innerBlocks: [
-						{ name: 'core/heading', attributes: { content: 'Core mix heading', level: 2 } },
-						{ name: 'core/image', attributes: { url: 'https://s.w.org/images/core/5.3/MtBlanc1.jpg', alt: 'Peak' } },
+						{ name: 'core/heading', attributes: { content: 'Core mix heading', level: 2 }},
+						{ name: 'core/image', attributes: { url: 'https://s.w.org/images/core/5.3/MtBlanc1.jpg', alt: 'Peak' }},
 						paragraph( 'An intro paragraph for the core mix slide.' ),
 						{ name: 'core/list', innerBlocks: [ listItem( 'Alpha' ), listItem( 'Beta' ), listItem( 'Gamma' ) ] },
 						{ name: 'core/quote', innerBlocks: [ paragraph( 'A quoted line of text.' ) ] },
-						{ name: 'core/buttons', innerBlocks: [ { name: 'core/button', attributes: { text: 'Core button' } } ] }
+						{ name: 'core/buttons', innerBlocks: [{ name: 'core/button', attributes: { text: 'Core button' }}] }
 					]
 				},
 
 				// Slide 2 — content-heavy: many blocks nested inside one slide.
 				{
 					name: 'core/group',
-					attributes: { className: 'huge-slide', layout: { type: 'constrained' } },
+					attributes: { className: 'huge-slide', layout: { type: 'constrained' }},
 					innerBlocks: [
-						{ name: 'core/heading', attributes: { content: 'Content-heavy slide', level: 2 } },
+						{ name: 'core/heading', attributes: { content: 'Content-heavy slide', level: 2 }},
 						...Array.from({ length: 10 }, ( _, i ) => paragraph( `Body paragraph number ${ i + 1 } with a sentence of content.` ) ),
 						{ name: 'core/list', innerBlocks: Array.from({ length: 8 }, ( _, i ) => listItem( `Feature ${ i + 1 }` ) ) },
 						{
@@ -320,11 +320,11 @@ test.describe( 'Content Slider Block', () => {
 				// Slide 3 — core and Otter blocks together in one slide.
 				{
 					name: 'core/group',
-					attributes: { className: 'mixed-slide', layout: { type: 'constrained' } },
+					attributes: { className: 'mixed-slide', layout: { type: 'constrained' }},
 					innerBlocks: [
-						{ name: 'core/heading', attributes: { content: 'Mixed slide', level: 3 } },
-						{ name: 'themeisle-blocks/advanced-heading', attributes: { content: 'Otter advanced heading', tag: 'h4' } },
-						{ name: 'themeisle-blocks/button-group', innerBlocks: [ { name: 'themeisle-blocks/button', attributes: { text: 'Otter CTA', link: 'https://example.com' } } ] }
+						{ name: 'core/heading', attributes: { content: 'Mixed slide', level: 3 }},
+						{ name: 'themeisle-blocks/advanced-heading', attributes: { content: 'Otter advanced heading', tag: 'h4' }},
+						{ name: 'themeisle-blocks/button-group', innerBlocks: [{ name: 'themeisle-blocks/button', attributes: { text: 'Otter CTA', link: 'https://example.com' }}] }
 					]
 				}
 			]

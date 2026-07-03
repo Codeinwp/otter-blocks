@@ -99,8 +99,7 @@ class Template_Cloud_Server {
 	private function validate_source_and_get_name( $url, $key ) {
 		$url  = trailingslashit( $url ) . self::API_ENDPOINT_SUFFIX;
 		$args = [
-			'sslverify' => false,
-			'headers'   => [
+			'headers' => [
 				'X-API-KEY' => $key,
 			],
 		];

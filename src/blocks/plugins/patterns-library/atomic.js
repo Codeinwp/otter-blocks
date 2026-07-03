@@ -43,19 +43,21 @@ const extractClasses = ( content ) => {
 	return Array.from( classes );
 };
 
-// Returns { css, isReady } for a pattern. isReady is immediately true for
-// patterns without Atomic Wind blocks (and when the generator script isn't
-// loaded, e.g. the blocks are disabled — they'd preview as missing anyway);
-// for the rest it flips once the Tailwind CSS has been generated, so callers
-// can hold the skeleton until the preview can paint fully styled.
-export const useAtomicCss = ( pattern ) => {
-	const needsAtomic = pattern.content.includes( 'atomic-wind/' ) &&
+// Returns { css, isReady } for a chunk of serialized block markup, keyed by
+// cacheKey. isReady is immediately true for markup without Atomic Wind blocks
+// (and when the generator script isn't loaded, e.g. the blocks are disabled —
+// they'd preview as missing anyway); for the rest it flips once the Tailwind
+// CSS has been generated, so callers can hold the skeleton until the preview
+// can paint fully styled. Use this directly when you hold raw markup (e.g. live
+// blocks serialized on the fly); patterns go through useAtomicCss below.
+export const useAtomicCssForContent = ( content, cacheKey ) => {
+	const needsAtomic = content.includes( 'atomic-wind/' ) &&
 		Boolean( window.atomicWindGenerateCss );
 
-	const [ css, setCss ] = useState( () => cache.get( pattern.name ) );
+	const [ css, setCss ] = useState( () => cache.get( cacheKey ) );
 
 	useEffect( () => {
-		const cached = cache.get( pattern.name );
+		const cached = cache.get( cacheKey );
 		setCss( cached );
 
 		if ( ! needsAtomic || undefined !== cached ) {
@@ -64,10 +66,10 @@ export const useAtomicCss = ( pattern ) => {
 
 		let cancelled = false;
 
-		window.atomicWindGenerateCss( extractClasses( pattern.content ) )
+		window.atomicWindGenerateCss( extractClasses( content ) )
 			.then( ( generated ) => {
 				const rewritten = rewritePreviewVh( generated );
-				cache.set( pattern.name, rewritten );
+				cache.set( cacheKey, rewritten );
 
 				if ( ! cancelled ) {
 					setCss( rewritten );
@@ -85,10 +87,15 @@ export const useAtomicCss = ( pattern ) => {
 		return () => {
 			cancelled = true;
 		};
-	}, [ pattern.name, needsAtomic ]);
+	}, [ cacheKey, needsAtomic ]);
 
 	return {
 		css: css || '',
 		isReady: ! needsAtomic || undefined !== css
 	};
 };
+
+// Pattern flavor of useAtomicCssForContent: a pattern's name is a stable cache
+// key and its content never changes, so the two map one-to-one.
+export const useAtomicCss = ( pattern ) =>
+	useAtomicCssForContent( pattern.content, pattern.name );

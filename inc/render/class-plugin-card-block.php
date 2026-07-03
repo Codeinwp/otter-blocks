@@ -56,7 +56,7 @@ class Plugin_Card_Block {
 							</div>
 							<div class="o-plugin-cards-info">
 								<h4>' . esc_html( $results->name ) . '</h4>
-								<h5>' . $results->author . '</h5>
+								<h5>' . wp_kses_post( $results->author ) . '</h5>
 							</div>
 							<div class="o-plugin-cards-ratings">
 								' . $this->get_ratings( $results->rating ) . '

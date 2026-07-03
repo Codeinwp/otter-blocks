@@ -16,17 +16,21 @@ import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, lightnessFr
  * @param {Function} setAttributes - The setAttributes function from the block.
  */
 export const useResponsiveAttributes = ( setAttributes = () => {}) => {
-	const view = useSelect( ( select ) => {
+	// Return only the current view (a primitive) from useSelect, so its value is
+	// referentially stable across renders. Building the get/set helpers inside
+	// useSelect produced new function references every call, which tripped
+	// useSelect's equality check for every block on the page.
+	const view = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
 		const editor = select( 'core/editor' );
 
 		return editor?.getDeviceType ? editor.getDeviceType() : getView();
-	}, [] );
+	}, []);
 
-	return useMemo( () => ( {
+	return useMemo( () => ({
 		responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
 		responsiveGetAttributes: buildResponsiveGetAttributes( view )
-	} ), [ setAttributes, view ] );
+	}), [ view, setAttributes ]);
 };
 
 /**

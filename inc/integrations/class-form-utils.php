@@ -103,7 +103,12 @@ class Form_Utils {
 		try {
 			$file_data = $files[ $file_data_key ];
 
-			if ( 'svg' === pathinfo( $file_name, PATHINFO_EXTENSION ) ) {
+			$upload_name = isset( $file_data['name'] ) ? $file_data['name'] : $file_name;
+			$is_svg      = 'svg' === strtolower( pathinfo( $upload_name, PATHINFO_EXTENSION ) )
+				|| 'svg' === strtolower( pathinfo( $file_name, PATHINFO_EXTENSION ) )
+				|| ( isset( $file_data['type'] ) && 'image/svg+xml' === $file_data['type'] );
+
+			if ( $is_svg ) {
 				$file_contents = file_get_contents( $file_data['tmp_name'] );
 
 				$sanitizer     = new Sanitizer();

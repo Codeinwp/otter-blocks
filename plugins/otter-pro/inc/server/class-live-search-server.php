@@ -73,8 +73,8 @@ class Live_Search_Server {
 	 * @param WP_Query $query WP Query object.
 	 */
 	public function parse_query( $query ) {
-		if ( get_query_var( 'o_post_type' ) ) {
-			$query->set( 'post_type', explode( ',', get_query_var( 'o_post_type' ) ) );
+		if ( $query->is_main_query() && $query->is_search() && $query->get( 'o_post_type' ) ) {
+			$query->set( 'post_type', explode( ',', $query->get( 'o_post_type' ) ) );
 		}
 
 		return $query;

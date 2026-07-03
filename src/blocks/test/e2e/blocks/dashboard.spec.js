@@ -19,11 +19,8 @@ test.describe( 'Dashboard', () => {
 		});
 		await admin.visitAdminPage( 'admin.php?page=otter' );
 
-		const integrationsTab = page.getByRole( 'button', { name: 'Integrations' });
-		await integrationsTab.click();
-
-		const openAIAccordion = page.getByRole( 'button', { name: 'AI Provider' });
-		await openAIAccordion.click();
+		const aiTab = page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true });
+		await aiTab.click();
 
 		const aiClientSupported = await page.evaluate( () => Boolean( window.otterObj?.aiClientSupported ) );
 		const inputArea = page.getByPlaceholder( 'OpenAI API Key' );
@@ -39,7 +36,7 @@ test.describe( 'Dashboard', () => {
 			await expect( inputArea ).toBeVisible();
 			await inputArea.fill( 'test' );
 
-			const save = page.locator( 'div' ).filter({ hasText: /^SaveGet API Key↗More Info↗$/ }).getByRole( 'button' );
+			const save = page.getByRole( 'button', { name: 'Save', exact: true });
 			await save.click();
 
 			const snackbar = page.getByTestId( 'snackbar' );
@@ -56,8 +53,7 @@ test.describe( 'Dashboard', () => {
 		await otterUtils.setOptions({ themeisle_open_ai_api_key: PRESEEDED_OPENAI_KEY });
 		await admin.visitAdminPage( 'admin.php?page=otter' );
 
-		await page.getByRole( 'button', { name: 'Integrations' }).click();
-		await page.getByRole( 'button', { name: 'AI Provider' }).click();
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
 
 		// The grandfathered input renders with the masked saved key as placeholder.
 		await expect( page.getByPlaceholder( /^sk_X+xx$/ ) ).toBeVisible();
@@ -66,55 +62,30 @@ test.describe( 'Dashboard', () => {
 
 		if ( aiClientSupported ) {
 			await expect( page.getByText( 'Legacy connection.' ) ).toBeVisible();
+			await expect( page.getByText( 'OpenAI API (Deprecated)' ) ).toBeVisible();
 		}
 	});
 
-	test( 'toggle AI Block Toolbar', async({ admin, page, requestUtils }) => {
-
-		/*
-		 * The dashboard hydrates settings asynchronously and toggles render
-		 * unchecked until then, so reading the initial value from the UI races
-		 * hydration (the value can flip between the read and the click). Seed a
-		 * known state via the REST API instead, and use the seeded checked
-		 * toggles as hydration signals before interacting.
-		 */
-		await requestUtils.rest({
-			method: 'POST',
-			path: '/wp/v2/settings',
-			data: {
-				themeisle_blocks_settings_block_ai_toolbar_module: true,
-				themeisle_blocks_settings_css_module: true
-			}
-		});
-		await admin.visitAdminPage( 'admin.php?page=otter' );
+	test( 'toggle AI Block Toolbar', async({ page, otterUtils }) => {
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'Dashboard', exact: true }).click();
 
 		const toggle = page.getByLabel( 'Enable AI Block Toolbar Module' );
-		const hydrationCanary = page.getByLabel( 'Enable Custom CSS Module' );
+		await expect( toggle ).toBeVisible();
+		const initialToggleValue = await toggle.isChecked();
 
-		const waitForSave = () => page.waitForResponse( response =>
-			response.url().includes( 'wp/v2/settings' ) &&
-			[ 'POST', 'PUT' ].includes( response.request().method() )
-		);
+		try {
+			await toggle.click();
+			await expect( toggle ).toBeChecked({ checked: ! initialToggleValue });
 
-		// Checked only happens once the seeded value has hydrated.
-		await expect( toggle ).toBeChecked();
+			await page.reload();
+			await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'Dashboard', exact: true }).click();
+			await expect( toggle ).toBeChecked({ checked: ! initialToggleValue });
 
-		let saved = waitForSave();
-		await toggle.click();
-		await expect( toggle ).not.toBeChecked();
-		await saved;
-
-		await page.reload();
-
-		// Wait for hydration before interacting, otherwise the click can be
-		// overwritten when the settings request resolves.
-		await expect( hydrationCanary ).toBeChecked();
-		await expect( toggle ).not.toBeChecked();
-
-		saved = waitForSave();
-		await toggle.click();
-		await expect( toggle ).toBeChecked();
-		await saved;
+			await toggle.click();
+			await expect( toggle ).toBeChecked({ checked: initialToggleValue });
+		} finally {
+			await otterUtils.setOptions({ themeisle_blocks_settings_block_ai_toolbar_module: true });
+		}
 	});
 
 	test( 'edit editable custom actions', async({ page }) => {
@@ -122,25 +93,48 @@ test.describe( 'Dashboard', () => {
 		const actionTitleValue = 'Fix Spelling';
 		const actionPromptValue = 'Fix spelling mistakes in the content.';
 
-		await page.getByRole( 'button', { name: 'Integrations' }).click();
-		await page.getByRole( 'button', { name: 'AI Provider' }).click();
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
 
-		// Edit the first action.
-		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child button' ).click();
-		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child' ).getByPlaceholder( 'Action Name' ).fill( actionTitleValue );
-		await page.locator( '.otter-ai-toolbar-actions .components-panel__body:first-child' ).getByPlaceholder( 'Prompt' ).fill( actionPromptValue );
+		const firstAction = page.locator( '.otter-ai-action-card' ).first();
 
-		// Save the changes.
+		await firstAction.locator( '.otter-ai-action-card__header' ).click();
+		await firstAction.getByLabel( 'Action name' ).fill( actionTitleValue );
+		await firstAction.getByLabel( 'Prompt' ).fill( actionPromptValue );
+
 		const requestPromise = page.waitForRequest( request =>
 			request.url().includes( 'settings' )
 		);
-		await page.locator( 'div' ).filter({ hasText: /^SaveMore Info↗$/ }).getByRole( 'button' ).click();
+		await page.getByRole( 'button', { name: 'Save Actions' }).click();
 		await requestPromise;
 		await page.reload();
 
-		await page.getByRole( 'button', { name: 'Integrations' }).click();
-		await page.getByRole( 'button', { name: 'AI Provider' }).click();
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
 		await expect( page.getByRole( 'button', { name: actionTitleValue }) ).toBeVisible();
+	});
+
+	test( 'adds and removes a custom toolbar action', async({ page, otterUtils }) => {
+		await otterUtils.setOptions({ themeisle_open_ai_api_key: PRESEEDED_OPENAI_KEY });
+
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
+		await page.getByRole( 'button', { name: 'Add custom action' }).click();
+
+		const customAction = page.locator( '.otter-ai-action-card' ).last();
+		await customAction.locator( '.otter-ai-action-card__header' ).click();
+		await customAction.getByLabel( 'Action name' ).fill( 'My Custom Action' );
+
+		await page.getByRole( 'button', { name: 'Save Actions' }).click();
+		await page.reload();
+
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
+		await expect( page.getByRole( 'button', { name: 'My Custom Action' }) ).toBeVisible();
+
+		await page.locator( '.otter-ai-action-card' ).filter({ hasText: 'My Custom Action' }).locator( '.otter-ai-action-card__header' ).click();
+		await page.getByRole( 'button', { name: 'Delete action' }).click();
+		await page.getByRole( 'button', { name: 'Save Actions' }).click();
+		await page.reload();
+
+		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
+		await expect( page.getByRole( 'button', { name: 'My Custom Action' }) ).not.toBeVisible();
 	});
 
 	test( 'disabling a block hides it from the block inserter', async({ admin, editor, page }) => {
