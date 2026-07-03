@@ -24,7 +24,7 @@ import PreviewBoundary from './preview-boundary.js';
 import PromptPlaceholder from '../../components/prompt';
 import { aiGeneration as icon } from '../../helpers/icons.js';
 import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
-import AIContentModal from '../../plugins/ai-content/modal';
+import AIContentModal, { trackAiEvent } from '../../plugins/ai-content/modal';
 import EnableAtomicWind from '../../plugins/patterns-library/enableAtomicWind';
 import useSettings from '../../helpers/use-settings';
 import {
@@ -170,6 +170,8 @@ const ContentGenerator = ({
 		} else {
 			replaceBlocks( clientId, blocksToInsert );
 		}
+
+		trackAiEvent( `ai-outcome-${ clientId }`, 'outcome-form', 'replace' );
 	};
 
 	/**
@@ -246,7 +248,12 @@ const ContentGenerator = ({
 						onValueChange={ setPrompt }
 						onPreview={ onPreview }
 						actionButtons={ actionButtons }
-						onClose={ () => removeBlock( clientId ) }
+						onClose={ () => {
+							if ( hasInnerBlocks ) {
+								trackAiEvent( `ai-outcome-${ clientId }`, 'outcome-form', 'discard' );
+							}
+							removeBlock( clientId );
+						} }
 						promptPlaceholder={ __( 'Start describing what form you need…', 'otter-blocks' ) }
 					>
 						{

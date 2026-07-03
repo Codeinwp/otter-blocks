@@ -57,6 +57,23 @@ import { useAtomicCssForContent } from '../patterns-library/atomic';
 
 const EMPTY_PREVIEW_BLOCKS: BlockProps<unknown>[] = [];
 
+export const trackAiEvent = ( key: string, featureComponent: string, featureValue: string ) =>
+	window.oTrk?.set( key, { feature: 'ai-generation', featureComponent, featureValue });
+
+// Bucket the regeneration count into a coarse, non-PII enum for telemetry.
+const retryBucket = ( count: number ): string => {
+	if ( 1 > count ) {
+		return '0';
+	}
+	if ( 1 === count ) {
+		return '1';
+	}
+	if ( 4 > count ) {
+		return '2-3';
+	}
+	return '4+';
+};
+
 /**
  * Cheap stable hash so identical preview markup reuses its generated CSS.
  * @param value
@@ -165,6 +182,10 @@ const AIContentModal = ({
 	const isCreateMode = 'create' === mode;
 	const scope = initialScope;
 
+	const trackingKey = singleClientId ?? selectedClientIds?.[0] ?? 'ai-modal';
+	const trackOutcome = ( featureValue: string ) =>
+		trackAiEvent( `ai-outcome-${ trackingKey }`, isCreateMode ? 'outcome-create' : 'outcome-transform', featureValue );
+
 	const [ pinnedPreviewClone, setPinnedPreviewClone ] = useState<BlockProps<unknown>[]>( EMPTY_PREVIEW_BLOCKS );
 	const wasOpenRef = useRef( false );
 
@@ -193,6 +214,14 @@ const AIContentModal = ({
 		selectedBlocks,
 		isMultipleSelection ? selectedClientIds.join( ',' ) : singleClientId
 	]);
+
+	useEffect( () => {
+		if ( isOpen ) {
+			return () => {
+				window.oTrk?.base?.uploadEvents();
+			};
+		}
+	}, [ isOpen ]);
 
 	const hasSelection = 0 < pinnedPreviewClone.length;
 
@@ -673,6 +702,8 @@ const AIContentModal = ({
 				)
 			}, { consent: true });
 
+			trackAiEvent( `ai-retries-${ trackingKey }`, 'regenerate-count', retryBucket( priorTurns.length ) );
+
 			if ( isStale() ) {
 				return;
 			}
@@ -817,6 +848,7 @@ const AIContentModal = ({
 
 		try {
 			if ( onApplyBlocks ) {
+				trackOutcome( 'insert' );
 				onApplyBlocks( blocksToInsert );
 				return;
 			}
@@ -831,6 +863,7 @@ const AIContentModal = ({
 			}
 
 			replaceBlocks( replaceClientIds, blocksToInsert );
+			trackOutcome( 'replace' );
 			( onApplyComplete ?? onClose )();
 		} catch {
 			createNotice(
@@ -873,6 +906,10 @@ const AIContentModal = ({
 	const handleDiscard = () => {
 		if ( isGenerating ) {
 			return;
+		}
+
+		if ( hasRealTurns ) {
+			trackOutcome( 'discard' );
 		}
 
 		( onDiscard ?? onClose )();
