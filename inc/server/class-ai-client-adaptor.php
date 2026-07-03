@@ -62,11 +62,11 @@ class AI_Client_Adaptor {
 		if (
 			function_exists( 'wp_ai_client_prompt' ) &&
 			function_exists( 'wp_supports_ai' ) &&
-			wp_supports_ai()
+			call_user_func( 'wp_supports_ai' )
 		) {
 			try {
 				// False when no provider is configured; performs no API call.
-				$available = (bool) wp_ai_client_prompt()->is_supported_for_text_generation();
+				$available = (bool) call_user_func( 'wp_ai_client_prompt' )->is_supported_for_text_generation();
 			} catch ( \Exception $e ) {
 				$available = false;
 			}
@@ -508,7 +508,7 @@ class AI_Client_Adaptor {
 	 * @return \WP_AI_Client_Prompt_Builder|null
 	 */
 	protected function make_builder() {
-		return function_exists( 'wp_ai_client_prompt' ) ? wp_ai_client_prompt() : null;
+		return function_exists( 'wp_ai_client_prompt' ) ? call_user_func( 'wp_ai_client_prompt' ) : null;
 	}
 
 	/**

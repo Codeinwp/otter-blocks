@@ -434,7 +434,7 @@ class Blocks_Animation {
 		if ( ! isset( $_POST['nonce'] ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'otter_animation_dismiss_welcome_notice' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'otter_animation_dismiss_welcome_notice' ) ) {
 			return;
 		}
 		update_option( 'otter_animation_dismiss_welcome_notice', true );
