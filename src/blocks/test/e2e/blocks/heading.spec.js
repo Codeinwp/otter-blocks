@@ -117,7 +117,7 @@ test.describe( 'Advanced Heading Block', () => {
 		await page.getByRole( 'button', { name: 'Typography Settings' }).click();
 
 		await expect(
-			page.locator( '.wp-themeisle-blocks-advanced-heading-popover-content' ).getByText( 'Font Family' )
+			page.locator( '.wp-themeisle-blocks-advanced-heading-popover-content' ).getByText( 'Font Family', { exact: true })
 		).toBeVisible();
 	});
 });
