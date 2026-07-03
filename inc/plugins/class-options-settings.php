@@ -289,6 +289,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'otter_activation_first_save',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Whether the activation first-save milestone has already been tracked for this site.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => false,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_google_map_block_api_key',
 			array(
 				'type'              => 'string',
