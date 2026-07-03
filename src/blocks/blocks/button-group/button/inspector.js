@@ -513,9 +513,9 @@ const Inspector = ({
 
 											</AutoDisableSyncAttr>
 
-											<AutoDisableSyncAttr attr='boxShadowVertical' attributes={attributes}>
+											<AutoDisableSyncAttr attr='hoverBoxShadowSpread' attributes={attributes}>
 												<RangeControl
-													label={ __( 'hoverBoxShadowSpread', 'otter-blocks' ) }
+													label={ __( 'Spread', 'otter-blocks' ) }
 													value={ attributes.hoverBoxShadowSpread }
 													onChange={ e => setAttributes({ hoverBoxShadowSpread: e }) }
 													min={ -100 }

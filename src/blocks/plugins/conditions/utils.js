@@ -198,9 +198,13 @@ export const getConditionSummary = condition => {
 		} else if ( 1 === params.length ) {
 			summary = params[0];
 		} else {
+			summary = sprintf(
 
-			/* translators: %1$s: the first URL parameter, %2$d: the number of remaining parameters */
-			summary = sprintf( __( '%1$s + %2$d more', 'otter-blocks' ), params[0], params.length - 1 );
+				/* translators: %1$s: the first URL parameter, %2$d: the number of remaining parameters */
+				__( '%1$s + %2$d more', 'otter-blocks' ),
+				params[0],
+				params.length - 1
+			);
 		}
 		break;
 	}
