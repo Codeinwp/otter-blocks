@@ -57,7 +57,6 @@ import { useAtomicCssForContent } from '../patterns-library/atomic';
 
 const EMPTY_PREVIEW_BLOCKS: BlockProps<unknown>[] = [];
 
-// Consent-gated AI telemetry (no { consent: true }); the key is dedup-only and never sent as a value.
 export const trackAiEvent = ( key: string, featureComponent: string, featureValue: string ) =>
 	window.oTrk?.set( key, { feature: 'ai-generation', featureComponent, featureValue });
 
