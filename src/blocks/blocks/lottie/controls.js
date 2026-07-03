@@ -5,9 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	Dashicon,
-	Button,
-	ToolbarGroup,
-	Tooltip
+	ToolbarButton,
+	ToolbarGroup
 } from '@wordpress/components';
 
 import { BlockControls } from '@wordpress/block-editor';
@@ -19,13 +18,13 @@ const Controls = ({
 	return (
 		<BlockControls>
 			<ToolbarGroup>
-				<Tooltip text={ isEditing ? __( 'Save', 'otter-blocks' ) : __( 'Edit', 'otter-blocks' ) }>
-					<Button
-						onClick={ () => setEditing( ! isEditing ) }
-					>
-						<Dashicon icon={ isEditing ? 'yes' : 'edit' } />
-					</Button>
-				</Tooltip>
+				<ToolbarButton
+					label={ isEditing ? __( 'Save', 'otter-blocks' ) : __( 'Edit', 'otter-blocks' ) }
+					showTooltip={ true }
+					onClick={ () => setEditing( ! isEditing ) }
+				>
+					<Dashicon icon={ isEditing ? 'yes' : 'edit' } />
+				</ToolbarButton>
 			</ToolbarGroup>
 		</BlockControls>
 	);

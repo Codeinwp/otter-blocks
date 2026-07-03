@@ -3,23 +3,9 @@
  */
 import { test, expect } from '../fixtures';
 import { getBlockByName, expectBlockByName, publishAndViewPost } from '../helpers/editor';
-import { insertContactForm } from '../helpers/forms';
+import { getFormClientId, insertContactForm, insertFormCaptchaBlock } from '../helpers/forms';
 
 const CAPTCHA_BLOCK = 'themeisle-blocks/form-captcha';
-
-// editor.getBlocks() strips clientIds, so resolve the form's clientId from the store.
-async function getFormClientId( page ) {
-	return page.evaluate( () => {
-		return window.wp.data.select( 'core/block-editor' ).getBlocks().find( ({ name }) => 'themeisle-blocks/form' === name )?.clientId;
-	});
-}
-
-async function insertCaptchaBlock( page, formClientId, provider ) {
-	await page.evaluate( ({ formClientId, provider, blockName }) => {
-		const block = window.wp.blocks.createBlock( blockName, { provider });
-		window.wp.data.dispatch( 'core/block-editor' ).insertBlock( block, undefined, formClientId );
-	}, { formClientId, provider, blockName: CAPTCHA_BLOCK });
-}
 
 test.describe( 'Form Block - Captcha block', () => {
 
@@ -60,7 +46,7 @@ test.describe( 'Form Block - Captcha block', () => {
 		const formClientId = await getFormClientId( page );
 		expect( formClientId ).toBeTruthy();
 
-		await insertCaptchaBlock( page, formClientId, 'turnstile' );
+		await insertFormCaptchaBlock( page, formClientId, 'turnstile' );
 
 		await expect.poll( async() => {
 			const form = await getBlockByName( editor, 'themeisle-blocks/form' );
@@ -102,8 +88,8 @@ test.describe( 'Form Block - Captcha block', () => {
 		const formClientId = await getFormClientId( page );
 		expect( formClientId ).toBeTruthy();
 
-		await insertCaptchaBlock( page, formClientId, 'turnstile' );
-		await insertCaptchaBlock( page, formClientId, 'recaptcha' );
+		await insertFormCaptchaBlock( page, formClientId, 'turnstile' );
+		await insertFormCaptchaBlock( page, formClientId, 'recaptcha' );
 
 		// The Form block removes every Captcha block beyond the first.
 		await expect.poll( async() => {

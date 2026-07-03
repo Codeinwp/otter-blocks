@@ -116,7 +116,7 @@ const hideBlocksInInserter = () => {
 		return variationsMap.hasOwnProperty( blockSlug );
 	};
 
-	const hiddenBlocks = select( 'core/preferences' )?.get( 'core/edit-post', 'hiddenBlockTypes' ) || [];
+	const hiddenBlocks = select( 'core/preferences' )?.get( 'core', 'hiddenBlockTypes' ) || [];
 
 	hiddenBlocks.forEach( blockName => {
 		if ( isVariation( blockName ) ) {

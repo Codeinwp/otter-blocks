@@ -4,10 +4,10 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	Button,
 	Dropdown,
 	DropdownMenu,
 	RangeControl,
+	ToolbarButton,
 	ToolbarGroup
 } from '@wordpress/components';
 
@@ -111,7 +111,7 @@ const Controls = ({
 					contentClassName="wp-themeisle-blocks-advanced-heading-popover-content"
 					position="bottom center"
 					renderToggle={ ({ isOpen, onToggle }) => (
-						<Button
+						<ToolbarButton
 							className="components-dropdown-menu__toggle"
 							icon={ 'editor-textcolor' }
 							onClick={ onToggle }
@@ -121,7 +121,7 @@ const Controls = ({
 							showTooltip={ true }
 						>
 							<span className="components-dropdown-menu__indicator" />
-						</Button>
+						</ToolbarButton>
 					) }
 					renderContent={ () => (
 						<Fragment>

@@ -311,9 +311,9 @@ const Blocks = () => {
 		 * Array of hidden block types.
 		 * @type {Array<string>|undefined}
 		 */
-		const hiddenBlocks = select( 'core/preferences' )?.get( 'core/edit-post', 'hiddenBlockTypes' );
+		const hiddenBlocks = select( 'core/preferences' )?.get( 'core', 'hiddenBlockTypes' );
 
-		const isResolving = select( 'core/preferences' ).isResolving( 'get', [ 'hiddenBlockTypes' ]);
+		const isResolving = select( 'core/preferences' ).isResolving( 'get', [ 'core', 'hiddenBlockTypes' ]);
 
 		return {
 			preferencesHiddenBlocks: hiddenBlocks ? new Set( hiddenBlocks ) : undefined,
@@ -346,7 +346,7 @@ const Blocks = () => {
 			}
 		});
 
-		dispatch( 'core/preferences' ).set( 'core/edit-post', 'hiddenBlockTypes', [ ...newPreferencesHiddenBlocks ]);
+		dispatch( 'core/preferences' ).set( 'core', 'hiddenBlockTypes', [ ...newPreferencesHiddenBlocks ]);
 	};
 
 	/**

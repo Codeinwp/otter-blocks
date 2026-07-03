@@ -33,6 +33,10 @@ const ModalButton = () => {
 				icon={ otterIcon }
 				className="o-library__button"
 				onClick={ () => setOpen( true ) }
+				// The button is appended into the editor header NavigableToolbar; mark it as a
+				// toolbar item so it is keyboard-navigable and does not trip the
+				// "custom components as toolbar controls" deprecation (WP 5.6+).
+				data-toolbar-item="true"
 			>
 				{ __( 'Design Library', 'otter-blocks' ) }
 			</Button>

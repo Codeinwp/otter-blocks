@@ -136,4 +136,38 @@ test.describe( 'Dashboard', () => {
 		await page.locator( '.otter-navigation' ).getByRole( 'button', { name: 'AI', exact: true }).click();
 		await expect( page.getByRole( 'button', { name: 'My Custom Action' }) ).not.toBeVisible();
 	});
+
+	test( 'disabling a block hides it from the block inserter', async({ admin, editor, page }) => {
+		await page.getByRole( 'button', { name: 'Blocks' }).click();
+
+		const countdownCard = page.locator( '.o-block-card' ).filter({
+			has: page.getByRole( 'heading', { name: 'Countdown', level: 3 })
+		});
+		const countdownToggle = countdownCard.getByRole( 'checkbox' );
+
+		await expect( countdownToggle ).toBeVisible();
+
+		if ( ! await countdownToggle.isChecked() ) {
+			await countdownToggle.click();
+			await expect( countdownToggle ).toBeChecked();
+		}
+
+		await countdownToggle.click();
+		await expect( countdownToggle ).not.toBeChecked();
+		await expect( page.locator( '.components-snackbar' ).getByText( 'Option Updated.' ) ).toBeVisible();
+
+		await admin.createNewPost();
+		await editor.canvas.getByRole( 'button', { name: 'Add default block' }).click();
+		await page.keyboard.type( '/countdown' );
+		await expect(
+			page.locator( '.components-autocomplete__results [role="option"]' ).filter({ hasText: /^Countdown$/ })
+		).toHaveCount( 0 );
+		await page.keyboard.press( 'Escape' );
+
+		await admin.visitAdminPage( 'admin.php?page=otter' );
+		await page.getByRole( 'button', { name: 'Blocks' }).click();
+		await expect( countdownCard.getByRole( 'checkbox' ) ).not.toBeChecked();
+		await countdownCard.getByRole( 'checkbox' ).click();
+		await expect( countdownCard.getByRole( 'checkbox' ) ).toBeChecked();
+	});
 });

@@ -7,35 +7,7 @@ import path from 'path';
 /**
  * Internal dependencies
  */
-import { publishAndViewPost } from '../helpers/editor';
-
-const selectBlockByName = ( page, blockName ) => page.evaluate( name => {
-	const findBlock = blocks => {
-		for ( const block of blocks ) {
-			if ( block.name === name ) {
-				return block;
-			}
-
-			const inner = findBlock( block.innerBlocks || [] );
-
-			if ( inner ) {
-				return inner;
-			}
-		}
-
-		return null;
-	};
-
-	const block = findBlock( window.wp.data.select( 'core/block-editor' ).getBlocks() );
-
-	if ( ! block ) {
-		throw new Error( `Block not found: ${ name }` );
-	}
-
-	window.wp.data.dispatch( 'core/block-editor' ).selectBlock( block.clientId );
-
-	return block.clientId;
-}, blockName );
+import { publishAndViewPost, selectBlockByName } from '../helpers/editor';
 
 test.describe( 'Alt attributes', () => {
 
@@ -278,7 +250,10 @@ test.describe( 'Alt attributes', () => {
 
 		await publishAndViewPost({ editor, page });
 
-		await expect( page.locator( '.wp-block-themeisle-blocks-slider-item' ).first() ).toHaveAttribute( 'alt', 'Edited alt' );
+		const slide = page.locator( '.wp-block-themeisle-blocks-slider-item' ).first();
+
+		await expect( slide ).toHaveAttribute( 'alt', 'Edited alt' );
+		expect( await slide.getAttribute( 'title' ) ).toBeNull();
 	});
 
 	test( 'old Slider content drops the redundant title attribute after resave', async({ editor, page }) => {
@@ -325,28 +300,6 @@ test.describe( 'Alt attributes', () => {
 		await publishAndViewPost({ editor, page });
 
 		await expect( page.locator( '.wp-block-themeisle-blocks-flip .o-flip-front .o-img' ) ).toHaveAttribute( 'alt', 'Flip card image' );
-	});
-
-	test( 'Slider images keep the alt and no longer duplicate it as title', async({ editor, page }) => {
-		await editor.insertBlock({
-			name: 'themeisle-blocks/slider',
-			attributes: {
-				images: [
-					{
-						id: uploadedMedia.id,
-						url: uploadedMedia.source_url,
-						alt: 'Slide one'
-					}
-				]
-			}
-		});
-
-		await publishAndViewPost({ editor, page });
-
-		const slide = page.locator( '.wp-block-themeisle-blocks-slider-item' ).first();
-
-		await expect( slide ).toHaveAttribute( 'alt', 'Slide one' );
-		expect( await slide.getAttribute( 'title' ) ).toBeNull();
 	});
 
 	test( 'old Icon List content (no alt) is migrated by the deprecation', async({ editor, page }) => {
