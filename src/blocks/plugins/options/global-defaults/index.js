@@ -26,7 +26,7 @@ const GlobalDefaults = ({
 }) => {
 	const { hiddenBlocks } = useSelect( select => {
 		return {
-			hiddenBlocks: select( 'core/edit-post' ).getPreference( 'hiddenBlockTypes' )
+			hiddenBlocks: select( 'core/preferences' ).get( 'core', 'hiddenBlockTypes' ) || []
 		};
 	});
 

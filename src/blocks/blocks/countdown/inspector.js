@@ -25,7 +25,7 @@ import {
 
 import {
 	format,
-	__experimentalGetSettings
+	getSettings
 } from '@wordpress/date';
 
 import {
@@ -168,7 +168,7 @@ const Inspector = ({
 
 	const [ tab, setTab ] = useTabSwitch( attributes.id, 'settings' );
 
-	const settings = __experimentalGetSettings();
+	const settings = getSettings();
 
 	return (
 		<InspectorControls>

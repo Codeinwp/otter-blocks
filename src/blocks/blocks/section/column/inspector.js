@@ -69,9 +69,9 @@ const Inspector = ({
 }) => {
 	const getView = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const editor = select( 'core/editor' );
 
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+		return editor?.getDeviceType ? editor.getDeviceType() : getView();
 	}, []);
 
 	const [ tab, setTab ] = useTabSwitch( attributes.id, 'layout' );

@@ -1,11 +1,7 @@
 /**
- * WordPress dependencies
- */
-import { test, expect } from '@wordpress/e2e-test-utils-playwright';
-
-/**
  * Internal dependencies
  */
+import { test, expect } from '../fixtures';
 import {
 	expectFormVariationIconsVisible,
 	expectIframedEditorCanvas,
@@ -13,15 +9,14 @@ import {
 	insertEmptyFormBlock,
 	insertLeafletMaps
 } from '../helpers/canvas';
-import { insertContactForm } from '../helpers/forms';
-import { expectBlockByName } from '../helpers/editor';
+import { getFormClientId, insertContactForm, insertFormCaptchaBlock } from '../helpers/forms';
+import { expectBlockByName, getNestedBlockByName } from '../helpers/editor';
+
+const CAPTCHA_BLOCK = 'themeisle-blocks/form-captcha';
 
 test.describe( 'Block API v3 editor canvas', () => {
-	test.beforeEach( async({ admin }) => {
+	test.beforeEach( async({ admin, page }) => {
 		await admin.createNewPost();
-	});
-
-	test( 'uses the iframed editor canvas', async({ page }) => {
 		await expectIframedEditorCanvas( page );
 	});
 
@@ -48,5 +43,28 @@ test.describe( 'Block API v3 editor canvas', () => {
 	test( 'renders every Leaflet map block inserted on the same post', async({ editor }) => {
 		await insertLeafletMaps( editor, 2 );
 		await expectLeafletMapsRendered( editor, 2 );
+	});
+
+	test( 'renders form captcha placeholder inside the canvas iframe', async({ editor, page, otterUtils }) => {
+		await otterUtils.setOptions({
+			themeisle_cloudflare_turnstile_site_key: 'turnstile-sitekey',
+			themeisle_cloudflare_turnstile_secret_key: 'turnstile-secret'
+		});
+
+		await insertContactForm({ editor, page });
+
+		const formClientId = await getFormClientId( page );
+		expect( formClientId ).toBeTruthy();
+
+		await insertFormCaptchaBlock( page, formClientId, 'turnstile' );
+
+		await expect.poll( async() => {
+			return ( await getNestedBlockByName( editor, CAPTCHA_BLOCK ) ) ? 1 : 0;
+		}).toBe( 1 );
+
+		await expect( editor.canvas.locator( '.otter-form-captcha' ) ).toBeVisible();
+		await expect(
+			editor.canvas.getByText( 'A captcha challenge will be displayed here on the published form.' )
+		).toBeVisible();
 	});
 });

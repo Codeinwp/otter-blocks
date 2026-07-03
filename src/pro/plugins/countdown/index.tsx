@@ -15,7 +15,7 @@ import {
 
 import {
 	format,
-	__experimentalGetSettings
+	getSettings
 } from '@wordpress/date';
 
 import { Fragment } from '@wordpress/element';
@@ -63,7 +63,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 		);
 	}
 
-	const settings = __experimentalGetSettings();
+	const settings = getSettings();
 
 	return (
 		<Fragment>
