@@ -9,7 +9,21 @@ import { expect } from '@wordpress/e2e-test-utils-playwright';
 import { insertAndGetBlock } from './editor';
 
 const FORM_BLOCK = 'themeisle-blocks/form';
+const CAPTCHA_BLOCK = 'themeisle-blocks/form-captcha';
 const CONTACT_FORM_VARIATION = 'Contact form for clients';
+
+export async function getFormClientId( page ) {
+	return page.evaluate( () => {
+		return window.wp.data.select( 'core/block-editor' ).getBlocks().find( ({ name }) => 'themeisle-blocks/form' === name )?.clientId;
+	});
+}
+
+export async function insertFormCaptchaBlock( page, formClientId, provider = 'recaptcha' ) {
+	await page.evaluate( ({ formClientId, provider, blockName }) => {
+		const block = window.wp.blocks.createBlock( blockName, { provider });
+		window.wp.data.dispatch( 'core/block-editor' ).insertBlock( block, undefined, formClientId );
+	}, { formClientId, provider, blockName: CAPTCHA_BLOCK });
+}
 
 export async function insertContactForm({ editor, page, blockConfig = { name: FORM_BLOCK }}) {
 	const formBlock = await insertAndGetBlock( editor, page, blockConfig, FORM_BLOCK );

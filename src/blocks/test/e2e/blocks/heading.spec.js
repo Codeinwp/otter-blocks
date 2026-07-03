@@ -103,4 +103,21 @@ test.describe( 'Advanced Heading Block', () => {
 		expect( attrs?.textTransform ).toBe( 'uppercase' );
 		expect( attrs?.fontStyle ).toBe( 'italic' );
 	});
+
+	// Guards the toolbar Button → ToolbarButton migration: the typography
+	// dropdown must still open from the block toolbar.
+	test( 'opens typography settings from the toolbar', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/advanced-heading',
+			attributes: { content: 'Toolbar check' }
+		});
+
+		await editor.canvas.getByRole( 'document', { name: 'Block: Advanced Heading' }).click();
+
+		await page.getByRole( 'button', { name: 'Typography Settings' }).click();
+
+		await expect(
+			page.locator( '.wp-themeisle-blocks-advanced-heading-popover-content' ).getByText( 'Font Family' )
+		).toBeVisible();
+	});
 });

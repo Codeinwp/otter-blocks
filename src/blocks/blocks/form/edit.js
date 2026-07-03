@@ -47,7 +47,7 @@ import {
 	Icon
 } from '@wordpress/icons';
 
-import { Button, Notice, ToolbarGroup } from '@wordpress/components';
+import { Button, Notice, ToolbarButton, ToolbarGroup } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -983,7 +983,7 @@ const Edit = ({
 
 				<BlockControls>
 					<ToolbarGroup>
-						<Button
+						<ToolbarButton
 							onClick={()=> {
 								const generator = createBlock( 'themeisle-blocks/content-generator', {
 									promptID: 'form'
@@ -994,7 +994,7 @@ const Edit = ({
 						>
 							{ __( 'Create Form With AI', 'otter-blocks' ) }
 							<Icon width={22} icon={aiGeneration} style={{ marginLeft: '8px' }} />
-						</Button>
+						</ToolbarButton>
 					</ToolbarGroup>
 				</BlockControls>
 

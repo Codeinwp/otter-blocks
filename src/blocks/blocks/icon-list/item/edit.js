@@ -13,8 +13,6 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { createBlock } from '@wordpress/blocks';
-
 import { select, useSelect } from '@wordpress/data';
 
 import {
@@ -41,7 +39,6 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	name,
 	clientId,
 	onReplace,
 	onRemove,
@@ -159,16 +156,6 @@ const Edit = ({
 					) }
 					value={ attributes.content }
 					onChange={ ( content ) => setAttributes({ content }) }
-					onSplit={ ( value ) => {
-						if ( ! value ) {
-							return createBlock( name );
-						}
-
-						return createBlock( name, {
-							...attributes,
-							content: value
-						});
-					} }
 					onMerge={ mergeBlocks }
 					onReplace={ onReplace }
 					onRemove={ onRemove }

@@ -49,9 +49,8 @@ test.describe( 'Countdown Block', () => {
 
 		await page.getByRole( 'spinbutton', { name: 'Year' }).press( 'Enter' );
 
-		// Editor preview uses singular labels ("Day", "Hour", …); the frontend renders the
-		// pluralised form ("Days") once the countdown has a real value.
-		await expect( editor.canvas.locator( '.otter-countdown__label' ).filter({ hasText: /^Day$/ }) ).toBeVisible();
+		// Labels pluralise when the interval is > 1; 2030-08-17 is thousands of days away.
+		await expect( editor.canvas.getByText( 'Days', { exact: true }) ).toBeVisible();
 
 		await editor.canvas.locator( '.editor-styles-wrapper' ).click();
 		await publishAndViewPost({ editor, page });

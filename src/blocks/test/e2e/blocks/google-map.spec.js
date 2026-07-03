@@ -136,4 +136,23 @@ test.describe( 'Google Map block API v3 canvas', () => {
 			editor.canvas.locator( '.block-editor-warning' )
 		).toHaveCount( 0 );
 	});
+
+	// Guards the style-switcher's Button → ToolbarButton migration: the
+	// "Block Styles" dropdown must open from the toolbar and apply a style.
+	test( 'switches the block style from the toolbar', async({ editor, page }) => {
+		await editor.insertBlock({ name: GOOGLE_MAP_BLOCK, attributes: MAP_ATTRIBUTES });
+
+		await expect(
+			editor.canvas.locator( '.otter-mock-gmap' )
+		).toHaveCount( 1, { timeout: 20_000 });
+
+		await editor.canvas.getByRole( 'document', { name: 'Block: Google Maps' }).click();
+		await page.getByRole( 'button', { name: 'Block Styles' }).click();
+		await page.locator( '.o-style-switcher' ).getByRole( 'button', { name: 'Dark' }).click();
+
+		await expect.poll( async() => {
+			const blocks = await editor.getBlocks();
+			return blocks.find( ( b ) => GOOGLE_MAP_BLOCK === b.name )?.attributes.style;
+		}).toBe( 'dark' );
+	});
 });
