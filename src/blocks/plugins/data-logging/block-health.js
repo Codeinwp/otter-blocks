@@ -21,9 +21,9 @@ const reportedSlugs = new Set();
 /**
  * Walk the block tree and collect slugs for broken Otter blocks.
  *
- * @param {Array} blocks Blocks to inspect.
- * @param {string[]} tracked Otter block names to watch.
- * @param {Set<string>} acc Accumulator for errored slugs.
+ * @param {Array}       blocks  Blocks to inspect.
+ * @param {string[]}    tracked Otter block names to watch.
+ * @param {Set<string>} acc     Accumulator for errored slugs.
  * @return {Set<string>}
  */
 const collectErroredSlugs = ( blocks, tracked, acc ) => {
