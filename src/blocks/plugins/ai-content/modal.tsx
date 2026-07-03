@@ -215,6 +215,16 @@ const AIContentModal = ({
 		isMultipleSelection ? selectedClientIds.join( ',' ) : singleClientId
 	]);
 
+	// Flush pending telemetry when the session ends — on close (isOpen flips
+	// false) or on unmount (the toolbar removes the modal from the tree).
+	useEffect( () => {
+		if ( isOpen ) {
+			return () => {
+				window.oTrk?.base?.uploadEvents();
+			};
+		}
+	}, [ isOpen ]);
+
 	const hasSelection = 0 < pinnedPreviewClone.length;
 
 	const [ getOption ] = useSettings();
