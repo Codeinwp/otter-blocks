@@ -12,6 +12,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use ThemeIsle\GutenbergBlocks\Plugins\Options_Settings;
+
 /**
  * Class AI_Client_Adaptor
  */
@@ -30,6 +32,13 @@ class AI_Client_Adaptor {
 	 * @var string
 	 */
 	const BACKEND_OTTER_OPENAI = 'legacy';
+
+	/**
+	 * Default HTTP timeout (seconds) for a single AI provider request.
+	 *
+	 * @var int
+	 */
+	const DEFAULT_REQUEST_TIMEOUT = 300;
 
 	/**
 	 * Cached availability result for the current request.
@@ -87,6 +96,25 @@ class AI_Client_Adaptor {
 	}
 
 	/**
+	 * HTTP timeout in seconds for Otter AI generation requests.
+	 *
+	 * @return int
+	 */
+	public static function get_request_timeout_seconds() {
+		/**
+		 * Filter the HTTP timeout (in seconds) for AI generation requests.
+		 *
+		 * Slow provider models (OpenRouter, reasoning endpoints) and Otter's
+		 * multi-step block pipeline can exceed two minutes per call.
+		 *
+		 * @param int $timeout Timeout in seconds.
+		 */
+		$timeout = (int) apply_filters( 'otter_ai_request_timeout', self::DEFAULT_REQUEST_TIMEOUT );
+
+		return max( 0, $timeout );
+	}
+
+	/**
 	 * Run an OpenAI chat-completions payload through the WP AI Client.
 	 *
 	 * @param array<string, mixed> $payload The OpenAI-format payload (already stripped of `otter_*` keys).
@@ -103,6 +131,9 @@ class AI_Client_Adaptor {
 			if ( null === $builder ) {
 				return $this->error_response( 'no_ai_provider', __( 'No AI provider is configured. Add an API key under Settings → Connectors in your WordPress dashboard.', 'otter-blocks' ), 400 );
 			}
+
+			$builder = $this->apply_request_timeout( $builder );
+			$builder = $this->apply_wp_client_preferences( $builder );
 
 			$messages = isset( $payload['messages'] ) && is_array( $payload['messages'] ) ? $payload['messages'] : array();
 
@@ -160,11 +191,8 @@ class AI_Client_Adaptor {
 			}
 
 			if ( ! empty( $history ) ) {
-				// The wordpress-stubs @method tag resolves `Message` in the global namespace instead of WordPress\AiClient\Messages\DTO.
-				// phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
-				// @phpstan-ignore argument.type (generator quirk)
-				$builder = $builder->with_history( ...$history );
-				// phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
+				// The wordpress-stubs @method tag under-qualifies the Message type (generator quirk).
+				$builder = $builder->with_history( ...$history ); /* @phpstan-ignore argument.type */
 			}
 
 			$builder = $builder->with_text( $prompt_text );
@@ -199,6 +227,10 @@ class AI_Client_Adaptor {
 			// translate it to the AI Client's structured JSON response.
 			$forced_function = $this->get_forced_function( $payload );
 
+			// The block-generation pipeline asks for JSON via response_format; without
+			// this the model can wrap its JSON in prose and break the client's parse.
+			$wants_json = isset( $payload['response_format']['type'] ) && 'json_object' === $payload['response_format']['type'];
+
 			if ( null !== $forced_function ) {
 				$schema = isset( $forced_function['parameters'] ) && is_array( $forced_function['parameters'] ) ? $forced_function['parameters'] : null;
 
@@ -207,6 +239,8 @@ class AI_Client_Adaptor {
 				}
 
 				$builder = $builder->as_json_response( $schema );
+			} elseif ( $wants_json ) {
+				$builder = $builder->as_json_response();
 			}
 
 			$result = $builder->generate_text_result();
@@ -231,12 +265,52 @@ class AI_Client_Adaptor {
 			return AI_Response::success(
 				$text,
 				$usage->getTotalTokens(),
-				null !== $forced_function ? 'json' : 'text'
+				( null !== $forced_function || $wants_json ) ? 'json' : 'text'
 			);
 		} catch ( \Exception $e ) {
-			$code = $e instanceof \RuntimeException ? 'empty_response' : 'wp_ai_client_error';
-			return $this->error_response( $code, $e->getMessage(), 502 );
+			if ( $e instanceof \RuntimeException ) {
+				return $this->error_response( 'empty_response', $e->getMessage(), 502 );
+			}
+
+			// The exception message can be a raw HTTP error body (e.g. an nginx 502
+			// HTML page). Classify it into a clean, retryable error instead.
+			list( $code, $message, $status ) = $this->classify_provider_exception( $e );
+
+			return $this->error_response( $code, $message, $status );
 		}
+	}
+
+	/**
+	 * Classify a provider exception into a clean [code, message, status] triple,
+	 * never leaking a raw HTTP error body. Gateway/timeout failures use transient
+	 * statuses so the client auto-retries.
+	 *
+	 * @param \Exception $e The caught exception.
+	 * @return array{0:string,1:string,2:int} The [code, message, status] triple.
+	 */
+	private function classify_provider_exception( $e ) {
+		$raw = (string) $e->getMessage();
+
+		// Bad gateway — provider or its proxy was briefly unavailable.
+		if ( false !== stripos( $raw, '<html' ) || false !== stripos( $raw, 'bad gateway' ) || false !== stripos( $raw, '502' ) ) {
+			return array( 'bad_gateway', __( 'The AI provider was temporarily unavailable (bad gateway). Please try again.', 'otter-blocks' ), 502 );
+		}
+
+		// A timeout — the model took longer than the request budget allowed.
+		if ( preg_match( '/tim(?:e|ed)\s?out|timeout|cURL error 28|gateway time|504/i', $raw ) ) {
+			return array( 'provider_timeout', __( 'The AI request took too long and timed out. Try again, or narrow the selection so there is less to generate.', 'otter-blocks' ), 504 );
+		}
+
+		// Else: keep the provider's wording, but strip markup and cap the length.
+		$clean = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $raw ) ) );
+
+		if ( '' === $clean ) {
+			$clean = __( 'The AI provider returned an unexpected error. Please try again.', 'otter-blocks' );
+		} elseif ( strlen( $clean ) > 300 ) {
+			$clean = substr( $clean, 0, 297 ) . '…';
+		}
+
+		return array( 'wp_ai_client_error', $clean, 502 );
 	}
 
 	/**
@@ -435,5 +509,81 @@ class AI_Client_Adaptor {
 	 */
 	protected function make_builder() {
 		return function_exists( 'wp_ai_client_prompt' ) ? call_user_func( 'wp_ai_client_prompt' ) : null;
+	}
+
+	/**
+	 * Apply Otter's HTTP timeout to the WP AI Client builder.
+	 *
+	 * @param \WP_AI_Client_Prompt_Builder $builder The prompt builder.
+	 * @return \WP_AI_Client_Prompt_Builder
+	 */
+	protected function apply_request_timeout( $builder ) {
+		$timeout = self::get_request_timeout_seconds();
+
+		if ( 0 === $timeout || ! class_exists( '\WordPress\AiClient\Providers\Http\DTO\RequestOptions' ) ) {
+			return $builder;
+		}
+
+		$options = \WordPress\AiClient\Providers\Http\DTO\RequestOptions::fromArray(
+			array(
+				\WordPress\AiClient\Providers\Http\DTO\RequestOptions::KEY_TIMEOUT => (float) $timeout,
+			)
+		);
+
+		// The wordpress-stubs @method tag under-qualifies the RequestOptions type (generator quirk).
+		return $builder->using_request_options( $options ); /* @phpstan-ignore argument.type */
+	}
+
+	/**
+	 * Apply Otter's saved WordPress AI Client provider/model preferences.
+	 *
+	 * @param \WP_AI_Client_Prompt_Builder $builder The prompt builder.
+	 * @return \WP_AI_Client_Prompt_Builder
+	 */
+	protected function apply_wp_client_preferences( $builder ) {
+		$config   = Options_Settings::get_ai_wp_client_config();
+		$provider = $config['provider'];
+		$model    = $config['model'];
+
+		if ( '' !== $provider && '' !== $model ) {
+			$provider_model = $this->get_wp_client_provider_model( $provider, $model );
+
+			if ( null !== $provider_model ) {
+				return $builder->using_model( $provider_model );
+			}
+		}
+
+		if ( '' !== $provider ) {
+			$builder = $builder->using_provider( $provider );
+		}
+
+		if ( '' !== $model ) {
+			if ( '' !== $provider ) {
+				$builder = $builder->using_model_preference( array( $provider, $model ) );
+			} else {
+				$builder = $builder->using_model_preference( $model );
+			}
+		}
+
+		return $builder;
+	}
+
+	/**
+	 * Resolve a configured provider/model pair to a model instance.
+	 *
+	 * @param string $provider Provider ID.
+	 * @param string $model    Model ID.
+	 * @return object|null Model instance or null when unavailable.
+	 */
+	protected function get_wp_client_provider_model( $provider, $model ) {
+		if ( ! class_exists( '\WordPress\AiClient\AiClient' ) ) {
+			return null;
+		}
+
+		try {
+			return \WordPress\AiClient\AiClient::defaultRegistry()->getProviderModel( $provider, $model );
+		} catch ( \Throwable $e ) {
+			return null;
+		}
 	}
 }

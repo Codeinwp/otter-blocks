@@ -3,7 +3,7 @@
  */
 import { test, expect } from '../fixtures';
 import { expectBlockByName, publishPostReliable } from '../helpers/editor';
-import { expectFormOptionSavedNotice, findSavedFormEmail, getEmailNotificationToggle, getSavedFormEmails, insertContactForm, prepareFormOptionsInspector } from '../helpers/forms';
+import { expectFormOptionSavedNotice, findSavedFormEmail, getEmailNotificationToggle, getSavedFormEmails, insertContactForm, prepareFormOptionsInspector, showFormOption } from '../helpers/forms';
 import { expectSuccessMessage } from '../helpers/frontend';
 
 /**
@@ -487,5 +487,56 @@ test.describe( 'Form submission retention', () => {
 
 		// No field label (the required Name/Email included) may carry the required marker.
 		records[0].inputs.forEach( input => expect( input.label ).not.toContain( '*' ) );
+	});
+
+	test( 'notification email Reply-To defaults to the submitter and honors the Reply-To Email option', async({ admin, editor, page, otterUtils }) => {
+		const joinHeaders = ( headers ) => [].concat( headers ?? [] ).join( '\n' );
+
+		await insertContactForm({ editor, page });
+		const postId = await publishPostReliable( editor, page );
+		await expectFormOptionSavedNotice( page );
+
+		// Clear the mail log of anything the publish flow may have attempted.
+		await otterUtils.setMailMode( 'ok' );
+
+		await page.goto( `/?p=${postId}` );
+		await fillAndSubmitContactForm( page );
+		await expectSuccessMessage( page );
+
+		// Without an explicit option, replies go to the address the visitor entered.
+		let mailLog = await otterUtils.getMailLog();
+		expect( mailLog ).toHaveLength( 1 );
+		expect( joinHeaders( mailLog[0].headers ) ).toContain( 'Reply-To: ada@example.com' );
+
+		// Set an explicit Reply-To through the inspector control.
+		await admin.editPost( postId );
+
+		await page.waitForFunction( () => 0 < window.wp?.data?.select( 'core/block-editor' )?.getBlocks()?.length );
+		await page.evaluate( () => {
+			const blocks = window.wp.data.select( 'core/block-editor' ).getBlocks();
+			const form = blocks.find( block => 'themeisle-blocks/form' === block.name );
+			window.wp.data.dispatch( 'core/block-editor' ).selectBlock( form.clientId );
+		});
+		await editor.openDocumentSettingsSidebar();
+
+		// Wait until the Form Options panel is ready, then reveal the hidden-by-default control.
+		await getEmailNotificationToggle( page );
+		await showFormOption( page, 'Reply-To Email' );
+		await page.getByLabel( 'Reply-To Email' ).fill( 'owner-replies@example.com' );
+
+		const saveBtn = page.locator( '.editor-post-publish-button__button' );
+		await expect( saveBtn ).toBeEnabled({ timeout: 10_000 });
+		await saveBtn.click();
+		await expectFormOptionSavedNotice( page );
+
+		await otterUtils.setMailMode( 'ok' );
+
+		await page.goto( `/?p=${postId}` );
+		await fillAndSubmitContactForm( page );
+		await expectSuccessMessage( page );
+
+		mailLog = await otterUtils.getMailLog();
+		expect( mailLog ).toHaveLength( 1 );
+		expect( joinHeaders( mailLog[0].headers ) ).toContain( 'Reply-To: owner-replies@example.com' );
 	});
 });

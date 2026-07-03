@@ -4,23 +4,23 @@
  * Start from the @wordpress/scripts defaults, then restore Otter's previous
  * style rules and rule severities from the legacy .eslintrc config.
  */
-const wpScriptsConfig = require( '@wordpress/scripts/config/eslint.config.cjs' );
+const wpScriptsConfig = require('@wordpress/scripts/config/eslint.config.cjs');
 
 const plugins = wpScriptsConfig.reduce(
-	( allPlugins, config ) => ( {
+	(allPlugins, config) => ({
 		...allPlugins,
-		...( config.plugins || {} ),
-	} ),
+		...(config.plugins || {}),
+	}),
 	{}
 );
 
 module.exports = [
 	...wpScriptsConfig,
 	{
-		ignores: [ '**/node_modules/**', '**/assets/**' ],
+		ignores: ['**/node_modules/**', '**/assets/**'],
 	},
 	{
-		files: [ '**/*.{js,jsx,ts,tsx}' ],
+		files: ['**/*.{js,jsx,ts,tsx}'],
 		plugins,
 		languageOptions: {
 			ecmaVersion: 2021,
@@ -34,15 +34,15 @@ module.exports = [
 		settings: {
 			'import/resolver': {
 				node: {
-					extensions: [ '.js', '.jsx', '.ts', '.tsx', '.json' ],
+					extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
 				},
 			},
 		},
 		rules: {
-			indent: [ 'error', 'tab' ],
-			'linebreak-style': [ 'error', 'unix' ],
-			quotes: [ 'error', 'single' ],
-			semi: [ 'error', 'always' ],
+			indent: ['error', 'tab'],
+			'linebreak-style': ['error', 'unix'],
+			quotes: ['error', 'single'],
+			semi: ['error', 'always'],
 			'prefer-destructuring': [
 				'warn',
 				{
@@ -124,7 +124,10 @@ module.exports = [
 		},
 	},
 	{
-		files: [ '**/*.{test,spec}.{js,jsx,ts,tsx}', '**/test/**/*.{js,jsx,ts,tsx}' ],
+		files: [
+			'**/*.{test,spec}.{js,jsx,ts,tsx}',
+			'**/test/**/*.{js,jsx,ts,tsx}',
+		],
 		languageOptions: {
 			globals: {
 				describe: 'readonly',

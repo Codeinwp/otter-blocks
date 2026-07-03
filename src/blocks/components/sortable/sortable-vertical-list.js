@@ -18,6 +18,8 @@ import {
 /**
  * WordPress dependencies
  */
+import { __experimentalVStack as VStack } from '@wordpress/components';
+
 import { useMemo } from '@wordpress/element';
 
 const SortableVerticalList = ({
@@ -26,6 +28,7 @@ const SortableVerticalList = ({
 	onReorder,
 	children,
 	className,
+	spacing,
 	isItemDisabled
 }) => {
 	const itemIds = useMemo(
@@ -67,9 +70,12 @@ const SortableVerticalList = ({
 				items={ itemIds }
 				strategy={ verticalListSortingStrategy }
 			>
-				<div className={ className }>
+				<VStack
+					className={ className }
+					spacing={ spacing }
+				>
 					{ items.map( ( item, index ) => children( item, index, getItemId( item, index ), isItemDisabled?.( item, index ) ) ) }
-				</div>
+				</VStack>
 			</SortableContext>
 		</DndContext>
 	);

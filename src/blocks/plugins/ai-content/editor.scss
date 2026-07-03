@@ -15,3 +15,1004 @@
     color: #828282;
     text-transform: uppercase;
 }
+
+$o-ai-accent: var(--wp-admin-theme-color, #3858e9);
+$o-ai-border: #e0e0e0;
+$o-ai-muted: #757575;
+$o-ai-segment-bg: #f0f0f1;
+
+.o-ai-content-modal__dialog {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 960px;
+    height: 84vh;
+    max-height: 90vh;
+    overflow: hidden;
+
+    // Quiet the default modal chrome and let the body breathe.
+    .components-modal__header {
+        flex: 0 0 auto;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .components-modal__header-heading {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    // Column layout keeps children full-width and lets the inner region (not the
+    // whole modal) take the scroll; `flex: 1; min-height: 0` bounds the height.
+    .components-modal__content {
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
+        flex-direction: column;
+        overflow: hidden;
+        padding-bottom: 0;
+    }
+
+    .components-modal__children-container {
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
+        flex-direction: column;
+    }
+}
+
+.o-ai-content-modal__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+
+    .components-base-control {
+        margin-bottom: 0;
+    }
+}
+
+// Scrollable region — everything above the footer.
+.o-ai-content-modal__scroll {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 16px;
+}
+
+.o-ai-content-modal__label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: $o-ai-muted;
+}
+
+// Prompt row — sparkle + textarea + Generate, presented as one control.
+.o-ai-content-modal__prompt-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 8px 12px;
+    border: 1px solid #dcdcde;
+    border-radius: 10px;
+    background: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus-within {
+        border-color: var(--wp-admin-theme-color, #3858e9);
+        box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #3858e9);
+    }
+}
+
+.o-ai-content-modal__prompt-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: $o-ai-accent;
+
+    svg {
+        width: 22px;
+        height: 22px;
+        fill: currentColor;
+    }
+}
+
+.o-ai-content-modal__prompt-input {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    .components-base-control__field {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    textarea {
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        padding: 6px 0 !important;
+        resize: none;
+        min-height: 34px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+
+.o-ai-content-modal__generate {
+    flex-shrink: 0;
+    align-self: stretch;
+}
+
+.o-ai-content-modal__prompt-actions {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.o-ai-content-modal__tones {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.o-ai-content-modal__tones .o-ai-content-modal__prompt-actions {
+    align-self: flex-end;
+}
+
+.o-ai-content-modal__tone-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+// Side-by-side panels for the text-transform actions.
+.o-ai-content-modal__panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.o-ai-content-modal__panel {
+    min-width: 0;
+}
+
+.o-ai-content-modal__text {
+    min-height: 120px;
+    padding: 12px 14px;
+    border: 1px solid $o-ai-border;
+    border-radius: 8px;
+    background: #f6f7f7;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+// Generated-section preview.
+.o-ai-content-modal__preview {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.o-ai-content-modal__preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.o-ai-content-modal__viewport {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 8px;
+    background: $o-ai-segment-bg;
+}
+
+.o-ai-content-modal__preview-canvas {
+    border: 1px solid $o-ai-border;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.o-ai-content-modal__placeholder {
+    display: block;
+    padding: 40px 16px;
+    text-align: center;
+    color: $o-ai-muted;
+    border: 1px dashed #dcdcde;
+    border-radius: 10px;
+}
+
+.o-ai-content-modal__loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 16px;
+    color: #50575e;
+}
+
+@keyframes o-ai-gen-twinkle {
+    0%, 100% { transform: scale( 1 ); opacity: 0.8; }
+    50% { transform: scale( 1.18 ); opacity: 1; }
+}
+
+@keyframes o-ai-canvas-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+// Footer — actions left, version nav right. Solid background so scrolling
+// content never peeks past it.
+.o-ai-content-modal__footer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px solid #f0f0f0;
+    background: var( --wp-components-color-background, #fff );
+}
+
+.o-ai-content-modal__footer-left {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 6px;
+}
+
+.o-ai-content-modal__footer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.o-ai-version-control {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    overflow: hidden;
+    border: 1px solid #d8dbe0;
+    border-radius: 8px;
+    background: #fff;
+    font-variant-numeric: tabular-nums;
+}
+
+.o-ai-version-control__button.components-button {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 0;
+    justify-content: center;
+    border: none;
+    border-radius: 0;
+    color: #50575e;
+
+    &:disabled {
+        color: #c4c7cc;
+        cursor: default;
+    }
+
+    svg {
+        width: 17px;
+        height: 17px;
+    }
+}
+
+.o-ai-version-control__count {
+    padding: 0 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 32px;
+    white-space: nowrap;
+    color: #1e1e1e;
+    border-left: 1px solid #ededed;
+    border-right: 1px solid #ededed;
+}
+
+.o-ai-content-modal__footer-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.o-ai-content-modal__tokens {
+    align-self: center;
+    color: $o-ai-muted;
+    font-size: 12px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Section-generation experience (create mode) — custom modal chrome.
+ * ------------------------------------------------------------------ */
+
+$o-ai-primary: #3858e9;
+
+.o-ai-content-modal__dialog.is-section-mode {
+    width: min(1020px, 96vw);
+    max-width: min(1020px, 96vw);
+    // Hug the content but cap at the viewport; the canvas takes any overflow.
+    height: auto;
+    max-height: 90vh;
+
+    // We render our own header/footer; let the section fill the dialog flush.
+    .components-modal__content {
+        padding: 0;
+    }
+}
+
+.o-ai-section {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+    background: #fff;
+}
+
+// Header — brand, status pill, close.
+.o-ai-section__header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    height: 60px;
+    padding: 0 16px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.o-ai-section__brand-icon {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+    background: #f3e9e0;
+    overflow: hidden;
+    color: $o-ai-accent;
+
+    svg {
+        width: 27px;
+        height: 31px;
+        fill: currentColor;
+    }
+}
+
+.o-ai-section__brand {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.o-ai-section__brand-title {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #1e1e1e;
+    // Keep the fixed-height header to one line; the full text is in the title attr.
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.o-ai-section__brand-subtitle {
+    display: block;
+    margin-top: 1px;
+    font-size: 12px;
+    line-height: 1.2;
+    color: #8b8d91;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.o-ai-section__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 1 auto;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    color: #5b626a;
+    background: #f3f4f6;
+}
+
+.o-ai-section__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #c4c7cc;
+}
+
+.o-ai-section__status.is-ready .o-ai-section__status-dot {
+    background: $o-ai-primary;
+}
+
+.o-ai-section__status.is-busy .o-ai-section__status-dot {
+    background: $o-ai-accent;
+    animation: o-ai-gen-twinkle 1.2s ease-in-out infinite;
+}
+
+.o-ai-section__status.is-error .o-ai-section__status-dot {
+    background: #d63638;
+}
+
+.o-ai-section__close.components-button {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    margin-left: 4px;
+    color: #5b626a;
+}
+
+.o-ai-section__quick-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 6px 14px;
+    border: 1px solid #dde0e4;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    color: #5b626a;
+    background: #f3f4f6;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover:not(:disabled) {
+        color: #1e1e1e;
+        background: #ebecef;
+        border-color: #cdd1d6;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $o-ai-primary;
+        outline-offset: 1px;
+    }
+
+    &:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+}
+
+.o-ai-section__quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.o-ai-section__refine .o-ai-section__quick-actions {
+    justify-content: flex-start;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+// Canvas — the preview stage on a muted background. Does NOT scroll itself; the
+// scroll lives inside the frame (see .o-ai-section__scroll).
+.o-ai-section__canvas {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 26px;
+    background: #f0f0f1;
+}
+
+// The framed preview, centered on the stage. BlockPreview scales its own iframe
+// from viewportWidth down to this width.
+.o-ai-section__frame {
+    position: relative;
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 1100px;
+    // A fixed 16:9 viewport; `max-height: 100%` caps it to the canvas and the
+    // inner scroll region takes any overflow.
+    aspect-ratio: 16 / 9;
+    max-height: 100%;
+    min-height: 0;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+
+    // Full-page builds preview in a narrower, page-like column.
+    &.is-page {
+        max-width: 760px;
+    }
+
+    // Dim slightly while roots are still streaming in.
+    &.is-live {
+        opacity: 0.92;
+    }
+
+    .block-editor-block-preview__content {
+        max-height: none !important;
+
+        iframe {
+            max-height: none !important;
+        }
+    }
+}
+
+// The only scroll container in the stage: fills the fixed 16:9 frame and takes
+// the scroll, so a tall section stays contained (and the shimmer overlay, pinned
+// to the non-scrolling frame, stays over the visible area).
+.o-ai-section__scroll {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+}
+
+// Translucent "updating" overlay shown over the live preview during an edit —
+// the current layout stays visible underneath while a sweep + pulse signal work.
+.o-ai-section__updating {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(1px);
+    overflow: hidden;
+    pointer-events: none;
+
+    // Diagonal shimmer sweeping across the frame.
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            110deg,
+            rgba(255, 255, 255, 0) 30%,
+            rgba(56, 88, 233, 0.18) 50%,
+            rgba(255, 255, 255, 0) 70%
+        );
+        background-size: 220% 100%;
+        animation: o-ai-updating-sweep 1.6s ease-in-out infinite;
+    }
+}
+
+.o-ai-section__updating-label {
+    position: relative;
+    z-index: 1;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(30, 30, 30, 0.82);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    animation: o-ai-updating-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes o-ai-updating-sweep {
+    0% {
+        background-position: 130% 0;
+    }
+
+    100% {
+        background-position: -30% 0;
+    }
+}
+
+@keyframes o-ai-updating-pulse {
+    0%,
+    100% {
+        opacity: 0.78;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+// Wraps the live BlockPreview so the skeleton holds until the iframe has painted,
+// then crossfades in — otherwise the preview flashes white while the iframe boots.
+.o-ai-section__live {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .block-editor-block-preview__container {
+        width: 100%;
+    }
+
+    // Before paint, keep it out of flow so the skeleton alone sets the size.
+    &:not( .is-ready ) .block-editor-block-preview__container {
+        position: absolute;
+        inset: 0 0 auto;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &.is-ready .block-editor-block-preview__container {
+        animation: o-ai-preview-fade 0.18s ease;
+    }
+}
+
+// "Section forming" skeleton — shown over a booting preview and as the first-build
+// loading state. Centered like a hero so it reads as a section taking shape.
+.o-ai-section__skeleton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 340px;
+    padding: 64px 48px;
+    box-sizing: border-box;
+}
+
+// The individual shimmering bars.
+.o-ai-section__sk-bar {
+    display: block;
+    border-radius: 6px;
+    background: linear-gradient(
+        100deg,
+        #e4e4e7 40%,
+        #f3f3f5 50%,
+        #e4e4e7 60%
+    );
+    background-size: 200% 100%;
+    animation: o-ai-canvas-shimmer 1.4s linear infinite;
+
+    @media ( prefers-reduced-motion: reduce ) {
+        animation: none;
+        background: #e4e4e7;
+    }
+}
+
+.o-ai-section__sk-eyebrow {
+    width: 90px;
+    height: 12px;
+    border-radius: 999px;
+}
+
+.o-ai-section__sk-title {
+    width: min( 70%, 520px );
+    height: 30px;
+}
+
+.o-ai-section__sk-line {
+    width: min( 58%, 440px );
+    height: 14px;
+
+    &.is-short {
+        width: min( 42%, 320px );
+    }
+}
+
+.o-ai-section__sk-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.o-ai-section__sk-btn {
+    width: 134px;
+    height: 42px;
+    border-radius: 8px;
+
+    &.is-ghost {
+        width: 116px;
+        opacity: 0.55;
+    }
+}
+
+@keyframes o-ai-preview-fade {
+    from {
+        opacity: 0;
+    }
+}
+
+.o-ai-section__placeholder {
+    margin: auto;
+    padding: 48px 24px;
+    text-align: center;
+    color: $o-ai-muted;
+    border: 1px dashed #cdd0d6;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.o-ai-section__loading {
+    flex: 0 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+// Refine / prompt bar.
+.o-ai-section__refine {
+    flex: 0 0 auto;
+    padding: 13px 16px;
+    border-top: 1px solid #e8e8e8;
+    background: #fff;
+}
+
+.o-ai-section__refine-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 6px 6px 12px;
+    border: 1px solid #cdd0d6;
+    border-radius: 10px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus-within {
+        border-color: $o-ai-primary;
+        box-shadow: 0 0 0 1px $o-ai-primary;
+    }
+}
+
+.o-ai-section__refine-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: $o-ai-accent;
+
+    svg {
+        width: 19px;
+        height: 19px;
+        fill: currentColor;
+    }
+
+    // The busy spinner reads as the same accent as the sparkle icon it replaces.
+    .components-spinner__indicator {
+        stroke: $o-ai-accent;
+    }
+
+    .components-spinner__track {
+        stroke: rgba( 56, 88, 233, 0.15 );
+    }
+}
+
+.o-ai-section__refine-input {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    .components-base-control__field {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    textarea {
+        width: 100%;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        padding: 6px 0 !important;
+        resize: none;
+        min-height: 48px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    // The disabled field still shows the running prompt — keep it legible
+    // (browsers otherwise fade disabled text).
+    textarea:disabled {
+        opacity: 1;
+        color: #1e1e1e;
+        -webkit-text-fill-color: #1e1e1e;
+        cursor: default;
+    }
+}
+
+// Busy / locked state — a muted, greyed field with a "not-allowed" cursor makes
+// it clear the prompt can't be edited while a generation is in flight.
+.o-ai-section__refine-field.is-busy {
+    background: #f5f6f7;
+    border-color: #e0e2e6;
+    box-shadow: none;
+    cursor: not-allowed;
+
+    // Spinner sized to match the sparkle icon it replaces.
+    .o-ai-section__refine-icon .components-spinner {
+        margin: 0;
+        width: 19px;
+        height: 19px;
+    }
+
+    .o-ai-section__refine-input textarea {
+        background: transparent !important;
+        color: #6b7280;
+        -webkit-text-fill-color: #6b7280;
+        cursor: not-allowed;
+    }
+}
+
+.o-ai-section__refine-submit.components-button,
+.o-ai-section__refine-stop.components-button {
+    flex: 0 0 auto;
+    justify-content: center;
+}
+
+// Stop = a filled danger button while generating (overrides WP's secondary +
+// destructive outline) so cancelling reads clearly as an interrupt.
+.o-ai-section__refine-stop.components-button.is-destructive {
+    background: #d63638;
+    color: #fff;
+    box-shadow: none;
+
+    &:not( :disabled ):hover,
+    &:not( :disabled ):focus {
+        background: #b32d2e;
+        color: #fff;
+        box-shadow: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid rgba( 214, 54, 56, 0.5 );
+        outline-offset: 1px;
+    }
+}
+
+// Soft inline failure card under the prompt box — a tinted rounded panel, not the
+// heavy WP <Notice>. Carries only the message; Retry lives on the primary button.
+.o-ai-section__error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 9px 12px;
+    border: 1px solid #f1c7c8;
+    border-radius: 9px;
+    background: #fdf4f4;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #8a2b2c;
+    animation: o-ai-error-in 0.18s ease;
+}
+
+.o-ai-section__error-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-top: 1px;
+}
+
+@keyframes o-ai-error-in {
+    from {
+        opacity: 0;
+        transform: translateY( -3px );
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY( 0 );
+    }
+}
+
+// Soft red frame on the prompt box while an error shows; the blue focus ring
+// still wins on click.
+.o-ai-section__refine-field.has-error {
+    border-color: #eab8b9;
+
+    &:not( :focus-within ) {
+        box-shadow: 0 0 0 1px rgba( 204, 24, 24, 0.12 );
+    }
+}
+
+// A quick-action pill just filled the prompt: brief accent pulse so the
+// easily-missed field visibly reacts.
+.o-ai-section__refine-field.is-pulsing {
+    animation: o-ai-prompt-pulse 1s ease;
+
+    @media ( prefers-reduced-motion: reduce ) {
+        animation: none;
+    }
+}
+
+@keyframes o-ai-prompt-pulse {
+    0% {
+        border-color: $o-ai-primary;
+        box-shadow: 0 0 0 3px rgba( 56, 88, 233, 0.22 );
+    }
+
+    100% {
+        border-color: #cdd0d6;
+        box-shadow: 0 0 0 3px rgba( 56, 88, 233, 0 );
+    }
+}
+
+// Footer — version stepper + tokens (left), Discard / Insert (right).
+.o-ai-section__footer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 16px;
+    border-top: 1px solid #e3e4e6;
+    background: #fafafa;
+}
+
+.o-ai-section__footer-left,
+.o-ai-section__footer-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+@keyframes oai-modalin {
+    from {
+        opacity: 0;
+        transform: translateY( 12px ) scale( 0.98 );
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY( 0 ) scale( 1 );
+    }
+}
+
+@keyframes oai-verin {
+    from {
+        opacity: 0;
+        transform: translateY( 8px );
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY( 0 );
+    }
+}
+
+.o-ai-content-modal__dialog.is-section-mode {
+    animation: oai-modalin 0.22s ease;
+}
+
+.o-ai-section__frame {
+    animation: oai-verin 0.2s ease;
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+    .o-ai-content-modal__dialog.is-section-mode,
+    .o-ai-section__frame {
+        animation: none;
+    }
+}

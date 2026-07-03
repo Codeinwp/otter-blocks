@@ -46,33 +46,33 @@ import { blockInit } from '../../helpers/block-utility.js';
 const { attributes: defaultAttributes } = metadata;
 
 const TEMPLATE = [
-	[ 'core/group', { layout: { type: 'constrained' }, style: { spacing: { blockGap: '0.5rem' } } }, [
+	[ 'core/group', { layout: { type: 'constrained' }, style: { spacing: { blockGap: '0.5rem' }}}, [
 		[ 'core/image', {
 			url: 'https://s.w.org/images/core/5.3/Glacial_lakes%2C_Bhutan.jpg',
 			alt: __( 'Glacial lakes, Bhutan', 'otter-blocks' ),
 			align: 'center',
 			sizeSlug: 'large'
-		} ],
-		[ 'core/paragraph', { align: 'center', content: __( 'Compose each slide from any blocks.', 'otter-blocks' ) } ]
-	] ],
-	[ 'core/group', { layout: { type: 'constrained' }, style: { spacing: { blockGap: '0.5rem' } } }, [
+		}],
+		[ 'core/paragraph', { align: 'center', content: __( 'Compose each slide from any blocks.', 'otter-blocks' ) }]
+	]],
+	[ 'core/group', { layout: { type: 'constrained' }, style: { spacing: { blockGap: '0.5rem' }}}, [
 		[ 'core/image', {
 			url: 'https://s.w.org/images/core/5.3/Sediment_off_the_Yucatan_Peninsula.jpg',
 			alt: __( 'Sediment off the Yucatan Peninsula', 'otter-blocks' ),
 			align: 'center',
 			sizeSlug: 'large'
-		} ],
-		[ 'core/paragraph', { align: 'center', content: __( 'Mix images, text, buttons and more.', 'otter-blocks' ) } ]
-	] ],
-	[ 'core/group', { layout: { type: 'constrained' }, style: { spacing: { blockGap: '0.5rem' } } }, [
+		}],
+		[ 'core/paragraph', { align: 'center', content: __( 'Mix images, text, buttons and more.', 'otter-blocks' ) }]
+	]],
+	[ 'core/group', { layout: { type: 'constrained' }, style: { spacing: { blockGap: '0.5rem' }}}, [
 		[ 'core/image', {
 			url: 'https://s.w.org/images/core/5.3/MtBlanc1.jpg',
 			alt: __( 'Mont Blanc', 'otter-blocks' ),
 			align: 'center',
 			sizeSlug: 'large'
-		} ],
-		[ 'core/paragraph', { align: 'center', content: __( 'Each group becomes one slide.', 'otter-blocks' ) } ]
-	] ]
+		}],
+		[ 'core/paragraph', { align: 'center', content: __( 'Each group becomes one slide.', 'otter-blocks' ) }]
+	]]
 ];
 
 // Single slide at a time (mode B); the active index is UI-only, never persisted.
@@ -106,7 +106,7 @@ const Edit = ({
 	const addSlide = () => {
 		const slide = createBlock(
 			'core/group',
-			{ layout: { type: 'constrained' } },
+			{ layout: { type: 'constrained' }},
 			[ createBlock( 'core/paragraph', { placeholder: __( 'Add slide content…', 'otter-blocks' ) }) ]
 		);
 		insertBlock( slide, slideCount, clientId, false );

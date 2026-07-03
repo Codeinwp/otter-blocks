@@ -61,6 +61,16 @@ class Otter_OpenAI_Backend implements AI_Backend {
 		 */
 		$model = apply_filters( 'otter_ai_otter_openai_model', isset( $payload['model'] ) ? (string) $payload['model'] : '', $payload );
 
+		if ( '' === $model && empty( $payload['model'] ) ) {
+			/**
+			 * Filters the legacy OpenAI model used when the client did not pin one.
+			 *
+			 * @param string               $model   Default model ID.
+			 * @param array<string, mixed> $payload The filtered OpenAI-format payload.
+			 */
+			$model = (string) apply_filters( 'otter_ai_block_generation_model', 'gpt-5-mini', $payload );
+		}
+
 		if ( is_string( $model ) && '' !== $model ) {
 			$payload['model'] = $model;
 		}
@@ -72,7 +82,7 @@ class Otter_OpenAI_Backend implements AI_Backend {
 				'Content-Type'  => 'application/json',
 			),
 			'body'    => wp_json_encode( $payload ),
-			'timeout' => 2 * MINUTE_IN_SECONDS,
+			'timeout' => AI_Client_Adaptor::get_request_timeout_seconds(),
 		);
 
 		/**
@@ -99,7 +109,7 @@ class Otter_OpenAI_Backend implements AI_Backend {
 		}
 
 		if ( ! isset( $request_args['timeout'] ) || ! is_numeric( $request_args['timeout'] ) ) {
-			$request_args['timeout'] = 2 * MINUTE_IN_SECONDS;
+			$request_args['timeout'] = AI_Client_Adaptor::get_request_timeout_seconds();
 		}
 
 		$headers = array();

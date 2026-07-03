@@ -44,8 +44,11 @@ window.themeisleGutenberg.blockIDs ??= [];
 export const addGlobalDefaults = ( attributes, setAttributes, name, defaultAttributes ) => {
 
 	// Check if the globals default are available and its values are different from the base values.
-	if ( undefined !== window.themeisleGutenberg?.globalDefaults && ! isEqual( globalDefaultsBlocksAttrs[name], window.themeisleGutenberg.globalDefaults[name]) ) {
-		const defaultGlobalAttrs = { ...window.themeisleGutenberg.globalDefaults[name] };
+	// Optional chaining throughout: a corrupt/empty option localizes globalDefaults as null.
+	const globalDefaults = window.themeisleGutenberg?.globalDefaults?.[ name ];
+
+	if ( globalDefaults && ! isEqual( globalDefaultsBlocksAttrs[name], globalDefaults ) ) {
+		const defaultGlobalAttrs = { ...globalDefaults };
 
 		const attrs = Object.keys( defaultGlobalAttrs )
 			.filter( attr => isEqual( attributes[ attr ], defaultAttributes[ attr ]?.default ) ) // Keep only the properties with the default value.

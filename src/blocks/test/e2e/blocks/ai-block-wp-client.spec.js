@@ -18,6 +18,9 @@ test.describe( 'AI Block via WP AI Client', () => {
 		await otterUtils.setOptions({
 			'connectors_ai_openai_api_key': 'sk-otter-e2e-mock'
 		});
+		// The content-generator block renders an enable-gate (no prompt field)
+		// unless the Atomic Wind blocks it builds with are registered.
+		await otterUtils.setAtomicWindBlocks( true );
 		await otterUtils.seedPrompts();
 
 		await admin.createNewPost();
@@ -31,6 +34,7 @@ test.describe( 'AI Block via WP AI Client', () => {
 		await otterUtils.setOptions({
 			'connectors_ai_openai_api_key': ''
 		});
+		await otterUtils.setAtomicWindBlocks( false );
 	});
 
 	test( 'generates content through the WP AI Client without route mocks', async({ editor, page }) => {
@@ -41,11 +45,18 @@ test.describe( 'AI Block via WP AI Client', () => {
 			}
 		});
 
-		// Wait for the prompt list to load so embeddedPrompts is populated before "Generate".
-		await page.waitForResponse( r => r.url().includes( '/otter/v1/openai/prompt' ) ).catch( () => null );
-		await editor.canvas.getByPlaceholder( 'Start describing what content' ).type( 'Write about anything.' );
+		await editor.canvas
+			.getByPlaceholder( 'e.g. A hero section for a dental clinic with a heading and two buttons' )
+			.fill( 'Write about anything.' );
 		await editor.canvas.getByRole( 'button', { name: 'Generate' }).click();
-		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
+
+		const dialog = page.getByRole( 'dialog' );
+		await expect( dialog ).toBeVisible();
+
+		const insertButton = dialog.getByRole( 'button', { name: 'Insert section' });
+		await expect( insertButton ).toBeEnabled({ timeout: 30000 });
+		await insertButton.click();
+		await expect( dialog ).toBeHidden();
 
 		const blocks = await editor.getBlocks();
 
@@ -71,7 +82,7 @@ test.describe( 'AI Block via WP AI Client', () => {
 		await expect( editor.canvas.getByText( 'Full Name' ) ).toBeVisible();
 		await expect( editor.canvas.getByText( 'Email Address' ) ).toBeVisible();
 
-		await editor.canvas.getByRole( 'button', { name: 'Replace' }).click();
+		await editor.canvas.getByRole( 'button', { name: 'Done' }).click();
 
 		const blocks = await editor.getBlocks();
 

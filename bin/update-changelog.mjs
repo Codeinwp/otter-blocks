@@ -1,6 +1,5 @@
 import { replaceInFile } from 'replace-in-file';
 
-
 async function updateChangelog() {
 	const options = {
 		files: 'readme.txt',
