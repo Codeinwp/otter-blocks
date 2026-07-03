@@ -57,6 +57,10 @@ import { useAtomicCssForContent } from '../patterns-library/atomic';
 
 const EMPTY_PREVIEW_BLOCKS: BlockProps<unknown>[] = [];
 
+// Consent-gated AI telemetry (no { consent: true }); the key is dedup-only and never sent as a value.
+export const trackAiEvent = ( key: string, featureComponent: string, featureValue: string ) =>
+	window.oTrk?.set( key, { feature: 'ai-generation', featureComponent, featureValue });
+
 // Bucket the regeneration count into a coarse, non-PII enum for telemetry.
 const retryBucket = ( count: number ): string => {
 	if ( 1 > count ) {
@@ -179,9 +183,9 @@ const AIContentModal = ({
 	const isCreateMode = 'create' === mode;
 	const scope = initialScope;
 
-	// Telemetry dedup key only — never sent as an event value.
 	const trackingKey = singleClientId ?? selectedClientIds?.[0] ?? 'ai-modal';
-	const outcomeComponent = isCreateMode ? 'outcome-create' : 'outcome-transform';
+	const trackOutcome = ( featureValue: string ) =>
+		trackAiEvent( `ai-outcome-${ trackingKey }`, isCreateMode ? 'outcome-create' : 'outcome-transform', featureValue );
 
 	const [ pinnedPreviewClone, setPinnedPreviewClone ] = useState<BlockProps<unknown>[]>( EMPTY_PREVIEW_BLOCKS );
 	const wasOpenRef = useRef( false );
@@ -691,7 +695,7 @@ const AIContentModal = ({
 				)
 			}, { consent: true });
 
-			window.oTrk?.set( `ai-retries-${ trackingKey }`, { feature: 'ai-generation', featureComponent: 'regenerate-count', featureValue: retryBucket( priorTurns.length ) });
+			trackAiEvent( `ai-retries-${ trackingKey }`, 'regenerate-count', retryBucket( priorTurns.length ) );
 
 			if ( isStale() ) {
 				return;
@@ -837,7 +841,7 @@ const AIContentModal = ({
 
 		try {
 			if ( onApplyBlocks ) {
-				window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: outcomeComponent, featureValue: 'insert' });
+				trackOutcome( 'insert' );
 				onApplyBlocks( blocksToInsert );
 				return;
 			}
@@ -852,7 +856,7 @@ const AIContentModal = ({
 			}
 
 			replaceBlocks( replaceClientIds, blocksToInsert );
-			window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: outcomeComponent, featureValue: 'replace' });
+			trackOutcome( 'replace' );
 			( onApplyComplete ?? onClose )();
 		} catch {
 			createNotice(
@@ -898,7 +902,7 @@ const AIContentModal = ({
 		}
 
 		if ( hasRealTurns ) {
-			window.oTrk?.set( `ai-outcome-${ trackingKey }`, { feature: 'ai-generation', featureComponent: outcomeComponent, featureValue: 'discard' });
+			trackOutcome( 'discard' );
 		}
 
 		( onDiscard ?? onClose )();

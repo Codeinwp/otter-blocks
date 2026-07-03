@@ -24,7 +24,7 @@ import PreviewBoundary from './preview-boundary.js';
 import PromptPlaceholder from '../../components/prompt';
 import { aiGeneration as icon } from '../../helpers/icons.js';
 import { parseFormPromptResponseToBlocks } from '../../helpers/prompt';
-import AIContentModal from '../../plugins/ai-content/modal';
+import AIContentModal, { trackAiEvent } from '../../plugins/ai-content/modal';
 import EnableAtomicWind from '../../plugins/patterns-library/enableAtomicWind';
 import useSettings from '../../helpers/use-settings';
 import {
@@ -171,7 +171,7 @@ const ContentGenerator = ({
 			replaceBlocks( clientId, blocksToInsert );
 		}
 
-		window.oTrk?.set( `ai-outcome-${ clientId }`, { feature: 'ai-generation', featureComponent: 'outcome-form', featureValue: 'replace' });
+		trackAiEvent( `ai-outcome-${ clientId }`, 'outcome-form', 'replace' );
 	};
 
 	/**
@@ -250,7 +250,7 @@ const ContentGenerator = ({
 						actionButtons={ actionButtons }
 						onClose={ () => {
 							if ( hasInnerBlocks ) {
-								window.oTrk?.set( `ai-outcome-${ clientId }`, { feature: 'ai-generation', featureComponent: 'outcome-form', featureValue: 'discard' });
+								trackAiEvent( `ai-outcome-${ clientId }`, 'outcome-form', 'discard' );
 							}
 							removeBlock( clientId );
 						} }
