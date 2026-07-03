@@ -47,7 +47,7 @@ import {
 	Icon
 } from '@wordpress/icons';
 
-import { Button, Notice, ToolbarGroup } from '@wordpress/components';
+import { Button, Notice, ToolbarButton, ToolbarGroup } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -855,9 +855,9 @@ const Edit = ({
 		setLoading({ captcha: 'loading' });
 		try {
 			const model = new api.models.Settings({
-				// eslint-disable-next-line camelcase
+				 
 				themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
-				// eslint-disable-next-line camelcase
+				 
 				themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
 			});
 
@@ -983,7 +983,7 @@ const Edit = ({
 
 				<BlockControls>
 					<ToolbarGroup>
-						<Button
+						<ToolbarButton
 							onClick={()=> {
 								const generator = createBlock( 'themeisle-blocks/content-generator', {
 									promptID: 'form'
@@ -994,7 +994,7 @@ const Edit = ({
 						>
 							{ __( 'Create Form With AI', 'otter-blocks' ) }
 							<Icon width={22} icon={aiGeneration} style={{ marginLeft: '8px' }} />
-						</Button>
+						</ToolbarButton>
 					</ToolbarGroup>
 				</BlockControls>
 

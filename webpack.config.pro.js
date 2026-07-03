@@ -66,7 +66,12 @@ module.exports = [
 		output: {
 			path: path.resolve( __dirname, './build/pro' ),
 			filename: '[name].js',
-			chunkFilename: 'chunk-[name].js'
+			chunkFilename: 'chunk-[name].js',
+
+			// Isolate the chunk-loading global from the free build: both default to
+			// webpackChunkotter_blocks, and colliding runtimes resolve each other's
+			// numeric module IDs, crashing the editor when free + pro load together.
+			uniqueName: 'otterProBlocks'
 		},
 		module: {
 			rules: [

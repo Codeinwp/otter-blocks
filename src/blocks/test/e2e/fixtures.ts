@@ -6,6 +6,7 @@ import { test as base, expect } from '@wordpress/e2e-test-utils-playwright';
 export type MailLogEntry = {
 	to: string | string[];
 	subject: string;
+	headers: string | string[];
 };
 
 export type FormRecord = {
@@ -15,10 +16,10 @@ export type FormRecord = {
 	form: string | null;
 	inputs: Array<{ label: string; value: string }>;
 
-	/* eslint-disable camelcase */
+	 
 	delivery_status: string;
 	delivery_errors: Array<{ action: string; code: string; message: string }> | '';
-	/* eslint-enable camelcase */
+	 
 };
 
 /**
@@ -43,6 +44,13 @@ export type OtterUtils = {
 
 	/** Stub or pass through /otter/v1/openai/generate (AI block E2E). */
 	setOpenAiMode: ( mode: 'stub' | 'off' ) => Promise<unknown>;
+
+	/**
+	 * Toggle the option that gates registration of the Atomic Wind blocks
+	 * (atomic-wind/*). Call before loading the editor; restore it afterwards so
+	 * the shared instance is left as found.
+	 */
+	setAtomicWindBlocks: ( enabled: boolean ) => Promise<unknown>;
 
 	/** Upsert an entry in themeisle_blocks_form_emails; a null value removes the key (simulates legacy entries). */
 	upsertFormOption: ( entry: { form: string } & Record<string, unknown> ) => Promise<unknown>;
@@ -72,6 +80,7 @@ export const test = base.extend<{ otterUtils: OtterUtils }>({
 			setOptions: ( options ) => call( 'options', options ),
 			seedPrompts: () => call( 'prompts/seed' ),
 			reset: () => call( 'reset' ),
+			setAtomicWindBlocks: ( enabled ) => call( 'options', { themeisle_blocks_settings_atomic_wind_blocks: enabled }),
 			setMailMode: ( mode ) => call( 'mail', { mode }),
 			getMailLog: () => call( 'mail/log' ) as Promise<MailLogEntry[]>,
 			setCaptchaMode: ( mode ) => call( 'captcha', { mode }),

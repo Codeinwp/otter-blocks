@@ -1,13 +1,19 @@
 import { createBlock } from '@wordpress/blocks';
+import apiFetch from '@wordpress/api-fetch';
 import {
 	editLastConversation,
 	injectActionIntoPrompt,
 	injectConversationIntoPrompt,
+	isTransientPromptError,
 	normalizePromptResponse,
 	parseFormPromptResponseToBlocks,
+	sendBlockGenerationPrompt,
 	tryInjectIntoTemplate,
-	tryParseResponse
+	tryParseResponse,
+	withPromptRetry
 } from '../../helpers/prompt';
+
+import type { PromptResult } from '../../helpers/prompt';
 
 jest.mock( '@wordpress/api-fetch', () => jest.fn(), { virtual: true } );
 jest.mock( '@wordpress/url', () => ({
@@ -228,6 +234,101 @@ describe( 'prompt helpers', () => {
 			} as any;
 
 			expect( editLastConversation( prompt, () => 'ignored' ) ).toEqual( prompt );
+		});
+	});
+
+	describe( 'isTransientPromptError', () => {
+		it( 'flags the WP AI Client network timeout (cURL 28 / 502)', () => {
+			const result: PromptResult = {
+				ok: false,
+				error: {
+					code: 'prompt_network_error',
+					message: 'Network error occurred ... cURL error 28: Operation timed out after 30002 milliseconds',
+					type: 'wp_ai_client'
+				},
+				raw: { data: { status: 502 }}
+			};
+
+			expect( isTransientPromptError( result ) ).toBe( true );
+		});
+
+		it( 'flags transient HTTP statuses from the raw payload', () => {
+			const result: PromptResult = {
+				ok: false,
+				error: { code: 'some_code', message: 'Service unavailable' },
+				raw: { data: { status: 503 }}
+			};
+
+			expect( isTransientPromptError( result ) ).toBe( true );
+		});
+
+		it( 'does not retry permanent errors or successes', () => {
+			expect( isTransientPromptError({
+				ok: false,
+				error: { code: 'invalid_api_key', message: 'Incorrect API key provided.' },
+				raw: { data: { status: 401 }}
+			}) ).toBe( false );
+
+			expect( isTransientPromptError({ ok: true, content: 'hi', usedTokens: 1, raw: {}}) ).toBe( false );
+		});
+	});
+
+	describe( 'sendBlockGenerationPrompt', () => {
+		it( 'does not include a model field in the request body', async() => {
+			( apiFetch as jest.Mock ).mockResolvedValue({
+				content: '{}',
+				usedTokens: 1
+			});
+
+			window.themeisleGutenberg = { aiClientActive: true };
+
+			await sendBlockGenerationPrompt( 'Build a hero section', 'aiChat' );
+
+			const body = JSON.parse( ( apiFetch as jest.Mock ).mock.calls[0][0].body );
+			expect( body.model ).toBeUndefined();
+		});
+	});
+
+	describe( 'withPromptRetry', () => {
+		const transient: PromptResult = {
+			ok: false,
+			error: { code: 'prompt_network_error', message: 'timed out' },
+			raw: { data: { status: 502 }}
+		};
+		const success: PromptResult = { ok: true, content: '{}', usedTokens: 5, raw: {}};
+
+		it( 'retries a transient failure then returns the success', async() => {
+			const attempt = jest.fn()
+				.mockResolvedValueOnce( transient )
+				.mockResolvedValueOnce( success );
+
+			const result = await withPromptRetry( attempt, { retries: 2, baseDelay: 0 });
+
+			expect( attempt ).toHaveBeenCalledTimes( 2 );
+			expect( result ).toEqual( success );
+		});
+
+		it( 'stops after exhausting retries and returns the last failure', async() => {
+			const attempt = jest.fn().mockResolvedValue( transient );
+
+			const result = await withPromptRetry( attempt, { retries: 2, baseDelay: 0 });
+
+			expect( attempt ).toHaveBeenCalledTimes( 3 );
+			expect( result ).toEqual( transient );
+		});
+
+		it( 'does not retry a permanent failure', async() => {
+			const permanent: PromptResult = {
+				ok: false,
+				error: { code: 'invalid_api_key', message: 'bad key' },
+				raw: { data: { status: 401 }}
+			};
+			const attempt = jest.fn().mockResolvedValue( permanent );
+
+			const result = await withPromptRetry( attempt, { retries: 2, baseDelay: 0 });
+
+			expect( attempt ).toHaveBeenCalledTimes( 1 );
+			expect( result ).toEqual( permanent );
 		});
 	});
 });

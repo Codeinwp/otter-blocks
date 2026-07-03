@@ -120,15 +120,16 @@ const debouncedSubscription = debounce( () => {
 		return;
 	}
 	
-	const __experimentalGetPreviewDeviceType = select( 'core/edit-post' ) ? select( 'core/edit-post' ).__experimentalGetPreviewDeviceType() : false;
+	const editor = select( 'core/editor' );
+	const deviceType = editor?.getDeviceType ? editor.getDeviceType() : false;
 	const blocks = getBlocks();
 	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block', { context: 'view' });
 
-	if ( ! isEqual( previousBlocks, blocks ) || previewView !== __experimentalGetPreviewDeviceType ) {
+	if ( ! isEqual( previousBlocks, blocks ) || previewView !== deviceType ) {
 		const blocksStyle = getCustomCssFromBlocks( blocks, reusableBlocks );
 
 		if ( blocksStyle ) {
-			if ( previewView !== __experimentalGetPreviewDeviceType && 'Desktop' === previewView ) {
+			if ( previewView !== deviceType && 'Desktop' === previewView ) {
 				setTimeout( () => {
 					addStyle( blocksStyle );
 				}, 500 );
@@ -138,7 +139,7 @@ const debouncedSubscription = debounce( () => {
 		}
 
 		previousBlocks = blocks;
-		previewView = __experimentalGetPreviewDeviceType;
+		previewView = deviceType;
 	}
 }, 300 ); // Adjust debounce time as necessary
 

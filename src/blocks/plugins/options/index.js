@@ -38,7 +38,7 @@ import {
 import {
 	PluginSidebar,
 	PluginSidebarMoreMenuItem
-} from '@wordpress/edit-post';
+} from '@wordpress/editor';
 
 import { applyFilters } from '@wordpress/hooks';
 

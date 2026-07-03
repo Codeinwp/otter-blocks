@@ -198,6 +198,14 @@ namespace ThemeIsle\GutenbergBlocks\Tests {
 		public $throw_on_text = false;
 
 		/**
+		 * Exception for toText() to throw, simulating a raw HTTP error body (e.g. an
+		 * nginx 502 page) in the AI Client exception message.
+		 *
+		 * @var \Exception|null
+		 */
+		public $throw_exception = null;
+
+		/**
 		 * Constructor.
 		 *
 		 * @param string $text The text content.
@@ -222,6 +230,10 @@ namespace ThemeIsle\GutenbergBlocks\Tests {
 		 * @return string
 		 */
 		public function toText() {
+			if ( null !== $this->throw_exception ) {
+				throw $this->throw_exception;
+			}
+
 			if ( $this->throw_on_text ) {
 				throw new \RuntimeException( 'No text content available in the result.' );
 			}
@@ -251,12 +263,20 @@ namespace ThemeIsle\GutenbergBlocks\Tests {
 		public $builder;
 
 		/**
+		 * Model instance returned by get_wp_client_provider_model().
+		 *
+		 * @var object|null
+		 */
+		public $provider_model;
+
+		/**
 		 * Constructor.
 		 *
 		 * @param Spy_AI_Builder|null $builder The spy builder.
 		 */
 		public function __construct( $builder = null ) {
-			$this->builder = null !== $builder ? $builder : new Spy_AI_Builder();
+			$this->builder        = null !== $builder ? $builder : new Spy_AI_Builder();
+			$this->provider_model = new \stdClass();
 		}
 
 		/**
@@ -266,6 +286,21 @@ namespace ThemeIsle\GutenbergBlocks\Tests {
 		 */
 		protected function make_builder() {
 			return $this->builder;
+		}
+
+		/**
+		 * Return a stand-in model for configured provider/model tests.
+		 *
+		 * @param string $provider Provider ID.
+		 * @param string $model    Model ID.
+		 * @return object|null
+		 */
+		protected function get_wp_client_provider_model( $provider, $model ) {
+			if ( null === $this->provider_model ) {
+				return null;
+			}
+
+			return $this->provider_model;
 		}
 	}
 

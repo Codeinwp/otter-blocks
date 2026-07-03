@@ -81,10 +81,7 @@ const Edit = ({
 
 	const {
 		sectionBlock,
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile,
+		deviceType,
 		children,
 		variations,
 		defaultVariation
@@ -99,15 +96,13 @@ const Edit = ({
 			getDefaultBlockVariation
 		} = select( 'core/blocks' );
 
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const editor = select( 'core/editor' );
+		const deviceType = editor?.getDeviceType ? editor.getDeviceType() : false;
 
 		return {
 			sectionBlock: getBlock( clientId ),
 			children: getBlock( clientId )?.innerBlocks || [],
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false,
+			deviceType,
 			blockType: getBlockType( name ),
 			defaultVariation: getDefaultBlockVariation( name, 'block' ),
 			variations: getBlockVariations( name, 'block' ).filter( ({ isDefault }) => ! isDefault )
@@ -185,10 +180,10 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
+	if ( deviceType && ! isMobile ) {
+		isDesktop = 'Desktop' === deviceType;
+		isTablet = 'Tablet' === deviceType;
+		isMobile = 'Mobile' === deviceType;
 	}
 
 	// +-------------------------------- DIVIDER SIZE --------------------------------+

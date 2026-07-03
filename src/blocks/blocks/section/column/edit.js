@@ -61,17 +61,15 @@ const Edit = ({
 		adjacentBlock,
 		parentBlock,
 		hasInnerBlocks,
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile
+		deviceType
 	} = useSelect( select => {
 		const {
 			getAdjacentBlockClientId,
 			getBlock,
 			getBlockRootClientId
 		} = select( 'core/block-editor' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const editor = select( 'core/editor' );
+		const deviceType = editor?.getDeviceType ? editor.getDeviceType() : false;
 		const block = getBlock( clientId );
 		const adjacentBlockClientId = getAdjacentBlockClientId( clientId );
 		const adjacentBlock = getBlock( adjacentBlockClientId );
@@ -84,10 +82,7 @@ const Edit = ({
 			adjacentBlock,
 			parentBlock,
 			hasInnerBlocks,
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
+			deviceType
 		};
 	}, []);
 
@@ -148,10 +143,10 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
+	if ( deviceType && ! isMobile ) {
+		isDesktop = 'Desktop' === deviceType;
+		isTablet = 'Tablet' === deviceType;
+		isMobile = 'Mobile' === deviceType;
 	}
 	const { layout, layoutTablet, layoutMobile } = parentBlock.attributes;
 	const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );

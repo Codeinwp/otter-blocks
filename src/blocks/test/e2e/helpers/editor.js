@@ -142,3 +142,94 @@ export async function publishAndViewPost({ editor, page, query = '', waitAfterPu
 
 	return postId;
 }
+
+/**
+ * Open the block settings sidebar if it is collapsed.
+ *
+ * @param {import('@playwright/test').Page} page The page.
+ * @return {Promise<void>}
+ */
+export async function openSettingsSidebar( page ) {
+	const settings = page.getByRole( 'button', { name: 'Settings', exact: true }).first();
+	const className = await settings.getAttribute( 'class' );
+
+	if ( ! className?.includes( 'is-pressed' ) ) {
+		await settings.click();
+	}
+}
+
+/**
+ * Switch the editor preview device via the View menu.
+ *
+ * @param {import('@playwright/test').Page} page The page.
+ * @param {'Desktop'|'Tablet'|'Mobile'}     view Target device.
+ * @return {Promise<void>}
+ */
+export async function switchEditorView( page, view ) {
+	await page.getByRole( 'button', { name: 'View', exact: true }).click();
+	await page.getByRole( 'menuitemradio', { name: view }).click();
+}
+
+/**
+ * Find a nested block by name in the current editor tree.
+ *
+ * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor    The editor utils.
+ * @param {string}                                                blockName Block name.
+ * @return {Promise<object|undefined>}
+ */
+export async function getNestedBlockByName( editor, blockName ) {
+	const findBlock = ( blocks ) => {
+		for ( const block of blocks ) {
+			if ( blockName === block.name ) {
+				return block;
+			}
+
+			const inner = findBlock( block.innerBlocks || [] );
+
+			if ( inner ) {
+				return inner;
+			}
+		}
+
+		return undefined;
+	};
+
+	return findBlock( await editor.getBlocks() );
+}
+
+/**
+ * Select a block by name anywhere in the block tree.
+ *
+ * @param {import('@playwright/test').Page} page      The page.
+ * @param {string}                          blockName Block name to select.
+ * @return {Promise<string>} The selected block clientId.
+ */
+export async function selectBlockByName( page, blockName ) {
+	return page.evaluate( name => {
+		const findBlock = blocks => {
+			for ( const block of blocks ) {
+				if ( block.name === name ) {
+					return block;
+				}
+
+				const inner = findBlock( block.innerBlocks || [] );
+
+				if ( inner ) {
+					return inner;
+				}
+			}
+
+			return null;
+		};
+
+		const block = findBlock( window.wp.data.select( 'core/block-editor' ).getBlocks() );
+
+		if ( ! block ) {
+			throw new Error( `Block not found: ${ name }` );
+		}
+
+		window.wp.data.dispatch( 'core/block-editor' ).selectBlock( block.clientId );
+
+		return block.clientId;
+	}, blockName );
+}

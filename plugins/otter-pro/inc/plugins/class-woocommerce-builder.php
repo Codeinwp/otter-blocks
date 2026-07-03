@@ -72,20 +72,20 @@ class WooCommerce_Builder {
 		if ( boolval( $woo_builder_enabled ) ) {
 			?>
 			<div class="clear">
-				<p><?php _e( 'You can go back to the regular editor from this option.', 'otter-pro' ); ?></p>
+				<p><?php esc_html_e( 'You can go back to the regular editor from this option.', 'otter-pro' ); ?></p>
 
 				<a href="<?php echo esc_url( add_query_arg( 'otter-woo-builder', 0 ) ); ?>" class="button button-primary" id="otter-woo-builder">
-					<?php _e( 'Disable WooCommerce Builder', 'otter-pro' ); ?>
+					<?php esc_html_e( 'Disable WooCommerce Builder', 'otter-pro' ); ?>
 				</a>
 			</div>
 			<?php
 		} else {
 			?>
 			<div class="clear">
-				<p><?php _e( 'Use WooCommerce Builder by Otter to build a custom page for your WooCommerce products.', 'otter-pro' ); ?></p>
+				<p><?php esc_html_e( 'Use WooCommerce Builder by Otter to build a custom page for your WooCommerce products.', 'otter-pro' ); ?></p>
 
 				<a href="<?php echo esc_url( add_query_arg( 'otter-woo-builder', 1 ) ); ?>" class="button button-primary" id="otter-woo-builder">
-					<?php _e( 'Enable WooCommerce Builder', 'otter-pro' ); ?>
+					<?php esc_html_e( 'Enable WooCommerce Builder', 'otter-pro' ); ?>
 				</a>
 			</div>
 			<?php

@@ -28,7 +28,6 @@
 		"test:unit:help": "wp-scripts test-unit-js --help",
 		"test:unit:watch": "wp-scripts test-unit-js --watch",
 		"test:unit:debug": "wp-scripts --inspect-brk test-unit-js --runInBand --no-cache",
-		"test:e2e:blockId": "wp-scripts test-e2e uniq-id-checking.spec.js",
 		"test:e2e:playwright": "npx playwright test --config src/blocks/test/e2e/playwright.config.js",
 		"test:e2e:playwright:serial": "npx playwright test --config src/blocks/test/e2e/playwright.config.js --project=chromium-serial",
 		"test:e2e:playwright:parallel": "npx playwright test --config src/blocks/test/e2e/playwright.config.js --project=chromium-parallel --no-deps",
@@ -92,7 +91,7 @@
 		"uuid": "^14.0.0"
 	},
 	"devDependencies": {
-		"@automattic/babel-plugin-replace-textdomain": "^1.1.2",
+		"@automattic/babel-plugin-replace-textdomain": "^1.1.6",
 		"@playwright/test": "^1.61.1",
 		"@semantic-release/changelog": "^6.0.3",
 		"@semantic-release/exec": "^6.0.3",

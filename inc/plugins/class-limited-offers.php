@@ -152,7 +152,7 @@ class LimitedOffers {
 	 * @return void
 	 */
 	public function disable_notification_ajax() {
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'dismiss_themeisle_event_notice_otter' ) ) {
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'dismiss_themeisle_event_notice_otter' ) ) {
 			wp_die( esc_html( __( 'Invalid nonce! Refresh the page and try again.', 'otter-blocks' ) ) );
 		}
 

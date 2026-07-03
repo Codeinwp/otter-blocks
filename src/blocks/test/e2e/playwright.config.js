@@ -37,7 +37,10 @@ const WP_BASE_URL = process.env.WP_BASE_URL || `http://localhost:${ WP_ENV_PORT 
 process.env.WP_BASE_URL = WP_BASE_URL;
 
 const SERIAL_SPECS = [
-
+	'**/blocks/ai-toolbar.spec.js',
+	// Toggles the site-wide Atomic Wind option, which the parallel
+	// ai-block-section-insert spec also flips; serialize to avoid the race.
+	'**/blocks/ai-block.spec.js',
 	// Flips the AI backend + connector key options server-side; must not race parallel specs.
 	'**/blocks/ai-block-wp-client.spec.js',
 	'**/blocks/ai-block-legacy-openai.spec.js',
@@ -51,7 +54,10 @@ const SERIAL_SPECS = [
 	'**/blocks/form-retention.spec.js',
 	'**/blocks/form-turnstile.spec.js',
 	'**/blocks/onboarding.spec.js',
-	'**/blocks/design-library.spec.js'
+	'**/blocks/design-library.spec.js',
+
+	// Flips the site-wide atomic-wind blocks option.
+	'**/blocks/atomic-wind-list-view.spec.js'
 ];
 
 const config = defineConfig({

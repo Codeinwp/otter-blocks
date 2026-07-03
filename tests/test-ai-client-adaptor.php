@@ -10,6 +10,7 @@ use ThemeIsle\GutenbergBlocks\Server\AI_Backend_Resolver;
 use ThemeIsle\GutenbergBlocks\Server\AI_Response;
 use ThemeIsle\GutenbergBlocks\Server\Otter_OpenAI_Backend;
 use ThemeIsle\GutenbergBlocks\Server\Prompt_Server;
+use ThemeIsle\GutenbergBlocks\Plugins\Options_Settings;
 use ThemeIsle\GutenbergBlocks\Tests\Fake_AI_Backend;
 use ThemeIsle\GutenbergBlocks\Tests\Fake_AI_Result;
 use ThemeIsle\GutenbergBlocks\Tests\Spy_AI_Builder;
@@ -45,6 +46,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		remove_all_filters( 'pre_http_request' );
 		delete_option( 'themeisle_open_ai_api_key' );
 		delete_option( 'themeisle_otter_ai_usage' );
+		delete_option( Options_Settings::AI_WP_CLIENT_OPTION );
 		reset_ai_adaptor_cache();
 		parent::tear_down();
 	}
@@ -215,6 +217,71 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Otter's generation timeout is applied to the WP AI Client builder.
+	 */
+	public function test_generate_applies_request_timeout() {
+		add_filter( 'otter_ai_request_timeout', static fn() => 300 );
+
+		$adaptor = $this->make_adaptor();
+
+		$adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Hello',
+					),
+				),
+			)
+		);
+
+		$builder = $adaptor->builder;
+
+		if ( class_exists( '\WordPress\AiClient\Providers\Http\DTO\RequestOptions' ) ) {
+			$this->assertTrue( $builder->was_called( 'using_request_options' ) );
+			$options = $builder->get_call_args( 'using_request_options' )[0];
+			$this->assertSame( 300.0, $options->getTimeout() );
+		} else {
+			$this->assertFalse( $builder->was_called( 'using_request_options' ) );
+		}
+
+		remove_all_filters( 'otter_ai_request_timeout' );
+	}
+
+	/**
+	 * Saved provider/model preferences are applied to the WP AI Client builder.
+	 */
+	public function test_generate_applies_saved_provider_and_model() {
+		update_option(
+			Options_Settings::AI_WP_CLIENT_OPTION,
+			array(
+				'provider' => 'openrouter',
+				'model'    => 'openai/gpt-4o-mini',
+			)
+		);
+
+		$adaptor = $this->make_adaptor();
+
+		$adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Hello',
+					),
+				),
+			)
+		);
+
+		$builder = $adaptor->builder;
+
+		$this->assertTrue( $builder->was_called( 'using_model' ) );
+		$this->assertSame( array( $adaptor->provider_model ), $builder->get_call_args( 'using_model' ) );
+		$this->assertFalse( $builder->was_called( 'using_provider' ) );
+		$this->assertFalse( $builder->was_called( 'using_model_preference' ) );
+	}
+
+	/**
 	 * OpenAI function calling translates to a JSON response with the matched schema.
 	 */
 	public function test_generate_translates_forced_json() {
@@ -261,6 +328,30 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 
 		$this->assertSame( '{"fields":[]}', $response['content'] );
 		$this->assertSame( 33, $response['usedTokens'] );
+		$this->assertSame( 'json', $response['format'] );
+	}
+
+	/**
+	 * response_format json_object (no forced function) must enable schema-less JSON
+	 * output — how the block-generation pipeline asks for JSON.
+	 */
+	public function test_generate_forces_json_from_response_format() {
+		$adaptor = $this->make_adaptor( new Fake_AI_Result( '{"markup":"..."}' ) );
+
+		$response = $adaptor->generate(
+			array(
+				'messages'        => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Rewrite this section',
+					),
+				),
+				'response_format' => array( 'type' => 'json_object' ),
+			)
+		);
+
+		$this->assertTrue( $adaptor->builder->was_called( 'as_json_response' ) );
+		$this->assertSame( array(), $adaptor->builder->get_call_args( 'as_json_response' ) );
 		$this->assertSame( 'json', $response['format'] );
 	}
 
@@ -655,6 +746,59 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A raw nginx 502 HTML body in the AI Client exception must be classified into a
+	 * clean, transient bad_gateway error — never surfaced verbatim.
+	 */
+	public function test_generate_sanitizes_gateway_html_error() {
+		$html                  = "<html>\n<head><title>502 Bad Gateway</title></head>\n<body>\n<center><h1>502 Bad Gateway</h1></center>\n<hr><center>nginx/1.25.4</center>\n</body>\n</html>";
+		$result                = new Fake_AI_Result();
+		$result->throw_exception = new \Exception( $html );
+		$adaptor               = $this->make_adaptor( $result );
+
+		$response = $adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Rewrite this section',
+					),
+				),
+			)
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'bad_gateway', $response->get_error_code() );
+		$this->assertSame( 502, $response->get_error_data()['status'] );
+		// The raw markup must not leak into the user-facing message.
+		$this->assertStringNotContainsString( '<html', $response->get_error_message() );
+		$this->assertStringNotContainsString( 'nginx', $response->get_error_message() );
+	}
+
+	/**
+	 * A provider timeout is classified as a 504 timeout so the client retries it.
+	 */
+	public function test_generate_classifies_provider_timeout() {
+		$result                  = new Fake_AI_Result();
+		$result->throw_exception = new \Exception( 'cURL error 28: Operation timed out after 60001 milliseconds' );
+		$adaptor                 = $this->make_adaptor( $result );
+
+		$response = $adaptor->generate(
+			array(
+				'messages' => array(
+					array(
+						'role'    => 'user',
+						'content' => 'Generate a page',
+					),
+				),
+			)
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'provider_timeout', $response->get_error_code() );
+		$this->assertSame( 504, $response->get_error_data()['status'] );
+	}
+
+	/**
 	 * Generation without an available provider returns an actionable error.
 	 */
 	public function test_generate_errors_when_unavailable() {
@@ -794,7 +938,8 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 			'otter_ai_otter_openai_request_args',
 			function ( $args, $payload ) use ( &$filter_saw_authorization ) {
 				$filter_saw_authorization = isset( $args['headers']['Authorization'] );
-				$args['timeout']                         = 123;
+				// Above the request-timeout floor forward_prompt() enforces, so it passes through unchanged.
+				$args['timeout']                         = 600;
 				$args['headers']['Authorization']        = 'Bearer sk-override';
 				$args['headers']['X-Otter-Test-Model'] = $payload['model'];
 				$args['sslverify']                       = false;
@@ -854,7 +999,7 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 
 		$this->assertSame( 'gpt-test-model', $sent_body['model'] );
 		$this->assertTrue( $filter_saw_authorization );
-		$this->assertSame( 123, $captured_args['timeout'] );
+		$this->assertSame( 600, $captured_args['timeout'] );
 		$this->assertSame( 'Bearer sk-override', $captured_args['headers']['Authorization'] );
 		$this->assertSame( 'gpt-test-model', $captured_args['headers']['X-Otter-Test-Model'] );
 

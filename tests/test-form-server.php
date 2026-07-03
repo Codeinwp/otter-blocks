@@ -250,6 +250,35 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The test-email recipient must be sanitized so it cannot inject mail headers.
+	 */
+	public function test_send_test_email_sanitizes_recipient() {
+		$this->mock_mail();
+
+		$request = new WP_REST_Request( 'POST', '/otter/v1/form/editor' );
+		$request->set_body(
+			wp_json_encode(
+				array(
+					'handler' => 'testEmail',
+					'payload' => array(
+						'to' => "attacker@evil.com\r\nBcc: victim@example.com",
+					),
+				)
+			)
+		);
+
+		Form_Server::send_test_email( new Form_Data_Request( $request ) );
+
+		$this->assertNotEmpty( $this->mail_requests );
+		$to_arg  = (string) $this->mail_requests[0]['to'];
+		$headers = implode( "\n", (array) $this->mail_requests[0]['headers'] );
+
+		$this->assertStringNotContainsString( "\n", $to_arg );
+		$this->assertStringNotContainsString( "\r", $to_arg );
+		$this->assertStringNotContainsString( 'Bcc:', $headers );
+	}
+
+	/**
 	 * Ensure a configured Reply-To address overrides the submitter email fallback.
 	 */
 	public function test_frontend_submission_uses_configured_reply_to_header() {

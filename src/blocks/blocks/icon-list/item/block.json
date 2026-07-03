@@ -36,5 +36,8 @@
 		"iconAlt": {
 			"type": "string"
 		}
+	},
+	"supports": {
+		"splitting": true
 	}
 }
