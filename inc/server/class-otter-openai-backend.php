@@ -75,6 +75,13 @@ class Otter_OpenAI_Backend implements AI_Backend {
 			$payload['model'] = $model;
 		}
 
+		// GPT-5/o-series models reject `max_tokens`; `max_completion_tokens` is
+		// accepted by all current chat-completions models.
+		if ( isset( $payload['max_tokens'] ) ) {
+			$payload['max_completion_tokens'] = $payload['max_tokens'];
+			unset( $payload['max_tokens'] );
+		}
+
 		$request_args = array(
 			'method'  => 'POST',
 			'headers' => array(
