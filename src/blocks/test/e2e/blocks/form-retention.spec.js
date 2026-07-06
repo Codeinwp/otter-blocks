@@ -79,10 +79,12 @@ test.describe( 'Form submission retention', () => {
 	});
 
 	// Leave the site in pretend-send state for the specs that run after this one.
+	// The run baseline is an active Pro stub (see global-setup), so restore it rather
+	// than deactivate: later Pro-gated specs (form.spec file/hidden/export) rely on it.
 	test.afterEach( async({ otterUtils }) => {
 		await otterUtils.setCaptchaMode( 'off' );
 		await otterUtils.setMailMode( 'ok' );
-		await otterUtils.deactivatePro();
+		await otterUtils.activatePro();
 	});
 
 	test( 'successful submission stores a Record with Complete delivery', async({ editor, page, otterUtils }) => {
@@ -187,6 +189,9 @@ test.describe( 'Form submission retention', () => {
 	});
 
 	test( 'legacy save-location value maps to the toggle and is rewritten on save', async({ admin, editor, page, otterUtils }) => {
+		// The legacy mapping is Pro-gated on both sides (edit.js and Form_Settings_Data).
+		await otterUtils.activatePro();
+
 		await insertContactForm({ editor, page });
 
 		const postId = await publishPostReliable( editor, page );
@@ -488,6 +493,7 @@ test.describe( 'Form submission retention', () => {
 		const recordB = records.find( record => record.form === formB );
 
 		// Free: the filters render as disabled selects with the Pro upsell.
+		await otterUtils.deactivatePro();
 		await page.goto( '/wp-admin/edit.php?post_type=otter_form_record' );
 
 		await expect( page.locator( '.o-filters-locked select' ).first() ).toBeDisabled();

@@ -47,10 +47,6 @@ jobs:
         run: |
           npm run build-dev
 
-      - name: Create License File
-        run: |
-          printf "{\"key\":\"${{ secrets.OTTER_PRO_LICENSE }}\"}" > license.json
-
       - name: Setup WP Env
         run: |
           npm run wp-env start
