@@ -48,6 +48,9 @@ const OPTION_WHITELIST = array(
 	'themeisle_blocks_form_fields_option',
 	'themeisle_blocks_settings_patterns_library',
 	'themeisle_blocks_settings_atomic_wind_blocks',
+	// Form webhooks registry; retention specs seed a dead-URL webhook to force
+	// a delivery failure with the 'webhook' action.
+	'themeisle_webhooks_options',
 	'otter_blocks_logger_flag',
 	'otter_blocks_logger_data',
 	'otter_activation_first_save',
