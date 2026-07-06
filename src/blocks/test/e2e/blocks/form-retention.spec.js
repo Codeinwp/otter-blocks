@@ -82,6 +82,7 @@ test.describe( 'Form submission retention', () => {
 	test.afterEach( async({ otterUtils }) => {
 		await otterUtils.setCaptchaMode( 'off' );
 		await otterUtils.setMailMode( 'ok' );
+		await otterUtils.deactivatePro();
 	});
 
 	test( 'successful submission stores a Record with Complete delivery', async({ editor, page, otterUtils }) => {
@@ -420,6 +421,55 @@ test.describe( 'Form submission retention', () => {
 
 		await expect( page.locator( '#submitpost .metadata' ) ).toContainText( 'Complete' );
 		await expect( page.locator( '#form_record_errors_meta_box' ) ).toBeHidden();
+	});
+
+	test( 'failed webhook marks delivery Failed while the visitor still sees success', async({ page, otterUtils, requestUtils }) => {
+		const formOption = `e2e-webhook-${Date.now()}`;
+		const formId = 'wp-block-themeisle-blocks-form-webhook0';
+
+		// Webhooks are a Pro delivery action; point one at a dead port.
+		await otterUtils.activatePro();
+		await otterUtils.setOptions({
+			themeisle_webhooks_options: [
+				{
+					id: 'e2e-dead-webhook',
+					name: 'E2E dead webhook',
+					url: 'http://127.0.0.1:9/otter-e2e',
+					method: 'POST',
+					headers: []
+				}
+			]
+		});
+		await otterUtils.upsertFormOption({ form: formOption, webhookId: 'e2e-dead-webhook' });
+
+		const response = await submitFormViaApi( requestUtils, {
+			nonceValue: await otterUtils.getFormVerificationNonce(),
+			formOption,
+			formId
+		});
+
+		// The webhook failure is only a warning: the visitor gets a success response.
+		expect( response.success ).toBe( true );
+
+		// ...but the Record is marked failed for the webhook action.
+		const records = ( await otterUtils.getFormRecords() ).filter( record => record.form === formId );
+
+		expect( records ).toHaveLength( 1 );
+		expect( records[0].delivery_status ).toBe( 'failed' );
+		expect( records[0].delivery_errors[0].action ).toBe( 'webhook' );
+
+		const [{ id: recordId }] = records;
+
+		// The record detail page renders the webhook failure in both meta boxes.
+		// The message is the raw transport error, so assert action and code only.
+		await page.goto( `/wp-admin/post.php?post=${recordId}&action=edit` );
+
+		await expect( page.locator( '#submitpost .metadata' ) ).toContainText( 'Failed' );
+		await expect( page.locator( '#submitpost .metadata li' ).first() ).toContainText( 'webhook' );
+
+		const errorsBox = page.locator( '#form_record_errors_meta_box' );
+		await expect( errorsBox ).toBeVisible();
+		await expect( errorsBox.locator( 'tbody tr' ).first().locator( 'code' ) ).toHaveText( '210' );
 	});
 
 	test( 'required multiple-choice field stores its label without the asterisk', async({ editor, page, otterUtils }) => {
