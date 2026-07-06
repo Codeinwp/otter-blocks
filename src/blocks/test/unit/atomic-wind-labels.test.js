@@ -9,7 +9,7 @@ describe( 'toPlainText', () => {
 
 	it( 'decodes entities and collapses whitespace', () => {
 		expect( toPlainText( 'a &amp; b' ) ).toBe( 'a & b' );
-		expect( toPlainText( "  spaced \n\t out  " ) ).toBe( 'spaced out' );
+		expect( toPlainText( '  spaced \n\t out  ' ) ).toBe( 'spaced out' );
 	} );
 
 	it( 'handles RichTextData-like values and empty input', () => {
