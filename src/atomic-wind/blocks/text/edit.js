@@ -6,6 +6,7 @@ import {
 import { PanelBody, SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import useQueryPreview from '../../query/use-query-preview';
+import { toPlainText } from '../labels';
 
 const TAG_OPTIONS = [
 	{ label: 'p', value: 'p' },
@@ -26,7 +27,7 @@ function getPreviewText( post, postField ) {
 	case 'title':
 		return post.title?.rendered || '';
 	case 'excerpt':
-		return ( post.excerpt?.rendered || '' ).replace( /<[^>]+>/g, '' ).trim();
+		return toPlainText( post.excerpt?.rendered || '' );
 	case 'date':
 		return post.date ? new Date( post.date ).toLocaleDateString() : '';
 	case 'author':

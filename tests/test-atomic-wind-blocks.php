@@ -286,6 +286,112 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertSame( '', $result );
 	}
 
+	public function test_icon_block_strips_dangerous_attribute_values_but_keeps_elements() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10">'
+					. '<rect x="1" y="1" width="4" height="4" fill="javascript:alert(1)"/>'
+					. '<path d="M0 0h10" fill="url(http://evil.com)"/>'
+					. '<circle cx="5" cy="5" r="2" fill="data:image/png;base64,AAAA"/>'
+					. '<ellipse cx="3" cy="3" rx="1" ry="1" fill="expression(alert(2))"/>'
+					. '</svg>',
+			)
+		);
+
+		$this->assertStringContainsString( '<rect', $result );
+		$this->assertStringContainsString( '<path', $result );
+		$this->assertStringContainsString( '<circle', $result );
+		$this->assertStringContainsString( '<ellipse', $result );
+		$this->assertStringNotContainsString( 'javascript', $result );
+		$this->assertStringNotContainsString( 'evil.com', $result );
+		$this->assertStringNotContainsString( 'data:', $result );
+		$this->assertStringNotContainsString( 'expression(', $result );
+	}
+
+	public function test_icon_block_keeps_fragment_url_but_drops_remote_url() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10">'
+					. '<defs><linearGradient id="grad"><stop offset="0" stop-color="red"/></linearGradient></defs>'
+					. '<rect width="10" height="10" fill="url(#grad)"/>'
+					. '<path d="M0 0h10" stroke="url(http://evil.com/p)"/>'
+					. '</svg>',
+			)
+		);
+
+		$this->assertStringContainsString( 'url(#grad)', $result );
+		$this->assertStringContainsString( '<path', $result );
+		$this->assertStringNotContainsString( 'evil.com', $result );
+	}
+
+	public function test_icon_block_strips_entity_encoded_javascript_scheme() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10"><rect width="10" height="10" fill="java&#115;cript:alert(1)"/></svg>',
+			)
+		);
+
+		$this->assertStringContainsString( '<rect', $result );
+		$this->assertStringNotContainsString( 'javascript', $result );
+		$this->assertStringNotContainsString( 'alert', $result );
+	}
+
+	public function test_icon_block_returns_empty_for_oversized_custom_svg() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10">' . str_repeat( '<path d="M0 0h10"/>', 3000 ) . '</svg>',
+			)
+		);
+
+		$this->assertSame( '', $result );
+	}
+
+	public function test_icon_block_removes_non_allowlisted_tags() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10">'
+					. '<style>.a{fill:red}</style>'
+					. '<use href="#x"/>'
+					. '<foreignObject><div>hi</div></foreignObject>'
+					. '<path d="M0 0h10"/>'
+					. '</svg>',
+			)
+		);
+
+		$this->assertStringContainsString( '<path', $result );
+		$this->assertStringNotContainsStringIgnoringCase( '<style', $result );
+		$this->assertStringNotContainsStringIgnoringCase( '<use', $result );
+		$this->assertStringNotContainsStringIgnoringCase( '<foreignobject', $result );
+		$this->assertStringNotContainsString( 'fill:red', $result );
+	}
+
+	public function test_icon_block_keeps_aria_label_attribute() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10"><path d="M0 0h10" aria-label="decorative line"/></svg>',
+			)
+		);
+
+		$this->assertStringContainsString( 'aria-label="decorative line"', $result );
+	}
+
+	public function test_icon_block_falls_back_to_circle_for_unknown_icon() {
+		$result = $this->render_icon_block(
+			array(
+				'icon' => 'not-a-real-icon',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<circle ', $result );
+	}
+
 	// -------------------------------------------------------
 	// render_animation_attrs
 	// -------------------------------------------------------

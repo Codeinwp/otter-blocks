@@ -1,4 +1,4 @@
-const stripTags = ( html ) => html.replace( /<[^>]+>/g, '' ).trim();
+const stripTags = ( html ) => new window.DOMParser().parseFromString( html, 'text/html' ).body.textContent.trim();
 
 const normalizeBlockName = ( name ) => {
 	return name.includes( '/' ) ? name : `core/${ name }`;
