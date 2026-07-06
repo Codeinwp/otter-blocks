@@ -10,17 +10,8 @@ import { getStructuralLabel, toPlainText } from '../blocks/labels';
 import { StateControls, hasStateConfig } from '../states';
 import { AnimationControls } from '../animations';
 
-const _decodeEl = document.createElement( 'textarea' );
-function decodeEntities( html ) {
-	_decodeEl.innerHTML = html;
-	return _decodeEl.value;
-}
-
-// RichTextData.toPlainText() output is already decoded; only raw strings
-// still carry entities.
 function previewText( value ) {
-	const plain = toPlainText( value );
-	const text = typeof value === 'string' ? decodeEntities( plain ) : plain;
+	const text = toPlainText( value );
 	return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
 }
 
