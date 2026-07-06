@@ -146,7 +146,7 @@ const SyncControlDropdown = ({
 
 						<MenuGroup>
 							<MenuItem
-								onClick={ () => enableComplementaryArea( 'core/edit-post', 'themeisle-blocks/otter-options' ) }
+								onClick={ () => enableComplementaryArea( 'core', 'themeisle-blocks/otter-options' ) }
 							>
 								{ __( 'Manage Global Defaults', 'otter-blocks' ) }
 							</MenuItem>

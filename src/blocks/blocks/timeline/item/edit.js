@@ -79,7 +79,7 @@ const Edit = ({
 						{
 							attributes.hasIcon && (
 								'image' === attributes.iconType && isURL ? (
-									<img src={ attributes.icon } />
+									<img src={ attributes.icon } alt={ attributes.iconAlt || '' } />
 								) : (
 									'themeisle-icons' === attributes.iconType && attributes.icon && Icon !== undefined ? (
 										<Icon/>

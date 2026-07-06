@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+ 
 /* jshint node:true */
 /* global require */
 const fs = require( 'fs' );

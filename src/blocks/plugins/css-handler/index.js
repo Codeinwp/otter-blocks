@@ -17,59 +17,39 @@ let isSavingCSS = false;
 
 const { createNotice } = dispatch( 'core/notices' );
 
+const createCSSErrorNotice = error => {
+	createNotice(
+		'error',
+		error?.message || __( 'Unable to save CSS.', 'otter-blocks' ),
+		{
+			isDismissible: true,
+			type: 'snackbar',
+			id: 'saving-css'
+		}
+	);
+};
+
 const savePostMeta = debounce( async() => {
 	const { getCurrentPostId } = select( 'core/editor' );
 	const postId = getCurrentPostId();
 
-	createNotice(
-		'info',
-		__( 'Saving CSS…', 'otter-blocks' ),
-		{
-			isDismissible: true,
-			type: 'snackbar',
-			id: 'saving-css'
-		}
-	);
-
-	await apiFetch({ path: `otter/v1/post_styles/${ postId }`, method: 'POST' });
-
-	createNotice(
-		'info',
-		__( 'CSS saved.', 'otter-blocks' ),
-		{
-			isDismissible: true,
-			type: 'snackbar',
-			id: 'saving-css'
-		}
-	);
-
-	isSavingCSS = false;
+	try {
+		await apiFetch({ path: `otter/v1/post_styles/${ postId }`, method: 'POST' });
+	} catch ( error ) {
+		createCSSErrorNotice( error );
+	} finally {
+		isSavingCSS = false;
+	}
 }, 1000 );
 
 const saveWidgets = debounce( async() => {
-	createNotice(
-		'info',
-		__( 'Saving CSS…', 'otter-blocks' ),
-		{
-			isDismissible: true,
-			type: 'snackbar',
-			id: 'saving-css'
-		}
-	);
-
-	await apiFetch({ path: 'otter/v1/widget_styles', method: 'POST' });
-
-	createNotice(
-		'info',
-		__( 'CSS saved.', 'otter-blocks' ),
-		{
-			isDismissible: true,
-			type: 'snackbar',
-			id: 'saving-css'
-		}
-	);
-
-	isSavingCSS = false;
+	try {
+		await apiFetch({ path: 'otter/v1/widget_styles', method: 'POST' });
+	} catch ( error ) {
+		createCSSErrorNotice( error );
+	} finally {
+		isSavingCSS = false;
+	}
 }, 1000 );
 
 const reusableBlocks = {};

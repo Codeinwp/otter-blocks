@@ -76,4 +76,36 @@ class TestLiveSearch extends WP_UnitTestCase
         $search_query = $live_search->prepare_search_query( 'test', 'post', 'uncategorized' );
         $this->assertEquals( 'uncategorized', $search_query['category_name'] );
     }
+
+    /**
+     * The o_post_type var filters the main search query (feature intact).
+     */
+    public function test_o_post_type_overrides_main_search_query() {
+        $live_search = new Live_Search_Server();
+
+        $this->go_to( home_url( '/?s=test' ) );
+        global $wp_query;
+        $wp_query->set( 'o_post_type', 'otter_shop_product' );
+
+        $live_search->parse_query( $wp_query );
+
+        $this->assertEquals( array( 'otter_shop_product' ), $wp_query->get( 'post_type' ) );
+    }
+
+    /**
+     * The o_post_type var must not override secondary queries.
+     */
+    public function test_o_post_type_ignored_on_secondary_query() {
+        $live_search = new Live_Search_Server();
+
+        // Simulate the URL param landing on the global main query.
+        $this->go_to( home_url( '/?s=test' ) );
+        global $wp_query;
+        $wp_query->set( 'o_post_type', 'otter_shop_product' );
+
+        $secondary = new WP_Query( array( 's' => 'test' ) );
+        $live_search->parse_query( $secondary );
+
+        $this->assertNotEquals( array( 'otter_shop_product' ), $secondary->get( 'post_type' ) );
+    }
 }

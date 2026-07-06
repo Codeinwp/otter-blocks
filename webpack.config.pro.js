@@ -6,7 +6,10 @@ const path = require( 'path' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const blocks = require( './blocks.json' );
 
-defaultConfig.plugins.splice( 1, 1 ); // We need to remove Core's Copy Files plugin.
+// Remove CopyPlugin only; PhpFilePathsPlugin was added at index 1 in @wordpress/scripts 32+.
+defaultConfig.plugins = defaultConfig.plugins.filter(
+	( plugin ) => plugin.constructor.name !== 'CopyPlugin'
+);
 
 const blockFilesPro = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true === blocks[ block ]?.isPro )
 	.map( block => {
@@ -63,7 +66,12 @@ module.exports = [
 		output: {
 			path: path.resolve( __dirname, './build/pro' ),
 			filename: '[name].js',
-			chunkFilename: 'chunk-[name].js'
+			chunkFilename: 'chunk-[name].js',
+
+			// Isolate the chunk-loading global from the free build: both default to
+			// webpackChunkotter_blocks, and colliding runtimes resolve each other's
+			// numeric module IDs, crashing the editor when free + pro load together.
+			uniqueName: 'otterProBlocks'
 		},
 		module: {
 			rules: [

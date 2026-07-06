@@ -7,6 +7,8 @@
 
 use ThemeIsle\GutenbergBlocks\Plugins\Atomic_Wind_Blocks;
 
+require_once dirname( __FILE__ ) . '/php/migration-test-helper.php';
+
 /**
  * Atomic Wind Blocks test case.
  */
@@ -32,6 +34,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
+		$this->unregister_atomic_wind_blocks();
 		$this->instance = new Atomic_Wind_Blocks();
 		$this->post_id  = $this->factory()->post->create(
 			array(
@@ -51,7 +54,19 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		$this->reset_in_query( false );
+		$this->unregister_atomic_wind_blocks();
 		parent::tear_down();
+	}
+
+	/**
+	 * Helper: remove Atomic Wind blocks from the global registry.
+	 */
+	private function unregister_atomic_wind_blocks() {
+		foreach ( array_keys( WP_Block_Type_Registry::get_instance()->get_all_registered() ) as $name ) {
+			if ( 0 === strpos( $name, 'atomic-wind/' ) ) {
+				unregister_block_type( $name );
+			}
+		}
 	}
 
 	/**
@@ -78,6 +93,45 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 			'attrs'       => $attrs,
 			'innerBlocks' => array(),
 		);
+	}
+
+	/**
+	 * Helper: render the Atomic Wind icon block file with attributes.
+	 *
+	 * @param array $attributes Block attributes.
+	 * @return string
+	 */
+	private function render_icon_block( $attributes ) {
+		if ( WP_Block_Type_Registry::get_instance()->is_registered( 'atomic-wind/icon' ) ) {
+			unregister_block_type( 'atomic-wind/icon' );
+		}
+
+		register_block_type(
+			'atomic-wind/icon',
+			array(
+				'attributes'      => array(
+					'icon'             => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'customSvgEnabled' => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
+					'customSvg'        => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+				),
+				'render_callback' => function ( $attributes ) {
+					ob_start();
+					include OTTER_BLOCKS_PATH . '/src/atomic-wind/blocks/icon/render.php';
+					return ob_get_clean();
+				},
+			)
+		);
+
+		return render_block( $this->make_block( 'atomic-wind/icon', $attributes ) );
 	}
 
 	// -------------------------------------------------------
@@ -113,6 +167,30 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		);
 	}
 
+	public function test_run_registers_hooks_after_default_for_fresh_install() {
+		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
+		delete_option( 'themeisle_blocks_settings_atomic_wind_defaulted' );
+		update_option( 'otter_blocks_install', time() - HOUR_IN_SECONDS );
+
+		otter_test_maybe_default_atomic_wind_blocks();
+
+		$this->assertTrue( get_option( 'themeisle_blocks_settings_atomic_wind_blocks', false ) );
+	}
+
+	public function test_run_bails_for_old_install_without_saved_option_after_default() {
+		delete_option( 'themeisle_blocks_settings_atomic_wind_blocks' );
+		delete_option( 'themeisle_blocks_settings_atomic_wind_defaulted' );
+		update_option( 'otter_blocks_install', time() - ( 2 * DAY_IN_SECONDS ) );
+
+		otter_test_maybe_default_atomic_wind_blocks();
+
+		$this->instance->run();
+
+		$this->assertFalse(
+			has_filter( 'render_block', array( $this->instance, 'render_animation_attrs' ) )
+		);
+	}
+
 	// -------------------------------------------------------
 	// register_category
 	// -------------------------------------------------------
@@ -123,6 +201,195 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 		$this->assertSame( 'atomic-wind', $result[0]['slug'] );
 		$this->assertCount( 2, $result );
+	}
+
+	// -------------------------------------------------------
+	// icon render
+	// -------------------------------------------------------
+
+	public function test_icon_block_renders_legacy_lucide_icon() {
+		$result = $this->render_icon_block(
+			array(
+				'icon' => 'zap',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<path ', $result );
+	}
+
+	public function test_icon_block_renders_default_lucide_icon_when_empty() {
+		$result = $this->render_icon_block(
+			array(
+				'icon' => '',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<circle ', $result );
+	}
+
+	public function test_icon_block_renders_custom_svg_when_enabled() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10" fill="none"><path d="M1 1h8v8H1z" stroke="currentColor"/></svg>',
+				'icon'             => 'zap',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( 'viewBox="0 0 10 10"', $result );
+		$this->assertStringContainsString( 'd="M1 1h8v8H1z"', $result );
+	}
+
+	public function test_icon_block_sanitizes_custom_svg() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10" onload="alert(1)"><script>alert(1)</script><image href="https://example.com/x.png"/><path d="M0 0h10" onclick="alert(2)"/></svg>',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<path ', $result );
+		$this->assertStringNotContainsString( '<script', $result );
+		$this->assertStringNotContainsString( '<image', $result );
+		$this->assertStringNotContainsString( 'onload', $result );
+		$this->assertStringNotContainsString( 'onclick', $result );
+		$this->assertStringNotContainsString( 'example.com', $result );
+	}
+
+	public function test_icon_block_ignores_custom_svg_when_toggle_is_off() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => false,
+				'customSvg'        => '<svg viewBox="0 0 10 10"><script>alert(1)</script></svg>',
+				'icon'             => 'zap',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<path ', $result );
+		$this->assertStringNotContainsString( '<script', $result );
+	}
+
+	public function test_icon_block_returns_empty_for_invalid_custom_svg() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<div><script>alert(1)</script></div>',
+				'icon'             => 'zap',
+			)
+		);
+
+		$this->assertSame( '', $result );
+	}
+
+	public function test_icon_block_strips_dangerous_attribute_values_but_keeps_elements() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10">'
+					. '<rect x="1" y="1" width="4" height="4" fill="javascript:alert(1)"/>'
+					. '<path d="M0 0h10" fill="url(http://evil.com)"/>'
+					. '<circle cx="5" cy="5" r="2" fill="data:image/png;base64,AAAA"/>'
+					. '<ellipse cx="3" cy="3" rx="1" ry="1" fill="expression(alert(2))"/>'
+					. '</svg>',
+			)
+		);
+
+		$this->assertStringContainsString( '<rect', $result );
+		$this->assertStringContainsString( '<path', $result );
+		$this->assertStringContainsString( '<circle', $result );
+		$this->assertStringContainsString( '<ellipse', $result );
+		$this->assertStringNotContainsString( 'javascript', $result );
+		$this->assertStringNotContainsString( 'evil.com', $result );
+		$this->assertStringNotContainsString( 'data:', $result );
+		$this->assertStringNotContainsString( 'expression(', $result );
+	}
+
+	public function test_icon_block_keeps_fragment_url_but_drops_remote_url() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10">'
+					. '<defs><linearGradient id="grad"><stop offset="0" stop-color="red"/></linearGradient></defs>'
+					. '<rect width="10" height="10" fill="url(#grad)"/>'
+					. '<path d="M0 0h10" stroke="url(http://evil.com/p)"/>'
+					. '</svg>',
+			)
+		);
+
+		$this->assertStringContainsString( 'url(#grad)', $result );
+		$this->assertStringContainsString( '<path', $result );
+		$this->assertStringNotContainsString( 'evil.com', $result );
+	}
+
+	public function test_icon_block_strips_entity_encoded_javascript_scheme() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10"><rect width="10" height="10" fill="java&#115;cript:alert(1)"/></svg>',
+			)
+		);
+
+		$this->assertStringContainsString( '<rect', $result );
+		$this->assertStringNotContainsString( 'javascript', $result );
+		$this->assertStringNotContainsString( 'alert', $result );
+	}
+
+	public function test_icon_block_returns_empty_for_oversized_custom_svg() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10">' . str_repeat( '<path d="M0 0h10"/>', 3000 ) . '</svg>',
+			)
+		);
+
+		$this->assertSame( '', $result );
+	}
+
+	public function test_icon_block_removes_non_allowlisted_tags() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10">'
+					. '<style>.a{fill:red}</style>'
+					. '<use href="#x"/>'
+					. '<foreignObject><div>hi</div></foreignObject>'
+					. '<path d="M0 0h10"/>'
+					. '</svg>',
+			)
+		);
+
+		$this->assertStringContainsString( '<path', $result );
+		$this->assertStringNotContainsStringIgnoringCase( '<style', $result );
+		$this->assertStringNotContainsStringIgnoringCase( '<use', $result );
+		$this->assertStringNotContainsStringIgnoringCase( '<foreignobject', $result );
+		$this->assertStringNotContainsString( 'fill:red', $result );
+	}
+
+	public function test_icon_block_keeps_aria_label_attribute() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg viewBox="0 0 10 10"><path d="M0 0h10" aria-label="decorative line"/></svg>',
+			)
+		);
+
+		$this->assertStringContainsString( 'aria-label="decorative line"', $result );
+	}
+
+	public function test_icon_block_falls_back_to_circle_for_unknown_icon() {
+		$result = $this->render_icon_block(
+			array(
+				'icon' => 'not-a-real-icon',
+			)
+		);
+
+		$this->assertStringContainsString( '<svg ', $result );
+		$this->assertStringContainsString( '<circle ', $result );
 	}
 
 	// -------------------------------------------------------
@@ -841,5 +1108,108 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( '<script>', $result );
 
 		wp_reset_postdata();
+	}
+
+	// -------------------------------------------------------
+	// Save-time CSS warm helpers
+	// -------------------------------------------------------
+
+	/**
+	 * Helper: invoke a private method on the instance.
+	 */
+	private function call_private( $name, ...$args ) {
+		$ref = new ReflectionMethod( Atomic_Wind_Blocks::class, $name );
+		$ref->setAccessible( true );
+		return $ref->invoke( $this->instance, ...$args );
+	}
+
+	/**
+	 * Helper: build a post whose atomic-wind block carries the given classes.
+	 *
+	 * @param string $classes Space-separated Tailwind classes (in the className attr).
+	 * @return int
+	 */
+	private function make_atomic_wind_post( $classes ) {
+		return $this->factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:atomic-wind/box {"className":"' . $classes . '"} --><div class="wp-block-atomic-wind-box ' . $classes . '"></div><!-- /wp:atomic-wind/box -->',
+			)
+		);
+	}
+
+	// -------------------------------------------------------
+	// Save-time CSS warm (hidden-iframe render)
+	// -------------------------------------------------------
+
+	public function test_run_registers_warm_template_redirect() {
+		update_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
+
+		$this->instance->run();
+
+		$this->assertNotFalse(
+			has_action( 'template_redirect', array( $this->instance, 'maybe_render_css_warm_page' ) )
+		);
+	}
+
+	public function test_warm_gate_allows_editor_with_valid_nonce() {
+		// Current user is an administrator (set in set_up()).
+		$nonce = wp_create_nonce( 'atomic_wind_css_warm' );
+
+		$this->assertTrue( $this->call_private( 'can_render_css_warm', $this->post_id, $nonce ) );
+	}
+
+	public function test_warm_gate_rejects_invalid_nonce() {
+		$this->assertFalse( $this->call_private( 'can_render_css_warm', $this->post_id, 'bogus-nonce' ) );
+	}
+
+	public function test_warm_gate_rejects_user_without_edit_cap() {
+		$subscriber = $this->factory()->user->create( array( 'role' => 'subscriber' ) );
+		wp_set_current_user( $subscriber );
+
+		// A subscriber can mint a valid nonce, but lacks edit_post on the target.
+		$nonce = wp_create_nonce( 'atomic_wind_css_warm' );
+
+		$this->assertFalse( $this->call_private( 'can_render_css_warm', $this->post_id, $nonce ) );
+	}
+
+	public function test_warm_gate_rejects_missing_post_id() {
+		$nonce = wp_create_nonce( 'atomic_wind_css_warm' );
+
+		$this->assertFalse( $this->call_private( 'can_render_css_warm', 0, $nonce ) );
+	}
+
+	public function test_warm_html_includes_content_scripts_and_config() {
+		$post_id = $this->make_atomic_wind_post( 'bg-orange-500 md:py-36' );
+		$post    = get_post( $post_id );
+
+		$html = $this->call_private( 'render_css_warm_page_html', $post );
+
+		// The rendered block classes must be in the DOM for the generator to compile them.
+		$this->assertStringContainsString( 'bg-orange-500', $html );
+		$this->assertStringContainsString( 'md:py-36', $html );
+
+		// The two scripts that compile + persist the CSS.
+		$this->assertStringContainsString( 'tailwind-generator-frontend.js', $html );
+		$this->assertStringContainsString( 'style-builder.js', $html );
+
+		// Style-builder config targets the warmed post.
+		$this->assertStringContainsString( 'atomicWindStyleBuilder', $html );
+		$this->assertStringContainsString( '"postId":' . $post_id, $html );
+
+		// Stripped page must not be indexed, and must ping the opener when done.
+		$this->assertStringContainsString( 'noindex', $html );
+		$this->assertStringContainsString( 'atomic-wind:css-warmed', $html );
+	}
+
+	public function test_warm_html_does_not_leak_globals() {
+		global $post;
+
+		$sentinel = get_post( $this->post_id );
+		$post     = $sentinel;
+
+		$target = get_post( $this->make_atomic_wind_post( 'flex' ) );
+		$this->call_private( 'render_css_warm_page_html', $target );
+
+		$this->assertSame( $sentinel, $post, 'The global $post must be restored after rendering the warm page.' );
 	}
 }

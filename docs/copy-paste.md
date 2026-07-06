@@ -22,11 +22,11 @@ When adding Copy/Paste for a block, you need to implement two adaptors: one for 
 
 :warning: This feature heavily relies on Typescript for autocompletion, type compatibility, and modification. When you change the type of an attribute, Typescript will raise an error if there is a problem in the adaptor.
 
-You can see the Common Interface declaration for `Storage` in [`src/block/plugins/models.d.ts`](../src/blocks/plugins/copy-paste/models.d.ts)
+You can see the Common Interface declaration for `Storage` in [`src/blocks/plugins/copy-paste/models.d.ts`](../src/blocks/plugins/copy-paste/models.d.ts)
 
-Otter adaptors in [`src/block/plugins/adaptors.ts`](../src/blocks/plugins/copy-paste/adaptors.ts)
+Otter adaptors in [`src/blocks/plugins/copy-paste/adaptors.ts`](../src/blocks/plugins/copy-paste/adaptors.ts)
 
-Core adaptors in [`src/block/plugins/core-adaptors.ts`](../src/blocks/plugins/copy-paste/core-adaptors.ts)
+Core adaptors in [`src/blocks/plugins/copy-paste/core-adaptors.ts`](../src/blocks/plugins/copy-paste/core-adaptors.ts)
 
 ## How to add a block
 

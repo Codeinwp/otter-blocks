@@ -13,8 +13,6 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { createBlock } from '@wordpress/blocks';
-
 import { select, useSelect } from '@wordpress/data';
 
 import {
@@ -41,7 +39,6 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	name,
 	clientId,
 	onReplace,
 	onRemove,
@@ -77,7 +74,10 @@ const Edit = ({
 		setAttributes({
 			library: attributes.library || parentAttributes.defaultLibrary,
 			icon: attributes.icon || parentAttributes.defaultIcon,
-			iconPrefix: attributes.iconPrefix || parentAttributes.defaultPrefix
+			iconPrefix: attributes.iconPrefix || parentAttributes.defaultPrefix,
+
+			// The alt belongs to the image: inherit it only while the icon itself is inherited, so a cleared (decorative) item alt stays cleared.
+			iconAlt: attributes.icon ? attributes.iconAlt : parentAttributes.defaultIconAlt
 		});
 	}, [ hasParent, parentAttributes, attributes ]);
 
@@ -127,8 +127,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				{ 'image' === attributes.library && isURL ? (
-					/* eslint-disable-next-line jsx-a11y/alt-text */
-					<img src={ attributes.icon } />
+					<img src={ attributes.icon } alt={ attributes.iconAlt || '' } />
 				) : (
 					'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
 						<Icon
@@ -157,16 +156,6 @@ const Edit = ({
 					) }
 					value={ attributes.content }
 					onChange={ ( content ) => setAttributes({ content }) }
-					onSplit={ ( value ) => {
-						if ( ! value ) {
-							return createBlock( name );
-						}
-
-						return createBlock( name, {
-							...attributes,
-							content: value
-						});
-					} }
 					onMerge={ mergeBlocks }
 					onReplace={ onReplace }
 					onRemove={ onRemove }

@@ -129,7 +129,7 @@ const Inspector = ({
 					value={ attributes.zoom }
 					onChange={ zoom => setAttributes({ zoom }) }
 					min={ 0 }
-					max={ 20 }
+					max={ 21 }
 				/>
 
 				<ResponsiveControl
@@ -165,6 +165,20 @@ const Inspector = ({
 					label={ __( 'Zoom Control', 'otter-blocks' ) }
 					checked={ attributes.zoomControl }
 					onChange={ () => setAttributes({ zoomControl: ! attributes.zoomControl }) }
+				/>
+
+				<ToggleControl
+					label={ __( 'Scroll to Zoom', 'otter-blocks' ) }
+					help={ __( 'Allow zooming the map with the mouse wheel. When enabled, use Ctrl/⌘ + scroll.', 'otter-blocks' ) }
+					checked={ attributes.scrollZoom }
+					onChange={ () => setAttributes({ scrollZoom: ! attributes.scrollZoom }) }
+				/>
+
+				<ToggleControl
+					label={ __( 'Show Marker Tooltip on Hover', 'otter-blocks' ) }
+					help={ __( 'Display the marker title in a tooltip when hovering over a marker.', 'otter-blocks' ) }
+					checked={ attributes.showMarkerTooltip }
+					onChange={ () => setAttributes({ showMarkerTooltip: ! attributes.showMarkerTooltip }) }
 				/>
 			</PanelBody>
 

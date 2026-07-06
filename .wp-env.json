@@ -1,0 +1,25 @@
+{
+  "core": null,
+  "phpVersion": "7.4",
+  "testsEnvironment": false,
+  "plugins": [
+    ".",
+    "https://downloads.wordpress.org/plugin/ai-provider-for-openai.zip"
+  ],
+  "themes": [ "./test/emptytheme" ],
+  "config": {
+    "WP_DEBUG": true,
+    "WP_DEBUG_LOG": true,
+    "WP_DEBUG_DISPLAY": false,
+    "FS_METHOD": "direct",
+    "WP_DEFAULT_THEME": "twentytwentythree",
+    "ENABLE_OTTER_PRO_DEV": true
+  },
+  "mappings": {
+    "wp-content/mu-plugins": "./packages/e2e-tests/mu-plugins",
+    "wp-content/themes/raft": "https://downloads.wordpress.org/theme/raft.zip"
+  },
+  "lifecycleScripts": {
+    "afterStart": "bash bin/e2e-tests.sh"
+  }
+}

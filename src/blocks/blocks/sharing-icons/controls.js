@@ -15,8 +15,7 @@ import { BlockControls } from '@wordpress/block-editor';
 
 import {
 	ToolbarGroup,
-	Button,
-	Tooltip
+	ToolbarButton
 } from '@wordpress/components';
 
 /**
@@ -43,27 +42,25 @@ const Controls = ({
 					const prop = attributes[ item ]?.active ?? attributes?.[ item ];
 
 					return (
-						<Tooltip
+						<ToolbarButton
 							key={ item }
-							text={ 
-								sprintf( 
+							label={
+								sprintf(
 									/* translators: %s Label */
-									__( 'Display %s', 'otter-blocks' ), 
-									socialList[ item ].label 
-								) 
+									__( 'Display %s', 'otter-blocks' ),
+									socialList[ item ].label
+								)
 							}
+							showTooltip={ true }
+							className={ classnames(
+								'components-button',
+								'wp-block-themeisle-toolbar',
+								{ 'is-active': prop }
+							) }
+							onClick={ () => toggleIcons( item ) }
 						>
-							<Button
-								className={ classnames(
-									'components-button',
-									'wp-block-themeisle-toolbar',
-									{ 'is-active': prop }
-								) }
-								onClick={ () => toggleIcons( item ) }
-							>
-								<SocialIcons icon={ item } />
-							</Button>
-						</Tooltip>
+							<SocialIcons icon={ item } />
+						</ToolbarButton>
 					);
 				}) }
 			</ToolbarGroup>

@@ -18,6 +18,7 @@ import Sidebar from './Sidebar.js';
 import Dashboard from './pages/Dashboard.js';
 import Upsell from './pages/Upsell.js';
 import Integrations from './pages/Integrations.js';
+import AI from './pages/AI.js';
 import Feedback from './pages/Feedback.js';
 import NoticeCard from './NoticeCard';
 import { applyFilters } from '@wordpress/hooks';
@@ -52,7 +53,13 @@ const Main = ({
 		case 'integrations':
 			return (
 				<div className="otter-left">
-					<Integrations/>
+					<Integrations setTab={ setTab }/>
+				</div>
+			);
+		case 'ai':
+			return (
+				<div className="otter-left">
+					<AI />
 				</div>
 			);
 		case 'upsell':

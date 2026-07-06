@@ -18,6 +18,7 @@ import {
 	PromptsData,
 	injectActionIntoPrompt,
 	injectConversationIntoPrompt,
+	isAIBackendConfigured,
 	retrieveEmbeddedPrompt,
 	sendPromptToOpenAI, sendPromptToOpenAIWithRegenerate
 } from '../../helpers/prompt';
@@ -36,6 +37,23 @@ type PromptPlaceholderProps = {
 	onPreview?: ( result: string ) => void
 	actionButtons?: ( props: {status?: string}) => ReactNode
 	resultHistory?: {result: string, meta: { usedToken: number, prompt: string }}[]
+
+	/**
+	 * Optional generation override. When provided, the prompt submit bypasses the
+	 * built-in single-shot OpenAI call and delegates to this handler (used by the
+	 * AI Block to run the multi-step block generation pipeline). The handler is
+	 * responsible for inserting the generated blocks; the returned `result`
+	 * string is only used for the history/token display.
+	 */
+	onGenerateBlocks?: ( task: string, regenerate: boolean ) => Promise<{ result: string, usedToken: number } | { error: string }>
+
+	/**
+	 * Optional content rendered alongside the prompt while generating (and after),
+	 * independent of the result history. The AI Block uses it to show the
+	 * generation plan and per-section progress during the first run, before any
+	 * result history exists.
+	 */
+	progressContent?: ReactNode
 };
 
 export const openAiAPIKeyName = 'themeisle_open_ai_api_key';
@@ -133,7 +151,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	const [ generationStatus, setGenerationStatus ] = useState<'loading' | 'loaded' | 'error'>( 'loaded' );
 
-	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( window.themeisleGutenberg?.hasOpenAiKey ? 'present' : 'checking' );
+	const [ apiKeyStatus, setApiKeyStatus ] = useState<'checking' | 'missing' | 'present' | 'error'>( isAIBackendConfigured() ? 'present' : 'checking' );
 	const [ embeddedPrompts, setEmbeddedPrompts ] = useState<PromptsData>([]);
 
 	const [ resultHistory, setResultHistory ] = useState<{result: string, meta: { usedToken: number, prompt: string }}[]>( props.resultHistory ?? []);
@@ -217,6 +235,51 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 	function onPromptSubmit( regenerate = false ) {
 
+		// Block generation pipeline path: the parent owns the request loop and
+		// block insertion. We only manage the loading state and history here.
+		if ( props.onGenerateBlocks ) {
+			if ( 'present' !== apiKeyStatus ) {
+				setShowError( true );
+				setErrorMessage( __( 'API Key not found. Please add your API Key in the settings page.', 'otter-blocks' ) );
+				return;
+			}
+
+			setGenerationStatus( 'loading' );
+			window.oTrk?.add({ feature: 'ai-generation', featureComponent: 'block-pipeline', featureValue: value }, { consent: true });
+
+			props.onGenerateBlocks( value, regenerate ).then( ( outcome ) => {
+				if ( 'error' in outcome ) {
+					setGenerationStatus( 'error' );
+					setShowError( true );
+					setErrorMessage( outcome.error || __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
+					return;
+				}
+
+				setGenerationStatus( 'loaded' );
+
+				const historyItem = {
+					result: outcome.result,
+					meta: {
+						usedToken: outcome.usedToken,
+						prompt: value
+					}
+				};
+
+				if ( regenerate ) {
+					const newResultHistory = [ ...resultHistory ];
+					newResultHistory[ resultHistoryIndex ] = historyItem;
+					setResultHistory( newResultHistory );
+				} else {
+					setResultHistory([ ...resultHistory, historyItem ]);
+					setResultHistoryIndex( resultHistory.length );
+				}
+
+				setTokenUsageDescription( __( 'Token used:', 'otter-blocks' ) + outcome.usedToken );
+			});
+
+			return;
+		}
+
 		let embeddedPrompt = embeddedPrompts?.find( ( prompt ) => prompt.otter_name === promptID );
 
 		if ( undefined === embeddedPrompt ) {
@@ -259,14 +322,14 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 			'otter_used_action': 'textTransformation' === promptID ? 'textTransformation::otter_action_prompt' : ( promptID ?? '' ),
 			'otter_user_content': value
 		}).then ( ( data ) => {
-			if ( data?.error ) {
+			if ( ! data.ok ) {
 				setGenerationStatus( 'error' );
 				setShowError( true );
 				setErrorMessage( `Error ${data.error.code} - ${data.error.message}` ?? __( 'Something went wrong. Please try again.', 'otter-blocks' ) );
 				return;
 			}
 
-			const result = data?.choices?.[0]?.message?.function_call?.arguments ?? data?.choices?.[0]?.message?.content;
+			const result = data.content;
 
 			setGenerationStatus( 'loaded' );
 
@@ -275,13 +338,15 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				setErrorMessage( __( 'Empty response from OpenAI. Please try again.', 'otter-blocks' ) );
 				return;
 			}
+
+			const usedToken = data.usedTokens;
 			
 			if ( regenerate ) {
 				const newResultHistory = [ ...resultHistory ];
 				newResultHistory[ resultHistoryIndex ] = {
 					result,
 					meta: {
-						usedToken: data.usage.total_tokens,
+						usedToken,
 						prompt: value
 					}
 				};
@@ -290,7 +355,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				setResultHistory([ ...resultHistory, {
 					result,
 					meta: {
-						usedToken: data.usage.total_tokens,
+						usedToken,
 						prompt: value
 					}
 				}]);
@@ -298,16 +363,18 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 
 			}
 			
-			setTokenUsageDescription( __( 'Token used:', 'otter-blocks' ) + data.usage.total_tokens );
+			setTokenUsageDescription( __( 'Token used:', 'otter-blocks' ) + usedToken );
 			props.onPreview?.( result );
 		});
 	}
 
 	if ( 'present' !== apiKeyStatus ) {
+		const aiClientSupported = Boolean( window.themeisleGutenberg?.aiClientSupported );
+
 		return (
 			<Placeholder
 				className="prompt-placeholder"
-				label={ __( 'OpenAI API Key', 'otter-blocks' ) }
+				label={ aiClientSupported ? __( 'WordPress AI', 'otter-blocks' ) : __( 'OpenAI API Key', 'otter-blocks' ) }
 			>
 				{
 					'checking' === apiKeyStatus && (
@@ -319,7 +386,21 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 				}
 
 				{
-					'missing' === apiKeyStatus && (
+					'missing' === apiKeyStatus && aiClientSupported && (
+						<Fragment>
+							<span>{ __( 'No AI provider is configured. Set one up under Settings > Connectors, then reload the editor.', 'otter-blocks' ) }</span>
+
+							<div className='o-info-row'>
+								<ExternalLink href={ window.themeisleGutenberg?.connectorsUrl ?? '' }>
+									{ __( 'Manage Connectors', 'otter-blocks' ) }
+								</ExternalLink>
+							</div>
+						</Fragment>
+					)
+				}
+
+				{
+					'missing' === apiKeyStatus && ! aiClientSupported && (
 						<Fragment>
 							<span>{ __( 'API Key not found. Please introduce the API Key', 'otter-blocks' ) }
 							</span>
@@ -428,6 +509,8 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 					/>
 				)
 			}
+
+			{ props.progressContent }
 
 			{
 				showError && (

@@ -28,6 +28,7 @@ const CSSEditor = ({
 	clientId
 }) => {
 	const editorRef = useRef( null );
+	const editorContainerRef = useRef( null );
 	const [ errors, setErrors ] = useState([]);
 	const [ editorValue, setEditorValue ] = useState( null );
 
@@ -77,7 +78,15 @@ const CSSEditor = ({
 			initialValue = ( attributes.customCSS ).replace( regex, 'selector' );
 		}
 
-		editorRef.current = wp.CodeMirror( document.getElementById( 'o-css-editor' ), {
+		const container = editorContainerRef.current;
+		if ( ! container ) {
+			return;
+		}
+
+		// Defensive cleanup in case the component is re-mounted (e.g. React strict mode).
+		container.innerHTML = '';
+
+		editorRef.current = wp.CodeMirror( container, {
 			value: initialValue,
 			autoCloseBrackets: true,
 			continueComments: true,
@@ -107,7 +116,20 @@ const CSSEditor = ({
 		editorRef.current.on( 'change', onChange );
 
 		return () => {
-			editorRef.current.off( 'change', onChange );
+			clearTimeout( inputTimeout );
+
+			if ( editorRef.current ) {
+				editorRef.current.off( 'change', onChange );
+
+				const wrapper = editorRef.current.getWrapperElement?.();
+				if ( wrapper?.parentNode ) {
+					wrapper.parentNode.removeChild( wrapper );
+				} else if ( container ) {
+					container.innerHTML = '';
+				}
+
+				editorRef.current = null;
+			}
 		};
 	}, []);
 
@@ -155,7 +177,7 @@ const CSSEditor = ({
 
 			<p>{__( 'Add your custom CSS.', 'blocks-css' )}</p>
 
-			<div id="o-css-editor" className="o-css-editor" />
+			<div ref={ editorContainerRef } className="o-css-editor" />
 
 			{ 0 < errors?.length && (
 				<div className='o-css-errors'>

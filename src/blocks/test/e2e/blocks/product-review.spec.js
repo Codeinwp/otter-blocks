@@ -3,6 +3,11 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
+
 test.describe( 'Product Review Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
@@ -11,27 +16,25 @@ test.describe( 'Product Review Block', () => {
 	test( 'can be created by typing "/product-review"', async({ editor, page }) => {
 
 		// Create a Review Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/product-review' );
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasReviewBlock = blocks.some( ( block ) => 'themeisle-blocks/review' === block.name );
-
-		expect( hasReviewBlock ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/product-review',
+			blockName: 'themeisle-blocks/review'
+		});
 	});
 
 	test( 'add value by typing', async({ editor, page }) => {
 		await editor.insertBlock({ name: 'themeisle-blocks/review' });
 
-		const title = page.getByRole( 'textbox', { name: 'Name of your product…' });
+		const title = editor.canvas.getByRole( 'textbox', { name: 'Name of your product…' });
 
 		await title.type( 'Test Product' );
 
 		// Check if the value is added in title
 		expect( await title.innerHTML() ).toBe( 'Test Product' );
 
-		const description = page.getByRole( 'textbox', { name: 'Product description or a small review…' });
+		const description = editor.canvas.getByRole( 'textbox', { name: 'Product description or a small review…' });
 
 		await description.type( 'Test Description' );
 
@@ -77,8 +80,8 @@ test.describe( 'Product Review Block', () => {
 		/**
 		 * Check new feature in display
 		 */
-		await expect( await page.getByRole( 'document', { name: 'Block: Product Review' }).getByText( FEATURE_TITLE, { exact: true }) ).toBeVisible();
-		await expect( await page.getByRole( 'document', { name: 'Block: Product Review' }).getByText( FEATURE_DESCRIPTION, { exact: true }) ).toBeVisible();
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Product Review' }).getByText( FEATURE_TITLE, { exact: true }) ).toBeVisible();
+		await expect( editor.canvas.getByRole( 'document', { name: 'Block: Product Review' }).getByText( FEATURE_DESCRIPTION, { exact: true }) ).toBeVisible();
 	});
 
 	test( 'open in new tab', async({ editor, page }) => {
@@ -95,9 +98,7 @@ test.describe( 'Product Review Block', () => {
 
 		await page.getByRole( 'button', { name: 'Add Links' }).click();
 
-		const postId = await editor.publishPost();
-
-		await page.goto( `/?p=${postId}` );
+		await publishAndViewPost({ editor, page });
 
 		await expect( page.getByRole( 'link', { name: 'Buy Now in same tab' }) ).toHaveAttribute( 'target', '_self' );
 		await expect( page.getByRole( 'link', { name: 'Buy Now', exact: true }) ).toHaveAttribute( 'target', '_blank' );
@@ -107,7 +108,7 @@ test.describe( 'Product Review Block', () => {
 	test( 'check description new lines preserved', async({ editor, page }) => {
 		await editor.insertBlock({ name: 'themeisle-blocks/review' });
 
-		const title = page.getByRole( 'textbox', { name: 'Name of your product…' });
+		const title = editor.canvas.getByRole( 'textbox', { name: 'Name of your product…' });
 
 		await title.type( 'Test Product' );
 
@@ -115,20 +116,17 @@ test.describe( 'Product Review Block', () => {
 		expect( await title.innerHTML() ).toBe( 'Test Product' );
 
 		// Add a multi line description
-		await page.getByLabel( 'Product description or a' ).click();
-		await page.getByLabel( 'Product description or a' ).fill( 'Product description' );
+		await editor.canvas.getByLabel( 'Product description or a' ).click();
+		await editor.canvas.getByLabel( 'Product description or a' ).fill( 'Product description' );
 		await page.keyboard.press( 'Enter' );
 		await page.keyboard.type( 'Line 1' );
 		await page.keyboard.press( 'Enter' );
 		await page.keyboard.type( 'Line 2' );
 
 		// Check if the value is added in description and is multiline
-		await expect( page.getByLabel( 'Product description or a' ) ).toContainText( 'Product description\nLine 1\nLine 2', { useInnerText: true });
+		await expect( editor.canvas.getByLabel( 'Product description or a' ) ).toContainText( 'Product description\nLine 1\nLine 2', { useInnerText: true });
 
-		// Publish the post and view the post
-		await page.getByRole( 'button', { name: 'Publish', exact: true }).click();
-		await page.getByLabel( 'Editor publish' ).getByRole( 'button', { name: 'Publish', exact: true }).click();
-		await page.getByLabel( 'Editor publish' ).getByRole( 'link', { name: 'View Post' }).click();
+		await publishAndViewPost({ editor, page });
 
 		// Check if the value is added in description and multiline is preserved
 		await expect( page.locator( '.wp-block-themeisle-blocks-review .o-review__header_details' ) ).toContainText( 'Product description\nLine 1\nLine 2', { useInnerText: true });

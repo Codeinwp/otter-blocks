@@ -6,7 +6,10 @@ const path = require( 'path' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const blocks = require( './blocks.json' );
 
-defaultConfig.plugins.splice( 1, 1 ); // We need to remove Core's Copy Files plugin.
+// Remove CopyPlugin only; PhpFilePathsPlugin was added at index 1 in @wordpress/scripts 32+.
+defaultConfig.plugins = defaultConfig.plugins.filter(
+	( plugin ) => plugin.constructor.name !== 'CopyPlugin'
+);
 
 const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true !== blocks[ block ]?.isPro )
 	.map( block => {
@@ -168,6 +171,28 @@ module.exports = [
 	},
 	{
 
+		// PATTERNS LIBRARY (Design Library)
+		// Own bundle so this tree and its fuse.js / react-intersection-observer
+		// deps load only when the module is enabled, not on every editor load.
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			index: './src/blocks/plugins/patterns-library/index.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/patterns-library' )
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
+	},
+	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
@@ -185,6 +210,7 @@ module.exports = [
 			'leaflet-gesture-handling': './src/blocks/frontend/leaflet-map/leaflet-gesture-handling.js',
 			maps: './src/blocks/frontend/google-map/index.js',
 			slider: './src/blocks/frontend/slider/index.js',
+			'content-slider': './src/blocks/frontend/content-slider/index.js',
 			'progress-bar': './src/blocks/frontend/progress-bar/index.js',
 			'circle-counter': './src/blocks/frontend/circle-counter/index.js',
 			lottie: './src/blocks/frontend/lottie/index.js',
@@ -285,7 +311,7 @@ module.exports = [
 					type: 'asset/source'
 				},
 				...defaultConfig.module.rules.map( ( rule ) => {
-					if ( rule.test && rule.test.toString().includes( '\\.css' ) ) {
+					if ( rule.test?.toString()?.includes( '\\.css' ) ) {
 						return {
 							...rule,
 							exclude: [

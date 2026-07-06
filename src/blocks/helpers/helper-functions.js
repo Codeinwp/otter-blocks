@@ -1,7 +1,6 @@
 import { isEmpty, merge, set, unset, without, omitBy, isObjectLike, isString, isNumber, isNil, cloneDeep } from 'lodash';
 
-import { __, sprintf } from '@wordpress/i18n';
-import { __experimentalGetSettings } from '@wordpress/date';
+import { getSettings } from '@wordpress/date';
 import { makeBox } from '../plugins/copy-paste/utils';
 
 // Post types to exclude
@@ -163,12 +162,14 @@ export const insertBetweenItems = ( arr, item ) => {
  * @return {*}
  */
 export const getTimezone = () => {
-	const settings = __experimentalGetSettings();
-	const offset   = 60 * settings.timezone.offset;
-	const sign     = 0 > offset ? '-' : '+';
-	const absmin   = Math.abs( offset );
-	const timezone = sprintf( '%1$s%2$02d:%3$02d', sign, absmin / 60, absmin % 60 );
-	return timezone;
+	const settings = getSettings();
+	const offsetMinutes = 60 * settings.timezone.offset;
+	const sign          = 0 > offsetMinutes ? '-' : '+';
+	const absMinutes    = Math.abs( offsetMinutes );
+	const hours         = Math.floor( absMinutes / 60 );
+	const minutes       = absMinutes % 60;
+	const pad           = ( value ) => String( value ).padStart( 2, '0' );
+	return `${ sign }${ pad( hours ) }:${ pad( minutes ) }`;
 };
 
 /**
@@ -500,8 +501,19 @@ export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
 
 		const attrName = keys[mapViewToKey[currentView] ?? 0]?.split( '.' )[0];
 		const attr = { [attrName]: { ...oldAttr }};
+		const activePath = keys[mapViewToKey[currentView] ?? 0];
 
-		set( attr, keys[mapViewToKey[currentView] ?? 0], value );
+		set( attr, activePath, value );
+		if ( value === undefined ) {
+			unset( attr, activePath );
+		}
+		if ( 'object' === typeof attr[attrName] && attr[attrName] !== null ) {
+			for ( const key in attr[attrName] ) {
+				if ( attr[attrName][key] === undefined ) {
+					delete attr[attrName][key];
+				}
+			}
+		}
 
 		setAttributes( 'object' === typeof attr[attrName] && isEmpty( attr[attrName]) ? { [attrName]: undefined } : attr );
 	};

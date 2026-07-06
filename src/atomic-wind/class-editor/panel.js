@@ -6,25 +6,21 @@ import { close, chevronLeft, chevronRight, copy, upload, undo } from '@wordpress
 import { createPortal, useState, useEffect, useRef, useCallback, memo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import blockIcon from '../blocks/icon';
-import { StateControls } from '../states';
+import { getStructuralLabel, toPlainText } from '../blocks/labels';
+import { StateControls, hasStateConfig } from '../states';
 import { AnimationControls } from '../animations';
 
-const _decodeEl = document.createElement( 'textarea' );
-function decodeEntities( html ) {
-	_decodeEl.innerHTML = html;
-	return _decodeEl.value;
+function previewText( value ) {
+	const text = toPlainText( value );
+	return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
 }
 
 function getTextPreview( block ) {
 	if ( block.name === 'atomic-wind/text' ) {
-		const raw = block.attributes?.content || '';
-		const text = decodeEntities( raw.replace( /<[^>]+>/g, '' ) ).trim();
-		return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
+		return previewText( block.attributes?.content );
 	}
 	if ( block.name === 'atomic-wind/link' && block.attributes?.mode !== 'inner-blocks' ) {
-		const raw = block.attributes?.content || '';
-		const text = decodeEntities( raw.replace( /<[^>]+>/g, '' ) ).trim();
-		return text.length > 30 ? text.slice( 0, 30 ) + '…' : text;
+		return previewText( block.attributes?.text );
 	}
 	return '';
 }
@@ -39,9 +35,9 @@ const TreeNode = memo( ( { block, depth, selectedId, onSelect, collapsed, onTogg
 	const title = useSelect(
 		( select ) => {
 			const type = select( blocksStore ).getBlockType( block.name );
-			return type ? type.title : block.name;
+			return getStructuralLabel( block.name, block.attributes ) || ( type ? type.title : block.name );
 		},
-		[ block.name ]
+		[ block.name, block.attributes ]
 	);
 
 	const hasChildren = block.innerBlocks && block.innerBlocks.length > 0;
@@ -132,7 +128,7 @@ const Panel = ( { onClose } ) => {
 			if ( ! block ) {return { selectedTitle: '', selectedPreview: '', selectedAttributes: {}};}
 			const type = select( blocksStore ).getBlockType( block.name );
 			return {
-				selectedTitle: type ? type.title : block.name,
+				selectedTitle: getStructuralLabel( block.name, block.attributes ) || ( type ? type.title : block.name ),
 				selectedPreview: getTextPreview( block ),
 				selectedAttributes: block.attributes || {},
 			};
@@ -492,16 +488,33 @@ const Panel = ( { onClose } ) => {
 						) }
 					</div>
 					<div className="aw-ce-tabs">
-						{ TABS.map( ( tab ) => (
-							<button
-								key={ tab.id }
-								type="button"
-								className={ `aw-ce-tab${ activeTab === tab.id ? ' is-active' : '' }` }
-								onClick={ () => setActiveTab( tab.id ) }
-							>
-								{ tab.label }
-							</button>
-						) ) }
+						{ TABS.map( ( tab ) => {
+							const showStateDot = tab.id === 'state' && hasStateConfig( selectedAttributes );
+							return (
+								<button
+									key={ tab.id }
+									type="button"
+									className={ `aw-ce-tab${ activeTab === tab.id ? ' is-active' : '' }` }
+									onClick={ () => setActiveTab( tab.id ) }
+								>
+									{ tab.label }
+									{ showStateDot && (
+										<span
+											aria-hidden="true"
+											style={ {
+												display: 'inline-block',
+												width: '6px',
+												height: '6px',
+												marginLeft: '5px',
+												borderRadius: '50%',
+												background: '#3858e9',
+												verticalAlign: 'middle',
+											} }
+										/>
+									) }
+								</button>
+							);
+						} ) }
 					</div>
 					<div className="aw-ce-classname-body">
 						{ renderTabContent() }

@@ -55,6 +55,7 @@ class Atomic_Wind_Blocks {
 		add_filter( 'render_block', array( $this, 'render_post_fields' ), 20, 2 );
 		add_filter( 'render_block', array( $this, 'render_animation_attrs' ), 10, 2 );
 		add_filter( 'render_block', array( $this, 'render_state_attrs' ), 10, 2 );
+		add_action( 'template_redirect', array( $this, 'maybe_render_css_warm_page' ), 0 );
 		add_action( 'save_post', array( $this, 'clear_cached_css' ) );
 		add_filter( 'block_categories_all', array( $this, 'register_category' ) );
 	}
@@ -210,8 +211,10 @@ class Atomic_Wind_Blocks {
 			) . ';' .
 			'window.atomicWindEditor = ' . wp_json_encode(
 				array(
-					'restUrl' => rest_url( 'otter/v1/atomic-wind' ),
-					'nonce'   => wp_create_nonce( 'wp_rest' ),
+					'restUrl'   => rest_url( 'otter/v1/atomic-wind' ),
+					'nonce'     => wp_create_nonce( 'wp_rest' ),
+					'warmUrl'   => home_url( '/' ),
+					'warmNonce' => wp_create_nonce( 'atomic_wind_css_warm' ),
 				)
 			) . ';',
 			'before'
@@ -381,6 +384,130 @@ class Atomic_Wind_Blocks {
 	 */
 	public function clear_cached_css( $post_id ) {
 		delete_post_meta( $post_id, '_atomic_wind_css' );
+	}
+
+	/**
+	 * Render a stripped, frontend-shaped page for warming the CSS cache.
+	 *
+	 * @return void
+	 */
+	public function maybe_render_css_warm_page() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- nonce is verified below via can_render_css_warm().
+		if ( empty( $_GET['atomic_wind_css_warm'] ) || empty( $_GET['post_id'] ) ) {
+			return;
+		}
+
+		$nonce   = sanitize_text_field( wp_unslash( $_GET['atomic_wind_css_warm'] ) );
+		$post_id = absint( wp_unslash( $_GET['post_id'] ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		if ( ! $this->can_render_css_warm( $post_id, $nonce ) ) {
+			return;
+		}
+
+		$post = get_post( $post_id );
+		if ( ! $post instanceof \WP_Post || ! $this->post_has_atomic_wind_blocks( $post ) ) {
+			// Nothing to warm — leave the (already-cleared) cache empty.
+			return;
+		}
+
+		nocache_headers();
+		header( 'Content-Type: text/html; charset=' . get_option( 'blog_charset' ) );
+		header( 'X-Robots-Tag: noindex, nofollow', true );
+
+		echo $this->render_css_warm_page_html( $post ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- self-contained document built below with per-part escaping.
+		exit;
+	}
+
+	/**
+	 * Whether the current request may render the CSS warm page for a post.
+	 *
+	 * @param int    $post_id Post ID from the request.
+	 * @param string $nonce   Nonce from the request.
+	 * @return bool
+	 */
+	private function can_render_css_warm( $post_id, $nonce ) {
+		return $post_id > 0
+			&& false !== wp_verify_nonce( $nonce, 'atomic_wind_css_warm' )
+			&& current_user_can( 'edit_post', $post_id );
+	}
+
+	/**
+	 * Build the minimal HTML document for the CSS warm iframe.
+	 *
+	 * Kept separate from the request handling so it stays pure/testable: it
+	 * returns a string and neither reads superglobals nor calls exit().
+	 *
+	 * @param \WP_Post $post_obj Post to render.
+	 * @return string
+	 */
+	private function render_css_warm_page_html( \WP_Post $post_obj ) {
+		global $post;
+
+		$previous = $post;
+		$post     = $post_obj; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- temporary, restored below, so render_block filters see the warmed post.
+		setup_postdata( $post );
+		$content = do_blocks( $post_obj->post_content );
+		wp_reset_postdata();
+		$post = $previous; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- restore the original global.
+
+		$generator = $this->build_asset_url( 'tailwind-generator-frontend' );
+		$builder   = $this->build_asset_url( 'style-builder' );
+
+		$config = wp_json_encode(
+			array(
+				'postId'  => (int) $post_obj->ID,
+				'restUrl' => rest_url( 'otter/v1/atomic-wind' ),
+				'nonce'   => wp_create_nonce( 'wp_rest' ),
+			)
+		);
+
+		$post_id_json = wp_json_encode( (int) $post_obj->ID );
+
+		// Base reset so the in-browser generator measures the real frontend layout.
+		$base_css = '[class*="wp-block-atomic-wind-"]{margin:0;max-width:unset;}[class*="wp-block-atomic-wind-"] p{margin:0;}';
+
+		// On css-saved, notify the opener (the editor) so it can drop the iframe.
+		// The payload carries no secret; the editor still validates the message origin.
+		$ping = 'document.addEventListener("atomic-wind:css-saved",function(){'
+			. 'if(window.parent&&window.parent!==window){'
+			. 'var t="*";try{if(document.referrer){t=new URL(document.referrer).origin;}}catch(e){}'
+			. 'window.parent.postMessage({type:"atomic-wind:css-warmed",postId:' . $post_id_json . '},t);}});';
+
+		$html  = '<!DOCTYPE html><html ' . get_language_attributes() . '><head>';
+		$html .= '<meta charset="' . esc_attr( get_option( 'blog_charset' ) ) . '">';
+		$html .= '<meta name="viewport" content="width=1024">';
+		$html .= '<meta name="robots" content="noindex,nofollow">';
+		$html .= '<style id="atomic-wind-base-inline-css">' . $base_css . '</style>';
+		$html .= '</head><body class="atomic-wind-css-warm">';
+		$html .= $content;
+		$html .= '<script>window.atomicWindStyleBuilder = ' . $config . ';</script>';
+		$html .= '<script src="' . esc_url( $generator ) . '"></script>';
+		$html .= '<script src="' . esc_url( $builder ) . '"></script>';
+		$html .= '<script>' . $ping . '</script>';
+		$html .= '</body></html>';
+
+		return $html;
+	}
+
+	/**
+	 * Build a versioned URL for an atomic-wind build script.
+	 *
+	 * @param string $name Script base name (without extension), e.g. `style-builder`.
+	 * @return string
+	 */
+	private function build_asset_url( $name ) {
+		$asset_file = $this->build_path() . '/' . $name . '.asset.php';
+		$version    = OTTER_BLOCKS_VERSION;
+
+		if ( file_exists( $asset_file ) ) {
+			$asset = include $asset_file;
+			if ( isset( $asset['version'] ) ) {
+				$version = $asset['version'];
+			}
+		}
+
+		return add_query_arg( 'ver', $version, $this->plugin_url( 'build/atomic-wind/' . $name . '.js' ) );
 	}
 
 	/**

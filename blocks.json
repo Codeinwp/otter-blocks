@@ -56,6 +56,13 @@
 			"circle-counter/style.css": "blocks/blocks/circle-counter/style.scss"
 		}
 	},
+	"content-slider": {
+		"block": "blocks/blocks/content-slider/block.json",
+		"assets": {
+			"content-slider/editor.css": "blocks/blocks/content-slider/editor.scss",
+			"content-slider/style.css": "blocks/blocks/content-slider/style.scss"
+		}
+	},
 	"countdown": {
 		"block": "blocks/blocks/countdown/block.json",
 		"assets": {
@@ -83,6 +90,9 @@
 			"form/editor.css": "blocks/blocks/form/editor.scss",
 			"form/style.css": "blocks/blocks/form/style.scss"
 		}
+	},
+	"form-captcha": {
+		"block": "blocks/blocks/form/captcha/block.json"
 	},
 	"form-input": {
 		"block": "blocks/blocks/form/input/block.json"

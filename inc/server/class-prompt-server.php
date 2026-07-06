@@ -49,10 +49,10 @@ class Prompt_Server {
 
 	/**
 	 * OpenAI Endpoint.
-	 * 
+	 *
 	 * @var string
 	 */
-	const BASE_URL = 'https://api.openai.com/v1/chat/completions';
+	const BASE_URL = Otter_OpenAI_Backend::BASE_URL;
 
 	/**
 	 * Initialize the class
@@ -120,7 +120,7 @@ class Prompt_Server {
 		$body = $request->get_body();
 		$body = json_decode( $body, true );
 
-		if ( ! is_array( $body ) && ! isset( $body['api_key'] ) ) {
+		if ( ! is_array( $body ) || ! isset( $body['api_key'] ) ) {
 			return new \WP_Error( 'rest_invalid_json', __( 'API key is missing.', 'otter-blocks' ), array( 'status' => 400 ) );
 		}
 
@@ -159,18 +159,27 @@ class Prompt_Server {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return $response;
+			return new \WP_Error(
+				$response->get_error_code(),
+				$response->get_error_message(),
+				array( 'status' => 502 )
+			);
 		}
 
 		$body = wp_remote_retrieve_body( $response );
 		$body = json_decode( $body );
 
 		if ( json_last_error() !== JSON_ERROR_NONE && ! is_object( $body ) ) {
-			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 502 ) );
 		}
 
 		if ( isset( $body->error ) ) {
-			return isset( $body->error->message ) ? new \WP_Error( isset( $body->error->code ) ? $body->error->code : 'unknown_error', $body->error->message ) : new \WP_Error( 'unknown_error', __( 'An error occurred while processing the request.', 'otter-blocks' ) );
+			$status  = wp_remote_retrieve_response_code( $response );
+			$status  = 400 <= $status ? $status : 502;
+			$code    = isset( $body->error->code ) ? $body->error->code : 'unknown_error';
+			$message = isset( $body->error->message ) ? $body->error->message : __( 'An error occurred while processing the request.', 'otter-blocks' );
+
+			return new \WP_Error( $code, $message, array( 'status' => $status ) );
 		}
 
 		update_option( 'themeisle_open_ai_api_key', $api_key );
@@ -189,7 +198,9 @@ class Prompt_Server {
 		$body = $request->get_body();
 		$body = json_decode( $body, true );
 
-		$api_key = get_option( 'themeisle_open_ai_api_key' );
+		if ( ! is_array( $body ) ) {
+			return new \WP_Error( 'rest_invalid_json', __( 'Invalid prompt request body.', 'otter-blocks' ), array( 'status' => 400 ) );
+		}
 
 		// Extract the data from keys that start with 'otter_'.
 		$otter_data = array_filter(
@@ -203,31 +214,40 @@ class Prompt_Server {
 		// Remove the values which keys start with 'otter_'.
 		$body = array_diff_key( $body, $otter_data );
 
-		$response = wp_remote_post(
-			self::BASE_URL,
-			array(
-				'method'  => 'POST',
-				'headers' => array(
-					'Authorization' => 'Bearer ' . $api_key,
-					'Content-Type'  => 'application/json',
-				),
-				'body'    => wp_json_encode( $body ),
-				'timeout' => 2 * MINUTE_IN_SECONDS,
-			)
-		);
+		$backend = AI_Backend_Resolver::resolve();
 
-		if ( is_wp_error( $response ) ) {
-			return $response;
+		$timeout = AI_Client_Adaptor::get_request_timeout_seconds();
+
+		$raise_timeout = static function ( $args ) use ( $timeout ) {
+			$current = isset( $args['timeout'] ) ? (int) $args['timeout'] : 0;
+			if ( $current < $timeout ) {
+				$args['timeout'] = $timeout;
+			}
+			return $args;
+		};
+
+		// Scope the raised timeout to just this generation request. A long timeout is
+		// intentional here: AI generation runs in a dedicated REST request, not a
+		// page load, and reasoning models can take well over the 30s default.
+		add_filter( 'http_request_args', $raise_timeout, 100 ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.http_request_args
+
+		try {
+			$result = $backend->generate( $body );
+		} finally {
+			remove_filter( 'http_request_args', $raise_timeout, 100 );
 		}
 
-		$body = wp_remote_retrieve_body( $response );
-		$body = json_decode( $body, true );
-
-		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			return new \WP_Error( 'rest_invalid_json', __( 'Could not parse the response from OpenAI. Try again.', 'otter-blocks' ), array( 'status' => 400 ) );
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
-		return new \WP_REST_Response( $body, wp_remote_retrieve_response_code( $response ) );
+		if ( ! AI_Response::is_valid( $result ) ) {
+			return AI_Response::error( 'invalid_backend_response', __( 'The AI backend returned an invalid response.', 'otter-blocks' ), 'otter', 502 );
+		}
+
+		$this->record_prompt_usage( $otter_data );
+
+		return new \WP_REST_Response( $result, 200 );
 	}
 
 	/**
@@ -304,7 +324,7 @@ class Prompt_Server {
 				'site_url'   => get_site_url(),
 				'license_id' => apply_filters( 'product_otter_license_key', 'free' ),
 				'cache'      => gmdate( 'u' ),
-				'isValid'    => boolval( get_option( 'themeisle_open_ai_api_key', false ) ) ? 'true' : 'false',
+				'isValid'    => ( AI_Client_Adaptor::is_available() || boolval( get_option( 'themeisle_open_ai_api_key', false ) ) ) ? 'true' : 'false',
 			),
 			'https://api.themeisle.com/templates-cloud/otter-prompts'
 		);
@@ -363,9 +383,8 @@ class Prompt_Server {
 	/**
 	 * Record prompt usage.
 	 *
-	 * @param array $otter_metadata The metadata from the prompt usage request.
+	 * @param array<string, mixed> $otter_metadata The client-supplied metadata from the prompt usage request.
 	 * @return void
-	 * @phpstan-ignore-next-line
 	 */
 	private function record_prompt_usage( $otter_metadata ) {
 		if ( ! isset( $otter_metadata['otter_used_action'] ) || ! isset( $otter_metadata['otter_user_content'] ) ) {
@@ -375,65 +394,7 @@ class Prompt_Server {
 		$action       = $otter_metadata['otter_used_action'];
 		$user_content = $otter_metadata['otter_user_content'];
 
-		$usage = get_option( 'themeisle_otter_ai_usage' );
-
-		if ( ! is_array( $usage ) ) {
-			$usage = array(
-				'usage_count' => array(),
-				'prompts'     => array(),
-			);
-		}
-
-		if ( ! is_array( $usage['usage_count'] ) ) {
-			$usage['usage_count'] = array();
-		}
-
-		if ( ! is_array( $usage['prompts'] ) ) {
-			$usage['prompts'] = array();
-		}
-
-		$is_missing = true;
-
-		foreach ( $usage['usage_count'] as &$u ) {
-			if ( isset( $u['key'] ) && $u['key'] === $action ) {
-				++$u['value'];
-				$is_missing = false;
-			}
-		}
-
-		unset( $u );
-
-		if ( $is_missing ) {
-			$usage['usage_count'][] = array(
-				'key'   => $action,
-				'value' => 1,
-			);
-		}
-
-		$is_missing = true;
-
-		foreach ( $usage['prompts'] as &$u ) {
-			if ( isset( $u['key'] ) && $u['key'] === $action ) {
-				$u['values'][] = $user_content;
-				$is_missing    = false;
-
-				// Keep only the last 10 prompts.
-				if ( count( $u['values'] ) > 10 ) {
-					array_shift( $u['values'] );
-				}
-			}
-		}
-
-		unset( $u );
-
-		if ( $is_missing ) {
-			$usage['prompts'][] = array(
-				'key'    => $action,
-				'values' => array( $user_content ),
-			);
-		}
-
-		update_option( 'themeisle_otter_ai_usage', $usage );
+		AI_Usage::record( $action, $user_content );
 	}
 
 

@@ -47,7 +47,7 @@ const FeaturePanel = ({ props }) => {
 			<ToolsPanelItem
 				hasValue={ () => false }
 				label={ __( 'Manage Default Tools', 'otter-blocks' ) }
-				onSelect={ () => enableComplementaryArea( 'core/edit-post', 'themeisle-blocks/otter-options' ) }
+				onSelect={ () => enableComplementaryArea( 'core', 'themeisle-blocks/otter-options' ) }
 				isShownByDefault={ false }
 			/>
 		</ToolsPanel>

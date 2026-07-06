@@ -174,6 +174,40 @@ class Dynamic_Content_Server {
 	}
 
 	/**
+	 * Resolve a user-supplied fallback image path to a safe absolute path, or ''.
+	 *
+	 * The fallback is chosen from the media library, so a valid value always lives
+	 * inside the uploads directory. Restricting to uploads (rather than the whole
+	 * wp-content tree) prevents this unauthenticated endpoint from reading arbitrary
+	 * images elsewhere under wp-content.
+	 *
+	 * @param string $fallback Requested fallback path.
+	 *
+	 * @return string Validated absolute path, or '' if not allowed.
+	 */
+	public static function get_safe_fallback_path( $fallback ) {
+		if ( empty( $fallback ) ) {
+			return '';
+		}
+
+		$fallback  = sanitize_text_field( $fallback );
+		$full_path = realpath( $fallback );
+
+		if ( false === $full_path ) {
+			return '';
+		}
+
+		$uploads  = wp_get_upload_dir();
+		$base_dir = realpath( $uploads['basedir'] );
+
+		if ( false !== $base_dir && 0 === strpos( $full_path, trailingslashit( $base_dir ) ) && @getimagesize( $full_path ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			return $full_path;
+		}
+
+		return '';
+	}
+
+	/**
 	 * Get Dynamic Image
 	 *
 	 * Get dynamic image from WordPress.
@@ -183,20 +217,14 @@ class Dynamic_Content_Server {
 	 * @return mixed|\WP_REST_Response
 	 */
 	public function get( $request ) {
-		$type     = $request->get_param( 'type' );
-		$context  = $request->get_param( 'context' );
-		$fallback = $request->get_param( 'fallback' );
-		$path     = OTTER_BLOCKS_PATH . '/assets/images/placeholder.jpg';
+		$type          = $request->get_param( 'type' );
+		$context       = $request->get_param( 'context' );
+		$fallback      = $request->get_param( 'fallback' );
+		$path          = OTTER_BLOCKS_PATH . '/assets/images/placeholder.jpg';
+		$safe_fallback = self::get_safe_fallback_path( $fallback );
 
-		if ( ! empty( $fallback ) ) {
-
-			$fallback           = sanitize_text_field( $fallback );
-			$feedback_full_path = realpath( $fallback );
-			$feedback_full_path = str_contains( $feedback_full_path, WP_CONTENT_DIR );
-
-			if ( false !== $feedback_full_path && @getimagesize( $fallback ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-				$path = $feedback_full_path;
-			}
+		if ( '' !== $safe_fallback ) {
+			$path = $safe_fallback;
 		}
 
 		$default = $path;

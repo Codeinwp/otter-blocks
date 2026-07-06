@@ -1,0 +1,95 @@
+/**
+ * WordPress dependencies
+ */
+import { expect } from '@wordpress/e2e-test-utils-playwright';
+
+/**
+ * Internal dependencies
+ */
+import { insertAndGetBlock } from './editor';
+
+const FORM_BLOCK = 'themeisle-blocks/form';
+const CAPTCHA_BLOCK = 'themeisle-blocks/form-captcha';
+const CONTACT_FORM_VARIATION = 'Contact form for clients';
+
+export async function getFormClientId( page ) {
+	return page.evaluate( () => {
+		return window.wp.data.select( 'core/block-editor' ).getBlocks().find( ({ name }) => 'themeisle-blocks/form' === name )?.clientId;
+	});
+}
+
+export async function insertFormCaptchaBlock( page, formClientId, provider = 'recaptcha' ) {
+	await page.evaluate( ({ formClientId, provider, blockName }) => {
+		const block = window.wp.blocks.createBlock( blockName, { provider });
+		window.wp.data.dispatch( 'core/block-editor' ).insertBlock( block, undefined, formClientId );
+	}, { formClientId, provider, blockName: CAPTCHA_BLOCK });
+}
+
+export async function insertContactForm({ editor, page, blockConfig = { name: FORM_BLOCK }}) {
+	const formBlock = await insertAndGetBlock( editor, page, blockConfig, FORM_BLOCK );
+
+	// With block API v3 the editor canvas is iframed, so in-canvas elements
+	// must be queried through `editor.canvas` instead of `page`.
+	await editor.canvas.getByRole( 'button', { name: CONTACT_FORM_VARIATION }).click();
+
+	return formBlock;
+}
+
+export async function openFormOptions( page ) {
+	await page.getByRole( 'button', { name: 'Form Options options' }).click();
+}
+
+/**
+ * Wait for the Email Notification toggle in the Form Options inspector panel.
+ *
+ * @param {import('@playwright/test').Page} page The page.
+ * @return {Promise<import('@playwright/test').Locator>} The toggle locator.
+ */
+export async function getEmailNotificationToggle( page ) {
+	const toggle = page.locator( '.o-form-options' ).getByRole( 'checkbox', { name: 'Email Notification' });
+
+	await expect( toggle ).toBeVisible({ timeout: 15_000 });
+
+	return toggle;
+}
+
+/**
+ * Open the block inspector and wait until Form Options are ready to edit.
+ *
+ * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor The editor utils.
+ * @param {import('@playwright/test').Page}                       page   The page.
+ * @return {Promise<import('@playwright/test').Locator>} The Email Notification toggle.
+ */
+export async function prepareFormOptionsInspector( editor, page ) {
+	await editor.openDocumentSettingsSidebar();
+
+	return getEmailNotificationToggle( page );
+}
+
+export async function showFormOption( page, optionName ) {
+	await openFormOptions( page );
+	await page.getByRole( 'menuitemcheckbox', { name: optionName }).click();
+	await openFormOptions( page );
+}
+
+export async function getSavedFormEmails( page ) {
+	return page.evaluate( async() => {
+		// eslint-disable-next-line camelcase
+		const { themeisle_blocks_form_emails } = await ( new wp.api.models.Settings() ).fetch();
+
+		// eslint-disable-next-line camelcase
+		return themeisle_blocks_form_emails;
+	});
+}
+
+export async function expectFormOptionSavedNotice( page ) {
+	await expect(
+		page.getByRole( 'button', { name: 'Dismiss this notice' }).filter({
+			hasText: 'Form options have been saved.'
+		})
+	).toBeVisible();
+}
+
+export function findSavedFormEmail( databaseEmails, optionName ) {
+	return databaseEmails.find( email => email?.form === optionName );
+}

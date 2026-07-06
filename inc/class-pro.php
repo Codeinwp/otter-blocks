@@ -241,17 +241,17 @@ class Pro {
 				}
 			</style>
 			<div class="clear o-upsell">
-				<p><?php _e( 'Unlock the full power of WooCommerce Builder with Otter Pro:', 'otter-blocks' ); ?></p>
+				<p><?php esc_html_e( 'Unlock the full power of WooCommerce Builder with Otter Pro:', 'otter-blocks' ); ?></p>
 
 				<ul>
-					<li><?php _e( 'WooCommerce Block Builder', 'otter-blocks' ); ?></li>
-					<li><?php _e( 'Add to Cart Block', 'otter-blocks' ); ?></li>
-					<li><?php _e( 'Review Comparison  Block', 'otter-blocks' ); ?></li>
-					<li><?php _e( 'Priority Support', 'otter-blocks' ); ?></li>
+					<li><?php esc_html_e( 'WooCommerce Block Builder', 'otter-blocks' ); ?></li>
+					<li><?php esc_html_e( 'Add to Cart Block', 'otter-blocks' ); ?></li>
+					<li><?php esc_html_e( 'Review Comparison  Block', 'otter-blocks' ); ?></li>
+					<li><?php esc_html_e( 'Priority Support', 'otter-blocks' ); ?></li>
 				</ul>
 
 				<a href="<?php echo esc_url_raw( tsdk_translate_link( tsdk_utmify( self::get_url(), 'woobuilder', 'wooproducteditor' ) ) ); ?>" target="_blank" class="button button-primary">
-					<?php _e( 'Discover Otter Pro', 'otter-blocks' ); ?>
+					<?php esc_html_e( 'Discover Otter Pro', 'otter-blocks' ); ?>
 				</a>
 			</div>
 			<?php
@@ -260,10 +260,10 @@ class Pro {
 
 		?>
 		<div class="clear">
-			<p><?php _e( 'Unlock the full power of WooCommerce Builder by activating Otter Pro license.', 'otter-blocks' ); ?></p>
+			<p><?php esc_html_e( 'Unlock the full power of WooCommerce Builder by activating Otter Pro license.', 'otter-blocks' ); ?></p>
 
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=otter' ) ); ?>" target="_blank" class="button button-primary">
-				<?php _e( 'Activate License', 'otter-blocks' ); ?>
+				<?php esc_html_e( 'Activate License', 'otter-blocks' ); ?>
 			</a>
 		</div>
 		<?php
@@ -348,7 +348,7 @@ class Pro {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'dismiss_otter_notice' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'dismiss_otter_notice' ) ) {
 			return;
 		}
 

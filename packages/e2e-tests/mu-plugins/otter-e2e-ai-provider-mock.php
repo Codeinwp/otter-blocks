@@ -1,0 +1,461 @@
+<?php
+/**
+ * Plugin Name: Otter E2E AI Provider Mock
+ * Description: Test-only MU-plugin that intercepts api.openai.com HTTP requests server-side, so the WordPress 7.0 AI Client path (Otter's `wp-ai-client` backend) runs deterministically in E2E without real credentials or network access. Mounted by wp-env in the `tests` env.
+ * Author: ThemeIsle (E2E)
+ *
+ * The `ai-provider-for-openai` plugin (mounted via .wp-env.json) talks to two
+ * endpoints, both proxied through the WP HTTP API (so `pre_http_request` applies):
+ *  - GET  /v1/models     — model discovery, used by is_supported_for_text_generation().
+ *  - POST /v1/responses  — text generation (OpenAI Responses API).
+ *
+ * Otter's legacy backend (`openai-key`) talks to POST /v1/chat/completions;
+ * that endpoint is mocked only for the sentinel LEGACY_MOCK_KEY so the
+ * dashboard key-validation spec keeps its real-endpoint behavior.
+ *
+ * When the generation request asks for structured JSON output
+ * (`text.format.type === 'json_schema'`, the translation of Otter's forced
+ * function calling), the mock returns a form-fields JSON payload; otherwise it
+ * returns deterministic HTML content.
+ *
+ * @package otter-blocks
+ */
+
+namespace ThemeIsle\OtterE2E\AiProviderMock;
+
+// Defence-in-depth: refuse to run in production, even if the file is mismounted.
+if ( defined( 'WP_ENVIRONMENT_TYPE' ) && 'production' === constant( 'WP_ENVIRONMENT_TYPE' ) ) {
+	return;
+}
+
+const TEXT_RESPONSE = '<h2>WP AI Client mock response</h2><p>Deterministic content generated through the WordPress AI Client.</p>';
+
+const FORM_RESPONSE = '{"fields":[{"label":"Full Name","type":"text","required":true},{"label":"Email Address","type":"email","required":true}]}';
+
+const LEGACY_TEXT_RESPONSE = '<h2>Legacy OpenAI mock response</h2><p>Deterministic content generated through the Otter OpenAI backend.</p>';
+
+/**
+ * Sentinel API key for the legacy `/chat/completions` mock. Requests bearing
+ * any other key (the preseeded dashboard key, the literal 'test' used by the
+ * key-validation spec) pass through untouched.
+ */
+const LEGACY_MOCK_KEY = 'sk-otter-e2e-legacy-mock';
+
+/**
+ * Marker a spec can type into the prompt to make the legacy mock return an
+ * empty completion (no choices), exercising the empty-response error path.
+ */
+const LEGACY_EMPTY_MARKER = 'otter-e2e-empty';
+
+/**
+ * Whether an outbound request body is one of the content-generator block-
+ * generation phases. Both `block-generation.ts` prompts ask for strict JSON;
+ * the content-generator parses the model reply with `JSON.parse`, so the mock
+ * must answer with JSON (not HTML) or no blocks are produced.
+ *
+ * @param string $body Raw outbound request body.
+ * @return bool
+ */
+function is_catalog_plan_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: OUTLINE (catalog)' )
+		|| false !== strpos( $body, 'planning a WordPress block layout' )
+		|| false !== strpos( $body, 'planning the structure' );
+}
+
+function is_layout_brief_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: OUTLINE —' );
+}
+
+function is_construct_request( $body ) {
+	return false !== strpos( $body, 'Fill in the attributes' )
+		|| false !== strpos( $body, 'Pipeline step: CONSTRUCT' );
+}
+
+function is_block_generation_request( $body ) {
+	return is_catalog_plan_request( $body )
+		|| is_construct_request( $body )
+		|| false !== strpos( $body, 'Pipeline step: STRUCTURE GAPS' );
+}
+
+/**
+ * Whether the outbound body is an attribute-patch edit (toolbar rewrite, refine).
+ *
+ * @param string $body Raw outbound request body.
+ * @return bool
+ */
+function is_edit_patch_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: EDIT' );
+}
+
+function is_polish_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: POLISH' );
+}
+
+function is_decide_edit_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: DECIDE_EDIT' );
+}
+
+function is_text_edit_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: TEXT_EDIT' );
+}
+
+function is_style_edit_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: STYLE_EDIT' );
+}
+
+function is_rewrite_request( $body ) {
+	return false !== strpos( $body, 'Pipeline step: REWRITE' );
+}
+
+function decide_edit_payload() {
+	return wp_json_encode(
+		array(
+			'kind'   => 'redesign',
+			'reason' => 'Deterministic E2E edit classification.',
+		)
+	);
+}
+
+/**
+ * Deterministic TEXT_EDIT reply: the transformed copy once per fragment, matching
+ * the count the prompt asks for so run-text-edit's positional mapping lines up.
+ *
+ * @param string $body        Raw outbound request body.
+ * @param string $replacement Copy to write into every fragment.
+ * @return string JSON-encoded `{ items: string[] }` payload.
+ */
+function text_edit_payload( $body, $replacement ) {
+	$count = 1;
+
+	if ( preg_match( '/JSON array of (\d+) strings/', $body, $matches ) ) {
+		$count = max( 1, (int) $matches[1] );
+	}
+
+	return wp_json_encode( array( 'items' => array_fill( 0, $count, $replacement ) ) );
+}
+
+/**
+ * Deterministic STYLE_EDIT reply: no-op (empty items leaves attributes untouched).
+ *
+ * @return string JSON-encoded `{ items: array }` payload.
+ */
+function style_edit_payload() {
+	return wp_json_encode( array( 'items' => array() ) );
+}
+
+/**
+ * Deterministic REWRITE reply: a serialized paragraph carrying the replacement
+ * copy, which run-rewrite parses back into blocks.
+ *
+ * @param string $replacement Copy for the rewritten block.
+ * @return string JSON-encoded `{ summary, markup }` payload.
+ */
+function rewrite_payload( $replacement ) {
+	$markup = '<!-- wp:paragraph --><p>' . $replacement . '</p><!-- /wp:paragraph -->';
+
+	return wp_json_encode(
+		array(
+			'summary' => 'Deterministic E2E rewrite.',
+			'markup'  => $markup,
+		)
+	);
+}
+
+function stub_tool_call_payload( $body ) {
+	if ( false !== strpos( $body, 'hasReferenceBlocks: true' )
+		&& false !== strpos( $body, 'preferLocalTools: true' ) ) {
+		return wp_json_encode(
+			array(
+				'tool'   => 'patch',
+				'reason' => 'Deterministic E2E edit tool call.',
+				'args'   => array( 'patches' => array() ),
+			)
+		);
+	}
+
+	return wp_json_encode(
+		array(
+			'tool'   => 'generate',
+			'reason' => 'Deterministic E2E generate tool call.',
+			'args'   => array(),
+		)
+	);
+}
+
+function stub_layout_brief_payload() {
+	return wp_json_encode(
+		array(
+			'mission'  => '',
+			'design'   => (object) array(),
+			'sections' => array(),
+		)
+	);
+}
+
+/**
+ * Deterministic patch JSON for edit/refine requests.
+ *
+ * @param string $body     Raw outbound request body.
+ * @param string $headline Replacement copy for the first patched block.
+ * @return string JSON-encoded `{ patches: [...] }` payload.
+ */
+function edit_patch_payload( $body, $headline ) {
+	if ( preg_match( '/"id"\s*:\s*"([^"]+)"/', $body, $matches ) ) {
+		return wp_json_encode(
+			array(
+				'patches' => array(
+					array(
+						'id'         => $matches[1],
+						'attributes' => array( 'content' => $headline ),
+					),
+				),
+			)
+		);
+	}
+
+	return wp_json_encode( array( 'patches' => array() ) );
+}
+
+/**
+ * Pick deterministic assistant text for a mocked OpenAI request.
+ *
+ * @param string $body             Raw outbound request body.
+ * @param string $block_headline   Default heading copy for block-generation stubs.
+ * @return string
+ */
+function mock_assistant_content( $body, $block_headline = 'WP AI Client mock response' ) {
+	$is_space_nation = false !== stripos( $body, 'space nation' );
+
+	if ( is_layout_brief_request( $body ) ) {
+		return stub_layout_brief_payload();
+	}
+
+	if ( false !== strpos( $body, 'Pipeline step: TOOL_CALL' ) ) {
+		return stub_tool_call_payload( $body );
+	}
+
+	if ( is_polish_request( $body ) ) {
+		return wp_json_encode( array( 'patches' => array() ) );
+	}
+
+	if ( is_decide_edit_request( $body ) ) {
+		return decide_edit_payload();
+	}
+
+	if ( is_text_edit_request( $body ) ) {
+		$replacement = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return text_edit_payload( $body, $replacement );
+	}
+
+	if ( is_style_edit_request( $body ) ) {
+		return style_edit_payload();
+	}
+
+	if ( is_rewrite_request( $body ) ) {
+		$replacement = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return rewrite_payload( $replacement );
+	}
+
+	if ( is_block_generation_request( $body ) ) {
+		$headline = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: $block_headline;
+
+		return block_generation_payload( $body, $headline );
+	}
+
+	if ( is_edit_patch_request( $body ) ) {
+		$headline = $is_space_nation
+			? 'Discover the Next Frontier: Space Nation on the Rise'
+			: 'Rewritten content for testing.';
+
+		return edit_patch_payload( $body, $headline );
+	}
+
+	return TEXT_RESPONSE;
+}
+
+/**
+ * Deterministic `{ rationale, roots }` reply for the block-generation pipeline.
+ *
+ * Phase 1 (structure) plans a single heading; phase 3 (attributes) fills it
+ * with $headline so a spec can assert the rendered text. A lone core/heading
+ * survives `validateStructure`/`validateGeneratedBlocks` with no ancestor.
+ *
+ * @param string $body     Raw outbound request body (used to pick the phase).
+ * @param string $headline Heading text returned by the attribute phase.
+ * @return string JSON-encoded payload for the assistant message content.
+ */
+function block_generation_payload( $body, $headline ) {
+	if ( is_construct_request( $body ) ) {
+		return wp_json_encode(
+			array(
+				'rationale' => array( 'Deterministic E2E content.' ),
+				'roots'     => array(
+					array(
+						'name'        => 'core/heading',
+						'attributes'  => array( 'content' => $headline ),
+						'innerBlocks' => array(),
+					),
+				),
+			)
+		);
+	}
+
+	return wp_json_encode(
+		array(
+			'rationale' => array( 'Deterministic E2E structure.' ),
+			'roots'     => array(
+				array(
+					'name'        => 'core/heading',
+					'innerBlocks' => array(),
+				),
+			),
+		)
+	);
+}
+
+/**
+ * Build a WP HTTP API response array with a JSON body.
+ *
+ * @param array<string, mixed> $data The response data.
+ * @return array<string, mixed>
+ */
+function respond( $data ) {
+	return array(
+		'headers'  => array( 'Content-Type' => 'application/json' ),
+		'body'     => wp_json_encode( $data ),
+		'response' => array(
+			'code'    => 200,
+			'message' => 'OK',
+		),
+		'cookies'  => array(),
+		'filename' => null,
+	);
+}
+
+/**
+ * Intercept api.openai.com requests with canned responses.
+ *
+ * @param false|array|\WP_Error $preempt The preemptive response.
+ * @param array<string, mixed>  $args    The request arguments.
+ * @param string                $url     The request URL.
+ * @return false|array<string, mixed>|\WP_Error
+ */
+function mock_openai_http( $preempt, $args, $url ) {
+	if ( false === strpos( $url, 'api.openai.com' ) ) {
+		return $preempt;
+	}
+
+	// Model discovery: GET /v1/models.
+	if ( false !== strpos( $url, '/models' ) ) {
+		return respond(
+			array(
+				'data' => array(
+					array( 'id' => 'gpt-4o' ),
+					array( 'id' => 'gpt-4o-mini' ),
+				),
+			)
+		);
+	}
+
+	// Text generation: POST /v1/responses.
+	if ( false !== strpos( $url, '/responses' ) ) {
+		$raw_body = isset( $args['body'] ) && is_string( $args['body'] ) ? $args['body'] : '';
+		$body     = '' !== $raw_body ? json_decode( $raw_body, true ) : array();
+		$is_json  = isset( $body['text']['format']['type'] ) && 'json_schema' === $body['text']['format']['type'];
+
+		if ( $is_json ) {
+			$text = FORM_RESPONSE;
+		} elseif ( is_layout_brief_request( $raw_body )
+			|| false !== strpos( $raw_body, 'Pipeline step: TOOL_CALL' )
+			|| is_block_generation_request( $raw_body )
+			|| is_edit_patch_request( $raw_body )
+			|| is_polish_request( $raw_body )
+			|| is_decide_edit_request( $raw_body )
+			|| is_text_edit_request( $raw_body )
+			|| is_style_edit_request( $raw_body )
+			|| is_rewrite_request( $raw_body ) ) {
+			$text = mock_assistant_content( $raw_body );
+		} else {
+			$text = TEXT_RESPONSE;
+		}
+
+		return respond(
+			array(
+				'id'     => 'resp_otter_e2e_mock',
+				'status' => 'completed',
+				'output' => array(
+					array(
+						'type'    => 'message',
+						'role'    => 'assistant',
+						'content' => array(
+							array(
+								'type' => 'output_text',
+								'text' => $text,
+							),
+						),
+					),
+				),
+				'usage'  => array(
+					'input_tokens'  => 31,
+					'output_tokens' => 38,
+					'total_tokens'  => 69,
+				),
+			)
+		);
+	}
+
+	// Legacy backend: POST /v1/chat/completions, only for the sentinel key so
+	// the dashboard key-validation spec keeps hitting the real endpoint.
+	if ( false !== strpos( $url, '/chat/completions' ) ) {
+		$auth = isset( $args['headers']['Authorization'] ) && is_string( $args['headers']['Authorization'] ) ? $args['headers']['Authorization'] : '';
+
+		if ( 'Bearer ' . LEGACY_MOCK_KEY !== $auth ) {
+			return $preempt;
+		}
+
+		$body = isset( $args['body'] ) && is_string( $args['body'] ) ? $args['body'] : '';
+
+		if ( false !== strpos( $body, LEGACY_EMPTY_MARKER ) ) {
+			return respond( array( 'choices' => array() ) );
+		}
+
+		$content = is_layout_brief_request( $body )
+			|| false !== strpos( $body, 'Pipeline step: TOOL_CALL' )
+			|| is_block_generation_request( $body )
+			|| is_edit_patch_request( $body )
+			|| is_polish_request( $body )
+			|| is_decide_edit_request( $body )
+			|| is_text_edit_request( $body )
+			|| is_style_edit_request( $body )
+			|| is_rewrite_request( $body )
+			? mock_assistant_content( $body, 'Legacy OpenAI mock response' )
+			: LEGACY_TEXT_RESPONSE;
+
+		return respond(
+			array(
+				'choices' => array(
+					array(
+						'message' => array(
+							'role'    => 'assistant',
+							'content' => $content,
+						),
+					),
+				),
+				'usage'   => array( 'total_tokens' => 42 ),
+			)
+		);
+	}
+
+	// Anything else passes through untouched.
+	return $preempt;
+}
+
+add_filter( 'pre_http_request', __NAMESPACE__ . '\\mock_openai_http', 10, 3 );

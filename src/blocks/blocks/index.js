@@ -5,6 +5,7 @@ import './accordion/index.js';
 import './advanced-heading/index.js';
 import './button-group/index.js';
 import './circle-counter/index.js';
+import './content-slider/index.js';
 import './countdown/index.js';
 import './flip/index.js';
 import './font-awesome-icons/index.js';

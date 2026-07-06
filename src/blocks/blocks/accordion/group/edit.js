@@ -8,7 +8,7 @@ import googleFontsLoader from '../../../helpers/google-fonts.js';
  * WordPress dependencies.
  */
 import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
-import { Fragment, useEffect } from '@wordpress/element';
+import { Fragment, useEffect, useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
@@ -27,8 +27,7 @@ import {
 
 import { useDarkBackground, useColorResolver } from '../../../helpers/utility-hooks.js';
 
-// @ts-ignore
-import faIcons from '../../../../../assets/fontawesome/fa-icons.json';
+import { loadFontAwesomeIcons } from '../../../helpers/fontawesome-icons.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -99,8 +98,28 @@ const Edit = ({
 		]);
 	}, [ attributes.fontSize, attributes.fontFamily, attributes.fontVariant, attributes.fontStyle, attributes.textTransform, attributes.letterSpacing ]);
 
+	// Load the ~143KB icon map lazily; regenerate icon CSS once it resolves.
+	const [ faIcons, setFaIcons ] = useState( null );
+	useEffect( () => {
+		let isMounted = true;
+
+		loadFontAwesomeIcons().then( data => {
+			if ( isMounted ) {
+				setFaIcons( data );
+			}
+		});
+
+		return () => {
+			isMounted = false;
+		};
+	}, []);
+
 	const [ iconsCSSNodeName, setIconsNodeCSS ] = useCSSNode();
 	useEffect( () => {
+		if ( ! faIcons ) {
+			return;
+		}
+
 		const icon = getValue( 'icon' );
 		const openIcon = getValue( 'openItemIcon' );
 
@@ -116,7 +135,7 @@ const Edit = ({
 				font-weight: ${ 'fas' !== openIcon.prefix ? '400' : '900' }
 			}` ]  : [])
 		]);
-	}, [ attributes.icon, attributes.openItemIcon ]);
+	}, [ attributes.icon, attributes.openItemIcon, faIcons ]);
 
 	const [ activeCSSNodeName, setActiveNodeCSS ] = useCSSNode();
 	useEffect( () => {
@@ -175,15 +194,16 @@ const Edit = ({
 						[ 'themeisle-blocks/accordion-item', { title: __( 'Accordion title 1', 'otter-blocks' ) }],
 						[ 'themeisle-blocks/accordion-item', { title: __( 'Accordion title 2', 'otter-blocks' ) }]
 					] }
-					renderAppender={ isSelected ? () =>
-						<BlockAppender
-							buttonText={ __( 'Add Accordion Item', 'otter-blocks' ) }
-							variant="primary"
-							allowedBlock="themeisle-blocks/accordion-item"
-							clientId={ clientId }
-						/> : undefined
-					}
+					renderAppender={ false }
 				/>
+				{ isSelected && (
+					<BlockAppender
+						buttonText={ __( 'Add Accordion Item', 'otter-blocks' ) }
+						variant="primary"
+						allowedBlock="themeisle-blocks/accordion-item"
+						clientId={ clientId }
+					/>
+				) }
 			</div>
 		</Fragment>
 	);

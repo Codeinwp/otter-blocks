@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import apiFetch from '@wordpress/api-fetch';
-
 import {
 	BaseControl,
 	Button,
@@ -22,8 +20,6 @@ import {
 	useState
 } from '@wordpress/element';
 
-import { useDispatch } from '@wordpress/data';
-
 import { applyFilters } from '@wordpress/hooks';
 
 /**
@@ -32,16 +28,14 @@ import { applyFilters } from '@wordpress/hooks';
 import useSettings from '../../../blocks/helpers/use-settings.js';
 import TCPanel from '../template-cloud/TCPanel';
 
-const Integrations = () => {
+const Integrations = ({ setTab }) => {
 	const [ getOption, updateOption, status ] = useSettings();
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
+	const [ cloudflareTurnstileSiteKey, setCloudflareTurnstileSiteKey ] = useState( '' );
+	const [ cloudflareTurnstileSecretKey, setCloudflareTurnstileSecretKey ] = useState( '' );
 	const [ stripeAPI, setStripeAPI ] = useState( '' );
-	const [ openAISecretKey, setOpenAISecretKey ] = useState( '' );
-	const [ toolbarActions, setToolbarActions ] = useState([]);
-
-	const [ maskOpenAISecretKey, setMaskOpenAISecretKey ] = useState( '' );
 
 
 	useEffect( () => {
@@ -54,23 +48,13 @@ const Integrations = () => {
 	}, [ getOption( 'themeisle_google_captcha_api_site_key' ), getOption( 'themeisle_google_captcha_api_secret_key' ) ]);
 
 	useEffect( () => {
+		setCloudflareTurnstileSiteKey( getOption( 'themeisle_cloudflare_turnstile_site_key' ) );
+		setCloudflareTurnstileSecretKey( getOption( 'themeisle_cloudflare_turnstile_secret_key' ) );
+	}, [ getOption( 'themeisle_cloudflare_turnstile_site_key' ), getOption( 'themeisle_cloudflare_turnstile_secret_key' ) ]);
+
+	useEffect( () => {
 		setStripeAPI( getOption( 'themeisle_stripe_api_key' ) );
 	}, [ getOption( 'themeisle_stripe_api_key' ) ]);
-
-	useEffect( () => {
-		const apiKey = getOption( 'themeisle_open_ai_api_key' );
-		if ( ! apiKey || 8 > apiKey.length ) {
-			return;
-		}
-
-		setMaskOpenAISecretKey( apiKey.slice( 0, 3 ) + 'X'.repeat( apiKey.length - 8 ) + apiKey.slice( -4 ) );
-	}, [ getOption( 'themeisle_open_ai_api_key' ) ]);
-
-	useEffect( () => {
-		setToolbarActions( getOption( 'themeisle_blocks_settings_prompt_actions' ) );
-	}, [ getOption( 'themeisle_blocks_settings_prompt_actions' ) ]);
-
-	const { createNotice } = useDispatch( 'core/notices' );
 
 	let ProModules = () => {
 		return (
@@ -189,6 +173,57 @@ const Integrations = () => {
 			</PanelBody>
 
 			<PanelBody
+				title={ __( 'Cloudflare Turnstile', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<PanelRow>
+					<BaseControl
+						help={ __( 'In order to use Turnstile field in the Form block, you need to configure Cloudflare Turnstile keys.', 'otter-blocks' ) }
+						id="otter-options-cloudflare-turnstile"
+						className="otter-button-field"
+					>
+						<TextControl
+							type="password"
+							label={ __( 'Site Key', 'otter-blocks' ) }
+							value={ cloudflareTurnstileSiteKey }
+							placeholder={ __( 'Site Key', 'otter-blocks' ) }
+							disabled={ 'saving' === status }
+							onChange={ value => setCloudflareTurnstileSiteKey( value ) }
+						/>
+
+						<TextControl
+							type="password"
+							label={ __( 'Secret Key', 'otter-blocks' ) }
+							value={ cloudflareTurnstileSecretKey }
+							placeholder={ __( 'Secret Key', 'otter-blocks' ) }
+							disabled={ 'saving' === status }
+							onChange={ value => setCloudflareTurnstileSecretKey( value ) }
+						/>
+
+						<div className="otter-button-group">
+							<Button
+								variant="secondary"
+								isSecondary
+								disabled={ 'saving' === status }
+								onClick={ () => {
+									updateOption( 'themeisle_cloudflare_turnstile_site_key', cloudflareTurnstileSiteKey );
+									updateOption( 'themeisle_cloudflare_turnstile_secret_key', cloudflareTurnstileSecretKey );
+								} }
+							>
+								{ __( 'Save', 'otter-blocks' ) }
+							</Button>
+
+							<ExternalLink
+								href="https://developers.cloudflare.com/turnstile/get-started/"
+							>
+								{ __( 'Get API Key', 'otter-blocks' ) }
+							</ExternalLink>
+						</div>
+					</BaseControl>
+				</PanelRow>
+			</PanelBody>
+
+			<PanelBody
 				title={ __( 'Stripe', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
@@ -238,163 +273,21 @@ const Integrations = () => {
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'OpenAI', 'otter-blocks' ) }
+				title={ __( 'AI Provider', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				<PanelRow>
 					<BaseControl
-						label={ __( 'OpenAI API', 'otter-blocks' ) }
-						help={ __( 'In order to use AI Block, you need to use OpenAI API.', 'otter-blocks' ) }
-						id="otter-options-stripe-api"
-						className="otter-button-field"
+						help={ __( 'OpenAI settings and AI toolbar actions have moved to the AI tab.', 'otter-blocks' ) }
 					>
-						<TextControl
-							type="text"
-							label={ __( 'Secret Key', 'otter-blocks' ) }
-							value={ openAISecretKey }
-							placeholder={ maskOpenAISecretKey ? maskOpenAISecretKey : __( 'OpenAI API Key', 'otter-blocks' ) }
-							disabled={ 'saving' === status }
-							onChange={ value => setOpenAISecretKey( value ) }
-						/>
-
-						<div className="otter-button-group">
-							<Button
-								variant="secondary"
-								isSecondary
-								disabled={ 'saving' === status }
-								onClick={ async() => {
-									try {
-										const response = await apiFetch({
-											path: 'otter/v1/openai/key',
-											method: 'POST',
-											data: {
-												'api_key': openAISecretKey
-											}
-										});
-
-										if ( ! response.success ) {
-											createNotice(
-												'error',
-												response.message ?? __( 'An unknown error occurred.', 'otter-blocks' ),
-												{
-													isDismissible: true,
-													type: 'snackbar'
-												}
-											);
-
-											return;
-										}
-
-										createNotice(
-											'success',
-											__( 'API Key saved successfully.', 'otter-blocks' ),
-											{
-												isDismissible: true,
-												type: 'snackbar'
-											}
-										);
-									} catch ( e ) {
-										createNotice(
-											'error',
-											e?.message ?? __( 'An unknown error occurred.', 'otter-blocks' ),
-											{
-												isDismissible: true,
-												type: 'snackbar'
-											}
-										);
-
-
-									}
-								} }
-							>
-								{ __( 'Save', 'otter-blocks' ) }
-							</Button>
-
-							<ExternalLink
-								href="https://platform.openai.com/account/api-keys"
-							>
-								{ __( 'Get API Key', 'otter-blocks' ) }
-							</ExternalLink>
-
-							<ExternalLink
-								href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
-							>
-								{ __( 'More Info', 'otter-blocks' ) }
-							</ExternalLink>
-						</div>
+						<Button
+							variant="link"
+							onClick={ () => setTab( 'ai' ) }
+						>
+							{ __( 'Go to AI Settings', 'otter-blocks' ) }
+						</Button>
 					</BaseControl>
 				</PanelRow>
-				{
-					0 < getOption( 'themeisle_open_ai_api_key' )?.length ? (
-						<PanelRow>
-							<BaseControl
-								label={ __( 'Toolbar Actions', 'otter-blocks' ) }
-								help={ __( 'Change the actions present in the AI Toolbar.', 'otter-blocks' ) }
-								id="otter-options-toolbar-actions"
-								className="otter-button-field"
-							>
-								<div className="otter-ai-toolbar-actions">
-									{
-										toolbarActions.map( ( action, index ) => {
-											return (
-												<PanelBody title={ action.title } key={ `container-${index}` } initialOpen={false}>
-													<TextControl
-														key={ `name-${index}` }
-														type="text"
-														value={ action.title }
-														label={ __( 'Action Name', 'otter-blocks' ) }
-														placeholder={ __( 'Action Name', 'otter-blocks' ) }
-														disabled={ 'saving' === status }
-														onChange={ value => {
-															const newActions = [ ...toolbarActions ];
-															newActions[ index ].title = value;
-															setToolbarActions( newActions );
-														} }
-													/>
-													<TextControl
-														key={ `prompt-${index}` }
-														type="text"
-														value={ action.prompt }
-														label={ __( 'Prompt', 'otter-blocks' ) }
-														placeholder={ __( 'Prompt', 'otter-blocks' ) }
-														disabled={ 'saving' === status }
-														onChange={ value => {
-															const newActions = [ ...toolbarActions ];
-															newActions[ index ].prompt = value;
-															setToolbarActions( newActions );
-														} }
-													/>
-												</PanelBody>
-											);
-										})
-									}
-								</div>
-
-								<div className="otter-button-group">
-									<Button
-										variant="secondary"
-										isSecondary
-										disabled={ 'saving' === status }
-										onClick={ () => {
-											window.tiTrk?.with( 'otter' ).add({ feature: 'dashboard-integration', featureComponent: 'toolbar-actions' });
-											updateOption( 'themeisle_blocks_settings_prompt_actions', toolbarActions );
-										} }
-									>
-										{ __( 'Save', 'otter-blocks' ) }
-									</Button>
-
-									<ExternalLink
-										href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
-									>
-										{ __( 'More Info', 'otter-blocks' ) }
-									</ExternalLink>
-								</div>
-							</BaseControl>
-						</PanelRow>
-					) : (
-						<></>
-					)
-				}
 			</PanelBody>
 
 			{ Boolean( window?.otterObj?.hasPatternSources ) && <TCPanel/> }

@@ -3,40 +3,42 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { expectBlockByName, insertBlockBySlash } from '../helpers/editor';
+
 test.describe( 'Section Block', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
 	});
 
+	// Arrow-key navigation for Otter blocks is covered in keyboard-navigation.spec.js.
+
 	test( 'can be created by typing "/section"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/section' );
-		await page.keyboard.press( 'Enter' );
-
-		const blocks = await editor.getBlocks();
-		const hasSection = blocks.some( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
-
-		expect( hasSection ).toBeTruthy();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/section',
+			blockName: 'themeisle-blocks/advanced-columns'
+		});
 	});
 
 	test( 'can be created by typing "/section" and choose Single Column', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/section' );
-		await page.keyboard.press( 'Enter' );
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/section',
+			blockName: 'themeisle-blocks/advanced-columns'
+		});
 
-		const hasSection = ( await editor.getBlocks() ).some( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		await editor.canvas.getByRole( 'button', { name: 'Single column' }).click();
 
-		expect( hasSection ).toBeTruthy();
-
-		await page.getByRole( 'button', { name: 'Single column' }).click();
-
-		const blocks = await editor.getBlocks();
-
-		const sectionBlock = blocks.find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		const sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		// Check if w have a column in innerBlocks
 		expect( sectionBlock.innerBlocks.length ).toBe( 1 );
@@ -52,7 +54,7 @@ test.describe( 'Section Block', () => {
 			]
 		});
 
-		let sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		let sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		const columnController = page.getByRole( 'spinbutton', { name: 'Columns' });
 
@@ -61,7 +63,7 @@ test.describe( 'Section Block', () => {
 		// Press the up arrow one time
 		await columnController.press( 'ArrowUp' );
 
-		sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		expect( sectionBlock.innerBlocks.length ).toBe( 2 );
 	});
@@ -79,7 +81,7 @@ test.describe( 'Section Block', () => {
 			]
 		});
 
-		let sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		let sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		const columnController = page.getByRole( 'spinbutton', { name: 'Columns' });
 
@@ -88,7 +90,7 @@ test.describe( 'Section Block', () => {
 		// Press the up arrow one time
 		await columnController.press( 'ArrowDown' );
 
-		sectionBlock = ( await editor.getBlocks() ).find( ( block ) => 'themeisle-blocks/advanced-columns' === block.name );
+		sectionBlock = await expectBlockByName( editor, 'themeisle-blocks/advanced-columns' );
 
 		expect( sectionBlock.innerBlocks.length ).toBe( 1 );
 	});
@@ -96,13 +98,16 @@ test.describe( 'Section Block', () => {
 	test( 'check margin and padding controls', async({ editor, page }) => {
 
 		// Create a Section Block with the slash block shortcut. Add a column and a paragraph block.
-		await page.click( 'role=button[name="Add default block"i]' );
-		await page.keyboard.type( '/section' );
-		await page.keyboard.press( 'Enter' );
-		await page.getByLabel( 'Single column' ).click();
-		await page.getByLabel( 'Add block' ).click();
+		await insertBlockBySlash({
+			editor,
+			page,
+			shortcut: '/section',
+			blockName: 'themeisle-blocks/advanced-columns'
+		});
+		await editor.canvas.getByLabel( 'Single column' ).click();
+		await editor.canvas.getByLabel( 'Add block' ).click();
 		await page.getByRole( 'option', { name: 'Paragraph' }).click();
-		await page.getByLabel( 'Empty block; start writing or' ).fill( 'Test' );
+		await editor.canvas.getByLabel( 'Empty block; start writing or' ).fill( 'Test' );
 		await page.getByLabel( 'Document Overview' ).click();
 		await page.getByRole( 'link', { name: 'Section', exact: true }).click();
 

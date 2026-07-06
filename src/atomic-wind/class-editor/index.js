@@ -9,7 +9,7 @@ import { Button, PanelBody } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import Panel from './panel';
 import blockIcon from '../blocks/icon';
-import { StateControls } from '../states';
+import { StateControls, hasStateConfig } from '../states';
 import { AnimationControls } from '../animations';
 import './style.css';
 
@@ -71,7 +71,24 @@ const withClassEditorToggle = createHigherOrderComponent( ( BlockEdit ) => {
 				<BlockEdit { ...props } />
 				<InspectorControls>
 					<PanelBody
-						title={ __( 'State & Visibility', 'otter-blocks' ) }
+						title={
+							<span style={ { display: 'inline-flex', alignItems: 'center' } }>
+								{ __( 'State & Visibility', 'otter-blocks' ) }
+								{ hasStateConfig( attributes ) && (
+									<span
+										aria-label={ __( 'State configured', 'otter-blocks' ) }
+										style={ {
+											display: 'inline-block',
+											width: '6px',
+											height: '6px',
+											marginLeft: '6px',
+											borderRadius: '50%',
+											background: '#3858e9',
+										} }
+									/>
+								) }
+							</span>
+						}
 						initialOpen={ false }
 					>
 						<StateControls attributes={ attributes } setAttributes={ setAttributes } />

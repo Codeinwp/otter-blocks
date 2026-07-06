@@ -53,6 +53,56 @@ class Test_SVG_Upload extends WP_UnitTestCase {
 		$this->assertTrue( strpos( $contents, '<script>' ) === false );
 	}
 
+	/**
+	 * A form-uploaded SVG must be sanitized based on its real content, even when the
+	 * client-supplied metadata name claims a different (non-SVG) extension.
+	 */
+	public function test_save_file_from_field_sanitizes_svg_regardless_of_metadata_name() {
+		wp_set_current_user( 1 );
+
+		// Allow the SVG sideload without registering Main's sanitizing prefilter,
+		// so this test exercises Form_Utils' own sanitization only.
+		$allow_svg = function ( $mimes ) {
+			$mimes['svg'] = 'image/svg+xml';
+			return $mimes;
+		};
+		$fix_ext = function ( $data, $file, $filename ) {
+			if ( '.svg' === substr( $filename, -4 ) ) {
+				$data['ext']  = 'svg';
+				$data['type'] = 'image/svg+xml';
+			}
+			return $data;
+		};
+		add_filter( 'upload_mimes', $allow_svg );
+		add_filter( 'wp_check_filetype_and_ext', $fix_ext, 10, 3 );
+
+		// Simulate a host where Main's global sanitizing prefilter is absent (e.g. VIP,
+		// or unhooked by a third party). Hooks are restored automatically in teardown.
+		remove_all_filters( 'wp_handle_sideload_prefilter' );
+
+		$file  = $this->handle_upload( __DIR__ . '/assets/xss.svg' );
+		$field = array(
+			'metadata' => array(
+				'name' => 'harmless.png', // Client lies: real upload below is an SVG.
+				'data' => 'file-0',
+			),
+		);
+		$files = array( 'file-0' => $file );
+
+		$result = \ThemeIsle\GutenbergBlocks\Integration\Form_Utils::save_file_from_field( $field, $files );
+
+		remove_filter( 'upload_mimes', $allow_svg );
+		remove_filter( 'wp_check_filetype_and_ext', $fix_ext, 10 );
+
+		$this->assertTrue( $result['success'], isset( $result['error'] ) ? (string) $result['error'] : 'upload failed' );
+		$contents = file_get_contents( $result['file_path'] );
+		$this->assertStringNotContainsString( '<script>', $contents );
+
+		if ( ! empty( $result['file_path'] ) && file_exists( $result['file_path'] ) ) {
+			unlink( $result['file_path'] );
+		}
+	}
+
 	public function test_non_svg_upload_sanitization() {
 		// Set the user as the current user.
 		wp_set_current_user( 1 );
@@ -68,5 +118,95 @@ class Test_SVG_Upload extends WP_UnitTestCase {
 
 		// The filter should not change non-svg file names.
 		$this->assertEquals( $file['name'], $response['name'] );
+	}
+
+	/**
+	 * Ensure default mime types are added by helper.
+	 */
+	public function test_allow_meme_types_adds_expected_defaults() {
+		$main  = new ThemeIsle\GutenbergBlocks\Main();
+		$mimes = $main->allow_meme_types( array() );
+
+		$this->assertSame( 'application/json', $mimes['json'] );
+		$this->assertSame( 'application/zip', $mimes['lottie'] );
+		$this->assertSame( 'image/svg+xml', $mimes['svg'] );
+		$this->assertSame( 'image/svg+xml', $mimes['svgz'] );
+	}
+
+	/**
+	 * Ensure mime helper infers JSON type from filename extension.
+	 */
+	public function test_fix_mime_type_json_svg_sets_json_type_from_filename() {
+		$main = new ThemeIsle\GutenbergBlocks\Main();
+		$data = $main->fix_mime_type_json_svg(
+			array(
+				'ext'  => '',
+				'type' => '',
+			),
+			'/tmp/animation.json',
+			'animation.json'
+		);
+
+		$this->assertSame( 'json', $data['ext'] );
+		$this->assertSame( 'application/json', $data['type'] );
+	}
+
+	/**
+	 * Ensure mime helper infers SVG type from filename extension.
+	 */
+	public function test_fix_mime_type_json_svg_sets_svg_type_from_filename() {
+		$main = new ThemeIsle\GutenbergBlocks\Main();
+		$data = $main->fix_mime_type_json_svg(
+			array(
+				'ext'  => '',
+				'type' => '',
+			),
+			'/tmp/icon.svg',
+			'icon.svg'
+		);
+
+		$this->assertSame( 'svg', $data['ext'] );
+		$this->assertSame( 'image/svg+xml', $data['type'] );
+	}
+
+	/**
+	 * Ensure REST orderby params are extended with rand.
+	 */
+	public function test_add_random_orderby_param_adds_rand_value() {
+		$main   = new ThemeIsle\GutenbergBlocks\Main();
+		$params = array(
+			'orderby' => array(
+				'enum' => array( 'date', 'title' ),
+			),
+		);
+		$result = $main->add_random_orderby_param( $params );
+
+		$this->assertContains( 'rand', $result['orderby']['enum'] );
+	}
+
+	/**
+	 * Ensure used_html_properties keeps input untouched for non-post context.
+	 */
+	public function test_used_html_properties_returns_input_for_non_post_context() {
+		$main = new ThemeIsle\GutenbergBlocks\Main();
+		$tags = array(
+			'div' => array(
+				'class' => true,
+			),
+		);
+
+		$this->assertSame( $tags, $main->used_html_properties( $tags, 'data' ) );
+	}
+
+	/**
+	 * Ensure used_css_properties falls back to defaults for non-array input.
+	 */
+	public function test_used_css_properties_returns_default_when_input_is_not_array() {
+		$main   = new ThemeIsle\GutenbergBlocks\Main();
+		$result = $main->used_css_properties( 'invalid' );
+
+		$this->assertIsArray( $result );
+		$this->assertContains( 'border-radius', $result );
+		$this->assertContains( 'transform', $result );
 	}
 }

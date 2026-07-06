@@ -53,15 +53,15 @@ const ResponsiveControl = ({
 
 	const getView = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const editor = select( 'core/editor' );
 
-		return __experimentalGetPreviewDeviceType && ! isMobile ? __experimentalGetPreviewDeviceType() : getView();
+		return editor?.getDeviceType && ! isMobile ? editor.getDeviceType() : getView();
 	}, []);
 
 	const { updateView } = useDispatch( 'themeisle-gutenberg/data' );
-	const { __experimentalSetPreviewDeviceType } = useDispatch( 'core/edit-post' ) ? useDispatch( 'core/edit-post' ) : false;
+	const { setDeviceType } = useDispatch( 'core/editor' );
 
-	const setView = __experimentalSetPreviewDeviceType && ! isMobile ? __experimentalSetPreviewDeviceType : updateView;
+	const setView = setDeviceType && ! isMobile ? setDeviceType : updateView;
 
 	const id = `inspector-responsive-control-${ instanceId }`;
 

@@ -105,6 +105,19 @@ class Form_Data_Request {
 	protected $warning_codes = array();
 
 	/**
+	 * Infrastructure failure code.
+	 *
+	 * A third pipeline outcome alongside success and rejection: the submission itself is valid,
+	 * but a service it depends on is down (e.g. captcha provider unreachable). It is not an
+	 * error at record-save time — the Submission Record is saved and marked failed — but it
+	 * suppresses primary delivery and produces an error response for the visitor.
+	 *
+	 * @var string|null $infrastructure_failure_code Infrastructure failure code.
+	 * @since 3.1
+	 */
+	protected $infrastructure_failure_code = null;
+
+	/**
 	 * Saving mode of the form data.
 	 *
 	 * @var string $saving_mode Saving mode.
@@ -228,6 +241,16 @@ class Form_Data_Request {
 	 */
 	public function change_provider( $provider ) {
 		$this->changed_provider = $provider;
+	}
+
+	/**
+	 * Get the provider override.
+	 *
+	 * @return bool|string
+	 * @since 3.1.10
+	 */
+	public function get_changed_provider() {
+		return $this->changed_provider;
 	}
 
 	/**
@@ -447,6 +470,74 @@ class Form_Data_Request {
 	public function set_error( $error_code, $error_details = null ) {
 		$this->error_code    = $error_code;
 		$this->error_details = $error_details;
+	}
+
+	/**
+	 * Check if an infrastructure failure occurred (e.g. captcha provider unreachable).
+	 *
+	 * @return bool
+	 * @since 3.1
+	 */
+	public function has_infrastructure_failure() {
+		return ! empty( $this->infrastructure_failure_code );
+	}
+
+	/**
+	 * Get the infrastructure failure code.
+	 *
+	 * @return string|null
+	 * @since 3.1
+	 */
+	public function get_infrastructure_failure_code() {
+		return $this->infrastructure_failure_code;
+	}
+
+	/**
+	 * Mark the submission as hit by an infrastructure failure.
+	 *
+	 * Unlike set_error(), this does not short-circuit the pipeline before record save:
+	 * the Submission Record is still saved (and marked failed), primary delivery is
+	 * skipped and the visitor sees the configured error message.
+	 *
+	 * @param string $code The failure code.
+	 * @param string $details The failure details.
+	 * @return void
+	 * @since 3.1
+	 */
+	public function mark_infrastructure_failure( $code, $details = null ) {
+		$this->infrastructure_failure_code = $code;
+		$this->add_warning( $code, $details );
+	}
+
+	/**
+	 * Check if a Submission Record was saved for this request.
+	 *
+	 * @return bool
+	 * @since 3.1
+	 */
+	public function has_record_id() {
+		return ! empty( $this->metadata['otter_form_record_id'] );
+	}
+
+	/**
+	 * Get the Submission Record post ID.
+	 *
+	 * @return int|null
+	 * @since 3.1
+	 */
+	public function get_record_id() {
+		return $this->has_record_id() ? (int) $this->metadata['otter_form_record_id'] : null;
+	}
+
+	/**
+	 * Set the Submission Record post ID.
+	 *
+	 * @param int $record_id The record post ID.
+	 * @return void
+	 * @since 3.1
+	 */
+	public function set_record_id( $record_id ) {
+		$this->metadata['otter_form_record_id'] = $record_id;
 	}
 
 	/**

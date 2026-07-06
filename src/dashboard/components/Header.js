@@ -23,6 +23,11 @@ const NAVIGATION_ITEMS = [
 		visibility: true
 	},
 	{
+		slug: 'ai',
+		label: __( 'AI', 'otter-blocks' ),
+		visibility: true
+	},
+	{
 		slug: 'integrations',
 		label: __( 'Integrations', 'otter-blocks' ),
 		visibility: true

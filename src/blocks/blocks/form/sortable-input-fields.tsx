@@ -1,12 +1,4 @@
 /**
- * External dependencies
- */
-import {
-	SortableElement,
-	SortableHandle
-} from 'react-sortable-hoc';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -14,15 +6,13 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import type { FormInputProps } from './input/types.d.ts';
 
-const DragHandle = SortableHandle( () => {
-	return (
-		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__drag" tabIndex={ 0 }>
-			<span></span>
-		</div>
-	);
-});
+/**
+ * Internal dependencies
+ */
+import { SortableDragHandle, useSortableRow } from '../../components/sortable/index.js';
 
 type SortableTabProps = {
+	id: string;
     item: { parentClientId: string, inputField: FormInputProps}
     actions: {
         select?: ( clientId: string ) => void
@@ -67,13 +57,26 @@ const extractFieldName = ( input: FormInputProps ) => {
 	return 'textarea';
 };
 
-export const SortableInputField = SortableElement( ({ item, actions } : SortableTabProps ) => {
+export const SortableInputField = ({ id, item, actions } : SortableTabProps ) => {
 	const { inputField } = item;
 	const fieldName = extractFieldName( inputField );
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		style
+	} = useSortableRow( id );
 
 	return (
-		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">
-			<DragHandle />
+		<div
+			ref={ setNodeRef }
+			style={ style }
+			className="wp-block-themeisle-blocks-tabs-inspector-tab-option"
+		>
+			<SortableDragHandle
+				listeners={ listeners }
+				attributes={ attributes }
+			/>
 
 			<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__name">
 				{ 'stripe' === fieldName ? fieldNames.stripe : ( inputField?.attributes?.label ?? fieldNames[fieldName] ?? __( 'Invalid Field', 'otter-blocks' ) ) }
@@ -96,4 +99,4 @@ export const SortableInputField = SortableElement( ({ item, actions } : Sortable
 			/>
 		</div>
 	);
-});
+};

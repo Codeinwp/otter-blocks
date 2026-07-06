@@ -60,7 +60,7 @@ class Form_Multiple_Choice_Block {
 		if ( 'select' === $field_type ) {
 			$output .= $this->render_select_field( $label, $options, $id, $mapped_name, $has_multiple_selection, $is_required );
 		} else {
-			$output .= '<label class="otter-form-input-label" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
+			$output .= '<label class="otter-form-input-label"><span class="otter-form-input-label__label">' . $label . '</span>' . $this->render_required_sign( $is_required ) . '</label>';
 
 			$output .= '<div class="o-form-choices">';
 
@@ -141,7 +141,7 @@ class Form_Multiple_Choice_Block {
 	 * @return string
 	 */
 	public function render_select_field( $label, $options_array, $id, $name, $is_multiple, $is_required ) {
-		$output  = '<label class="otter-form-input-label" for="' . esc_attr( $id ) . '" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
+		$output  = '<label class="otter-form-input-label" for="' . esc_attr( $id ) . '"><span class="otter-form-input-label__label">' . $label . '</span>' . $this->render_required_sign( $is_required ) . '</label>';
 		$output .= '<select id="' . esc_attr( $id ) . '" ' . ( $is_multiple ? ' multiple ' : '' ) . ( $is_required ? ' required ' : '' ) . ' name="' . esc_attr( $name ) . '">';
 
 		foreach ( $options_array as $option ) {

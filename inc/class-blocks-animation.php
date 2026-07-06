@@ -67,13 +67,6 @@ class Blocks_Animation {
 		$asset_file           = include BLOCKS_ANIMATION_PATH . '/build/animation/index.asset.php';
 		$is_using_otter_files = defined( 'BLOCKS_ANIMATION_OTTER' );
 
-		wp_enqueue_style(
-			'otter-animation',
-			BLOCKS_ANIMATION_URL . 'build/animation/index.css',
-			array(),
-			$asset_file['version']
-		);
-
 		if ( defined( 'OTTER_BLOCKS_VERSION' ) ) {
 			array_push( $asset_file['dependencies'], 'otter-blocks' );
 		}
@@ -129,6 +122,22 @@ class Blocks_Animation {
 	 * @access  public
 	 */
 	public function enqueue_block_frontend_assets() {
+		if ( is_admin() ) {
+			// Editor context (including the iframed canvas): enqueue the animation
+			// styles here so WordPress loads them into the iframe natively.
+			// Enqueuing on `enqueue_block_editor_assets` would load them only in the
+			// parent document, and WordPress 6.9+ warns when copying them into the
+			// iframe.
+			$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/index.asset.php';
+			wp_enqueue_style(
+				'otter-animation',
+				BLOCKS_ANIMATION_URL . 'build/animation/index.css',
+				array(),
+				$asset_file['version']
+			);
+			return;
+		}
+
 		if ( did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) {
 			self::$can_load_frontend = false;
 		}
@@ -425,7 +434,7 @@ class Blocks_Animation {
 		if ( ! isset( $_POST['nonce'] ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), 'otter_animation_dismiss_welcome_notice' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'otter_animation_dismiss_welcome_notice' ) ) {
 			return;
 		}
 		update_option( 'otter_animation_dismiss_welcome_notice', true );

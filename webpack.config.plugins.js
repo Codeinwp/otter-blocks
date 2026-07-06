@@ -3,7 +3,10 @@ const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const path = require( 'path' );
 
-defaultConfig.plugins.splice( 1, 1 ); // We need to remove Core's Copy Files plugin.
+// Remove CopyPlugin only; PhpFilePathsPlugin was added at index 1 in @wordpress/scripts 32+.
+defaultConfig.plugins = defaultConfig.plugins.filter(
+	( plugin ) => plugin.constructor.name !== 'CopyPlugin'
+);
 
 const changeTextDomain = textdomain => {
 	return {

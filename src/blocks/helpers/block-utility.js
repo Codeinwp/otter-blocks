@@ -25,6 +25,7 @@ import {
  */
 import globalDefaultsBlocksAttrs from '../plugins/options/global-defaults/defaults.js';
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { useRefEffect } from '@wordpress/compose';
 
 /**
  * Initiate the global id tracker with an empty list if it is the case.
@@ -43,8 +44,11 @@ window.themeisleGutenberg.blockIDs ??= [];
 export const addGlobalDefaults = ( attributes, setAttributes, name, defaultAttributes ) => {
 
 	// Check if the globals default are available and its values are different from the base values.
-	if ( undefined !== window.themeisleGutenberg?.globalDefaults && ! isEqual( globalDefaultsBlocksAttrs[name], window.themeisleGutenberg.globalDefaults[name]) ) {
-		const defaultGlobalAttrs = { ...window.themeisleGutenberg.globalDefaults[name] };
+	// Optional chaining throughout: a corrupt/empty option localizes globalDefaults as null.
+	const globalDefaults = window.themeisleGutenberg?.globalDefaults?.[ name ];
+
+	if ( globalDefaults && ! isEqual( globalDefaultsBlocksAttrs[name], globalDefaults ) ) {
+		const defaultGlobalAttrs = { ...globalDefaults };
 
 		const attrs = Object.keys( defaultGlobalAttrs )
 			.filter( attr => isEqual( attributes[ attr ], defaultAttributes[ attr ]?.default ) ) // Keep only the properties with the default value.
@@ -411,8 +415,125 @@ export const useCSSNode = ( options = {}) => {
  */
 export const getEditorIframe = () => ( document.querySelector( 'iframe[name^="editor-canvas"]' ) );
 
+const pendingIframeScriptCallbacks = new Map();
+const pendingIframeScriptInflight = new Set();
+
+/**
+ * Run all queued callbacks for a script copied into the editor iframe.
+ *
+ * @param {string} assetSelectorId The id selector of the asset.
+ */
+const flushIframeScriptCallbacks = ( assetSelectorId ) => {
+	const queue = pendingIframeScriptCallbacks.get( assetSelectorId );
+
+	if ( ! queue?.length ) {
+		return;
+	}
+
+	pendingIframeScriptCallbacks.delete( assetSelectorId );
+	queue.forEach( ( cb ) => cb() );
+};
+
+/**
+ * Queue a callback until an iframe script asset has finished loading.
+ *
+ * @param {string}   assetSelectorId The id selector of the asset.
+ * @param {Function} callback        The callback.
+ */
+const queueIframeScriptCallback = ( assetSelectorId, callback ) => {
+	if ( ! pendingIframeScriptCallbacks.has( assetSelectorId ) ) {
+		pendingIframeScriptCallbacks.set( assetSelectorId, [] );
+	}
+
+	pendingIframeScriptCallbacks.get( assetSelectorId ).push( callback );
+};
+
+/**
+ * Whether a copied iframe script node has finished loading.
+ *
+ * @param {HTMLScriptElement} scriptEl The script element.
+ * @return {boolean} True when the script is ready.
+ */
+const isIframeScriptLoaded = ( scriptEl ) => {
+	return Boolean(
+		scriptEl.complete ||
+		'complete' === scriptEl.readyState ||
+		'loaded' === scriptEl.readyState
+	);
+};
+
+/**
+ * Whether a copied iframe script has finished executing in the iframe window.
+ *
+ * @param {Window}                 iframeWindow    The iframe window.
+ * @param {string}                 assetSelectorId The id selector of the asset.
+ * @param {HTMLScriptElement|null} scriptEl        The copied script element.
+ * @return {boolean} True when the asset is ready to use.
+ */
+const isIframeScriptReady = ( iframeWindow, assetSelectorId, scriptEl ) => {
+	if ( '#leaflet-js' === assetSelectorId ) {
+		return Boolean( iframeWindow?.L );
+	}
+
+	return Boolean( scriptEl && isIframeScriptLoaded( scriptEl ) );
+};
+
+/**
+ * Wait until a copied iframe script is ready, then flush queued callbacks.
+ *
+ * @param {string}                 assetSelectorId The id selector of the asset.
+ * @param {Window}                 iframeWindow    The iframe window.
+ * @param {HTMLScriptElement|null} scriptEl        The copied script element.
+ */
+const waitForIframeScriptReady = ( assetSelectorId, iframeWindow, scriptEl ) => {
+	const tryFlush = () => {
+		if ( isIframeScriptReady( iframeWindow, assetSelectorId, scriptEl ) ) {
+			flushIframeScriptCallbacks( assetSelectorId );
+			return true;
+		}
+
+		return false;
+	};
+
+	if ( tryFlush() ) {
+		return;
+	}
+
+	if ( scriptEl && ! scriptEl.dataset.otterIframeCallbackBound ) {
+		scriptEl.dataset.otterIframeCallbackBound = 'true';
+		scriptEl.addEventListener( 'load', tryFlush );
+	}
+
+	let attempts = 0;
+	const poll = () => {
+		if ( ! pendingIframeScriptCallbacks.has( assetSelectorId ) ) {
+			return;
+		}
+
+		if ( tryFlush() || 300 < attempts++ ) {
+			return;
+		}
+
+		requestAnimationFrame( poll );
+	};
+
+	requestAnimationFrame( poll );
+};
+
 /**
  * Copy the JS node asset from main document to the iframe.
+ *
+ * WordPress can inject scripts into the canvas iframe natively: anything
+ * enqueued on the `enqueue_block_assets` hook is collected by
+ * `_wp_get_iframed_editor_assets()` and printed inside the iframe at boot
+ * (see the `is_admin()` branch in `inc/class-registration.php`, which already
+ * uses this for editor styles). We deliberately do NOT use that for the heavy
+ * third-party scripts (Leaflet ~150KB, Lottie player ~280KB, Glide): the
+ * iframe assets are resolved once, server-side, on editor load, so the native
+ * route would ship them in every editor session even when no such block is
+ * used. Copying on demand from the parent document keeps them lazy, at the
+ * cost of the load/readiness tracking below. If that trade-off ever flips,
+ * delete this machinery and enqueue the scripts on `enqueue_block_assets`.
  *
  * @param {string}   assetSelectorId The id of the asset.
  * @param {Function} callback        The callback.
@@ -420,25 +541,175 @@ export const getEditorIframe = () => ( document.querySelector( 'iframe[name^="ed
 export const copyScriptAssetToIframe = ( assetSelectorId, callback ) => {
 	const iframe = getEditorIframe();
 	callback ??= () => {};
-	if ( Boolean( iframe ) ) {
-		if ( Boolean( iframe?.contentWindow?.document.querySelector( assetSelectorId ) ) ) {
+
+	if ( ! iframe?.contentWindow?.document ) {
+		return;
+	}
+
+	const iframeWindow = iframe.contentWindow;
+	const iframeDocument = iframeWindow.document;
+	const existing = iframeDocument.querySelector( assetSelectorId );
+
+	if ( existing ) {
+		if ( isIframeScriptReady( iframeWindow, assetSelectorId, existing ) ) {
 			callback?.();
 		} else {
-			const original = document.querySelector( assetSelectorId );
-
-			if ( ! Boolean( original ) ) {
-				console.warn( `Selector: ${ assetSelectorId } is invalid.` );
-				return;
-			}
-
-			const n = iframe.contentWindow.document.createElement( 'script' );
-			n.onload = callback;
-			n.id = original.id;
-			n.type = 'text/javascript';
-			iframe.contentWindow.document?.head.appendChild( n );
-			n.src = original.src;
+			queueIframeScriptCallback( assetSelectorId, callback );
+			waitForIframeScriptReady( assetSelectorId, iframeWindow, existing );
 		}
+
+		return;
 	}
+
+	if ( pendingIframeScriptInflight.has( assetSelectorId ) ) {
+		queueIframeScriptCallback( assetSelectorId, callback );
+		return;
+	}
+
+	const original = document.querySelector( assetSelectorId );
+
+	if ( ! Boolean( original ) ) {
+		console.warn( `Selector: ${ assetSelectorId } is invalid.` );
+		return;
+	}
+
+	pendingIframeScriptInflight.add( assetSelectorId );
+	queueIframeScriptCallback( assetSelectorId, callback );
+
+	const script = iframeDocument.createElement( 'script' );
+	script.onload = () => {
+		pendingIframeScriptInflight.delete( assetSelectorId );
+		waitForIframeScriptReady( assetSelectorId, iframeWindow, script );
+	};
+	script.onerror = () => {
+		pendingIframeScriptInflight.delete( assetSelectorId );
+		pendingIframeScriptCallbacks.delete( assetSelectorId );
+	};
+	script.id = original.id;
+	script.type = 'text/javascript';
+	iframeDocument.head.appendChild( script );
+	script.src = original.src;
+};
+
+/**
+ * Mount the shared Otter icon gradient definition into a document.
+ *
+ * Block icons in the iframed editor (`apiVersion: 3`) reference
+ * `fill: url(#o-icon-fill)` from CSS, so the gradient must live in the same
+ * document as the SVG icons.
+ *
+ * @param {Document} ownerDocument The document that should own the gradient.
+ */
+export const mountIconGradient = ( ownerDocument ) => {
+	if ( ! ownerDocument?.body || ownerDocument.querySelector( 'svg.o-icon-gradient' ) ) {
+		return;
+	}
+
+	const gradient = ownerDocument.createElement( 'div' );
+	gradient.setAttribute( 'style', 'height: 0; width: 0; overflow: hidden;' );
+	gradient.setAttribute( 'aria-hidden', 'true' );
+	gradient.innerHTML = `
+		<svg xmlns="http://www.w3.org/2000/svg" class="o-icon-gradient" height="0" width="0" style="opacity: 0">
+			<defs>
+				<linearGradient id="o-icon-fill">
+					<stop offset="0%" stop-color="#ED6F57" stop-opacity="1"></stop>
+					<stop offset="100%" stop-color="#F22B6C" stop-opacity="1"></stop>
+				</linearGradient>
+			</defs>
+		</svg>
+	`.trim();
+	ownerDocument.body.appendChild( gradient );
+};
+
+/**
+ * Ensure the Otter icon gradient exists in the editor and canvas iframe.
+ */
+export const mountIconGradientForEditor = () => {
+	mountIconGradient( document );
+
+	const iframe = getEditorIframe();
+
+	if ( iframe?.contentDocument ) {
+		mountIconGradient( iframe.contentDocument );
+	}
+};
+
+/**
+ * Keep the icon gradient available when the editor canvas iframe appears.
+ */
+export const watchEditorIframeIconGradient = () => {
+	mountIconGradientForEditor();
+
+	const observer = new MutationObserver( () => {
+		mountIconGradientForEditor();
+	});
+
+	observer.observe( document.body, {
+		childList: true,
+		subtree: true
+	});
+
+	document.addEventListener( 'load', ( event ) => {
+		if ( event.target?.name?.startsWith?.( 'editor-canvas' ) ) {
+			mountIconGradientForEditor();
+		}
+	}, true );
+};
+
+/**
+ * Get the document that owns a block's DOM element.
+ *
+ * In the iframed editor (`apiVersion: 3`) the block lives inside the editor
+ * canvas iframe, so its `ownerDocument` is the iframe document — not the
+ * top-level `document`. Reading from the element's `ownerDocument` is the
+ * pattern recommended by the WordPress block migration guide and is correct in
+ * nested, FSE and Tablet/Mobile preview contexts too. Falls back to the
+ * top-level `document` when no element is available yet (e.g. before the ref is
+ * attached) or when the editor is not iframed.
+ *
+ * @param {HTMLElement|{current: ?HTMLElement}|null} [refOrElement] The block element or a ref to it.
+ * @return {Document} The document that owns the element.
+ */
+export const getBlockDocument = ( refOrElement ) => {
+	const element = refOrElement?.current ?? refOrElement;
+	return element?.ownerDocument ?? document;
+};
+
+/**
+ * Get the window that owns a block's DOM element.
+ *
+ * Companion to {@link getBlockDocument}. Use this to read editor globals (e.g.
+ * `themeisleGutenberg`), browser APIs (`location`, `getComputedStyle`) or
+ * third-party libraries from within the iframed editor instead of reaching for
+ * the top-level `window`.
+ *
+ * @param {HTMLElement|{current: ?HTMLElement}|null} [refOrElement] The block element or a ref to it.
+ * @return {Window} The window that owns the element.
+ */
+export const getBlockWindow = ( refOrElement ) => {
+	return getBlockDocument( refOrElement ).defaultView ?? window;
+};
+
+/**
+ * Run an effect against a block's DOM element and its owning document/window.
+ *
+ * Thin wrapper over `useRefEffect` that hands the callback the element plus the
+ * `ownerDocument`/`defaultView` it belongs to, so third-party libraries (Glide,
+ * Leaflet, Google Maps, …) initialise against the iframed editor's document
+ * rather than the top-level one. Return a cleanup function as usual. Spread the
+ * returned ref callback onto the target element (it can be merged with other
+ * refs via `@wordpress/compose`'s `useMergeRefs`).
+ *
+ * @param {(element: HTMLElement, ownerDocument: Document, ownerWindow: Window) => (void | (() => void))} callback     The setup callback.
+ * @param {Array}                                                                                         dependencies Effect dependencies, forwarded to `useRefEffect`.
+ * @return {Function} A ref callback to attach to the target element.
+ */
+export const useBlockElementEffect = ( callback, dependencies ) => {
+	return useRefEffect( ( element ) => {
+		const ownerDocument = element?.ownerDocument ?? document;
+		const ownerWindow = ownerDocument.defaultView ?? window;
+		return callback( element, ownerDocument, ownerWindow );
+	}, dependencies );
 };
 
 export const buildGetSyncValue = ( name, attributes, defaultAttributes ) => {
@@ -510,7 +781,7 @@ export function insertBlockBelow( clientId, block ) {
 
 export class GlobalStateMemory {
 	constructor() {
-		this.states = {};
+		this.states = Object.create( null );
 		window.addEventListener( 'message', this.handleMessage.bind( this ) );
 	}
 
@@ -525,7 +796,7 @@ export class GlobalStateMemory {
 
 			if ( 'set' === action ) {
 				if ( this.states[location] === undefined ) {
-					this.states[location] = {};
+					this.states[location] = Object.create( null );
 				}
 
 				this.states[location][key] = value;

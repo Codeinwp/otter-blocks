@@ -55,7 +55,7 @@ domReady( () => {
 		// build the JSON object for structured data
 		items.forEach( item => {
 			const questionElem = item.querySelector( ':scope > .wp-block-themeisle-blocks-accordion-item__title > *' );
-			const question = questionElem?.innerText ?? questionElem?.innerHTML?.replace( /<[^>]*>?/gm, '' );
+			const question = questionElem?.textContent;
 			const textElements = item.querySelectorAll( ':scope > .wp-block-themeisle-blocks-accordion-item__content :is(p, h1, h2, h3, h4, h5, h6)' );
 			const answer = Array.from( textElements ).map( elem => elem.innerHTML ).join( ' ' );
 

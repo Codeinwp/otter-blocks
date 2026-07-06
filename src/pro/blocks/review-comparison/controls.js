@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { edit } from '@wordpress/icons';
+import { pencil } from '@wordpress/icons';
 
 /**
  * WordPress dependencies
@@ -23,7 +23,7 @@ const Controls = ({
 			<ToolbarGroup>
 				<ToolbarButton
 					label={ __( 'Edit', 'otter-pro' ) }
-					icon={ edit }
+					icon={ pencil }
 					onClick={ onEdit }
 				/>
 			</ToolbarGroup>
