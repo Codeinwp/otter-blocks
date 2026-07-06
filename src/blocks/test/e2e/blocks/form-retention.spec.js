@@ -395,6 +395,31 @@ test.describe( 'Form submission retention', () => {
 		await expect( page.locator( '#submitpost .metadata' ) ).toContainText( 'Delivery' );
 		await expect( page.locator( '#submitpost .metadata' ) ).toContainText( 'Failed' );
 		await expect( page.locator( '#submitpost .metadata li' ).first() ).toContainText( 'email' );
+		await expect( page.locator( '#submitpost .metadata li' ).first() ).toContainText( 'Email could not be sent' );
+
+		// The Errors meta box lists each recorded issue with its code and message.
+		const errorsBox = page.locator( '#form_record_errors_meta_box' );
+		await expect( errorsBox ).toBeVisible();
+		await expect( errorsBox.locator( 'tbody tr' ).first().locator( 'code' ) ).toHaveText( '106' );
+		await expect( errorsBox.locator( 'tbody tr' ).first() ).toContainText( 'Email could not be sent' );
+
+		// A clean record renders Complete delivery and no Errors meta box at all.
+		await otterUtils.setMailMode( 'ok' );
+
+		await submitFormViaApi( requestUtils, {
+			nonceValue: await otterUtils.getFormVerificationNonce(),
+			formOption,
+			formId
+		});
+
+		const cleanRecord = ( await otterUtils.getFormRecords() )
+			.filter( record => record.form === formId )
+			.find( record => record.id !== recordId );
+
+		await page.goto( `/wp-admin/post.php?post=${cleanRecord.id}&action=edit` );
+
+		await expect( page.locator( '#submitpost .metadata' ) ).toContainText( 'Complete' );
+		await expect( page.locator( '#form_record_errors_meta_box' ) ).toBeHidden();
 	});
 
 	test( 'required multiple-choice field stores its label without the asterisk', async({ editor, page, otterUtils }) => {
