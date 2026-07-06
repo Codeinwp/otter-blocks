@@ -472,6 +472,37 @@ test.describe( 'Form submission retention', () => {
 		await expect( errorsBox.locator( 'tbody tr' ).first().locator( 'code' ) ).toHaveText( '210' );
 	});
 
+	test( 'form filter is a locked upsell on free and filters records with Pro', async({ page, otterUtils, requestUtils }) => {
+		const formOption = `e2e-filters-${Date.now()}`;
+		const formA = 'wp-block-themeisle-blocks-form-filter-a';
+		const formB = 'wp-block-themeisle-blocks-form-filter-b';
+
+		await otterUtils.upsertFormOption({ form: formOption });
+
+		const nonceValue = await otterUtils.getFormVerificationNonce();
+		await submitFormViaApi( requestUtils, { nonceValue, formOption, formId: formA });
+		await submitFormViaApi( requestUtils, { nonceValue, formOption, formId: formB });
+
+		const records = await otterUtils.getFormRecords();
+		const recordA = records.find( record => record.form === formA );
+		const recordB = records.find( record => record.form === formB );
+
+		// Free: the filters render as disabled selects with the Pro upsell.
+		await page.goto( '/wp-admin/edit.php?post_type=otter_form_record' );
+
+		await expect( page.locator( '.o-filters-locked select' ).first() ).toBeDisabled();
+
+		// Pro: the form dropdown filters the list down to the selected form's records.
+		await otterUtils.activatePro();
+		await page.reload();
+
+		await page.locator( '#filter-by-form' ).selectOption( formA );
+		await page.locator( '#post-query-submit' ).click();
+
+		await expect( page.locator( `#post-${recordA.id}` ) ).toBeVisible();
+		await expect( page.locator( `#post-${recordB.id}` ) ).toBeHidden();
+	});
+
 	test( 'required multiple-choice field stores its label without the asterisk', async({ editor, page, otterUtils }) => {
 		// Regression for the required-field asterisk leaking into the stored/emailed label.
 		// The required sign must render in its own span so the frontend extracts only the
