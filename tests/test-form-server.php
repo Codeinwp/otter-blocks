@@ -1167,6 +1167,111 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the captcha provider setter lowercases valid slugs and falls back to reCaptcha otherwise.
+	 */
+	public function test_captcha_provider_setting_sanitizes_and_falls_back_to_recaptcha() {
+		$settings = new Form_Settings_Data( array() );
+
+		$this->assertFalse( $settings->has_captcha_provider() );
+		$this->assertSame( 'recaptcha', $settings->get_captcha_provider() );
+
+		$settings->set_captcha_provider( 'TURNSTILE' );
+		$this->assertTrue( $settings->has_captcha_provider() );
+		$this->assertSame( 'turnstile', $settings->get_captcha_provider() );
+
+		$settings->set_captcha_provider( 'hcaptcha' );
+		$this->assertSame( 'recaptcha', $settings->get_captcha_provider() );
+
+		$settings->set_captcha_provider( 123 );
+		$this->assertTrue( $settings->has_captcha_provider() );
+		$this->assertSame( 'recaptcha', $settings->get_captcha_provider() );
+	}
+
+	/**
+	 * Ensure the AI autoresponder setter normalizes input to a bool flag and a string prompt.
+	 */
+	public function test_ai_autoresponder_setting_normalizes_input() {
+		$settings = new Form_Settings_Data( array() );
+
+		$settings->set_ai_autoresponder( 'not-an-array' );
+		$this->assertSame(
+			array(
+				'enabled' => false,
+				'prompt'  => '',
+			),
+			$settings->get_ai_autoresponder()
+		);
+		$this->assertFalse( $settings->has_ai_autoresponder() );
+
+		$settings->set_ai_autoresponder( array( 'enabled' => true ) );
+		$this->assertSame(
+			array(
+				'enabled' => true,
+				'prompt'  => '',
+			),
+			$settings->get_ai_autoresponder()
+		);
+		$this->assertFalse( $settings->has_ai_autoresponder() );
+
+		$settings->set_ai_autoresponder(
+			array(
+				'enabled' => 1,
+				'prompt'  => 42,
+			)
+		);
+		$this->assertSame(
+			array(
+				'enabled' => true,
+				'prompt'  => '42',
+			),
+			$settings->get_ai_autoresponder()
+		);
+		$this->assertTrue( $settings->has_ai_autoresponder() );
+	}
+
+	/**
+	 * Ensure a changed provider on the request overrides the form-options provider resolution.
+	 */
+	public function test_changed_provider_overrides_form_options_provider() {
+		$options_handlers = array(
+			'submit' => function () {},
+		);
+		$changed_handlers = array(
+			'submit' => function () {},
+		);
+
+		$this->form_providers->providers['options-provider'] = array(
+			'frontend' => $options_handlers,
+			'editor'   => array(),
+		);
+		$this->form_providers->providers['changed-provider'] = array(
+			'frontend' => $changed_handlers,
+			'editor'   => array(),
+		);
+
+		$form_data = new Form_Data_Request( $this->get_frontend_request() );
+		$form_data->set_form_options(
+			new Form_Settings_Data(
+				array(
+					'provider' => 'options-provider',
+					'apiKey'   => 'api-key',
+					'listId'   => 'list-id',
+				)
+			)
+		);
+
+		// No override: resolves the provider configured in the form options.
+		$this->assertSame( $options_handlers, $this->form_providers->select_provider_from_form_options( $form_data ) );
+
+		$form_data->change_provider( 'changed-provider' );
+		$this->assertSame( $changed_handlers, $this->form_providers->select_provider_from_form_options( $form_data ) );
+
+		// An empty override falls through to the form-options resolution.
+		$form_data->change_provider( '' );
+		$this->assertSame( $options_handlers, $this->form_providers->select_provider_from_form_options( $form_data ) );
+	}
+
+	/**
 	 * Ensure malformed JSON is surfaced as a form response error.
 	 */
 	public function test_frontend_submission_rejects_malformed_request() {

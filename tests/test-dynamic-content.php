@@ -871,4 +871,228 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		$this->assertStringNotContainsString( 'secret-token-data', $result );
 	}
+
+	/**
+	 * Invoke a private method on the PRO Dynamic_Content instance.
+	 *
+	 * @param string $method Method name.
+	 * @param array  $args   Arguments.
+	 * @return mixed
+	 */
+	private function invoke_pro_private( $method, $args ) {
+		$reflection = new ReflectionMethod( \ThemeIsle\OtterPro\Plugins\Dynamic_Content::class, $method );
+		$reflection->setAccessible( true );
+		return $reflection->invokeArgs( $this->dynamic_content_pro, $args );
+	}
+
+	/**
+	 * Sub-field values are collected across nested rows for a multi-segment path.
+	 */
+	public function test_collect_acf_sub_field_values_multi_segment_path() {
+		$rows = array(
+			array(
+				'inner' => array(
+					array( 'leaf' => 'alpha' ),
+					array( 'leaf' => 'beta' ),
+				),
+			),
+			array(
+				'inner' => array(
+					array( 'leaf' => 'gamma' ),
+				),
+			),
+		);
+
+		$values = $this->invoke_pro_private( 'collect_acf_sub_field_values', array( $rows, array( 'inner', 'leaf' ) ) );
+
+		$this->assertEquals( array( 'alpha', 'beta', 'gamma' ), $values );
+	}
+
+	/**
+	 * Non-string leaf values (ints, arrays, empty strings) are skipped.
+	 */
+	public function test_collect_acf_sub_field_values_skips_non_string_leaves() {
+		$rows = array(
+			array( 'field' => 'kept' ),
+			array( 'field' => 42 ),
+			array( 'field' => array( 'nested' => 'ignored' ) ),
+			array( 'field' => '' ),
+			array( 'other' => 'no match' ),
+		);
+
+		$values = $this->invoke_pro_private( 'collect_acf_sub_field_values', array( $rows, array( 'field' ) ) );
+
+		$this->assertEquals( array( 'kept' ), $values );
+	}
+
+	/**
+	 * An empty path returns an empty array (guard clause).
+	 */
+	public function test_collect_acf_sub_field_values_empty_path() {
+		$rows = array( array( 'field' => 'value' ) );
+
+		$values = $this->invoke_pro_private( 'collect_acf_sub_field_values', array( $rows, array() ) );
+
+		$this->assertEquals( array(), $values );
+	}
+
+	/**
+	 * Nested repeater recursion merges leaf values from all nested rows in order.
+	 */
+	public function test_collect_acf_sub_field_values_merges_nested_rows() {
+		$rows = array(
+			array(
+				'nested' => array(
+					array( 'leaf' => 'one' ),
+					array( 'leaf' => 'two' ),
+				),
+			),
+			array(
+				// Intermediate value that is not an array is skipped.
+				'nested' => 'not-an-array',
+			),
+			array(
+				'nested' => array(
+					array( 'leaf' => 'three' ),
+					array( 'other' => 'skipped' ),
+				),
+			),
+		);
+
+		$values = $this->invoke_pro_private( 'collect_acf_sub_field_values', array( $rows, array( 'nested', 'leaf' ) ) );
+
+		$this->assertEquals( array( 'one', 'two', 'three' ), $values );
+	}
+
+	/**
+	 * Image sub-field collection keeps any non-empty value (arrays, ints, strings).
+	 */
+	public function test_collect_acf_sub_field_images_collects_across_rows() {
+		$image_array = array(
+			'ID'  => 12,
+			'url' => 'https://example.com/a.png',
+		);
+
+		$rows = array(
+			array( 'image' => $image_array ),
+			array( 'image' => 34 ),
+			array( 'image' => 'https://example.com/b.png' ),
+			array( 'image' => 0 ), // Empty value skipped.
+			array( 'other' => 'no match' ),
+		);
+
+		$values = $this->invoke_pro_private( 'collect_acf_sub_field_images', array( $rows, array( 'image' ) ) );
+
+		$this->assertEquals( array( $image_array, 34, 'https://example.com/b.png' ), $values );
+	}
+
+	/**
+	 * Image collection recurses through nested repeater rows and guards the empty path.
+	 */
+	public function test_collect_acf_sub_field_images_nested_recursion() {
+		$rows = array(
+			array(
+				'gallery' => array(
+					array( 'img' => 11 ),
+					array( 'img' => 22 ),
+				),
+			),
+			array(
+				'gallery' => array(
+					array( 'img' => 33 ),
+				),
+			),
+		);
+
+		$values = $this->invoke_pro_private( 'collect_acf_sub_field_images', array( $rows, array( 'gallery', 'img' ) ) );
+		$this->assertEquals( array( 11, 22, 33 ), $values );
+
+		$empty = $this->invoke_pro_private( 'collect_acf_sub_field_images', array( $rows, array() ) );
+		$this->assertEquals( array(), $empty );
+	}
+
+	/**
+	 * A javascript: URL inside an ACF image array is neutralized by esc_url.
+	 */
+	public function test_get_attachment_url_strips_javascript_scheme() {
+		$result = $this->invoke_pro_private( 'get_attachment_url', array( array( 'url' => 'javascript:alert(1)' ) ) );
+
+		$this->assertStringNotContainsString( 'javascript:', $result );
+	}
+
+	/**
+	 * A plain string URL passes through escaped.
+	 */
+	public function test_get_attachment_url_passes_string_url() {
+		$result = $this->invoke_pro_private( 'get_attachment_url', array( 'https://example.com/image.png' ) );
+
+		$this->assertEquals( 'https://example.com/image.png', $result );
+	}
+
+	/**
+	 * An integer attachment ID resolves to the attachment URL.
+	 */
+	public function test_get_attachment_url_resolves_attachment_id() {
+		$attachment_id = $this->factory()->attachment->create_object(
+			'test-image.png',
+			$this->post_id,
+			array(
+				'post_mime_type' => 'image/png',
+				'post_type'      => 'attachment',
+			)
+		);
+
+		$result = $this->invoke_pro_private( 'get_attachment_url', array( $attachment_id ) );
+
+		$this->assertNotEmpty( $result );
+		$this->assertEquals( esc_url( wp_get_attachment_url( $attachment_id ) ), $result );
+
+		wp_delete_attachment( $attachment_id, true );
+	}
+
+	/**
+	 * HTTP_CLIENT_IP takes precedence over HTTP_X_FORWARDED_FOR and REMOTE_ADDR.
+	 */
+	public function test_get_client_ip_header_precedence() {
+		$original_remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : null;
+
+		$_SERVER['HTTP_CLIENT_IP']       = '198.51.100.1';
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = '198.51.100.2';
+		$_SERVER['REMOTE_ADDR']          = '198.51.100.3';
+
+		$this->assertEquals( '198.51.100.1', \ThemeIsle\OtterPro\Plugins\Dynamic_Content::get_client_ip() );
+
+		unset( $_SERVER['HTTP_CLIENT_IP'] );
+		$this->assertEquals( '198.51.100.2', \ThemeIsle\OtterPro\Plugins\Dynamic_Content::get_client_ip() );
+
+		unset( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+		$this->assertEquals( '198.51.100.3', \ThemeIsle\OtterPro\Plugins\Dynamic_Content::get_client_ip() );
+
+		if ( null === $original_remote_addr ) {
+			unset( $_SERVER['REMOTE_ADDR'] );
+		} else {
+			$_SERVER['REMOTE_ADDR'] = $original_remote_addr;
+		}
+	}
+
+	/**
+	 * A valid IPv6 address is accepted.
+	 */
+	public function test_get_client_ip_accepts_ipv6() {
+		$_SERVER['HTTP_CLIENT_IP'] = '2001:db8::1';
+		$ip                        = \ThemeIsle\OtterPro\Plugins\Dynamic_Content::get_client_ip();
+		unset( $_SERVER['HTTP_CLIENT_IP'] );
+
+		$this->assertEquals( '2001:db8::1', $ip );
+	}
+
+	/**
+	 * Protected meta key edge cases: empty, sensitive user fields (case-insensitive), and public keys.
+	 */
+	public function test_is_protected_meta_key_edge_cases() {
+		$this->assertTrue( \ThemeIsle\OtterPro\Plugins\Dynamic_Content::is_protected_meta_key( '' ) );
+		$this->assertTrue( \ThemeIsle\OtterPro\Plugins\Dynamic_Content::is_protected_meta_key( 'user_activation_key' ) );
+		$this->assertTrue( \ThemeIsle\OtterPro\Plugins\Dynamic_Content::is_protected_meta_key( 'USER_PASS' ) );
+		$this->assertFalse( \ThemeIsle\OtterPro\Plugins\Dynamic_Content::is_protected_meta_key( 'test_meta' ) );
+	}
 }
