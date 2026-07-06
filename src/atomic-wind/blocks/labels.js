@@ -34,7 +34,9 @@ export const toPlainText = ( value ) => {
 	if ( ! value ) {
 		return '';
 	}
-	const text = typeof value === 'string' ? value.replace( /<[^>]+>/g, ' ' ) : value.toPlainText?.() ?? '';
+	// DOMParser documents are inert (no script execution, no resource loading),
+	// so this both strips markup completely and decodes entities.
+	const text = typeof value === 'string' ? new window.DOMParser().parseFromString( value, 'text/html' ).body.textContent : value.toPlainText?.() ?? '';
 	return text.replace( /\s+/g, ' ' ).trim();
 };
 

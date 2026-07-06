@@ -112,7 +112,9 @@ const collect = (
 			const content = block.attributes?.content;
 
 			if ( 'string' === typeof tagName && HEADING_TAGS.has( tagName ) && 'string' === typeof content ) {
-				const text = content.replace( /<[^>]+>/g, '' ).trim();
+				// Inert document parse: strips markup completely (regex tag-stripping
+				// leaves fragments behind on malformed input) and decodes entities.
+				const text = ( new window.DOMParser().parseFromString( content, 'text/html' ).body.textContent ?? '' ).trim();
 
 				if ( text && acc.headings.length < MAX_TONE_SAMPLES * 4 ) {
 					acc.headings.push( text.length > TONE_SAMPLE_MAX_LEN ? `${ text.slice( 0, TONE_SAMPLE_MAX_LEN ) }…` : text );

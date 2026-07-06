@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [opened, synchronize, ready_for_review]
 
+permissions:
+  contents: read
+
 jobs:
   phplint:
     name: Phplint

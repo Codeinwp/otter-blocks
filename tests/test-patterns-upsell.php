@@ -31,11 +31,19 @@ class TestPatternsUpsell extends WP_UnitTestCase {
 	 */
 	private $http_body = null;
 
+	/**
+	 * Last URL intercepted by the stubbed HTTP layer.
+	 *
+	 * @var string
+	 */
+	private $http_last_url = '';
+
 	public function set_up(): void {
 		parent::set_up();
 
-		$this->http_calls = 0;
-		$this->http_body  = null;
+		$this->http_calls    = 0;
+		$this->http_body     = null;
+		$this->http_last_url = '';
 
 		add_filter( 'pre_http_request', array( $this, 'stub_http' ), 10, 3 );
 
@@ -64,6 +72,7 @@ class TestPatternsUpsell extends WP_UnitTestCase {
 	 */
 	public function stub_http( $preempt, $args, $url ) {
 		$this->http_calls++;
+		$this->http_last_url = $url;
 
 		return array(
 			'body'     => is_string( $this->http_body ) ? $this->http_body : wp_json_encode( $this->http_body ),
@@ -228,6 +237,73 @@ class TestPatternsUpsell extends WP_UnitTestCase {
 
 		$this->assertSame( 1, $this->http_calls );
 		$this->assertIsArray( get_transient( Patterns::UPSELLS_CACHE_KEY ) );
+	}
+
+	public function test_register_patterns_registers_categories_and_patterns() {
+		( new Patterns() )->register_patterns();
+
+		$category_registry = WP_Block_Pattern_Categories_Registry::get_instance();
+
+		foreach ( array( 'otter-blocks', 'call-to-action', 'testimonials', 'cafe-pack' ) as $slug ) {
+			$this->assertTrue( $category_registry->is_registered( $slug ), "Category '{$slug}' should be registered." );
+		}
+
+		$this->assertTrue( WP_Block_Patterns_Registry::get_instance()->is_registered( 'otter-blocks/aw-cta-banner' ) );
+	}
+
+	public function test_register_patterns_category_filter_can_add_and_remove() {
+		$category_registry = WP_Block_Pattern_Categories_Registry::get_instance();
+
+		// The plugin bootstrap may have registered categories already; clear
+		// the one we filter out so the assertion below is meaningful.
+		if ( $category_registry->is_registered( 'waitlist' ) ) {
+			$category_registry->unregister( 'waitlist' );
+		}
+
+		$filter = function ( $categories ) {
+			unset( $categories['waitlist'] );
+			$categories['otter-test-extra'] = array( 'label' => 'Test Extra' );
+
+			return $categories;
+		};
+
+		add_filter( 'otter_blocks_block_pattern_categories', $filter );
+		( new Patterns() )->register_patterns();
+		remove_filter( 'otter_blocks_block_pattern_categories', $filter );
+
+		$this->assertFalse( $category_registry->is_registered( 'waitlist' ) );
+		$this->assertTrue( $category_registry->is_registered( 'otter-test-extra' ) );
+
+		// Restore the shared registry state for the rest of the suite.
+		$category_registry->unregister( 'otter-test-extra' );
+		( new Patterns() )->register_patterns();
+		$this->assertTrue( $category_registry->is_registered( 'waitlist' ) );
+	}
+
+	public function test_sync_requests_endpoint_with_site_and_license_args() {
+		$this->http_body = array( array( 'slug' => 'pro-hero' ) );
+
+		( new Patterns() )->sync_upsell_patterns();
+
+		$this->assertSame( 1, $this->http_calls );
+		$this->assertStringContainsString( 'api.themeisle.com/templates-cloud/otter-patterns-preview', $this->http_last_url );
+		$this->assertStringContainsString( 'site_url=' . get_site_url(), $this->http_last_url );
+		$this->assertStringContainsString( 'license_id=free', $this->http_last_url );
+	}
+
+	public function test_sync_ignores_non_array_json_response() {
+		$this->http_body = '"just-a-string"';
+
+		( new Patterns() )->sync_upsell_patterns();
+
+		$this->assertFalse( get_transient( Patterns::UPSELLS_CACHE_KEY ) );
+
+		// Invalid JSON decodes to null — same guard, same result.
+		$this->http_body = 'not-json{';
+
+		( new Patterns() )->sync_upsell_patterns();
+
+		$this->assertFalse( get_transient( Patterns::UPSELLS_CACHE_KEY ) );
 	}
 
 	/**

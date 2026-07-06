@@ -60,6 +60,7 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		unset( $_REQUEST[ Form_Submissions::FORM_RECORD_TYPE ], $_REQUEST['_wpnonce'], $_REQUEST['post'] );
 		unset( $_POST['action'], $_POST['_wpnonce'], $_POST['_nonce'] );
 		unset( $_GET['post_type'], $_GET['filter_action'], $_GET['filters_nonce'], $_GET['otter_form_filter'], $_REQUEST['otter_form_filter'] );
+		unset( $_GET['otter_post_filter'], $_REQUEST['otter_post_filter'] );
 		unset( $GLOBALS['otter_test_stripe_record_id'] );
 		unset( $GLOBALS['otter_legacy_store_called'] );
 
@@ -877,6 +878,404 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'https://example.com/cap#cap-form', $output );
 		// Unread rows render bold.
 		$this->assertStringContainsString( '<strong>', $output );
+	}
+
+	/**
+	 * Ensure the Record post type is registered private, out of the REST API, with the
+	 * mapped create capability and the custom read/unread statuses.
+	 */
+	public function test_record_post_type_is_private_with_custom_create_cap_and_statuses() {
+		( new Form_Records_Post_Type() )->create_form_records_type();
+
+		$post_type = get_post_type_object( Form_Submissions::FORM_RECORD_TYPE );
+
+		$this->assertNotNull( $post_type );
+		$this->assertFalse( $post_type->public );
+		$this->assertFalse( $post_type->show_in_rest );
+		$this->assertSame( Form_Submissions::FORM_RECORD_TYPE, $post_type->capability_type );
+		$this->assertSame( 'create_otter_form_records', $post_type->cap->create_posts );
+
+		$stati = get_post_stati();
+		$this->assertArrayHasKey( 'read', $stati );
+		$this->assertArrayHasKey( 'unread', $stati );
+	}
+
+	/**
+	 * Ensure administrators get the record management capabilities but the create
+	 * capability is deliberately removed (records only come from submissions).
+	 */
+	public function test_admin_role_gets_record_caps_but_never_create() {
+		$role = get_role( 'administrator' );
+
+		foreach ( array( 'edit', 'read', 'delete' ) as $cap ) {
+			$this->assertTrue( $role->has_cap( $cap . '_' . Form_Submissions::FORM_RECORD_TYPE ), "Administrator should have the {$cap} record cap." );
+			$this->assertTrue( $role->has_cap( $cap . '_' . Form_Submissions::FORM_RECORD_TYPE . 's' ), "Administrator should have the plural {$cap} records cap." );
+		}
+
+		$this->assertFalse( $role->has_cap( 'create_' . Form_Submissions::FORM_RECORD_TYPE ) );
+		$this->assertFalse( $role->has_cap( 'create_' . Form_Submissions::FORM_RECORD_TYPE . 's' ) );
+	}
+
+	/**
+	 * Ensure the Pro post filter appends a LIKE meta_query clause carrying the
+	 * esc_url_raw'd value, not the raw GET input.
+	 */
+	public function test_pro_filter_query_adds_sanitized_post_meta_clause() {
+		if ( ! \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		add_filter( 'product_otter_license_status', array( $this, 'valid_license' ) );
+
+		set_current_screen( 'edit-' . Form_Submissions::FORM_RECORD_TYPE );
+
+		global $pagenow;
+		$previous_pagenow = $pagenow;
+		$pagenow          = 'edit.php';
+
+		$raw       = 'https://example.com/a b"c';
+		$sanitized = esc_url_raw( $raw );
+		// The fixture must be a value esc_url_raw actually alters.
+		$this->assertNotSame( $raw, $sanitized );
+
+		$_GET['post_type']             = Form_Submissions::FORM_RECORD_TYPE;
+		$_GET['filter_action']         = 'Filter';
+		$_GET['filters_nonce']         = wp_create_nonce( 'filter' );
+		$_REQUEST['otter_post_filter'] = $raw;
+
+		$query        = new WP_Query();
+		$query->query = array( 'post_type' => Form_Submissions::FORM_RECORD_TYPE );
+
+		$result = ( new Form_Records_Filters() )->form_record_filter_query( $query );
+
+		$pagenow = $previous_pagenow;
+		unset( $_GET['post_type'], $_GET['filter_action'], $_GET['filters_nonce'], $_REQUEST['otter_post_filter'] );
+
+		$meta_query = isset( $result->query_vars['meta_query'] ) ? $result->query_vars['meta_query'] : array();
+
+		$found = false;
+		foreach ( $meta_query as $clause ) {
+			if (
+				is_array( $clause ) &&
+				isset( $clause['key'], $clause['value'], $clause['compare'] ) &&
+				Form_Submissions::FORM_RECORD_META_KEY === $clause['key'] &&
+				$sanitized === $clause['value'] &&
+				'LIKE' === $clause['compare']
+			) {
+				$found = true;
+			}
+		}
+
+		$this->assertTrue( $found, 'Post filter should append a LIKE meta_query clause with the esc_url_raw value.' );
+	}
+
+	/**
+	 * Ensure each early-return guard of the list-table filter leaves the query untouched:
+	 * wrong post_type GET, not on edit.php, and missing filter_action.
+	 */
+	public function test_filter_query_guards_leave_query_untouched() {
+		if ( ! \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		add_filter( 'product_otter_license_status', array( $this, 'valid_license' ) );
+
+		set_current_screen( 'edit-' . Form_Submissions::FORM_RECORD_TYPE );
+
+		global $pagenow;
+		$previous_pagenow = $pagenow;
+
+		$_GET['filters_nonce']         = wp_create_nonce( 'filter' );
+		$_GET['filter_action']         = 'Filter';
+		$_REQUEST['otter_form_filter'] = 'guard-form';
+
+		$filters    = new Form_Records_Filters();
+		$make_query = function () {
+			$query        = new WP_Query();
+			$query->query = array( 'post_type' => Form_Submissions::FORM_RECORD_TYPE );
+			return $query;
+		};
+
+		// Wrong post_type GET.
+		$pagenow           = 'edit.php';
+		$_GET['post_type'] = 'post';
+		$result            = $filters->form_record_filter_query( $make_query() );
+		$this->assertArrayNotHasKey( 'meta_query', $result->query_vars, 'A non-record post_type GET must leave the query untouched.' );
+
+		// Not on the list-table screen.
+		$_GET['post_type'] = Form_Submissions::FORM_RECORD_TYPE;
+		$pagenow           = 'post.php';
+		$result            = $filters->form_record_filter_query( $make_query() );
+		$this->assertArrayNotHasKey( 'meta_query', $result->query_vars, 'A pagenow other than edit.php must leave the query untouched.' );
+
+		// Missing filter_action.
+		$pagenow = 'edit.php';
+		unset( $_GET['filter_action'] );
+		$result = $filters->form_record_filter_query( $make_query() );
+		$this->assertArrayNotHasKey( 'meta_query', $result->query_vars, 'A missing filter_action must leave the query untouched.' );
+
+		// Sanity: with every guard satisfied the clause is appended, so the guards above
+		// were the only reason the query stayed untouched.
+		$_GET['filter_action'] = 'Filter';
+		$result                = $filters->form_record_filter_query( $make_query() );
+		$this->assertArrayHasKey( 'meta_query', $result->query_vars );
+
+		$pagenow = $previous_pagenow;
+		unset( $_GET['post_type'], $_GET['filter_action'], $_GET['filters_nonce'], $_REQUEST['otter_form_filter'] );
+	}
+
+	/**
+	 * Ensure the file cleanup ignores non-record post types: deleting a regular post whose
+	 * meta happens to reference an uploads path leaves the file intact.
+	 */
+	public function test_delete_regular_post_referencing_upload_keeps_file() {
+		$path    = $this->create_upload_file( 'regular-post-upload.txt' );
+		$post_id = self::factory()->post->create();
+
+		add_post_meta( $post_id, Form_Submissions::FORM_RECORD_META_KEY, $this->get_file_record_meta( $path ) );
+
+		wp_delete_post( $post_id, true );
+
+		$this->assertFileExists( $path );
+	}
+
+	/**
+	 * Ensure the LIKE prefilter match is re-verified: another record that merely mentions
+	 * the file path in a plain text field does not protect the file from deletion.
+	 */
+	public function test_non_file_mention_in_another_record_does_not_protect_file() {
+		$path  = $this->create_upload_file( 'mentioned-upload.txt' );
+		$owner = $this->create_record( 'unread', $this->get_file_record_meta( $path ) );
+
+		// This record's serialized meta contains the path, so the LIKE query matches it,
+		// but it has no owning file field.
+		$this->create_record(
+			'unread',
+			array(
+				'inputs' => array(
+					'text-input' => array(
+						'label'    => 'Message',
+						'value'    => $path,
+						'type'     => 'text',
+						'metadata' => array(),
+					),
+				),
+			)
+		);
+
+		wp_delete_post( $owner, true );
+
+		$this->assertFileDoesNotExist( $path );
+	}
+
+	/**
+	 * Ensure malformed file meta (non-string path, path on a non-file input) neither
+	 * fatals nor deletes anything.
+	 */
+	public function test_malformed_file_meta_neither_fatals_nor_deletes() {
+		$path = $this->create_upload_file( 'malformed-upload.txt' );
+
+		$record_id = $this->create_record(
+			'unread',
+			array(
+				'inputs' => array(
+					'array-path'     => array(
+						'label' => 'Upload',
+						'type'  => 'file',
+						'path'  => array( $path ),
+					),
+					'text-with-path' => array(
+						'label' => 'Message',
+						'type'  => 'text',
+						'path'  => $path,
+					),
+				),
+			)
+		);
+
+		wp_delete_post( $record_id, true );
+
+		$this->assertFileExists( $path );
+	}
+
+	/**
+	 * Ensure the meta-box save handler ignores non-record post types entirely: no record
+	 * meta is written even with an editpost action, a valid nonce and an otter_meta_ key.
+	 */
+	public function test_meta_box_save_ignores_non_record_post_types() {
+		wp_set_current_user( $this->admin_id );
+
+		$post_id = self::factory()->post->create();
+
+		$_POST['action']              = 'editpost';
+		$_POST['_wpnonce']            = wp_create_nonce( 'update-post_' . $post_id );
+		$_POST['otter_meta_abcd1234'] = 'Injected';
+
+		do_action( 'save_post', $post_id, get_post( $post_id ) );
+
+		unset( $_POST['otter_meta_abcd1234'] );
+
+		$this->assertFalse( metadata_exists( 'post', $post_id, Form_Submissions::FORM_RECORD_META_KEY ) );
+	}
+
+	/**
+	 * Ensure a missing or non-editpost action is a silent no-op: no meta write and no
+	 * wp_die, even though no valid nonce is present.
+	 */
+	public function test_meta_box_save_requires_editpost_action() {
+		wp_set_current_user( $this->admin_id );
+
+		$record_id = $this->create_record(
+			'unread',
+			array(
+				'inputs' => array(
+					'abcd1234' => array(
+						'label'    => 'Name',
+						'value'    => 'Old Value',
+						'type'     => 'text',
+						'metadata' => array(),
+					),
+				),
+			)
+		);
+
+		// Missing action: returns before the nonce check, so no WPDieException.
+		$_POST['otter_meta_abcd1234'] = 'New Value';
+		do_action( 'save_post', $record_id, get_post( $record_id ) );
+
+		$meta = get_post_meta( $record_id, Form_Submissions::FORM_RECORD_META_KEY, true );
+		$this->assertSame( 'Old Value', $meta['inputs']['abcd1234']['value'] );
+
+		// Non-editpost action: same silent no-op.
+		$_POST['action'] = 'inline-save';
+		do_action( 'save_post', $record_id, get_post( $record_id ) );
+
+		$meta = get_post_meta( $record_id, Form_Submissions::FORM_RECORD_META_KEY, true );
+
+		unset( $_POST['otter_meta_abcd1234'] );
+
+		$this->assertSame( 'Old Value', $meta['inputs']['abcd1234']['value'] );
+	}
+
+	/**
+	 * Ensure the meta-box save only processes otter_meta_-prefixed keys and silently
+	 * skips ids that do not exist in the stored inputs.
+	 */
+	public function test_meta_box_save_ignores_unrelated_keys_and_unknown_fields() {
+		wp_set_current_user( $this->admin_id );
+
+		$record_id = $this->create_record(
+			'unread',
+			array(
+				'inputs' => array(
+					'abcd1234' => array(
+						'label'    => 'Name',
+						'value'    => 'Old Value',
+						'type'     => 'text',
+						'metadata' => array(),
+					),
+				),
+			)
+		);
+
+		$_POST['action']              = 'editpost';
+		$_POST['_wpnonce']            = wp_create_nonce( 'update-post_' . $record_id );
+		$_POST['not_otter_abcd1234']  = 'Injected';
+		$_POST['otter_meta_zzzz9999'] = 'Ghost';
+
+		do_action( 'save_post', $record_id, get_post( $record_id ) );
+
+		$meta = get_post_meta( $record_id, Form_Submissions::FORM_RECORD_META_KEY, true );
+
+		unset( $_POST['not_otter_abcd1234'], $_POST['otter_meta_zzzz9999'] );
+
+		$this->assertSame( 'Old Value', $meta['inputs']['abcd1234']['value'] );
+		$this->assertArrayNotHasKey( 'zzzz9999', $meta['inputs'] );
+	}
+
+	/**
+	 * Ensure the delivery column renders Complete for completed deliveries and an
+	 * em-dash when no delivery status has been recorded.
+	 */
+	public function test_delivery_column_renders_complete_and_dash_for_missing_status() {
+		$complete = $this->create_record( 'read' );
+		update_post_meta( $complete, Form_Submissions::DELIVERY_STATUS_META_KEY, Form_Submissions::DELIVERY_STATUS_COMPLETE );
+
+		ob_start();
+		do_action( 'manage_' . Form_Submissions::FORM_RECORD_TYPE . '_posts_custom_column', 'delivery', $complete );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'Complete', $output );
+
+		$pending = $this->create_record( 'read' );
+
+		ob_start();
+		do_action( 'manage_' . Form_Submissions::FORM_RECORD_TYPE . '_posts_custom_column', 'delivery', $pending );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( '&#8212;', $output );
+	}
+
+	/**
+	 * Ensure the Post column resolves the source title and permalink from the stored
+	 * post_id meta when present.
+	 */
+	public function test_post_url_column_resolves_title_via_post_id_meta() {
+		$source_id = self::factory()->post->create( array( 'post_title' => 'Source Page' ) );
+		$record_id = $this->create_record(
+			'read',
+			array(
+				'post_id' => array(
+					'label' => 'Post ID',
+					'value' => (string) $source_id,
+				),
+			)
+		);
+
+		ob_start();
+		do_action( 'manage_' . Form_Submissions::FORM_RECORD_TYPE . '_posts_custom_column', 'post_url', $record_id );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'Source Page', $output );
+		$this->assertStringContainsString( esc_url( get_permalink( $source_id ) ), $output );
+	}
+
+	/**
+	 * Ensure the Post column falls back to the raw stored URL as the link text when the
+	 * URL cannot be resolved to a local post.
+	 */
+	public function test_post_url_column_falls_back_to_raw_url_when_unresolvable() {
+		$record_id = $this->create_record( 'read' );
+
+		ob_start();
+		do_action( 'manage_' . Form_Submissions::FORM_RECORD_TYPE . '_posts_custom_column', 'post_url', $record_id );
+		$output = ob_get_clean();
+
+		// The external URL from the record fixture is both the href and the visible text.
+		$this->assertStringContainsString( '>https://example.com/cap</a>', $output );
+	}
+
+	/**
+	 * Ensure the Post column shows the "(no title)" placeholder when the resolved source
+	 * post has an empty title.
+	 */
+	public function test_post_url_column_shows_placeholder_for_empty_title() {
+		$source_id = self::factory()->post->create( array( 'post_title' => '' ) );
+		$record_id = $this->create_record(
+			'read',
+			array(
+				'post_id' => array(
+					'label' => 'Post ID',
+					'value' => (string) $source_id,
+				),
+			)
+		);
+
+		ob_start();
+		do_action( 'manage_' . Form_Submissions::FORM_RECORD_TYPE . '_posts_custom_column', 'post_url', $record_id );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( '(no title)', $output );
 	}
 
 	/**
