@@ -247,13 +247,10 @@ test.describe( 'Design Library', () => {
 
 		test( 'expands wp:pattern references into editable blocks on insert', async({ page, editor }) => {
 
-			// The fixture pattern (registered by otter-e2e-pattern-fixtures.php)
-			// contains a heading, a reference to a registered pattern and a
-			// reference to a missing slug. Inserted content must arrive as plain
-			// editable blocks: registered references inlined, missing ones dropped —
-			// never a core/pattern block, which the editor renders as a locked
-			// "Edit pattern" wrapper (or nothing at all for missing slugs).
-			// See https://github.com/Codeinwp/otter-blocks/issues/2854
+			// Fixture (otter-e2e-pattern-fixtures.php): a heading plus one
+			// registered and one missing wp:pattern reference. Inserts must
+			// arrive as plain editable blocks — refs inlined, missing ones
+			// dropped, never a locked core/pattern wrapper. See #2854.
 			const modal = await openLibrary( page );
 			await waitForGrid( modal );
 
@@ -273,10 +270,8 @@ test.describe( 'Design Library', () => {
 			expect( names ).toContain( 'core/paragraph' );
 			expect( names ).not.toContain( 'core/pattern' );
 
-			// WordPress 7.0 inlines registered references server-side and stamps
-			// the inlined blocks with metadata.patternName, which its editor then
-			// locks into content-only mode ("A block pattern" / "Edit pattern").
-			// Unsynced inserts must shed the attribution to stay editable.
+			// WP 7.0 stamps inlined blocks with metadata.patternName and locks
+			// them into content-only mode — inserts must shed it.
 			const stamped = blocks
 				.filter( ( block ) => block.attributes?.metadata?.patternName )
 				.map( ( block ) => block.name );

@@ -40,11 +40,9 @@ import { accentContent } from './accent';
 
 import { resolvePatternBlocks } from '../../../onboarding/utils.js';
 
-// WordPress 7.0 inlines nested wp:pattern references server-side and stamps
-// each inlined block with metadata.patternName, which its editor then locks
-// into content-only mode ("A block pattern" / "Edit pattern"). Library inserts
-// are unsynced copies, so shed the attribution; every other metadata key
-// (bindings, custom labels) is kept.
+// WP 7.0 stamps blocks inlined from wp:pattern refs with metadata.patternName
+// and locks them into content-only mode. Inserts are unsynced copies — drop
+// the stamp, keep the rest of metadata (bindings, labels).
 const stripPatternAttribution = (blocks) =>
 	blocks.map((block) => {
 		const metadata = { ...(block.attributes?.metadata || {}) };
@@ -596,10 +594,9 @@ const Library = ({ onClose }) => {
 			}
 
 			// With Pro active the upsell banner removes itself right after
-			// insertion anyway — skip it up front. Inline wp:pattern references
-			// while parsing: inserted literally they render as locked "Edit
-			// pattern" wrappers (or nothing, for unregistered slugs) instead of
-			// editable blocks.
+			// insertion anyway — skip it up front. Inline wp:pattern refs while
+			// parsing: inserted raw they render locked, or not at all for
+			// unregistered slugs.
 			const blocks = stripPatternAttribution(
 				resolvePatternBlocks(parse(accentContent(pattern, accent)), allPatterns),
 			).filter(

@@ -4,9 +4,8 @@
  * Description: Registers Design Library test patterns containing wp:pattern references (issue #2854).
  */
 
-// Late priority: mu-plugins load before Otter, and the library's "Featured"
-// sort is registration order — registering late keeps the fixtures out of the
-// grid's first cards, which other tests insert blindly.
+// Register after Otter's patterns: "Featured" sort is registration order and
+// other tests insert the grid's first card blindly.
 add_action(
 	'init',
 	function () {
@@ -18,8 +17,7 @@ add_action(
 			)
 		);
 
-		// One registered reference, one unresolvable reference — a single insert
-		// exercises both paths of the Design Library's pattern expansion.
+		// One registered and one unresolvable reference — one insert covers both paths.
 		register_block_pattern(
 			'otter-e2e/pattern-reference-fixture',
 			array(
