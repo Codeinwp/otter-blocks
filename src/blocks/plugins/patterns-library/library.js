@@ -38,6 +38,28 @@ import {
 
 import { accentContent } from './accent';
 
+import { resolvePatternBlocks } from '../../../onboarding/utils.js';
+
+// WordPress 7.0 inlines nested wp:pattern references server-side and stamps
+// each inlined block with metadata.patternName, which its editor then locks
+// into content-only mode ("A block pattern" / "Edit pattern"). Library inserts
+// are unsynced copies, so shed the attribution; every other metadata key
+// (bindings, custom labels) is kept.
+const stripPatternAttribution = (blocks) =>
+	blocks.map((block) => {
+		const metadata = { ...(block.attributes?.metadata || {}) };
+		delete metadata.patternName;
+
+		return {
+			...block,
+			attributes: {
+				...block.attributes,
+				metadata: Object.keys(metadata).length ? metadata : undefined,
+			},
+			innerBlocks: stripPatternAttribution(block.innerBlocks || []),
+		};
+	});
+
 const CLOUD_EMPTY_CATEGORY = 'cloud-empty';
 
 // Section categories bucketed into meaningful sidebar groups. Mirrors the
@@ -574,8 +596,13 @@ const Library = ({ onClose }) => {
 			}
 
 			// With Pro active the upsell banner removes itself right after
-			// insertion anyway — skip it up front.
-			const blocks = parse(accentContent(pattern, accent)).filter(
+			// insertion anyway — skip it up front. Inline wp:pattern references
+			// while parsing: inserted literally they render as locked "Edit
+			// pattern" wrappers (or nothing, for unregistered slugs) instead of
+			// editable blocks.
+			const blocks = stripPatternAttribution(
+				resolvePatternBlocks(parse(accentContent(pattern, accent)), allPatterns),
+			).filter(
 				(block) =>
 					UPSELL_BLOCK !== block.name ||
           !Boolean(window.themeisleGutenberg?.hasPro),
@@ -660,7 +687,7 @@ const Library = ({ onClose }) => {
 
 			onClose();
 		},
-		[ clientID, accent ],
+		[ clientID, accent, allPatterns ],
 	);
 
 	const resetFilters = () => {
