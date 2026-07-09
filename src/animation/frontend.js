@@ -160,7 +160,7 @@ const speed = [ 'none', 'slow', 'slower', 'fast', 'faster' ];
 const elementsScroll = [];
 let scrollListenerAttached = false;
 
-const processElement = ( element ) => {
+const processElement = ( element, visible = isElementInViewport( element ) ) => {
 	// Skip if already processed
 	if ( element.classList.contains( 'o-anim-ready' ) ) {
 		return;
@@ -169,7 +169,7 @@ const processElement = ( element ) => {
 	const classes = element.classList;
 	element.animationClasses = [];
 
-	if ( ! isElementInViewport( element ) ) {
+	if ( ! visible ) {
 		const animationClass = animations.find( ( i ) => {
 			return Array.from( classes ).find( ( o ) => o === i );
 		});
@@ -283,8 +283,14 @@ const animateElements = () => {
 
 	createCustomAnimationNode( elements );
 
+	// Measure every element before processing marks any of them o-anim-ready:
+	const inViewport = new Map();
 	for ( const element of elements ) {
-		processElement( element );
+		inViewport.set( element, isElementInViewport( element ) );
+	}
+
+	for ( const element of elements ) {
+		processElement( element, inViewport.get( element ) );
 	}
 
 	attachScrollListener();
