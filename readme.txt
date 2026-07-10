@@ -56,6 +56,18 @@ Every block has customization support to help you style your site according to y
 - Animation backing, bouncing, fading, flipping, rotating, sliding, rolling, light speed, and more at the click of a button.
 - Typography controls from spacing to font choice.
 
+### Your AI Assistant for the Block Editor
+
+Otter brings AI right into the block editor to help you build, not just edit. Describe what you want, and Otter creates it as real, editable blocks.
+
+- **AI Content Generator:** Generate a full section or an entire page from a simple prompt with the AI Block. Pick a type like Hero, Features, Pricing, Testimonials, or Call to action, or describe your own. Otter matches your theme colors and current page style, so the result arrives on-brand.
+
+- **AI Toolbar:** Select any text to rewrite, summarize, expand, shorten, translate, change tone, fix grammar, or simplify it, all without leaving the page. You can also create your own custom actions with your own prompts and reorder the toolbar to fit how you work.
+
+- **AI Form Autoresponder [PRO]:** Reply to every form submission with a personalized, AI-written message. Write a prompt using your form fields, set a fallback message, and let AI craft the rest.
+
+- **Native WordPress AI Connectors:** Otter's AI works with the native AI adapters in WordPress 7.0, so you connect your preferred AI provider once, and every Otter AI feature uses it. 
+
 ### Mobile Responsiveness of Otter Blocks
 
 Create mobile-friendly designs with Otter’s built-in responsive settings. Each block can be tweaked to provide a consistent experience for mobile, tablet, and desktop.
@@ -105,7 +117,7 @@ The heading block you didn't know you needed. This Otter block has all the funct
 
 #### AI Block [FREE]
 
-Step inside the AI Block, your gateway to effortless content and form creation, all powered by AI. With the AI Content Generator, crafting text, dynamic headings, and insightful paragraphs is a breeze, while the AI Form Generator simplifies building forms. It's your all-in-one solution for seamless work — everything you need with AI, neatly packed into a single block.
+Build with AI, right in the editor. Describe the section or page you want, and the AI Block generates it as real, editable Gutenberg blocks, matched to your theme colors and page style. Adjust anything by hand afterward, just like blocks you built yourself.
 
 #### Button Group Gutenberg Block [FREE]
 
@@ -122,6 +134,10 @@ Quickly and easily insert a contact form anywhere on the page. Optionally, turn 
 #### Content Timeline Block [FREE]
 
 Elegantly display events in a chronological timeline. Ideal for highlighting historical events, process steps, or key milestones.
+
+#### Content Slider Block [FREE]
+
+A slider where every slide can hold any Gutenberg blocks, not just images. Add headings, text, buttons, images, or full layouts like testimonial, pricing, or feature cards inside each slide, then let visitors move through them with arrows or dots. Unlike a standard image slider, the Content Slider turns anything you build in Gutenberg into a swipeable carousel, with no extra plugin needed.
 
 #### Countdown Block [FREE]
 
