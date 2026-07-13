@@ -229,31 +229,7 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 
 ## Ready to Import Patterns & Full-page Templates in Otter:
 
-Easily launch your site with our customizable patterns and full-page WordPress templates. Import ready-made designs with just one click and get started in no time.
-
-#### Service Patterns
-
-Organize your services clearly with sections that keep your page tidy while offering detailed information on demand. [Check live demo](https://demo.themeisle.com/otter-blocks/service/)
-
-#### Testimonial Patterns
-
-Organize your services clearly with sections that keep your page tidy while offering detailed information on demand. [Check live demo](https://demo.themeisle.com/otter-blocks/service/)
-
-#### Pricing Patterns
-
-Tailor your pricing tables with versatile layout patterns that enhance readability and appeal, suitable for any business model. [Check live demo](https://demo.themeisle.com/otter-blocks/pricing/)
-
-#### Features Section Patterns
-
-Detail the features of your products or services using clean, organized layouts that make complex information easy to digest. [Check live demo](https://demo.themeisle.com/otter-blocks/features-patterns/)
-
-#### Call-to-action Section Patterns
-
-Drive conversions with compelling call-to-action sections, designed to grab attention and motivate immediate responses. [Check live demo](https://demo.themeisle.com/otter-blocks/cta-patterns/)
-
-📌 Check a live demo of all the patterns available by [clicking here](https://demo.themeisle.com/otter-blocks/patterns/).
-
-📌 Check a live demo of all the Full-page templates available by [clicking here](https://demo.themeisle.com/otter-blocks/templates/).
+Explore a wide range of Otter patterns and full-page templates for services, testimonials, pricing, features, call-to-action sections, and more. Browse the available designs [here](https://themeisle.com/plugins/otter-blocks/patterns/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=otter-blocks).
 
 ### Get More Options in Otter Pro 🤩
 
