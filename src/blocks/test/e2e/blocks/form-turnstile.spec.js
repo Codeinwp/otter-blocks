@@ -3,7 +3,7 @@
  */
 import { test, expect } from '../fixtures';
 import { getBlockByName, expectBlockByName, publishAndViewPost, publishPostReliable } from '../helpers/editor';
-import { expectFormOptionSavedNotice, findSavedFormEmail, getFormClientId, getSavedFormEmails, insertContactForm, insertFormCaptchaBlock, showFormOption } from '../helpers/forms';
+import { expectFormOptionSavedNotice, findSavedFormEmail, getFormClientId, getSavedFormEmails, insertContactForm, insertFormCaptchaBlock, prepareFormOptionsInspector, showFormOption } from '../helpers/forms';
 
 const CAPTCHA_BLOCK = 'themeisle-blocks/form-captcha';
 
@@ -102,6 +102,14 @@ test.describe( 'Form Block - Captcha block', () => {
 			const form = await getBlockByName( editor, 'themeisle-blocks/form' );
 			return form?.innerBlocks?.filter( ({ name }) => CAPTCHA_BLOCK === name )?.length;
 		}).toBe( 1 );
+
+		// Inserting the captcha selects it; the Form Options panel only shows
+		// in the Form block's own inspector.
+		await page.evaluate( ( clientId ) => {
+			window.wp.data.dispatch( 'core/block-editor' ).selectBlock( clientId );
+		}, formClientId );
+
+		await prepareFormOptionsInspector( editor, page );
 
 		await showFormOption( page, 'Show CC' );
 
