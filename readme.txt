@@ -229,6 +229,8 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 
 ## Ready to Import Patterns & Full-page Templates in Otter:
 
+Easily launch your site with our customizable patterns and full-page WordPress templates. Import ready-made designs with just one click and get started in no time.
+
 Explore a wide range of Otter patterns and full-page templates for services, testimonials, pricing, features, call-to-action sections, and more. Browse the available designs [here](https://themeisle.com/plugins/otter-blocks/patterns/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=otter-blocks).
 
 ### Get More Options in Otter Pro 🤩
