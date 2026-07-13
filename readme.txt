@@ -306,12 +306,11 @@ The plugin is relying on the service behind api.themeisle.com for accessing the 
 
 == Screenshots ==
 
-1. Gutenberg Block Animations
-2. Visibility Condition Rules
-3. Posts Block
-4. AI Form Generator
-5. AI Layout Generator
-6. Patterns & Full-page templates Library
+1. Advanced Blocks Library
+2. Patterns & Full-page Design Library
+3. AI Section and Page Generator
+4. Visibility Conditions
+5. Advanced Forms
 
 == Installation ==
 
