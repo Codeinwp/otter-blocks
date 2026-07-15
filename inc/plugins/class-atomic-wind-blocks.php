@@ -68,7 +68,7 @@ class Atomic_Wind_Blocks {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_base_css' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_icons_data' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'output_cached_css' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_style_builder' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_animations' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_states' ) );
@@ -189,7 +189,6 @@ class Atomic_Wind_Blocks {
 		// Always reset frontend blocks, including those outside the main query.
 		if ( ! is_admin() ) {
 			wp_register_style( 'atomic-wind-base', false, [], OTTER_BLOCKS_VERSION );
-			wp_enqueue_style( 'atomic-wind-base' );
 			wp_add_inline_style( 'atomic-wind-base', $css );
 			return;
 		}
@@ -304,65 +303,11 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * Load cached CSS for main-query posts.
-	 *
-	 * Missing CSS uses the generator. Footer rendering is handled separately.
-	 *
-	 * @return void
-	 */
-	public function output_cached_css() {
-		$candidates = array();
-
-		if ( isset( $GLOBALS['wp_query'] ) && ! empty( $GLOBALS['wp_query']->posts ) ) {
-			foreach ( $GLOBALS['wp_query']->posts as $candidate ) {
-				if ( $candidate instanceof \WP_Post ) {
-					$candidates[ $candidate->ID ] = $candidate;
-				}
-			}
-		}
-
-		$blobs           = array();
-		$needs_generator = false;
-
-		foreach ( $candidates as $candidate ) {
-			if ( ! $this->post_has_atomic_wind_blocks( $candidate ) ) {
-				continue;
-			}
-
-			$this->expected[ $candidate->ID ] = substr_count( $candidate->post_content, '<!-- wp:atomic-wind/' );
-
-			$cached_css = get_post_meta( $candidate->ID, '_atomic_wind_css', true );
-
-			if ( $cached_css ) {
-				$hash = md5( $cached_css );
-				if ( ! isset( $this->inlined[ $hash ] ) ) {
-					$this->inlined[ $hash ] = true;
-					$blobs[]                = $cached_css;
-				}
-			} else {
-				$needs_generator = true;
-			}
-		}
-
-		if ( ! empty( $blobs ) ) {
-			wp_register_style( 'atomic-wind-tailwind', false, [], OTTER_BLOCKS_VERSION );
-			wp_enqueue_style( 'atomic-wind-tailwind' );
-			wp_add_inline_style( 'atomic-wind-tailwind', implode( "\n", $blobs ) );
-		}
-
-		if ( $needs_generator ) {
-			$this->enqueue_generator();
-		}
-
-		$this->maybe_enqueue_style_builder();
-	}
-
-	/**
 	 * Enqueue the style builder for editable singular posts without cached CSS.
 	 *
 	 * @return void
 	 */
-	private function maybe_enqueue_style_builder() {
+	public function maybe_enqueue_style_builder() {
 		if ( ! is_singular() ) {
 			return;
 		}
@@ -421,11 +366,13 @@ class Atomic_Wind_Blocks {
 			return $block_content;
 		}
 
+		wp_enqueue_style( 'atomic-wind-base' );
+
 		$id  = get_the_ID();
 		$key = $id ? $id : 0;
 
 		if ( isset( $this->rendered[ $key ] ) ) {
-			$this->rendered[ $key ]++;
+			++$this->rendered[ $key ];
 		} else {
 			$this->rendered[ $key ] = 1;
 		}
