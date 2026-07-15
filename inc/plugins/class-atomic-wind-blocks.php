@@ -68,6 +68,7 @@ class Atomic_Wind_Blocks {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_base_css' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_icons_data' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'output_singular_css' ), 11 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'maybe_enqueue_style_builder' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_animations' ) );
@@ -300,6 +301,42 @@ class Atomic_Wind_Blocks {
 			$gen['version'],
 			true
 		);
+	}
+
+	/**
+	 * Load the queried post's CSS in the head on singular views.
+	 *
+	 * The post is guaranteed to render, so inlining its cached CSS early avoids
+	 * a flash of unstyled content for the main content. Everything else (hooked
+	 * layouts, embeds) stays on the render-tracked footer path.
+	 *
+	 * @return void
+	 */
+	public function output_singular_css() {
+		if ( ! is_singular() ) {
+			return;
+		}
+
+		$queried = get_queried_object();
+
+		if ( ! $queried instanceof \WP_Post || ! $this->post_has_atomic_wind_blocks( $queried ) ) {
+			return;
+		}
+
+		$this->expected[ $queried->ID ] = substr_count( $queried->post_content, '<!-- wp:atomic-wind/' );
+		wp_enqueue_style( 'atomic-wind-base' );
+
+		$cached_css = get_post_meta( $queried->ID, '_atomic_wind_css', true );
+
+		if ( ! $cached_css ) {
+			$this->enqueue_generator();
+			return;
+		}
+
+		$this->inlined[ md5( $cached_css ) ] = true;
+		wp_register_style( 'atomic-wind-tailwind', false, [], OTTER_BLOCKS_VERSION );
+		wp_enqueue_style( 'atomic-wind-tailwind' );
+		wp_add_inline_style( 'atomic-wind-tailwind', $cached_css );
 	}
 
 	/**
