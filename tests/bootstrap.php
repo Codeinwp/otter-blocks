@@ -20,7 +20,17 @@ require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_plugin() {
 	require dirname( dirname( __FILE__ ) ) . '/otter-blocks.php';
-	require dirname( dirname( __FILE__ ) ) . '/vendor/wp-content/plugins/woocommerce/woocommerce.php';
+
+	// Prefer the copy in the plugins directory (mounted there by wp-env) so the
+	// activate_plugin() call below resolves to the already-loaded file instead
+	// of redeclaring WooCommerce from the composer-vendored copy.
+	$woocommerce = WP_PLUGIN_DIR . '/woocommerce/woocommerce.php';
+
+	if ( ! file_exists( $woocommerce ) ) {
+		$woocommerce = dirname( dirname( __FILE__ ) ) . '/vendor/wp-content/plugins/woocommerce/woocommerce.php';
+	}
+
+	require $woocommerce;
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

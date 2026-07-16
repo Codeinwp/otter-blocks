@@ -102,6 +102,7 @@ class WooCommerce_Builder {
 	 * default; an explicit user preference still wins over the default.
 	 *
 	 * @access  public
+	 * @return  void
 	 */
 	public function ensure_metabox_panel_visible() {
 		$post = get_post();
