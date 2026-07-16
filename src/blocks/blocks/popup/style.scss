@@ -122,6 +122,9 @@ $base-index: 99999 !default;
 		position: absolute;
 		right: var( --padding );
 
+		// Keep the close button above positioned popup content, e.g. Section columns.
+		z-index: 2;
+
 		@media (max-width: 600px) {
 			padding-bottom: 0px;
 		}
@@ -135,7 +138,6 @@ $base-index: 99999 !default;
 			padding: 0 !important;
 			border: none;
 			cursor: pointer;
-			z-index: 2;
 
 			&:hover {
 				opacity: .75;

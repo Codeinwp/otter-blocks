@@ -1,3 +1,49 @@
+#### [Version 3.2.0](https://github.com/Codeinwp/otter-blocks/compare/v3.1.11...v3.2.0) (2026-07-06)
+
+### New Features
+
+- **Modernized AI backend**: Otters AI features work with the native AI adapters in the WordPress 7.0 release with backwards compatibility for older versions.
+- **AI content toolbar**: Rewrite, summarize, expand, shorten, translate, change tone, fix grammar, and simplify from a new modal, plus custom user-defined actions.
+- **AI page generation**: Generate a section or full page from a prompt and insert it into the editor.
+- **AI form autoresponders**: Enrich autoresponder messages with personalized, AI-generated content.
+- **New block patterns and page templates**: 50 new free & 100+ premium block patterns plus 3 new free & 10 premium  template packages for the Otter Design Library.
+- **Smarter design library search**: Better search over the Design Library, powered by rich descriptions and fuzzt search.
+- **Better pattern categorization and tagging**: Otter Design Library is now better categorized and tagged, making patterns easier to find.
+- **Accent color selector for Design Library**: Preview and insert patterns in your accent color, so they arrive on-brand.
+- **Content Slider block**: A lightweight slider that accepts any inner blocks as slides, not just images.
+- **ACF Repeater support**: Pull dynamic values from ACF Repeater fields, including sub-fields like images.
+- **Archive title prefix toggle**: Show a category name without the Category: prefix.
+- **Cloudflare Turnstile**: An alternative to reCAPTCHA for Form block spam protection.
+- **Form reply-to**: Set a configurable Reply-To address on the Form block.
+- **Reworked Block Conditions design**: Cleaner, less cluttered visibility Conditions panel.
+
+### Fixes 
+
+- **Slider duplication**: No more error when duplicating a Slider block.
+- **Maps block**: Toggle scroll-zoom, plus fixes for duplicate markers, placement, and popups.
+- **Button Group global options**: Appearance, Letter case, and Line height now properly apply on the front end.
+- **Custom CSS panel**: No longer shows duplicated CSS textarea boxes on WP 7.0.
+- **Keyboard navigation**: Arrow-key navigation between blocks works again on WP 7.0.
+- **Live Search warning**: Fixed the Undefined array key cat PHP warning when no category is selected.
+- **Required fields in emails**: Multiple-choice values no longer show a stray asterisk.
+- **Image alt text**: Blocks with images now support alt attributes for EU accessibility compliance.
+- **Modal close button**: Added aria-labels for screen-reader users.
+- **WooCommerce Builder**: Hide placeholders to users that cant edit the product template if no user-facing content can be displayed.
+
+### Changes
+
+- **Block API v3**: Migrated all blocks to apiVersion: 3, removing editor deprecation warnings and fixing iframe compatibility.
+- **Resilient form submissions**: Entries save to the database before email, so mail failures no longer lose leads; errors are logged.
+- **Removed CSS saving notice**: Dropped noisy Saving CSS notices while still surfacing real errors.
+- **Performance**: Audited block loading and caching for editor and front-end speed.
+- **Atomic Wind block names**: Show meaningful names for Atomic Wind blocks in List View.
+- **Atomic Wind icons**: New icons for Atomic Wind blocks.
+- **Atomic Wind CSS warmup**: Added CSS generator warmup so the styles are already generated before the page is visited.
+- **Uprefixed dynamic category name**: Users can now display the category name dynamic value without a prefix.
+- **Dependencies**: Updated internal dependencies.
+- **Security**: General security improvements.
+- **English typos**: Corrected several English typos in form messages.
+
 ##### [Version 3.1.11](https://github.com/Codeinwp/otter-blocks/compare/v3.1.10...v3.1.11) (2026-05-27)
 
 - Fixed patterns not showing in onboarding on Full Site Editing themes

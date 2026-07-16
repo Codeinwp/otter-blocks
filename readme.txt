@@ -4,7 +4,7 @@ Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 3.1.11
+Stable tag: 3.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,18 @@ Every block has customization support to help you style your site according to y
 - Animation backing, bouncing, fading, flipping, rotating, sliding, rolling, light speed, and more at the click of a button.
 - Typography controls from spacing to font choice.
 
+### Your AI Assistant for the Block Editor
+
+Otter brings AI right into the block editor to help you build, not just edit. Describe what you want, and Otter creates it as real, editable blocks.
+
+- **AI Content Generator:** Generate a full section or an entire page from a simple prompt with the AI Block. Pick a type like Hero, Features, Pricing, Testimonials, or Call to action, or describe your own. Otter matches your theme colors and current page style, so the result arrives on-brand.
+
+- **AI Toolbar:** Select any text to rewrite, summarize, expand, shorten, translate, change tone, fix grammar, or simplify it, all without leaving the page. You can also create your own custom actions with your own prompts and reorder the toolbar to fit how you work.
+
+- **AI Form Autoresponder [PRO]:** Reply to every form submission with a personalized, AI-written message. Write a prompt using your form fields, set a fallback message, and let AI craft the rest.
+
+- **Native WordPress AI Connectors:** Otter's AI works with the native AI adapters in WordPress 7.0, so you connect your preferred AI provider once, and every Otter AI feature uses it. 
+
 ### Mobile Responsiveness of Otter Blocks
 
 Create mobile-friendly designs with Otter’s built-in responsive settings. Each block can be tweaked to provide a consistent experience for mobile, tablet, and desktop.
@@ -105,7 +117,7 @@ The heading block you didn't know you needed. This Otter block has all the funct
 
 #### AI Block [FREE]
 
-Step inside the AI Block, your gateway to effortless content and form creation, all powered by AI. With the AI Content Generator, crafting text, dynamic headings, and insightful paragraphs is a breeze, while the AI Form Generator simplifies building forms. It's your all-in-one solution for seamless work — everything you need with AI, neatly packed into a single block.
+Build with AI, right in the editor. Describe the section or page you want, and the AI Block generates it as real, editable Gutenberg blocks, matched to your theme colors and page style. Adjust anything by hand afterward, just like blocks you built yourself.
 
 #### Button Group Gutenberg Block [FREE]
 
@@ -122,6 +134,10 @@ Quickly and easily insert a contact form anywhere on the page. Optionally, turn 
 #### Content Timeline Block [FREE]
 
 Elegantly display events in a chronological timeline. Ideal for highlighting historical events, process steps, or key milestones.
+
+#### Content Slider Block [FREE]
+
+A slider where every slide can hold any Gutenberg blocks, not just images. Add headings, text, buttons, images, or full layouts like testimonial, pricing, or feature cards inside each slide, then let visitors move through them with arrows or dots. Unlike a standard image slider, the Content Slider turns anything you build in Gutenberg into a swipeable carousel, with no extra plugin needed.
 
 #### Countdown Block [FREE]
 
@@ -215,29 +231,7 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 
 Easily launch your site with our customizable patterns and full-page WordPress templates. Import ready-made designs with just one click and get started in no time.
 
-#### Service Patterns
-
-Organize your services clearly with sections that keep your page tidy while offering detailed information on demand. [Check live demo](https://demo.themeisle.com/otter-blocks/service/)
-
-#### Testimonial Patterns
-
-Organize your services clearly with sections that keep your page tidy while offering detailed information on demand. [Check live demo](https://demo.themeisle.com/otter-blocks/service/)
-
-#### Pricing Patterns
-
-Tailor your pricing tables with versatile layout patterns that enhance readability and appeal, suitable for any business model. [Check live demo](https://demo.themeisle.com/otter-blocks/pricing/)
-
-#### Features Section Patterns
-
-Detail the features of your products or services using clean, organized layouts that make complex information easy to digest. [Check live demo](https://demo.themeisle.com/otter-blocks/features-patterns/)
-
-#### Call-to-action Section Patterns
-
-Drive conversions with compelling call-to-action sections, designed to grab attention and motivate immediate responses. [Check live demo](https://demo.themeisle.com/otter-blocks/cta-patterns/)
-
-📌 Check a live demo of all the patterns available by [clicking here](https://demo.themeisle.com/otter-blocks/patterns/).
-
-📌 Check a live demo of all the Full-page templates available by [clicking here](https://demo.themeisle.com/otter-blocks/templates/).
+Explore a wide range of Otter patterns and full-page templates for services, testimonials, pricing, features, call-to-action sections, and more. Browse the available designs [here](https://themeisle.com/plugins/otter-blocks/patterns/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=otter-blocks).
 
 ### Get More Options in Otter Pro 🤩
 
@@ -314,12 +308,11 @@ The plugin is relying on the service behind api.themeisle.com for accessing the 
 
 == Screenshots ==
 
-1. Gutenberg Block Animations
-2. Visibility Condition Rules
-3. Posts Block
-4. AI Form Generator
-5. AI Layout Generator
-6. Patterns & Full-page templates Library
+1. Advanced Blocks Library
+2. Patterns & Full-page Design Library
+3. AI Section and Page Generator
+4. Visibility Conditions
+5. Advanced Forms
 
 == Installation ==
 
@@ -371,9 +364,51 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 == Changelog ==
 
-##### [Version 3.1.11](https://github.com/Codeinwp/otter-blocks/compare/v3.1.10...v3.1.11) (2026-05-27)
+#### [Version 3.2.0](https://github.com/Codeinwp/otter-blocks/compare/v3.1.11...v3.2.0) (2026-07-06)
 
-- Fixed patterns not showing in onboarding on Full Site Editing themes
+### New Features
+
+- **Modernized AI backend**: Otters AI features work with the native AI adapters in the WordPress 7.0 release with backwards compatibility for older versions.
+- **AI content toolbar**: Rewrite, summarize, expand, shorten, translate, change tone, fix grammar, and simplify from a new modal, plus custom user-defined actions.
+- **AI page generation**: Generate a section or full page from a prompt and insert it into the editor.
+- **AI form autoresponders**: Enrich autoresponder messages with personalized, AI-generated content.
+- **New block patterns and page templates**: 50 new free & 100+ premium block patterns plus 3 new free & 10 premium  template packages for the Otter Design Library.
+- **Smarter design library search**: Better search over the Design Library, powered by rich descriptions and fuzzt search.
+- **Better pattern categorization and tagging**: Otter Design Library is now better categorized and tagged, making patterns easier to find.
+- **Accent color selector for Design Library**: Preview and insert patterns in your accent color, so they arrive on-brand.
+- **Content Slider block**: A lightweight slider that accepts any inner blocks as slides, not just images.
+- **ACF Repeater support**: Pull dynamic values from ACF Repeater fields, including sub-fields like images.
+- **Archive title prefix toggle**: Show a category name without the Category: prefix.
+- **Cloudflare Turnstile**: An alternative to reCAPTCHA for Form block spam protection.
+- **Form reply-to**: Set a configurable Reply-To address on the Form block.
+- **Reworked Block Conditions design**: Cleaner, less cluttered visibility Conditions panel.
+
+### Fixes 
+
+- **Slider duplication**: No more error when duplicating a Slider block.
+- **Maps block**: Toggle scroll-zoom, plus fixes for duplicate markers, placement, and popups.
+- **Button Group global options**: Appearance, Letter case, and Line height now properly apply on the front end.
+- **Custom CSS panel**: No longer shows duplicated CSS textarea boxes on WP 7.0.
+- **Keyboard navigation**: Arrow-key navigation between blocks works again on WP 7.0.
+- **Live Search warning**: Fixed the Undefined array key cat PHP warning when no category is selected.
+- **Required fields in emails**: Multiple-choice values no longer show a stray asterisk.
+- **Image alt text**: Blocks with images now support alt attributes for EU accessibility compliance.
+- **Modal close button**: Added aria-labels for screen-reader users.
+- **WooCommerce Builder**: Hide placeholders to users that cant edit the product template if no user-facing content can be displayed.
+
+### Changes
+
+- **Block API v3**: Migrated all blocks to apiVersion: 3, removing editor deprecation warnings and fixing iframe compatibility.
+- **Resilient form submissions**: Entries save to the database before email, so mail failures no longer lose leads; errors are logged.
+- **Removed CSS saving notice**: Dropped noisy Saving CSS notices while still surfacing real errors.
+- **Performance**: Audited block loading and caching for editor and front-end speed.
+- **Atomic Wind block names**: Show meaningful names for Atomic Wind blocks in List View.
+- **Atomic Wind icons**: New icons for Atomic Wind blocks.
+- **Atomic Wind CSS warmup**: Added CSS generator warmup so the styles are already generated before the page is visited.
+- **Uprefixed dynamic category name**: Users can now display the category name dynamic value without a prefix.
+- **Dependencies**: Updated internal dependencies.
+- **Security**: General security improvements.
+- **English typos**: Corrected several English typos in form messages.
 
 
 
