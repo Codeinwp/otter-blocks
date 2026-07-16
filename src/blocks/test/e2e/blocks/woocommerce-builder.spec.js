@@ -46,6 +46,11 @@ test.describe( 'WooCommerce Builder product editing (issue #2822)', () => {
 
 	test.beforeAll( () => {
 
+		// WooCommerce is mounted by wp-env but only activated for this spec —
+		// the rest of the suite runs without it, as its editor integrations
+		// change load behavior for every other test. Serial project only.
+		runWpCli( 'wp plugin activate woocommerce' );
+
 		// Prevent the WooCommerce activation redirect from hijacking admin page loads.
 		tryRunWpCli( 'wp transient delete _wc_activation_redirect' );
 
@@ -53,6 +58,10 @@ test.describe( 'WooCommerce Builder product editing (issue #2822)', () => {
 		// assertions exercise the plugin-provided default rather than a
 		// leftover choice, without clobbering preferences other specs rely on.
 		tryRunWpCli( 'wp user meta patch delete 1 wp_persisted_preferences core/edit-post metaBoxesMainIsOpen' );
+	});
+
+	test.afterAll( () => {
+		tryRunWpCli( 'wp plugin deactivate woocommerce' );
 	});
 
 	test.beforeEach( async({}, testInfo ) => {

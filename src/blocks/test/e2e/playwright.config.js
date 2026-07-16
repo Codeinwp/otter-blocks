@@ -59,7 +59,7 @@ const SERIAL_SPECS = [
 	// Flips the site-wide atomic-wind blocks option.
 	'**/blocks/atomic-wind-list-view.spec.js',
 
-	// Deletes the admin user's persisted editor preferences; must not race parallel specs.
+	// Activates/deactivates the WooCommerce plugin site-wide; must not race parallel specs.
 	'**/blocks/woocommerce-builder.spec.js'
 ];
 
