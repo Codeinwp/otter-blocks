@@ -992,7 +992,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	}
 
 	// -------------------------------------------------------
-	// Security: output_cached_css uses wp_add_inline_style
+	// Security: cached CSS uses wp_add_inline_style.
 	// -------------------------------------------------------
 
 	public function test_cached_css_uses_inline_style_api() {
@@ -1001,12 +1001,12 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 		$this->assertNotFalse(
 			strpos( $source, 'wp_add_inline_style' ),
-			'output_cached_css should use wp_add_inline_style instead of raw echo'
+			'Cached CSS should use wp_add_inline_style instead of raw echo'
 		);
 
 		$this->assertFalse(
 			(bool) preg_match( '/echo.*\$cached_css/', $source ),
-			'output_cached_css should not echo $cached_css directly'
+			'Cached CSS should not be echoed directly'
 		);
 	}
 
@@ -1211,5 +1211,302 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->call_private( 'render_css_warm_page_html', $target );
 
 		$this->assertSame( $sentinel, $post, 'The global $post must be restored after rendering the warm page.' );
+	}
+
+	// -------------------------------------------------------
+	// Frontend CSS loading.
+	// -------------------------------------------------------
+
+	/**
+	 * Read a private property.
+	 *
+	 * @param string $name Property name.
+	 * @return mixed
+	 */
+	private function get_private_prop( $name ) {
+		$ref = new ReflectionProperty( Atomic_Wind_Blocks::class, $name );
+		$ref->setAccessible( true );
+		return $ref->getValue( $this->instance );
+	}
+
+	/**
+	 * Reset style and script queues.
+	 */
+	private function reset_style_globals() {
+		$GLOBALS['wp_styles']  = new WP_Styles();
+		$GLOBALS['wp_scripts'] = new WP_Scripts();
+	}
+
+	/**
+	 * Get inline CSS for a style.
+	 *
+	 * @param string $handle Style handle.
+	 * @return string
+	 */
+	private function inline_style_for( $handle ) {
+		$data = wp_styles()->get_data( $handle, 'after' );
+		return is_array( $data ) ? implode( '', $data ) : (string) $data;
+	}
+
+	public function test_track_rendered_blocks_increments_per_current_post() {
+		$this->reset_in_query( false );
+
+		global $post;
+		$post = get_post( $this->post_id );
+		setup_postdata( $post );
+
+		$block = $this->make_block( 'atomic-wind/box' );
+		$this->instance->track_rendered_blocks( '<div></div>', $block );
+		$this->instance->track_rendered_blocks( '<div></div>', $block );
+
+		$rendered = $this->get_private_prop( 'rendered' );
+
+		wp_reset_postdata();
+
+		$this->assertSame( 2, $rendered[ $this->post_id ] );
+	}
+
+	public function test_track_rendered_blocks_skips_non_atomic() {
+		$this->reset_in_query( false );
+
+		$this->instance->track_rendered_blocks( '<p></p>', $this->make_block( 'core/paragraph' ) );
+
+		$this->assertSame( array(), $this->get_private_prop( 'rendered' ) );
+	}
+
+	public function test_track_rendered_blocks_skips_inside_query_loop() {
+		$this->reset_in_query( true );
+
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+
+		$this->assertSame( array(), $this->get_private_prop( 'rendered' ) );
+	}
+
+	public function test_output_late_css_inlines_multiple_rendered_posts() {
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+
+		$a = $this->make_atomic_wind_post( 'flex' );
+		$b = $this->make_atomic_wind_post( 'grid' );
+		update_post_meta( $a, '_atomic_wind_css', '.flex{display:flex}' );
+		update_post_meta( $b, '_atomic_wind_css', '.grid{display:grid}' );
+
+		global $post;
+		$post = get_post( $a );
+		setup_postdata( $post );
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+
+		$post = get_post( $b );
+		setup_postdata( $post );
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+
+		$this->instance->output_late_css();
+
+		$inline = $this->inline_style_for( 'atomic-wind-tailwind-late' );
+
+		wp_reset_postdata();
+
+		$this->assertStringContainsString( '.flex{display:flex}', $inline );
+		$this->assertStringContainsString( '.grid{display:grid}', $inline );
+	}
+
+	public function test_output_late_css_dedupes_identical_blobs() {
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+
+		$a = $this->make_atomic_wind_post( 'flex' );
+		$b = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $a, '_atomic_wind_css', '.flex{display:flex}' );
+		update_post_meta( $b, '_atomic_wind_css', '.flex{display:flex}' );
+
+		global $post;
+		$post = get_post( $a );
+		setup_postdata( $post );
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+
+		$post = get_post( $b );
+		setup_postdata( $post );
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+
+		$this->instance->output_late_css();
+
+		$inline = $this->inline_style_for( 'atomic-wind-tailwind-late' );
+
+		wp_reset_postdata();
+
+		$this->assertSame( 1, substr_count( $inline, '.flex{display:flex}' ) );
+	}
+
+	public function test_frontend_css_is_not_enqueued_until_a_block_renders() {
+		$this->reset_style_globals();
+
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $post_id, '_atomic_wind_css', '.flex{display:flex}' );
+
+		$GLOBALS['wp_query']->posts = array( get_post( $post_id ) );
+
+		$this->instance->enqueue_base_css();
+		$this->instance->maybe_enqueue_style_builder();
+
+		$this->assertFalse( wp_style_is( 'atomic-wind-base', 'enqueued' ) );
+		$this->assertFalse( wp_style_is( 'atomic-wind-tailwind', 'enqueued' ) );
+	}
+
+	public function test_output_late_css_inlines_tracked_post_and_skips_generator() {
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+		$this->instance->enqueue_base_css();
+
+		$late = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $late, '_atomic_wind_css', '.late{color:blue}' );
+
+		global $post;
+		$post = get_post( $late );
+		setup_postdata( $post );
+
+		// Render the post's single Atomic Wind block.
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+
+		$this->instance->output_late_css();
+
+		$inline = $this->inline_style_for( 'atomic-wind-tailwind-late' );
+
+		wp_reset_postdata();
+
+		$this->assertTrue( wp_style_is( 'atomic-wind-base', 'enqueued' ) );
+		$this->assertStringContainsString( '.late{color:blue}', $inline );
+		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_late_css_collects_blocks_rendered_by_normal_footer_callbacks() {
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+		update_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
+
+		$late = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $late, '_atomic_wind_css', '.footer-callback{color:purple}' );
+
+		global $post;
+		$post = get_post( $late );
+		setup_postdata( $post );
+
+		$render_footer_block = function () {
+			$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+		};
+
+		// Avoid unrelated core footer output.
+		remove_all_actions( 'wp_footer' );
+		add_action( 'wp_footer', $render_footer_block, 10 );
+		$this->instance->run();
+		do_action( 'wp_footer' );
+		remove_action( 'wp_footer', $render_footer_block, 10 );
+		remove_action( 'wp_footer', array( $this->instance, 'output_late_css' ), 19 );
+
+		$inline = $this->inline_style_for( 'atomic-wind-tailwind-late' );
+
+		wp_reset_postdata();
+
+		$this->assertStringContainsString( '.footer-callback{color:purple}', $inline );
+	}
+
+	public function test_output_late_css_falls_back_to_generator_when_counts_exceed() {
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+
+		$late = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $late, '_atomic_wind_css', '.late{color:blue}' );
+
+		global $post;
+		$post = get_post( $late );
+		setup_postdata( $post );
+
+		// Render one block more than the post declares.
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+
+		$this->instance->output_late_css();
+
+		wp_reset_postdata();
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_singular_css_inlines_queried_post_in_head() {
+		$this->reset_style_globals();
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $singular, '_atomic_wind_css', '.flex{display:flex}' );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->enqueue_base_css();
+		$this->instance->output_singular_css();
+
+		$this->assertStringContainsString( '.flex{display:flex}', $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertTrue( wp_style_is( 'atomic-wind-base', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_singular_css_enqueues_generator_without_cache() {
+		$this->reset_style_globals();
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->output_singular_css();
+
+		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_singular_css_noop_on_non_singular_views() {
+		$this->reset_style_globals();
+
+		$listed = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $listed, '_atomic_wind_css', '.flex{display:flex}' );
+
+		$this->go_to( home_url( '/' ) );
+		$this->instance->output_singular_css();
+
+		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_late_css_skips_post_already_inlined_at_head() {
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $singular, '_atomic_wind_css', '.flex{display:flex}' );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->output_singular_css();
+
+		// The post's single block renders and is tracked, as during a real request.
+		global $post;
+		$post = get_post( $singular );
+		setup_postdata( $post );
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+		wp_reset_postdata();
+
+		$this->instance->output_late_css();
+
+		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_enqueue_base_css_registers_frontend_style_without_enqueuing_it() {
+		$this->reset_style_globals();
+
+		global $post;
+		$post = null;
+
+		$this->instance->enqueue_base_css();
+
+		$this->assertTrue( wp_style_is( 'atomic-wind-base', 'registered' ) );
+		$this->assertFalse( wp_style_is( 'atomic-wind-base', 'enqueued' ) );
+		$this->assertStringContainsString(
+			'wp-block-atomic-wind-',
+			$this->inline_style_for( 'atomic-wind-base' )
+		);
 	}
 }
