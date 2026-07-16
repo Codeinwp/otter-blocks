@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Cafe - Menu', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'pages', 'cafe-pack' ),

@@ -261,7 +261,7 @@ class Dynamic_Content_Server {
 
 		if ( $size = @getimagesize( $path ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure
 			ob_start();
-				readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+				readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile, WordPress.WP.AlternativeFunctions.file_system_operations_readfile
 			$output = ob_get_contents();
 
 			if ( ! empty( $size['mime'] ) ) {
@@ -271,7 +271,7 @@ class Dynamic_Content_Server {
 		}
 
 		ob_start();
-			readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+			readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile, WordPress.WP.AlternativeFunctions.file_system_operations_readfile
 		$output = ob_get_contents();
 
 		if ( isset( $size['mime'] ) ) {

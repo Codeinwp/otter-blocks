@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Horizontal Timeline', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'timeline' ),

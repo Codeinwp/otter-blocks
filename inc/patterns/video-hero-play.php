@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Video Hero With Play', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'video' ),

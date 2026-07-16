@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Map And Location Details', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'contact' ),

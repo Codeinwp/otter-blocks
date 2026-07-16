@@ -7,6 +7,10 @@
 
 // phpcs:ignoreFile
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! defined( 'ENABLE_OTTER_PRO_DEV' ) ) {
 	define( 'ENABLE_OTTER_PRO_DEV', true );
 }

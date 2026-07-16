@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Launch Countdown', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'waitlist' ),

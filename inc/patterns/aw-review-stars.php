@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Star Rating Reviews', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'testimonials' ),

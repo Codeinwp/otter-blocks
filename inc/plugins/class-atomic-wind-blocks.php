@@ -482,8 +482,8 @@ class Atomic_Wind_Blocks {
 		$html .= '</head><body class="atomic-wind-css-warm">';
 		$html .= $content;
 		$html .= '<script>window.atomicWindStyleBuilder = ' . $config . ';</script>';
-		$html .= '<script src="' . esc_url( $generator ) . '"></script>';
-		$html .= '<script src="' . esc_url( $builder ) . '"></script>';
+		$html .= '<script src="' . esc_url( $generator ) . '"></script>'; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- standalone iframe document, not a WordPress page.
+		$html .= '<script src="' . esc_url( $builder ) . '"></script>'; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- standalone iframe document, not a WordPress page.
 		$html .= '<script>' . $ping . '</script>';
 		$html .= '</body></html>';
 

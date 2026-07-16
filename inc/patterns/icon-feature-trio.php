@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Icon Feature Trio', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'icons' ),

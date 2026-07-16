@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Pricing Columns', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'pricing' ),

@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Coming Soon Waitlist', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'waitlist' ),

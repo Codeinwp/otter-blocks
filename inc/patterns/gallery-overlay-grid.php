@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Gallery Overlay Grid', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'gallery' ),

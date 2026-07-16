@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Simple Pricing Comparison', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'pricing' ),

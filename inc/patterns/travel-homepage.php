@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Travel - Homepage', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'pages', 'travel-pack' ),

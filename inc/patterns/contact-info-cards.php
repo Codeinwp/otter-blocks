@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Contact Info Cards', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'contact' ),

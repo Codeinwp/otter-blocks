@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Content with Checklist', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'text' ),

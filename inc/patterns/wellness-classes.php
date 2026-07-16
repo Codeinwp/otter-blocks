@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Wellness - Classes', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'pages', 'wellness-pack' ),

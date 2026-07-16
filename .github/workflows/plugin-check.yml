@@ -48,7 +48,12 @@ jobs:
             tests
             bin
             .github
+            src
+            packages
+          exclude-files: |
+            phpcs.xml.dist
           ignore-codes: |
+            PluginCheck.CodeAnalysis.Offloading.OffloadedContent
             WordPress.WP.I18n.TextDomainMismatch
             textdomain_mismatch
             hidden_files

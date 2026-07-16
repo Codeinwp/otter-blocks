@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Contact Form with Gradient Panel', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'forms' ),

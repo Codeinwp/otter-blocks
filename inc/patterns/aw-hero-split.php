@@ -5,6 +5,10 @@
  * @package ThemeIsle
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 return array(
 	'title'       => __( 'Split Hero', 'otter-blocks' ),
 	'categories'  => array( 'otter-blocks', 'header' ),
