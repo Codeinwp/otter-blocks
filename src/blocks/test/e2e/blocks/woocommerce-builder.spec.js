@@ -84,11 +84,12 @@ test.describe( 'WooCommerce Builder product editing (issue #2822)', () => {
 		// Re-open the edit screen the way a merchant would after the toggle.
 		await admin.visitAdminPage( 'post.php', `post=${ productId }&action=edit` );
 
-		const isBlockEditor = ( await page.locator( 'body.block-editor-page' ).count() ) > 0;
-		testInfo.annotations.push({ type: 'editor-loaded', description: isBlockEditor ? 'block editor' : 'classic editor' });
+		// The builder must actually route the product into the block editor —
+		// otherwise the metabox assertions below pass without exercising it.
+		await expect( page.locator( 'body.block-editor-page' ) ).toBeVisible();
 		await attachScreenshot( testInfo, page, 'product-edit-screen-with-builder-enabled' );
 
-		// Whichever editor loads, the WooCommerce product options must stay editable.
+		// The WooCommerce product options must stay editable in the block editor.
 		await expect( page.locator( '#woocommerce-product-data' ) ).toBeVisible();
 		await expect( page.locator( '#_regular_price' ) ).toBeVisible();
 	});
