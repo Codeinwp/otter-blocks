@@ -26,6 +26,7 @@ class WooCommerce_Builder {
 	 */
 	public function init() {
 		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'ensure_metabox_panel_visible' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'enable_block_editor' ), 11, 2 );
 		add_filter( 'wc_get_template_part', array( $this, 'wc_get_template_part' ), 1000, 3 );
 		add_action( 'otter_blocks_woocommerce_content', 'the_content' );
@@ -90,6 +91,41 @@ class WooCommerce_Builder {
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * Keep the WooCommerce Product data metabox visible in the block editor.
+	 *
+	 * Products using the WooCommerce Builder are edited in the block editor,
+	 * where WordPress 6.7+ collapses the meta boxes panel by default — hiding
+	 * the Product data options (price, inventory, etc.). Open the panel by
+	 * default; an explicit user preference still wins over the default.
+	 *
+	 * @access  public
+	 */
+	public function ensure_metabox_panel_visible() {
+		$post = get_post();
+
+		if ( ! $post || 'product' !== $post->post_type ) {
+			return;
+		}
+
+		if ( ! boolval( get_post_meta( $post->ID, '_themeisle_gutenberg_woo_builder', true ) ) ) {
+			return;
+		}
+
+		wp_add_inline_script(
+			'wp-edit-post',
+			"( function() {
+				if ( ! window.wp || ! wp.data || ! wp.domReady ) {
+					return;
+				}
+
+				wp.domReady( function() {
+					wp.data.dispatch( 'core/preferences' ).setDefaults( 'core/edit-post', { metaBoxesMainIsOpen: true } );
+				} );
+			} )();"
+		);
 	}
 
 	/**

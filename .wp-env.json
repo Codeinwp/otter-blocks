@@ -4,6 +4,7 @@
   "testsEnvironment": false,
   "plugins": [
     ".",
+    "./vendor/wp-content/plugins/woocommerce",
     "https://downloads.wordpress.org/plugin/ai-provider-for-openai.zip"
   ],
   "themes": [ "./test/emptytheme" ],
