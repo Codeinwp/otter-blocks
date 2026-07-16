@@ -77,9 +77,9 @@ const config = defineConfig({
 			use: { ...devices[ 'Desktop Chrome' ], video: 'off' }
 		}
 	],
-	reporter: process.env.CI ?
-		'./config/performance-reporter.ts' :
-		[[ 'list' ], [ './config/performance-reporter.ts' ]],
+	// Keep the list reporter on CI too — the custom reporter implements no
+	// onError, so without it global-setup and test failures exit silently.
+	reporter: [[ 'list' ], [ './config/performance-reporter.ts' ]],
 	forbidOnly: !! process.env.CI,
 	fullyParallel: false,
 	retries: 0,

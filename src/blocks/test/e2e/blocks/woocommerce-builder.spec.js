@@ -49,9 +49,10 @@ test.describe( 'WooCommerce Builder product editing (issue #2822)', () => {
 		// Prevent the WooCommerce activation redirect from hijacking admin page loads.
 		tryRunWpCli( 'wp transient delete _wc_activation_redirect' );
 
-		// Drop persisted editor preferences so the assertions exercise the
-		// plugin-provided "Meta Boxes" panel default rather than a leftover choice.
-		tryRunWpCli( 'wp user meta delete 1 wp_persisted_preferences' );
+		// Unset only the persisted "Meta Boxes" panel preference so the
+		// assertions exercise the plugin-provided default rather than a
+		// leftover choice, without clobbering preferences other specs rely on.
+		tryRunWpCli( 'wp user meta patch delete 1 wp_persisted_preferences core/edit-post metaBoxesMainIsOpen' );
 	});
 
 	test.beforeEach( async({}, testInfo ) => {
