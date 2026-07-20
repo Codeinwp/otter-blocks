@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { test, expect } from '../fixtures';
-import { getBlockByName, expectBlockByName, publishAndViewPost } from '../helpers/editor';
-import { getFormClientId, insertContactForm, insertFormCaptchaBlock } from '../helpers/forms';
+import { getBlockByName, expectBlockByName, publishAndViewPost, publishPostReliable } from '../helpers/editor';
+import { expectFormOptionSavedNotice, findSavedFormEmail, getFormClientId, getSavedFormEmails, insertContactForm, insertFormCaptchaBlock, prepareFormOptionsInspector, showFormOption } from '../helpers/forms';
 
 const CAPTCHA_BLOCK = 'themeisle-blocks/form-captcha';
 
@@ -12,7 +12,11 @@ test.describe( 'Form Block - Captcha block', () => {
 	test.beforeEach( async({ admin, otterUtils }) => {
 		await otterUtils.setOptions({
 			themeisle_cloudflare_turnstile_site_key: 'turnstile-sitekey',
-			themeisle_cloudflare_turnstile_secret_key: 'turnstile-secret'
+			themeisle_cloudflare_turnstile_secret_key: 'turnstile-secret',
+
+			// Start from a clean form-options state (see form.spec.js).
+			themeisle_blocks_form_emails: [],
+			themeisle_blocks_form_fields_option: []
 		});
 
 		await admin.createNewPost();
@@ -78,6 +82,55 @@ test.describe( 'Form Block - Captcha block', () => {
 		await page.getByRole( 'button', { name: 'Submit' }).click();
 
 		await expect( page.locator( `#${formId} .o-form-server-response.o-success` ) ).toBeVisible({ timeout: 15000 });
+	});
+
+	// Regression for #2919: `captchaProvider` was missing from the
+	// `themeisle_blocks_form_emails` REST schema, so the settings endpoint
+	// (which forces `additionalProperties: false`) rejected the entire
+	// form-options save whenever a captcha was present.
+	test( 'saves form options when a Turnstile captcha is present', async({ editor, page }) => {
+		const ccValue = 'otter@turnstile-form.com';
+
+		await insertContactForm({ editor, page });
+
+		const formClientId = await getFormClientId( page );
+		expect( formClientId ).toBeTruthy();
+
+		await insertFormCaptchaBlock( page, formClientId, 'turnstile' );
+
+		await expect.poll( async() => {
+			const form = await getBlockByName( editor, 'themeisle-blocks/form' );
+			return form?.innerBlocks?.filter( ({ name }) => CAPTCHA_BLOCK === name )?.length;
+		}).toBe( 1 );
+
+		// Inserting the captcha selects it; the Form Options panel only shows
+		// in the Form block's own inspector.
+		await page.evaluate( ( clientId ) => {
+			window.wp.data.dispatch( 'core/block-editor' ).selectBlock( clientId );
+		}, formClientId );
+
+		await prepareFormOptionsInspector( editor, page );
+
+		await showFormOption( page, 'Show CC' );
+
+		const cc = page.getByPlaceholder( 'Send copies to' );
+		await cc.fill( ccValue );
+
+		await publishPostReliable( editor, page );
+
+		// Without the schema fix the settings request fails with
+		// `rest_additional_properties_forbidden` and this notice never shows.
+		await expectFormOptionSavedNotice( page );
+
+		const formBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
+		expect( formBlock.attributes.optionName ).toBeTruthy();
+
+		const databaseEmails = await getSavedFormEmails( page );
+		const savedEmail = findSavedFormEmail( databaseEmails, formBlock.attributes.optionName );
+
+		expect( savedEmail ).toBeTruthy();
+		expect( savedEmail?.cc ).toBe( ccValue );
+		expect( savedEmail?.captchaProvider ).toBe( 'turnstile' );
 	});
 
 	test( 'keeps a single Captcha block per form', async({ editor, page }) => {
