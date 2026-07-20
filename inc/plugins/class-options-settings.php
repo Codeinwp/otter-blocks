@@ -412,6 +412,9 @@ class Options_Settings {
 							if ( isset( $item['redirectLink'] ) ) {
 								$item['redirectLink'] = sanitize_text_field( $item['redirectLink'] );
 							}
+							if ( isset( $item['captchaProvider'] ) ) {
+								$item['captchaProvider'] = sanitize_text_field( $item['captchaProvider'] );
+							}
 							if ( isset( $item['titleSubject'] ) ) {
 								$item['titleSubject'] = sanitize_text_field( $item['titleSubject'] );
 							}
@@ -492,6 +495,9 @@ class Options_Settings {
 								),
 								'hasCaptcha'              => array(
 									'type' => array( 'boolean', 'number', 'string' ),
+								),
+								'captchaProvider'         => array(
+									'type' => 'string',
 								),
 								'email'                   => array(
 									'type' => 'string',
