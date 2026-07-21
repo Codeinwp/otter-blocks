@@ -38,6 +38,26 @@ import {
 
 import { accentContent } from './accent';
 
+import { resolvePatternBlocks } from '../../../onboarding/utils.js';
+
+// WP 7.0 stamps blocks inlined from wp:pattern refs with metadata.patternName
+// and locks them into content-only mode. Inserts are unsynced copies — drop
+// the stamp, keep the rest of metadata (bindings, labels).
+const stripPatternAttribution = (blocks) =>
+	blocks.map((block) => {
+		const metadata = { ...(block.attributes?.metadata || {}) };
+		delete metadata.patternName;
+
+		return {
+			...block,
+			attributes: {
+				...block.attributes,
+				metadata: Object.keys(metadata).length ? metadata : undefined,
+			},
+			innerBlocks: stripPatternAttribution(block.innerBlocks || []),
+		};
+	});
+
 const CLOUD_EMPTY_CATEGORY = 'cloud-empty';
 
 // Section categories bucketed into meaningful sidebar groups. Mirrors the
@@ -574,8 +594,12 @@ const Library = ({ onClose }) => {
 			}
 
 			// With Pro active the upsell banner removes itself right after
-			// insertion anyway — skip it up front.
-			const blocks = parse(accentContent(pattern, accent)).filter(
+			// insertion anyway — skip it up front. Inline wp:pattern refs while
+			// parsing: inserted raw they render locked, or not at all for
+			// unregistered slugs.
+			const blocks = stripPatternAttribution(
+				resolvePatternBlocks(parse(accentContent(pattern, accent)), allPatterns),
+			).filter(
 				(block) =>
 					UPSELL_BLOCK !== block.name ||
           !Boolean(window.themeisleGutenberg?.hasPro),
@@ -660,7 +684,7 @@ const Library = ({ onClose }) => {
 
 			onClose();
 		},
-		[ clientID, accent ],
+		[ clientID, accent, allPatterns ],
 	);
 
 	const resetFilters = () => {
