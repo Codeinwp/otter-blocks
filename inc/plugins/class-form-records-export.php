@@ -116,7 +116,7 @@ class Form_Records_Export {
 				}
 
 				$label      = $input['label'];
- 				$column_key = 'input:' . $label;
+				$column_key = 'input:' . $label;
 
 				if ( ! isset( $input_columns[ $label ] ) ) {
 					$input_columns[ $column_key ] = $label;
@@ -136,24 +136,24 @@ class Form_Records_Export {
 
 		$columns = array_merge( $fixed_columns, $input_columns );
 
-		$stream = fopen( 'php://temp', 'w+' );
+		$stream = fopen( 'php://temp', 'w+' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 
 		$sanitize_cell = static function ( $value ) {
- 			$value = strval( $value );
- 			return preg_match( '/^[\x00-\x20]*[=+\-@]/', $value ) ? "'" . $value : $value;
- 		};
+			$value = strval( $value );
+			return preg_match( '/^[\x00-\x20]*[=+\-@]/', $value ) ? "'" . $value : $value;
+		};
 
- 		fputcsv( $stream, array_map( $sanitize_cell, array_values( $columns ) ) );
+		fputcsv( $stream, array_map( $sanitize_cell, array_values( $columns ) ) ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_fputcsv
 
 		foreach ( $rows as $row ) {
 			$line = array();
 
 			foreach ( array_keys( $columns ) as $key ) {
 				$value  = isset( $row[ $key ] ) ? $row[ $key ] : '';
- 				$line[] = $sanitize_cell( $value );
+				$line[] = $sanitize_cell( $value );
 			}
 
-			fputcsv( $stream, $line );
+			fputcsv( $stream, $line ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_fputcsv
 		}
 
 		rewind( $stream );
