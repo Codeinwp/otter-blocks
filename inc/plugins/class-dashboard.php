@@ -739,7 +739,7 @@ class Dashboard {
 						id="export-submissions-toggle"
 						type="button"
 						class="button o-export-split__toggle"
-						aria-haspopup="true"
+						aria-controls="export-submissions-menu"
 						aria-expanded="false"
 						aria-label="<?php esc_attr_e( 'Choose file format', 'otter-blocks' ); ?>"
 					>

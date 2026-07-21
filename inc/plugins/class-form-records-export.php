@@ -72,7 +72,7 @@ class Form_Records_Export {
 		$records = get_posts(
 			array(
 				'post_type'      => Form_Submissions::FORM_RECORD_TYPE,
-				'post_status'    => array( 'draft', 'unread', 'read', 'trash' ),
+				'post_status'    => array( 'draft', 'unread', 'read', 'trash', 'publish' ),
 				'posts_per_page' => -1,
 				'orderby'        => 'ID',
 				'order'          => 'ASC',
@@ -115,10 +115,11 @@ class Form_Records_Export {
 					continue;
 				}
 
-				$label = $input['label'];
+				$label      = $input['label'];
+ 				$column_key = 'input:' . $label;
 
 				if ( ! isset( $input_columns[ $label ] ) ) {
-					$input_columns[ $label ] = $label;
+					$input_columns[ $column_key ] = $label;
 				}
 
 				$value = isset( $input['value'] ) ? $input['value'] : '';
@@ -127,7 +128,7 @@ class Form_Records_Export {
 					$value = $input['metadata']['name'];
 				}
 
-				$row[ $label ] = $value;
+				$row[ $column_key ] = $value;
 			}
 
 			$rows[] = $row;
@@ -137,13 +138,19 @@ class Form_Records_Export {
 
 		$stream = fopen( 'php://temp', 'w+' );
 
-		fputcsv( $stream, array_values( $columns ) );
+		$sanitize_cell = static function ( $value ) {
+ 			$value = strval( $value );
+ 			return preg_match( '/^[\x00-\x20]*[=+\-@]/', $value ) ? "'" . $value : $value;
+ 		};
+
+ 		fputcsv( $stream, array_map( $sanitize_cell, array_values( $columns ) ) );
 
 		foreach ( $rows as $row ) {
 			$line = array();
 
 			foreach ( array_keys( $columns ) as $key ) {
-				$line[] = isset( $row[ $key ] ) ? $row[ $key ] : '';
+				$value  = isset( $row[ $key ] ) ? $row[ $key ] : '';
+ 				$line[] = $sanitize_cell( $value );
 			}
 
 			fputcsv( $stream, $line );
