@@ -244,6 +244,39 @@ test.describe( 'Design Library', () => {
 				page.locator( '.components-snackbar', { hasText: title })
 			).toBeVisible();
 		});
+
+		test( 'expands wp:pattern references into editable blocks on insert', async({ page, editor }) => {
+
+			// Fixture (otter-e2e-pattern-fixtures.php): a heading plus one
+			// registered and one missing wp:pattern reference. Inserts must
+			// arrive as plain editable blocks — refs inlined, missing ones
+			// dropped, never a locked core/pattern wrapper. See #2854.
+			const modal = await openLibrary( page );
+			await waitForGrid( modal );
+
+			await modal.locator( '.o-library__search' ).fill( 'E2E Pattern Reference Fixture' );
+
+			const card = firstCard( modal );
+			await card.hover();
+			await card.getByRole( 'button', { name: 'Insert', exact: true }).click();
+
+			await expect( modal ).toHaveCount( 0 );
+			await waitForEditorReady( page );
+
+			const blocks = await editor.getBlocks();
+			const names = blocks.map( ( block ) => block.name );
+
+			expect( names ).toContain( 'core/heading' );
+			expect( names ).toContain( 'core/paragraph' );
+			expect( names ).not.toContain( 'core/pattern' );
+
+			// WP 7.0 stamps inlined blocks with metadata.patternName and locks
+			// them into content-only mode — inserts must shed it.
+			const stamped = blocks
+				.filter( ( block ) => block.attributes?.metadata?.patternName )
+				.map( ( block ) => block.name );
+			expect( stamped ).toEqual( [] );
+		});
 	});
 
 	test.describe( 'Pro upsells', () => {
