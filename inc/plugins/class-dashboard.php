@@ -635,6 +635,54 @@ class Dashboard {
 				max-height: 35px;
 			}
 
+			.o-export-split {
+				position: relative;
+				display: inline-flex;
+			}
+
+			.o-export-split #export-submissions {
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
+			}
+
+			.o-export-split__toggle {
+				border-top-left-radius: 0 !important;
+				border-bottom-left-radius: 0 !important;
+				border-left: none !important;
+				padding: 0 6px !important;
+			}
+
+			.o-export-split__menu {
+				position: absolute;
+				top: 100%;
+				right: 0;
+				z-index: 10;
+				margin: 4px 0 0;
+				padding: 4px 0;
+				list-style: none;
+				background: #fff;
+				border: 1px solid #c3c4c7;
+				border-radius: 4px;
+				box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+				min-width: 220px;
+			}
+
+			.o-export-split__item {
+				display: block;
+				width: 100%;
+				padding: 8px 12px;
+				background: none;
+				border: none;
+				text-align: left;
+				cursor: pointer;
+				font-size: 13px;
+			}
+
+			.o-export-split__item:hover,
+			.o-export-split__item:focus {
+				background: #f0f0f1;
+			}
+
 			.wp-core-ui .button.o-locked-action,
 			.wp-core-ui .button.o-locked-action:focus {
 				display: inline-flex;
@@ -683,9 +731,25 @@ class Dashboard {
 				<h1 class="otter-banner__title" style="line-height: normal;"><?php esc_html_e( 'Form Submissions', 'otter-blocks' ); ?></h1>
 
 				<?php if ( Pro::is_pro_active() ) : ?>
-				<button id="export-submissions" class="button">
-					<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
-				</button>
+				<div class="o-export-split">
+					<button id="export-submissions" class="button" data-format="xml">
+						<?php esc_html_e( 'Export', 'otter-blocks' ); ?>
+					</button>
+					<button
+						id="export-submissions-toggle"
+						type="button"
+						class="button o-export-split__toggle"
+						aria-haspopup="true"
+						aria-expanded="false"
+						aria-label="<?php esc_attr_e( 'Choose file format', 'otter-blocks' ); ?>"
+					>
+						<span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
+					</button>
+					<ul id="export-submissions-menu" class="o-export-split__menu" hidden>
+						<li><button type="button" class="o-export-split__item" data-format="xml"><?php esc_html_e( 'Export as WordPress XML (WXR)', 'otter-blocks' ); ?></button></li>
+						<li><button type="button" class="o-export-split__item" data-format="csv"><?php esc_html_e( 'Export as CSV', 'otter-blocks' ); ?></button></li>
+					</ul>
+				</div>
 				<?php else : ?>
 				<span class="otter-banner__actions">
 					<span class="o-pro-notice"><?php esc_html_e( 'Filter and export form submissions with Otter Pro.', 'otter-blocks' ); ?></span>
@@ -706,7 +770,20 @@ class Dashboard {
 		</div>
 		<script>
 			window.document.addEventListener('DOMContentLoaded', () => {
-				document.querySelector('#export-submissions')?.addEventListener('click', () => {
+				const exportBtn = document.querySelector('#export-submissions');
+				const toggleBtn = document.querySelector('#export-submissions-toggle');
+				const menu = document.querySelector('#export-submissions-menu');
+
+				const closeMenu = () => {
+					if (!menu || !toggleBtn) {
+						return;
+					}
+
+					menu.setAttribute('hidden', '');
+					toggleBtn.setAttribute('aria-expanded', 'false');
+				};
+
+				const runExport = (format) => {
 					fetch('<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>', {
 						method: 'POST',
 						headers: {
@@ -714,6 +791,7 @@ class Dashboard {
 						},
 						body: new URLSearchParams({
 							action: 'otter_form_submissions',
+							format: format,
 							_nonce: '<?php echo esc_attr( wp_create_nonce( 'otter_form_export_submissions' ) ); ?>'
 						})
 					})
@@ -724,17 +802,43 @@ class Dashboard {
 							const month = String(currentDate.getMonth() + 1).padStart(2, '0');
 							const day = String(currentDate.getDate()).padStart(2, '0');
 
-							const blob = new Blob([response], {type: 'text/xml'});
+							const isCsv = 'csv' === format;
+							const blob = new Blob([response], {type: isCsv ? 'text/csv;charset=utf-8' : 'text/xml'});
 							const url = window.URL.createObjectURL(blob);
 							const a = document.createElement('a');
 							a.href = url;
-							a.download = `otter_form_submissions__${year}-${month}-${day}.xml`;
+							a.download = `otter_form_submissions__${year}-${month}-${day}.${isCsv ? 'csv' : 'xml'}`;
 							document.body.appendChild(a);
 							a.click();
 						})
 						.catch(error => console.error('Error:', error));
+				};
+
+				exportBtn?.addEventListener('click', () => runExport(exportBtn.dataset.format || 'xml'));
+
+				toggleBtn?.addEventListener('click', (event) => {
+					event.stopPropagation();
+
+					if (menu.hasAttribute('hidden')) {
+						menu.removeAttribute('hidden');
+						toggleBtn.setAttribute('aria-expanded', 'true');
+					} else {
+						closeMenu();
+					}
 				});
 
+				menu?.querySelectorAll('.o-export-split__item').forEach((item) => {
+					item.addEventListener('click', () => {
+						runExport(item.dataset.format);
+						closeMenu();
+					});
+				});
+
+				document.addEventListener('click', (event) => {
+					if (menu && !menu.hasAttribute('hidden') && !menu.contains(event.target) && event.target !== toggleBtn) {
+						closeMenu();
+					}
+				});
 			})
 		</script>
 		<?php
