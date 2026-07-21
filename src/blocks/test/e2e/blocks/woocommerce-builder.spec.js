@@ -28,6 +28,11 @@ const tryRunWpCli = ( command ) => {
 	}
 };
 
+// Reports whether a post meta key exists without leaking WP-CLI failures:
+// runWpCli() propagates infrastructure errors, and the eval always prints 0/1.
+const postMetaExists = ( postId, key ) =>
+	runWpCli( `wp eval "echo metadata_exists( 'post', ${ postId }, '${ key }' ) ? 1 : 0;"` ).trim();
+
 const createProduct = ( title ) => {
 	const output = runWpCli( `wp post create --post_type=product --post_status=publish --post_title="${ title }" --porcelain` );
 	const match = output.match( /^\s*(\d+)\s*$/m );
@@ -110,11 +115,29 @@ test.describe( 'WooCommerce Builder product editing (issue #2822)', () => {
 		await admin.visitAdminPage( 'post.php', `post=${ productId }&action=edit&otter-woo-builder=1` );
 		await admin.visitAdminPage( 'post.php', `post=${ productId }&action=edit&otter-woo-builder=0` );
 
-		expect( tryRunWpCli( `wp post meta get ${ productId } _themeisle_gutenberg_woo_builder` ) ).not.toContain( '1' );
+		expect( postMetaExists( productId, '_themeisle_gutenberg_woo_builder' ) ).toBe( '0' );
 
 		await admin.visitAdminPage( 'post.php', `post=${ productId }&action=edit` );
 
 		await expect( page.locator( '#woocommerce-product-data' ) ).toBeVisible();
 		await expect( page.locator( '#_regular_price' ) ).toBeVisible();
+	});
+
+	test( 'an explicit collapsed preference still wins over the default', async({ admin, page }) => {
+		await admin.visitAdminPage( 'post.php', `post=${ productId }&action=edit&otter-woo-builder=1` );
+
+		// A merchant who deliberately collapsed the Meta Boxes drawer keeps that
+		// choice: ensure_metabox_panel_visible() uses setDefaults(), which must
+		// never override a persisted preference.
+		runWpCli( `wp user meta update 1 wp_persisted_preferences '{"core/edit-post":{"metaBoxesMainIsOpen":false}}' --format=json` );
+
+		await admin.visitAdminPage( 'post.php', `post=${ productId }&action=edit` );
+		await expect( page.locator( 'body.block-editor-page' ) ).toBeVisible();
+
+		// Drawer stays collapsed, so the Product data metabox remains hidden.
+		await expect( page.locator( '#woocommerce-product-data' ) ).toBeHidden();
+
+		// Restore the cleared-default state for any following assertions.
+		tryRunWpCli( 'wp user meta patch delete 1 wp_persisted_preferences core/edit-post metaBoxesMainIsOpen' );
 	});
 });
