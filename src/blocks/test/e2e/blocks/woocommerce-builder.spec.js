@@ -129,7 +129,7 @@ test.describe( 'WooCommerce Builder product editing (issue #2822)', () => {
 		// A merchant who deliberately collapsed the Meta Boxes drawer keeps that
 		// choice: ensure_metabox_panel_visible() uses setDefaults(), which must
 		// never override a persisted preference.
-		runWpCli( `wp user meta update 1 wp_persisted_preferences '{"core/edit-post":{"metaBoxesMainIsOpen":false}}' --format=json` );
+		runWpCli( 'wp user meta update 1 wp_persisted_preferences \'{"core/edit-post":{"metaBoxesMainIsOpen":false}}\' --format=json' );
 
 		await admin.visitAdminPage( 'post.php', `post=${ productId }&action=edit` );
 		await expect( page.locator( 'body.block-editor-page' ) ).toBeVisible();
