@@ -61,6 +61,7 @@ class Test_Options_Settings extends WP_UnitTestCase {
 			array(
 				array(
 					'form'          => ' form-id<script> ',
+					'captchaProvider' => ' turnstile<script> ',
 					'fromEmail'     => 'bad-email',
 					'replyTo'       => "sales@example.com\r\nBcc: evil@attacker.com",
 					'requiredFields' => 'invalid-type',
@@ -76,6 +77,7 @@ class Test_Options_Settings extends WP_UnitTestCase {
 		);
 
 		$this->assertSame( 'form-id', $sanitized[0]['form'] );
+		$this->assertSame( 'turnstile', $sanitized[0]['captchaProvider'] );
 		$this->assertSame( '', $sanitized[0]['fromEmail'] );
 		$this->assertStringNotContainsString( "\r", $sanitized[0]['replyTo'] );
 		$this->assertStringNotContainsString( "\n", $sanitized[0]['replyTo'] );
@@ -84,6 +86,18 @@ class Test_Options_Settings extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<strong>ok</strong>', $sanitized[0]['autoresponder']['body'] );
 		$this->assertStringNotContainsString( '<form>', $sanitized[0]['autoresponder']['body'] );
 		$this->assertStringNotContainsString( '<input', $sanitized[0]['autoresponder']['body'] );
+	}
+
+	/**
+	 * Every property the form editor writes must be declared in the REST schema:
+	 * the settings endpoint forces additionalProperties to false, so a missing
+	 * property rejects the whole save (see #2919).
+	 */
+	public function test_form_emails_rest_schema_declares_captcha_provider() {
+		$registered_settings = get_registered_settings();
+		$schema              = $registered_settings['themeisle_blocks_form_emails']['show_in_rest']['schema'];
+
+		$this->assertArrayHasKey( 'captchaProvider', $schema['items']['properties'] );
 	}
 
 	/**

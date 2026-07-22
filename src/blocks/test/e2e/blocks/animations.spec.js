@@ -3,9 +3,44 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+/**
+ * Internal dependencies
+ */
+import { publishAndViewPost } from '../helpers/editor';
+
 test.describe( 'Animations', () => {
 	test.beforeEach( async({ admin }) => {
 		await admin.createNewPost();
+	});
+
+	test( 'nested animated block plays on load inside a transform-animated parent', async({ editor, page }) => {
+		
+		await page.setViewportSize({ width: 1280, height: 900 });
+
+		await editor.insertBlock({
+			name: 'core/cover',
+			attributes: {
+				overlayColor: 'black',
+				dimRatio: 100,
+				minHeight: 800,
+				contentPosition: 'top center',
+				className: 'animated slideInDown'
+			},
+			innerBlocks: [
+				{
+					name: 'core/heading',
+					attributes: {
+						content: 'Nested Animated Heading',
+						className: 'animated fadeInLeft delay-1s'
+					}
+				}
+			]
+		});
+
+		await publishAndViewPost({ editor, page });
+
+		// Without any scrolling, the nested heading must animate in after its delay.
+		await expect( page.getByText( 'Nested Animated Heading' ) ).toBeVisible({ timeout: 10000 });
 	});
 
 	test( 'can add a typing animation"', async({ editor, page }) => {
