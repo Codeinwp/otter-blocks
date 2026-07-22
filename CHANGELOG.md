@@ -1,3 +1,11 @@
+##### [Version 3.2.1](https://github.com/Codeinwp/otter-blocks/compare/v3.2.0...v3.2.1) (2026-07-22)
+
+- Fixed an issue where the close button placed inside a popup could not be clicked when the popup content overlapped it.
+- Fixed an issue where blocks with animations nested inside a parent using a slide or similar animation stayed invisible until the page was scrolled.
+- Fixed an issue on WordPress 7.0 where content inserted from the Design Library was locked as a pattern instead of arriving as fully editable blocks.
+- Fixed an issue where form settings such as the recipient email and messages failed to save when the form used a Cloudflare Turnstile captcha.
+- Introduced block render tracking and late CSS output in the footer for blocks using Atomic Wind not rendered in the main query.
+
 #### [Version 3.2.0](https://github.com/Codeinwp/otter-blocks/compare/v3.1.11...v3.2.0) (2026-07-06)
 
 ### New Features
