@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b41cfd1bb81a9d4f8ed32b2381a22d65",
+    "content-hash": "556f279ce85f25f708f60329f1f7067c",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -3113,15 +3113,15 @@
         },
         {
             "name": "wpackagist-plugin/woocommerce",
-            "version": "10.1.2",
+            "version": "10.9.4",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/woocommerce/",
-                "reference": "tags/10.1.2"
+                "reference": "tags/10.9.4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/woocommerce.10.1.2.zip"
+                "url": "https://downloads.wordpress.org/plugin/woocommerce.10.9.4.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
