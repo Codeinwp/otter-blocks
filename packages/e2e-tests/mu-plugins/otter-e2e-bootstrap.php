@@ -1241,6 +1241,10 @@ add_action(
 						);
 					}
 
+					// The spec activates WooCommerce right before this call; drop
+					// the redirect it schedules so it cannot hijack admin visits.
+					delete_transient( '_wc_activation_redirect' );
+
 					$product = new \WC_Product_Simple();
 					$product->set_name( $request->get_param( 'title' ) ? sanitize_text_field( $request->get_param( 'title' ) ) : 'E2E Product' );
 					$product->set_regular_price( '49.99' );

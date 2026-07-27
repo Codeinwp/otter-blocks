@@ -50,6 +50,10 @@ class WooCommerce_Builder {
 	 * @return  mixed
 	 */
 	public function restore_product_data_location( $order ) {
+		if ( ! boolval( get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true ) ) ) {
+			return $order;
+		}
+
 		if ( ! is_array( $order ) || ! isset( $order['side'] ) || false === strpos( $order['side'], 'woocommerce-product-data' ) ) {
 			return $order;
 		}
@@ -74,6 +78,7 @@ class WooCommerce_Builder {
 	 * overridden, as setDefaults only applies to unset preferences.
 	 *
 	 * @access  public
+	 * @return  void
 	 */
 	public function show_meta_boxes_pane() {
 		if ( 'product' !== get_post_type() || ! boolval( get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true ) ) ) {

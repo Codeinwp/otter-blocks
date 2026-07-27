@@ -32,12 +32,30 @@ const dismissOtterTour = async( page ) => {
 };
 
 test.describe( 'WooCommerce Builder product editor', () => {
-	test.afterEach( async({ otterUtils }) => {
-		await otterUtils.setProductMetaBoxOrder( null );
+	// WooCommerce is mounted by wp-env but only activated around this spec —
+	// its editor integrations would change load behavior (and performance
+	// numbers) for every other suite. Serial project only.
+	test.beforeAll( async({ requestUtils }) => {
+		await requestUtils.activatePlugin( 'woocommerce' );
+	});
 
-		// The collapse test persists a drawer preference for the shared admin
-		// user; clear it server-side so every test starts as a fresh user.
+	test.afterAll( async({ requestUtils }) => {
+		await requestUtils.deactivatePlugin( 'woocommerce' );
+	});
+
+	// A drawer preference or metabox order left by an earlier run would skew
+	// the first test as much as a later one, so reset on both sides.
+	const resetSharedUserState = async( otterUtils ) => {
+		await otterUtils.setProductMetaBoxOrder( null );
 		await otterUtils.resetMetaBoxesPane();
+	};
+
+	test.beforeEach( async({ otterUtils }) => {
+		await resetSharedUserState( otterUtils );
+	});
+
+	test.afterEach( async({ otterUtils }) => {
+		await resetSharedUserState( otterUtils );
 	});
 
 	test( 'builder products open in the block editor with the Product data panel visible', async({ admin, page, otterUtils }) => {
