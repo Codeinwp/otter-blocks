@@ -71,7 +71,14 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 	 * Tear down.
 	 */
 	public function tear_down() {
-		wp_scripts()->remove( 'wp-edit-post' );
+		/*
+		 * Discard the whole registry instead of just the dummy handle: it is
+		 * shared between tests, so removing the handle would leave it without
+		 * WordPress's own wp-edit-post registration and break later tests
+		 * depending on suite order. Nulling it makes the next wp_scripts()
+		 * call rebuild every default registration.
+		 */
+		$GLOBALS['wp_scripts'] = null;
 
 		parent::tear_down();
 	}
