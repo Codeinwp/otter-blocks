@@ -30,6 +30,29 @@ class WooCommerce_Builder {
 		add_filter( 'wc_get_template_part', array( $this, 'wc_get_template_part' ), 1000, 3 );
 		add_action( 'otter_blocks_woocommerce_content', 'the_content' );
 		add_filter( 'body_class', array( $this, 'add_body_class' ), 1000, 1 );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'show_meta_boxes_pane' ) );
+	}
+
+	/**
+	 * Keep the Meta Boxes pane open by default in the block editor.
+	 *
+	 * Since WP 6.7 the iframed post editor renders meta boxes inside a bottom
+	 * drawer that is collapsed unless the user opened it before. On builder
+	 * products that hides the WooCommerce Product data panel (price, inventory
+	 * etc.), so default the drawer to open. An explicit user preference is not
+	 * overridden, as setDefaults only applies to unset preferences.
+	 *
+	 * @access  public
+	 */
+	public function show_meta_boxes_pane() {
+		if ( 'product' !== get_post_type() || ! boolval( get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true ) ) ) {
+			return;
+		}
+
+		wp_add_inline_script(
+			'wp-edit-post',
+			'window.wp && wp.data && wp.data.dispatch( "core/preferences" ).setDefaults( "core/edit-post", { metaBoxesMainIsOpen: true } );'
+		);
 	}
 
 	/**
