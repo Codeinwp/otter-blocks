@@ -50,16 +50,35 @@ test.describe( 'WooCommerce Builder product editor', () => {
 		await otterUtils.resetMetaBoxesPane();
 	};
 
+	// wp-env is reused between runs, so every product a test publishes has to
+	// be removed again or they pile up and skew later product suites.
+	let createdProductIds = [];
+
+	const createProduct = async( otterUtils, args ) => {
+		const { id } = await otterUtils.createWooProduct( args );
+
+		createdProductIds.push( id );
+
+		return id;
+	};
+
 	test.beforeEach( async({ otterUtils }) => {
 		await resetSharedUserState( otterUtils );
 	});
 
+	// Runs while WooCommerce is still active (afterAll deactivates it), so the
+	// deletes also clear its product lookup tables.
 	test.afterEach( async({ otterUtils }) => {
 		await resetSharedUserState( otterUtils );
+
+		if ( createdProductIds.length ) {
+			await otterUtils.deleteWooProducts( createdProductIds );
+			createdProductIds = [];
+		}
 	});
 
 	test( 'builder products open in the block editor with the Product data panel visible', async({ admin, page, otterUtils }) => {
-		const { id } = await otterUtils.createWooProduct({ builder: true });
+		const id = await createProduct( otterUtils, { builder: true });
 
 		await admin.editPost( id );
 		await dismissOtterTour( page );
@@ -74,7 +93,7 @@ test.describe( 'WooCommerce Builder product editor', () => {
 	});
 
 	test( 'Product data stranded in the side area is rescued into the drawer', async({ admin, page, otterUtils }) => {
-		const { id } = await otterUtils.createWooProduct({ builder: true });
+		const id = await createProduct( otterUtils, { builder: true });
 
 		// The corrupted layout one metabox arrow click can persist: Product
 		// data serialized into "side", which renders inside the ~280px
@@ -93,7 +112,7 @@ test.describe( 'WooCommerce Builder product editor', () => {
 	});
 
 	test( 'products without the builder keep the classic editor', async({ admin, page, otterUtils }) => {
-		const { id } = await otterUtils.createWooProduct({ builder: false });
+		const id = await createProduct( otterUtils, { builder: false });
 
 		await admin.visitAdminPage( 'post.php', `post=${ id }&action=edit` );
 
@@ -102,7 +121,7 @@ test.describe( 'WooCommerce Builder product editor', () => {
 	});
 
 	test( 'an explicitly collapsed drawer stays collapsed (user preference wins)', async({ admin, page, otterUtils }) => {
-		const { id } = await otterUtils.createWooProduct({ builder: true });
+		const id = await createProduct( otterUtils, { builder: true });
 
 		await admin.editPost( id );
 		await dismissOtterTour( page );

@@ -1262,6 +1262,33 @@ add_action(
 
 		register_rest_route(
 			REST_NAMESPACE,
+			'/woo/product/delete',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function ( \WP_REST_Request $request ) {
+					$deleted = array();
+
+					foreach ( (array) $request->get_param( 'ids' ) as $id ) {
+						$id = absint( $id );
+
+						// Only ever remove products, so a stale id from a spec
+						// cannot delete unrelated content in a reused env.
+						if ( 0 === $id || 'product' !== get_post_type( $id ) ) {
+							continue;
+						}
+
+						wp_delete_post( $id, true );
+						$deleted[] = $id;
+					}
+
+					return rest_ensure_response( array( 'deleted' => $deleted ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
 			'/user/meta-box-order',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,

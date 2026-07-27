@@ -67,6 +67,9 @@ export type OtterUtils = {
 	/** Create a published simple WooCommerce product (price 49.99); `builder` also enables WooCommerce Builder on it. */
 	createWooProduct: ( args?: { title?: string; builder?: boolean } ) => Promise<{ id: number }>;
 
+	/** Hard-delete products created by a spec. Ids that are not products are ignored. */
+	deleteWooProducts: ( ids: number[] ) => Promise<unknown>;
+
 	/** Set the current user's product metabox order (`meta-box-order_product`); null/empty resets it. */
 	setProductMetaBoxOrder: ( order: Record<string, string> | null ) => Promise<unknown>;
 
@@ -102,6 +105,7 @@ export const test = base.extend<{ otterUtils: OtterUtils }>({
 			getFormRecords: () => call( 'form/records' ) as Promise<FormRecord[]>,
 			cleanupFormRecords: () => call( 'form/records/cleanup' ),
 			createWooProduct: ( args ) => call( 'woo/product', args ?? {}) as Promise<{ id: number }>,
+			deleteWooProducts: ( ids ) => call( 'woo/product/delete', { ids }),
 			setProductMetaBoxOrder: ( order ) => call( 'user/meta-box-order', { order }),
 			resetMetaBoxesPane: () => call( 'user/meta-boxes-pane/reset' )
 		});
