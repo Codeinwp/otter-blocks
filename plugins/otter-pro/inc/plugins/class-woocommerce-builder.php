@@ -31,6 +31,37 @@ class WooCommerce_Builder {
 		add_action( 'otter_blocks_woocommerce_content', 'the_content' );
 		add_filter( 'body_class', array( $this, 'add_body_class' ), 1000, 1 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'show_meta_boxes_pane' ) );
+		add_filter( 'get_user_option_meta-box-order_product', array( $this, 'restore_product_data_location' ) );
+	}
+
+	/**
+	 * Keep the Product data metabox out of the narrow side column.
+	 *
+	 * The metabox "Move up/down" arrows persist the order instantly and, at the
+	 * edge of an area, relocate a box into the adjacent area. From the block
+	 * editor (used by WooCommerce Builder products) one accidental click can
+	 * move WooCommerce's Product data box into "side", where it renders inside
+	 * the ~280px sidebar and its layout breaks. Correct it at read time; the
+	 * stored user option is left untouched.
+	 *
+	 * @param mixed $order Saved metabox order for the product screen.
+	 *
+	 * @access  public
+	 * @return  mixed
+	 */
+	public function restore_product_data_location( $order ) {
+		if ( ! is_array( $order ) || ! isset( $order['side'] ) || false === strpos( $order['side'], 'woocommerce-product-data' ) ) {
+			return $order;
+		}
+
+		$side   = array_diff( explode( ',', $order['side'] ), array( 'woocommerce-product-data' ) );
+		$normal = empty( $order['normal'] ) ? array() : explode( ',', $order['normal'] );
+		array_unshift( $normal, 'woocommerce-product-data' );
+
+		$order['side']   = implode( ',', $side );
+		$order['normal'] = implode( ',', array_unique( $normal ) );
+
+		return $order;
 	}
 
 	/**

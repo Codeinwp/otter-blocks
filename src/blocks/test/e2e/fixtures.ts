@@ -63,6 +63,15 @@ export type OtterUtils = {
 
 	/** Hard-delete all Submission Records. */
 	cleanupFormRecords: () => Promise<unknown>;
+
+	/** Create a published simple WooCommerce product (price 49.99); `builder` also enables WooCommerce Builder on it. */
+	createWooProduct: ( args?: { title?: string; builder?: boolean } ) => Promise<{ id: number }>;
+
+	/** Set the current user's product metabox order (`meta-box-order_product`); null/empty resets it. */
+	setProductMetaBoxOrder: ( order: Record<string, string> | null ) => Promise<unknown>;
+
+	/** Remove the current user's persisted meta-boxes-pane preferences (open state and height). */
+	resetMetaBoxesPane: () => Promise<unknown>;
 };
 
 export const test = base.extend<{ otterUtils: OtterUtils }>({
@@ -91,7 +100,10 @@ export const test = base.extend<{ otterUtils: OtterUtils }>({
 				return response.nonce;
 			},
 			getFormRecords: () => call( 'form/records' ) as Promise<FormRecord[]>,
-			cleanupFormRecords: () => call( 'form/records/cleanup' )
+			cleanupFormRecords: () => call( 'form/records/cleanup' ),
+			createWooProduct: ( args ) => call( 'woo/product', args ?? {}) as Promise<{ id: number }>,
+			setProductMetaBoxOrder: ( order ) => call( 'user/meta-box-order', { order }),
+			resetMetaBoxesPane: () => call( 'user/meta-boxes-pane/reset' )
 		});
 	}
 });
