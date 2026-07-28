@@ -58,7 +58,7 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		unset( $_REQUEST[ Form_Submissions::FORM_RECORD_TYPE ], $_REQUEST['_wpnonce'], $_REQUEST['post'] );
-		unset( $_POST['action'], $_POST['_wpnonce'], $_POST['_nonce'] );
+		unset( $_POST['action'], $_POST['_wpnonce'], $_POST['_nonce'], $_POST['format'] );
 		unset( $_GET['post_type'], $_GET['filter_action'], $_GET['filters_nonce'], $_GET['otter_form_filter'], $_REQUEST['otter_form_filter'] );
 		unset( $_GET['otter_post_filter'], $_REQUEST['otter_post_filter'] );
 		unset( $GLOBALS['otter_test_stripe_record_id'] );
@@ -807,6 +807,92 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		$this->expectExceptionMessage( 'You are not allowed to export submissions.' );
 
 		( new Form_Records_Export() )->export_submissions();
+	}
+
+	/**
+	 * Ensure the export defaults to the WordPress XML (WXR) format when no format is
+	 * posted, preserving the pre-existing endpoint contract.
+	 */
+	public function test_export_defaults_to_xml_format() {
+		if ( ! \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		add_filter( 'product_otter_license_status', array( $this, 'valid_license' ) );
+
+		$this->create_record();
+
+		wp_set_current_user( $this->admin_id );
+		$_POST['_nonce'] = wp_create_nonce( 'otter_form_export_submissions' );
+
+		ob_start();
+
+		try {
+			( new Form_Records_Export() )->export_submissions();
+		} catch ( WPDieException $exception ) {
+			// export_submissions() always ends in wp_die(); assertions run on the buffered output below.
+		}
+
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( '<?xml version="1.0"', $output );
+	}
+
+	/**
+	 * Ensure the CSV export contains a header row and one line per submission, with columns
+	 * covering every input label found across submissions from different forms.
+	 */
+	public function test_export_csv_contains_submission_data() {
+		if ( ! \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		add_filter( 'product_otter_license_status', array( $this, 'valid_license' ) );
+
+		$this->create_record(
+			'unread',
+			array(
+				'inputs' => array(
+					'input01' => array(
+						'label' => 'Name',
+						'value' => 'Ada Lovelace',
+						'type'  => 'text',
+					),
+				),
+			)
+		);
+
+		$this->create_record(
+			'read',
+			array(
+				'inputs' => array(
+					'input02' => array(
+						'label' => 'Company',
+						'value' => 'Analytical Engines Ltd',
+						'type'  => 'text',
+					),
+				),
+			)
+		);
+
+		wp_set_current_user( $this->admin_id );
+		$_POST['_nonce'] = wp_create_nonce( 'otter_form_export_submissions' );
+		$_POST['format'] = 'csv';
+
+		ob_start();
+
+		try {
+			( new Form_Records_Export() )->export_submissions();
+		} catch ( WPDieException $exception ) {
+			// export_submissions() always ends in wp_die(); assertions run on the buffered output below.
+		}
+
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'Name', $output );
+		$this->assertStringContainsString( 'Company', $output );
+		$this->assertStringContainsString( 'Ada Lovelace', $output );
+		$this->assertStringContainsString( 'Analytical Engines Ltd', $output );
 	}
 
 	/**
