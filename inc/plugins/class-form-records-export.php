@@ -24,6 +24,13 @@ class Form_Records_Export {
 	const EXPORT_BATCH_SIZE = 100;
 
 	/**
+	 * Post statuses.
+	 *
+	 * @var string[]
+	 */
+	const EXPORT_POST_STATUSES = array( 'draft', 'unread', 'read', 'trash', 'publish' );
+
+	/**
 	 * Register hooks.
 	 *
 	 * @return void
@@ -76,12 +83,14 @@ class Form_Records_Export {
 	}
 
 	/**
-	 * Build a CSV export of all submissions.
+	 * Write a CSV export of all submissions to the output.
 	 *
 	 * @return void
 	 */
 	private function export_csv() {
-		$columns = array_merge( $this->get_fixed_columns(), $this->collect_input_columns() );
+		$max_id = (int) $this->get_max_submission_id();
+
+		$columns = array_merge( $this->get_fixed_columns(), $this->collect_input_columns( $max_id ) );
 
 		$stream = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 
@@ -97,8 +106,9 @@ class Form_Records_Export {
 		$column_keys = array_keys( $columns );
 
 		$this->walk_submissions(
-			function ( $meta, $record ) use ( $stream, $column_keys ) {
-				$row  = $this->get_record_row( $record, $meta );
+			$max_id,
+			function ( $meta, $post_id ) use ( $stream, $column_keys ) {
+				$row  = $this->get_record_row( $post_id, $meta );
 				$line = array();
 
 				foreach ( $column_keys as $key ) {
@@ -130,12 +140,14 @@ class Form_Records_Export {
 	/**
 	 * Collect the dynamically generated input columns found across every submission.
 	 *
+	 * @param int $max_id Highest submission ID to export.
 	 * @return array<string, string> Column key => header label, in order of first appearance.
 	 */
-	private function collect_input_columns() {
+	private function collect_input_columns( $max_id ) {
 		$input_columns = array();
 
 		$this->walk_submissions(
+			$max_id,
 			function ( $meta ) use ( &$input_columns ) {
 				foreach ( $this->get_record_inputs( $meta ) as $column_key => $input ) {
 					if ( isset( $input_columns[ $column_key ] ) ) {
@@ -153,22 +165,24 @@ class Form_Records_Export {
 	/**
 	 * Run a callback over every submission, loading them in bounded batches.
 	 *
-	 * @param callable $callback Receives the submission record meta and the submission post.
+	 * @param int      $max_id   Highest submission ID to export.
+	 * @param callable $callback Receives the submission record meta and the submission post ID.
 	 * @return void
 	 */
-	private function walk_submissions( $callback ) {
-		$offset               = 0;
-		$has_more_submissions = false;
+	private function walk_submissions( $max_id, $callback ) {
+		$last_id = 0;
 
 		do {
-			$records = $this->get_submissions_batch( $offset );
-			$count   = count( $records );
+			$records = $this->get_submissions_batch( $last_id, $max_id );
 
-			if ( 0 === $count ) {
+			// The batch is only limited, never offset, so an empty one means the range is done.
+			if ( empty( $records ) ) {
 				return;
 			}
 
-			$ids = wp_list_pluck( $records, 'ID' );
+			$ids     = wp_list_pluck( $records, 'ID' );
+			$last_id = (int) end( $ids );
+
 			update_meta_cache( 'post', $ids );
 
 			foreach ( $records as $record ) {
@@ -178,9 +192,10 @@ class Form_Records_Export {
 					continue;
 				}
 
-				$callback( $meta, $record );
+				$callback( $meta, $record->ID );
 			}
 
+			// Drop the batch from the object cache, otherwise memory grows with every batch.
 			foreach ( $ids as $id ) {
 				wp_cache_delete( $id, 'posts' );
 				wp_cache_delete( $id, 'post_meta' );
@@ -188,42 +203,75 @@ class Form_Records_Export {
 
 			unset( $records, $ids );
 
-			$offset              += $count;
-			$has_more_submissions = self::EXPORT_BATCH_SIZE === $count;
+			$has_more_submissions = $last_id < $max_id;
 		} while ( $has_more_submissions );
 	}
 
 	/**
-	 * Fetch a batch of submissions, oldest first.
+	 * The highest submission ID eligible for export.
 	 *
-	 * @param int $offset How many submissions to skip.
-	 * @return \WP_Post[]
+	 * @return int
 	 */
-	private function get_submissions_batch( $offset ) {
-		return get_posts(
+	private function get_max_submission_id() {
+		$ids = get_posts(
 			array(
 				'post_type'              => Form_Submissions::FORM_RECORD_TYPE,
-				'post_status'            => array( 'draft', 'unread', 'read', 'trash', 'publish' ),
-				'posts_per_page'         => self::EXPORT_BATCH_SIZE,
-				'offset'                 => $offset,
+				'post_status'            => self::EXPORT_POST_STATUSES,
+				'posts_per_page'         => 1,
 				'orderby'                => 'ID',
-				'order'                  => 'ASC',
+				'order'                  => 'DESC',
+				'fields'                 => 'ids',
 				'update_post_meta_cache' => false,
 				'update_post_term_cache' => false,
 			)
 		);
+
+		return empty( $ids ) ? 0 : reset( $ids );
+	}
+
+	/**
+	 * Fetch the submissions following the last one handled, oldest first.
+	 *
+	 * @param int $last_id Highest submission ID handled so far.
+	 * @param int $max_id  Highest submission ID to export.
+	 * @return \WP_Post[]
+	 */
+	private function get_submissions_batch( $last_id, $max_id ) {
+		$keyset_clause = static function ( $where ) use ( $last_id, $max_id ) {
+			global $wpdb;
+
+			return $where . $wpdb->prepare( " AND {$wpdb->posts}.ID > %d AND {$wpdb->posts}.ID <= %d", $last_id, $max_id );
+		};
+
+		add_filter( 'posts_where', $keyset_clause );
+
+		$query = new \WP_Query(
+			array(
+				'post_type'              => Form_Submissions::FORM_RECORD_TYPE,
+				'post_status'            => self::EXPORT_POST_STATUSES,
+				'posts_per_page'         => self::EXPORT_BATCH_SIZE,
+				'orderby'                => 'ID',
+				'order'                  => 'ASC',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+				'suppress_filters'       => false,
+			)
+		);
+
+		remove_filter( 'posts_where', $keyset_clause );
+
+		return $query->posts;
 	}
 
 	/**
 	 * Build the CSV row of a single submission, keyed by column.
 	 *
-	 * @param \WP_Post             $record Submission post.
-	 * @param array<string, mixed> $meta   Submission record meta.
+	 * @param int                  $post_id Submission post ID.
+	 * @param array<string, mixed> $meta    Submission record meta.
 	 * @return array<string, mixed>
 	 */
-	private function get_record_row( $record, $meta ) {
-		$post_id = $record->ID;
-
+	private function get_record_row( $post_id, $meta ) {
 		$row = array(
 			'id'     => substr( strval( $post_id ), -8 ),
 			'status' => get_post_status( $post_id ),
