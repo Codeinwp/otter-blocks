@@ -47,7 +47,7 @@ class Form_Records_Export {
 			wp_die( esc_html( __( 'Exporting submissions requires Otter Pro.', 'otter-blocks' ) ) );
 		}
 
-		$nonce = isset( $_POST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_nonce'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$nonce = isset( $_POST['_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_nonce'] ) ) : '';
 		if ( ! wp_verify_nonce( $nonce, 'otter_form_export_submissions' ) ) {
 			wp_die( esc_html( __( 'Invalid nonce.', 'otter-blocks' ) ) );
 		}
@@ -56,12 +56,14 @@ class Form_Records_Export {
 			wp_die( esc_html( __( 'You are not allowed to export submissions.', 'otter-blocks' ) ) );
 		}
 
-		$format = isset( $_POST['format'] ) ? sanitize_key( wp_unslash( $_POST['format'] ) ) : 'xml'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$format = isset( $_POST['format'] ) ? sanitize_key( wp_unslash( $_POST['format'] ) ) : 'xml';
+
+		$output = new \SplFileObject( 'php://output', 'w' );
 
 		if ( 'csv' === $format ) {
-			$this->export_csv();
+			$this->export_csv( $output );
 		} else {
-			echo $this->export_xml(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			$this->export_xml( $output );
 		}
 
 		wp_die();
@@ -70,56 +72,50 @@ class Form_Records_Export {
 	/**
 	 * Build the WordPress WXR (XML) export of all submissions.
 	 *
-	 * @return string
+	 * @param \SplFileObject $output Output stream.
+	 * @return void
 	 */
-	private function export_xml() {
+	private function export_xml( $output ) {
 		require_once ABSPATH . 'wp-admin/includes/export.php';
 
 		ob_start();
 		export_wp( array( 'content' => Form_Submissions::FORM_RECORD_TYPE ) );
 		$export = ob_get_clean();
 
-		return ent2ncr( $export );
+		$output->fwrite( ent2ncr( $export ) );
 	}
 
 	/**
 	 * Write a CSV export of all submissions to the output.
 	 *
+	 * @param \SplFileObject $output Output stream.
 	 * @return void
 	 */
-	private function export_csv() {
+	private function export_csv( $output ) {
 		$max_id = (int) $this->get_max_submission_id();
 
 		$columns = array_merge( $this->get_fixed_columns(), $this->collect_input_columns( $max_id ) );
 
-		$stream = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-
-		if ( false === $stream ) {
-			return;
-		}
-
 		// Prefix a UTF-8 BOM so Excel detects the encoding instead of mangling accented characters.
-		fwrite( $stream, "\xEF\xBB\xBF" ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_fwrite
+		$output->fwrite( "\xEF\xBB\xBF" );
 
-		fputcsv( $stream, array_map( array( $this, 'sanitize_cell' ), array_values( $columns ) ) ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_fputcsv
+		$output->fputcsv( array_map( array( $this, 'sanitize_cell' ), array_values( $columns ) ) );
 
 		$column_keys = array_keys( $columns );
 
 		$this->walk_submissions(
 			$max_id,
-			function ( $meta, $post_id ) use ( $stream, $column_keys ) {
-				$row  = $this->get_record_row( $post_id, $meta );
+			function ( $meta, $record ) use ( $output, $column_keys ) {
+				$row  = $this->get_record_row( $record, $meta );
 				$line = array();
 
 				foreach ( $column_keys as $key ) {
 					$line[] = $this->sanitize_cell( isset( $row[ $key ] ) ? $row[ $key ] : '' );
 				}
 
-				fputcsv( $stream, $line ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.file_ops_fputcsv
+				$output->fputcsv( $line );
 			}
 		);
-
-		fclose( $stream ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 	}
 
 	/**
@@ -166,7 +162,7 @@ class Form_Records_Export {
 	 * Run a callback over every submission, loading them in bounded batches.
 	 *
 	 * @param int      $max_id   Highest submission ID to export.
-	 * @param callable $callback Receives the submission record meta and the submission post ID.
+	 * @param callable $callback Receives the submission record meta and the submission post.
 	 * @return void
 	 */
 	private function walk_submissions( $max_id, $callback ) {
@@ -192,12 +188,11 @@ class Form_Records_Export {
 					continue;
 				}
 
-				$callback( $meta, $record->ID );
+				$callback( $meta, $record );
 			}
 
 			// Drop the batch from the object cache, otherwise memory grows with every batch.
 			foreach ( $ids as $id ) {
-				wp_cache_delete( $id, 'posts' );
 				wp_cache_delete( $id, 'post_meta' );
 			}
 
@@ -280,15 +275,15 @@ class Form_Records_Export {
 	/**
 	 * Build the CSV row of a single submission, keyed by column.
 	 *
-	 * @param int                  $post_id Submission post ID.
-	 * @param array<string, mixed> $meta    Submission record meta.
+	 * @param \WP_Post             $record Submission post.
+	 * @param array<string, mixed> $meta   Submission record meta.
 	 * @return array<string, mixed>
 	 */
-	private function get_record_row( $post_id, $meta ) {
+	private function get_record_row( $record, $meta ) {
 		$row = array(
-			'id'     => substr( strval( $post_id ), -8 ),
-			'status' => get_post_status( $post_id ),
-			'date'   => get_the_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $post_id ),
+			'id'     => substr( strval( $record->ID ), -8 ),
+			'status' => get_post_status( $record ),
+			'date'   => get_the_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $record ),
 			'form'   => isset( $meta['form']['value'] ) ? $meta['form']['value'] : '',
 			'post'   => isset( $meta['post_url']['value'] ) ? $meta['post_url']['value'] : '',
 		);
