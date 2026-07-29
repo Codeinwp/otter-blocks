@@ -896,6 +896,64 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the CSV export walks past the first batch: every submission gets a row, and a field
+	 * that only shows up in a later batch still makes it into the header row.
+	 */
+	public function test_export_csv_paginates_beyond_a_single_batch() {
+		if ( ! \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() ) {
+			$this->markTestSkipped( 'Otter Pro is not installed in this test environment.' );
+		}
+
+		add_filter( 'product_otter_license_status', array( $this, 'valid_license' ) );
+
+		$total = Form_Records_Export::EXPORT_BATCH_SIZE + 5;
+
+		for ( $index = 0; $index < $total; $index++ ) {
+			// Only the very last submission carries the late field, so it lands in a second batch.
+			$label = $index === $total - 1 ? 'Late Field' : 'Name';
+
+			$this->create_record(
+				'unread',
+				array(
+					'inputs' => array(
+						'input01' => array(
+							'label' => $label,
+							'value' => 'Submission ' . $index,
+							'type'  => 'text',
+						),
+					),
+				)
+			);
+		}
+
+		wp_set_current_user( $this->admin_id );
+		$_POST['_nonce'] = wp_create_nonce( 'otter_form_export_submissions' );
+		$_POST['format'] = 'csv';
+
+		ob_start();
+
+		try {
+			( new Form_Records_Export() )->export_submissions();
+		} catch ( WPDieException $exception ) {
+			// export_submissions() always ends in wp_die(); assertions run on the buffered output below.
+		}
+
+		$output = ob_get_clean();
+
+		$lines = array_filter( explode( "\n", trim( $output ) ) );
+
+		// One header row plus one row per submission.
+		$this->assertCount( $total + 1, $lines );
+
+		// The header is built from a full pass, so a label from a later batch is not missed.
+		$this->assertStringContainsString( 'Late Field', reset( $lines ) );
+
+		$this->assertStringContainsString( 'Submission 0', $output );
+		$this->assertStringContainsString( 'Submission ' . ( Form_Records_Export::EXPORT_BATCH_SIZE - 1 ), $output );
+		$this->assertStringContainsString( 'Submission ' . ( $total - 1 ), $output );
+	}
+
+	/**
 	 * Ensure the list-table bulk actions match the current status view.
 	 */
 	public function test_list_table_bulk_actions_follow_status_view() {
