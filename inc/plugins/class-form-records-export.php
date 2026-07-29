@@ -221,6 +221,7 @@ class Form_Records_Export {
 				'orderby'                => 'ID',
 				'order'                  => 'DESC',
 				'fields'                 => 'ids',
+				'cache_results'          => false,
 				'update_post_meta_cache' => false,
 				'update_post_term_cache' => false,
 			)
@@ -243,7 +244,17 @@ class Form_Records_Export {
 			return $where . $wpdb->prepare( " AND {$wpdb->posts}.ID > %d AND {$wpdb->posts}.ID <= %d", $last_id, $max_id );
 		};
 
+		/*
+		 * A split query fetches the IDs and then primes the post cache with a second query, which
+		 * is wasted work here: the batch is read once and its caches are dropped straight after.
+		 * That priming is not covered by `cache_results`, so it has to be turned off separately.
+		 */
+		$single_query = static function () {
+			return false;
+		};
+
 		add_filter( 'posts_where', $keyset_clause );
+		add_filter( 'split_the_query', $single_query );
 
 		$query = new \WP_Query(
 			array(
@@ -253,12 +264,14 @@ class Form_Records_Export {
 				'orderby'                => 'ID',
 				'order'                  => 'ASC',
 				'no_found_rows'          => true,
+				'cache_results'          => false,
 				'update_post_meta_cache' => false,
 				'update_post_term_cache' => false,
 				'suppress_filters'       => false,
 			)
 		);
 
+		remove_filter( 'split_the_query', $single_query );
 		remove_filter( 'posts_where', $keyset_clause );
 
 		return $query->posts;
