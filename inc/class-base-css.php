@@ -467,7 +467,26 @@ class Base_CSS {
 	 */
 	public static function has_own_css_parser() {
 		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor/' );
+		$prefix     = 'Sabberworm\\CSS\\';
 
+		// Reject anything already in memory from a foreign copy first, before the
+		// sentinel checks below can autoload any bundled class: the parser touches
+		// more classes than the sentinels (OutputFormat, KeyFrame, the cached
+		// object graph...), and any preloaded foreign one poisons the process.
+		$declared = array_merge( get_declared_classes(), get_declared_interfaces(), get_declared_traits() );
+
+		foreach ( $declared as $declared_name ) {
+			if ( 0 !== strpos( $declared_name, $prefix ) ) {
+				continue;
+			}
+
+			if ( ! self::is_bundled_class( $declared_name, $own_vendor ) ) {
+				return false;
+			}
+		}
+
+		// Entry points nothing may have loaded yet: whichever autoloader resolves
+		// them must serve the bundled copy.
 		$sentinels = array(
 			'\Sabberworm\CSS\Parser',
 			'\Sabberworm\CSS\Comment\Commentable',
@@ -479,15 +498,26 @@ class Base_CSS {
 				return false;
 			}
 
-			$reflection = new \ReflectionClass( $sentinel );
-			$file       = $reflection->getFileName();
-
-			if ( false === $file || 0 !== strpos( wp_normalize_path( $file ), $own_vendor ) ) {
+			if ( ! self::is_bundled_class( $sentinel, $own_vendor ) ) {
 				return false;
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check that a class, interface, or trait was loaded from this plugin's vendor directory.
+	 *
+	 * @param string $name Fully qualified name.
+	 * @param string $own_vendor Normalized path of this plugin's vendor directory.
+	 * @return bool
+	 */
+	private static function is_bundled_class( $name, $own_vendor ) {
+		$reflection = new \ReflectionClass( $name );
+		$file       = $reflection->getFileName();
+
+		return false !== $file && 0 === strpos( wp_normalize_path( $file ), $own_vendor );
 	}
 
 	/**

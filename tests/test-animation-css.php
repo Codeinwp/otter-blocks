@@ -39,18 +39,41 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 	 * scenario runs in a separate PHP process against a predefined 9.x interface.
 	 */
 	public function test_get_animation_css_falls_back_when_foreign_parser_is_loaded() {
+		$output = $this->run_sandbox( 'commentable' );
+
+		$this->assertStringContainsString( 'CSS_LENGTH:0', $output, 'The optimization should be skipped when a foreign parser is loaded: ' . $output );
+		$this->assertStringNotContainsString( 'must be compatible', $output );
+	}
+
+	/**
+	 * The guard must reject any preloaded foreign `Sabberworm\CSS` symbol, not
+	 * only its sentinel entry points — here a foreign `OutputFormat` class.
+	 */
+	public function test_get_animation_css_falls_back_when_foreign_non_sentinel_class_is_loaded() {
+		$output = $this->run_sandbox( 'outputformat' );
+
+		$this->assertStringContainsString( 'CSS_LENGTH:0', $output, 'The optimization should be skipped when any foreign Sabberworm class is loaded: ' . $output );
+	}
+
+	/**
+	 * Run the collision sandbox in a separate PHP process and assert it completes.
+	 *
+	 * @param string $scenario Sandbox scenario name.
+	 * @return string Combined process output.
+	 */
+	private function run_sandbox( $scenario ) {
 		$sandbox = __DIR__ . '/php/foreign-sabberworm-sandbox.php';
 
-		$command = escapeshellarg( PHP_BINARY ) . ' -d display_errors=1 ' . escapeshellarg( $sandbox ) . ' 2>&1';
+		$command = escapeshellarg( PHP_BINARY ) . ' -d display_errors=1 ' . escapeshellarg( $sandbox ) . ' ' . escapeshellarg( $scenario ) . ' 2>&1';
 
 		exec( $command, $output, $exit_code ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec
 
 		$output = implode( "\n", $output );
 
 		$this->assertSame( 0, $exit_code, 'The sandbox request fataled instead of degrading gracefully: ' . $output );
-		$this->assertStringContainsString( 'CSS_LENGTH:0', $output, 'The optimization should be skipped when a foreign parser is loaded: ' . $output );
 		$this->assertStringContainsString( 'REQUEST COMPLETED WITHOUT FATAL', $output );
-		$this->assertStringNotContainsString( 'must be compatible', $output );
+
+		return $output;
 	}
 
 	/**

@@ -2,27 +2,46 @@
 /**
  * Standalone sandbox for the Sabberworm dependency-collision regression (issue #2942).
  *
- * Simulates another plugin having already loaded a newer php-css-parser release:
- * its `Commentable` interface declares typed signatures, so loading Otter's
- * bundled untyped `CSSList` fatals at class-link time on PHP 8.1+ with
- * "Declaration of ... addComments(array $aComments) must be compatible ...".
- * Base_CSS::get_animation_css() must detect the foreign copy and fall back to
- * enqueueing the full stock stylesheet instead of parsing.
+ * Simulates another plugin having already loaded classes from a different
+ * php-css-parser release, which makes mixing in Otter's bundled copy fatal at
+ * class-link or call time. Base_CSS::get_animation_css() must detect the
+ * foreign copy and skip the optimization instead of parsing.
  *
  * Run in a separate PHP process (no WordPress loaded):
- *   php foreign-sabberworm-sandbox.php
+ *   php foreign-sabberworm-sandbox.php [commentable|outputformat]
+ *
+ * - `commentable` (default): the typed 9.x `Commentable` interface is preloaded —
+ *   loading the bundled untyped `CSSList` then fatals at class-link time on
+ *   PHP 8.1+ with "Declaration of ... must be compatible ...".
+ * - `outputformat`: a foreign copy of the non-sentinel `OutputFormat` class is
+ *   preloaded — proving the guard rejects any foreign `Sabberworm\CSS` symbol,
+ *   not only its sentinels.
  *
  * @package gutenberg-blocks
  */
 
 // phpcs:ignoreFile -- multi-namespace sandbox executed outside WordPress.
 
+namespace {
+	$GLOBALS['otter_sandbox_scenario'] = isset( $argv[1] ) ? $argv[1] : 'commentable';
+}
+
 namespace Sabberworm\CSS\Comment {
-	// The typed interface shape shipped by php-css-parser 9.x.
-	interface Commentable {
-		public function addComments( array $comments ): void;
-		public function getComments(): array;
-		public function setComments( array $comments ): void;
+	if ( 'commentable' === $GLOBALS['otter_sandbox_scenario'] ) {
+		// The typed interface shape shipped by php-css-parser 9.x.
+		interface Commentable {
+			public function addComments( array $comments ): void;
+			public function getComments(): array;
+			public function setComments( array $comments ): void;
+		}
+	}
+}
+
+namespace Sabberworm\CSS {
+	if ( 'outputformat' === $GLOBALS['otter_sandbox_scenario'] ) {
+		// A foreign copy of a class the parser uses but the guard's sentinels
+		// do not cover, as another plugin's autoloader would leave behind.
+		class OutputFormat {}
 	}
 }
 
@@ -39,7 +58,7 @@ namespace {
 	function add_filter() {}
 	function apply_filters( $tag, $value ) { return $value; }
 	function wp_normalize_path( $path ) { return str_replace( '\\', '/', $path ); }
-	function wp_enqueue_style( $handle ) { echo 'ENQUEUED:' . $handle . "\n"; }
+	function wp_enqueue_style( $handle ) {}
 
 	// Minimal autoloader for Otter's bundled parser only — mirrors the situation
 	// where Otter's Composer autoloader serves the remaining Sabberworm classes.
