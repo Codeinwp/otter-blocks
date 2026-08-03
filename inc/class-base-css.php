@@ -384,6 +384,20 @@ class Base_CSS {
 			return $style;
 		}
 
+		if ( ! self::has_own_css_parser() ) {
+			// Another plugin loaded a different php-css-parser release; mixing its
+			// classes with the bundled ones fatals at class-link time (issue #2942).
+			// Skip the optimization and serve the full stock stylesheet instead.
+			// This can run before Blocks_Animation registers the handle, so
+			// register it here or the enqueue never prints.
+			if ( defined( 'BLOCKS_ANIMATION_URL' ) && ! wp_style_is( 'otter-animation', 'registered' ) ) {
+				wp_register_style( 'otter-animation', BLOCKS_ANIMATION_URL . 'build/animation/index.css', array(), OTTER_BLOCKS_VERSION );
+			}
+
+			wp_enqueue_style( 'otter-animation' );
+			return $style;
+		}
+
 		$prepared_classes = array( ':root' );
 
 		foreach ( $classes as $class ) {
@@ -443,6 +457,42 @@ class Base_CSS {
 		}
 
 		return $style;
+	}
+
+	/**
+	 * Check that every Sabberworm class the animation parser touches resolves to
+	 * the copy bundled with this plugin.
+	 *
+	 * Another active plugin can ship a different php-css-parser release under the
+	 * same global namespace. Once any of its classes or interfaces is loaded,
+	 * loading the bundled counterparts fatals at class-link time with a
+	 * declaration-compatibility error, and that error is not catchable.
+	 *
+	 * @return bool
+	 */
+	public static function has_own_css_parser() {
+		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor/' );
+
+		$sentinels = array(
+			'\Sabberworm\CSS\Parser',
+			'\Sabberworm\CSS\Comment\Commentable',
+			'\Sabberworm\CSS\Renderable',
+		);
+
+		foreach ( $sentinels as $sentinel ) {
+			if ( ! class_exists( $sentinel ) && ! interface_exists( $sentinel ) ) {
+				return false;
+			}
+
+			$reflection = new \ReflectionClass( $sentinel );
+			$file       = $reflection->getFileName();
+
+			if ( false === $file || 0 !== strpos( wp_normalize_path( $file ), $own_vendor ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
