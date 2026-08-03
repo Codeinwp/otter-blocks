@@ -12,24 +12,38 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
  * rendered empty.
  */
 test.describe( 'Dynamic Content postContent tag', () => {
-	const TARGET_CONTENT = 'Otter dynamic target content 2929';
+
+	// wp-env is persistent, so the fixtures are namespaced per run and torn down
+	// in afterAll: a fixed token would let leftovers from an earlier run (or a
+	// retry) win the Query Loop and make the assertions state-dependent.
+	let token;
+	let targetContent;
 	let pageId;
 
+	// Every record created by this spec, so a retried beforeAll cleans up both
+	// attempts instead of leaking the first one.
+	const created = [];
+
 	test.beforeAll( async({ requestUtils }) => {
+		token         = `frontier2929${ Date.now() }`;
+		targetContent = `Otter dynamic target content ${ token }`;
+
 		// The Query Loop block has no include/post__in arg, so the loop is
-		// scoped to the target post via a unique search token in its title.
-		await requestUtils.createPost({
-			title: 'Dynamic content target frontier2929',
-			content: `<!-- wp:paragraph --><p>${ TARGET_CONTENT }</p><!-- /wp:paragraph -->`,
+		// scoped to the target post via the run's search token in its title.
+		const target = await requestUtils.createPost({
+			title: `Dynamic content target ${ token }`,
+			content: `<!-- wp:paragraph --><p>${ targetContent }</p><!-- /wp:paragraph -->`,
 			status: 'publish'
 		});
 
+		created.push({ type: 'posts', id: target.id });
+
 		const holder = await requestUtils.createPage({
-			title: 'Dynamic content holder 2929',
+			title: `Dynamic content holder ${ token }`,
 			// The tag is wrapped in a group: postContent runs the_content, which
 			// wraps its output in <p>, and a nested <p> would be auto-closed by
 			// the browser parser and land outside the marker element.
-			content: `<!-- wp:query {"query":{"perPage":1,"postType":"post","search":"frontier2929","inherit":false}} -->
+			content: `<!-- wp:query {"query":{"perPage":1,"postType":"post","search":"${ token }","inherit":false}} -->
 <div class="wp-block-query"><!-- wp:post-template -->
 <!-- wp:group {"className":"o-dyn-2929"} --><div class="wp-block-group o-dyn-2929"><!-- wp:paragraph --><p><o-dynamic data-type="postContent" data-context="query">Post Content</o-dynamic></p><!-- /wp:paragraph --></div><!-- /wp:group -->
 <!-- /wp:post-template --></div>
@@ -37,13 +51,32 @@ test.describe( 'Dynamic Content postContent tag', () => {
 			status: 'publish'
 		});
 
+		created.push({ type: 'pages', id: holder.id });
+
 		pageId = holder.id;
+	});
+
+	test.afterAll( async({ requestUtils }) => {
+		// Only this spec's own records - other specs run against the same site.
+		// Best-effort per record: one failed request must not orphan the rest.
+		while ( created.length ) {
+			const record = created.pop();
+			try {
+				await requestUtils.rest({
+					method: 'DELETE',
+					path: `/wp/v2/${ record.type }/${ record.id }`,
+					params: { force: true }
+				});
+			} catch ( error ) {
+				console.warn( `Could not delete ${ record.type }/${ record.id }:`, error.message );
+			}
+		}
 	});
 
 	test( 'renders the target post content on the frontend', async({ page }) => {
 		await page.goto( `/?page_id=${ pageId }` );
 
-		await expect( page.locator( '.o-dyn-2929' ) ).toContainText( TARGET_CONTENT );
+		await expect( page.locator( '.o-dyn-2929' ) ).toContainText( targetContent );
 	});
 
 	test( 'survives a corrupted $pages loop global without PHP warnings', async({ page }) => {
@@ -55,6 +88,6 @@ test.describe( 'Dynamic Content postContent tag', () => {
 		await expect( page.locator( 'body' ) ).not.toContainText( 'preg_match' );
 
 		// The tag must still resolve the context post's content.
-		await expect( page.locator( '.o-dyn-2929' ) ).toContainText( TARGET_CONTENT );
+		await expect( page.locator( '.o-dyn-2929' ) ).toContainText( targetContent );
 	});
 });
