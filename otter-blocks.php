@@ -38,6 +38,11 @@ if ( is_readable( $vendor_file ) ) {
 	require_once $vendor_file;
 }
 
+// Resolves the plugin's own classes from their file names when Composer's generated
+// classmap does not match the files on disk. Registered last, so Composer stays first.
+require_once OTTER_BLOCKS_PATH . '/inc/class-autoloader.php';
+\ThemeIsle\GutenbergBlocks\Autoloader::register();
+
 if ( class_exists( '\ThemeIsle\GutenbergBlocks\Main' ) ) {
 	\ThemeIsle\GutenbergBlocks\Main::instance();
 }
