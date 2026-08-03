@@ -476,7 +476,9 @@ class Base_CSS {
 		$declared = array_merge( get_declared_classes(), get_declared_interfaces(), get_declared_traits() );
 
 		foreach ( $declared as $declared_name ) {
-			if ( 0 !== strpos( $declared_name, $prefix ) ) {
+			// Case-insensitive: PHP class and namespace names are case-insensitive,
+			// so a foreign copy declared with different casing is the same class.
+			if ( 0 !== stripos( $declared_name, $prefix ) ) {
 				continue;
 			}
 
