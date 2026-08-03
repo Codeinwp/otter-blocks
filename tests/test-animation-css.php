@@ -48,7 +48,7 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 		$output = implode( "\n", $output );
 
 		$this->assertSame( 0, $exit_code, 'The sandbox request fataled instead of degrading gracefully: ' . $output );
-		$this->assertStringContainsString( 'ENQUEUED:otter-animation', $output, 'The full stock stylesheet should be enqueued as the fallback: ' . $output );
+		$this->assertStringContainsString( 'CSS_LENGTH:0', $output, 'The optimization should be skipped when a foreign parser is loaded: ' . $output );
 		$this->assertStringContainsString( 'REQUEST COMPLETED WITHOUT FATAL', $output );
 		$this->assertStringNotContainsString( 'must be compatible', $output );
 	}

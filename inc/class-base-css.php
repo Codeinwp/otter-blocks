@@ -387,14 +387,9 @@ class Base_CSS {
 		if ( ! self::has_own_css_parser() ) {
 			// Another plugin loaded a different php-css-parser release; mixing its
 			// classes with the bundled ones fatals at class-link time (issue #2942).
-			// Skip the optimization and serve the full stock stylesheet instead.
-			// This can run before Blocks_Animation registers the handle, so
-			// register it here or the enqueue never prints.
-			if ( defined( 'BLOCKS_ANIMATION_URL' ) && ! wp_style_is( 'otter-animation', 'registered' ) ) {
-				wp_register_style( 'otter-animation', BLOCKS_ANIMATION_URL . 'build/animation/index.css', array(), OTTER_BLOCKS_VERSION );
-			}
-
-			wp_enqueue_style( 'otter-animation' );
+			// Skip the optimization — Blocks_Animation::frontend_load() serves the
+			// full stock stylesheet whenever this guard fails, so the animation
+			// rules never depend on the optimized fragment generated here.
 			return $style;
 		}
 
