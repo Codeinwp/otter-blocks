@@ -94,6 +94,11 @@ class Main {
 		$classnames = apply_filters( 'otter_blocks_autoloader', $classnames );
 
 		foreach ( $classnames as $classname ) {
+			// A stale Composer classmap or a third-party filter can list a class that is not loadable; skip it instead of fataling the request.
+			if ( ! is_string( $classname ) || ! class_exists( $classname ) ) {
+				continue;
+			}
+
 			$classname = new $classname();
 
 			if ( method_exists( $classname, 'instance' ) ) {
