@@ -14,10 +14,28 @@ use ThemeIsle\GutenbergBlocks\Registration;
 class Test_Registration extends WP_UnitTestCase {
 
 	/**
+	 * Temp renderer files to remove after the test, even if it failed part way.
+	 *
+	 * @var array<string>
+	 */
+	private $temp_renderer_files = array();
+
+	/**
 	 * Tear down test environment.
 	 */
 	public function tear_down() {
 		delete_option( 'themeisle_blocks_settings_global_defaults' );
+
+		// Restore permissions before unlinking: a test that fails mid-way would
+		// otherwise leave an unreadable file behind and poison later runs.
+		foreach ( $this->temp_renderer_files as $file ) {
+			if ( file_exists( $file ) ) {
+				chmod( $file, 0644 );
+				unlink( $file );
+			}
+		}
+
+		$this->temp_renderer_files = array();
 
 		parent::tear_down();
 	}
@@ -60,5 +78,126 @@ class Test_Registration extends WP_UnitTestCase {
 		delete_option( 'themeisle_blocks_settings_global_defaults' );
 
 		$this->assertEquals( new stdClass(), Registration::get_editor_global_defaults() );
+	}
+
+	/**
+	 * Run register_blocks() with `form-captcha` mapped to $classname.
+	 *
+	 * register_blocks() already ran once via the `init` hook fired during
+	 * bootstrap, so the plugin's blocks are unregistered first to keep this a
+	 * clean registration instead of "already registered" notices.
+	 *
+	 * @param string $classname Renderer class to map form-captcha to.
+	 * @return void
+	 */
+	private function register_blocks_with_captcha_renderer( $classname ) {
+		$filter = function ( $dynamic_blocks ) use ( $classname ) {
+			$dynamic_blocks['form-captcha'] = $classname;
+
+			return $dynamic_blocks;
+		};
+
+		add_filter( 'otter_blocks_register_dynamic_blocks', $filter );
+
+		$registry = \WP_Block_Type_Registry::get_instance();
+
+		foreach ( array_keys( $registry->get_all_registered() ) as $name ) {
+			if ( 0 === strpos( $name, 'themeisle-blocks/' ) ) {
+				$registry->unregister( $name );
+			}
+		}
+
+		// WordPress does not convert PHP warnings into exceptions the way this
+		// suite is configured to; swallow the failed-include warning so the
+		// production code path is what gets exercised.
+		set_error_handler( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_handler
+			function () {
+				return true;
+			}
+		);
+
+		( new Registration() )->register_blocks();
+
+		restore_error_handler();
+
+		remove_filter( 'otter_blocks_register_dynamic_blocks', $filter );
+	}
+
+	/**
+	 * Register a throwaway autoloader that resolves $class from $file the same
+	 * way Composer's classmap loader does: an unsuppressed `include` of the
+	 * mapped path, with no prior existence check.
+	 *
+	 * @param string $class Class to map.
+	 * @param string $file  Path to include for it.
+	 * @return callable The loader, for spl_autoload_unregister.
+	 */
+	private function register_composer_like_loader( $class, $file ) {
+		$loader = function ( $requested ) use ( $class, $file ) {
+			if ( ltrim( $class, '\\' ) === $requested ) {
+				include $file; // phpcs:ignore
+			}
+		};
+
+		spl_autoload_register( $loader );
+
+		return $loader;
+	}
+
+	/**
+	 * A dynamic block whose mapped renderer class has no autoload entry at all
+	 * must not fatal registration for every other block; it should fall back to
+	 * plain metadata registration.
+	 */
+	public function test_register_blocks_survives_dynamic_renderer_class_with_no_autoload_entry() {
+		$this->register_blocks_with_captcha_renderer( '\ThemeIsle\GutenbergBlocks\Render\Nonexistent_Form_Captcha_Block' );
+
+		$this->assertTrue( \WP_Block_Type_Registry::get_instance()->is_registered( 'themeisle-blocks/form-captcha' ) );
+	}
+
+	/**
+	 * A renderer class that is mapped by the autoloader but whose file is absent
+	 * from the deployed artifact must degrade the same way. Composer's classmap
+	 * returns the path without checking it exists, so the include only warns and
+	 * the class stays undefined.
+	 */
+	public function test_register_blocks_survives_dynamic_renderer_class_whose_file_is_missing() {
+		$class  = 'ThemeIsle\GutenbergBlocks\Render\Missing_File_Captcha_Block';
+		$loader = $this->register_composer_like_loader( $class, get_temp_dir() . 'otter-absent-renderer.php' );
+
+		$this->register_blocks_with_captcha_renderer( $class );
+
+		spl_autoload_unregister( $loader );
+
+		$this->assertFalse( class_exists( $class, false ), 'The renderer class must not have been defined.' );
+		$this->assertTrue( \WP_Block_Type_Registry::get_instance()->is_registered( 'themeisle-blocks/form-captcha' ) );
+	}
+
+	/**
+	 * Same degradation when the renderer file is present but not readable — a
+	 * permissions mishap during deploy. `include` needs read permission, so the
+	 * class again stays undefined.
+	 */
+	public function test_register_blocks_survives_dynamic_renderer_class_whose_file_is_unreadable() {
+		$class = 'ThemeIsle\GutenbergBlocks\Render\Unreadable_File_Captcha_Block';
+		$file  = get_temp_dir() . 'otter-unreadable-renderer.php';
+
+		$this->temp_renderer_files[] = $file;
+
+		file_put_contents( $file, '<?php namespace ThemeIsle\GutenbergBlocks\Render; class Unreadable_File_Captcha_Block { public function render( $attributes ) { return ""; } }' ); // phpcs:ignore
+		chmod( $file, 0000 );
+
+		if ( is_readable( $file ) ) {
+			$this->markTestSkipped( 'Cannot make a file unreadable as this user (likely running as root).' );
+		}
+
+		$loader = $this->register_composer_like_loader( $class, $file );
+
+		$this->register_blocks_with_captcha_renderer( $class );
+
+		spl_autoload_unregister( $loader );
+
+		$this->assertFalse( class_exists( $class, false ), 'The renderer class must not have been defined.' );
+		$this->assertTrue( \WP_Block_Type_Registry::get_instance()->is_registered( 'themeisle-blocks/form-captcha' ) );
 	}
 }
