@@ -87,10 +87,11 @@ class Test_Registration extends WP_UnitTestCase {
 	 * bootstrap, so the plugin's blocks are unregistered first to keep this a
 	 * clean registration instead of "already registered" notices.
 	 *
-	 * @param string $classname Renderer class to map form-captcha to.
+	 * @param string $classname                Renderer class to map form-captcha to.
+	 * @param string $expected_include_failure Path whose failed include is expected, or empty if no include failure is expected.
 	 * @return void
 	 */
-	private function register_blocks_with_captcha_renderer( $classname ) {
+	private function register_blocks_with_captcha_renderer( $classname, $expected_include_failure = '' ) {
 		$filter = function ( $dynamic_blocks ) use ( $classname ) {
 			$dynamic_blocks['form-captcha'] = $classname;
 
@@ -107,21 +108,30 @@ class Test_Registration extends WP_UnitTestCase {
 			}
 		}
 
-		// WordPress does not convert PHP warnings into exceptions the way this
-		// suite is configured to; swallow the failed-include warning so the
-		// production code path is what gets exercised.
-		set_error_handler(
-			function ( $error_level, $message ) {
- 				return E_WARNING === $error_level && false !== strpos( $message, 'renderer.php' );
- 			}
+		$previous = set_error_handler(
+			function ( $level, $message, $file = '', $line = 0 ) use ( &$previous, $expected_include_failure ) {
+				if (
+					'' !== $expected_include_failure &&
+					E_WARNING === $level &&
+					false !== strpos( $message, $expected_include_failure )
+				) {
+					return true;
+				}
+
+				if ( null === $previous ) {
+					return false;
+				}
+
+				return call_user_func( $previous, $level, $message, $file, $line );
+			}
 		);
 
 		try {
- 			( new Registration() )->register_blocks();
- 		} finally {
- 			restore_error_handler();
- 			remove_filter( 'otter_blocks_register_dynamic_blocks', $filter );
- 		}
+			( new Registration() )->register_blocks();
+		} finally {
+			restore_error_handler();
+			remove_filter( 'otter_blocks_register_dynamic_blocks', $filter );
+		}
 	}
 
 	/**
@@ -192,14 +202,14 @@ class Test_Registration extends WP_UnitTestCase {
 	 */
 	public function test_register_blocks_survives_dynamic_renderer_class_whose_file_is_missing() {
 		$class  = 'ThemeIsle\GutenbergBlocks\Render\Missing_File_Captcha_Block';
-		$loader = $this->register_composer_like_loader( $class, get_temp_dir() . 'otter-absent-renderer.php' );
+		$file   = get_temp_dir() . 'otter-absent-renderer.php';
+		$loader = $this->register_composer_like_loader( $class, $file );
 
 		try {
- 			$this->register_blocks_with_captcha_renderer( $class );
- 		} finally {
- 			spl_autoload_unregister( $loader );
- 		}
-
+			$this->register_blocks_with_captcha_renderer( $class, $file );
+		} finally {
+			spl_autoload_unregister( $loader );
+		}
 
 		$this->assertFalse( class_exists( $class, false ), 'The renderer class must not have been defined.' );
 		$this->assertCaptchaRegisteredWithoutRenderer();
@@ -226,11 +236,10 @@ class Test_Registration extends WP_UnitTestCase {
 		$loader = $this->register_composer_like_loader( $class, $file );
 
 		try {
- 			$this->register_blocks_with_captcha_renderer( $class );
- 		} finally {
- 			spl_autoload_unregister( $loader );
- 		}
-
+			$this->register_blocks_with_captcha_renderer( $class, $file );
+		} finally {
+			spl_autoload_unregister( $loader );
+		}
 
 		$this->assertFalse( class_exists( $class, false ), 'The renderer class must not have been defined.' );
 		$this->assertCaptchaRegisteredWithoutRenderer();
