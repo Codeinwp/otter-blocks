@@ -110,17 +110,18 @@ class Test_Registration extends WP_UnitTestCase {
 		// WordPress does not convert PHP warnings into exceptions the way this
 		// suite is configured to; swallow the failed-include warning so the
 		// production code path is what gets exercised.
-		set_error_handler( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_handler
-			function () {
-				return true;
-			}
+		set_error_handler(
+			function ( $error_level, $message ) {
+ 				return E_WARNING === $error_level && false !== strpos( $message, 'renderer.php' );
+ 			}
 		);
 
-		( new Registration() )->register_blocks();
-
-		restore_error_handler();
-
-		remove_filter( 'otter_blocks_register_dynamic_blocks', $filter );
+		try {
+ 			( new Registration() )->register_blocks();
+ 		} finally {
+ 			restore_error_handler();
+ 			remove_filter( 'otter_blocks_register_dynamic_blocks', $filter );
+ 		}
 	}
 
 	/**
@@ -135,13 +136,27 @@ class Test_Registration extends WP_UnitTestCase {
 	private function register_composer_like_loader( $class, $file ) {
 		$loader = function ( $requested ) use ( $class, $file ) {
 			if ( ltrim( $class, '\\' ) === $requested ) {
-				include $file; // phpcs:ignore
+				include $file;
 			}
 		};
 
 		spl_autoload_register( $loader );
 
 		return $loader;
+	}
+
+	/**
+	 * Positive control: a loadable renderer must register the block *with* a
+	 * render_callback. Without this, the null-callback assertions below would
+	 * pass even if registration silently stopped wiring renderers altogether.
+	 */
+	public function test_register_blocks_uses_the_renderer_when_the_class_is_loadable() {
+		$this->register_blocks_with_captcha_renderer( '\ThemeIsle\GutenbergBlocks\Render\Form_Captcha_Block' );
+
+		$block_type = \WP_Block_Type_Registry::get_instance()->get_registered( 'themeisle-blocks/form-captcha' );
+
+		$this->assertNotNull( $block_type, 'The block must be registered.' );
+		$this->assertIsCallable( $block_type->render_callback, 'A loadable renderer must be wired as the render callback.' );
 	}
 
 	/**
@@ -152,7 +167,21 @@ class Test_Registration extends WP_UnitTestCase {
 	public function test_register_blocks_survives_dynamic_renderer_class_with_no_autoload_entry() {
 		$this->register_blocks_with_captcha_renderer( '\ThemeIsle\GutenbergBlocks\Render\Nonexistent_Form_Captcha_Block' );
 
-		$this->assertTrue( \WP_Block_Type_Registry::get_instance()->is_registered( 'themeisle-blocks/form-captcha' ) );
+		$this->assertCaptchaRegisteredWithoutRenderer();
+	}
+
+	/**
+	 * Assert the captcha block came through the fallback branch: still registered,
+	 * but with no render_callback. `is_registered()` alone would also pass on the
+	 * dynamic path, so the null callback is what pins the fallback down.
+	 *
+	 * @return void
+	 */
+	private function assertCaptchaRegisteredWithoutRenderer() {
+		$block_type = \WP_Block_Type_Registry::get_instance()->get_registered( 'themeisle-blocks/form-captcha' );
+
+		$this->assertNotNull( $block_type, 'The block must still be registered.' );
+		$this->assertNull( $block_type->render_callback, 'The block must fall back to registration without a renderer.' );
 	}
 
 	/**
@@ -165,12 +194,15 @@ class Test_Registration extends WP_UnitTestCase {
 		$class  = 'ThemeIsle\GutenbergBlocks\Render\Missing_File_Captcha_Block';
 		$loader = $this->register_composer_like_loader( $class, get_temp_dir() . 'otter-absent-renderer.php' );
 
-		$this->register_blocks_with_captcha_renderer( $class );
+		try {
+ 			$this->register_blocks_with_captcha_renderer( $class );
+ 		} finally {
+ 			spl_autoload_unregister( $loader );
+ 		}
 
-		spl_autoload_unregister( $loader );
 
 		$this->assertFalse( class_exists( $class, false ), 'The renderer class must not have been defined.' );
-		$this->assertTrue( \WP_Block_Type_Registry::get_instance()->is_registered( 'themeisle-blocks/form-captcha' ) );
+		$this->assertCaptchaRegisteredWithoutRenderer();
 	}
 
 	/**
@@ -184,7 +216,7 @@ class Test_Registration extends WP_UnitTestCase {
 
 		$this->temp_renderer_files[] = $file;
 
-		file_put_contents( $file, '<?php namespace ThemeIsle\GutenbergBlocks\Render; class Unreadable_File_Captcha_Block { public function render( $attributes ) { return ""; } }' ); // phpcs:ignore
+		file_put_contents( $file, '<?php namespace ThemeIsle\GutenbergBlocks\Render; class Unreadable_File_Captcha_Block { public function render( $attributes ) { return ""; } }' );
 		chmod( $file, 0000 );
 
 		if ( is_readable( $file ) ) {
@@ -193,11 +225,14 @@ class Test_Registration extends WP_UnitTestCase {
 
 		$loader = $this->register_composer_like_loader( $class, $file );
 
-		$this->register_blocks_with_captcha_renderer( $class );
+		try {
+ 			$this->register_blocks_with_captcha_renderer( $class );
+ 		} finally {
+ 			spl_autoload_unregister( $loader );
+ 		}
 
-		spl_autoload_unregister( $loader );
 
 		$this->assertFalse( class_exists( $class, false ), 'The renderer class must not have been defined.' );
-		$this->assertTrue( \WP_Block_Type_Registry::get_instance()->is_registered( 'themeisle-blocks/form-captcha' ) );
+		$this->assertCaptchaRegisteredWithoutRenderer();
 	}
 }
