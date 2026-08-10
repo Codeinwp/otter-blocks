@@ -385,11 +385,9 @@ class Base_CSS {
 		}
 
 		if ( ! self::has_own_css_parser() ) {
-			// Another plugin loaded a different php-css-parser release; mixing its
-			// classes with the bundled ones fatals at class-link time (issue #2942).
-			// Skip the optimization — Blocks_Animation::frontend_load() serves the
-			// full stock stylesheet whenever this guard fails, so the animation
-			// rules never depend on the optimized fragment generated here.
+			// A foreign php-css-parser release is loaded; parsing now fatals
+			// uncatchably at class-link time (#2942). The frontend loader serves
+			// the stock stylesheet instead.
 			return $style;
 		}
 
@@ -455,13 +453,11 @@ class Base_CSS {
 	}
 
 	/**
-	 * Check that every Sabberworm class the animation parser touches resolves to
-	 * the copy bundled with this plugin.
+	 * Check that every loaded Sabberworm\CSS symbol resolves to this plugin's copy.
 	 *
-	 * Another active plugin can ship a different php-css-parser release under the
-	 * same global namespace. Once any of its classes or interfaces is loaded,
-	 * loading the bundled counterparts fatals at class-link time with a
-	 * declaration-compatibility error, and that error is not catchable.
+	 * Another plugin can ship a different php-css-parser release under the same
+	 * namespace. Once any of its classes loads, loading the bundled counterparts
+	 * fatals at class-link time, and that error is not catchable.
 	 *
 	 * @return bool
 	 */
@@ -469,15 +465,13 @@ class Base_CSS {
 		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor/' );
 		$prefix     = 'Sabberworm\\CSS\\';
 
-		// Reject anything already in memory from a foreign copy first, before the
-		// sentinel checks below can autoload any bundled class: the parser touches
-		// more classes than the sentinels (OutputFormat, KeyFrame, the cached
-		// object graph...), and any preloaded foreign one poisons the process.
+		// Reject any foreign copy already in memory before the sentinel checks
+		// autoload a bundled class: the parser uses more classes than the
+		// sentinels, and one preloaded foreign symbol poisons the process.
 		$declared = array_merge( get_declared_classes(), get_declared_interfaces(), get_declared_traits() );
 
 		foreach ( $declared as $declared_name ) {
-			// Case-insensitive: PHP class and namespace names are case-insensitive,
-			// so a foreign copy declared with different casing is the same class.
+			// PHP class names are case-insensitive; match a foreign copy in any casing.
 			if ( 0 !== stripos( $declared_name, $prefix ) ) {
 				continue;
 			}

@@ -172,10 +172,8 @@ class Blocks_Animation {
 		}
 
 		if ( ! self::$scripts_loaded['animation'] && strpos( $block_content, 'animated' ) ) {
-			// The stock stylesheet also serves pages whose generated CSS was built
-			// while a foreign php-css-parser copy blocked the optimization (issue
-			// #2942) — the cached CSS carries no animation rules, so this delivery
-			// must not depend on the optimized path having run.
+			// Foreign-parser pages (#2942) cache post-CSS with no animation rules,
+			// so deliver the stock stylesheet here rather than via the parser path.
 			if (
 				! defined( 'OTTER_BLOCKS_VERSION' ) ||
 				! get_option( 'themeisle_blocks_settings_optimize_animations_css', true ) ||
