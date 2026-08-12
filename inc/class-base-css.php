@@ -388,6 +388,7 @@ class Base_CSS {
 			// A foreign php-css-parser release is loaded; parsing now fatals
 			// uncatchably at class-link time (#2942). The frontend loader serves
 			// the stock stylesheet instead.
+			error_log( '[Otter Blocks] A conflicting Sabberworm php-css-parser release is loaded; skipping animation CSS optimization and serving the stock stylesheet instead.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return $style;
 		}
 
