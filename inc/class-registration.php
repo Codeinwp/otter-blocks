@@ -968,7 +968,7 @@ class Registration {
 				);
 			}
 
-			if ( isset( $dynamic_blocks[ $block ] ) ) {
+			if ( isset( $dynamic_blocks[ $block ] ) && class_exists( $dynamic_blocks[ $block ] ) ) {
 				$classname = $dynamic_blocks[ $block ];
 				$renderer  = new $classname();
 
