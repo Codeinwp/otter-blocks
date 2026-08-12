@@ -4,7 +4,7 @@ Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 3.2.1
+Stable tag: 3.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -364,13 +364,11 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 == Changelog ==
 
-##### [Version 3.2.1](https://github.com/Codeinwp/otter-blocks/compare/v3.2.0...v3.2.1) (2026-07-22)
+##### [Version 3.2.2](https://github.com/Codeinwp/otter-blocks/compare/v3.2.1...v3.2.2) (2026-08-12)
 
-- Fixed an issue where the close button placed inside a popup could not be clicked when the popup content overlapped it.
-- Fixed an issue where blocks with animations nested inside a parent using a slide or similar animation stayed invisible until the page was scrolled.
-- Fixed an issue on WordPress 7.0 where content inserted from the Design Library was locked as a pattern instead of arriving as fully editable blocks.
-- Fixed an issue where form settings such as the recipient email and messages failed to save when the form used a Cloudflare Turnstile captcha.
-- Introduced block render tracking and late CSS output in the footer for blocks using Atomic Wind not rendered in the main query.
+- Form submissions can now be exported as a CSV file, with the export button offering a choice between CSV and XML formats.
+- Fixed a fatal error when a dynamic block class was not available during block registration.
+- Updated dependencies
 
 
 
