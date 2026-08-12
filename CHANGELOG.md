@@ -1,3 +1,9 @@
+##### [Version 3.2.2](https://github.com/Codeinwp/otter-blocks/compare/v3.2.1...v3.2.2) (2026-08-12)
+
+- Form submissions can now be exported as a CSV file, with the export button offering a choice between CSV and XML formats.
+- Fixed a fatal error when a dynamic block class was not available during block registration.
+- Updated dependencies
+
 ##### [Version 3.2.1](https://github.com/Codeinwp/otter-blocks/compare/v3.2.0...v3.2.1) (2026-07-22)
 
 - Fixed an issue where the close button placed inside a popup could not be clicked when the popup content overlapped it.
