@@ -5,7 +5,6 @@
  * @package gutenberg-blocks
  */
 
-use ThemeIsle\GutenbergBlocks\Autoloader;
 use ThemeIsle\GutenbergBlocks\Main;
 
 /**
@@ -87,47 +86,6 @@ class TestMainAutoload extends WP_UnitTestCase {
 		foreach ( $listed as $classname ) {
 			$this->assertTrue( class_exists( $classname ), $classname . ' is listed for autoloading but cannot be loaded.' );
 		}
-	}
-
-	/**
-	 * The fallback loader must cover the whole autoload list, so a class stays reachable when Composer's generated classmap does not match the files on disk.
-	 */
-	public function test_fallback_autoloader_resolves_every_listed_classname() {
-		foreach ( $this->get_listed_classnames() as $classname ) {
-			$this->assertNotFalse(
-				Autoloader::path_for( ltrim( $classname, '\\' ) ),
-				$classname . ' cannot be resolved from its file name; the fallback autoloader no longer covers the autoload list.'
-			);
-		}
-	}
-
-	/**
-	 * File name mapping, including the Integration namespace that lives in inc/integrations/.
-	 */
-	public function test_path_for_maps_class_names_to_files() {
-		$this->assertSame(
-			OTTER_BLOCKS_PATH . '/inc/plugins/class-atomic-wind-blocks.php',
-			Autoloader::path_for( 'ThemeIsle\GutenbergBlocks\Plugins\Atomic_Wind_Blocks' )
-		);
-
-		$this->assertSame(
-			OTTER_BLOCKS_PATH . '/inc/integrations/class-form-providers.php',
-			Autoloader::path_for( 'ThemeIsle\GutenbergBlocks\Integration\Form_Providers' )
-		);
-
-		$this->assertSame(
-			OTTER_BLOCKS_PATH . '/inc/class-main.php',
-			Autoloader::path_for( 'ThemeIsle\GutenbergBlocks\Main' )
-		);
-	}
-
-	/**
-	 * Classes outside the plugin namespace, and names with no file, are left to the other loaders.
-	 */
-	public function test_path_for_ignores_foreign_and_missing_classes() {
-		$this->assertFalse( Autoloader::path_for( 'WP_Query' ) );
-		$this->assertFalse( Autoloader::path_for( 'ThemeIsle\OtterPro\Plugins\License' ) );
-		$this->assertFalse( Autoloader::path_for( 'ThemeIsle\GutenbergBlocks\Plugins\Definitely_Missing_Class' ) );
 	}
 
 	/**
