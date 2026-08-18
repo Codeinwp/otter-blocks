@@ -51,6 +51,8 @@ const OPTION_WHITELIST = array(
 	// Form webhooks registry; retention specs seed a dead-URL webhook to force
 	// a delivery failure with the 'webhook' action.
 	'themeisle_webhooks_options',
+	// Scenario flag for the autoloader-resilience spec; see break_otter_autoloader().
+	'otter_e2e_broken_autoloader',
 	'otter_blocks_logger_flag',
 	'otter_blocks_logger_data',
 	'otter_activation_first_save',
@@ -93,6 +95,33 @@ const CAPTCHA_MODE_OPTION = 'otter_e2e_captcha_mode';
  * When truthy, /otter/v1/openai/generate returns a deterministic stub instead of calling OpenAI.
  */
 const OPENAI_STUB_OPTION = 'otter_e2e_openai_stub';
+
+/**
+ * When truthy, get_filesystem_method() reports a bogus method so WP_Filesystem()
+ * fails to initialize. Simulates hosts where the filesystem API is unavailable
+ * on the frontend (issue #2937) — CSS_Handler::is_writable() must degrade to
+ * `false` and the widgets CSS must fall back to an inline <style>.
+ */
+const FS_BLOCKED_OPTION = 'otter_e2e_fs_blocked';
+
+/**
+ * Numeric index used for the seeded block widget instance (widget id `block-999`).
+ */
+const WIDGET_SEED_INDEX = 999;
+
+/**
+ * When truthy, an unloadable class is put at the head of the Otter autoloader list,
+ * reproducing a stale Composer classmap on a released package (issue #2954).
+ */
+const BROKEN_AUTOLOADER_OPTION = 'otter_e2e_broken_autoloader';
+
+/**
+ * When truthy, a typed php-css-parser 9.x `Commentable` interface is defined before
+ * any plugin loads, reproducing a second plugin shipping a different Sabberworm
+ * release (issue #2942). Otter must skip its animation-CSS optimization instead
+ * of fataling while loading its bundled untyped classes.
+ */
+const FOREIGN_SABBERWORM_OPTION = 'otter_e2e_foreign_sabberworm';
 
 /**
  * Form record post type, mirrored from \ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions.
@@ -741,6 +770,91 @@ function stub_openai_http_for_e2e( $preempt, $parsed_args, $url ) {
 	return stub_openai_http_response( $content );
 }
 
+/**
+ * Issue #2929 rig: with ?otter_e2e_corrupt_pages=1, mimic a theme/plugin that
+ * clobbers the $pages loop global (main templates are included at global scope,
+ * so any template-level $pages variable overwrites it) while Otter evaluates a
+ * dynamic tag, and surface PHP notices in the output so the spec can assert
+ * none are emitted.
+ *
+ * The corruption is scoped to blocks carrying an <o-dynamic> tag and restored
+ * straight after Otter's filter (priority 10): leaving it in place for every
+ * block would make core's own the_content() warn too, which is core behavior
+ * rather than the bug under test.
+ */
+function corrupt_pages_around_dynamic_tags() {
+	if ( is_admin() || ! isset( $_GET['otter_e2e_corrupt_pages'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return;
+	}
+
+	ini_set( 'display_errors', '1' ); // phpcs:ignore WordPress.PHP.IniSet.display_errors_Disallowed
+
+	$saved = null;
+
+	add_filter(
+		'render_block',
+		function ( $block_content ) use ( &$saved ) {
+			if ( false !== strpos( $block_content, '<o-dynamic' ) ) {
+				$saved            = isset( $GLOBALS['pages'] ) ? $GLOBALS['pages'] : null;
+				$GLOBALS['pages'] = array();
+			}
+			return $block_content;
+		},
+		9
+	);
+
+	add_filter(
+		'render_block',
+		function ( $block_content ) use ( &$saved ) {
+			if ( null !== $saved ) {
+				$GLOBALS['pages'] = $saved;
+				$saved            = null;
+			}
+			return $block_content;
+		},
+		11
+	);
+}
+
+add_action( 'wp', __NAMESPACE__ . '\\corrupt_pages_around_dynamic_tags' );
+
+/**
+ * Put an unloadable class first in the Otter autoloader list when the scenario option is on.
+ *
+ * @param array<int, string> $classnames Classes Otter initializes on `init`.
+ * @return array<int, string>
+ */
+function break_otter_autoloader( $classnames ) {
+	if ( ! get_option( BROKEN_AUTOLOADER_OPTION, false ) ) {
+		return $classnames;
+	}
+
+	// Never break the scenario endpoints themselves, or a spec running against unfixed
+	// code could not disarm the flag and would poison the rest of the run.
+	$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+	if ( false !== strpos( $uri, REST_NAMESPACE ) ) {
+		return $classnames;
+	}
+
+	array_unshift( $classnames, '\ThemeIsle\GutenbergBlocks\Plugins\Missing_From_Classmap' );
+
+	return $classnames;
+}
+
+add_filter( 'otter_blocks_autoloader', __NAMESPACE__ . '\\break_otter_autoloader' );
+
+// Foreign-Sabberworm scenario (issue #2942): define the typed 9.x interface before
+// any plugin code runs, like a competing plugin's autoloader would. The scenario
+// endpoints stay exempt so a spec can always disarm the flag, even against code
+// where the armed frontend fatals.
+if ( get_option( FOREIGN_SABBERWORM_OPTION, false ) ) {
+	$otter_e2e_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+
+	if ( false === strpos( $otter_e2e_request_uri, REST_NAMESPACE ) ) {
+		require __DIR__ . '/includes/foreign-sabberworm-interface.php';
+	}
+}
+
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e', 10, 2 );
 add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_openai_http_for_e2e', 10, 3 );
 
@@ -940,6 +1054,104 @@ function stub_captcha_http_verification_for_e2e( $preempt, $request, $url ) {
 }
 
 add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_captcha_http_verification_for_e2e', 10, 3 );
+
+/**
+ * Report an unknown filesystem method while the fs-blocked scenario is active.
+ *
+ * WP_Filesystem() then fails to locate the abstraction class file and bails out
+ * without initializing `$wp_filesystem`, which is the closest reproducible
+ * stand-in for the production condition behind issue #2937.
+ *
+ * @param string $method Detected filesystem method.
+ * @return string
+ */
+function block_filesystem_method_for_e2e( $method ) {
+	return get_option( FS_BLOCKED_OPTION ) ? 'otter_e2e_blocked' : $method;
+}
+
+add_filter( 'filesystem_method', __NAMESPACE__ . '\\block_filesystem_method_for_e2e', PHP_INT_MAX );
+
+/**
+ * Seed a classic-widgets sidebar with an Otter block so the frontend
+ * widgets-CSS path (Block_Frontend::enqueue_widgets_css) is exercised.
+ *
+ * Clears the generated-stylesheet options so the next frontend request takes
+ * the "no CSS file yet" branch that calls CSS_Handler::is_writable().
+ *
+ * @param string $sidebar_id Sidebar to place the widget in.
+ * @return void
+ */
+function seed_otter_widget( $sidebar_id ) {
+	$markup = '<!-- wp:themeisle-blocks/progress-bar {"id":"wp-block-themeisle-blocks-progress-bar-e2e2937","title":"E2E Progress","percentage":75,"titleColor":"#123abc","height":36} -->' . "\n" .
+		'<div id="wp-block-themeisle-blocks-progress-bar-e2e2937" class="wp-block-themeisle-blocks-progress-bar"><div class="wp-block-themeisle-blocks-progress-bar__title">E2E Progress</div><div class="wp-block-themeisle-blocks-progress-bar__area"><div class="wp-block-themeisle-blocks-progress-bar__area__bar"></div></div></div>' . "\n" .
+		'<!-- /wp:themeisle-blocks/progress-bar -->';
+
+	$widget_blocks = get_option( 'widget_block', array() );
+
+	if ( ! is_array( $widget_blocks ) ) {
+		$widget_blocks = array();
+	}
+
+	$widget_blocks[ WIDGET_SEED_INDEX ] = array( 'content' => $markup );
+	$widget_blocks['_multiwidget']      = 1;
+	update_option( 'widget_block', $widget_blocks );
+
+	$sidebars = get_option( 'sidebars_widgets', array() );
+
+	if ( ! is_array( $sidebars ) ) {
+		$sidebars = array();
+	}
+
+	$existing = isset( $sidebars[ $sidebar_id ] ) && is_array( $sidebars[ $sidebar_id ] ) ? $sidebars[ $sidebar_id ] : array();
+
+	$sidebars[ $sidebar_id ] = array_values( array_unique( array_merge( array( 'block-' . WIDGET_SEED_INDEX ), $existing ) ) );
+	update_option( 'sidebars_widgets', $sidebars );
+
+	delete_option( 'themeisle_blocks_widgets_css_file' );
+	delete_option( 'themeisle_blocks_widgets_css' );
+	delete_option( 'themeisle_blocks_widgets_fonts' );
+}
+
+/**
+ * Remove the seeded widget and every widgets-CSS artifact it produced.
+ *
+ * @return void
+ */
+function cleanup_otter_widget() {
+	$widget_blocks = get_option( 'widget_block', array() );
+
+	if ( is_array( $widget_blocks ) && isset( $widget_blocks[ WIDGET_SEED_INDEX ] ) ) {
+		unset( $widget_blocks[ WIDGET_SEED_INDEX ] );
+		update_option( 'widget_block', $widget_blocks );
+	}
+
+	$sidebars = get_option( 'sidebars_widgets', array() );
+
+	if ( is_array( $sidebars ) ) {
+		foreach ( $sidebars as $sidebar_id => $widgets ) {
+			if ( is_array( $widgets ) ) {
+				$sidebars[ $sidebar_id ] = array_values( array_diff( $widgets, array( 'block-' . WIDGET_SEED_INDEX ) ) );
+			}
+		}
+		update_option( 'sidebars_widgets', $sidebars );
+	}
+
+	$file_name = get_option( 'themeisle_blocks_widgets_css_file' );
+
+	if ( $file_name ) {
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$file_path     = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/' . $file_name . '.css';
+
+		if ( is_file( $file_path ) ) {
+			wp_delete_file( $file_path );
+		}
+	}
+
+	delete_option( 'themeisle_blocks_widgets_css_file' );
+	delete_option( 'themeisle_blocks_widgets_css' );
+	delete_option( 'themeisle_blocks_widgets_fonts' );
+	delete_option( FS_BLOCKED_OPTION );
+}
 
 add_action(
 	'rest_api_init',
@@ -1333,6 +1545,92 @@ add_action(
 
 		register_rest_route(
 			REST_NAMESPACE,
+			'/filesystem',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function ( \WP_REST_Request $request ) {
+					$mode = $request->get_param( 'mode' );
+
+					if ( ! in_array( $mode, array( 'blocked', 'ok' ), true ) ) {
+						return new \WP_Error(
+							'otter_e2e_invalid_fs_mode',
+							'Mode must be "blocked" or "ok".',
+							array( 'status' => 400 )
+						);
+					}
+
+					if ( 'blocked' === $mode ) {
+						update_option( FS_BLOCKED_OPTION, true, false );
+					} else {
+						delete_option( FS_BLOCKED_OPTION );
+					}
+
+					return rest_ensure_response( array( 'ok' => true ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
+			'/sabberworm',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function ( \WP_REST_Request $request ) {
+					$mode = $request->get_param( 'mode' );
+
+					if ( ! in_array( $mode, array( 'foreign', 'own' ), true ) ) {
+						return new \WP_Error(
+							'otter_e2e_invalid_sabberworm_mode',
+							'Mode must be "foreign" or "own".',
+							array( 'status' => 400 )
+						);
+					}
+
+					if ( 'foreign' === $mode ) {
+						update_option( FOREIGN_SABBERWORM_OPTION, true, false );
+					} else {
+						delete_option( FOREIGN_SABBERWORM_OPTION );
+					}
+
+					// Force the next frontend request through the parse path.
+					delete_transient( 'otter_animations_parsed' );
+
+					return rest_ensure_response( array( 'ok' => true ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
+			'/widgets/seed',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function ( \WP_REST_Request $request ) {
+					$sidebar_id = $request->get_param( 'sidebar' );
+					seed_otter_widget( is_string( $sidebar_id ) && '' !== $sidebar_id ? $sidebar_id : 'sidebar-1' );
+					return rest_ensure_response( array( 'ok' => true ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
+			'/widgets/cleanup',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function () {
+					cleanup_otter_widget();
+					return rest_ensure_response( array( 'ok' => true ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
 			'/reset',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
@@ -1354,6 +1652,8 @@ add_action(
 					delete_option( MAIL_LOG_OPTION );
 					delete_option( CAPTCHA_MODE_OPTION );
 					delete_option( OPENAI_STUB_OPTION );
+					delete_option( FS_BLOCKED_OPTION );
+					delete_option( FOREIGN_SABBERWORM_OPTION );
 					cleanup_form_records();
 					return rest_ensure_response( array( 'ok' => true ) );
 				},

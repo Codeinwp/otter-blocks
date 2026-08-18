@@ -60,7 +60,16 @@ const SERIAL_SPECS = [
 	'**/blocks/atomic-wind-list-view.spec.js',
 
 	// Mutates the shared admin user's metabox order and editor preferences.
-	'**/blocks/woocommerce-builder.spec.js'
+	'**/blocks/woocommerce-builder.spec.js',
+
+	// Switches the active theme and mutates site-wide widget + filesystem state.
+	'**/blocks/widgets-css-frontend.spec.js',
+
+	// Flips a site-wide flag that breaks Otter's autoloader for every request.
+	'**/blocks/autoloader-resilience.spec.js',
+
+	// Flips a site-wide flag that injects a foreign Sabberworm interface for every request.
+	'**/blocks/sabberworm-collision.spec.js'
 ];
 
 const config = defineConfig({

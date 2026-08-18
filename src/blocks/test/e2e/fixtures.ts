@@ -58,6 +58,25 @@ export type OtterUtils = {
 	/** Mint a `form-verification` nonce for API-driven submissions. */
 	getFormVerificationNonce: () => Promise<string>;
 
+	/**
+	 * 'blocked' makes get_filesystem_method() report a bogus method so
+	 * WP_Filesystem() fails to initialize (issue #2937 scenario); 'ok' restores it.
+	 */
+	setFilesystemMode: ( mode: 'blocked' | 'ok' ) => Promise<unknown>;
+
+	/** Seed a classic sidebar with an Otter block widget and clear the generated widgets-CSS options. */
+	seedOtterWidget: ( sidebar?: string ) => Promise<unknown>;
+
+	/** Remove the seeded widget, its CSS file/options, and the filesystem block. */
+	cleanupOtterWidget: () => Promise<unknown>;
+
+	/**
+	 * 'foreign' predefines a typed php-css-parser 9.x Commentable interface before
+	 * plugins load (issue #2942 scenario); 'own' restores the bundled parser.
+	 * Both modes clear the parsed-animations transient.
+	 */
+	setSabberwormMode: ( mode: 'foreign' | 'own' ) => Promise<unknown>;
+
 	/** All stored Submission Records with their Delivery Status meta. */
 	getFormRecords: () => Promise<FormRecord[]>;
 
@@ -102,6 +121,10 @@ export const test = base.extend<{ otterUtils: OtterUtils }>({
 				const response = ( await call( 'form/nonce' ) ) as { nonce: string };
 				return response.nonce;
 			},
+			setFilesystemMode: ( mode ) => call( 'filesystem', { mode }),
+			seedOtterWidget: ( sidebar ) => call( 'widgets/seed', sidebar ? { sidebar } : undefined ),
+			cleanupOtterWidget: () => call( 'widgets/cleanup' ),
+			setSabberwormMode: ( mode ) => call( 'sabberworm', { mode }),
 			getFormRecords: () => call( 'form/records' ) as Promise<FormRecord[]>,
 			cleanupFormRecords: () => call( 'form/records/cleanup' ),
 			createWooProduct: ( args ) => call( 'woo/product', args ?? {}) as Promise<{ id: number }>,

@@ -172,7 +172,13 @@ class Blocks_Animation {
 		}
 
 		if ( ! self::$scripts_loaded['animation'] && strpos( $block_content, 'animated' ) ) {
-			if ( ! defined( 'OTTER_BLOCKS_VERSION' ) || ( defined( 'OTTER_BLOCKS_VERSION' ) && ! get_option( 'themeisle_blocks_settings_optimize_animations_css', true ) ) ) {
+			// Foreign-parser pages (#2942) cache post-CSS with no animation rules,
+			// so deliver the stock stylesheet here rather than via the parser path.
+			if (
+				! defined( 'OTTER_BLOCKS_VERSION' ) ||
+				! get_option( 'themeisle_blocks_settings_optimize_animations_css', true ) ||
+				! Base_CSS::has_own_css_parser()
+			) {
 				wp_enqueue_style( 'otter-animation' );
 			}
 
