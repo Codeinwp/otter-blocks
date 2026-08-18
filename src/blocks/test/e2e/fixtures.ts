@@ -70,6 +70,13 @@ export type OtterUtils = {
 	/** Remove the seeded widget, its CSS file/options, and the filesystem block. */
 	cleanupOtterWidget: () => Promise<unknown>;
 
+	/**
+	 * 'foreign' predefines a typed php-css-parser 9.x Commentable interface before
+	 * plugins load (issue #2942 scenario); 'own' restores the bundled parser.
+	 * Both modes clear the parsed-animations transient.
+	 */
+	setSabberwormMode: ( mode: 'foreign' | 'own' ) => Promise<unknown>;
+
 	/** All stored Submission Records with their Delivery Status meta. */
 	getFormRecords: () => Promise<FormRecord[]>;
 
@@ -105,6 +112,7 @@ export const test = base.extend<{ otterUtils: OtterUtils }>({
 			setFilesystemMode: ( mode ) => call( 'filesystem', { mode }),
 			seedOtterWidget: ( sidebar ) => call( 'widgets/seed', sidebar ? { sidebar } : undefined ),
 			cleanupOtterWidget: () => call( 'widgets/cleanup' ),
+			setSabberwormMode: ( mode ) => call( 'sabberworm', { mode }),
 			getFormRecords: () => call( 'form/records' ) as Promise<FormRecord[]>,
 			cleanupFormRecords: () => call( 'form/records/cleanup' )
 		});

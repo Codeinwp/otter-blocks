@@ -116,6 +116,14 @@ const WIDGET_SEED_INDEX = 999;
 const BROKEN_AUTOLOADER_OPTION = 'otter_e2e_broken_autoloader';
 
 /**
+ * When truthy, a typed php-css-parser 9.x `Commentable` interface is defined before
+ * any plugin loads, reproducing a second plugin shipping a different Sabberworm
+ * release (issue #2942). Otter must skip its animation-CSS optimization instead
+ * of fataling while loading its bundled untyped classes.
+ */
+const FOREIGN_SABBERWORM_OPTION = 'otter_e2e_foreign_sabberworm';
+
+/**
  * Form record post type, mirrored from \ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions.
  */
 const FORM_RECORD_TYPE = 'otter_form_record';
@@ -835,6 +843,18 @@ function break_otter_autoloader( $classnames ) {
 
 add_filter( 'otter_blocks_autoloader', __NAMESPACE__ . '\\break_otter_autoloader' );
 
+// Foreign-Sabberworm scenario (issue #2942): define the typed 9.x interface before
+// any plugin code runs, like a competing plugin's autoloader would. The scenario
+// endpoints stay exempt so a spec can always disarm the flag, even against code
+// where the armed frontend fatals.
+if ( get_option( FOREIGN_SABBERWORM_OPTION, false ) ) {
+	$otter_e2e_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+
+	if ( false === strpos( $otter_e2e_request_uri, REST_NAMESPACE ) ) {
+		require __DIR__ . '/includes/foreign-sabberworm-interface.php';
+	}
+}
+
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e', 10, 2 );
 add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_openai_http_for_e2e', 10, 3 );
 
@@ -1448,6 +1468,37 @@ add_action(
 
 		register_rest_route(
 			REST_NAMESPACE,
+			'/sabberworm',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function ( \WP_REST_Request $request ) {
+					$mode = $request->get_param( 'mode' );
+
+					if ( ! in_array( $mode, array( 'foreign', 'own' ), true ) ) {
+						return new \WP_Error(
+							'otter_e2e_invalid_sabberworm_mode',
+							'Mode must be "foreign" or "own".',
+							array( 'status' => 400 )
+						);
+					}
+
+					if ( 'foreign' === $mode ) {
+						update_option( FOREIGN_SABBERWORM_OPTION, true, false );
+					} else {
+						delete_option( FOREIGN_SABBERWORM_OPTION );
+					}
+
+					// Force the next frontend request through the parse path.
+					delete_transient( 'otter_animations_parsed' );
+
+					return rest_ensure_response( array( 'ok' => true ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
 			'/widgets/seed',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
@@ -1497,6 +1548,7 @@ add_action(
 					delete_option( CAPTCHA_MODE_OPTION );
 					delete_option( OPENAI_STUB_OPTION );
 					delete_option( FS_BLOCKED_OPTION );
+					delete_option( FOREIGN_SABBERWORM_OPTION );
 					cleanup_form_records();
 					return rest_ensure_response( array( 'ok' => true ) );
 				},

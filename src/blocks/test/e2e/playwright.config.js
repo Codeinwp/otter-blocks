@@ -63,7 +63,10 @@ const SERIAL_SPECS = [
 	'**/blocks/widgets-css-frontend.spec.js',
 
 	// Flips a site-wide flag that breaks Otter's autoloader for every request.
-	'**/blocks/autoloader-resilience.spec.js'
+	'**/blocks/autoloader-resilience.spec.js',
+
+	// Flips a site-wide flag that injects a foreign Sabberworm interface for every request.
+	'**/blocks/sabberworm-collision.spec.js'
 ];
 
 const config = defineConfig({
