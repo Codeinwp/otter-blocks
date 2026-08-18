@@ -1095,4 +1095,168 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertTrue( \ThemeIsle\OtterPro\Plugins\Dynamic_Content::is_protected_meta_key( 'USER_PASS' ) );
 		$this->assertFalse( \ThemeIsle\OtterPro\Plugins\Dynamic_Content::is_protected_meta_key( 'test_meta' ) );
 	}
+
+	/**
+	 * postContent must render the context post, not whatever post the loop
+	 * globals happen to point at (issue #2929: the context ID was passed to
+	 * get_the_content() as $more_link_text, so the post argument stayed null).
+	 */
+	public function test_post_content_uses_context_not_loop_globals() {
+		$other_id = $this->factory()->post->create(
+			array(
+				'post_title'   => 'Other',
+				'post_content' => 'Other post content',
+				'post_status'  => 'publish',
+			)
+		);
+
+		$this->go_to( get_permalink( $this->post_id ) );
+
+		// A secondary loop (page builder, related-posts widget) that forgot wp_reset_postdata().
+		$query = new WP_Query( array( 'p' => $other_id ) );
+		while ( $query->have_posts() ) {
+			$query->the_post();
+		}
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="postContent">Post Content</o-dynamic></p>' );
+
+		wp_reset_postdata();
+		wp_delete_post( $other_id, true );
+
+		$this->assertStringNotContainsString( 'Other post content', $result );
+		$this->assertStringContainsString( 'Test', $result );
+	}
+
+	/**
+	 * A clobbered $pages loop global (theme templates are included at global
+	 * scope, so any template-level $pages variable overwrites it) must not
+	 * surface "Undefined array key -1" from post-template.php nor swallow the
+	 * content (issue #2929).
+	 */
+	public function test_post_content_survives_corrupted_pages_global() {
+		$this->go_to( get_permalink( $this->post_id ) );
+
+		// Fire the loop so did_action( 'the_post' ) is truthy, then corrupt the global.
+		$query = new WP_Query( array( 'p' => $this->post_id ) );
+		while ( $query->have_posts() ) {
+			$query->the_post();
+		}
+		$GLOBALS['pages'] = array();
+
+		$captured = array();
+		set_error_handler(
+			function ( $errno, $errstr ) use ( &$captured ) {
+				$captured[] = $errstr;
+				return true;
+			}
+		);
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="postContent">Post Content</o-dynamic></p>' );
+
+		restore_error_handler();
+		wp_reset_postdata();
+
+		$page_warnings = array_filter(
+			$captured,
+			function ( $message ) {
+				return false !== strpos( $message, 'Undefined' ) || false !== strpos( $message, 'preg_match' );
+			}
+		);
+
+		$this->assertSame( array(), array_values( $page_warnings ) );
+		$this->assertStringContainsString( 'Test', $result );
+	}
+
+	/**
+	 * The infinite-loop guard in mark_exceptions() must inspect the context
+	 * post. When the context post nests a postContent tag the guard has to fire
+	 * even though the loop-global post is clean (issue #2929: the guard read the
+	 * loop global, so the nested tag went undetected and recursed).
+	 */
+	public function test_post_content_guard_detects_nested_tag_in_context_post() {
+		$nested_id = $this->factory()->post->create(
+			array(
+				'post_title'   => 'Nested',
+				'post_content' => 'Before <o-dynamic data-type="postContent">Post Content</o-dynamic> after',
+				'post_status'  => 'publish',
+			)
+		);
+
+		$clean_id = $this->factory()->post->create(
+			array(
+				'post_title'   => 'Clean loop global',
+				'post_content' => 'Clean loop global content',
+				'post_status'  => 'publish',
+			)
+		);
+
+		// Context = the nested post, loop global = the clean post.
+		$this->go_to( get_permalink( $nested_id ) );
+
+		$query = new WP_Query( array( 'p' => $clean_id ) );
+		while ( $query->have_posts() ) {
+			$query->the_post();
+		}
+
+		$data      = array(
+			'type'    => 'postContent',
+			'context' => $nested_id,
+		);
+		$marked    = $this->dynamic_content->mark_exceptions( $data );
+		$guard_key = $this->dynamic_content->get_exception_key( $data, $nested_id );
+
+		// Asserted before rendering on purpose: an unfired guard makes
+		// apply_dynamic_content() recurse until the process dies, so this has to
+		// fail fast rather than hang.
+		$this->assertArrayHasKey( $guard_key, $marked );
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="postContent">Post Content</o-dynamic></p>' );
+
+		wp_reset_postdata();
+		wp_delete_post( $nested_id, true );
+		wp_delete_post( $clean_id, true );
+
+		// Guard fired: the tag resolves to an empty string instead of recursing.
+		$this->assertSame( '<p></p>', $result );
+		$this->assertStringNotContainsString( 'Clean loop global content', $result );
+	}
+
+	/**
+	 * The mirror case: a nested postContent tag in the loop-global post must not
+	 * blank out a clean context post (issue #2929).
+	 */
+	public function test_post_content_guard_ignores_nested_tag_in_loop_global() {
+		$nested_id = $this->factory()->post->create(
+			array(
+				'post_title'   => 'Nested loop global',
+				'post_content' => 'Before <o-dynamic data-type="postContent">Post Content</o-dynamic> after',
+				'post_status'  => 'publish',
+			)
+		);
+
+		// Context = the clean post from set_up(), loop global = the nested post.
+		$this->go_to( get_permalink( $this->post_id ) );
+
+		$query = new WP_Query( array( 'p' => $nested_id ) );
+		while ( $query->have_posts() ) {
+			$query->the_post();
+		}
+
+		$data      = array(
+			'type'    => 'postContent',
+			'context' => $this->post_id,
+		);
+		$marked    = $this->dynamic_content->mark_exceptions( $data );
+		$guard_key = $this->dynamic_content->get_exception_key( $data, $this->post_id );
+
+		$this->assertArrayNotHasKey( $guard_key, $marked );
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="postContent">Post Content</o-dynamic></p>' );
+
+		wp_reset_postdata();
+		wp_delete_post( $nested_id, true );
+
+		// Guard did not fire: the context post's own content is still rendered.
+		$this->assertStringContainsString( 'Test', $result );
+	}
 }

@@ -545,7 +545,7 @@ class Dynamic_Content {
 			return '';
 		}
 
-		$content = get_the_content( $data['context'] );
+		$content = get_the_content( null, false, $data['context'] );
 		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', $content ) );
 		return wp_kses_post( $content );
 	}
@@ -902,7 +902,7 @@ class Dynamic_Content {
 				if ( ! $post instanceof \WP_Post ) {
 					return $data;
 				}
-				$content = get_the_content( $data['context'] );
+				$content = get_the_content( null, false, $data['context'] );
 				if ( strpos( $content, 'data-type="postContent"' ) ) {
 					$key = $this->get_exception_key( $data, $post->ID );
 					if ( $key ) {

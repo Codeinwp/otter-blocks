@@ -57,7 +57,16 @@ const SERIAL_SPECS = [
 	'**/blocks/design-library.spec.js',
 
 	// Flips the site-wide atomic-wind blocks option.
-	'**/blocks/atomic-wind-list-view.spec.js'
+	'**/blocks/atomic-wind-list-view.spec.js',
+
+	// Switches the active theme and mutates site-wide widget + filesystem state.
+	'**/blocks/widgets-css-frontend.spec.js',
+
+	// Flips a site-wide flag that breaks Otter's autoloader for every request.
+	'**/blocks/autoloader-resilience.spec.js',
+
+	// Flips a site-wide flag that injects a foreign Sabberworm interface for every request.
+	'**/blocks/sabberworm-collision.spec.js'
 ];
 
 const config = defineConfig({
