@@ -412,10 +412,10 @@ test.describe( 'Form Block', () => {
 		await expect( page.locator( '.otter-form-input[type="hidden"]' ) ).toHaveValue( '123' );
 	});
 
-	test( 'can export form data', async({ page }) => {
+	test( 'can export form data as WordPress XML (WXR)', async({ page }) => {
 		await page.goto( '/wp-admin/edit.php?post_type=otter_form_record' );
 
-		const exportBtn = page.getByRole( 'button', { name: 'Export' });
+		const exportBtn = page.getByRole( 'button', { name: 'Export', exact: true });
 
 		await expect( exportBtn ).toBeVisible();
 
@@ -425,5 +425,20 @@ test.describe( 'Form Block', () => {
 
 		await download.path(); // Wait for download to complete.
 		expect( download.suggestedFilename().startsWith( 'otter_form_submissions' ) ).toBeTruthy();
+		expect( download.suggestedFilename().endsWith( '.xml' ) ).toBeTruthy();
+	});
+
+	test( 'can export form data as CSV', async({ page }) => {
+		await page.goto( '/wp-admin/edit.php?post_type=otter_form_record' );
+
+		await page.locator( '#export-submissions-toggle' ).click();
+
+		const downloadPromise = page.waitForEvent( 'download' );
+		await page.getByRole( 'button', { name: 'Export as CSV' }).click();
+		const download = await downloadPromise;
+
+		await download.path(); // Wait for download to complete.
+		expect( download.suggestedFilename().startsWith( 'otter_form_submissions' ) ).toBeTruthy();
+		expect( download.suggestedFilename().endsWith( '.csv' ) ).toBeTruthy();
 	});
 });
