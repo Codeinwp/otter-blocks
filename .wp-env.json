@@ -20,7 +20,8 @@
   },
   "mappings": {
     "wp-content/mu-plugins": "./packages/e2e-tests/mu-plugins",
-    "wp-content/themes/raft": "https://downloads.wordpress.org/theme/raft.zip"
+    "wp-content/themes/raft": "https://downloads.wordpress.org/theme/raft.zip",
+    "wp-content/plugins/woocommerce": "./vendor/wp-content/plugins/woocommerce"
   },
   "lifecycleScripts": {
     "afterStart": "bash bin/e2e-tests.sh"

@@ -1440,6 +1440,111 @@ add_action(
 
 		register_rest_route(
 			REST_NAMESPACE,
+			'/woo/product',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function ( \WP_REST_Request $request ) {
+					if ( ! class_exists( 'WC_Product_Simple' ) ) {
+						return new \WP_Error(
+							'otter_e2e_no_woocommerce',
+							'WooCommerce is not active in the environment.',
+							array( 'status' => 500 )
+						);
+					}
+
+					// The spec activates WooCommerce right before this call; drop
+					// the redirect it schedules so it cannot hijack admin visits.
+					delete_transient( '_wc_activation_redirect' );
+
+					$product = new \WC_Product_Simple();
+					$product->set_name( $request->get_param( 'title' ) ? sanitize_text_field( $request->get_param( 'title' ) ) : 'E2E Product' );
+					$product->set_regular_price( '49.99' );
+					$product->set_status( 'publish' );
+					$id = $product->save();
+
+					if ( rest_sanitize_boolean( $request->get_param( 'builder' ) ) ) {
+						update_post_meta( $id, '_themeisle_gutenberg_woo_builder', true );
+					}
+
+					return rest_ensure_response( array( 'id' => $id ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
+			'/woo/product/delete',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function ( \WP_REST_Request $request ) {
+					$deleted = array();
+
+					foreach ( (array) $request->get_param( 'ids' ) as $id ) {
+						$id = absint( $id );
+
+						// Only ever remove products, so a stale id from a spec
+						// cannot delete unrelated content in a reused env.
+						if ( 0 === $id || 'product' !== get_post_type( $id ) ) {
+							continue;
+						}
+
+						wp_delete_post( $id, true );
+						$deleted[] = $id;
+					}
+
+					return rest_ensure_response( array( 'deleted' => $deleted ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
+			'/user/meta-box-order',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function ( \WP_REST_Request $request ) {
+					$order = $request->get_param( 'order' );
+
+					if ( ! is_array( $order ) || empty( $order ) ) {
+						delete_user_meta( get_current_user_id(), 'meta-box-order_product' );
+					} else {
+						update_user_meta( get_current_user_id(), 'meta-box-order_product', array_map( 'sanitize_text_field', $order ) );
+					}
+
+					return rest_ensure_response( array( 'ok' => true ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
+			'/user/meta-boxes-pane/reset',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'permission_callback' => __NAMESPACE__ . '\\require_admin',
+				'callback'            => function () {
+					$user_id     = get_current_user_id();
+					$meta_key    = $GLOBALS['wpdb']->get_blog_prefix() . 'persisted_preferences';
+					$preferences = get_user_meta( $user_id, $meta_key, true );
+
+					if ( is_array( $preferences ) && isset( $preferences['core/edit-post'] ) ) {
+						unset(
+							$preferences['core/edit-post']['metaBoxesMainIsOpen'],
+							$preferences['core/edit-post']['metaBoxesMainOpenHeight']
+						);
+						update_user_meta( $user_id, $meta_key, $preferences );
+					}
+
+					return rest_ensure_response( array( 'ok' => true ) );
+				},
+			)
+		);
+
+		register_rest_route(
+			REST_NAMESPACE,
 			'/filesystem',
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
