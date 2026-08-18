@@ -30,6 +30,65 @@ class WooCommerce_Builder {
 		add_filter( 'wc_get_template_part', array( $this, 'wc_get_template_part' ), 1000, 3 );
 		add_action( 'otter_blocks_woocommerce_content', 'the_content' );
 		add_filter( 'body_class', array( $this, 'add_body_class' ), 1000, 1 );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'show_meta_boxes_pane' ) );
+		add_filter( 'get_user_option_meta-box-order_product', array( $this, 'restore_product_data_location' ) );
+	}
+
+	/**
+	 * Keep the Product data metabox out of the narrow side column.
+	 *
+	 * The metabox "Move up/down" arrows persist the order instantly and, at the
+	 * edge of an area, relocate a box into the adjacent area. From the block
+	 * editor (used by WooCommerce Builder products) one accidental click can
+	 * move WooCommerce's Product data box into "side", where it renders inside
+	 * the ~280px sidebar and its layout breaks. Correct it at read time; the
+	 * stored user option is left untouched.
+	 *
+	 * @param mixed $order Saved metabox order for the product screen.
+	 *
+	 * @access  public
+	 * @return  mixed
+	 */
+	public function restore_product_data_location( $order ) {
+		if ( ! boolval( get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true ) ) ) {
+			return $order;
+		}
+
+		if ( ! is_array( $order ) || ! isset( $order['side'] ) || false === strpos( $order['side'], 'woocommerce-product-data' ) ) {
+			return $order;
+		}
+
+		$side   = array_diff( explode( ',', $order['side'] ), array( 'woocommerce-product-data' ) );
+		$normal = empty( $order['normal'] ) ? array() : explode( ',', $order['normal'] );
+		array_unshift( $normal, 'woocommerce-product-data' );
+
+		$order['side']   = implode( ',', $side );
+		$order['normal'] = implode( ',', array_unique( $normal ) );
+
+		return $order;
+	}
+
+	/**
+	 * Keep the Meta Boxes pane open by default in the block editor.
+	 *
+	 * Since WP 6.7 the iframed post editor renders meta boxes inside a bottom
+	 * drawer that is collapsed unless the user opened it before. On builder
+	 * products that hides the WooCommerce Product data panel (price, inventory
+	 * etc.), so default the drawer to open. An explicit user preference is not
+	 * overridden, as setDefaults only applies to unset preferences.
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public function show_meta_boxes_pane() {
+		if ( 'product' !== get_post_type() || ! boolval( get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true ) ) ) {
+			return;
+		}
+
+		wp_add_inline_script(
+			'wp-edit-post',
+			'window.wp && wp.data && wp.data.dispatch( "core/preferences" ).setDefaults( "core/edit-post", { metaBoxesMainIsOpen: true } );'
+		);
 	}
 
 	/**

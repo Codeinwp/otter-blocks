@@ -59,6 +59,9 @@ const SERIAL_SPECS = [
 	// Flips the site-wide atomic-wind blocks option.
 	'**/blocks/atomic-wind-list-view.spec.js',
 
+	// Mutates the shared admin user's metabox order and editor preferences.
+	'**/blocks/woocommerce-builder.spec.js',
+
 	// Switches the active theme and mutates site-wide widget + filesystem state.
 	'**/blocks/widgets-css-frontend.spec.js',
 
