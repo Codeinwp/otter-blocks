@@ -754,6 +754,54 @@ function stub_openai_http_for_e2e( $preempt, $parsed_args, $url ) {
 	return stub_openai_http_response( $content );
 }
 
+/**
+ * Issue #2929 rig: with ?otter_e2e_corrupt_pages=1, mimic a theme/plugin that
+ * clobbers the $pages loop global (main templates are included at global scope,
+ * so any template-level $pages variable overwrites it) while Otter evaluates a
+ * dynamic tag, and surface PHP notices in the output so the spec can assert
+ * none are emitted.
+ *
+ * The corruption is scoped to blocks carrying an <o-dynamic> tag and restored
+ * straight after Otter's filter (priority 10): leaving it in place for every
+ * block would make core's own the_content() warn too, which is core behavior
+ * rather than the bug under test.
+ */
+function corrupt_pages_around_dynamic_tags() {
+	if ( is_admin() || ! isset( $_GET['otter_e2e_corrupt_pages'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return;
+	}
+
+	ini_set( 'display_errors', '1' ); // phpcs:ignore WordPress.PHP.IniSet.display_errors_Disallowed
+
+	$saved = null;
+
+	add_filter(
+		'render_block',
+		function ( $block_content ) use ( &$saved ) {
+			if ( false !== strpos( $block_content, '<o-dynamic' ) ) {
+				$saved            = isset( $GLOBALS['pages'] ) ? $GLOBALS['pages'] : null;
+				$GLOBALS['pages'] = array();
+			}
+			return $block_content;
+		},
+		9
+	);
+
+	add_filter(
+		'render_block',
+		function ( $block_content ) use ( &$saved ) {
+			if ( null !== $saved ) {
+				$GLOBALS['pages'] = $saved;
+				$saved            = null;
+			}
+			return $block_content;
+		},
+		11
+	);
+}
+
+add_action( 'wp', __NAMESPACE__ . '\\corrupt_pages_around_dynamic_tags' );
+
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e', 10, 2 );
 add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_openai_http_for_e2e', 10, 3 );
 
