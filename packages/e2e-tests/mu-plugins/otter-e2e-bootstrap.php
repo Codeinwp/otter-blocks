@@ -51,6 +51,8 @@ const OPTION_WHITELIST = array(
 	// Form webhooks registry; retention specs seed a dead-URL webhook to force
 	// a delivery failure with the 'webhook' action.
 	'themeisle_webhooks_options',
+	// Scenario flag for the autoloader-resilience spec; see break_otter_autoloader().
+	'otter_e2e_broken_autoloader',
 	'otter_blocks_logger_flag',
 	'otter_blocks_logger_data',
 	'otter_activation_first_save',
@@ -106,6 +108,12 @@ const FS_BLOCKED_OPTION = 'otter_e2e_fs_blocked';
  * Numeric index used for the seeded block widget instance (widget id `block-999`).
  */
 const WIDGET_SEED_INDEX = 999;
+
+/**
+ * When truthy, an unloadable class is put at the head of the Otter autoloader list,
+ * reproducing a stale Composer classmap on a released package (issue #2954).
+ */
+const BROKEN_AUTOLOADER_OPTION = 'otter_e2e_broken_autoloader';
 
 /**
  * Form record post type, mirrored from \ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions.
@@ -801,6 +809,31 @@ function corrupt_pages_around_dynamic_tags() {
 }
 
 add_action( 'wp', __NAMESPACE__ . '\\corrupt_pages_around_dynamic_tags' );
+
+/**
+ * Put an unloadable class first in the Otter autoloader list when the scenario option is on.
+ *
+ * @param array<int, string> $classnames Classes Otter initializes on `init`.
+ * @return array<int, string>
+ */
+function break_otter_autoloader( $classnames ) {
+	if ( ! get_option( BROKEN_AUTOLOADER_OPTION, false ) ) {
+		return $classnames;
+	}
+
+	// Never break the scenario endpoints themselves, or a spec running against unfixed
+	// code could not disarm the flag and would poison the rest of the run.
+	$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+	if ( false !== strpos( $uri, REST_NAMESPACE ) ) {
+		return $classnames;
+	}
+
+	array_unshift( $classnames, '\ThemeIsle\GutenbergBlocks\Plugins\Missing_From_Classmap' );
+
+	return $classnames;
+}
+
+add_filter( 'otter_blocks_autoloader', __NAMESPACE__ . '\\break_otter_autoloader' );
 
 add_filter( 'pre_wp_mail', __NAMESPACE__ . '\\stub_wp_mail_for_e2e', 10, 2 );
 add_filter( 'pre_http_request', __NAMESPACE__ . '\\stub_openai_http_for_e2e', 10, 3 );

@@ -60,7 +60,10 @@ const SERIAL_SPECS = [
 	'**/blocks/atomic-wind-list-view.spec.js',
 
 	// Switches the active theme and mutates site-wide widget + filesystem state.
-	'**/blocks/widgets-css-frontend.spec.js'
+	'**/blocks/widgets-css-frontend.spec.js',
+
+	// Flips a site-wide flag that breaks Otter's autoloader for every request.
+	'**/blocks/autoloader-resilience.spec.js'
 ];
 
 const config = defineConfig({
