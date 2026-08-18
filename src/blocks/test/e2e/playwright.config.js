@@ -57,7 +57,10 @@ const SERIAL_SPECS = [
 	'**/blocks/design-library.spec.js',
 
 	// Flips the site-wide atomic-wind blocks option.
-	'**/blocks/atomic-wind-list-view.spec.js'
+	'**/blocks/atomic-wind-list-view.spec.js',
+
+	// Switches the active theme and mutates site-wide widget + filesystem state.
+	'**/blocks/widgets-css-frontend.spec.js'
 ];
 
 const config = defineConfig({
