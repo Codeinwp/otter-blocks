@@ -16,6 +16,13 @@ use ThemeIsle\GutenbergBlocks\Render\Review_Block;
  */
 class Stripe_Checkout_Block {
 	/**
+	 * Transient prefix for the cached checkout mode of a price.
+	 *
+	 * @var string
+	 */
+	const PRICE_MODE_CACHE_PREFIX = 'otter_stripe_price_mode_';
+
+	/**
 	 * Stripe API instance.
 	 * 
 	 * @var Stripe_API
@@ -279,13 +286,24 @@ class Stripe_Checkout_Block {
 	 * @return string
 	 */
 	private function get_mode_for_price( $price_id ) {
+		$cache_key = self::PRICE_MODE_CACHE_PREFIX . md5( $price_id );
+		$cached    = get_transient( $cache_key );
+
+		if ( 'payment' === $cached || 'subscription' === $cached ) {
+			return $cached;
+		}
+
 		$price = $this->stripe_api->create_request( 'price', $price_id );
 
 		if ( is_wp_error( $price ) || ! isset( $price['type'] ) ) {
 			return 'payment';
 		}
 
-		return 'recurring' === $price['type'] ? 'subscription' : 'payment';
+		$mode = 'recurring' === $price['type'] ? 'subscription' : 'payment';
+
+		set_transient( $cache_key, $mode, WEEK_IN_SECONDS );
+
+		return $mode;
 	}
 
 	/**

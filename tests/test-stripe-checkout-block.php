@@ -28,10 +28,19 @@ class TestStripeCheckoutBlock extends WP_UnitTestCase {
 	private $post_id;
 
 	/**
+	 * Value of the Stripe API key option before the test.
+	 *
+	 * @var mixed
+	 */
+	private $previous_api_key;
+
+	/**
 	 * Set up the test.
 	 */
 	public function set_up() {
 		parent::set_up();
+
+		$this->previous_api_key = get_option( 'themeisle_stripe_api_key' );
 
 		update_option( 'themeisle_stripe_api_key', 'sk_test' );
 		\Stripe\ApiRequestor::setHttpClient( new StripeHttpClientMock() );
@@ -55,6 +64,17 @@ class TestStripeCheckoutBlock extends WP_UnitTestCase {
 	public function tear_down() {
 		remove_filter( 'wp_redirect', array( $this, 'throw_on_redirect' ) );
 		unset( $_GET['action'], $_GET['product_id'], $_GET['price_id'], $_GET['url'] );
+
+		delete_transient( Stripe_Checkout_Block::PRICE_MODE_CACHE_PREFIX . md5( 'price_1' ) );
+
+		if ( false === $this->previous_api_key ) {
+			delete_option( 'themeisle_stripe_api_key' );
+		} else {
+			update_option( 'themeisle_stripe_api_key', $this->previous_api_key );
+		}
+
+		// The library falls back to this client when none is set, so it is the default to restore.
+		\Stripe\ApiRequestor::setHttpClient( \Stripe\HttpClient\CurlClient::instance() );
 
 		parent::tear_down();
 	}
@@ -99,6 +119,29 @@ class TestStripeCheckoutBlock extends WP_UnitTestCase {
 			)
 		);
 
+		$this->assertStringContainsString( 'checkout.stripe.com', $location );
+	}
+
+	/**
+	 * The checkout mode is derived from the price and then served from cache.
+	 */
+	public function test_price_mode_is_cached() {
+		$args = array(
+			'product_id' => 'prod_1',
+			'price_id'   => 'price_1',
+			'url'        => get_permalink( $this->post_id ),
+		);
+
+		StripeHttpClientMock::reset_request_paths();
+		$this->run_checkout( $args );
+
+		$this->assertContains( '/v1/prices/price_1', StripeHttpClientMock::$request_paths );
+		$this->assertSame( 'payment', get_transient( Stripe_Checkout_Block::PRICE_MODE_CACHE_PREFIX . md5( 'price_1' ) ) );
+
+		StripeHttpClientMock::reset_request_paths();
+		$location = $this->run_checkout( $args );
+
+		$this->assertNotContains( '/v1/prices/price_1', StripeHttpClientMock::$request_paths );
 		$this->assertStringContainsString( 'checkout.stripe.com', $location );
 	}
 

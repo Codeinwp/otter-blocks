@@ -11,10 +11,24 @@ use Stripe\HttpClient\ClientInterface;
 
 class StripeHttpClientMock implements ClientInterface
 {
+	/**
+	 * Paths requested since the last reset, so tests can assert on API usage.
+	 *
+	 * @var array
+	 */
+	public static $request_paths = array();
+
+	public static function reset_request_paths()
+	{
+		self::$request_paths = array();
+	}
+
 	public function request($method, $absUrl, $headers, $params, $hasFile)
 	{
 		$urlParts = parse_url($absUrl);
 		$path = $urlParts['path'];
+
+		self::$request_paths[] = $path;
 
 		if ($path === '/v1/products') {
 			return array($this->mockProductsList(), 200, null);
