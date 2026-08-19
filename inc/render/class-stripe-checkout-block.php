@@ -57,9 +57,17 @@ class Stripe_Checkout_Block {
 		$product_id = isset( $_GET['product_id'] ) ? sanitize_text_field( wp_unslash( $_GET['product_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$price_id   = isset( $_GET['price_id'] ) ? sanitize_text_field( wp_unslash( $_GET['price_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$url        = isset( $_GET['url'] ) ? sanitize_text_field( wp_unslash( $_GET['url'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$mode       = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : 'payment'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( empty( $product_id ) || empty( $price_id ) || empty( $url ) ) {
+			return sprintf(
+				'<div class="wp-block-themeisle-blocks-stripe-checkout"><div class="o-stripe-checkout">%s</div></div>',
+				__( 'An error occurred! Could not retrieve the product information!', 'otter-blocks' )
+			);
+		}
+
+		$post_id = $this->get_post_id_for_checkout( $product_id, $price_id, $url );
+
+		if ( 0 === $post_id ) {
 			return sprintf(
 				'<div class="wp-block-themeisle-blocks-stripe-checkout"><div class="o-stripe-checkout">%s</div></div>',
 				__( 'An error occurred! Could not retrieve the product information!', 'otter-blocks' )
@@ -71,7 +79,7 @@ class Stripe_Checkout_Block {
 				'stripe_session_id' => '{CHECKOUT_SESSION_ID}',
 				'product_id'        => $product_id,
 			),
-			$url
+			get_permalink( $post_id )
 		);
 	
 		$session = $this->stripe_api->create_request(
@@ -85,7 +93,7 @@ class Stripe_Checkout_Block {
 						'quantity' => 1,
 					),
 				),
-				'mode'        => $mode,
+				'mode'        => $this->get_mode_for_price( $price_id ),
 			)
 		);
 
@@ -165,15 +173,12 @@ class Stripe_Checkout_Block {
 		$details_markup .= '<h5>' . $currency . $amount . '</h5>';
 		$details_markup .= '</div>';
 
-		$mode = 'recurring' === $price['type'] ? 'subscription' : 'payment';
-
 		$session_url = add_query_arg(
 			array(
 				'action'     => 'buy_stripe',
 				'product_id' => $attributes['product'],
 				'price_id'   => $attributes['price'],
 				'url'        => get_permalink(),
-				'mode'       => $mode,
 			),
 			get_permalink()
 		);
@@ -186,6 +191,98 @@ class Stripe_Checkout_Block {
 			$details_markup,
 			$button_markup
 		);
+	}
+
+	/**
+	 * Get the ID of the post that offers the given product/price pair.
+	 *
+	 * @param string $product_id Stripe product ID.
+	 * @param string $price_id Stripe price ID.
+	 * @param string $url URL of the page holding the checkout block.
+	 * @return int Post ID, or 0 when the pair is not offered there.
+	 */
+	private function get_post_id_for_checkout( $product_id, $price_id, $url ) {
+		if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
+			$post_id = wpcom_vip_url_to_postid( $url );
+		} else {
+			$post_id = url_to_postid( $url ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
+		}
+
+		if ( 0 === $post_id ) {
+			return 0;
+		}
+
+		$post = get_post( $post_id );
+
+		if ( ! $post instanceof \WP_Post ) {
+			return 0;
+		}
+
+		if ( 'publish' !== $post->post_status && ! current_user_can( 'read_post', $post_id ) ) {
+			return 0;
+		}
+
+		return $this->blocks_have_checkout( parse_blocks( $post->post_content ), $product_id, $price_id ) ? $post_id : 0;
+	}
+
+	/**
+	 * Check whether a block tree contains a Stripe Checkout block for the given product/price pair.
+	 *
+	 * @param array<int, array<string, mixed>> $blocks Parsed blocks.
+	 * @param string                           $product_id Stripe product ID.
+	 * @param string                           $price_id Stripe price ID.
+	 * @param int                              $depth Current recursion depth.
+	 * @return bool
+	 */
+	private function blocks_have_checkout( $blocks, $product_id, $price_id, $depth = 0 ) {
+		if ( 10 < $depth ) {
+			return false;
+		}
+
+		foreach ( $blocks as $block ) {
+			if ( ! isset( $block['blockName'] ) ) {
+				continue;
+			}
+
+			if ( 'themeisle-blocks/stripe-checkout' === $block['blockName'] ) {
+				$attrs = isset( $block['attrs'] ) ? $block['attrs'] : array();
+
+				if ( isset( $attrs['product'], $attrs['price'] ) && $product_id === $attrs['product'] && $price_id === $attrs['price'] ) {
+					return true;
+				}
+			}
+
+			// Synced patterns keep their content in a separate post.
+			if ( 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] ) ) {
+				$reusable = get_post( (int) $block['attrs']['ref'] );
+
+				if ( $reusable instanceof \WP_Post && $this->blocks_have_checkout( parse_blocks( $reusable->post_content ), $product_id, $price_id, $depth + 1 ) ) {
+					return true;
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) && $this->blocks_have_checkout( $block['innerBlocks'], $product_id, $price_id, $depth + 1 ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the checkout session mode for a price.
+	 *
+	 * @param string $price_id Stripe price ID.
+	 * @return string
+	 */
+	private function get_mode_for_price( $price_id ) {
+		$price = $this->stripe_api->create_request( 'price', $price_id );
+
+		if ( is_wp_error( $price ) || ! isset( $price['type'] ) ) {
+			return 'payment';
+		}
+
+		return 'recurring' === $price['type'] ? 'subscription' : 'payment';
 	}
 
 	/**
