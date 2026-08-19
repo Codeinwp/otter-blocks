@@ -56,7 +56,7 @@ class Stripe_Checkout_Block {
 
 		$product_id = isset( $_GET['product_id'] ) ? sanitize_text_field( wp_unslash( $_GET['product_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$price_id   = isset( $_GET['price_id'] ) ? sanitize_text_field( wp_unslash( $_GET['price_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$url        = isset( $_GET['url'] ) ? sanitize_text_field( wp_unslash( $_GET['url'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$url        = isset( $_GET['url'] ) ? sanitize_url( wp_unslash( $_GET['url'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( empty( $product_id ) || empty( $price_id ) || empty( $url ) ) {
 			return sprintf(
@@ -222,7 +222,9 @@ class Stripe_Checkout_Block {
 			return 0;
 		}
 
-		return $this->blocks_have_checkout( parse_blocks( $post->post_content ), $product_id, $price_id ) ? $post_id : 0;
+		$visited = array( $post_id => true );
+
+		return $this->blocks_have_checkout( parse_blocks( $post->post_content ), $product_id, $price_id, $visited ) ? $post_id : 0;
 	}
 
 	/**
@@ -231,14 +233,10 @@ class Stripe_Checkout_Block {
 	 * @param array<int, array<string, mixed>> $blocks Parsed blocks.
 	 * @param string                           $product_id Stripe product ID.
 	 * @param string                           $price_id Stripe price ID.
-	 * @param int                              $depth Current recursion depth.
+	 * @param array<int, bool>                 $visited Reusable block IDs already traversed.
 	 * @return bool
 	 */
-	private function blocks_have_checkout( $blocks, $product_id, $price_id, $depth = 0 ) {
-		if ( 10 < $depth ) {
-			return false;
-		}
-
+	private function blocks_have_checkout( $blocks, $product_id, $price_id, &$visited = array() ) {
 		foreach ( $blocks as $block ) {
 			if ( ! isset( $block['blockName'] ) ) {
 				continue;
@@ -252,16 +250,21 @@ class Stripe_Checkout_Block {
 				}
 			}
 
-			// Synced patterns keep their content in a separate post.
+			// Synced patterns keep their content in a separate post; guard against reference cycles.
 			if ( 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] ) ) {
-				$reusable = get_post( (int) $block['attrs']['ref'] );
+				$ref = (int) $block['attrs']['ref'];
 
-				if ( $reusable instanceof \WP_Post && $this->blocks_have_checkout( parse_blocks( $reusable->post_content ), $product_id, $price_id, $depth + 1 ) ) {
-					return true;
+				if ( ! isset( $visited[ $ref ] ) ) {
+					$visited[ $ref ] = true;
+					$reusable        = get_post( $ref );
+
+					if ( $reusable instanceof \WP_Post && $this->blocks_have_checkout( parse_blocks( $reusable->post_content ), $product_id, $price_id, $visited ) ) {
+						return true;
+					}
 				}
 			}
 
-			if ( ! empty( $block['innerBlocks'] ) && $this->blocks_have_checkout( $block['innerBlocks'], $product_id, $price_id, $depth + 1 ) ) {
+			if ( ! empty( $block['innerBlocks'] ) && $this->blocks_have_checkout( $block['innerBlocks'], $product_id, $price_id, $visited ) ) {
 				return true;
 			}
 		}
