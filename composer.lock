@@ -1377,11 +1377,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.2.0",
+            "version": "2.2.7",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b4cd98348c809924f62bb9cc8c047f5e73bc9a58",
-                "reference": "b4cd98348c809924f62bb9cc8c047f5e73bc9a58",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/692db47b9dddb0487934e5236e77d48594aef921",
+                "reference": "692db47b9dddb0487934e5236e77d48594aef921",
                 "shasum": ""
             },
             "require": {
@@ -1437,7 +1437,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-28T08:22:43+00:00"
+            "time": "2026-07-29T17:39:32+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
