@@ -13,13 +13,13 @@ test.describe( 'Tabs Block', () => {
 		await admin.createNewPost();
 	});
 
-	test( 'can be created by typing "/tabs"', async({ editor, page }) => {
+	test( 'can be created by typing "/themeisle-tabs"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
 		await insertBlockBySlash({
 			editor,
 			page,
-			shortcut: '/tabs',
+			shortcut: '/themeisle-tabs',
 			blockName: 'themeisle-blocks/tabs'
 		});
 	});

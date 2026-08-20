@@ -11,10 +11,42 @@ use Stripe\HttpClient\ClientInterface;
 
 class StripeHttpClientMock implements ClientInterface
 {
+	/**
+	 * Paths requested since the last reset, so tests can assert on API usage.
+	 *
+	 * @var array
+	 */
+	public static $request_paths = array();
+
+	/**
+	 * Parameters of the requests made since the last reset, keyed by path.
+	 *
+	 * @var array
+	 */
+	public static $request_params = array();
+
+	public static function reset_request_paths()
+	{
+		self::$request_paths = array();
+	}
+
+	public static function reset_request_params()
+	{
+		self::$request_params = array();
+	}
+
+	public static function get_params_for($path)
+	{
+		return isset(self::$request_params[$path]) ? self::$request_params[$path] : array();
+	}
+
 	public function request($method, $absUrl, $headers, $params, $hasFile)
 	{
 		$urlParts = parse_url($absUrl);
 		$path = $urlParts['path'];
+
+		self::$request_paths[] = $path;
+		self::$request_params[$path] = $params;
 
 		if ($path === '/v1/products') {
 			return array($this->mockProductsList(), 200, null);
@@ -101,6 +133,7 @@ class StripeHttpClientMock implements ClientInterface
 				'price' => 1200,
 				'currency' => 'USD',
 				'active' => true,
+				'images' => [],
 				'object' => 'product'
 			]
 		);
