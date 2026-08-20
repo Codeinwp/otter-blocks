@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 5.6
 Stable tag: 3.2.3
 License: GPLv2 or later
