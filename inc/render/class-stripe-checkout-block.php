@@ -64,6 +64,7 @@ class Stripe_Checkout_Block {
 		$product_id = isset( $_GET['product_id'] ) ? sanitize_text_field( wp_unslash( $_GET['product_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$price_id   = isset( $_GET['price_id'] ) ? sanitize_text_field( wp_unslash( $_GET['price_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$url        = isset( $_GET['url'] ) ? sanitize_url( wp_unslash( $_GET['url'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$token      = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( empty( $product_id ) || empty( $price_id ) || empty( $url ) ) {
 			return sprintf(
@@ -72,9 +73,7 @@ class Stripe_Checkout_Block {
 			);
 		}
 
-		$post_id = $this->get_post_id_for_checkout( $product_id, $price_id, $url );
-
-		if ( 0 === $post_id ) {
+		if ( ! hash_equals( self::get_checkout_token( $product_id, $price_id ), $token ) ) {
 			return sprintf(
 				'<div class="wp-block-themeisle-blocks-stripe-checkout"><div class="o-stripe-checkout">%s</div></div>',
 				__( 'An error occurred! Could not retrieve the product information!', 'otter-blocks' )
@@ -86,7 +85,7 @@ class Stripe_Checkout_Block {
 				'stripe_session_id' => '{CHECKOUT_SESSION_ID}',
 				'product_id'        => $product_id,
 			),
-			get_permalink( $post_id )
+			$this->get_return_url( $url )
 		);
 	
 		$session = $this->stripe_api->create_request(
@@ -180,14 +179,22 @@ class Stripe_Checkout_Block {
 		$details_markup .= '<h5>' . $currency . $amount . '</h5>';
 		$details_markup .= '</div>';
 
+		// A widget area or an FSE template has no permalink of its own, so fall back to the current URL.
+		$return_url = get_permalink();
+
+		if ( ! is_string( $return_url ) || '' === $return_url ) {
+			$return_url = home_url( add_query_arg( array() ) );
+		}
+
 		$session_url = add_query_arg(
 			array(
 				'action'     => 'buy_stripe',
 				'product_id' => $attributes['product'],
 				'price_id'   => $attributes['price'],
-				'url'        => get_permalink(),
+				'url'        => $return_url,
+				'token'      => self::get_checkout_token( $attributes['product'], $attributes['price'] ),
 			),
-			get_permalink()
+			$return_url
 		);
 
 		$button_markup = '<a href="' . esc_url( $session_url ) . '">' . __( 'Checkout', 'otter-blocks' ) . '</a>';
@@ -201,82 +208,31 @@ class Stripe_Checkout_Block {
 	}
 
 	/**
-	 * Get the ID of the post that offers the given product/price pair.
+	 * Sign a product/price pair so the checkout can verify it was offered by a block.
 	 *
 	 * @param string $product_id Stripe product ID.
 	 * @param string $price_id Stripe price ID.
-	 * @param string $url URL of the page holding the checkout block.
-	 * @return int Post ID, or 0 when the pair is not offered there.
+	 * @return string
 	 */
-	private function get_post_id_for_checkout( $product_id, $price_id, $url ) {
-		if ( function_exists( 'wpcom_vip_url_to_postid' ) ) {
-			$post_id = wpcom_vip_url_to_postid( $url );
-		} else {
-			$post_id = url_to_postid( $url ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
-		}
-
-		if ( 0 === $post_id ) {
-			return 0;
-		}
-
-		$post = get_post( $post_id );
-
-		if ( ! $post instanceof \WP_Post ) {
-			return 0;
-		}
-
-		if ( 'publish' !== $post->post_status && ! current_user_can( 'read_post', $post_id ) ) {
-			return 0;
-		}
-
-		$visited = array( $post_id => true );
-
-		return $this->blocks_have_checkout( parse_blocks( $post->post_content ), $product_id, $price_id, $visited ) ? $post_id : 0;
+	public static function get_checkout_token( $product_id, $price_id ) {
+		return hash_hmac( 'sha256', $product_id . '|' . $price_id, wp_salt( 'otter_stripe' ) );
 	}
 
 	/**
-	 * Check whether a block tree contains a Stripe Checkout block for the given product/price pair.
+	 * Get the URL Stripe returns the buyer to, restricted to this site.
 	 *
-	 * @param array<int, array<string, mixed>> $blocks Parsed blocks.
-	 * @param string                           $product_id Stripe product ID.
-	 * @param string                           $price_id Stripe price ID.
-	 * @param array<int, bool>                 $visited Reusable block IDs already traversed.
-	 * @return bool
+	 * @param string $url Requested return URL.
+	 * @return string
 	 */
-	private function blocks_have_checkout( $blocks, $product_id, $price_id, &$visited = array() ) {
-		foreach ( $blocks as $block ) {
-			if ( ! isset( $block['blockName'] ) ) {
-				continue;
-			}
+	private function get_return_url( $url ) {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+		$home = wp_parse_url( home_url(), PHP_URL_HOST );
 
-			if ( 'themeisle-blocks/stripe-checkout' === $block['blockName'] ) {
-				$attrs = isset( $block['attrs'] ) ? $block['attrs'] : array();
-
-				if ( isset( $attrs['product'], $attrs['price'] ) && $product_id === $attrs['product'] && $price_id === $attrs['price'] ) {
-					return true;
-				}
-			}
-
-			// Synced patterns keep their content in a separate post; guard against reference cycles.
-			if ( 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] ) ) {
-				$ref = (int) $block['attrs']['ref'];
-
-				if ( ! isset( $visited[ $ref ] ) ) {
-					$visited[ $ref ] = true;
-					$reusable        = get_post( $ref );
-
-					if ( $reusable instanceof \WP_Post && $this->blocks_have_checkout( parse_blocks( $reusable->post_content ), $product_id, $price_id, $visited ) ) {
-						return true;
-					}
-				}
-			}
-
-			if ( ! empty( $block['innerBlocks'] ) && $this->blocks_have_checkout( $block['innerBlocks'], $product_id, $price_id, $visited ) ) {
-				return true;
-			}
+		if ( $home !== $host ) {
+			return home_url( '/' );
 		}
 
-		return false;
+		return $url;
 	}
 
 	/**
