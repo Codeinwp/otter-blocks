@@ -1044,24 +1044,24 @@
         },
         {
             "name": "php-stubs/woocommerce-stubs",
-            "version": "v10.9.1",
+            "version": "v10.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/woocommerce-stubs.git",
-                "reference": "e6d583b9fa05b3f5ff67f86c939b45a0c35b8444"
+                "reference": "a569e43283b86178628beb7aa22cc34b4076b435"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/e6d583b9fa05b3f5ff67f86c939b45a0c35b8444",
-                "reference": "e6d583b9fa05b3f5ff67f86c939b45a0c35b8444",
+                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/a569e43283b86178628beb7aa22cc34b4076b435",
+                "reference": "a569e43283b86178628beb7aa22cc34b4076b435",
                 "shasum": ""
             },
             "require": {
-                "php-stubs/wordpress-stubs": "^5.3 || ^6.0"
+                "php-stubs/wordpress-stubs": "^5.3 || ^6.0 || ^7.0"
             },
             "require-dev": {
                 "php": "~7.1 || ~8.0",
-                "php-stubs/generator": "^0.8.0"
+                "php-stubs/generator": "^0.9.0"
             },
             "suggest": {
                 "symfony/polyfill-php73": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
@@ -1082,9 +1082,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
-                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v10.9.1"
+                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v10.9.4"
             },
-            "time": "2026-06-25T10:47:57+00:00"
+            "time": "2026-07-16T18:17:41+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",
