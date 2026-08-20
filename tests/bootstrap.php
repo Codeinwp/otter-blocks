@@ -20,7 +20,17 @@ require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_plugin() {
 	require dirname( dirname( __FILE__ ) ) . '/otter-blocks.php';
-	require dirname( dirname( __FILE__ ) ) . '/vendor/wp-content/plugins/woocommerce/woocommerce.php';
+
+	/*
+	 * wp-env also mounts WooCommerce at wp-content/plugins/woocommerce (see
+	 * .wp-env.json). Prefer that copy so the activate_plugin() call below
+	 * resolves to the same file: woocommerce.php declares WC() and
+	 * wc_get_container() unguarded, so including it through two different
+	 * paths is a fatal redeclaration.
+	 */
+	$woocommerce = WP_PLUGIN_DIR . '/woocommerce/woocommerce.php';
+
+	require file_exists( $woocommerce ) ? $woocommerce : dirname( dirname( __FILE__ ) ) . '/vendor/wp-content/plugins/woocommerce/woocommerce.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

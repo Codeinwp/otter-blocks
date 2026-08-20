@@ -384,6 +384,14 @@ class Base_CSS {
 			return $style;
 		}
 
+		if ( ! self::has_own_css_parser() ) {
+			// A foreign php-css-parser release is loaded; parsing now fatals
+			// uncatchably at class-link time (#2942). The frontend loader serves
+			// the stock stylesheet instead.
+			error_log( '[Otter Blocks] A conflicting Sabberworm php-css-parser release is loaded; skipping animation CSS optimization and serving the stock stylesheet instead.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			return $style;
+		}
+
 		$prepared_classes = array( ':root' );
 
 		foreach ( $classes as $class ) {
@@ -443,6 +451,70 @@ class Base_CSS {
 		}
 
 		return $style;
+	}
+
+	/**
+	 * Check that every loaded Sabberworm\CSS symbol resolves to this plugin's copy.
+	 *
+	 * Another plugin can ship a different php-css-parser release under the same
+	 * namespace. Once any of its classes loads, loading the bundled counterparts
+	 * fatals at class-link time, and that error is not catchable.
+	 *
+	 * @return bool
+	 */
+	public static function has_own_css_parser() {
+		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor/' );
+		$prefix     = 'Sabberworm\\CSS\\';
+
+		// Reject any foreign copy already in memory before the sentinel checks
+		// autoload a bundled class: the parser uses more classes than the
+		// sentinels, and one preloaded foreign symbol poisons the process.
+		$declared = array_merge( get_declared_classes(), get_declared_interfaces(), get_declared_traits() );
+
+		foreach ( $declared as $declared_name ) {
+			// PHP class names are case-insensitive; match a foreign copy in any casing.
+			if ( 0 !== stripos( $declared_name, $prefix ) ) {
+				continue;
+			}
+
+			if ( ! self::is_bundled_class( $declared_name, $own_vendor ) ) {
+				return false;
+			}
+		}
+
+		// Entry points nothing may have loaded yet: whichever autoloader resolves
+		// them must serve the bundled copy.
+		$sentinels = array(
+			'\Sabberworm\CSS\Parser',
+			'\Sabberworm\CSS\Comment\Commentable',
+			'\Sabberworm\CSS\Renderable',
+		);
+
+		foreach ( $sentinels as $sentinel ) {
+			if ( ! class_exists( $sentinel ) && ! interface_exists( $sentinel ) ) {
+				return false;
+			}
+
+			if ( ! self::is_bundled_class( $sentinel, $own_vendor ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check that a class, interface, or trait was loaded from this plugin's vendor directory.
+	 *
+	 * @param string $name Fully qualified name.
+	 * @param string $own_vendor Normalized path of this plugin's vendor directory.
+	 * @return bool
+	 */
+	private static function is_bundled_class( $name, $own_vendor ) {
+		$reflection = new \ReflectionClass( $name );
+		$file       = $reflection->getFileName();
+
+		return false !== $file && 0 === strpos( wp_normalize_path( $file ), $own_vendor );
 	}
 
 	/**

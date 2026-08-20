@@ -496,18 +496,17 @@ class CSS_Handler extends Base_CSS {
 	public static function is_writable() {
 		global $wp_filesystem;
 		include_once ABSPATH . 'wp-admin/includes/file.php';
-		WP_Filesystem();
-
-		$wp_upload_dir = wp_upload_dir( null, false );
-		$upload_dir    = $wp_upload_dir['basedir'];
 
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
 			return false;
 		}
 
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$upload_dir    = $wp_upload_dir['basedir'];
+
 		$writable = WP_Filesystem( false, $upload_dir );
 
-		return $writable && 'direct' === $wp_filesystem->method;
+		return $writable && $wp_filesystem instanceof \WP_Filesystem_Base && 'direct' === $wp_filesystem->method;
 	}
 
 	/**
