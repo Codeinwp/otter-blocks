@@ -16,6 +16,13 @@ use ThemeIsle\GutenbergBlocks\Render\Review_Block;
  */
 class Stripe_Checkout_Block {
 	/**
+	 * Transient prefix for the cached checkout mode of a price.
+	 *
+	 * @var string
+	 */
+	const PRICE_MODE_CACHE_PREFIX = 'otter_stripe_price_mode_';
+
+	/**
 	 * Stripe API instance.
 	 * 
 	 * @var Stripe_API
@@ -56,10 +63,17 @@ class Stripe_Checkout_Block {
 
 		$product_id = isset( $_GET['product_id'] ) ? sanitize_text_field( wp_unslash( $_GET['product_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$price_id   = isset( $_GET['price_id'] ) ? sanitize_text_field( wp_unslash( $_GET['price_id'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$url        = isset( $_GET['url'] ) ? sanitize_text_field( wp_unslash( $_GET['url'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$mode       = isset( $_GET['mode'] ) ? sanitize_text_field( wp_unslash( $_GET['mode'] ) ) : 'payment'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$url        = isset( $_GET['url'] ) ? sanitize_url( wp_unslash( $_GET['url'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$token      = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( empty( $product_id ) || empty( $price_id ) || empty( $url ) ) {
+			return sprintf(
+				'<div class="wp-block-themeisle-blocks-stripe-checkout"><div class="o-stripe-checkout">%s</div></div>',
+				__( 'An error occurred! Could not retrieve the product information!', 'otter-blocks' )
+			);
+		}
+
+		if ( ! hash_equals( self::get_checkout_token( $product_id, $price_id ), $token ) ) {
 			return sprintf(
 				'<div class="wp-block-themeisle-blocks-stripe-checkout"><div class="o-stripe-checkout">%s</div></div>',
 				__( 'An error occurred! Could not retrieve the product information!', 'otter-blocks' )
@@ -71,7 +85,7 @@ class Stripe_Checkout_Block {
 				'stripe_session_id' => '{CHECKOUT_SESSION_ID}',
 				'product_id'        => $product_id,
 			),
-			$url
+			$this->get_return_url( $url )
 		);
 	
 		$session = $this->stripe_api->create_request(
@@ -85,7 +99,7 @@ class Stripe_Checkout_Block {
 						'quantity' => 1,
 					),
 				),
-				'mode'        => $mode,
+				'mode'        => $this->get_mode_for_price( $price_id ),
 			)
 		);
 
@@ -165,17 +179,22 @@ class Stripe_Checkout_Block {
 		$details_markup .= '<h5>' . $currency . $amount . '</h5>';
 		$details_markup .= '</div>';
 
-		$mode = 'recurring' === $price['type'] ? 'subscription' : 'payment';
+		// A widget area or an FSE template has no permalink of its own, so fall back to the current URL.
+		$return_url = get_permalink();
+
+		if ( ! is_string( $return_url ) || '' === $return_url ) {
+			$return_url = home_url( add_query_arg( array() ) );
+		}
 
 		$session_url = add_query_arg(
 			array(
 				'action'     => 'buy_stripe',
 				'product_id' => $attributes['product'],
 				'price_id'   => $attributes['price'],
-				'url'        => get_permalink(),
-				'mode'       => $mode,
+				'url'        => $return_url,
+				'token'      => self::get_checkout_token( $attributes['product'], $attributes['price'] ),
 			),
-			get_permalink()
+			$return_url
 		);
 
 		$button_markup = '<a href="' . esc_url( $session_url ) . '">' . __( 'Checkout', 'otter-blocks' ) . '</a>';
@@ -186,6 +205,61 @@ class Stripe_Checkout_Block {
 			$details_markup,
 			$button_markup
 		);
+	}
+
+	/**
+	 * Sign a product/price pair so the checkout can verify it was offered by a block.
+	 *
+	 * @param string $product_id Stripe product ID.
+	 * @param string $price_id Stripe price ID.
+	 * @return string
+	 */
+	public static function get_checkout_token( $product_id, $price_id ) {
+		return hash_hmac( 'sha256', $product_id . '|' . $price_id, wp_salt( 'otter_stripe' ) );
+	}
+
+	/**
+	 * Get the URL Stripe returns the buyer to, restricted to this site.
+	 *
+	 * @param string $url Requested return URL.
+	 * @return string
+	 */
+	private function get_return_url( $url ) {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+		$home = wp_parse_url( home_url(), PHP_URL_HOST );
+
+		if ( $home !== $host ) {
+			return home_url( '/' );
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Get the checkout session mode for a price.
+	 *
+	 * @param string $price_id Stripe price ID.
+	 * @return string
+	 */
+	private function get_mode_for_price( $price_id ) {
+		$cache_key = self::PRICE_MODE_CACHE_PREFIX . md5( $price_id );
+		$cached    = get_transient( $cache_key );
+
+		if ( 'payment' === $cached || 'subscription' === $cached ) {
+			return $cached;
+		}
+
+		$price = $this->stripe_api->create_request( 'price', $price_id );
+
+		if ( is_wp_error( $price ) || ! isset( $price['type'] ) ) {
+			return 'payment';
+		}
+
+		$mode = 'recurring' === $price['type'] ? 'subscription' : 'payment';
+
+		set_transient( $cache_key, $mode, WEEK_IN_SECONDS );
+
+		return $mode;
 	}
 
 	/**
