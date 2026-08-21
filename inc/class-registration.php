@@ -633,6 +633,7 @@ class Registration {
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
 						'submission'           => __( 'Form submission from', 'otter-blocks' ),
+						'success'              => __( 'Success', 'otter-blocks' ),
 						'captcha-not-loaded'   => __( 'Captcha is not loaded. Please check your browser plugins to allow it.', 'otter-blocks' ),
 						'check-captcha'        => __( 'Please check the captcha.', 'otter-blocks' ),
 						'invalid-email'        => __( 'The email address is invalid!', 'otter-blocks' ),
