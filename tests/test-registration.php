@@ -244,4 +244,38 @@ class Test_Registration extends WP_UnitTestCase {
 		$this->assertFalse( class_exists( $class, false ), 'The renderer class must not have been defined.' );
 		$this->assertCaptchaRegisteredWithoutRenderer();
 	}
+
+	/**
+	 * A synced pattern nested inside another block must still be found: the blocks
+	 * it holds get none of their assets registered otherwise.
+	 */
+	public function test_reusable_block_ids_finds_a_nested_pattern() {
+		$content = '<!-- wp:group --><div class="wp-block-group"><!-- wp:block {"ref":42} /--></div><!-- /wp:group -->';
+
+		$this->assertEquals( array( 42 ), Registration::get_reusable_block_ids( parse_blocks( $content ) ) );
+	}
+
+	/**
+	 * Patterns are collected from every level, each ID only once.
+	 */
+	public function test_reusable_block_ids_collects_every_level_without_duplicates() {
+		$content = '<!-- wp:block {"ref":1} /-->'
+			. '<!-- wp:group --><div class="wp-block-group">'
+			. '<!-- wp:columns --><div class="wp-block-columns">'
+			. '<!-- wp:column --><div class="wp-block-column"><!-- wp:block {"ref":2} /--></div><!-- /wp:column -->'
+			. '</div><!-- /wp:columns -->'
+			. '<!-- wp:block {"ref":1} /-->'
+			. '</div><!-- /wp:group -->';
+
+		$this->assertEquals( array( 1, 2 ), Registration::get_reusable_block_ids( parse_blocks( $content ) ) );
+	}
+
+	/**
+	 * Content without patterns yields nothing, and a pattern block without a ref
+	 * attribute is skipped rather than producing a bogus ID.
+	 */
+	public function test_reusable_block_ids_is_empty_without_usable_patterns() {
+		$this->assertEquals( array(), Registration::get_reusable_block_ids( parse_blocks( '<!-- wp:paragraph --><p>Text</p><!-- /wp:paragraph -->' ) ) );
+		$this->assertEquals( array(), Registration::get_reusable_block_ids( parse_blocks( '<!-- wp:block /-->' ) ) );
+	}
 }
