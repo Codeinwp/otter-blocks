@@ -290,6 +290,12 @@ export function transformCssSelectors( css, transform ) {
 			continue;
 		}
 
+		if ( '\\' === char ) {
+			prelude += css.slice( i, i + 2 );
+			i += 2;
+			continue;
+		}
+
 		if ( '"' === char || '\'' === char ) {
 			let end = i + 1;
 			while ( end < css.length ) {
