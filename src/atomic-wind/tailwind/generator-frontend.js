@@ -4,6 +4,7 @@ import indexCSS from 'tailwindcss/index.css';
 import preflightCSS from 'tailwindcss/preflight.css';
 import themeCSS from 'tailwindcss/theme.css';
 import utilitiesCSS from 'tailwindcss/utilities.css';
+import { scopeToAtomicWind } from './scope-css';
 
 const assets = {
 	index: indexCSS,
@@ -71,7 +72,7 @@ async function build( kind ) {
 		return;
 	}
 
-	sheet.textContent = compiler.build( Array.from( newClasses ) );
+	sheet.textContent = scopeToAtomicWind( compiler.build( Array.from( newClasses ) ) );
 }
 
 function rebuild( kind ) {
