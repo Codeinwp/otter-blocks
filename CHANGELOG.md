@@ -1,3 +1,12 @@
+##### [Version 3.2.3](https://github.com/Codeinwp/otter-blocks/compare/v3.2.2...v3.2.3) (2026-08-20)
+
+- Fixed WooCommerce product data controls hidden in WooCommerce Builder.
+- Fixed frontend pages stopping when widget CSS cannot use the WordPress filesystem.
+- Fixed PHP warnings when the Post Content dynamic value renders.
+- Fixed animation pages crashing when another plugin loads a different CSS parser.
+- Fixed frontend pages stopping when an Otter plugin class cannot load.
+- Fixed a security issue in the Stripe Checkout block where the checkout price could be manipulated via the URL. Thanks to sungbyeongchan for the responsible disclosure.
+
 ##### [Version 3.2.2](https://github.com/Codeinwp/otter-blocks/compare/v3.2.1...v3.2.2) (2026-08-12)
 
 - Form submissions can now be exported as a CSV file, with the export button offering a choice between CSV and XML formats.
