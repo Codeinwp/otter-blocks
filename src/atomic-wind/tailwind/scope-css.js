@@ -19,6 +19,8 @@ const OPAQUE_AT_RULE = /^@(-[a-z]+-)?(keyframes|font-face|property|counter-style
 // Document-level subjects: they carry inherited defaults, not element resets.
 const ROOT_SELECTOR = /^(:root|:host|html|body)$/;
 
+const ROOT_PREFIX = /^(:root|:host|html|body)(?=$|[\s>+~])/;
+
 const LEGACY_PSEUDO_ELEMENT = /^:(before|after|first-line|first-letter)\b/i;
 
 const COMBINATOR = /[\s>+~]/;
@@ -368,8 +370,12 @@ export function prefixCss( css, scopeSelector ) {
 	return transformCssSelectors( css, ( selectorText ) =>
 		splitSelectorList( selectorText )
 			.map( ( selector ) => {
-				if ( ROOT_SELECTOR.test( selector ) ) {
-					return scopeSelector;
+				// The container stands in for the document root, so substitute it
+				// for a leading root compound rather than prepending.
+				const rooted = selector.match( ROOT_PREFIX );
+
+				if ( rooted ) {
+					return `${ scopeSelector }${ selector.slice( rooted[ 0 ].length ) }`;
 				}
 
 				return `${ scopeSelector } ${ selector }`;

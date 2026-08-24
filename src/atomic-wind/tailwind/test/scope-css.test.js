@@ -153,9 +153,21 @@ describe( 'prefixCss', () => {
 		);
 	} );
 
-	it( 'prefixes a root-prefixed descendant instead of collapsing it', () => {
+	it( 'substitutes the scope for a leading document root, keeping the descendant', () => {
+		// The container is itself inside `body`, so prepending would produce
+		// `:where(.editor-styles-wrapper) body .utility` — unsatisfiable.
 		expect( prefixCss( 'body .utility{color:red}', ':where(.editor-styles-wrapper)' ) ).toBe(
-			':where(.editor-styles-wrapper) body .utility{color:red}'
+			':where(.editor-styles-wrapper) .utility{color:red}'
+		);
+
+		expect( prefixCss( 'html figure:where(x){margin:0}', ':where(.editor-styles-wrapper)' ) ).toBe(
+			':where(.editor-styles-wrapper) figure:where(x){margin:0}'
+		);
+	} );
+
+	it( 'keeps the combinator when substituting the scope', () => {
+		expect( prefixCss( 'body > .utility{color:red}', ':where(.editor-styles-wrapper)' ) ).toBe(
+			':where(.editor-styles-wrapper) > .utility{color:red}'
 		);
 	} );
 
