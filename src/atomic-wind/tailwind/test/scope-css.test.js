@@ -49,9 +49,29 @@ describe( 'scopeToAtomicWind', () => {
 		);
 	} );
 
-	it( 'leaves custom-property-only rules at their original scope', () => {
-		const css = ':root, :host{--spacing:0.25rem;--text-lg:1.125rem}';
-		expect( scopeToAtomicWind( css ) ).toBe( css );
+	it( 'moves theme variables onto the block wrapper so they cannot shadow theme ones', () => {
+		expect( scopeToAtomicWind( ':root, :host{--spacing:0.25rem;--text-lg:1.125rem}' ) ).toBe(
+			`${ SELF }{--spacing:0.25rem;--text-lg:1.125rem}`
+		);
+	} );
+
+	it( 'scopes the universal custom-property initializers', () => {
+		expect( scopeToAtomicWind( '*, ::before, ::backdrop{--tw-content:""}' ) ).toBe(
+			`*${ MATCH }, *${ MATCH }::before, *${ MATCH }::backdrop{--tw-content:""}`
+		);
+	} );
+
+	it( 'keeps a document root used as an ancestor, scoping its subject instead', () => {
+		// `[body_&]:text-red-500` and friends put a root in front of the real
+		// subject; collapsing the whole selector would drop that subject and
+		// apply the declarations to every block wrapper.
+		expect( scopeToAtomicWind( 'body .\\[body_\\&\\]\\:text-red-500{color:red}' ) ).toBe(
+			'body .\\[body_\\&\\]\\:text-red-500{color:red}'
+		);
+
+		expect( scopeToAtomicWind( 'html figure{margin:0}' ) ).toBe(
+			`html figure${ MATCH }{margin:0}`
+		);
 	} );
 
 	it( 'recurses into conditional at-rules', () => {
@@ -106,7 +126,7 @@ describe( 'scopeToAtomicWind', () => {
 
 		// Layer statements, theme variables, utilities and @property pass through.
 		expect( out ).toContain( '@layer properties;@layer theme, base, components, utilities;' );
-		expect( out ).toContain( '@layer theme{:root, :host{--spacing:0.25rem}}' );
+		expect( out ).toContain( `@layer theme{${ SELF }{--spacing:0.25rem}}` );
 		expect( out ).toContain( '.flex{display:flex !important}' );
 		expect( out ).toContain( '.hover\\:underline{&:hover{@media (hover: hover){text-decoration:underline !important}}}' );
 		expect( out ).toContain( '@property --tw-content{syntax:"*";initial-value:"";inherits:false}' );
@@ -130,6 +150,12 @@ describe( 'prefixCss', () => {
 	it( 'prefixes selectors and collapses document-level ones onto the scope', () => {
 		expect( prefixCss( 'h1{color:red}html{tab-size:4}', ':where(.editor-styles-wrapper)' ) ).toBe(
 			':where(.editor-styles-wrapper) h1{color:red}:where(.editor-styles-wrapper){tab-size:4}'
+		);
+	} );
+
+	it( 'prefixes a root-prefixed descendant instead of collapsing it', () => {
+		expect( prefixCss( 'body .utility{color:red}', ':where(.editor-styles-wrapper)' ) ).toBe(
+			':where(.editor-styles-wrapper) body .utility{color:red}'
 		);
 	} );
 

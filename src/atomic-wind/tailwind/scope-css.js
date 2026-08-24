@@ -16,8 +16,8 @@ const ATOMIC_SELF = `:where(${ ATOMIC_ROOT })`;
 // At-rules whose bodies are not selector lists and must be emitted verbatim.
 const OPAQUE_AT_RULE = /^@(-[a-z]+-)?(keyframes|font-face|property|counter-style|font-feature-values|font-palette-values|page|viewport|charset|import|namespace)\b/i;
 
-// Document-level selectors: they carry inherited defaults, not element resets.
-const ROOT_SELECTOR = /^(:root|:host|html|body)($|[\s:.#[(,>+~])/;
+// Document-level subjects: they carry inherited defaults, not element resets.
+const ROOT_SELECTOR = /^(:root|:host|html|body)$/;
 
 const LEGACY_PSEUDO_ELEMENT = /^:(before|after|first-line|first-letter)\b/i;
 
@@ -170,12 +170,12 @@ function isAnchored( subject ) {
  * @return {string} Scoped selector.
  */
 function scopeSelectorToBlocks( selector ) {
-	if ( ROOT_SELECTOR.test( selector ) ) {
-		return ATOMIC_SELF;
-	}
-
 	const start = subjectStart( selector );
 	const subject = selector.slice( start );
+
+	if ( 0 === start && ROOT_SELECTOR.test( subject ) ) {
+		return ATOMIC_SELF;
+	}
 
 	if ( isAnchored( subject ) ) {
 		return selector;
@@ -187,25 +187,6 @@ function scopeSelectorToBlocks( selector ) {
 	const suffix = -1 === pseudo ? '' : subject.slice( pseudo );
 
 	return `${ prefix }${ base || '*' }${ ATOMIC_MATCH }${ suffix }`;
-}
-
-/**
- * Whether a declaration block only defines custom properties.
- *
- * Those rules feed `var()` lookups instead of styling anything, so they are
- * safe to leave at their original scope.
- *
- * @param {string} body Declaration block, without the braces.
- * @return {boolean} True for custom-property-only blocks.
- */
-function isCustomPropertyOnly( body ) {
-	if ( body.includes( '{' ) ) {
-		return false;
-	}
-
-	const declarations = body.split( ';' ).map( ( declaration ) => declaration.trim() ).filter( Boolean );
-
-	return 0 < declarations.length && declarations.every( ( declaration ) => declaration.startsWith( '--' ) );
 }
 
 /**
@@ -355,7 +336,7 @@ export function transformCssSelectors( css, transform ) {
 }
 
 /**
- * Keep Tailwind's element resets inside Atomic Wind blocks.
+ * Keep Tailwind's element resets and variables inside Atomic Wind blocks.
  *
  * @param {string} css Generated stylesheet.
  * @return {string} Scoped stylesheet.
@@ -365,11 +346,7 @@ export function scopeToAtomicWind( css ) {
 		return css;
 	}
 
-	return transformCssSelectors( css, ( selectorText, body ) => {
-		if ( isCustomPropertyOnly( body ) ) {
-			return selectorText;
-		}
-
+	return transformCssSelectors( css, ( selectorText ) => {
 		const scoped = splitSelectorList( selectorText ).map( scopeSelectorToBlocks );
 
 		return Array.from( new Set( scoped ) ).join( ', ' );
@@ -390,7 +367,13 @@ export function prefixCss( css, scopeSelector ) {
 
 	return transformCssSelectors( css, ( selectorText ) =>
 		splitSelectorList( selectorText )
-			.map( ( selector ) => ( ROOT_SELECTOR.test( selector ) ? scopeSelector : `${ scopeSelector } ${ selector }` ) )
+			.map( ( selector ) => {
+				if ( ROOT_SELECTOR.test( selector ) ) {
+					return scopeSelector;
+				}
+
+				return `${ scopeSelector } ${ selector }`;
+			} )
 			.join( ', ' )
 	);
 }
