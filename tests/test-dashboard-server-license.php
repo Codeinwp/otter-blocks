@@ -19,10 +19,14 @@ class Test_Dashboard_Server_License extends WP_UnitTestCase {
 	const SDK_INVALID_MESSAGE = 'ERROR: Invalid license provided.';
 
 	/**
-	 * The message the dashboard should show for a plan mismatch, before the
-	 * offending price ID is substituted in.
+	 * Option the SDK writes the store's answer to, derived from the plugin dir.
 	 */
-	const PLAN_MISMATCH_FORMAT = 'Entered license key does not include Otter Pro.';
+	const LICENSE_DATA_OPTION = 'otter_pro_license_data';
+
+	/**
+	 * The message the dashboard should show for a plan mismatch.
+	 */
+	const PLAN_MISMATCH_MESSAGE = 'Entered license key does not include Otter Pro.';
 
 	/**
 	 * Instance under test.
@@ -56,6 +60,7 @@ class Test_Dashboard_Server_License extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 		$this->server = new Dashboard_Server();
+		delete_option( self::LICENSE_DATA_OPTION );
 	}
 
 	/**
@@ -86,6 +91,30 @@ class Test_Dashboard_Server_License extends WP_UnitTestCase {
 				return $plan;
 			}
 		);
+	}
+
+	/**
+	 * Mirror what the SDK stores after the store answers an activation.
+	 *
+	 * do_license_process() writes the response to the license data option before
+	 * it returns the WP_Error, and the plan filter reports price_id from that
+	 * same option, falling back to -1 when the response carried none.
+	 *
+	 * @param string   $status   License status returned by the store.
+	 * @param int|null $price_id Price ID returned by the store, null if absent.
+	 */
+	private function mock_store_response( $status, $price_id = null ) {
+		$data = array(
+			'license' => $status,
+			'key'     => 'a-license-key',
+		);
+
+		if ( null !== $price_id ) {
+			$data['price_id'] = $price_id;
+		}
+
+		update_option( self::LICENSE_DATA_OPTION, (object) $data );
+		$this->mock_license_plan( null === $price_id ? -1 : $price_id );
 	}
 
 	/**
@@ -124,24 +153,24 @@ class Test_Dashboard_Server_License extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A key whose plan is outside the allow list does not include Otter Pro, so
-	 * the generic SDK error is replaced by the actual reason, naming the plan.
+	 * A key the store answered for with a plan outside the allow list does not
+	 * include Otter Pro, so the generic SDK error is replaced by the reason.
 	 *
-	 * 1 and 2 are Neve Personal; 0 is the plan filter's default, used when the
-	 * store's response carried no price ID.
+	 * 1 and 2 are Neve Personal; 7, 12 and 30 are higher Neve tiers that still
+	 * exclude Otter Pro.
 	 */
 	public function test_activation_with_an_unsupported_plan_reports_the_plan_mismatch() {
 		$this->mock_license_process( new WP_Error( 'themeisle-license-invalid', self::SDK_INVALID_MESSAGE ) );
 
-		foreach ( array( 0, 1, 2, 7, 12, 30 ) as $plan ) {
+		foreach ( array( 1, 2, 7, 12, 30 ) as $plan ) {
 			$this->assertNotContains( $plan, Dashboard_Server::VALID_NEVE_PLANS, "Plan {$plan} is a fixture for an unsupported plan" );
 
-			$this->mock_license_plan( $plan );
+			$this->mock_store_response( 'invalid', $plan );
 
 			$data = $this->activate();
 
 			$this->assertFalse( $data['success'], "Activation should fail for plan {$plan}" );
-			$this->assertSame( self::PLAN_MISMATCH_FORMAT, $data['message'], "Plan {$plan} should report the plan mismatch, not the generic SDK error" );
+			$this->assertSame( self::PLAN_MISMATCH_MESSAGE, $data['message'], "Plan {$plan} should report the plan mismatch, not the generic SDK error" );
 		}
 	}
 
@@ -155,7 +184,7 @@ class Test_Dashboard_Server_License extends WP_UnitTestCase {
 		$this->assertNotEmpty( Dashboard_Server::VALID_NEVE_PLANS, 'The supported plan list should not be empty' );
 
 		foreach ( Dashboard_Server::VALID_NEVE_PLANS as $plan ) {
-			$this->mock_license_plan( $plan );
+			$this->mock_store_response( 'invalid', $plan );
 
 			$data = $this->activate( 'some-agency-license-key' );
 
@@ -165,26 +194,54 @@ class Test_Dashboard_Server_License extends WP_UnitTestCase {
 	}
 
 	/**
-	 * With no plan filter registered the default 0 is used, which is not in the
-	 * allow list.
+	 * A key that does cover Otter Pro but is expired, revoked or out of
+	 * activations is rejected with the same themeisle-license-invalid code. Its
+	 * plan is not the problem, so the SDK message must survive.
+	 *
+	 * Price ID 1 is deliberate: it is a standalone Otter plan per
+	 * License::$plans_map and is absent from VALID_NEVE_PLANS, so the plan check
+	 * alone would misreport every one of these as a plan mismatch.
 	 */
-	public function test_activation_without_a_plan_filter_reports_the_plan_mismatch() {
+	public function test_unusable_but_eligible_key_keeps_the_sdk_message() {
 		$this->mock_license_process( new WP_Error( 'themeisle-license-invalid', self::SDK_INVALID_MESSAGE ) );
-		remove_all_filters( 'product_otter_license_plan' );
 
-		$data = $this->activate( 'unknown-license-key' );
+		foreach ( Dashboard_Server::NON_PLAN_LICENSE_STATUSES as $status ) {
+			foreach ( array_keys( License::$plans_map ) as $plan ) {
+				$this->mock_store_response( $status, $plan );
 
-		$this->assertFalse( $data['success'] );
-		$this->assertSame( self::PLAN_MISMATCH_FORMAT, $data['message'] );
+				$data = $this->activate( 'an-otter-standalone-key' );
+
+				$this->assertFalse( $data['success'] );
+				$this->assertSame( self::SDK_INVALID_MESSAGE, $data['message'], "A {$status} key on Otter plan {$plan} is not a plan mismatch" );
+			}
+		}
 	}
 
 	/**
-	 * Only the store's "invalid license" rejection can be caused by a plan
-	 * mismatch. Every other failure is reported as the SDK worded it, even while
-	 * an unsupported plan is stored from an earlier key.
+	 * A key the store did not recognise comes back without a price ID, so the
+	 * plan filter reports -1. That is not evidence of anything and must not be
+	 * rewritten.
+	 */
+	public function test_unrecognised_key_without_a_price_id_keeps_the_sdk_message() {
+		$this->mock_license_process( new WP_Error( 'themeisle-license-invalid', self::SDK_INVALID_MESSAGE ) );
+
+		foreach ( array( 'invalid', 'missing', 'item_name_mismatch' ) as $status ) {
+			$this->mock_store_response( $status );
+
+			$data = $this->activate( 'a-made-up-key' );
+
+			$this->assertFalse( $data['success'] );
+			$this->assertSame( self::SDK_INVALID_MESSAGE, $data['message'], "A {$status} key with no price ID should keep the SDK message" );
+		}
+	}
+
+	/**
+	 * Only the store's rejection can be caused by a plan mismatch. Every other
+	 * failure is reported as the SDK worded it, even while an unsupported plan
+	 * is stored from an earlier key.
 	 */
 	public function test_only_the_invalid_license_error_is_rewritten() {
-		$this->mock_license_plan( 1 );
+		$this->mock_store_response( 'invalid', 1 );
 
 		$codes = array(
 			'themeisle-license-500'            => 'ERROR: Failed to connect to the license service.',
@@ -204,28 +261,11 @@ class Test_Dashboard_Server_License extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Otter's standalone plans are considered valid even if they are not in the Neve allow list.
-	 */
-	public function test_otter_standalone_plans_are_reported_as_a_valid_plan() {
-		$this->mock_license_process( true );
-
-		foreach ( array( 1, 2, 3, 4 ) as $plan ) {
-			$this->assertArrayHasKey( $plan, License::$plans_map, "Price ID {$plan} is a valid Otter plan" );
-
-			$this->mock_license_plan( $plan );
-
-			$data = $this->activate( 'an-otter-standalone-key' );
-
-			$this->assertSame( 'Activated.', $data['message'] );
-		}
-	}
-
-	/**
 	 * The rewrite is gated on the activate action, so deactivation failures are
 	 * never reported as a plan mismatch.
 	 */
 	public function test_deactivation_keeps_the_sdk_message() {
-		$this->mock_license_plan( 1 );
+		$this->mock_store_response( 'invalid', 1 );
 
 		$errors = array(
 			'themeisle-license-already-deactivate' => 'License not active.',
@@ -248,7 +288,7 @@ class Test_Dashboard_Server_License extends WP_UnitTestCase {
 	 */
 	public function test_successful_toggle_is_not_rewritten() {
 		$this->mock_license_process( true );
-		$this->mock_license_plan( 1 );
+		$this->mock_store_response( 'invalid', 1 );
 
 		$data = $this->activate( 'a-valid-license-key' );
 
@@ -262,7 +302,7 @@ class Test_Dashboard_Server_License extends WP_UnitTestCase {
 	 */
 	public function test_invalid_action_payload_is_rejected() {
 		$this->mock_license_process( new WP_Error( 'themeisle-license-invalid', self::SDK_INVALID_MESSAGE ) );
-		$this->mock_license_plan( 1 );
+		$this->mock_store_response( 'invalid', 1 );
 
 		foreach ( array( array(), array( 'action' => 'activate' ) ) as $body ) {
 			$data = $this->toggle( $body );

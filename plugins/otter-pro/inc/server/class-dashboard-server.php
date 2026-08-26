@@ -43,6 +43,13 @@ class Dashboard_Server {
 	const VALID_NEVE_PLANS = array( 5, 6, 9, 14, 17, 20, 23, 27, 28, 29 );
 
 	/**
+	 * License statuses describing a key that does cover Otter Pro but cannot be used right now.
+	 *
+	 * @var string[]
+	 */
+	const NON_PLAN_LICENSE_STATUSES = array( 'expired', 'active_expired', 'revoked', 'site_inactive', 'no_activations_left', 'not_active' );
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -155,7 +162,7 @@ class Dashboard_Server {
 			if (
 				'activate' === $fields['action'] &&
 				'themeisle-license-invalid' === $response->get_error_code() &&
-				! in_array( $plan, self::VALID_NEVE_PLANS, true )
+				$this->is_ineligible_plan( $plan )
 			) {
 				$message = __( 'Entered license key does not include Otter Pro.', 'otter-pro' );
 			}
@@ -179,6 +186,28 @@ class Dashboard_Server {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Whether the stored license data proves the key belongs to a plan without Otter Pro.
+	 *
+	 * @param int $plan Price ID reported for the stored license.
+	 * @return bool
+	 */
+	private function is_ineligible_plan( $plan ) {
+		$license_data = License::get_license_data();
+
+		if ( ! is_object( $license_data ) || ! isset( $license_data->price_id ) ) {
+			return false;
+		}
+
+		$status = isset( $license_data->license ) ? $license_data->license : '';
+
+		if ( in_array( $status, self::NON_PLAN_LICENSE_STATUSES, true ) ) {
+			return false;
+		}
+
+		return ! in_array( $plan, self::VALID_NEVE_PLANS, true );
 	}
 
 	/**
