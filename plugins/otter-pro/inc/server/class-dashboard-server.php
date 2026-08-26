@@ -36,6 +36,13 @@ class Dashboard_Server {
 	public $version = 'v1';
 
 	/**
+	 * Neve price IDs that bundle Otter Pro.
+	 *
+	 * @var int[]
+	 */
+	const VALID_NEVE_PLANS = array( 5, 6, 9, 14, 17, 20, 23, 27, 28, 29 );
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -141,11 +148,21 @@ class Dashboard_Server {
 		}
 
 		$response = apply_filters( 'themeisle_sdk_license_process_otter', $fields['key'], $fields['action'] );
+		$plan     = (int) apply_filters( 'product_otter_license_plan', 0 );
 
 		if ( is_wp_error( $response ) ) {
+			$message = $response->get_error_message();
+			if (
+				'activate' === $fields['action'] &&
+				'themeisle-license-invalid' === $response->get_error_code() &&
+				! in_array( $plan, self::VALID_NEVE_PLANS, true )
+			) {
+				$message = __( 'Entered license key does not include Otter Pro.', 'otter-pro' );
+			}
+
 			return new \WP_REST_Response(
 				array(
-					'message' => $response->get_error_message(),
+					'message' => $message,
 					'success' => false,
 				)
 			);

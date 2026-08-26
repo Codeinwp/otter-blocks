@@ -65,7 +65,10 @@ const LicenseField = () => {
 					setLicenseKey( '' );
 				}
 
-				window.location.reload();
+				// Reloading on failure would discard the notice explaining why.
+				if ( res?.success ) {
+					window.location.reload();
+				}
 			}
 		).catch( err => {
 			setLoading( false );
