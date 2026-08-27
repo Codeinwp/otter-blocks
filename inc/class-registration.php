@@ -98,6 +98,38 @@ class Registration {
 	}
 
 	/**
+	 * Get the `className` attribute of a block as a string.
+	 *
+	 * @param mixed $attributes Block attributes.
+	 * @return string
+	 */
+	public static function get_class_name( $attributes ) {
+		if ( ! is_array( $attributes ) || ! isset( $attributes['className'] ) ) {
+			return '';
+		}
+
+		$class_name = $attributes['className'];
+
+		if ( is_array( $class_name ) ) {
+			// Flatten nested arrays and drop anything that is not printable.
+			$flat = array();
+
+			array_walk_recursive(
+				$class_name,
+				function ( $value ) use ( &$flat ) {
+					if ( is_scalar( $value ) ) {
+						$flat[] = (string) $value;
+					}
+				}
+			);
+
+			return implode( ' ', $flat );
+		}
+
+		return is_scalar( $class_name ) ? (string) $class_name : '';
+	}
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -1076,7 +1108,7 @@ class Registration {
 		$has_navigation_block = \WP_Block_Type_Registry::get_instance()->is_registered( 'core/navigation' );
 
 		if ( $has_navigation_block && ( 'core/navigation-link' === $block['blockName'] || 'core/navigation-submenu' === $block['blockName'] ) ) {
-			if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'fa-' ) !== false ) {
+			if ( strpos( self::get_class_name( isset( $block['attrs'] ) ? $block['attrs'] : array() ), 'fa-' ) !== false ) {
 				self::$is_fa_loaded = true;
 
 				// See the src/blocks/plugins/menu-icons/inline.css file for where this comes from.
@@ -1118,7 +1150,7 @@ class Registration {
 			return $block_content;
 		}
 
-		if ( isset( $block['attrs']['className'] ) && false !== strpos( $block['attrs']['className'], 'o-sticky' ) ) {
+		if ( false !== strpos( self::get_class_name( isset( $block['attrs'] ) ? $block['attrs'] : array() ), 'o-sticky' ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
 			wp_enqueue_script(
 				'otter-sticky',

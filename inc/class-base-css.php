@@ -683,10 +683,10 @@ class Base_CSS {
 		);
 
 		foreach ( $blocks as $block ) {
-			if ( isset( $block['attrs']['className'] ) && ! empty( $block['attrs']['className'] ) ) {
-				if ( preg_match( '/\banimated\b/', $block['attrs']['className'] ) ) {
-					$classes = array_merge( $classes, explode( ' ', trim( $block['attrs']['className'] ) ) );
-				}
+			$block_classes = Registration::get_class_name( isset( $block['attrs'] ) ? $block['attrs'] : array() );
+
+			if ( ! empty( $block_classes ) && preg_match( '/\banimated\b/', $block_classes ) ) {
+				$classes = array_merge( $classes, explode( ' ', trim( $block_classes ) ) );
 			}
 
 			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
