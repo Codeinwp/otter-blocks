@@ -14,8 +14,12 @@
 		<gutenberg-block type="themeisle-blocks/flip" translate="1">
 			<key name="title" />
 			<key name="description" />
+			<key name="frontMedia">
+				<key name="alt" />
+			</key>
 			<xpath>//div[contains(@class, "o-flip-content")]/h3</xpath>
 			<xpath>//div[contains(@class, "o-flip-content")]/p</xpath>
+			<xpath>//div[contains(@class, "o-flip-content")]/img/@alt</xpath>
 		</gutenberg-block>
 
 		<gutenberg-block type="themeisle-blocks/circle-counter" translate="1">
@@ -31,7 +35,9 @@
 
 		<gutenberg-block type="themeisle-blocks/icon-list-item" translate="1">
 			<key name="content" />
+			<key name="iconAlt" />
 			<xpath>//p[contains(@class, "wp-block-themeisle-blocks-icon-list-item-content")]</xpath>
+			<xpath>//img/@alt</xpath>
 		</gutenberg-block>
 
 		<gutenberg-block type="themeisle-blocks/form" translate="1">
@@ -46,6 +52,7 @@
 			<key name="helpText" />
 			<xpath>//span[contains(@class, "otter-form-input-label__label")]</xpath>
 			<xpath>//input/@placeholder</xpath>
+			<xpath>//input[contains(@class, "otter-form-input")]/@value</xpath>
 			<xpath>//span[contains(@class, "o-form-help")]</xpath>
 		</gutenberg-block>
 
@@ -55,6 +62,7 @@
 			<key name="helpText" />
 			<xpath>//span[contains(@class, "otter-form-textarea-label__label")]</xpath>
 			<xpath>//textarea/@placeholder</xpath>
+			<xpath>//textarea[contains(@class, "otter-form-textarea-input")]</xpath>
 			<xpath>//span[contains(@class, "o-form-help")]</xpath>
 		</gutenberg-block>
 
@@ -77,6 +85,9 @@
 			<key name="links">
 				<key name="label" />
 			</key>
+			<key name="image">
+				<key name="alt" />
+			</key>
 		</gutenberg-block>
 
 		<gutenberg-block type="themeisle-blocks/stripe-checkout" translate="1">
@@ -88,6 +99,9 @@
 			<key name="label" />
 			<key name="placeholder" />
 			<key name="helpText" />
+			<key name="options">
+				<key name="content" />
+			</key>
 			<key name="options" />
 		</gutenberg-block>
 
