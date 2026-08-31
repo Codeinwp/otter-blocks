@@ -40,23 +40,29 @@ if ( is_readable( $vendor_file ) ) {
 
 $loader_file = OTTER_BLOCKS_PATH . '/inc/class-loader.php';
 
-if ( ! class_exists( '\ThemeIsle\GutenbergBlocks\Loader' ) ) {
-	if ( ! file_exists( $loader_file ) ) {
+$loader_available = class_exists( '\ThemeIsle\GutenbergBlocks\Loader', false );
+if ( ! $loader_available ) {
+	if ( ! is_file( $loader_file ) ) {
 		error_log( '[Otter Blocks] Not starting: ' . $loader_file . ' is missing.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 	} elseif ( ! is_readable( $loader_file ) ) {
 		error_log( '[Otter Blocks] Not starting: ' . $loader_file . ' is not readable.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 	} else {
-		require_once $loader_file;
+		try {
+			require_once $loader_file;
+			$loader_available = class_exists( '\ThemeIsle\GutenbergBlocks\Loader', false );
 
-		if ( ! class_exists( '\ThemeIsle\GutenbergBlocks\Loader' ) ) {
-			error_log( '[Otter Blocks] Not starting: ' . $loader_file . ' does not declare ThemeIsle\GutenbergBlocks\Loader.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			if ( ! $loader_available ) {
+				error_log( '[Otter Blocks] Not starting: ' . $loader_file . ' does not declare ThemeIsle\GutenbergBlocks\Loader.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			}
+		} catch ( \Throwable $e ) {
+			error_log( '[Otter Blocks] Not starting: ' . $loader_file . ' failed to load: ' . $e->getMessage() . '.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 	}
 }
 
-// Everything downstream runs from Main, so gating it here covers every Loader call site.
-if ( class_exists( '\ThemeIsle\GutenbergBlocks\Loader' ) && class_exists( '\ThemeIsle\GutenbergBlocks\Main' ) ) {
-	\ThemeIsle\GutenbergBlocks\Main::instance();
+ // Everything downstream runs from Main, so boot it through Loader's throwable boundary.
+if ( $loader_available ) {
+	\ThemeIsle\GutenbergBlocks\Loader::boot_singleton( '\ThemeIsle\GutenbergBlocks\Main' );
 }
 
 add_filter(
