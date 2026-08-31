@@ -1,0 +1,39 @@
+<wpml-config>
+	<gutenberg-blocks>
+
+		<gutenberg-block type="themeisle-blocks/business-hours" translate="1">
+			<key name="title" />
+			<xpath>//div[contains(@class, "otter-business-hour__title")]/span</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/business-hours-item" translate="1">
+			<key name="label" />
+			<key name="time" />
+			<xpath>//div[contains(@class, "otter-business-hour-item__label")]/span</xpath>
+			<xpath>//div[contains(@class, "otter-business-hour-item__time")]/span</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/add-to-cart-button" translate="1">
+			<key name="label" />
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/review-comparison" translate="1">
+			<key name="buttonText" />
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/form-file" translate="1">
+			<key name="label" />
+			<key name="placeholder" />
+			<key name="helpText" />
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/form-hidden-field" translate="1">
+			<key name="label" />
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/form-stripe-field" translate="1">
+			<key name="label" />
+		</gutenberg-block>
+
+	</gutenberg-blocks>
+</wpml-config>

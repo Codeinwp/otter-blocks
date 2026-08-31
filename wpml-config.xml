@@ -1,0 +1,111 @@
+<wpml-config>
+	<gutenberg-blocks>
+		<gutenberg-block type="themeisle-blocks/accordion-item" translate="1">
+			<key name="title" />
+			<xpath>//summary/*[self::div or self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/tabs-item" translate="1">
+			<key name="title" />
+			<xpath>//div[contains(@class, "wp-block-themeisle-blocks-tabs-item__header")]</xpath>
+			<xpath>//div[@data-title]/@data-title</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/flip" translate="1">
+			<key name="title" />
+			<key name="description" />
+			<xpath>//div[contains(@class, "o-flip-content")]/h3</xpath>
+			<xpath>//div[contains(@class, "o-flip-content")]/p</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/circle-counter" translate="1">
+			<key name="title" />
+			<xpath>//span[contains(@class, "wp-block-themeisle-blocks-circle-counter-title__value")]</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/progress-bar" translate="1">
+			<key name="title" />
+			<xpath>//span[contains(@class, "wp-block-themeisle-blocks-progress-bar__outer__title")]</xpath>
+			<xpath>//div[contains(@class, "wp-block-themeisle-blocks-progress-bar__area__title")]/span</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/icon-list-item" translate="1">
+			<key name="content" />
+			<xpath>//p[contains(@class, "wp-block-themeisle-blocks-icon-list-item-content")]</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/form" translate="1">
+			<key name="submitLabel" />
+			<key name="submitMessage" />
+			<xpath>//button[contains(@class, "wp-block-button__link")]</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/form-input" translate="1">
+			<key name="label" />
+			<key name="placeholder" />
+			<key name="helpText" />
+			<xpath>//span[contains(@class, "otter-form-input-label__label")]</xpath>
+			<xpath>//input/@placeholder</xpath>
+			<xpath>//span[contains(@class, "o-form-help")]</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/form-textarea" translate="1">
+			<key name="label" />
+			<key name="placeholder" />
+			<key name="helpText" />
+			<xpath>//span[contains(@class, "otter-form-textarea-label__label")]</xpath>
+			<xpath>//textarea/@placeholder</xpath>
+			<xpath>//span[contains(@class, "o-form-help")]</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/lottie" translate="1">
+			<key name="ariaLabel" />
+			<xpath>//*[@aria-label]/@aria-label</xpath>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/review" translate="1">
+			<key name="title" />
+			<key name="description" />
+			<key name="prosLabel" />
+			<key name="consLabel" />
+			<key name="buttonsLabel" />
+			<key name="pros" />
+			<key name="cons" />
+			<key name="features">
+				<key name="title" />
+			</key>
+			<key name="links">
+				<key name="label" />
+			</key>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/stripe-checkout" translate="1">
+			<key name="successMessage" />
+			<key name="cancelMessage" />
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/form-multiple-choice" translate="1">
+			<key name="label" />
+			<key name="placeholder" />
+			<key name="helpText" />
+			<key name="options" />
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/google-map" translate="1">
+			<key name="location" />
+			<key name="markers">
+				<key name="title" />
+				<key name="description" />
+			</key>
+		</gutenberg-block>
+
+		<gutenberg-block type="themeisle-blocks/leaflet-map" translate="1">
+			<key name="location" />
+			<key name="markers">
+				<key name="title" />
+				<key name="description" />
+			</key>
+		</gutenberg-block>
+
+	</gutenberg-blocks>
+</wpml-config>
