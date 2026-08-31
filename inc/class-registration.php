@@ -1251,7 +1251,7 @@ class Registration {
 	 * @access public
 	 */
 	public static function condition_hide_on_style() {
-		echo '<style id="o-condition-hide-inline-css">@layer theme, base, components, utilities;@media (max-width:768px){@layer utilities{.o-hide-on-mobile:not(#_){display:none!important}}}@media (min-width:769px) and (max-width:1024px){@layer utilities{.o-hide-on-tablet:not(#_){display:none!important}}}@media (min-width:1025px){@layer utilities{.o-hide-on-desktop:not(#_){display:none!important}}}</style>';
+		echo '<style id="o-condition-hide-inline-css">@layer theme, base, components, utilities;@media (max-width:768px){@layer utilities{.o-hide-on-mobile:is(.o-hide-on-mobile,#_){display:none!important}}}@media (min-width:769px) and (max-width:1024px){@layer utilities{.o-hide-on-tablet:is(.o-hide-on-tablet,#_){display:none!important}}}@media (min-width:1025px){@layer utilities{.o-hide-on-desktop:is(.o-hide-on-desktop,#_){display:none!important}}}</style>';
 	}
 
 	/**

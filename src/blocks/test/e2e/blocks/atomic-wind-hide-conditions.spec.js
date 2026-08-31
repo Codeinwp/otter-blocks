@@ -62,6 +62,17 @@ test.describe( 'Atomic Wind hide on screen size', () => {
 		await expect( box ).toHaveCSS( 'display', 'none' );
 	});
 
+	test( 'hiding on tablet beats the flex utility', async({ editor, page }) => {
+		await insertHiddenBox( editor, [ 'tablet' ] );
+		await publishAndViewPost({ editor, page });
+		const box = page.locator( '.wp-block-atomic-wind-box' );
+		await expect( box ).toHaveClass( /o-hide-on-tablet/ );
+		await page.setViewportSize( MOBILE );
+		await expect( box ).toHaveCSS( 'display', 'flex' );
+		await page.setViewportSize( TABLET );
+		await expect( box ).toHaveCSS( 'display', 'none' );
+	});
+
 	test( 'hiding on desktop beats the flex utility', async({ editor, page }) => {
 		await insertHiddenBox( editor, [ 'desktop' ] );
 		await publishAndViewPost({ editor, page });
