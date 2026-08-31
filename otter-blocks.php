@@ -38,7 +38,14 @@ if ( is_readable( $vendor_file ) ) {
 	require_once $vendor_file;
 }
 
-if ( class_exists( '\ThemeIsle\GutenbergBlocks\Main' ) ) {
+$loader_file = OTTER_BLOCKS_PATH . '/inc/class-loader.php';
+
+if ( ! class_exists( '\ThemeIsle\GutenbergBlocks\Loader' ) && is_readable( $loader_file ) ) {
+	require_once $loader_file;
+}
+
+// Everything downstream runs from Main, so gating it here covers every Loader call site.
+if ( class_exists( '\ThemeIsle\GutenbergBlocks\Loader' ) && class_exists( '\ThemeIsle\GutenbergBlocks\Main' ) ) {
 	\ThemeIsle\GutenbergBlocks\Main::instance();
 }
 
