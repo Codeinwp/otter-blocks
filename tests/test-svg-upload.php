@@ -211,7 +211,7 @@ class Test_SVG_Upload extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Create an SVG attachment post whose file is missing from disk.
+	 * Create an SVG attachment post for the supplied file path.
 	 *
 	 * @param string $file Attached file path to store, may be empty.
 	 * @return int
