@@ -60,7 +60,7 @@ if ( ! $loader_available ) {
 	}
 }
 
- // Everything downstream runs from Main, so boot it through Loader's throwable boundary.
+// Everything downstream runs from Main, so boot it through Loader's throwable boundary.
 if ( $loader_available ) {
 	\ThemeIsle\GutenbergBlocks\Loader::boot_singleton( '\ThemeIsle\GutenbergBlocks\Main' );
 }
