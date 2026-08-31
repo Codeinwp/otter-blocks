@@ -102,7 +102,6 @@
 			<key name="options">
 				<key name="content" />
 			</key>
-			<key name="options" />
 		</gutenberg-block>
 
 		<gutenberg-block type="themeisle-blocks/google-map" translate="1">
