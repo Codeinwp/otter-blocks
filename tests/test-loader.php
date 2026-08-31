@@ -203,16 +203,152 @@ class TestLoader extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Main is only booted when Loader is available, so a corrupt loader file degrades to an
-	 * inert plugin instead of a fatal at the first call site.
+	 * A missing loader file is reported, and the plugin stays inert instead of fataling.
 	 */
-	public function test_bootstrap_gates_main_on_the_loader() {
-		$bootstrap = file_get_contents( OTTER_BLOCKS_PATH . '/otter-blocks.php' );
+	public function test_bootstrap_reports_a_missing_loader_file() {
+		$result = $this->run_bootstrap( 'missing' );
 
-		$this->assertMatchesRegularExpression(
-			'/if \(\s*class_exists\(\s*\x27\\\\ThemeIsle\\\\GutenbergBlocks\\\\Loader\x27\s*\)\s*&&\s*class_exists\(\s*\x27\\\\ThemeIsle\\\\GutenbergBlocks\\\\Main\x27\s*\)\s*\)/',
-			$bootstrap,
-			'Main::instance() must be gated on Loader being loadable.'
+		$this->assertSame( 0, $result['status'], $result['output'] );
+		$this->assertStringContainsString( 'is missing.', $result['log'] );
+		$this->assertStringContainsString( 'LOADER:no', $result['output'] );
+	}
+
+	/**
+	 * An unreadable loader file is reported distinctly from a missing one.
+	 */
+	public function test_bootstrap_reports_an_unreadable_loader_file() {
+		$result = $this->run_bootstrap( 'unreadable' );
+
+		if ( null === $result ) {
+			$this->markTestSkipped( 'The test user can read a 0000 file, so this branch cannot be reached here.' );
+		}
+
+		$this->assertSame( 0, $result['status'], $result['output'] );
+		$this->assertStringContainsString( 'is not readable.', $result['log'] );
+		$this->assertStringContainsString( 'LOADER:no', $result['output'] );
+	}
+
+	/**
+	 * A readable file that does not declare the class is reported too, rather than falling
+	 * through to a fatal at the first call site.
+	 */
+	public function test_bootstrap_reports_a_loader_file_that_declares_nothing() {
+		$result = $this->run_bootstrap( 'empty' );
+
+		$this->assertSame( 0, $result['status'], $result['output'] );
+		$this->assertStringContainsString( 'does not declare', $result['log'] );
+		$this->assertStringContainsString( 'LOADER:no', $result['output'] );
+	}
+
+	/**
+	 * The healthy path stays quiet and leaves Loader available.
+	 */
+	public function test_bootstrap_loads_the_real_loader_without_composer() {
+		$result = $this->run_bootstrap( 'real' );
+
+		$this->assertSame( 0, $result['status'], $result['output'] );
+		$this->assertStringNotContainsString( 'Not starting', $result['log'] );
+		$this->assertStringContainsString( 'LOADER:yes', $result['output'] );
+	}
+
+	/**
+	 * Run otter-blocks.php in a bare PHP process against a fixture plugin directory.
+	 *
+	 * The fixture ships no vendor/ so the Composer classmap cannot resolve Loader, which is
+	 * the stale-install case the fallback exists for.
+	 *
+	 * @param string $scenario One of missing, unreadable, empty, real.
+	 * @return array<string, mixed>|null Status, stdout and error log, or null when the
+	 *                                   unreadable scenario cannot be set up.
+	 */
+	private function run_bootstrap( $scenario ) {
+		$dir = get_temp_dir() . 'otter-bootstrap-' . $scenario . '-' . wp_generate_password( 8, false );
+
+		mkdir( $dir . '/inc', 0777, true );
+		copy( OTTER_BLOCKS_PATH . '/otter-blocks.php', $dir . '/otter-blocks.php' );
+
+		$loader_file = $dir . '/inc/class-loader.php';
+
+		if ( 'real' === $scenario ) {
+			copy( OTTER_BLOCKS_PATH . '/inc/class-loader.php', $loader_file );
+		} elseif ( 'empty' === $scenario ) {
+			file_put_contents( $loader_file, '<?php // Declares nothing.' );
+		} elseif ( 'unreadable' === $scenario ) {
+			copy( OTTER_BLOCKS_PATH . '/inc/class-loader.php', $loader_file );
+			chmod( $loader_file, 0000 );
+			clearstatcache( true, $loader_file );
+
+			if ( is_readable( $loader_file ) ) {
+				// Running as root: a 0000 file is still readable, so the branch is unreachable.
+				$this->remove_dir( $dir );
+
+				return null;
+			}
+		}
+
+		$log     = $dir . '/error.log';
+		$harness = $dir . '/harness.php';
+
+		file_put_contents(
+			$harness,
+			'<?php' . "\n"
+			. 'define( "WPINC", "wp-includes" );' . "\n"
+			. 'function plugins_url( $path = "", $plugin = "" ) { return "http://example.org/"; }' . "\n"
+			. 'function add_filter() { return true; }' . "\n"
+			. 'function add_action() { return true; }' . "\n"
+			. 'function plugin_basename( $file ) { return basename( dirname( $file ) ) . "/" . basename( $file ); }' . "\n"
+			. 'function __( $text, $domain = null ) { return $text; }' . "\n"
+			. 'require ' . var_export( $dir . '/otter-blocks.php', true ) . ';' . "\n"
+			. 'echo class_exists( "ThemeIsle\\\\GutenbergBlocks\\\\Loader" ) ? "LOADER:yes" : "LOADER:no";' . "\n"
 		);
+
+		$output = array();
+		$status = 0;
+
+		exec(
+			escapeshellarg( PHP_BINARY )
+			. ' -d log_errors=1 -d ' . escapeshellarg( 'error_log=' . $log )
+			. ' ' . escapeshellarg( $harness ) . ' 2>&1',
+			$output,
+			$status
+		);
+
+		$result = array(
+			'status' => $status,
+			'output' => implode( "\n", $output ),
+			'log'    => file_exists( $log ) ? file_get_contents( $log ) : '',
+		);
+
+		if ( 'unreadable' === $scenario ) {
+			chmod( $loader_file, 0644 );
+		}
+
+		$this->remove_dir( $dir );
+
+		return $result;
+	}
+
+	/**
+	 * Recursively delete a directory created by the test.
+	 *
+	 * @param string $dir Directory to remove.
+	 * @return void
+	 */
+	private function remove_dir( $dir ) {
+		if ( '' === $dir || ! is_dir( $dir ) ) {
+			return;
+		}
+
+		foreach ( array_diff( scandir( $dir ), array( '.', '..' ) ) as $item ) {
+			$path = $dir . '/' . $item;
+
+			if ( is_dir( $path ) ) {
+				$this->remove_dir( $path );
+			} else {
+				unlink( $path );
+			}
+		}
+
+		rmdir( $dir );
 	}
 }
