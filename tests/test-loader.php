@@ -203,6 +203,60 @@ class TestLoader extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Some call sites run per block, so the same bad entry must be reported once per request
+	 * rather than once per attempt.
+	 */
+	public function test_repeated_skips_are_logged_once() {
+		Loader::reset_reported();
+
+		$log = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
+		$old = ini_set( 'error_log', $log );
+
+		for ( $i = 0; $i < 5; $i++ ) {
+			Loader::instantiate( 'Otter_Loader_Definitely_Missing' );
+		}
+
+		ini_set( 'error_log', false === $old ? '' : $old );
+
+		$lines = file_exists( $log ) ? substr_count( file_get_contents( $log ), 'Otter_Loader_Definitely_Missing' ) : 0;
+
+		if ( file_exists( $log ) ) {
+			unlink( $log );
+		}
+
+		$this->assertSame( 1, $lines, 'A repeated skip must not be logged more than once.' );
+
+		Loader::reset_reported();
+	}
+
+	/**
+	 * Distinct reasons for the same class are still reported separately.
+	 */
+	public function test_distinct_skip_reasons_are_both_logged() {
+		Loader::reset_reported();
+
+		$log = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
+		$old = ini_set( 'error_log', $log );
+
+		Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
+		Loader::log_skipped( 'Otter_Loader_Plain', 'second reason' );
+		Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
+
+		ini_set( 'error_log', false === $old ? '' : $old );
+
+		$contents = file_exists( $log ) ? file_get_contents( $log ) : '';
+
+		if ( file_exists( $log ) ) {
+			unlink( $log );
+		}
+
+		$this->assertSame( 1, substr_count( $contents, 'first reason' ) );
+		$this->assertSame( 1, substr_count( $contents, 'second reason' ) );
+
+		Loader::reset_reported();
+	}
+
+	/**
 	 * A missing loader file is reported, and the plugin stays inert instead of fataling.
 	 */
 	public function test_bootstrap_reports_a_missing_loader_file() {

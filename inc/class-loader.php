@@ -18,6 +18,13 @@ namespace ThemeIsle\GutenbergBlocks;
 class Loader {
 
 	/**
+	 * Skips already reported this request, keyed by class name and reason.
+	 *
+	 * @var array<string, bool>
+	 */
+	private static $reported = array();
+
+	/**
 	 * Instantiate a class without ever fataling the request.
 	 *
 	 * @param mixed $classname Class name to instantiate.
@@ -122,6 +129,24 @@ class Loader {
 	 * @return void
 	 */
 	public static function log_skipped( $classname, $reason ) {
-		error_log( '[Otter Blocks] Skipped ' . ( is_string( $classname ) ? $classname : gettype( $classname ) ) . ': ' . $reason . '.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		$label = is_string( $classname ) ? $classname : gettype( $classname );
+		$key   = $label . '|' . $reason;
+
+		if ( isset( self::$reported[ $key ] ) ) {
+			return;
+		}
+
+		self::$reported[ $key ] = true;
+
+		error_log( '[Otter Blocks] Skipped ' . $label . ': ' . $reason . '.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+	}
+
+	/**
+	 * Forget which skips have been reported, so a later failure is logged again.
+	 *
+	 * @return void
+	 */
+	public static function reset_reported() {
+		self::$reported = array();
 	}
 }
