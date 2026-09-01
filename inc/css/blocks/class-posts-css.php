@@ -8,6 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks\CSS\Blocks;
 
 use ThemeIsle\GutenbergBlocks\Base_CSS;
+use ThemeIsle\GutenbergBlocks\Registration;
 
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
 
@@ -429,8 +430,7 @@ class Posts_CSS extends Base_CSS {
 							return $value[ $position ];
 						},
 						'condition' => function ( $attrs ) {
-							// @phpstan-ignore-next-line
-							return isset( $attrs['className'] ) && strpos( $attrs['className'], 'is-style-tiled' ) !== false;
+							return strpos( Registration::get_class_name( $attrs ), 'is-style-tiled' ) !== false;
 						},
 					);
 				},
