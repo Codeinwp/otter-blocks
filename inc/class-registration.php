@@ -507,10 +507,21 @@ class Registration {
 	 * Handler which checks the blocks used and enqueue the assets which needs.
 	 *
 	 * @since   2.0.0
-	 * @param   string|int|null $post Current post.
+	 * @param   string|int|null $post    Current post.
+	 * @param   array           $visited Reusable block IDs already traversed.
 	 * @access  public
 	 */
-	public function enqueue_dependencies( $post = null ) {
+	public function enqueue_dependencies( $post = null, $visited = array() ) {
+		if ( is_numeric( $post ) ) {
+			$post_id = (int) $post;
+
+			if ( isset( $visited[ $post_id ] ) ) {
+				return;
+			}
+
+			$visited[ $post_id ] = true;
+		}
+
 		$content = '';
 
 		if ( 'widgets' === $post ) {
@@ -570,7 +581,7 @@ class Registration {
 			);
 
 			foreach ( $blocks as $block ) {
-				$this->enqueue_dependencies( $block['attrs']['ref'] );
+				$this->enqueue_dependencies( $block['attrs']['ref'], $visited );
 			}
 		}
 
