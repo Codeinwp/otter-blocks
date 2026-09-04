@@ -529,16 +529,8 @@ class Registration {
 		$this->enqueue_block_styles( $post );
 
 		if ( has_block( 'core/block', $post ) ) {
-			$blocks = parse_blocks( $content );
-			$blocks = array_filter(
-				$blocks,
-				function ( $block ) {
-					return 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] );
-				}
-			);
-
-			foreach ( $blocks as $block ) {
-				$this->enqueue_dependencies( $block['attrs']['ref'] );
+			foreach ( self::get_reusable_block_ids( parse_blocks( $content ) ) as $ref ) {
+				$this->enqueue_dependencies( $ref );
 			}
 		}
 
@@ -1228,6 +1220,35 @@ class Registration {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Collect the IDs of every reusable block (synced pattern) in a block tree.
+	 *
+	 * Synced patterns can be nested inside other blocks, so the whole tree is
+	 * walked instead of only its top level. Without this, a pattern placed inside
+	 * a Group block is never found and the blocks it holds get none of their
+	 * assets registered.
+	 *
+	 * @param array<int, array<string, mixed>> $blocks Parsed blocks.
+	 * @return array<int, int> List of reusable block IDs.
+	 * @since   3.2.3
+	 * @access  public
+	 */
+	public static function get_reusable_block_ids( $blocks ) {
+		$ids = array();
+
+		foreach ( $blocks as $block ) {
+			if ( 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] ) ) {
+				$ids[] = (int) $block['attrs']['ref'];
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$ids = array_merge( $ids, self::get_reusable_block_ids( $block['innerBlocks'] ) );
+			}
+		}
+
+		return array_values( array_unique( $ids ) );
 	}
 
 	/**
