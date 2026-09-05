@@ -366,4 +366,32 @@ class Test_Registration extends WP_UnitTestCase {
 			$this->assertTrue( class_exists( $classname ), $classname . ' is registered as an AMP block but cannot be loaded.' );
 		}
 	}
+
+	/**
+	 * Circular reusable block references must not recurse indefinitely.
+	 */
+	public function test_enqueue_dependencies_stops_at_a_reusable_block_cycle() {
+		$first = $this->factory()->post->create(
+			array(
+				'post_type'   => 'wp_block',
+				'post_status' => 'publish',
+			)
+		);
+		$second = $this->factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => '<!-- wp:block {"ref":' . $first . '} /-->',
+			)
+		);
+
+		wp_update_post(
+			array(
+				'ID'           => $first,
+				'post_content' => '<!-- wp:block {"ref":' . $second . '} /-->',
+			)
+		);
+
+		$this->assertNull( ( new Registration() )->enqueue_dependencies( $first ) );
+	}
 }
