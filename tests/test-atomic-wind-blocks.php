@@ -1137,6 +1137,17 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Helper: set cached CSS for a post.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $css CSS string.
+	 */
+	private function set_cached_css( $post_id, $css ) {
+		update_post_meta( $post_id, '_atomic_wind_css', $css );
+		update_post_meta( $post_id, '_atomic_wind_css_version', Atomic_Wind_Blocks::ATOMIC_WIND_CSS_VERSION );
+	}
+
 	// -------------------------------------------------------
 	// Save-time CSS warm (hidden-iframe render)
 	// -------------------------------------------------------
@@ -1288,8 +1299,8 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 		$a = $this->make_atomic_wind_post( 'flex' );
 		$b = $this->make_atomic_wind_post( 'grid' );
-		update_post_meta( $a, '_atomic_wind_css', '.flex{display:flex}' );
-		update_post_meta( $b, '_atomic_wind_css', '.grid{display:grid}' );
+		$this->set_cached_css( $a, '.flex{display:flex}' );
+		$this->set_cached_css( $b, '.grid{display:grid}' );
 
 		global $post;
 		$post = get_post( $a );
@@ -1316,8 +1327,8 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 		$a = $this->make_atomic_wind_post( 'flex' );
 		$b = $this->make_atomic_wind_post( 'flex' );
-		update_post_meta( $a, '_atomic_wind_css', '.flex{display:flex}' );
-		update_post_meta( $b, '_atomic_wind_css', '.flex{display:flex}' );
+		$this->set_cached_css( $a, '.flex{display:flex}' );
+		$this->set_cached_css( $b, '.flex{display:flex}' );
 
 		global $post;
 		$post = get_post( $a );
@@ -1341,7 +1352,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->reset_style_globals();
 
 		$post_id = $this->make_atomic_wind_post( 'flex' );
-		update_post_meta( $post_id, '_atomic_wind_css', '.flex{display:flex}' );
+		$this->set_cached_css( $post_id, '.flex{display:flex}' );
 
 		$GLOBALS['wp_query']->posts = array( get_post( $post_id ) );
 
@@ -1358,7 +1369,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->instance->enqueue_base_css();
 
 		$late = $this->make_atomic_wind_post( 'flex' );
-		update_post_meta( $late, '_atomic_wind_css', '.late{color:blue}' );
+		$this->set_cached_css( $late, '.late{color:blue}' );
 
 		global $post;
 		$post = get_post( $late );
@@ -1384,7 +1395,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		update_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
 
 		$late = $this->make_atomic_wind_post( 'flex' );
-		update_post_meta( $late, '_atomic_wind_css', '.footer-callback{color:purple}' );
+		$this->set_cached_css( $late, '.footer-callback{color:purple}' );
 
 		global $post;
 		$post = get_post( $late );
@@ -1414,7 +1425,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->reset_in_query( false );
 
 		$late = $this->make_atomic_wind_post( 'flex' );
-		update_post_meta( $late, '_atomic_wind_css', '.late{color:blue}' );
+		$this->set_cached_css( $late, '.late{color:blue}' );
 
 		global $post;
 		$post = get_post( $late );
@@ -1435,7 +1446,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->reset_style_globals();
 
 		$singular = $this->make_atomic_wind_post( 'flex' );
-		update_post_meta( $singular, '_atomic_wind_css', '.flex{display:flex}' );
+		$this->set_cached_css( $singular, '.flex{display:flex}' );
 
 		$this->go_to( get_permalink( $singular ) );
 		$this->instance->enqueue_base_css();
@@ -1458,11 +1469,47 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
 	}
 
+	public function test_output_singular_css_regenerates_css_from_an_older_generator() {
+		$this->reset_style_globals();
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+		// Stylesheet cached before the resets were scoped to Atomic Wind blocks.
+		update_post_meta( $singular, '_atomic_wind_css', 'h1{font-size:inherit}' );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->output_singular_css();
+
+		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_rest_save_style_stamps_the_generator_version() {
+		$request = new WP_REST_Request( 'POST', '/otter/v1/atomic-wind/style' );
+		$request->set_param( 'postId', $this->post_id );
+		$request->set_param( 'css', '.flex{display:flex}' );
+
+		$this->instance->rest_save_style( $request );
+
+		$this->assertSame(
+			Atomic_Wind_Blocks::ATOMIC_WIND_CSS_VERSION,
+			get_post_meta( $this->post_id, '_atomic_wind_css_version', true )
+		);
+	}
+
+	public function test_clear_cached_css_drops_the_version_stamp() {
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		$this->set_cached_css( $post_id, '.flex{display:flex}' );
+
+		$this->instance->clear_cached_css( $post_id );
+
+		$this->assertSame( '', get_post_meta( $post_id, '_atomic_wind_css_version', true ) );
+	}
+
 	public function test_output_singular_css_noop_on_non_singular_views() {
 		$this->reset_style_globals();
 
 		$listed = $this->make_atomic_wind_post( 'flex' );
-		update_post_meta( $listed, '_atomic_wind_css', '.flex{display:flex}' );
+		$this->set_cached_css( $listed, '.flex{display:flex}' );
 
 		$this->go_to( home_url( '/' ) );
 		$this->instance->output_singular_css();
@@ -1476,7 +1523,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->reset_in_query( false );
 
 		$singular = $this->make_atomic_wind_post( 'flex' );
-		update_post_meta( $singular, '_atomic_wind_css', '.flex{display:flex}' );
+		$this->set_cached_css( $singular, '.flex{display:flex}' );
 
 		$this->go_to( get_permalink( $singular ) );
 		$this->instance->output_singular_css();

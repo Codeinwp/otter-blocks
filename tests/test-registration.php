@@ -8,6 +8,73 @@
 use ThemeIsle\GutenbergBlocks\Registration;
 
 /**
+ * Renderer whose constructor touches a class that is absent from the deployed
+ * artifact: `class_exists()` on the renderer passes, `new` fatals.
+ */
+class Otter_Renderer_With_Missing_Dependency {
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		new Otter_Dependency_That_Does_Not_Exist();
+	}
+
+	/**
+	 * Render the block.
+	 *
+	 * @param array $attributes Block attributes.
+	 * @return string
+	 */
+	public function render( $attributes ) {
+		return '';
+	}
+}
+
+/**
+ * Renderer that cannot be instantiated: a singleton with a private constructor.
+ */
+class Otter_Renderer_With_Private_Constructor {
+	/**
+	 * Constructor.
+	 */
+	private function __construct() {
+	}
+
+	/**
+	 * Render the block.
+	 *
+	 * @param array $attributes Block attributes.
+	 * @return string
+	 */
+	public function render( $attributes ) {
+		return '';
+	}
+}
+
+/**
+ * Renderer whose constructor takes a required argument.
+ */
+class Otter_Renderer_Requiring_Arguments {
+	/**
+	 * Constructor.
+	 *
+	 * @param string $required Required dependency.
+	 */
+	public function __construct( $required ) {
+	}
+
+	/**
+	 * Render the block.
+	 *
+	 * @param array $attributes Block attributes.
+	 * @return string
+	 */
+	public function render( $attributes ) {
+		return '';
+	}
+}
+
+/**
  * Editor localization tests: the global defaults handed to the editor must
  * always be an object, or every block's Edit component crashes on null.
  */
@@ -87,7 +154,7 @@ class Test_Registration extends WP_UnitTestCase {
 	 * bootstrap, so the plugin's blocks are unregistered first to keep this a
 	 * clean registration instead of "already registered" notices.
 	 *
-	 * @param string $classname                Renderer class to map form-captcha to.
+	 * @param mixed  $classname                Renderer class to map form-captcha to.
 	 * @param string $expected_include_failure Path whose failed include is expected, or empty if no include failure is expected.
 	 * @return void
 	 */
@@ -243,5 +310,60 @@ class Test_Registration extends WP_UnitTestCase {
 
 		$this->assertFalse( class_exists( $class, false ), 'The renderer class must not have been defined.' );
 		$this->assertCaptchaRegisteredWithoutRenderer();
+	}
+
+	/**
+	 * The renderer class loads, but its constructor references a class that is
+	 * missing — the reported "class not found" fatal. Registration must fall back
+	 * instead of taking the request down.
+	 */
+	public function test_register_blocks_survives_renderer_whose_constructor_hits_a_missing_class() {
+		$this->register_blocks_with_captcha_renderer( 'Otter_Renderer_With_Missing_Dependency' );
+
+		$this->assertCaptchaRegisteredWithoutRenderer();
+	}
+
+	/**
+	 * A loadable but uninstantiable renderer (abstract class, or a singleton with
+	 * a private constructor) must degrade too.
+	 */
+	public function test_register_blocks_survives_uninstantiable_renderer() {
+		$this->register_blocks_with_captcha_renderer( 'Otter_Renderer_With_Private_Constructor' );
+
+		$this->assertCaptchaRegisteredWithoutRenderer();
+	}
+
+	/**
+	 * A renderer whose constructor requires arguments cannot be built with `new`.
+	 */
+	public function test_register_blocks_survives_renderer_requiring_constructor_arguments() {
+		$this->register_blocks_with_captcha_renderer( 'Otter_Renderer_Requiring_Arguments' );
+
+		$this->assertCaptchaRegisteredWithoutRenderer();
+	}
+
+	/**
+	 * A non-string entry injected through the filter must not reach
+	 * `class_exists()`, which throws a TypeError on those in PHP 8.
+	 */
+	public function test_register_blocks_survives_non_string_renderer_entry() {
+		$this->register_blocks_with_captcha_renderer( array( 'Otter_Renderer_With_Private_Constructor' ) );
+
+		$this->assertCaptchaRegisteredWithoutRenderer();
+	}
+
+	/**
+	 * The AMP list has no filter to inject through, so the guard there is covered
+	 * by running it: it must complete, and every class it ships must still be
+	 * loadable, which is what a stale classmap would break.
+	 */
+	public function test_init_amp_blocks_completes_and_ships_loadable_classes() {
+		( new Registration() )->init_amp_blocks();
+
+		foreach ( array( 'Circle_Counter_Block', 'Lottie_Block', 'Slider_Block' ) as $short ) {
+			$classname = '\\ThemeIsle\\GutenbergBlocks\\Render\\AMP\\' . $short;
+
+			$this->assertTrue( class_exists( $classname ), $classname . ' is registered as an AMP block but cannot be loaded.' );
+		}
 	}
 }

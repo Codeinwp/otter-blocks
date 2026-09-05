@@ -16,6 +16,13 @@ namespace ThemeIsle\GutenbergBlocks\Plugins;
 class Atomic_Wind_Blocks {
 
 	/**
+	 * CSS version for the Atomic Wind blocks.
+	 *
+	 * @var string
+	 */
+	const ATOMIC_WIND_CSS_VERSION = '1.0.0';
+
+	/**
 	 * Whether we are currently inside a query loop render.
 	 *
 	 * @var bool
@@ -326,7 +333,7 @@ class Atomic_Wind_Blocks {
 		$this->expected[ $queried->ID ] = substr_count( $queried->post_content, '<!-- wp:atomic-wind/' );
 		wp_enqueue_style( 'atomic-wind-base' );
 
-		$cached_css = get_post_meta( $queried->ID, '_atomic_wind_css', true );
+		$cached_css = $this->get_cached_css( $queried->ID );
 
 		if ( ! $cached_css ) {
 			$this->enqueue_generator();
@@ -353,7 +360,7 @@ class Atomic_Wind_Blocks {
 
 		if ( ! $queried instanceof \WP_Post
 			|| ! $this->post_has_atomic_wind_blocks( $queried )
-			|| get_post_meta( $queried->ID, '_atomic_wind_css', true )
+			|| $this->get_cached_css( $queried->ID )
 			|| ! current_user_can( 'edit_post', $queried->ID ) ) {
 			return;
 		}
@@ -435,7 +442,7 @@ class Atomic_Wind_Blocks {
 				if ( $post instanceof \WP_Post && $this->post_has_atomic_wind_blocks( $post ) ) {
 					$this->expected[ $id ] = substr_count( $post->post_content, '<!-- wp:atomic-wind/' );
 
-					$cached_css = get_post_meta( $id, '_atomic_wind_css', true );
+					$cached_css = $this->get_cached_css( $id );
 
 					if ( $cached_css ) {
 						$hash = md5( $cached_css );
@@ -507,8 +514,25 @@ class Atomic_Wind_Blocks {
 		$css     = $request->get_param( 'css' );
 
 		$success = update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $css ) );
+		update_post_meta( $post_id, '_atomic_wind_css_version', self::ATOMIC_WIND_CSS_VERSION );
 
 		return new \WP_REST_Response( array( 'success' => $success ), 200 );
+	}
+
+	/**
+	 * Read cached CSS, ignoring stylesheets built by an older generator.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string
+	 */
+	private function get_cached_css( $post_id ) {
+		if ( self::ATOMIC_WIND_CSS_VERSION !== get_post_meta( $post_id, '_atomic_wind_css_version', true ) ) {
+			return '';
+		}
+
+		$css = get_post_meta( $post_id, '_atomic_wind_css', true );
+
+		return is_string( $css ) ? $css : '';
 	}
 
 	/**
@@ -534,6 +558,7 @@ class Atomic_Wind_Blocks {
 	 */
 	public function clear_cached_css( $post_id ) {
 		delete_post_meta( $post_id, '_atomic_wind_css' );
+		delete_post_meta( $post_id, '_atomic_wind_css_version' );
 	}
 
 	/**

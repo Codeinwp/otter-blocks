@@ -98,6 +98,38 @@ class Registration {
 	}
 
 	/**
+	 * Get the `className` attribute of a block as a string.
+	 *
+	 * @param mixed $attributes Block attributes.
+	 * @return string
+	 */
+	public static function get_class_name( $attributes ) {
+		if ( ! is_array( $attributes ) || ! isset( $attributes['className'] ) ) {
+			return '';
+		}
+
+		$class_name = $attributes['className'];
+
+		if ( is_array( $class_name ) ) {
+			// Flatten nested arrays and drop anything that is not printable.
+			$flat = array();
+
+			array_walk_recursive(
+				$class_name,
+				function ( $value ) use ( &$flat ) {
+					if ( is_scalar( $value ) ) {
+						$flat[] = (string) $value;
+					}
+				}
+			);
+
+			return implode( ' ', $flat );
+		}
+
+		return is_scalar( $class_name ) ? (string) $class_name : '';
+	}
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -633,6 +665,7 @@ class Registration {
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
 						'submission'           => __( 'Form submission from', 'otter-blocks' ),
+						'success'              => __( 'Success', 'otter-blocks' ),
 						'captcha-not-loaded'   => __( 'Captcha is not loaded. Please check your browser plugins to allow it.', 'otter-blocks' ),
 						'check-captcha'        => __( 'Please check the captcha.', 'otter-blocks' ),
 						'invalid-email'        => __( 'The email address is invalid!', 'otter-blocks' ),
@@ -968,24 +1001,78 @@ class Registration {
 				);
 			}
 
-			if ( isset( $dynamic_blocks[ $block ] ) && class_exists( $dynamic_blocks[ $block ] ) ) {
-				$classname = $dynamic_blocks[ $block ];
-				$renderer  = new $classname();
+			$renderer = isset( $dynamic_blocks[ $block ] ) ? self::instantiate_safely( $dynamic_blocks[ $block ] ) : null;
 
-				if ( method_exists( $renderer, 'render' ) ) {
-					register_block_type_from_metadata(
-						$metadata_file,
-						array(
-							'render_callback' => array( $renderer, 'render' ),
-						)
-					);
+			if ( null !== $renderer && method_exists( $renderer, 'render' ) ) {
+				register_block_type_from_metadata(
+					$metadata_file,
+					array(
+						'render_callback' => array( $renderer, 'render' ),
+					)
+				);
 
-					continue;
-				}
+				continue;
 			}
 
 			register_block_type_from_metadata( $metadata_file );
 		}
+	}
+
+	/**
+	 * Instantiate a class without ever fataling the request.
+	 *
+	 * @param mixed $classname Class name to instantiate.
+	 * @return object|null The instance, or null when it cannot be built.
+	 */
+	private static function instantiate_safely( $classname ) {
+		if ( ! is_string( $classname ) || '' === trim( $classname ) ) {
+			self::log_skipped_class( $classname, 'is not a class name' );
+
+			return null;
+		}
+
+		try {
+			// An autoloader can throw or fatal on its own; keep it inside the try.
+			if ( ! class_exists( $classname ) ) {
+				self::log_skipped_class( $classname, 'could not be loaded' );
+
+				return null;
+			}
+
+			$reflection = new \ReflectionClass( $classname );
+
+			if ( ! $reflection->isInstantiable() ) {
+				self::log_skipped_class( $classname, 'is not instantiable' );
+
+				return null;
+			}
+
+			$constructor = $reflection->getConstructor();
+
+			if ( null !== $constructor && $constructor->getNumberOfRequiredParameters() > 0 ) {
+				self::log_skipped_class( $classname, 'requires constructor arguments' );
+
+				return null;
+			}
+
+			return $reflection->newInstance();
+		} catch ( \Throwable $e ) {
+			// Covers Error too: a missing dependency inside the constructor.
+			self::log_skipped_class( $classname, 'threw while being instantiated: ' . $e->getMessage() );
+
+			return null;
+		}
+	}
+
+	/**
+	 * Log a class the plugin had to skip.
+	 *
+	 * @param mixed  $classname Class name, or whatever was given in its place.
+	 * @param string $reason    Why it was skipped.
+	 * @return void
+	 */
+	private static function log_skipped_class( $classname, $reason ) {
+		error_log( '[Otter Blocks] Skipped ' . ( is_string( $classname ) ? $classname : gettype( $classname ) ) . ': ' . $reason . '.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 	}
 
 	/**
@@ -1002,10 +1089,10 @@ class Registration {
 		);
 
 		foreach ( $classnames as $classname ) {
-			$classname = new $classname();
+			$instance = self::instantiate_safely( $classname );
 
-			if ( method_exists( $classname, 'instance' ) ) {
-				$classname->instance();
+			if ( null !== $instance && method_exists( $instance, 'instance' ) ) {
+				$instance->instance();
 			}
 		}
 	}
@@ -1075,7 +1162,7 @@ class Registration {
 		$has_navigation_block = \WP_Block_Type_Registry::get_instance()->is_registered( 'core/navigation' );
 
 		if ( $has_navigation_block && ( 'core/navigation-link' === $block['blockName'] || 'core/navigation-submenu' === $block['blockName'] ) ) {
-			if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'fa-' ) !== false ) {
+			if ( strpos( self::get_class_name( isset( $block['attrs'] ) ? $block['attrs'] : array() ), 'fa-' ) !== false ) {
 				self::$is_fa_loaded = true;
 
 				// See the src/blocks/plugins/menu-icons/inline.css file for where this comes from.
@@ -1117,7 +1204,7 @@ class Registration {
 			return $block_content;
 		}
 
-		if ( isset( $block['attrs']['className'] ) && false !== strpos( $block['attrs']['className'], 'o-sticky' ) ) {
+		if ( false !== strpos( self::get_class_name( isset( $block['attrs'] ) ? $block['attrs'] : array() ), 'o-sticky' ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
 			wp_enqueue_script(
 				'otter-sticky',
@@ -1196,7 +1283,7 @@ class Registration {
 	 * @access public
 	 */
 	public static function condition_hide_on_style() {
-		echo '<style id="o-condition-hide-inline-css">@media (max-width:768px){.o-hide-on-mobile{display:none!important}}@media (min-width:769px) and (max-width:1024px){.o-hide-on-tablet{display:none!important}}@media (min-width:1025px){.o-hide-on-desktop{display:none!important}}</style>';
+		echo '<style id="o-condition-hide-inline-css">@layer theme, base, components, utilities;@media (max-width:768px){@layer utilities{.o-hide-on-mobile:is(.o-hide-on-mobile,#_){display:none!important}}}@media (min-width:769px) and (max-width:1024px){@layer utilities{.o-hide-on-tablet:is(.o-hide-on-tablet,#_){display:none!important}}}@media (min-width:1025px){@layer utilities{.o-hide-on-desktop:is(.o-hide-on-desktop,#_){display:none!important}}}</style>';
 	}
 
 	/**

@@ -209,4 +209,120 @@ class Test_SVG_Upload extends WP_UnitTestCase {
 		$this->assertContains( 'border-radius', $result );
 		$this->assertContains( 'transform', $result );
 	}
+
+	/**
+	 * Create an SVG attachment post for the supplied file path.
+	 *
+	 * @param string $file Attached file path to store, may be empty.
+	 * @return int
+	 */
+	private function create_svg_attachment( $file ) {
+		$attachment_id = $this->factory()->attachment->create_object(
+			array(
+				'file'           => $file,
+				'post_mime_type' => 'image/svg+xml',
+			)
+		);
+
+		return $attachment_id;
+	}
+
+	/**
+	 * A missing SVG file must not fatal, and metadata is returned untouched.
+	 */
+	public function test_generate_svg_attachment_metadata_with_missing_file() {
+		$main          = new ThemeIsle\GutenbergBlocks\Main();
+		$attachment_id = $this->create_svg_attachment( '/does/not/exist/missing.svg' );
+		$metadata      = array( 'sizes' => array() );
+
+		$result = $main->generate_svg_attachment_metadata( $metadata, $attachment_id );
+
+		$this->assertSame( $metadata, $result );
+
+		wp_delete_attachment( $attachment_id, true );
+	}
+
+	/**
+	 * get_attached_file() returning false must not fatal.
+	 */
+	public function test_generate_svg_attachment_metadata_when_attached_file_is_false() {
+		$main          = new ThemeIsle\GutenbergBlocks\Main();
+		$attachment_id = $this->create_svg_attachment( '' );
+		$metadata      = array( 'sizes' => array() );
+
+		$force_false = '__return_false';
+		add_filter( 'get_attached_file', $force_false );
+
+		$result = $main->generate_svg_attachment_metadata( $metadata, $attachment_id );
+
+		remove_filter( 'get_attached_file', $force_false );
+
+		$this->assertSame( $metadata, $result );
+
+		wp_delete_attachment( $attachment_id, true );
+	}
+
+	/**
+	 * A file that is not valid XML must not fatal.
+	 */
+	public function test_generate_svg_attachment_metadata_with_malformed_svg() {
+		$main      = new ThemeIsle\GutenbergBlocks\Main();
+		$svg_path  = wp_tempnam( 'broken.svg' );
+		file_put_contents( $svg_path, '<svg width="10" height="10">' );
+
+		$attachment_id = $this->create_svg_attachment( $svg_path );
+		$metadata      = array( 'sizes' => array() );
+
+		$result = $main->generate_svg_attachment_metadata( $metadata, $attachment_id );
+
+		$this->assertSame( $metadata, $result );
+
+		wp_delete_attachment( $attachment_id, true );
+		if ( file_exists( $svg_path ) ) {
+			unlink( $svg_path );
+		}
+	}
+
+	/**
+	 * A valid SVG still gets its dimensions filled in.
+	 */
+	public function test_generate_svg_attachment_metadata_with_valid_svg() {
+		$main     = new ThemeIsle\GutenbergBlocks\Main();
+		$svg_path = wp_tempnam( 'valid.svg' );
+		file_put_contents( $svg_path, '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="42"></svg>' );
+
+		$attachment_id = $this->create_svg_attachment( $svg_path );
+
+		$result = $main->generate_svg_attachment_metadata( array( 'sizes' => array() ), $attachment_id );
+
+		$this->assertSame( 24, $result['width'] );
+		$this->assertSame( 42, $result['height'] );
+		$this->assertSame( basename( $svg_path ), $result['file'] );
+
+		wp_delete_attachment( $attachment_id, true );
+		if ( file_exists( $svg_path ) ) {
+			unlink( $svg_path );
+		}
+	}
+
+	/**
+	 * An SVG without width/height attributes must not produce zeroed dimensions.
+	 */
+	public function test_generate_svg_attachment_metadata_without_dimension_attributes() {
+		$main     = new ThemeIsle\GutenbergBlocks\Main();
+		$svg_path = wp_tempnam( 'no-dimensions.svg' );
+		file_put_contents( $svg_path, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 42"></svg>' );
+
+		$attachment_id = $this->create_svg_attachment( $svg_path );
+		$metadata      = array( 'sizes' => array() );
+
+		$result = $main->generate_svg_attachment_metadata( $metadata, $attachment_id );
+
+		$this->assertSame( $metadata, $result );
+
+		wp_delete_attachment( $attachment_id, true );
+		if ( file_exists( $svg_path ) ) {
+			unlink( $svg_path );
+		}
+	}
 }

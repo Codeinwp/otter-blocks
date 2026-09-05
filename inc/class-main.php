@@ -529,10 +529,28 @@ class Main {
 		}
 
 		$svg_path = get_attached_file( $attachment_id );
+
+		if ( empty( $svg_path ) || ! file_exists( $svg_path ) || ! is_readable( $svg_path ) ) {
+			return $metadata;
+		}
+
 		$filename = basename( $svg_path );
 
-		$svg        = simplexml_load_file( $svg_path );
+		// Keep malformed SVG errors internal instead of emitting PHP warnings.
+		$previous_state = libxml_use_internal_errors( true );
+		$svg            = simplexml_load_file( $svg_path );
+		libxml_clear_errors();
+		libxml_use_internal_errors( $previous_state );
+
+		if ( false === $svg ) {
+			return $metadata;
+		}
+
 		$attributes = $svg->attributes();
+
+		if ( ! isset( $attributes->width, $attributes->height ) ) {
+			return $metadata;
+		}
 
 		// Update metadata with SVG dimensions.
 		$metadata['width']  = intval( (string) $attributes->width );
