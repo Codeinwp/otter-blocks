@@ -27,6 +27,52 @@ class Otter_Autoload_Probe {
 }
 
 /**
+ * Abstract entry: class_exists() is true for it, but `new` raises an Error.
+ */
+abstract class Otter_Autoload_Abstract_Probe {}
+
+/**
+ * Entry whose constructor raises an Error, standing in for a constructor that
+ * reaches for a class from a plugin that is no longer loaded.
+ */
+class Otter_Autoload_Throwing_Probe {
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		throw new \Error( 'Class "Gone_Away" not found' );
+	}
+}
+
+/**
+ * Entry whose constructor requires an argument, so it cannot be built from a bare class name.
+ */
+class Otter_Autoload_Required_Arg_Probe {
+	/**
+	 * Constructor.
+	 *
+	 * @param string $required A required argument.
+	 */
+	public function __construct( $required ) {
+		unset( $required );
+	}
+}
+
+/**
+ * Entry whose instance() raises an Error after the constructor succeeded.
+ */
+class Otter_Autoload_Throwing_Instance_Probe {
+	/**
+	 * Boot the module.
+	 *
+	 * @return void
+	 */
+	public function instance() {
+		throw new \Error( 'Class "Gone_Away" not found' );
+	}
+}
+
+/**
  * Main autoloader test case.
  */
 class TestMainAutoload extends WP_UnitTestCase {
@@ -73,6 +119,70 @@ class TestMainAutoload extends WP_UnitTestCase {
 		( new Main() )->autoload_classes();
 
 		$this->assertTrue( Otter_Autoload_Probe::$instantiated );
+	}
+
+	/**
+	 * An abstract class passes class_exists() but cannot be instantiated; it must not fatal the request.
+	 */
+	public function test_autoload_classes_skips_abstract_class() {
+		add_filter(
+			'otter_blocks_autoloader',
+			function () {
+				return array( 'Otter_Autoload_Abstract_Probe', 'Otter_Autoload_Probe' );
+			}
+		);
+
+		( new Main() )->autoload_classes();
+
+		$this->assertTrue( Otter_Autoload_Probe::$instantiated, 'Classes listed after an abstract one should still be instantiated.' );
+	}
+
+	/**
+	 * A constructor that raises an Error must be contained, not fatal the request.
+	 */
+	public function test_autoload_classes_survives_a_throwing_constructor() {
+		add_filter(
+			'otter_blocks_autoloader',
+			function () {
+				return array( 'Otter_Autoload_Throwing_Probe', 'Otter_Autoload_Probe' );
+			}
+		);
+
+		( new Main() )->autoload_classes();
+
+		$this->assertTrue( Otter_Autoload_Probe::$instantiated, 'Classes listed after a throwing constructor should still be instantiated.' );
+	}
+
+	/**
+	 * An instance() call that raises an Error must be contained too.
+	 */
+	public function test_autoload_classes_survives_a_throwing_instance_call() {
+		add_filter(
+			'otter_blocks_autoloader',
+			function () {
+				return array( 'Otter_Autoload_Throwing_Instance_Probe', 'Otter_Autoload_Probe' );
+			}
+		);
+
+		( new Main() )->autoload_classes();
+
+		$this->assertTrue( Otter_Autoload_Probe::$instantiated, 'Classes listed after a throwing instance() should still be instantiated.' );
+	}
+
+	/**
+	 * A class needing constructor arguments cannot be built from a bare name; it must not fatal the request.
+	 */
+	public function test_autoload_classes_skips_class_requiring_constructor_arguments() {
+		add_filter(
+			'otter_blocks_autoloader',
+			function () {
+				return array( 'Otter_Autoload_Required_Arg_Probe', 'Otter_Autoload_Probe' );
+			}
+		);
+
+		( new Main() )->autoload_classes();
+
+		$this->assertTrue( Otter_Autoload_Probe::$instantiated, 'Classes listed after one requiring constructor arguments should still be instantiated.' );
 	}
 
 	/**
