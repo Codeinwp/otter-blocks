@@ -5,6 +5,7 @@ import preflightCSS from 'tailwindcss/preflight.css';
 import themeCSS from 'tailwindcss/theme.css';
 import utilitiesCSS from 'tailwindcss/utilities.css';
 import { prefixCss, scopeToAtomicWind } from './scope-css';
+import { observePreviewBody } from './preview-observer';
 
 const assets = {
 	index: indexCSS,
@@ -339,17 +340,10 @@ function bootstrapPreviewFrame() {
 		( window.requestAnimationFrame || window.setTimeout )( apply );
 	};
 
-	schedule();
-
 	// Parent injects markup after load; regenerate when it arrives. Body only,
 	// so our own <head> style writes can't retrigger this.
 	const observer = new MutationObserver( schedule );
-	observer.observe( document.body, {
-		attributes: true,
-		attributeFilter: [ 'class' ],
-		childList: true,
-		subtree: true,
-	} );
+	observePreviewBody( observer, schedule );
 }
 
 function start() {
