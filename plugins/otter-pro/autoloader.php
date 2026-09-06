@@ -117,15 +117,15 @@ class Autoloader {
 			// replace the namespace prefix with the base directory,
 			// replace namespace separators with directory separators
 			// in the relative class name, append with .php.
-			$relative_class = strtolower( str_replace( '\\', '/', $relative_class ) );
-			$relative_class = str_replace( '_', '-', $relative_class );
+			$relative_path = strtolower( str_replace( '\\', '/', $relative_class ) );
+			$relative_path = str_replace( '_', '-', $relative_path );
 
-			if ( strpos( $relative_class, '/' ) !== false ) {
-				$relative_class = strrev( implode( strrev( '/class-' ), explode( strrev( '/' ), strrev( $relative_class ), 2 ) ) );
+			if ( strpos( $relative_path, '/' ) !== false ) {
+				$relative_path = strrev( implode( strrev( '/class-' ), explode( strrev( '/' ), strrev( $relative_path ), 2 ) ) );
 			} else {
-				$relative_class = 'class-' . $relative_class;
+				$relative_path = 'class-' . $relative_path;
 			}
-			$file = $base_dir . $relative_class . '.php';
+			$file = $base_dir . $relative_path . '.php';
 
 			// if the mapped file exists, require it.
 			if ( $this->require_file( $file ) ) {
@@ -141,11 +141,18 @@ class Autoloader {
 	/**
 	 * If a file exists, require it from the file system.
 	 *
+	 * A missing or unreadable file is skipped instead of fataling the request,
+	 * so a partial or broken install degrades rather than white-screening.
+	 *
 	 * @param string $file The file to require.
-	 * @return bool True if the file exists, false if not.
+	 * @return bool True if the file was required, false if not.
 	 */
 	protected function require_file( $file ) {
-		require $file;
+		if ( '' === $file || ! is_file( $file ) || ! is_readable( $file ) ) {
+			return false;
+		}
+
+		require_once $file;
 		return true;
 	}
 }
