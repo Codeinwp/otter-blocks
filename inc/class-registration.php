@@ -1001,7 +1001,7 @@ class Registration {
 				);
 			}
 
-			$renderer = isset( $dynamic_blocks[ $block ] ) ? self::instantiate_safely( $dynamic_blocks[ $block ] ) : null;
+			$renderer = isset( $dynamic_blocks[ $block ] ) ? Loader::instantiate( $dynamic_blocks[ $block ] ) : null;
 
 			if ( null !== $renderer && method_exists( $renderer, 'render' ) ) {
 				register_block_type_from_metadata(
@@ -1019,63 +1019,6 @@ class Registration {
 	}
 
 	/**
-	 * Instantiate a class without ever fataling the request.
-	 *
-	 * @param mixed $classname Class name to instantiate.
-	 * @return object|null The instance, or null when it cannot be built.
-	 */
-	private static function instantiate_safely( $classname ) {
-		if ( ! is_string( $classname ) || '' === trim( $classname ) ) {
-			self::log_skipped_class( $classname, 'is not a class name' );
-
-			return null;
-		}
-
-		try {
-			// An autoloader can throw or fatal on its own; keep it inside the try.
-			if ( ! class_exists( $classname ) ) {
-				self::log_skipped_class( $classname, 'could not be loaded' );
-
-				return null;
-			}
-
-			$reflection = new \ReflectionClass( $classname );
-
-			if ( ! $reflection->isInstantiable() ) {
-				self::log_skipped_class( $classname, 'is not instantiable' );
-
-				return null;
-			}
-
-			$constructor = $reflection->getConstructor();
-
-			if ( null !== $constructor && $constructor->getNumberOfRequiredParameters() > 0 ) {
-				self::log_skipped_class( $classname, 'requires constructor arguments' );
-
-				return null;
-			}
-
-			return $reflection->newInstance();
-		} catch ( \Throwable $e ) {
-			// Covers Error too: a missing dependency inside the constructor.
-			self::log_skipped_class( $classname, 'threw while being instantiated: ' . $e->getMessage() );
-
-			return null;
-		}
-	}
-
-	/**
-	 * Log a class the plugin had to skip.
-	 *
-	 * @param mixed  $classname Class name, or whatever was given in its place.
-	 * @param string $reason    Why it was skipped.
-	 * @return void
-	 */
-	private static function log_skipped_class( $classname, $reason ) {
-		error_log( '[Otter Blocks] Skipped ' . ( is_string( $classname ) ? $classname : gettype( $classname ) ) . ': ' . $reason . '.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-	}
-
-	/**
 	 * Initialize AMP blocks.
 	 *
 	 * @since   1.0.0
@@ -1089,11 +1032,7 @@ class Registration {
 		);
 
 		foreach ( $classnames as $classname ) {
-			$instance = self::instantiate_safely( $classname );
-
-			if ( null !== $instance && method_exists( $instance, 'instance' ) ) {
-				$instance->instance();
-			}
+			Loader::boot( $classname );
 		}
 	}
 

@@ -340,7 +340,11 @@ class Base_CSS {
 
 		foreach ( $blocks as $block ) {
 			foreach ( self::$blocks_classes as $classname ) {
-				$path = new $classname();
+				$path = Loader::instantiate( $classname );
+
+				if ( null === $path ) {
+					continue;
+				}
 
 				if ( method_exists( $path, 'render_css' ) && isset( $path->block_prefix ) ) {
 					if ( ( isset( $path->library_prefix ) ? $path->library_prefix : $this->library_prefix ) . '/' . $path->block_prefix === $block['blockName'] ) {
@@ -709,7 +713,11 @@ class Base_CSS {
 	public function cycle_through_global_styles() {
 		$style = '';
 		foreach ( self::$blocks_classes as $classname ) {
-			$path = new $classname();
+			$path = Loader::instantiate( $classname );
+
+			if ( null === $path ) {
+				continue;
+			}
 
 			if ( method_exists( $path, 'render_global_css' ) ) {
 				$style .= $path->render_global_css();
