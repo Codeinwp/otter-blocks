@@ -75,6 +75,8 @@ namespace {
 		}
 	);
 
+	// Base_CSS reads block class names through Registration::get_class_name().
+	require OTTER_BLOCKS_PATH . '/inc/class-registration.php';
 	require OTTER_BLOCKS_PATH . '/inc/class-base-css.php';
 
 	$base   = new \ThemeIsle\GutenbergBlocks\Base_CSS();

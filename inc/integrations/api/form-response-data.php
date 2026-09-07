@@ -105,8 +105,8 @@ class Form_Data_Response {
 		$this->response['success']       = false;
 		$this->response['reasons']       = array();
 		$this->response['code']          = self::SUCCESS_EMAIL_SEND;
-		$this->response['displayError']  = 'Error. Please try again.';
-		$this->response['submitMessage'] = 'Success';
+		$this->response['displayError']  = __( 'Error. Please try again.', 'otter-blocks' );
+		$this->response['submitMessage'] = __( 'Success', 'otter-blocks' );
 	}
 
 	/**

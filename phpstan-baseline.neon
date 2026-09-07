@@ -421,12 +421,6 @@ parameters:
 			path: inc/class-pro.php
 
 		-
-			rawMessage: 'Call to function method_exists() with ThemeIsle\GutenbergBlocks\Render\AMP\Circle_Counter_Block|ThemeIsle\GutenbergBlocks\Render\AMP\Lottie_Block|ThemeIsle\GutenbergBlocks\Render\AMP\Slider_Block and ''instance'' will always evaluate to true.'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: inc/class-registration.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Registration::block_categories() has parameter $categories with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1

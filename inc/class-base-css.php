@@ -340,7 +340,11 @@ class Base_CSS {
 
 		foreach ( $blocks as $block ) {
 			foreach ( self::$blocks_classes as $classname ) {
-				$path = new $classname();
+				$path = Loader::instantiate( $classname );
+
+				if ( null === $path ) {
+					continue;
+				}
 
 				if ( method_exists( $path, 'render_css' ) && isset( $path->block_prefix ) ) {
 					if ( ( isset( $path->library_prefix ) ? $path->library_prefix : $this->library_prefix ) . '/' . $path->block_prefix === $block['blockName'] ) {
@@ -683,10 +687,10 @@ class Base_CSS {
 		);
 
 		foreach ( $blocks as $block ) {
-			if ( isset( $block['attrs']['className'] ) && ! empty( $block['attrs']['className'] ) ) {
-				if ( preg_match( '/\banimated\b/', $block['attrs']['className'] ) ) {
-					$classes = array_merge( $classes, explode( ' ', trim( $block['attrs']['className'] ) ) );
-				}
+			$block_classes = Registration::get_class_name( isset( $block['attrs'] ) ? $block['attrs'] : array() );
+
+			if ( ! empty( $block_classes ) && preg_match( '/\banimated\b/', $block_classes ) ) {
+				$classes = array_merge( $classes, explode( ' ', trim( $block_classes ) ) );
 			}
 
 			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
@@ -709,7 +713,11 @@ class Base_CSS {
 	public function cycle_through_global_styles() {
 		$style = '';
 		foreach ( self::$blocks_classes as $classname ) {
-			$path = new $classname();
+			$path = Loader::instantiate( $classname );
+
+			if ( null === $path ) {
+				continue;
+			}
 
 			if ( method_exists( $path, 'render_global_css' ) ) {
 				$style .= $path->render_global_css();

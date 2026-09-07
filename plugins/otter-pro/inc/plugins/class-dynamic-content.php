@@ -304,9 +304,16 @@ class Dynamic_Content {
 
 		$path   = array( $field['name'] );
 		$cursor = $field;
+		$seen   = array();
 
 		while ( true ) {
-			$parent = acf_get_field( (int) $cursor['parent'] );
+			$parent_id = (int) $cursor['parent'];
+			if ( isset( $seen[ $parent_id ] ) ) {
+				return null;
+			}
+			$seen[ $parent_id ] = true;
+
+			$parent = acf_get_field( $parent_id );
 			if ( ! $parent ) {
 				break;
 			}
@@ -399,9 +406,16 @@ class Dynamic_Content {
 		// Walk up the ancestor chain to find the top-level repeater.
 		$path   = array( $field['name'] );
 		$cursor = $field;
+		$seen   = array();
 
 		while ( true ) {
-			$parent = acf_get_field( (int) $cursor['parent'] );
+			$parent_id = (int) $cursor['parent'];
+			if ( isset( $seen[ $parent_id ] ) ) {
+				return array();
+			}
+			$seen[ $parent_id ] = true;
+
+			$parent = acf_get_field( $parent_id );
 			if ( ! $parent ) {
 				break;
 			}
