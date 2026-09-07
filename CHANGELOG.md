@@ -1,3 +1,20 @@
+##### [Version 3.2.4](https://github.com/Codeinwp/otter-blocks/compare/v3.2.3...v3.2.4) (2026-09-07)
+
+- Fixed form success and error messages that stayed in English on live sites.
+- Fixed Atomic Wind Blocks changing site styles outside block content.
+- Fixed the license message for Neve plans that do not include Otter Pro.
+- Fixed AMP pages crashing when a block renderer cannot load.
+- Fixed page crashes when a dynamic block renderer cannot be created.
+- Fixed page crashes when a block has a list of CSS classes.
+- Fixed responsive visibility for Atomic Wind boxes using display utilities.
+- Fixed crashes when invalid SVG files generate attachment metadata.
+- Fixed Dynamic Content timing out on cyclic ACF repeater field parents.
+- Fixed the Otter Pro activation message to specify Neve Agency license eligibility.
+- Fixed unstyled Atomic Wind pattern previews in the WordPress editor.
+- Improved Otter startup when a module cannot load or start.
+- Fixed Otter Pro fatal errors when a required class file is missing.
+- Fixed pages timing out when reusable blocks reference each other.
+
 ##### [Version 3.2.3](https://github.com/Codeinwp/otter-blocks/compare/v3.2.2...v3.2.3) (2026-08-20)
 
 - Fixed WooCommerce product data controls hidden in WooCommerce Builder.
