@@ -507,8 +507,8 @@ class Registration {
 	 * Handler which checks the blocks used and enqueue the assets which needs.
 	 *
 	 * @since   2.0.0
-	 * @param   string|int|null $post    Current post.
-	 * @param   array           $visited Reusable block IDs already traversed.
+	 * @param   string|int|null  $post    Current post.
+	 * @param   array<int, bool> $visited Reusable block IDs already traversed.
 	 * @access  public
 	 */
 	public function enqueue_dependencies( $post = null, $visited = array() ) {
