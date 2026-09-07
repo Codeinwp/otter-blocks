@@ -2,9 +2,9 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
 **Tags:** gutenberg blocks, gutenberg, blocks, page builder, fse  
 **Requires at least:** 6.6  
-**Tested up to:** 7.0  
+**Tested up to:** 7.1  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.2.3  
+**Stable tag:** 3.2.4  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -139,10 +139,6 @@ Elegantly display events in a chronological timeline. Ideal for highlighting his
 
 A slider where every slide can hold any Gutenberg blocks, not just images. Add headings, text, buttons, images, or full layouts like testimonial, pricing, or feature cards inside each slide, then let visitors move through them with arrows or dots. Unlike a standard image slider, the Content Slider turns anything you build in Gutenberg into a swipeable carousel, with no extra plugin needed.
 
-#### Countdown Block [FREE]
-
-Counting down to a big event? Show it by making use of these Gutenberg blocks. [Check live demo](https://demo.themeisle.com/otter-blocks/countdown/)
-
 #### Circular Progress Block [FREE]
 
 Show your progress with a beautiful Circle Counter block. [Check live demo](https://demo.themeisle.com/otter-blocks/circle-counter/)
@@ -264,15 +260,9 @@ You can try a live demo of Otter Blocks - no setup required. [Click here](https:
 
 ## Let's See Some Use Cases 🚀
 
-Otter opens up a world of opportunities! Discover how different audience segments can make the most of it:
-
 - **Travel Bloggers:** Enhance your travel blog with captivating maps using Otter's Maps and Google Maps blocks to showcase your journeys to the world.
   
 - **Non-Profit Organizations:** Engage your audience and promote your cause with Otter's Circle Counter and Testimonial blocks to share inspiring success stories.
-  
-- **Restaurant Owners:** Showcase your restaurant's menus and gather reservations easily with Otter's Flip Card and Form blocks for a mouth-watering online presence.
-
-- **Tech Product Reviewers:** Present detailed product reviews with Otter's Product Review, making your content informative and captivating.
 
 - **Bloggers:** Enhance your blog posts with Sharing Icons, creating easy sharing options for your readers. Use Slider to display image galleries and engage your audience.
 
@@ -282,17 +272,7 @@ Otter opens up a world of opportunities! Discover how different audience segment
 
 - **Restaurant Owners:** Display your business hours in a stylish format using Business Hours blocks, making it easy for customers to find you.
 
-- **Online Directories:** Websites offering directories, listings, or extensive content where live search simplifies content access.
-
 ---
-
-### Support 🤝
-
-We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/otter-blocks/).
-
-### Documentation 📚
-
-Discover how to make the most of Otter Blocks with our detailed and user-friendly [documentation](https://docs.themeisle.com/article/1478-otter-blocks-documentation).
 
 ### Become a Contributor 💁‍♂️
 
@@ -364,14 +344,22 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 ## Changelog ##
 
-##### [Version 3.2.3](https://github.com/Codeinwp/otter-blocks/compare/v3.2.2...v3.2.3) (2026-08-20)
+##### [Version 3.2.4](https://github.com/Codeinwp/otter-blocks/compare/v3.2.3...v3.2.4) (2026-09-07)
 
-- Fixed WooCommerce product data controls hidden in WooCommerce Builder.
-- Fixed frontend pages stopping when widget CSS cannot use the WordPress filesystem.
-- Fixed PHP warnings when the Post Content dynamic value renders.
-- Fixed animation pages crashing when another plugin loads a different CSS parser.
-- Fixed frontend pages stopping when an Otter plugin class cannot load.
-- Fixed a security issue in the Stripe Checkout block where the checkout price could be manipulated via the URL. Thanks to sungbyeongchan for the responsible disclosure.
+- Fixed form success and error messages that stayed in English on live sites.
+- Fixed Atomic Wind Blocks changing site styles outside block content.
+- Fixed the license message for Neve plans that do not include Otter Pro.
+- Fixed AMP pages crashing when a block renderer cannot load.
+- Fixed page crashes when a dynamic block renderer cannot be created.
+- Fixed page crashes when a block has a list of CSS classes.
+- Fixed responsive visibility for Atomic Wind boxes using display utilities.
+- Fixed crashes when invalid SVG files generate attachment metadata.
+- Fixed Dynamic Content timing out on cyclic ACF repeater field parents.
+- Fixed the Otter Pro activation message to specify Neve Agency license eligibility.
+- Fixed unstyled Atomic Wind pattern previews in the WordPress editor.
+- Improved Otter startup when a module cannot load or start.
+- Fixed Otter Pro fatal errors when a required class file is missing.
+- Fixed pages timing out when reusable blocks reference each other.
 
 
 
