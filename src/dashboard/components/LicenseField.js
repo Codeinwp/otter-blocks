@@ -82,7 +82,7 @@ const LicenseField = () => {
 			<p>{ __( 'Enter your license from ThemeIsle purchase history in order to get plugin updates.', 'otter-blocks' ) }</p>
 
 			{ Boolean( window.otterObj.hasNevePro ) && (
-				<p>{ __( 'Neve Pro license can also be used to activate Otter Pro.', 'otter-blocks' ) }</p>
+				<p>{ __( 'A Neve Agency license can also be used to activate Otter Pro.', 'otter-blocks' ) }</p>
 			) }
 
 			<input

@@ -98,6 +98,38 @@ class Registration {
 	}
 
 	/**
+	 * Get the `className` attribute of a block as a string.
+	 *
+	 * @param mixed $attributes Block attributes.
+	 * @return string
+	 */
+	public static function get_class_name( $attributes ) {
+		if ( ! is_array( $attributes ) || ! isset( $attributes['className'] ) ) {
+			return '';
+		}
+
+		$class_name = $attributes['className'];
+
+		if ( is_array( $class_name ) ) {
+			// Flatten nested arrays and drop anything that is not printable.
+			$flat = array();
+
+			array_walk_recursive(
+				$class_name,
+				function ( $value ) use ( &$flat ) {
+					if ( is_scalar( $value ) ) {
+						$flat[] = (string) $value;
+					}
+				}
+			);
+
+			return implode( ' ', $flat );
+		}
+
+		return is_scalar( $class_name ) ? (string) $class_name : '';
+	}
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -475,10 +507,21 @@ class Registration {
 	 * Handler which checks the blocks used and enqueue the assets which needs.
 	 *
 	 * @since   2.0.0
-	 * @param   string|int|null $post Current post.
+	 * @param   string|int|null  $post    Current post.
+	 * @param   array<int, bool> $visited Reusable block IDs already traversed.
 	 * @access  public
 	 */
-	public function enqueue_dependencies( $post = null ) {
+	public function enqueue_dependencies( $post = null, $visited = array() ) {
+		if ( is_numeric( $post ) ) {
+			$post_id = (int) $post;
+
+			if ( isset( $visited[ $post_id ] ) ) {
+				return;
+			}
+
+			$visited[ $post_id ] = true;
+		}
+
 		$content = '';
 
 		if ( 'widgets' === $post ) {
@@ -538,7 +581,7 @@ class Registration {
 			);
 
 			foreach ( $blocks as $block ) {
-				$this->enqueue_dependencies( $block['attrs']['ref'] );
+				$this->enqueue_dependencies( $block['attrs']['ref'], $visited );
 			}
 		}
 
@@ -633,6 +676,7 @@ class Registration {
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
 						'submission'           => __( 'Form submission from', 'otter-blocks' ),
+						'success'              => __( 'Success', 'otter-blocks' ),
 						'captcha-not-loaded'   => __( 'Captcha is not loaded. Please check your browser plugins to allow it.', 'otter-blocks' ),
 						'check-captcha'        => __( 'Please check the captcha.', 'otter-blocks' ),
 						'invalid-email'        => __( 'The email address is invalid!', 'otter-blocks' ),
@@ -968,20 +1012,17 @@ class Registration {
 				);
 			}
 
-			if ( isset( $dynamic_blocks[ $block ] ) && class_exists( $dynamic_blocks[ $block ] ) ) {
-				$classname = $dynamic_blocks[ $block ];
-				$renderer  = new $classname();
+			$renderer = isset( $dynamic_blocks[ $block ] ) ? Loader::instantiate( $dynamic_blocks[ $block ] ) : null;
 
-				if ( method_exists( $renderer, 'render' ) ) {
-					register_block_type_from_metadata(
-						$metadata_file,
-						array(
-							'render_callback' => array( $renderer, 'render' ),
-						)
-					);
+			if ( null !== $renderer && method_exists( $renderer, 'render' ) ) {
+				register_block_type_from_metadata(
+					$metadata_file,
+					array(
+						'render_callback' => array( $renderer, 'render' ),
+					)
+				);
 
-					continue;
-				}
+				continue;
 			}
 
 			register_block_type_from_metadata( $metadata_file );
@@ -1002,11 +1043,7 @@ class Registration {
 		);
 
 		foreach ( $classnames as $classname ) {
-			$classname = new $classname();
-
-			if ( method_exists( $classname, 'instance' ) ) {
-				$classname->instance();
-			}
+			Loader::boot( $classname );
 		}
 	}
 
@@ -1075,7 +1112,7 @@ class Registration {
 		$has_navigation_block = \WP_Block_Type_Registry::get_instance()->is_registered( 'core/navigation' );
 
 		if ( $has_navigation_block && ( 'core/navigation-link' === $block['blockName'] || 'core/navigation-submenu' === $block['blockName'] ) ) {
-			if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'fa-' ) !== false ) {
+			if ( strpos( self::get_class_name( isset( $block['attrs'] ) ? $block['attrs'] : array() ), 'fa-' ) !== false ) {
 				self::$is_fa_loaded = true;
 
 				// See the src/blocks/plugins/menu-icons/inline.css file for where this comes from.
@@ -1117,7 +1154,7 @@ class Registration {
 			return $block_content;
 		}
 
-		if ( isset( $block['attrs']['className'] ) && false !== strpos( $block['attrs']['className'], 'o-sticky' ) ) {
+		if ( false !== strpos( self::get_class_name( isset( $block['attrs'] ) ? $block['attrs'] : array() ), 'o-sticky' ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
 			wp_enqueue_script(
 				'otter-sticky',
@@ -1196,7 +1233,7 @@ class Registration {
 	 * @access public
 	 */
 	public static function condition_hide_on_style() {
-		echo '<style id="o-condition-hide-inline-css">@media (max-width:768px){.o-hide-on-mobile{display:none!important}}@media (min-width:769px) and (max-width:1024px){.o-hide-on-tablet{display:none!important}}@media (min-width:1025px){.o-hide-on-desktop{display:none!important}}</style>';
+		echo '<style id="o-condition-hide-inline-css">@layer theme, base, components, utilities;@media (max-width:768px){@layer utilities{.o-hide-on-mobile:is(.o-hide-on-mobile,#_){display:none!important}}}@media (min-width:769px) and (max-width:1024px){@layer utilities{.o-hide-on-tablet:is(.o-hide-on-tablet,#_){display:none!important}}}@media (min-width:1025px){@layer utilities{.o-hide-on-desktop:is(.o-hide-on-desktop,#_){display:none!important}}}</style>';
 	}
 
 	/**

@@ -4,6 +4,8 @@ import indexCSS from 'tailwindcss/index.css';
 import preflightCSS from 'tailwindcss/preflight.css';
 import themeCSS from 'tailwindcss/theme.css';
 import utilitiesCSS from 'tailwindcss/utilities.css';
+import { prefixCss, scopeToAtomicWind } from './scope-css';
+import { observePreviewBody } from './preview-observer';
 
 const assets = {
 	index: indexCSS,
@@ -85,157 +87,6 @@ function resolveEditorContext() {
 	}
 
 	return null;
-}
-
-function splitSelectorList( selectorText ) {
-	const selectors = [];
-	let current = '';
-	let parenDepth = 0;
-	let bracketDepth = 0;
-	let braceDepth = 0;
-	let inSingleQuote = false;
-	let inDoubleQuote = false;
-	let escaped = false;
-
-	for ( const char of selectorText ) {
-		if ( escaped ) {
-			current += char;
-			escaped = false;
-			continue;
-		}
-
-		if ( '\\' === char ) {
-			current += char;
-			escaped = true;
-			continue;
-		}
-
-		if ( '\'' === char && ! inDoubleQuote ) {
-			inSingleQuote = ! inSingleQuote;
-			current += char;
-			continue;
-		}
-
-		if ( '"' === char && ! inSingleQuote ) {
-			inDoubleQuote = ! inDoubleQuote;
-			current += char;
-			continue;
-		}
-
-		if ( inSingleQuote || inDoubleQuote ) {
-			current += char;
-			continue;
-		}
-
-		if ( '(' === char ) {
-			parenDepth++;
-			current += char;
-			continue;
-		}
-		if ( ')' === char ) {
-			parenDepth = Math.max( 0, parenDepth - 1 );
-			current += char;
-			continue;
-		}
-
-		if ( '[' === char ) {
-			bracketDepth++;
-			current += char;
-			continue;
-		}
-		if ( ']' === char ) {
-			bracketDepth = Math.max( 0, bracketDepth - 1 );
-			current += char;
-			continue;
-		}
-
-		if ( '{' === char ) {
-			braceDepth++;
-			current += char;
-			continue;
-		}
-		if ( '}' === char ) {
-			braceDepth = Math.max( 0, braceDepth - 1 );
-			current += char;
-			continue;
-		}
-
-		if ( ',' === char && 0 === parenDepth && 0 === bracketDepth && 0 === braceDepth ) {
-			selectors.push( current.trim() );
-			current = '';
-			continue;
-		}
-
-		current += char;
-	}
-
-	if ( current.trim() ) {
-		selectors.push( current.trim() );
-	}
-
-	return selectors;
-}
-
-function prefixSelectorList( selectorText, scopeSelector ) {
-	return splitSelectorList( selectorText )
-		.map( ( selector ) => {
-			if ( /^(:root|:host|html|body)(\b|$|:|\.|#|\[)/.test( selector ) ) {
-				return scopeSelector;
-			}
-
-			return `${scopeSelector} ${selector}`;
-		} )
-		.join( ', ' );
-}
-
-function scopeRuleCss( rule, scopeSelector ) {
-	if ( CSSRule.STYLE_RULE === rule.type ) {
-		const open = rule.cssText.indexOf( '{' );
-		if ( -1 === open ) {
-			return rule.cssText;
-		}
-
-		const prefixedSelector = prefixSelectorList( rule.selectorText, scopeSelector );
-		const body = rule.cssText.slice( open );
-		return `${prefixedSelector}${body}`;
-	}
-
-	if (
-		CSSRule.FONT_FACE_RULE === rule.type ||
-		CSSRule.KEYFRAMES_RULE === rule.type ||
-		( 'PROPERTY_RULE' in CSSRule && CSSRule.PROPERTY_RULE === rule.type )
-	) {
-		return rule.cssText;
-	}
-
-	if ( rule.cssRules && rule.cssRules.length > 0 ) {
-		const open = rule.cssText.indexOf( '{' );
-		const close = rule.cssText.lastIndexOf( '}' );
-		if ( -1 !== open && -1 !== close ) {
-			return `${rule.cssText.slice( 0, open + 1 )}${scopeCssRules( rule.cssRules, scopeSelector )}}`;
-		}
-	}
-
-	return rule.cssText;
-}
-
-function scopeCssRules( rules, scopeSelector ) {
-	return Array.from( rules ).map( ( rule ) => scopeRuleCss( rule, scopeSelector ) ).join( '' );
-}
-
-function scopeGeneratedCss( css, scopeSelector ) {
-	if ( ! css || ! scopeSelector ) {
-		return css;
-	}
-
-	try {
-		const parsed = new CSSStyleSheet();
-		parsed.replaceSync( css );
-		return scopeCssRules( parsed.cssRules, scopeSelector );
-	} catch ( error ) {
-		console.error( error );
-		return css;
-	}
 }
 
 function attachObserver( root ) {
@@ -369,14 +220,14 @@ async function build( kind ) {
 		return;
 	}
 
-	const generated = compiler.build( Array.from( newClasses ) );
-	const scopedCss = activeScopeSelector ? scopeGeneratedCss( generated, activeScopeSelector ) : generated;
+	const generated = scopeToAtomicWind( compiler.build( Array.from( newClasses ) ) );
+	const scopedCss = activeScopeSelector ? prefixCss( generated, activeScopeSelector ) : generated;
 	ensureStyleTag( activeDocument );
 	sheet.textContent = scopedCss;
 }
 
 // Lets other editor features (the Design Library pattern previews) generate
-// unscoped Tailwind CSS for an arbitrary class list. Kept separate from the
+// Tailwind CSS for an arbitrary class list. Kept separate from the
 // canvas compiler: it must not pollute the canvas sheet, and canvas full
 // rebuilds reset that compiler, which would drop classes fed in here. The
 // compiler is cumulative — each call returns the full stylesheet for every
@@ -392,7 +243,7 @@ window.atomicWindGenerateCss = async ( classNames ) => {
 	}
 
 	const instance = await apiCompiler;
-	return instance.build( Array.from( new Set( classNames ) ) );
+	return scopeToAtomicWind( instance.build( Array.from( new Set( classNames ) ) ) );
 };
 
 function rebuild( kind ) {
@@ -489,17 +340,10 @@ function bootstrapPreviewFrame() {
 		( window.requestAnimationFrame || window.setTimeout )( apply );
 	};
 
-	schedule();
-
 	// Parent injects markup after load; regenerate when it arrives. Body only,
 	// so our own <head> style writes can't retrigger this.
 	const observer = new MutationObserver( schedule );
-	observer.observe( document.body, {
-		attributes: true,
-		attributeFilter: [ 'class' ],
-		childList: true,
-		subtree: true,
-	} );
+	observePreviewBody( observer, schedule );
 }
 
 function start() {

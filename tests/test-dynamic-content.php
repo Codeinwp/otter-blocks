@@ -9,6 +9,10 @@ use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertEqualsCanonicalizing;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertNotEqualsCanonicalizing;
 
+if ( ! function_exists( 'acf_get_field' ) ) {
+	require_once __DIR__ . '/php/acf-parent-cycle.php';
+}
+
 /**
  * Dynamic Content Test Case.
  */
@@ -92,6 +96,7 @@ class TestDynamicContent extends WP_UnitTestCase
 	 * Tear down the test.
 	 */
 	public function tear_down() {
+		unset( $GLOBALS['otter_test_acf_fields'] );
 		wp_delete_user( $this->user_id, true );
 		wp_delete_post( $this->post_id, true );
 		wp_delete_term( $this->category_id, 'category' );
@@ -1009,6 +1014,58 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		$empty = $this->invoke_pro_private( 'collect_acf_sub_field_images', array( $rows, array() ) );
 		$this->assertEquals( array(), $empty );
+	}
+
+	/**
+	 * ACF parent relationships can be filtered into a cycle; value lookup must stop.
+	 */
+	public function test_acf_repeater_value_lookup_stops_at_parent_cycle() {
+		if ( ! defined( 'OTTER_TEST_ACF_GET_FIELD_STUB' ) ) {
+			$this->markTestSkipped( 'The ACF field lookup is controlled by an installed plugin.' );
+		}
+
+		$GLOBALS['otter_test_acf_fields'] = $this->cyclic_acf_fields();
+
+		$result = $this->invoke_pro_private( 'get_acf_repeater_sub_field', array( 10, $this->post_id ) );
+
+		$this->assertNull( $result );
+	}
+
+	/**
+	 * Image lookup uses the same parent traversal and must stop at a cycle too.
+	 */
+	public function test_acf_repeater_image_lookup_stops_at_parent_cycle() {
+		if ( ! defined( 'OTTER_TEST_ACF_GET_FIELD_STUB' ) ) {
+			$this->markTestSkipped( 'The ACF field lookup is controlled by an installed plugin.' );
+		}
+
+		$GLOBALS['otter_test_acf_fields'] = $this->cyclic_acf_fields();
+
+		$result = $this->invoke_pro_private( 'get_acf_repeater_sub_field_image', array( 10, $this->post_id ) );
+
+		$this->assertSame( array(), $result );
+	}
+
+	/**
+	 * Build two ACF field definitions whose parent IDs point at each other.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function cyclic_acf_fields() {
+		return array(
+			10 => array(
+				'key'    => 'field_10',
+				'name'   => 'leaf',
+				'parent' => 20,
+				'type'   => 'text',
+			),
+			20 => array(
+				'key'    => 'field_20',
+				'name'   => 'rows',
+				'parent' => 10,
+				'type'   => 'repeater',
+			),
+		);
 	}
 
 	/**

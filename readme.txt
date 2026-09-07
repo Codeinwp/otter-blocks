@@ -139,10 +139,6 @@ Elegantly display events in a chronological timeline. Ideal for highlighting his
 
 A slider where every slide can hold any Gutenberg blocks, not just images. Add headings, text, buttons, images, or full layouts like testimonial, pricing, or feature cards inside each slide, then let visitors move through them with arrows or dots. Unlike a standard image slider, the Content Slider turns anything you build in Gutenberg into a swipeable carousel, with no extra plugin needed.
 
-#### Countdown Block [FREE]
-
-Counting down to a big event? Show it by making use of these Gutenberg blocks. [Check live demo](https://demo.themeisle.com/otter-blocks/countdown/)
-
 #### Circular Progress Block [FREE]
 
 Show your progress with a beautiful Circle Counter block. [Check live demo](https://demo.themeisle.com/otter-blocks/circle-counter/)
@@ -264,15 +260,9 @@ You can try a live demo of Otter Blocks - no setup required. [Click here](https:
 
 ## Let's See Some Use Cases 🚀
 
-Otter opens up a world of opportunities! Discover how different audience segments can make the most of it:
-
 - **Travel Bloggers:** Enhance your travel blog with captivating maps using Otter's Maps and Google Maps blocks to showcase your journeys to the world.
   
 - **Non-Profit Organizations:** Engage your audience and promote your cause with Otter's Circle Counter and Testimonial blocks to share inspiring success stories.
-  
-- **Restaurant Owners:** Showcase your restaurant's menus and gather reservations easily with Otter's Flip Card and Form blocks for a mouth-watering online presence.
-
-- **Tech Product Reviewers:** Present detailed product reviews with Otter's Product Review, making your content informative and captivating.
 
 - **Bloggers:** Enhance your blog posts with Sharing Icons, creating easy sharing options for your readers. Use Slider to display image galleries and engage your audience.
 
@@ -282,17 +272,7 @@ Otter opens up a world of opportunities! Discover how different audience segment
 
 - **Restaurant Owners:** Display your business hours in a stylish format using Business Hours blocks, making it easy for customers to find you.
 
-- **Online Directories:** Websites offering directories, listings, or extensive content where live search simplifies content access.
-
 ---
-
-### Support 🤝
-
-We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/otter-blocks/).
-
-### Documentation 📚
-
-Discover how to make the most of Otter Blocks with our detailed and user-friendly [documentation](https://docs.themeisle.com/article/1478-otter-blocks-documentation).
 
 ### Become a Contributor 💁‍♂️
 

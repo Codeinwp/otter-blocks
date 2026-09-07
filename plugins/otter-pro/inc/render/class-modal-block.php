@@ -8,6 +8,7 @@
 namespace ThemeIsle\OtterPro\Render;
 
 use ThemeIsle\OtterPro\Plugins\License;
+use ThemeIsle\GutenbergBlocks\Registration;
 
 /**
  * Class Modal_CSS.
@@ -45,8 +46,10 @@ class Modal_Block {
 
 		$classes = array( 'wp-block-themeisle-blocks-modal', 'is-active', 'is-front' );
 
-		if ( ! empty( $attributes['className'] ) ) {
-			$classes[] = esc_attr( $attributes['className'] );
+		$class_name = Registration::get_class_name( $attributes );
+
+		if ( ! empty( $class_name ) ) {
+			$classes[] = esc_attr( $class_name );
 		}
 
 		if ( ! empty( $attributes['closeButtonType'] ) && 'outside' === $attributes['closeButtonType'] ) {

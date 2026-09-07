@@ -59,7 +59,7 @@ const extractFormFields = async( form ) => {
 
 
 	/** @type {Array.<import('./types').FormFieldData>} */
-	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href, metadata: { position: 0 }}];
+	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages?.submission || 'Form submission from', value: window.location.href, metadata: { position: 0 }}];
 
 	/**
 	 * All input fields that belong to the current form. Fields from inner forms are removed.
@@ -488,7 +488,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 						return;
 					}
 
-					const msg = res?.submitMessage ? res.submitMessage :  'Success';
+					const msg = res?.submitMessage ? res.submitMessage : ( window?.themeisleGutenbergForm?.messages?.success || 'Success' );
 					displayMsg.setMsg( msg ).show();
 
 					form?.querySelector( 'form' )?.reset();
@@ -573,7 +573,7 @@ domReady( () => {
 			spinner.show();
 
 			handleAfterSubmit( confirmRecord(), displayMsg, ( res, displayMsg ) => {
-				const msg = res?.submitMessage ? res.submitMessage :  'Success';
+				const msg = res?.submitMessage ? res.submitMessage : ( window?.themeisleGutenbergForm?.messages?.success || 'Success' );
 				displayMsg.setMsg( msg ).show();
 
 				if ( 0 < res?.redirectLink?.length ) {

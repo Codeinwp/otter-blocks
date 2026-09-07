@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
+use ThemeIsle\GutenbergBlocks\Registration;
+
 /**
  * Class Posts_Grid_Block
  */
@@ -26,7 +28,7 @@ class Posts_Grid_Block {
 		add_filter( 'wp_img_tag_add_auto_sizes', '__return_false' );
 		$has_pagination = isset( $attributes['hasPagination'] ) && $attributes['hasPagination'];
 		$page_number    = 1;
-		$is_tiled       = isset( $attributes['className'] ) && false !== strpos( $attributes['className'], 'is-style-tiled' );
+		$is_tiled       = false !== strpos( Registration::get_class_name( $attributes ), 'is-style-tiled' );
 
 		if ( $has_pagination ) {
 			if ( ! empty( get_query_var( 'page' ) ) || ! empty( get_query_var( 'paged' ) ) ) {
@@ -301,7 +303,7 @@ class Posts_Grid_Block {
 		$image_alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
 		$style     = '';
 		$image_url = wp_get_attachment_image_src( $thumb_id, $size );
-		$is_tiled  = isset( $attributes['className'] ) && false !== strpos( $attributes['className'], 'is-style-tiled' );
+		$is_tiled  = false !== strpos( Registration::get_class_name( $attributes ), 'is-style-tiled' );
 
 		if ( ! $image_alt ) {
 			$image_alt = get_the_title( $id );

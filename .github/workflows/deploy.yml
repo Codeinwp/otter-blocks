@@ -31,6 +31,8 @@ jobs:
         run: npm run build
       - name: Build zip
         run: npm run dist
+      - name: Generate file checksums
+        uses: Codeinwp/action-release-checksums@main
       - name: Upload Latest Version to S3
         uses: jakejarvis/s3-sync-action@master
         with:
