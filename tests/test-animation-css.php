@@ -18,6 +18,23 @@ use ThemeIsle\GutenbergBlocks\Base_CSS;
 class Test_Animation_CSS extends WP_UnitTestCase {
 
 	/**
+	 * Animation assets remain available with older Otter and parser fallbacks.
+	 */
+	public function test_frontend_assets_support_mixed_otter_versions() {
+		$sandbox = __DIR__ . '/php/animation-compatibility-sandbox.php';
+
+		foreach ( array( 'legacy', 'owned', 'foreign', 'standalone', 'disabled' ) as $scenario ) {
+			$command = escapeshellarg( PHP_BINARY ) . ' -d display_errors=1 ' . escapeshellarg( $sandbox ) . ' ' . escapeshellarg( $scenario ) . ' 2>&1';
+			$output  = array();
+			exec( $command, $output, $exit_code ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.system_calls_exec
+			$output = implode( "\n", $output );
+
+			$this->assertSame( 0, $exit_code, $scenario . ': ' . $output );
+			$this->assertStringContainsString( 'REQUEST COMPLETED WITHOUT FATAL', $output );
+		}
+	}
+
+	/**
 	 * A single animated block, as parse_blocks() would shape it.
 	 *
 	 * @return array<int, array<string, mixed>>
