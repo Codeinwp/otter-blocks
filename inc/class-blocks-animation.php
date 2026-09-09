@@ -178,7 +178,7 @@ class Blocks_Animation {
 			if (
 				! defined( 'OTTER_BLOCKS_VERSION' ) ||
 				! get_option( 'themeisle_blocks_settings_optimize_animations_css', true ) ||
-				! method_exists( Base_CSS::class, 'has_own_css_parser' ) ||
+				! method_exists( Base_CSS::class, 'has_own_css_parser' ) || // @phpstan-ignore function.alreadyNarrowedType (Older Otter can supply this class at runtime.)
 				! Base_CSS::has_own_css_parser()
 			) {
 				wp_enqueue_style( 'otter-animation' );
