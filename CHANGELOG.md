@@ -1,3 +1,9 @@
+##### [Version 3.2.5](https://github.com/Codeinwp/otter-blocks/compare/v3.2.4...v3.2.5) (2026-09-09)
+
+- Fixed Accordion Item titles not appearing for translation in WPML. 
+- Fixed animation blocks crashing with older Otter versions. 
+- Fixed form submit buttons changing size while the loading spinner is shown.
+
 ##### [Version 3.2.4](https://github.com/Codeinwp/otter-blocks/compare/v3.2.3...v3.2.4) (2026-09-07)
 
 - Fixed form success and error messages that stayed in English on live sites.
