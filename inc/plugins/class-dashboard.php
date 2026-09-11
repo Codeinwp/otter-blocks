@@ -9,7 +9,6 @@ namespace ThemeIsle\GutenbergBlocks\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Pro;
 use ThemeIsle\GutenbergBlocks\Plugins\FSE_Onboarding;
-use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 use ThemeIsle\GutenbergBlocks\Server\AI_Client_Adaptor;
 
 /**
@@ -510,7 +509,9 @@ class Dashboard {
 				)
 			),
 			'neveInstalled'          => defined( 'NEVE_VERSION' ),
-			'hasPatternSources'      => Template_Cloud::has_used_pattern_sources(),
+			// Always expose the Template Cloud UI, otherwise a site that never had a source
+			// has no way to reach the "Add Source" entry point in the first place (#3048).
+			'hasPatternSources'      => true,
 			'aiClientAvailable'      => AI_Client_Adaptor::is_available(),
 			'aiClientSupported'      => function_exists( 'wp_ai_client_prompt' ),
 			'connectorsUrl'          => esc_url( admin_url( 'options-connectors.php' ) ),
