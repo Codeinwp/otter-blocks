@@ -10,7 +10,6 @@ namespace ThemeIsle\GutenbergBlocks;
 use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 use ThemeIsle\GutenbergBlocks\Plugins\Dashboard;
 use ThemeIsle\GutenbergBlocks\Plugins\LimitedOffers;
-use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 use ThemeIsle\GutenbergBlocks\Server\AI_Client_Adaptor;
 
 /**
@@ -372,7 +371,9 @@ class Registration {
 				'aiClientSupported'       => function_exists( 'wp_ai_client_prompt' ),
 				'hasAIProvider'           => AI_Client_Adaptor::is_available(),
 				'connectorsUrl'           => esc_url( admin_url( 'options-connectors.php' ) ),
-				'hasPatternSources'       => Template_Cloud::has_used_pattern_sources(),
+				// Always expose the Template Cloud UI, otherwise a site that never had a source
+				// has no way to reach the "Add Source" entry point in the first place (#3048).
+				'hasPatternSources'       => true,
 				'proPatterns'             => boolval( get_option( 'themeisle_blocks_settings_patterns_library', true ) ) ? Patterns::get_upsell_patterns() : array(),
 		);
 

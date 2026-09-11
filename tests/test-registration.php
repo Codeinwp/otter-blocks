@@ -92,6 +92,12 @@ class Test_Registration extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		delete_option( 'themeisle_blocks_settings_global_defaults' );
+		delete_option( 'themeisle_template_cloud_sources' );
+
+		foreach ( array( 'otter-blocks', 'otter-vendor', 'otter-patterns-library' ) as $handle ) {
+			wp_dequeue_script( $handle );
+			wp_deregister_script( $handle );
+		}
 
 		// Restore permissions before unlinking: a test that fails mid-way would
 		// otherwise leave an unreadable file behind and poison later runs.
@@ -105,6 +111,25 @@ class Test_Registration extends WP_UnitTestCase {
 		$this->temp_renderer_files = array();
 
 		parent::tear_down();
+	}
+
+	/**
+	 * The editor localization must expose Template Cloud regardless of whether the
+	 * themeisle_template_cloud_sources option has ever been saved, otherwise the
+	 * "Add Source" entry point in the Patterns Library — the only UI that could
+	 * ever create that option — stays hidden forever on a fresh install (#3048).
+	 */
+	public function test_enqueue_block_editor_assets_exposes_pattern_sources_on_fresh_install() {
+		delete_option( 'themeisle_template_cloud_sources' );
+
+		set_current_screen( 'post' );
+
+		( new Registration() )->enqueue_block_editor_assets();
+
+		$data = wp_scripts()->get_data( 'otter-blocks', 'data' );
+
+		$this->assertIsString( $data, 'The editor localization data should be set on the otter-blocks handle' );
+		$this->assertStringContainsString( '"hasPatternSources":true', $data, 'hasPatternSources should be exposed as true even when no source has ever been added' );
 	}
 
 	/**
