@@ -103,6 +103,19 @@ class Test_Dashboard extends WP_UnitTestCase {
 	}
 
 	/**
+	 * hasPatternSources must be true even on a fresh install that has never saved
+	 * a Template Cloud source, otherwise the Integrations panel — and the only UI
+	 * that could ever create that option — stays hidden forever (#3048).
+	 */
+	public function test_get_dashboard_data_exposes_pattern_sources_on_fresh_install() {
+		delete_option( 'themeisle_template_cloud_sources' );
+
+		$data = $this->dashboard->get_dashboard_data();
+
+		$this->assertTrue( $data['hasPatternSources'], 'hasPatternSources should be true even when no source has ever been added' );
+	}
+
+	/**
 	 * Test get_dashboard_data exposes the AI client, connectors and YouTube playlist keys.
 	 */
 	public function test_get_dashboard_data_new_keys() {
