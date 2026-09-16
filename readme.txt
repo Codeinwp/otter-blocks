@@ -4,7 +4,7 @@ Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 3.2.4
+Stable tag: 3.2.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -344,22 +344,11 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 == Changelog ==
 
-##### [Version 3.2.4](https://github.com/Codeinwp/otter-blocks/compare/v3.2.3...v3.2.4) (2026-09-07)
+##### [Version 3.2.5](https://github.com/Codeinwp/otter-blocks/compare/v3.2.4...v3.2.5) (2026-09-09)
 
-- Fixed form success and error messages that stayed in English on live sites.
-- Fixed Atomic Wind Blocks changing site styles outside block content.
-- Fixed the license message for Neve plans that do not include Otter Pro.
-- Fixed AMP pages crashing when a block renderer cannot load.
-- Fixed page crashes when a dynamic block renderer cannot be created.
-- Fixed page crashes when a block has a list of CSS classes.
-- Fixed responsive visibility for Atomic Wind boxes using display utilities.
-- Fixed crashes when invalid SVG files generate attachment metadata.
-- Fixed Dynamic Content timing out on cyclic ACF repeater field parents.
-- Fixed the Otter Pro activation message to specify Neve Agency license eligibility.
-- Fixed unstyled Atomic Wind pattern previews in the WordPress editor.
-- Improved Otter startup when a module cannot load or start.
-- Fixed Otter Pro fatal errors when a required class file is missing.
-- Fixed pages timing out when reusable blocks reference each other.
+- Fixed Accordion Item titles not appearing for translation in WPML. 
+- Fixed animation blocks crashing with older Otter versions. 
+- Fixed form submit buttons changing size while the loading spinner is shown.
 
 
 
