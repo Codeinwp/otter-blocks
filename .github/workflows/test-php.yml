@@ -53,6 +53,8 @@ jobs:
         run: composer phpstan
 
   unit:
+    env:
+      WP_ENV_PHP_VERSION: "8.2"
     name: UnitTests
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
