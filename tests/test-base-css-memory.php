@@ -73,6 +73,13 @@ class Test_Base_CSS_Memory extends WP_UnitTestCase {
 	private $css;
 
 	/**
+	 * Filter callbacks this test registered, so only those are removed again.
+	 *
+	 * @var array<int, callable>
+	 */
+	private $registered_filters = array();
+
+	/**
 	 * Set up each test.
 	 */
 	public function set_up() {
@@ -87,7 +94,7 @@ class Test_Base_CSS_Memory extends WP_UnitTestCase {
 	 * Tear down each test.
 	 */
 	public function tear_down() {
-		remove_all_filters( 'otter_blocks_register_css' );
+		$this->remove_registered_filters();
 
 		// Restore the shipped list for any later test in the suite.
 		$this->css->autoload_block_classes();
@@ -102,14 +109,28 @@ class Test_Base_CSS_Memory extends WP_UnitTestCase {
 	 * @return void
 	 */
 	private function set_classes( $classnames ) {
-		add_filter(
-			'otter_blocks_register_css',
-			function () use ( $classnames ) {
-				return $classnames;
-			}
-		);
+		$callback = function () use ( $classnames ) {
+			return $classnames;
+		};
+
+		$this->registered_filters[] = $callback;
+
+		add_filter( 'otter_blocks_register_css', $callback );
 
 		$this->css->autoload_block_classes();
+	}
+
+	/**
+	 * Remove only the callbacks this test added, leaving integration ones (Otter Pro) in place.
+	 *
+	 * @return void
+	 */
+	private function remove_registered_filters() {
+		foreach ( $this->registered_filters as $callback ) {
+			remove_filter( 'otter_blocks_register_css', $callback );
+		}
+
+		$this->registered_filters = array();
 	}
 
 	/**
@@ -254,7 +275,7 @@ class Test_Base_CSS_Memory extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( '.counting-probe{', $this->css->cycle_through_static_blocks( $blocks, false ) );
 
-		remove_all_filters( 'otter_blocks_register_css' );
+		$this->remove_registered_filters();
 		$this->set_classes( array( 'Otter_CSS_Counting_Probe_Twin' ) );
 
 		$style = $this->css->cycle_through_static_blocks( $blocks, false );
