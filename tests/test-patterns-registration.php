@@ -103,8 +103,10 @@ class TestPatternsRegistration extends WP_UnitTestCase {
 		( new Patterns() )->register_patterns();
 
 		$this->assertFalse( $this->is_registered( 'cafe-about' ), 'The unavailable pattern should be skipped.' );
-		$this->assertTrue( $this->is_registered( 'cafe-homepage' ), 'Later patterns should still register.' );
-		$this->assertTrue( $this->is_registered( 'aw-cta-banner' ), 'Earlier patterns should still register.' );
+		$this->assertTrue( $this->is_registered( 'aw-cta-banner' ), 'Patterns before the unavailable one should still register.' );
+		$this->assertTrue( $this->is_registered( 'cafe-homepage' ), 'Patterns before the unavailable one should still register.' );
+		$this->assertTrue( $this->is_registered( 'cafe-contact' ), 'The pattern right after the unavailable one should still register.' );
+		$this->assertTrue( $this->is_registered( 'wellness-contact' ), 'The last pattern in the list should still register.' );
 	}
 
 	/**
