@@ -371,13 +371,28 @@ class Patterns {
 				continue;
 			}
 
-			$pattern_file = OTTER_BLOCKS_PATH . '/inc/patterns/' . $block_pattern['slug'] . '.php';
-
-			register_block_pattern(
-				'otter-blocks/' . $block_pattern['slug'],
-				require $pattern_file
-			);
+			$this->register_pattern_file( $block_pattern['slug'] );
 		}
+	}
+
+	/**
+	 * Register a single bundled pattern, skipping it if its file is unusable.
+	 *
+	 * @param string $slug Pattern slug.
+	 * @return bool Whether the pattern was registered.
+	 */
+	protected function register_pattern_file( $slug ) {
+		$pattern_file = OTTER_BLOCKS_PATH . '/inc/patterns/' . $slug . '.php';
+
+		// A partial install can leave a pattern file missing; skip it instead of fataling.
+		if ( ! file_exists( $pattern_file ) || ! is_readable( $pattern_file ) ) {
+			return false;
+		}
+
+		return register_block_pattern(
+			'otter-blocks/' . $slug,
+			require $pattern_file
+		);
 	}
 
 	/**
