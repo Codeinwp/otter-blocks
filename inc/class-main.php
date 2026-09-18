@@ -48,6 +48,7 @@ class Main {
 		}
 
 		add_filter( 'otter_blocks_about_us_metadata', array( $this, 'about_page' ) );
+		add_filter( 'otter_blocks_ai_connect_metadata', array( $this, 'ai_connect_metadata' ) );
 		add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'add_black_friday_data' ) );
 
 		add_action( 'parse_query', array( $this, 'pagination_support' ) );
@@ -602,6 +603,32 @@ class Main {
 			'has_upgrade_menu' => ! DEFINED( 'OTTER_PRO_VERSION' ),
 			'upgrade_link'     => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ) ),
 			'upgrade_text'     => __( 'Get Otter Pro', 'otter-blocks' ),
+		);
+	}
+
+	/**
+	 * Opt in to the SDK AI Connect module.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function ai_connect_metadata() {
+		return array(
+			'name'         => 'Otter Blocks',
+			'notice_cases' => array(
+				__( 'review your form submissions', 'otter-blocks' ),
+				__( 'change where a form sends its emails', 'otter-blocks' ),
+				__( 'find every form on your site', 'otter-blocks' ),
+			),
+			'prompts'      => array(
+				__( 'List every Otter Blocks form on my site and tell me where each one sends its submissions.', 'otter-blocks' ),
+				__( 'Send the submissions of the form on my Contact page to sales@example.com with the subject "New website enquiry".', 'otter-blocks' ),
+				__( 'Go through all my unread form submissions, summarize them and flag any that were not delivered by email.', 'otter-blocks' ),
+			),
+			'abilities'    => array(
+				'otter/list-forms',
+				'otter/update-form',
+				'otter/list-form-submissions',
+			),
 		);
 	}
 
