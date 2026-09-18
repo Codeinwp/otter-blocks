@@ -252,9 +252,9 @@ const Edit = ({
 		// Add Open Street Map as source. OSM serves tiles up to zoom 19; allow a
 		// couple of extra levels via overzoom (maxNativeZoom) so users can zoom in
 		// as far as other OSM plugins, upscaling the level-19 tiles past that point.
-		L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		L.tileLayer( 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-			subdomains: [ 'a', 'b', 'c' ],
+			referrerPolicy: 'strict-origin-when-cross-origin',
 			maxNativeZoom: 19,
 			maxZoom: 21
 		}).addTo( _map );
