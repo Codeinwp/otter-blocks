@@ -599,7 +599,7 @@ class Abilities {
 		if ( '' !== $form_id ) {
 			// Filtering the records by form is an Otter Pro feature.
 			if ( ! Pro::is_pro_active() ) {
-				return new WP_Error( 'otter_pro_required', __( 'Filtering submissions by form requires an active Otter Pro license.', 'otter-blocks' ) );
+				return $this->pro_required_error( __( 'Filtering submissions by form requires an active Otter Pro license.', 'otter-blocks' ), 'form-submissions-filter' );
 			}
 
 			// Records reference the form by its block ID, which shares its suffix with the form option name.
@@ -819,6 +819,24 @@ class Abilities {
 	}
 
 	/**
+	 * Build the error returned when a request needs Otter Pro, with the upgrade link.
+	 *
+	 * @param string $message The reason, already translated.
+	 * @param string $area    The gated feature, used as the campaign of the upgrade link.
+	 * @return WP_Error
+	 */
+	private function pro_required_error( $message, $area ) {
+		$upgrade_url = tsdk_translate_link( tsdk_utmify( Pro::get_url(), $area, 'mcp' ) );
+
+		return new WP_Error(
+			'otter_pro_required',
+			/* translators: 1: the reason the request was refused, 2: the upgrade URL */
+			sprintf( __( '%1$s Upgrade: %2$s', 'otter-blocks' ), $message, $upgrade_url ),
+			array( 'upgrade_url' => $upgrade_url )
+		);
+	}
+
+	/**
 	 * Apply the `delivery` input to a form entry.
 	 *
 	 * @param array<string, mixed> $entry    The saved form entry.
@@ -837,7 +855,7 @@ class Abilities {
 
 			if ( in_array( $key, $pro_keys, true ) && ! Pro::is_pro_active() ) {
 				/* translators: %s the name of the setting */
-				return new WP_Error( 'otter_pro_required', sprintf( __( 'The %s setting requires an active Otter Pro license.', 'otter-blocks' ), $key ) );
+				return $this->pro_required_error( sprintf( __( 'The %s setting requires an active Otter Pro license.', 'otter-blocks' ), $key ), 'form-' . str_replace( '_', '-', $key ) );
 			}
 
 			if ( in_array( $key, array( 'email_notification', 'ai_autoresponder_enabled' ), true ) ) {
