@@ -54,12 +54,40 @@ class Base_CSS {
 	protected static $google_fonts = array();
 
 	/**
+	 * Renderer instances built from the class list, in registration order.
+	 *
+	 * @var array<int, object>|null
+	 */
+	protected static $blocks_instances = null;
+
+	/**
+	 * Renderer instances indexed by the block name they render.
+	 *
+	 * @var array<string, array<int, object>>|null
+	 */
+	protected static $blocks_instances_by_name = null;
+
+	/**
+	 * Whether the class list is already scheduled for autoloading.
+	 *
+	 * @var bool
+	 */
+	protected static $is_autoload_registered = false;
+
+	/**
 	 * Base_CSS constructor.
 	 *
 	 * @since   1.3.0
 	 * @access  public
 	 */
 	public function __construct() {
+		// Register once per request; renderers inherit this constructor.
+		if ( self::$is_autoload_registered ) {
+			return;
+		}
+
+		self::$is_autoload_registered = true;
+
 		add_action( 'init', array( $this, 'autoload_block_classes' ), 99 );
 	}
 
@@ -102,6 +130,86 @@ class Base_CSS {
 		);
 
 		self::$blocks_classes = apply_filters( 'otter_blocks_register_css', self::$blocks_classes );
+
+		self::reset_blocks_instances();
+	}
+
+	/**
+	 * Drop the cached renderer instances, so a changed class list is picked up.
+	 *
+	 * @return void
+	 * @access  public
+	 */
+	public static function reset_blocks_instances() {
+		self::$blocks_instances         = null;
+		self::$blocks_instances_by_name = null;
+	}
+
+	/**
+	 * Get one renderer instance per registered class, built once per request.
+	 *
+	 * Renderers hold no per-block state, so reusing them keeps memory flat
+	 * instead of scaling with the number of parsed blocks.
+	 *
+	 * @return array<int, object> Instances, in registration order.
+	 * @access  public
+	 */
+	public function get_blocks_instances() {
+		if ( null !== self::$blocks_instances ) {
+			return self::$blocks_instances;
+		}
+
+		$instances = array();
+
+		foreach ( self::$blocks_classes as $classname ) {
+			$path = Loader::instantiate( $classname );
+
+			if ( null === $path ) {
+				continue;
+			}
+
+			$instances[] = $path;
+		}
+
+		self::$blocks_instances = $instances;
+
+		return self::$blocks_instances;
+	}
+
+	/**
+	 * Get the renderers that handle a given block name.
+	 *
+	 * @param mixed $block_name Block name, as parsed; may be missing or null.
+	 *
+	 * @return array<int, object> Renderers for that block, in registration order.
+	 * @access  public
+	 */
+	public function get_blocks_instances_for( $block_name ) {
+		if ( null === self::$blocks_instances_by_name ) {
+			$index = array();
+
+			foreach ( $this->get_blocks_instances() as $path ) {
+				if ( ! method_exists( $path, 'render_css' ) || ! isset( $path->block_prefix ) ) {
+					continue;
+				}
+
+				$name = ( isset( $path->library_prefix ) ? $path->library_prefix : $this->library_prefix ) . '/' . $path->block_prefix;
+
+				if ( ! isset( $index[ $name ] ) ) {
+					$index[ $name ] = array();
+				}
+
+				$index[ $name ][] = $path;
+			}
+
+			self::$blocks_instances_by_name = $index;
+		}
+
+		if ( ! is_string( $block_name ) || ! isset( self::$blocks_instances_by_name[ $block_name ] ) ) {
+			return array();
+		}
+
+		return self::$blocks_instances_by_name[ $block_name ];
 	}
 
 	/**
@@ -339,18 +447,10 @@ class Base_CSS {
 		$style = '';
 
 		foreach ( $blocks as $block ) {
-			foreach ( self::$blocks_classes as $classname ) {
-				$path = Loader::instantiate( $classname );
+			$renderers = $this->get_blocks_instances_for( isset( $block['blockName'] ) ? $block['blockName'] : null );
 
-				if ( null === $path ) {
-					continue;
-				}
-
-				if ( method_exists( $path, 'render_css' ) && isset( $path->block_prefix ) ) {
-					if ( ( isset( $path->library_prefix ) ? $path->library_prefix : $this->library_prefix ) . '/' . $path->block_prefix === $block['blockName'] ) {
-						$style .= $path->render_css( $block );
-					}
-				}
+			foreach ( $renderers as $path ) {
+				$style .= $path->render_css( $block );
 			}
 
 			$custom_css = apply_filters( 'otter_blocks_css', $block );
@@ -712,13 +812,7 @@ class Base_CSS {
 	 */
 	public function cycle_through_global_styles() {
 		$style = '';
-		foreach ( self::$blocks_classes as $classname ) {
-			$path = Loader::instantiate( $classname );
-
-			if ( null === $path ) {
-				continue;
-			}
-
+		foreach ( $this->get_blocks_instances() as $path ) {
 			if ( method_exists( $path, 'render_global_css' ) ) {
 				$style .= $path->render_global_css();
 			}
