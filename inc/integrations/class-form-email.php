@@ -146,7 +146,7 @@ class Form_Email {
 		}
 
 		foreach ( $fields as $input ) {
-			$content .= sprintf( '<tr><td><strong>%s:</strong> %s</td></tr>', $input['label'], $input['value'] );
+			$content .= sprintf( '<tr><td><strong>%s:</strong> %s</td></tr>', esc_html( $input['label'] ), esc_html( $input['value'] ) );
 		}
 
 		if ( $form_data->has_files_loaded_to_media_library() ) {
