@@ -613,22 +613,18 @@ class Main {
 	 */
 	public function ai_connect_metadata() {
 		return array(
-			'name'         => 'Otter Blocks',
-			'notice_cases' => array(
+			'name'           => 'Otter Blocks',
+			'notice_cases'   => array(
 				__( 'review your form submissions', 'otter-blocks' ),
 				__( 'change where a form sends its emails', 'otter-blocks' ),
 				__( 'find every form on your site', 'otter-blocks' ),
 			),
-			'prompts'      => array(
+			'prompts'        => array(
 				__( 'Summarize my unread Otter Blocks form submissions and flag any that were not delivered by email.', 'otter-blocks' ),
 				__( 'Send the submissions of the form on my Contact page to sales@example.com with the subject "New website enquiry".', 'otter-blocks' ),
 				__( 'List every form on my site and tell me where each one sends its submissions.', 'otter-blocks' ),
 			),
-			'abilities'    => array(
-				'otter/list-forms',
-				'otter/update-form',
-				'otter/list-form-submissions',
-			),
+			'ability_prefix' => 'otter',
 		);
 	}
 
