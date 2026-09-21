@@ -620,9 +620,9 @@ class Main {
 				__( 'find every form on your site', 'otter-blocks' ),
 			),
 			'prompts'        => array(
-				__( 'Summarize my unread Otter Blocks form submissions and flag any that were not delivered by email.', 'otter-blocks' ),
-				__( 'Send the submissions of the form on my Contact page to sales@example.com with the subject "New website enquiry".', 'otter-blocks' ),
-				__( 'List every form on my site and tell me where each one sends its submissions.', 'otter-blocks' ),
+				__( 'Summarize this week\'s Otter Blocks form submissions and list the ones that need a reply.', 'otter-blocks' ),
+				__( 'Send the submissions of my Contact form to sales@example.com with the subject "New website enquiry".', 'otter-blocks' ),
+				__( 'Which of my forms have no recipient email? Point them all to hello@example.com.', 'otter-blocks' ),
 			),
 			'ability_prefix' => 'otter',
 		);
