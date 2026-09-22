@@ -38,12 +38,24 @@ const getMapAttributes = async( editor ) => {
 
 test.describe( 'Maps (Leaflet) block', () => {
 	test.beforeEach( async({ page, admin }) => {
-		await page.route( '**/*.tile.openstreetmap.org/**', ( route ) =>
+		await page.route( /https:\/\/(?:[abc]\.)?tile\.openstreetmap\.org\//, ( route ) =>
 			route.fulfill({ contentType: 'image/png', body: TILE_PNG })
 		);
 
 		await admin.createNewPost();
 		await waitForEditorReady( page );
+	});
+
+	test( 'uses canonical OSM tiles with an explicit referrer policy in both views', async({ editor, page }) => {
+		await insertMap( editor, { markers: [ marker() ] });
+		const editorTile = editor.canvas.locator( '.leaflet-tile' ).first();
+		await expect( editorTile ).toHaveAttribute( 'src', /^https:\/\/tile\.openstreetmap\.org\// );
+		await expect( editorTile ).toHaveAttribute( 'referrerpolicy', 'strict-origin-when-cross-origin' );
+
+		await publishAndViewPost({ editor, page });
+		const frontendTile = page.locator( '.leaflet-tile' ).first();
+		await expect( frontendTile ).toHaveAttribute( 'src', /^https:\/\/tile\.openstreetmap\.org\// );
+		await expect( frontendTile ).toHaveAttribute( 'referrerpolicy', 'strict-origin-when-cross-origin' );
 	});
 
 	test( 'renders a marker with the bundled icon and no duplicates', async({ editor }) => {
