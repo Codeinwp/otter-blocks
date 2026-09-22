@@ -146,7 +146,7 @@ class Form_Email {
 		}
 
 		foreach ( $fields as $input ) {
-			$content .= sprintf( '<tr><td><strong>%s:</strong> %s</td></tr>', esc_html( $input['label'] ), esc_html( $input['value'] ) );
+			$content .= sprintf( '<tr><td><strong>%s:</strong> %s</td></tr>', self::escape_submitted_text( $input['label'] ), self::escape_submitted_text( $input['value'] ) );
 		}
 
 		if ( $form_data->has_files_loaded_to_media_library() ) {
@@ -174,6 +174,20 @@ class Form_Email {
 		</tfoot>
 		</table>
 		';
+	}
+
+	/**
+	 * Escape a submitter-supplied string for the HTML mail body.
+	 *
+	 * Double-encoded on purpose: submitted text arrives literal, so `esc_html()` — which leaves an
+	 * existing entity untouched — would let a typed `&lt;` be decoded by the mail client and the
+	 * administrator would not see what was submitted.
+	 *
+	 * @param string $text The submitted text.
+	 * @return string
+	 */
+	private static function escape_submitted_text( $text ) {
+		return _wp_specialchars( wp_check_invalid_utf8( (string) $text ), ENT_QUOTES, false, true );
 	}
 
 	/**

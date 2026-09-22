@@ -66,6 +66,35 @@ class Test_Form_Email extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A value the visitor typed as entity text must reach the admin verbatim, not decoded by the mail client (otter-internals#313).
+	 */
+	public function test_build_body_double_encodes_entity_text() {
+		$typed = '&lt;strong&gt;URGENT&lt;/strong&gt;';
+
+		$form_data = $this->make_form_data(
+			array(
+				array(
+					'id'       => 'field-0001',
+					'label'    => 'Message',
+					'value'    => $typed,
+					'type'     => 'text',
+					'metadata' => array( 'position' => 0 ),
+				),
+			)
+		);
+
+		$body = Form_Email::instance()->build_body( $form_data );
+
+		// The mail body must carry the ampersands encoded, so an HTML mail client renders the typed characters back.
+		$this->assertStringContainsString( '&amp;lt;strong&amp;gt;URGENT&amp;lt;/strong&amp;gt;', $body );
+		$this->assertStringNotContainsString( '> ' . $typed . '<', $body );
+
+		// What the reader ends up seeing is what was typed.
+		preg_match( '#<tr><td><strong>Message:</strong> (.*?)</td></tr>#', $body, $matches );
+		$this->assertSame( $typed, html_entity_decode( $matches[1], ENT_QUOTES ) );
+	}
+
+	/**
 	 * Values sharing a position are joined first and escaped once, so the separator stays literal.
 	 */
 	public function test_build_body_escapes_joined_multi_value_field() {
