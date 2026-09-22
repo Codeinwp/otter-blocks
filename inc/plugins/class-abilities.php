@@ -457,6 +457,49 @@ class Abilities {
 	}
 
 	/**
+	 * The post that contains a form block with the given form id.
+	 *
+	 * Same search `otter/list-forms` runs, narrowed to the id; the block
+	 * comment carries the id as a JSON attribute, so a content search finds
+	 * it, and the match is confirmed by parsing the post's form blocks.
+	 *
+	 * @param string $form_id The form id.
+	 * @return int The post ID, 0 when no post contains the form.
+	 */
+	private function find_form_post( $form_id ) {
+		$post_types = array_values( array_diff( get_post_types( array( 'show_in_rest' => true ) ), array( 'attachment' ) ) );
+
+		$query = new WP_Query(
+			array(
+				'post_type'           => $post_types,
+				'post_status'         => array( 'publish', 'future', 'draft', 'pending', 'private' ),
+				's'                   => $form_id,
+				'sentence'            => true,
+				'search_columns'      => array( 'post_content' ),
+				'posts_per_page'      => 20,
+				'orderby'             => 'ID',
+				'order'               => 'ASC',
+				'ignore_sticky_posts' => true,
+				'no_found_rows'       => true,
+			)
+		);
+
+		foreach ( $query->posts as $post ) {
+			if ( ! ( $post instanceof \WP_Post ) ) {
+				continue;
+			}
+
+			foreach ( $this->get_post_forms( $post, array() ) as $post_form ) {
+				if ( $post_form['form_id'] === $form_id ) {
+					return (int) $post->ID;
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	/**
 	 * Execute `otter/update-form`.
 	 *
 	 * @param mixed $input The ability input.
@@ -482,30 +525,38 @@ class Abilities {
 			}
 		}
 
-		if ( $post_id ) {
-			$post = get_post( $post_id );
+		// The form's settings are changed from the editor of the post that
+		// contains it, so that post's `edit_post` is the check that applies —
+		// whether the caller named the post or not. A form found in no post
+		// has no page to authorise against and is not editable here.
+		if ( ! $post_id ) {
+			$post_id = $this->find_form_post( $form_id );
 
-			if ( ! $post ) {
-				return new WP_Error( 'otter_post_not_found', __( 'The post does not exist.', 'otter-blocks' ) );
+			if ( ! $post_id ) {
+				return new WP_Error( 'otter_form_not_found', __( 'The form was not found in any post. Pass the post_id that contains the form.', 'otter-blocks' ) );
 			}
+		}
 
-			if ( ! current_user_can( 'edit_post', $post_id ) ) {
-				return new WP_Error( 'otter_forbidden', __( 'You are not allowed to edit this post.', 'otter-blocks' ) );
+		$post = get_post( $post_id );
+
+		if ( ! $post ) {
+			return new WP_Error( 'otter_post_not_found', __( 'The post does not exist.', 'otter-blocks' ) );
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return new WP_Error( 'otter_forbidden', __( 'You are not allowed to edit this post.', 'otter-blocks' ) );
+		}
+
+		$in_post = false;
+
+		foreach ( $this->get_post_forms( $post, array() ) as $post_form ) {
+			if ( $post_form['form_id'] === $form_id ) {
+				$in_post = true;
 			}
+		}
 
-			$in_post = false;
-
-			foreach ( $this->get_post_forms( $post, array() ) as $post_form ) {
-				if ( $post_form['form_id'] === $form_id ) {
-					$in_post = true;
-				}
-			}
-
-			if ( ! $in_post ) {
-				return new WP_Error( 'otter_form_not_found', __( 'The form was not found in this post.', 'otter-blocks' ) );
-			}
-		} elseif ( null === $index ) {
-			return new WP_Error( 'otter_form_not_found', __( 'No saved settings for this form. Pass the post_id that contains the form.', 'otter-blocks' ) );
+		if ( ! $in_post ) {
+			return new WP_Error( 'otter_form_not_found', __( 'The form was not found in this post.', 'otter-blocks' ) );
 		}
 
 		$entry   = null !== $index ? $forms[ $index ] : array( 'form' => $form_id );
