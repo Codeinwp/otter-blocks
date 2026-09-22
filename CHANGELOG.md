@@ -1,3 +1,11 @@
+##### [Version 3.2.6](https://github.com/Codeinwp/otter-blocks/compare/v3.2.5...v3.2.6) (2026-09-22)
+
+- Fixed Maps block tiles that failed to load in the editor.
+- Fixed errors when unavailable pattern files load during site startup.
+- Fixed frontend CSS generation using too much memory on pages with many blocks.
+- Updated dependencies
+- Enhanced Security
+
 ##### [Version 3.2.5](https://github.com/Codeinwp/otter-blocks/compare/v3.2.4...v3.2.5) (2026-09-09)
 
 - Fixed Accordion Item titles not appearing for translation in WPML. 
