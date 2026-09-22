@@ -350,7 +350,7 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 - Fixed errors when unavailable pattern files load during site startup.
 - Fixed frontend CSS generation using too much memory on pages with many blocks.
 - Updated dependencies
-- Enhanced Security
+- Enhanced Security. Thanks to Ashish Agarwal for responsible disclosure.
 
 
 
