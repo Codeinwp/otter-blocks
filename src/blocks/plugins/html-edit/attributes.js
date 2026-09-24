@@ -90,14 +90,15 @@ const toType = ( value, type ) => {
 };
 
 /**
- * Normalize a value so markup and attribute values compare equal.
+ * Serialize a stored attribute the way the markup reads it, so both compare equal.
+ * Values read from the markup are already serialized and are never parsed again.
  *
- * @param {*}       value  The value.
- * @param {boolean} isHTML Whether the value is markup.
- * @return {string} The normalized value.
+ * @param {*}       current The stored attribute.
+ * @param {boolean} isHTML  Whether the attribute is markup.
+ * @return {string} The serialized attribute.
  */
-const normalize = ( value, isHTML ) => {
-	const string = undefined === value || null === value ? '' : String( value );
+const serializeStored = ( current, isHTML ) => {
+	const string = undefined === current || null === current ? '' : String( current );
 
 	return isHTML ? toFragment( `<div>${ string }</div>` ).firstChild.innerHTML : string;
 };
@@ -147,7 +148,7 @@ export const getAttributesFromHTML = ( attributes, blockType, innerHTML ) => {
 
 			const value = toType( raw, type );
 
-			if ( undefined !== value && normalize( value, location.html ) !== normalize( current, location.html ) ) {
+			if ( undefined !== value && String( value ) !== serializeStored( current, location.html ) ) {
 				changed = { ...( changed ?? attributes ), [ key ]: value };
 				break;
 			}

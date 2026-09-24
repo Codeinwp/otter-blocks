@@ -24,6 +24,8 @@ describe( 'getAttributesFromHTML', () => {
 			[{ title: 'A & B', percentage: 50 }, progressBar, progressHTML({ title: 'A &amp; B' }) ],
 			[{ title: 'Skill', percentage: 50 }, circleCounter, circleHTML( 'Skill', 50 ) ],
 			[{ content: 'Say &quot;hi&quot; <strong>now</strong>' }, blockType( 'icon-list-item' ), iconListItemHTML( 'Say &quot;hi&quot; <strong>now</strong>' ) ],
+			[{ content: 'Line<br/>two' }, blockType( 'icon-list-item' ), iconListItemHTML( 'Line<br/>two' ) ],
+			[{ content: 'A <a href=\'#x\'>link</a>' }, blockType( 'icon-list-item' ), iconListItemHTML( 'A <a href=\'#x\'>link</a>' ) ],
 			[{ label: 'Name', placeholder: 'Jane', helpText: 'Help' }, formInput, formInputHTML({ label: 'Name', placeholder: 'Jane', help: 'Help' }) ]
 		];
 
