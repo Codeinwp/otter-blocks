@@ -1,4 +1,4 @@
-import { getAttributesFromHTML } from '../../plugins/html-edit/attributes';
+import { getAttributesFromHTML, syncDuplicateValues } from '../../plugins/html-edit/attributes';
 
 const blockType = ( name, attributes = {}) => ({ name: `themeisle-blocks/${ name }`, attributes });
 
@@ -63,12 +63,30 @@ describe( 'getAttributesFromHTML', () => {
 			.toEqual({ content: 'Entry <strong>two</strong>' });
 	});
 
-	it( 'reads edited Form field texts and keeps the ones missing from the markup', () => {
+	it( 'reads edited Form field texts', () => {
 		expect( getAttributesFromHTML(
 			{ label: 'Name', placeholder: 'Jane', helpText: 'Help' },
 			formInput,
-			formInputHTML({ label: 'Full name', placeholder: 'John' })
-		) ).toEqual({ label: 'Full name', placeholder: 'John', helpText: 'Help' });
+			formInputHTML({ label: 'Full name', placeholder: 'John', help: 'More help' })
+		) ).toEqual({ label: 'Full name', placeholder: 'John', helpText: 'More help' });
+	});
+
+	it( 'clears optional Form texts deleted from the markup', () => {
+		const result = getAttributesFromHTML(
+			{ label: 'Name', placeholder: 'Jane', helpText: 'Help' },
+			formInput,
+			formInputHTML({ label: 'Name', placeholder: 'Jane' }).replace( ' placeholder="Jane"', '' )
+		);
+
+		expect( result.label ).toBe( 'Name' );
+		expect( result.placeholder ).toBeUndefined();
+		expect( result.helpText ).toBeUndefined();
+	});
+
+	it( 'keeps a missing optional text that was already empty', () => {
+		const attributes = { label: 'Name', placeholder: 'Jane' };
+
+		expect( getAttributesFromHTML( attributes, formInput, formInputHTML({ label: 'Name', placeholder: 'Jane' }) ) ).toBe( attributes );
 	});
 
 	it( 'leaves other blocks alone', () => {
@@ -76,5 +94,27 @@ describe( 'getAttributesFromHTML', () => {
 
 		expect( getAttributesFromHTML( attributes, blockType( 'advanced-heading' ), '<h2>Other</h2>' ) ).toBe( attributes );
 		expect( getAttributesFromHTML( attributes, blockType( 'icon-list-item' ), '' ) ).toBe( attributes );
+	});
+});
+
+describe( 'syncDuplicateValues', () => {
+	it( 'syncs data-percent to an edit of the visible percentage', () => {
+		const html = progressHTML({ number: '80%' });
+		const attributes = getAttributesFromHTML({ title: 'Skill', percentage: 50 }, progressBar, html );
+
+		expect( attributes.percentage ).toBe( 80 );
+		expect( syncDuplicateValues( attributes, progressBar, html ) ).toBe( progressHTML({ percent: 80, number: '80%' }) );
+	});
+
+	it( 'syncs the visible percentage to an edit of data-percent', () => {
+		const html = progressHTML({ percent: 70 });
+		const attributes = getAttributesFromHTML({ title: 'Skill', percentage: 50 }, progressBar, html );
+
+		expect( syncDuplicateValues( attributes, progressBar, html ) ).toBe( progressHTML({ percent: 70, number: '70%' }) );
+	});
+
+	it( 'returns null when no copy is stale', () => {
+		expect( syncDuplicateValues({ title: 'Skill', percentage: 50 }, progressBar, progressHTML() ) ).toBeNull();
+		expect( syncDuplicateValues({ title: 'Skill', percentage: 50 }, circleCounter, circleHTML( 'Skill', 50 ) ) ).toBeNull();
 	});
 });

@@ -3,7 +3,8 @@
  *
  * Each attribute lists its locations: `attribute` reads an HTML attribute, otherwise
  * `html` or `text` reads the element content. Selectors are relative to the block
- * wrapper; without one the wrapper itself is read.
+ * wrapper; without one the wrapper itself is read. `optional` marks what `save` renders
+ * only for a value, so its absence clears the attribute.
  */
 export const HTML_FIELDS = {
 	'themeisle-blocks/countdown': {
@@ -28,13 +29,13 @@ export const HTML_FIELDS = {
 	},
 	'themeisle-blocks/form-input': {
 		label: [{ selector: ':scope > label > .otter-form-input-label__label', html: true }],
-		placeholder: [{ selector: ':scope > input', attribute: 'placeholder' }],
-		helpText: [{ selector: ':scope > .o-form-help', text: true }]
+		placeholder: [{ selector: ':scope > input', attribute: 'placeholder', optional: true }],
+		helpText: [{ selector: ':scope > .o-form-help', text: true, optional: true }]
 	},
 	'themeisle-blocks/form-textarea': {
 		label: [{ selector: ':scope > label > .otter-form-textarea-label__label', html: true }],
-		placeholder: [{ selector: ':scope > textarea', attribute: 'placeholder' }],
-		helpText: [{ selector: ':scope > .o-form-help', text: true }]
+		placeholder: [{ selector: ':scope > textarea', attribute: 'placeholder', optional: true }],
+		helpText: [{ selector: ':scope > .o-form-help', text: true, optional: true }]
 	}
 };
 
@@ -52,6 +53,15 @@ const toFragment = ( html ) => {
 };
 
 /**
+ * Find the element of a location in the block wrapper.
+ *
+ * @param {Element} root     The block wrapper.
+ * @param {Object}  location The location.
+ * @return {Element|null} The element.
+ */
+const findNode = ( root, location ) => location.selector ? root.querySelector( location.selector ) : root;
+
+/**
  * Read one location of an attribute from the block wrapper.
  *
  * @param {Element} root     The block wrapper.
@@ -59,7 +69,7 @@ const toFragment = ( html ) => {
  * @return {string|undefined} The raw value, or undefined when absent.
  */
 const readLocation = ( root, location ) => {
-	const node = location.selector ? root.querySelector( location.selector ) : root;
+	const node = findNode( root, location );
 
 	if ( ! node ) {
 		return undefined;
@@ -143,6 +153,11 @@ export const getAttributesFromHTML = ( attributes, blockType, innerHTML ) => {
 			const raw = readLocation( root, location );
 
 			if ( undefined === raw ) {
+				if ( location.optional && undefined !== current && '' !== current ) {
+					changed = { ...( changed ?? attributes ), [ key ]: undefined };
+					break;
+				}
+
 				continue;
 			}
 
@@ -156,4 +171,67 @@ export const getAttributesFromHTML = ( attributes, blockType, innerHTML ) => {
 	});
 
 	return changed ?? attributes;
+};
+
+/**
+ * Rewrite the other copies of a value rendered in several places to the stored
+ * attribute, so an HTML edit of one copy matches the markup `save` regenerates.
+ * Only attributes and plain text are rewritten, never markup.
+ *
+ * @param {Object} attributes The block attributes.
+ * @param {Object} blockType  The block type.
+ * @param {string} html       The edited block markup.
+ * @return {string|null} The synced markup, or null when no copy was stale.
+ */
+export const syncDuplicateValues = ( attributes, blockType, html ) => {
+	const fields = HTML_FIELDS[ blockType?.name ];
+
+	if ( ! fields || 'string' !== typeof html ) {
+		return null;
+	}
+
+	const template = document.createElement( 'template' );
+	template.innerHTML = html;
+
+	const root = template.content.firstElementChild;
+
+	if ( ! root ) {
+		return null;
+	}
+
+	let synced = false;
+
+	Object.entries( fields ).forEach( ([ key, locations ]) => {
+		const value = attributes?.[ key ];
+
+		if ( 2 > locations.length || ! [ 'string', 'number' ].includes( typeof value ) ) {
+			return;
+		}
+
+		locations.forEach( ( location ) => {
+			const node = findNode( root, location );
+			const raw = node && ! location.html ? readLocation( root, location ) : undefined;
+
+			if ( undefined === raw ) {
+				return;
+			}
+
+			// The visible percentage keeps its sign.
+			const expected = `${ value }${ ! location.attribute && /%\s*$/.test( raw ) ? '%' : '' }`;
+
+			if ( raw === expected ) {
+				return;
+			}
+
+			if ( location.attribute ) {
+				node.setAttribute( location.attribute, expected );
+			} else {
+				node.textContent = expected;
+			}
+
+			synced = true;
+		});
+	});
+
+	return synced ? template.innerHTML : null;
 };

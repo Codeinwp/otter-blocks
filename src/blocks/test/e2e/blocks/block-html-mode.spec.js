@@ -17,8 +17,15 @@ const EDITABLE = [
 	{
 		target: 'themeisle-blocks/progress-bar',
 		block: { name: 'themeisle-blocks/progress-bar' },
-		edits: [[ 'data-percent="50"', 'data-percent="80"' ], [ '>50%<', '>80%<' ], [ '<span>Skill</span>', '<span>Design</span>' ]],
+		edits: [[ '>50%<', '>80%<' ], [ '<span>Skill</span>', '<span>Design</span>' ]],
 		expected: { percentage: 80, title: 'Design' }
+	},
+	{
+		title: 'data-percent',
+		target: 'themeisle-blocks/progress-bar',
+		block: { name: 'themeisle-blocks/progress-bar' },
+		edits: [[ 'data-percent="50"', 'data-percent="30"' ]],
+		expected: { percentage: 30 }
 	},
 	{
 		target: 'themeisle-blocks/circle-counter',
@@ -52,6 +59,28 @@ const EDITABLE = [
 		},
 		edits: [[ '>Message<', '>Comment<' ], [ 'placeholder="Type"', 'placeholder="Write"' ]],
 		expected: { label: 'Comment', placeholder: 'Write' }
+	},
+	{
+		title: 'deleted help text',
+		target: 'themeisle-blocks/form-input',
+		block: {
+			name: 'themeisle-blocks/form',
+			innerBlocks: [{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name', helpText: 'Help' }}]
+		},
+		edits: [[ '<span class="o-form-help">Help</span>', '' ]],
+		expected: { label: 'Name' },
+		cleared: [ 'helpText' ]
+	},
+	{
+		title: 'deleted help text',
+		target: 'themeisle-blocks/form-textarea',
+		block: {
+			name: 'themeisle-blocks/form',
+			innerBlocks: [{ name: 'themeisle-blocks/form-textarea', attributes: { label: 'Message', helpText: 'Help' }}]
+		},
+		edits: [[ '<span class="o-form-help">Help</span>', '' ]],
+		expected: { label: 'Message' },
+		cleared: [ 'helpText' ]
 	}
 ];
 
@@ -136,8 +165,8 @@ test.describe( 'Edit as HTML mode', () => {
 		await admin.createNewPost();
 	});
 
-	for ( const { target, block, edits, expected } of EDITABLE ) {
-		test( `${ target } keeps an Edit as HTML change`, async({ editor, page }) => {
+	for ( const { title, target, block, edits, expected, cleared = [] } of EDITABLE ) {
+		test( `${ target } keeps an Edit as HTML change${ title ? ` (${ title })` : '' }`, async({ editor, page }) => {
 			await editor.insertBlock( block );
 			await selectBlockByName( page, target );
 			await editor.clickBlockOptionsMenuItem( 'Edit as HTML' );
@@ -153,14 +182,12 @@ test.describe( 'Edit as HTML mode', () => {
 			await textarea.fill( html );
 			await textarea.blur();
 
-			const result = await page.evaluate( () => {
-				const { isValid, attributes } = window.wp.data.select( 'core/block-editor' ).getSelectedBlock();
+			// A stale copy of a duplicated value is synced right after the edit.
+			await expect.poll( () => page.evaluate( () => window.wp.data.select( 'core/block-editor' ).getSelectedBlock().isValid ) ).toBe( true );
 
-				return { isValid, attributes };
-			});
+			const attributes = await page.evaluate( () => window.wp.data.select( 'core/block-editor' ).getSelectedBlock().attributes );
 
-			expect( result.isValid ).toBe( true );
-			expect( result.attributes ).toMatchObject( expected );
+			expect( attributes ).toMatchObject( expected );
 
 			// Stored in the block comment, where the server reads it.
 			const commentAttributes = await page.evaluate( ( name ) => {
@@ -171,6 +198,11 @@ test.describe( 'Edit as HTML mode', () => {
 			}, target );
 
 			expect( commentAttributes ).toMatchObject( expected );
+
+			for ( const key of cleared ) {
+				expect( attributes[ key ]).toBeUndefined();
+				expect( commentAttributes ).not.toHaveProperty( key );
+			}
 		});
 	}
 
