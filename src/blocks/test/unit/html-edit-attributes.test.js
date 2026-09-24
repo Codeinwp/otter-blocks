@@ -1,4 +1,29 @@
+import { registerBlockType } from '@wordpress/blocks';
+import { applyFilters } from '@wordpress/hooks';
+
 import { getAttributesFromHTML, syncDuplicateValues } from '../../plugins/html-edit/attributes';
+import '../../plugins/html-edit/index';
+
+// The real registry pulls an ESM-only dependency that this Jest setup does not transform.
+jest.mock( '@wordpress/blocks', () => {
+	const types = {};
+
+	return {
+		registerBlockType: ( name, settings ) => {
+			types[ name ] = { name, ...settings };
+
+			return types[ name ];
+		},
+		getBlockType: ( name ) => types[ name ],
+		validateBlock: jest.fn()
+	};
+});
+
+jest.mock( '@wordpress/data', () => ({
+	dispatch: jest.fn(),
+	select: jest.fn(),
+	subscribe: jest.fn()
+}) );
 
 const blockType = ( name, attributes = {}) => ({ name: `themeisle-blocks/${ name }`, attributes });
 
@@ -116,5 +141,29 @@ describe( 'syncDuplicateValues', () => {
 	it( 'returns null when no copy is stale', () => {
 		expect( syncDuplicateValues({ title: 'Skill', percentage: 50 }, progressBar, progressHTML() ) ).toBeNull();
 		expect( syncDuplicateValues({ title: 'Skill', percentage: 50 }, circleCounter, circleHTML( 'Skill', 50 ) ) ).toBeNull();
+	});
+});
+
+describe( 'blocks.getBlockAttributes filter', () => {
+	const attributes = { id: 'c1', date: '2026-10-01T10:00:00' };
+	const editedHTML = countdownHTML( '2026-12-25T10:00:00' );
+	let countdown;
+
+	beforeAll( () => {
+		countdown = registerBlockType( 'themeisle-blocks/countdown', {
+			attributes: { id: { type: 'string' }, date: { type: 'string' }},
+			save: () => null
+		});
+	});
+
+	it( 'reads the edited markup for the registered definition', () => {
+		expect( applyFilters( 'blocks.getBlockAttributes', attributes, countdown, editedHTML ) )
+			.toEqual({ id: 'c1', date: '2026-12-25T10:00:00' });
+	});
+
+	it( 'leaves a deprecated definition alone', () => {
+		const deprecated = { ...countdown, save: () => null };
+
+		expect( applyFilters( 'blocks.getBlockAttributes', attributes, deprecated, editedHTML ) ).toBe( attributes );
 	});
 });

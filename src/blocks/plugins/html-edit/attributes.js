@@ -1,10 +1,19 @@
 /**
- * Where the comment-stored attributes of static blocks appear in the saved markup.
+ * One place where an attribute appears in the saved markup.
  *
- * Each attribute lists its locations: `attribute` reads an HTML attribute, otherwise
- * `html` or `text` reads the element content. Selectors are relative to the block
- * wrapper; without one the wrapper itself is read. `optional` marks what `save` renders
- * only for a value, so its absence clears the attribute.
+ * @typedef {Object} HTMLFieldLocation
+ * @property {string}  [selector]  Element relative to the block wrapper; the wrapper itself without one.
+ * @property {string}  [attribute] Read this HTML attribute of the element.
+ * @property {boolean} [html]      Read the element content as markup.
+ * @property {boolean} [text]      Read the element content as plain text.
+ * @property {boolean} [optional]  Rendered by `save` only for a value, so its absence clears the attribute.
+ */
+
+/**
+ * Where the comment-stored attributes of static blocks appear in the saved markup,
+ * by block name and attribute.
+ *
+ * @type {Object<string, Object<string, HTMLFieldLocation[]>>}
  */
 export const HTML_FIELDS = {
 	'themeisle-blocks/countdown': {
@@ -55,8 +64,8 @@ const toFragment = ( html ) => {
 /**
  * Find the element of a location in the block wrapper.
  *
- * @param {Element} root     The block wrapper.
- * @param {Object}  location The location.
+ * @param {Element}           root     The block wrapper.
+ * @param {HTMLFieldLocation} location The location.
  * @return {Element|null} The element.
  */
 const findNode = ( root, location ) => location.selector ? root.querySelector( location.selector ) : root;
@@ -64,8 +73,8 @@ const findNode = ( root, location ) => location.selector ? root.querySelector( l
 /**
  * Read one location of an attribute from the block wrapper.
  *
- * @param {Element} root     The block wrapper.
- * @param {Object}  location The location.
+ * @param {Element}           root     The block wrapper.
+ * @param {HTMLFieldLocation} location The location.
  * @return {string|undefined} The raw value, or undefined when absent.
  */
 const readLocation = ( root, location ) => {
@@ -103,14 +112,45 @@ const toType = ( value, type ) => {
  * Serialize a stored attribute the way the markup reads it, so both compare equal.
  * Values read from the markup are already serialized and are never parsed again.
  *
- * @param {*}       current The stored attribute.
- * @param {boolean} isHTML  Whether the attribute is markup.
+ * @param {string|number|undefined} current The stored attribute.
+ * @param {boolean}                 isHTML  Whether the attribute is markup.
  * @return {string} The serialized attribute.
  */
 const serializeStored = ( current, isHTML ) => {
-	const string = undefined === current || null === current ? '' : String( current );
+	const string = undefined === current ? '' : String( current );
 
 	return isHTML ? toFragment( `<div>${ string }</div>` ).firstChild.innerHTML : string;
+};
+
+/**
+ * Find the first location whose value differs from the stored attribute.
+ *
+ * @param {Element}                 root      The block wrapper.
+ * @param {HTMLFieldLocation[]}     locations The attribute locations.
+ * @param {string|number|undefined} current   The stored attribute.
+ * @param {string|undefined}        type      The attribute type.
+ * @return {{value: string|number|undefined}|null} The changed or cleared value, or null when unchanged.
+ */
+const findChangedValue = ( root, locations, current, type ) => {
+	for ( const location of locations ) {
+		const raw = readLocation( root, location );
+
+		if ( undefined === raw ) {
+			if ( location.optional && undefined !== current && '' !== current ) {
+				return { value: undefined };
+			}
+
+			continue;
+		}
+
+		const value = toType( raw, type );
+
+		if ( undefined !== value && String( value ) !== serializeStored( current, location.html ) ) {
+			return { value };
+		}
+	}
+
+	return null;
 };
 
 /**
@@ -120,9 +160,9 @@ const serializeStored = ( current, isHTML ) => {
  * A value rendered in several places is taken from the first place that differs
  * from the stored attribute.
  *
- * @param {Object}      attributes The parsed attributes.
- * @param {Object}      blockType  The block type.
- * @param {string|Node} innerHTML  The block markup.
+ * @param {Object}                                                       attributes The parsed attributes.
+ * @param {{name: string, attributes?: Object<string, {type?: string}>}} blockType  The block type.
+ * @param {string|Node}                                                  innerHTML  The block markup.
  * @return {Object} The attributes.
  */
 export const getAttributesFromHTML = ( attributes, blockType, innerHTML ) => {
@@ -147,26 +187,10 @@ export const getAttributesFromHTML = ( attributes, blockType, innerHTML ) => {
 			return;
 		}
 
-		const type = blockType.attributes?.[ key ]?.type;
+		const found = findChangedValue( root, locations, current, blockType.attributes?.[ key ]?.type );
 
-		for ( const location of locations ) {
-			const raw = readLocation( root, location );
-
-			if ( undefined === raw ) {
-				if ( location.optional && undefined !== current && '' !== current ) {
-					changed = { ...( changed ?? attributes ), [ key ]: undefined };
-					break;
-				}
-
-				continue;
-			}
-
-			const value = toType( raw, type );
-
-			if ( undefined !== value && String( value ) !== serializeStored( current, location.html ) ) {
-				changed = { ...( changed ?? attributes ), [ key ]: value };
-				break;
-			}
+		if ( found ) {
+			changed = { ...( changed ?? attributes ), [ key ]: found.value };
 		}
 	});
 
@@ -178,9 +202,9 @@ export const getAttributesFromHTML = ( attributes, blockType, innerHTML ) => {
  * attribute, so an HTML edit of one copy matches the markup `save` regenerates.
  * Only attributes and plain text are rewritten, never markup.
  *
- * @param {Object} attributes The block attributes.
- * @param {Object} blockType  The block type.
- * @param {string} html       The edited block markup.
+ * @param {Object}                                                       attributes The block attributes.
+ * @param {{name: string, attributes?: Object<string, {type?: string}>}} blockType  The block type.
+ * @param {string}                                                       html       The edited block markup.
  * @return {string|null} The synced markup, or null when no copy was stale.
  */
 export const syncDuplicateValues = ( attributes, blockType, html ) => {
