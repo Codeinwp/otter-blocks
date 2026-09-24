@@ -143,7 +143,7 @@ class Blocks_CSS {
 				}
 
 				$content .= $_wp_current_template_content;
-			} else {
+			} elseif ( is_singular() || ! post_password_required( $post ) ) {
 				$content     = $post->post_content;
 				$rendered_id = $post->ID;
 			}
@@ -189,7 +189,7 @@ class Blocks_CSS {
 		foreach ( $wp_query->posts as $archive_post ) {
 			$archive_post = get_post( $archive_post );
 
-			if ( ! $archive_post || $archive_post->ID === $skip_id || ! empty( $archive_post->post_password ) || ! has_blocks( $archive_post ) ) {
+			if ( ! $archive_post || $archive_post->ID === $skip_id || post_password_required( $archive_post ) || ! has_blocks( $archive_post ) ) {
 				continue;
 			}
 

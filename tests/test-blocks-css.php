@@ -156,6 +156,49 @@ class Test_Blocks_CSS extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A password protected first archive post is skipped too.
+	 */
+	public function test_archive_skips_password_protected_first_post() {
+		$this->create_archive_post( $this->block_with_css( '.ticss-locked{color:red}' ), 1, array( 'post_password' => 'secret' ) );
+		$this->create_archive_post( $this->block_with_css( '.ticss-public{color:blue}' ), 2 );
+
+		$this->go_to( get_category_link( $this->category_id ) );
+
+		$output = $this->render( new Blocks_CSS_Standalone_Stub() );
+
+		$this->assertStringNotContainsString( '.ticss-locked{color:red}', $output );
+		$this->assertStringContainsString( '.ticss-public{color:blue}', $output );
+	}
+
+	/**
+	 * Unlocked password protected archive posts keep their CSS.
+	 */
+	public function test_archive_renders_unlocked_password_protected_posts() {
+		$this->create_archive_post( $this->block_with_css( '.ticss-first{color:red}' ), 1, array( 'post_password' => 'secret' ) );
+		$this->create_archive_post( $this->block_with_css( '.ticss-second{color:blue}' ), 2, array( 'post_password' => 'secret' ) );
+
+		$this->go_to( get_category_link( $this->category_id ) );
+
+		add_filter( 'post_password_required', '__return_false' );
+		$output = $this->render( new Blocks_CSS_Standalone_Stub() );
+		remove_filter( 'post_password_required', '__return_false' );
+
+		$this->assertStringContainsString( '.ticss-first{color:red}', $output );
+		$this->assertStringContainsString( '.ticss-second{color:blue}', $output );
+	}
+
+	/**
+	 * A password protected single post keeps its CSS, as before.
+	 */
+	public function test_singular_password_protected_keeps_css() {
+		$post_id = $this->create_archive_post( $this->block_with_css( '.ticss-own{color:red}' ), 1, array( 'post_password' => 'secret' ) );
+
+		$this->go_to( get_permalink( $post_id ) );
+
+		$this->assertStringContainsString( '.ticss-own{color:red}', $this->render( new Blocks_CSS_Standalone_Stub() ) );
+	}
+
+	/**
 	 * Posts covered by Otter's stylesheet do not get inline CSS.
 	 */
 	public function test_archive_skips_posts_with_otter_stylesheet() {
