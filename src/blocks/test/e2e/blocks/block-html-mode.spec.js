@@ -43,6 +43,15 @@ const EDITABLE = [
 		expected: { content: 'Entry <strong>two</strong>' }
 	},
 	{
+		target: 'themeisle-blocks/business-hours-item',
+		block: {
+			name: 'themeisle-blocks/business-hours',
+			innerBlocks: [{ name: 'themeisle-blocks/business-hours-item', attributes: { label: 'Monday', time: '9:00 - 17:00' }}]
+		},
+		edits: [[ '<span>Monday</span>', '<span>Tuesday</span>' ], [ '<span>9:00 - 17:00</span>', '<span>Closed</span>' ]],
+		expected: { label: 'Tuesday', time: 'Closed' }
+	},
+	{
 		target: 'themeisle-blocks/form-input',
 		block: {
 			name: 'themeisle-blocks/form',
@@ -84,7 +93,7 @@ const EDITABLE = [
 	}
 ];
 
-// Gutenberg validates the HTML mode without inner blocks, so these cannot offer it.
+// Gutenberg validates the HTML mode without inner blocks, so blocks saving InnerBlocks cannot offer it.
 const WITHOUT_HTML_MODE = [
 	{ target: 'themeisle-blocks/flip', block: { name: 'themeisle-blocks/flip' }},
 	{
@@ -99,6 +108,69 @@ const WITHOUT_HTML_MODE = [
 		block: {
 			name: 'themeisle-blocks/tabs',
 			innerBlocks: [{ name: 'themeisle-blocks/tabs-item', attributes: { title: 'Tab' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/tabs',
+		block: {
+			name: 'themeisle-blocks/tabs',
+			innerBlocks: [{ name: 'themeisle-blocks/tabs-item', attributes: { title: 'Tab' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/timeline',
+		block: {
+			name: 'themeisle-blocks/timeline',
+			innerBlocks: [{ name: 'themeisle-blocks/timeline-item' }]
+		}
+	},
+	{
+		target: 'themeisle-blocks/timeline-item',
+		block: {
+			name: 'themeisle-blocks/timeline',
+			innerBlocks: [{ name: 'themeisle-blocks/timeline-item' }]
+		}
+	},
+	{
+		target: 'themeisle-blocks/icon-list',
+		block: {
+			name: 'themeisle-blocks/icon-list',
+			innerBlocks: [{ name: 'themeisle-blocks/icon-list-item', attributes: { content: 'Entry' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/form',
+		block: {
+			name: 'themeisle-blocks/form',
+			innerBlocks: [{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/button-group',
+		block: {
+			name: 'themeisle-blocks/button-group',
+			innerBlocks: [{ name: 'themeisle-blocks/button', attributes: { text: 'Click' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/modal',
+		block: {
+			name: 'themeisle-blocks/modal',
+			innerBlocks: [{ name: 'core/paragraph', attributes: { content: 'Inner' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/popup',
+		block: {
+			name: 'themeisle-blocks/popup',
+			innerBlocks: [{ name: 'core/paragraph', attributes: { content: 'Inner' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/business-hours',
+		block: {
+			name: 'themeisle-blocks/business-hours',
+			innerBlocks: [{ name: 'themeisle-blocks/business-hours-item', attributes: { label: 'Monday', time: '9:00 - 17:00' }}]
 		}
 	}
 ];

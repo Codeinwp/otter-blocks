@@ -39,6 +39,8 @@ const circleHTML = ( title, percentage ) => `<div id="cc1" class="wp-block-theme
 
 const iconListItemHTML = ( content ) => `<div id="i1" class="wp-block-themeisle-blocks-icon-list-item"><i class="fas fa-star wp-block-themeisle-blocks-icon-list-item-icon"></i><p class="wp-block-themeisle-blocks-icon-list-item-content">${ content }</p></div>`;
 
+const businessHoursItemHTML = ( label, time ) => `<div id="b1" class="wp-block-themeisle-blocks-business-hours-item"><div class="otter-business-hour-item__label"><span>${ label }</span></div><div class="otter-business-hour-item__time"><span>${ time }</span></div></div>`;
+
 const formInputHTML = ({ label, placeholder, help }) => `<div id="f1" class="wp-block-themeisle-blocks-form-input"><label for="f1-input" class="otter-form-input-label"><span class="otter-form-input-label__label">${ label }</span><span class="required">*</span></label><input type="text" id="f1-input" required placeholder="${ placeholder }" class="otter-form-input"/>${ help ? `<span class="o-form-help">${ help }</span>` : '' }</div>`;
 
 describe( 'getAttributesFromHTML', () => {
@@ -51,7 +53,8 @@ describe( 'getAttributesFromHTML', () => {
 			[{ content: 'Say &quot;hi&quot; <strong>now</strong>' }, blockType( 'icon-list-item' ), iconListItemHTML( 'Say &quot;hi&quot; <strong>now</strong>' ) ],
 			[{ content: 'Line<br/>two' }, blockType( 'icon-list-item' ), iconListItemHTML( 'Line<br/>two' ) ],
 			[{ content: 'A <a href=\'#x\'>link</a>' }, blockType( 'icon-list-item' ), iconListItemHTML( 'A <a href=\'#x\'>link</a>' ) ],
-			[{ label: 'Name', placeholder: 'Jane', helpText: 'Help' }, formInput, formInputHTML({ label: 'Name', placeholder: 'Jane', help: 'Help' }) ]
+			[{ label: 'Name', placeholder: 'Jane', helpText: 'Help' }, formInput, formInputHTML({ label: 'Name', placeholder: 'Jane', help: 'Help' }) ],
+			[{ label: 'Monday', time: '9:00<br/>17:00' }, blockType( 'business-hours-item' ), businessHoursItemHTML( 'Monday', '9:00<br/>17:00' ) ]
 		];
 
 		cases.forEach( ([ attributes, type, html ]) => {
@@ -86,6 +89,14 @@ describe( 'getAttributesFromHTML', () => {
 	it( 'reads edited rich text as markup', () => {
 		expect( getAttributesFromHTML({ content: 'Entry' }, blockType( 'icon-list-item' ), iconListItemHTML( 'Entry <strong>two</strong>' ) ) )
 			.toEqual({ content: 'Entry <strong>two</strong>' });
+	});
+
+	it( 'reads an edited Business Hours item label and time as markup', () => {
+		expect( getAttributesFromHTML(
+			{ id: 'b1', label: 'Monday', time: '9:00 - 17:00' },
+			blockType( 'business-hours-item', { label: { type: 'string' }, time: { type: 'string' }}),
+			businessHoursItemHTML( '<strong>Mon</strong>', 'Closed &amp; away' )
+		) ).toEqual({ id: 'b1', label: '<strong>Mon</strong>', time: 'Closed &amp; away' });
 	});
 
 	it( 'reads edited Form field texts', () => {

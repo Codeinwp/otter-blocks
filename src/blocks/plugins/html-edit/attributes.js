@@ -36,6 +36,10 @@ export const HTML_FIELDS = {
 	'themeisle-blocks/icon-list-item': {
 		content: [{ selector: ':scope > p', html: true }]
 	},
+	'themeisle-blocks/business-hours-item': {
+		label: [{ selector: ':scope > .otter-business-hour-item__label > span', html: true }],
+		time: [{ selector: ':scope > .otter-business-hour-item__time > span', html: true }]
+	},
 	'themeisle-blocks/form-input': {
 		label: [{ selector: ':scope > label > .otter-form-input-label__label', html: true }],
 		placeholder: [{ selector: ':scope > input', attribute: 'placeholder', optional: true }],

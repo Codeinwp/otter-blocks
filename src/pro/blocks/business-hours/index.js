@@ -39,7 +39,7 @@ registerBlockType( name, {
 		'time'
 	],
 	supports: {
-		align: [ 'wide', 'full' ],
+		...metadata.supports,
 		inserter: Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired )
 	},
 	styles: [

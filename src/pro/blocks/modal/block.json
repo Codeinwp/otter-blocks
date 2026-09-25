@@ -125,6 +125,9 @@
 			"type": "string"
 		}
 	},
+	"supports": {
+		"html": false
+	},
 	"editorStyle": "otter-popup-editor",
 	"style": "otter-popup-style",
 	"script": "otter-popup"
