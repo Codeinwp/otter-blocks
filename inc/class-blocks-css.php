@@ -104,13 +104,16 @@ class Blocks_CSS {
 	 * @access  public
 	 */
 	public function render_server_side_css() {
-		if ( function_exists( 'has_blocks' ) && has_blocks( get_the_ID() ) ) {
-			global $post;
+		if ( ! function_exists( 'has_blocks' ) ) {
+			return;
+		}
 
-			if ( ! is_object( $post ) ) {
-				return;
-			}
+		global $post;
 
+		$css         = '';
+		$rendered_id = 0;
+
+		if ( has_blocks( get_the_ID() ) && is_object( $post ) ) {
 			$content = '';
 
 			if (
@@ -140,28 +143,70 @@ class Blocks_CSS {
 				}
 
 				$content .= $_wp_current_template_content;
-			} else {
-				$content = $post->post_content;
+			} elseif ( is_singular() || ! post_password_required( $post ) ) {
+				$content     = $post->post_content;
+				$rendered_id = $post->ID;
 			}
 
 			$blocks = parse_blocks( $content );
 
-			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-				return;
+			if ( is_array( $blocks ) && ! empty( $blocks ) ) {
+				$css = $this->cycle_through_blocks( $blocks, $post->ID );
 			}
-
-			$css = $this->cycle_through_blocks( $blocks, $post->ID );
-
-			if ( empty( $css ) ) {
-				return;
-			}
-
-			$style  = "\n" . '<style type="text/css" media="all">' . "\n";
-			$style .= $css;
-			$style .= "\n" . '</style>' . "\n";
-
-			echo $style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
+
+		if ( ! is_singular() && $this->is_standalone() ) {
+			$css .= $this->get_archive_posts_css( $rendered_id );
+		}
+
+		if ( empty( $css ) ) {
+			return;
+		}
+
+		$style  = "\n" . '<style type="text/css" media="all">' . "\n";
+		$style .= $css;
+		$style .= "\n" . '</style>' . "\n";
+
+		echo $style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Collect the custom CSS of the posts listed by the main query.
+	 *
+	 * @param int $skip_id Post already rendered from the global post.
+	 *
+	 * @return string
+	 */
+	protected function get_archive_posts_css( $skip_id = 0 ) {
+		global $wp_query;
+
+		if ( ! $wp_query instanceof \WP_Query || empty( $wp_query->posts ) ) {
+			return '';
+		}
+
+		$css = '';
+
+		foreach ( $wp_query->posts as $archive_post ) {
+			$archive_post = get_post( $archive_post );
+
+			if ( ! $archive_post || $archive_post->ID === $skip_id || post_password_required( $archive_post ) || ! has_blocks( $archive_post ) ) {
+				continue;
+			}
+
+			// Per post, so one post's reusable block cannot wipe the rest.
+			$css .= $this->cycle_through_blocks( parse_blocks( $archive_post->post_content ), $archive_post->ID );
+		}
+
+		return $css;
+	}
+
+	/**
+	 * Whether Blocks CSS runs without Otter, which renders archive CSS itself.
+	 *
+	 * @return bool
+	 */
+	protected function is_standalone() {
+		return ! defined( 'OTTER_BLOCKS_VERSION' );
 	}
 
 	/**
