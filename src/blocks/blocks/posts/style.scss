@@ -152,19 +152,19 @@
 
 	.is-grid {
 		&.o-posts-grid-columns-2 {
-			grid-template-columns: auto auto;
+			grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 		}
 
 		&.o-posts-grid-columns-3 {
-			grid-template-columns: auto auto auto;
+			grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
 		}
 
 		&.o-posts-grid-columns-4 {
-			grid-template-columns: auto auto auto auto;
+			grid-template-columns: repeat( 4, minmax( 0, 1fr ) );
 		}
 
 		&.o-posts-grid-columns-5 {
-			grid-template-columns: auto auto auto auto auto;
+			grid-template-columns: repeat( 5, minmax( 0, 1fr ) );
 		}
 	}
 
@@ -383,7 +383,7 @@
 	.wp-block-themeisle-blocks-posts-grid {
 		.is-grid {
 			&.o-posts-grid-columns-4, &.o-posts-grid-columns-5 {
-				grid-template-columns: auto auto auto;
+				grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
 			}
 
 			.o-posts-grid-post-blog {
