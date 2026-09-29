@@ -353,7 +353,6 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 - Fixed frontend pages failing when Otter could not load a block style.
 - Fixed frontend crashes when Otter could not load a plugin class.
 - Fixed unequal card and featured image widths in the Posts Block grid.
-- Added AI agent support: let AI assistants read and change your Otter forms and settings.
 
 
 
