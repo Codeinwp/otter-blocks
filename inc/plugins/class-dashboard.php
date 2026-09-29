@@ -845,11 +845,26 @@ class Dashboard {
 	}
 
 	/**
+	 * Whether the current user may see form submissions, the same check the Submissions list uses.
+	 *
+	 * @return bool
+	 */
+	private function can_view_form_submissions() {
+		$post_type = get_post_type_object( 'otter_form_record' );
+
+		return current_user_can( null !== $post_type ? $post_type->cap->edit_posts : 'manage_options' );
+	}
+
+	/**
 	 * Hook the form submissions widget.
 	 *
 	 * @return void
 	 */
 	public function form_submissions_widget() {
+		if ( ! $this->can_view_form_submissions() ) {
+			return;
+		}
+
 		wp_add_dashboard_widget(
 			'otter_form_submissions_widget',
 			__( 'Otter Blocks - Form Submissions', 'otter-blocks' ),
@@ -863,6 +878,9 @@ class Dashboard {
 	 * @return void
 	 */
 	public function form_submissions_widget_content() {
+		if ( ! $this->can_view_form_submissions() ) {
+			return;
+		}
 
 		// Submission storage lives in the lite plugin: the widget shows real data for every plan.
 		$is_active    = post_type_exists( 'otter_form_record' );
@@ -872,6 +890,10 @@ class Dashboard {
 
 		if ( $is_active ) {
 			$posts_filter = isset( $_GET['otter_nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['otter_nonce'] ), 'otter_widget_nonce' ) && isset( $_GET['otter_form_widget_filter'] ) ? sanitize_key( $_GET['otter_form_widget_filter'] ) : 'all';
+
+			if ( ! in_array( $posts_filter, array( 'all', 'read', 'unread' ), true ) ) {
+				$posts_filter = 'all';
+			}
 
 			$query_args = array(
 				'post_type'      => 'otter_form_record',

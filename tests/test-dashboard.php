@@ -254,6 +254,8 @@ class Test_Dashboard extends WP_UnitTestCase {
 	public function test_form_submissions_widget_content_active() {
 		$this->assertTrue( post_type_exists( 'otter_form_record' ), 'The form record CPT should be registered in the test suite' );
 
+		wp_set_current_user( $this->create_records_admin() );
+
 		ob_start();
 		$this->dashboard->form_submissions_widget_content();
 		$output = ob_get_clean();
@@ -267,6 +269,7 @@ class Test_Dashboard extends WP_UnitTestCase {
 	 * Test form_submissions_widget_content renders the inactive branch when the CPT is absent.
 	 */
 	public function test_form_submissions_widget_content_inactive() {
+		wp_set_current_user( $this->create_records_admin() );
 		unregister_post_type( 'otter_form_record' );
 
 		try {
@@ -280,6 +283,197 @@ class Test_Dashboard extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'class="otter-form-submissions-widget inactive"', $output, 'The widget wrapper should carry the inactive class' );
 		$this->assertStringContainsString( 'disabled', $output, 'The filter select should be disabled when inactive' );
+	}
+
+	/**
+	 * The widget is not registered for users who cannot manage submissions.
+	 */
+	public function test_form_submissions_widget_registration_requires_records_cap(): void {
+		$this->assertFalse( $this->is_widget_registered_for( self::factory()->user->create( array( 'role' => 'subscriber' ) ) ), 'Subscribers must not get the widget' );
+		$this->assertFalse( $this->is_widget_registered_for( self::factory()->user->create( array( 'role' => 'editor' ) ) ), 'Editors cannot open the Submissions list, so they must not get the widget' );
+		$this->assertTrue( $this->is_widget_registered_for( $this->create_records_admin() ), 'Administrators must still get the widget' );
+	}
+
+	/**
+	 * The widget renders no submission data for users who cannot manage submissions.
+	 */
+	public function test_form_submissions_widget_content_hides_records_from_non_admins(): void {
+		$this->create_form_record( 'leak-test@example.com' );
+
+		foreach ( array( 'subscriber', 'editor' ) as $role ) {
+			$output = $this->render_widget_as( self::factory()->user->create( array( 'role' => $role ) ) );
+
+			$this->assertStringNotContainsString( 'leak-test@example.com', $output, "A {$role} must not see submitter emails" );
+			$this->assertStringNotContainsString( 'Total Entries', $output, "A {$role} must not see the submissions count" );
+			$this->assertStringNotContainsString( 'otter_nonce', $output, "A {$role} must not receive the filter nonce" );
+		}
+	}
+
+	/**
+	 * Administrators still see the latest submissions and the count.
+	 */
+	public function test_form_submissions_widget_content_shows_records_to_admin(): void {
+		$this->create_form_record( 'admin-sees@example.com' );
+
+		$output = $this->render_widget_as( $this->create_records_admin() );
+
+		$this->assertStringContainsString( 'admin-sees@example.com', $output );
+		$this->assertStringContainsString( 'otter-form-submissions-widget__total-entries', $output );
+	}
+
+	/**
+	 * A status outside the widget's own options falls back to "all".
+	 */
+	public function test_form_submissions_widget_filter_rejects_unlisted_status(): void {
+		$this->create_form_record( 'visible@example.com' );
+		$this->create_form_record( 'trashed@example.com', 'trash' );
+		$this->create_form_record( 'pending@example.com', 'draft' );
+
+		foreach ( array( 'trash', 'draft', 'any' ) as $status ) {
+			$output = $this->render_widget_as( $this->create_records_admin(), $status );
+
+			$this->assertStringNotContainsString( 'trashed@example.com', $output, "Filter '{$status}' must not reach trashed records" );
+			$this->assertStringContainsString( 'visible@example.com', $output, "Filter '{$status}' must fall back to all" );
+			$this->assertStringContainsString( 'value="all" selected', $output );
+		}
+	}
+
+	/**
+	 * The read/unread filters keep working for administrators.
+	 */
+	public function test_form_submissions_widget_filter_keeps_read_status(): void {
+		$this->create_form_record( 'is-read@example.com', 'read' );
+		$this->create_form_record( 'not-read@example.com', 'unread' );
+
+		$output = $this->render_widget_as( $this->create_records_admin(), 'read' );
+
+		$this->assertStringContainsString( 'is-read@example.com', $output );
+		$this->assertStringNotContainsString( 'not-read@example.com', $output );
+		$this->assertStringContainsString( 'value="read" selected', $output );
+	}
+
+	/**
+	 * Records are not reachable from the frontend despite the public read/unread statuses.
+	 */
+	public function test_form_records_not_queryable_from_frontend(): void {
+		$record_id = $this->create_form_record( 'frontend@example.com', 'read' );
+
+		wp_set_current_user( 0 );
+
+		// go_to() passes its query string as trusted extra vars; a real request runs WP::main() without any.
+		$this->go_to( home_url( '/' ) );
+		$_GET = array(
+			'post_type'   => 'otter_form_record',
+			'post_status' => 'read',
+			'p'           => (string) $record_id,
+		);
+		try {
+			$GLOBALS['wp']->main();
+		} finally {
+			$_GET = array();
+		}
+
+		$this->assertNotContains( $record_id, wp_list_pluck( $GLOBALS['wp_query']->posts, 'ID' ) );
+	}
+
+	/**
+	 * Create an administrator holding the form record capabilities.
+	 *
+	 * @return int
+	 */
+	private function create_records_admin(): int {
+		$user_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+
+		// The role caps are granted on admin_init, which the suite never fires.
+		get_userdata( $user_id )->add_cap( 'edit_otter_form_records' );
+
+		return $user_id;
+	}
+
+	/**
+	 * Create a form record whose first email field is the given address.
+	 *
+	 * @param string $email  Submitter email.
+	 * @param string $status Record status.
+	 *
+	 * @return int
+	 */
+	private function create_form_record( string $email, string $status = 'unread' ): int {
+		$record_id = self::factory()->post->create(
+			array(
+				'post_type'   => 'otter_form_record',
+				'post_status' => $status,
+			)
+		);
+
+		update_post_meta(
+			$record_id,
+			'otter_form_record_meta',
+			array(
+				'inputs' => array(
+					array(
+						'type'  => 'email',
+						'value' => $email,
+					),
+				),
+			)
+		);
+
+		return $record_id;
+	}
+
+	/**
+	 * Render the widget as the given user, optionally with a nonce-verified status filter.
+	 *
+	 * @param int         $user_id User ID.
+	 * @param string|null $filter  Status filter.
+	 *
+	 * @return string
+	 */
+	private function render_widget_as( int $user_id, ?string $filter = null ): string {
+		wp_set_current_user( $user_id );
+
+		if ( null !== $filter ) {
+			$_GET['otter_nonce']              = wp_create_nonce( 'otter_widget_nonce' );
+			$_GET['otter_form_widget_filter'] = $filter;
+		}
+
+		try {
+			ob_start();
+			$this->dashboard->form_submissions_widget_content();
+
+			return (string) ob_get_clean();
+		} finally {
+			unset( $_GET['otter_nonce'], $_GET['otter_form_widget_filter'] );
+		}
+	}
+
+	/**
+	 * Whether the widget gets registered on the dashboard for the given user.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return bool
+	 */
+	private function is_widget_registered_for( int $user_id ): bool {
+		global $wp_meta_boxes, $current_screen;
+
+		require_once ABSPATH . 'wp-admin/includes/dashboard.php';
+
+		$previous_boxes  = $wp_meta_boxes;
+		$previous_screen = $current_screen;
+
+		wp_set_current_user( $user_id );
+		set_current_screen( 'dashboard' );
+
+		try {
+			$this->dashboard->form_submissions_widget();
+
+			return isset( $wp_meta_boxes['dashboard']['normal']['core']['otter_form_submissions_widget'] );
+		} finally {
+			$wp_meta_boxes  = $previous_boxes;
+			$current_screen = $previous_screen;
+		}
 	}
 
 	/**
