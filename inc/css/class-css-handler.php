@@ -234,7 +234,14 @@ class CSS_Handler extends Base_CSS {
 	 * @param int $post_id Post id.
 	 */
 	public static function generate_css_file( $post_id ) {
-		$css = self::instance()->get_blocks_css( $post_id );
+		$failures = self::get_render_failures();
+		$css      = self::instance()->get_blocks_css( $post_id );
+
+		// Never persist partial CSS; the page falls back to inline styles.
+		if ( self::get_render_failures() > $failures ) {
+			return;
+		}
+
 		self::save_css_file( $post_id, $css );
 	}
 
@@ -305,10 +312,14 @@ class CSS_Handler extends Base_CSS {
 			return false;
 		}
 
-		$post_id = $request->get_param( 'id' );
-		$css     = $this->get_reusable_block_css( $post_id );
+		$post_id  = $request->get_param( 'id' );
+		$failures = self::get_render_failures();
+		$css      = $this->get_reusable_block_css( $post_id );
 
-		self::save_css_file( $post_id, $css );
+		// Never persist partial CSS.
+		if ( self::get_render_failures() === $failures ) {
+			self::save_css_file( $post_id, $css );
+		}
 
 		self::mark_review_block_metadata( $post_id );
 
@@ -428,7 +439,13 @@ class CSS_Handler extends Base_CSS {
 		require_once ABSPATH . '/wp-admin/includes/file.php';
 		WP_Filesystem();
 
-		$css = self::instance()->get_widgets_css();
+		$failures = self::get_render_failures();
+		$css      = self::instance()->get_widgets_css();
+
+		// Never persist or delete on partial CSS; the page falls back to inline styles.
+		if ( self::get_render_failures() > $failures ) {
+			return false;
+		}
 
 		if ( empty( $css ) ) {
 			$file_path = get_option( 'themeisle_blocks_widgets_css_file' );
