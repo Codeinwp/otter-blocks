@@ -933,17 +933,15 @@ class Dashboard {
 	 * @return list<array{title: string, date: string|false|null}>
 	 */
 	private function get_form_widget_entries( $posts_filter ) {
-		$entries    = array();
-		$query_args = array(
-			'post_type'      => 'otter_form_record',
-			'posts_per_page' => 5,
+		$entries = array();
+
+		$query = new \WP_Query(
+			array(
+				'post_type'      => 'otter_form_record',
+				'post_status'    => 'all' === $posts_filter ? array( 'read', 'unread' ) : $posts_filter,
+				'posts_per_page' => 5,
+			)
 		);
-
-		if ( 'all' !== $posts_filter ) {
-			$query_args['post_status'] = $posts_filter;
-		}
-
-		$query = new \WP_Query( $query_args );
 
 		if ( $query->have_posts() ) {
 

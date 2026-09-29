@@ -342,6 +342,27 @@ class Test_Dashboard extends WP_UnitTestCase {
 	}
 
 	/**
+	 * "All" lists only the read/unread records it counts, so drafts never displace them.
+	 */
+	public function test_form_submissions_widget_all_excludes_drafts(): void {
+		foreach ( range( 1, 5 ) as $day ) {
+			$this->create_form_record( "eligible-{$day}@example.com", 0 === $day % 2 ? 'read' : 'unread', "2026-01-0{$day} 10:00:00" );
+		}
+		$this->create_form_record( 'pending@example.com', 'draft', '2026-01-09 10:00:00' );
+
+		foreach ( array( null, 'all', 'draft', 'any' ) as $filter ) {
+			$label  = null === $filter ? 'no filter' : "filter '{$filter}'";
+			$output = $this->render_widget_as( $this->create_records_user(), $filter );
+
+			$this->assertStringNotContainsString( 'pending@example.com', $output, "Drafts must not be listed under {$label}" );
+			foreach ( range( 1, 5 ) as $day ) {
+				$this->assertStringContainsString( "eligible-{$day}@example.com", $output, "All five counted records must be listed under {$label}" );
+			}
+			$this->assertMatchesRegularExpression( '/total-entries">\s*5\s*</', $output );
+		}
+	}
+
+	/**
 	 * Create a user holding the form record capabilities.
 	 *
 	 * @param string $role User role.
@@ -362,14 +383,18 @@ class Test_Dashboard extends WP_UnitTestCase {
 	 *
 	 * @param string $email  Submitter email.
 	 * @param string $status Record status.
+	 * @param string $date   Record date, now when empty.
 	 *
 	 * @return int
 	 */
-	private function create_form_record( string $email, string $status = 'unread' ): int {
+	private function create_form_record( string $email, string $status = 'unread', string $date = '' ): int {
 		$record_id = self::factory()->post->create(
-			array(
-				'post_type'   => 'otter_form_record',
-				'post_status' => $status,
+			array_filter(
+				array(
+					'post_type'   => 'otter_form_record',
+					'post_status' => $status,
+					'post_date'   => $date,
+				)
 			)
 		);
 
@@ -398,7 +423,13 @@ class Test_Dashboard extends WP_UnitTestCase {
 	 * @return string
 	 */
 	private function render_widget_as( int $user_id, ?string $filter = null ): string {
+		global $current_screen;
+
+		$previous_screen = $current_screen;
+
 		wp_set_current_user( $user_id );
+		// Render in wp-admin, as the Dashboard does.
+		set_current_screen( 'dashboard' );
 
 		if ( null !== $filter ) {
 			$_GET['otter_nonce']              = wp_create_nonce( 'otter_widget_nonce' );
@@ -412,6 +443,7 @@ class Test_Dashboard extends WP_UnitTestCase {
 			return (string) ob_get_clean();
 		} finally {
 			unset( $_GET['otter_nonce'], $_GET['otter_form_widget_filter'] );
+			$current_screen = $previous_screen; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 	}
 
