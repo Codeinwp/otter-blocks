@@ -858,7 +858,7 @@ class Dashboard {
 	/**
 	 * Get the status filter requested for the form submissions widget.
 	 *
-	 * @return string One of `all`, `read` or `unread`.
+	 * @return 'all'|'read'|'unread'
 	 */
 	private function get_form_widget_filter() {
 		$posts_filter = isset( $_GET['otter_nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['otter_nonce'] ), 'otter_widget_nonce' ) && isset( $_GET['otter_form_widget_filter'] ) ? sanitize_key( $_GET['otter_form_widget_filter'] ) : 'all';
