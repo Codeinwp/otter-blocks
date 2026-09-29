@@ -56,6 +56,73 @@ test.describe( 'Posts Block', () => {
 	});
 });
 
+/**
+ * Render a synthetic grid (one long unbreakable title) and measure it.
+ *
+ * @param {import('@playwright/test').Page} page        Page with the Posts Block stylesheet loaded.
+ * @param {number}                          columnCount Columns setting to render.
+ * @param {boolean}                         withImages  Whether cards get a featured image.
+ * @return {Promise<{display: string, tracks: number, share: number, titleWidth: number, cards: number[], images: number[]}>} Measurements.
+ */
+const measureGrid = ( page, columnCount, withImages = true ) => page.evaluate( ([ count, hasImages ]) => {
+	const image = hasImages ? '<img width="1280" height="720" alt="" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221280%22 height=%22720%22/%3E">' : '';
+	const titles = [ 'W'.repeat( 60 ), ...Array( count - 1 ).fill( 'Hi' ) ];
+	const cards = titles.map( ( title ) => `
+		<div class="o-posts-grid-post-blog o-posts-grid-post-plain">
+			<div class="o-posts-grid-post">
+				${ image ? `<div class="o-posts-grid-post-image"><a href="#">${ image }</a></div>` : '' }
+				<div class="o-posts-grid-post-body">
+					<h4 class="o-posts-grid-post-title"><a href="#">${ title }</a></h4>
+				</div>
+			</div>
+		</div>` ).join( '' );
+
+	document.getElementById( 'otter-fixture' )?.remove();
+
+	const wrapper = document.createElement( 'div' );
+	wrapper.id = 'otter-fixture';
+	wrapper.className = 'wp-block-themeisle-blocks-posts-grid';
+	wrapper.style.width = '1000px';
+	wrapper.innerHTML = `<div class="is-grid o-posts-grid-columns-${ count }">${ cards }</div>`;
+	document.body.prepend( wrapper );
+
+	const grid = wrapper.querySelector( '.is-grid' );
+	const tracks = window.getComputedStyle( grid ).gridTemplateColumns.split( ' ' ).length;
+	const longTitle = wrapper.querySelector( '.o-posts-grid-post-title' );
+	const probe = longTitle.cloneNode( true );
+	probe.style.cssText = 'position:absolute;width:max-content;visibility:hidden;';
+	longTitle.parentElement?.appendChild( probe );
+	const titleWidth = probe.getBoundingClientRect().width;
+	probe.remove();
+
+	return {
+		display: window.getComputedStyle( grid ).display,
+		tracks,
+		share: grid.clientWidth / tracks,
+		titleWidth,
+		cards: Array.from( wrapper.querySelectorAll( '.o-posts-grid-post-blog' ) ).map( ( el ) => el.getBoundingClientRect().width ),
+		images: Array.from( wrapper.querySelectorAll( 'img' ) ).map( ( el ) => el.getBoundingClientRect().width )
+	};
+}, [ columnCount, withImages ]);
+
+/**
+ * Assert every card and image in the measured grid has the same width.
+ *
+ * @param {Awaited<ReturnType<typeof measureGrid>>} result         Grid measurements.
+ * @param {number}                                  expectedTracks Column tracks the breakpoint should render.
+ */
+const expectEqualColumns = ( result, expectedTracks ) => {
+
+	// Preconditions: stylesheet applied and the title would overflow an equal share.
+	expect( result.display ).toBe( 'grid' );
+	expect( result.tracks ).toBe( expectedTracks );
+	expect( result.titleWidth ).toBeGreaterThan( result.share );
+
+	for ( const width of [ ...result.cards, ...result.images ]) {
+		expect( Math.abs( width - result.cards[ 0 ]) ).toBeLessThanOrEqual( 1 );
+	}
+};
+
 test.describe( 'Posts Block frontend grid', () => {
 
 	// A long unbreakable title must not widen its column (and image).
@@ -69,52 +136,14 @@ test.describe( 'Posts Block frontend grid', () => {
 		await page.goto( post.link );
 
 		for ( const columns of [ 2, 3, 4, 5 ]) {
-			const result = await page.evaluate( ( columnCount ) => {
-				const image = '<img width="1280" height="720" alt="" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%221280%22 height=%22720%22/%3E">';
-				const titles = [ 'W'.repeat( 60 ), ...Array( columnCount - 1 ).fill( 'Hi' ) ];
-				const cards = titles.map( ( title ) => `
-					<div class="o-posts-grid-post-blog o-posts-grid-post-plain">
-						<div class="o-posts-grid-post">
-							<div class="o-posts-grid-post-image"><a href="#">${ image }</a></div>
-							<div class="o-posts-grid-post-body">
-								<h4 class="o-posts-grid-post-title"><a href="#">${ title }</a></h4>
-							</div>
-						</div>
-					</div>` ).join( '' );
+			expectEqualColumns( await measureGrid( page, columns ), columns );
+		}
 
-				document.getElementById( 'otter-fixture' )?.remove();
+		// Tablet (600–960px) collapses four and five columns to three; image-less cards expose content-sized tracks.
+		await page.setViewportSize({ width: 800, height: 900 });
 
-				const wrapper = document.createElement( 'div' );
-				wrapper.id = 'otter-fixture';
-				wrapper.className = 'wp-block-themeisle-blocks-posts-grid';
-				wrapper.style.width = '1000px';
-				wrapper.innerHTML = `<div class="is-grid o-posts-grid-columns-${ columnCount }">${ cards }</div>`;
-				document.body.prepend( wrapper );
-
-				const grid = wrapper.querySelector( '.is-grid' );
-				const longTitle = wrapper.querySelector( '.o-posts-grid-post-title' );
-				const probe = longTitle.cloneNode( true );
-				probe.style.cssText = 'position:absolute;width:max-content;visibility:hidden;';
-				longTitle.parentElement?.appendChild( probe );
-				const titleWidth = probe.getBoundingClientRect().width;
-				probe.remove();
-
-				return {
-					display: window.getComputedStyle( grid ).display,
-					share: grid.clientWidth / columnCount,
-					titleWidth,
-					cards: Array.from( wrapper.querySelectorAll( '.o-posts-grid-post-blog' ) ).map( ( el ) => el.getBoundingClientRect().width ),
-					images: Array.from( wrapper.querySelectorAll( 'img' ) ).map( ( el ) => el.getBoundingClientRect().width )
-				};
-			}, columns );
-
-			// Preconditions: stylesheet applied and the title would overflow an equal share.
-			expect( result.display ).toBe( 'grid' );
-			expect( result.titleWidth ).toBeGreaterThan( result.share );
-
-			for ( const width of [ ...result.cards, ...result.images ]) {
-				expect( Math.abs( width - result.cards[ 0 ]) ).toBeLessThanOrEqual( 1 );
-			}
+		for ( const columns of [ 4, 5 ]) {
+			expectEqualColumns( await measureGrid( page, columns, false ), 3 );
 		}
 	});
 });
