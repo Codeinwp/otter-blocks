@@ -1,3 +1,14 @@
+##### [Version 3.2.7](https://github.com/Codeinwp/otter-blocks/compare/v3.2.6...v3.2.7) (2026-09-29)
+
+- Fixed custom block CSS missing from posts on archive pages.
+- Updated dependencies.
+- Fixed permission checks for form submissions widget.
+- Added AI agent support: let AI assistants read and change your Otter forms and settings.
+- Fixed frontend pages failing when Otter could not load a block style.
+- Fixed frontend crashes when Otter could not load a plugin class.
+- Fixed unequal card and featured image widths in the Posts Block grid.
+- Added AI agent support: let AI assistants read and change your Otter forms and settings.
+
 ##### [Version 3.2.6](https://github.com/Codeinwp/otter-blocks/compare/v3.2.5...v3.2.6) (2026-09-22)
 
 - Fixed Maps block tiles that failed to load in the editor.

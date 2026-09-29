@@ -4,7 +4,7 @@
 **Requires at least:** 6.6  
 **Tested up to:** 7.1  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.2.6  
+**Stable tag:** 3.2.7  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -344,13 +344,16 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 ## Changelog ##
 
-##### [Version 3.2.6](https://github.com/Codeinwp/otter-blocks/compare/v3.2.5...v3.2.6) (2026-09-22)
+##### [Version 3.2.7](https://github.com/Codeinwp/otter-blocks/compare/v3.2.6...v3.2.7) (2026-09-29)
 
-- Fixed Maps block tiles that failed to load in the editor.
-- Fixed errors when unavailable pattern files load during site startup.
-- Fixed frontend CSS generation using too much memory on pages with many blocks.
-- Updated dependencies
-- Enhanced Security
+- Fixed custom block CSS missing from posts on archive pages.
+- Updated dependencies.
+- Fixed permission checks for form submissions widget.
+- Added AI agent support: let AI assistants read and change your Otter forms and settings.
+- Fixed frontend pages failing when Otter could not load a block style.
+- Fixed frontend crashes when Otter could not load a plugin class.
+- Fixed unequal card and featured image widths in the Posts Block grid.
+- Added AI agent support: let AI assistants read and change your Otter forms and settings.
 
 
 
