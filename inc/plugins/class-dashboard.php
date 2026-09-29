@@ -856,6 +856,17 @@ class Dashboard {
 	}
 
 	/**
+	 * Get the status filter requested for the form submissions widget.
+	 *
+	 * @return string One of `all`, `read` or `unread`.
+	 */
+	private function get_form_widget_filter() {
+		$posts_filter = isset( $_GET['otter_nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['otter_nonce'] ), 'otter_widget_nonce' ) && isset( $_GET['otter_form_widget_filter'] ) ? sanitize_key( $_GET['otter_form_widget_filter'] ) : 'all';
+
+		return in_array( $posts_filter, array( 'all', 'read', 'unread' ), true ) ? $posts_filter : 'all';
+	}
+
+	/**
 	 * Hook the form submissions widget.
 	 *
 	 * @return void
@@ -889,11 +900,7 @@ class Dashboard {
 		$posts_filter = 'all';
 
 		if ( $is_active ) {
-			$posts_filter = isset( $_GET['otter_nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['otter_nonce'] ), 'otter_widget_nonce' ) && isset( $_GET['otter_form_widget_filter'] ) ? sanitize_key( $_GET['otter_form_widget_filter'] ) : 'all';
-
-			if ( ! in_array( $posts_filter, array( 'all', 'read', 'unread' ), true ) ) {
-				$posts_filter = 'all';
-			}
+			$posts_filter = $this->get_form_widget_filter();
 
 			$query_args = array(
 				'post_type'      => 'otter_form_record',
