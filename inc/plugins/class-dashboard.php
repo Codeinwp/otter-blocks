@@ -930,7 +930,7 @@ class Dashboard {
 	 *
 	 * @param string $posts_filter The status filter.
 	 *
-	 * @return array<int, array{title: string, date: string|false|null}>
+	 * @return list<array{title: string, date: string|false|null}>
 	 */
 	private function get_form_widget_entries( $posts_filter ) {
 		$entries    = array();
@@ -1160,8 +1160,8 @@ class Dashboard {
 	/**
 	 * Print the list of entries, or the empty state.
 	 *
-	 * @param bool                                                      $has_entries Whether there are entries to list.
-	 * @param array<int, array{title: string, date: string|false|null}> $entries     The entries.
+	 * @param bool                                                $has_entries Whether there are entries to list.
+	 * @param list<array{title: string, date: string|false|null}> $entries     The entries.
 	 *
 	 * @return void
 	 */
