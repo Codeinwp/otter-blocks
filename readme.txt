@@ -4,7 +4,7 @@ Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 3.2.5
+Stable tag: 3.2.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -344,11 +344,13 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 == Changelog ==
 
-##### [Version 3.2.5](https://github.com/Codeinwp/otter-blocks/compare/v3.2.4...v3.2.5) (2026-09-09)
+##### [Version 3.2.6](https://github.com/Codeinwp/otter-blocks/compare/v3.2.5...v3.2.6) (2026-09-22)
 
-- Fixed Accordion Item titles not appearing for translation in WPML. 
-- Fixed animation blocks crashing with older Otter versions. 
-- Fixed form submit buttons changing size while the loading spinner is shown.
+- Fixed Maps block tiles that failed to load in the editor.
+- Fixed errors when unavailable pattern files load during site startup.
+- Fixed frontend CSS generation using too much memory on pages with many blocks.
+- Updated dependencies
+- Enhanced Security. Thanks to Ashish Agarwal for responsible disclosure.
 
 
 
