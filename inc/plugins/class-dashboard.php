@@ -845,11 +845,37 @@ class Dashboard {
 	}
 
 	/**
+	 * Whether the current user may see form submissions, the same check the Submissions list uses.
+	 *
+	 * @return bool
+	 */
+	private function can_view_form_submissions() {
+		$post_type = get_post_type_object( 'otter_form_record' );
+
+		return current_user_can( null !== $post_type ? $post_type->cap->edit_posts : 'manage_options' );
+	}
+
+	/**
+	 * Get the status filter requested for the form submissions widget.
+	 *
+	 * @return 'all'|'read'|'unread'
+	 */
+	private function get_form_widget_filter() {
+		$posts_filter = isset( $_GET['otter_nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['otter_nonce'] ), 'otter_widget_nonce' ) && isset( $_GET['otter_form_widget_filter'] ) ? sanitize_key( $_GET['otter_form_widget_filter'] ) : 'all';
+
+		return in_array( $posts_filter, array( 'all', 'read', 'unread' ), true ) ? $posts_filter : 'all';
+	}
+
+	/**
 	 * Hook the form submissions widget.
 	 *
 	 * @return void
 	 */
 	public function form_submissions_widget() {
+		if ( ! $this->can_view_form_submissions() ) {
+			return;
+		}
+
 		wp_add_dashboard_widget(
 			'otter_form_submissions_widget',
 			__( 'Otter Blocks - Form Submissions', 'otter-blocks' ),
@@ -863,6 +889,9 @@ class Dashboard {
 	 * @return void
 	 */
 	public function form_submissions_widget_content() {
+		if ( ! $this->can_view_form_submissions() ) {
+			return;
+		}
 
 		// Submission storage lives in the lite plugin: the widget shows real data for every plan.
 		$is_active    = post_type_exists( 'otter_form_record' );
@@ -871,72 +900,133 @@ class Dashboard {
 		$posts_filter = 'all';
 
 		if ( $is_active ) {
-			$posts_filter = isset( $_GET['otter_nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['otter_nonce'] ), 'otter_widget_nonce' ) && isset( $_GET['otter_form_widget_filter'] ) ? sanitize_key( $_GET['otter_form_widget_filter'] ) : 'all';
+			$posts_filter = $this->get_form_widget_filter();
+			$entries      = $this->get_form_widget_entries( $posts_filter );
+			$count        = $this->get_form_widget_count( $posts_filter );
+		}
 
-			$query_args = array(
+		$has_entries = $is_active && 0 < count( $entries );
+
+		$this->render_form_widget_styles();
+
+		if ( $is_active ) {
+			$this->render_form_widget_script();
+		}
+		?>
+		<div class="otter-form-submissions-widget <?php echo ! $is_active ? 'inactive' : ''; ?>">
+
+			<div class="o-form-entries">
+				<?php $this->render_form_widget_header( $is_active, $has_entries, $count, $posts_filter ); ?>
+				<?php $this->render_form_widget_entries( $has_entries, $entries ); ?>
+			</div>
+
+
+		</div>
+		<?php
+	}
+
+	/**
+	 * Get the latest form submissions shown in the widget.
+	 *
+	 * @param string $posts_filter The status filter.
+	 *
+	 * @return list<array{title: string, date: string|false|null}>
+	 */
+	private function get_form_widget_entries( $posts_filter ) {
+		$entries = array();
+
+		$query = new \WP_Query(
+			array(
 				'post_type'      => 'otter_form_record',
+				'post_status'    => 'all' === $posts_filter ? array( 'read', 'unread' ) : $posts_filter,
 				'posts_per_page' => 5,
-			);
+			)
+		);
 
-			if ( 'all' !== $posts_filter ) {
-				$query_args['post_status'] = $posts_filter;
+		if ( $query->have_posts() ) {
+
+			while ( $query->have_posts() ) {
+				$query->the_post();
+
+				$meta = get_post_meta( get_the_ID(), 'otter_form_record_meta', true );
+
+				$date = null;
+
+				if ( isset( $meta['post_id']['value'] ) ) {
+					$date = get_the_date( 'F j, H:i', $meta['post_id']['value'] );
+				}
+
+				$entries[] = array(
+					'title' => $this->get_form_widget_entry_title( $meta, get_the_ID() ),
+					'date'  => $date,
+				);
 			}
+		}
 
-			$query = new \WP_Query( $query_args );
+		return $entries;
+	}
 
+	/**
+	 * Get the widget title of a form submission: its first email, or a fallback.
+	 *
+	 * @param mixed $meta      The submission meta.
+	 * @param int   $record_id The submission ID.
+	 *
+	 * @return string
+	 */
+	private function get_form_widget_entry_title( $meta, $record_id ) {
+		$title = null;
 
-			$records_count = wp_count_posts( 'otter_form_record' );
-
-			$count = $records_count->read + $records_count->unread;
-
-			if ( 'read' === $posts_filter ) {
-				$count = $records_count->read;
-			} elseif ( 'unread' === $posts_filter ) {
-				$count = $records_count->unread;
-			}
-
-			if ( $query->have_posts() ) {
-
-				while ( $query->have_posts() ) {
-					$query->the_post();
-
-					$meta = get_post_meta( get_the_ID(), 'otter_form_record_meta', true );
-
-					$title = null;
-					$date  = null;
-
-					if ( isset( $meta['post_id']['value'] ) ) {
-						$date = get_the_date( 'F j, H:i', $meta['post_id']['value'] );
-					}
-
-					if ( isset( $meta['inputs'] ) && is_array( $meta['inputs'] ) ) {
-						// Find the first email field and use that as the title.
-						foreach ( $meta['inputs'] as $input ) {
-							if ( isset( $input['type'] ) && 'email' === $input['type'] && ! empty( $input['value'] ) ) {
-								$title = $input['value'];
-								break;
-							}
-						}
-					}
-
-
-					if ( ! $title ) {
-
-						if ( isset( $meta['post_id']['value'] ) ) {
-							$title = __( 'Submission', 'otter-blocks' ) . ' #' . get_the_ID();
-						} else {
-							$title = __( 'No title', 'otter-blocks' );
-						}
-					}
-
-					$entries[] = array(
-						'title' => $title,
-						'date'  => $date,
-					);
+		if ( isset( $meta['inputs'] ) && is_array( $meta['inputs'] ) ) {
+			// Find the first email field and use that as the title.
+			foreach ( $meta['inputs'] as $input ) {
+				if ( isset( $input['type'] ) && 'email' === $input['type'] && ! empty( $input['value'] ) ) {
+					$title = $input['value'];
+					break;
 				}
 			}
 		}
 
+
+		if ( ! $title ) {
+
+			if ( isset( $meta['post_id']['value'] ) ) {
+				$title = __( 'Submission', 'otter-blocks' ) . ' #' . $record_id;
+			} else {
+				$title = __( 'No title', 'otter-blocks' );
+			}
+		}
+
+		return $title;
+	}
+
+	/**
+	 * Get the number of form submissions matching the widget filter.
+	 *
+	 * @param string $posts_filter The status filter.
+	 *
+	 * @return int
+	 */
+	private function get_form_widget_count( $posts_filter ) {
+		$records_count = wp_count_posts( 'otter_form_record' );
+
+		$count = $records_count->read + $records_count->unread;
+
+		if ( 'read' === $posts_filter ) {
+			$count = $records_count->read;
+		} elseif ( 'unread' === $posts_filter ) {
+			$count = $records_count->unread;
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Print the form submissions widget styles.
+	 *
+	 * @return void
+	 */
+	private function render_form_widget_styles() {
 		?>
 		<style>
 			.otter-form-submissions-widget {
@@ -999,7 +1089,16 @@ class Dashboard {
 			}
 
 		</style>
-		<?php if ( $is_active ) { ?>
+		<?php
+	}
+
+	/**
+	 * Print the script that reloads the widget with the selected filter.
+	 *
+	 * @return void
+	 */
+	private function render_form_widget_script() {
+		?>
 			<script>
 				window.document.addEventListener('DOMContentLoaded', () => {
 					const select = document.querySelector('#otter_form_submissions_widget #otter-form-submissions-widget__form-select');
@@ -1020,13 +1119,24 @@ class Dashboard {
 					}
 				})
 			</script>
-		<?php } ?>
-		<div class="otter-form-submissions-widget <?php echo ! $is_active ? 'inactive' : ''; ?>">
+		<?php
+	}
 
-			<div class="o-form-entries">
+	/**
+	 * Print the widget header: the entries count and the status filter.
+	 *
+	 * @param bool   $is_active    Whether submission storage is available.
+	 * @param bool   $has_entries  Whether there are entries to list.
+	 * @param int    $count        The number of submissions.
+	 * @param string $posts_filter The status filter.
+	 *
+	 * @return void
+	 */
+	private function render_form_widget_header( $is_active, $has_entries, $count, $posts_filter ) {
+		?>
 				<div class="o-entries-header">
 					<div class="o-title">
-						<?php if ( 0 === count( $entries ) || ! $is_active ) { ?>
+						<?php if ( ! $has_entries ) { ?>
 							<?php esc_html_e( 'Total Entries', 'otter-blocks' ); ?>
 						<?php } else { ?>
 							<?php esc_html_e( 'Total Entries', 'otter-blocks' ); ?>:
@@ -1042,8 +1152,21 @@ class Dashboard {
 						<option value="unread" <?php echo 'unread' === $posts_filter ? 'selected' : ''; ?>><?php esc_html_e( 'Unread', 'otter-blocks' ); ?></option>
 					</select>
 				</div>
+		<?php
+	}
+
+	/**
+	 * Print the list of entries, or the empty state.
+	 *
+	 * @param bool                                                $has_entries Whether there are entries to list.
+	 * @param list<array{title: string, date: string|false|null}> $entries     The entries.
+	 *
+	 * @return void
+	 */
+	private function render_form_widget_entries( $has_entries, $entries ) {
+		?>
 				<div class="o-entries-list">
-					<?php if ( 0 === count( $entries ) || ! $is_active ) { ?>
+					<?php if ( ! $has_entries ) { ?>
 						<div class="o-no-entries">
 							<?php esc_html_e( 'Your submission will appear here.', 'otter-blocks' ); ?>
 						</div>
@@ -1072,10 +1195,6 @@ class Dashboard {
 						</div>
 					<?php } ?>
 				</div>
-			</div>
-
-
-		</div>
 		<?php
 	}
 
