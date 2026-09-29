@@ -302,31 +302,98 @@ class Test_Base_CSS_Renderer_Guard extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Partial widget CSS must neither overwrite nor delete the saved stylesheet.
+	 * Write a stylesheet to uploads, as a previous successful save would.
+	 *
+	 * @param string $file_name Stylesheet name, without extension.
+	 * @return string The file path.
 	 */
-	public function test_partial_widget_css_is_not_persisted(): void {
+	private function seed_stylesheet( string $file_name ): string {
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$dir           = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
+
+		wp_mkdir_p( $dir );
+		file_put_contents( $dir . $file_name . '.css', '.previous{color:black}' );
+
+		return $dir . $file_name . '.css';
+	}
+
+	/**
+	 * Give a post the CSS a previous successful save would have left.
+	 *
+	 * @param int $post_id Post id.
+	 * @return string The seeded file path.
+	 */
+	private function seed_post_css( int $post_id ): string {
+		$file_name = 'post-v2-' . $post_id . '-previous';
+
+		update_post_meta( $post_id, '_themeisle_gutenberg_block_styles', '.previous{color:black}' );
+		update_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', $file_name );
+
+		return $this->seed_stylesheet( $file_name );
+	}
+
+	/**
+	 * A failed regeneration must drop the saved widgets CSS, so it is not served after an edit.
+	 */
+	public function test_partial_widget_css_invalidates_saved_css(): void {
 		$this->set_classes( array( '\Otter_Missing_Dependency_CSS' ) );
 		$this->set_widget_content( self::IMAGE_BLOCK );
+
+		$file_path = $this->seed_stylesheet( 'widgets-previous' );
 
 		update_option( 'themeisle_blocks_widgets_css', '.previous{color:black}' );
 		update_option( 'themeisle_blocks_widgets_css_file', 'widgets-previous' );
 
+		$this->assertTrue( CSS_Handler::has_css_file( 'widgets' ) );
 		$this->assertFalse( CSS_Handler::save_widgets_styles() );
-		$this->assertSame( '.previous{color:black}', get_option( 'themeisle_blocks_widgets_css' ) );
-		$this->assertSame( 'widgets-previous', get_option( 'themeisle_blocks_widgets_css_file' ) );
+
+		$this->assertFalse( get_option( 'themeisle_blocks_widgets_css' ), 'Stale widget CSS would be printed inline.' );
+		$this->assertFalse( CSS_Handler::has_css_file( 'widgets' ), 'The stale stylesheet would still be enqueued.' );
+		$this->assertFileDoesNotExist( $file_path );
 	}
 
 	/**
-	 * Partial post CSS must not be saved, so the page keeps rendering inline styles.
+	 * A failed regeneration must drop the post's saved CSS, so it is not served after an edit.
 	 */
-	public function test_partial_post_css_is_not_persisted(): void {
+	public function test_partial_post_css_invalidates_saved_css(): void {
 		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
 
-		$post_id = self::factory()->post->create( array( 'post_content' => self::IMAGE_BLOCK . self::HEADING_BLOCK ) );
+		$post_id   = self::factory()->post->create( array( 'post_content' => self::IMAGE_BLOCK . self::HEADING_BLOCK ) );
+		$file_path = $this->seed_post_css( $post_id );
+
+		$this->assertTrue( CSS_Handler::has_css_file( $post_id ) );
 
 		CSS_Handler::generate_css_file( $post_id );
 
-		$this->assertSame( '', get_post_meta( $post_id, '_themeisle_gutenberg_block_styles', true ) );
-		$this->assertSame( '', get_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', true ) );
+		$this->assertSame( '', get_post_meta( $post_id, '_themeisle_gutenberg_block_styles', true ), 'Stale meta would win over inline CSS.' );
+		$this->assertFalse( CSS_Handler::has_css_file( $post_id ), 'The stale stylesheet would still be enqueued.' );
+		$this->assertFileDoesNotExist( $file_path );
+	}
+
+	/**
+	 * Reusable block saves get the same invalidation.
+	 */
+	public function test_partial_reusable_block_css_invalidates_saved_css(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+
+		$block_id  = self::factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => self::IMAGE_BLOCK . self::HEADING_BLOCK,
+			)
+		);
+		$file_path = $this->seed_post_css( $block_id );
+
+		$request = new WP_REST_Request( 'POST' );
+		$request->set_param( 'id', $block_id );
+
+		CSS_Handler::instance()->save_block_meta( $request );
+
+		$this->assertSame( '', get_post_meta( $block_id, '_themeisle_gutenberg_block_styles', true ) );
+		$this->assertFalse( CSS_Handler::has_css_file( $block_id ) );
+		$this->assertFileDoesNotExist( $file_path );
 	}
 }

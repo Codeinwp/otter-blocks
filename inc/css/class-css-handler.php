@@ -237,12 +237,64 @@ class CSS_Handler extends Base_CSS {
 		$failures = self::get_render_failures();
 		$css      = self::instance()->get_blocks_css( $post_id );
 
-		// Never persist partial CSS; the page falls back to inline styles.
+		// Never persist partial CSS, nor keep serving the pre-edit copy.
 		if ( self::get_render_failures() > $failures ) {
+			self::invalidate_post_css( $post_id );
 			return;
 		}
 
 		self::save_css_file( $post_id, $css );
+	}
+
+	/**
+	 * Drop a post's saved CSS, so the page renders inline styles until it regenerates cleanly.
+	 *
+	 * Unlike delete_css_file(), this runs without a capability check: it only
+	 * clears a cache, and the frontend regeneration path runs as a visitor.
+	 *
+	 * @param int $post_id Post id.
+	 * @return void
+	 */
+	private static function invalidate_post_css( $post_id ) {
+		$file_name = get_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', true );
+
+		delete_post_meta( $post_id, '_themeisle_gutenberg_block_styles' );
+		delete_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet' );
+
+		self::delete_stylesheet( $file_name );
+	}
+
+	/**
+	 * Drop the saved widgets CSS, so widgets render inline styles until they regenerate cleanly.
+	 *
+	 * @return void
+	 */
+	private static function invalidate_widgets_css() {
+		$file_name = get_option( 'themeisle_blocks_widgets_css_file' );
+
+		delete_option( 'themeisle_blocks_widgets_css' );
+		delete_option( 'themeisle_blocks_widgets_css_file' );
+
+		self::delete_stylesheet( $file_name );
+	}
+
+	/**
+	 * Delete a generated stylesheet from uploads.
+	 *
+	 * @param mixed $file_name Stylesheet name, without extension.
+	 * @return void
+	 */
+	private static function delete_stylesheet( $file_name ) {
+		if ( ! is_string( $file_name ) || '' === $file_name ) {
+			return;
+		}
+
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$file_path     = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/' . $file_name . '.css';
+
+		if ( is_file( $file_path ) ) {
+			wp_delete_file( $file_path );
+		}
 	}
 
 	/**
@@ -316,8 +368,10 @@ class CSS_Handler extends Base_CSS {
 		$failures = self::get_render_failures();
 		$css      = $this->get_reusable_block_css( $post_id );
 
-		// Never persist partial CSS.
-		if ( self::get_render_failures() === $failures ) {
+		// Never persist partial CSS, nor keep serving the pre-edit copy.
+		if ( self::get_render_failures() > $failures ) {
+			self::invalidate_post_css( $post_id );
+		} else {
 			self::save_css_file( $post_id, $css );
 		}
 
@@ -442,8 +496,9 @@ class CSS_Handler extends Base_CSS {
 		$failures = self::get_render_failures();
 		$css      = self::instance()->get_widgets_css();
 
-		// Never persist or delete on partial CSS; the page falls back to inline styles.
+		// Never persist partial CSS, nor keep serving the pre-edit copy.
 		if ( self::get_render_failures() > $failures ) {
+			self::invalidate_widgets_css();
 			return false;
 		}
 
