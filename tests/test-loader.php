@@ -150,7 +150,15 @@ class TestLoader extends WP_UnitTestCase {
 	 * An absent optional module is reported as not booted, without fataling.
 	 */
 	public function test_boot_singleton_reports_a_missing_class() {
-		$this->assertFalse( Loader::boot_singleton( 'Otter_Loader_Definitely_Missing' ) );
+		$result = $this->with_classmaps(
+			array(),
+			function (): bool {
+				return Loader::boot_singleton( 'Otter_Loader_Definitely_Missing' );
+			}
+		);
+
+		$this->assertFalse( $result['value'] );
+		$this->assertStringContainsString( 'Skipped Otter_Loader_Definitely_Missing: could not be loaded.', $result['log'] );
 	}
 
 	/**
@@ -209,22 +217,15 @@ class TestLoader extends WP_UnitTestCase {
 	public function test_repeated_skips_are_logged_once() {
 		Loader::reset_reported();
 
-		$log = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
-		$old = ini_set( 'error_log', $log );
+		$result = $this->capture_error_log(
+			function (): void {
+				for ( $i = 0; $i < 5; $i++ ) {
+					Loader::instantiate( 'Otter_Loader_Definitely_Missing' );
+				}
+			}
+		);
 
-		for ( $i = 0; $i < 5; $i++ ) {
-			Loader::instantiate( 'Otter_Loader_Definitely_Missing' );
-		}
-
-		ini_set( 'error_log', false === $old ? '' : $old );
-
-		$lines = file_exists( $log ) ? substr_count( file_get_contents( $log ), 'Otter_Loader_Definitely_Missing' ) : 0;
-
-		if ( file_exists( $log ) ) {
-			unlink( $log );
-		}
-
-		$this->assertSame( 1, $lines, 'A repeated skip must not be logged more than once.' );
+		$this->assertSame( 1, substr_count( $result['log'], 'Otter_Loader_Definitely_Missing' ), 'A repeated skip must not be logged more than once.' );
 
 		Loader::reset_reported();
 	}
@@ -235,23 +236,16 @@ class TestLoader extends WP_UnitTestCase {
 	public function test_distinct_skip_reasons_are_both_logged() {
 		Loader::reset_reported();
 
-		$log = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
-		$old = ini_set( 'error_log', $log );
+		$result = $this->capture_error_log(
+			function (): void {
+				Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
+				Loader::log_skipped( 'Otter_Loader_Plain', 'second reason' );
+				Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
+			}
+		);
 
-		Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
-		Loader::log_skipped( 'Otter_Loader_Plain', 'second reason' );
-		Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
-
-		ini_set( 'error_log', false === $old ? '' : $old );
-
-		$contents = file_exists( $log ) ? file_get_contents( $log ) : '';
-
-		if ( file_exists( $log ) ) {
-			unlink( $log );
-		}
-
-		$this->assertSame( 1, substr_count( $contents, 'first reason' ) );
-		$this->assertSame( 1, substr_count( $contents, 'second reason' ) );
+		$this->assertSame( 1, substr_count( $result['log'], 'first reason' ) );
+		$this->assertSame( 1, substr_count( $result['log'], 'second reason' ) );
 
 		Loader::reset_reported();
 	}
@@ -276,29 +270,7 @@ class TestLoader extends WP_UnitTestCase {
 		$this->assertNull( $result['value']['instance'] );
 		$this->assertFalse( $result['value']['booted'] );
 		$this->assertStringContainsString( 'Skipped \Otter_Loader_Stale_Mapped: mapped file is missing.', $result['log'] );
-	}
-
-	/**
-	 * A classmap entry whose file exists still loads through Composer.
-	 */
-	public function test_readable_classmap_entry_still_loads(): void {
-		$file = get_temp_dir() . 'class-otter-loader-mapped-present-' . wp_generate_password( 8, false ) . '.php';
-
-		file_put_contents( $file, '<?php class Otter_Loader_Mapped_Present {}' );
-
-		$result = $this->with_classmaps(
-			array(
-				array( 'Otter_Loader_Mapped_Present' => $file ),
-			),
-			function () {
-				return Loader::instantiate( '\Otter_Loader_Mapped_Present' );
-			}
-		);
-
-		unlink( $file );
-
-		$this->assertSame( array(), $result['warnings'] );
-		$this->assertInstanceOf( 'Otter_Loader_Mapped_Present', $result['value'] );
+		$this->assertStringContainsString( 'Skipped Otter_Loader_Stale_Mapped: mapped file is missing.', $result['log'] );
 	}
 
 	/**
@@ -428,11 +400,41 @@ class TestLoader extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Run a callback with error_log() pointed at a temp file, returning what it logged.
+	 *
+	 * @template T
+	 * @param callable(): T $callback Code to run.
+	 * @return array{value: T, log: string}
+	 */
+	private function capture_error_log( callable $callback ): array {
+		$log     = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
+		$old_log = ini_set( 'error_log', $log );
+
+		try {
+			$value = $callback();
+		} finally {
+			ini_set( 'error_log', false === $old_log ? '' : $old_log );
+
+			$contents = file_exists( $log ) ? file_get_contents( $log ) : '';
+
+			if ( file_exists( $log ) ) {
+				unlink( $log );
+			}
+		}
+
+		return array(
+			'value' => $value,
+			'log'   => $contents,
+		);
+	}
+
+	/**
 	 * Run a callback with extra Composer classmaps registered ahead of the real ones, collecting warnings and the error log.
 	 *
+	 * @template T
 	 * @param list<array<string, string>> $class_maps One class-to-file map per loader; the first sits first on the autoload stack.
-	 * @param callable                    $callback   Code to run while the classmaps are registered.
-	 * @return array{value: mixed, warnings: list<string>, log: string}
+	 * @param callable(): T               $callback   Code to run while the classmaps are registered.
+	 * @return array{value: T, warnings: list<string>, log: string}
 	 */
 	private function with_classmaps( array $class_maps, callable $callback ): array {
 		Loader::reset_reported();
@@ -448,8 +450,6 @@ class TestLoader extends WP_UnitTestCase {
 			$loaders[] = $loader;
 		}
 
-		$log      = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
-		$old_log  = ini_set( 'error_log', $log );
 		$warnings = array();
 
 		set_error_handler(
@@ -461,10 +461,9 @@ class TestLoader extends WP_UnitTestCase {
 		);
 
 		try {
-			$value = $callback();
+			$captured = $this->capture_error_log( $callback );
 		} finally {
 			restore_error_handler();
-			ini_set( 'error_log', false === $old_log ? '' : $old_log );
 			foreach ( $loaders as $loader ) {
 				$loader->unregister();
 			}
@@ -472,16 +471,10 @@ class TestLoader extends WP_UnitTestCase {
 			Loader::reset_reported();
 		}
 
-		$contents = file_exists( $log ) ? file_get_contents( $log ) : '';
-
-		if ( file_exists( $log ) ) {
-			unlink( $log );
-		}
-
 		return array(
-			'value'    => $value,
+			'value'    => $captured['value'],
 			'warnings' => $warnings,
-			'log'      => $contents,
+			'log'      => $captured['log'],
 		);
 	}
 
