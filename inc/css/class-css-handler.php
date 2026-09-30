@@ -247,7 +247,7 @@ class CSS_Handler extends Base_CSS {
 	}
 
 	/**
-	 * Drop a post's saved CSS, so the page renders inline styles until it regenerates cleanly.
+	 * Drop a post's saved CSS and fonts, so the page renders inline styles until it regenerates cleanly.
 	 *
 	 * Unlike delete_css_file(), this runs without a capability check: it only
 	 * clears a cache, and the frontend regeneration path runs as a visitor.
@@ -260,12 +260,13 @@ class CSS_Handler extends Base_CSS {
 
 		delete_post_meta( $post_id, '_themeisle_gutenberg_block_styles' );
 		delete_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet' );
+		delete_post_meta( $post_id, '_themeisle_gutenberg_block_fonts' );
 
 		self::delete_stylesheet( $file_name );
 	}
 
 	/**
-	 * Drop the saved widgets CSS, so widgets render inline styles until they regenerate cleanly.
+	 * Drop the saved widgets CSS and fonts, so widgets render inline styles until they regenerate cleanly.
 	 *
 	 * @return void
 	 */
@@ -274,6 +275,7 @@ class CSS_Handler extends Base_CSS {
 
 		delete_option( 'themeisle_blocks_widgets_css' );
 		delete_option( 'themeisle_blocks_widgets_css_file' );
+		delete_option( 'themeisle_blocks_widgets_fonts' );
 
 		self::delete_stylesheet( $file_name );
 	}

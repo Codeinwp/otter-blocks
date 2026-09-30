@@ -328,12 +328,13 @@ class Test_Base_CSS_Renderer_Guard extends WP_UnitTestCase {
 
 		update_post_meta( $post_id, '_themeisle_gutenberg_block_styles', '.previous{color:black}' );
 		update_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', $file_name );
+		update_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', array( array( 'fontfamily' => 'Previous Font' ) ) );
 
 		return $this->seed_stylesheet( $file_name );
 	}
 
 	/**
-	 * A failed regeneration must drop the saved widgets CSS, so it is not served after an edit.
+	 * A failed regeneration must drop the saved widgets CSS and fonts, so neither is served after an edit.
 	 */
 	public function test_partial_widget_css_invalidates_saved_css(): void {
 		$this->set_classes( array( '\Otter_Missing_Dependency_CSS' ) );
@@ -343,17 +344,19 @@ class Test_Base_CSS_Renderer_Guard extends WP_UnitTestCase {
 
 		update_option( 'themeisle_blocks_widgets_css', '.previous{color:black}' );
 		update_option( 'themeisle_blocks_widgets_css_file', 'widgets-previous' );
+		update_option( 'themeisle_blocks_widgets_fonts', array( array( 'fontfamily' => 'Previous Font' ) ) );
 
 		$this->assertTrue( CSS_Handler::has_css_file( 'widgets' ) );
 		$this->assertFalse( CSS_Handler::save_widgets_styles() );
 
 		$this->assertFalse( get_option( 'themeisle_blocks_widgets_css' ), 'Stale widget CSS would be printed inline.' );
 		$this->assertFalse( CSS_Handler::has_css_file( 'widgets' ), 'The stale stylesheet would still be enqueued.' );
+		$this->assertFalse( get_option( 'themeisle_blocks_widgets_fonts' ), 'Stale widget fonts would still be enqueued.' );
 		$this->assertFileDoesNotExist( $file_path );
 	}
 
 	/**
-	 * A failed regeneration must drop the post's saved CSS, so it is not served after an edit.
+	 * A failed regeneration must drop the post's saved CSS and fonts, so neither is served after an edit.
 	 */
 	public function test_partial_post_css_invalidates_saved_css(): void {
 		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
@@ -367,6 +370,7 @@ class Test_Base_CSS_Renderer_Guard extends WP_UnitTestCase {
 
 		$this->assertSame( '', get_post_meta( $post_id, '_themeisle_gutenberg_block_styles', true ), 'Stale meta would win over inline CSS.' );
 		$this->assertFalse( CSS_Handler::has_css_file( $post_id ), 'The stale stylesheet would still be enqueued.' );
+		$this->assertSame( '', get_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', true ), 'Stale fonts would block the in-memory font fallback.' );
 		$this->assertFileDoesNotExist( $file_path );
 	}
 
@@ -394,6 +398,7 @@ class Test_Base_CSS_Renderer_Guard extends WP_UnitTestCase {
 
 		$this->assertSame( '', get_post_meta( $block_id, '_themeisle_gutenberg_block_styles', true ) );
 		$this->assertFalse( CSS_Handler::has_css_file( $block_id ) );
+		$this->assertSame( '', get_post_meta( $block_id, '_themeisle_gutenberg_block_fonts', true ) );
 		$this->assertFileDoesNotExist( $file_path );
 	}
 }
