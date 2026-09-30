@@ -335,11 +335,86 @@ class TestLoader extends WP_UnitTestCase {
 		unlink( $plain );
 		unlink( $singleton );
 
-		// The earlier stale map still warns; that is the foreign loader's own include.
 		$this->assertNotNull( $result['value']['instance'], 'instantiate() must fall through to the later readable mapping.' );
 		$this->assertInstanceOf( 'Otter_Loader_Shadowed', $result['value']['instance'] );
 		$this->assertTrue( $result['value']['booted'], 'boot_singleton() must fall through to the later readable mapping.' );
+		$this->assertSame( array(), $result['warnings'], 'The earlier stale include must stay silent.' );
 		$this->assertStringNotContainsString( 'mapped file is missing', $result['log'] );
+	}
+
+	/**
+	 * A stale Composer map must not block a non-Composer autoloader that defines the class,
+	 * e.g. a third-party renderer added through otter_blocks_register_css.
+	 */
+	public function test_custom_autoloader_wins_over_a_stale_composer_map(): void {
+		$files = array(
+			'Otter_Loader_Custom_Plain'     => '<?php class Otter_Loader_Custom_Plain {}',
+			'Otter_Loader_Custom_Singleton' => '<?php class Otter_Loader_Custom_Singleton { public static function instance() {} }',
+		);
+		$paths = array();
+
+		foreach ( $files as $class => $source ) {
+			$paths[ $class ] = get_temp_dir() . 'otter-custom-' . wp_generate_password( 8, false ) . '.php';
+			file_put_contents( $paths[ $class ], $source );
+		}
+
+		$custom = function ( string $class ) use ( $paths ): void {
+			if ( isset( $paths[ $class ] ) ) {
+				require $paths[ $class ];
+			}
+		};
+
+		spl_autoload_register( $custom );
+
+		try {
+			$result = $this->with_classmaps(
+				array(
+					array(
+						'Otter_Loader_Custom_Plain'     => $this->missing_file( 'class-otter-loader-custom-plain.php' ),
+						'Otter_Loader_Custom_Singleton' => $this->missing_file( 'class-otter-loader-custom-singleton.php' ),
+					),
+				),
+				function (): array {
+					return array(
+						'instance' => Loader::instantiate( '\Otter_Loader_Custom_Plain' ),
+						'booted'   => Loader::boot_singleton( 'Otter_Loader_Custom_Singleton' ),
+					);
+				}
+			);
+		} finally {
+			spl_autoload_unregister( $custom );
+			array_map( 'unlink', $paths );
+		}
+
+		$this->assertNotNull( $result['value']['instance'], 'instantiate() must let the custom autoloader run.' );
+		$this->assertInstanceOf( 'Otter_Loader_Custom_Plain', $result['value']['instance'] );
+		$this->assertTrue( $result['value']['booted'], 'boot_singleton() must let the custom autoloader run.' );
+		$this->assertSame( array(), $result['warnings'], 'The stale include must stay silent.' );
+		$this->assertStringNotContainsString( 'mapped file is missing', $result['log'] );
+	}
+
+	/**
+	 * Only the stale include is silenced; other warnings raised while autoloading still reach the previous handler.
+	 */
+	public function test_unrelated_autoload_warnings_are_not_silenced(): void {
+		$file = get_temp_dir() . 'class-otter-loader-noisy-' . wp_generate_password( 8, false ) . '.php';
+
+		file_put_contents( $file, '<?php trigger_error( "noisy class file", E_USER_WARNING ); class Otter_Loader_Noisy {}' );
+
+		$result = $this->with_classmaps(
+			array(
+				array( 'Otter_Loader_Noisy' => $this->missing_file( 'class-otter-loader-noisy.php' ) ),
+				array( 'Otter_Loader_Noisy' => $file ),
+			),
+			function () {
+				return Loader::instantiate( 'Otter_Loader_Noisy' );
+			}
+		);
+
+		unlink( $file );
+
+		$this->assertInstanceOf( 'Otter_Loader_Noisy', $result['value'] );
+		$this->assertSame( array( 'noisy class file' ), $result['warnings'] );
 	}
 
 	/**

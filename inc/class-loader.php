@@ -38,15 +38,11 @@ class Loader {
 		}
 
 		try {
-			if ( self::has_missing_mapped_file( $classname ) ) {
-				self::log_skipped( $classname, 'mapped file is missing' );
-
-				return null;
-			}
-
 			// An autoloader can throw or fatal on its own; keep it inside the try.
-			if ( ! class_exists( $classname ) ) {
-				self::log_skipped( $classname, 'could not be loaded' );
+			$skip_reason = self::load_class( $classname );
+
+			if ( null !== $skip_reason ) {
+				self::log_skipped( $classname, $skip_reason );
 
 				return null;
 			}
@@ -113,13 +109,15 @@ class Loader {
 		}
 
 		try {
-			if ( self::has_missing_mapped_file( $classname ) ) {
-				self::log_skipped( $classname, 'mapped file is missing' );
+			$skip_reason = self::load_class( $classname );
+
+			if ( null !== $skip_reason ) {
+				self::log_skipped( $classname, $skip_reason );
 
 				return false;
 			}
 
-			if ( ! class_exists( $classname ) || ! method_exists( $classname, 'instance' ) ) {
+			if ( ! method_exists( $classname, 'instance' ) ) {
 				return false;
 			}
 
@@ -134,15 +132,33 @@ class Loader {
 	}
 
 	/**
-	 * Whether Composer would autoload the class from a file that cannot be read.
+	 * Autoload a class through the full autoload stack, without Composer's warnings for stale classmap entries.
 	 *
-	 * Composer trusts its classmap and includes the mapped path unchecked, so a
-	 * stale entry raises include warnings before class_exists() returns false.
+	 * @param string $classname Class name.
+	 * @return string|null Why the class is unavailable, or null when it is loaded.
+	 */
+	private static function load_class( $classname ) {
+		$had_stale_mapping = self::clear_stale_mappings( $classname );
+
+		if ( class_exists( $classname ) ) {
+			return null;
+		}
+
+		return $had_stale_mapping ? 'mapped file is missing' : 'could not be loaded';
+	}
+
+	/**
+	 * Blank out Composer classmap entries whose file is gone.
+	 *
+	 * Composer trusts its classmap and includes a mapped path unchecked, so a stale
+	 * entry warns even when a later autoloader then defines the class. Composer only
+	 * includes a non-empty path, so an emptied entry is passed over silently and PHP
+	 * still moves on to the next autoloader, with any other error raised as usual.
 	 *
 	 * @param string $classname Class name, with or without a leading backslash.
-	 * @return bool True when Composer maps the class, but to no readable file.
+	 * @return bool True when any registered Composer loader mapped the class to an unreadable file.
 	 */
-	private static function has_missing_mapped_file( $classname ) {
+	private static function clear_stale_mappings( $classname ) {
 		if ( class_exists( $classname, false ) || ! class_exists( '\Composer\Autoload\ClassLoader', false ) ) {
 			return false;
 		}
@@ -156,25 +172,22 @@ class Loader {
 
 		// Classmap keys carry no leading backslash.
 		$class = ltrim( $classname, '\\' );
+		$stale = false;
 
-		$is_mapped = false;
-
-		// A failed include falls through to the next autoloader, so any readable mapping will load it.
 		foreach ( $loaders as $loader ) {
 			$file = $loader->findFile( $class );
 
-			if ( ! is_string( $file ) ) {
+			if ( ! is_string( $file ) || is_readable( $file ) ) {
 				continue;
 			}
 
-			if ( is_readable( $file ) ) {
-				return false;
-			}
+			$stale = true;
 
-			$is_mapped = true;
+			// loadClass() skips an empty path instead of including it.
+			$loader->addClassMap( array( $class => '' ) );
 		}
 
-		return $is_mapped;
+		return $stale;
 	}
 
 	/**
