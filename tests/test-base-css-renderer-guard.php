@@ -6,6 +6,7 @@
  */
 
 use ThemeIsle\GutenbergBlocks\Base_CSS;
+use ThemeIsle\GutenbergBlocks\CSS\Block_Frontend;
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Handler;
 use ThemeIsle\GutenbergBlocks\Loader;
 use ThemeIsle\GutenbergBlocks\Registration;
@@ -400,5 +401,55 @@ class Test_Base_CSS_Renderer_Guard extends WP_UnitTestCase {
 		$this->assertFalse( CSS_Handler::has_css_file( $block_id ) );
 		$this->assertSame( '', get_post_meta( $block_id, '_themeisle_gutenberg_block_fonts', true ) );
 		$this->assertFileDoesNotExist( $file_path );
+	}
+
+	/**
+	 * A failure earlier in the request must not block a later clean save (archive pages render several posts).
+	 */
+	public function test_clean_save_after_failure_in_same_request_persists_css(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+
+		$failing_id = self::factory()->post->create( array( 'post_content' => self::IMAGE_BLOCK . self::HEADING_BLOCK ) );
+		$clean_id   = self::factory()->post->create( array( 'post_content' => self::HEADING_BLOCK ) );
+
+		CSS_Handler::generate_css_file( $failing_id );
+		CSS_Handler::generate_css_file( $clean_id );
+
+		$this->assertStringContainsString( '.otter-heading{color:green}', (string) get_post_meta( $clean_id, '_themeisle_gutenberg_block_styles', true ) );
+
+		CSS_Handler::delete_css_file( $clean_id );
+	}
+
+	/**
+	 * After invalidation, saved reusable-block CSS must not hide the post's own blocks.
+	 */
+	public function test_invalidated_post_with_saved_reusable_block_renders_own_blocks_inline(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
+
+		$block_id = self::factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => '<!-- wp:paragraph --><p>Reusable</p><!-- /wp:paragraph -->',
+			)
+		);
+		update_post_meta( $block_id, '_themeisle_gutenberg_block_styles', '.reusable{color:pink}' );
+
+		$post_id = self::factory()->post->create(
+			array( 'post_content' => self::IMAGE_BLOCK . self::HEADING_BLOCK . '<!-- wp:block {"ref":' . $block_id . '} /-->' )
+		);
+		$this->seed_post_css( $post_id );
+
+		CSS_Handler::generate_css_file( $post_id );
+
+		ob_start();
+		Block_Frontend::instance()->get_post_css( $post_id );
+		$output = (string) ob_get_clean();
+
+		$this->assertStringContainsString( '.otter-heading{color:green}', $output, 'The post\'s own healthy blocks must still be styled.' );
+		$this->assertStringContainsString( '.reusable{color:pink}', $output );
+		$this->assertStringNotContainsString( '.previous{color:black}', $output );
 	}
 }

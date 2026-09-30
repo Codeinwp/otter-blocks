@@ -405,16 +405,22 @@ class Block_Frontend extends Base_CSS {
 	public function get_page_css_meta( $post_id ) {
 		$style = '';
 		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
-			$style .= get_post_meta( $post_id, '_themeisle_gutenberg_block_styles', true );
+			$own_style = get_post_meta( $post_id, '_themeisle_gutenberg_block_styles', true );
 
 			$content = get_post_field( 'post_content', $post_id );
 
 			$blocks = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-				return $style;
+				return $own_style;
 			}
 
+			// Not saved or invalidated; reusable-block meta must not mask the post's own blocks.
+			if ( empty( $own_style ) ) {
+				$own_style = stripslashes( $this->cycle_through_static_blocks( $blocks, boolval( preg_match( '/\banimated\b/', $content ) ) ) );
+			}
+
+			$style .= $own_style;
 			$style .= $this->get_reusable_block_meta( $blocks );
 		}
 
