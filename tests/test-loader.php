@@ -260,8 +260,10 @@ class TestLoader extends WP_UnitTestCase {
 	 * A classmap entry whose file is gone is skipped without Composer's include warnings.
 	 */
 	public function test_stale_classmap_entry_is_skipped_without_warnings(): void {
-		$result = $this->with_classmap(
-			array( 'Otter_Loader_Stale_Mapped' => get_temp_dir() . 'otter-missing-' . wp_generate_password( 8, false ) . '/class-otter-loader-stale-mapped.php' ),
+		$result = $this->with_classmaps(
+			array(
+				array( 'Otter_Loader_Stale_Mapped' => $this->missing_file( 'class-otter-loader-stale-mapped.php' ) ),
+			),
 			function (): array {
 				return array(
 					'instance' => Loader::instantiate( '\Otter_Loader_Stale_Mapped' ),
@@ -284,8 +286,10 @@ class TestLoader extends WP_UnitTestCase {
 
 		file_put_contents( $file, '<?php class Otter_Loader_Mapped_Present {}' );
 
-		$result = $this->with_classmap(
-			array( 'Otter_Loader_Mapped_Present' => $file ),
+		$result = $this->with_classmaps(
+			array(
+				array( 'Otter_Loader_Mapped_Present' => $file ),
+			),
 			function () {
 				return Loader::instantiate( '\Otter_Loader_Mapped_Present' );
 			}
@@ -298,18 +302,76 @@ class TestLoader extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Run a callback with an extra Composer classmap registered first, collecting warnings and the error log.
+	 * A stale map from an earlier Composer loader must not hide a valid mapping in a later one,
+	 * since a failed include falls through to the next autoloader.
+	 */
+	public function test_later_readable_mapping_wins_over_an_earlier_stale_one(): void {
+		// One class per method, so neither call finds the other's class already loaded.
+		$plain     = get_temp_dir() . 'class-otter-loader-shadowed-' . wp_generate_password( 8, false ) . '.php';
+		$singleton = get_temp_dir() . 'class-otter-loader-shadowed-singleton-' . wp_generate_password( 8, false ) . '.php';
+
+		file_put_contents( $plain, '<?php class Otter_Loader_Shadowed {}' );
+		file_put_contents( $singleton, '<?php class Otter_Loader_Shadowed_Singleton { public static function instance() {} }' );
+
+		$result = $this->with_classmaps(
+			array(
+				array(
+					'Otter_Loader_Shadowed'           => $this->missing_file( 'class-otter-loader-shadowed.php' ),
+					'Otter_Loader_Shadowed_Singleton' => $this->missing_file( 'class-otter-loader-shadowed-singleton.php' ),
+				),
+				array(
+					'Otter_Loader_Shadowed'           => $plain,
+					'Otter_Loader_Shadowed_Singleton' => $singleton,
+				),
+			),
+			function (): array {
+				return array(
+					'instance' => Loader::instantiate( '\Otter_Loader_Shadowed' ),
+					'booted'   => Loader::boot_singleton( 'Otter_Loader_Shadowed_Singleton' ),
+				);
+			}
+		);
+
+		unlink( $plain );
+		unlink( $singleton );
+
+		// The earlier stale map still warns; that is the foreign loader's own include.
+		$this->assertNotNull( $result['value']['instance'], 'instantiate() must fall through to the later readable mapping.' );
+		$this->assertInstanceOf( 'Otter_Loader_Shadowed', $result['value']['instance'] );
+		$this->assertTrue( $result['value']['booted'], 'boot_singleton() must fall through to the later readable mapping.' );
+		$this->assertStringNotContainsString( 'mapped file is missing', $result['log'] );
+	}
+
+	/**
+	 * A path under a directory that does not exist.
 	 *
-	 * @param array<string, string> $class_map Class name to file path.
-	 * @param callable              $callback  Code to run while the classmap is registered.
+	 * @param string $name File name.
+	 * @return string
+	 */
+	private function missing_file( string $name ): string {
+		return get_temp_dir() . 'otter-missing-' . wp_generate_password( 8, false ) . '/' . $name;
+	}
+
+	/**
+	 * Run a callback with extra Composer classmaps registered ahead of the real ones, collecting warnings and the error log.
+	 *
+	 * @param list<array<string, string>> $class_maps One class-to-file map per loader; the first sits first on the autoload stack.
+	 * @param callable                    $callback   Code to run while the classmaps are registered.
 	 * @return array{value: mixed, warnings: list<string>, log: string}
 	 */
-	private function with_classmap( array $class_map, callable $callback ): array {
+	private function with_classmaps( array $class_maps, callable $callback ): array {
 		Loader::reset_reported();
 
-		$loader = new \Composer\Autoload\ClassLoader( get_temp_dir() . 'otter-vendor-' . wp_generate_password( 8, false ) );
-		$loader->addClassMap( $class_map );
-		$loader->register( true );
+		$loaders = array();
+
+		// Prepend in reverse, so the first map ends up first.
+		foreach ( array_reverse( $class_maps ) as $class_map ) {
+			$loader = new \Composer\Autoload\ClassLoader( get_temp_dir() . 'otter-vendor-' . wp_generate_password( 8, false ) );
+			$loader->addClassMap( $class_map );
+			$loader->register( true );
+
+			$loaders[] = $loader;
+		}
 
 		$log      = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
 		$old_log  = ini_set( 'error_log', $log );
@@ -328,7 +390,10 @@ class TestLoader extends WP_UnitTestCase {
 		} finally {
 			restore_error_handler();
 			ini_set( 'error_log', false === $old_log ? '' : $old_log );
-			$loader->unregister();
+			foreach ( $loaders as $loader ) {
+				$loader->unregister();
+			}
+
 			Loader::reset_reported();
 		}
 

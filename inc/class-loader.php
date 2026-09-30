@@ -140,7 +140,7 @@ class Loader {
 	 * stale entry raises include warnings before class_exists() returns false.
 	 *
 	 * @param string $classname Class name, with or without a leading backslash.
-	 * @return bool True when the first Composer loader mapping the class points at an unreadable file.
+	 * @return bool True when Composer maps the class, but to no readable file.
 	 */
 	private static function has_missing_mapped_file( $classname ) {
 		if ( class_exists( $classname, false ) || ! class_exists( '\Composer\Autoload\ClassLoader', false ) ) {
@@ -157,16 +157,24 @@ class Loader {
 		// Classmap keys carry no leading backslash.
 		$class = ltrim( $classname, '\\' );
 
-		// Same order as the autoload stack, so the first mapping is the one Composer would include.
+		$is_mapped = false;
+
+		// A failed include falls through to the next autoloader, so any readable mapping will load it.
 		foreach ( $loaders as $loader ) {
 			$file = $loader->findFile( $class );
 
-			if ( is_string( $file ) ) {
-				return ! is_readable( $file );
+			if ( ! is_string( $file ) ) {
+				continue;
 			}
+
+			if ( is_readable( $file ) ) {
+				return false;
+			}
+
+			$is_mapped = true;
 		}
 
-		return false;
+		return $is_mapped;
 	}
 
 	/**
