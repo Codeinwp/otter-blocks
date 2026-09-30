@@ -237,7 +237,6 @@ class CSS_Handler extends Base_CSS {
 		$failures = self::get_render_failures();
 		$css      = self::instance()->get_blocks_css( $post_id );
 
-		// Never persist partial CSS, nor keep serving the pre-edit copy.
 		if ( self::get_render_failures() > $failures ) {
 			self::invalidate_post_css( $post_id );
 			return;
@@ -370,7 +369,6 @@ class CSS_Handler extends Base_CSS {
 		$failures = self::get_render_failures();
 		$css      = $this->get_reusable_block_css( $post_id );
 
-		// Never persist partial CSS, nor keep serving the pre-edit copy.
 		if ( self::get_render_failures() > $failures ) {
 			self::invalidate_post_css( $post_id );
 		} else {
@@ -498,7 +496,6 @@ class CSS_Handler extends Base_CSS {
 		$failures = self::get_render_failures();
 		$css      = self::instance()->get_widgets_css();
 
-		// Never persist partial CSS, nor keep serving the pre-edit copy.
 		if ( self::get_render_failures() > $failures ) {
 			self::invalidate_widgets_css();
 			return false;
