@@ -257,6 +257,95 @@ class TestLoader extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A classmap entry whose file is gone is skipped without Composer's include warnings.
+	 */
+	public function test_stale_classmap_entry_is_skipped_without_warnings(): void {
+		$result = $this->with_classmap(
+			array( 'Otter_Loader_Stale_Mapped' => get_temp_dir() . 'otter-missing-' . wp_generate_password( 8, false ) . '/class-otter-loader-stale-mapped.php' ),
+			function (): array {
+				return array(
+					'instance' => Loader::instantiate( '\Otter_Loader_Stale_Mapped' ),
+					'booted'   => Loader::boot_singleton( 'Otter_Loader_Stale_Mapped' ),
+				);
+			}
+		);
+
+		$this->assertSame( array(), $result['warnings'], 'A stale classmap entry must not reach Composer\'s include.' );
+		$this->assertNull( $result['value']['instance'] );
+		$this->assertFalse( $result['value']['booted'] );
+		$this->assertStringContainsString( 'Skipped \Otter_Loader_Stale_Mapped: mapped file is missing.', $result['log'] );
+	}
+
+	/**
+	 * A classmap entry whose file exists still loads through Composer.
+	 */
+	public function test_readable_classmap_entry_still_loads(): void {
+		$file = get_temp_dir() . 'class-otter-loader-mapped-present-' . wp_generate_password( 8, false ) . '.php';
+
+		file_put_contents( $file, '<?php class Otter_Loader_Mapped_Present {}' );
+
+		$result = $this->with_classmap(
+			array( 'Otter_Loader_Mapped_Present' => $file ),
+			function () {
+				return Loader::instantiate( '\Otter_Loader_Mapped_Present' );
+			}
+		);
+
+		unlink( $file );
+
+		$this->assertSame( array(), $result['warnings'] );
+		$this->assertInstanceOf( 'Otter_Loader_Mapped_Present', $result['value'] );
+	}
+
+	/**
+	 * Run a callback with an extra Composer classmap registered first, collecting warnings and the error log.
+	 *
+	 * @param array<string, string> $class_map Class name to file path.
+	 * @param callable              $callback  Code to run while the classmap is registered.
+	 * @return array{value: mixed, warnings: list<string>, log: string}
+	 */
+	private function with_classmap( array $class_map, callable $callback ): array {
+		Loader::reset_reported();
+
+		$loader = new \Composer\Autoload\ClassLoader( get_temp_dir() . 'otter-vendor-' . wp_generate_password( 8, false ) );
+		$loader->addClassMap( $class_map );
+		$loader->register( true );
+
+		$log      = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
+		$old_log  = ini_set( 'error_log', $log );
+		$warnings = array();
+
+		set_error_handler(
+			function ( int $errno, string $errstr ) use ( &$warnings ): bool {
+				$warnings[] = $errstr;
+
+				return true;
+			}
+		);
+
+		try {
+			$value = $callback();
+		} finally {
+			restore_error_handler();
+			ini_set( 'error_log', false === $old_log ? '' : $old_log );
+			$loader->unregister();
+			Loader::reset_reported();
+		}
+
+		$contents = file_exists( $log ) ? file_get_contents( $log ) : '';
+
+		if ( file_exists( $log ) ) {
+			unlink( $log );
+		}
+
+		return array(
+			'value'    => $value,
+			'warnings' => $warnings,
+			'log'      => $contents,
+		);
+	}
+
+	/**
 	 * A missing loader file is reported, and the plugin stays inert instead of fataling.
 	 */
 	public function test_bootstrap_reports_a_missing_loader_file() {

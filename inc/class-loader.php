@@ -38,6 +38,12 @@ class Loader {
 		}
 
 		try {
+			if ( self::has_missing_mapped_file( $classname ) ) {
+				self::log_skipped( $classname, 'mapped file is missing' );
+
+				return null;
+			}
+
 			// An autoloader can throw or fatal on its own; keep it inside the try.
 			if ( ! class_exists( $classname ) ) {
 				self::log_skipped( $classname, 'could not be loaded' );
@@ -107,6 +113,12 @@ class Loader {
 		}
 
 		try {
+			if ( self::has_missing_mapped_file( $classname ) ) {
+				self::log_skipped( $classname, 'mapped file is missing' );
+
+				return false;
+			}
+
 			if ( ! class_exists( $classname ) || ! method_exists( $classname, 'instance' ) ) {
 				return false;
 			}
@@ -119,6 +131,42 @@ class Loader {
 
 			return false;
 		}
+	}
+
+	/**
+	 * Whether Composer would autoload the class from a file that cannot be read.
+	 *
+	 * Composer trusts its classmap and includes the mapped path unchecked, so a
+	 * stale entry raises include warnings before class_exists() returns false.
+	 *
+	 * @param string $classname Class name, with or without a leading backslash.
+	 * @return bool True when the first Composer loader mapping the class points at an unreadable file.
+	 */
+	private static function has_missing_mapped_file( $classname ) {
+		if ( class_exists( $classname, false ) || ! class_exists( '\Composer\Autoload\ClassLoader', false ) ) {
+			return false;
+		}
+
+		try {
+			$loaders = \Composer\Autoload\ClassLoader::getRegisteredLoaders();
+		} catch ( \Throwable $e ) {
+			// Another plugin loaded a pre-2.0 ClassLoader, which cannot list its loaders.
+			return false;
+		}
+
+		// Classmap keys carry no leading backslash.
+		$class = ltrim( $classname, '\\' );
+
+		// Same order as the autoload stack, so the first mapping is the one Composer would include.
+		foreach ( $loaders as $loader ) {
+			$file = $loader->findFile( $class );
+
+			if ( is_string( $file ) ) {
+				return ! is_readable( $file );
+			}
+		}
+
+		return false;
 	}
 
 	/**
