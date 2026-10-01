@@ -20,9 +20,18 @@ describe( 'scopeToAtomicWind', () => {
 		);
 	} );
 
-	it( 'leaves utility rules global', () => {
-		const css = '.flex{display:flex}#id{color:red}';
-		expect( scopeToAtomicWind( css ) ).toBe( css );
+	it( 'confines utility rules to the block subtree', () => {
+		// Classes are collected from the whole canvas, so a global `.hidden`
+		// would also hide unrelated content carrying that class.
+		expect( scopeToAtomicWind( '.hidden{display:none !important}#id{color:red}' ) ).toBe(
+			`.hidden${ MATCH }{display:none !important}#id${ MATCH }{color:red}`
+		);
+	} );
+
+	it( 'scopes a utility ahead of its pseudo-element', () => {
+		expect( scopeToAtomicWind( '.hover\\:underline:hover, .placeholder\\:text-transparent::placeholder{color:transparent}' ) ).toBe(
+			`.hover\\:underline:hover${ MATCH }, .placeholder\\:text-transparent${ MATCH }::placeholder{color:transparent}`
+		);
 	} );
 
 	it( 'scopes the subject compound only, keeping ancestors intact', () => {
@@ -66,7 +75,7 @@ describe( 'scopeToAtomicWind', () => {
 		// subject; collapsing the whole selector would drop that subject and
 		// apply the declarations to every block wrapper.
 		expect( scopeToAtomicWind( 'body .\\[body_\\&\\]\\:text-red-500{color:red}' ) ).toBe(
-			'body .\\[body_\\&\\]\\:text-red-500{color:red}'
+			`body .\\[body_\\&\\]\\:text-red-500${ MATCH }{color:red}`
 		);
 
 		expect( scopeToAtomicWind( 'html figure{margin:0}' ) ).toBe(
@@ -87,7 +96,9 @@ describe( 'scopeToAtomicWind', () => {
 
 	it( 'leaves nested selectors inside a utility rule untouched', () => {
 		const css = '.space-y-4{:where(& > :not(:last-child)){margin-block-start:0}}.hover\\:underline{&:hover{text-decoration:underline}}';
-		expect( scopeToAtomicWind( css ) ).toBe( css );
+		expect( scopeToAtomicWind( css ) ).toBe(
+			`.space-y-4${ MATCH }{:where(& > :not(:last-child)){margin-block-start:0}}.hover\\:underline${ MATCH }{&:hover{text-decoration:underline}}`
+		);
 	} );
 
 	it( 'keeps escaped arbitrary-value selectors intact and keeps scoping after them', () => {
@@ -98,7 +109,7 @@ describe( 'scopeToAtomicWind', () => {
 		const css = `${ utility }{--tw-content:"it's"}h1{font-size:inherit}`;
 
 		expect( scopeToAtomicWind( css ) ).toBe(
-			`${ utility }{--tw-content:"it's"}h1${ MATCH }{font-size:inherit}`
+			`${ utility }${ MATCH }{--tw-content:"it's"}h1${ MATCH }{font-size:inherit}`
 		);
 	} );
 
@@ -106,7 +117,7 @@ describe( 'scopeToAtomicWind', () => {
 		const utility = '.grid-cols-\\[repeat\\(2\\,minmax\\(0\\,1fr\\)\\)\\]';
 		const css = `${ utility }{grid-template-columns:repeat(2,minmax(0,1fr))}`;
 
-		expect( scopeToAtomicWind( css ) ).toBe( css );
+		expect( scopeToAtomicWind( css ) ).toBe( `${ utility }${ MATCH }{grid-template-columns:repeat(2,minmax(0,1fr))}` );
 	} );
 
 	it( 'handles a Tailwind-shaped stylesheet layer by layer', () => {
@@ -124,11 +135,11 @@ describe( 'scopeToAtomicWind', () => {
 
 		const out = scopeToAtomicWind( css );
 
-		// Layer statements, theme variables, utilities and @property pass through.
+		// Layer statements, theme variables and @property pass through.
 		expect( out ).toContain( '@layer properties;@layer theme, base, components, utilities;' );
 		expect( out ).toContain( `@layer theme{${ SELF }{--spacing:0.25rem}}` );
-		expect( out ).toContain( '.flex{display:flex !important}' );
-		expect( out ).toContain( '.hover\\:underline{&:hover{@media (hover: hover){text-decoration:underline !important}}}' );
+		expect( out ).toContain( `.flex${ MATCH }{display:flex !important}` );
+		expect( out ).toContain( `.hover\\:underline${ MATCH }{&:hover{@media (hover: hover){text-decoration:underline !important}}}` );
 		expect( out ).toContain( '@property --tw-content{syntax:"*";initial-value:"";inherits:false}' );
 
 		// Every base-layer rule is confined to the blocks.

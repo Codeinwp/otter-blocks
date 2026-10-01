@@ -1,17 +1,13 @@
 /**
  * Selector rewriting for the generated Tailwind stylesheet.
  *
- * Tailwind ships preflight, whose rules target bare HTML elements (`h1`,
- * `button`, `img`, `*`). Injected as-is they reset the whole document and win
- * over the theme's own element styles, so every element-anchored rule is
- * confined to the Atomic Wind block subtree. Class-anchored rules (the
- * utilities) stay global — they only match our generated markup anyway.
+ * Scope Tailwind resets and utilities to Atomic Wind blocks to prevent theme conflicts.
  */
 
 const ATOMIC_ROOT = '[class*="wp-block-atomic-wind-"]';
-const ATOMIC_MATCH = `:where(${ ATOMIC_ROOT }, ${ ATOMIC_ROOT } *)`;
 // Zero specificity, so a theme rule aimed at the block wrapper still wins.
 const ATOMIC_SELF = `:where(${ ATOMIC_ROOT })`;
+const ATOMIC_MATCH = `${ ATOMIC_SELF }, ${ ATOMIC_SELF } *`;
 
 // At-rules whose bodies are not selector lists and must be emitted verbatim.
 const OPAQUE_AT_RULE = /^@(-[a-z]+-)?(keyframes|font-face|property|counter-style|font-feature-values|font-palette-values|page|viewport|charset|import|namespace)\b/i;
@@ -145,28 +141,7 @@ function pseudoElementStart( subject ) {
 }
 
 /**
- * Whether the subject is already anchored to a class or id.
- *
- * Those are the generated utilities; attribute-only subjects (`[hidden]`) still
- * match theme markup, so they get scoped like bare elements do.
- *
- * @param {string} subject Subject compound.
- * @return {boolean} True when the rule cannot leak onto theme markup.
- */
-function isAnchored( subject ) {
-	const mask = topLevelMask( subject );
-
-	for ( let i = 0; i < subject.length; i++ ) {
-		if ( mask[ i ] && ( '.' === subject[ i ] || '#' === subject[ i ] ) ) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * Confine one selector to the Atomic Wind subtree when it targets bare elements.
+ * Confine one selector to the Atomic Wind subtree.
  *
  * @param {string} selector Single selector.
  * @return {string} Scoped selector.
@@ -177,10 +152,6 @@ function scopeSelectorToBlocks( selector ) {
 
 	if ( 0 === start && ROOT_SELECTOR.test( subject ) ) {
 		return ATOMIC_SELF;
-	}
-
-	if ( isAnchored( subject ) ) {
-		return selector;
 	}
 
 	const prefix = selector.slice( 0, start );
