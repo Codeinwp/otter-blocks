@@ -7,7 +7,7 @@
 const ATOMIC_ROOT = '[class*="wp-block-atomic-wind-"]';
 // Zero specificity, so a theme rule aimed at the block wrapper still wins.
 const ATOMIC_SELF = `:where(${ ATOMIC_ROOT })`;
-const ATOMIC_MATCH = `${ ATOMIC_SELF }, ${ ATOMIC_SELF } *`;
+const ATOMIC_MATCH = `:where(${ ATOMIC_ROOT }, ${ ATOMIC_ROOT } *)`;
 
 // At-rules whose bodies are not selector lists and must be emitted verbatim.
 const OPAQUE_AT_RULE = /^@(-[a-z]+-)?(keyframes|font-face|property|counter-style|font-feature-values|font-palette-values|page|viewport|charset|import|namespace)\b/i;
