@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4481bf0cd8326f6f2dda193aa9a5c782",
+    "content-hash": "e95075319cb6161ca17041c0c6de02e3",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -1044,16 +1044,16 @@
         },
         {
             "name": "php-stubs/woocommerce-stubs",
-            "version": "v11.1.1",
+            "version": "v11.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/woocommerce-stubs.git",
-                "reference": "b34e5fa17f177b89f486b639c41e57d78a44d4cd"
+                "reference": "06dfedfe33a46a12db99fd343b80f1f2f11e64f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/b34e5fa17f177b89f486b639c41e57d78a44d4cd",
-                "reference": "b34e5fa17f177b89f486b639c41e57d78a44d4cd",
+                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/06dfedfe33a46a12db99fd343b80f1f2f11e64f6",
+                "reference": "06dfedfe33a46a12db99fd343b80f1f2f11e64f6",
                 "shasum": ""
             },
             "require": {
@@ -1082,9 +1082,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
-                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v11.1.1"
+                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v11.1.2"
             },
-            "time": "2026-09-18T13:07:48+00:00"
+            "time": "2026-09-22T23:29:58+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",
@@ -1377,11 +1377,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.2.0",
+            "version": "2.2.15",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b4cd98348c809924f62bb9cc8c047f5e73bc9a58",
-                "reference": "b4cd98348c809924f62bb9cc8c047f5e73bc9a58",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b158556ffd26825cf615a1c1f72fb5157a2301b7",
+                "reference": "b158556ffd26825cf615a1c1f72fb5157a2301b7",
                 "shasum": ""
             },
             "require": {
@@ -1437,7 +1437,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-28T08:22:43+00:00"
+            "time": "2026-09-23T12:23:07+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
