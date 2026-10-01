@@ -21,6 +21,7 @@ jest.mock( '../link/edit', () => () => null );
 jest.mock( '../link/save', () => () => null );
 jest.mock( '../icon/edit', () => () => null );
 
+/** @param {typeof import('@wordpress/blocks')} blocks */
 const registerAll = ( blocks ) => {
 	// Registered server-side in production.
 	blocks.setCategories( [ ...blocks.getCategories(), { slug: 'atomic-wind', title: 'Atomic Wind' }] );
