@@ -711,7 +711,9 @@ class Base_CSS {
 			}
 		};
 
-		spl_autoload_register( $autoloader, true, true );
+		// Appended: a parser another plugin registers resolves first, so the
+		// sentinel check sees its copy and the bundled one is never loaded over it.
+		spl_autoload_register( $autoloader, true, false );
 
 		try {
 			return $callback();

@@ -135,6 +135,17 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Another plugin's parser autoloader is registered but has loaded nothing
+	 * yet; the guard must not load the bundled copy ahead of it.
+	 */
+	public function test_registered_foreign_loader_is_not_overridden_issue_3098(): void {
+		$output = $this->run_sandbox( 'unloaded' );
+
+		$this->assertStringContainsString( 'CSS_LENGTH:0', $output );
+		$this->assertStringContainsString( 'BUNDLED_PARSER_SYMBOLS:0', $output );
+	}
+
+	/**
 	 * Otter's Composer autoloader must not hand the unprefixed bundled parser
 	 * to other plugins, which may already have loaded their own release.
 	 */

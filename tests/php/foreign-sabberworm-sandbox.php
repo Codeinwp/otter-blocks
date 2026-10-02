@@ -8,7 +8,7 @@
  * foreign copy and skip the optimization instead of parsing.
  *
  * Run in a separate PHP process (no WordPress loaded):
- *   php foreign-sabberworm-sandbox.php [commentable|outputformat|ruleset]
+ *   php foreign-sabberworm-sandbox.php [commentable|outputformat|ruleset|unloaded]
  *
  * - `commentable` (default): the typed 9.x `Commentable` interface is preloaded —
  *   loading the bundled untyped `CSSList` then fatals at class-link time on
@@ -19,6 +19,9 @@
  * - `ruleset`: the typed interface is preloaded, Otter's Composer autoloader is
  *   registered as on boot, and another plugin requests `RuleSet` directly — the
  *   bundled copy must not be served to it.
+ * - `unloaded`: another plugin's 9.x autoloader is registered first but none of
+ *   its classes are loaded yet — the guard must not load the bundled copy ahead
+ *   of it.
  *
  * @package gutenberg-blocks
  */
@@ -83,6 +86,28 @@ namespace {
 		class_exists( 'Sabberworm\\CSS\\RuleSet\\RuleSet' );
 	}
 
+	if ( 'unloaded' === $GLOBALS['otter_sandbox_scenario'] ) {
+		// The other plugin's autoloader for its own 9.x copy; nothing loaded yet.
+		spl_autoload_register(
+			function ( $class ) {
+				if ( 0 !== strpos( $class, 'Sabberworm\\CSS\\' ) ) {
+					return;
+				}
+
+				$namespace = substr( $class, 0, strrpos( $class, '\\' ) );
+				$name      = substr( $class, strrpos( $class, '\\' ) + 1 );
+
+				if ( 'Sabberworm\\CSS\\Comment\\Commentable' === $class ) {
+					eval( "namespace $namespace; interface $name { public function addComments( array \\$comments ): void; }" );
+				} elseif ( 'Sabberworm\\CSS\\Renderable' === $class ) {
+					eval( "namespace $namespace; interface $name {}" );
+				} else {
+					eval( "namespace $namespace; class $name {}" );
+				}
+			}
+		);
+	}
+
 	$base   = new \ThemeIsle\GutenbergBlocks\Base_CSS();
 	$blocks = array(
 		array(
@@ -94,5 +119,14 @@ namespace {
 	$css = $base->get_animation_css( $blocks );
 
 	echo 'CSS_LENGTH:' . strlen( (string) $css ) . "\n";
+
+	$bundled = 0;
+	foreach ( array_merge( get_declared_classes(), get_declared_interfaces() ) as $declared ) {
+		$file = ( new \ReflectionClass( $declared ) )->getFileName();
+		if ( 0 === strpos( $declared, 'Sabberworm\\' ) && false !== $file && 0 === strpos( $file, OTTER_BLOCKS_PATH . '/vendor/' ) ) {
+			++$bundled;
+		}
+	}
+	echo 'BUNDLED_PARSER_SYMBOLS:' . $bundled . "\n";
 	echo "REQUEST COMPLETED WITHOUT FATAL\n";
 }
