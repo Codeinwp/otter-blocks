@@ -98,7 +98,7 @@ namespace {
 				$name      = substr( $class, strrpos( $class, '\\' ) + 1 );
 
 				if ( 'Sabberworm\\CSS\\Comment\\Commentable' === $class ) {
-					eval( "namespace $namespace; interface $name { public function addComments( array \\$comments ): void; }" );
+					eval( "namespace $namespace; interface $name { public function addComments( array \$comments ): void; }" );
 				} elseif ( 'Sabberworm\\CSS\\Renderable' === $class ) {
 					eval( "namespace $namespace; interface $name {}" );
 				} else {
@@ -106,6 +106,13 @@ namespace {
 				}
 			}
 		);
+
+		// Otter boots after the other plugin, as otter-blocks.php does.
+		require OTTER_BLOCKS_PATH . '/vendor/autoload.php';
+
+		if ( method_exists( '\ThemeIsle\GutenbergBlocks\Base_CSS', 'isolate_bundled_parser' ) ) {
+			\ThemeIsle\GutenbergBlocks\Base_CSS::isolate_bundled_parser();
+		}
 	}
 
 	$base   = new \ThemeIsle\GutenbergBlocks\Base_CSS();

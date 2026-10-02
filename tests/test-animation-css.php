@@ -115,7 +115,7 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 	 * outside has_own_css_parser(), which fatals in `RuleSet` while a foreign
 	 * parser is loaded. The cache must hold plain data only.
 	 */
-	public function test_animation_cache_holds_no_parser_objects_issue_3098(): void {
+	public function test_animation_cache_holds_no_parser_objects(): void {
 		delete_transient( Base_CSS::ANIMATION_RULES_TRANSIENT );
 
 		$css = ( new Base_CSS() )->get_animation_css( $this->animated_blocks() );
@@ -138,7 +138,7 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 	 * Another plugin's parser autoloader is registered but has loaded nothing
 	 * yet; the guard must not load the bundled copy ahead of it.
 	 */
-	public function test_registered_foreign_loader_is_not_overridden_issue_3098(): void {
+	public function test_registered_foreign_loader_is_not_overridden(): void {
 		$output = $this->run_sandbox( 'unloaded' );
 
 		$this->assertStringContainsString( 'CSS_LENGTH:0', $output );
@@ -149,7 +149,7 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 	 * Otter's Composer autoloader must not hand the unprefixed bundled parser
 	 * to other plugins, which may already have loaded their own release.
 	 */
-	public function test_composer_autoloader_does_not_serve_bundled_parser_issue_3098(): void {
+	public function test_composer_autoloader_does_not_serve_bundled_parser(): void {
 		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor' );
 		$checked    = 0;
 
@@ -170,7 +170,7 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 	 * Another plugin with the typed 9.x `Commentable` loaded requests `RuleSet`
 	 * directly; Otter's autoloader must leave it to that plugin's own loader.
 	 */
-	public function test_foreign_ruleset_request_is_not_served_bundled_copy_issue_3098(): void {
+	public function test_foreign_ruleset_request_is_not_served_bundled_copy(): void {
 		$output = $this->run_sandbox( 'ruleset' );
 
 		$this->assertStringContainsString( 'RULESET_LEFT_TO_FOREIGN_AUTOLOADER', $output );
@@ -181,7 +181,7 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 	 * Older releases cached parser objects under `otter_animations_parsed`; the
 	 * dashboard and style regeneration must drop that value without reading it.
 	 */
-	public function test_legacy_animation_cache_is_deleted_unread_issue_3098(): void {
+	public function test_legacy_animation_cache_is_deleted_unread(): void {
 		set_transient( 'otter_animations_parsed', array( 'legacy' ), MONTH_IN_SECONDS );
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
 
@@ -213,5 +213,30 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 
 		$this->assertSame( 0, $reads, 'The legacy parser-object cache was read.' );
 		$this->assertFalse( get_option( '_transient_otter_animations_parsed' ) );
+	}
+
+	/**
+	 * Regenerating styles reports the cleared animation cache even when no
+	 * generated stylesheet directory exists.
+	 */
+	public function test_regenerate_styles_reports_cleared_animation_cache(): void {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		set_transient( Base_CSS::ANIMATION_RULES_TRANSIENT, array( array( 'selectors' => null, 'css' => '' ) ), MONTH_IN_SECONDS );
+
+		$styles_dir = wp_upload_dir( null, false )['basedir'] . '/themeisle-gutenberg';
+		$parked_dir = $styles_dir . '-parked-' . uniqid();
+		$parked     = is_dir( $styles_dir ) && rename( $styles_dir, $parked_dir );
+
+		try {
+			$response = Dashboard_Server::regenerate_styles();
+		} finally {
+			if ( $parked ) {
+				rename( $parked_dir, $styles_dir );
+			}
+		}
+
+		$this->assertInstanceOf( WP_REST_Response::class, $response );
+		$this->assertSame( 'Optimized code deleted.', $response->get_data()['data']['message'] );
+		$this->assertFalse( get_transient( Base_CSS::ANIMATION_RULES_TRANSIENT ) );
 	}
 }
