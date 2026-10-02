@@ -19,6 +19,13 @@ use Sabberworm\CSS\CSSList\KeyFrame;
 class Base_CSS {
 
 	/**
+	 * Transient caching the rendered animation rules.
+	 *
+	 * @var string
+	 */
+	const ANIMATION_RULES_TRANSIENT = 'otter_animation_rules';
+
+	/**
 	 * The namespace under which the blocks are registered.
 	 *
 	 * @var string
@@ -504,30 +511,55 @@ class Base_CSS {
 
 		$classes = $prepared_classes;
 
-		$content = get_transient( 'otter_animations_parsed' );
+		$rules = get_transient( self::ANIMATION_RULES_TRANSIENT );
 
-		if ( false === $content ) {
-			$parser = null;
-			if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
-				$parser = new Parser( wpcom_vip_file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) );
-			} else {
-				$parser = new Parser( file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+		if ( false === $rules ) {
+			$rules = $this->parse_animation_rules();
+
+			set_transient( self::ANIMATION_RULES_TRANSIENT, $rules, MONTH_IN_SECONDS );
+		}
+
+		foreach ( $rules as $rule ) {
+			if ( null === $rule['selectors'] ) {
+				$style .= $rule['css'];
+				continue;
 			}
 
-			$content = $parser->parse()->getContents();
+			foreach ( $rule['selectors'] as $selector ) {
+				if ( in_array( $selector, $classes ) ) {
+					$style .= $rule['css'];
+				}
+			}
+		}
 
-			set_transient( 'otter_animations_parsed', $content, MONTH_IN_SECONDS );
+		return $style;
+	}
+
+	/**
+	 * Parse the bundled animation stylesheet into rendered rules.
+	 *
+	 * Only strings are returned for caching: a cached parser object graph loads
+	 * the bundled parser classes on every read, bypassing has_own_css_parser().
+	 *
+	 * @return list<array{selectors: list<string>|null, css: string}> Rules in stylesheet order; `null` selectors means always included.
+	 */
+	private function parse_animation_rules() {
+		$parser = null;
+		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
+			$parser = new Parser( wpcom_vip_file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) );
+		} else {
+			$parser = new Parser( file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 		}
 
 		$format = OutputFormat::createCompact();
+		$rules  = array();
 
-		foreach ( $content as $rule ) {
+		foreach ( $parser->parse()->getContents() as $rule ) {
 			if ( $rule instanceof DeclarationBlock ) {
-				foreach ( $rule->getSelectors() as $selector ) {
-					if ( in_array( $selector, $classes ) ) {
-						$style .= $rule->render( $format );
-					}
-				}
+				$rules[] = array(
+					'selectors' => array_map( 'strval', $rule->getSelectors() ),
+					'css'       => $rule->render( $format ),
+				);
 				continue;
 			}
 
@@ -539,7 +571,10 @@ class Base_CSS {
 					continue;
 				}
 
-				$style .= $rule->render( $format );
+				$rules[] = array(
+					'selectors' => null,
+					'css'       => $rule->render( $format ),
+				);
 				continue;
 			}
 
@@ -547,14 +582,14 @@ class Base_CSS {
 			 * This is used to get actual animation which is a @keyframe.
 			 */
 			if ( $rule instanceof KeyFrame ) {
-				if ( in_array( '.' . $rule->getAnimationName(), $classes ) ) {
-					$style .= $rule->render( $format );
-				}
-				continue;
+				$rules[] = array(
+					'selectors' => array( '.' . $rule->getAnimationName() ),
+					'css'       => $rule->render( $format ),
+				);
 			}
 		}
 
-		return $style;
+		return $rules;
 	}
 
 	/**

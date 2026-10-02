@@ -6,6 +6,8 @@
  */
 
 use ThemeIsle\GutenbergBlocks\Base_CSS;
+use ThemeIsle\GutenbergBlocks\Plugins\Dashboard;
+use ThemeIsle\GutenbergBlocks\Server\Dashboard_Server;
 
 /**
  * Animation-CSS parser collision tests.
@@ -100,11 +102,83 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 	public function test_get_animation_css_parses_with_bundled_parser() {
 		$this->assertTrue( Base_CSS::has_own_css_parser() );
 
-		delete_transient( 'otter_animations_parsed' );
+		delete_transient( Base_CSS::ANIMATION_RULES_TRANSIENT );
 
 		$css = ( new Base_CSS() )->get_animation_css( $this->animated_blocks() );
 
 		$this->assertStringContainsString( 'fadeIn', $css );
 		$this->assertStringContainsString( '@keyframes', $css );
+	}
+
+	/**
+	 * Reading a cached parser object graph loads the bundled parser classes
+	 * outside has_own_css_parser(), which fatals in `RuleSet` while a foreign
+	 * parser is loaded. The cache must hold plain data only.
+	 */
+	public function test_animation_cache_holds_no_parser_objects_issue_3098(): void {
+		/** @var array<string, mixed> $cached */
+		$cached = array();
+
+		add_action(
+			'set_transient',
+			function ( string $transient, $value ) use ( &$cached ): void {
+				$cached[ $transient ] = $value;
+			},
+			10,
+			2
+		);
+
+		$css = ( new Base_CSS() )->get_animation_css( $this->animated_blocks() );
+
+		$this->assertStringContainsString( '@keyframes fadeIn', $css );
+		$this->assertNotEmpty( $cached, 'The parsed animation rules should be cached.' );
+
+		foreach ( $cached as $transient => $value ) {
+			$this->assertIsArray( $value, $transient );
+			array_walk_recursive(
+				$value,
+				function ( $item ) use ( $transient ): void {
+					$this->assertIsNotObject( $item, $transient . ' caches parser objects.' );
+				}
+			);
+		}
+	}
+
+	/**
+	 * Older releases cached parser objects under `otter_animations_parsed`; the
+	 * dashboard and style regeneration must drop that value without reading it.
+	 */
+	public function test_legacy_animation_cache_is_deleted_unread_issue_3098(): void {
+		set_transient( 'otter_animations_parsed', array( 'legacy' ), MONTH_IN_SECONDS );
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$reads = 0;
+		add_filter(
+			'pre_transient_otter_animations_parsed',
+			function ( $pre ) use ( &$reads ) {
+				++$reads;
+				return $pre;
+			}
+		);
+
+		if ( ! function_exists( 'tsdk_translate_link' ) ) {
+			function tsdk_translate_link( string $link ): string {
+				return $link;
+			}
+		}
+
+		if ( ! function_exists( 'tsdk_utmify' ) ) {
+			function tsdk_utmify( string $link ): string {
+				return $link;
+			}
+		}
+
+		add_filter( 'pre_http_request', fn() => new WP_Error( 'http_request_blocked', 'External HTTP requests are blocked in tests.' ) );
+
+		Dashboard::instance()->get_dashboard_data();
+		Dashboard_Server::regenerate_styles();
+
+		$this->assertSame( 0, $reads, 'The legacy parser-object cache was read.' );
+		$this->assertFalse( get_option( '_transient_otter_animations_parsed' ) );
 	}
 }
