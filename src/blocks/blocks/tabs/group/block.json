@@ -62,7 +62,8 @@
 		}
 	},
 	"supports": {
-		"align": [ "left", "center", "right" ]
+		"align": [ "left", "center", "right" ],
+		"html": false
 	},
 	"editorStyle": "otter-tabs-editor",
 	"style": "otter-tabs-style",

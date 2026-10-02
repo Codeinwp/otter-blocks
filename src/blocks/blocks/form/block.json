@@ -147,7 +147,8 @@
 		}
 	},
 	"supports": {
-		"align": [ "wide", "full" ]
+		"align": [ "wide", "full" ],
+		"html": false
 	},
 	"editorStyle": "otter-form-editor",
 	"style": "otter-form-style",
