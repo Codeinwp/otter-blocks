@@ -75,6 +75,13 @@ class Base_CSS {
 	protected static $is_autoload_registered = false;
 
 	/**
+	 * Renderers that threw this request.
+	 *
+	 * @var int
+	 */
+	protected static $render_failures = 0;
+
+	/**
 	 * Base_CSS constructor.
 	 *
 	 * @since   1.3.0
@@ -450,7 +457,7 @@ class Base_CSS {
 			$renderers = $this->get_blocks_instances_for( isset( $block['blockName'] ) ? $block['blockName'] : null );
 
 			foreach ( $renderers as $path ) {
-				$style .= $path->render_css( $block );
+				$style .= $this->run_renderer( $path, 'render_css', array( $block ) );
 			}
 
 			$custom_css = apply_filters( 'otter_blocks_css', $block );
@@ -814,11 +821,45 @@ class Base_CSS {
 		$style = '';
 		foreach ( $this->get_blocks_instances() as $path ) {
 			if ( method_exists( $path, 'render_global_css' ) ) {
-				$style .= $path->render_global_css();
+				$style .= $this->run_renderer( $path, 'render_global_css' );
 			}
 		}
 
 		return $style;
+	}
+
+	/**
+	 * Run one renderer method, skipping it when it throws.
+	 *
+	 * A renderer can fail on a dependency the autoloader cannot resolve (e.g. a
+	 * stale classmap); the other renderers must still produce their CSS.
+	 *
+	 * @param object            $path   Renderer instance.
+	 * @param string            $method Render method to call.
+	 * @param array<int, mixed> $args   Method arguments.
+	 *
+	 * @return mixed The renderer output, or an empty string when it threw.
+	 */
+	protected function run_renderer( $path, $method, $args = array() ) {
+		try {
+			return call_user_func_array( array( $path, $method ), $args );
+		} catch ( \Throwable $e ) {
+			++self::$render_failures;
+			Loader::log_skipped( get_class( $path ), 'threw while rendering CSS: ' . $e->getMessage() );
+
+			return '';
+		}
+	}
+
+	/**
+	 * Number of renderers that threw this request.
+	 *
+	 * Compare before and after generating CSS to tell whether the result is partial.
+	 *
+	 * @return int
+	 */
+	public static function get_render_failures() {
+		return self::$render_failures;
 	}
 
 	/**

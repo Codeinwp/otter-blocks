@@ -1,0 +1,455 @@
+<?php
+/**
+ * Tests that a failing CSS renderer is skipped instead of fataling the request.
+ *
+ * @package gutenberg-blocks
+ */
+
+use ThemeIsle\GutenbergBlocks\Base_CSS;
+use ThemeIsle\GutenbergBlocks\CSS\Block_Frontend;
+use ThemeIsle\GutenbergBlocks\CSS\CSS_Handler;
+use ThemeIsle\GutenbergBlocks\Loader;
+use ThemeIsle\GutenbergBlocks\Registration;
+
+/**
+ * Core Image renderer whose dependency cannot be autoloaded, as with a stale classmap.
+ */
+class Otter_Missing_Dependency_CSS extends Base_CSS {
+	/**
+	 * Library matched against the block name.
+	 *
+	 * @var string
+	 */
+	public $library_prefix = 'core';
+
+	/**
+	 * Block suffix matched against the block name.
+	 *
+	 * @var string
+	 */
+	public $block_prefix = 'image';
+
+	/**
+	 * Render the block CSS.
+	 *
+	 * @param array<string, mixed> $block Block data.
+	 * @return string
+	 */
+	public function render_css( $block ): string {
+		// Same Error an unmapped CSS_Utility raises.
+		new \ThemeIsle\GutenbergBlocks\CSS\Otter_Missing_Utility( $block );
+
+		return '.never-reached{color:red}';
+	}
+
+	/**
+	 * Render the global CSS.
+	 *
+	 * @return string
+	 */
+	public function render_global_css(): string {
+		new \ThemeIsle\GutenbergBlocks\CSS\Otter_Missing_Utility();
+
+		return '.never-reached-global{color:red}';
+	}
+}
+
+/**
+ * Healthy renderer for the same Core Image block.
+ */
+class Otter_Image_CSS extends Base_CSS {
+	/**
+	 * Library matched against the block name.
+	 *
+	 * @var string
+	 */
+	public $library_prefix = 'core';
+
+	/**
+	 * Block suffix matched against the block name.
+	 *
+	 * @var string
+	 */
+	public $block_prefix = 'image';
+
+	/**
+	 * Render the block CSS.
+	 *
+	 * @param array<string, mixed> $block Block data.
+	 * @return string
+	 */
+	public function render_css( $block ): string {
+		return '.otter-image{color:blue}';
+	}
+}
+
+/**
+ * Healthy renderer for an unrelated Otter block.
+ */
+class Otter_Heading_CSS extends Base_CSS {
+	/**
+	 * Block suffix matched against the block name.
+	 *
+	 * @var string
+	 */
+	public $block_prefix = 'otter-heading';
+
+	/**
+	 * Render the block CSS.
+	 *
+	 * @param array<string, mixed> $block Block data.
+	 * @return string
+	 */
+	public function render_css( $block ): string {
+		return '.otter-heading{color:green}';
+	}
+
+	/**
+	 * Render the global CSS.
+	 *
+	 * @return string
+	 */
+	public function render_global_css(): string {
+		return '.otter-heading-global{color:green}';
+	}
+}
+
+/**
+ * Class Test_Base_CSS_Renderer_Guard
+ */
+class Test_Base_CSS_Renderer_Guard extends WP_UnitTestCase {
+
+	private const IMAGE_BLOCK   = '<!-- wp:image --><figure class="wp-block-image"><img src="x.jpg"/></figure><!-- /wp:image -->';
+	private const HEADING_BLOCK = '<!-- wp:themeisle-blocks/otter-heading /-->';
+	private const WIDGET_ID     = 2991;
+
+	/**
+	 * Base_CSS instance under test.
+	 *
+	 * @var Base_CSS
+	 */
+	private $css;
+
+	/**
+	 * Filter callbacks this test registered, so only those are removed again.
+	 *
+	 * @var array<int, callable>
+	 */
+	private $registered_filters = array();
+
+	/**
+	 * Widgets marked as used before the test.
+	 *
+	 * @var array<int, string>
+	 */
+	private $widget_used = array();
+
+	/**
+	 * Set up each test.
+	 */
+	public function set_up(): void {
+		parent::set_up();
+
+		$this->css         = new Base_CSS();
+		$this->widget_used = Registration::$widget_used;
+
+		Loader::reset_reported();
+	}
+
+	/**
+	 * Tear down each test.
+	 */
+	public function tear_down(): void {
+		foreach ( $this->registered_filters as $callback ) {
+			remove_filter( 'otter_blocks_register_css', $callback );
+		}
+
+		$this->registered_filters = array();
+
+		// Restore the shipped list for any later test in the suite.
+		$this->css->autoload_block_classes();
+
+		$this->delete_widgets_css_file();
+
+		Registration::$widget_used = $this->widget_used;
+
+		Loader::reset_reported();
+
+		parent::tear_down();
+	}
+
+	/**
+	 * Replace the CSS class list with the given entries.
+	 *
+	 * @param array<int, string> $classnames Entries to register.
+	 * @return void
+	 */
+	private function set_classes( array $classnames ): void {
+		$callback = function () use ( $classnames ): array {
+			return $classnames;
+		};
+
+		$this->registered_filters[] = $callback;
+
+		add_filter( 'otter_blocks_register_css', $callback );
+
+		$this->css->autoload_block_classes();
+	}
+
+	/**
+	 * Make the given markup the only active widget content.
+	 *
+	 * @param string $content Widget block markup.
+	 * @return void
+	 */
+	private function set_widget_content( string $content ): void {
+		update_option( 'widget_block', array( self::WIDGET_ID => array( 'content' => $content ) ) );
+
+		Registration::$widget_used = array( 'block-' . self::WIDGET_ID );
+	}
+
+	/**
+	 * Remove a widgets stylesheet a test wrote to uploads.
+	 *
+	 * @return void
+	 */
+	private function delete_widgets_css_file(): void {
+		$file_name = get_option( 'themeisle_blocks_widgets_css_file' );
+
+		if ( ! is_string( $file_name ) || '' === $file_name ) {
+			return;
+		}
+
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$file_path     = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/' . $file_name . '.css';
+
+		if ( is_file( $file_path ) ) {
+			unlink( $file_path );
+		}
+	}
+
+	/**
+	 * A renderer that throws must not abort the traversal or drop other blocks' CSS.
+	 */
+	public function test_throwing_renderer_does_not_abort_traversal(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Image_CSS', '\Otter_Heading_CSS' ) );
+
+		$style = $this->css->cycle_through_static_blocks( parse_blocks( self::IMAGE_BLOCK . self::HEADING_BLOCK ), false );
+
+		$this->assertStringContainsString( '.otter-image{color:blue}', $style, 'A healthy renderer for the same block must still contribute.' );
+		$this->assertStringContainsString( '.otter-heading{color:green}', $style, 'Later blocks must still be rendered.' );
+		$this->assertStringNotContainsString( 'never-reached', $style );
+	}
+
+	/**
+	 * Each failure is counted, so callers can tell the CSS is partial.
+	 */
+	public function test_render_failures_are_counted(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
+
+		$before = Base_CSS::get_render_failures();
+
+		$this->css->cycle_through_static_blocks( parse_blocks( self::IMAGE_BLOCK . self::IMAGE_BLOCK . self::HEADING_BLOCK ), false );
+
+		$this->assertSame( 2, Base_CSS::get_render_failures() - $before );
+	}
+
+	/**
+	 * A clean traversal leaves the failure count untouched.
+	 */
+	public function test_clean_traversal_counts_no_failures(): void {
+		$this->set_classes( array( '\Otter_Image_CSS', '\Otter_Heading_CSS' ) );
+
+		$before = Base_CSS::get_render_failures();
+
+		$this->css->cycle_through_static_blocks( parse_blocks( self::IMAGE_BLOCK . self::HEADING_BLOCK ), false );
+
+		$this->assertSame( $before, Base_CSS::get_render_failures() );
+	}
+
+	/**
+	 * Global styles get the same guard.
+	 */
+	public function test_throwing_global_renderer_is_skipped(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
+
+		$style = $this->css->cycle_through_global_styles();
+
+		$this->assertStringContainsString( '.otter-heading-global{color:green}', $style );
+		$this->assertStringNotContainsString( 'never-reached', $style );
+	}
+
+	/**
+	 * The failure runs per block, so it must be logged once per request, naming the renderer.
+	 */
+	public function test_failure_is_logged_once(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS' ) );
+
+		$log = get_temp_dir() . 'otter-log-' . wp_generate_password( 8, false ) . '.txt';
+		$old = ini_set( 'error_log', $log );
+
+		$this->css->cycle_through_static_blocks( parse_blocks( str_repeat( self::IMAGE_BLOCK, 5 ) ), false );
+
+		ini_set( 'error_log', false === $old ? '' : $old );
+
+		$contents = file_exists( $log ) ? (string) file_get_contents( $log ) : '';
+
+		if ( file_exists( $log ) ) {
+			unlink( $log );
+		}
+
+		$this->assertSame( 1, substr_count( $contents, 'Otter_Missing_Dependency_CSS: threw while rendering CSS' ) );
+		$this->assertStringContainsString( 'Otter_Missing_Utility', $contents, 'The log must name the missing class.' );
+	}
+
+	/**
+	 * Write a stylesheet to uploads, as a previous successful save would.
+	 *
+	 * @param string $file_name Stylesheet name, without extension.
+	 * @return string The file path.
+	 */
+	private function seed_stylesheet( string $file_name ): string {
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$dir           = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
+
+		wp_mkdir_p( $dir );
+		file_put_contents( $dir . $file_name . '.css', '.previous{color:black}' );
+
+		return $dir . $file_name . '.css';
+	}
+
+	/**
+	 * Give a post the CSS a previous successful save would have left.
+	 *
+	 * @param int $post_id Post id.
+	 * @return string The seeded file path.
+	 */
+	private function seed_post_css( int $post_id ): string {
+		$file_name = 'post-v2-' . $post_id . '-previous';
+
+		update_post_meta( $post_id, '_themeisle_gutenberg_block_styles', '.previous{color:black}' );
+		update_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', $file_name );
+		update_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', array( array( 'fontfamily' => 'Previous Font' ) ) );
+
+		return $this->seed_stylesheet( $file_name );
+	}
+
+	/**
+	 * A failed regeneration must drop the saved widgets CSS and fonts, so neither is served after an edit.
+	 */
+	public function test_partial_widget_css_invalidates_saved_css(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS' ) );
+		$this->set_widget_content( self::IMAGE_BLOCK );
+
+		$file_path = $this->seed_stylesheet( 'widgets-previous' );
+
+		update_option( 'themeisle_blocks_widgets_css', '.previous{color:black}' );
+		update_option( 'themeisle_blocks_widgets_css_file', 'widgets-previous' );
+		update_option( 'themeisle_blocks_widgets_fonts', array( array( 'fontfamily' => 'Previous Font' ) ) );
+
+		$this->assertTrue( CSS_Handler::has_css_file( 'widgets' ) );
+		$this->assertFalse( CSS_Handler::save_widgets_styles() );
+
+		$this->assertFalse( get_option( 'themeisle_blocks_widgets_css' ), 'Stale widget CSS would be printed inline.' );
+		$this->assertFalse( CSS_Handler::has_css_file( 'widgets' ), 'The stale stylesheet would still be enqueued.' );
+		$this->assertFalse( get_option( 'themeisle_blocks_widgets_fonts' ), 'Stale widget fonts would still be enqueued.' );
+		$this->assertFileDoesNotExist( $file_path );
+	}
+
+	/**
+	 * A failed regeneration must drop the post's saved CSS and fonts, so neither is served after an edit.
+	 */
+	public function test_partial_post_css_invalidates_saved_css(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
+
+		$post_id   = self::factory()->post->create( array( 'post_content' => self::IMAGE_BLOCK . self::HEADING_BLOCK ) );
+		$file_path = $this->seed_post_css( $post_id );
+
+		$this->assertTrue( CSS_Handler::has_css_file( $post_id ) );
+
+		CSS_Handler::generate_css_file( $post_id );
+
+		$this->assertSame( '', get_post_meta( $post_id, '_themeisle_gutenberg_block_styles', true ), 'Stale meta would win over inline CSS.' );
+		$this->assertFalse( CSS_Handler::has_css_file( $post_id ), 'The stale stylesheet would still be enqueued.' );
+		$this->assertSame( '', get_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', true ), 'Stale fonts would block the in-memory font fallback.' );
+		$this->assertFileDoesNotExist( $file_path );
+	}
+
+	/**
+	 * Reusable block saves get the same invalidation.
+	 */
+	public function test_partial_reusable_block_css_invalidates_saved_css(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+
+		$block_id  = self::factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => self::IMAGE_BLOCK . self::HEADING_BLOCK,
+			)
+		);
+		$file_path = $this->seed_post_css( $block_id );
+
+		$request = new WP_REST_Request( 'POST' );
+		$request->set_param( 'id', $block_id );
+
+		CSS_Handler::instance()->save_block_meta( $request );
+
+		$this->assertSame( '', get_post_meta( $block_id, '_themeisle_gutenberg_block_styles', true ) );
+		$this->assertFalse( CSS_Handler::has_css_file( $block_id ) );
+		$this->assertSame( '', get_post_meta( $block_id, '_themeisle_gutenberg_block_fonts', true ) );
+		$this->assertFileDoesNotExist( $file_path );
+	}
+
+	/**
+	 * A failure earlier in the request must not block a later clean save (archive pages render several posts).
+	 */
+	public function test_clean_save_after_failure_in_same_request_persists_css(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+
+		$failing_id = self::factory()->post->create( array( 'post_content' => self::IMAGE_BLOCK . self::HEADING_BLOCK ) );
+		$clean_id   = self::factory()->post->create( array( 'post_content' => self::HEADING_BLOCK ) );
+
+		CSS_Handler::generate_css_file( $failing_id );
+		CSS_Handler::generate_css_file( $clean_id );
+
+		$this->assertStringContainsString( '.otter-heading{color:green}', (string) get_post_meta( $clean_id, '_themeisle_gutenberg_block_styles', true ) );
+
+		CSS_Handler::delete_css_file( $clean_id );
+	}
+
+	/**
+	 * After invalidation, saved reusable-block CSS must not hide the post's own blocks.
+	 */
+	public function test_invalidated_post_with_saved_reusable_block_renders_own_blocks_inline(): void {
+		$this->set_classes( array( '\Otter_Missing_Dependency_CSS', '\Otter_Heading_CSS' ) );
+
+		$block_id = self::factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => '<!-- wp:paragraph --><p>Reusable</p><!-- /wp:paragraph -->',
+			)
+		);
+		update_post_meta( $block_id, '_themeisle_gutenberg_block_styles', '.reusable{color:pink}' );
+
+		$post_id = self::factory()->post->create(
+			array( 'post_content' => self::IMAGE_BLOCK . self::HEADING_BLOCK . '<!-- wp:block {"ref":' . $block_id . '} /-->' )
+		);
+		$this->seed_post_css( $post_id );
+
+		CSS_Handler::generate_css_file( $post_id );
+
+		ob_start();
+		Block_Frontend::instance()->get_post_css( $post_id );
+		$output = (string) ob_get_clean();
+
+		$this->assertStringContainsString( '.otter-heading{color:green}', $output, 'The post\'s own healthy blocks must still be styled.' );
+		$this->assertStringContainsString( '.reusable{color:pink}', $output );
+		$this->assertStringNotContainsString( '.previous{color:black}', $output );
+	}
+}
