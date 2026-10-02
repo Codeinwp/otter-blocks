@@ -26,6 +26,13 @@ class Base_CSS {
 	const ANIMATION_RULES_TRANSIENT = 'otter_animation_rules';
 
 	/**
+	 * Namespace of the bundled php-css-parser.
+	 *
+	 * @var string
+	 */
+	const PARSER_NAMESPACE = 'Sabberworm\\CSS\\';
+
+	/**
 	 * The namespace under which the blocks are registered.
 	 *
 	 * @var string
@@ -514,7 +521,11 @@ class Base_CSS {
 		$rules = get_transient( self::ANIMATION_RULES_TRANSIENT );
 
 		if ( false === $rules ) {
-			$rules = $this->parse_animation_rules();
+			$rules = self::with_bundled_parser(
+				function () {
+					return $this->parse_animation_rules();
+				}
+			);
 
 			set_transient( self::ANIMATION_RULES_TRANSIENT, $rules, MONTH_IN_SECONDS );
 		}
@@ -603,7 +614,6 @@ class Base_CSS {
 	 */
 	public static function has_own_css_parser() {
 		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor/' );
-		$prefix     = 'Sabberworm\\CSS\\';
 
 		// Reject any foreign copy already in memory before the sentinel checks
 		// autoload a bundled class: the parser uses more classes than the
@@ -612,7 +622,7 @@ class Base_CSS {
 
 		foreach ( $declared as $declared_name ) {
 			// PHP class names are case-insensitive; match a foreign copy in any casing.
-			if ( 0 !== stripos( $declared_name, $prefix ) ) {
+			if ( 0 !== stripos( $declared_name, self::PARSER_NAMESPACE ) ) {
 				continue;
 			}
 
@@ -621,25 +631,93 @@ class Base_CSS {
 			}
 		}
 
-		// Entry points nothing may have loaded yet: whichever autoloader resolves
-		// them must serve the bundled copy.
-		$sentinels = array(
-			'\Sabberworm\CSS\Parser',
-			'\Sabberworm\CSS\Comment\Commentable',
-			'\Sabberworm\CSS\Renderable',
-		);
+		return self::with_bundled_parser(
+			static function () use ( $own_vendor ) {
+				// Entry points nothing may have loaded yet: whichever autoloader
+				// resolves them must serve the bundled copy.
+				$sentinels = array(
+					'\Sabberworm\CSS\Parser',
+					'\Sabberworm\CSS\Comment\Commentable',
+					'\Sabberworm\CSS\Renderable',
+				);
 
-		foreach ( $sentinels as $sentinel ) {
-			if ( ! class_exists( $sentinel ) && ! interface_exists( $sentinel ) ) {
-				return false;
+				foreach ( $sentinels as $sentinel ) {
+					if ( ! class_exists( $sentinel ) && ! interface_exists( $sentinel ) ) {
+						return false;
+					}
+
+					if ( ! self::is_bundled_class( $sentinel, $own_vendor ) ) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+		);
+	}
+
+	/**
+	 * Stop this plugin's Composer autoloader from serving the bundled php-css-parser.
+	 *
+	 * The parser is unprefixed: serving it to another plugin that already loaded
+	 * its own release mixes the two and fatals at class-link time. The classmap
+	 * leaves it out (composer.json), and with_bundled_parser() loads it for this
+	 * plugin only.
+	 *
+	 * @return void
+	 */
+	public static function isolate_bundled_parser() {
+		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor/' );
+
+		foreach ( spl_autoload_functions() as $autoloader ) {
+			if ( ! is_array( $autoloader ) || ! $autoloader[0] instanceof \Composer\Autoload\ClassLoader ) {
+				continue;
 			}
 
-			if ( ! self::is_bundled_class( $sentinel, $own_vendor ) ) {
-				return false;
+			$prefixes = $autoloader[0]->getPrefixesPsr4();
+
+			if ( ! isset( $prefixes[ self::PARSER_NAMESPACE ] ) ) {
+				continue;
+			}
+
+			// Another plugin's loader may map the same namespace to its own copy.
+			foreach ( $prefixes[ self::PARSER_NAMESPACE ] as $dir ) {
+				if ( 0 === strpos( wp_normalize_path( $dir ), $own_vendor ) ) {
+					$autoloader[0]->setPsr4( self::PARSER_NAMESPACE, array() );
+					break;
+				}
 			}
 		}
+	}
 
-		return true;
+	/**
+	 * Run a callback with the bundled php-css-parser autoloadable.
+	 *
+	 * @template T
+	 * @param callable(): T $callback Code that loads parser classes.
+	 * @return T
+	 */
+	private static function with_bundled_parser( $callback ) {
+		$source     = OTTER_BLOCKS_PATH . '/vendor/sabberworm/php-css-parser/src/';
+		$autoloader = static function ( $class_name ) use ( $source ) {
+			if ( 0 !== strpos( $class_name, self::PARSER_NAMESPACE ) ) {
+				return;
+			}
+
+			$file = $source . str_replace( '\\', '/', substr( $class_name, strlen( self::PARSER_NAMESPACE ) ) ) . '.php';
+
+			if ( is_file( $file ) ) {
+				require $file;
+			}
+		};
+
+		spl_autoload_register( $autoloader, true, true );
+
+		try {
+			return $callback();
+		} finally {
+			spl_autoload_unregister( $autoloader );
+		}
 	}
 
 	/**

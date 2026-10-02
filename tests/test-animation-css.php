@@ -116,32 +116,54 @@ class Test_Animation_CSS extends WP_UnitTestCase {
 	 * parser is loaded. The cache must hold plain data only.
 	 */
 	public function test_animation_cache_holds_no_parser_objects_issue_3098(): void {
-		/** @var array<string, mixed> $cached */
-		$cached = array();
-
-		add_action(
-			'set_transient',
-			function ( string $transient, $value ) use ( &$cached ): void {
-				$cached[ $transient ] = $value;
-			},
-			10,
-			2
-		);
+		delete_transient( Base_CSS::ANIMATION_RULES_TRANSIENT );
 
 		$css = ( new Base_CSS() )->get_animation_css( $this->animated_blocks() );
 
 		$this->assertStringContainsString( '@keyframes fadeIn', $css );
-		$this->assertNotEmpty( $cached, 'The parsed animation rules should be cached.' );
 
-		foreach ( $cached as $transient => $value ) {
-			$this->assertIsArray( $value, $transient );
-			array_walk_recursive(
-				$value,
-				function ( $item ) use ( $transient ): void {
-					$this->assertIsNotObject( $item, $transient . ' caches parser objects.' );
-				}
-			);
+		$cached = get_transient( Base_CSS::ANIMATION_RULES_TRANSIENT );
+
+		$this->assertIsArray( $cached );
+		$this->assertNotEmpty( $cached, 'The parsed animation rules should be cached.' );
+		array_walk_recursive(
+			$cached,
+			function ( $item ): void {
+				$this->assertIsNotObject( $item, 'The animation cache holds parser objects.' );
+			}
+		);
+	}
+
+	/**
+	 * Otter's Composer autoloader must not hand the unprefixed bundled parser
+	 * to other plugins, which may already have loaded their own release.
+	 */
+	public function test_composer_autoloader_does_not_serve_bundled_parser_issue_3098(): void {
+		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor' );
+		$checked    = 0;
+
+		foreach ( \Composer\Autoload\ClassLoader::getRegisteredLoaders() as $vendor_dir => $loader ) {
+			if ( wp_normalize_path( $vendor_dir ) !== $own_vendor ) {
+				continue;
+			}
+
+			++$checked;
+			$this->assertFalse( $loader->findFile( 'Sabberworm\\CSS\\RuleSet\\RuleSet' ) );
+			$this->assertFalse( $loader->findFile( 'Sabberworm\\CSS\\Parser' ) );
 		}
+
+		$this->assertSame( 1, $checked, 'Otter\'s Composer autoloader is not registered.' );
+	}
+
+	/**
+	 * Another plugin with the typed 9.x `Commentable` loaded requests `RuleSet`
+	 * directly; Otter's autoloader must leave it to that plugin's own loader.
+	 */
+	public function test_foreign_ruleset_request_is_not_served_bundled_copy_issue_3098(): void {
+		$output = $this->run_sandbox( 'ruleset' );
+
+		$this->assertStringContainsString( 'RULESET_LEFT_TO_FOREIGN_AUTOLOADER', $output );
+		$this->assertStringContainsString( 'CSS_LENGTH:0', $output );
 	}
 
 	/**

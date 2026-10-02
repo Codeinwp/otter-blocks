@@ -8,7 +8,7 @@
  * foreign copy and skip the optimization instead of parsing.
  *
  * Run in a separate PHP process (no WordPress loaded):
- *   php foreign-sabberworm-sandbox.php [commentable|outputformat]
+ *   php foreign-sabberworm-sandbox.php [commentable|outputformat|ruleset]
  *
  * - `commentable` (default): the typed 9.x `Commentable` interface is preloaded —
  *   loading the bundled untyped `CSSList` then fatals at class-link time on
@@ -16,6 +16,9 @@
  * - `outputformat`: a foreign copy of the non-sentinel `OutputFormat` class is
  *   preloaded — proving the guard rejects any foreign `Sabberworm\CSS` symbol,
  *   not only its sentinels.
+ * - `ruleset`: the typed interface is preloaded, Otter's Composer autoloader is
+ *   registered as on boot, and another plugin requests `RuleSet` directly — the
+ *   bundled copy must not be served to it.
  *
  * @package gutenberg-blocks
  */
@@ -27,7 +30,7 @@ namespace {
 }
 
 namespace Sabberworm\CSS\Comment {
-	if ( 'commentable' === $GLOBALS['otter_sandbox_scenario'] ) {
+	if ( in_array( $GLOBALS['otter_sandbox_scenario'], array( 'commentable', 'ruleset' ), true ) ) {
 		// The typed interface shape shipped by php-css-parser 9.x.
 		interface Commentable {
 			public function addComments( array $comments ): void;
@@ -60,24 +63,25 @@ namespace {
 	function wp_normalize_path( $path ) { return str_replace( '\\', '/', $path ); }
 	function wp_enqueue_style( $handle ) {}
 
-	// Minimal autoloader for Otter's bundled parser only — mirrors the situation
-	// where Otter's Composer autoloader serves the remaining Sabberworm classes.
-	spl_autoload_register(
-		function ( $class ) {
-			$prefix = 'Sabberworm\\CSS\\';
-			if ( 0 !== strpos( $class, $prefix ) ) {
-				return;
-			}
-			$file = OTTER_BLOCKS_PATH . '/vendor/sabberworm/php-css-parser/src/' . str_replace( '\\', '/', substr( $class, strlen( $prefix ) ) ) . '.php';
-			if ( is_file( $file ) ) {
-				require $file;
-			}
-		}
-	);
-
 	// Base_CSS reads block class names through Registration::get_class_name().
 	require OTTER_BLOCKS_PATH . '/inc/class-registration.php';
 	require OTTER_BLOCKS_PATH . '/inc/class-base-css.php';
+
+	if ( 'ruleset' === $GLOBALS['otter_sandbox_scenario'] ) {
+		// The other plugin's own autoloader, registered before Otter's.
+		spl_autoload_register(
+			function ( $class ) {
+				if ( 'Sabberworm\\CSS\\RuleSet\\RuleSet' === $class ) {
+					echo "RULESET_LEFT_TO_FOREIGN_AUTOLOADER\n";
+				}
+			}
+		);
+
+		require OTTER_BLOCKS_PATH . '/vendor/autoload.php';
+		\ThemeIsle\GutenbergBlocks\Base_CSS::isolate_bundled_parser();
+
+		class_exists( 'Sabberworm\\CSS\\RuleSet\\RuleSet' );
+	}
 
 	$base   = new \ThemeIsle\GutenbergBlocks\Base_CSS();
 	$blocks = array(
