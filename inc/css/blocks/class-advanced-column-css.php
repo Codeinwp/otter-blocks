@@ -914,7 +914,7 @@ class Advanced_Column_CSS extends Base_CSS {
 							return $value['top'];
 						},
 						'condition' => function ( $attrs ) {
-							return isset( $attrs['marMobilegMobilein'] ) && isset( $attrs['marginMobile']['top'] );
+							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['top'] );
 						},
 					),
 					array(

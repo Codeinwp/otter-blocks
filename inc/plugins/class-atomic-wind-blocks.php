@@ -20,7 +20,7 @@ class Atomic_Wind_Blocks {
 	 *
 	 * @var string
 	 */
-	const ATOMIC_WIND_CSS_VERSION = '1.0.0';
+	const ATOMIC_WIND_CSS_VERSION = '1.0.1';
 
 	/**
 	 * Whether we are currently inside a query loop render.
