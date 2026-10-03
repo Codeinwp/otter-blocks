@@ -86,4 +86,45 @@ test.describe( 'Atomic Wind Tailwind CSS scope', () => {
 		expect( rootSpacing ).toBe( '' );
 		expect( blockSpacing ).toBe( '0.25rem' );
 	});
+
+	/**
+	 * Classes are collected from the whole canvas, so a utility class on
+	 * unrelated content must not pick up the generated (important) styles.
+	 *
+	 * @param {import('@wordpress/e2e-test-utils-playwright').Editor} editor Editor utils.
+	 */
+	const insertUtilityCollision = async( editor ) => {
+		await editor.insertBlock({
+			name: 'core/paragraph',
+			attributes: { className: 'outside-text hidden', content: 'Outside text' }
+		});
+
+		await editor.insertBlock({
+			name: 'atomic-wind/box',
+			attributes: { className: 'flex' },
+			innerBlocks: [
+				{
+					name: 'atomic-wind/text',
+					attributes: { className: 'inside-text hidden', content: 'Inside text' }
+				}
+			]
+		});
+	};
+
+	test( 'keeps utilities off unrelated editor content', async({ editor }) => {
+		await insertUtilityCollision( editor );
+
+		// The inside rule landing proves `.hidden` was generated at all.
+		await expect( editor.canvas.locator( '.inside-text' ) ).toHaveCSS( 'display', 'none' );
+		await expect( editor.canvas.locator( '.outside-text' ) ).toHaveCSS( 'display', 'block' );
+	});
+
+	test( 'keeps utilities off unrelated frontend content', async({ editor, page }) => {
+		await insertUtilityCollision( editor );
+
+		await publishAndViewPost({ editor, page });
+
+		await expect( page.locator( '.inside-text' ) ).toHaveCSS( 'display', 'none' );
+		await expect( page.locator( '.outside-text' ) ).toHaveCSS( 'display', 'block' );
+	});
 });
