@@ -60,6 +60,7 @@
 	},
 	"autoload": {
 		"classmap": ["inc/"],
+		"exclude-from-classmap": ["vendor/sabberworm/"],
 		"files": [
 			"vendor/codeinwp/themeisle-sdk/load.php"
 		]

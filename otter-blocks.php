@@ -38,6 +38,10 @@ if ( is_readable( $vendor_file ) ) {
 	require_once $vendor_file;
 }
 
+if ( class_exists( '\ThemeIsle\GutenbergBlocks\Base_CSS' ) ) {
+	\ThemeIsle\GutenbergBlocks\Base_CSS::isolate_bundled_parser();
+}
+
 $loader_file = OTTER_BLOCKS_PATH . '/inc/class-loader.php';
 
 $loader_available = class_exists( '\ThemeIsle\GutenbergBlocks\Loader', false );
