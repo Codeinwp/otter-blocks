@@ -59,6 +59,9 @@
 			"type": "array"
 		}
 	},
+	"supports": {
+		"html": false
+	},
 	"editorStyle": "otter-button-group-editor",
 	"style": "otter-button-group-style"
 }
