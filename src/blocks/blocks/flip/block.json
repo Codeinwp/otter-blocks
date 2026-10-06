@@ -171,6 +171,9 @@
 			"type": "string"
 		}
 	},
+	"supports": {
+		"html": false
+	},
 	"editorStyle": "otter-flip-editor",
 	"style": "otter-flip-style"
 }
