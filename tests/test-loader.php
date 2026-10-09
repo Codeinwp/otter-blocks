@@ -150,7 +150,15 @@ class TestLoader extends WP_UnitTestCase {
 	 * An absent optional module is reported as not booted, without fataling.
 	 */
 	public function test_boot_singleton_reports_a_missing_class() {
-		$this->assertFalse( Loader::boot_singleton( 'Otter_Loader_Definitely_Missing' ) );
+		$result = $this->with_classmaps(
+			array(),
+			function (): bool {
+				return Loader::boot_singleton( 'Otter_Loader_Definitely_Missing' );
+			}
+		);
+
+		$this->assertFalse( $result['value'] );
+		$this->assertStringContainsString( 'Skipped Otter_Loader_Definitely_Missing: could not be loaded.', $result['log'] );
 	}
 
 	/**
@@ -209,22 +217,15 @@ class TestLoader extends WP_UnitTestCase {
 	public function test_repeated_skips_are_logged_once() {
 		Loader::reset_reported();
 
-		$log = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
-		$old = ini_set( 'error_log', $log );
+		$result = $this->capture_error_log(
+			function (): void {
+				for ( $i = 0; $i < 5; $i++ ) {
+					Loader::instantiate( 'Otter_Loader_Definitely_Missing' );
+				}
+			}
+		);
 
-		for ( $i = 0; $i < 5; $i++ ) {
-			Loader::instantiate( 'Otter_Loader_Definitely_Missing' );
-		}
-
-		ini_set( 'error_log', false === $old ? '' : $old );
-
-		$lines = file_exists( $log ) ? substr_count( file_get_contents( $log ), 'Otter_Loader_Definitely_Missing' ) : 0;
-
-		if ( file_exists( $log ) ) {
-			unlink( $log );
-		}
-
-		$this->assertSame( 1, $lines, 'A repeated skip must not be logged more than once.' );
+		$this->assertSame( 1, substr_count( $result['log'], 'Otter_Loader_Definitely_Missing' ), 'A repeated skip must not be logged more than once.' );
 
 		Loader::reset_reported();
 	}
@@ -235,25 +236,246 @@ class TestLoader extends WP_UnitTestCase {
 	public function test_distinct_skip_reasons_are_both_logged() {
 		Loader::reset_reported();
 
-		$log = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
-		$old = ini_set( 'error_log', $log );
+		$result = $this->capture_error_log(
+			function (): void {
+				Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
+				Loader::log_skipped( 'Otter_Loader_Plain', 'second reason' );
+				Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
+			}
+		);
 
-		Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
-		Loader::log_skipped( 'Otter_Loader_Plain', 'second reason' );
-		Loader::log_skipped( 'Otter_Loader_Plain', 'first reason' );
-
-		ini_set( 'error_log', false === $old ? '' : $old );
-
-		$contents = file_exists( $log ) ? file_get_contents( $log ) : '';
-
-		if ( file_exists( $log ) ) {
-			unlink( $log );
-		}
-
-		$this->assertSame( 1, substr_count( $contents, 'first reason' ) );
-		$this->assertSame( 1, substr_count( $contents, 'second reason' ) );
+		$this->assertSame( 1, substr_count( $result['log'], 'first reason' ) );
+		$this->assertSame( 1, substr_count( $result['log'], 'second reason' ) );
 
 		Loader::reset_reported();
+	}
+
+	/**
+	 * A classmap entry whose file is gone is skipped without Composer's include warnings.
+	 */
+	public function test_stale_classmap_entry_is_skipped_without_warnings(): void {
+		$result = $this->with_classmaps(
+			array(
+				array( 'Otter_Loader_Stale_Mapped' => $this->missing_file( 'class-otter-loader-stale-mapped.php' ) ),
+			),
+			function (): array {
+				return array(
+					'instance' => Loader::instantiate( '\Otter_Loader_Stale_Mapped' ),
+					'booted'   => Loader::boot_singleton( 'Otter_Loader_Stale_Mapped' ),
+				);
+			}
+		);
+
+		$this->assertSame( array(), $result['warnings'], 'A stale classmap entry must not reach Composer\'s include.' );
+		$this->assertNull( $result['value']['instance'] );
+		$this->assertFalse( $result['value']['booted'] );
+		$this->assertStringContainsString( 'Skipped \Otter_Loader_Stale_Mapped: mapped file is missing.', $result['log'] );
+		$this->assertStringContainsString( 'Skipped Otter_Loader_Stale_Mapped: mapped file is missing.', $result['log'] );
+	}
+
+	/**
+	 * A stale map from an earlier Composer loader must not hide a valid mapping in a later one,
+	 * since a failed include falls through to the next autoloader.
+	 */
+	public function test_later_readable_mapping_wins_over_an_earlier_stale_one(): void {
+		// One class per method, so neither call finds the other's class already loaded.
+		$plain     = get_temp_dir() . 'class-otter-loader-shadowed-' . wp_generate_password( 8, false ) . '.php';
+		$singleton = get_temp_dir() . 'class-otter-loader-shadowed-singleton-' . wp_generate_password( 8, false ) . '.php';
+
+		file_put_contents( $plain, '<?php class Otter_Loader_Shadowed {}' );
+		file_put_contents( $singleton, '<?php class Otter_Loader_Shadowed_Singleton { public static function instance() {} }' );
+
+		$result = $this->with_classmaps(
+			array(
+				array(
+					'Otter_Loader_Shadowed'           => $this->missing_file( 'class-otter-loader-shadowed.php' ),
+					'Otter_Loader_Shadowed_Singleton' => $this->missing_file( 'class-otter-loader-shadowed-singleton.php' ),
+				),
+				array(
+					'Otter_Loader_Shadowed'           => $plain,
+					'Otter_Loader_Shadowed_Singleton' => $singleton,
+				),
+			),
+			function (): array {
+				return array(
+					'instance' => Loader::instantiate( '\Otter_Loader_Shadowed' ),
+					'booted'   => Loader::boot_singleton( 'Otter_Loader_Shadowed_Singleton' ),
+				);
+			}
+		);
+
+		unlink( $plain );
+		unlink( $singleton );
+
+		$this->assertNotNull( $result['value']['instance'], 'instantiate() must fall through to the later readable mapping.' );
+		$this->assertInstanceOf( 'Otter_Loader_Shadowed', $result['value']['instance'] );
+		$this->assertTrue( $result['value']['booted'], 'boot_singleton() must fall through to the later readable mapping.' );
+		$this->assertSame( array(), $result['warnings'], 'The earlier stale include must stay silent.' );
+		$this->assertStringNotContainsString( 'mapped file is missing', $result['log'] );
+	}
+
+	/**
+	 * A stale Composer map must not block a non-Composer autoloader that defines the class,
+	 * e.g. a third-party renderer added through otter_blocks_register_css.
+	 */
+	public function test_custom_autoloader_wins_over_a_stale_composer_map(): void {
+		$files = array(
+			'Otter_Loader_Custom_Plain'     => '<?php class Otter_Loader_Custom_Plain {}',
+			'Otter_Loader_Custom_Singleton' => '<?php class Otter_Loader_Custom_Singleton { public static function instance() {} }',
+		);
+		$paths = array();
+
+		foreach ( $files as $class => $source ) {
+			$paths[ $class ] = get_temp_dir() . 'otter-custom-' . wp_generate_password( 8, false ) . '.php';
+			file_put_contents( $paths[ $class ], $source );
+		}
+
+		$custom = function ( string $class ) use ( $paths ): void {
+			if ( isset( $paths[ $class ] ) ) {
+				require $paths[ $class ];
+			}
+		};
+
+		spl_autoload_register( $custom );
+
+		try {
+			$result = $this->with_classmaps(
+				array(
+					array(
+						'Otter_Loader_Custom_Plain'     => $this->missing_file( 'class-otter-loader-custom-plain.php' ),
+						'Otter_Loader_Custom_Singleton' => $this->missing_file( 'class-otter-loader-custom-singleton.php' ),
+					),
+				),
+				function (): array {
+					return array(
+						'instance' => Loader::instantiate( '\Otter_Loader_Custom_Plain' ),
+						'booted'   => Loader::boot_singleton( 'Otter_Loader_Custom_Singleton' ),
+					);
+				}
+			);
+		} finally {
+			spl_autoload_unregister( $custom );
+			array_map( 'unlink', $paths );
+		}
+
+		$this->assertNotNull( $result['value']['instance'], 'instantiate() must let the custom autoloader run.' );
+		$this->assertInstanceOf( 'Otter_Loader_Custom_Plain', $result['value']['instance'] );
+		$this->assertTrue( $result['value']['booted'], 'boot_singleton() must let the custom autoloader run.' );
+		$this->assertSame( array(), $result['warnings'], 'The stale include must stay silent.' );
+		$this->assertStringNotContainsString( 'mapped file is missing', $result['log'] );
+	}
+
+	/**
+	 * Only the stale include is silenced; other warnings raised while autoloading still reach the previous handler.
+	 */
+	public function test_unrelated_autoload_warnings_are_not_silenced(): void {
+		$file = get_temp_dir() . 'class-otter-loader-noisy-' . wp_generate_password( 8, false ) . '.php';
+
+		file_put_contents( $file, '<?php trigger_error( "noisy class file", E_USER_WARNING ); class Otter_Loader_Noisy {}' );
+
+		$result = $this->with_classmaps(
+			array(
+				array( 'Otter_Loader_Noisy' => $this->missing_file( 'class-otter-loader-noisy.php' ) ),
+				array( 'Otter_Loader_Noisy' => $file ),
+			),
+			function () {
+				return Loader::instantiate( 'Otter_Loader_Noisy' );
+			}
+		);
+
+		unlink( $file );
+
+		$this->assertInstanceOf( 'Otter_Loader_Noisy', $result['value'] );
+		$this->assertSame( array( 'noisy class file' ), $result['warnings'] );
+	}
+
+	/**
+	 * A path under a directory that does not exist.
+	 *
+	 * @param string $name File name.
+	 * @return string
+	 */
+	private function missing_file( string $name ): string {
+		return get_temp_dir() . 'otter-missing-' . wp_generate_password( 8, false ) . '/' . $name;
+	}
+
+	/**
+	 * Run a callback with error_log() pointed at a temp file, returning what it logged.
+	 *
+	 * @template T
+	 * @param callable(): T $callback Code to run.
+	 * @return array{value: T, log: string}
+	 */
+	private function capture_error_log( callable $callback ): array {
+		$log     = get_temp_dir() . 'otter-loader-log-' . wp_generate_password( 8, false ) . '.txt';
+		$old_log = ini_set( 'error_log', $log );
+
+		try {
+			$value = $callback();
+		} finally {
+			ini_set( 'error_log', false === $old_log ? '' : $old_log );
+
+			$contents = file_exists( $log ) ? file_get_contents( $log ) : '';
+
+			if ( file_exists( $log ) ) {
+				unlink( $log );
+			}
+		}
+
+		return array(
+			'value' => $value,
+			'log'   => $contents,
+		);
+	}
+
+	/**
+	 * Run a callback with extra Composer classmaps registered ahead of the real ones, collecting warnings and the error log.
+	 *
+	 * @template T
+	 * @param list<array<string, string>> $class_maps One class-to-file map per loader; the first sits first on the autoload stack.
+	 * @param callable(): T               $callback   Code to run while the classmaps are registered.
+	 * @return array{value: T, warnings: list<string>, log: string}
+	 */
+	private function with_classmaps( array $class_maps, callable $callback ): array {
+		Loader::reset_reported();
+
+		$loaders = array();
+
+		// Prepend in reverse, so the first map ends up first.
+		foreach ( array_reverse( $class_maps ) as $class_map ) {
+			$loader = new \Composer\Autoload\ClassLoader( get_temp_dir() . 'otter-vendor-' . wp_generate_password( 8, false ) );
+			$loader->addClassMap( $class_map );
+			$loader->register( true );
+
+			$loaders[] = $loader;
+		}
+
+		$warnings = array();
+
+		set_error_handler(
+			function ( int $errno, string $errstr ) use ( &$warnings ): bool {
+				$warnings[] = $errstr;
+
+				return true;
+			}
+		);
+
+		try {
+			$captured = $this->capture_error_log( $callback );
+		} finally {
+			restore_error_handler();
+			foreach ( $loaders as $loader ) {
+				$loader->unregister();
+			}
+
+			Loader::reset_reported();
+		}
+
+		return array(
+			'value'    => $captured['value'],
+			'warnings' => $warnings,
+			'log'      => $captured['log'],
+		);
 	}
 
 	/**

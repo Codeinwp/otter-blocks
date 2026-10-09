@@ -126,4 +126,16 @@ test.describe( 'Animations', () => {
 		await expect( editor.canvas.locator( '.o-anim-custom-delay.o-anim-value-delay-2s' ).first() ).toBeVisible();
 		await expect( editor.canvas.locator( '.o-anim-custom-speed.o-anim-value-speed-2s' ).first() ).toBeVisible();
 	});
+
+	test( 'count and typing help popovers show their own image', async({ editor, page }) => {
+		await editor.insertBlock({ name: 'core/paragraph' });
+
+		await page.getByRole( 'button', { name: 'Animations' }).click();
+
+		await page.getByRole( 'button', { name: 'Count Animations' }).click();
+		await expect( page.getByAltText( 'Using Count Animation in the Block Editor' ) ).toHaveAttribute( 'src', /count-animation\.[^/]+\.png$/ );
+
+		await page.getByRole( 'button', { name: 'Typing Animations' }).click();
+		await expect( page.getByAltText( 'Using Typing Animation in the Block Editor' ) ).toHaveAttribute( 'src', /typing-animation\.[^/]+\.png$/ );
+	});
 });

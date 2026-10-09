@@ -1595,7 +1595,7 @@ add_action(
 					}
 
 					// Force the next frontend request through the parse path.
-					delete_transient( 'otter_animations_parsed' );
+					delete_transient( \ThemeIsle\GutenbergBlocks\Base_CSS::ANIMATION_RULES_TRANSIENT );
 
 					return rest_ensure_response( array( 'ok' => true ) );
 				},

@@ -19,6 +19,20 @@ use Sabberworm\CSS\CSSList\KeyFrame;
 class Base_CSS {
 
 	/**
+	 * Transient caching the rendered animation rules.
+	 *
+	 * @var string
+	 */
+	const ANIMATION_RULES_TRANSIENT = 'otter_animation_rules';
+
+	/**
+	 * Namespace of the bundled php-css-parser.
+	 *
+	 * @var string
+	 */
+	const PARSER_NAMESPACE = 'Sabberworm\\CSS\\';
+
+	/**
 	 * The namespace under which the blocks are registered.
 	 *
 	 * @var string
@@ -73,6 +87,13 @@ class Base_CSS {
 	 * @var bool
 	 */
 	protected static $is_autoload_registered = false;
+
+	/**
+	 * Renderers that threw this request.
+	 *
+	 * @var int
+	 */
+	protected static $render_failures = 0;
 
 	/**
 	 * Base_CSS constructor.
@@ -450,7 +471,7 @@ class Base_CSS {
 			$renderers = $this->get_blocks_instances_for( isset( $block['blockName'] ) ? $block['blockName'] : null );
 
 			foreach ( $renderers as $path ) {
-				$style .= $path->render_css( $block );
+				$style .= $this->run_renderer( $path, 'render_css', array( $block ) );
 			}
 
 			$custom_css = apply_filters( 'otter_blocks_css', $block );
@@ -504,30 +525,59 @@ class Base_CSS {
 
 		$classes = $prepared_classes;
 
-		$content = get_transient( 'otter_animations_parsed' );
+		$rules = get_transient( self::ANIMATION_RULES_TRANSIENT );
 
-		if ( false === $content ) {
-			$parser = null;
-			if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
-				$parser = new Parser( wpcom_vip_file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) );
-			} else {
-				$parser = new Parser( file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+		if ( false === $rules ) {
+			$rules = self::with_bundled_parser(
+				function () {
+					return $this->parse_animation_rules();
+				}
+			);
+
+			set_transient( self::ANIMATION_RULES_TRANSIENT, $rules, MONTH_IN_SECONDS );
+		}
+
+		foreach ( $rules as $rule ) {
+			if ( null === $rule['selectors'] ) {
+				$style .= $rule['css'];
+				continue;
 			}
 
-			$content = $parser->parse()->getContents();
+			foreach ( $rule['selectors'] as $selector ) {
+				if ( in_array( $selector, $classes ) ) {
+					$style .= $rule['css'];
+				}
+			}
+		}
 
-			set_transient( 'otter_animations_parsed', $content, MONTH_IN_SECONDS );
+		return $style;
+	}
+
+	/**
+	 * Parse the bundled animation stylesheet into rendered rules.
+	 *
+	 * Only strings are returned for caching: a cached parser object graph loads
+	 * the bundled parser classes on every read, bypassing has_own_css_parser().
+	 *
+	 * @return list<array{selectors: list<string>|null, css: string}> Rules in stylesheet order; `null` selectors means always included.
+	 */
+	private function parse_animation_rules() {
+		$parser = null;
+		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
+			$parser = new Parser( wpcom_vip_file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) );
+		} else {
+			$parser = new Parser( file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 		}
 
 		$format = OutputFormat::createCompact();
+		$rules  = array();
 
-		foreach ( $content as $rule ) {
+		foreach ( $parser->parse()->getContents() as $rule ) {
 			if ( $rule instanceof DeclarationBlock ) {
-				foreach ( $rule->getSelectors() as $selector ) {
-					if ( in_array( $selector, $classes ) ) {
-						$style .= $rule->render( $format );
-					}
-				}
+				$rules[] = array(
+					'selectors' => array_map( 'strval', $rule->getSelectors() ),
+					'css'       => $rule->render( $format ),
+				);
 				continue;
 			}
 
@@ -539,7 +589,10 @@ class Base_CSS {
 					continue;
 				}
 
-				$style .= $rule->render( $format );
+				$rules[] = array(
+					'selectors' => null,
+					'css'       => $rule->render( $format ),
+				);
 				continue;
 			}
 
@@ -547,14 +600,14 @@ class Base_CSS {
 			 * This is used to get actual animation which is a @keyframe.
 			 */
 			if ( $rule instanceof KeyFrame ) {
-				if ( in_array( '.' . $rule->getAnimationName(), $classes ) ) {
-					$style .= $rule->render( $format );
-				}
-				continue;
+				$rules[] = array(
+					'selectors' => array( '.' . $rule->getAnimationName() ),
+					'css'       => $rule->render( $format ),
+				);
 			}
 		}
 
-		return $style;
+		return $rules;
 	}
 
 	/**
@@ -568,7 +621,6 @@ class Base_CSS {
 	 */
 	public static function has_own_css_parser() {
 		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor/' );
-		$prefix     = 'Sabberworm\\CSS\\';
 
 		// Reject any foreign copy already in memory before the sentinel checks
 		// autoload a bundled class: the parser uses more classes than the
@@ -577,7 +629,7 @@ class Base_CSS {
 
 		foreach ( $declared as $declared_name ) {
 			// PHP class names are case-insensitive; match a foreign copy in any casing.
-			if ( 0 !== stripos( $declared_name, $prefix ) ) {
+			if ( 0 !== stripos( $declared_name, self::PARSER_NAMESPACE ) ) {
 				continue;
 			}
 
@@ -586,25 +638,95 @@ class Base_CSS {
 			}
 		}
 
-		// Entry points nothing may have loaded yet: whichever autoloader resolves
-		// them must serve the bundled copy.
-		$sentinels = array(
-			'\Sabberworm\CSS\Parser',
-			'\Sabberworm\CSS\Comment\Commentable',
-			'\Sabberworm\CSS\Renderable',
-		);
+		return self::with_bundled_parser(
+			static function () use ( $own_vendor ) {
+				// Entry points nothing may have loaded yet: whichever autoloader
+				// resolves them must serve the bundled copy.
+				$sentinels = array(
+					'\Sabberworm\CSS\Parser',
+					'\Sabberworm\CSS\Comment\Commentable',
+					'\Sabberworm\CSS\Renderable',
+				);
 
-		foreach ( $sentinels as $sentinel ) {
-			if ( ! class_exists( $sentinel ) && ! interface_exists( $sentinel ) ) {
-				return false;
+				foreach ( $sentinels as $sentinel ) {
+					if ( ! class_exists( $sentinel ) && ! interface_exists( $sentinel ) ) {
+						return false;
+					}
+
+					if ( ! self::is_bundled_class( $sentinel, $own_vendor ) ) {
+						return false;
+					}
+				}
+
+				return true;
+			}
+		);
+	}
+
+	/**
+	 * Stop this plugin's Composer autoloader from serving the bundled php-css-parser.
+	 *
+	 * The parser is unprefixed: serving it to another plugin that already loaded
+	 * its own release mixes the two and fatals at class-link time. The classmap
+	 * leaves it out (composer.json), and with_bundled_parser() loads it for this
+	 * plugin only.
+	 *
+	 * @return void
+	 */
+	public static function isolate_bundled_parser() {
+		$own_vendor = wp_normalize_path( OTTER_BLOCKS_PATH . '/vendor/' );
+
+		foreach ( spl_autoload_functions() as $autoloader ) {
+			if ( ! is_array( $autoloader ) || ! $autoloader[0] instanceof \Composer\Autoload\ClassLoader ) {
+				continue;
 			}
 
-			if ( ! self::is_bundled_class( $sentinel, $own_vendor ) ) {
-				return false;
+			$prefixes = $autoloader[0]->getPrefixesPsr4();
+
+			if ( ! isset( $prefixes[ self::PARSER_NAMESPACE ] ) ) {
+				continue;
+			}
+
+			// Another plugin's loader may map the same namespace to its own copy.
+			foreach ( $prefixes[ self::PARSER_NAMESPACE ] as $dir ) {
+				if ( 0 === strpos( wp_normalize_path( $dir ), $own_vendor ) ) {
+					$autoloader[0]->setPsr4( self::PARSER_NAMESPACE, array() );
+					break;
+				}
 			}
 		}
+	}
 
-		return true;
+	/**
+	 * Run a callback with the bundled php-css-parser autoloadable.
+	 *
+	 * @template T
+	 * @param callable(): T $callback Code that loads parser classes.
+	 * @return T
+	 */
+	private static function with_bundled_parser( $callback ) {
+		$source     = OTTER_BLOCKS_PATH . '/vendor/sabberworm/php-css-parser/src/';
+		$autoloader = static function ( $class_name ) use ( $source ) {
+			if ( 0 !== strpos( $class_name, self::PARSER_NAMESPACE ) ) {
+				return;
+			}
+
+			$file = $source . str_replace( '\\', '/', substr( $class_name, strlen( self::PARSER_NAMESPACE ) ) ) . '.php';
+
+			if ( is_file( $file ) ) {
+				require $file;
+			}
+		};
+
+		// Appended: a parser another plugin registers resolves first, so the
+		// sentinel check sees its copy and the bundled one is never loaded over it.
+		spl_autoload_register( $autoloader, true, false );
+
+		try {
+			return $callback();
+		} finally {
+			spl_autoload_unregister( $autoloader );
+		}
 	}
 
 	/**
@@ -814,11 +936,45 @@ class Base_CSS {
 		$style = '';
 		foreach ( $this->get_blocks_instances() as $path ) {
 			if ( method_exists( $path, 'render_global_css' ) ) {
-				$style .= $path->render_global_css();
+				$style .= $this->run_renderer( $path, 'render_global_css' );
 			}
 		}
 
 		return $style;
+	}
+
+	/**
+	 * Run one renderer method, skipping it when it throws.
+	 *
+	 * A renderer can fail on a dependency the autoloader cannot resolve (e.g. a
+	 * stale classmap); the other renderers must still produce their CSS.
+	 *
+	 * @param object            $path   Renderer instance.
+	 * @param string            $method Render method to call.
+	 * @param array<int, mixed> $args   Method arguments.
+	 *
+	 * @return mixed The renderer output, or an empty string when it threw.
+	 */
+	protected function run_renderer( $path, $method, $args = array() ) {
+		try {
+			return call_user_func_array( array( $path, $method ), $args );
+		} catch ( \Throwable $e ) {
+			++self::$render_failures;
+			Loader::log_skipped( get_class( $path ), 'threw while rendering CSS: ' . $e->getMessage() );
+
+			return '';
+		}
+	}
+
+	/**
+	 * Number of renderers that threw this request.
+	 *
+	 * Compare before and after generating CSS to tell whether the result is partial.
+	 *
+	 * @return int
+	 */
+	public static function get_render_failures() {
+		return self::$render_failures;
 	}
 
 	/**

@@ -191,6 +191,38 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * Block titles and descriptions resolve through the otter-blocks catalog.
+	 */
+	public function test_block_metadata_translates_with_otter_text_domain(): void {
+		$translate = static function ( string $translation, string $text, string $context ): string {
+			return in_array( $context, array( 'block title', 'block description' ), true ) ? 'otter: ' . $text : $translation;
+		};
+		add_filter( 'gettext_with_context_otter-blocks', $translate, 10, 3 );
+		update_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
+
+		$this->instance->run();
+
+		remove_filter( 'gettext_with_context_otter-blocks', $translate, 10 );
+
+		$registry = WP_Block_Type_Registry::get_instance();
+		$expected = array(
+			'box'   => 'Box',
+			'text'  => 'Text',
+			'image' => 'Image',
+			'link'  => 'Link',
+			'icon'  => 'Icon',
+		);
+
+		foreach ( $expected as $block => $title ) {
+			$block_type = $registry->get_registered( 'atomic-wind/' . $block );
+
+			$this->assertInstanceOf( WP_Block_Type::class, $block_type, $block );
+			$this->assertSame( 'otter: ' . $title, $block_type->title, $block );
+			$this->assertStringStartsWith( 'otter: ', $block_type->description, $block );
+		}
+	}
+
 	// -------------------------------------------------------
 	// register_category
 	// -------------------------------------------------------
