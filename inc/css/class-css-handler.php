@@ -601,7 +601,26 @@ class CSS_Handler extends Base_CSS {
 		$css = htmlspecialchars_decode( $css );
 		$css = $compressor->run( $css );
 
-		return $css;
+		return self::escape_style_contents( $css );
+	}
+
+	/**
+	 * Neutralize closing style tags so CSS cannot end the <style> element it is printed in.
+	 *
+	 * Same escape core's HTML API applies to style text, which not every supported WordPress version does.
+	 *
+	 * @param string $css CSS.
+	 *
+	 * @return string Escaped CSS.
+	 */
+	public static function escape_style_contents( $css ) {
+		return (string) preg_replace_callback(
+			'~</(?P<tag>style)~i',
+			function ( $matches ) {
+				return '\3c\2f' . $matches['tag'];
+			},
+			$css
+		);
 	}
 
 	/**
