@@ -1316,4 +1316,83 @@ class TestDynamicContent extends WP_UnitTestCase
 		// Guard did not fire: the context post's own content is still rendered.
 		$this->assertStringContainsString( 'Test', $result );
 	}
+
+
+	/**
+	 * A dynamic link token must not consume the quote closing its attribute, or a
+	 * comment author name printed after it becomes markup.
+	 */
+	public function test_dynamic_link_button_keeps_attribute_boundary(): void {
+		$double = '<a class="wp-block-latest-comments__comment-author" href="http://attacker.example/#otterDynamicLink">Eve" autofocus onfocus=alert(1) x</a>';
+		$single = "<a href='http://attacker.example/#otterDynamicLink'>Eve' autofocus onfocus=alert(1) x</a>";
+
+		$this->assertNoInjectedAttributes( $this->dynamic_content->apply_dynamic_link_button( $double ) );
+		$this->assertNoInjectedAttributes( $this->dynamic_content->apply_dynamic_link_button( $single ) );
+
+		$link = new WP_HTML_Tag_Processor( $this->dynamic_content->apply_dynamic_link_button( '<a href="#otterDynamicLink?type=siteURL&#038;context=query">Go</a>' ) );
+		$link->next_tag();
+		$this->assertSame( get_site_url(), $link->get_attribute( 'href' ) );
+	}
+
+	/**
+	 * Resolved link values are URL-escaped, as the Pro post meta link returns raw meta.
+	 */
+	public function test_dynamic_link_button_escapes_resolved_url(): void {
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_link',
+			function (): string {
+				return 'javascript:alert(1)';
+			}
+		);
+
+		$link = new WP_HTML_Tag_Processor( $this->dynamic_content->apply_dynamic_link_button( '<a href="#otterDynamicLink?type=postMetaURL&amp;metaKey=link">Go</a>' ) );
+		$link->next_tag();
+
+		$this->assertStringNotContainsString( 'javascript:', (string) $link->get_attribute( 'href' ) );
+	}
+
+	/**
+	 * The dynamic image rewrite matches the REST URL itself, so a comment linking to
+	 * it must not break out of its attribute either.
+	 */
+	public function test_dynamic_image_keeps_attribute_boundary(): void {
+		$markup = '<a class="wp-block-latest-comments__comment-author" href="' . get_rest_url( null, 'otter/v1/dynamic' ) . '">Eve" autofocus onfocus=alert(1) x</a>';
+
+		$this->assertNoInjectedAttributes( $this->dynamic_content->apply_dynamic_images( $markup ) );
+
+		$this->set_permalink_structure( '/%postname%/' );
+		try {
+			$src   = get_rest_url( null, 'otter/v1' ) . '/dynamic/?type=author&amp;context=' . $this->post_id . '&amp;uid=abc';
+			$image = new WP_HTML_Tag_Processor( $this->dynamic_content->apply_dynamic_images( '<img src="' . $src . '" alt="Hero">' ) );
+		} finally {
+			$this->set_permalink_structure( '' );
+		}
+		$image->next_tag();
+		$this->assertSame( get_avatar_url( (int) get_post_field( 'post_author', $this->post_id ) ), $image->get_attribute( 'src' ) );
+		$this->assertSame( 'Hero', $image->get_attribute( 'alt' ) );
+	}
+
+	/**
+	 * A magic tag opened inside an attribute must not close on text after it.
+	 */
+	public function test_dynamic_magic_tag_keeps_attribute_boundary(): void {
+		$markup = '<p title="x{otterDynamic">y=1}" autofocus onfocus=alert(1) x {otterDynamic?type=siteTitle}</p>';
+		$result = $this->dynamic_content->apply_dynamic_magic_tags( $markup );
+
+		$this->assertNoInjectedAttributes( $result );
+		$this->assertStringContainsString( get_bloginfo( 'name' ), $result );
+	}
+
+	/**
+	 * Assert the first tag of the markup gained no attributes from the text after it.
+	 *
+	 * @param string $html Rewritten markup.
+	 */
+	private function assertNoInjectedAttributes( string $html ): void {
+		$processor = new WP_HTML_Tag_Processor( $html );
+		$processor->next_tag();
+
+		$this->assertNull( $processor->get_attribute( 'onfocus' ), $html );
+		$this->assertNull( $processor->get_attribute( 'autofocus' ), $html );
+	}
 }
