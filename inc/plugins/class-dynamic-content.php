@@ -66,7 +66,7 @@ class Dynamic_Content {
 
 			$position = strlen( $position );
 			if ( is_array( $replacement ) ) {
-				$re      = '/#otterDynamicLink[^"\'\s<>]*/';
+				$re      = '/#otterDynamicLink[^"\'<>]*/';
 				$matches = array();
 				$num     = preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
 
@@ -133,12 +133,12 @@ class Dynamic_Content {
 	/**
 	 * Resolve a text Magic Tag, or attribute-escape every Magic Tag inside a start tag.
 	 *
-	 * @param array<int|string, string> $matches Start tag in `tag`, or the Magic Tag query in group 2.
+	 * @param array<int|string, string> $matches Start tag in `tag`, or the text Magic Tag query in `2`.
 	 *
 	 * @return string|string[]|void
 	 */
 	public function apply_magic_tags_in_markup( $matches ) {
-		if ( '' === $matches['tag'] ) {
+		if ( isset( $matches[2] ) ) {
 			return $this->apply_magic_tags( array( 1 => $matches[2] ) );
 		}
 
@@ -253,7 +253,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/#otterDynamicLink[^"\'\s<>]*/';
+		$re = '/#otterDynamicLink[^"\'<>]*/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_link_button' ), $content );
 	}
@@ -273,7 +273,7 @@ class Dynamic_Content {
 		$rest_url = get_rest_url( null, 'otter/v1' );
 		$rest_url = preg_replace( '/([^A-Za-z0-9\s_-])/', '\\\\$1', $rest_url );
 
-		$re      = '/' . $rest_url . '\/dynamic[^"\'\s<>]*/';
+		$re      = '/' . $rest_url . '\/dynamic[^"\'<>]*/';
 		$matches = array();
 		$num     = preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
 		if ( isset( $num ) && 0 === $num ) {

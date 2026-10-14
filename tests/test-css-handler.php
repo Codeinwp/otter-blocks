@@ -134,6 +134,34 @@ class Test_CSS_Handler extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Without a widgets stylesheet file, stored widgets CSS is printed inline with closing style tags escaped.
+	 */
+	public function test_widgets_css_fallback_print_escapes_style_tag(): void {
+		global $wp_registered_sidebars;
+
+		$widget_used = Registration::$widget_used;
+		$sidebars    = $wp_registered_sidebars;
+
+		register_sidebar( array( 'id' => 'otter-test-sidebar' ) );
+		update_option( 'sidebars_widgets', array( 'otter-test-sidebar' => array( 'block-7' ) ) );
+		update_option( 'themeisle_blocks_widgets_css', '.a{}</style><script>x</script>' );
+		delete_option( 'themeisle_blocks_widgets_css_file' );
+		Registration::$widget_used = array();
+
+		try {
+			ob_start();
+			Block_Frontend::instance()->enqueue_widgets_css();
+			$output = (string) ob_get_clean();
+		} finally {
+			Registration::$widget_used = $widget_used;
+			$wp_registered_sidebars    = $sidebars;
+		}
+
+		$this->assertSame( 1, preg_match_all( '~</style~i', $output ), $output );
+		$this->assertStringContainsString( '\\3c\\2fstyle', $output );
+	}
+
+	/**
 	 * Remove the stylesheet and meta generate_css_file() wrote for a post.
 	 *
 	 * @param int $post_id Post ID.
