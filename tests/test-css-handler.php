@@ -7,6 +7,7 @@
 
 use ThemeIsle\GutenbergBlocks\CSS\Block_Frontend;
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Handler;
+use ThemeIsle\GutenbergBlocks\Registration;
 
 /**
  * CSS_Handler filesystem and stored stylesheet tests.
@@ -72,7 +73,7 @@ class Test_CSS_Handler extends WP_UnitTestCase {
 		}
 
 		$this->assertStringContainsString( 'font-family', (string) get_post_meta( $post_id, '_themeisle_gutenberg_block_styles', true ) );
-		$this->assertDoesNotMatchRegularExpression( '~</style~i', (string) get_post_meta( $post_id, '_themeisle_gutenberg_block_styles', true ) );
+		$this->assertStringContainsString( 'font-family:a\\3c\\2fstyle>', $output );
 		$this->assertSame( 1, preg_match_all( '~</style~i', $output ), $output );
 
 		$processor = new WP_HTML_Tag_Processor( $output );
@@ -100,6 +101,36 @@ class Test_CSS_Handler extends WP_UnitTestCase {
 
 		$this->assertSame( 1, preg_match_all( '~</style~i', $output ), $output );
 		$this->assertStringContainsString( '.a{color:red}', $output );
+	}
+
+	/**
+	 * The widgets stylesheet, which core may inline in a style tag, keeps the exact CSS escape.
+	 */
+	public function test_widgets_css_file_keeps_style_escape(): void {
+		$widget_used = Registration::$widget_used;
+		$payload     = 'a&lt;/style&gt;&lt;script&gt;alert(/xss/)&lt;/script&gt;&lt;style&gt;b';
+
+		update_option(
+			'widget_block',
+			array( 7 => array( 'content' => '<!-- wp:themeisle-blocks/advanced-heading {"id":"wp-block-themeisle-blocks-advanced-heading","fontFamily":"' . $payload . '"} --><h2 id="wp-block-themeisle-blocks-advanced-heading" class="wp-block-themeisle-blocks-advanced-heading">Hi</h2><!-- /wp:themeisle-blocks/advanced-heading -->' ) )
+		);
+		Registration::$widget_used = array( 'block-7' );
+
+		try {
+			CSS_Handler::save_widgets_styles();
+
+			$file_path = wp_upload_dir( null, false )['basedir'] . '/themeisle-gutenberg/' . get_option( 'themeisle_blocks_widgets_css_file' ) . '.css';
+			$css       = (string) file_get_contents( $file_path );
+		} finally {
+			Registration::$widget_used = $widget_used;
+
+			if ( isset( $file_path ) && is_file( $file_path ) ) {
+				unlink( $file_path );
+			}
+		}
+
+		$this->assertStringContainsString( 'font-family:a\\3c\\2fstyle>', $css );
+		$this->assertDoesNotMatchRegularExpression( '~</style~i', $css );
 	}
 
 	/**
