@@ -73,6 +73,11 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private $pro_license_filter = null;
 
 	/**
+	 * @var array<string, Closure(): string>
+	 */
+	private array $admin_email_filters = array();
+
+	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {
@@ -119,6 +124,11 @@ class Test_Form_Server extends WP_UnitTestCase {
 			remove_filter( 'product_otter_license_status', $this->pro_license_filter );
 			$this->pro_license_filter = null;
 		}
+
+		foreach ( $this->admin_email_filters as $hook => $filter ) {
+			remove_filter( $hook, $filter );
+		}
+		$this->admin_email_filters = array();
 
 		$this->form_providers->providers = $this->original_providers;
 
@@ -276,6 +286,83 @@ class Test_Form_Server extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( "\n", $to_arg );
 		$this->assertStringNotContainsString( "\r", $to_arg );
 		$this->assertStringNotContainsString( 'Bcc:', $headers );
+	}
+
+	/**
+	 * Form recipients that leave the notification without a valid address.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function missing_recipient_provider(): array {
+		return array(
+			'empty recipient'   => array( '' ),
+			'invalid recipient' => array( 'not-an-email' ),
+		);
+	}
+
+	/**
+	 * Without a form recipient, the notification goes to the current site's admin, not the network admin.
+	 *
+	 * @dataProvider missing_recipient_provider
+	 *
+	 * @param string $recipient The form's configured recipient.
+	 */
+	public function test_frontend_submission_without_recipient_uses_site_admin_email( string $recipient ): void {
+		$this->mock_mail();
+		$this->use_distinct_network_admin_email();
+		update_option(
+			'themeisle_blocks_form_emails',
+			array(
+				$this->get_form_option(
+					array(
+						'email'     => $recipient,
+						'fromEmail' => '',
+					)
+				),
+			)
+		);
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+
+		$this->assertTrue( $response->get_data()['success'] );
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( 'site-admin@example.org', $this->mail_requests[0]['to'] );
+		$this->assertStringContainsString( '<site-admin@example.org>', implode( "\n", $this->mail_requests[0]['headers'] ) );
+		$this->assertStringContainsString( 'site-admin@example.org', $this->mail_requests[0]['message'] );
+		$this->assertStringNotContainsString( 'network-admin@example.org', $this->mail_requests[0]['message'] );
+	}
+
+	/**
+	 * The admin alert goes to the current site's admin, not the network admin.
+	 */
+	public function test_admin_alert_uses_site_admin_email(): void {
+		$this->mock_mail();
+		$this->use_distinct_network_admin_email();
+
+		$this->assertTrue( Form_Server::send_error_email( new Form_Data_Request( $this->get_frontend_request() ) ) );
+
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( 'site-admin@example.org', $this->mail_requests[0]['to'] );
+		$this->assertStringContainsString( 'site-admin@example.org', $this->mail_requests[0]['message'] );
+		$this->assertStringNotContainsString( 'network-admin@example.org', $this->mail_requests[0]['message'] );
+	}
+
+	/**
+	 * Without a test recipient, the test email goes to the current site's admin, not the network admin.
+	 */
+	public function test_send_test_email_without_recipient_uses_site_admin_email(): void {
+		$this->mock_mail();
+		$this->use_distinct_network_admin_email();
+
+		$request = new WP_REST_Request( 'POST', '/otter/v1/form/editor' );
+		$request->set_body( wp_json_encode( array( 'handler' => 'testEmail' ) ) );
+
+		Form_Server::send_test_email( new Form_Data_Request( $request ) );
+
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( 'site-admin@example.org', $this->mail_requests[0]['to'] );
+		$this->assertStringContainsString( 'site-admin@example.org', $this->mail_requests[0]['message'] );
+		$this->assertStringNotContainsString( 'network-admin@example.org', $this->mail_requests[0]['message'] );
 	}
 
 	/**
@@ -634,7 +721,7 @@ class Test_Form_Server extends WP_UnitTestCase {
 
 		// Primary delivery is skipped: the only email is the throttled admin alert.
 		$this->assertCount( 1, $this->mail_requests );
-		$this->assertSame( get_site_option( 'admin_email' ), $this->mail_requests[0]['to'] );
+		$this->assertSame( get_option( 'admin_email' ), $this->mail_requests[0]['to'] );
 
 		// The submission is not lost: a Record is saved and marked failed.
 		$records = $this->get_form_records();
@@ -800,7 +887,7 @@ class Test_Form_Server extends WP_UnitTestCase {
 
 		// The throttled delivery alert went to the site admin.
 		$this->assertCount( 1, $this->mail_requests );
-		$this->assertSame( get_site_option( 'admin_email' ), $this->mail_requests[0]['to'] );
+		$this->assertSame( get_option( 'admin_email' ), $this->mail_requests[0]['to'] );
 	}
 
 	/**
@@ -1839,7 +1926,7 @@ class Test_Form_Server extends WP_UnitTestCase {
 
 		// No owner email — the only attempt is the throttled delivery Admin Alert.
 		$this->assertCount( 1, $this->mail_requests );
-		$this->assertSame( get_site_option( 'admin_email' ), $this->mail_requests[0]['to'] );
+		$this->assertSame( get_option( 'admin_email' ), $this->mail_requests[0]['to'] );
 	}
 
 	/**
@@ -2497,6 +2584,24 @@ class Test_Form_Server extends WP_UnitTestCase {
 			return is_callable( $result ) ? $result( $atts ) : $result;
 		};
 		add_filter( 'pre_wp_mail', $this->mail_filter, 10, 2 );
+	}
+
+	/**
+	 * Give the network and the current site different admin emails, as on a multisite subsite.
+	 */
+	private function use_distinct_network_admin_email(): void {
+		$this->admin_email_filters = array(
+			'pre_option_admin_email'      => function (): string {
+				return 'site-admin@example.org';
+			},
+			'pre_site_option_admin_email' => function (): string {
+				return 'network-admin@example.org';
+			},
+		);
+
+		foreach ( $this->admin_email_filters as $hook => $filter ) {
+			add_filter( $hook, $filter );
+		}
 	}
 
 	/**

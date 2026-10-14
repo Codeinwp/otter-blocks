@@ -87,7 +87,7 @@ class Form_Email {
 		</body>
 		</html>',
 			esc_html__( 'Mail From: ', 'otter-blocks' ),
-			sanitize_email( get_site_option( 'admin_email' ) ),
+			sanitize_email( get_option( 'admin_email' ) ),
 			apply_filters( 'otter_form_email_render_head', $form_data ),
 			apply_filters( 'otter_form_email_render_body', $form_data )
 		);
@@ -207,7 +207,7 @@ class Form_Email {
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 			<title>'
-			. esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ) .
+			. esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_option( 'admin_email' ) ) .
 			'</title>
 		</head>
 		<body>'
@@ -296,7 +296,7 @@ class Form_Email {
 			sprintf(
 				// translators: %s is the admin email address.
 				__( 'Mail From: %s', 'otter-blocks' ), 
-				sanitize_email( get_site_option( 'admin_email' ) ) 
+				sanitize_email( get_option( 'admin_email' ) ) 
 			),
 			esc_html__( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks' ),
 			sprintf( 
