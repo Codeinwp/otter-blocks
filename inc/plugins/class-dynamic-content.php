@@ -20,6 +20,11 @@ class Dynamic_Content {
 	protected static $instance = null;
 
 	/**
+	 * Magic Tag pattern, without delimiters; its first group is the query.
+	 */
+	const MAGIC_TAG_REGEX = '{(otterDynamic\?[^"\'<>}]*)}';
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -119,9 +124,33 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/{(otterDynamic\?[^"\'<>}]*)}/';
+		// A whole start tag (quoted values may hold ">") or a text Magic Tag, in one pass so resolved values are never re-scanned.
+		$re = '/(?P<tag><[a-zA-Z\/!][^>"\']*(?:(?:"[^"]*"|\'[^\']*\')[^>"\']*)*>)|' . self::MAGIC_TAG_REGEX . '/';
 
-		return preg_replace_callback( $re, array( $this, 'apply_magic_tags' ), $content );
+		return preg_replace_callback( $re, array( $this, 'apply_magic_tags_in_markup' ), $content );
+	}
+
+	/**
+	 * Resolve a text Magic Tag, or attribute-escape every Magic Tag inside a start tag.
+	 *
+	 * @param array<int|string, string> $matches Start tag in `tag`, or the Magic Tag query in group 2.
+	 *
+	 * @return string|string[]|void
+	 */
+	public function apply_magic_tags_in_markup( $matches ) {
+		if ( '' === $matches['tag'] ) {
+			return $this->apply_magic_tags( array( 1 => $matches[2] ) );
+		}
+
+		return preg_replace_callback(
+			'/' . self::MAGIC_TAG_REGEX . '/',
+			function ( $token ) {
+				$value = $this->apply_magic_tags( $token );
+
+				return is_string( $value ) ? esc_attr( $value ) : $value;
+			},
+			$matches['tag']
+		);
 	}
 
 	/**

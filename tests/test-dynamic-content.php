@@ -1384,6 +1384,30 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * A magic tag inside an attribute is attribute-escaped, as the values it resolves to are raw.
+	 */
+	public function test_dynamic_magic_tag_value_is_escaped_in_attribute(): void {
+		$name      = 'Safe" autofocus onfocus=alert(1) x="';
+		$author_id = self::factory()->user->create(
+			array(
+				'role'         => 'contributor',
+				'display_name' => $name,
+			)
+		);
+		$this->go_to( get_permalink( self::factory()->post->create( array( 'post_author' => $author_id ) ) ) );
+
+		$result = $this->dynamic_content->apply_dynamic_magic_tags( "<p title=\"{otterDynamic?type=authorName}\" data-x='{otterDynamic?type=authorName}'>{otterDynamic?type=authorName}</p>" );
+
+		$this->assertNoInjectedAttributes( $result );
+
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$processor->next_tag();
+		$this->assertSame( $name, $processor->get_attribute( 'title' ) );
+		$this->assertSame( $name, $processor->get_attribute( 'data-x' ) );
+		$this->assertStringContainsString( '>' . $name . '</p>', $result );
+	}
+
+	/**
 	 * Assert the first tag of the markup gained no attributes from the text after it.
 	 *
 	 * @param string $html Rewritten markup.
