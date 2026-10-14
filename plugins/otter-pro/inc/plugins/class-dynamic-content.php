@@ -693,7 +693,7 @@ class Dynamic_Content {
 
 		if ( 'product' === $type && class_exists( 'WooCommerce' ) && ! empty( $id ) ) {
 			$product = wc_get_product( $id );
-			$image   = $product->get_image_id();
+			$image   = $product ? $product->get_image_id() : 0;
 
 			if ( $image ) {
 				$path = wp_get_original_image_path( intval( $image ) );
