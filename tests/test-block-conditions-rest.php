@@ -16,31 +16,30 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 	const CONTENT = '<!-- wp:paragraph {"otterConditions":[[{"type":"userRoles","roles":["administrator"]}]]} --><p>SECRET</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>PUBLIC</p><!-- /wp:paragraph -->';
 
 	/**
-	 * Visitors get no restricted block from the posts endpoint; editors still get it in edit context.
-	 *
-	 * REST_REQUEST cannot be undefined again, so this runs in its own process.
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
+	 * Only an editor's edit-context REST request skips conditions; view-context renders apply them.
 	 */
 	public function test_rest_render_applies_conditions_outside_edit_context(): void {
-		define( 'REST_REQUEST', true );
+		$previous_user = get_current_user_id();
+		$post_id       = self::factory()->post->create( array( 'post_content' => self::CONTENT ) );
+		$editor_id     = self::factory()->user->create( array( 'role' => 'editor' ) );
 
-		$post_id = self::factory()->post->create( array( 'post_content' => self::CONTENT ) );
+		try {
+			wp_set_current_user( 0 );
+			$visitor = $this->get_post_over_rest( $post_id, 'view' );
 
-		wp_set_current_user( 0 );
-		$data = rest_get_server()->dispatch( new WP_REST_Request( 'GET', '/wp/v2/posts/' . $post_id ) )->get_data();
+			wp_set_current_user( $editor_id );
+			$editor_view = $this->get_post_over_rest( $post_id, 'view' );
+			$editor_edit = $this->get_post_over_rest( $post_id, 'edit' );
+		} finally {
+			wp_set_current_user( $previous_user );
+			$GLOBALS['wp_rest_server'] = null;
+		}
 
-		$this->assertStringNotContainsString( 'SECRET', $data['content']['rendered'] );
-		$this->assertStringNotContainsString( 'SECRET', $data['excerpt']['rendered'] );
-		$this->assertStringContainsString( 'PUBLIC', $data['content']['rendered'] );
-
-		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
-		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $post_id );
-		$request->set_param( 'context', 'edit' );
-		$data = rest_get_server()->dispatch( $request )->get_data();
-
-		$this->assertStringContainsString( 'SECRET', $data['content']['rendered'] );
+		$this->assertStringNotContainsString( 'SECRET', $visitor['content']['rendered'] );
+		$this->assertStringNotContainsString( 'SECRET', $visitor['excerpt']['rendered'] );
+		$this->assertStringContainsString( 'PUBLIC', $visitor['content']['rendered'] );
+		$this->assertStringNotContainsString( 'SECRET', $editor_view['content']['rendered'] );
+		$this->assertStringContainsString( 'SECRET', $editor_edit['content']['rendered'] );
 	}
 
 	/**
@@ -61,5 +60,19 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 
 		$this->assertStringNotContainsString( 'SECRET', $output );
 		$this->assertStringContainsString( 'PUBLIC', $output );
+	}
+
+	/**
+	 * Fetch a post from the posts endpoint as the current user.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $context REST context, 'view' or 'edit'.
+	 * @return array{content: array{rendered: string}, excerpt: array{rendered: string}}
+	 */
+	private function get_post_over_rest( int $post_id, string $context ): array {
+		$request = new WP_REST_Request( 'GET', '/wp/v2/posts/' . $post_id );
+		$request->set_param( 'context', $context );
+
+		return rest_get_server()->dispatch( $request )->get_data();
 	}
 }
