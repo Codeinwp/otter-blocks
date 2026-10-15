@@ -762,7 +762,7 @@ class Dynamic_Content {
 
 		if ( 'product' === $data['type'] && class_exists( 'WooCommerce' ) && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
 			$product = wc_get_product( $data['id'] );
-			$image   = $product->get_image_id();
+			$image   = $product ? $product->get_image_id() : 0;
 
 			if ( $image ) {
 				$value = wp_get_attachment_image_url( intval( $image ), 'full' );

@@ -85,7 +85,7 @@ class Block_Conditions {
 	}
 
 	/**
-	 * Record whether a starting REST dispatch is an editor's edit-context request.
+	 * Record whether a starting REST dispatch is an editor previewing content.
 	 *
 	 * Runs before the route's permission check, hence the capability check here.
 	 *
@@ -97,9 +97,26 @@ class Block_Conditions {
 	 * @return \WP_REST_Response|\WP_HTTP_Response|\WP_Error|mixed Unchanged result.
 	 */
 	public function enter_rest_request( $response, $handler, $request ) {
-		$this->editor_rest_requests[] = 'edit' === $request->get_param( 'context' ) && current_user_can( 'edit_posts' );
+		$this->editor_rest_requests[] = $this->is_editor_rest_request( $request );
 
 		return $response;
+	}
+
+	/**
+	 * Whether a REST request is an editor previewing content.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
+	 *
+	 * @return bool
+	 */
+	private function is_editor_rest_request( $request ) {
+		// The dynamic preview route uses `context` for the previewed post ID.
+		if ( '/otter/v1/dynamic/preview' === $request->get_route() ) {
+			return current_user_can( 'edit_post', (int) $request->get_param( 'context' ) );
+		}
+
+		return 'edit' === $request->get_param( 'context' ) && current_user_can( 'edit_posts' );
 	}
 
 	/**

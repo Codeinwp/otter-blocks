@@ -113,6 +113,26 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A rendered product image pointing to a deleted product falls back instead of fataling.
+	 */
+	public function test_rendered_product_image_ignores_missing_product(): void {
+		update_option( 'woocommerce_placeholder_image', 0 );
+
+		$product_id = self::factory()->post->create( array( 'post_type' => 'product' ) );
+		wp_delete_post( $product_id, true );
+
+		$value = ( new \ThemeIsle\OtterPro\Plugins\Dynamic_Content() )->evaluate_content_media_content(
+			'fallback.jpg',
+			array(
+				'type' => 'product',
+				'id'   => $product_id,
+			)
+		);
+
+		$this->assertSame( 'fallback.jpg', $value );
+	}
+
+	/**
 	 * Run the route's permission callback for the given query.
 	 *
 	 * @param string                    $route  Route path.
