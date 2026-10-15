@@ -442,7 +442,7 @@ class Atomic_Wind_Blocks {
 	 * Missing or unattributed CSS uses the generator. Separately cached stylesheets
 	 * each restart Tailwind's utility order, so a later base utility would override
 	 * an earlier responsive one: a page combining them gets their cached combined
-	 * stylesheet, or the generator until an editor's visit caches one.
+	 * stylesheet when one applies, or the generator.
 	 *
 	 * @return void
 	 */
@@ -479,19 +479,65 @@ class Atomic_Wind_Blocks {
 	 * Swap the queued stylesheets for the cached combined one, or have an
 	 * editor's generator run cache it.
 	 *
+	 * Skipped when Block Conditions can drop contributing markup: one user's
+	 * compile would then lack utilities of blocks only others see.
+	 *
 	 * @param string[] $blobs Cached CSS queued for the footer.
 	 * @phpstan-param list<string> $blobs
 	 * @return bool Whether the combined stylesheet is cached.
 	 */
 	private function queue_combined_css( array &$blobs ) {
-		$combined = get_transient( $this->combined_css_key( $this->inlined ) );
+		if ( $this->contributing_markup_varies_by_visitor() ) {
+			return false;
+		}
+
+		$cache_key = $this->combined_css_key( $this->inlined );
+		$combined  = get_transient( $cache_key );
 
 		if ( is_string( $combined ) && '' !== $combined ) {
 			$blobs = array( $combined );
 			return true;
 		}
 
-		$this->maybe_enqueue_combined_style_builder();
+		$this->maybe_enqueue_combined_style_builder( $cache_key );
+
+		return false;
+	}
+
+	/**
+	 * Whether Block Conditions can remove markup from a contributing post for
+	 * some visitors.
+	 *
+	 * @return bool
+	 */
+	private function contributing_markup_varies_by_visitor() {
+		foreach ( $this->inlined as $post_id ) {
+			$content = (string) get_post_field( 'post_content', $post_id );
+
+			if ( false !== strpos( $content, '"otterConditions"' ) && $this->blocks_vary_by_visitor( parse_blocks( $content ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Whether any of the blocks, nested ones included, carries a condition other
+	 * than screen size: only screen size keeps the markup, adding hide classes.
+	 *
+	 * @param array<int|string, array<string, mixed>> $blocks Blocks from parse_blocks().
+	 * @return bool
+	 */
+	private function blocks_vary_by_visitor( array $blocks ) {
+		foreach ( $blocks as $block ) {
+			$groups = isset( $block['attrs']['otterConditions'] ) ? array_filter( (array) $block['attrs']['otterConditions'], 'is_array' ) : array();
+			$types  = wp_list_pluck( array_merge( array(), ...array_values( $groups ) ), 'type' );
+
+			if ( array() !== array_diff( $types, array( 'screenSize' ) ) || $this->blocks_vary_by_visitor( $block['innerBlocks'] ) ) {
+				return true;
+			}
+		}
 
 		return false;
 	}
@@ -500,9 +546,10 @@ class Atomic_Wind_Blocks {
 	 * Enqueue the style builder to cache the combined stylesheet when the user
 	 * may edit every post contributing to it.
 	 *
+	 * @param string $cache_key Key of the combined stylesheet this page renders.
 	 * @return void
 	 */
-	private function maybe_enqueue_combined_style_builder() {
+	private function maybe_enqueue_combined_style_builder( $cache_key ) {
 		$post_ids = array_values( $this->inlined );
 
 		foreach ( $post_ids as $post_id ) {
@@ -515,7 +562,14 @@ class Atomic_Wind_Blocks {
 			return;
 		}
 
-		wp_localize_script( 'atomic-wind-style-builder', 'atomicWindCombinedStyle', array( 'postIds' => $post_ids ) );
+		wp_localize_script(
+			'atomic-wind-style-builder',
+			'atomicWindCombinedStyle',
+			array(
+				'postIds'  => $post_ids,
+				'cacheKey' => $cache_key,
+			)
+		);
 	}
 
 	/**
@@ -609,15 +663,19 @@ class Atomic_Wind_Blocks {
 				'callback'            => array( $this, 'rest_save_combined_style' ),
 				'permission_callback' => array( $this, 'rest_save_combined_style_permissions' ),
 				'args'                => array(
-					'css'     => array(
+					'css'      => array(
 						'type'              => 'string',
 						'required'          => true,
 						'sanitize_callback' => array( $this, 'sanitize_css' ),
 					),
-					'postIds' => array(
+					'postIds'  => array(
 						'type'     => 'array',
 						'items'    => array( 'type' => 'integer' ),
 						'minItems' => 2,
+						'required' => true,
+					),
+					'cacheKey' => array(
+						'type'     => 'string',
 						'required' => true,
 					),
 				),
@@ -629,10 +687,11 @@ class Atomic_Wind_Blocks {
 	 * REST callback: cache the combined stylesheet of posts rendered together.
 	 *
 	 * The key is rebuilt from the posts' current cached CSS, so a client cannot
-	 * pick which combination it writes.
+	 * pick which combination it writes, and must match the key the page was
+	 * rendered with, so a compile of since-changed CSS is not saved.
 	 *
 	 * @param \WP_REST_Request $request Request object.
-	 * @phpstan-param \WP_REST_Request<array{css: string, postIds: list<int>}> $request
+	 * @phpstan-param \WP_REST_Request<array{css: string, postIds: list<int>, cacheKey: string}> $request
 	 * @return \WP_REST_Response
 	 */
 	public function rest_save_combined_style( \WP_REST_Request $request ) {
@@ -653,7 +712,13 @@ class Atomic_Wind_Blocks {
 			return new \WP_REST_Response( array( 'success' => false ), 400 );
 		}
 
-		$success = set_transient( $this->combined_css_key( $post_ids_by_hash ), $request->get_param( 'css' ), MONTH_IN_SECONDS );
+		$cache_key = $this->combined_css_key( $post_ids_by_hash );
+
+		if ( ! hash_equals( $cache_key, (string) $request->get_param( 'cacheKey' ) ) ) {
+			return new \WP_REST_Response( array( 'success' => false ), 409 );
+		}
+
+		$success = set_transient( $cache_key, $request->get_param( 'css' ), MONTH_IN_SECONDS );
 
 		return new \WP_REST_Response( array( 'success' => $success ), 200 );
 	}
@@ -662,7 +727,7 @@ class Atomic_Wind_Blocks {
 	 * REST permission callback for the combined style endpoint.
 	 *
 	 * @param \WP_REST_Request $request Request object.
-	 * @phpstan-param \WP_REST_Request<array{css: string, postIds: list<int>}> $request
+	 * @phpstan-param \WP_REST_Request<array{css: string, postIds: list<int>, cacheKey: string}> $request
 	 * @return bool
 	 */
 	public function rest_save_combined_style_permissions( \WP_REST_Request $request ) {
