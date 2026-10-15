@@ -1411,4 +1411,27 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertSame( 1, substr_count( $result, 'Rendered tag body' ) );
 		$this->assertStringNotContainsString( '<o-dynamic', $result );
 	}
+
+	/**
+	 * The recursion guard must be released after each render, so sibling
+	 * postContent tags for the same post all render.
+	 */
+	public function test_sibling_post_content_tags_each_render(): void {
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_title'   => 'Sibling tags',
+				'post_content' => '<!-- wp:paragraph --><p>Sibling body</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+			)
+		);
+
+		$this->go_to( get_permalink( $post_id ) );
+
+		$tag    = '<div><o-dynamic data-type="postContent">Post Content</o-dynamic></div>';
+		$result = $this->dynamic_content->apply_dynamic_content( $tag . $tag );
+
+		wp_delete_post( $post_id, true );
+
+		$this->assertSame( 2, substr_count( $result, 'Sibling body' ) );
+	}
 }
