@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render\AMP;
 
-use Masterminds\HTML5;
+use DOMDocument;
 
 /**
  * Class Slider_Block
@@ -36,14 +36,17 @@ class Slider_Block {
 	 */
 	public function render_blocks( $block_content, $block ) {
 		if ( 'themeisle-blocks/slider' === $block['blockName'] && did_action( 'parse_request' ) && function_exists( 'amp_is_request' ) && amp_is_request() ) {
-			$html5         = new HTML5();
-			$dom           = $html5->loadHTML( $block['innerHTML'] );
-			$id            = $block['attrs']['id'];
+			$use_errors = libxml_use_internal_errors( true );
+			$dom        = new DOMDocument();
+			$dom->loadHTML( '<?xml encoding="utf-8" ?>' . $block['innerHTML'] );
+			libxml_clear_errors();
+			libxml_use_internal_errors( $use_errors );
+
 			$images        = $dom->getElementsByTagName( 'figure' );
-			$block_content = '<amp-carousel id="' . $id . '" class="wp-block-themeisle-blocks-slider" width="400" height="300" layout="responsive" type="slides" autoplay delay="2000">';
+			$block_content = '<amp-carousel id="' . esc_attr( $block['attrs']['id'] ) . '" class="wp-block-themeisle-blocks-slider" width="400" height="300" layout="responsive" type="slides" autoplay delay="2000">';
 
 			foreach ( $images as $image ) {
-				$block_content .= $html5->saveHTML( $image );
+				$block_content .= $dom->saveHTML( $image );
 			}
 
 			$block_content .= '</amp-carousel>';
