@@ -44,9 +44,9 @@ class Atomic_Wind_Blocks {
 	private $rendered = array();
 
 	/**
-	 * Hashes of inlined CSS.
+	 * Post IDs by hash of their inlined CSS.
 	 *
-	 * @var array<string, bool>
+	 * @var array<string, int>
 	 */
 	private $inlined = array();
 
@@ -340,7 +340,7 @@ class Atomic_Wind_Blocks {
 			return;
 		}
 
-		$this->inlined[ md5( $cached_css ) ] = true;
+		$this->inlined[ md5( $cached_css ) ] = $queried->ID;
 		wp_register_style( 'atomic-wind-tailwind', false, [], OTTER_BLOCKS_VERSION );
 		wp_enqueue_style( 'atomic-wind-tailwind' );
 		wp_add_inline_style( 'atomic-wind-tailwind', $cached_css );
@@ -365,10 +365,20 @@ class Atomic_Wind_Blocks {
 			return;
 		}
 
+		$this->enqueue_style_builder( $queried->ID );
+	}
+
+	/**
+	 * Enqueue the script that saves the generator's CSS.
+	 *
+	 * @param int $post_id Post to save it to, 0 for none.
+	 * @return bool Whether the script is enqueued.
+	 */
+	private function enqueue_style_builder( $post_id ) {
 		$builder_asset = $this->build_path() . '/style-builder.asset.php';
 
 		if ( ! file_exists( $builder_asset ) ) {
-			return;
+			return false;
 		}
 
 		$sb = include $builder_asset;
@@ -384,11 +394,13 @@ class Atomic_Wind_Blocks {
 			'atomic-wind-style-builder',
 			'atomicWindStyleBuilder',
 			array(
-				'postId'  => $queried->ID,
+				'postId'  => $post_id,
 				'restUrl' => rest_url( 'otter/v1/atomic-wind' ),
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 			)
 		);
+
+		return true;
 	}
 
 	/**
@@ -427,9 +439,10 @@ class Atomic_Wind_Blocks {
 	/**
 	 * Load CSS for blocks rendered after the head.
 	 *
-	 * Missing or unattributed CSS uses the generator, and so does a page combining
-	 * separately cached stylesheets: each restarts Tailwind's utility order, so a
-	 * later base utility would override an earlier responsive one.
+	 * Missing or unattributed CSS uses the generator. Separately cached stylesheets
+	 * each restart Tailwind's utility order, so a later base utility would override
+	 * an earlier responsive one: a page combining them gets their cached combined
+	 * stylesheet, or the generator until an editor's visit caches one.
 	 *
 	 * @return void
 	 */
@@ -447,15 +460,83 @@ class Atomic_Wind_Blocks {
 			}
 		}
 
+		if ( count( $this->inlined ) > 1 && ! $this->queue_combined_css( $blobs ) ) {
+			$needs_generator = true;
+		}
+
 		if ( ! empty( $blobs ) ) {
 			wp_register_style( 'atomic-wind-tailwind-late', false, [], OTTER_BLOCKS_VERSION );
 			wp_enqueue_style( 'atomic-wind-tailwind-late' );
 			wp_add_inline_style( 'atomic-wind-tailwind-late', implode( "\n", $blobs ) );
 		}
 
-		if ( $needs_generator || count( $this->inlined ) > 1 ) {
+		if ( $needs_generator ) {
 			$this->enqueue_generator();
 		}
+	}
+
+	/**
+	 * Swap the queued stylesheets for the cached combined one, or have an
+	 * editor's generator run cache it.
+	 *
+	 * @param string[] $blobs Cached CSS queued for the footer.
+	 * @phpstan-param list<string> $blobs
+	 * @return bool Whether the combined stylesheet is cached.
+	 */
+	private function queue_combined_css( array &$blobs ) {
+		$combined = get_transient( $this->combined_css_key( $this->inlined ) );
+
+		if ( is_string( $combined ) && '' !== $combined ) {
+			$blobs = array( $combined );
+			return true;
+		}
+
+		$this->maybe_enqueue_combined_style_builder();
+
+		return false;
+	}
+
+	/**
+	 * Enqueue the style builder to cache the combined stylesheet when the user
+	 * may edit every post contributing to it.
+	 *
+	 * @return void
+	 */
+	private function maybe_enqueue_combined_style_builder() {
+		$post_ids = array_values( $this->inlined );
+
+		foreach ( $post_ids as $post_id ) {
+			if ( ! current_user_can( 'edit_post', $post_id ) ) {
+				return;
+			}
+		}
+
+		if ( ! wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) && ! $this->enqueue_style_builder( 0 ) ) {
+			return;
+		}
+
+		wp_localize_script( 'atomic-wind-style-builder', 'atomicWindCombinedStyle', array( 'postIds' => $post_ids ) );
+	}
+
+	/**
+	 * Transient key of the combined stylesheet for a set of cached stylesheets.
+	 *
+	 * Keyed by each post and its CSS: editing a post retires the entry, and
+	 * copying other posts' CSS cannot write the entry served with them.
+	 *
+	 * @param array<string, int> $post_ids_by_hash Post IDs by hash of their cached CSS.
+	 * @return string
+	 */
+	private function combined_css_key( array $post_ids_by_hash ) {
+		$parts = array();
+
+		foreach ( $post_ids_by_hash as $hash => $post_id ) {
+			$parts[] = $hash . ':' . $post_id;
+		}
+
+		sort( $parts, SORT_STRING );
+
+		return 'atomic_wind_css_' . md5( implode( ',', $parts ) );
 	}
 
 	/**
@@ -486,7 +567,7 @@ class Atomic_Wind_Blocks {
 		$hash = md5( $cached_css );
 
 		if ( ! isset( $this->inlined[ $hash ] ) ) {
-			$this->inlined[ $hash ] = true;
+			$this->inlined[ $hash ] = $id;
 			$blobs[]                = $cached_css;
 		}
 
@@ -519,6 +600,81 @@ class Atomic_Wind_Blocks {
 				),
 			) 
 		);
+
+		register_rest_route(
+			'otter/v1',
+			'/atomic-wind/combined-style',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'rest_save_combined_style' ),
+				'permission_callback' => array( $this, 'rest_save_combined_style_permissions' ),
+				'args'                => array(
+					'css'     => array(
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => array( $this, 'sanitize_css' ),
+					),
+					'postIds' => array(
+						'type'     => 'array',
+						'items'    => array( 'type' => 'integer' ),
+						'minItems' => 2,
+						'required' => true,
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * REST callback: cache the combined stylesheet of posts rendered together.
+	 *
+	 * The key is rebuilt from the posts' current cached CSS, so a client cannot
+	 * pick which combination it writes.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @phpstan-param \WP_REST_Request<array{css: string, postIds: list<int>}> $request
+	 * @return \WP_REST_Response
+	 */
+	public function rest_save_combined_style( \WP_REST_Request $request ) {
+		$post_ids_by_hash = array();
+
+		foreach ( $request->get_param( 'postIds' ) as $post_id ) {
+			$post_id    = absint( $post_id );
+			$cached_css = $this->get_cached_css( $post_id );
+
+			if ( '' === $cached_css ) {
+				return new \WP_REST_Response( array( 'success' => false ), 409 );
+			}
+
+			$post_ids_by_hash[ md5( $cached_css ) ] = $post_id;
+		}
+
+		if ( count( $post_ids_by_hash ) < 2 ) {
+			return new \WP_REST_Response( array( 'success' => false ), 400 );
+		}
+
+		$success = set_transient( $this->combined_css_key( $post_ids_by_hash ), $request->get_param( 'css' ), MONTH_IN_SECONDS );
+
+		return new \WP_REST_Response( array( 'success' => $success ), 200 );
+	}
+
+	/**
+	 * REST permission callback for the combined style endpoint.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @phpstan-param \WP_REST_Request<array{css: string, postIds: list<int>}> $request
+	 * @return bool
+	 */
+	public function rest_save_combined_style_permissions( \WP_REST_Request $request ) {
+		$post_ids = (array) $request->get_param( 'postIds' );
+
+		foreach ( $post_ids as $post_id ) {
+			if ( ! current_user_can( 'edit_post', absint( $post_id ) ) ) {
+				return false;
+			}
+		}
+
+		return ! empty( $post_ids );
 	}
 
 	/**

@@ -67,13 +67,21 @@ test.describe( 'Atomic Wind late cached CSS', () => {
 
 			const url = new URL( main.link );
 			url.searchParams.set( 'otter_e2e_late_post', layout.id );
-			await page.goto( url.toString() );
+
+			// First combined visit: the generator orders the page, and the editor's run caches it.
+			await cachePostCss( page, url.toString() );
 
 			// Proves both cached stylesheets reached the page, the footer one last.
 			await expect( page.locator( '#atomic-wind-tailwind-late-inline-css' ) ).toHaveCount( 1 );
-
 			await expect.poll( () => columnCount( page, '.aw-main' ) ).toBe( 4 );
 			await expect.poll( () => columnCount( page, '.aw-layout' ) ).toBe( 1 );
+
+			await page.reload();
+
+			await expect( page.locator( '#atomic-wind-tailwind-generator-js' ) ).toHaveCount( 0 );
+			await expect( page.locator( '#atomic-wind-tailwind-late-inline-css' ) ).toHaveCount( 1 );
+			expect( await columnCount( page, '.aw-main' ) ).toBe( 4 );
+			expect( await columnCount( page, '.aw-layout' ) ).toBe( 1 );
 		} finally {
 			for ( const post of [ main, layout ]) {
 				await requestUtils.rest({

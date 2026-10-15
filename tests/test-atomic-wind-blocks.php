@@ -55,6 +55,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	public function tear_down() {
 		$this->reset_in_query( false );
 		$this->unregister_atomic_wind_blocks();
+		$GLOBALS['wp_rest_server'] = null;
 		parent::tear_down();
 	}
 
@@ -1641,6 +1642,158 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
 		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	/**
+	 * Helper: two posts with different cached CSS, the second rendered like a hooked layout.
+	 *
+	 * @return array{singular: int, layout: int}
+	 */
+	private function make_combined_page_posts(): array {
+		$singular = $this->make_atomic_wind_post( 'grid grid-cols-1 lg:grid-cols-4' );
+		$layout   = $this->make_atomic_wind_post( 'grid grid-cols-1' );
+		$this->set_cached_css( $singular, '.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}' );
+		$this->set_cached_css( $layout, '.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}' );
+
+		return array(
+			'singular' => $singular,
+			'layout'   => $layout,
+		);
+	}
+
+	/**
+	 * Helper: render the singular post with the layout post after it, up to the footer CSS.
+	 *
+	 * @param array{singular: int, layout: int} $posts Posts from make_combined_page_posts().
+	 */
+	private function render_combined_page( array $posts ): void {
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+		$this->instance = new Atomic_Wind_Blocks();
+
+		$this->go_to( get_permalink( $posts['singular'] ) );
+		$this->instance->output_singular_css();
+		$this->render_tracked_block( $posts['singular'] );
+		$this->render_tracked_block( $posts['layout'] );
+
+		$this->instance->output_late_css();
+	}
+
+	/**
+	 * Helper: POST a combined stylesheet to a fresh REST server.
+	 *
+	 * @param list<int> $post_ids Contributing posts.
+	 * @param string    $css      Compiled CSS.
+	 */
+	private function save_combined_style( array $post_ids, string $css ): WP_REST_Response {
+		global $wp_rest_server;
+
+		$wp_rest_server = new Spy_REST_Server();
+		add_action( 'rest_api_init', array( $this->instance, 'register_rest_routes' ) );
+		do_action( 'rest_api_init', $wp_rest_server );
+
+		$request = new WP_REST_Request( 'POST', '/otter/v1/atomic-wind/combined-style' );
+		$request->set_param( 'postIds', $post_ids );
+		$request->set_param( 'css', $css );
+
+		return rest_get_server()->dispatch( $request );
+	}
+
+	public function test_combined_style_saved_by_an_editor_replaces_the_generator(): void {
+		$posts    = $this->make_combined_page_posts();
+		$combined = '.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}';
+
+		$response = $this->save_combined_style( array( $posts['singular'], $posts['layout'] ), $combined );
+		wp_set_current_user( 0 );
+		$this->render_combined_page( $posts );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( $combined, $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_late_css_has_an_editor_cache_the_combined_style(): void {
+		$posts = $this->make_combined_page_posts();
+
+		$this->render_combined_page( $posts );
+
+		$data = (string) wp_scripts()->get_data( 'atomic-wind-style-builder', 'data' );
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+		$this->assertStringContainsString( 'atomicWindCombinedStyle', $data );
+		$this->assertStringContainsString( '"postIds":[' . $posts['singular'] . ',' . $posts['layout'] . ']', $data );
+	}
+
+	public function test_output_late_css_skips_the_combined_cache_for_users_who_cannot_edit_every_post(): void {
+		$posts = $this->make_combined_page_posts();
+
+		$this->render_combined_page( $posts );
+		$this->assertTrue( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+
+		wp_set_current_user( $this->factory()->user->create( array( 'role' => 'author' ) ) );
+		$this->render_combined_page( $posts );
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+	}
+
+	public function test_combined_style_save_requires_edit_rights_on_every_post(): void {
+		$posts  = $this->make_combined_page_posts();
+		$author = $this->factory()->user->create( array( 'role' => 'author' ) );
+		wp_update_post(
+			array(
+				'ID'          => $posts['singular'],
+				'post_author' => $author,
+			)
+		);
+		$this->set_cached_css( $posts['singular'], '.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}' );
+		wp_set_current_user( $author );
+
+		$response = $this->save_combined_style( array( $posts['singular'], $posts['layout'] ), '.x{color:red}' );
+		$this->render_combined_page( $posts );
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertStringNotContainsString( '.x{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+	}
+
+	public function test_combined_style_saved_for_copied_stylesheets_is_not_served_on_the_originals(): void {
+		$posts  = $this->make_combined_page_posts();
+		$copies = $this->make_combined_page_posts();
+		$this->save_combined_style( array( $copies['singular'], $copies['layout'] ), '.copy{color:red}' );
+
+		$this->render_combined_page( $copies );
+		$this->assertSame( '.copy{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+
+		$this->render_combined_page( $posts );
+
+		$this->assertStringNotContainsString( '.copy{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_combined_style_save_rejects_posts_sharing_one_stylesheet(): void {
+		$first  = $this->make_atomic_wind_post( 'flex' );
+		$second = $this->make_atomic_wind_post( 'flex' );
+		$this->set_cached_css( $first, '.flex{display:flex}' );
+		$this->set_cached_css( $second, '.flex{display:flex}' );
+
+		$response = $this->save_combined_style( array( $first, $second ), '.flex{display:flex}' );
+
+		$this->assertSame( 400, $response->get_status() );
+	}
+
+	public function test_combined_style_is_dropped_once_a_contributing_stylesheet_changes(): void {
+		$posts = $this->make_combined_page_posts();
+		$this->save_combined_style( array( $posts['singular'], $posts['layout'] ), '.stale{color:red}' );
+
+		$this->render_combined_page( $posts );
+		$this->assertSame( '.stale{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+
+		$this->set_cached_css( $posts['layout'], '.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}' );
+		$this->render_combined_page( $posts );
+
+		$this->assertStringNotContainsString( '.stale{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
 	}
 
 	public function test_enqueue_base_css_registers_frontend_style_without_enqueuing_it() {
