@@ -479,15 +479,15 @@ class Atomic_Wind_Blocks {
 	 * Swap the queued stylesheets for the cached combined one, or have an
 	 * editor's generator run cache it.
 	 *
-	 * Skipped when Block Conditions can drop contributing markup: one user's
-	 * compile would then lack utilities of blocks only others see.
+	 * Skipped when contributing markup can differ from what one compile saw: the
+	 * cached stylesheet would lack utilities of blocks that render later.
 	 *
 	 * @param string[] $blobs Cached CSS queued for the footer.
 	 * @phpstan-param list<string> $blobs
 	 * @return bool Whether the combined stylesheet is cached.
 	 */
 	private function queue_combined_css( array &$blobs ) {
-		if ( $this->contributing_markup_varies_by_visitor() ) {
+		if ( $this->contributing_markup_varies() ) {
 			return false;
 		}
 
@@ -505,16 +505,15 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * Whether Block Conditions can remove markup from a contributing post for
-	 * some visitors.
+	 * Whether a contributing post can render other markup on another request.
 	 *
 	 * @return bool
 	 */
-	private function contributing_markup_varies_by_visitor() {
+	private function contributing_markup_varies() {
 		foreach ( $this->inlined as $post_id ) {
 			$content = (string) get_post_field( 'post_content', $post_id );
 
-			if ( false !== strpos( $content, '"otterConditions"' ) && $this->blocks_vary_by_visitor( parse_blocks( $content ) ) ) {
+			if ( preg_match( '/"(otterConditions|queryPostType)"/', $content ) && $this->blocks_markup_varies( parse_blocks( $content ) ) ) {
 				return true;
 			}
 		}
@@ -523,18 +522,22 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * Whether any of the blocks, nested ones included, carries a condition other
-	 * than screen size: only screen size keeps the markup, adding hide classes.
+	 * Whether any of the blocks, nested ones included, is a query box, which
+	 * renders nothing without results, or carries a Block Condition other than
+	 * screen size, which drops the block for some visitors (screen size only
+	 * adds hide classes).
 	 *
 	 * @param array<int|string, array<string, mixed>> $blocks Blocks from parse_blocks().
 	 * @return bool
 	 */
-	private function blocks_vary_by_visitor( array $blocks ) {
+	private function blocks_markup_varies( array $blocks ) {
 		foreach ( $blocks as $block ) {
 			$groups = isset( $block['attrs']['otterConditions'] ) ? array_filter( (array) $block['attrs']['otterConditions'], 'is_array' ) : array();
 			$types  = wp_list_pluck( array_merge( array(), ...array_values( $groups ) ), 'type' );
 
-			if ( array() !== array_diff( $types, array( 'screenSize' ) ) || $this->blocks_vary_by_visitor( $block['innerBlocks'] ) ) {
+			if ( ! empty( $block['attrs']['queryPostType'] )
+				|| array() !== array_diff( $types, array( 'screenSize' ) )
+				|| $this->blocks_markup_varies( $block['innerBlocks'] ) ) {
 				return true;
 			}
 		}
@@ -552,10 +555,8 @@ class Atomic_Wind_Blocks {
 	private function maybe_enqueue_combined_style_builder( $cache_key ) {
 		$post_ids = array_values( $this->inlined );
 
-		foreach ( $post_ids as $post_id ) {
-			if ( ! current_user_can( 'edit_post', $post_id ) ) {
-				return;
-			}
+		if ( ! $this->current_user_can_edit_posts( $post_ids ) ) {
+			return;
 		}
 
 		if ( ! wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) && ! $this->enqueue_style_builder( 0 ) ) {
@@ -733,13 +734,24 @@ class Atomic_Wind_Blocks {
 	public function rest_save_combined_style_permissions( \WP_REST_Request $request ) {
 		$post_ids = (array) $request->get_param( 'postIds' );
 
+		return ! empty( $post_ids ) && $this->current_user_can_edit_posts( $post_ids );
+	}
+
+	/**
+	 * Whether the current user may edit every given post.
+	 *
+	 * @param int[] $post_ids Post IDs.
+	 * @phpstan-param list<int> $post_ids
+	 * @return bool
+	 */
+	private function current_user_can_edit_posts( array $post_ids ) {
 		foreach ( $post_ids as $post_id ) {
 			if ( ! current_user_can( 'edit_post', absint( $post_id ) ) ) {
 				return false;
 			}
 		}
 
-		return ! empty( $post_ids );
+		return true;
 	}
 
 	/**

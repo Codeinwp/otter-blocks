@@ -1588,20 +1588,8 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	}
 
 	public function test_output_late_css_compiles_head_and_late_blobs_together(): void {
-		$this->reset_style_globals();
-		$this->reset_in_query( false );
-
-		$singular = $this->make_atomic_wind_post( 'grid grid-cols-1 lg:grid-cols-4' );
-		$layout   = $this->make_atomic_wind_post( 'grid grid-cols-1' );
-		$this->set_cached_css( $singular, '.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}' );
-		$this->set_cached_css( $layout, '.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}' );
-
-		$this->go_to( get_permalink( $singular ) );
-		$this->instance->output_singular_css();
-		$this->render_tracked_block( $singular );
-		$this->render_tracked_block( $layout );
-
-		$this->instance->output_late_css();
+		$posts = $this->make_combined_page_posts();
+		$this->render_combined_page( $posts );
 
 		$this->assertStringContainsString( '.grid-cols-1{', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
 		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
@@ -1692,14 +1680,14 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Helper: a layout post with cached CSS whose box carries Block Conditions.
+	 * Helper: a layout post with cached CSS whose box carries extra attributes.
 	 *
-	 * @param string $conditions Serialized `otterConditions` attribute.
+	 * @param string $attrs Serialized attribute members, e.g. `"queryPostType":"post"`.
 	 */
-	private function make_conditional_layout( string $conditions ): int {
+	private function make_layout_with_box_attrs( string $attrs ): int {
 		$layout = $this->factory()->post->create(
 			array(
-				'post_content' => '<!-- wp:atomic-wind/box {"className":"grid grid-cols-1","otterConditions":' . $conditions . '} --><div class="wp-block-atomic-wind-box grid grid-cols-1"></div><!-- /wp:atomic-wind/box -->',
+				'post_content' => '<!-- wp:atomic-wind/box {"className":"grid grid-cols-1",' . $attrs . '} --><div class="wp-block-atomic-wind-box grid grid-cols-1"></div><!-- /wp:atomic-wind/box -->',
 			)
 		);
 		$this->set_cached_css( $layout, '.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}' );
@@ -1771,13 +1759,13 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 	public function test_output_late_css_bypasses_the_combined_cache_when_conditions_drop_markup(): void {
 		$posts           = $this->make_combined_page_posts();
-		$posts['layout'] = $this->make_conditional_layout( '[[{"type":"screenSize","screen_sizes":["mobile"]}]]' );
+		$posts['layout'] = $this->make_layout_with_box_attrs( '"otterConditions":[[{"type":"screenSize","screen_sizes":["mobile"]}]]' );
 
 		// Screen size only adds hide classes, so every visitor gets the same markup.
 		$this->render_combined_page( $posts );
 		$this->assertTrue( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
 
-		$posts['layout'] = $this->make_conditional_layout( '[[{"type":"loggedOutUser"}]]' );
+		$posts['layout'] = $this->make_layout_with_box_attrs( '"otterConditions":[[{"type":"loggedOutUser"}]]' );
 		$this->render_combined_page( $posts );
 
 		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
@@ -1791,6 +1779,16 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->set_cached_css( $posts['layout'], '.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}' );
 		$this->render_combined_page( $posts );
 
+		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+	}
+
+	public function test_output_late_css_bypasses_the_combined_cache_for_query_boxes(): void {
+		$posts           = $this->make_combined_page_posts();
+		$posts['layout'] = $this->make_layout_with_box_attrs( '"queryPostType":"post"' );
+
+		$this->render_combined_page( $posts );
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
 		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
 	}
 
