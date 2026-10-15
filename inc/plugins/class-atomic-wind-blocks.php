@@ -427,7 +427,9 @@ class Atomic_Wind_Blocks {
 	/**
 	 * Load CSS for blocks rendered after the head.
 	 *
-	 * Missing or unattributed CSS uses the generator.
+	 * Missing or unattributed CSS uses the generator, and so does a page combining
+	 * separately cached stylesheets: each restarts Tailwind's utility order, so a
+	 * later base utility would override an earlier responsive one.
 	 *
 	 * @return void
 	 */
@@ -436,26 +438,8 @@ class Atomic_Wind_Blocks {
 		$needs_generator = false;
 
 		foreach ( $this->rendered as $id => $count ) {
-			if ( ! isset( $this->expected[ $id ] ) ) {
-				$post = $id ? get_post( $id ) : null;
-
-				if ( $post instanceof \WP_Post && $this->post_has_atomic_wind_blocks( $post ) ) {
-					$this->expected[ $id ] = substr_count( $post->post_content, '<!-- wp:atomic-wind/' );
-
-					$cached_css = $this->get_cached_css( $id );
-
-					if ( $cached_css ) {
-						$hash = md5( $cached_css );
-						if ( ! isset( $this->inlined[ $hash ] ) ) {
-							$this->inlined[ $hash ] = true;
-							$blobs[]                = $cached_css;
-						}
-					} else {
-						$needs_generator = true;
-					}
-				} else {
-					$this->expected[ $id ] = 0;
-				}
+			if ( ! isset( $this->expected[ $id ] ) && $this->queue_cached_css( $id, $blobs ) ) {
+				$needs_generator = true;
 			}
 
 			if ( $count > $this->expected[ $id ] ) {
@@ -469,9 +453,44 @@ class Atomic_Wind_Blocks {
 			wp_add_inline_style( 'atomic-wind-tailwind-late', implode( "\n", $blobs ) );
 		}
 
-		if ( $needs_generator ) {
+		if ( $needs_generator || count( $this->inlined ) > 1 ) {
 			$this->enqueue_generator();
 		}
+	}
+
+	/**
+	 * Record the expected block count of a post first seen at render time and
+	 * queue its cached CSS unless already inlined.
+	 *
+	 * @param int      $id    Post ID. 0 is unknown.
+	 * @param string[] $blobs Cached CSS queued for the footer.
+	 * @phpstan-param list<string> $blobs
+	 * @return bool Whether the post has no cached CSS and needs the generator.
+	 */
+	private function queue_cached_css( $id, array &$blobs ) {
+		$post = $id ? get_post( $id ) : null;
+
+		if ( ! $post instanceof \WP_Post || ! $this->post_has_atomic_wind_blocks( $post ) ) {
+			$this->expected[ $id ] = 0;
+			return false;
+		}
+
+		$this->expected[ $id ] = substr_count( $post->post_content, '<!-- wp:atomic-wind/' );
+
+		$cached_css = $this->get_cached_css( $id );
+
+		if ( ! $cached_css ) {
+			return true;
+		}
+
+		$hash = md5( $cached_css );
+
+		if ( ! isset( $this->inlined[ $hash ] ) ) {
+			$this->inlined[ $hash ] = true;
+			$blobs[]                = $cached_css;
+		}
+
+		return false;
 	}
 
 	/**

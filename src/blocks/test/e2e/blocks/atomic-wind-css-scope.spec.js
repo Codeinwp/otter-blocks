@@ -8,7 +8,7 @@ import { publishAndViewPost } from '../helpers/editor';
 /**
  * The generated Tailwind stylesheet carries preflight, whose rules target bare
  * HTML elements, and a theme layer defining variables such as `--spacing`. It
- * is injected into the document head, so both must only reach markup inside
+ * is injected into the whole document, so both must only reach markup inside
  * Atomic Wind blocks — theme markup elsewhere keeps its own element styling and
  * its own variables.
  */

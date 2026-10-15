@@ -120,7 +120,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		.then( async () => {
 			await createCompiler();
 			await build( 'full' );
-			document.head.append( sheet );
+			// After every cached stylesheet, footer ones included, so its single ordered compile wins.
+			document.body.append( sheet );
 			document.dispatchEvent( new CustomEvent( 'atomic-wind:css-ready' ) );
 		} )
 		.catch( console.error );
