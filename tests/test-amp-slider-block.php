@@ -100,7 +100,7 @@ class Test_AMP_Slider_Block extends WP_UnitTestCase {
 	/**
 	 * The block `id` cannot break out of the carousel `id` attribute.
 	 */
-	public function test_amp_slider_escapes_id_attribute() {
+	public function test_amp_slider_escapes_id_attribute(): void {
 		$this->assertSame(
 			$this->expected_carousel( 'x&quot; onmouseover=&quot;alert(1)' ),
 			$this->render_slider( 'x" onmouseover="alert(1)' )
@@ -110,7 +110,7 @@ class Test_AMP_Slider_Block extends WP_UnitTestCase {
 	/**
 	 * Malformed markup must not stall the request in the HTML parser.
 	 */
-	public function test_amp_slider_parses_malformed_markup_quickly() {
+	public function test_amp_slider_parses_malformed_markup_quickly(): void {
 		$malformed = str_repeat( 'x', 200000 ) . str_repeat( '<img src="a.jpg" alt=x"y"z/>', 16000 );
 
 		$start  = microtime( true );
