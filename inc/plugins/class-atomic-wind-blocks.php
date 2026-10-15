@@ -513,6 +513,11 @@ class Atomic_Wind_Blocks {
 		foreach ( $this->inlined as $post_id ) {
 			$content = (string) get_post_field( 'post_content', $post_id );
 
+			// Only the current page or the teaser renders.
+			if ( preg_match( '/<!--(nextpage|more)\b/', $content ) ) {
+				return true;
+			}
+
 			if ( preg_match( '/"(otterConditions|queryPostType)"/', $content ) && $this->blocks_markup_varies( parse_blocks( $content ) ) ) {
 				return true;
 			}

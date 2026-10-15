@@ -1653,13 +1653,14 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	 * Helper: render the singular post with the layout post after it, up to the footer CSS.
 	 *
 	 * @param array{singular: int, layout: int} $posts Posts from make_combined_page_posts().
+	 * @param int                               $page  Page of the singular post.
 	 */
-	private function render_combined_page( array $posts ): void {
+	private function render_combined_page( array $posts, int $page = 1 ): void {
 		$this->reset_style_globals();
 		$this->reset_in_query( false );
 		$this->instance = new Atomic_Wind_Blocks();
 
-		$this->go_to( get_permalink( $posts['singular'] ) );
+		$this->go_to( add_query_arg( 'page', $page, get_permalink( $posts['singular'] ) ) );
 		$this->instance->output_singular_css();
 		$this->render_tracked_block( $posts['singular'] );
 		$this->render_tracked_block( $posts['layout'] );
@@ -1787,6 +1788,40 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$posts['layout'] = $this->make_layout_with_box_attrs( '"queryPostType":"post"' );
 
 		$this->render_combined_page( $posts );
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+	}
+
+	/**
+	 * @return array<string, array{0: string, 1: int}>
+	 */
+	public function data_partially_rendered_posts(): array {
+		return array(
+			'page 2 of a paged post' => array( '<!-- wp:nextpage --><!--nextpage--><!-- /wp:nextpage -->', 2 ),
+			'teaser before more'     => array( '<!-- wp:more --><!--more--><!-- /wp:more -->', 1 ),
+		);
+	}
+
+	/**
+	 * @dataProvider data_partially_rendered_posts
+	 *
+	 * @param string $separator Block markup splitting the post.
+	 * @param int    $page      Page of the singular post.
+	 */
+	public function test_output_late_css_bypasses_the_combined_cache_for_partially_rendered_posts( string $separator, int $page ): void {
+		$posts = $this->make_combined_page_posts();
+		$box   = get_post_field( 'post_content', $posts['singular'] );
+		wp_update_post(
+			array(
+				'ID'           => $posts['singular'],
+				'post_content' => $box . $separator . $box,
+			)
+		);
+		// Saving cleared the post's cached CSS.
+		$this->set_cached_css( $posts['singular'], '.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}' );
+
+		$this->render_combined_page( $posts, $page );
 
 		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
 		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
