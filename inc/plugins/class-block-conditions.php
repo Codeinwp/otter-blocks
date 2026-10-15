@@ -22,7 +22,7 @@ class Block_Conditions {
 	protected static $instance = null;
 
 	/**
-	 * One entry per REST dispatch in progress: whether it is an editor's edit-context request.
+	 * One entry per REST dispatch in progress: whether it is an editor previewing content.
 	 *
 	 * @var list<bool>
 	 */

@@ -16,24 +16,26 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 	const CONTENT = '<!-- wp:paragraph {"otterConditions":[[{"type":"userRoles","roles":["administrator"]}]]} --><p>SECRET</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>PUBLIC</p><!-- /wp:paragraph -->';
 
 	/**
-	 * Only an editor's edit-context REST request skips conditions; view-context renders apply them.
+	 * Drop the REST server built for the test.
+	 */
+	public function tear_down(): void {
+		$GLOBALS['wp_rest_server'] = null;
+
+		parent::tear_down();
+	}
+
+	/**
+	 * On the posts endpoint, only an editor's edit-context request skips conditions; view-context renders apply them.
 	 */
 	public function test_rest_render_applies_conditions_outside_edit_context(): void {
-		$previous_user = get_current_user_id();
-		$post_id       = self::factory()->post->create( array( 'post_content' => self::CONTENT ) );
-		$editor_id     = self::factory()->user->create( array( 'role' => 'editor' ) );
+		$post_id = self::factory()->post->create( array( 'post_content' => self::CONTENT ) );
 
-		try {
-			wp_set_current_user( 0 );
-			$visitor = $this->get_post_over_rest( $post_id, 'view' );
+		wp_set_current_user( 0 );
+		$visitor = $this->get_post_over_rest( $post_id, 'view' );
 
-			wp_set_current_user( $editor_id );
-			$editor_view = $this->get_post_over_rest( $post_id, 'view' );
-			$editor_edit = $this->get_post_over_rest( $post_id, 'edit' );
-		} finally {
-			wp_set_current_user( $previous_user );
-			$GLOBALS['wp_rest_server'] = null;
-		}
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		$editor_view = $this->get_post_over_rest( $post_id, 'view' );
+		$editor_edit = $this->get_post_over_rest( $post_id, 'edit' );
 
 		$this->assertStringNotContainsString( 'SECRET', $visitor['content']['rendered'] );
 		$this->assertStringNotContainsString( 'SECRET', $visitor['excerpt']['rendered'] );
@@ -46,7 +48,6 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 	 * Admin-ajax serves front-end requests too, so it gets no bypass.
 	 */
 	public function test_admin_ajax_render_applies_conditions(): void {
-		$previous_user = get_current_user_id();
 		wp_set_current_user( 0 );
 		add_filter( 'wp_doing_ajax', '__return_true' );
 		set_current_screen( 'dashboard' );
@@ -55,7 +56,6 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 			$output = do_blocks( self::CONTENT );
 		} finally {
 			$GLOBALS['current_screen'] = null;
-			wp_set_current_user( $previous_user );
 		}
 
 		$this->assertStringNotContainsString( 'SECRET', $output );
@@ -80,21 +80,14 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 	 * The Post Content preview passes the post ID as `context`; editing that post skips conditions, visitors stay filtered.
 	 */
 	public function test_dynamic_preview_skips_conditions_only_for_post_editors(): void {
-		$previous_user = get_current_user_id();
-		$post_id       = self::factory()->post->create( array( 'post_content' => self::CONTENT ) );
-		$editor_id     = self::factory()->user->create( array( 'role' => 'editor' ) );
+		$post_id = self::factory()->post->create( array( 'post_content' => self::CONTENT ) );
 		$this->go_to( get_permalink( $post_id ) );
 
-		try {
-			wp_set_current_user( $editor_id );
-			$editor = $this->preview_post_content( $post_id );
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		$editor = $this->preview_post_content( $post_id );
 
-			wp_set_current_user( 0 );
-			$visitor = $this->preview_post_content( $post_id );
-		} finally {
-			wp_set_current_user( $previous_user );
-			$GLOBALS['wp_rest_server'] = null;
-		}
+		wp_set_current_user( 0 );
+		$visitor = $this->preview_post_content( $post_id );
 
 		$this->assertStringContainsString( 'SECRET', $editor );
 		$this->assertStringNotContainsString( 'SECRET', $visitor );
@@ -105,18 +98,12 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 	 * A visitor's `context=edit` on a route that does not validate it still gets conditions applied.
 	 */
 	public function test_visitor_edit_context_request_applies_conditions(): void {
-		$previous_user = get_current_user_id();
 		$this->register_render_routes();
 
-		try {
-			wp_set_current_user( 0 );
-			$request = new WP_REST_Request( 'GET', '/otter-test/v1/render' );
-			$request->set_param( 'context', 'edit' );
-			$output = (string) rest_get_server()->dispatch( $request )->get_data();
-		} finally {
-			wp_set_current_user( $previous_user );
-			$GLOBALS['wp_rest_server'] = null;
-		}
+		wp_set_current_user( 0 );
+		$request = new WP_REST_Request( 'GET', '/otter-test/v1/render' );
+		$request->set_param( 'context', 'edit' );
+		$output = (string) rest_get_server()->dispatch( $request )->get_data();
 
 		$this->assertStringNotContainsString( 'SECRET', $output );
 		$this->assertStringContainsString( 'PUBLIC', $output );
@@ -126,18 +113,12 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 	 * A view-context request nested in an editor's edit-context request is filtered, and the outer render is not.
 	 */
 	public function test_nested_view_request_inside_edit_request_applies_conditions(): void {
-		$previous_user = get_current_user_id();
 		$this->register_render_routes();
 
-		try {
-			wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
-			$request = new WP_REST_Request( 'GET', '/otter-test/v1/nested' );
-			$request->set_param( 'context', 'edit' );
-			$data = rest_get_server()->dispatch( $request )->get_data();
-		} finally {
-			wp_set_current_user( $previous_user );
-			$GLOBALS['wp_rest_server'] = null;
-		}
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		$request = new WP_REST_Request( 'GET', '/otter-test/v1/nested' );
+		$request->set_param( 'context', 'edit' );
+		$data = rest_get_server()->dispatch( $request )->get_data();
 
 		$this->assertStringNotContainsString( 'SECRET', $data['inner'] );
 		$this->assertStringContainsString( 'SECRET', $data['outer'] );
