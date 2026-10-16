@@ -60,6 +60,7 @@ const SERIAL_SPECS = [
 	'**/blocks/atomic-wind-list-view.spec.js',
 	'**/blocks/atomic-wind-css-scope.spec.js',
 	'**/blocks/atomic-wind-hide-conditions.spec.js',
+	'**/blocks/atomic-wind-late-css.spec.js',
 
 	// Mutates the shared admin user's metabox order and editor preferences.
 	'**/blocks/woocommerce-builder.spec.js',
