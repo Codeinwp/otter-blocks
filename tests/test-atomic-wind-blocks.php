@@ -1720,9 +1720,9 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	/**
 	 * Helper: POST a combined stylesheet.
 	 *
-	 * @param list<int>                     $post_ids  Contributing posts.
-	 * @param string|array<mixed>|bool|int $css       Compiled CSS, or a malformed value.
-	 * @param string                        $cache_key Key the page was rendered with.
+	 * @param list<int>                      $post_ids  Contributing posts.
+	 * @param string|array<string>|true|int $css       Compiled CSS, or a malformed value.
+	 * @param string                         $cache_key Key the page was rendered with.
 	 */
 	private function save_combined_style( array $post_ids, $css, string $cache_key ): WP_REST_Response {
 		return $this->post_atomic_wind_route(
@@ -1736,7 +1736,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @return array<string, array{0: array<mixed>|bool|int}>
+	 * @return array<string, array{0: array<string>|true|int}>
 	 */
 	public function data_css_that_is_not_text(): array {
 		return array(
@@ -1750,7 +1750,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	/**
 	 * @dataProvider data_css_that_is_not_text
 	 *
-	 * @param array<mixed>|bool|int $css Malformed CSS value.
+	 * @param array<string>|true|int $css Malformed CSS value.
 	 */
 	public function test_combined_style_save_rejects_css_that_is_not_text( $css ): void {
 		$posts = $this->make_combined_page_posts();
@@ -1766,7 +1766,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	/**
 	 * @dataProvider data_css_that_is_not_text
 	 *
-	 * @param array<mixed>|bool|int $css Malformed CSS value.
+	 * @param array<string>|true|int $css Malformed CSS value.
 	 */
 	public function test_style_save_rejects_css_that_is_not_text( $css ): void {
 		$post_id = $this->make_atomic_wind_post( 'flex' );
@@ -1931,6 +1931,45 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		} finally {
 			unset( $_COOKIE[ $cookie ] );
 		}
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+	}
+
+	/**
+	 * @return array<string, array{0: string}>
+	 */
+	public function data_referenced_content_blocks(): array {
+		return array(
+			'synced pattern'    => array( '<!-- wp:block {"ref":%d} /-->' ),
+			'pattern reference' => array( '<!-- wp:pattern {"slug":"otter-e2e/referenced-inner"} /-->' ),
+			'template part'     => array( '<!-- wp:template-part {"slug":"footer"} /-->' ),
+		);
+	}
+
+	/**
+	 * @dataProvider data_referenced_content_blocks
+	 *
+	 * @param string $reference Block markup rendering content stored elsewhere; `%d` is a synced pattern ID.
+	 */
+	public function test_output_late_css_bypasses_the_combined_cache_for_referenced_content( string $reference ): void {
+		$pattern = $this->factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => '<!-- wp:group {"className":"grid md:grid-cols-2","otterConditions":[[{"type":"userRoles","roles":["administrator"]}]]} --><div class="wp-block-group grid md:grid-cols-2"></div><!-- /wp:group -->',
+			)
+		);
+
+		$posts           = $this->make_combined_page_posts();
+		$posts['layout'] = $this->factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:atomic-wind/box {"className":"grid grid-cols-1"} --><div class="wp-block-atomic-wind-box grid grid-cols-1">' . sprintf( $reference, $pattern ) . '</div><!-- /wp:atomic-wind/box -->',
+			)
+		);
+		$this->set_cached_css( $posts['layout'], '.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}' );
+
+		$this->render_combined_page( $posts );
 
 		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
 		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
