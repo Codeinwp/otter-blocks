@@ -1893,6 +1893,49 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
 	}
 
+	/**
+	 * @return array<string, array{0: bool}>
+	 */
+	public function data_password_visits(): array {
+		return array(
+			'locked'   => array( false ),
+			'unlocked' => array( true ),
+		);
+	}
+
+	/**
+	 * @dataProvider data_password_visits
+	 *
+	 * @param bool $unlocked Whether the visitor entered the post password.
+	 */
+	public function test_output_late_css_bypasses_the_combined_cache_for_password_protected_posts( bool $unlocked ): void {
+		$posts = $this->make_combined_page_posts();
+		wp_update_post(
+			array(
+				'ID'            => $posts['singular'],
+				'post_password' => 'secret',
+			)
+		);
+		// Saving cleared the post's cached CSS.
+		$this->set_cached_css( $posts['singular'], '.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}' );
+
+		$cookie = 'wp-postpass_' . COOKIEHASH;
+		if ( $unlocked ) {
+			require_once ABSPATH . WPINC . '/class-phpass.php';
+			$_COOKIE[ $cookie ] = ( new PasswordHash( 8, true ) )->HashPassword( 'secret' );
+		}
+
+		try {
+			$this->assertSame( ! $unlocked, post_password_required( $posts['singular'] ) );
+			$this->render_combined_page( $posts );
+		} finally {
+			unset( $_COOKIE[ $cookie ] );
+		}
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+	}
+
 	public function test_combined_style_save_requires_edit_rights_on_every_post(): void {
 		$posts  = $this->make_combined_page_posts();
 		$author = $this->factory()->user->create( array( 'role' => 'author' ) );

@@ -513,8 +513,8 @@ class Atomic_Wind_Blocks {
 		foreach ( $this->inlined as $post_id ) {
 			$content = (string) get_post_field( 'post_content', $post_id );
 
-			// Only the current page or the teaser renders.
-			if ( preg_match( '/<!--(nextpage|more)\b/', $content ) ) {
+			// Only the current page, the teaser or the password form renders.
+			if ( preg_match( '/<!--(nextpage|more)\b/', $content ) || '' !== (string) get_post_field( 'post_password', $post_id ) ) {
 				return true;
 			}
 
