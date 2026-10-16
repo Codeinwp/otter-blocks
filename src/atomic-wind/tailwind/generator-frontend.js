@@ -5,6 +5,7 @@ import preflightCSS from 'tailwindcss/preflight.css';
 import themeCSS from 'tailwindcss/theme.css';
 import utilitiesCSS from 'tailwindcss/utilities.css';
 import { scopeToAtomicWind } from './scope-css';
+import { collectNewCandidates } from './candidates';
 
 const assets = {
 	index: indexCSS,
@@ -57,16 +58,12 @@ async function build( kind ) {
 		return;
 	}
 
-	const newClasses = new Set();
-
-	for ( const el of document.querySelectorAll( '[class]' ) ) {
-		for ( const c of el.classList ) {
-			if ( ! classes.has( c ) ) {
-				classes.add( c );
-				newClasses.add( c );
-			}
-		}
-	}
+	// Tokens the server rendered, so a stylesheet saved from this compile covers them.
+	const newClasses = collectNewCandidates(
+		document.querySelectorAll( '[class]' ),
+		classes,
+		window.atomicWindGenerator?.candidates
+	);
 
 	if ( newClasses.size === 0 && kind === 'incremental' ) {
 		return;

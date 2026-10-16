@@ -36,7 +36,7 @@ describe( 'style builder', () => {
 	it( 'saves the combined stylesheet without a post to save to', async () => {
 		const calls = await buildStyles(
 			{ postId: '0', restUrl: '/wp-json/otter/v1/atomic-wind', nonce: 'n' },
-			{ postIds: [ 4, 9 ], cacheKey: 'atomic_wind_css_key' }
+			{ postIds: [ 4, 9 ], tokensHash: 'hash', signature: 'signed' }
 		);
 
 		expect( calls ).toHaveLength( 1 );
@@ -44,14 +44,15 @@ describe( 'style builder', () => {
 		expect( JSON.parse( calls[ 0 ][ 1 ].body ) ).toEqual( {
 			css: '.flex{display:flex}',
 			postIds: [ 4, 9 ],
-			cacheKey: 'atomic_wind_css_key',
+			tokensHash: 'hash',
+			signature: 'signed',
 		} );
 	} );
 
 	it( 'saves the post and the combined stylesheet from one compile', async () => {
 		const calls = await buildStyles(
 			{ postId: '4', restUrl: '/wp-json/otter/v1/atomic-wind', nonce: 'n' },
-			{ postIds: [ 7, 9 ], cacheKey: 'atomic_wind_css_key' }
+			{ postIds: [ 7, 9 ], tokensHash: 'hash', signature: 'signed' }
 		);
 
 		expect( calls.map( ( [ url ] ) => url ) ).toEqual( [

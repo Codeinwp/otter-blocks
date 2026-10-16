@@ -39,8 +39,8 @@ document.addEventListener( 'atomic-wind:css-ready', () => {
 	}
 
 	if ( window.atomicWindCombinedStyle ) {
-		const { postIds, cacheKey } = window.atomicWindCombinedStyle;
-		saves.push( save( 'combined-style', { css, postIds, cacheKey } ) );
+		const { postIds, tokensHash, signature } = window.atomicWindCombinedStyle;
+		saves.push( save( 'combined-style', { css, postIds, tokensHash, signature } ) );
 	}
 
 	Promise.all( saves ).finally( signalDone );
