@@ -479,7 +479,7 @@ class Form_Server {
 			$email_body    = apply_filters( 'otter_form_email_build_body', $email_message );
 
 			// Sent the form date to the admin site as a default behavior.
-			$to         = sanitize_email( get_site_option( 'admin_email' ) );
+			$to         = sanitize_email( get_option( 'admin_email' ) );
 			$from_email = $to;
 
 			// Check if we need to send it to another user email.
@@ -494,7 +494,7 @@ class Form_Server {
 				}
 
 				if ( empty( $to ) ) {
-					$to = sanitize_email( get_site_option( 'admin_email' ) );
+					$to = sanitize_email( get_option( 'admin_email' ) );
 				}
 
 				if ( $form_options->has_from_email() && '' !== $form_options->get_from_email() ) {
@@ -799,7 +799,7 @@ class Form_Server {
 		$email_message = Form_Email::instance()->build_error_email( $form_data );
 		$email_body    = apply_filters( 'otter_form_email_build_body_error', $email_message );
 		// Sent the form date to the admin site as a default behaviour.
-		$to      = sanitize_email( get_site_option( 'admin_email' ) );
+		$to      = sanitize_email( get_option( 'admin_email' ) );
 		$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
 		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
 		return wp_mail( $to, $email_subject, $email_body, $headers );
@@ -818,7 +818,7 @@ class Form_Server {
 			$email_subject = ( __( 'Test email for Otter Form from ', 'otter-blocks' ) . get_bloginfo( 'name', 'display' ) );
 			$email_body    = Form_Email::instance()->build_test_email( $form_data );
 			// Sent the form date to the admin site as a default behaviour.
-			$to = sanitize_email( get_site_option( 'admin_email' ) );
+			$to = sanitize_email( get_option( 'admin_email' ) );
 			if ( $form_data->payload_has( 'to' ) && '' !== $form_data->get_data_from_payload( 'to' ) ) {
 				$to = sanitize_email( $form_data->get_data_from_payload( 'to' ) );
 			}
