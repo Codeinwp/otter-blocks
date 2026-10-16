@@ -409,6 +409,10 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_products_in_cart( $condition ) {
+		if ( ! ( \WC()->cart instanceof \WC_Cart ) ) { // @phpstan-ignore instanceof.alwaysTrue (WooCommerce leaves the cart null outside front-end requests.)
+			return false;
+		}
+
 		if ( 'products' === $condition['on'] && isset( $condition['products'] ) ) {
 			foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 				if ( in_array( $cart_item['product_id'], $condition['products'], true ) ) {
