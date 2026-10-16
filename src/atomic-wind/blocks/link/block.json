@@ -6,7 +6,7 @@
 	"category": "atomic-wind",
 	"description": "An anchor element with link picker and rich text.",
 	"keywords": [ "link", "anchor", "url" ],
-	"textdomain": "atomic-wind",
+	"textdomain": "otter-blocks",
 	"attributes": {
 		"url": {
 			"type": "string",

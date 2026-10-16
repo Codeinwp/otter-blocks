@@ -5,10 +5,7 @@ import edit from './edit';
 import save from './save';
 import { boxLabel } from '../labels';
 
-const { name, ...settings } = metadata;
-
-registerBlockType( name, {
-	...settings,
+registerBlockType( metadata, {
 	icon,
 	edit,
 	save,

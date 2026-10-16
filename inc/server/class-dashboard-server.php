@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use ThemeIsle\GutenbergBlocks\Base_CSS;
 use ThemeIsle\GutenbergBlocks\Tracker;
 
 /**
@@ -134,12 +135,9 @@ class Dashboard_Server {
 			);
 		}
 
-		$transient_deleted = false;
-
-		if ( get_transient( 'otter_animations_parsed' ) ) {
-			delete_transient( 'otter_animations_parsed' );
-			$transient_deleted = true;
-		}
+		// The legacy cache holds parser objects; reading it would load them.
+		$legacy_deleted    = delete_transient( 'otter_animations_parsed' );
+		$transient_deleted = delete_transient( Base_CSS::ANIMATION_RULES_TRANSIENT ) || $legacy_deleted;
 
 
 		if ( ! is_dir( $basedir ) ) {

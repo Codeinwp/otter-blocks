@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use ThemeIsle\GutenbergBlocks\Base_CSS;
 use ThemeIsle\GutenbergBlocks\Pro;
 use ThemeIsle\GutenbergBlocks\Plugins\FSE_Onboarding;
 use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
@@ -469,7 +470,7 @@ class Dashboard {
 		$global_data = array(
 			'version'                => OTTER_BLOCKS_VERSION,
 			'assetsPath'             => OTTER_BLOCKS_URL . 'assets/',
-			'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
+			'stylesExist'            => is_dir( $basedir ) || boolval( get_transient( Base_CSS::ANIMATION_RULES_TRANSIENT ) ),
 			'hasPro'                 => Pro::is_pro_installed(),
 			'otterPage'              => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/', 'welcome', 'admin' ) ),
 			'upgradeLink'            => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ) ),

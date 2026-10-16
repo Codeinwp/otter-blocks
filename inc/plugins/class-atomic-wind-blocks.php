@@ -20,7 +20,7 @@ class Atomic_Wind_Blocks {
 	 *
 	 * @var string
 	 */
-	const ATOMIC_WIND_CSS_VERSION = '1.0.0';
+	const ATOMIC_WIND_CSS_VERSION = '1.0.1';
 
 	/**
 	 * Whether we are currently inside a query loop render.
@@ -44,11 +44,18 @@ class Atomic_Wind_Blocks {
 	private $rendered = array();
 
 	/**
-	 * Hashes of inlined CSS.
+	 * Post IDs by hash of their inlined CSS.
 	 *
-	 * @var array<string, bool>
+	 * @var array<string, int>
 	 */
 	private $inlined = array();
+
+	/**
+	 * Class tokens of the Atomic Wind markup rendered so far, as keys.
+	 *
+	 * @var array<string, true>
+	 */
+	private $rendered_tokens = array();
 
 	/**
 	 * Initialize the module.
@@ -85,6 +92,8 @@ class Atomic_Wind_Blocks {
 		add_filter( 'render_block', array( $this, 'render_animation_attrs' ), 10, 2 );
 		add_filter( 'render_block', array( $this, 'render_state_attrs' ), 10, 2 );
 		add_filter( 'render_block', array( $this, 'track_rendered_blocks' ), 10, 2 );
+		add_filter( 'render_block', array( $this, 'collect_block_tokens' ), PHP_INT_MAX, 2 );
+		add_filter( 'the_content', array( $this, 'collect_content_tokens' ), PHP_INT_MAX );
 		add_action( 'wp_footer', array( $this, 'output_late_css' ), 19 );
 		add_action( 'template_redirect', array( $this, 'maybe_render_css_warm_page' ), 0 );
 		add_action( 'save_post', array( $this, 'clear_cached_css' ) );
@@ -340,7 +349,7 @@ class Atomic_Wind_Blocks {
 			return;
 		}
 
-		$this->inlined[ md5( $cached_css ) ] = true;
+		$this->inlined[ md5( $cached_css ) ] = $queried->ID;
 		wp_register_style( 'atomic-wind-tailwind', false, [], OTTER_BLOCKS_VERSION );
 		wp_enqueue_style( 'atomic-wind-tailwind' );
 		wp_add_inline_style( 'atomic-wind-tailwind', $cached_css );
@@ -365,10 +374,20 @@ class Atomic_Wind_Blocks {
 			return;
 		}
 
+		$this->enqueue_style_builder( $queried->ID );
+	}
+
+	/**
+	 * Enqueue the script that saves the generator's CSS.
+	 *
+	 * @param int $post_id Post to save it to, 0 for none.
+	 * @return bool Whether the script is enqueued.
+	 */
+	private function enqueue_style_builder( $post_id ) {
 		$builder_asset = $this->build_path() . '/style-builder.asset.php';
 
 		if ( ! file_exists( $builder_asset ) ) {
-			return;
+			return false;
 		}
 
 		$sb = include $builder_asset;
@@ -384,11 +403,13 @@ class Atomic_Wind_Blocks {
 			'atomic-wind-style-builder',
 			'atomicWindStyleBuilder',
 			array(
-				'postId'  => $queried->ID,
+				'postId'  => $post_id,
 				'restUrl' => rest_url( 'otter/v1/atomic-wind' ),
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 			)
 		);
+
+		return true;
 	}
 
 	/**
@@ -425,9 +446,79 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
+	 * Record the class tokens of an Atomic Wind block's final markup.
+	 *
+	 * Runs last, after Block Conditions and the other filters on this block. Markup
+	 * an ancestor drops later stays counted, which is safe: the compile covers
+	 * every counted token.
+	 *
+	 * @param string               $block_content Block content.
+	 * @param array<string, mixed> $block         Block data.
+	 * @return string
+	 */
+	public function collect_block_tokens( $block_content, $block ) {
+		$block_name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
+
+		if ( 0 === strpos( $block_name, 'atomic-wind/' ) ) {
+			$this->collect_tokens( $block_content );
+		}
+
+		return $block_content;
+	}
+
+	/**
+	 * Record the class tokens of content holding Atomic Wind markup, after
+	 * shortcodes and the other content filters ran.
+	 *
+	 * @param string $content Post content.
+	 * @return string
+	 */
+	public function collect_content_tokens( $content ) {
+		if ( false !== strpos( $content, 'wp-block-atomic-wind-' ) ) {
+			$this->collect_tokens( $content );
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Add the class tokens of frontend markup to the rendered set.
+	 *
+	 * @param string $html Rendered markup.
+	 * @return void
+	 */
+	private function collect_tokens( $html ) {
+		if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			return;
+		}
+
+		$tags = new \WP_HTML_Tag_Processor( $html );
+
+		while ( $tags->next_tag() ) {
+			$class = $tags->get_attribute( 'class' );
+
+			foreach ( is_string( $class ) ? preg_split( '/\s+/', $class, -1, PREG_SPLIT_NO_EMPTY ) : array() as $token ) {
+				$this->rendered_tokens[ $token ] = true;
+			}
+		}
+	}
+
+	/**
+	 * Class tokens of the Atomic Wind markup rendered so far.
+	 *
+	 * @return list<string>
+	 */
+	private function rendered_tokens() {
+		return array_map( 'strval', array_keys( $this->rendered_tokens ) );
+	}
+
+	/**
 	 * Load CSS for blocks rendered after the head.
 	 *
-	 * Missing or unattributed CSS uses the generator.
+	 * Missing or unattributed CSS uses the generator. Separately cached stylesheets
+	 * each restart Tailwind's utility order, so a later base utility would override
+	 * an earlier responsive one: a page combining them gets their cached combined
+	 * stylesheet when one applies, or the generator.
 	 *
 	 * @return void
 	 */
@@ -436,31 +527,17 @@ class Atomic_Wind_Blocks {
 		$needs_generator = false;
 
 		foreach ( $this->rendered as $id => $count ) {
-			if ( ! isset( $this->expected[ $id ] ) ) {
-				$post = $id ? get_post( $id ) : null;
-
-				if ( $post instanceof \WP_Post && $this->post_has_atomic_wind_blocks( $post ) ) {
-					$this->expected[ $id ] = substr_count( $post->post_content, '<!-- wp:atomic-wind/' );
-
-					$cached_css = $this->get_cached_css( $id );
-
-					if ( $cached_css ) {
-						$hash = md5( $cached_css );
-						if ( ! isset( $this->inlined[ $hash ] ) ) {
-							$this->inlined[ $hash ] = true;
-							$blobs[]                = $cached_css;
-						}
-					} else {
-						$needs_generator = true;
-					}
-				} else {
-					$this->expected[ $id ] = 0;
-				}
+			if ( ! isset( $this->expected[ $id ] ) && $this->queue_cached_css( $id, $blobs ) ) {
+				$needs_generator = true;
 			}
 
 			if ( $count > $this->expected[ $id ] ) {
 				$needs_generator = true;
 			}
+		}
+
+		if ( count( $this->inlined ) > 1 && ! $this->queue_combined_css( $blobs ) ) {
+			$needs_generator = true;
 		}
 
 		if ( ! empty( $blobs ) ) {
@@ -472,6 +549,139 @@ class Atomic_Wind_Blocks {
 		if ( $needs_generator ) {
 			$this->enqueue_generator();
 		}
+	}
+
+	/**
+	 * Swap the queued stylesheets for the cached combined one, or have an
+	 * editor's generator run cache it.
+	 *
+	 * The key includes the rendered class tokens, so a request rendering other
+	 * markup, from any block or filter, never gets another request's compile.
+	 *
+	 * @param string[] $blobs Cached CSS queued for the footer.
+	 * @phpstan-param list<string> $blobs
+	 * @return bool Whether the combined stylesheet is cached.
+	 */
+	private function queue_combined_css( array &$blobs ) {
+		$tokens    = $this->rendered_tokens();
+		$cache_key = $this->combined_css_key( $this->inlined, $this->tokens_hash( $tokens ) );
+		$combined  = get_transient( $cache_key );
+
+		if ( is_string( $combined ) && '' !== $combined ) {
+			$blobs = array( $combined );
+			return true;
+		}
+
+		$this->maybe_enqueue_combined_style_builder( $cache_key, $tokens );
+
+		return false;
+	}
+
+	/**
+	 * Enqueue the style builder to cache the combined stylesheet when the user
+	 * may edit every post contributing to it.
+	 *
+	 * The generator also compiles the rendered tokens, so the saved stylesheet
+	 * covers them even if a script changed the markup first.
+	 *
+	 * @param string   $cache_key Key of the combined stylesheet this page renders.
+	 * @param string[] $tokens    Rendered class tokens.
+	 * @phpstan-param list<string> $tokens
+	 * @return void
+	 */
+	private function maybe_enqueue_combined_style_builder( $cache_key, array $tokens ) {
+		$post_ids = array_values( $this->inlined );
+
+		if ( ! $this->current_user_can_edit_posts( $post_ids ) ) {
+			return;
+		}
+
+		if ( ! wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) && ! $this->enqueue_style_builder( 0 ) ) {
+			return;
+		}
+
+		$this->enqueue_generator();
+		wp_localize_script( 'atomic-wind-tailwind-generator', 'atomicWindGenerator', array( 'candidates' => $tokens ) );
+		wp_localize_script(
+			'atomic-wind-style-builder',
+			'atomicWindCombinedStyle',
+			array(
+				'postIds'    => $post_ids,
+				'tokensHash' => $this->tokens_hash( $tokens ),
+				'signature'  => wp_hash( $cache_key ),
+			)
+		);
+	}
+
+	/**
+	 * Order-independent hash of class tokens.
+	 *
+	 * @param string[] $tokens Class tokens.
+	 * @phpstan-param list<string> $tokens
+	 * @return string
+	 */
+	private function tokens_hash( array $tokens ) {
+		sort( $tokens, SORT_STRING );
+
+		return md5( implode( ' ', $tokens ) );
+	}
+
+	/**
+	 * Transient key of the combined stylesheet for a set of cached stylesheets
+	 * and the class tokens rendered with them.
+	 *
+	 * Keyed by each post and its CSS: editing a post retires the entry, and
+	 * copying other posts' CSS cannot write the entry served with them.
+	 *
+	 * @param array<string, int> $post_ids_by_hash Post IDs by hash of their cached CSS.
+	 * @param string             $tokens_hash      Hash of the rendered class tokens.
+	 * @return string
+	 */
+	private function combined_css_key( array $post_ids_by_hash, $tokens_hash ) {
+		$parts = array();
+
+		foreach ( $post_ids_by_hash as $hash => $post_id ) {
+			$parts[] = $hash . ':' . $post_id;
+		}
+
+		sort( $parts, SORT_STRING );
+
+		return 'atomic_wind_css_' . md5( implode( ',', $parts ) . '|' . $tokens_hash );
+	}
+
+	/**
+	 * Record the expected block count of a post first seen at render time and
+	 * queue its cached CSS unless already inlined.
+	 *
+	 * @param int      $id    Post ID. 0 is unknown.
+	 * @param string[] $blobs Cached CSS queued for the footer.
+	 * @phpstan-param list<string> $blobs
+	 * @return bool Whether the post has no cached CSS and needs the generator.
+	 */
+	private function queue_cached_css( $id, array &$blobs ) {
+		$post = $id ? get_post( $id ) : null;
+
+		if ( ! $post instanceof \WP_Post || ! $this->post_has_atomic_wind_blocks( $post ) ) {
+			$this->expected[ $id ] = 0;
+			return false;
+		}
+
+		$this->expected[ $id ] = substr_count( $post->post_content, '<!-- wp:atomic-wind/' );
+
+		$cached_css = $this->get_cached_css( $id );
+
+		if ( ! $cached_css ) {
+			return true;
+		}
+
+		$hash = md5( $cached_css );
+
+		if ( ! isset( $this->inlined[ $hash ] ) ) {
+			$this->inlined[ $hash ] = $id;
+			$blobs[]                = $cached_css;
+		}
+
+		return false;
 	}
 
 	/**
@@ -491,6 +701,7 @@ class Atomic_Wind_Blocks {
 					'css'    => array(
 						'type'              => 'string',
 						'required'          => true,
+						'validate_callback' => 'rest_validate_request_arg',
 						'sanitize_callback' => array( $this, 'sanitize_css' ),
 					),
 					'postId' => array(
@@ -500,6 +711,110 @@ class Atomic_Wind_Blocks {
 				),
 			) 
 		);
+
+		register_rest_route(
+			'otter/v1',
+			'/atomic-wind/combined-style',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'rest_save_combined_style' ),
+				'permission_callback' => array( $this, 'rest_save_combined_style_permissions' ),
+				'args'                => array(
+					'css'        => array(
+						'type'              => 'string',
+						'required'          => true,
+						'validate_callback' => 'rest_validate_request_arg',
+						'sanitize_callback' => array( $this, 'sanitize_css' ),
+					),
+					'postIds'    => array(
+						'type'     => 'array',
+						'items'    => array( 'type' => 'integer' ),
+						'minItems' => 2,
+						'required' => true,
+					),
+					'tokensHash' => array(
+						'type'     => 'string',
+						'pattern'  => '^[0-9a-f]{32}$',
+						'required' => true,
+					),
+					'signature'  => array(
+						'type'     => 'string',
+						'required' => true,
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * REST callback: cache the combined stylesheet of posts rendered together.
+	 *
+	 * The key is rebuilt from the posts' current cached CSS and the page's tokens
+	 * hash, and must carry the signature the page was rendered with: a client can
+	 * neither pick the combination or tokens it writes, nor save a compile of
+	 * since-changed CSS.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @phpstan-param \WP_REST_Request<array{css: string, postIds: list<int>, tokensHash: string, signature: string}> $request
+	 * @return \WP_REST_Response
+	 */
+	public function rest_save_combined_style( \WP_REST_Request $request ) {
+		$post_ids_by_hash = array();
+
+		foreach ( $request->get_param( 'postIds' ) as $post_id ) {
+			$post_id    = absint( $post_id );
+			$cached_css = $this->get_cached_css( $post_id );
+
+			if ( '' === $cached_css ) {
+				return new \WP_REST_Response( array( 'success' => false ), 409 );
+			}
+
+			$post_ids_by_hash[ md5( $cached_css ) ] = $post_id;
+		}
+
+		if ( count( $post_ids_by_hash ) < 2 ) {
+			return new \WP_REST_Response( array( 'success' => false ), 400 );
+		}
+
+		$cache_key = $this->combined_css_key( $post_ids_by_hash, (string) $request->get_param( 'tokensHash' ) );
+
+		if ( ! hash_equals( wp_hash( $cache_key ), (string) $request->get_param( 'signature' ) ) ) {
+			return new \WP_REST_Response( array( 'success' => false ), 409 );
+		}
+
+		$success = set_transient( $cache_key, $request->get_param( 'css' ), MONTH_IN_SECONDS );
+
+		return new \WP_REST_Response( array( 'success' => $success ), 200 );
+	}
+
+	/**
+	 * REST permission callback for the combined style endpoint.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @phpstan-param \WP_REST_Request<array{css: string, postIds: list<int>, tokensHash: string, signature: string}> $request
+	 * @return bool
+	 */
+	public function rest_save_combined_style_permissions( \WP_REST_Request $request ) {
+		$post_ids = (array) $request->get_param( 'postIds' );
+
+		return ! empty( $post_ids ) && $this->current_user_can_edit_posts( $post_ids );
+	}
+
+	/**
+	 * Whether the current user may edit every given post.
+	 *
+	 * @param int[] $post_ids Post IDs.
+	 * @phpstan-param list<int> $post_ids
+	 * @return bool
+	 */
+	private function current_user_can_edit_posts( array $post_ids ) {
+		foreach ( $post_ids as $post_id ) {
+			if ( ! current_user_can( 'edit_post', absint( $post_id ) ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

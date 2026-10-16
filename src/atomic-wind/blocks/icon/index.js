@@ -4,10 +4,7 @@ import blockIcon from './icon';
 import edit from './edit';
 import { iconLabel } from '../labels';
 
-const { name, ...settings } = metadata;
-
-registerBlockType( name, {
-	...settings,
+registerBlockType( metadata, {
 	icon: blockIcon,
 	edit,
 	save: () => null,

@@ -45,7 +45,8 @@
 		}
 	},
 	"supports": {
-		"align": [ "wide", "full" ]
+		"align": [ "wide", "full" ],
+		"html": false
 	},
 	"editorStyle": "otter-timeline-editor",
 	"style": "otter-timeline-style"
