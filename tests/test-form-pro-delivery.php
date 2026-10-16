@@ -243,7 +243,7 @@ class Test_Form_Pro_Delivery extends WP_UnitTestCase {
 
 		// The owner email and the throttled delivery alert.
 		$this->assertCount( 2, $this->mail_requests );
-		$this->assertSame( get_site_option( 'admin_email' ), $this->mail_requests[1]['to'] );
+		$this->assertSame( get_option( 'admin_email' ), $this->mail_requests[1]['to'] );
 	}
 
 	/**
@@ -283,6 +283,42 @@ class Test_Form_Pro_Delivery extends WP_UnitTestCase {
 		$this->assertCount( 1, $records );
 		$this->assertSame( Form_Submissions::DELIVERY_STATUS_COMPLETE, get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_STATUS_META_KEY, true ) );
 		$this->assertEmpty( get_post_meta( $records[0]->ID, Form_Submissions::DELIVERY_ERRORS_META_KEY, true ) );
+	}
+
+	/**
+	 * Without a From email, the autoresponder is sent from the current site's admin, not the network admin.
+	 */
+	public function test_autoresponder_from_uses_site_admin_email(): void {
+		$this->mock_mail();
+		$this->add_test_hook(
+			'pre_option_admin_email',
+			function (): string {
+				return 'site-admin@example.org';
+			}
+		);
+		$this->add_test_hook(
+			'pre_site_option_admin_email',
+			function (): string {
+				return 'network-admin@example.org';
+			}
+		);
+
+		$this->set_form_option(
+			array(
+				'autoresponder' => array(
+					'subject' => 'Thanks for your message',
+					'body'    => '<p>We will reply soon.</p>',
+				),
+			)
+		);
+
+		$this->add_test_hook( 'otter_form_after_submit', array( $this->pro_features, 'send_autoresponder' ), 99 );
+
+		$this->form_server->frontend( $this->get_frontend_request() );
+
+		$this->assertCount( 2, $this->mail_requests );
+		$this->assertSame( 'ada@example.com', $this->mail_requests[1]['to'] );
+		$this->assertStringContainsString( '<site-admin@example.org>', implode( "\n", $this->mail_requests[1]['headers'] ) );
 	}
 
 	/**
