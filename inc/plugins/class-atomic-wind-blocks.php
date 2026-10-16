@@ -515,7 +515,7 @@ class Atomic_Wind_Blocks {
 
 			// Only the current page, the teaser or the password form renders, and
 			// synced patterns, patterns and template parts render content stored elsewhere.
-			if ( preg_match( '/<!--(nextpage|more)\b|<!-- wp:(block|pattern|template-part)\s/', $content ) || '' !== (string) get_post_field( 'post_password', $post_id ) ) {
+			if ( preg_match( '/<!--(nextpage|more)\b|<!--\s+wp:(core\/)?(block|pattern|template-part)\s/', $content ) || '' !== (string) get_post_field( 'post_password', $post_id ) ) {
 				return true;
 			}
 

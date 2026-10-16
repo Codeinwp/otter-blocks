@@ -1941,9 +1941,11 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	 */
 	public function data_referenced_content_blocks(): array {
 		return array(
-			'synced pattern'    => array( '<!-- wp:block {"ref":%d} /-->' ),
-			'pattern reference' => array( '<!-- wp:pattern {"slug":"otter-e2e/referenced-inner"} /-->' ),
-			'template part'     => array( '<!-- wp:template-part {"slug":"footer"} /-->' ),
+			'synced pattern'               => array( '<!-- wp:block {"ref":%d} /-->' ),
+			'namespaced synced pattern'    => array( '<!-- wp:core/block {"ref":%d} /-->' ),
+			'synced pattern, extra spaces' => array( '<!--  wp:block {"ref":%d} /-->' ),
+			'pattern reference'            => array( '<!-- wp:pattern {"slug":"otter-e2e/referenced-inner"} /-->' ),
+			'template part'                => array( '<!-- wp:template-part {"slug":"footer"} /-->' ),
 		);
 	}
 
