@@ -108,7 +108,7 @@
 		"@wordpress/env": "^11.10.0",
 		"@wordpress/scripts": "32.2.0",
 		"conventional-changelog-simple-preset": "^1.0.24",
-		"eslint": "^10.6.0",
+		"eslint": "^10.9.1",
 		"filemanager-webpack-plugin": "^10.0.1",
 		"grunt": "^1.4.0",
 		"grunt-contrib-sass": "^2.0.0",
