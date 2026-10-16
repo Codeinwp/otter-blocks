@@ -1697,25 +1697,91 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Helper: POST a combined stylesheet to a fresh REST server.
+	 * Helper: POST to an Atomic Wind REST route on a fresh REST server.
 	 *
-	 * @param list<int> $post_ids  Contributing posts.
-	 * @param string    $css       Compiled CSS.
-	 * @param string    $cache_key Key the page was rendered with.
+	 * @param string               $route  Route under `/otter/v1/atomic-wind/`.
+	 * @param array<string, mixed> $params Request parameters.
 	 */
-	private function save_combined_style( array $post_ids, string $css, string $cache_key ): WP_REST_Response {
+	private function post_atomic_wind_route( string $route, array $params ): WP_REST_Response {
 		global $wp_rest_server;
 
 		$wp_rest_server = new Spy_REST_Server();
 		add_action( 'rest_api_init', array( $this->instance, 'register_rest_routes' ) );
 		do_action( 'rest_api_init', $wp_rest_server );
 
-		$request = new WP_REST_Request( 'POST', '/otter/v1/atomic-wind/combined-style' );
-		$request->set_param( 'postIds', $post_ids );
-		$request->set_param( 'css', $css );
-		$request->set_param( 'cacheKey', $cache_key );
+		$request = new WP_REST_Request( 'POST', '/otter/v1/atomic-wind/' . $route );
+		foreach ( $params as $name => $value ) {
+			$request->set_param( $name, $value );
+		}
 
 		return rest_get_server()->dispatch( $request );
+	}
+
+	/**
+	 * Helper: POST a combined stylesheet.
+	 *
+	 * @param list<int>                     $post_ids  Contributing posts.
+	 * @param string|array<mixed>|bool|int $css       Compiled CSS, or a malformed value.
+	 * @param string                        $cache_key Key the page was rendered with.
+	 */
+	private function save_combined_style( array $post_ids, $css, string $cache_key ): WP_REST_Response {
+		return $this->post_atomic_wind_route(
+			'combined-style',
+			array(
+				'postIds'  => $post_ids,
+				'css'      => $css,
+				'cacheKey' => $cache_key,
+			)
+		);
+	}
+
+	/**
+	 * @return array<string, array{0: array<mixed>|bool|int}>
+	 */
+	public function data_css_that_is_not_text(): array {
+		return array(
+			'list'    => array( array( '.x{color:red}' ) ),
+			'object'  => array( array( 'rule' => '.x{color:red}' ) ),
+			'boolean' => array( true ),
+			'number'  => array( 42 ),
+		);
+	}
+
+	/**
+	 * @dataProvider data_css_that_is_not_text
+	 *
+	 * @param array<mixed>|bool|int $css Malformed CSS value.
+	 */
+	public function test_combined_style_save_rejects_css_that_is_not_text( $css ): void {
+		$posts = $this->make_combined_page_posts();
+
+		$response = $this->save_combined_style( array( $posts['singular'], $posts['layout'] ), $css, $this->combined_style_key( $posts ) );
+		$this->render_combined_page( $posts );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertStringNotContainsString( 'Array', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	/**
+	 * @dataProvider data_css_that_is_not_text
+	 *
+	 * @param array<mixed>|bool|int $css Malformed CSS value.
+	 */
+	public function test_style_save_rejects_css_that_is_not_text( $css ): void {
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		$this->set_cached_css( $post_id, '.flex{display:flex}' );
+
+		$response = $this->post_atomic_wind_route(
+			'style',
+			array(
+				'postId' => $post_id,
+				'css'    => $css,
+			)
+		);
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( '.flex{display:flex}', get_post_meta( $post_id, '_atomic_wind_css', true ) );
 	}
 
 	public function test_combined_style_saved_by_an_editor_replaces_the_generator(): void {

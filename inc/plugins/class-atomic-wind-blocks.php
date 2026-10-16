@@ -651,6 +651,7 @@ class Atomic_Wind_Blocks {
 					'css'    => array(
 						'type'              => 'string',
 						'required'          => true,
+						'validate_callback' => 'rest_validate_request_arg',
 						'sanitize_callback' => array( $this, 'sanitize_css' ),
 					),
 					'postId' => array(
@@ -672,6 +673,7 @@ class Atomic_Wind_Blocks {
 					'css'      => array(
 						'type'              => 'string',
 						'required'          => true,
+						'validate_callback' => 'rest_validate_request_arg',
 						'sanitize_callback' => array( $this, 'sanitize_css' ),
 					),
 					'postIds'  => array(
