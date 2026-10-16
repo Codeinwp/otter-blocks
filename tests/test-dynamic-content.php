@@ -1495,4 +1495,122 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertNull( $processor->get_attribute( 'onfocus' ), $html );
 		$this->assertNull( $processor->get_attribute( 'autofocus' ), $html );
 	}
+
+	/**
+	 * Nested postContent tags the parser accepts, beyond the double-quoted form.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function provide_parser_valid_nested_post_content_tags(): array {
+		return array(
+			'single quotes'            => array( "<o-dynamic data-type='postContent'>Post Content</o-dynamic>" ),
+			'mixed quotes'             => array( "<o-dynamic data-type=\"postContent'>Post Content</o-dynamic>" ),
+			'after another attribute'  => array( "<o-dynamic data-context=\"query\" data-type='postContent'>Post Content</o-dynamic>" ),
+		);
+	}
+
+	/**
+	 * Any parser-valid nested postContent tag must fire the recursion guard.
+	 *
+	 * @dataProvider provide_parser_valid_nested_post_content_tags
+	 *
+	 * @param string $nested_tag Nested tag stored in the context post.
+	 */
+	public function test_post_content_guard_detects_parser_valid_nested_tag( string $nested_tag ): void {
+		global $wpdb;
+
+		$nested_id = $this->factory()->post->create(
+			array(
+				'post_title'  => 'Nested',
+				'post_status' => 'publish',
+			)
+		);
+
+		// Written directly: kses on save rewrites quotes unless the author has unfiltered_html.
+		$wpdb->update( $wpdb->posts, array( 'post_content' => '<!-- wp:html -->' . $nested_tag . '<!-- /wp:html -->' ), array( 'ID' => $nested_id ) );
+		clean_post_cache( $nested_id );
+
+		$this->go_to( get_permalink( $nested_id ) );
+
+		$data      = array(
+			'type'    => 'postContent',
+			'context' => $nested_id,
+		);
+		$marked    = $this->dynamic_content->mark_exceptions( $data );
+		$guard_key = $this->dynamic_content->get_exception_key( $data, $nested_id );
+
+		// Asserted before rendering: an unfired guard recurses until the process dies.
+		$this->assertArrayHasKey( $guard_key, $marked );
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="postContent">Post Content</o-dynamic></p>' );
+
+		wp_delete_post( $nested_id, true );
+
+		$this->assertSame( '<p></p>', $result );
+	}
+
+	/**
+	 * A postContent tag that only appears in rendered block output must not
+	 * render the post inside itself.
+	 */
+	public function test_post_content_tag_added_at_render_time_does_not_recurse(): void {
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_title'   => 'Rendered tag',
+				'post_content' => '<!-- wp:paragraph --><p>Rendered tag body</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+			)
+		);
+
+		$renders = 0;
+		$inject  = function ( string $block_content, array $block ) use ( &$renders ): string {
+			if ( 'core/paragraph' !== $block['blockName'] || false === strpos( $block_content, 'Rendered tag body' ) ) {
+				return $block_content;
+			}
+
+			++$renders;
+
+			// Stops the unguarded recursion so the test fails instead of exhausting memory.
+			if ( $renders > 5 ) {
+				return $block_content;
+			}
+
+			return $block_content . '<p><o-dynamic data-type="postContent">Post Content</o-dynamic></p>';
+		};
+		add_filter( 'render_block', $inject, 9, 2 );
+
+		$this->go_to( get_permalink( $post_id ) );
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<div><o-dynamic data-type="postContent">Post Content</o-dynamic></div>' );
+
+		remove_filter( 'render_block', $inject, 9 );
+		wp_delete_post( $post_id, true );
+
+		$this->assertSame( 1, $renders );
+		$this->assertSame( 1, substr_count( $result, 'Rendered tag body' ) );
+		$this->assertStringNotContainsString( '<o-dynamic', $result );
+	}
+
+	/**
+	 * The recursion guard must be released after each render, so sibling
+	 * postContent tags for the same post all render.
+	 */
+	public function test_sibling_post_content_tags_each_render(): void {
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_title'   => 'Sibling tags',
+				'post_content' => '<!-- wp:paragraph --><p>Sibling body</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+			)
+		);
+
+		$this->go_to( get_permalink( $post_id ) );
+
+		$tag    = '<div><o-dynamic data-type="postContent">Post Content</o-dynamic></div>';
+		$result = $this->dynamic_content->apply_dynamic_content( $tag . $tag );
+
+		wp_delete_post( $post_id, true );
+
+		$this->assertSame( 2, substr_count( $result, 'Sibling body' ) );
+	}
 }

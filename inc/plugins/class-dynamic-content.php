@@ -25,6 +25,13 @@ class Dynamic_Content {
 	const MAGIC_TAG_REGEX = '{(otterDynamic\?[^"\'<>}]*)}';
 
 	/**
+	 * Exception keys of the postContent tags currently being rendered.
+	 *
+	 * @var array<string, true>
+	 */
+	private static $rendering_content = array();
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -570,12 +577,20 @@ class Dynamic_Content {
 		$data = $this->mark_exceptions( $data );
 		$key  = $this->get_exception_key( $data );
 
-		if ( isset( $data[ $key ] ) ) {
+		if ( isset( $data[ $key ] ) || isset( self::$rendering_content[ $key ] ) ) {
 			return '';
 		}
 
-		$content = get_the_content( null, false, $data['context'] );
-		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', $content ) );
+		// Static: nested tags are resolved by the hooked instance, not necessarily this one.
+		self::$rendering_content[ $key ] = true;
+
+		try {
+			$content = get_the_content( null, false, $data['context'] );
+			$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', $content ) );
+		} finally {
+			unset( self::$rendering_content[ $key ] );
+		}
+
 		return wp_kses_post( $content );
 	}
 
@@ -936,7 +951,9 @@ class Dynamic_Content {
 					return $data;
 				}
 				$content = get_the_content( null, false, $data['context'] );
-				if ( strpos( $content, 'data-type="postContent"' ) ) {
+				$matches = array();
+				self::parse_dynamic_content_query( $content, $matches );
+				if ( in_array( 'postContent', array_column( $matches, 'type' ), true ) ) {
 					$key = $this->get_exception_key( $data, $post->ID );
 					if ( $key ) {
 						$data[ $key ] = true;
