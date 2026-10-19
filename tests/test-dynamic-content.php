@@ -1317,6 +1317,185 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertStringContainsString( 'Test', $result );
 	}
 
+
+	/**
+	 * A dynamic link token must not consume the quote closing its attribute, or a
+	 * comment author name printed after it becomes markup.
+	 */
+	public function test_dynamic_link_button_keeps_attribute_boundary(): void {
+		$double = '<a class="wp-block-latest-comments__comment-author" href="http://attacker.example/#otterDynamicLink">Eve" autofocus onfocus=alert(1) x</a>';
+		$single = "<a href='http://attacker.example/#otterDynamicLink'>Eve' autofocus onfocus=alert(1) x</a>";
+
+		$this->assertNoInjectedAttributes( $this->dynamic_content->apply_dynamic_link_button( $double ) );
+		$this->assertNoInjectedAttributes( $this->dynamic_content->apply_dynamic_link_button( $single ) );
+
+		$link = new WP_HTML_Tag_Processor( $this->dynamic_content->apply_dynamic_link_button( '<a href="#otterDynamicLink?type=siteURL&#038;context=query">Go</a>' ) );
+		$link->next_tag();
+		$this->assertSame( get_site_url(), $link->get_attribute( 'href' ) );
+	}
+
+	/**
+	 * Resolved link values are URL-escaped, as the Pro post meta link returns raw meta.
+	 */
+	public function test_dynamic_link_button_escapes_resolved_url(): void {
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_link',
+			function (): string {
+				return 'javascript:alert(1)';
+			}
+		);
+
+		$link = new WP_HTML_Tag_Processor( $this->dynamic_content->apply_dynamic_link_button( '<a href="#otterDynamicLink?type=postMetaURL&amp;metaKey=link">Go</a>' ) );
+		$link->next_tag();
+
+		$this->assertStringNotContainsString( 'javascript:', (string) $link->get_attribute( 'href' ) );
+	}
+
+	/**
+	 * The dynamic image rewrite matches the REST URL itself, so a comment linking to
+	 * it must not break out of its attribute either.
+	 */
+	public function test_dynamic_image_keeps_attribute_boundary(): void {
+		$markup = '<a class="wp-block-latest-comments__comment-author" href="' . get_rest_url( null, 'otter/v1/dynamic' ) . '">Eve" autofocus onfocus=alert(1) x</a>';
+
+		$this->assertNoInjectedAttributes( $this->dynamic_content->apply_dynamic_images( $markup ) );
+
+		$this->set_permalink_structure( '/%postname%/' );
+		try {
+			$src   = get_rest_url( null, 'otter/v1' ) . '/dynamic/?type=author&amp;context=' . $this->post_id . '&amp;uid=abc';
+			$image = new WP_HTML_Tag_Processor( $this->dynamic_content->apply_dynamic_images( '<img src="' . $src . '" alt="Hero">' ) );
+		} finally {
+			$this->set_permalink_structure( '' );
+		}
+		$image->next_tag();
+		$this->assertSame( get_avatar_url( (int) get_post_field( 'post_author', $this->post_id ) ), $image->get_attribute( 'src' ) );
+		$this->assertSame( 'Hero', $image->get_attribute( 'alt' ) );
+	}
+
+	/**
+	 * A magic tag opened inside an attribute must not close on text after it.
+	 */
+	public function test_dynamic_magic_tag_keeps_attribute_boundary(): void {
+		$markup = '<p title="x{otterDynamic">y=1}" autofocus onfocus=alert(1) x {otterDynamic?type=siteTitle}</p>';
+		$result = $this->dynamic_content->apply_dynamic_magic_tags( $markup );
+
+		$this->assertNoInjectedAttributes( $result );
+		$this->assertStringContainsString( get_bloginfo( 'name' ), $result );
+	}
+
+	/**
+	 * Link and image tokens keep meta keys with spaces, which the editor saves unencoded.
+	 */
+	public function test_dynamic_tokens_keep_spaced_meta_keys(): void {
+		$keys    = array();
+		$capture = function ( $value, array $data ) use ( &$keys ) {
+			if ( isset( $data['metaKey'] ) ) {
+				$keys[] = $data['metaKey'];
+			}
+			if ( isset( $data['meta'] ) ) {
+				$keys[] = $data['meta'];
+			}
+
+			return $value;
+		};
+		add_filter( 'otter_blocks_evaluate_dynamic_content_link', $capture, 10, 2 );
+		add_filter( 'otter_blocks_evaluate_dynamic_content_media_content', $capture, 10, 2 );
+
+		$this->dynamic_content->apply_dynamic_link_button( '<a href="#otterDynamicLink?type=postMetaURL&amp;metaKey=my key">Go</a>' );
+
+		$this->set_permalink_structure( '/%postname%/' );
+		try {
+			$this->dynamic_content->apply_dynamic_images( '<img src="' . get_rest_url( null, 'otter/v1' ) . '/dynamic/?type=postMeta&amp;meta=my key&amp;context=' . $this->post_id . '">' );
+		} finally {
+			$this->set_permalink_structure( '' );
+		}
+
+		$this->assertSame( array( 'my key', 'my key' ), $keys );
+	}
+
+	/**
+	 * Repeater values clone the content and swap each link token in full, without leaving its attribute.
+	 */
+	public function test_dynamic_content_array_value_replaces_link_tokens(): void {
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_text',
+			function (): array {
+				return array( 'One', 'Two' );
+			}
+		);
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_link',
+			function (): array {
+				return array( 'https://one.example', 'https://two.example' );
+			}
+		);
+
+		$result = $this->dynamic_content->apply_dynamic_content( "<a href='#otterDynamicLink?type=otterTestLink&amp;metaKey=my key'>Eve' autofocus onfocus=alert(1) x</a><o-dynamic data-type=\"otterTestList\">Value</o-dynamic>" );
+
+		$processor = new WP_HTML_Tag_Processor( $result );
+		foreach ( array( 'https://one.example', 'https://two.example' ) as $expected ) {
+			$this->assertTrue( $processor->next_tag( 'a' ), $result );
+			$this->assertSame( $expected, $processor->get_attribute( 'href' ) );
+			$this->assertNull( $processor->get_attribute( 'onfocus' ), $result );
+		}
+		$this->assertStringContainsString( 'One', $result );
+		$this->assertStringContainsString( 'Two', $result );
+	}
+
+	/**
+	 * Every resolved repeater link is URL-escaped.
+	 */
+	public function test_dynamic_link_button_escapes_each_resolved_url(): void {
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_link',
+			function (): array {
+				return array( 'javascript:alert(1)', 'https://ok.example' );
+			}
+		);
+
+		$this->assertSame(
+			array( '', 'https://ok.example' ),
+			$this->dynamic_content->apply_link_button( array( '#otterDynamicLink?type=otterTestLink' ) )
+		);
+	}
+
+	/**
+	 * A magic tag inside an attribute is attribute-escaped, as the values it resolves to are raw.
+	 */
+	public function test_dynamic_magic_tag_value_is_escaped_in_attribute(): void {
+		$name      = 'Safe" autofocus onfocus=alert(1) x="';
+		$author_id = self::factory()->user->create(
+			array(
+				'role'         => 'contributor',
+				'display_name' => $name,
+			)
+		);
+		$this->go_to( get_permalink( self::factory()->post->create( array( 'post_author' => $author_id ) ) ) );
+
+		$result = $this->dynamic_content->apply_dynamic_magic_tags( "<p title=\"{otterDynamic?type=authorName}\" data-x='{otterDynamic?type=authorName}'>{otterDynamic?type=authorName}</p>" );
+
+		$this->assertNoInjectedAttributes( $result );
+
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$processor->next_tag();
+		$this->assertSame( $name, $processor->get_attribute( 'title' ) );
+		$this->assertSame( $name, $processor->get_attribute( 'data-x' ) );
+		$this->assertStringContainsString( '>' . $name . '</p>', $result );
+	}
+
+	/**
+	 * Assert the first tag of the markup gained no attributes from the text after it.
+	 *
+	 * @param string $html Rewritten markup.
+	 */
+	private function assertNoInjectedAttributes( string $html ): void {
+		$processor = new WP_HTML_Tag_Processor( $html );
+		$processor->next_tag();
+
+		$this->assertNull( $processor->get_attribute( 'onfocus' ), $html );
+		$this->assertNull( $processor->get_attribute( 'autofocus' ), $html );
+	}
+
 	/**
 	 * Nested postContent tags the parser accepts, beyond the double-quoted form.
 	 *

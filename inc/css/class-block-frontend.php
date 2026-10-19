@@ -386,7 +386,7 @@ class Block_Frontend extends Base_CSS {
 			}
 
 			$style  = "\n" . '<style type="text/css" media="all">' . "\n";
-			$style .= $css;
+			$style .= CSS_Handler::escape_style_contents( $css );
 			$style .= "\n" . '</style>' . "\n";
 
 			echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -558,7 +558,7 @@ class Block_Frontend extends Base_CSS {
 			}
 
 			$style  = "\n" . '<style type="text/css" media="all">' . "\n";
-			$style .= $css;
+			$style .= CSS_Handler::escape_style_contents( $css );
 			$style .= "\n" . '</style>' . "\n";
 			echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			return $empty;

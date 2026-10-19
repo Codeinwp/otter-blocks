@@ -22,12 +22,21 @@ class Block_Conditions {
 	protected static $instance = null;
 
 	/**
+	 * One entry per REST dispatch in progress: whether it is an editor previewing content.
+	 *
+	 * @var list<bool>
+	 */
+	private $editor_rest_requests = array();
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
 		if ( get_option( 'themeisle_blocks_settings_block_conditions', true ) ) {
 			add_filter( 'render_block', array( $this, 'render_blocks' ), 999, 2 );
 			add_action( 'wp_loaded', array( $this, 'add_attributes_to_blocks' ), 999 );
+			add_filter( 'rest_request_before_callbacks', array( $this, 'enter_rest_request' ), 10, 3 );
+			add_filter( 'rest_request_after_callbacks', array( $this, 'leave_rest_request' ) );
 		}
 	}
 
@@ -43,8 +52,7 @@ class Block_Conditions {
 	 * @access  public
 	 */
 	public function render_blocks( $block_content, $block ) {
-		if ( ! is_admin() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) && isset( $block['attrs']['otterConditions'] ) ) {
-			
+		if ( isset( $block['attrs']['otterConditions'] ) && ! $this->is_editor_render() ) {
 			$display = $this->evaluate_condition_collection( $block['attrs']['otterConditions'] );
 
 			if ( false === $display ) {
@@ -59,6 +67,69 @@ class Block_Conditions {
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * Whether blocks render for editing, where conditioned blocks stay visible.
+	 *
+	 * Admin-ajax also serves front-end requests, so it does not count as admin.
+	 *
+	 * @return bool
+	 */
+	private function is_editor_render() {
+		if ( is_admin() && ! wp_doing_ajax() ) {
+			return true;
+		}
+
+		return true === end( $this->editor_rest_requests );
+	}
+
+	/**
+	 * Record whether a starting REST dispatch is an editor previewing content.
+	 *
+	 * Runs before the route's permission check, hence the capability check here.
+	 *
+	 * @param \WP_REST_Response|\WP_HTTP_Response|\WP_Error|mixed $response Result to send.
+	 * @param array<string, mixed>                                $handler  Route handler.
+	 * @param \WP_REST_Request                                    $request  Request.
+	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
+	 *
+	 * @return \WP_REST_Response|\WP_HTTP_Response|\WP_Error|mixed Unchanged result.
+	 */
+	public function enter_rest_request( $response, $handler, $request ) {
+		$this->editor_rest_requests[] = $this->is_editor_rest_request( $request );
+
+		return $response;
+	}
+
+	/**
+	 * Whether a REST request is an editor previewing content.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
+	 *
+	 * @return bool
+	 */
+	private function is_editor_rest_request( $request ) {
+		// The dynamic preview route uses `context` for the previewed post ID.
+		if ( '/otter/v1/dynamic/preview' === $request->get_route() ) {
+			return current_user_can( 'edit_post', (int) $request->get_param( 'context' ) );
+		}
+
+		return 'edit' === $request->get_param( 'context' ) && current_user_can( 'edit_posts' );
+	}
+
+	/**
+	 * Forget the REST dispatch that just finished.
+	 *
+	 * @param \WP_REST_Response|\WP_HTTP_Response|\WP_Error|mixed $response Result to send.
+	 *
+	 * @return \WP_REST_Response|\WP_HTTP_Response|\WP_Error|mixed Unchanged result.
+	 */
+	public function leave_rest_request( $response ) {
+		array_pop( $this->editor_rest_requests );
+
+		return $response;
 	}
 
 	/**

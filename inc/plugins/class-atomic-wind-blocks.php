@@ -847,7 +847,7 @@ class Atomic_Wind_Blocks {
 
 		$css = get_post_meta( $post_id, '_atomic_wind_css', true );
 
-		return is_string( $css ) ? $css : '';
+		return is_string( $css ) ? \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css ) : '';
 	}
 
 	/**
@@ -1016,7 +1016,7 @@ class Atomic_Wind_Blocks {
 		$css = preg_replace( '/<\/?script\b[^>]*>/i', '', $css );
 		$css = preg_replace( '/<!--.*?-->/s', '', $css );
 
-		return $css;
+		return \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css );
 	}
 
 	/**
