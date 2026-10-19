@@ -456,7 +456,7 @@ function AnimationControls({
 				label={ __( 'Count Animations', 'blocks-animation' ) }
 			>
 				<img
-					src={ typingPlaceholder }
+					src={ countPlaceholder }
 					alt={ __( 'Using Count Animation in the Block Editor', 'blocks-animation' ) }
 					className="otter-animations-count-image"
 				/>
@@ -469,7 +469,7 @@ function AnimationControls({
 				label={ __( 'Typing Animations', 'blocks-animation' ) }
 			>
 				<img
-					src={ countPlaceholder }
+					src={ typingPlaceholder }
 					alt={ __( 'Using Typing Animation in the Block Editor', 'blocks-animation' ) }
 					className="otter-animations-count-image"
 				/>

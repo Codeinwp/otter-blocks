@@ -6,7 +6,7 @@
 	"category": "atomic-wind",
 	"description": "A simple image element. Set via media library or direct URL.",
 	"keywords": [ "image", "img", "photo" ],
-	"textdomain": "atomic-wind",
+	"textdomain": "otter-blocks",
 	"attributes": {
 		"id": {
 			"type": "number"

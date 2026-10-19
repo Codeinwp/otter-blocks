@@ -1,0 +1,296 @@
+/**
+ * WordPress dependencies
+ */
+import { test, expect } from '@wordpress/e2e-test-utils-playwright';
+
+/**
+ * Blocks whose visible content is stored in comment attributes: the edited
+ * markup is read back into them, so the block stays valid.
+ */
+const EDITABLE = [
+	{
+		target: 'themeisle-blocks/countdown',
+		block: { name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }},
+		edits: [[ 'data-date="2026-10-01T10:00:00"', 'data-date="2026-12-25T10:00:00"' ]],
+		expected: { date: '2026-12-25T10:00:00' }
+	},
+	{
+		target: 'themeisle-blocks/progress-bar',
+		block: { name: 'themeisle-blocks/progress-bar' },
+		edits: [[ '>50%<', '>80%<' ], [ '<span>Skill</span>', '<span>Design</span>' ]],
+		expected: { percentage: 80, title: 'Design' }
+	},
+	{
+		title: 'data-percent',
+		target: 'themeisle-blocks/progress-bar',
+		block: { name: 'themeisle-blocks/progress-bar' },
+		edits: [[ 'data-percent="50"', 'data-percent="30"' ]],
+		expected: { percentage: 30 }
+	},
+	{
+		target: 'themeisle-blocks/circle-counter',
+		block: { name: 'themeisle-blocks/circle-counter' },
+		edits: [[ 'data-percentage="50"', 'data-percentage="65"' ], [ '>Skill<', '>Speed<' ]],
+		expected: { percentage: 65, title: 'Speed' }
+	},
+	{
+		target: 'themeisle-blocks/icon-list-item',
+		block: {
+			name: 'themeisle-blocks/icon-list',
+			innerBlocks: [{ name: 'themeisle-blocks/icon-list-item', attributes: { content: 'Entry' }}]
+		},
+		edits: [[ '>Entry<', '>Entry <strong>two</strong><' ]],
+		expected: { content: 'Entry <strong>two</strong>' }
+	},
+	{
+		target: 'themeisle-blocks/business-hours-item',
+		block: {
+			name: 'themeisle-blocks/business-hours',
+			innerBlocks: [{ name: 'themeisle-blocks/business-hours-item', attributes: { label: 'Monday', time: '9:00 - 17:00' }}]
+		},
+		edits: [[ '<span>Monday</span>', '<span>Tuesday</span>' ], [ '<span>9:00 - 17:00</span>', '<span>Closed</span>' ]],
+		expected: { label: 'Tuesday', time: 'Closed' }
+	},
+	{
+		target: 'themeisle-blocks/form-input',
+		block: {
+			name: 'themeisle-blocks/form',
+			innerBlocks: [{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name', placeholder: 'Jane' }}]
+		},
+		edits: [[ '>Name<', '>Full name<' ], [ 'placeholder="Jane"', 'placeholder="John"' ]],
+		expected: { label: 'Full name', placeholder: 'John' }
+	},
+	{
+		target: 'themeisle-blocks/form-textarea',
+		block: {
+			name: 'themeisle-blocks/form',
+			innerBlocks: [{ name: 'themeisle-blocks/form-textarea', attributes: { label: 'Message', placeholder: 'Type' }}]
+		},
+		edits: [[ '>Message<', '>Comment<' ], [ 'placeholder="Type"', 'placeholder="Write"' ]],
+		expected: { label: 'Comment', placeholder: 'Write' }
+	},
+	{
+		title: 'deleted help text',
+		target: 'themeisle-blocks/form-input',
+		block: {
+			name: 'themeisle-blocks/form',
+			innerBlocks: [{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name', helpText: 'Help' }}]
+		},
+		edits: [[ '<span class="o-form-help">Help</span>', '' ]],
+		expected: { label: 'Name' },
+		cleared: [ 'helpText' ]
+	},
+	{
+		title: 'deleted help text',
+		target: 'themeisle-blocks/form-textarea',
+		block: {
+			name: 'themeisle-blocks/form',
+			innerBlocks: [{ name: 'themeisle-blocks/form-textarea', attributes: { label: 'Message', helpText: 'Help' }}]
+		},
+		edits: [[ '<span class="o-form-help">Help</span>', '' ]],
+		expected: { label: 'Message' },
+		cleared: [ 'helpText' ]
+	}
+];
+
+// Gutenberg validates the HTML mode without inner blocks, so blocks saving InnerBlocks cannot offer it.
+const WITHOUT_HTML_MODE = [
+	{ target: 'themeisle-blocks/flip', block: { name: 'themeisle-blocks/flip' }},
+	{
+		target: 'themeisle-blocks/accordion-item',
+		block: {
+			name: 'themeisle-blocks/accordion',
+			innerBlocks: [{ name: 'themeisle-blocks/accordion-item', attributes: { title: 'Question' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/tabs-item',
+		block: {
+			name: 'themeisle-blocks/tabs',
+			innerBlocks: [{ name: 'themeisle-blocks/tabs-item', attributes: { title: 'Tab' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/tabs',
+		block: {
+			name: 'themeisle-blocks/tabs',
+			innerBlocks: [{ name: 'themeisle-blocks/tabs-item', attributes: { title: 'Tab' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/timeline',
+		block: {
+			name: 'themeisle-blocks/timeline',
+			innerBlocks: [{ name: 'themeisle-blocks/timeline-item' }]
+		}
+	},
+	{
+		target: 'themeisle-blocks/timeline-item',
+		block: {
+			name: 'themeisle-blocks/timeline',
+			innerBlocks: [{ name: 'themeisle-blocks/timeline-item' }]
+		}
+	},
+	{
+		target: 'themeisle-blocks/icon-list',
+		block: {
+			name: 'themeisle-blocks/icon-list',
+			innerBlocks: [{ name: 'themeisle-blocks/icon-list-item', attributes: { content: 'Entry' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/form',
+		block: {
+			name: 'themeisle-blocks/form',
+			innerBlocks: [{ name: 'themeisle-blocks/form-input', attributes: { label: 'Name' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/button-group',
+		block: {
+			name: 'themeisle-blocks/button-group',
+			innerBlocks: [{ name: 'themeisle-blocks/button', attributes: { text: 'Click' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/modal',
+		block: {
+			name: 'themeisle-blocks/modal',
+			innerBlocks: [{ name: 'core/paragraph', attributes: { content: 'Inner' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/popup',
+		block: {
+			name: 'themeisle-blocks/popup',
+			innerBlocks: [{ name: 'core/paragraph', attributes: { content: 'Inner' }}]
+		}
+	},
+	{
+		target: 'themeisle-blocks/business-hours',
+		block: {
+			name: 'themeisle-blocks/business-hours',
+			innerBlocks: [{ name: 'themeisle-blocks/business-hours-item', attributes: { label: 'Monday', time: '9:00 - 17:00' }}]
+		}
+	}
+];
+
+// Content is sourced from the markup, so HTML edits round-trip.
+const WITH_HTML_MODE = [
+	{ target: 'themeisle-blocks/advanced-heading', block: { name: 'themeisle-blocks/advanced-heading', attributes: { content: 'Heading' }}},
+	{
+		target: 'themeisle-blocks/button',
+		block: {
+			name: 'themeisle-blocks/button-group',
+			innerBlocks: [{ name: 'themeisle-blocks/button', attributes: { text: 'Click' }}]
+		}
+	}
+];
+
+/**
+ * Select the first block with the given name.
+ *
+ * @param {Object} page      The page fixture.
+ * @param {string} blockName The block to select.
+ */
+const selectBlockByName = async( page, blockName ) => {
+	await page.evaluate( ( name ) => {
+		const { select, dispatch } = window.wp.data;
+		const find = ( blocks ) => {
+			for ( const block of blocks ) {
+				if ( name === block.name ) {
+					return block;
+				}
+
+				const inner = find( block.innerBlocks );
+
+				if ( inner ) {
+					return inner;
+				}
+			}
+		};
+
+		dispatch( 'core/block-editor' ).selectBlock( find( select( 'core/block-editor' ).getBlocks() ).clientId );
+	}, blockName );
+};
+
+/**
+ * Select the first block with the given name and report whether its Options menu offers "Edit as HTML".
+ *
+ * @param {Object} editor    The editor fixture.
+ * @param {Object} page      The page fixture.
+ * @param {string} blockName The block to select.
+ * @return {Promise<boolean>} Whether the menu item is present.
+ */
+const hasEditAsHTML = async( editor, page, blockName ) => {
+	await selectBlockByName( page, blockName );
+	await editor.clickBlockToolbarButton( 'Options' );
+
+	const menu = page.getByRole( 'menu', { name: 'Options' });
+	await expect( menu.getByRole( 'menuitem' ).first() ).toBeVisible();
+
+	return 0 < await menu.getByRole( 'menuitem', { name: 'Edit as HTML' }).count();
+};
+
+test.describe( 'Edit as HTML mode', () => {
+	test.beforeEach( async({ admin }) => {
+		await admin.createNewPost();
+	});
+
+	for ( const { title, target, block, edits, expected, cleared = [] } of EDITABLE ) {
+		test( `${ target } keeps an Edit as HTML change${ title ? ` (${ title })` : '' }`, async({ editor, page }) => {
+			await editor.insertBlock( block );
+			await selectBlockByName( page, target );
+			await editor.clickBlockOptionsMenuItem( 'Edit as HTML' );
+
+			const textarea = editor.canvas.locator( '.block-editor-block-list__block-html-textarea' );
+			let html = await textarea.inputValue();
+
+			for ( const [ from, to ] of edits ) {
+				expect( html ).toContain( from );
+				html = html.replace( from, to );
+			}
+
+			await textarea.fill( html );
+			await textarea.blur();
+
+			// A stale copy of a duplicated value is synced right after the edit.
+			await expect.poll( () => page.evaluate( () => window.wp.data.select( 'core/block-editor' ).getSelectedBlock().isValid ) ).toBe( true );
+
+			const attributes = await page.evaluate( () => window.wp.data.select( 'core/block-editor' ).getSelectedBlock().attributes );
+
+			expect( attributes ).toMatchObject( expected );
+
+			// Stored in the block comment, where the server reads it.
+			const commentAttributes = await page.evaluate( ( name ) => {
+				const content = window.wp.data.select( 'core/editor' ).getEditedPostContent();
+				const match = content.match( new RegExp( `<!-- wp:${ name } (\\{.*?\\}) -->` ) );
+
+				return match ? JSON.parse( match[1]) : null;
+			}, target );
+
+			expect( commentAttributes ).toMatchObject( expected );
+
+			for ( const key of cleared ) {
+				expect( attributes[ key ]).toBeUndefined();
+				expect( commentAttributes ).not.toHaveProperty( key );
+			}
+		});
+	}
+
+	for ( const { target, block } of WITHOUT_HTML_MODE ) {
+		test( `${ target } does not offer Edit as HTML`, async({ editor, page }) => {
+			await editor.insertBlock( block );
+
+			expect( await hasEditAsHTML( editor, page, target ) ).toBe( false );
+		});
+	}
+
+	for ( const { target, block } of WITH_HTML_MODE ) {
+		test( `${ target } still offers Edit as HTML`, async({ editor, page }) => {
+			await editor.insertBlock( block );
+
+			expect( await hasEditAsHTML( editor, page, target ) ).toBe( true );
+		});
+	}
+});

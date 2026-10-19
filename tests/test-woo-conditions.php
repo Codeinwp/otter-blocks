@@ -153,4 +153,25 @@ class TestWooConditions extends WP_UnitTestCase
 		$result = $this->block_conditions->evaluate_condition( $condition );
 		$this->assertTrue( $result );
 	}
+
+	/**
+	 * REST and admin-ajax renders have no cart, so cart conditions fail closed instead of fataling.
+	 */
+	public function test_products_in_cart_without_cart(): void {
+		$cart      = WC()->cart;
+		WC()->cart = null;
+
+		try {
+			$result = $this->pro_conditions->has_products_in_cart(
+				array(
+					'on'       => 'products',
+					'products' => array( $this->product_id_1 ),
+				)
+			);
+		} finally {
+			WC()->cart = $cart;
+		}
+
+		$this->assertFalse( $result );
+	}
 }

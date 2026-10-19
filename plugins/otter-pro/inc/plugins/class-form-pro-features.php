@@ -422,7 +422,7 @@ class Form_Pro_Features {
 		$this->log_autoresponder_debug( 'Recipient resolved: ' . $to );
 
 		try {
-			$from_email = sanitize_email( get_site_option( 'admin_email' ) );
+			$from_email = sanitize_email( get_option( 'admin_email' ) );
 
 			if ( $form_data->get_wp_options()->has_from_email() && '' !== $form_data->get_wp_options()->get_from_email() ) {
 				$from_email = sanitize_email( $form_data->get_wp_options()->get_from_email() );

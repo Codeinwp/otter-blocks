@@ -72,7 +72,9 @@
 			"type": "string"
 		}
 	},
-
+	"supports": {
+		"html": false
+	},
 	"editorStyle": "otter-icon-list-editor",
 	"style": "otter-icon-list-style"
 }

@@ -55,6 +55,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	public function tear_down() {
 		$this->reset_in_query( false );
 		$this->unregister_atomic_wind_blocks();
+		$GLOBALS['wp_rest_server'] = null;
 		parent::tear_down();
 	}
 
@@ -189,6 +190,38 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertFalse(
 			has_filter( 'render_block', array( $this->instance, 'render_animation_attrs' ) )
 		);
+	}
+
+	/**
+	 * Block titles and descriptions resolve through the otter-blocks catalog.
+	 */
+	public function test_block_metadata_translates_with_otter_text_domain(): void {
+		$translate = static function ( string $translation, string $text, string $context ): string {
+			return in_array( $context, array( 'block title', 'block description' ), true ) ? 'otter: ' . $text : $translation;
+		};
+		add_filter( 'gettext_with_context_otter-blocks', $translate, 10, 3 );
+		update_option( 'themeisle_blocks_settings_atomic_wind_blocks', true );
+
+		$this->instance->run();
+
+		remove_filter( 'gettext_with_context_otter-blocks', $translate, 10 );
+
+		$registry = WP_Block_Type_Registry::get_instance();
+		$expected = array(
+			'box'   => 'Box',
+			'text'  => 'Text',
+			'image' => 'Image',
+			'link'  => 'Link',
+			'icon'  => 'Icon',
+		);
+
+		foreach ( $expected as $block => $title ) {
+			$block_type = $registry->get_registered( 'atomic-wind/' . $block );
+
+			$this->assertInstanceOf( WP_Block_Type::class, $block_type, $block );
+			$this->assertSame( 'otter: ' . $title, $block_type->title, $block );
+			$this->assertStringStartsWith( 'otter: ', $block_type->description, $block );
+		}
 	}
 
 	// -------------------------------------------------------
@@ -991,6 +1024,34 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertSame( $css, $stored );
 	}
 
+	/**
+	 * Nested tags must not reassemble into a closing style tag, which WordPress
+	 * 6.9 and older print raw in inline styles.
+	 */
+	public function test_sanitize_css_cannot_close_style_element(): void {
+		$css = $this->instance->sanitize_css( '.a{color:red}</sty</style>le><scr<script>ipt>alert(1)</scr</script>ipt>' );
+
+		$this->assertDoesNotMatchRegularExpression( '~</style~i', $css );
+		$this->assertSame( '@property --c{syntax:"<color>"}', $this->instance->sanitize_css( '@property --c{syntax:"<color>"}' ) );
+	}
+
+	/**
+	 * CSS saved before the fix is neutralized when inlined.
+	 */
+	public function test_cached_css_with_closing_style_tag_is_neutralized(): void {
+		$this->reset_style_globals();
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+		$this->set_cached_css( $singular, '.flex{display:flex}</STYLE><script>alert(1)</script>' );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->output_singular_css();
+
+		$inline = $this->inline_style_for( 'atomic-wind-tailwind' );
+		$this->assertStringContainsString( '.flex{display:flex}', $inline );
+		$this->assertDoesNotMatchRegularExpression( '~</style~i', $inline );
+	}
+
 	// -------------------------------------------------------
 	// Security: cached CSS uses wp_add_inline_style.
 	// -------------------------------------------------------
@@ -1130,11 +1191,7 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 	 * @return int
 	 */
 	private function make_atomic_wind_post( $classes ) {
-		return $this->factory()->post->create(
-			array(
-				'post_content' => '<!-- wp:atomic-wind/box {"className":"' . $classes . '"} --><div class="wp-block-atomic-wind-box ' . $classes . '"></div><!-- /wp:atomic-wind/box -->',
-			)
-		);
+		return $this->factory()->post->create( array( 'post_content' => $this->box_markup( $classes ) ) );
 	}
 
 	/**
@@ -1539,6 +1596,500 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
 		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	/**
+	 * Helper: track one Atomic Wind block rendered for a post.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	private function render_tracked_block( int $post_id ): void {
+		global $post;
+		$post = get_post( $post_id );
+		setup_postdata( $post );
+		$this->instance->track_rendered_blocks( '<div></div>', $this->make_block( 'atomic-wind/box' ) );
+		wp_reset_postdata();
+	}
+
+	public function test_output_late_css_compiles_head_and_late_blobs_together(): void {
+		$posts = $this->make_combined_page_posts();
+		$this->render_combined_page( $posts );
+
+		$this->assertStringContainsString( '.grid-cols-1{', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_late_css_compiles_multiple_late_blobs_together(): void {
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+
+		$header = $this->make_atomic_wind_post( 'grid md:grid-cols-3' );
+		$footer = $this->make_atomic_wind_post( 'grid grid-cols-1' );
+		$this->set_cached_css( $header, '.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}' );
+		$this->set_cached_css( $footer, '.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}' );
+
+		$this->render_tracked_block( $header );
+		$this->render_tracked_block( $footer );
+
+		$this->instance->output_late_css();
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_late_css_skips_generator_for_a_blob_identical_to_the_head(): void {
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+		$layout   = $this->make_atomic_wind_post( 'flex' );
+		$this->set_cached_css( $singular, '.flex{display:flex}' );
+		$this->set_cached_css( $layout, '.flex{display:flex}' );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->output_singular_css();
+		$this->render_tracked_block( $singular );
+		$this->render_tracked_block( $layout );
+
+		$this->instance->output_late_css();
+
+		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	/**
+	 * Helper: Atomic Wind box markup.
+	 *
+	 * @param string $classes Space-separated classes of the box.
+	 * @param string $inner   Inner markup.
+	 */
+	private function box_markup( string $classes, string $inner = '' ): string {
+		return '<!-- wp:atomic-wind/box {"className":"' . $classes . '"} --><div class="wp-block-atomic-wind-box ' . $classes . '">' . $inner . '</div><!-- /wp:atomic-wind/box -->';
+	}
+
+	/**
+	 * Helper: two posts with different cached CSS, the second rendered like a hooked layout.
+	 *
+	 * @param array<string, string> $singular_args Overrides for the singular post.
+	 * @param string                $layout_inner  Markup inside the layout's box.
+	 * @return array{singular: int, layout: int}
+	 */
+	private function make_combined_page_posts( array $singular_args = array(), string $layout_inner = '' ): array {
+		$singular = $this->factory()->post->create( array_merge( array( 'post_content' => $this->box_markup( 'grid grid-cols-1 lg:grid-cols-4' ) ), $singular_args ) );
+		$layout   = $this->factory()->post->create( array( 'post_content' => $this->box_markup( 'grid grid-cols-1', $layout_inner ) ) );
+		$this->set_cached_css( $singular, '.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}' );
+		$this->set_cached_css( $layout, '.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}' );
+
+		return array(
+			'singular' => $singular,
+			'layout'   => $layout,
+		);
+	}
+
+	/**
+	 * Helper: render the singular post, then the layout post, up to the footer CSS.
+	 *
+	 * Both render through `the_content` with the module's render filters, as on the frontend.
+	 *
+	 * @param array{singular: int, layout: int} $posts Posts from make_combined_page_posts().
+	 * @param int                               $page  Page of the singular post.
+	 */
+	private function render_combined_page( array $posts, int $page = 1 ): void {
+		global $post;
+
+		$this->reset_style_globals();
+		$this->reset_in_query( false );
+		$this->instance = new Atomic_Wind_Blocks();
+
+		$filters = array(
+			array( 'render_block', 'render_query_loop', 5, 2 ),
+			array( 'render_block', 'track_rendered_blocks', 10, 2 ),
+			array( 'render_block', 'collect_block_tokens', PHP_INT_MAX, 2 ),
+			array( 'the_content', 'collect_content_tokens', PHP_INT_MAX, 1 ),
+		);
+		foreach ( $filters as list( $hook, $method, $priority, $accepted_args ) ) {
+			add_filter( $hook, array( $this->instance, $method ), $priority, $accepted_args );
+		}
+
+		// Core 404s a `page` query var on content without page breaks.
+		$url = get_permalink( $posts['singular'] );
+		$this->go_to( $page > 1 ? add_query_arg( 'page', $page, $url ) : $url );
+		$this->instance->output_singular_css();
+
+		foreach ( array( $posts['singular'], $posts['layout'] ) as $post_id ) {
+			$post = get_post( $post_id );
+			setup_postdata( $post );
+			apply_filters( 'the_content', get_the_content() );
+		}
+		wp_reset_postdata();
+
+		$this->instance->output_late_css();
+
+		foreach ( $filters as list( $hook, $method, $priority ) ) {
+			remove_filter( $hook, array( $this->instance, $method ), $priority );
+		}
+	}
+
+	/**
+	 * Helper: the signed payload an editor's rendered page hands its style builder.
+	 *
+	 * @param array{singular: int, layout: int} $posts Posts from make_combined_page_posts().
+	 * @return array{tokensHash: string, signature: string}
+	 */
+	private function combined_style_payload( array $posts ): array {
+		$this->render_combined_page( $posts );
+		$data = (string) wp_scripts()->get_data( 'atomic-wind-style-builder', 'data' );
+
+		preg_match( '/"tokensHash":"(\w*)"/', $data, $tokens_hash );
+		preg_match( '/"signature":"(\w*)"/', $data, $signature );
+
+		return array(
+			'tokensHash' => $tokens_hash[1] ?? '',
+			'signature'  => $signature[1] ?? '',
+		);
+	}
+
+	/**
+	 * Helper: POST to an Atomic Wind REST route on a fresh REST server.
+	 *
+	 * @param string               $route  Route under `/otter/v1/atomic-wind/`.
+	 * @param array<string, mixed> $params Request parameters.
+	 */
+	private function post_atomic_wind_route( string $route, array $params ): WP_REST_Response {
+		global $wp_rest_server;
+
+		$wp_rest_server = new Spy_REST_Server();
+		add_action( 'rest_api_init', array( $this->instance, 'register_rest_routes' ) );
+		do_action( 'rest_api_init', $wp_rest_server );
+
+		$request = new WP_REST_Request( 'POST', '/otter/v1/atomic-wind/' . $route );
+		foreach ( $params as $name => $value ) {
+			$request->set_param( $name, $value );
+		}
+
+		return rest_get_server()->dispatch( $request );
+	}
+
+	/**
+	 * Helper: POST a combined stylesheet.
+	 *
+	 * @param list<int>                                    $post_ids Contributing posts.
+	 * @param string|array<string>|true|int               $css      Compiled CSS, or a malformed value.
+	 * @param array{tokensHash: string, signature: string} $payload  Signed payload of the rendered page.
+	 */
+	private function save_combined_style( array $post_ids, $css, array $payload ): WP_REST_Response {
+		return $this->post_atomic_wind_route(
+			'combined-style',
+			array(
+				'postIds'    => $post_ids,
+				'css'        => $css,
+				'tokensHash' => $payload['tokensHash'],
+				'signature'  => $payload['signature'],
+			)
+		);
+	}
+
+	/**
+	 * Helper: cache a combined stylesheet for the current render, then assert that a
+	 * render of other markup is not served it.
+	 *
+	 * @param array{singular: int, layout: int} $posts        Posts rendered together.
+	 * @param callable(): void                  $render_other Renders the page with other markup.
+	 */
+	private function assert_combined_style_stays_with_its_markup( array $posts, callable $render_other ): void {
+		$this->save_combined_style( array( $posts['singular'], $posts['layout'] ), '.cached{color:red}', $this->combined_style_payload( $posts ) );
+
+		$this->render_combined_page( $posts );
+		$this->assertSame( '.cached{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+
+		$render_other();
+
+		$this->assertStringNotContainsString( '.cached{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	/**
+	 * @return array<string, array{0: array<string>|true|int}>
+	 */
+	public function data_css_that_is_not_text(): array {
+		return array(
+			'list'    => array( array( '.x{color:red}' ) ),
+			'object'  => array( array( 'rule' => '.x{color:red}' ) ),
+			'boolean' => array( true ),
+			'number'  => array( 42 ),
+		);
+	}
+
+	/**
+	 * @dataProvider data_css_that_is_not_text
+	 *
+	 * @param array<string>|true|int $css Malformed CSS value.
+	 */
+	public function test_combined_style_save_rejects_css_that_is_not_text( $css ): void {
+		$posts = $this->make_combined_page_posts();
+
+		$response = $this->save_combined_style( array( $posts['singular'], $posts['layout'] ), $css, $this->combined_style_payload( $posts ) );
+		$this->render_combined_page( $posts );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertStringNotContainsString( 'Array', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	/**
+	 * @dataProvider data_css_that_is_not_text
+	 *
+	 * @param array<string>|true|int $css Malformed CSS value.
+	 */
+	public function test_style_save_rejects_css_that_is_not_text( $css ): void {
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		$this->set_cached_css( $post_id, '.flex{display:flex}' );
+
+		$response = $this->post_atomic_wind_route(
+			'style',
+			array(
+				'postId' => $post_id,
+				'css'    => $css,
+			)
+		);
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( '.flex{display:flex}', get_post_meta( $post_id, '_atomic_wind_css', true ) );
+	}
+
+	public function test_combined_style_saved_by_an_editor_replaces_the_generator(): void {
+		$posts    = $this->make_combined_page_posts();
+		$combined = '.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}';
+
+		$response = $this->save_combined_style( array( $posts['singular'], $posts['layout'] ), $combined, $this->combined_style_payload( $posts ) );
+		wp_set_current_user( 0 );
+		$this->render_combined_page( $posts );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( $combined, $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_late_css_has_an_editor_cache_the_combined_style(): void {
+		$posts = $this->make_combined_page_posts();
+
+		$this->render_combined_page( $posts );
+
+		$data       = (string) wp_scripts()->get_data( 'atomic-wind-style-builder', 'data' );
+		$candidates = (string) wp_scripts()->get_data( 'atomic-wind-tailwind-generator', 'data' );
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+		$this->assertStringContainsString( '"postIds":[' . $posts['singular'] . ',' . $posts['layout'] . ']', $data );
+		$this->assertMatchesRegularExpression( '/"tokensHash":"[0-9a-f]{32}"/', $data );
+		$this->assertMatchesRegularExpression( '/"signature":"[0-9a-f]{32}"/', $data );
+		$this->assertStringContainsString( '"lg:grid-cols-4"', $candidates );
+		$this->assertStringContainsString( '"grid-cols-1"', $candidates );
+	}
+
+	public function test_output_late_css_skips_the_combined_cache_for_users_who_cannot_edit_every_post(): void {
+		$posts = $this->make_combined_page_posts();
+
+		$this->render_combined_page( $posts );
+		$this->assertTrue( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+
+		wp_set_current_user( $this->factory()->user->create( array( 'role' => 'author' ) ) );
+		$this->render_combined_page( $posts );
+
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-style-builder', 'enqueued' ) );
+	}
+
+	public function test_rendered_tokens_include_shortcode_output_and_skip_markup_conditions_remove(): void {
+		add_shortcode(
+			'otter_aw_token',
+			static function (): string {
+				return '<span class="shortcode-token"></span>';
+			}
+		);
+		$posts = $this->make_combined_page_posts(
+			array(),
+			'[otter_aw_token]<!-- wp:group {"className":"hidden-token","otterConditions":[[{"type":"loggedOutUser"}]]} --><div class="wp-block-group hidden-token"></div><!-- /wp:group -->'
+		);
+
+		try {
+			$this->render_combined_page( $posts );
+		} finally {
+			remove_shortcode( 'otter_aw_token' );
+		}
+
+		$candidates = (string) wp_scripts()->get_data( 'atomic-wind-tailwind-generator', 'data' );
+
+		$this->assertStringContainsString( '"shortcode-token"', $candidates );
+		$this->assertStringNotContainsString( '"hidden-token"', $candidates );
+	}
+
+	public function test_combined_style_is_not_served_once_block_conditions_change_the_markup(): void {
+		$posts = $this->make_combined_page_posts(
+			array(),
+			'<!-- wp:group {"className":"md:grid-cols-2","otterConditions":[[{"type":"loggedInUser"}]]} --><div class="wp-block-group md:grid-cols-2"></div><!-- /wp:group -->'
+		);
+
+		$this->assert_combined_style_stays_with_its_markup(
+			$posts,
+			function () use ( $posts ): void {
+				wp_set_current_user( 0 );
+				$this->render_combined_page( $posts );
+			}
+		);
+	}
+
+	public function test_combined_style_compile_covers_query_items_before_any_result(): void {
+		$posts = $this->make_combined_page_posts(
+			array(),
+			'<!-- wp:atomic-wind/box {"className":"grid","queryPostType":"page"} --><div class="wp-block-atomic-wind-box grid">' . $this->box_markup( 'md:grid-cols-2' ) . '</div><!-- /wp:atomic-wind/box -->'
+		);
+
+		$this->render_combined_page( $posts );
+
+		// The item template renders before the empty query drops it, so a compile
+		// cached now still styles the items once results appear.
+		$this->assertStringContainsString( '"md:grid-cols-2"', (string) wp_scripts()->get_data( 'atomic-wind-tailwind-generator', 'data' ) );
+	}
+
+	public function test_combined_style_is_not_served_on_another_page_of_the_post(): void {
+		$posts = $this->make_combined_page_posts(
+			array( 'post_content' => $this->box_markup( 'grid grid-cols-1' ) . '<!-- wp:nextpage --><!--nextpage--><!-- /wp:nextpage -->' . $this->box_markup( 'grid lg:grid-cols-4' ) )
+		);
+
+		$this->assert_combined_style_stays_with_its_markup(
+			$posts,
+			function () use ( $posts ): void {
+				$this->render_combined_page( $posts, 2 );
+			}
+		);
+	}
+
+	public function test_combined_style_is_not_served_once_the_post_password_is_entered(): void {
+		$posts  = $this->make_combined_page_posts( array( 'post_password' => 'secret' ) );
+		$cookie = 'wp-postpass_' . COOKIEHASH;
+
+		try {
+			$this->assert_combined_style_stays_with_its_markup(
+				$posts,
+				function () use ( $posts, $cookie ): void {
+					require_once ABSPATH . WPINC . '/class-phpass.php';
+					$_COOKIE[ $cookie ] = ( new PasswordHash( 8, true ) )->HashPassword( 'secret' );
+					$this->assertFalse( post_password_required( $posts['singular'] ) );
+					$this->render_combined_page( $posts );
+				}
+			);
+		} finally {
+			unset( $_COOKIE[ $cookie ] );
+		}
+	}
+
+	public function test_combined_style_is_not_served_once_conditions_inside_a_synced_pattern_change_the_markup(): void {
+		$pattern = $this->factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => '<!-- wp:group {"className":"md:grid-cols-2","otterConditions":[[{"type":"loggedInUser"}]]} --><div class="wp-block-group md:grid-cols-2"></div><!-- /wp:group -->',
+			)
+		);
+		$posts   = $this->make_combined_page_posts( array(), '<!-- wp:block {"ref":' . $pattern . '} /-->' );
+
+		$this->assert_combined_style_stays_with_its_markup(
+			$posts,
+			function () use ( $posts ): void {
+				wp_set_current_user( 0 );
+				$this->render_combined_page( $posts );
+			}
+		);
+	}
+
+	public function test_combined_style_save_requires_edit_rights_on_every_post(): void {
+		$posts  = $this->make_combined_page_posts();
+		$author = $this->factory()->user->create( array( 'role' => 'author' ) );
+		wp_update_post(
+			array(
+				'ID'          => $posts['singular'],
+				'post_author' => $author,
+			)
+		);
+		$this->set_cached_css( $posts['singular'], '.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}' );
+		$payload = $this->combined_style_payload( $posts );
+		wp_set_current_user( $author );
+
+		$response = $this->save_combined_style( array( $posts['singular'], $posts['layout'] ), '.x{color:red}', $payload );
+		$this->render_combined_page( $posts );
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertStringNotContainsString( '.x{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+	}
+
+	public function test_combined_style_save_rejects_a_tokens_hash_the_page_did_not_sign(): void {
+		$posts   = $this->make_combined_page_posts();
+		$payload = array_merge( $this->combined_style_payload( $posts ), array( 'tokensHash' => md5( 'forged' ) ) );
+
+		$response = $this->save_combined_style( array( $posts['singular'], $posts['layout'] ), '.forged{color:red}', $payload );
+		$this->render_combined_page( $posts );
+
+		$this->assertSame( 409, $response->get_status() );
+		$this->assertStringNotContainsString( '.forged{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+	}
+
+	public function test_combined_style_save_is_rejected_once_a_contributing_stylesheet_changes(): void {
+		$posts   = $this->make_combined_page_posts();
+		$payload = $this->combined_style_payload( $posts );
+		$this->set_cached_css( $posts['layout'], '.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}' );
+
+		$response = $this->save_combined_style( array( $posts['singular'], $posts['layout'] ), '.stale{color:red}', $payload );
+		$this->render_combined_page( $posts );
+
+		$this->assertSame( 409, $response->get_status() );
+		$this->assertStringNotContainsString( '.stale{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_combined_style_saved_for_copied_stylesheets_is_not_served_on_the_originals(): void {
+		$posts  = $this->make_combined_page_posts();
+		$copies = $this->make_combined_page_posts();
+		$this->save_combined_style( array( $copies['singular'], $copies['layout'] ), '.copy{color:red}', $this->combined_style_payload( $copies ) );
+
+		$this->render_combined_page( $copies );
+		$this->assertSame( '.copy{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+
+		$this->render_combined_page( $posts );
+
+		$this->assertStringNotContainsString( '.copy{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_combined_style_save_rejects_posts_sharing_one_stylesheet(): void {
+		$first  = $this->make_atomic_wind_post( 'flex' );
+		$second = $this->make_atomic_wind_post( 'flex' );
+		$this->set_cached_css( $first, '.flex{display:flex}' );
+		$this->set_cached_css( $second, '.flex{display:flex}' );
+
+		$response = $this->save_combined_style(
+			array( $first, $second ),
+			'.flex{display:flex}',
+			array(
+				'tokensHash' => md5( 'flex' ),
+				'signature'  => md5( 'unsigned' ),
+			)
+		);
+
+		$this->assertSame( 400, $response->get_status() );
+	}
+
+	public function test_combined_style_is_dropped_once_a_contributing_stylesheet_changes(): void {
+		$posts = $this->make_combined_page_posts();
+		$this->save_combined_style( array( $posts['singular'], $posts['layout'] ), '.stale{color:red}', $this->combined_style_payload( $posts ) );
+
+		$this->render_combined_page( $posts );
+		$this->assertSame( '.stale{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+
+		$this->set_cached_css( $posts['layout'], '.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}' );
+		$this->render_combined_page( $posts );
+
+		$this->assertStringNotContainsString( '.stale{color:red}', $this->inline_style_for( 'atomic-wind-tailwind-late' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
 	}
 
 	public function test_enqueue_base_css_registers_frontend_style_without_enqueuing_it() {

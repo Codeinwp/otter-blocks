@@ -6,7 +6,7 @@
 	"category": "atomic-wind",
 	"description": "A generic wrapper element with tag selection and inner blocks. Supports details and summary tags for native disclosure widgets.",
 	"keywords": [ "box", "container", "wrapper", "div", "section", "details", "summary" ],
-	"textdomain": "atomic-wind",
+	"textdomain": "otter-blocks",
 	"attributes": {
 		"tagName": {
 			"type": "string",

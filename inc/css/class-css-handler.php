@@ -234,8 +234,68 @@ class CSS_Handler extends Base_CSS {
 	 * @param int $post_id Post id.
 	 */
 	public static function generate_css_file( $post_id ) {
-		$css = self::instance()->get_blocks_css( $post_id );
+		$failures = self::get_render_failures();
+		$css      = self::instance()->get_blocks_css( $post_id );
+
+		if ( self::get_render_failures() > $failures ) {
+			self::invalidate_post_css( $post_id );
+			return;
+		}
+
 		self::save_css_file( $post_id, $css );
+	}
+
+	/**
+	 * Drop a post's saved CSS and fonts, so the page renders inline styles until it regenerates cleanly.
+	 *
+	 * Unlike delete_css_file(), this runs without a capability check: it only
+	 * clears a cache, and the frontend regeneration path runs as a visitor.
+	 *
+	 * @param int $post_id Post id.
+	 * @return void
+	 */
+	private static function invalidate_post_css( $post_id ) {
+		$file_name = get_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', true );
+
+		delete_post_meta( $post_id, '_themeisle_gutenberg_block_styles' );
+		delete_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet' );
+		delete_post_meta( $post_id, '_themeisle_gutenberg_block_fonts' );
+
+		self::delete_stylesheet( $file_name );
+	}
+
+	/**
+	 * Drop the saved widgets CSS and fonts, so widgets render inline styles until they regenerate cleanly.
+	 *
+	 * @return void
+	 */
+	private static function invalidate_widgets_css() {
+		$file_name = get_option( 'themeisle_blocks_widgets_css_file' );
+
+		delete_option( 'themeisle_blocks_widgets_css' );
+		delete_option( 'themeisle_blocks_widgets_css_file' );
+		delete_option( 'themeisle_blocks_widgets_fonts' );
+
+		self::delete_stylesheet( $file_name );
+	}
+
+	/**
+	 * Delete a generated stylesheet from uploads.
+	 *
+	 * @param mixed $file_name Stylesheet name, without extension.
+	 * @return void
+	 */
+	private static function delete_stylesheet( $file_name ) {
+		if ( ! is_string( $file_name ) || '' === $file_name ) {
+			return;
+		}
+
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$file_path     = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/' . $file_name . '.css';
+
+		if ( is_file( $file_path ) ) {
+			wp_delete_file( $file_path );
+		}
 	}
 
 	/**
@@ -305,10 +365,15 @@ class CSS_Handler extends Base_CSS {
 			return false;
 		}
 
-		$post_id = $request->get_param( 'id' );
-		$css     = $this->get_reusable_block_css( $post_id );
+		$post_id  = $request->get_param( 'id' );
+		$failures = self::get_render_failures();
+		$css      = $this->get_reusable_block_css( $post_id );
 
-		self::save_css_file( $post_id, $css );
+		if ( self::get_render_failures() > $failures ) {
+			self::invalidate_post_css( $post_id );
+		} else {
+			self::save_css_file( $post_id, $css );
+		}
 
 		self::mark_review_block_metadata( $post_id );
 
@@ -428,7 +493,13 @@ class CSS_Handler extends Base_CSS {
 		require_once ABSPATH . '/wp-admin/includes/file.php';
 		WP_Filesystem();
 
-		$css = self::instance()->get_widgets_css();
+		$failures = self::get_render_failures();
+		$css      = self::instance()->get_widgets_css();
+
+		if ( self::get_render_failures() > $failures ) {
+			self::invalidate_widgets_css();
+			return false;
+		}
 
 		if ( empty( $css ) ) {
 			$file_path = get_option( 'themeisle_blocks_widgets_css_file' );
@@ -478,7 +549,8 @@ class CSS_Handler extends Base_CSS {
 				wp_mkdir_p( $upload_dir );
 			}
 
-			$wp_filesystem->put_contents( $file_path, stripslashes( $css ), FS_CHMOD_FILE );
+			// Escaped after unslashing so the CSS escape survives; core may inline this file in a style tag.
+			$wp_filesystem->put_contents( $file_path, self::escape_style_contents( stripslashes( $css ) ), FS_CHMOD_FILE );
 
 			if ( file_exists( $file_path ) ) {
 				update_option( 'themeisle_blocks_widgets_css_file', $file_name );
@@ -531,6 +603,25 @@ class CSS_Handler extends Base_CSS {
 		$css = $compressor->run( $css );
 
 		return $css;
+	}
+
+	/**
+	 * Neutralize closing style tags so CSS cannot end the <style> element it is printed in.
+	 *
+	 * Mirrors the escaping core's HTML API applies to style text, which older supported WordPress versions lack.
+	 *
+	 * @param string $css CSS.
+	 *
+	 * @return string Escaped CSS.
+	 */
+	public static function escape_style_contents( $css ) {
+		return (string) preg_replace_callback(
+			'~</(?P<tag>style)~i',
+			function ( $matches ) {
+				return '\3c\2f' . $matches['tag'];
+			},
+			$css
+		);
 	}
 
 	/**
