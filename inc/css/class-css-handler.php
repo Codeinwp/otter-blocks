@@ -549,7 +549,8 @@ class CSS_Handler extends Base_CSS {
 				wp_mkdir_p( $upload_dir );
 			}
 
-			$wp_filesystem->put_contents( $file_path, stripslashes( $css ), FS_CHMOD_FILE );
+			// Escaped after unslashing so the CSS escape survives; core may inline this file in a style tag.
+			$wp_filesystem->put_contents( $file_path, self::escape_style_contents( stripslashes( $css ) ), FS_CHMOD_FILE );
 
 			if ( file_exists( $file_path ) ) {
 				update_option( 'themeisle_blocks_widgets_css_file', $file_name );
@@ -602,6 +603,25 @@ class CSS_Handler extends Base_CSS {
 		$css = $compressor->run( $css );
 
 		return $css;
+	}
+
+	/**
+	 * Neutralize closing style tags so CSS cannot end the <style> element it is printed in.
+	 *
+	 * Mirrors the escaping core's HTML API applies to style text, which older supported WordPress versions lack.
+	 *
+	 * @param string $css CSS.
+	 *
+	 * @return string Escaped CSS.
+	 */
+	public static function escape_style_contents( $css ) {
+		return (string) preg_replace_callback(
+			'~</(?P<tag>style)~i',
+			function ( $matches ) {
+				return '\3c\2f' . $matches['tag'];
+			},
+			$css
+		);
 	}
 
 	/**

@@ -125,6 +125,10 @@ class Dynamic_Content_Server {
 						),
 					),
 					'permission_callback' => function ( $request ) {
+						if ( 'product' === $request->get_param( 'type' ) && ! empty( $request->get_param( 'id' ) ) && ! $this->check_permission( $request->get_param( 'id' ) ) ) {
+							return false;
+						}
+
 						return $this->check_permission( $request->get_param( 'context' ) );
 					},
 				),
@@ -165,12 +169,12 @@ class Dynamic_Content_Server {
 			return false;
 		}
 
-		// Allow only if the post is published or the user has permission to view it.
-		if ( 'publish' === $post->post_status || current_user_can( 'edit_post', $post_id ) ) {
+		if ( current_user_can( 'edit_post', $post->ID ) ) {
 			return true;
 		}
 
-		return false;
+		// Publish status alone also covers non-viewable types and protected posts.
+		return 'publish' === $post->post_status && is_post_type_viewable( $post->post_type ) && ! post_password_required( $post );
 	}
 
 	/**

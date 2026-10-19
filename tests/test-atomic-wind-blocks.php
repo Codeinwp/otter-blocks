@@ -1024,6 +1024,34 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertSame( $css, $stored );
 	}
 
+	/**
+	 * Nested tags must not reassemble into a closing style tag, which WordPress
+	 * 6.9 and older print raw in inline styles.
+	 */
+	public function test_sanitize_css_cannot_close_style_element(): void {
+		$css = $this->instance->sanitize_css( '.a{color:red}</sty</style>le><scr<script>ipt>alert(1)</scr</script>ipt>' );
+
+		$this->assertDoesNotMatchRegularExpression( '~</style~i', $css );
+		$this->assertSame( '@property --c{syntax:"<color>"}', $this->instance->sanitize_css( '@property --c{syntax:"<color>"}' ) );
+	}
+
+	/**
+	 * CSS saved before the fix is neutralized when inlined.
+	 */
+	public function test_cached_css_with_closing_style_tag_is_neutralized(): void {
+		$this->reset_style_globals();
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+		$this->set_cached_css( $singular, '.flex{display:flex}</STYLE><script>alert(1)</script>' );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->output_singular_css();
+
+		$inline = $this->inline_style_for( 'atomic-wind-tailwind' );
+		$this->assertStringContainsString( '.flex{display:flex}', $inline );
+		$this->assertDoesNotMatchRegularExpression( '~</style~i', $inline );
+	}
+
 	// -------------------------------------------------------
 	// Security: cached CSS uses wp_add_inline_style.
 	// -------------------------------------------------------

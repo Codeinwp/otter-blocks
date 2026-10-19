@@ -20,6 +20,11 @@ class Dynamic_Content {
 	protected static $instance = null;
 
 	/**
+	 * Magic Tag pattern, without delimiters; its first group is the query.
+	 */
+	const MAGIC_TAG_REGEX = '{(otterDynamic\?[^"\'<>}]*)}';
+
+	/**
 	 * Exception keys of the postContent tags currently being rendered.
 	 *
 	 * @var array<string, true>
@@ -68,7 +73,7 @@ class Dynamic_Content {
 
 			$position = strlen( $position );
 			if ( is_array( $replacement ) ) {
-				$re      = '/#otterDynamicLink\/?.[^"]*/';
+				$re      = '/#otterDynamicLink[^"\'<>]*/';
 				$matches = array();
 				$num     = preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
 
@@ -126,9 +131,33 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/{(otterDynamic\/?.[^"]*)}/';
+		// A whole start tag (quoted values may hold ">") or a text Magic Tag, in one pass so resolved values are never re-scanned.
+		$re = '/(?P<tag><[a-zA-Z\/!][^>"\']*(?:(?:"[^"]*"|\'[^\']*\')[^>"\']*)*>)|' . self::MAGIC_TAG_REGEX . '/';
 
-		return preg_replace_callback( $re, array( $this, 'apply_magic_tags' ), $content );
+		return preg_replace_callback( $re, array( $this, 'apply_magic_tags_in_markup' ), $content );
+	}
+
+	/**
+	 * Resolve a text Magic Tag, or attribute-escape every Magic Tag inside a start tag.
+	 *
+	 * @param array<int|string, string> $matches Start tag in `tag`, or the text Magic Tag query in `2`.
+	 *
+	 * @return string|string[]|void
+	 */
+	public function apply_magic_tags_in_markup( $matches ) {
+		if ( isset( $matches[2] ) ) {
+			return $this->apply_magic_tags( array( 1 => $matches[2] ) );
+		}
+
+		return preg_replace_callback(
+			'/' . self::MAGIC_TAG_REGEX . '/',
+			function ( $token ) {
+				$value = $this->apply_magic_tags( $token );
+
+				return is_string( $value ) ? esc_attr( $value ) : $value;
+			},
+			$matches['tag']
+		);
 	}
 
 	/**
@@ -231,7 +260,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/#otterDynamicLink\/?.[^"]*/';
+		$re = '/#otterDynamicLink[^"\'<>]*/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_link_button' ), $content );
 	}
@@ -251,7 +280,7 @@ class Dynamic_Content {
 		$rest_url = get_rest_url( null, 'otter/v1' );
 		$rest_url = preg_replace( '/([^A-Za-z0-9\s_-])/', '\\\\$1', $rest_url );
 
-		$re      = '/' . $rest_url . '\/dynamic\/?.[^"]*/';
+		$re      = '/' . $rest_url . '\/dynamic[^"\'<>]*/';
 		$matches = array();
 		$num     = preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
 		if ( isset( $num ) && 0 === $num ) {
@@ -842,7 +871,11 @@ class Dynamic_Content {
 			$link = get_site_url();
 		}
 
-		return $link;
+		if ( is_array( $link ) ) {
+			return array_map( 'esc_url', $link );
+		}
+
+		return esc_url( $link );
 	}
 
 	/**
