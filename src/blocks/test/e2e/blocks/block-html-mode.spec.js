@@ -292,6 +292,24 @@ test.describe( 'Edit as HTML mode', () => {
 		});
 	}
 
+	test( 'themeisle-blocks/countdown stays valid when the same generated label edit is repeated', async({ editor, page }) => {
+		await editor.insertBlock({ name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }});
+		await selectBlockByName( page, 'themeisle-blocks/countdown' );
+
+		const textarea = editor.canvas.locator( '.block-editor-block-list__block-html-textarea' );
+
+		for ( let attempt = 0; 2 > attempt; attempt++ ) {
+			await editor.clickBlockOptionsMenuItem( 'Edit as HTML' );
+			await expect( textarea ).toHaveValue( />Day</ );
+			await textarea.fill( ( await textarea.inputValue() ).replace( '>Day<', '>Days<' ) );
+			await textarea.blur();
+
+			await expect.poll( () => page.evaluate( () => window.wp.data.select( 'core/block-editor' ).getSelectedBlock().isValid ) ).toBe( true );
+
+			await editor.clickBlockOptionsMenuItem( 'Edit visually' );
+		}
+	});
+
 	for ( const { target, block } of WITHOUT_HTML_MODE ) {
 		test( `${ target } does not offer Edit as HTML`, async({ editor, page }) => {
 			await editor.insertBlock( block );

@@ -66,6 +66,9 @@ subscribe( () => {
 		return;
 	}
 
+	// The same edit can come back after the repair and must be repaired again.
+	lastChecked = null;
+
 	dispatch( 'core/block-editor' ).updateBlock( block.clientId, {
 		originalContent: repaired,
 		isValid: true,
