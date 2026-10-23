@@ -310,6 +310,23 @@ test.describe( 'Edit as HTML mode', () => {
 		}
 	});
 
+	test( 'themeisle-blocks/countdown stays valid when the edited HTML is blurred again', async({ editor, page }) => {
+		await editor.insertBlock({ name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }});
+		await selectBlockByName( page, 'themeisle-blocks/countdown' );
+		await editor.clickBlockOptionsMenuItem( 'Edit as HTML' );
+
+		const textarea = editor.canvas.locator( '.block-editor-block-list__block-html-textarea' );
+		const isValid = () => page.evaluate( () => window.wp.data.select( 'core/block-editor' ).getSelectedBlock().isValid );
+
+		await textarea.fill( ( await textarea.inputValue() ).replace( '>Day<', '>Days<' ) );
+		await textarea.blur();
+		await expect.poll( isValid ).toBe( true );
+
+		await textarea.focus();
+		await textarea.blur();
+		await expect.poll( isValid ).toBe( true );
+	});
+
 	for ( const { target, block } of WITHOUT_HTML_MODE ) {
 		test( `${ target } does not offer Edit as HTML`, async({ editor, page }) => {
 			await editor.insertBlock( block );
