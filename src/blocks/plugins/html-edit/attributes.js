@@ -53,6 +53,16 @@ export const HTML_FIELDS = {
 };
 
 /**
+ * Markup that `save` generates from no attribute, by block name. An HTML edit
+ * inside it cannot be kept, so it is restored from `save`.
+ *
+ * @type {Object<string, string>}
+ */
+export const GENERATED_MARKUP = {
+	'themeisle-blocks/countdown': ':scope > .otter-countdown__container'
+};
+
+/**
  * Parse markup into an inert fragment.
  *
  * @param {string} html The markup.
@@ -262,4 +272,35 @@ export const syncDuplicateValues = ( attributes, blockType, html ) => {
 	});
 
 	return synced ? template.innerHTML : null;
+};
+
+/**
+ * Replace the generated markup in an edited block with the markup `save`
+ * regenerates, so an HTML edit inside it matches `save` again.
+ *
+ * @param {string} name      The block name.
+ * @param {string} html      The edited block markup.
+ * @param {string} savedHTML The markup `save` generates for the block attributes.
+ * @return {string|null} The restored markup, or null when the generated markup was not edited.
+ */
+export const restoreGeneratedMarkup = ( name, html, savedHTML ) => {
+	const selector = GENERATED_MARKUP[ name ];
+
+	if ( ! selector || 'string' !== typeof html ) {
+		return null;
+	}
+
+	const template = document.createElement( 'template' );
+	template.innerHTML = html;
+
+	const edited = template.content.firstElementChild?.querySelector( selector );
+	const generated = toFragment( savedHTML ).firstElementChild?.querySelector( selector );
+
+	if ( ! edited || ! generated || edited.isEqualNode( generated ) ) {
+		return null;
+	}
+
+	edited.replaceWith( generated );
+
+	return template.innerHTML;
 };

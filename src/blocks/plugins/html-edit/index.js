@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { getBlockType, validateBlock } from '@wordpress/blocks';
+import { getBlockType, getSaveContent, validateBlock } from '@wordpress/blocks';
 
 import { dispatch, select, subscribe } from '@wordpress/data';
 
@@ -11,8 +11,10 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies
  */
 import {
+	GENERATED_MARKUP,
 	HTML_FIELDS,
 	getAttributesFromHTML,
+	restoreGeneratedMarkup,
 	syncDuplicateValues
 } from './attributes.js';
 
@@ -28,7 +30,20 @@ addFilter( 'blocks.getBlockAttributes', 'themeisle-gutenberg/html-edit-attribute
 
 let lastChecked = null;
 
-// An HTML edit of one copy of a duplicated value leaves the block invalid; sync the other copies.
+/**
+ * Sync the stale copies of duplicated values and restore the generated markup in an edited block.
+ *
+ * @param {{name: string, attributes: Record<string, unknown>, originalContent: string}} block The block.
+ * @return {string} The repaired markup.
+ */
+const repairMarkup = ( block ) => {
+	const blockType = getBlockType( block.name );
+	const synced = syncDuplicateValues( block.attributes, blockType, block.originalContent ) ?? block.originalContent;
+
+	return restoreGeneratedMarkup( block.name, synced, getSaveContent( blockType, block.attributes ) ) ?? synced;
+};
+
+// An HTML edit of one copy of a duplicated value, or of generated markup, leaves the block invalid; repair it.
 subscribe( () => {
 	const blockEditor = select( 'core/block-editor' );
 	const block = blockEditor?.getSelectedBlock();
@@ -36,7 +51,7 @@ subscribe( () => {
 	if (
 		! block ||
 		block.isValid ||
-		! HTML_FIELDS[ block.name ] ||
+		( ! HTML_FIELDS[ block.name ] && ! GENERATED_MARKUP[ block.name ]) ||
 		lastChecked === block.originalContent ||
 		'html' !== blockEditor.getBlockMode( block.clientId )
 	) {
@@ -45,14 +60,14 @@ subscribe( () => {
 
 	lastChecked = block.originalContent;
 
-	const synced = syncDuplicateValues( block.attributes, getBlockType( block.name ), block.originalContent );
+	const repaired = repairMarkup( block );
 
-	if ( ! synced || ! validateBlock({ ...block, originalContent: synced })[0]) {
+	if ( repaired === block.originalContent || ! validateBlock({ ...block, originalContent: repaired })[0]) {
 		return;
 	}
 
 	dispatch( 'core/block-editor' ).updateBlock( block.clientId, {
-		originalContent: synced,
+		originalContent: repaired,
 		isValid: true,
 		validationIssues: []
 	});

@@ -15,6 +15,20 @@ const EDITABLE = [
 		expected: { date: '2026-12-25T10:00:00' }
 	},
 	{
+		title: 'generated label',
+		target: 'themeisle-blocks/countdown',
+		block: { name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }},
+		edits: [[ '>Day<', '>Days<' ]],
+		expected: { date: '2026-10-01T10:00:00' }
+	},
+	{
+		title: 'date and generated label',
+		target: 'themeisle-blocks/countdown',
+		block: { name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }},
+		edits: [[ 'data-date="2026-10-01T10:00:00"', 'data-date="2026-12-25T10:00:00"' ], [ '>Day<', '>Days<' ]],
+		expected: { date: '2026-12-25T10:00:00' }
+	},
+	{
 		target: 'themeisle-blocks/progress-bar',
 		block: { name: 'themeisle-blocks/progress-bar' },
 		edits: [[ '>50%<', '>80%<' ], [ '<span>Skill</span>', '<span>Design</span>' ]],
