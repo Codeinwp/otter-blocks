@@ -4,8 +4,8 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 /**
- * Blocks whose visible content is stored in comment attributes: the edited
- * markup is read back into them, so the block stays valid.
+ * Blocks whose edited markup is read back into comment attributes, or restored
+ * from `save` for generated markup, so the block stays valid.
  */
 const EDITABLE = [
 	{
