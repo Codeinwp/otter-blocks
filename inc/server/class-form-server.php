@@ -489,7 +489,7 @@ class Form_Server {
 
 				foreach ( $form_emails as $form ) {
 					if ( isset( $form['form'] ) && $form['form'] === $option_name && isset( $form['email'] ) && '' !== $form['email'] ) {
-						$to = sanitize_email( $form['email'] );
+						$to = implode( ', ', self::sanitize_recipients( $form['email'] ) );
 					}
 				}
 
@@ -817,14 +817,15 @@ class Form_Server {
 		try {
 			$email_subject = ( __( 'Test email for Otter Form from ', 'otter-blocks' ) . get_bloginfo( 'name', 'display' ) );
 			$email_body    = Form_Email::instance()->build_test_email( $form_data );
+
+			$recipients = $form_data->payload_has( 'to' ) ? self::sanitize_recipients( $form_data->get_data_from_payload( 'to' ) ) : array();
 			// Sent the form date to the admin site as a default behaviour.
-			$to = sanitize_email( get_option( 'admin_email' ) );
-			if ( $form_data->payload_has( 'to' ) && '' !== $form_data->get_data_from_payload( 'to' ) ) {
-				$to = sanitize_email( $form_data->get_data_from_payload( 'to' ) );
+			if ( empty( $recipients ) ) {
+				$recipients = array( sanitize_email( get_option( 'admin_email' ) ) );
 			}
-			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . get_bloginfo( 'name', 'display' ) . '<' . $to . '>' );
+			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . get_bloginfo( 'name', 'display' ) . '<' . $recipients[0] . '>' );
 			// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_mail_wp_mail
-			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
+			$res->set_success( wp_mail( implode( ', ', $recipients ), $email_subject, $email_body, $headers ) );
 		} catch ( Exception  $e ) {
 			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
@@ -1168,6 +1169,18 @@ class Form_Server {
 	 */
 	public function build_email_error_content( $content ) {
 		return $content;
+	}
+
+	/**
+	 * Sanitize a comma-separated list of email addresses, dropping the invalid ones.
+	 *
+	 * @param string $recipients Comma-separated email addresses.
+	 * @return list<string>
+	 */
+	private static function sanitize_recipients( $recipients ) {
+		$emails = array_map( 'sanitize_email', explode( ',', $recipients ) );
+
+		return array_values( array_filter( $emails, 'is_email' ) );
 	}
 
 	/**
