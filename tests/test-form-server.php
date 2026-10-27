@@ -423,6 +423,30 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A test email whose recipients are all invalid goes to, and is sent from, the current site's admin.
+	 */
+	public function test_send_test_email_with_only_invalid_recipients_uses_site_admin_email(): void {
+		$this->mock_mail();
+		$this->use_distinct_network_admin_email();
+
+		$request = new WP_REST_Request( 'POST', '/otter/v1/form/editor' );
+		$request->set_body(
+			wp_json_encode(
+				array(
+					'handler' => 'testEmail',
+					'payload' => array( 'to' => 'not-an-email, also-not-an-email' ),
+				)
+			)
+		);
+
+		Form_Server::send_test_email( new Form_Data_Request( $request ) );
+
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( 'site-admin@example.org', $this->mail_requests[0]['to'] );
+		$this->assertContains( 'From: ' . get_bloginfo( 'name', 'display' ) . '<site-admin@example.org>', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
 	 * Ensure a configured Reply-To address overrides the submitter email fallback.
 	 */
 	public function test_frontend_submission_uses_configured_reply_to_header() {
