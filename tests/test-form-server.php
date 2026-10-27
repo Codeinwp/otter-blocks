@@ -366,6 +366,63 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Form recipient lists and the `to` value the notification must be sent with.
+	 *
+	 * @return array<string, array{0: string, 1: string}>
+	 */
+	public function recipient_list_provider(): array {
+		return array(
+			'comma separated'       => array( 'first@example.org,second@example.org', 'first@example.org, second@example.org' ),
+			'comma and space'       => array( 'first@example.org, second@example.org', 'first@example.org, second@example.org' ),
+			'invalid entry dropped' => array( 'first@example.org, not-an-email', 'first@example.org' ),
+			'only invalid entries'  => array( 'not-an-email, also-not-an-email', 'site-admin@example.org' ),
+		);
+	}
+
+	/**
+	 * The notification goes to every valid address in a comma-separated recipient list.
+	 *
+	 * @dataProvider recipient_list_provider
+	 *
+	 * @param string $recipients  The form's configured recipients.
+	 * @param string $expected_to The expected `to` value.
+	 */
+	public function test_frontend_submission_sends_to_every_listed_recipient( string $recipients, string $expected_to ): void {
+		$this->mock_mail();
+		$this->use_distinct_network_admin_email();
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'email' => $recipients ) ) ) );
+
+		$response = $this->form_server->frontend( $this->get_frontend_request() );
+
+		$this->assertTrue( $response->get_data()['success'] );
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( $expected_to, $this->mail_requests[0]['to'] );
+	}
+
+	/**
+	 * The test email goes to every valid listed address and is sent from the first one only.
+	 */
+	public function test_send_test_email_sends_to_every_listed_recipient(): void {
+		$this->mock_mail();
+
+		$request = new WP_REST_Request( 'POST', '/otter/v1/form/editor' );
+		$request->set_body(
+			wp_json_encode(
+				array(
+					'handler' => 'testEmail',
+					'payload' => array( 'to' => 'first@example.org, not-an-email, second@example.org' ),
+				)
+			)
+		);
+
+		Form_Server::send_test_email( new Form_Data_Request( $request ) );
+
+		$this->assertCount( 1, $this->mail_requests );
+		$this->assertSame( 'first@example.org, second@example.org', $this->mail_requests[0]['to'] );
+		$this->assertContains( 'From: ' . get_bloginfo( 'name', 'display' ) . '<first@example.org>', $this->mail_requests[0]['headers'] );
+	}
+
+	/**
 	 * Ensure a configured Reply-To address overrides the submitter email fallback.
 	 */
 	public function test_frontend_submission_uses_configured_reply_to_header() {
