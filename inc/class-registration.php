@@ -1211,21 +1211,26 @@ class Registration {
 			return $block_content;
 		}
 
-		add_action( 'wp_footer', array( $this, 'condition_hide_on_style' ) );
+		self::condition_hide_on_style();
 		self::$scripts_loaded['condition_hide_on'] = true;
 
 		return $block_content;
 	}
 
 	/**
-	 * Get the styles for Hide on condition.
+	 * Enqueue the styles for Hide on condition.
+	 *
+	 * Enqueued, not echoed, so core can print them in <head> even when enqueued late.
 	 *
 	 * @static
 	 * @since 2.4
 	 * @access public
+	 * @return void
 	 */
 	public static function condition_hide_on_style() {
-		echo '<style id="o-condition-hide-inline-css">@layer theme, base, components, utilities;@media (max-width:768px){@layer utilities{.o-hide-on-mobile:is(.o-hide-on-mobile,#_){display:none!important}}}@media (min-width:769px) and (max-width:1024px){@layer utilities{.o-hide-on-tablet:is(.o-hide-on-tablet,#_){display:none!important}}}@media (min-width:1025px){@layer utilities{.o-hide-on-desktop:is(.o-hide-on-desktop,#_){display:none!important}}}</style>';
+		wp_register_style( 'o-condition-hide', false, array(), OTTER_BLOCKS_VERSION );
+		wp_add_inline_style( 'o-condition-hide', '@layer theme, base, components, utilities;@media (max-width:768px){@layer utilities{.o-hide-on-mobile:is(.o-hide-on-mobile,#_){display:none!important}}}@media (min-width:769px) and (max-width:1024px){@layer utilities{.o-hide-on-tablet:is(.o-hide-on-tablet,#_){display:none!important}}}@media (min-width:1025px){@layer utilities{.o-hide-on-desktop:is(.o-hide-on-desktop,#_){display:none!important}}}' );
+		wp_enqueue_style( 'o-condition-hide' );
 	}
 
 	/**
