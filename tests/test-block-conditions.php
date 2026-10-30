@@ -656,7 +656,7 @@ class TestBlockConditions extends WP_UnitTestCase
 
 		$head_styles = get_echo( 'wp_print_styles', array( 'o-condition-hide' ) );
 
-		$this->assertStringContainsString( 'id="o-condition-hide-inline-css"', $head_styles );
+		$this->assertMatchesRegularExpression( '/id=["\']o-condition-hide-inline-css["\']/', $head_styles );
 		$this->assertStringContainsString( '.o-hide-on-mobile:is(.o-hide-on-mobile,#_){display:none!important}', $head_styles );
 	}
 }
