@@ -85,6 +85,9 @@ class TestBlockConditions extends WP_UnitTestCase
 		wp_delete_user( $this->user_id, true );
 		wp_delete_post( $this->post_id, true );
 		wp_delete_term( $this->category_id, 'category' );
+		wp_dequeue_style( 'o-condition-hide' );
+		wp_deregister_style( 'o-condition-hide' );
+		Registration::$scripts_loaded['condition_hide_on'] = false;
 		parent::tear_down();
 	}
 
@@ -630,5 +633,30 @@ class TestBlockConditions extends WP_UnitTestCase
 
 		// Make sure styles are loaded.
 		$this->assertEquals( Registration::$scripts_loaded['condition_hide_on'], true );
+	}
+
+	public function test_screen_size_condition_enqueues_hide_styles_for_head(): void {
+		$block = array(
+			'blockName' => 'core/paragraph',
+			'attrs'     => array(
+				'otterConditions' => array(
+					array(
+						array(
+							'type'         => 'screenSize',
+							'screen_sizes' => array( 'mobile' ),
+						),
+					),
+				),
+			),
+		);
+
+		( new Registration() )->load_condition_hide_on_styles( '<p>Hello!</p>', $block );
+
+		$this->assertTrue( wp_style_is( 'o-condition-hide' ) );
+
+		$head_styles = get_echo( 'wp_print_styles', array( 'o-condition-hide' ) );
+
+		$this->assertStringContainsString( 'id="o-condition-hide-inline-css"', $head_styles );
+		$this->assertStringContainsString( '.o-hide-on-mobile:is(.o-hide-on-mobile,#_){display:none!important}', $head_styles );
 	}
 }
