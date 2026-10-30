@@ -1,7 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { applyFilters } from '@wordpress/hooks';
 
-import { getAttributesFromHTML, syncDuplicateValues } from '../../plugins/html-edit/attributes';
+import { getAttributesFromHTML, restoreGeneratedMarkup, syncDuplicateValues } from '../../plugins/html-edit/attributes';
 import '../../plugins/html-edit/index';
 
 // The real registry pulls an ESM-only dependency that this Jest setup does not transform.
@@ -32,6 +32,8 @@ const circleCounter = blockType( 'circle-counter', { title: { type: 'string' }, 
 const formInput = blockType( 'form-input', { label: { type: 'string' }, placeholder: { type: 'string' }, helpText: { type: 'string' }});
 
 const countdownHTML = ( date ) => `<div id="c1" data-date="${ date }" class="wp-block-themeisle-blocks-countdown"><div class="otter-countdown__container"></div></div>`;
+
+const countdownDisplayHTML = ( date, label ) => `<div id="c1" data-date="${ date }" class="wp-block-themeisle-blocks-countdown"><div class="otter-countdown__container"><div class="otter-countdown__display"><div name="day" class="otter-countdown__display-area is-main-component"><div class="otter-countdown__value">0</div><div class="otter-countdown__label">${ label }</div></div></div></div></div>`;
 
 const progressHTML = ({ title = 'Skill', percent = 50, number = '50%' } = {}) => `<div id="p1" class="wp-block-themeisle-blocks-progress-bar" data-percent="${ percent }" data-duration="2"><div class="wp-block-themeisle-blocks-progress-bar__area"><div class="wp-block-themeisle-blocks-progress-bar__area__title"><span>${ title }</span></div><div class="wp-block-themeisle-blocks-progress-bar__area__bar"></div><div class="wp-block-themeisle-blocks-progress-bar__progress wp-block-themeisle-blocks-progress-bar__number">${ number }</div></div></div>`;
 
@@ -152,6 +154,28 @@ describe( 'syncDuplicateValues', () => {
 	it( 'returns null when no copy is stale', () => {
 		expect( syncDuplicateValues({ title: 'Skill', percentage: 50 }, progressBar, progressHTML() ) ).toBeNull();
 		expect( syncDuplicateValues({ title: 'Skill', percentage: 50 }, circleCounter, circleHTML( 'Skill', 50 ) ) ).toBeNull();
+	});
+});
+
+describe( 'restoreGeneratedMarkup', () => {
+	const countdown = 'themeisle-blocks/countdown';
+
+	it( 'restores an edited Countdown label from the saved markup', () => {
+		expect( restoreGeneratedMarkup( countdown, countdownDisplayHTML( '2026-10-01T10:00:00', 'Days' ), countdownDisplayHTML( '2026-10-01T10:00:00', 'Day' ) ) )
+			.toBe( countdownDisplayHTML( '2026-10-01T10:00:00', 'Day' ) );
+	});
+
+	it( 'restores only the generated markup, not the wrapper', () => {
+		expect( restoreGeneratedMarkup( countdown, countdownDisplayHTML( '2026-12-25T10:00:00', 'Days' ), countdownDisplayHTML( '2026-10-01T10:00:00', 'Day' ) ) )
+			.toBe( countdownDisplayHTML( '2026-12-25T10:00:00', 'Day' ) );
+	});
+
+	it( 'returns null when the generated markup was not edited', () => {
+		const html = countdownDisplayHTML( '2026-10-01T10:00:00', 'Day' );
+
+		expect( restoreGeneratedMarkup( countdown, html, html ) ).toBeNull();
+		expect( restoreGeneratedMarkup( countdown, countdownHTML( '2026-10-01T10:00:00' ).replace( '<div class="otter-countdown__container"></div>', '' ), html ) ).toBeNull();
+		expect( restoreGeneratedMarkup( 'themeisle-blocks/progress-bar', progressHTML({ title: 'Design' }), progressHTML() ) ).toBeNull();
 	});
 });
 

@@ -4,14 +4,28 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 /**
- * Blocks whose visible content is stored in comment attributes: the edited
- * markup is read back into them, so the block stays valid.
+ * Blocks whose edited markup is read back into comment attributes, or restored
+ * from `save` for generated markup, so the block stays valid.
  */
 const EDITABLE = [
 	{
 		target: 'themeisle-blocks/countdown',
 		block: { name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }},
 		edits: [[ 'data-date="2026-10-01T10:00:00"', 'data-date="2026-12-25T10:00:00"' ]],
+		expected: { date: '2026-12-25T10:00:00' }
+	},
+	{
+		title: 'generated label',
+		target: 'themeisle-blocks/countdown',
+		block: { name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }},
+		edits: [[ '>Day<', '>Days<' ]],
+		expected: { date: '2026-10-01T10:00:00' }
+	},
+	{
+		title: 'date and generated label',
+		target: 'themeisle-blocks/countdown',
+		block: { name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }},
+		edits: [[ 'data-date="2026-10-01T10:00:00"', 'data-date="2026-12-25T10:00:00"' ], [ '>Day<', '>Days<' ]],
 		expected: { date: '2026-12-25T10:00:00' }
 	},
 	{
@@ -277,6 +291,41 @@ test.describe( 'Edit as HTML mode', () => {
 			}
 		});
 	}
+
+	test( 'themeisle-blocks/countdown stays valid when the same generated label edit is repeated', async({ editor, page }) => {
+		await editor.insertBlock({ name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }});
+		await selectBlockByName( page, 'themeisle-blocks/countdown' );
+
+		const textarea = editor.canvas.locator( '.block-editor-block-list__block-html-textarea' );
+
+		for ( let attempt = 0; 2 > attempt; attempt++ ) {
+			await editor.clickBlockOptionsMenuItem( 'Edit as HTML' );
+			await expect( textarea ).toHaveValue( />Day</ );
+			await textarea.fill( ( await textarea.inputValue() ).replace( '>Day<', '>Days<' ) );
+			await textarea.blur();
+
+			await expect.poll( () => page.evaluate( () => window.wp.data.select( 'core/block-editor' ).getSelectedBlock().isValid ) ).toBe( true );
+
+			await editor.clickBlockOptionsMenuItem( 'Edit visually' );
+		}
+	});
+
+	test( 'themeisle-blocks/countdown stays valid when the edited HTML is blurred again', async({ editor, page }) => {
+		await editor.insertBlock({ name: 'themeisle-blocks/countdown', attributes: { date: '2026-10-01T10:00:00' }});
+		await selectBlockByName( page, 'themeisle-blocks/countdown' );
+		await editor.clickBlockOptionsMenuItem( 'Edit as HTML' );
+
+		const textarea = editor.canvas.locator( '.block-editor-block-list__block-html-textarea' );
+		const isValid = () => page.evaluate( () => window.wp.data.select( 'core/block-editor' ).getSelectedBlock().isValid );
+
+		await textarea.fill( ( await textarea.inputValue() ).replace( '>Day<', '>Days<' ) );
+		await textarea.blur();
+		await expect.poll( isValid ).toBe( true );
+
+		await textarea.focus();
+		await textarea.blur();
+		await expect.poll( isValid ).toBe( true );
+	});
 
 	for ( const { target, block } of WITHOUT_HTML_MODE ) {
 		test( `${ target } does not offer Edit as HTML`, async({ editor, page }) => {

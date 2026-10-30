@@ -113,7 +113,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 				<TextControl
 					label={ __( 'Email To', 'otter-blocks' ) }
 					placeholder={ __( 'Default is to admin site', 'otter-blocks' ) }
-					type="email"
+					type="text"
 					value={ formOptions.emailTo }
 					onChange={ emailTo => setFormOption({ emailTo }) }
 					help={ __( 'Default is site administrator.', 'otter-blocks' ) }
