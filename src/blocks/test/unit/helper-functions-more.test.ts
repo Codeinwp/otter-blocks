@@ -1,6 +1,7 @@
 import {
 	_cssBlock,
 	_cssProp,
+	docsURL,
 	findInnerBlocks,
 	getObjectFromQueryString,
 	getQueryStringFromObject,
@@ -51,6 +52,20 @@ describe( 'setUtm', () => {
 		const result = setUtm( 'https://example.com/path?foo=bar', 'dashboard', undefined );
 		expect( result ).toContain( 'foo=bar' );
 		expect( result ).toContain( 'utm_campaign=dashboard' );
+	});
+});
+
+describe( 'docsURL', () => {
+	it( 'adds the same utm params as the SDK tsdk_utmify()', () => {
+		expect( docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/block-sticky', 'sticky', 'block-editor' ) ).toBe(
+			'https://docs.themeisle.com/otter-page-builder-blocks-extensions/block-sticky?utm_source=wpadmin&utm_medium=block-editor&utm_campaign=sticky&utm_content=docsotter-page-builder-blocks-extensionsblock-sticky'
+		);
+	});
+
+	it( 'keeps the anchor at the end', () => {
+		expect( docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/how-to-use-webhooks-in-otter-forms#mapped-name', 'mapped-name', 'block-editor' ) ).toBe(
+			'https://docs.themeisle.com/otter-page-builder-blocks-extensions/how-to-use-webhooks-in-otter-forms?utm_source=wpadmin&utm_medium=block-editor&utm_campaign=mapped-name&utm_content=docsotter-page-builder-blocks-extensionshow-to-use-webhooks-in-otter-formsmapped-name#mapped-name'
+		);
 	});
 });
 
