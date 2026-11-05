@@ -201,7 +201,7 @@ class Abilities {
 							'properties'           => array(
 								'email_to'                 => array(
 									'type'        => 'string',
-									'description' => __( 'Recipient email address. The site admin email is used when empty.', 'otter-blocks' ),
+									'description' => __( 'Recipient email addresses, separated by commas. The site admin email is used when empty.', 'otter-blocks' ),
 								),
 								'subject'                  => array( 'type' => 'string' ),
 								'from_name'                => array( 'type' => 'string' ),
@@ -919,7 +919,7 @@ class Abilities {
 			}
 
 			if ( '' !== $value && in_array( $key, array( 'email_to', 'cc', 'bcc', 'from_email', 'reply_to' ), true ) ) {
-				$emails = in_array( $key, array( 'email_to', 'from_email', 'reply_to' ), true ) ? array( $value ) : array_map( 'trim', explode( ',', $value ) );
+				$emails = in_array( $key, array( 'from_email', 'reply_to' ), true ) ? array( $value ) : array_map( 'trim', explode( ',', $value ) );
 
 				foreach ( $emails as $email ) {
 					if ( ! is_email( $email ) ) {

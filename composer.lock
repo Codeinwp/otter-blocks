@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "14a762d6a169ff16a90a941283c7a5b1",
+    "content-hash": "1ae0a828e38ceeea92578f76f35e483a",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.67",
+            "version": "3.3.71",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "e1dda44811660a65c3da6994349c054a46686d69"
+                "reference": "cd7acfc0b01b8d5712736aa3721d689591ced991"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/e1dda44811660a65c3da6994349c054a46686d69",
-                "reference": "e1dda44811660a65c3da6994349c054a46686d69",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/cd7acfc0b01b8d5712736aa3721d689591ced991",
+                "reference": "cd7acfc0b01b8d5712736aa3721d689591ced991",
                 "shasum": ""
             },
             "require-dev": {
@@ -43,22 +43,22 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.67"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.71"
             },
-            "time": "2026-10-13T12:16:34+00:00"
+            "time": "2026-11-04T20:22:53+00:00"
         },
         {
             "name": "enshrined/svg-sanitize",
-            "version": "1.0.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/darylldoyle/svg-sanitizer.git",
-                "reference": "f3300fcd1bbf67d205b52217c75d0f7d6a8c47ff"
+                "reference": "1976ff93c8d8a234cdd3ff99626bd43ecf11bf49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/f3300fcd1bbf67d205b52217c75d0f7d6a8c47ff",
-                "reference": "f3300fcd1bbf67d205b52217c75d0f7d6a8c47ff",
+                "url": "https://api.github.com/repos/darylldoyle/svg-sanitizer/zipball/1976ff93c8d8a234cdd3ff99626bd43ecf11bf49",
+                "reference": "1976ff93c8d8a234cdd3ff99626bd43ecf11bf49",
                 "shasum": ""
             },
             "require": {
@@ -88,9 +88,9 @@
             "description": "An SVG sanitizer for PHP",
             "support": {
                 "issues": "https://github.com/darylldoyle/svg-sanitizer/issues",
-                "source": "https://github.com/darylldoyle/svg-sanitizer/tree/1.0.0"
+                "source": "https://github.com/darylldoyle/svg-sanitizer/tree/1.1.1"
             },
-            "time": "2026-09-01T09:35:47+00:00"
+            "time": "2026-10-20T09:45:10+00:00"
         },
         {
             "name": "sabberworm/php-css-parser",
@@ -977,16 +977,16 @@
         },
         {
             "name": "php-stubs/woocommerce-stubs",
-            "version": "v11.2.0",
+            "version": "v11.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/woocommerce-stubs.git",
-                "reference": "fb590c1c2a26c47aa5da2c6c51a707130e8a389c"
+                "reference": "8cfdb86cad90da64441317e1bebe5f71a437a074"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/fb590c1c2a26c47aa5da2c6c51a707130e8a389c",
-                "reference": "fb590c1c2a26c47aa5da2c6c51a707130e8a389c",
+                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/8cfdb86cad90da64441317e1bebe5f71a437a074",
+                "reference": "8cfdb86cad90da64441317e1bebe5f71a437a074",
                 "shasum": ""
             },
             "require": {
@@ -1015,9 +1015,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
-                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v11.2.0"
+                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v11.2.1"
             },
-            "time": "2026-10-07T19:02:59+00:00"
+            "time": "2026-10-09T20:26:55+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",

@@ -427,12 +427,6 @@ parameters:
 			path: inc/class-registration.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Registration::condition_hide_on_style() has no return type specified.'
-			identifier: missingType.return
-			count: 1
-			path: inc/class-registration.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Registration::enqueue_assets() has no return type specified.'
 			identifier: missingType.return
 			count: 1

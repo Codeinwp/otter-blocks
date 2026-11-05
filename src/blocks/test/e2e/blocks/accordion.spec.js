@@ -6,7 +6,7 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 /**
  * Internal dependencies
  */
-import { expectBlockByName, insertBlockBySlash, publishAndViewPost } from '../helpers/editor';
+import { expectBlockByName, getBlockByName, insertBlockBySlash, publishAndViewPost, waitForEditorReady } from '../helpers/editor';
 
 test.describe( 'Accordion Block', () => {
 	test.beforeEach( async({ admin }) => {
@@ -79,5 +79,23 @@ test.describe( 'Accordion Block', () => {
 		await page.locator( 'summary' ).filter({ hasText: 'Accordion title 1' }).click();
 
 		await expect( page.getByRole( 'paragraph' ).filter({ hasText: 'This is a placeholder tab content. It is important to have the necessary informa' }) ).toBeHidden();
+	});
+
+	test( 'keeps letter spacing after the post is reopened', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'themeisle-blocks/accordion',
+			attributes: { letterSpacing: 3 }
+		});
+
+		await editor.publishPost();
+
+		await page.reload();
+		await waitForEditorReady( page );
+
+		// The saved post is parsed asynchronously after the editor boots.
+		await expect.poll( async() => {
+			const block = await getBlockByName( editor, 'themeisle-blocks/accordion' );
+			return block?.attributes.letterSpacing;
+		}).toBe( 3 );
 	});
 });

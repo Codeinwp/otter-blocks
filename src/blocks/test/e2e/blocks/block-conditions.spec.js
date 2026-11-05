@@ -111,4 +111,31 @@ test.describe( 'Block Conditions', () => {
 		await page.goto( `/?p=${postId}` );
 		await expect( page.getByText( 'Members only content' ) ).toBeHidden();
 	});
+
+	test( 'screen size hide styles load in the head', async({ editor, page }) => {
+		await waitForEditorReady( page );
+
+		await editor.insertBlock({
+			name: 'core/paragraph',
+			attributes: {
+				content: 'Hidden on mobile',
+				otterConditions: [
+					[
+						{
+							type: 'screenSize',
+							screen_sizes: [ 'mobile' ]
+						}
+					]
+				]
+			}
+		});
+
+		await publishAndViewPost({ editor, page });
+
+		// Hidden from the first paint, not after the body parses.
+		await expect( page.locator( 'head style#o-condition-hide-inline-css' ) ).toHaveCount( 1 );
+
+		await page.setViewportSize({ width: 375, height: 700 });
+		await expect( page.getByText( 'Hidden on mobile' ) ).toBeHidden();
+	});
 });

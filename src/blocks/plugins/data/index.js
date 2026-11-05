@@ -8,7 +8,10 @@ import hash from 'object-hash';
  */
 import apiFetch from '@wordpress/api-fetch';
 
-import { registerStore } from '@wordpress/data';
+import {
+	registerStore,
+	select
+} from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -16,7 +19,7 @@ import { registerStore } from '@wordpress/data';
 import { getQueryStringFromObject } from '../../helpers/helper-functions.js';
 
 const DEFAULT_STATE = {
-	showOnboarding: Boolean( window.themeisleGutenberg.showOnboarding ) && 'false' !== window.localStorage?.getItem( 'o-show-onboarding' ),
+	showOnboarding: Boolean( window.themeisleGutenberg.showOnboarding ) && 'false' !== window.localStorage?.getItem( 'o-show-onboarding' ) && false !== select( 'core/preferences' )?.get( 'themeisle/otter-blocks', 'show-welcome-guide' ),
 	viewType: 'Desktop',
 	visiblePopover: 'themeisle-blocks/dynamic-value',
 	dynamicData: {},

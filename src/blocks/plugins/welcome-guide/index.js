@@ -55,6 +55,7 @@ const WelcomeGuide = () => {
 	const { createNotice } = useDispatch( 'core/notices' );
 
 	const { showOnboarding } = useDispatch( 'themeisle-gutenberg/data' );
+	const { set: setPreference } = useDispatch( 'core/preferences' );
 
 	useEffect( () => {
 		if ( '' === email && undefined !== currentUser ) {
@@ -66,6 +67,7 @@ const WelcomeGuide = () => {
 		showOnboarding( false );
 
 		localStorage?.setItem( 'o-show-onboarding', 'false' );
+		setPreference( 'themeisle/otter-blocks', 'show-welcome-guide', false );
 
 		if ( canTrack ) {
 			updateOption( 'otter_blocks_logger_flag', 'yes' );
