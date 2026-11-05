@@ -1,3 +1,13 @@
+##### [Version 3.2.9](https://github.com/Codeinwp/otter-blocks/compare/v3.2.8...v3.2.9) (2026-11-05)
+
+- Fixed Accordion letter spacing disappearing after reopening the post
+- Fixed the Countdown block going invalid after HTML edits.
+- Fixed Form block sending notifications to multiple comma-separated recipients.
+- Fixed the welcome guide reopening after dismissal
+- Fixed blocks hidden on mobile shifting the page layout.
+- Fixed OpenAI API key saving failing with a valid key.
+- Updated dependencies
+
 ##### [Version 3.2.8](https://github.com/Codeinwp/otter-blocks/compare/v3.2.7...v3.2.8) (2026-10-19)
 
 - Fixed frontend pages failing when Otter Pro cannot load a style file.
