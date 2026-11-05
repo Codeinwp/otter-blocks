@@ -141,7 +141,7 @@ class Prompt_Server {
 				),
 				'body'    => wp_json_encode(
 					array(
-						'model'    => 'gpt-3.5-turbo',
+						'model'    => 'gpt-6-luna',
 						'messages' => array(
 							array(
 								'role'    => 'system',

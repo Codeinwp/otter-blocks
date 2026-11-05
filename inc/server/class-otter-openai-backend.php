@@ -68,7 +68,7 @@ class Otter_OpenAI_Backend implements AI_Backend {
 			 * @param string               $model   Default model ID.
 			 * @param array<string, mixed> $payload The filtered OpenAI-format payload.
 			 */
-			$model = (string) apply_filters( 'otter_ai_block_generation_model', 'gpt-5-mini', $payload );
+			$model = (string) apply_filters( 'otter_ai_block_generation_model', 'gpt-5.6-terra', $payload );
 		}
 
 		if ( is_string( $model ) && '' !== $model ) {
