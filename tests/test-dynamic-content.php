@@ -1787,21 +1787,22 @@ class TestDynamicContent extends WP_UnitTestCase
 		$token = '{otterDynamic?type=siteTitle}';
 		wp_set_current_user( 0 );
 		$this->go_to( add_query_arg( 's', rawurlencode( $query ), home_url( '/' ) ) );
-		foreach ( array( 'html5', 'xhtml' ) as $format ) {
-			$format_filter = function () use ( $format ) { return $format; };
+		foreach ( array( 'html5', 'xhtml', 'single-quoted' ) as $format ) {
+			$format_filter = function () use ( $format ) { return 'single-quoted' === $format ? 'html5' : $format; };
+			$form_filter = function ( $form ) use ( $format ) {
+				return 'single-quoted' === $format ? str_replace( '"', "'", $form ) : $form;
+			};
 			add_filter( 'search_form_format', $format_filter );
-			ob_start();
+			add_filter( 'get_search_form', $form_filter, 9 );
 			try {
-				$widget = new WP_Widget_Search();
-				$widget->widget( array( 'before_widget' => '', 'after_widget' => '', 'before_title' => '<h2>', 'after_title' => '</h2>' ), array( 'title' => '' ) );
+				$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:legacy-widget {"idBase":"search"} /--><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
 			} finally {
-				$form = ob_get_clean();
 				remove_filter( 'search_form_format', $format_filter );
+				remove_filter( 'get_search_form', $form_filter, 9 );
 			}
-			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:html -->' . $form . '<!-- /wp:html --><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
 			$processor = new WP_HTML_Tag_Processor( $result );
 			$this->assertTrue( $processor->next_tag( 'input' ), $result );
-			$this->assertSame( 'html5' === $format ? 'search' : 'text', $processor->get_attribute( 'type' ), $result );
+			$this->assertSame( 'xhtml' === $format ? 'text' : 'search', $processor->get_attribute( 'type' ), $result );
 			$this->assertSame( html_entity_decode( $query ), $processor->get_attribute( 'value' ), $result );
 			$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
 			$this->assertSame( $query, get_search_query( false ) );

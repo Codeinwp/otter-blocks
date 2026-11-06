@@ -47,18 +47,7 @@ class Dynamic_Content {
 		add_filter( 'get_comment_author', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_author_url', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'block_core_breadcrumbs_items', array( $this, 'escape_breadcrumb_magic_tags' ) );
-		add_filter(
-			'get_search_form',
-			/**
-			 * Protect classic search form values.
-			 *
-			 * @param string $form Rendered search form.
-			 * @return string
-			 */
-			function ( $form ) {
-				return $this->escape_visitor_block_magic_tags( $form, array( 'blockName' => 'core/search' ) );
-			}
-		);
+		add_filter( 'get_search_form', array( $this, 'escape_comment_magic_tags' ) );
 		foreach ( array( 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
 			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
 		}
