@@ -1799,7 +1799,11 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertStringContainsString( 'https://example.org/safe-fallback.png', $fallback_result );
 		$this->assertStringNotContainsString( $image_url, $fallback_result );
 
-		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$administrator = get_userdata( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		foreach ( array( 'edit_products', 'edit_others_products', 'edit_private_products' ) as $capability ) {
+			$administrator->add_cap( $capability );
+		}
+		wp_set_current_user( $administrator->ID );
 		$this->assertTrue( current_user_can( 'edit_post', $product_id ) );
 		$this->assertStringContainsString( $image_url, $this->dynamic_content->apply_dynamic_images( '<img src="' . $query . '">' ) );
 
