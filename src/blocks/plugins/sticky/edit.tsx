@@ -32,7 +32,7 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Notice from '../../components/notice/index.js';
-import { setUtm } from '../../helpers/helper-functions.js';
+import { docsURL, setUtm } from '../../helpers/helper-functions.js';
 import type { BlockProps, OtterBlock } from '../../helpers/blocks.js';
 
 const FILTER_OPTIONS = {
@@ -417,7 +417,7 @@ const Edit = ({
 			<ExternalLink
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://docs.themeisle.com/article/1529-how-to-make-a-block-sticky"
+				href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/block-sticky', 'sticky', 'block-editor' ) }
 			>
 				{ __( 'Learn more about Sticky', 'otter-blocks' ) }
 			</ExternalLink>

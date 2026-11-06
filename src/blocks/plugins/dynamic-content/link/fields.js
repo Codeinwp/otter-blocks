@@ -27,6 +27,7 @@ import { applyFilters } from '@wordpress/hooks';
 import options from './options.js';
 
 import Notice from '../../../components/notice/index.js';
+import { docsURL } from '../../../helpers/helper-functions.js';
 
 const Fields = ({
 	activeAttributes,
@@ -49,7 +50,7 @@ const Fields = ({
 				<ExternalLink
 					target="_blank"
 					rel="noopener noreferrer"
-					href="https://docs.themeisle.com/article/1478-otter-blocks-documentation#dynamiclinks"
+					href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/the-dynamic-link-feature-otter-features-library', 'dynamic-links', 'block-editor' ) }
 				>
 					{ __( 'Learn more about Dynamic Links', 'otter-blocks' ) }
 				</ExternalLink>

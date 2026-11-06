@@ -151,7 +151,7 @@ class Dashboard {
 			'<strong>' . esc_html( $pages_label ) . '</strong>'
 		);
 
-		$documentation_url = Pro::get_docs_url();
+		$documentation_url = tsdk_utmify( Pro::get_docs_url(), 'documentation', 'uninstall-feedback' );
 		$support_url       = Pro::is_pro_active()
 			? 'https://store.themeisle.com/'
 			: 'https://wordpress.org/support/plugin/otter-blocks/';
@@ -476,8 +476,8 @@ class Dashboard {
 			'upgradeLink'            => tsdk_translate_link( tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ) ),
 			'upgradeLinkFromTc'      => tsdk_utmify( Pro::get_url(), 'templatecloud' ),
 			'tcUpgradeLink'          => tsdk_utmify( 'https://themeisle.com/plugins/templates-cloud/', 'templatecloud', 'otter-blocks' ),
-			'tcDocs'                 => 'https://docs.themeisle.com/article/2191-templates-cloud-collections',
-			'docsLink'               => Pro::get_docs_url(),
+			'tcDocs'                 => tsdk_utmify( 'https://docs.themeisle.com/wordpress/templates-cloud-collections', 'templates-cloud-collections', 'dashboard' ),
+			'docsLink'               => tsdk_utmify( Pro::get_docs_url(), 'documentation', 'dashboard' ),
 			'newPageUrl'             => esc_url( admin_url( 'post-new.php?post_type=page' ) ),
 			'showFeedbackNotice'     => $this->should_show_feedback_notice(),
 			'deal'                   => ! Pro::is_pro_installed() ? $offer->get_localized_data() : array(),

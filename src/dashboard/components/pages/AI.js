@@ -35,6 +35,7 @@ import { useDispatch } from '@wordpress/data';
  * Internal dependencies.
  */
 import useSettings from '../../../blocks/helpers/use-settings.js';
+import { docsURL } from '../../../blocks/helpers/helper-functions.js';
 import { SortableVerticalList } from '../../../blocks/components/sortable/index.js';
 import SortableToolbarAction from '../SortableToolbarAction.js';
 import {
@@ -388,7 +389,7 @@ const AI = () => {
 								</ExternalLink>
 
 								<ExternalLink
-									href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
+									href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/how-to-generate-an-openai-api-key', 'openai-api-key', 'dashboard' ) }
 								>
 									{ __( 'More Info', 'otter-blocks' ) }
 								</ExternalLink>
@@ -481,7 +482,7 @@ const AI = () => {
 								</Button>
 
 								<ExternalLink
-									href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions"
+									href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/the-ai-block-otter-blocks-library#ai-content-toolbar', 'ai-toolbar-actions', 'dashboard' ) }
 								>
 									{ __( 'More Info', 'otter-blocks' ) }
 								</ExternalLink>

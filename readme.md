@@ -4,7 +4,7 @@
 **Requires at least:** 6.6  
 **Tested up to:** 7.1  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.2.8  
+**Stable tag:** 3.2.9  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -344,31 +344,15 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 ## Changelog ##
 
-##### [Version 3.2.8](https://github.com/Codeinwp/otter-blocks/compare/v3.2.7...v3.2.8) (2026-10-19)
+##### [Version 3.2.9](https://github.com/Codeinwp/otter-blocks/compare/v3.2.8...v3.2.9) (2026-11-05)
 
-- Fixed frontend pages failing when Otter Pro cannot load a style file.
-- Fixed frontend pages crashing when an Otter plugin class could not load.
-- Fixed frontend errors when Otter cannot load a registered component.
-- Fixed warnings when Otter skips components with missing files.
-- Fixed frontend crashes when Otter cannot load a block style.
-- Fixed warning messages when Otter skips styles from missing plugin files.
-- Fixed the Atomic Wind block titles and descriptions to use Otter Blocks translations.
-- Fixed Atomic Wind styles affecting typography outside Atomic Wind blocks.
-- Fixed missing mobile top margins for Section and Section Column blocks using Global Defaults.
-- Fixed pages crashing on sites that use conflicting CSS parser versions.
-- Fixed static blocks turning invalid after Edit as HTML changes.
-- Fixed Atomic Wind styles affecting content outside Atomic Wind blocks
-- Fixed the Count and Typing animation help images showing swapped pictures
-- Fixed the Count Animations help popover showing the wrong image.
-- Fixed pages failing to render when block styles cannot load
-- Fixed the slider block timing out on AMP pages
-- Fixed the site crashing when a block renderer was missing.
-- Fixed form emails going to the network admin instead of the site admin
-- Fixed page crashes from nested post content dynamic tags
-- Reworked the AI block with a new prompt card.
-- Fixed responsive Atomic Wind grids collapsing to one column on live pages.
+- Fixed Accordion letter spacing disappearing after reopening the post
+- Fixed the Countdown block going invalid after HTML edits.
+- Fixed Form block sending notifications to multiple comma-separated recipients.
+- Fixed the welcome guide reopening after dismissal
+- Fixed blocks hidden on mobile shifting the page layout.
+- Fixed OpenAI API key saving failing with a valid key.
 - Updated dependencies
-- Enhanced security
 
 
 

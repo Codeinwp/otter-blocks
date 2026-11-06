@@ -47,6 +47,7 @@ import {
 	tabsIcon,
 	timelineIcon
 } from '../../../blocks/helpers/icons';
+import { docsURL } from '../../../blocks/helpers/helper-functions.js';
 
 /**
  * List with all the blocks that can be disabled.
@@ -58,167 +59,167 @@ const otterBlocks = [
 		'slug': 'themeisle-blocks/accordion',
 		'name': __( 'Accordion', 'otter-blocks' ),
 		'icon': accordionIcon,
-		'docLink': 'https://docs.themeisle.com/article/1672-accessibility-blocks#accordion'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/accessibility-blocks#accordion'
 	},
 	{
 		'slug': 'themeisle-blocks/advanced-heading',
 		'name': __( 'Advanced Heading', 'otter-blocks' ),
 		'icon': headingIcon,
-		'docLink': 'https://docs.themeisle.com/article/1686-global-defaults-blocks#advanced-heading'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/global-defaults-blocks#advanced-heading'
 	},
 	{
 		'slug': 'themeisle-blocks/business-hours',
 		'name': __( 'Business Hours', 'otter-blocks' ),
 		'isPro': true,
 		'icon': businessHoursIcon,
-		'docLink': 'https://docs.themeisle.com/article/1679-business-blocks#business-hours'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/business-blocks#business-hours'
 	},
 	{
 		'slug': 'themeisle-blocks/button-group',
 		'name': __( 'Button Group', 'otter-blocks' ),
 		'icon': buttonsIcon,
-		'docLink': 'https://docs.themeisle.com/article/1686-global-defaults-blocks#button-group'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/global-defaults-blocks#button-group'
 	},
 	{
 		'slug': 'themeisle-blocks/circle-counter',
 		'name': __( 'Circle Counter', 'otter-blocks' ),
 		'icon': circleIcon,
-		'docLink': 'https://docs.themeisle.com/article/1669-tracking-blocks#circle-counter'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/tracking-blocks#circle-counter'
 	},
 	{
 		'slug': 'themeisle-blocks/countdown',
 		'name': __( 'Countdown', 'otter-blocks' ),
 		'icon': countdownIcon,
-		'docLink': 'https://docs.themeisle.com/article/1669-tracking-blocks#countdown'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/tracking-blocks#countdown'
 	},
 	{
 		'slug': 'themeisle-blocks/flip',
 		'name': __( 'Flip Card', 'otter-blocks' ),
 		'icon': flipIcon,
-		'docLink': 'https://docs.themeisle.com/article/1673-popularity-block#flip-card'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/popularity-block#flip-card'
 	},
 	{
 		'slug': 'themeisle-blocks/font-awesome-icons',
 		'name': __( 'Icon', 'otter-blocks' ),
 		'icon': faIcon,
-		'docLink': 'https://docs.themeisle.com/article/1676-useful-blocks#icon'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/useful-blocks#icon'
 	},
 	{
 		'slug': 'themeisle-blocks/form',
 		'name': __( 'Form', 'otter-blocks' ),
 		'icon': formIcon,
-		'docLink': 'https://docs.themeisle.com/article/1674-form-blocks'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/form-blocks'
 	},
 	{
 		'slug': 'themeisle-blocks/google-map',
 		'name': __( 'Google Maps', 'otter-blocks' ),
 		'icon': googleMapIcon,
-		'docLink': 'https://docs.themeisle.com/article/1675-location-blocks#google-maps'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/location-blocks#google-maps'
 	},
 	{
 		'slug': 'themeisle-blocks/icon-list',
 		'name': __( 'Icon List', 'otter-blocks' ),
 		'icon': iconListIcon,
-		'docLink': 'https://docs.themeisle.com/article/1676-useful-blocks#icon-list'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/useful-blocks#icon-list'
 	},
 	{
 		'slug': 'themeisle-blocks/leaflet-map',
 		'name': __( 'Maps', 'otter-blocks' ),
 		'icon': mapIcon,
-		'docLink': 'https://docs.themeisle.com/article/1675-location-blocks#maps'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/location-blocks#maps'
 	},
 	{
 		'slug': 'themeisle-blocks/modal',
 		'name': __( 'Modal', 'otter-blocks' ),
 		'icon': popupIcon,
-		'docLink': 'https://docs.themeisle.com/article/2050-modal-block',
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/modal-block',
 		'isPro': true
 	},
 	{
 		'slug': 'themeisle-blocks/lottie',
 		'name': __( 'Lottie Animation', 'otter-blocks' ),
 		'icon': lottieIcon,
-		'docLink': 'https://docs.themeisle.com/article/1668-image-related-blocks#lottie-animation'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/image-related-blocks#lottie-animation'
 	},
 	{
 		'slug': 'themeisle-blocks/popup',
 		'name': __( 'Popup', 'otter-blocks' ),
 		'icon': popupIcon,
-		'docLink': 'https://docs.themeisle.com/article/1551-the-popup-block-otter-blocks-library'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/the-popup-block-otter-blocks-library'
 	},
 	{
 		'slug': 'themeisle-blocks/posts-grid',
 		'name': __( 'Posts', 'otter-blocks' ),
 		'icon': postsIcon,
-		'docLink': 'https://docs.themeisle.com/article/1530-posts-block'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/posts-block'
 	},
 	{
 		'slug': 'themeisle-blocks/progress-bar',
 		'name': __( 'Progress Bar', 'otter-blocks' ),
 		'icon': progressIcon,
-		'docLink': 'https://docs.themeisle.com/article/1669-tracking-blocks#progress-bar'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/tracking-blocks#progress-bar'
 	},
 	{
 		'slug': 'themeisle-blocks/review',
 		'name': __( 'Product Review', 'otter-blocks' ),
 		'icon': reviewIcon,
-		'docLink': 'https://docs.themeisle.com/article/1671-shop-related-blocks#product-review'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/shop-related-blocks#product-review'
 	},
 	{
 		'slug': 'themeisle-blocks/review-comparison',
 		'name': __( 'Review Comparison Table', 'otter-blocks' ),
 		'isPro': true,
 		'icon': comparisonTableIcon,
-		'docLink': 'https://docs.themeisle.com/article/1671-shop-related-blocks#comparison-table'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/shop-related-blocks#review-comparison-table'
 	},
 	{
 		'slug': 'themeisle-blocks/advanced-columns',
 		'name': __( 'Section', 'otter-blocks' ),
 		'icon': columnsIcon,
-		'docLink': 'https://docs.themeisle.com/article/1833-the-section-block-otter-blocks-library'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/the-section-block-otter-blocks-library'
 	},
 	{
 		'slug': 'themeisle-blocks/sharing-icons',
 		'name': __( 'Sharing Icons', 'otter-blocks' ),
 		'icon': sharingIcon,
-		'docLink': 'https://docs.themeisle.com/article/1673-popularity-block#sharing-icons'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/popularity-block#sharing-icons'
 	},
 	{
 		'slug': 'themeisle-blocks/slider',
 		'name': __( 'Image Slider', 'otter-blocks' ),
 		'icon': sliderIcon,
-		'docLink': 'https://docs.themeisle.com/article/1668-image-related-blocks#slider'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/image-related-blocks#slider'
 	},
 	{
 		'slug': 'themeisle-blocks/stripe-checkout',
 		'name': __( 'Stripe Checkout', 'otter-blocks' ),
 		'icon': cartIcon,
-		'docLink': 'https://docs.themeisle.com/article/1688-integrations-related-blocks#stripe-checkout'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/integrations-related-blocks#stripe-checkout'
 	},
 	{
 		'slug': 'themeisle-blocks/tabs',
 		'name': __( 'Tabs', 'otter-blocks' ),
 		'icon': tabsIcon,
-		'docLink': 'https://docs.themeisle.com/article/1672-accessibility-blocks#tabs'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/accessibility-blocks#tabs'
 	},
 	{
 		'slug': 'themeisle-gutenberg/live-search', // TODO: find why this can not be disabled.
 		'name': __( 'Live Search', 'otter-blocks' ),
 		'isPro': true,
 		'icon': searchIcon,
-		'docLink': 'https://docs.themeisle.com/article/1747-the-live-search-feature-otter-features-library'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/the-live-search-feature-otter-features-library'
 	},
 	{
 		'slug': 'themeisle-blocks/content-generator',
 		'name': __( 'AI Block', 'otter-blocks' ),
 		'icon': () => aiGeneration,
-		'docLink': 'https://docs.themeisle.com/article/1917-the-ai-block-otter-blocks-library#content-generator'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/the-ai-block-otter-blocks-library#ai-content-generator'
 	},
 	{
 		'slug': 'themeisle-blocks/timeline',
 		'name': __( 'Timeline', 'otter-blocks' ),
 		'icon': timelineIcon,
-		'docLink': 'https://docs.themeisle.com/article/2051-timeline-block'
+		'docLink': 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/global-defaults-blocks#timeline'
 	}
 ].sort( ( a, b ) => a.name.localeCompare( b.name ) );
 
@@ -236,7 +237,7 @@ const BlockCard = ({ block, isLoading, onToggle }) => {
 				<h3>
 					{ block.name }
 				</h3>
-				<a href={block?.docLink ?? 'https://docs.themeisle.com/category/1611-blocks-library'} target="_blank" rel="noopener noreferrer">
+				<a href={ docsURL( block?.docLink ?? 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/otter-blocks-documentation#blocks-library', block.slug.split( '/' )[1], 'dashboard' ) } target="_blank" rel="noopener noreferrer">
 					{ __( 'Learn More', 'otter-blocks' ) }
 				</a>
 				{
