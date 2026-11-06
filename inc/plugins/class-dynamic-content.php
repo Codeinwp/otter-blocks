@@ -35,6 +35,7 @@ class Dynamic_Content {
 	 * Initialize the class
 	 */
 	public function init() {
+		add_filter( 'render_block', array( $this, 'escape_visitor_block_magic_tags' ), 9, 2 );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_magic_tags' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
@@ -45,9 +46,50 @@ class Dynamic_Content {
 		add_filter( 'get_comment_excerpt', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_author', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_author_url', array( $this, 'escape_comment_magic_tags' ) );
-		foreach ( array( 'get_avatar', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
+		add_filter( 'get_search_query', array( $this, 'escape_search_magic_tags' ) );
+		foreach ( array( 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
 			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
 		}
+	}
+
+	/**
+	 * Protect visitor attributes before the generic Magic Tag filters run.
+	 *
+	 * @param string                        $content Rendered block markup.
+	 * @param array{blockName: string|null} $block Parsed block.
+	 * @return string
+	 */
+	public function escape_visitor_block_magic_tags( $content, $block ) {
+		$patterns = array(
+			'core/avatar' => '/(<a\b[^>]*\saria-label=")([^"]*)"/',
+			'core/search' => '/(<input\b(?=[^>]*\stype="search")(?=[^>]*\sname="s")[^>]*\svalue=")([^"]*)"/',
+		);
+		if ( ! isset( $patterns[ $block['blockName'] ] ) ) {
+			return $content;
+		}
+
+		return preg_replace_callback(
+			$patterns[ $block['blockName'] ],
+			function ( $matches ) {
+				return $matches[1] . $this->escape_comment_magic_tags( $matches[2] ) . '"';
+			},
+			$content
+		);
+	}
+
+	/**
+	 * Protect search text, deferring raw input escaping to the search block filter.
+	 *
+	 * @param string $query Visitor search text.
+	 * @return string
+	 */
+	public function escape_search_magic_tags( $query ) {
+		// The search block's tag processor escapes entities itself.
+		if ( isset( \WP_Block_Supports::$block_to_render['blockName'] ) && 'core/search' === \WP_Block_Supports::$block_to_render['blockName'] ) {
+			return $query;
+		}
+
+		return $this->escape_comment_magic_tags( $query );
 	}
 
 	/**
@@ -416,12 +458,14 @@ class Dynamic_Content {
 	public function get_image( $data ) {
 		$value = OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg';
 
-		global $post;
+		$id = ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? (int) get_the_ID() : get_queried_object_id();
 
-		$id = ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
-
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
+		if ( isset( $data['context'] ) && ( 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
 			$data['context'] = $id;
+		}
+
+		if ( empty( $data['context'] ) ) {
+			$data['context'] = (int) get_the_ID();
 		}
 
 		if ( isset( $data['fallback'] ) && ! empty( $data['fallback'] ) ) {
@@ -433,7 +477,7 @@ class Dynamic_Content {
 		}
 
 		$server = \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::instance();
-		if ( ! in_array( $data['type'], array( 'logo', 'loggedInUser' ), true ) && ! $server->check_permission( isset( $data['context'] ) ? (int) $data['context'] : 0 ) ) {
+		if ( ! in_array( $data['type'], array( 'logo', 'loggedInUser' ), true ) && ! $server->check_permission( (int) $data['context'] ) ) {
 			return $value;
 		}
 
@@ -478,8 +522,8 @@ class Dynamic_Content {
 	/**
 	 * Apply dynamic data.
 	 *
-	 * @param array<int|string, int|string> $data Dynamic request.
-	 * @param bool                          $magic_tags Is a request for Magic Tags.
+	 * @param array<int|string, int|string|null> $data Dynamic request.
+	 * @param bool                               $magic_tags Is a request for Magic Tags.
 	 *
 	 * @return int|string|list<string>|false
 	 */

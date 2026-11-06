@@ -1632,23 +1632,58 @@ class TestDynamicContent extends WP_UnitTestCase
 			array(
 				'comment_post_ID' => $this->post_id,
 				'author' => $token,
+				'url' => 'https://example.org/',
 				'comment' => 'Visitor comment',
 			)
 		);
 		$this->assertInstanceOf( WP_Comment::class, $comment );
 		$this->assertSame( $token, $comment->comment_author );
-		$block = new WP_Block(
-			array( 'blockName' => 'core/avatar', 'attrs' => array( 'isLink' => false ) ),
-			array( 'commentId' => (int) $comment->comment_ID )
-		);
-		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . $block->render() . '<!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
-		$processor = new WP_HTML_Tag_Processor( $result );
-		$this->assertTrue( $processor->next_tag( 'img' ), $result );
-		$this->assertStringContainsString( $token, $processor->get_attribute( 'alt' ), $result );
-		$this->assertStringContainsString( '>Test</p>', $result );
+		foreach ( array( false, true ) as $is_link ) {
+			$block = new WP_Block(
+				array( 'blockName' => 'core/avatar', 'attrs' => array( 'isLink' => $is_link, 'linkTarget' => '_blank', 'className' => 'visitor-' . $token ) ),
+				array( 'commentId' => (int) $comment->comment_ID )
+			);
+			$avatar = $block->render();
+			$processor = new WP_HTML_Tag_Processor( $avatar );
+			$this->assertTrue( $processor->next_tag( 'div' ), $avatar );
+			$this->assertStringContainsString( 'visitor-Test', $processor->get_attribute( 'class' ), $avatar );
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . $avatar . '<!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+			$processor = new WP_HTML_Tag_Processor( $result );
+			if ( $is_link ) {
+				$this->assertTrue( $processor->next_tag( 'a' ), $result );
+				$this->assertStringContainsString( $token, $processor->get_attribute( 'aria-label' ), $result );
+			}
+			$this->assertTrue( $processor->next_tag( 'img' ), $result );
+			$this->assertStringContainsString( $token, $processor->get_attribute( 'alt' ), $result );
+			$this->assertStringContainsString( '>Test</p>', $result );
+		}
 		update_option( 'show_avatars', 0 );
 		$processor = new WP_HTML_Tag_Processor( $block->render() );
 		$this->assertFalse( $processor->next_tag( 'img' ) );
+	}
+
+	public function test_author_archive_magic_tags_remain_literal_in_nested_blocks(): void {
+		require_once ABSPATH . 'wp-admin/includes/user.php';
+		$token = '{otterDynamic?type=siteTitle}';
+		wp_set_current_user( $this->user_id );
+		$this->assertTrue( current_user_can( 'edit_user', $this->user_id ) );
+		$this->assertFalse( current_user_can( 'edit_users' ) );
+		$previous_post = $_POST;
+		try {
+			$_POST = array( 'display_name' => $token, 'nickname' => 'Visitor', 'email' => 'test@userrecover.com' );
+			$this->assertSame( $this->user_id, edit_user( $this->user_id ) );
+		} finally {
+			$_POST = $previous_post;
+		}
+		$this->assertSame( $token, get_userdata( $this->user_id )->display_name );
+		wp_set_current_user( 0 );
+		$this->go_to( get_author_posts_url( $this->user_id ) );
+		$this->assertTrue( is_author() );
+		$GLOBALS['wp_query']->the_post();
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:query-title {"type":"archive"} /--><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$this->assertStringContainsString( $token, html_entity_decode( $result ), $result );
+		$this->assertStringContainsString( 'Author:', $result );
+		$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
 	}
 
 	public function test_profile_magic_tags_remain_literal_in_nested_blocks(): void {
@@ -1672,8 +1707,11 @@ class TestDynamicContent extends WP_UnitTestCase
 
 	public function test_comment_form_identity_magic_tags_remain_literal_in_nested_blocks(): void {
 		$token = '{otterDynamic?type=postTitle}';
+		$email = $token . '@example.org';
+		$this->assertSame( $email, sanitize_email( $email ) );
 		wp_update_post( array( 'ID' => $this->post_id, 'comment_status' => 'open' ) );
 		$_COOKIE[ 'comment_author_' . COOKIEHASH ] = $token;
+		$_COOKIE[ 'comment_author_email_' . COOKIEHASH ] = $email;
 		$_COOKIE[ 'comment_author_url_' . COOKIEHASH ] = 'https://example.org/' . $token;
 		wp_update_user( array( 'ID' => $this->user_id, 'display_name' => $token ) );
 
@@ -1685,10 +1723,50 @@ class TestDynamicContent extends WP_UnitTestCase
 				$this->assertStringContainsString( '>Test</p>', $result );
 				$this->assertStringNotContainsString( 'value="Test"', $result );
 				$this->assertStringNotContainsString( 'Logged in as Test', $result );
+				if ( 0 === $user_id ) {
+					$processor = new WP_HTML_Tag_Processor( $result );
+					while ( $processor->next_tag( 'input' ) && 'email' !== $processor->get_attribute( 'name' ) ) {
+					}
+					$this->assertSame( $email, $processor->get_attribute( 'value' ), $result );
+				}
 			}
 		} finally {
-			unset( $_COOKIE[ 'comment_author_' . COOKIEHASH ], $_COOKIE[ 'comment_author_url_' . COOKIEHASH ] );
+			unset( $_COOKIE[ 'comment_author_' . COOKIEHASH ], $_COOKIE[ 'comment_author_email_' . COOKIEHASH ], $_COOKIE[ 'comment_author_url_' . COOKIEHASH ] );
 		}
+	}
+
+	/**
+	 * @dataProvider provide_literal_search_queries
+	 *
+	 * @param string $query Visitor search text.
+	 */
+	public function test_search_magic_tags_remain_literal_in_nested_blocks( string $query ): void {
+		$token = '{otterDynamic?type=siteTitle}';
+		wp_set_current_user( 0 );
+		$this->go_to( add_query_arg( 's', rawurlencode( $query ), home_url( '/' ) ) );
+		$this->assertTrue( is_search() );
+		$this->assertSame( $query, get_query_var( 's' ) );
+		$search_attributes = wp_json_encode( array( 'placeholder' => $token, 'className' => 'trusted-' . $token, 'query' => array( 'visitor' => $token ) ) );
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:search ' . $search_attributes . ' /--><!-- wp:query-title {"type":"search","showSearchTerm":true} /--><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'input' ), $result );
+		$this->assertSame( $query, $processor->get_attribute( 'value' ), $result );
+		$this->assertSame( get_bloginfo( 'name' ), $processor->get_attribute( 'placeholder' ), $result );
+		$this->assertTrue( $processor->next_tag( 'input' ), $result );
+		$this->assertSame( 'visitor', $processor->get_attribute( 'name' ), $result );
+		$this->assertSame( get_bloginfo( 'name' ), $processor->get_attribute( 'value' ), $result );
+		$this->assertStringContainsString( 'trusted-' . get_bloginfo( 'name' ), $result );
+		$this->assertSame( substr_count( $query, $token ) + substr_count( html_entity_decode( $query ), $token ), substr_count( html_entity_decode( $result ), $token ), $result );
+		$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
+		$this->assertSame( $query, get_query_var( 's' ) );
+	}
+
+	public function provide_literal_search_queries(): array {
+		return array(
+			'literal token' => array( '{otterDynamic?type=siteTitle}' ),
+			'encoded prefix' => array( '&#123;otterDynamic?type=siteTitle}' ),
+			'mixed prefixes' => array( '{otterDynamic?type=siteTitle} &#123;otterDynamic?type=siteTitle}' ),
+		);
 	}
 
 	public function test_query_string_magic_tags_remain_literal_in_nested_blocks(): void {
@@ -1776,6 +1854,56 @@ class TestDynamicContent extends WP_UnitTestCase
 			'draft' => array( array( 'post_status' => 'draft' ) ),
 			'password protected' => array( array( 'post_status' => 'publish', 'post_password' => 'secret' ) ),
 			'non-viewable' => array( array( 'post_status' => 'publish', 'post_type' => 'wp_block' ) ),
+		);
+	}
+
+	/**
+	 * @dataProvider provide_dynamic_image_widget_contexts
+	 *
+	 * @param string $context_query Serialized widget context.
+	 */
+	public function test_dynamic_widget_images_use_global_post_permissions( string $context_query ): void {
+		$attachment_id = self::factory()->attachment->create_object( 'widget-image.png', $this->post_id, array( 'post_mime_type' => 'image/png' ) );
+		set_post_thumbnail( $this->post_id, $attachment_id );
+		$image_url = get_the_post_thumbnail_url( $this->post_id );
+		$this->assertNotEmpty( $image_url );
+		$editor_id = self::factory()->user->create( array( 'role' => 'editor' ) );
+		foreach ( array( get_category_link( $this->category_id ), home_url( '/' ), get_author_posts_url( $this->user_id ) ) as $url ) {
+			wp_set_current_user( 0 );
+			wp_update_post( array( 'ID' => $this->post_id, 'post_status' => 'publish' ) );
+			$this->go_to( $url );
+			$this->assertFalse( is_singular() );
+			$this->assertSame( $this->post_id, get_the_ID() );
+			foreach ( array( 'featuredImage' => $image_url, 'author' => get_avatar_url( $this->user_id ) ) as $type => $expected_url ) {
+				$query = get_rest_url( null, 'otter/v1/dynamic/' );
+				$query .= ( false === strpos( $query, '?' ) ? '?' : '&' ) . 'type=' . $type . $context_query . '&uid=1';
+				$markup = '<!-- wp:group --><div class="wp-block-group"><!-- wp:image --><figure class="wp-block-image"><img src="' . $query . '"/></figure><!-- /wp:image --></div><!-- /wp:group -->';
+				$result = do_blocks( $markup );
+				$this->assertStringContainsString( $expected_url, html_entity_decode( $result ), $result );
+				wp_update_post( array( 'ID' => $this->post_id, 'post_status' => 'private' ) );
+				$result = do_blocks( $markup );
+				$this->assertStringNotContainsString( $expected_url, html_entity_decode( $result ), $result );
+				$this->assertStringContainsString( 'assets/images/placeholder.jpg', $result );
+				wp_set_current_user( $editor_id );
+				$result = do_blocks( $markup );
+				$this->assertStringContainsString( $expected_url, html_entity_decode( $result ), $result );
+				wp_set_current_user( 0 );
+				wp_update_post( array( 'ID' => $this->post_id, 'post_status' => 'publish' ) );
+			}
+		}
+		wp_update_post( array( 'ID' => $this->post_id, 'post_status' => 'draft' ) );
+		$this->go_to( get_category_link( $this->category_id ) );
+		$this->assertFalse( get_the_ID() );
+		$this->assertStringContainsString( 'assets/images/placeholder.jpg', do_blocks( $markup ) );
+	}
+
+	public function provide_dynamic_image_widget_contexts(): array {
+		return array(
+			'zero' => array( '&context=0' ),
+			'empty' => array( '&context=' ),
+			'null' => array( '&context' ),
+			'missing' => array( '' ),
+			'query' => array( '&context=query' ),
 		);
 	}
 
