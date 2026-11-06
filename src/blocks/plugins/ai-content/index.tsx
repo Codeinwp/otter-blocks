@@ -30,6 +30,7 @@ import { isAIBackendConfigured } from '../../helpers/prompt';
 import useSettings from '../../helpers/use-settings';
 import { openAiAPIKeyName } from '../../components/prompt';
 import type { BlockProps } from '../../helpers/blocks';
+import { docsURL } from '../../helpers/helper-functions';
 import {
 	AIToolbarAction,
 	getEnabledActions,
@@ -109,7 +110,7 @@ const AIToolbarMenu = ({
 				</ExternalLink>
 			</MenuGroup>
 			<MenuGroup>
-				<ExternalLink className='o-menu-item-alignment' href="https://docs.themeisle.com/collection/1563-otter---page-builder-blocks-extensions" rel="noopener noreferrer">
+				<ExternalLink className='o-menu-item-alignment' href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/the-ai-block-otter-blocks-library#ai-content-toolbar', 'ai-toolbar', 'block-editor' ) } rel="noopener noreferrer">
 					{
 						__( 'Go to docs', 'otter-blocks' )
 					}

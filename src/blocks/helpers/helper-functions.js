@@ -489,6 +489,33 @@ export const setUtm = ( urlAddress, linkArea, content ) => {
 };
 
 /**
+ * Add the Themeisle UTM parameters to a docs link.
+ *
+ * Mirrors the SDK's tsdk_utmify() in PHP, so links built in JS report the
+ * same utm_source, utm_medium, utm_campaign and utm_content values.
+ *
+ * @param {string} url         The docs page URL.
+ * @param {string} utmCampaign The feature or placement the link belongs to.
+ * @param {string} utmMedium   The screen the link is shown on.
+ * @return {string} The URL with UTM parameters.
+ */
+export const docsURL = ( url, utmCampaign, utmMedium ) => {
+	const content = [ 'https://', 'themeisle.com', '/themes/', '/plugins/', '/upgrade' ]
+		.reduce( ( value, part ) => value.split( part ).join( '' ), url )
+		.replace( /^\/+|\/+$/g, '' )
+		.toLowerCase()
+		.replace( /[^a-z0-9_-]/g, '' );
+
+	const urlLink = new URL( url );
+	urlLink.searchParams.set( 'utm_source', 'wpadmin' );
+	urlLink.searchParams.set( 'utm_medium', utmMedium );
+	urlLink.searchParams.set( 'utm_campaign', utmCampaign );
+	urlLink.searchParams.set( 'utm_content', content );
+
+	return urlLink.toString();
+};
+
+/**
  * Build a responsive wrapper around `setAttributes`
  *
  * @param {Function}                    setAttributes The function that set the attributes.

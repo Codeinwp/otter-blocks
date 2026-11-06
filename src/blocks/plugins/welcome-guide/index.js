@@ -29,7 +29,7 @@ import { registerPlugin } from '@wordpress/plugins';
  */
 import './editor.scss';
 import useSettings from './../../helpers/use-settings.js';
-import { setUtm } from '../../helpers/helper-functions.js';
+import { docsURL, setUtm } from '../../helpers/helper-functions.js';
 
 const WelcomeGuide = () => {
 	const [ getOption, updateOption, status ] = useSettings();
@@ -158,7 +158,7 @@ const WelcomeGuide = () => {
 									<h1 className="o-welcome-guide__heading">{ __( 'You are all setup to use Otter Pro', 'otter-blocks' ) }</h1>
 									<p className="o-welcome-guide__text">
 										{ __( 'With Otter PRO, you have access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
-										<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation" target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
+										<ExternalLink href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/otter-pro-documentation', 'pro-features', 'block-editor' ) } target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
 									</p>
 								</Fragment>
 							) : (

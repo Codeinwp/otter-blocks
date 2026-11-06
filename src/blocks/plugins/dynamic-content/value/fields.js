@@ -37,7 +37,7 @@ import options from './options.js';
 
 import Notice from './../../../components/notice/index.js';
 
-import { getQueryStringFromObject, setUtm } from '../../../helpers/helper-functions.js';
+import { docsURL, getQueryStringFromObject, setUtm } from '../../../helpers/helper-functions.js';
 
 let hasSettingsPanel = [
 	'postExcerpt',
@@ -109,7 +109,7 @@ const Fields = ({
 				<ExternalLink
 					target="_blank"
 					rel="noopener noreferrer"
-					href="https://docs.themeisle.com/article/1478-otter-blocks-documentation#dynamicvalues"
+					href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/dynamic-values', 'dynamic-values', 'block-editor' ) }
 				>
 					{ __( 'Learn more about Dynamic Values', 'otter-blocks' ) }
 				</ExternalLink>

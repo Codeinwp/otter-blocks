@@ -13,6 +13,7 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
  */
 
 import useSettings from '../../helpers/use-settings';
+import { docsURL } from '../../helpers/helper-functions';
 import {
 	PromptConversation,
 	PromptsData,
@@ -445,7 +446,7 @@ const PromptPlaceholder = ( props: PromptPlaceholderProps ) => {
 								</ExternalLink>
 
 								<ExternalLink
-									href="https://docs.themeisle.com/article/1916-how-to-generate-an-openai-api-key"
+									href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/how-to-generate-an-openai-api-key', 'openai-api-key', 'block-editor' ) }
 								>
 									{ __( 'More Info', 'otter-blocks' ) }
 								</ExternalLink>
