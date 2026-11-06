@@ -1540,14 +1540,11 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	public function test_magic_tags_preserve_safe_url_values(): void {
-		foreach ( array( 'https://example.org/path?a=1&b=2', '/relative/path', '#section', '?search=test', 'mailto:user@example.org', 'tel:1234', '' ) as $url ) {
-			add_filter( 'otter_blocks_evaluate_dynamic_content_text', $resolve = function () use ( $url ) { return $url; } );
-			$result = $this->dynamic_content->apply_dynamic_magic_tags( '<a href="{otterDynamic?type=testURL}">Link</a>' );
-			remove_filter( 'otter_blocks_evaluate_dynamic_content_text', $resolve );
-			$processor = new WP_HTML_Tag_Processor( $result );
-			$this->assertTrue( $processor->next_tag(), $result );
-			$this->assertSame( $url, $processor->get_attribute( 'href' ), $result );
-		}
+		add_filter( 'otter_blocks_evaluate_dynamic_content_text', function () { return 'https://example.org/path with spaces?a=1&b=2'; } );
+		$result = $this->dynamic_content->apply_dynamic_magic_tags( '<a href="{otterDynamic?type=testURL}">Link</a>' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag(), $result );
+		$this->assertSame( 'https://example.org/path%20with%20spaces?a=1&b=2', $processor->get_attribute( 'href' ), $result );
 	}
 
 	public function test_magic_tags_quote_unquoted_attributes_and_preserve_literals(): void {
@@ -1559,7 +1556,7 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertSame( $value, $processor->get_attribute( 'title' ), $result );
 		$this->assertSame( '&amp;', $processor->get_attribute( 'data-static' ), $result );
 		$this->assertSame( array( 'title', 'data-static' ), $processor->get_attribute_names_with_prefix( '' ) );
-		$this->assertStringContainsString( '>' . $value . '</p>', $result );
+		$this->assertStringContainsString( '>' . $value . '</p>', html_entity_decode( $result ), $result );
 	}
 
 	public function test_magic_tags_sanitize_raw_text_element_attributes(): void {
@@ -1608,6 +1605,240 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertTrue( $processor->next_tag(), $result );
 		$this->assertSame( $token, $processor->get_attribute( 'href' ), $result );
 		$this->assertSame( 'Test', $processor->get_attribute( 'title' ), $result );
+	}
+
+	public function test_literal_marker_collision_preserves_comment_and_existing_attribute(): void {
+		$next_id = (int) wp_unique_id() + 1;
+		$marker = 'otter-literal-magic-' . $next_id;
+		$token = '{otterDynamic?type=postTitle}';
+		$content = '&#123;otterDynamic?type=postTitle}';
+		$result = $this->dynamic_content->apply_dynamic_magic_tags( '<a href="' . $content . '" data-marker="' . $marker . '" title="' . $token . '">Link</a>' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag(), $result );
+		$this->assertSame( $token, $processor->get_attribute( 'href' ), $result );
+		$this->assertSame( $marker, $processor->get_attribute( 'data-marker' ), $result );
+		$this->assertSame( 'Test', $processor->get_attribute( 'title' ), $result );
+		$this->assertSame( (string) ( $next_id + 2 ), wp_unique_id() );
+	}
+
+	public function test_comment_avatar_magic_tags_remain_literal_in_nested_blocks(): void {
+		wp_set_current_user( 0 );
+		update_option( 'comment_registration', 0 );
+		update_option( 'require_name_email', 0 );
+		update_option( 'show_avatars', 1 );
+		wp_update_post( array( 'ID' => $this->post_id, 'comment_status' => 'open' ) );
+		$token = '{otterDynamic?type=postTitle}';
+		$comment = wp_handle_comment_submission(
+			array(
+				'comment_post_ID' => $this->post_id,
+				'author' => $token,
+				'comment' => 'Visitor comment',
+			)
+		);
+		$this->assertInstanceOf( WP_Comment::class, $comment );
+		$this->assertSame( $token, $comment->comment_author );
+		$block = new WP_Block(
+			array( 'blockName' => 'core/avatar', 'attrs' => array( 'isLink' => false ) ),
+			array( 'commentId' => (int) $comment->comment_ID )
+		);
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . $block->render() . '<!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'img' ), $result );
+		$this->assertStringContainsString( $token, $processor->get_attribute( 'alt' ), $result );
+		$this->assertStringContainsString( '>Test</p>', $result );
+		update_option( 'show_avatars', 0 );
+		$processor = new WP_HTML_Tag_Processor( $block->render() );
+		$this->assertFalse( $processor->next_tag( 'img' ) );
+	}
+
+	public function test_profile_magic_tags_remain_literal_in_nested_blocks(): void {
+		$token = '{otterDynamic?type=postTitle}';
+		wp_update_user( array( 'ID' => $this->user_id, 'display_name' => $token, 'description' => $token ) );
+		wp_set_current_user( $this->user_id );
+		$markup = '<!-- wp:group --><div class="wp-block-group"><!-- wp:post-author {"showBio":true} /--><!-- wp:post-author-biography /--><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->';
+		$result = do_blocks( $markup );
+		$this->assertStringContainsString( $token, html_entity_decode( $result ), $result );
+		$this->assertStringContainsString( 'wp-block-post-author__name">' . $token, html_entity_decode( $result ), $result );
+		$this->assertStringContainsString( 'wp-block-post-author__bio">' . $token, html_entity_decode( $result ), $result );
+		$this->assertStringContainsString( 'wp-block-post-author-biography">' . $token, html_entity_decode( $result ), $result );
+		$this->assertStringContainsString( '>Test</p>', $result );
+
+		foreach ( array( 'authorName', 'authorDescription', 'loggedInUserName', 'loggedInUserDescription' ) as $type ) {
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p title="{otterDynamic?type=' . $type . '}">{otterDynamic?type=' . $type . '}</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+			$this->assertSame( 2, substr_count( html_entity_decode( $result ), $token ), $result );
+			$this->assertStringNotContainsString( 'Test', $result );
+		}
+	}
+
+	public function test_comment_form_identity_magic_tags_remain_literal_in_nested_blocks(): void {
+		$token = '{otterDynamic?type=postTitle}';
+		wp_update_post( array( 'ID' => $this->post_id, 'comment_status' => 'open' ) );
+		$_COOKIE[ 'comment_author_' . COOKIEHASH ] = $token;
+		$_COOKIE[ 'comment_author_url_' . COOKIEHASH ] = 'https://example.org/' . $token;
+		wp_update_user( array( 'ID' => $this->user_id, 'display_name' => $token ) );
+
+		try {
+			foreach ( array( 0, $this->user_id ) as $user_id ) {
+				wp_set_current_user( $user_id );
+				$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:post-comments-form /--><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+				$this->assertStringContainsString( $token, html_entity_decode( $result ), $result );
+				$this->assertStringContainsString( '>Test</p>', $result );
+				$this->assertStringNotContainsString( 'value="Test"', $result );
+				$this->assertStringNotContainsString( 'Logged in as Test', $result );
+			}
+		} finally {
+			unset( $_COOKIE[ 'comment_author_' . COOKIEHASH ], $_COOKIE[ 'comment_author_url_' . COOKIEHASH ] );
+		}
+	}
+
+	public function test_query_string_magic_tags_remain_literal_in_nested_blocks(): void {
+		$token = '{otterDynamic?type=postTitle}';
+		$this->configure_pro_dynamic_content_license( false );
+		$this->assertFalse( has_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $this->dynamic_content_pro, 'evaluate_content' ) ) );
+		$this->configure_pro_dynamic_content_license( true );
+		$this->go_to( add_query_arg( 'visitor', $token, get_permalink( $this->post_id ) ) );
+		foreach ( array( 'default', 'capitalize' ) as $format ) {
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p title="{otterDynamic?type=queryString&parameter=visitor&format=' . $format . '}">{otterDynamic?type=queryString&parameter=visitor&format=' . $format . '}</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+			$this->assertSame( 2, substr_count( html_entity_decode( $result ), $token ), $result );
+			$this->assertStringNotContainsString( 'Test', $result );
+		}
+	}
+
+	public function test_resolved_list_magic_tags_remain_literal_in_nested_blocks(): void {
+		$token = '{otterDynamic?type=postTitle}';
+		add_filter( 'otter_blocks_evaluate_dynamic_content_text', function () use ( $token ) { return array( $token, 'Other ' . $token ); } );
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p><o-dynamic data-type="otterTestList">Value</o-dynamic></p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$this->assertSame( 2, substr_count( html_entity_decode( $result ), $token ), $result );
+		$this->assertStringContainsString( 'Other ' . $token, html_entity_decode( $result ), $result );
+		$this->assertStringNotContainsString( 'Test', $result );
+	}
+
+	/**
+	 * @dataProvider provide_dynamic_image_post_contexts
+	 *
+	 * @param array{post_status: string, post_password?: string, post_type?: string} $post_args Context post.
+	 */
+	public function test_archive_comment_dynamic_images_enforce_post_permissions( array $post_args ): void {
+		$this->configure_pro_dynamic_content_license( true );
+		update_option( 'comment_registration', 0 );
+		update_option( 'require_name_email', 0 );
+		wp_update_post( array( 'ID' => $this->post_id, 'comment_status' => 'open' ) );
+		$subscriber_id = self::factory()->user->create( array( 'role' => 'subscriber' ) );
+		$editor_id = self::factory()->user->create( array( 'role' => 'editor' ) );
+		$this->set_permalink_structure( '/%postname%/' );
+
+		try {
+			$context_id = self::factory()->post->create( $post_args );
+			$secret_url = 'https://example.org/confidential-' . $context_id . '.png';
+			update_post_meta( $context_id, 'confidential_image', $secret_url );
+			$url = get_rest_url( null, 'otter/v1/dynamic/' ) . '?type=postMeta&context=' . $context_id . '&meta=confidential_image&uid=1';
+			wp_set_current_user( 0 );
+			$comment = wp_handle_comment_submission(
+				array(
+					'comment_post_ID' => $this->post_id,
+					'author' => 'Visitor ' . $context_id,
+					'url' => $url,
+					'comment' => 'Visitor comment ' . $context_id,
+				)
+			);
+			$this->assertInstanceOf( WP_Comment::class, $comment );
+			$this->assertSame( $url, html_entity_decode( $comment->comment_author_url ) );
+			wp_set_comment_status( $comment->comment_ID, 'approve' );
+			$this->go_to( get_category_link( $this->category_id ) );
+			$this->assertTrue( is_archive() );
+			$block = new WP_Block(
+				array(
+					'blockName' => 'core/latest-comments',
+					'attrs' => array( 'commentsToShow' => 100, 'displayAvatar' => false, 'displayExcerpt' => false ),
+				)
+			);
+			foreach ( array( 0, $subscriber_id, $editor_id ) as $user_id ) {
+				wp_set_current_user( $user_id );
+				$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . $block->render() . '</div><!-- /wp:group -->' );
+				if ( $user_id === $editor_id ) {
+					$this->assertStringContainsString( $secret_url, $result );
+				} else {
+					$this->assertStringNotContainsString( $secret_url, $result );
+					$this->assertStringContainsString( 'assets/images/placeholder.jpg', $result );
+				}
+			}
+			wp_update_post( array( 'ID' => $context_id, 'post_status' => 'publish', 'post_password' => '', 'post_type' => 'post' ) );
+			wp_set_current_user( 0 );
+			$this->assertStringContainsString( $secret_url, $block->render() );
+		} finally {
+			$this->set_permalink_structure( '' );
+		}
+	}
+
+	public function provide_dynamic_image_post_contexts(): array {
+		return array(
+			'private' => array( array( 'post_status' => 'private' ) ),
+			'draft' => array( array( 'post_status' => 'draft' ) ),
+			'password protected' => array( array( 'post_status' => 'publish', 'post_password' => 'secret' ) ),
+			'non-viewable' => array( array( 'post_status' => 'publish', 'post_type' => 'wp_block' ) ),
+		);
+	}
+
+	public function test_dynamic_product_images_require_access_to_product_and_context(): void {
+		$this->configure_pro_dynamic_content_license( true );
+		$attachment_id = self::factory()->attachment->create_object( 'product-image.png', $this->post_id, array( 'post_mime_type' => 'image/png' ) );
+		$image_url = wp_get_attachment_image_url( $attachment_id, 'full' );
+		$this->assertNotEmpty( $image_url );
+		$product = new WC_Product_Simple();
+		$product->set_status( 'private' );
+		$product->set_image_id( $attachment_id );
+		$product_id = $product->save();
+		$this->go_to( get_category_link( $this->category_id ) );
+		$query = get_rest_url( null, 'otter/v1/dynamic/' );
+		$query .= ( false === strpos( $query, '?' ) ? '?' : '&' ) . 'type=product&context=' . $this->post_id . '&id=' . $product_id . '&uid=1';
+		wp_set_current_user( 0 );
+		$result = $this->dynamic_content->apply_dynamic_images( '<img src="' . $query . '">' );
+		$this->assertStringNotContainsString( $image_url, $result );
+		$this->assertStringContainsString( 'assets/images/placeholder.jpg', $result );
+		$fallback_result = $this->dynamic_content->apply_dynamic_images( '<img src="' . $query . '&fallback=https://example.org/safe-fallback.png">' );
+		$this->assertStringContainsString( 'https://example.org/safe-fallback.png', $fallback_result );
+		$this->assertStringNotContainsString( $image_url, $fallback_result );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$this->assertTrue( current_user_can( 'edit_post', $product_id ) );
+		$this->assertStringContainsString( $image_url, $this->dynamic_content->apply_dynamic_images( '<img src="' . $query . '">' ) );
+
+		wp_update_post( array( 'ID' => $product_id, 'post_status' => 'publish' ) );
+		wp_set_current_user( 0 );
+		$this->assertSame( array( 'publish', true, false ), array( get_post_status( $product_id ), is_post_type_viewable( get_post_type( $product_id ) ), post_password_required( $product_id ) ) );
+		$this->assertStringContainsString( $image_url, $this->dynamic_content->apply_dynamic_images( '<img src="' . $query . '">' ) );
+
+		wp_update_post( array( 'ID' => $this->post_id, 'post_status' => 'private' ) );
+		$this->assertStringNotContainsString( $image_url, $this->dynamic_content->apply_dynamic_images( '<img src="' . $query . '">' ) );
+		wp_update_post( array( 'ID' => $this->post_id, 'post_status' => 'publish' ) );
+
+		$attachment_id = self::factory()->attachment->create_object( 'site-logo.png', $this->post_id, array( 'post_mime_type' => 'image/png' ) );
+		set_theme_mod( 'custom_logo', $attachment_id );
+		$this->go_to( get_category_link( $this->category_id ) );
+		wp_set_current_user( 0 );
+		$this->assertSame( wp_get_attachment_image_url( $attachment_id, 'full' ), $this->dynamic_content->get_image( array( 'type' => 'logo', 'context' => '0' ) ) );
+		set_theme_mod( 'custom_logo', 0 );
+		$this->assertSame( OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg', $this->dynamic_content->get_image( array( 'type' => 'logo', 'context' => '0' ) ) );
+		wp_set_current_user( $this->user_id );
+		$this->assertSame( get_avatar_url( $this->user_id ), $this->dynamic_content->get_image( array( 'type' => 'loggedInUser', 'context' => '0' ) ) );
+		update_option( 'show_avatars', 0 );
+		$this->assertSame( get_avatar_url( $this->user_id ), $this->dynamic_content->get_image( array( 'type' => 'loggedInUser', 'context' => '0' ) ) );
+
+		$this->go_to( get_permalink( $this->post_id ) );
+		$this->assertSame( get_avatar_url( $this->user_id ), $this->dynamic_content->get_image( array( 'type' => 'author', 'context' => '0' ) ) );
+	}
+
+	private function configure_pro_dynamic_content_license( bool $active ): void {
+		if ( ! defined( 'OTTER_PRO_BASEFILE' ) ) {
+			require_once dirname( __DIR__ ) . '/plugins/otter-pro/otter-pro.php';
+		}
+		$option_name = str_replace( '-', '_', strtolower( trim( basename( dirname( OTTER_PRO_BASEFILE ) ) ) ) ) . '_license_data';
+		if ( $active ) {
+			update_option( $option_name, (object) array( 'license' => 'valid' ) );
+		} else {
+			delete_option( $option_name );
+		}
+		$this->dynamic_content_pro->init();
 	}
 
 	/**

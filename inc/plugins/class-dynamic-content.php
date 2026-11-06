@@ -45,12 +45,15 @@ class Dynamic_Content {
 		add_filter( 'get_comment_excerpt', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_author', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_author_url', array( $this, 'escape_comment_magic_tags' ) );
+		foreach ( array( 'get_avatar', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
+			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
+		}
 	}
 
 	/**
-	 * Keep comment-origin Magic Tags literal across nested block renders.
+	 * Keep visitor and profile Magic Tags literal across nested block renders.
 	 *
-	 * @param string $content Comment field being displayed.
+	 * @param string $content Untrusted field or markup being displayed.
 	 * @return string
 	 */
 	public function escape_comment_magic_tags( $content ) {
@@ -211,6 +214,7 @@ class Dynamic_Content {
 		}
 
 		$markup = substr( $processor->get_updated_html(), 0, -strlen( $closing_tag ) );
+		$markup = $this->escape_comment_magic_tags( $markup );
 		return '' === $literal_marker ? $markup : str_replace( $literal_marker, '&#123;otterDynamic?', $markup );
 	}
 
@@ -405,9 +409,9 @@ class Dynamic_Content {
 	/**
 	 * Apply dynamic image.
 	 *
-	 * @param array $data Query array.
+	 * @param array<string, int|string|null> $data Query array.
 	 *
-	 * @return string
+	 * @return string|list<string>|false
 	 */
 	public function get_image( $data ) {
 		$value = OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg';
@@ -425,6 +429,15 @@ class Dynamic_Content {
 		}
 
 		if ( ! isset( $data['type'] ) && empty( $data['type'] ) ) {
+			return $value;
+		}
+
+		$server = \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::instance();
+		if ( ! in_array( $data['type'], array( 'logo', 'loggedInUser' ), true ) && ! $server->check_permission( isset( $data['context'] ) ? (int) $data['context'] : 0 ) ) {
+			return $value;
+		}
+
+		if ( 'product' === $data['type'] && ! empty( $data['id'] ) && ! $server->check_permission( (int) $data['id'] ) ) {
 			return $value;
 		}
 
@@ -465,18 +478,22 @@ class Dynamic_Content {
 	/**
 	 * Apply dynamic data.
 	 *
-	 * @param array $data Dynamic request.
-	 * @param bool  $magic_tags Is a request for Magic Tags.
+	 * @param array<int|string, int|string> $data Dynamic request.
+	 * @param bool                          $magic_tags Is a request for Magic Tags.
 	 *
-	 * @return string|string[]
+	 * @return int|string|list<string>|false
 	 */
 	public function apply_data( $data, $magic_tags = false ) {
 		$value = $this->get_data( $data, $magic_tags );
 
+		if ( is_string( $value ) ) {
+			$value = $this->escape_comment_magic_tags( $value );
+		}
+
 		if ( is_array( $value ) ) {
 			$updated_value = array();
 			foreach ( $value as $key => $val ) {
-				$_value = $this->apply_formatting( $val, $data );
+				$_value = $this->apply_formatting( $this->escape_comment_magic_tags( $val ), $data );
 				
 				if ( isset( $data['default'] ) && false !== strpos( $data['default'], '<o-dynamic-link' ) ) {
 					$link = $this->apply_dynamic_link( $data['default'], $key );
