@@ -13,7 +13,7 @@ import { createBlock } from '@wordpress/blocks';
 import { dispatch } from '@wordpress/data';
 
 import type { BlockProps } from '../../helpers/blocks';
-import { changeActiveStyle, getActiveStyle, getChoice } from '../../helpers/helper-functions';
+import { changeActiveStyle, docsURL, getActiveStyle, getChoice } from '../../helpers/helper-functions';
 import { Fragment } from '@wordpress/element';
 import { RichText } from '@wordpress/block-editor';
 import { SortableDragHandle, useSortableRow } from '../../components/sortable/index.js';
@@ -235,7 +235,7 @@ export const selectAllFieldsFromForm = ( children: any[]) : ({ parentClientId: s
 export const mappedNameInfo = (
 	<Fragment>
 		{__( 'Allow easy identification of the field in features like Webhooks.', 'otter-blocks' )}
-		<ExternalLink href='https://docs.themeisle.com/article/1878-how-to-use-webhooks-in-otter-forms#mapped-name'> { __( 'Learn More', 'otter-blocks' ) } </ExternalLink>
+		<ExternalLink href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/how-to-use-webhooks-in-otter-forms#mapped-name', 'mapped-name', 'block-editor' ) }> { __( 'Learn More', 'otter-blocks' ) } </ExternalLink>
 	</Fragment>
 );
 
