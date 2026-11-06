@@ -41,6 +41,20 @@ class Dynamic_Content {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link_button' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
+		add_filter( 'get_comment_text', array( $this, 'escape_comment_magic_tags' ) );
+		add_filter( 'get_comment_excerpt', array( $this, 'escape_comment_magic_tags' ) );
+		add_filter( 'get_comment_author', array( $this, 'escape_comment_magic_tags' ) );
+		add_filter( 'get_comment_author_url', array( $this, 'escape_comment_magic_tags' ) );
+	}
+
+	/**
+	 * Keep comment-origin Magic Tags literal across nested block renders.
+	 *
+	 * @param string $content Comment field being displayed.
+	 * @return string
+	 */
+	public function escape_comment_magic_tags( $content ) {
+		return str_replace( '{otterDynamic?', '&#123;otterDynamic?', $content );
 	}
 
 	/**
@@ -138,26 +152,66 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Resolve a text Magic Tag, or attribute-escape every Magic Tag inside a start tag.
+	 * Resolve a text Magic Tag, or resolve and sanitize complete attribute values.
 	 *
 	 * @param array<int|string, string> $matches Start tag in `tag`, or the text Magic Tag query in `2`.
 	 *
 	 * @return string|string[]|void
 	 */
-	public function apply_magic_tags_in_markup( $matches ) {
+	public function apply_magic_tags_in_markup( array $matches ) {
 		if ( isset( $matches[2] ) ) {
 			return $this->apply_magic_tags( array( 1 => $matches[2] ) );
 		}
 
-		return preg_replace_callback(
-			'/' . self::MAGIC_TAG_REGEX . '/',
-			function ( $token ) {
-				$value = $this->apply_magic_tags( $token );
+		if ( false === strpos( $matches['tag'], '{otterDynamic?' ) || ! preg_match( '/^<([a-zA-Z][^\s\/>]*)/', $matches['tag'], $tag ) ) {
+			return $matches['tag'];
+		}
 
-				return is_string( $value ) ? esc_attr( $value ) : $value;
-			},
-			$matches['tag']
-		);
+		$literal_marker = '';
+		$markup         = $matches['tag'];
+		if ( false !== strpos( $markup, '&#123;otterDynamic?' ) ) {
+			do {
+				$literal_marker = wp_unique_id( 'otter-literal-magic-' );
+			} while ( false !== strpos( $markup, $literal_marker ) );
+			$markup = str_replace( '&#123;otterDynamic?', $literal_marker, $markup );
+		}
+
+		$closing_tag = '</' . $tag[1] . '>';
+		$processor   = new \WP_HTML_Tag_Processor( $markup . $closing_tag );
+		if ( ! $processor->next_tag() ) {
+			return $matches['tag'];
+		}
+
+		foreach ( (array) $processor->get_attribute_names_with_prefix( '' ) as $attribute ) {
+			$value = $processor->get_attribute( $attribute );
+			if ( ! is_string( $value ) || false === strpos( $value, '{otterDynamic?' ) ) {
+				continue;
+			}
+
+			if ( 0 === strpos( $attribute, 'on' ) || 'srcdoc' === $attribute ) {
+				$processor->remove_attribute( $attribute );
+				continue;
+			}
+
+			$value = preg_replace_callback(
+				'/{(otterDynamic\?[^}]*)}/',
+				function ( $token ) {
+					return html_entity_decode( (string) $this->apply_magic_tags( $token ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+				},
+				$value
+			);
+
+			if ( in_array( $attribute, wp_kses_uri_attributes(), true ) ) {
+				$value = esc_url_raw( $value );
+			} elseif ( 'style' === $attribute ) {
+				$value = safecss_filter_attr( $value );
+			}
+
+			$processor->set_attribute( $attribute, $value );
+		}
+
+		$markup = substr( $processor->get_updated_html(), 0, -strlen( $closing_tag ) );
+		return '' === $literal_marker ? $markup : str_replace( $literal_marker, '&#123;otterDynamic?', $markup );
 	}
 
 	/**

@@ -1483,6 +1483,133 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertStringContainsString( '>' . $name . '</p>', $result );
 	}
 
+	public function test_comment_magic_tag_does_not_create_script_link(): void {
+		wp_set_current_user( 0 );
+		update_option( 'comment_registration', 0 );
+		update_option( 'require_name_email', 0 );
+		wp_update_post( array( 'ID' => $this->post_id, 'comment_status' => 'open' ) );
+
+		$comment = wp_handle_comment_submission(
+			array(
+				'comment_post_ID' => $this->post_id,
+				'author'          => 'Visitor',
+				'comment'         => '<a href="{otterDynamic?x=/?&default=javascript:alert(1)}">Comment link</a>',
+			)
+		);
+		$this->assertInstanceOf( WP_Comment::class, $comment );
+		$this->assertStringContainsString( '{otterDynamic?', $comment->comment_content );
+		wp_set_comment_status( $comment->comment_ID, 'approve' );
+
+		$block = new WP_Block(
+			array( 'blockName' => 'core/comment-content', 'attrs' => array() ),
+			array( 'commentId' => (int) $comment->comment_ID )
+		);
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . $block->render() . '</div><!-- /wp:group -->' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'a' ), $result );
+		$this->assertNotSame( 'javascript:alert(1)', $processor->get_attribute( 'href' ), $result );
+	}
+
+	public function test_contributor_magic_tag_does_not_create_script_link(): void {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'contributor' ) ) );
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p><a href="{otterDynamic?x=/?&default=javascript:alert(1)}">Post link</a></p><!-- /wp:paragraph -->',
+			)
+		);
+		$content = get_post_field( 'post_content', $post_id );
+		$this->assertStringContainsString( '{otterDynamic?', $content );
+		$result = do_blocks( $content );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'a' ), $result );
+		$this->assertSame( '', (string) $processor->get_attribute( 'href' ), $result );
+	}
+
+	public function test_magic_tags_sanitize_every_uri_attribute(): void {
+		add_filter( 'wp_kses_uri_attributes', function ( $attributes ) {
+			$attributes[] = 'data-destination';
+			return $attributes;
+		} );
+
+		foreach ( wp_kses_uri_attributes() as $attribute ) {
+			$result = $this->dynamic_content->apply_dynamic_magic_tags( '<a ' . strtoupper( $attribute ) . '="java{otterDynamic?default=script}:alert(1)">Link</a>' );
+			$processor = new WP_HTML_Tag_Processor( $result );
+			$this->assertTrue( $processor->next_tag(), $result );
+			$this->assertSame( '', (string) $processor->get_attribute( $attribute ), $result );
+		}
+	}
+
+	public function test_magic_tags_preserve_safe_url_values(): void {
+		foreach ( array( 'https://example.org/path?a=1&b=2', '/relative/path', '#section', '?search=test', 'mailto:user@example.org', 'tel:1234', '' ) as $url ) {
+			add_filter( 'otter_blocks_evaluate_dynamic_content_text', $resolve = function () use ( $url ) { return $url; } );
+			$result = $this->dynamic_content->apply_dynamic_magic_tags( '<a href="{otterDynamic?type=testURL}">Link</a>' );
+			remove_filter( 'otter_blocks_evaluate_dynamic_content_text', $resolve );
+			$processor = new WP_HTML_Tag_Processor( $result );
+			$this->assertTrue( $processor->next_tag(), $result );
+			$this->assertSame( $url, $processor->get_attribute( 'href' ), $result );
+		}
+	}
+
+	public function test_magic_tags_quote_unquoted_attributes_and_preserve_literals(): void {
+		$value = 'Value with spaces & "quotes" {otterDynamic?default=second-pass}';
+		add_filter( 'otter_blocks_evaluate_dynamic_content_text', function () use ( $value ) { return $value; } );
+		$result = $this->dynamic_content->apply_dynamic_magic_tags( '<p title={otterDynamic?type=testValue} data-static="&amp;amp;">{otterDynamic?type=testValue}</p>' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag(), $result );
+		$this->assertSame( $value, $processor->get_attribute( 'title' ), $result );
+		$this->assertSame( '&amp;', $processor->get_attribute( 'data-static' ), $result );
+		$this->assertSame( array( 'title', 'data-static' ), $processor->get_attribute_names_with_prefix( '' ) );
+		$this->assertStringContainsString( '>' . $value . '</p>', $result );
+	}
+
+	public function test_magic_tags_sanitize_raw_text_element_attributes(): void {
+		foreach ( array( 'iframe', 'script', 'style', 'textarea' ) as $tag ) {
+			$result = $this->dynamic_content->apply_dynamic_magic_tags( '<' . $tag . ' src="{otterDynamic?default=javascript:alert(1)}" title="{otterDynamic?default=Title}">Unchanged</' . $tag . '>' );
+			$processor = new WP_HTML_Tag_Processor( $result );
+			$this->assertTrue( $processor->next_tag(), $result );
+			$this->assertSame( '', (string) $processor->get_attribute( 'src' ), $result );
+			$this->assertSame( 'Title', $processor->get_attribute( 'title' ), $result );
+			$this->assertStringContainsString( '>Unchanged</' . $tag . '>', $result );
+		}
+	}
+
+	public function test_magic_tags_sanitize_css_and_reject_executable_attributes(): void {
+		$result = $this->dynamic_content->apply_dynamic_magic_tags( '<iframe style="color:{otterDynamic?default=red};background-image:url(java{otterDynamic?default=script}:alert(1))" onload="{otterDynamic?default=alert(1)}" srcdoc="{otterDynamic?default=content}"></iframe>' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag(), $result );
+		$this->assertSame( 'color:red', $processor->get_attribute( 'style' ), $result );
+		$this->assertNull( $processor->get_attribute( 'onload' ), $result );
+		$this->assertNull( $processor->get_attribute( 'srcdoc' ), $result );
+	}
+
+	public function test_stored_comment_magic_tags_remain_literal_in_nested_blocks(): void {
+		$token = '{otterDynamic?type=postTitle}';
+		$comment_id = self::factory()->comment->create(
+			array(
+				'comment_post_ID'  => $this->post_id,
+				'comment_content'  => '<a href="' . $token . '">' . $token . '</a>',
+				'comment_author'   => $token,
+				'comment_approved' => 1,
+			)
+		);
+		foreach ( array( get_comment_text( $comment_id ), get_comment_excerpt( $comment_id ), get_comment_author( $comment_id ) ) as $content ) {
+			$markup = '<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p>{otterDynamic?type=postTitle}</p><!-- /wp:paragraph -->' . $content . '</div><!-- /wp:group -->';
+			$result = do_blocks( $markup );
+			$this->assertStringContainsString( $token, html_entity_decode( $result ), $result );
+			$this->assertStringContainsString( '>Test</p>', $result );
+		}
+	}
+
+	public function test_encoded_comment_magic_tag_stays_literal_beside_dynamic_attribute(): void {
+		$token = '{otterDynamic?type=postTitle}';
+		$content = $this->dynamic_content->escape_comment_magic_tags( $token );
+		$result = $this->dynamic_content->apply_dynamic_magic_tags( '<a href="' . $content . '" title="{otterDynamic?type=postTitle}">Link</a>' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag(), $result );
+		$this->assertSame( $token, $processor->get_attribute( 'href' ), $result );
+		$this->assertSame( 'Test', $processor->get_attribute( 'title' ), $result );
+	}
+
 	/**
 	 * Assert the first tag of the markup gained no attributes from the text after it.
 	 *
