@@ -1837,6 +1837,107 @@ class TestDynamicContent extends WP_UnitTestCase
 		}
 	}
 
+	public function test_null_search_form_filter_preserves_fallback_and_literal_queries(): void {
+		$query = '{otterDynamic?type=siteTitle}';
+		wp_set_current_user( 0 );
+		$this->go_to( add_query_arg( 's', rawurlencode( $query ), home_url( '/' ) ) );
+		add_filter( 'get_search_form', '__return_null', 9 );
+		ob_start();
+		try {
+			get_search_form();
+		} finally {
+			$form = ob_get_clean();
+			remove_filter( 'get_search_form', '__return_null', 9 );
+		}
+		$processor = new WP_HTML_Tag_Processor( $form );
+		$this->assertTrue( $processor->next_tag( 'input' ), $form );
+		$this->assertSame( $query, $processor->get_attribute( 'value' ), $form );
+
+		add_filter( 'get_search_form', '__return_null', 9 );
+		try {
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:legacy-widget {"idBase":"search"} /--><!-- wp:paragraph --><p>' . $query . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		} finally {
+			remove_filter( 'get_search_form', '__return_null', 9 );
+		}
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'input' ), $result );
+		$this->assertSame( $query, $processor->get_attribute( 'value' ), $result );
+		$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
+		$this->assertSame( $query, get_search_query( false ) );
+	}
+
+	public function test_false_search_form_filter_preserves_disabled_form(): void {
+		add_filter( 'get_search_form', '__return_false', 9 );
+		try {
+			$this->assertFalse( get_search_form( array( 'echo' => false ) ) );
+		} finally {
+			remove_filter( 'get_search_form', '__return_false', 9 );
+		}
+	}
+
+	/**
+	 * @dataProvider provide_term_label_blocks
+	 *
+	 * @param string $name Block name.
+	 * @param array $attributes Block attributes.
+	 * @param bool $has_aria_label Whether the term link includes a label.
+	 */
+	public function test_term_names_remain_literal_in_nested_blocks( string $name, array $attributes, bool $has_aria_label ): void {
+		$token = '{otterDynamic?type=siteTitle}';
+		$user = get_userdata( $this->user_id );
+		$user->set_role( 'contributor' );
+		wp_set_current_user( $this->user_id );
+		$request = new WP_REST_Request( 'POST', '/wp/v2/tags' );
+		$request->set_param( 'name', $token );
+		$request->set_param( 'slug', 'literal-magic-tag' );
+		$response = rest_do_request( $request );
+		$this->assertSame( 201, $response->get_status(), wp_json_encode( $response->get_data() ) );
+		$term_id = $response->get_data()['id'];
+		$this->assertNotWPError( wp_set_post_terms( $this->post_id, array( $term_id ), 'post_tag' ) );
+		wp_set_current_user( 0 );
+		$this->go_to( get_term_link( $term_id, 'post_tag' ) );
+		$GLOBALS['wp_query']->the_post();
+		if ( 'core/post-terms' === $name ) {
+			$attributes['prefix'] = 'Prefix ' . $token;
+			$attributes['suffix'] = 'Suffix ' . $token;
+		}
+		$block = get_comment_delimited_block_content( $name, $attributes, '' );
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group trusted-' . $token . '">' . $block . '<!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$this->assertSame( 1, substr_count( wp_strip_all_tags( html_entity_decode( $result ) ), $token ), $result );
+		$this->assertStringContainsString( 'trusted-' . get_bloginfo( 'name' ), $result );
+		$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
+		if ( 'core/post-terms' === $name ) {
+			$this->assertStringContainsString( 'Prefix ' . get_bloginfo( 'name' ), $result );
+			$this->assertStringContainsString( 'Suffix ' . get_bloginfo( 'name' ), $result );
+		}
+		if ( $has_aria_label ) {
+			$processor = new WP_HTML_Tag_Processor( $result );
+			$this->assertTrue( $processor->next_tag( 'a' ), $result );
+			$this->assertStringContainsString( $token, $processor->get_attribute( 'aria-label' ), $result );
+		}
+		$this->assertSame( $token, get_term( $term_id, 'post_tag' )->name );
+		$this->assertSame( $token, get_the_terms( $this->post_id, 'post_tag' )[0]->name );
+	}
+
+	public function provide_term_label_blocks(): array {
+		$cases = array(
+			'post terms' => array( 'core/post-terms', array( 'term' => 'post_tag' ), false ),
+			'tag cloud' => array( 'core/tag-cloud', array( 'showTagCounts' => true ), true ),
+			'legacy tag cloud' => array( 'core/legacy-widget', array( 'idBase' => 'tag_cloud' ), true ),
+		);
+		$registry = WP_Block_Type_Registry::get_instance();
+		if ( $registry->is_registered( 'core/term-name' ) ) {
+			$cases['term name'] = array( 'core/term-name', array(), false );
+			$cases['linked term name'] = array( 'core/term-name', array( 'isLink' => true ), false );
+		}
+		$categories = $registry->get_registered( 'core/categories' );
+		if ( isset( $categories->attributes['taxonomy'] ) ) {
+			$cases['category list'] = array( 'core/categories', array( 'taxonomy' => 'post_tag' ), false );
+			$cases['category dropdown'] = array( 'core/categories', array( 'taxonomy' => 'post_tag', 'displayAsDropdown' => true ), false );
+		}
+		return $cases;
+	}
+
 	public function provide_literal_search_queries(): array {
 		return array(
 			'literal token' => array( '{otterDynamic?type=siteTitle}' ),

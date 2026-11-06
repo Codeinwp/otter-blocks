@@ -47,7 +47,9 @@ class Dynamic_Content {
 		add_filter( 'get_comment_author', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_author_url', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'block_core_breadcrumbs_items', array( $this, 'escape_breadcrumb_magic_tags' ) );
-		add_filter( 'get_search_form', array( $this, 'escape_comment_magic_tags' ) );
+		add_filter( 'get_search_form', array( $this, 'escape_search_form_magic_tags' ) );
+		add_filter( 'wp_generate_tag_cloud_data', array( $this, 'escape_tag_cloud_magic_tags' ) );
+		add_filter( 'list_cats', array( $this, 'escape_comment_magic_tags' ) );
 		foreach ( array( 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
 			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
 		}
@@ -56,8 +58,8 @@ class Dynamic_Content {
 	/**
 	 * Protect rendered visitor values before the generic Magic Tag filters run.
 	 *
-	 * @param string                        $content Rendered markup.
-	 * @param array{blockName: string|null} $block Parsed block.
+	 * @param string                                                                     $content Rendered markup.
+	 * @param array{blockName: string|null, attrs?: array{id?: string, idBase?: string}} $block Parsed block.
 	 * @return string
 	 */
 	public function escape_visitor_block_magic_tags( $content, $block ) {
@@ -65,7 +67,19 @@ class Dynamic_Content {
 			'core/avatar'      => '/(<a\b[^>]*\saria-label=")([^"]*)(")/',
 			'core/search'      => '/(<input\b(?=[^>]*\stype="(?:search|text)")(?=[^>]*\sname="s")[^>]*\svalue=")([^"]*)(")/',
 			'core/query-title' => '/(>)([^<]*)(<)/',
+			'core/post-terms'  => '/(<a\b[^>]*>)([^<]*)(<\/a>)/',
+			'core/term-name'   => '/(>)([^<]*)(<)/',
 		);
+		if ( 'core/legacy-widget' === $block['blockName'] ) {
+			$widget = isset( $block['attrs']['idBase'] ) ? $block['attrs']['idBase'] : '';
+			if ( isset( $block['attrs']['id'] ) ) {
+				$widget = $block['attrs']['id'];
+			}
+			if ( 'search' === _get_widget_id_base( $widget ) ) {
+				// A null form filter makes core use its unfiltered fallback markup.
+				$patterns['core/legacy-widget'] = '/(<form\b)(.*?)(<\/form>)/is';
+			}
+		}
 		if ( ! isset( $patterns[ $block['blockName'] ] ) ) {
 			return $content;
 		}
@@ -77,6 +91,31 @@ class Dynamic_Content {
 			},
 			$content
 		);
+	}
+
+	/**
+	 * Preserve native search-form sentinels while protecting rendered markup.
+	 *
+	 * @param string|false|null $form Rendered form or a filter sentinel.
+	 * @return string|false|null
+	 */
+	public function escape_search_form_magic_tags( $form ) {
+		return is_string( $form ) ? $this->escape_comment_magic_tags( $form ) : $form;
+	}
+
+	/**
+	 * Protect tag-cloud text and accessibility labels without changing term data.
+	 *
+	 * @param array<array{name: string, aria_label: string}> $items Tag-cloud display data.
+	 * @return array<array{name: string, aria_label: string}>
+	 */
+	public function escape_tag_cloud_magic_tags( $items ) {
+		foreach ( $items as $index => $item ) {
+			$items[ $index ]['name']       = $this->escape_comment_magic_tags( $item['name'] );
+			$items[ $index ]['aria_label'] = $this->escape_comment_magic_tags( $item['aria_label'] );
+		}
+
+		return $items;
 	}
 
 	/**
