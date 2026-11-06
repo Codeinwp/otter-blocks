@@ -1677,13 +1677,29 @@ class TestDynamicContent extends WP_UnitTestCase
 		}
 		$this->assertSame( $token, get_userdata( $this->user_id )->display_name );
 		wp_set_current_user( 0 );
-		$this->go_to( get_author_posts_url( $this->user_id ) );
-		$this->assertTrue( is_author() );
-		$GLOBALS['wp_query']->the_post();
-		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:query-title {"type":"archive"} /--><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
-		$this->assertStringContainsString( $token, html_entity_decode( $result ), $result );
-		$this->assertStringContainsString( 'Author:', $result );
-		$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
+		update_option( 'posts_per_page', 1 );
+		self::factory()->post->create( array( 'post_author' => $this->user_id ) );
+		$has_breadcrumbs = WP_Block_Type_Registry::get_instance()->is_registered( 'core/breadcrumbs' );
+		add_filter( 'block_core_breadcrumbs_items', function ( $items ) use ( $token ) {
+			$items['formatted'] = array( 'label' => '<em>' . $token . '</em>', 'url' => 'https://example.org/reference', 'allow_html' => true );
+			return $items;
+		}, 9 );
+		$author_url = get_author_posts_url( $this->user_id );
+		foreach ( array( $author_url, add_query_arg( 'paged', 2, $author_url ) ) as $url ) {
+			$this->go_to( $url );
+			$this->assertTrue( is_author() );
+			$GLOBALS['wp_query']->the_post();
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:query-title {"type":"archive"} /--><!-- wp:breadcrumbs {"className":"trusted-' . $token . '"} /--><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+			$this->assertSame( $has_breadcrumbs ? 3 : 1, substr_count( html_entity_decode( $result ), $token ), $result );
+			$this->assertStringContainsString( 'Author:', $result );
+			$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
+			if ( $has_breadcrumbs ) {
+				$this->assertStringContainsString( '>' . $token . ( is_paged() ? '</a>' : '</span>' ), html_entity_decode( $result ), $result );
+				$this->assertStringContainsString( 'trusted-' . get_bloginfo( 'name' ), $result );
+				$this->assertStringContainsString( '<em>' . $token . '</em>', html_entity_decode( $result ), $result );
+				$this->assertStringContainsString( 'href="https://example.org/reference"', $result );
+			}
+		}
 	}
 
 	public function test_profile_magic_tags_remain_literal_in_nested_blocks(): void {
@@ -1746,8 +1762,9 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->go_to( add_query_arg( 's', rawurlencode( $query ), home_url( '/' ) ) );
 		$this->assertTrue( is_search() );
 		$this->assertSame( $query, get_query_var( 's' ) );
+		$has_breadcrumbs = WP_Block_Type_Registry::get_instance()->is_registered( 'core/breadcrumbs' );
 		$search_attributes = wp_json_encode( array( 'placeholder' => $token, 'className' => 'trusted-' . $token, 'query' => array( 'visitor' => $token ) ) );
-		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:search ' . $search_attributes . ' /--><!-- wp:query-title {"type":"search","showSearchTerm":true} /--><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:search ' . $search_attributes . ' /--><!-- wp:query-title {"type":"search","showSearchTerm":true} /--><!-- wp:breadcrumbs /--><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
 		$processor = new WP_HTML_Tag_Processor( $result );
 		$this->assertTrue( $processor->next_tag( 'input' ), $result );
 		$this->assertSame( $query, $processor->get_attribute( 'value' ), $result );
@@ -1756,9 +1773,67 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertSame( 'visitor', $processor->get_attribute( 'name' ), $result );
 		$this->assertSame( get_bloginfo( 'name' ), $processor->get_attribute( 'value' ), $result );
 		$this->assertStringContainsString( 'trusted-' . get_bloginfo( 'name' ), $result );
-		$this->assertSame( substr_count( $query, $token ) + substr_count( html_entity_decode( $query ), $token ), substr_count( html_entity_decode( $result ), $token ), $result );
+		$this->assertSame( substr_count( $query, $token ) + ( $has_breadcrumbs ? 2 : 1 ) * substr_count( html_entity_decode( $query ), $token ), substr_count( html_entity_decode( $result ), $token ), $result );
 		$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
 		$this->assertSame( $query, get_query_var( 's' ) );
+	}
+
+	/**
+	 * @dataProvider provide_literal_search_queries
+	 *
+	 * @param string $query Visitor search text.
+	 */
+	public function test_legacy_search_widget_magic_tags_remain_literal_in_nested_blocks( string $query ): void {
+		$token = '{otterDynamic?type=siteTitle}';
+		wp_set_current_user( 0 );
+		$this->go_to( add_query_arg( 's', rawurlencode( $query ), home_url( '/' ) ) );
+		foreach ( array( 'html5', 'xhtml' ) as $format ) {
+			$format_filter = function () use ( $format ) { return $format; };
+			add_filter( 'search_form_format', $format_filter );
+			ob_start();
+			try {
+				$widget = new WP_Widget_Search();
+				$widget->widget( array( 'before_widget' => '', 'after_widget' => '', 'before_title' => '<h2>', 'after_title' => '</h2>' ), array( 'title' => '' ) );
+			} finally {
+				$form = ob_get_clean();
+				remove_filter( 'search_form_format', $format_filter );
+			}
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:html -->' . $form . '<!-- /wp:html --><!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+			$processor = new WP_HTML_Tag_Processor( $result );
+			$this->assertTrue( $processor->next_tag( 'input' ), $result );
+			$this->assertSame( 'html5' === $format ? 'search' : 'text', $processor->get_attribute( 'type' ), $result );
+			$this->assertSame( html_entity_decode( $query ), $processor->get_attribute( 'value' ), $result );
+			$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
+			$this->assertSame( $query, get_search_query( false ) );
+		}
+	}
+
+	/**
+	 * @dataProvider provide_literal_search_queries
+	 *
+	 * @param string $query Visitor search text.
+	 */
+	public function test_search_links_preserve_literal_queries( string $query ): void {
+		wp_set_current_user( 0 );
+		$previous_structure = get_option( 'permalink_structure' );
+		try {
+			foreach ( array( '', '/%postname%/' ) as $structure ) {
+				$this->set_permalink_structure( $structure );
+				$this->go_to( add_query_arg( 's', rawurlencode( $query ), home_url( '/' ) ) );
+				$search_link = get_search_link();
+				$feed_link = get_search_feed_link();
+				$this->assertSame( get_search_link( $query ), $search_link );
+				$this->assertSame( get_search_feed_link( $query ), $feed_link );
+				$this->assertSame( $query, get_search_query( false ) );
+				$this->go_to( $search_link );
+				$this->assertSame( $query, get_query_var( 's' ) );
+				$this->go_to( $feed_link );
+				$this->assertTrue( is_feed() );
+				$this->assertSame( $query, get_query_var( 's' ) );
+			}
+		} finally {
+			$this->set_permalink_structure( $previous_structure );
+		}
 	}
 
 	public function provide_literal_search_queries(): array {

@@ -46,23 +46,36 @@ class Dynamic_Content {
 		add_filter( 'get_comment_excerpt', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_author', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_author_url', array( $this, 'escape_comment_magic_tags' ) );
-		add_filter( 'get_search_query', array( $this, 'escape_search_magic_tags' ) );
+		add_filter( 'block_core_breadcrumbs_items', array( $this, 'escape_breadcrumb_magic_tags' ) );
+		add_filter(
+			'get_search_form',
+			/**
+			 * Protect classic search form values.
+			 *
+			 * @param string $form Rendered search form.
+			 * @return string
+			 */
+			function ( $form ) {
+				return $this->escape_visitor_block_magic_tags( $form, array( 'blockName' => 'core/search' ) );
+			}
+		);
 		foreach ( array( 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
 			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
 		}
 	}
 
 	/**
-	 * Protect visitor attributes before the generic Magic Tag filters run.
+	 * Protect rendered visitor values before the generic Magic Tag filters run.
 	 *
-	 * @param string                        $content Rendered block markup.
+	 * @param string                        $content Rendered markup.
 	 * @param array{blockName: string|null} $block Parsed block.
 	 * @return string
 	 */
 	public function escape_visitor_block_magic_tags( $content, $block ) {
 		$patterns = array(
-			'core/avatar' => '/(<a\b[^>]*\saria-label=")([^"]*)"/',
-			'core/search' => '/(<input\b(?=[^>]*\stype="search")(?=[^>]*\sname="s")[^>]*\svalue=")([^"]*)"/',
+			'core/avatar'      => '/(<a\b[^>]*\saria-label=")([^"]*)(")/',
+			'core/search'      => '/(<input\b(?=[^>]*\stype="(?:search|text)")(?=[^>]*\sname="s")[^>]*\svalue=")([^"]*)(")/',
+			'core/query-title' => '/(>)([^<]*)(<)/',
 		);
 		if ( ! isset( $patterns[ $block['blockName'] ] ) ) {
 			return $content;
@@ -71,25 +84,24 @@ class Dynamic_Content {
 		return preg_replace_callback(
 			$patterns[ $block['blockName'] ],
 			function ( $matches ) {
-				return $matches[1] . $this->escape_comment_magic_tags( $matches[2] ) . '"';
+				return $matches[1] . $this->escape_comment_magic_tags( $matches[2] ) . $matches[3];
 			},
 			$content
 		);
 	}
 
 	/**
-	 * Protect search text, deferring raw input escaping to the search block filter.
+	 * Keep breadcrumb labels literal without changing their links or allowed markup.
 	 *
-	 * @param string $query Visitor search text.
-	 * @return string
+	 * @param array<array{label: string, url?: string, allow_html?: bool}> $items Breadcrumb items.
+	 * @return array<array{label: string, url?: string, allow_html?: bool}>
 	 */
-	public function escape_search_magic_tags( $query ) {
-		// The search block's tag processor escapes entities itself.
-		if ( isset( \WP_Block_Supports::$block_to_render['blockName'] ) && 'core/search' === \WP_Block_Supports::$block_to_render['blockName'] ) {
-			return $query;
+	public function escape_breadcrumb_magic_tags( $items ) {
+		foreach ( $items as $index => $item ) {
+			$items[ $index ]['label'] = $this->escape_comment_magic_tags( $item['label'] );
 		}
 
-		return $this->escape_comment_magic_tags( $query );
+		return $items;
 	}
 
 	/**
