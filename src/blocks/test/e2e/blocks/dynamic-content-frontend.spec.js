@@ -51,6 +51,31 @@ test( 'keeps anonymous comment magic tags inert in nested latest comments', asyn
 	}
 });
 
+test( 'preserves authored links without resolving assembled dynamic markers', async({ page, requestUtils }) => {
+	const marker = `Dynamic marker ${ Date.now() }`;
+	const post = await requestUtils.createPost({
+		title: marker,
+		status: 'publish',
+		content: `<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p><a href="#otterDynamicLink?type=siteURL&context={otterDynamic?type=postID}" title="{otterDynamic?type=postTitle}">Authored ${ marker }</a><a href="#otterDynamic{otterDynamic?default=Link}?type=siteURL" title="{otterDynamic?type=postTitle}">Assembled ${ marker }</a></p><!-- /wp:paragraph --></div><!-- /wp:group -->`
+	});
+
+	try {
+		await page.goto( `/?p=${ post.id }` );
+		const authored = page.getByRole( 'link', { name: `Authored ${ marker }`, exact: true });
+		const assembled = page.getByRole( 'link', { name: `Assembled ${ marker }`, exact: true });
+		await expect( authored ).toHaveAttribute( 'href', new URL( post.link ).origin );
+		await expect( authored ).toHaveAttribute( 'title', marker );
+		await expect( assembled ).toHaveAttribute( 'href', '#otterDynamicLink?type=siteURL' );
+		await expect( assembled ).toHaveAttribute( 'title', marker );
+	} finally {
+		await requestUtils.rest({
+			method: 'DELETE',
+			path: `/wp/v2/posts/${ post.id }`,
+			params: { force: true }
+		});
+	}
+});
+
 /**
  * Frontend rendering of the postContent dynamic tag (issue #2929).
  *

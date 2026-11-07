@@ -25,6 +25,17 @@ class Dynamic_Content {
 	const MAGIC_TAG_REGEX = '{(otterDynamic\?[^"\'<>}]*)}';
 
 	/**
+	 * Literal representations of dynamic marker prefixes.
+	 *
+	 * @var array<string, string>
+	 */
+	private static $literal_marker_escapes = array(
+		'{otterDynamic?'   => '&#123;otterDynamic?',
+		'otterDynamicLink' => 'otterDynamicLin&#107;',
+		'otter/v1/dynamic' => 'otter/v1/dynami&#99;',
+	);
+
+	/**
 	 * Exception keys of the postContent tags currently being rendered.
 	 *
 	 * @var array<string, true>
@@ -159,8 +170,8 @@ class Dynamic_Content {
 	 */
 	public function escape_comment_magic_tags( $content ) {
 		return str_replace(
-			array( '{otterDynamic?', 'otterDynamicLink', 'otter/v1/dynamic' ),
-			array( '&#123;otterDynamic?', 'otterDynamicLin&#107;', 'otter/v1/dynami&#99;' ),
+			array_keys( self::$literal_marker_escapes ),
+			array_values( self::$literal_marker_escapes ),
 			$content
 		);
 	}
@@ -275,14 +286,27 @@ class Dynamic_Content {
 			return $matches['tag'];
 		}
 
-		$literal_marker = '';
-		$markup         = $matches['tag'];
-		if ( false !== strpos( $markup, '&#123;otterDynamic?' ) ) {
-			do {
-				$literal_marker = wp_unique_id( 'otter-literal-magic-' );
-			} while ( false !== strpos( $markup, $literal_marker ) );
-			$markup = str_replace( '&#123;otterDynamic?', $literal_marker, $markup );
+		$literal_markers  = array();
+		$protect_literals = function ( $value, $escapes ) use ( &$literal_markers, $matches ) {
+			foreach ( $escapes as $prefix => $escaped ) {
+				if ( false === strpos( $value, $prefix ) ) {
+					continue;
+				}
+				do {
+					$marker = wp_unique_id( 'otter-literal-magic-' );
+				} while ( false !== strpos( $matches['tag'], $marker ) || false !== strpos( $value, $marker ) );
+				$value                      = str_replace( $prefix, $marker, $value );
+				$literal_markers[ $marker ] = $escaped;
+			}
+			return $value;
+		};
+		$escaped_prefixes = array_values( self::$literal_marker_escapes );
+		$escaped_literals = array();
+		foreach ( $escaped_prefixes as $prefix ) {
+			$escaped_literals[ $prefix ]                               = $prefix;
+			$escaped_literals[ wp_kses_normalize_entities( $prefix ) ] = $prefix;
 		}
+		$markup = $protect_literals( $matches['tag'], $escaped_literals );
 
 		$closing_tag = '</' . $tag[1] . '>';
 		$processor   = new \WP_HTML_Tag_Processor( $markup . $closing_tag );
@@ -302,12 +326,26 @@ class Dynamic_Content {
 			}
 
 			$value = preg_replace_callback(
-				'/{(otterDynamic\?[^}]*)}/',
-				function ( $token ) {
-					return html_entity_decode( (string) $this->apply_magic_tags( $token ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+				'/({otterDynamic\?[^}]*})|otterDynamicLink|otter\/v1\/dynamic/',
+				function ( $token ) use ( $protect_literals ) {
+					return isset( $token[1] ) ? $token[0] : $protect_literals( $token[0], array( $token[0] => $token[0] ) );
 				},
 				$value
 			);
+
+			$value = preg_replace_callback(
+				'/{(otterDynamic\?[^}]*)}/',
+				function ( $token ) use ( $protect_literals, &$literal_markers ) {
+					$value = html_entity_decode( (string) $this->apply_magic_tags( $token ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+					if ( ! empty( $literal_markers ) ) {
+						$marker_names = array_keys( $literal_markers );
+						$value        = $protect_literals( $value, array_combine( $marker_names, $marker_names ) );
+					}
+					return $protect_literals( $value, self::$literal_marker_escapes );
+				},
+				$value
+			);
+			$value = $protect_literals( $value, self::$literal_marker_escapes );
 
 			if ( in_array( $attribute, wp_kses_uri_attributes(), true ) ) {
 				$value = esc_url_raw( $value );
@@ -319,8 +357,8 @@ class Dynamic_Content {
 		}
 
 		$markup = substr( $processor->get_updated_html(), 0, -strlen( $closing_tag ) );
-		$markup = $this->escape_comment_magic_tags( $markup );
-		return '' === $literal_marker ? $markup : str_replace( $literal_marker, '&#123;otterDynamic?', $markup );
+		$markup = str_replace( '{otterDynamic?', self::$literal_marker_escapes['{otterDynamic?'], $markup );
+		return strtr( $markup, $literal_markers );
 	}
 
 	/**
