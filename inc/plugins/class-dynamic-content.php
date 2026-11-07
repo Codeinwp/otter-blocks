@@ -126,8 +126,8 @@ class Dynamic_Content {
 	/**
 	 * Keep inherited taxonomy menu labels literal while preserving authored labels.
 	 *
-	 * @param \WP_Post|\WP_Term $item Decorated menu item.
-	 * @return \WP_Post|\WP_Term
+	 * @param \WP_Post|\WP_Term|\stdClass $item Decorated menu item.
+	 * @return \WP_Post|\WP_Term|\stdClass
 	 */
 	public function escape_taxonomy_menu_magic_tags( $item ) {
 		if ( isset( $item->type, $item->title ) && 'taxonomy' === $item->type && ( ! isset( $item->post_title ) || '' === $item->post_title ) ) {
@@ -152,13 +152,17 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Keep visitor and profile Magic Tags literal across nested block renders.
+	 * Keep visitor and resolved dynamic markers literal across nested block renders.
 	 *
 	 * @param string $content Untrusted field or markup being displayed.
 	 * @return string
 	 */
 	public function escape_comment_magic_tags( $content ) {
-		return str_replace( '{otterDynamic?', '&#123;otterDynamic?', $content );
+		return str_replace(
+			array( '{otterDynamic?', 'otterDynamicLink', 'otter/v1/dynamic' ),
+			array( '&#123;otterDynamic?', 'otterDynamicLin&#107;', 'otter/v1/dynami&#99;' ),
+			$content
+		);
 	}
 
 	/**

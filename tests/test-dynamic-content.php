@@ -1607,6 +1607,72 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertSame( 'Test', $processor->get_attribute( 'title' ), $result );
 	}
 
+	/**
+	 * @dataProvider provide_visitor_dynamic_urls
+	 */
+	public function test_visitor_comment_dynamic_links_remain_literal_in_nested_blocks( string $token ): void {
+		wp_update_post( array( 'ID' => $this->post_id, 'comment_status' => 'open' ) );
+		update_option( 'comment_registration', 0 );
+		wp_set_current_user( 0 );
+		$comment = wp_handle_comment_submission( array(
+			'comment_post_ID' => $this->post_id,
+			'author' => 'Visitor',
+			'email' => 'visitor@example.org',
+			'comment' => '<a href="' . $token . '">Visitor link</a>',
+		) );
+		$this->assertInstanceOf( WP_Comment::class, $comment );
+		$this->assertStringContainsString( $token, $comment->comment_content );
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . get_comment_text( $comment ) . '<!-- wp:paragraph --><p><a href="#otterDynamicLink?type=siteURL">Authored link</a></p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'a' ), $result );
+		$this->assertSame( $token, $processor->get_attribute( 'href' ), $result );
+		$this->assertTrue( $processor->next_tag( 'a' ), $result );
+		$this->assertSame( site_url(), $processor->get_attribute( 'href' ), $result );
+	}
+
+	/**
+	 * @dataProvider provide_visitor_dynamic_urls
+	 */
+	public function test_term_description_dynamic_links_remain_literal_in_nested_blocks( string $token ): void {
+		$user = get_userdata( $this->user_id );
+		$user->set_role( 'contributor' );
+		wp_set_current_user( $this->user_id );
+		$request = new WP_REST_Request( 'POST', '/wp/v2/tags' );
+		$request->set_param( 'name', 'Literal description' );
+		$request->set_param( 'description', '<a href="' . $token . '">Visitor link</a>' );
+		$response = rest_do_request( $request );
+		$this->assertSame( 201, $response->get_status(), wp_json_encode( $response->get_data() ) );
+		$term_id = $response->get_data()['id'];
+		$this->assertStringContainsString( $token, html_entity_decode( get_term( $term_id, 'post_tag' )->description ) );
+		wp_set_current_user( 0 );
+		$this->go_to( get_term_link( $term_id, 'post_tag' ) );
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:term-description /--><!-- wp:paragraph --><p><a href="#otterDynamicLink?type=siteURL">Authored link</a></p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'a' ), $result );
+		$this->assertSame( $token, $processor->get_attribute( 'href' ), $result );
+		$this->assertTrue( $processor->next_tag( 'a' ), $result );
+		$this->assertSame( site_url(), $processor->get_attribute( 'href' ), $result );
+	}
+
+	/**
+	 * @dataProvider provide_visitor_dynamic_urls
+	 */
+	public function test_encoded_dynamic_urls_stay_literal_beside_authored_attribute( string $token ): void {
+		$content = $this->dynamic_content->escape_comment_magic_tags( $token );
+		$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p><a href="' . $content . '" title="{otterDynamic?type=postTitle}">Link</a></p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'a' ), $result );
+		$this->assertSame( $token, $processor->get_attribute( 'href' ), $result );
+		$this->assertSame( 'Test', $processor->get_attribute( 'title' ), $result );
+	}
+
+	public function provide_visitor_dynamic_urls(): array {
+		return array(
+			'dynamic link' => array( '#otterDynamicLink?type=siteURL' ),
+			'dynamic image link' => array( get_rest_url( null, 'otter/v1/dynamic' ) ),
+		);
+	}
+
 	public function test_literal_marker_collision_preserves_comment_and_existing_attribute(): void {
 		$next_id = (int) wp_unique_id() + 1;
 		$marker = 'otter-literal-magic-' . $next_id;
@@ -2081,9 +2147,15 @@ class TestDynamicContent extends WP_UnitTestCase
 					'attrs' => array( 'commentsToShow' => 100, 'displayAvatar' => false, 'displayExcerpt' => false ),
 				)
 			);
+			$image = '<!-- wp:image --><figure class="wp-block-image"><img src="' . $url . '"/></figure><!-- /wp:image -->';
 			foreach ( array( 0, $subscriber_id, $editor_id ) as $user_id ) {
 				wp_set_current_user( $user_id );
-				$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . $block->render() . '</div><!-- /wp:group -->' );
+				$comment_markup = $block->render();
+				$processor = new WP_HTML_Tag_Processor( $comment_markup );
+				$this->assertTrue( $processor->next_tag( 'a' ), $comment_markup );
+				$this->assertSame( $url, $processor->get_attribute( 'href' ), $comment_markup );
+				$this->assertStringNotContainsString( $secret_url, $comment_markup );
+				$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . $comment_markup . $image . '</div><!-- /wp:group -->' );
 				if ( $user_id === $editor_id ) {
 					$this->assertStringContainsString( $secret_url, $result );
 				} else {
@@ -2093,7 +2165,7 @@ class TestDynamicContent extends WP_UnitTestCase
 			}
 			wp_update_post( array( 'ID' => $context_id, 'post_status' => 'publish', 'post_password' => '', 'post_type' => 'post' ) );
 			wp_set_current_user( 0 );
-			$this->assertStringContainsString( $secret_url, $block->render() );
+			$this->assertStringContainsString( $secret_url, do_blocks( $image ) );
 		} finally {
 			$this->set_permalink_structure( '' );
 		}
