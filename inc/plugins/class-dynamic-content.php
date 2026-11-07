@@ -49,6 +49,7 @@ class Dynamic_Content {
 		add_filter( 'block_core_breadcrumbs_items', array( $this, 'escape_breadcrumb_magic_tags' ) );
 		add_filter( 'get_search_form', array( $this, 'escape_search_form_magic_tags' ) );
 		add_filter( 'wp_generate_tag_cloud_data', array( $this, 'escape_tag_cloud_magic_tags' ) );
+		add_filter( 'wp_setup_nav_menu_item', array( $this, 'escape_taxonomy_menu_magic_tags' ) );
 		add_filter( 'list_cats', array( $this, 'escape_comment_magic_tags' ) );
 		foreach ( array( 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
 			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
@@ -63,6 +64,10 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function escape_visitor_block_magic_tags( $content, $block ) {
+		if ( 'core/term-description' === $block['blockName'] ) {
+			return $this->escape_comment_magic_tags( $content );
+		}
+
 		$patterns = array(
 			'core/avatar'      => '/(<a\b[^>]*\saria-label=")([^"]*)(")/',
 			'core/search'      => '/(<input\b(?=[^>]*\stype="(?:search|text)")(?=[^>]*\sname="s")[^>]*\svalue=")([^"]*)(")/',
@@ -116,6 +121,20 @@ class Dynamic_Content {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Keep inherited taxonomy menu labels literal while preserving authored labels.
+	 *
+	 * @param \WP_Post|\WP_Term $item Decorated menu item.
+	 * @return \WP_Post|\WP_Term
+	 */
+	public function escape_taxonomy_menu_magic_tags( $item ) {
+		if ( isset( $item->type, $item->title ) && 'taxonomy' === $item->type && ( ! isset( $item->post_title ) || '' === $item->post_title ) ) {
+			$item->title = $this->escape_comment_magic_tags( $item->title );
+		}
+
+		return $item;
 	}
 
 	/**

@@ -1890,6 +1890,7 @@ class TestDynamicContent extends WP_UnitTestCase
 		$request = new WP_REST_Request( 'POST', '/wp/v2/tags' );
 		$request->set_param( 'name', $token );
 		$request->set_param( 'slug', 'literal-magic-tag' );
+		$request->set_param( 'description', '<a href="https://example.org/" title="' . $token . '">' . $token . '</a>' );
 		$response = rest_do_request( $request );
 		$this->assertSame( 201, $response->get_status(), wp_json_encode( $response->get_data() ) );
 		$term_id = $response->get_data()['id'];
@@ -1915,12 +1916,19 @@ class TestDynamicContent extends WP_UnitTestCase
 			$this->assertTrue( $processor->next_tag( 'a' ), $result );
 			$this->assertStringContainsString( $token, $processor->get_attribute( 'aria-label' ), $result );
 		}
+		if ( 'core/term-description' === $name ) {
+			$processor = new WP_HTML_Tag_Processor( $result );
+			$this->assertTrue( $processor->next_tag( 'a' ), $result );
+			$this->assertSame( $token, $processor->get_attribute( 'title' ), $result );
+			$this->assertStringContainsString( $token, get_term( $term_id, 'post_tag' )->description );
+		}
 		$this->assertSame( $token, get_term( $term_id, 'post_tag' )->name );
 		$this->assertSame( $token, get_the_terms( $this->post_id, 'post_tag' )[0]->name );
 	}
 
 	public function provide_term_label_blocks(): array {
 		$cases = array(
+			'term description' => array( 'core/term-description', array(), false ),
 			'post terms' => array( 'core/post-terms', array( 'term' => 'post_tag' ), false ),
 			'tag cloud' => array( 'core/tag-cloud', array( 'showTagCounts' => true ), true ),
 			'legacy tag cloud' => array( 'core/legacy-widget', array( 'idBase' => 'tag_cloud' ), true ),
@@ -1936,6 +1944,72 @@ class TestDynamicContent extends WP_UnitTestCase
 			$cases['category dropdown'] = array( 'core/categories', array( 'taxonomy' => 'post_tag', 'displayAsDropdown' => true ), false );
 		}
 		return $cases;
+	}
+
+	public function test_posts_grid_category_names_remain_literal_in_nested_blocks(): void {
+		$token = '{otterDynamic?type=siteTitle}';
+		$this->assertNotWPError( wp_update_term( $this->category_id, 'category', array( 'name' => $token ) ) );
+		foreach ( array( false, true ) as $display_meta_category ) {
+			$attributes = array(
+				'template' => array( 'category', 'meta' ),
+				'displayCategory' => ! $display_meta_category,
+				'displayPostCategory' => $display_meta_category,
+				'displayDate' => false,
+				'displayAuthor' => false,
+				'displayComments' => false,
+				'displayFeaturedImage' => false,
+			);
+			$block = get_comment_delimited_block_content( 'themeisle-blocks/posts-grid', $attributes, '' );
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . $block . '<!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+			$this->assertStringContainsString( '>' . $token . '</a>', html_entity_decode( $result ), $result );
+			$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
+			$this->assertSame( $token, get_term( $this->category_id, 'category' )->name );
+		}
+	}
+
+	public function test_converted_taxonomy_menu_labels_remain_literal_in_nested_blocks(): void {
+		$token = '{otterDynamic?type=siteTitle}';
+		$term_id = self::factory()->term->create( array( 'taxonomy' => 'post_tag', 'name' => $token ) );
+		foreach ( array( false, true ) as $has_children ) {
+			foreach ( array( '', 'Authored ' . $token, '0' ) as $title ) {
+				$menu_id = wp_create_nav_menu( 'Literal taxonomy menu' );
+				$this->assertNotWPError( $menu_id );
+				try {
+					$item_id = wp_update_nav_menu_item( $menu_id, 0, array(
+						'menu-item-type' => 'taxonomy',
+						'menu-item-object' => 'post_tag',
+						'menu-item-object-id' => $term_id,
+						'menu-item-title' => $title,
+						'menu-item-status' => 'publish',
+					) );
+					$this->assertNotWPError( $item_id );
+					$this->assertSame( $title, get_post( $item_id )->post_title );
+					if ( $has_children ) {
+						$this->assertNotWPError( wp_update_nav_menu_item( $menu_id, 0, array(
+							'menu-item-type' => 'custom',
+							'menu-item-title' => 'Child',
+							'menu-item-url' => home_url( '/' ),
+							'menu-item-parent-id' => $item_id,
+							'menu-item-status' => 'publish',
+						) ) );
+					}
+					$items = wp_get_nav_menu_items( $menu_id );
+					$this->assertSame( '' === $title ? str_replace( '{', '&#123;', $token ) : $title, $items[0]->title );
+					$blocks = WP_Classic_To_Block_Menu_Converter::convert( wp_get_nav_menu_object( $menu_id ) );
+					$this->assertNotWPError( $blocks );
+					$this->assertSame( $has_children ? 'core/navigation-submenu' : 'core/navigation-link', parse_blocks( $blocks )[0]['blockName'] );
+					$result = do_blocks( '<!-- wp:group --><div class="wp-block-group">' . $blocks . '<!-- wp:paragraph --><p>' . $token . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+					$expected = '' === $title ? $token : str_replace( $token, get_bloginfo( 'name' ), $title );
+					if ( '0' !== $title ) {
+						$this->assertStringContainsString( '>' . $expected . '</span>', html_entity_decode( $result ), $result );
+					}
+					$this->assertStringContainsString( '>' . get_bloginfo( 'name' ) . '</p>', $result );
+					$this->assertSame( $token, get_term( $term_id, 'post_tag' )->name );
+				} finally {
+					wp_delete_nav_menu( $menu_id );
+				}
+			}
+		}
 	}
 
 	public function provide_literal_search_queries(): array {
