@@ -3,6 +3,79 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
+test( 'keeps anonymous comment magic tags inert in nested latest comments', async({ browser, baseURL, requestUtils }) => {
+	const marker = `Comment link ${ Date.now() }`;
+	const magicTag = '{otterDynamic?x=/?&default=javascript:alert(1)}';
+	const post = await requestUtils.createPost({
+		title: marker,
+		status: 'publish',
+		comment_status: 'open',
+		content: '<!-- wp:group --><div class="wp-block-group"><!-- wp:latest-comments {"displayContent":"full","displayAvatar":false,"commentsToShow":100} /--></div><!-- /wp:group -->'
+	});
+	const visitor = await browser.newContext({ baseURL, storageState: { cookies: [], origins: [] }});
+
+	try {
+		const response = await visitor.request.post( '/wp-comments-post.php', {
+			form: {
+				comment_post_ID: post.id,
+				author: marker,
+				email: `otter-${ post.id }@example.org`,
+				comment: `<a href="${ magicTag }">${ marker }</a>`
+			}
+		});
+		expect( response.ok() ).toBeTruthy();
+
+		const comments = await requestUtils.rest({
+			path: '/wp/v2/comments',
+			params: { post: post.id, status: 'all', context: 'edit' }
+		});
+		expect( comments ).toHaveLength( 1 );
+		expect( comments[0].author ).toBe( 0 );
+		await requestUtils.rest({
+			method: 'POST',
+			path: `/wp/v2/comments/${ comments[0].id }`,
+			data: { status: 'approved' }
+		});
+
+		const page = await visitor.newPage();
+		await page.goto( `/?p=${ post.id }` );
+		const link = page.locator( '.wp-block-latest-comments__comment-excerpt' ).getByRole( 'link', { name: marker, exact: true });
+		await expect( link ).toHaveAttribute( 'href', magicTag );
+	} finally {
+		await visitor.close();
+		await requestUtils.rest({
+			method: 'DELETE',
+			path: `/wp/v2/posts/${ post.id }`,
+			params: { force: true }
+		});
+	}
+});
+
+test( 'preserves authored links without resolving assembled dynamic markers', async({ page, requestUtils }) => {
+	const marker = `Dynamic marker ${ Date.now() }`;
+	const post = await requestUtils.createPost({
+		title: marker,
+		status: 'publish',
+		content: `<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p><a href="#otterDynamicLink?type=siteURL&context={otterDynamic?type=postID}" title="{otterDynamic?type=postTitle}">Authored ${ marker }</a><a href="#otterDynamic{otterDynamic?default=Link}?type=siteURL" title="{otterDynamic?type=postTitle}">Assembled ${ marker }</a></p><!-- /wp:paragraph --></div><!-- /wp:group -->`
+	});
+
+	try {
+		await page.goto( `/?p=${ post.id }` );
+		const authored = page.getByRole( 'link', { name: `Authored ${ marker }`, exact: true });
+		const assembled = page.getByRole( 'link', { name: `Assembled ${ marker }`, exact: true });
+		await expect( authored ).toHaveAttribute( 'href', new URL( post.link ).origin );
+		await expect( authored ).toHaveAttribute( 'title', marker );
+		await expect( assembled ).toHaveAttribute( 'href', '#otterDynamicLink?type=siteURL' );
+		await expect( assembled ).toHaveAttribute( 'title', marker );
+	} finally {
+		await requestUtils.rest({
+			method: 'DELETE',
+			path: `/wp/v2/posts/${ post.id }`,
+			params: { force: true }
+		});
+	}
+});
+
 /**
  * Frontend rendering of the postContent dynamic tag (issue #2929).
  *
