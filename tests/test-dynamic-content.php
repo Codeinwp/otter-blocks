@@ -1818,6 +1818,79 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertSame( $image, $processor->get_attribute( 'src' ), $result );
 	}
 
+	public function test_resolved_image_lists_keep_dynamic_markers_literal(): void {
+		$images = array( 'https://example.org/one.png#otterDynamicLink?type=siteURL', 'https://example.org/two.png' );
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_media_content',
+			function () use ( $images ): array {
+				return $images;
+			}
+		);
+		$src  = get_rest_url( null, 'otter/v1/dynamic/' );
+		$src .= ( false === strpos( $src, '?' ) ? '?' : '&' ) . 'type=logo';
+
+		$result    = $this->dynamic_content->apply_dynamic_images( '<img src="' . $src . '">' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertStringNotContainsString( 'otterDynamicLink', $result );
+		foreach ( $images as $image ) {
+			$this->assertTrue( $processor->next_tag( 'img' ), $result );
+			$this->assertSame( $image, $processor->get_attribute( 'src' ), $result );
+		}
+	}
+
+	public function test_dynamic_background_css_keeps_resolved_image_url(): void {
+		$image = 'https://example.org/wp-content/uploads/otter/v1/dynamic/background.png';
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_media_content',
+			function () use ( $image ): string {
+				return $image;
+			}
+		);
+		$src  = get_rest_url( null, 'otter/v1/dynamic/' );
+		$src .= ( false === strpos( $src, '?' ) ? '?' : '&' ) . 'type=logo';
+
+		$css = ( new \ThemeIsle\GutenbergBlocks\CSS\Blocks\Advanced_Column_CSS() )->render_css(
+			array(
+				'attrs' => array(
+					'id'                 => 'wp-block-themeisle-blocks-advanced-column-background',
+					'backgroundType'     => 'image',
+					'backgroundImageURL' => $src,
+				),
+			)
+		);
+
+		$this->assertStringContainsString( 'url( ' . $image . ' )', $css );
+	}
+
+	/**
+	 * @dataProvider provide_resolved_dynamic_elements
+	 */
+	public function test_resolved_dynamic_elements_remain_literal_in_nested_blocks( string $element ): void {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		wp_update_post( array( 'ID' => $this->post_id, 'post_title' => $element ) );
+		$this->assertSame( $element, get_post_field( 'post_title', $this->post_id ) );
+		$this->go_to( get_permalink( $this->post_id ) );
+
+		foreach ( array( '{otterDynamic?type=postTitle}', '<o-dynamic data-type="postTitle">Title</o-dynamic>' ) as $source ) {
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p>' . $source . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+			$this->assertStringContainsString( $element, html_entity_decode( $result ), $result );
+			$this->assertStringNotContainsString( '<a ', $result );
+			$this->assertStringNotContainsString( get_bloginfo( 'name' ), $result );
+		}
+
+		$result    = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p title="{otterDynamic?type=postTitle}">Title</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'p' ), $result );
+		$this->assertSame( $element, $processor->get_attribute( 'title' ), $result );
+	}
+
+	public function provide_resolved_dynamic_elements(): array {
+		return array(
+			'dynamic link element' => array( '<o-dynamic-link data-type="siteURL">Site</o-dynamic-link>' ),
+			'dynamic content element' => array( '<o-dynamic data-type="siteTitle">Site</o-dynamic>' ),
+		);
+	}
+
 	public function test_literal_marker_collision_preserves_comment_and_existing_attribute(): void {
 		$next_id = (int) wp_unique_id() + 1;
 		$marker = 'otter-literal-magic-' . $next_id;

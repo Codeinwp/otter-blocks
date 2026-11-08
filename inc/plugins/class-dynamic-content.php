@@ -33,6 +33,7 @@ class Dynamic_Content {
 		'{otterDynamic?'   => '&#123;otterDynamic?',
 		'otterDynamicLink' => 'otterDynamicLin&#107;',
 		'otter/v1/dynamic' => 'otter/v1/dynami&#99;',
+		'<o-dynamic'       => '&lt;o-dynamic',
 	);
 
 	/**
@@ -52,7 +53,7 @@ class Dynamic_Content {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link_button' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
-		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
+		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_css_images' ) );
 		add_filter( 'get_comment_text', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_excerpt', array( $this, 'escape_comment_magic_tags' ) );
 		add_filter( 'get_comment_author', array( $this, 'escape_comment_magic_tags' ) );
@@ -516,13 +517,25 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Filter post content for dynamic images.
+	 * Resolve dynamic image URLs for CSS, which does not decode HTML entities.
 	 *
-	 * @param string $content Post content.
+	 * @param string $content CSS image URL.
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_images( $content ) {
+	public function apply_dynamic_css_images( $content ) {
+		return $this->apply_dynamic_images( $content, false );
+	}
+
+	/**
+	 * Filter post content for dynamic images.
+	 *
+	 * @param string $content        Post content.
+	 * @param bool   $escape_markers Whether resolved URLs keep dynamic markers literal for later block renders.
+	 *
+	 * @return string
+	 */
+	public function apply_dynamic_images( $content, $escape_markers = true ) {
 		if ( false === strpos( $content, 'otter/v1/dynamic' ) ) {
 			return $content;
 		}
@@ -540,7 +553,12 @@ class Dynamic_Content {
 		$resolved    = array();
 		$clone_count = 1;
 		foreach ( $matches as $match ) {
-			$value      = $this->apply_images( $match );
+			$value = $this->apply_images( $match );
+			if ( $escape_markers && is_array( $value ) ) {
+				$value = array_map( array( $this, 'escape_comment_magic_tags' ), $value );
+			} elseif ( $escape_markers && is_string( $value ) ) {
+				$value = $this->escape_comment_magic_tags( $value );
+			}
 			$resolved[] = $value;
 			if ( is_array( $value ) ) {
 				$clone_count = max( $clone_count, count( $value ) );
@@ -595,11 +613,7 @@ class Dynamic_Content {
 		$data  = self::query_string_to_array( $data[0] );
 		$value = $this->get_image( $data );
 
-		if ( is_array( $value ) ) {
-			return array_map( array( $this, 'escape_comment_magic_tags' ), $value );
-		}
-
-		return is_string( $value ) ? $this->escape_comment_magic_tags( $value ) : $value;
+		return $value;
 	}
 
 	/**
