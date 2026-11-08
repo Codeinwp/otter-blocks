@@ -397,7 +397,8 @@ class Dynamic_Content {
 			);
 			$value = $this->protect_literals( $value, self::$literal_marker_escapes, $literal_markers );
 
-			if ( in_array( $attribute, wp_kses_uri_attributes(), true ) ) {
+			// SVG links still follow xlink:href, which core's URI list omits.
+			if ( 'xlink:href' === $attribute || in_array( $attribute, wp_kses_uri_attributes(), true ) ) {
 				$value = esc_url_raw( $value );
 			} elseif ( 'style' === $attribute ) {
 				$value = safecss_filter_attr( $value );

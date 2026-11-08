@@ -1541,6 +1541,15 @@ class TestDynamicContent extends WP_UnitTestCase
 		}
 	}
 
+	public function test_magic_tags_sanitize_svg_link_attributes(): void {
+		foreach ( array( 'java{otterDynamic?default=script}:alert(1)' => '', '{otterDynamic?default=https://example.org/svg}' => 'https://example.org/svg' ) as $value => $expected ) {
+			$result = $this->dynamic_content->apply_dynamic_magic_tags( '<svg><a XLINK:HREF="' . $value . '"><text>Link</text></a></svg>' );
+			$processor = new WP_HTML_Tag_Processor( $result );
+			$this->assertTrue( $processor->next_tag( 'a' ), $result );
+			$this->assertSame( $expected, (string) $processor->get_attribute( 'xlink:href' ), $result );
+		}
+	}
+
 	public function test_magic_tags_preserve_safe_url_values(): void {
 		add_filter( 'otter_blocks_evaluate_dynamic_content_text', function () { return 'https://example.org/path with spaces?a=1&b=2'; } );
 		$result = $this->dynamic_content->apply_dynamic_magic_tags( '<a href="{otterDynamic?type=testURL}">Link</a>' );
