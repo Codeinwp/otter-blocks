@@ -1742,6 +1742,17 @@ class TestDynamicContent extends WP_UnitTestCase
 			$this->assertTrue( $processor->next_tag( 'a' ), $result );
 			$this->assertSame( $expected, $processor->get_attribute( 'href' ), $result );
 		}
+
+		$texts = array(
+			'{otterDynamic?type=postMeta&metaKey=marker_prefix}{otterDynamic?type=postTitle}',
+			esc_html( $prefix ) . '{otterDynamic?type=postTitle}',
+			'<o-dynamic data-type="postMeta" data-meta-key="marker_prefix">Prefix</o-dynamic><o-dynamic data-type="postTitle">Title</o-dynamic>',
+			'<o-dynamic data-type="postTitle" data-before="' . esc_attr( $prefix ) . '">Title</o-dynamic>',
+		);
+		foreach ( $texts as $text ) {
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p>' . $text . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+			$this->assertSame( $expected, html_entity_decode( trim( wp_strip_all_tags( $result ) ) ), $result );
+		}
 	}
 
 	public function provide_split_dynamic_markers(): array {
@@ -1749,6 +1760,62 @@ class TestDynamicContent extends WP_UnitTestCase
 			'dynamic link' => array( '#otterDynamic', 'Link?type=siteURL', '#otterDynamicLink?type=siteURL' ),
 			'dynamic image' => array( get_rest_url( null, 'otter/v1/' ), 'dynamic', get_rest_url( null, 'otter/v1/dynamic' ) ),
 		);
+	}
+
+	public function test_resolved_link_urls_keep_dynamic_markers_literal(): void {
+		$attachment_id = self::factory()->attachment->create_object( 'website-image.png', $this->post_id, array( 'post_mime_type' => 'image/png' ) );
+		set_post_thumbnail( $this->post_id, $attachment_id );
+		$website  = get_rest_url( null, 'otter/v1/dynamic/' );
+		$website .= ( false === strpos( $website, '?' ) ? '?' : '&' ) . 'type=featuredImage';
+		wp_update_user( array( 'ID' => $this->user_id, 'user_url' => $website ) );
+		$this->go_to( get_permalink( $this->post_id ) );
+		foreach ( array( '<a href="#otterDynamicLink?type=authorWebsite">Website</a>', '<o-dynamic-link data-type="authorWebsite">Website</o-dynamic-link>' ) as $link ) {
+			$result = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:paragraph --><p>' . $link . '</p><!-- /wp:paragraph --></div><!-- /wp:group -->' );
+			$processor = new WP_HTML_Tag_Processor( $result );
+			$this->assertTrue( $processor->next_tag( 'a' ), $result );
+			$this->assertSame( $website, $processor->get_attribute( 'href' ), $result );
+		}
+	}
+
+	public function test_resolved_link_lists_keep_dynamic_markers_literal(): void {
+		$url  = get_rest_url( null, 'otter/v1/dynamic/' );
+		$url .= ( false === strpos( $url, '?' ) ? '?' : '&' ) . 'type=logo';
+		$urls = array( $url, 'https://ok.example/' );
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_link',
+			function () use ( $urls ): array {
+				return $urls;
+			}
+		);
+
+		$links = $this->dynamic_content->apply_link_button( array( '#otterDynamicLink?type=otterTestLink' ) );
+		$this->assertStringNotContainsString( 'otter/v1/dynamic', $links[0] );
+		$this->assertSame( $urls, array_map( 'html_entity_decode', $links ) );
+
+		$result    = $this->dynamic_content->apply_dynamic_link( '<o-dynamic-link data-type="otterTestLink">Go</o-dynamic-link>' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertStringNotContainsString( 'otter/v1/dynamic', $result );
+		foreach ( $urls as $url ) {
+			$this->assertTrue( $processor->next_tag( 'a' ), $result );
+			$this->assertSame( $url, $processor->get_attribute( 'href' ), $result );
+		}
+	}
+
+	public function test_resolved_image_urls_keep_dynamic_markers_literal(): void {
+		$image = 'https://example.org/image.png#otterDynamicLink?type=siteURL';
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_media_content',
+			function () use ( $image ): string {
+				return $image;
+			}
+		);
+		$src  = get_rest_url( null, 'otter/v1/dynamic/' );
+		$src .= ( false === strpos( $src, '?' ) ? '?' : '&' ) . 'type=logo';
+
+		$result    = do_blocks( '<!-- wp:group --><div class="wp-block-group"><!-- wp:image --><figure class="wp-block-image"><img src="' . $src . '"/></figure><!-- /wp:image --></div><!-- /wp:group -->' );
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'img' ), $result );
+		$this->assertSame( $image, $processor->get_attribute( 'src' ), $result );
 	}
 
 	public function test_literal_marker_collision_preserves_comment_and_existing_attribute(): void {
@@ -1762,7 +1829,6 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertSame( $token, $processor->get_attribute( 'href' ), $result );
 		$this->assertSame( $marker, $processor->get_attribute( 'data-marker' ), $result );
 		$this->assertSame( 'Test', $processor->get_attribute( 'title' ), $result );
-		$this->assertSame( (string) ( $next_id + 2 ), wp_unique_id() );
 	}
 
 	public function test_resolved_marker_collision_preserves_other_attribute(): void {
@@ -1777,6 +1843,16 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertTrue( $processor->next_tag( 'p' ), $result );
 		$this->assertSame( $token, $processor->get_attribute( 'title' ), $result );
 		$this->assertSame( $marker, $processor->get_attribute( 'data-marker' ), $result );
+
+		$marker = 'otter-literal-magic-' . ( (int) wp_unique_id() + 1 );
+		update_post_meta( $this->post_id, 'literal_marker', $marker );
+		$result = $this->dynamic_content->apply_dynamic_link_button(
+			$this->dynamic_content->apply_dynamic_magic_tags( '<a data-marker="{otterDynamic?type=postMeta&metaKey=literal_marker}" href="#otterDynamicLink?type=siteURL&context={otterDynamic?type=postID}">Link</a>' )
+		);
+		$processor = new WP_HTML_Tag_Processor( $result );
+		$this->assertTrue( $processor->next_tag( 'a' ), $result );
+		$this->assertSame( $marker, $processor->get_attribute( 'data-marker' ), $result );
+		$this->assertSame( site_url(), $processor->get_attribute( 'href' ), $result );
 	}
 
 	public function test_comment_avatar_magic_tags_remain_literal_in_nested_blocks(): void {

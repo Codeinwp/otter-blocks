@@ -177,6 +177,61 @@ class Dynamic_Content {
 	}
 
 	/**
+	 * Generate a placeholder that neither authored nor resolved content can predict.
+	 *
+	 * @param string $prefix Placeholder prefix.
+	 * @return string
+	 */
+	private static function unguessable_placeholder( $prefix ) {
+		return $prefix . wp_generate_password( 32, false );
+	}
+
+	/**
+	 * Replace literals with unguessable placeholders, recording the text each one restores.
+	 *
+	 * @param string                $value   Text to protect.
+	 * @param array<string, string> $escapes Literal => text restored in its place.
+	 * @param array<string, string> $markers Placeholder => restored text, extended in place.
+	 * @return string
+	 */
+	private function protect_literals( $value, $escapes, &$markers ) {
+		foreach ( $escapes as $literal => $restored ) {
+			if ( false === strpos( $value, $literal ) ) {
+				continue;
+			}
+			$marker             = self::unguessable_placeholder( 'otter-literal-' );
+			$value              = str_replace( $literal, $marker, $value );
+			$markers[ $marker ] = $restored;
+		}
+		return $value;
+	}
+
+	/**
+	 * Hide the live dynamic markers in a value so a later escape keeps them.
+	 *
+	 * @param string                $value   Text to protect.
+	 * @param array<string, string> $markers Placeholder => restored text, extended in place.
+	 * @return string
+	 */
+	private function protect_markers( $value, &$markers ) {
+		$prefixes = array_keys( self::$literal_marker_escapes );
+		return $this->protect_literals( $value, array_combine( $prefixes, $prefixes ), $markers );
+	}
+
+	/**
+	 * Escape markers that only form once resolved values, delimited by $seam, join their neighbors.
+	 *
+	 * @param string $content Markup whose resolved values hold no live marker.
+	 * @param string $seam    Delimiter placed around each resolved value.
+	 * @return string
+	 */
+	private function escape_assembled_markers( $content, $seam ) {
+		$markers = array();
+		$content = str_replace( $seam, '', $this->protect_markers( $content, $markers ) );
+		return strtr( $this->escape_comment_magic_tags( $content ), $markers );
+	}
+
+	/**
 	 * Filter post content for dynamic content.
 	 *
 	 * @param string $content Post content.
@@ -195,6 +250,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
+		$seam = self::unguessable_placeholder( 'otter-seam-' );
 		foreach ( $matches as $match ) {
 			$replacement       = $this->apply_data( $match );
 			$string_to_replace = $match[0];
@@ -216,18 +272,18 @@ class Dynamic_Content {
 				$_content = array_fill( 0, count( $replacement ), $content );
 				$content  = '';
 				foreach ( $replacement as $key => $value ) {
-					$updated_content = substr_replace( $_content[ $key ], $value, $position, strlen( $string_to_replace ) );
+					$updated_content = substr_replace( $_content[ $key ], $seam . $value . $seam, $position, strlen( $string_to_replace ) );
 					if ( isset( $link ) && is_array( $link ) && isset( $link[ $key ] ) ) {
-						$updated_content = str_replace( $matches[0], $link[ $key ], $updated_content );
+						$updated_content = str_replace( $matches[0], $seam . $link[ $key ] . $seam, $updated_content );
 					}
 					$content .= $updated_content;
 				}
 			} else {
-				$content = substr_replace( $content, $replacement, $position, strlen( $string_to_replace ) );
+				$content = substr_replace( $content, $seam . $replacement . $seam, $position, strlen( $string_to_replace ) );
 			}
 		}
 
-		return $content;
+		return $this->escape_assembled_markers( $content, $seam );
 	}
 
 	/**
@@ -265,9 +321,19 @@ class Dynamic_Content {
 		}
 
 		// A whole start tag (quoted values may hold ">") or a text Magic Tag, in one pass so resolved values are never re-scanned.
-		$re = '/(?P<tag><[a-zA-Z\/!][^>"\']*(?:(?:"[^"]*"|\'[^\']*\')[^>"\']*)*>)|' . self::MAGIC_TAG_REGEX . '/';
+		$re   = '/(?P<tag><[a-zA-Z\/!][^>"\']*(?:(?:"[^"]*"|\'[^\']*\')[^>"\']*)*>)|' . self::MAGIC_TAG_REGEX . '/';
+		$seam = self::unguessable_placeholder( 'otter-seam-' );
 
-		return preg_replace_callback( $re, array( $this, 'apply_magic_tags_in_markup' ), $content );
+		$content = preg_replace_callback(
+			$re,
+			function ( $matches ) use ( $seam ) {
+				$value = $this->apply_magic_tags_in_markup( $matches );
+				return isset( $matches[2] ) ? $seam . $value . $seam : $value;
+			},
+			$content
+		);
+
+		return $this->escape_assembled_markers( $content, $seam );
 	}
 
 	/**
@@ -277,7 +343,7 @@ class Dynamic_Content {
 	 *
 	 * @return string|string[]|void
 	 */
-	public function apply_magic_tags_in_markup( array $matches ) {
+	public function apply_magic_tags_in_markup( $matches ) {
 		if ( isset( $matches[2] ) ) {
 			return $this->apply_magic_tags( array( 1 => $matches[2] ) );
 		}
@@ -287,26 +353,13 @@ class Dynamic_Content {
 		}
 
 		$literal_markers  = array();
-		$protect_literals = function ( $value, $escapes ) use ( &$literal_markers, $matches ) {
-			foreach ( $escapes as $prefix => $escaped ) {
-				if ( false === strpos( $value, $prefix ) ) {
-					continue;
-				}
-				do {
-					$marker = wp_unique_id( 'otter-literal-magic-' );
-				} while ( false !== strpos( $matches['tag'], $marker ) || false !== strpos( $value, $marker ) );
-				$value                      = str_replace( $prefix, $marker, $value );
-				$literal_markers[ $marker ] = $escaped;
-			}
-			return $value;
-		};
 		$escaped_prefixes = array_values( self::$literal_marker_escapes );
 		$escaped_literals = array();
 		foreach ( $escaped_prefixes as $prefix ) {
 			$escaped_literals[ $prefix ]                               = $prefix;
 			$escaped_literals[ wp_kses_normalize_entities( $prefix ) ] = $prefix;
 		}
-		$markup = $protect_literals( $matches['tag'], $escaped_literals );
+		$markup = $this->protect_literals( $matches['tag'], $escaped_literals, $literal_markers );
 
 		$closing_tag = '</' . $tag[1] . '>';
 		$processor   = new \WP_HTML_Tag_Processor( $markup . $closing_tag );
@@ -327,25 +380,21 @@ class Dynamic_Content {
 
 			$value = preg_replace_callback(
 				'/({otterDynamic\?[^}]*})|otterDynamicLink|otter\/v1\/dynamic/',
-				function ( $token ) use ( $protect_literals ) {
-					return isset( $token[1] ) ? $token[0] : $protect_literals( $token[0], array( $token[0] => $token[0] ) );
+				function ( $token ) use ( &$literal_markers ) {
+					return isset( $token[1] ) ? $token[0] : $this->protect_markers( $token[0], $literal_markers );
 				},
 				$value
 			);
 
 			$value = preg_replace_callback(
 				'/{(otterDynamic\?[^}]*)}/',
-				function ( $token ) use ( $protect_literals, &$literal_markers ) {
+				function ( $token ) use ( &$literal_markers ) {
 					$value = html_entity_decode( (string) $this->apply_magic_tags( $token ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
-					if ( ! empty( $literal_markers ) ) {
-						$marker_names = array_keys( $literal_markers );
-						$value        = $protect_literals( $value, array_combine( $marker_names, $marker_names ) );
-					}
-					return $protect_literals( $value, self::$literal_marker_escapes );
+					return $this->protect_literals( $value, self::$literal_marker_escapes, $literal_markers );
 				},
 				$value
 			);
-			$value = $protect_literals( $value, self::$literal_marker_escapes );
+			$value = $this->protect_literals( $value, self::$literal_marker_escapes, $literal_markers );
 
 			if ( in_array( $attribute, wp_kses_uri_attributes(), true ) ) {
 				$value = esc_url_raw( $value );
@@ -536,7 +585,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string|string[]|void
+	 * @return string|list<string>|false|void
 	 */
 	public function apply_images( $data ) {
 		if ( ! isset( $data[0] ) ) {
@@ -546,7 +595,11 @@ class Dynamic_Content {
 		$data  = self::query_string_to_array( $data[0] );
 		$value = $this->get_image( $data );
 
-		return $value;
+		if ( is_array( $value ) ) {
+			return array_map( array( $this, 'escape_comment_magic_tags' ), $value );
+		}
+
+		return is_string( $value ) ? $this->escape_comment_magic_tags( $value ) : $value;
 	}
 
 	/**
@@ -638,7 +691,7 @@ class Dynamic_Content {
 		if ( is_array( $value ) ) {
 			$updated_value = array();
 			foreach ( $value as $key => $val ) {
-				$_value = $this->apply_formatting( $this->escape_comment_magic_tags( $val ), $data );
+				$_value = $this->apply_formatting( $val, $data );
 				
 				if ( isset( $data['default'] ) && false !== strpos( $data['default'], '<o-dynamic-link' ) ) {
 					$link = $this->apply_dynamic_link( $data['default'], $key );
@@ -673,15 +726,16 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function apply_formatting( $value, $data ) {
+		$markers = array();
 		if ( isset( $data['before'] ) ) {
-			$value = esc_html( $data['before'] ) . $value;
+			$value = $this->protect_markers( esc_html( $data['before'] ), $markers ) . $value;
 		}
 
 		if ( isset( $data['after'] ) ) {
-			$value = $value . esc_html( $data['after'] );
+			$value = $value . $this->protect_markers( esc_html( $data['after'] ), $markers );
 		}
 
-		return $value;
+		return strtr( $this->escape_comment_magic_tags( $value ), $markers );
 	}
 
 	/**
@@ -1044,7 +1098,7 @@ class Dynamic_Content {
 			foreach ( $link as $link_item ) {
 				$value[] = sprintf(
 					'<a href="%s" %s>%s</a>',
-					esc_url( $link_item ),
+					$this->esc_resolved_url( $link_item ),
 					$attrs,
 					wp_kses_post( $data['text'] )
 				);
@@ -1058,7 +1112,7 @@ class Dynamic_Content {
 		}
 		$value = sprintf(
 			'<a href="%s" %s>%s</a>',
-			esc_url( $link ),
+			$this->esc_resolved_url( $link ),
 			$attrs,
 			wp_kses_post( $data['text'] )
 		);
@@ -1088,10 +1142,20 @@ class Dynamic_Content {
 		}
 
 		if ( is_array( $link ) ) {
-			return array_map( 'esc_url', $link );
+			return array_map( array( $this, 'esc_resolved_url' ), $link );
 		}
 
-		return esc_url( $link );
+		return $this->esc_resolved_url( $link );
+	}
+
+	/**
+	 * Escape a resolved URL, keeping its dynamic markers literal while it still decodes to the same URL.
+	 *
+	 * @param string $url Resolved URL.
+	 * @return string
+	 */
+	private function esc_resolved_url( $url ) {
+		return $this->escape_comment_magic_tags( esc_url( $url ) );
 	}
 
 	/**
