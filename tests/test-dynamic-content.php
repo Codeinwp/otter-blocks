@@ -1542,7 +1542,15 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	public function test_magic_tags_sanitize_svg_link_attributes(): void {
-		foreach ( array( 'java{otterDynamic?default=script}:alert(1)' => '', '{otterDynamic?default=https://example.org/svg}' => 'https://example.org/svg' ) as $value => $expected ) {
+		$values = array(
+			'{otterDynamic?default=sprite.svg}'              => 'sprite.svg',
+			'{otterDynamic?default=../icons/sprite.svg}'     => '../icons/sprite.svg',
+			'java{otterDynamic?default=script}:alert(1)'     => 'alert(1)',
+			'JaVa{otterDynamic?default=ScRiPt}:alert(1)'     => 'alert(1)',
+			'{otterDynamic?default=data:text/html,svg}'      => 'text/html,svg',
+			'{otterDynamic?default=https://example.org/svg}' => 'https://example.org/svg',
+		);
+		foreach ( $values as $value => $expected ) {
 			$result = $this->dynamic_content->apply_dynamic_magic_tags( '<svg><a XLINK:HREF="' . $value . '"><text>Link</text></a></svg>' );
 			$processor = new WP_HTML_Tag_Processor( $result );
 			$this->assertTrue( $processor->next_tag( 'a' ), $result );
