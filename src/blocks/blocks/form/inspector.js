@@ -59,7 +59,7 @@ import {
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 import { makeBox } from '../../plugins/copy-paste/utils';
-import { _px, setUtm } from '../../helpers/helper-functions.js';
+import { _px, docsURL, setUtm } from '../../helpers/helper-functions.js';
 import { SortableInputField } from './sortable-input-fields';
 import AutoDisableSyncAttr from '../../components/auto-disable-sync-attr/index';
 import { selectAllFieldsFromForm } from './common';
@@ -346,7 +346,7 @@ const FormOptions = ({ formOptions, setFormOption, attributes, setAttributes }) 
 						</Button>
 
 						< br />
-						<ExternalLink href="https://docs.themeisle.com/article/1878-how-to-use-webhooks-in-otter-forms">
+						<ExternalLink href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/how-to-use-webhooks-in-otter-forms', 'form-webhooks', 'block-editor' ) }>
 							{ __( 'Learn more about webhooks.', 'otter-blocks' ) }
 						</ExternalLink>
 
@@ -1123,7 +1123,7 @@ const Inspector = ({
 				<span>{ __( 'In order for the Form to work properly, make sure your SMTP server is set up. The test email will be send to the address from the Email To field in Form Options.', 'otter-blocks' ) }</span>
 
 				<ExternalLink
-					href="https://docs.themeisle.com/article/1713-how-to-set-up-your-smtp-server"
+					href={ docsURL( 'https://docs.themeisle.com/wordpress/how-to-set-up-your-smtp-server', 'smtp-server', 'block-editor' ) }
 					style={{ marginLeft: '3px' }}
 				>
 					{ __( 'Learn more.', 'otter-blocks' ) }

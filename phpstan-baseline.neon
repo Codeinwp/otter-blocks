@@ -1489,12 +1489,6 @@ parameters:
 			path: inc/plugins/class-dashboard.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content::apply_data() has parameter $data with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: inc/plugins/class-dynamic-content.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content::apply_formatting() has parameter $data with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1562,12 +1556,6 @@ parameters:
 
 		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content::get_excerpt() has parameter $data with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: inc/plugins/class-dynamic-content.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content::get_image() has parameter $data with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
 			path: inc/plugins/class-dynamic-content.php

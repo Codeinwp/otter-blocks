@@ -24,6 +24,7 @@ import { arrowRight, closeSmall } from '@wordpress/icons';
  * Internal dependencies
  */
 import useSettings from '../../../blocks/helpers/use-settings';
+import { docsURL } from '../../../blocks/helpers/helper-functions';
 
 type WebhookEditorProps = {
 	webhookId: string,
@@ -384,7 +385,7 @@ const WebhookEditor = ( props: WebhookEditorProps ) => {
 				{ __( 'Edit Webhooks', 'otter-pro' ) }
 			</Button>
 			< br />
-			<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation">
+			<ExternalLink href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/how-to-use-webhooks-in-otter-forms', 'form-webhooks', 'block-editor' ) }>
 				{ __( 'Learn more about webhooks.', 'otter-pro' ) }
 			</ExternalLink>
 		</Fragment>

@@ -12,10 +12,10 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Notice from '../../components/notice';
-import { setUtm } from '../../helpers/helper-functions';
+import { docsURL, setUtm } from '../../helpers/helper-functions';
 import './editor.scss';
 
-const liveSearchDocUrl = 'https://docs.themeisle.com/article/1747-the-live-search-feature-otter-features-library';
+const liveSearchDocUrl = docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/the-live-search-feature-otter-features-library', 'live-search', 'block-editor' );
 
 const liveSearchUpsell = createHigherOrderComponent( BlockEdit => {
 	return props => {

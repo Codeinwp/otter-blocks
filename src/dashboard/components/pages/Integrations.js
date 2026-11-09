@@ -26,6 +26,7 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import useSettings from '../../../blocks/helpers/use-settings.js';
+import { docsURL } from '../../../blocks/helpers/helper-functions.js';
 import TCPanel from '../template-cloud/TCPanel';
 
 const Integrations = ({ setTab }) => {
@@ -263,7 +264,7 @@ const Integrations = ({ setTab }) => {
 							</ExternalLink>
 
 							<ExternalLink
-								href="https://docs.themeisle.com/article/1688-integrations-related-blocks#stripe-checkout"
+								href={ docsURL( 'https://docs.themeisle.com/otter-page-builder-blocks-extensions/integrations-related-blocks#stripe-checkout', 'stripe-checkout', 'dashboard' ) }
 							>
 								{ __( 'More Info', 'otter-blocks' ) }
 							</ExternalLink>
