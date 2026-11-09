@@ -1,3 +1,8 @@
+##### [Version 3.2.10](https://github.com/Codeinwp/otter-blocks/compare/v3.2.9...v3.2.10) (2026-11-09)
+
+- Updated dependencies
+- Enhanced security. Thanks to Jakub Herman for the responsible disclosure.
+
 ##### [Version 3.2.9](https://github.com/Codeinwp/otter-blocks/compare/v3.2.8...v3.2.9) (2026-11-05)
 
 - Fixed Accordion letter spacing disappearing after reopening the post
