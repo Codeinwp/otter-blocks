@@ -25,6 +25,18 @@ class Dynamic_Content {
 	const MAGIC_TAG_REGEX = '{(otterDynamic\?[^"\'<>}]*)}';
 
 	/**
+	 * Literal representations of dynamic marker prefixes.
+	 *
+	 * @var array<string, string>
+	 */
+	private static $literal_marker_escapes = array(
+		'{otterDynamic?'   => '&#123;otterDynamic?',
+		'otterDynamicLink' => 'otterDynamicLin&#107;',
+		'otter/v1/dynamic' => 'otter/v1/dynami&#99;',
+		'<o-dynamic'       => '&lt;o-dynamic',
+	);
+
+	/**
 	 * Exception keys of the postContent tags currently being rendered.
 	 *
 	 * @var array<string, true>
@@ -35,12 +47,189 @@ class Dynamic_Content {
 	 * Initialize the class
 	 */
 	public function init() {
+		add_filter( 'render_block', array( $this, 'escape_visitor_block_magic_tags' ), 9, 2 );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_magic_tags' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link_button' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
-		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
+		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_css_images' ) );
+		add_filter( 'get_comment_text', array( $this, 'escape_comment_magic_tags' ) );
+		add_filter( 'get_comment_excerpt', array( $this, 'escape_comment_magic_tags' ) );
+		add_filter( 'get_comment_author', array( $this, 'escape_comment_magic_tags' ) );
+		add_filter( 'get_comment_author_url', array( $this, 'escape_comment_magic_tags' ) );
+		add_filter( 'block_core_breadcrumbs_items', array( $this, 'escape_breadcrumb_magic_tags' ) );
+		add_filter( 'get_search_form', array( $this, 'escape_search_form_magic_tags' ) );
+		add_filter( 'wp_generate_tag_cloud_data', array( $this, 'escape_tag_cloud_magic_tags' ) );
+		add_filter( 'wp_setup_nav_menu_item', array( $this, 'escape_taxonomy_menu_magic_tags' ) );
+		add_filter( 'list_cats', array( $this, 'escape_comment_magic_tags' ) );
+		foreach ( array( 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
+			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
+		}
+	}
+
+	/**
+	 * Protect rendered visitor values before the generic Magic Tag filters run.
+	 *
+	 * @param string                                                                     $content Rendered markup.
+	 * @param array{blockName: string|null, attrs?: array{id?: string, idBase?: string}} $block Parsed block.
+	 * @return string
+	 */
+	public function escape_visitor_block_magic_tags( $content, $block ) {
+		if ( 'core/term-description' === $block['blockName'] ) {
+			return $this->escape_comment_magic_tags( $content );
+		}
+
+		$patterns = array(
+			'core/avatar'      => '/(<a\b[^>]*\saria-label=")([^"]*)(")/',
+			'core/search'      => '/(<input\b(?=[^>]*\stype="(?:search|text)")(?=[^>]*\sname="s")[^>]*\svalue=")([^"]*)(")/',
+			'core/query-title' => '/(>)([^<]*)(<)/',
+			'core/post-terms'  => '/(<a\b[^>]*>)([^<]*)(<\/a>)/',
+			'core/term-name'   => '/(>)([^<]*)(<)/',
+		);
+		if ( 'core/legacy-widget' === $block['blockName'] ) {
+			$widget = isset( $block['attrs']['idBase'] ) ? $block['attrs']['idBase'] : '';
+			if ( isset( $block['attrs']['id'] ) ) {
+				$widget = $block['attrs']['id'];
+			}
+			if ( 'search' === _get_widget_id_base( $widget ) ) {
+				// A null form filter makes core use its unfiltered fallback markup.
+				$patterns['core/legacy-widget'] = '/(<form\b)(.*?)(<\/form>)/is';
+			}
+		}
+		if ( ! isset( $patterns[ $block['blockName'] ] ) ) {
+			return $content;
+		}
+
+		return preg_replace_callback(
+			$patterns[ $block['blockName'] ],
+			function ( $matches ) {
+				return $matches[1] . $this->escape_comment_magic_tags( $matches[2] ) . $matches[3];
+			},
+			$content
+		);
+	}
+
+	/**
+	 * Preserve native search-form sentinels while protecting rendered markup.
+	 *
+	 * @param string|false|null $form Rendered form or a filter sentinel.
+	 * @return string|false|null
+	 */
+	public function escape_search_form_magic_tags( $form ) {
+		return is_string( $form ) ? $this->escape_comment_magic_tags( $form ) : $form;
+	}
+
+	/**
+	 * Protect tag-cloud text and accessibility labels without changing term data.
+	 *
+	 * @param array<array{name: string, aria_label: string}> $items Tag-cloud display data.
+	 * @return array<array{name: string, aria_label: string}>
+	 */
+	public function escape_tag_cloud_magic_tags( $items ) {
+		foreach ( $items as $index => $item ) {
+			$items[ $index ]['name']       = $this->escape_comment_magic_tags( $item['name'] );
+			$items[ $index ]['aria_label'] = $this->escape_comment_magic_tags( $item['aria_label'] );
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Keep inherited taxonomy menu labels literal while preserving authored labels.
+	 *
+	 * @param \WP_Post|\WP_Term|\stdClass $item Decorated menu item.
+	 * @return \WP_Post|\WP_Term|\stdClass
+	 */
+	public function escape_taxonomy_menu_magic_tags( $item ) {
+		if ( isset( $item->type, $item->title ) && 'taxonomy' === $item->type && ( ! isset( $item->post_title ) || '' === $item->post_title ) ) {
+			$item->title = $this->escape_comment_magic_tags( $item->title );
+		}
+
+		return $item;
+	}
+
+	/**
+	 * Keep breadcrumb labels literal without changing their links or allowed markup.
+	 *
+	 * @param array<array{label: string, url?: string, allow_html?: bool}> $items Breadcrumb items.
+	 * @return array<array{label: string, url?: string, allow_html?: bool}>
+	 */
+	public function escape_breadcrumb_magic_tags( $items ) {
+		foreach ( $items as $index => $item ) {
+			$items[ $index ]['label'] = $this->escape_comment_magic_tags( $item['label'] );
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Keep visitor and resolved dynamic markers literal across nested block renders.
+	 *
+	 * @param string $content Untrusted field or markup being displayed.
+	 * @return string
+	 */
+	public function escape_comment_magic_tags( $content ) {
+		return str_replace(
+			array_keys( self::$literal_marker_escapes ),
+			array_values( self::$literal_marker_escapes ),
+			$content
+		);
+	}
+
+	/**
+	 * Generate a placeholder that neither authored nor resolved content can predict.
+	 *
+	 * @param string $prefix Placeholder prefix.
+	 * @return string
+	 */
+	private static function unguessable_placeholder( $prefix ) {
+		return $prefix . wp_generate_password( 32, false );
+	}
+
+	/**
+	 * Replace literals with unguessable placeholders, recording the text each one restores.
+	 *
+	 * @param string                $value   Text to protect.
+	 * @param array<string, string> $escapes Literal => text restored in its place.
+	 * @param array<string, string> $markers Placeholder => restored text, extended in place.
+	 * @return string
+	 */
+	private function protect_literals( $value, $escapes, &$markers ) {
+		foreach ( $escapes as $literal => $restored ) {
+			if ( false === strpos( $value, $literal ) ) {
+				continue;
+			}
+			$marker             = self::unguessable_placeholder( 'otter-literal-' );
+			$value              = str_replace( $literal, $marker, $value );
+			$markers[ $marker ] = $restored;
+		}
+		return $value;
+	}
+
+	/**
+	 * Hide the live dynamic markers in a value so a later escape keeps them.
+	 *
+	 * @param string                $value   Text to protect.
+	 * @param array<string, string> $markers Placeholder => restored text, extended in place.
+	 * @return string
+	 */
+	private function protect_markers( $value, &$markers ) {
+		$prefixes = array_keys( self::$literal_marker_escapes );
+		return $this->protect_literals( $value, array_combine( $prefixes, $prefixes ), $markers );
+	}
+
+	/**
+	 * Escape markers that only form once resolved values, delimited by $seam, join their neighbors.
+	 *
+	 * @param string $content Markup whose resolved values hold no live marker.
+	 * @param string $seam    Delimiter placed around each resolved value.
+	 * @return string
+	 */
+	private function escape_assembled_markers( $content, $seam ) {
+		$markers = array();
+		$content = str_replace( $seam, '', $this->protect_markers( $content, $markers ) );
+		return strtr( $this->escape_comment_magic_tags( $content ), $markers );
 	}
 
 	/**
@@ -62,6 +251,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
+		$seam = self::unguessable_placeholder( 'otter-seam-' );
 		foreach ( $matches as $match ) {
 			$replacement       = $this->apply_data( $match );
 			$string_to_replace = $match[0];
@@ -83,18 +273,18 @@ class Dynamic_Content {
 				$_content = array_fill( 0, count( $replacement ), $content );
 				$content  = '';
 				foreach ( $replacement as $key => $value ) {
-					$updated_content = substr_replace( $_content[ $key ], $value, $position, strlen( $string_to_replace ) );
+					$updated_content = substr_replace( $_content[ $key ], $seam . $value . $seam, $position, strlen( $string_to_replace ) );
 					if ( isset( $link ) && is_array( $link ) && isset( $link[ $key ] ) ) {
-						$updated_content = str_replace( $matches[0], $link[ $key ], $updated_content );
+						$updated_content = str_replace( $matches[0], $seam . $link[ $key ] . $seam, $updated_content );
 					}
 					$content .= $updated_content;
 				}
 			} else {
-				$content = substr_replace( $content, $replacement, $position, strlen( $string_to_replace ) );
+				$content = substr_replace( $content, $seam . $replacement . $seam, $position, strlen( $string_to_replace ) );
 			}
 		}
 
-		return $content;
+		return $this->escape_assembled_markers( $content, $seam );
 	}
 
 	/**
@@ -132,13 +322,23 @@ class Dynamic_Content {
 		}
 
 		// A whole start tag (quoted values may hold ">") or a text Magic Tag, in one pass so resolved values are never re-scanned.
-		$re = '/(?P<tag><[a-zA-Z\/!][^>"\']*(?:(?:"[^"]*"|\'[^\']*\')[^>"\']*)*>)|' . self::MAGIC_TAG_REGEX . '/';
+		$re   = '/(?P<tag><[a-zA-Z\/!][^>"\']*(?:(?:"[^"]*"|\'[^\']*\')[^>"\']*)*>)|' . self::MAGIC_TAG_REGEX . '/';
+		$seam = self::unguessable_placeholder( 'otter-seam-' );
 
-		return preg_replace_callback( $re, array( $this, 'apply_magic_tags_in_markup' ), $content );
+		$content = preg_replace_callback(
+			$re,
+			function ( $matches ) use ( $seam ) {
+				$value = $this->apply_magic_tags_in_markup( $matches );
+				return isset( $matches[2] ) ? $seam . $value . $seam : $value;
+			},
+			$content
+		);
+
+		return $this->escape_assembled_markers( $content, $seam );
 	}
 
 	/**
-	 * Resolve a text Magic Tag, or attribute-escape every Magic Tag inside a start tag.
+	 * Resolve a text Magic Tag, or resolve and sanitize complete attribute values.
 	 *
 	 * @param array<int|string, string> $matches Start tag in `tag`, or the text Magic Tag query in `2`.
 	 *
@@ -149,15 +349,69 @@ class Dynamic_Content {
 			return $this->apply_magic_tags( array( 1 => $matches[2] ) );
 		}
 
-		return preg_replace_callback(
-			'/' . self::MAGIC_TAG_REGEX . '/',
-			function ( $token ) {
-				$value = $this->apply_magic_tags( $token );
+		if ( false === strpos( $matches['tag'], '{otterDynamic?' ) || ! preg_match( '/^<([a-zA-Z][^\s\/>]*)/', $matches['tag'], $tag ) ) {
+			return $matches['tag'];
+		}
 
-				return is_string( $value ) ? esc_attr( $value ) : $value;
-			},
-			$matches['tag']
-		);
+		$literal_markers  = array();
+		$escaped_prefixes = array_values( self::$literal_marker_escapes );
+		$escaped_literals = array();
+		foreach ( $escaped_prefixes as $prefix ) {
+			$escaped_literals[ $prefix ]                               = $prefix;
+			$escaped_literals[ wp_kses_normalize_entities( $prefix ) ] = $prefix;
+		}
+		$markup = $this->protect_literals( $matches['tag'], $escaped_literals, $literal_markers );
+
+		$closing_tag = '</' . $tag[1] . '>';
+		$processor   = new \WP_HTML_Tag_Processor( $markup . $closing_tag );
+		if ( ! $processor->next_tag() ) {
+			return $matches['tag'];
+		}
+
+		foreach ( (array) $processor->get_attribute_names_with_prefix( '' ) as $attribute ) {
+			$value = $processor->get_attribute( $attribute );
+			if ( ! is_string( $value ) || false === strpos( $value, '{otterDynamic?' ) ) {
+				continue;
+			}
+
+			if ( 0 === strpos( $attribute, 'on' ) || 'srcdoc' === $attribute ) {
+				$processor->remove_attribute( $attribute );
+				continue;
+			}
+
+			$value = preg_replace_callback(
+				'/({otterDynamic\?[^}]*})|otterDynamicLink|otter\/v1\/dynamic/',
+				function ( $token ) use ( &$literal_markers ) {
+					return isset( $token[1] ) ? $token[0] : $this->protect_markers( $token[0], $literal_markers );
+				},
+				$value
+			);
+
+			$value = preg_replace_callback(
+				'/{(otterDynamic\?[^}]*)}/',
+				function ( $token ) use ( &$literal_markers ) {
+					$value = html_entity_decode( (string) $this->apply_magic_tags( $token ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+					return $this->protect_literals( $value, self::$literal_marker_escapes, $literal_markers );
+				},
+				$value
+			);
+			$value = $this->protect_literals( $value, self::$literal_marker_escapes, $literal_markers );
+
+			// SVG links still follow xlink:href, which core's URI list omits; it may hold a bare relative reference.
+			if ( 'xlink:href' === $attribute ) {
+				$value = wp_kses_bad_protocol( $value, wp_allowed_protocols() );
+			} elseif ( in_array( $attribute, wp_kses_uri_attributes(), true ) ) {
+				$value = esc_url_raw( $value );
+			} elseif ( 'style' === $attribute ) {
+				$value = safecss_filter_attr( $value );
+			}
+
+			$processor->set_attribute( $attribute, $value );
+		}
+
+		$markup = substr( $processor->get_updated_html(), 0, -strlen( $closing_tag ) );
+		$markup = str_replace( '{otterDynamic?', self::$literal_marker_escapes['{otterDynamic?'], $markup );
+		return strtr( $markup, $literal_markers );
 	}
 
 	/**
@@ -266,13 +520,25 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Filter post content for dynamic images.
+	 * Resolve dynamic image URLs for CSS, which does not decode HTML entities.
 	 *
-	 * @param string $content Post content.
+	 * @param string $content CSS image URL.
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_images( $content ) {
+	public function apply_dynamic_css_images( $content ) {
+		return $this->apply_dynamic_images( $content, false );
+	}
+
+	/**
+	 * Filter post content for dynamic images.
+	 *
+	 * @param string $content        Post content.
+	 * @param bool   $escape_markers Whether resolved URLs keep dynamic markers literal for later block renders.
+	 *
+	 * @return string
+	 */
+	public function apply_dynamic_images( $content, $escape_markers = true ) {
 		if ( false === strpos( $content, 'otter/v1/dynamic' ) ) {
 			return $content;
 		}
@@ -290,7 +556,12 @@ class Dynamic_Content {
 		$resolved    = array();
 		$clone_count = 1;
 		foreach ( $matches as $match ) {
-			$value      = $this->apply_images( $match );
+			$value = $this->apply_images( $match );
+			if ( $escape_markers && is_array( $value ) ) {
+				$value = array_map( array( $this, 'escape_comment_magic_tags' ), $value );
+			} elseif ( $escape_markers && is_string( $value ) ) {
+				$value = $this->escape_comment_magic_tags( $value );
+			}
 			$resolved[] = $value;
 			if ( is_array( $value ) ) {
 				$clone_count = max( $clone_count, count( $value ) );
@@ -335,7 +606,7 @@ class Dynamic_Content {
 	 *
 	 * @param array $data Dynamic request.
 	 *
-	 * @return string|string[]|void
+	 * @return string|list<string>|false|void
 	 */
 	public function apply_images( $data ) {
 		if ( ! isset( $data[0] ) ) {
@@ -351,19 +622,21 @@ class Dynamic_Content {
 	/**
 	 * Apply dynamic image.
 	 *
-	 * @param array $data Query array.
+	 * @param array<string, int|string|null> $data Query array.
 	 *
-	 * @return string
+	 * @return string|list<string>|false
 	 */
 	public function get_image( $data ) {
 		$value = OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg';
 
-		global $post;
+		$id = ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? (int) get_the_ID() : get_queried_object_id();
 
-		$id = ( ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
-
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
+		if ( isset( $data['context'] ) && ( 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
 			$data['context'] = $id;
+		}
+
+		if ( empty( $data['context'] ) ) {
+			$data['context'] = (int) get_the_ID();
 		}
 
 		if ( isset( $data['fallback'] ) && ! empty( $data['fallback'] ) ) {
@@ -371,6 +644,15 @@ class Dynamic_Content {
 		}
 
 		if ( ! isset( $data['type'] ) && empty( $data['type'] ) ) {
+			return $value;
+		}
+
+		$server = \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::instance();
+		if ( ! in_array( $data['type'], array( 'logo', 'loggedInUser' ), true ) && ! $server->check_permission( (int) $data['context'] ) ) {
+			return $value;
+		}
+
+		if ( 'product' === $data['type'] && ! empty( $data['id'] ) && ! $server->check_permission( (int) $data['id'] ) ) {
 			return $value;
 		}
 
@@ -411,13 +693,17 @@ class Dynamic_Content {
 	/**
 	 * Apply dynamic data.
 	 *
-	 * @param array $data Dynamic request.
-	 * @param bool  $magic_tags Is a request for Magic Tags.
+	 * @param array<int|string, int|string|null> $data Dynamic request.
+	 * @param bool                               $magic_tags Is a request for Magic Tags.
 	 *
-	 * @return string|string[]
+	 * @return int|string|list<string>|false
 	 */
 	public function apply_data( $data, $magic_tags = false ) {
 		$value = $this->get_data( $data, $magic_tags );
+
+		if ( is_string( $value ) ) {
+			$value = $this->escape_comment_magic_tags( $value );
+		}
 
 		if ( is_array( $value ) ) {
 			$updated_value = array();
@@ -457,15 +743,16 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function apply_formatting( $value, $data ) {
+		$markers = array();
 		if ( isset( $data['before'] ) ) {
-			$value = esc_html( $data['before'] ) . $value;
+			$value = $this->protect_markers( esc_html( $data['before'] ), $markers ) . $value;
 		}
 
 		if ( isset( $data['after'] ) ) {
-			$value = $value . esc_html( $data['after'] );
+			$value = $value . $this->protect_markers( esc_html( $data['after'] ), $markers );
 		}
 
-		return $value;
+		return strtr( $this->escape_comment_magic_tags( $value ), $markers );
 	}
 
 	/**
@@ -828,7 +1115,7 @@ class Dynamic_Content {
 			foreach ( $link as $link_item ) {
 				$value[] = sprintf(
 					'<a href="%s" %s>%s</a>',
-					esc_url( $link_item ),
+					$this->esc_resolved_url( $link_item ),
 					$attrs,
 					wp_kses_post( $data['text'] )
 				);
@@ -842,7 +1129,7 @@ class Dynamic_Content {
 		}
 		$value = sprintf(
 			'<a href="%s" %s>%s</a>',
-			esc_url( $link ),
+			$this->esc_resolved_url( $link ),
 			$attrs,
 			wp_kses_post( $data['text'] )
 		);
@@ -872,10 +1159,20 @@ class Dynamic_Content {
 		}
 
 		if ( is_array( $link ) ) {
-			return array_map( 'esc_url', $link );
+			return array_map( array( $this, 'esc_resolved_url' ), $link );
 		}
 
-		return esc_url( $link );
+		return $this->esc_resolved_url( $link );
+	}
+
+	/**
+	 * Escape a resolved URL, keeping its dynamic markers literal while it still decodes to the same URL.
+	 *
+	 * @param string $url Resolved URL.
+	 * @return string
+	 */
+	private function esc_resolved_url( $url ) {
+		return $this->escape_comment_magic_tags( esc_url( $url ) );
 	}
 
 	/**
