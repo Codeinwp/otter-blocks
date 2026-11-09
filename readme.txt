@@ -4,7 +4,7 @@ Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 3.2.9
+Stable tag: 3.2.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -344,15 +344,10 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 == Changelog ==
 
-##### [Version 3.2.9](https://github.com/Codeinwp/otter-blocks/compare/v3.2.8...v3.2.9) (2026-11-05)
+##### [Version 3.2.10](https://github.com/Codeinwp/otter-blocks/compare/v3.2.9...v3.2.10) (2026-11-09)
 
-- Fixed Accordion letter spacing disappearing after reopening the post
-- Fixed the Countdown block going invalid after HTML edits.
-- Fixed Form block sending notifications to multiple comma-separated recipients.
-- Fixed the welcome guide reopening after dismissal
-- Fixed blocks hidden on mobile shifting the page layout.
-- Fixed OpenAI API key saving failing with a valid key.
 - Updated dependencies
+- Enhanced security. Thanks to Jakub Herman for the responsible disclosure.
 
 
 
