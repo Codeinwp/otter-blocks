@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
+use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
 use ThemeIsle\GutenbergBlocks\Registration;
 
 /**
@@ -161,7 +162,7 @@ class Posts_Grid_Block {
 					$html .= sprintf(
 						'<span class="o-posts-grid-post-category"><a href="%1$s">%2$s</a></span>',
 						esc_url( get_category_link( $category[0]->term_id ) ),
-						esc_html( $category[0]->name )
+						esc_html( Dynamic_Content::instance()->escape_comment_magic_tags( $category[0]->name ) )
 					);
 				}
 			}
@@ -227,7 +228,7 @@ class Posts_Grid_Block {
 							$output   .= sprintf(
 								'<a href="%1$s">%2$s</a>',
 								esc_url( get_category_link( $cat->term_id ) ),
-								esc_html( $cat->name )
+								esc_html( Dynamic_Content::instance()->escape_comment_magic_tags( $cat->name ) )
 							) . $separator;
 						}
 
