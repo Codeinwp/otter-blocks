@@ -246,7 +246,8 @@ class Template_Cloud {
 		foreach ( $sources as $source ) {
 			$url  = trailingslashit( $source['url'] ) . self::API_ENDPOINT_SUFFIX;
 			$args = array(
-				'headers' => array(
+				'reject_unsafe_urls' => true,
+				'headers'            => array(
 					'X-API-KEY' => $source['key'],
 				),
 			);

@@ -10,6 +10,9 @@ class Test_Template_Cloud extends WP_UnitTestCase {
 
 	public function set_up(): void {
 		parent::set_up();
+		require_once __DIR__ . '/fixtures/vip-http.php';
+		$GLOBALS['otter_vip_stub_enabled'] = false;
+
 		/** @var \WP_REST_Server $wp_rest_server */
 		global $wp_rest_server;
 		$wp_rest_server = new \Spy_REST_Server;
@@ -22,6 +25,8 @@ class Test_Template_Cloud extends WP_UnitTestCase {
 	}
 
 	public function tear_down(): void {
+		$GLOBALS['otter_vip_stub_enabled'] = false;
+		unset( $GLOBALS['otter_vip_requests'] );
 		delete_option( Template_Cloud::SOURCES_SETTING_KEY );
 		parent::tear_down();
 	}
@@ -174,6 +179,34 @@ class Test_Template_Cloud extends WP_UnitTestCase {
 
 		$this->assertTrue( $captured['sslverify'] );
 		$this->assertTrue( $captured['reject_unsafe_urls'] );
+	}
+
+	public function test_vip_requests_preserve_request_defaults() {
+		$GLOBALS['otter_vip_stub_enabled'] = true;
+		$GLOBALS['otter_vip_requests'] = array();
+
+		$reflection = new ReflectionClass( $this->server );
+		$method     = $reflection->getMethod( 'validate_source_and_get_name' );
+		$method->setAccessible( true );
+		$method->invoke( $this->server, 'https://example.com', 'test-key' );
+
+		Template_Cloud::save_pattern_sources(
+			array(
+				array(
+					'key'  => 'test-key',
+					'url'  => 'https://example.com',
+					'name' => 'Test Source',
+				),
+			)
+		);
+		Template_Cloud::sync_sources();
+
+		$this->assertCount( 2, $GLOBALS['otter_vip_requests'] );
+
+		foreach ( $GLOBALS['otter_vip_requests'] as $request ) {
+			$this->assertTrue( $request['args']['reject_unsafe_urls'] );
+			$this->assertSame( 1, $request['timeout'] );
+		}
 	}
 
 	public function test_remove_source() {
