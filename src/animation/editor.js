@@ -32,6 +32,8 @@ import {
 
 import AnimationPopover from './components/animation-popover.js';
 
+import { getAnimationTimingValue } from './timing.js';
+
 import ControlPanelControl from './../blocks/components/control-panel-control/index.js';
 
 import countPlaceholder from './../../assets/images/count-animation.png';
@@ -217,10 +219,14 @@ function AnimationControls({
 			attributes.className
 				?.split( ' ' )
 				.map( ( i ) => {
-					if ( i.includes( 'o-anim-value-delay-' ) ) {
-						return `.${ i } { animation-delay: ${ i.replace( 'o-anim-value-delay-', '' ) }; --webkit-animation-delay: ${ i.replace( 'o-anim-value-delay-', '' ) }; }`;
-					} else if ( i.includes( 'o-anim-value-speed-' ) ) {
-						return `.${ i } { animation-duration: ${ i.replace( 'o-anim-value-speed-', '' ) }; --webkit-animation-duration: ${ i.replace( 'o-anim-value-speed-', '' ) }; }`;
+					const delayValue = getAnimationTimingValue( i, 'o-anim-value-delay-' );
+					if ( null !== delayValue ) {
+						return `.${ i } { animation-delay: ${ delayValue }; --webkit-animation-delay: ${ delayValue }; }`;
+					}
+
+					const speedValue = getAnimationTimingValue( i, 'o-anim-value-speed-' );
+					if ( null !== speedValue ) {
+						return `.${ i } { animation-duration: ${ speedValue }; --webkit-animation-duration: ${ speedValue }; }`;
 					}
 					return '';
 				})
