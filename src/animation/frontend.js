@@ -1,3 +1,5 @@
+import { getAnimationTimingValue } from './timing.js';
+
 const animations = [
 	'none',
 	'bounce',
@@ -344,7 +346,7 @@ const createCustomAnimationNode = ( elements ) => {
 		if ( classes.contains( 'o-anim-custom-delay' ) ) {
 			let delay;
 			for ( const className of classes ) {
-				if ( className.includes( 'o-anim-value-delay-' ) ) {
+				if ( null !== getAnimationTimingValue( className, 'o-anim-value-delay-' ) ) {
 					delay = className;
 					break;
 				}
@@ -357,7 +359,7 @@ const createCustomAnimationNode = ( elements ) => {
 		if ( classes.contains( 'o-anim-custom-speed' ) ) {
 			let speed;
 			for ( const className of classes ) {
-				if ( className.includes( 'o-anim-value-speed-' ) ) {
+				if ( null !== getAnimationTimingValue( className, 'o-anim-value-speed-' ) ) {
 					speed = className;
 					break;
 				}
@@ -379,9 +381,12 @@ const createCustomAnimationNode = ( elements ) => {
 		// Helper to escape CSS class names (e.g., 2.3 -> 2\.3)
 		const escapeCssClass = className => className.replace(/([!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~])/g, '\\$1');
 
-		customValuesNode.innerHTML = customDelays.reduce(
+		customValuesNode.textContent = customDelays.reduce(
 			( accumulator, cssClass ) => {
-				const delayValue = cssClass.replace( 'o-anim-value-delay-', '' );
+				const delayValue = getAnimationTimingValue( cssClass, 'o-anim-value-delay-' );
+				if ( null === delayValue ) {
+					return accumulator;
+				}
 				const escapedClass = escapeCssClass( cssClass );
 
 				return (
@@ -392,7 +397,10 @@ const createCustomAnimationNode = ( elements ) => {
 			''
 		) + '\n' + customSpeeds.reduce(
 			( accumulator, cssClass ) => {
-				const speedValue = cssClass.replace( 'o-anim-value-speed-', '' );
+				const speedValue = getAnimationTimingValue( cssClass, 'o-anim-value-speed-' );
+				if ( null === speedValue ) {
+					return accumulator;
+				}
 				const escapedClass = escapeCssClass( cssClass );
 
 				return (
