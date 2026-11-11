@@ -99,7 +99,8 @@ class Template_Cloud_Server {
 	private function validate_source_and_get_name( $url, $key ) {
 		$url  = trailingslashit( $url ) . self::API_ENDPOINT_SUFFIX;
 		$args = [
-			'headers' => [
+			'reject_unsafe_urls' => true,
+			'headers'            => [
 				'X-API-KEY' => $key,
 			],
 		];
@@ -107,7 +108,7 @@ class Template_Cloud_Server {
 		if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
 			$response = vip_safe_wp_remote_get( $url, '', 3, 1, 20, $args );
 		} else {
-			$response = wp_remote_get( $url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
+			$response = wp_safe_remote_get( $url, $args );
 		}
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
