@@ -127,6 +127,30 @@ test.describe( 'Animations', () => {
 		await expect( editor.canvas.locator( '.o-anim-custom-speed.o-anim-value-speed-2s' ).first() ).toBeVisible();
 	});
 
+	test( 'ignores unsupported custom values in editor styles', async({ editor, page }) => {
+		await editor.insertBlock({
+			name: 'core/paragraph',
+			attributes: {
+				content: 'Animated paragraph',
+				className: [
+					'animated headShake',
+					'o-anim-custom-delay o-anim-value-delay-250ms o-anim-value-delay-1second',
+					'o-anim-custom-speed o-anim-value-speed-1.5s o-anim-value-speed-fast'
+				].join( ' ' )
+			}
+		});
+
+		await page.getByRole( 'button', { name: 'Animations' }).click();
+
+		const animationStyles = editor.canvas.locator( 'style[data-generator="otter-blocks"]' );
+		const styleText = async() => ( await animationStyles.allTextContents() ).join( '\n' );
+
+		await expect.poll( styleText ).toContain( 'animation-delay: 250ms' );
+		await expect.poll( styleText ).toContain( 'animation-duration: 1.5s' );
+		await expect.poll( styleText ).not.toContain( '1second' );
+		await expect.poll( styleText ).not.toContain( 'fast' );
+	});
+
 	test( 'count and typing help popovers show their own image', async({ editor, page }) => {
 		await editor.insertBlock({ name: 'core/paragraph' });
 
