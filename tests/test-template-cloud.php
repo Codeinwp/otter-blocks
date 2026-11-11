@@ -138,6 +138,42 @@ class Test_Template_Cloud extends WP_UnitTestCase {
 		$method->invoke( $this->server, 'https://example.com', 'test-key' );
 
 		$this->assertNotFalse( $captured['sslverify'] );
+		$this->assertTrue( $captured['reject_unsafe_urls'] );
+	}
+
+	public function test_sync_sources_uses_safe_http_defaults() {
+		Template_Cloud::save_pattern_sources(
+			[
+				[
+					'key'  => 'test-key',
+					'url'  => 'https://example.com',
+					'name' => 'Test Source',
+				],
+			]
+		);
+
+		$captured = array();
+		$stub     = function ( $preempt, $args ) use ( &$captured ) {
+			$captured = $args;
+
+			return array(
+				'response' => array( 'code' => 200 ),
+				'body'     => wp_json_encode(
+					array(
+						'success'  => true,
+						'data'     => array(),
+						'key_name' => 'Test Source',
+					)
+				),
+			);
+		};
+
+		add_filter( 'pre_http_request', $stub, 10, 2 );
+		Template_Cloud::sync_sources();
+		remove_filter( 'pre_http_request', $stub, 10 );
+
+		$this->assertTrue( $captured['sslverify'] );
+		$this->assertTrue( $captured['reject_unsafe_urls'] );
 	}
 
 	public function test_remove_source() {
