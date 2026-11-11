@@ -22,4 +22,21 @@ describe( 'Animation timing values', () => {
 		expect( timingStyles.textContent ).not.toContain( '1second' );
 		expect( timingStyles.textContent ).not.toContain( 'fast' );
 	} );
+
+	it( 'keeps supported timing values after unsupported classes', () => {
+		document.body.innerHTML = [
+			'<div class="animated o-anim-custom-delay o-anim-value-delay-1second o-anim-value-delay-250ms">Delay</div>',
+			'<div class="animated o-anim-custom-speed o-anim-value-speed-fast o-anim-value-speed-1.5s">Speed</div>'
+		].join( '' );
+
+		require( '../../../animation/frontend' );
+		window.dispatchEvent( new Event( 'load' ) );
+
+		const timingStyles = document.querySelector( '#o-anim-custom-values' );
+
+		expect( timingStyles.textContent ).toContain( 'animation-delay: 250ms' );
+		expect( timingStyles.textContent ).toContain( 'animation-duration: 1.5s' );
+		expect( timingStyles.textContent ).not.toContain( '1second' );
+		expect( timingStyles.textContent ).not.toContain( 'fast' );
+	} );
 } );

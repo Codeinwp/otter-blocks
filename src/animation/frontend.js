@@ -346,7 +346,7 @@ const createCustomAnimationNode = ( elements ) => {
 		if ( classes.contains( 'o-anim-custom-delay' ) ) {
 			let delay;
 			for ( const className of classes ) {
-				if ( className.includes( 'o-anim-value-delay-' ) ) {
+				if ( null !== getAnimationTimingValue( className, 'o-anim-value-delay-' ) ) {
 					delay = className;
 					break;
 				}
@@ -359,7 +359,7 @@ const createCustomAnimationNode = ( elements ) => {
 		if ( classes.contains( 'o-anim-custom-speed' ) ) {
 			let speed;
 			for ( const className of classes ) {
-				if ( className.includes( 'o-anim-value-speed-' ) ) {
+				if ( null !== getAnimationTimingValue( className, 'o-anim-value-speed-' ) ) {
 					speed = className;
 					break;
 				}
