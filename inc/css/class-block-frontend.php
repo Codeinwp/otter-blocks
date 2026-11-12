@@ -47,9 +47,9 @@ class Block_Frontend extends Base_CSS {
 	private $total_inline_size = 0;
 
 	/**
-	 * Synced-pattern IDs being expanded in the current chain.
+	 * Synced-pattern IDs being expanded in the current chain, per loader method.
 	 *
-	 * @var array<int, bool>
+	 * @var array<string, array<int, bool>>
 	 */
 	private $expanding_refs = array();
 
@@ -214,34 +214,38 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function enqueue_reusable_fonts( $blocks ) {
-		$this->expand_reusable_blocks( $blocks, array( $this, 'enqueue_google_fonts' ) );
+		$this->expand_reusable_blocks( $blocks, 'enqueue_google_fonts' );
 	}
 
 	/**
-	 * Run a callback for each synced pattern referenced in the blocks, skipping
-	 * patterns already being expanded in the current chain.
+	 * Run a loader method for each synced pattern referenced in the blocks,
+	 * skipping patterns that method is already expanding in the current chain.
 	 *
-	 * @param array<int, array<string, mixed>> $blocks   Blocks to inspect.
-	 * @param callable(int): void              $callback Receives the pattern ID.
+	 * @param array<int, array<string, mixed>>        $blocks Blocks to inspect.
+	 * @param 'enqueue_google_fonts'|'enqueue_styles' $loader Method that receives the pattern ID.
 	 *
 	 * @return void
 	 */
-	private function expand_reusable_blocks( $blocks, callable $callback ) {
+	private function expand_reusable_blocks( $blocks, $loader ) {
 		foreach ( $blocks as $block ) {
 			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
-				$reference_id = absint( $block['attrs']['ref'] );
+				$reference_id = (int) $block['attrs']['ref'];
 
-				if ( isset( $this->expanding_refs[ $reference_id ] ) ) {
+				if ( isset( $this->expanding_refs[ $loader ][ $reference_id ] ) ) {
 					continue;
 				}
 
-				$this->expanding_refs[ $reference_id ] = true;
-				$callback( $reference_id );
-				unset( $this->expanding_refs[ $reference_id ] );
+				$this->expanding_refs[ $loader ][ $reference_id ] = true;
+
+				try {
+					$this->$loader( $reference_id );
+				} finally {
+					unset( $this->expanding_refs[ $loader ][ $reference_id ] );
+				}
 			}
 
 			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$this->expand_reusable_blocks( $block['innerBlocks'], $callback );
+				$this->expand_reusable_blocks( $block['innerBlocks'], $loader );
 			}
 		}
 	}
@@ -381,7 +385,7 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function enqueue_reusable_styles( $blocks ) {
-		$this->expand_reusable_blocks( $blocks, array( $this, 'enqueue_styles' ) );
+		$this->expand_reusable_blocks( $blocks, 'enqueue_styles' );
 	}
 
 	/**
