@@ -219,6 +219,19 @@ class Blocks_CSS {
 	 * @access  public
 	 */
 	public function cycle_through_blocks( $inner_blocks, $id ) {
+		return $this->collect_css_from_blocks( $inner_blocks, $id, array() );
+	}
+
+	/**
+	 * Collect custom CSS while tracking the current synced-pattern chain.
+	 *
+	 * @param array<int, array<string, mixed>> $inner_blocks Blocks to inspect.
+	 * @param int                              $id Post ID.
+	 * @param array<int, bool>                 $seen_refs Synced-pattern IDs in the current chain.
+	 *
+	 * @return string
+	 */
+	private function collect_css_from_blocks( $inner_blocks, $id, $seen_refs ) {
 		$style = '';
 
 		foreach ( $inner_blocks as $block ) {
@@ -232,7 +245,13 @@ class Blocks_CSS {
 			}
 
 			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
-				$reusable_block = get_post( $block['attrs']['ref'] );
+				$reference_id = (int) $block['attrs']['ref'];
+
+				if ( $reference_id <= 0 || isset( $seen_refs[ $reference_id ] ) ) {
+					continue;
+				}
+
+				$reusable_block = get_post( $reference_id );
 
 				if ( ! $reusable_block || 'wp_block' !== $reusable_block->post_type ) {
 					return '';
@@ -242,13 +261,15 @@ class Blocks_CSS {
 					return '';
 				}
 
-				$blocks = parse_blocks( $reusable_block->post_content );
+				$blocks                          = parse_blocks( $reusable_block->post_content );
+				$next_seen_refs                  = $seen_refs;
+				$next_seen_refs[ $reference_id ] = true;
 
-				$style .= $this->cycle_through_blocks( $blocks, $reusable_block->ID );
+				$style .= $this->collect_css_from_blocks( $blocks, $reusable_block->ID, $next_seen_refs );
 			}
 
 			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$style .= $this->cycle_through_blocks( $block['innerBlocks'], $id );
+				$style .= $this->collect_css_from_blocks( $block['innerBlocks'], $id, $seen_refs );
 			}
 		}
 
