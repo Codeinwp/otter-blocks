@@ -170,4 +170,21 @@ test.describe( 'Dashboard', () => {
 		await countdownCard.getByRole( 'checkbox' ).click();
 		await expect( countdownCard.getByRole( 'checkbox' ) ).toBeChecked();
 	});
+
+	test( 'free sidebar opens the Help panel and keeps the community forum', async({ page }) => {
+		const contact = page.locator( '.otter-info-links' ).getByRole( 'link', { name: 'Contact Support' });
+
+		await expect( contact ).toHaveAttribute( 'data-ti-support', 'dashboard' );
+		await expect( page.locator( '.otter-info-links' ).getByRole( 'link', { name: 'Community Forum' }) ).toHaveAttribute( 'href', 'https://wordpress.org/support/plugin/otter-blocks/' );
+
+		await contact.click();
+
+		await expect( page.locator( '.ti-support-panel' ) ).toBeVisible();
+	});
+
+	test( 'block editor shows no Help launcher', async({ admin, page }) => {
+		await admin.createNewPost();
+
+		await expect( page.locator( '.ti-support-launcher' ) ).toHaveCount( 0 );
+	});
 });
