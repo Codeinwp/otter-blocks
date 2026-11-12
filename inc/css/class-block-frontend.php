@@ -231,7 +231,8 @@ class Block_Frontend extends Base_CSS {
 			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
 				$reference_id = (int) $block['attrs']['ref'];
 
-				if ( isset( $this->expanding_refs[ $loader ][ $reference_id ] ) ) {
+				// A non-positive ID is malformed; WordPress meta lookups would read it as its absolute value.
+				if ( $reference_id <= 0 || isset( $this->expanding_refs[ $loader ][ $reference_id ] ) ) {
 					continue;
 				}
 

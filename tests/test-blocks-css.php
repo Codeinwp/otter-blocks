@@ -279,7 +279,7 @@ class Test_Blocks_CSS extends WP_UnitTestCase {
 			array(
 				'post_type'    => 'wp_block',
 				'post_status'  => 'publish',
-				'post_content' => $this->block_with_css( '.ticss-second{color:blue}' ) . '<!-- wp:group --><div class="wp-block-group"><!-- wp:block {"ref":' . $first_id . '} /--></div><!-- /wp:group -->',
+				'post_content' => $this->block_with_css( '.ticss-second{color:blue}' ) . '<!-- wp:group --><div class="wp-block-group"><!-- wp:block {"ref":' . $first_id . '} /-->' . $this->block_with_css( '.ticss-nested{color:green}' ) . '</div><!-- /wp:group -->',
 			)
 		);
 
@@ -293,11 +293,11 @@ class Test_Blocks_CSS extends WP_UnitTestCase {
 		$blocks = parse_blocks( '<!-- wp:block {"ref":' . $first_id . '} /-->' );
 		$css    = ( new Blocks_CSS() )->cycle_through_blocks( $blocks, $first_id );
 
-		$this->assertSame( '.ticss-first{color:red}.ticss-second{color:blue}', $css );
+		$this->assertSame( '.ticss-first{color:red}.ticss-second{color:blue}.ticss-nested{color:green}', $css );
 	}
 
 	/**
-	 * A negative reference does not load the pattern with the matching positive ID.
+	 * A negative reference is skipped: it loads neither the pattern with the matching positive ID nor drops its siblings.
 	 */
 	public function test_negative_synced_pattern_reference_is_not_resolved() {
 		$pattern_id = self::factory()->post->create(
@@ -308,10 +308,10 @@ class Test_Blocks_CSS extends WP_UnitTestCase {
 			)
 		);
 
-		$blocks = parse_blocks( '<!-- wp:block {"ref":-' . $pattern_id . '} /-->' );
+		$blocks = parse_blocks( $this->block_with_css( '.ticss-before{color:blue}' ) . '<!-- wp:block {"ref":-' . $pattern_id . '} /-->' . $this->block_with_css( '.ticss-after{color:green}' ) );
 		$css    = ( new Blocks_CSS() )->cycle_through_blocks( $blocks, $pattern_id );
 
-		$this->assertSame( '', $css );
+		$this->assertSame( '.ticss-before{color:blue}.ticss-after{color:green}', $css );
 	}
 
 	/**

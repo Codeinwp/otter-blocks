@@ -201,7 +201,8 @@ class Test_CSS_Handler extends WP_UnitTestCase {
 		}
 
 		$this->assertStringContainsString( '.ticss-first{color:red}', $output );
-		$this->assertStringContainsString( '.ticss-third{color:green}', $output );
+		// Once from the third pattern's own loader, once from the second pattern's saved-CSS read, which does not expand references.
+		$this->assertSame( 2, substr_count( $output, '.ticss-third{color:green}' ), $output );
 	}
 
 	/**
@@ -280,6 +281,7 @@ class Test_CSS_Handler extends WP_UnitTestCase {
 		Block_Frontend::instance()->enqueue_reusable_fonts( parse_blocks( '<!-- wp:block {"ref":-' . $pattern_id . '} /-->' ) );
 
 		$this->assertFalse( wp_style_is( 'otter-google-fonts-' . $pattern_id, 'enqueued' ) );
+		$this->assertFalse( wp_style_is( 'otter-google-fonts--' . $pattern_id, 'enqueued' ) );
 	}
 
 	/**

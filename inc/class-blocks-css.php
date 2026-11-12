@@ -247,7 +247,7 @@ class Blocks_CSS {
 			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
 				$reference_id = (int) $block['attrs']['ref'];
 
-				if ( isset( $seen_refs[ $reference_id ] ) ) {
+				if ( $reference_id <= 0 || isset( $seen_refs[ $reference_id ] ) ) {
 					continue;
 				}
 
