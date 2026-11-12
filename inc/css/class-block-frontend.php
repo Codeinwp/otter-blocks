@@ -47,6 +47,13 @@ class Block_Frontend extends Base_CSS {
 	private $total_inline_size = 0;
 
 	/**
+	 * Synced-pattern IDs being expanded in the current chain.
+	 *
+	 * @var array<int, bool>
+	 */
+	private $expanding_refs = array();
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -207,13 +214,34 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function enqueue_reusable_fonts( $blocks ) {
+		$this->expand_reusable_blocks( $blocks, array( $this, 'enqueue_google_fonts' ) );
+	}
+
+	/**
+	 * Run a callback for each synced pattern referenced in the blocks, skipping
+	 * patterns already being expanded in the current chain.
+	 *
+	 * @param array<int, array<string, mixed>> $blocks   Blocks to inspect.
+	 * @param callable(int): void              $callback Receives the pattern ID.
+	 *
+	 * @return void
+	 */
+	private function expand_reusable_blocks( $blocks, callable $callback ) {
 		foreach ( $blocks as $block ) {
 			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
-				$this->enqueue_google_fonts( $block['attrs']['ref'] );
+				$reference_id = absint( $block['attrs']['ref'] );
+
+				if ( isset( $this->expanding_refs[ $reference_id ] ) ) {
+					continue;
+				}
+
+				$this->expanding_refs[ $reference_id ] = true;
+				$callback( $reference_id );
+				unset( $this->expanding_refs[ $reference_id ] );
 			}
 
 			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$this->enqueue_reusable_fonts( $block['innerBlocks'] );
+				$this->expand_reusable_blocks( $block['innerBlocks'], $callback );
 			}
 		}
 	}
@@ -353,15 +381,7 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function enqueue_reusable_styles( $blocks ) {
-		foreach ( $blocks as $block ) {
-			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
-				$this->enqueue_styles( $block['attrs']['ref'] );
-			}
-
-			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$this->enqueue_reusable_styles( $block['innerBlocks'] );
-			}
-		}
+		$this->expand_reusable_blocks( $blocks, array( $this, 'enqueue_styles' ) );
 	}
 
 	/**

@@ -162,6 +162,111 @@ class Test_CSS_Handler extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Fonts of a synced pattern that references itself are loaded without endless expansion.
+	 */
+	public function test_synced_pattern_cycle_fonts_are_loaded_once(): void {
+		$pattern_id = $this->create_self_referencing_pattern();
+		update_post_meta( $pattern_id, '_themeisle_gutenberg_block_fonts', array( array( 'fontfamily' => 'Roboto', 'fontvariant' => array( '400' ) ) ) );
+
+		Block_Frontend::instance()->enqueue_reusable_fonts( parse_blocks( '<!-- wp:block {"ref":' . $pattern_id . '} /-->' ) );
+
+		$this->assertTrue( wp_style_is( 'otter-google-fonts-' . $pattern_id, 'enqueued' ) );
+	}
+
+	/**
+	 * Styles of a synced pattern that references itself are loaded without endless expansion.
+	 */
+	public function test_synced_pattern_cycle_styles_are_loaded_once(): void {
+		$pattern_id = $this->create_self_referencing_pattern();
+		$file_path  = $this->seed_post_stylesheet( $pattern_id, '.ticss-cycle{color:red}' );
+
+		remove_all_actions( 'wp_footer' );
+
+		try {
+			Block_Frontend::instance()->enqueue_reusable_styles( parse_blocks( '<!-- wp:block {"ref":' . $pattern_id . '} /-->' ) );
+
+			ob_start();
+			do_action( 'wp_footer' );
+			$output = (string) ob_get_clean();
+		} finally {
+			unlink( $file_path );
+		}
+
+		$this->assertStringContainsString( '.ticss-cycle{color:red}', $output );
+	}
+
+	/**
+	 * Separate references to one synced pattern each load its styles.
+	 */
+	public function test_repeated_synced_pattern_styles_are_loaded_per_reference(): void {
+		$pattern_id = self::factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => '<!-- wp:paragraph --><p>Pattern</p><!-- /wp:paragraph -->',
+			)
+		);
+		$file_path  = $this->seed_post_stylesheet( $pattern_id, '.ticss-repeat{color:blue}' );
+		$reference  = '<!-- wp:block {"ref":' . $pattern_id . '} /-->';
+
+		remove_all_actions( 'wp_footer' );
+
+		try {
+			Block_Frontend::instance()->enqueue_reusable_styles( parse_blocks( $reference . $reference ) );
+
+			ob_start();
+			do_action( 'wp_footer' );
+			$output = (string) ob_get_clean();
+		} finally {
+			unlink( $file_path );
+		}
+
+		$this->assertSame( 2, substr_count( $output, '.ticss-repeat{color:blue}' ), $output );
+	}
+
+	/**
+	 * Create a published synced pattern whose content references itself.
+	 *
+	 * @return int Pattern ID.
+	 */
+	private function create_self_referencing_pattern(): int {
+		$pattern_id = self::factory()->post->create(
+			array(
+				'post_type'   => 'wp_block',
+				'post_status' => 'publish',
+			)
+		);
+
+		wp_update_post(
+			array(
+				'ID'           => $pattern_id,
+				'post_content' => '<!-- wp:paragraph --><p>Pattern</p><!-- /wp:paragraph --><!-- wp:block {"ref":' . $pattern_id . '} /-->',
+			)
+		);
+
+		return $pattern_id;
+	}
+
+	/**
+	 * Give a post the saved CSS and stylesheet file a previous save would have left.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $css     Saved CSS.
+	 * @return string The stylesheet path.
+	 */
+	private function seed_post_stylesheet( int $post_id, string $css ): string {
+		$file_name = 'post-v2-' . $post_id . '-test';
+		$dir       = wp_upload_dir( null, false )['basedir'] . '/themeisle-gutenberg/';
+
+		update_post_meta( $post_id, '_themeisle_gutenberg_block_styles', $css );
+		update_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', $file_name );
+		wp_mkdir_p( $dir );
+		file_put_contents( $dir . $file_name . '.css', $css );
+
+		return $dir . $file_name . '.css';
+	}
+
+	/**
 	 * Remove the stylesheet and meta generate_css_file() wrote for a post.
 	 *
 	 * @param int $post_id Post ID.
