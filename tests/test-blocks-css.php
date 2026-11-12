@@ -240,4 +240,47 @@ class Test_Blocks_CSS extends WP_UnitTestCase {
 
 		$this->assertStringNotContainsString( '.ticss-second{color:blue}', $this->render( new Blocks_CSS() ) );
 	}
+
+	/**
+	 * Synced patterns stop expanding when they reference themselves.
+	 */
+	public function test_synced_pattern_cycle_is_ignored() {
+		$pattern_id = self::factory()->post->create(
+			array(
+				'post_type'   => 'wp_block',
+				'post_status' => 'publish',
+			)
+		);
+
+		wp_update_post(
+			array(
+				'ID'           => $pattern_id,
+				'post_content' => $this->block_with_css( '.ticss-pattern{color:red}' ) . '<!-- wp:block {"ref":' . $pattern_id . '} /-->',
+			)
+		);
+
+		$blocks = parse_blocks( '<!-- wp:block {"ref":' . $pattern_id . '} /-->' );
+		$css    = ( new Blocks_CSS() )->cycle_through_blocks( $blocks, $pattern_id );
+
+		$this->assertSame( '.ticss-pattern{color:red}', $css );
+	}
+
+	/**
+	 * Separate references to one synced pattern each contribute their CSS.
+	 */
+	public function test_repeated_synced_pattern_references_are_preserved() {
+		$pattern_id = self::factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => $this->block_with_css( '.ticss-pattern{color:red}' ),
+			)
+		);
+
+		$reference = '<!-- wp:block {"ref":' . $pattern_id . '} /-->';
+		$blocks    = parse_blocks( $reference . $reference );
+		$css       = ( new Blocks_CSS() )->cycle_through_blocks( $blocks, $pattern_id );
+
+		$this->assertSame( '.ticss-pattern{color:red}.ticss-pattern{color:red}', $css );
+	}
 }
