@@ -171,15 +171,29 @@ test.describe( 'Dashboard', () => {
 		await expect( countdownCard.getByRole( 'checkbox' ) ).toBeChecked();
 	});
 
-	test( 'free sidebar opens the Help panel and keeps the community forum', async({ page }) => {
-		const contact = page.locator( '.otter-info-links' ).getByRole( 'link', { name: 'Contact Support' });
+	test( 'free sidebar opens the Help panel and keeps the community forum', async({ admin, otterUtils, page }) => {
+		// Global setup stubs a valid Pro license, which shows Contact Pro Support instead.
+		await otterUtils.deactivatePro();
 
-		await expect( contact ).toHaveAttribute( 'data-ti-support', 'dashboard' );
-		await expect( page.locator( '.otter-info-links' ).getByRole( 'link', { name: 'Community Forum' }) ).toHaveAttribute( 'href', 'https://wordpress.org/support/plugin/otter-blocks/' );
+		try {
+			await admin.visitAdminPage( 'admin.php?page=otter' );
 
-		await contact.click();
+			const contact = page.locator( '.otter-info-links' ).getByRole( 'link', { name: 'Contact Support' });
 
-		await expect( page.locator( '.ti-support-panel' ) ).toBeVisible();
+			await expect( contact ).toHaveAttribute( 'data-ti-support', 'dashboard' );
+			await expect( page.locator( '.otter-info-links' ).getByRole( 'link', { name: 'Community Forum' }) ).toHaveAttribute( 'href', 'https://wordpress.org/support/plugin/otter-blocks/' );
+
+			await contact.click();
+
+			await expect( page.locator( '.ti-support-panel' ) ).toBeVisible();
+		} finally {
+			await otterUtils.activatePro();
+		}
+	});
+
+	test( 'licensed Pro sidebar keeps Contact Pro Support', async({ page }) => {
+		await expect( page.locator( '.otter-info-links' ).getByRole( 'link', { name: 'Contact Pro Support' }) ).toHaveAttribute( 'href', 'https://store.themeisle.com/' );
+		await expect( page.locator( '.otter-info-links' ).getByRole( 'link', { name: 'Contact Support' }) ).toHaveCount( 0 );
 	});
 
 	test( 'block editor shows no Help launcher', async({ admin, page }) => {
