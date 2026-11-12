@@ -99,7 +99,9 @@ add_filter(
 	'otter_blocks_support_hub_metadata',
 	function () {
 		return array(
-			'is_pro' => \ThemeIsle\GutenbergBlocks\Pro::is_pro_active(),
+			// The SDK reads this while loading Otter, before Otter Pro's Licenser adds the
+			// product_otter_license_status filter, so read the stored license directly.
+			'is_pro' => defined( 'OTTER_PRO_BASEFILE' ) && class_exists( '\ThemeisleSDK\Modules\Licenser' ) && \ThemeisleSDK\Modules\Licenser::is_valid( OTTER_PRO_BASEFILE ),
 			'links'  => array(
 				array(
 					'icon' => 'book-alt',

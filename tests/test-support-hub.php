@@ -5,8 +5,6 @@
  * @package gutenberg-blocks
  */
 
-use ThemeIsle\GutenbergBlocks\Pro;
-
 /**
  * Support Hub opt-in tests.
  */
@@ -42,16 +40,29 @@ class Test_Support_Hub extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Messages are tagged as Pro only while the Pro license is valid.
+	 * Messages are tagged as Pro only while the stored Pro license is valid, whatever
+	 * the order in which the SDK loads Otter and Otter Pro.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
-	public function test_is_pro_needs_a_valid_license() {
-		add_filter( 'product_otter_license_status', array( $this, 'expired_license' ) );
-		$this->assertFalse( apply_filters( 'otter_blocks_support_hub_metadata', array() )['is_pro'] );
-		remove_filter( 'product_otter_license_status', array( $this, 'expired_license' ) );
+	public function test_is_pro_reads_the_stored_pro_license() {
+		if ( ! defined( 'OTTER_PRO_BASEFILE' ) ) {
+			define( 'OTTER_PRO_BASEFILE', dirname( __DIR__ ) . '/plugins/otter-pro/otter-pro.php' );
+		}
+		// The test bootstrap loads Composer before WordPress, so the SDK's load.php skips itself.
+		$sdk = dirname( __DIR__ ) . '/vendor/codeinwp/themeisle-sdk/src/';
+		foreach ( array( 'Loader.php', 'Product.php', 'Common/Abstract_module.php', 'Modules/Licenser.php' ) as $file ) {
+			require_once $sdk . $file;
+		}
+		// No Licenser filter is registered, as when Otter loads before Otter Pro.
+		remove_all_filters( 'product_otter_license_status' );
 
-		add_filter( 'product_otter_license_status', array( $this, 'valid_license' ) );
-		$this->assertSame( Pro::is_pro_installed(), apply_filters( 'otter_blocks_support_hub_metadata', array() )['is_pro'] );
-		remove_filter( 'product_otter_license_status', array( $this, 'valid_license' ) );
+		update_option( 'otter_pro_license_data', (object) array( 'license' => 'expired' ) );
+		$this->assertFalse( apply_filters( 'otter_blocks_support_hub_metadata', array() )['is_pro'] );
+
+		update_option( 'otter_pro_license_data', (object) array( 'license' => 'valid' ) );
+		$this->assertTrue( apply_filters( 'otter_blocks_support_hub_metadata', array() )['is_pro'] );
 	}
 
 	/**
@@ -89,23 +100,5 @@ class Test_Support_Hub extends WP_UnitTestCase {
 
 		$this->assertFalse( apply_filters( 'otter_blocks_hide_support_hub', false ) );
 		$this->assertTrue( apply_filters( 'otter_blocks_hide_support_hub', true ) );
-	}
-
-	/**
-	 * A license status the SDK reports for an expired key.
-	 *
-	 * @return string
-	 */
-	public function expired_license() {
-		return 'expired';
-	}
-
-	/**
-	 * A license status the SDK reports for a valid key.
-	 *
-	 * @return string
-	 */
-	public function valid_license() {
-		return 'valid';
 	}
 }
