@@ -42,9 +42,6 @@ class Test_Support_Hub extends WP_UnitTestCase {
 	/**
 	 * Messages are tagged as Pro only while the stored Pro license is valid, whatever
 	 * the order in which the SDK loads Otter and Otter Pro.
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_is_pro_reads_the_stored_pro_license() {
 		if ( ! defined( 'OTTER_PRO_BASEFILE' ) ) {
