@@ -196,9 +196,12 @@ test.describe( 'Dashboard', () => {
 		await expect( page.locator( '.otter-info-links' ).getByRole( 'link', { name: 'Contact Support' }) ).toHaveCount( 0 );
 	});
 
-	test( 'block editor shows no Help launcher', async({ admin, page }) => {
+	test( 'Help launcher shows on the dashboard but not in the block editor', async({ admin, page }) => {
+		await expect( page.locator( '.ti-support-launcher' ) ).toBeVisible();
+
 		await admin.createNewPost();
 
-		await expect( page.locator( '.ti-support-launcher' ) ).toHaveCount( 0 );
+		// The SDK prints this container in admin_footer whenever the hub loads.
+		await expect( page.locator( '#ti-support-hub' ) ).toHaveCount( 0 );
 	});
 });

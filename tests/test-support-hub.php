@@ -63,39 +63,32 @@ class Test_Support_Hub extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The Help button stays off the block editors, which also count as Otter screens.
+	 * The Help button stays off the block editors, which also count as Otter screens, and shows on Otter's own screens.
 	 *
-	 * @dataProvider editor_screens
+	 * @dataProvider admin_screens
 	 *
 	 * @param string $pagenow Admin page file.
+	 * @param bool   $hidden  Whether the Help button is hidden there.
 	 */
-	public function test_hub_is_hidden_in_block_editors( $pagenow ) {
+	public function test_hub_is_hidden_only_in_block_editors( $pagenow, $hidden ) {
 		$GLOBALS['pagenow'] = $pagenow; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-		$this->assertTrue( apply_filters( 'otter_blocks_hide_support_hub', false ) );
+		$this->assertSame( $hidden, apply_filters( 'otter_blocks_hide_support_hub', false ) );
 	}
 
 	/**
-	 * Block editor admin pages.
+	 * Admin pages and whether the Help button is hidden on them.
 	 *
-	 * @return array<string, array<int, string>>
+	 * @return array<string, array{0: string, 1: bool}>
 	 */
-	public function editor_screens() {
+	public function admin_screens() {
 		return array(
-			'post editor'   => array( 'post.php' ),
-			'new post'      => array( 'post-new.php' ),
-			'site editor'   => array( 'site-editor.php' ),
-			'widget editor' => array( 'widgets.php' ),
+			'post editor'   => array( 'post.php', true ),
+			'new post'      => array( 'post-new.php', true ),
+			'site editor'   => array( 'site-editor.php', true ),
+			'widget editor' => array( 'widgets.php', true ),
+			'Otter screen'  => array( 'admin.php', false ),
+			'post list'     => array( 'edit.php', false ),
 		);
-	}
-
-	/**
-	 * The Help button shows on Otter's own screens, and a site can still hide it.
-	 */
-	public function test_hub_is_shown_on_otter_screens() {
-		$GLOBALS['pagenow'] = 'admin.php'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-
-		$this->assertFalse( apply_filters( 'otter_blocks_hide_support_hub', false ) );
-		$this->assertTrue( apply_filters( 'otter_blocks_hide_support_hub', true ) );
 	}
 }
