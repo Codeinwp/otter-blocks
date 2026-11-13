@@ -1,3 +1,9 @@
+##### [Version 3.2.11](https://github.com/Codeinwp/otter-blocks/compare/v3.2.10...v3.2.11) (2026-11-13)
+
+- Added a Help panel to make it easier to contact support and find answers
+- Enhanced security
+- Updated dependencies
+
 ##### [Version 3.2.10](https://github.com/Codeinwp/otter-blocks/compare/v3.2.9...v3.2.10) (2026-11-09)
 
 - Updated dependencies
