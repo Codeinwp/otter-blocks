@@ -246,8 +246,8 @@ class Template_Cloud {
 		foreach ( $sources as $source ) {
 			$url  = trailingslashit( $source['url'] ) . self::API_ENDPOINT_SUFFIX;
 			$args = array(
-				'sslverify' => false,
-				'headers'   => array(
+				'reject_unsafe_urls' => true,
+				'headers'            => array(
 					'X-API-KEY' => $source['key'],
 				),
 			);
@@ -255,7 +255,7 @@ class Template_Cloud {
 			if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
 				$response = vip_safe_wp_remote_get( $url, '', 3, 1, 20, $args );
 			} else {
-				$response = wp_remote_get( $url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
+				$response = wp_safe_remote_get( $url, $args );
 			}
 
 			if ( is_wp_error( $response ) ) {

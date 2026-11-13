@@ -47,6 +47,13 @@ class Block_Frontend extends Base_CSS {
 	private $total_inline_size = 0;
 
 	/**
+	 * Synced-pattern IDs being expanded in the current chain, per loader method.
+	 *
+	 * @var array<string, array<int, bool>>
+	 */
+	private $expanding_refs = array();
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -207,13 +214,39 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function enqueue_reusable_fonts( $blocks ) {
+		$this->expand_reusable_blocks( $blocks, 'enqueue_google_fonts' );
+	}
+
+	/**
+	 * Run a loader method for each synced pattern referenced in the blocks,
+	 * skipping patterns that method is already expanding in the current chain.
+	 *
+	 * @param array<int, array<string, mixed>>        $blocks Blocks to inspect.
+	 * @param 'enqueue_google_fonts'|'enqueue_styles' $loader Method that receives the pattern ID.
+	 *
+	 * @return void
+	 */
+	private function expand_reusable_blocks( $blocks, $loader ) {
 		foreach ( $blocks as $block ) {
 			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
-				$this->enqueue_google_fonts( $block['attrs']['ref'] );
+				$reference_id = (int) $block['attrs']['ref'];
+
+				// A non-positive ID is malformed; WordPress meta lookups would read it as its absolute value.
+				if ( $reference_id <= 0 || isset( $this->expanding_refs[ $loader ][ $reference_id ] ) ) {
+					continue;
+				}
+
+				$this->expanding_refs[ $loader ][ $reference_id ] = true;
+
+				try {
+					$this->$loader( $reference_id );
+				} finally {
+					unset( $this->expanding_refs[ $loader ][ $reference_id ] );
+				}
 			}
 
 			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$this->enqueue_reusable_fonts( $block['innerBlocks'] );
+				$this->expand_reusable_blocks( $block['innerBlocks'], $loader );
 			}
 		}
 	}
@@ -353,15 +386,7 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function enqueue_reusable_styles( $blocks ) {
-		foreach ( $blocks as $block ) {
-			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
-				$this->enqueue_styles( $block['attrs']['ref'] );
-			}
-
-			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$this->enqueue_reusable_styles( $block['innerBlocks'] );
-			}
-		}
+		$this->expand_reusable_blocks( $blocks, 'enqueue_styles' );
 	}
 
 	/**

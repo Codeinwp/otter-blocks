@@ -90,6 +90,47 @@ add_filter(
 	}
 );
 
+/*
+ * Opts into the SDK Support Hub: one Help button on Otter's screens and the
+ * deactivation window. The dashboard and Form Submissions screens already fire
+ * `themeisle_internal_page`, so no `pages` list is needed.
+ */
+add_filter(
+	'otter_blocks_support_hub_metadata',
+	function () {
+		return array(
+			// The SDK reads this while loading Otter, before Otter Pro's Licenser adds the
+			// product_otter_license_status filter, so read the stored license directly.
+			'is_pro' => defined( 'OTTER_PRO_BASEFILE' ) && class_exists( '\ThemeisleSDK\Modules\Licenser' ) && \ThemeisleSDK\Modules\Licenser::is_valid( OTTER_PRO_BASEFILE ),
+			'links'  => array(
+				array(
+					'icon' => 'book-alt',
+					'text' => __( 'Documentation', 'otter-blocks' ),
+					'url'  => \ThemeIsle\GutenbergBlocks\Pro::get_docs_url(),
+				),
+				array(
+					'icon' => 'groups',
+					'text' => __( 'Community Forum', 'otter-blocks' ),
+					'url'  => 'https://wordpress.org/support/plugin/otter-blocks/',
+				),
+			),
+		);
+	}
+);
+
+/*
+ * Otter also fires `themeisle_internal_page` in the block editor, which would put
+ * the Help button on every post, site and widget editor. Keep it to Otter's screens.
+ */
+add_filter(
+	'otter_blocks_hide_support_hub',
+	function ( $hide ) {
+		global $pagenow;
+
+		return $hide || in_array( $pagenow, array( 'post.php', 'post-new.php', 'site-editor.php', 'widgets.php' ), true );
+	}
+);
+
 add_filter(
 	'themeisle_sdk_compatibilities/' . basename( OTTER_BLOCKS_PATH ),
 	function ( $compatibilities ) {

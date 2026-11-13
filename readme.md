@@ -330,7 +330,7 @@ Sure, Otter is compatible with any WordPress theme.
 
 ### Where can I get help? ###
 
-If you encounter any difficulties or if you have questions about Otter, you can create a ticket on our [support forum](https://wordpress.org/support/plugin/otter-blocks/). Also, feel free to check our [documentation](https://docs.themeisle.com/article/1478-otter-blocks-documentation) to find out more about the features within the plugin and how to use it to its full potential.
+If you encounter any difficulties or if you have questions about Otter, you can ask our support team from the **Help** button on the Otter dashboard, or create a ticket on our [support forum](https://wordpress.org/support/plugin/otter-blocks/). Also, feel free to check our [documentation](https://docs.themeisle.com/article/1478-otter-blocks-documentation) to find out more about the features within the plugin and how to use it to its full potential.
 
 ### What are the Patterns and how can I use them? ###
 
