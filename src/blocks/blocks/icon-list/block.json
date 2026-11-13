@@ -47,6 +47,9 @@
 		"gapIconLabel": {
 			"type": ["string"]
 		},
+		"sublistIndent": {
+			"type": ["number", "string"]
+		},
 		"horizontalAlign": {
 			"type": "string"
 		},

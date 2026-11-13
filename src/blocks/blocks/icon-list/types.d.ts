@@ -12,6 +12,7 @@ type Attributes= {
 	defaultIconSize: number
 	defaultSize: number | string
 	gap: number | string
+	sublistIndent: number | string
 	horizontalAlign: string
 	alignmentTablet: string
 	alignmentMobile: string

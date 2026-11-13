@@ -10,6 +10,7 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import metadata from './block.json';
 import { iconListIcon as icon } from '../../helpers/icons.js';
+import deprecated from './deprecated.js';
 import edit from './edit.js';
 import save from './save.js';
 import './item/index.js';
@@ -26,6 +27,7 @@ registerBlockType( name, {
 		'list',
 		'items'
 	],
+	deprecated,
 	edit,
 	save,
 	example: {

@@ -23,11 +23,25 @@
 			align-items: var( --icon-align-tablet );
 			justify-content: var( --icon-align-tablet );
 		}
-	
+
 		@media (max-width: 600px) {
 			align-items: var( --icon-align-mobile );
 			justify-content: var( --icon-align-mobile );
 		}
+	}
+
+	// The editor nests items inside the inner blocks wrappers, so mirror the
+	// direct-child rules from style.scss for the editor DOM.
+	&:not(.is-style-horizontal) > .block-editor-inner-blocks > .block-editor-block-list__layout > .wp-block-themeisle-blocks-icon-list-item {
+		@include icon-list-item-vertical;
+	}
+
+	&.has-divider:not(.is-style-horizontal) > .block-editor-inner-blocks > .block-editor-block-list__layout > .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {
+		@include icon-list-divider-vertical;
+	}
+
+	&.is-style-horizontal.has-divider > .block-editor-inner-blocks > .block-editor-block-list__layout > .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {
+		@include icon-list-divider-horizontal;
 	}
 
 	&.is-selected.has-divider {
@@ -36,6 +50,25 @@
 				display: none;
 			}
 		}
+	}
+}
+
+// Sub-list area inside an item: hidden while empty, on its own line once filled.
+.wp-block-themeisle-blocks-icon-list .wp-block-themeisle-blocks-icon-list-item {
+	flex-wrap: wrap;
+
+	> .block-editor-inner-blocks {
+		display: none;
+	}
+
+	&.has-sublist > .block-editor-inner-blocks {
+		display: block;
+		flex-basis: 100%;
+		width: 100%;
+	}
+
+	> .o-block-appender-button {
+		flex-basis: 100%;
 	}
 }
 

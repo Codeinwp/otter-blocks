@@ -7,6 +7,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import {
+	InnerBlocks,
 	RichText,
 	useBlockProps
 } from '@wordpress/block-editor';
@@ -17,13 +18,19 @@ import {
 import themeIsleIcons from './../../../helpers/themeisle-icons.js';
 
 const Save = ({
-	attributes
+	attributes,
+	innerBlocks
 }) => {
 	const iconClassName = `${ attributes.iconPrefix } fa-${ attributes.icon }`;
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
+	// The class is only present on items that hold a sub-list, so flat items keep serializing the same markup.
+	const hasSubList = Array.isArray( innerBlocks ) && 0 < innerBlocks.length;
+
 	const blockProps = useBlockProps.save({
-		id: attributes.id
+		id: attributes.id,
+		className: hasSubList ? 'has-sublist' : undefined,
+		role: 'listitem'
 	});
 
 	return (
@@ -60,6 +67,8 @@ const Save = ({
 				) }
 				value={ attributes.content }
 			/>
+
+			<InnerBlocks.Content />
 		</div>
 	);
 };

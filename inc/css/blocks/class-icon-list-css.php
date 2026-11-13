@@ -69,6 +69,21 @@ class Icon_List_CSS extends Base_CSS {
 						'value'    => 'gapIconLabel',
 					),
 					array(
+						'property'  => '--sublist-indent',
+						'value'     => 'sublistIndent',
+						'unit'      => 'px',
+						'condition' => function ( $attrs ) {
+							return isset( $attrs['sublistIndent'] ) && is_numeric( $attrs['sublistIndent'] );
+						},
+					),
+					array(
+						'property'  => '--sublist-indent',
+						'value'     => 'sublistIndent',
+						'condition' => function ( $attrs ) {
+							return isset( $attrs['sublistIndent'] ) && is_string( $attrs['sublistIndent'] ) && ! is_numeric( $attrs['sublistIndent'] );
+						},
+					),
+					array(
 						'property' => '--content-color',
 						'value'    => 'defaultContentColor',
 					),

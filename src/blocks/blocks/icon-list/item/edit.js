@@ -9,17 +9,25 @@ import classnames from 'classnames';
 import { __, sprintf } from '@wordpress/i18n';
 
 import {
+	BlockControls,
+	InnerBlocks,
 	RichText,
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { select, useSelect } from '@wordpress/data';
+import { ToolbarButton } from '@wordpress/components';
+
+import { createBlock } from '@wordpress/blocks';
+
+import { dispatch, select, useDispatch, useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
 	useEffect,
 	useState
 } from '@wordpress/element';
+
+import { formatListBullets } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -28,6 +36,8 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../../helpers/themeisle-icons.js';
 import { blockInit } from '../../../helpers/block-utility.js';
+import BlockAppender from '../../../components/block-appender-button';
+import { getSubListAttributes } from '../sublist.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -40,6 +50,7 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	clientId,
+	isSelected,
 	onReplace,
 	onRemove,
 	mergeBlocks
@@ -47,9 +58,12 @@ const Edit = ({
 
 	const [ isURL, setIsUrl ] = useState( false );
 
+	const { insertBlock } = useDispatch( 'core/block-editor' );
+
 	const {
 		hasParent,
-		parentAttributes
+		parentAttributes,
+		innerBlockCount
 	} = useSelect( select => {
 		const {
 			getBlock,
@@ -61,7 +75,8 @@ const Edit = ({
 
 		return {
 			hasParent: parentBlock ? true : false,
-			parentAttributes: parentBlock ? parentBlock.attributes : {}
+			parentAttributes: parentBlock ? parentBlock.attributes : {},
+			innerBlockCount: getBlock( clientId )?.innerBlocks.length ?? 0
 		};
 	}, []);
 
@@ -97,7 +112,8 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( attributes.content === undefined ) {
-			const parentClientId = select( 'core/block-editor' ).getBlockParents( clientId ).at( -1 );
+			// The direct parent list, so items added inside a sub-list are numbered within it.
+			const parentClientId = select( 'core/block-editor' ).getBlockRootClientId( clientId );
 			const parentBlock = select( 'core/block-editor' ).getBlock( parentClientId );
 
 			// translators: %d: the number of List item blocks.
@@ -109,13 +125,43 @@ const Edit = ({
 
 	const iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
 
+	const hasSubList = 0 < innerBlockCount;
+
+	const addSubList = () => {
+		insertBlock( createBlock( 'themeisle-blocks/icon-list', getSubListAttributes( parentAttributes ) ), innerBlockCount, clientId );
+	};
+
+	// Backspace merging into the previous item would drop this item's sub-list,
+	// because core only merges attributes. Move it over beforehand instead.
+	const handleMerge = ( forward ) => {
+		if ( ! forward && hasSubList ) {
+			const { getBlock, getBlockRootClientId, getPreviousBlockClientId } = select( 'core/block-editor' );
+			const previousClientId = getPreviousBlockClientId( clientId );
+
+			if ( previousClientId ) {
+				const innerClientIds = getBlock( clientId ).innerBlocks.map( ( { clientId: innerId } ) => innerId );
+				dispatch( 'core/block-editor' ).moveBlocksToPosition( innerClientIds, clientId, previousClientId );
+
+				// Cancel the merge when a lock kept the sub-list from moving, so it is not deleted with the item.
+				const moved = innerClientIds.every( ( innerId ) => previousClientId === getBlockRootClientId( innerId ) );
+
+				if ( ! moved ) {
+					return;
+				}
+			}
+		}
+
+		mergeBlocks( forward );
+	};
+
 	const inlineStyles = {
 		'--content-color': attributes.contentColor ?? parentAttributes.defaultContentColor,
 		'--icon-color': attributes.iconColor ?? parentAttributes.defaultIconColor
 	};
 
 	const blockProps = useBlockProps({
-		style: inlineStyles
+		style: inlineStyles,
+		className: hasSubList ? 'has-sublist' : undefined
 	});
 
 	return (
@@ -124,6 +170,16 @@ const Edit = ({
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
+
+			<BlockControls group="block">
+				{ ! hasSubList && (
+					<ToolbarButton
+						icon={ formatListBullets }
+						label={ __( 'Add Sub-list', 'otter-blocks' ) }
+						onClick={ addSubList }
+					/>
+				) }
+			</BlockControls>
 
 			<div { ...blockProps }>
 				{ 'image' === attributes.library && isURL ? (
@@ -156,10 +212,25 @@ const Edit = ({
 					) }
 					value={ attributes.content }
 					onChange={ ( content ) => setAttributes({ content }) }
-					onMerge={ mergeBlocks }
+					onMerge={ mergeBlocks ? handleMerge : undefined }
 					onReplace={ onReplace }
 					onRemove={ onRemove }
 				/>
+
+				<InnerBlocks
+					allowedBlocks={ [ 'themeisle-blocks/icon-list' ] }
+					renderAppender={ false }
+				/>
+
+				{ isSelected && ! hasSubList && (
+					<BlockAppender
+						buttonText={ __( 'Add Sub-list', 'otter-blocks' ) }
+						variant="link"
+						allowedBlock="themeisle-blocks/icon-list"
+						attributes={ getSubListAttributes( parentAttributes ) }
+						clientId={ clientId }
+					/>
+				) }
 			</div>
 		</Fragment>
 	);
