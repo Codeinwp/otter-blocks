@@ -4,7 +4,7 @@ Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 3.2.10
+Stable tag: 3.2.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -344,10 +344,11 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 == Changelog ==
 
-##### [Version 3.2.10](https://github.com/Codeinwp/otter-blocks/compare/v3.2.9...v3.2.10) (2026-11-09)
+##### [Version 3.2.11](https://github.com/Codeinwp/otter-blocks/compare/v3.2.10...v3.2.11) (2026-11-13)
 
+- Added a Help panel to make it easier to contact support and find answers
+- Enhanced security
 - Updated dependencies
-- Enhanced security. Thanks to Jakub Herman for the responsible disclosure.
 
 
 
