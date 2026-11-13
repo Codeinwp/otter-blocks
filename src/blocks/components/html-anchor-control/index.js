@@ -26,6 +26,7 @@ import {
 /**
  * Internal dependencies
  */
+import { sanitizeBlockId } from '../../helpers/block-utility';
 import './editor.scss';
 
 const HTMLAnchorControl = ({
@@ -34,7 +35,7 @@ const HTMLAnchorControl = ({
 }) => {
 	const instanceId = useInstanceId( HTMLAnchorControl );
 
-	useEffect( () => setID( value ), [ value ]);
+	useEffect( () => setID( sanitizeBlockId( value ) ), [ value ]);
 
 	const [ isEditing, setEditing ] = useState( false );
 	const [ ID, setID ] = useState( null );
@@ -54,7 +55,7 @@ const HTMLAnchorControl = ({
 						className="o-html-anchor-control-input"
 						readOnly={ isEditing ? false : 'readonly' }
 						value={ isEditing ? ID : value }
-						onChange={ e => setID( e.target.value ) }
+						onChange={ e => setID( sanitizeBlockId( e.target.value ) ) }
 						onClick={ e => e.target.select() }
 					/>
 

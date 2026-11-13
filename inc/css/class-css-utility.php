@@ -120,6 +120,28 @@ class CSS_Utility {
 	}
 
 	/**
+	 * Restrict a Block ID to characters that are safe in id attributes and CSS
+	 * selectors. ASCII punctuation, spaces and control characters are dropped,
+	 * while hyphens, underscores and non-ASCII characters are kept, so ids
+	 * already present in the saved markup are not renamed unnecessarily. The
+	 * same rule applies on the JS side in sanitizeBlockId().
+	 *
+	 * @access public
+	 * @since 3.2.12
+	 * @param mixed $id Block ID.
+	 * @return string
+	 */
+	public static function sanitize_block_id( $id ) {
+		if ( ! is_scalar( $id ) ) {
+			return '';
+		}
+
+		$id = preg_replace( '/[^\x{80}-\x{10FFFF}a-zA-Z0-9_-]/u', '', (string) $id );
+
+		return null === $id ? '' : $id;
+	}
+
+	/**
 	 * Filter media queries.
 	 *
 	 * @access public
@@ -239,6 +261,15 @@ class CSS_Utility {
 			if ( isset( $attrs['id'] ) ) {
 				$this->block_id = $attrs['id'];
 			}
+		}
+
+		// The ID is interpolated into selectors below, so it must not carry characters that would invalidate them.
+		$this->block_id = self::sanitize_block_id( $this->block_id );
+
+		// A CSS identifier cannot be empty nor start with a digit, a digit or hyphen after a leading hyphen,
+		// so rather than emit a rule that no browser would apply, drop it.
+		if ( isset( $attrs['id'] ) && ( '' === $this->block_id || preg_match( '/^(?:[0-9]|-[0-9-])/', $this->block_id ) ) ) {
+			return '';
 		}
 
 		foreach ( $this->css_array as $media_query => $css_items ) {
