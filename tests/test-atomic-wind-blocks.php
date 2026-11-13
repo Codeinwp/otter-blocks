@@ -425,6 +425,30 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<circle ', $result );
 	}
 
+	public function test_icon_block_renders_builtin_icon_with_default_dimensions() {
+		$result = $this->render_icon_block(
+			array(
+				'icon' => 'zap',
+			)
+		);
+
+		$this->assertStringContainsString( 'width="1em"', $result );
+		$this->assertStringContainsString( 'height="1em"', $result );
+	}
+
+	public function test_icon_block_custom_svg_keeps_own_dimensions_without_default() {
+		$result = $this->render_icon_block(
+			array(
+				'customSvgEnabled' => true,
+				'customSvg'        => '<svg width="32" height="32" viewBox="0 0 10 10"><path d="M1 1h8v8H1z"/></svg>',
+			)
+		);
+
+		$this->assertStringContainsString( 'width="32"', $result );
+		$this->assertStringContainsString( 'height="32"', $result );
+		$this->assertStringNotContainsString( '1em', $result );
+	}
+
 	// -------------------------------------------------------
 	// render_animation_attrs
 	// -------------------------------------------------------

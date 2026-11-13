@@ -332,8 +332,9 @@ if ( ! isset( $aw_icons_map[ $icon ] ) ) {
 
 $wrapper_attrs = get_block_wrapper_attributes();
 
+// Fallback size until the Tailwind utilities load, so the SVG does not paint at the browser default size. The size utilities override these attributes once their CSS is applied.
 // Safe: inner markup from plugin-bundled Lucide icons only.
-echo '<svg ' . $wrapper_attrs . ' viewBox="0 0 24 24" fill="none" stroke="currentColor" ' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+echo '<svg ' . $wrapper_attrs . ' width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	. 'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
 	. $aw_icons_map[ $icon ] // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	. '</svg>';
