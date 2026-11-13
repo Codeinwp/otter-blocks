@@ -1,12 +1,58 @@
+// Dividers and vertical item rules are scoped to direct children so a sub-list
+// styled by its own settings, never by the list it sits in. The editor nests its
+// items inside wrapper elements, so editor.scss mirrors these with its own selectors.
+@mixin icon-list-divider-vertical {
+	border-bottom: var(--divider-width) solid var(--divider-color);
+	content: "";
+	position: absolute;
+	height: 100%;
+	width: var(--divider-length);
+	box-sizing: content-box;
+	margin-left: var(--divider-margin-left);
+	margin-right: var(--divider-margin-right);
+
+	@media (min-width: 600px) and (max-width: 960px) {
+		margin-left: var(--divider-margin-left-tablet);
+		margin-right: var(--divider-margin-right-tablet);
+	}
+
+	@media (max-width: 600px) {
+		margin-left: var(--divider-margin-left-mobile);
+		margin-right: var(--divider-margin-right-mobile);
+	}
+}
+
+@mixin icon-list-divider-horizontal {
+	border-right: var(--divider-width) solid var(--divider-color);
+	content: "";
+	position: absolute;
+	height: var(--divider-length);
+	width: 100%;
+	box-sizing: content-box;
+}
+
+@mixin icon-list-item-vertical {
+	width: 100%;
+	justify-content: var( --icon-align );
+
+	@media (min-width: 600px) and (max-width: 960px) {
+		justify-content: var( --icon-align-tablet );
+	}
+
+	@media (max-width: 600px) {
+		justify-content: var( --icon-align-mobile );
+	}
+}
+
 .wp-block-themeisle-blocks-icon-list {
 	--horizontal-align: unset; // legacy
 
 	--icon-align: var(--horizontal-align);
 	--icon-align-tablet: var(--icon-align-tablet);
 	--icon-align-mobile: var(--icon-align-mobile);
-	--gap: 5px;
-	--gap-icon-label: 10px;
-	--font-size: inherit;
+		--gap: 5px;
+		--gap-icon-label: 10px;
+		--font-size: inherit;
 	--icon-size: 12px;
 	--content-color: inherit;
 	--label-visibility: block;
@@ -58,59 +104,39 @@
 		}
 	}
 
+	.wp-block-themeisle-blocks-icon-list-item.has-sublist {
+		flex-wrap: wrap;
+
+		> .wp-block-themeisle-blocks-icon-list {
+			flex-basis: 100%;
+		}
+	}
+
+		// The indent is inherited from the parent list, so its control moves
+		// existing sub-lists live. A sub-list can override it for deeper levels.
+		// Declaring a default here would block that inheritance.
+		.wp-block-themeisle-blocks-icon-list {
+			padding-inline-start: var(--sublist-indent, 32px);
+		}
+
 	&.is-style-horizontal {
 		flex-wrap: wrap;
 		flex-direction: row;
 		width: 100%;
 
-		&.has-divider .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {
-			border-right: var(--divider-width) solid var(--divider-color);
-			content: "";
-			position: absolute;
-			// bottom: 0;
-			// right: 0;
-			height: var(--divider-length);
-			width: 100%;
-			box-sizing: content-box;
+		&.has-divider > .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {
+			@include icon-list-divider-horizontal;
 		}
 	}
 
 	&:not(.is-style-horizontal) {
 
-		.wp-block-themeisle-blocks-icon-list-item {
-			width: 100%;
-			justify-content: var( --icon-align );
-
-			@media (min-width: 600px) and (max-width: 960px) {
-				justify-content: var( --icon-align-tablet );
-			}
-
-			@media (max-width: 600px) {
-				justify-content: var( --icon-align-mobile );
-			}
+		> .wp-block-themeisle-blocks-icon-list-item {
+			@include icon-list-item-vertical;
 		}
 
-		&.has-divider .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {
-			border-bottom: var(--divider-width) solid var(--divider-color);
-			content: "";
-			position: absolute;
-			// bottom: 0;
-			// left: 0;
-			height: 100%;
-			width: var(--divider-length);
-			box-sizing: content-box;
-			margin-left: var(--divider-margin-left);
-			margin-right: var(--divider-margin-right);
-
-			@media (min-width: 600px) and (max-width: 960px) {
-				margin-left: var(--divider-margin-left-tablet);
-				margin-right: var(--divider-margin-right-tablet);
-			}
-
-			@media (max-width: 600px) {
-				margin-left: var(--divider-margin-left-mobile);
-				margin-right: var(--divider-margin-right-mobile);
-			}
+		&.has-divider > .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {
+			@include icon-list-divider-vertical;
 		}
 	}
 

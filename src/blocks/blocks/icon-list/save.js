@@ -13,7 +13,8 @@ const Save = ({
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className: classNames( className, { 'has-divider': Boolean( attributes.hasDivider ) })
+		className: classNames( className, { 'has-divider': Boolean( attributes.hasDivider ) }),
+		role: 'list'
 	});
 
 	return (

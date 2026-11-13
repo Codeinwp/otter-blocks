@@ -49,6 +49,7 @@ const Edit = ({
 		'--icon-align-mobile': attributes.alignmentMobile,
 		'--gap': _px( attributes.gap ),
 		'--gap-icon-label': attributes.gapIconLabel,
+		'--sublist-indent': _px( attributes.sublistIndent ),
 		'--font-size': _px( attributes.defaultSize ),
 		'--icon-size': attributes.defaultIconSize,
 		'--label-visibility': attributes.hideLabels ? 'none' : undefined,

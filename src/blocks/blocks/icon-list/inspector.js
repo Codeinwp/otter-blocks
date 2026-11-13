@@ -331,6 +331,22 @@ const Inspector = ({
 									}
 								]}
 							/>
+
+							<br/>
+
+							<UnitControl
+								label={ __( 'Sub-list Indent', 'otter-blocks' ) }
+								value={ attributes.sublistIndent ?? '32px' }
+								onChange={ sublistIndent => setAttributes({ sublistIndent }) }
+								units={[
+									{
+										a11yLabel: 'Pixels (px)',
+										label: 'px',
+										step: 1,
+										value: 'px'
+									}
+								]}
+							/>
 						</PanelBody>
 						<PanelBody
 							title={ __( 'Divider', 'otter-blocks' ) }

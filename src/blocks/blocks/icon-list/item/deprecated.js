@@ -15,6 +15,7 @@ import {
  * Internal dependencies
  */
 import themeIsleIcons from './../../../helpers/themeisle-icons.js';
+import metadata from './block.json';
 
 const attributes = {
 	id: {
@@ -41,6 +42,57 @@ const attributes = {
 };
 
 const deprecated = [{
+	// Markup before sub-list support, which added the list role.
+	attributes: { ...metadata.attributes },
+
+	save: ({
+		attributes
+	}) => {
+		const iconClassName = `${ attributes.iconPrefix } fa-${ attributes.icon }`;
+		const Icon = themeIsleIcons.icons[ attributes.icon ];
+
+		const blockProps = useBlockProps.save({
+			id: attributes.id
+		});
+
+		return (
+			<div { ...blockProps }>
+				{
+					'image' === attributes.library && attributes.icon ? (
+						<img src={ attributes.icon } alt={ attributes.iconAlt || '' } />
+					) : (
+						'themeisle-icons' === attributes.library && attributes.icon ? (
+							<Icon
+								className={ classnames(
+									{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
+									{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
+								) }
+							/>
+						) : (
+							<i
+								className={ classnames(
+									iconClassName,
+									{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
+									{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
+								) }
+							></i>
+						)
+					)
+				}
+
+
+				<RichText.Content
+					tagName="p"
+					className={ classnames(
+						{ 'wp-block-themeisle-blocks-icon-list-item-content': ! attributes.contentColor },
+						{ 'wp-block-themeisle-blocks-icon-list-item-content-custom': attributes.contentColor }
+					) }
+					value={ attributes.content }
+				/>
+			</div>
+		);
+	}
+}, {
 	attributes,
 
 	migrate: oldAttributes => ({
