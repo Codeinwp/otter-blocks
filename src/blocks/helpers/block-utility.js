@@ -120,6 +120,24 @@ const isEmptyId = ( clientId ) => {
 };
 
 /**
+ * Restrict a block id to characters that are safe in HTML id attributes and
+ * CSS selectors. ASCII punctuation, spaces and control characters are dropped,
+ * while hyphens, underscores and non-ASCII letters are kept, so ids that
+ * already work in the saved markup are never renamed. The same rule applies on
+ * the PHP side in CSS_Utility::sanitize_block_id(). See https://github.com/Codeinwp/otter-blocks/issues/3085.
+ *
+ * @param {unknown} id The raw block id.
+ * @return {string} The sanitized id.
+ */
+export const sanitizeBlockId = ( id ) => {
+	if ( 'string' !== typeof id ) {
+		return '';
+	}
+
+	return id.replace( /[^\u0080-\uFFFFa-zA-Z0-9_-]/g, '' );
+};
+
+/**
  * Generate an Id based on the client id of the block. If the new id is also already used, create a new one using the `uuid`.
  * This might problem of duplicated new ids can be observed in the `Template Library` of the `Section` block when using Neve
  * Reference: https://github.com/Codeinwp/neve/blob/master/gutenberg/blocks/blog/template.json
@@ -133,11 +151,11 @@ const isEmptyId = ( clientId ) => {
  */
 const generateUniqIdInstance = ( idPrefix, clientId, idsList ) => {
 
-	const instanceId = `${ idPrefix }${ clientId.slice( 0, 8 ) }`;
+	const instanceId = sanitizeBlockId( `${ idPrefix }${ clientId.slice( 0, 8 ) }` );
 	if ( idsList.has( instanceId ) ) {
-		let newInstanceId = `${ idPrefix }${ uuidv4().slice( 0, 8 ) }`;
+		let newInstanceId = sanitizeBlockId( `${ idPrefix }${ uuidv4().slice( 0, 8 ) }` );
 		while ( idsList.has( newInstanceId ) ) {
-			newInstanceId = `${ idPrefix }${ uuidv4().slice( 0, 8 ) }`;
+			newInstanceId = sanitizeBlockId( `${ idPrefix }${ uuidv4().slice( 0, 8 ) }` );
 		}
 		return newInstanceId;
 	}
@@ -196,6 +214,31 @@ export const addBlockId = ( args ) => {
 
 	// Initialize with an empty array the id list for the given block
 	localIDs[name] ??= new Set();
+
+	// Stored ids end up in the markup and in CSS selectors, so keep only safe characters.
+	if ( attributes.id ) {
+		const sanitizedId = sanitizeBlockId( attributes.id );
+
+		if ( sanitizedId !== attributes.id ) {
+
+			// Adopt the sanitized form, unless it is empty or used elsewhere on the page, in which case a fresh id is generated.
+			const instanceId = sanitizedId && ! localIDs[name].has( sanitizedId ) && ! blockIDs.includes( sanitizedId ) ?
+				sanitizedId :
+				generateUniqIdInstance( idPrefix || generatePrefix( name ), clientId, localIDs[name] );
+
+			localIDs[name].add( instanceId );
+			blockIDs.push( instanceId );
+			setAttributes({ id: instanceId });
+
+			return ( savedId ) => {
+				idGenerationStatus[clientId] = 'free';
+
+				// Callers with stale closures hand over the pre-sanitizing id, so drop both of them.
+				localIDs[name].delete( instanceId );
+				localIDs[name].delete( savedId || attributes.id );
+			};
+		}
+	}
 
 	// Check if the ID is already used. EXCLUDE the one that come from reusable blocks.
 	const idIsAlreadyUsed = Boolean( attributes.id && localIDs[name].has( attributes.id ) );

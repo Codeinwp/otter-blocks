@@ -10,6 +10,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
 use ThemeIsle\GutenbergBlocks\Pro;
 use WP_Error;
 use WP_Query;
@@ -723,15 +724,16 @@ class Abilities {
 		}
 
 		foreach ( $this->find_blocks( parse_blocks( $post->post_content ), array( self::FORM_BLOCK ) ) as $block ) {
-			$attrs    = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
-			$form_id  = isset( $attrs['optionName'] ) && is_string( $attrs['optionName'] ) ? $attrs['optionName'] : '';
-			$block_id = isset( $attrs['id'] ) && is_string( $attrs['id'] ) ? $attrs['id'] : '';
-			$saved    = isset( $settings[ $form_id ] ) ? $settings[ $form_id ] : array();
+			$attrs       = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+			$form_id     = isset( $attrs['optionName'] ) && is_string( $attrs['optionName'] ) ? $attrs['optionName'] : '';
+			$block_id    = isset( $attrs['id'] ) && is_string( $attrs['id'] ) ? $attrs['id'] : '';
+			$selector_id = CSS_Utility::sanitize_block_id( $block_id );
+			$saved       = isset( $settings[ $form_id ] ) ? $settings[ $form_id ] : array();
 
 			$forms[] = array(
 				'form_id'        => $form_id,
 				'block_id'       => $block_id,
-				'block_selector' => '' !== $block_id ? '#' . $block_id : '',
+				'block_selector' => '' !== $selector_id ? '#' . $selector_id : '',
 				'post_id'        => (int) $post->ID,
 				'post_title'     => get_the_title( $post ),
 				'fields'         => $this->get_form_fields( $block ),
