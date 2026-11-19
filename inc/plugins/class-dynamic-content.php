@@ -97,7 +97,7 @@ class Dynamic_Content {
 				$patterns['core/legacy-widget'] = '/(<form\b)(.*?)(<\/form>)/is';
 			}
 		}
-		if ( ! isset( $patterns[ $block['blockName'] ] ) ) {
+		if ( ! is_string( $block['blockName'] ) || ! isset( $patterns[ $block['blockName'] ] ) ) {
 			return $content;
 		}
 

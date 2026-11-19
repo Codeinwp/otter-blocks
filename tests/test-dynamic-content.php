@@ -2684,4 +2684,22 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		$this->assertSame( 2, substr_count( $result, 'Sibling body' ) );
 	}
+
+	public function test_freeform_block_passes_visitor_escaping_without_notices(): void {
+		$blocks = parse_blocks( '<p>Example</p>' );
+		$this->assertNull( $blocks[0]['blockName'] );
+
+		$captured = array();
+		set_error_handler(
+			function ( int $errno, string $errstr ) use ( &$captured ): bool {
+				$captured[] = $errstr;
+				return true;
+			}
+		);
+		$result = $this->dynamic_content->escape_visitor_block_magic_tags( '<p>Example</p>', $blocks[0] );
+		restore_error_handler();
+
+		$this->assertSame( array(), $captured );
+		$this->assertSame( '<p>Example</p>', $result );
+	}
 }
