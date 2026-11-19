@@ -1,4 +1,4 @@
-import { prefixCss, scopeToAtomicWind, splitSelectorList } from '../scope-css';
+import { prefixCss, scopeToAtomicWind, splitSelectorList, transformCssSelectors } from '../scope-css';
 
 const MATCH = ':where([class*="wp-block-atomic-wind-"], [class*="wp-block-atomic-wind-"] *)';
 const SELF = ':where([class*="wp-block-atomic-wind-"])';
@@ -52,8 +52,8 @@ describe( 'scopeToAtomicWind', () => {
 		);
 	} );
 
-	it( 'drops document-level inherited styling instead of moving it onto the block wrapper', () => {
-		expect( scopeToAtomicWind( 'html, :host{line-height:1.5;tab-size:4}' ) ).toBe( '' );
+	it( 'keeps only wrapper-safe declarations of a document-level rule', () => {
+		expect( scopeToAtomicWind( 'html, :host{line-height:1.5;tab-size:4}' ) ).toBe( `${ SELF }{tab-size:4}` );
 	} );
 
 	it( 'moves theme variables onto the block wrapper so they cannot shadow theme ones', () => {
@@ -154,19 +154,20 @@ describe( 'scopeToAtomicWind', () => {
 		expect( scopeToAtomicWind( '' ) ).toBe( '' );
 	} );
 
-	it( 'drops the minified preflight root rule, whose values only reference variables', () => {
+	it( 'strips the typography from the minified preflight root rule', () => {
 		const css = 'html, :host{line-height:1.5;-webkit-text-size-adjust:100%;tab-size:4;font-family:var(--default-font-family, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji");font-feature-settings:var(--default-font-feature-settings, normal);font-variation-settings:var(--default-font-variation-settings, normal);-webkit-tap-highlight-color:transparent}';
 
-		expect( scopeToAtomicWind( css ) ).toBe( '' );
+		expect( scopeToAtomicWind( css ) ).toBe( `${ SELF }{-webkit-text-size-adjust:100%;tab-size:4;-webkit-tap-highlight-color:transparent}` );
 	} );
 
-	it( 'drops the pretty-printed preflight root rule', () => {
+	it( 'drops typography from the pretty-printed preflight root rule', () => {
 		const css = 'html, :host {\n  line-height: 1.5;\n  font-family: var(--default-font-family, ui-sans-serif);\n}';
 
 		expect( scopeToAtomicWind( css ) ).toBe( '' );
+		expect( scopeToAtomicWind( 'html, :host {\n  line-height: 1.5;\n  tab-size: 4;\n}' ) ).toBe( `${ SELF }{\n  tab-size: 4;\n}` );
 	} );
 
-	it.each( [ 'html', 'body', ':root', ':host' ] )( 'drops a %s rule that declares no custom property', ( root ) => {
+	it.each( [ 'html', 'body', ':root', ':host' ] )( 'drops a %s rule that declares only typography', ( root ) => {
 		expect( scopeToAtomicWind( `${ root }{font-family:serif}` ) ).toBe( '' );
 	} );
 
@@ -176,8 +177,57 @@ describe( 'scopeToAtomicWind', () => {
 		);
 	} );
 
-	it( 'keeps a root rule whole when it mixes variables with standard declarations', () => {
-		expect( scopeToAtomicWind( ':root{color:red;--x:1}' ) ).toBe( `${ SELF }{color:red;--x:1}` );
+	it( 'drops standard declarations from a root rule that also declares variables', () => {
+		expect( scopeToAtomicWind( ':root{color:red;--x:1}' ) ).toBe( `${ SELF }{--x:1}` );
+	} );
+
+	it( 'splits a mixed selector list when the root part loses declarations', () => {
+		expect( scopeToAtomicWind( 'html, h1{tab-size:4;line-height:1.5}' ) ).toBe( `${ SELF }{tab-size:4}h1${ MATCH }{tab-size:4;line-height:1.5}` );
+	} );
+
+	it( 'keeps every wrapper-safe root default', () => {
+		expect( scopeToAtomicWind( 'body{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent;color:red}' ) ).toBe(
+			`${ SELF }{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent}`
+		);
+	} );
+
+	it( 'matches property names case-insensitively', () => {
+		expect( scopeToAtomicWind( 'html{LINE-HEIGHT:1.5;TAB-SIZE:4}' ) ).toBe( `${ SELF }{TAB-SIZE:4}` );
+	} );
+
+	it( 'does not split declarations on a semicolon inside a string', () => {
+		expect( scopeToAtomicWind( ':root{--x:"a;b";color:red}' ) ).toBe( `${ SELF }{--x:"a;b"}` );
+		expect( scopeToAtomicWind( 'html{content:"a;--x:1"}' ) ).toBe( '' );
+	} );
+
+	it( 'does not split declarations on a semicolon inside parentheses or brackets', () => {
+		expect( scopeToAtomicWind( ':root{--x:url(a;b);color:red;--y:[c;d]}' ) ).toBe( `${ SELF }{--x:url(a;b);--y:[c;d]}` );
+	} );
+
+	it( 'does not split declarations on an escaped semicolon', () => {
+		expect( scopeToAtomicWind( ':root{--x:a\\;b;color:red}' ) ).toBe( `${ SELF }{--x:a\\;b}` );
+	} );
+
+	it( 'keeps escaped and non-ASCII custom property names', () => {
+		expect( scopeToAtomicWind( ':root{--\\31 x:1;--é:2}' ) ).toBe( `${ SELF }{--\\31 x:1;--é:2}` );
+	} );
+
+	it( 'drops the comments of a root rule it rewrites', () => {
+		expect( scopeToAtomicWind( 'html{/* note */line-height:1.5;tab-size:4}' ) ).toBe( `${ SELF }{tab-size:4}` );
+		expect( scopeToAtomicWind( 'html{line-height:1.5;/* note */tab-size:4}' ) ).toBe( `${ SELF }{tab-size:4}` );
+	} );
+
+	it( 'does not read a comment opener inside a string as a comment', () => {
+		expect( scopeToAtomicWind( ':root{--x:"/* not a comment */";color:red}' ) ).toBe( `${ SELF }{--x:"/* not a comment */"}` );
+		expect( scopeToAtomicWind( ':root{--i:"/*";font-family:x;--j:"*/"}' ) ).toBe( `${ SELF }{--i:"/*";--j:"*/"}` );
+	} );
+
+	it( 'does not read a comment opener inside url() as a comment', () => {
+		expect( scopeToAtomicWind( ':root{--a:url(/img/*.png);color:red;--b:url(/x/*/y)}' ) ).toBe( `${ SELF }{--a:url(/img/*.png);--b:url(/x/*/y)}` );
+	} );
+
+	it( 'does not treat a variable referenced in a value as a declaration', () => {
+		expect( scopeToAtomicWind( 'html{font-family:var(--default-font-family, serif)}' ) ).toBe( '' );
 	} );
 
 	it( 'drops only the root selector from a mixed selector list', () => {
@@ -193,6 +243,9 @@ describe( 'scopeToAtomicWind', () => {
 			`@layer base{h1${ MATCH }{font-size:inherit}}`
 		);
 		expect( scopeToAtomicWind( '@media (width >= 48rem){html{line-height:2}}' ) ).toBe( '@media (width >= 48rem){}' );
+		expect( scopeToAtomicWind( '@layer base{html, :host{line-height:1.5;tab-size:4}h1{font-size:inherit}}' ) ).toBe(
+			`@layer base{${ SELF }{tab-size:4}h1${ MATCH }{font-size:inherit}}`
+		);
 	} );
 
 	it( 'still scopes typography rules that use a root as an ancestor', () => {
@@ -216,6 +269,12 @@ describe( 'scopeToAtomicWind', () => {
 } );
 
 describe( 'prefixCss', () => {
+	it( 'prefixes the wrapper-safe root defaults', () => {
+		expect( prefixCss( scopeToAtomicWind( 'html, :host{line-height:1.5;tab-size:4}' ), ':where(.editor-styles-wrapper)' ) ).toBe(
+			`:where(.editor-styles-wrapper) ${ SELF }{tab-size:4}`
+		);
+	} );
+
 	it( 'prefixes a scoped stylesheet without reintroducing root typography', () => {
 		const scoped = scopeToAtomicWind( 'html, :host{line-height:1.5}:root, :host{--spacing:0.25rem}h1{font-size:inherit}' );
 
@@ -258,5 +317,23 @@ describe( 'prefixCss', () => {
 
 	it( 'returns the stylesheet untouched without a scope selector', () => {
 		expect( prefixCss( 'h1{color:red}', '' ) ).toBe( 'h1{color:red}' );
+	} );
+} );
+
+describe( 'transformCssSelectors', () => {
+	it( 'emits the pairs a transform returns in place of the rule', () => {
+		expect(
+			transformCssSelectors( 'a{x:1}b{y:2}', ( selector, body ) => 'a' === selector ? [[ 'c', 'z:3' ], [ 'd', body ]] : selector )
+		).toBe( 'c{z:3}d{x:1}b{y:2}' );
+	} );
+
+	it( 'drops the rule for an empty pair list and skips pairs without a selector', () => {
+		expect(
+			transformCssSelectors( 'a{x:1}b{y:2}', ( selector, body ) => 'a' === selector ? [] : [[ '', 'q:1' ], [ selector, body ]] )
+		).toBe( 'b{y:2}' );
+	} );
+
+	it( 'still drops a rule on a falsy return', () => {
+		expect( transformCssSelectors( 'a{x:1}b{y:2}', ( selector ) => 'a' === selector ? '' : selector ) ).toBe( 'b{y:2}' );
 	} );
 } );

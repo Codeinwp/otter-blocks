@@ -1,7 +1,7 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const { compile } = require( 'tailwindcss' );
-const { scopeToAtomicWind, splitSelectorList, transformCssSelectors } = require( '../scope-css' );
+const { prefixCss, scopeToAtomicWind, splitSelectorList, transformCssSelectors } = require( '../scope-css' );
 
 const WRAPPER = ':where([class*="wp-block-atomic-wind-"])';
 
@@ -44,6 +44,18 @@ function collectRules( css ) {
 	return rules;
 }
 
+function declarationNames( body ) {
+	return body
+		.replace( /\/\*[\s\S]*?\*\//g, '' )
+		.split( ';' )
+		.map( ( declaration ) => declaration.trim() )
+		.filter( Boolean )
+		.map( ( declaration ) => declaration.slice( 0, declaration.indexOf( ':' ) ).trim().toLowerCase() );
+}
+
+const WRAPPER_PROPERTY = /^(--.+|tab-size|(-webkit-)?text-size-adjust|-webkit-tap-highlight-color)$/;
+const TYPOGRAPHY = [ 'font-family', 'font-feature-settings', 'font-variation-settings', 'line-height' ];
+
 describe( 'scopeToAtomicWind against the real Tailwind compiler', () => {
 	let raw;
 	let rawRules;
@@ -65,19 +77,66 @@ describe( 'scopeToAtomicWind against the real Tailwind compiler', () => {
 		expect( rule ).toBeDefined();
 	} );
 
-	it( 'puts no standard declaration on the block wrapper', () => {
+	it( 'puts only wrapper-safe declarations on the block wrapper', () => {
 		const wrapperRules = scopedRules.filter( ( { selector } ) => selector === WRAPPER );
 
 		expect( wrapperRules.length ).toBeGreaterThan( 0 );
-		const offenders = wrapperRules.flatMap( ( { body } ) =>
-			body
-				.replace( /\/\*[\s\S]*?\*\//g, '' )
-				.split( ';' )
-				.map( ( declaration ) => declaration.trim() )
-				.filter( ( declaration ) => declaration && ! /^--[\w-]+\s*:/.test( declaration ) )
-		);
+		const offenders = wrapperRules.flatMap( ( { body } ) => declarationNames( body ) ).filter( ( name ) => ! WRAPPER_PROPERTY.test( name ) );
 
 		expect( offenders ).toEqual( [] );
+	} );
+
+	it( 'removes exactly the inherited typography from the root rule', () => {
+		const rawRule = rawRules.find(
+			( { selector, body } ) =>
+				splitSelectorList( selector ).includes( 'html' ) && /font-family\s*:/.test( body ) && /line-height\s*:/.test( body )
+		);
+		const wrapperRule = scopedRules.find( ( { selector, body } ) => selector === WRAPPER && /tab-size\s*:/.test( body ) );
+		const rawNames = declarationNames( rawRule.body );
+		const wrapperNames = declarationNames( wrapperRule.body );
+		const removed = rawNames.filter( ( name ) => ! wrapperNames.includes( name ) ).sort();
+
+		expect( removed ).toEqual( TYPOGRAPHY );
+		expect( wrapperNames.sort() ).toEqual( rawNames.filter( ( name ) => ! removed.includes( name ) ).sort() );
+	} );
+
+	it( 'keeps the non-typographic root defaults on the block wrapper', () => {
+		const found = scopedRules
+			.filter( ( { selector } ) => selector === WRAPPER )
+			.some( ( { body } ) => {
+				const names = declarationNames( body );
+				return [ 'tab-size', '-webkit-text-size-adjust', '-webkit-tap-highlight-color' ].every( ( name ) => names.includes( name ) );
+			} );
+
+		expect( found ).toBe( true );
+	} );
+
+	describe.each( [ ':where(.editor-styles-wrapper)', ':where(.is-root-container)' ] )( 'prefixed for a non-iframe editor with %s', ( container ) => {
+		let prefixedRules;
+
+		beforeAll( () => {
+			prefixedRules = collectRules( prefixCss( scopeToAtomicWind( raw ), container ) );
+		} );
+
+		it( 'prefixes every rule with the container', () => {
+			const selectors = prefixedRules.flatMap( ( { selector } ) => splitSelectorList( selector ) );
+
+			expect( selectors.length ).toBeGreaterThan( 0 );
+			expect( selectors.filter( ( selector ) => ! selector.startsWith( `${ container } ` ) ) ).toEqual( [] );
+		} );
+
+		it( 'puts nothing on the container itself', () => {
+			const selectors = prefixedRules.flatMap( ( { selector } ) => splitSelectorList( selector ) );
+
+			expect( selectors.filter( ( selector ) => selector === container ) ).toEqual( [] );
+		} );
+
+		it( 'keeps inherited typography off the block wrappers', () => {
+			const wrapperRules = prefixedRules.filter( ( { selector } ) => selector === `${ container } ${ WRAPPER }` );
+
+			expect( wrapperRules.length ).toBeGreaterThan( 0 );
+			expect( wrapperRules.flatMap( ( { body } ) => declarationNames( body ) ).filter( ( name ) => TYPOGRAPHY.includes( name ) ) ).toEqual( [] );
+		} );
 	} );
 
 	it( 'keeps theme variables on the block wrapper', () => {
