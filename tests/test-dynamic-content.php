@@ -2685,21 +2685,29 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertSame( 2, substr_count( $result, 'Sibling body' ) );
 	}
 
-	public function test_freeform_block_passes_visitor_escaping_without_notices(): void {
-		$blocks = parse_blocks( '<p>Example</p>' );
-		$this->assertNull( $blocks[0]['blockName'] );
+	public function test_unnamed_blocks_pass_visitor_escaping_without_notices(): void {
+		$freeform = parse_blocks( '<p>Example</p>' )[0];
+		$this->assertNull( $freeform['blockName'] );
 
-		$captured = array();
-		set_error_handler(
-			function ( int $errno, string $errstr ) use ( &$captured ): bool {
-				$captured[] = $errstr;
-				return true;
-			}
+		$blocks = array(
+			'freeform'    => $freeform,
+			'missing key' => array( 'attrs' => array() ),
+			'integer'     => array( 'blockName' => 5 ),
+			'array'       => array( 'blockName' => array( 'core/search' ) ),
 		);
-		$result = $this->dynamic_content->escape_visitor_block_magic_tags( '<p>Example</p>', $blocks[0] );
-		restore_error_handler();
+		foreach ( $blocks as $label => $block ) {
+			$captured = array();
+			set_error_handler(
+				function ( int $errno, string $errstr ) use ( &$captured ): bool {
+					$captured[] = $errstr;
+					return true;
+				}
+			);
+			$result = $this->dynamic_content->escape_visitor_block_magic_tags( '<p>Example</p>', $block );
+			restore_error_handler();
 
-		$this->assertSame( array(), $captured );
-		$this->assertSame( '<p>Example</p>', $result );
+			$this->assertSame( array(), $captured, $label );
+			$this->assertSame( '<p>Example</p>', $result, $label );
+		}
 	}
 }

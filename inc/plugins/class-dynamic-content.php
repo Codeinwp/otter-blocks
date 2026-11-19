@@ -71,11 +71,15 @@ class Dynamic_Content {
 	/**
 	 * Protect rendered visitor values before the generic Magic Tag filters run.
 	 *
-	 * @param string                                                                     $content Rendered markup.
-	 * @param array{blockName: string|null, attrs?: array{id?: string, idBase?: string}} $block Parsed block.
+	 * @param string                                                                $content Rendered markup.
+	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string}} $block Parsed block.
 	 * @return string
 	 */
 	public function escape_visitor_block_magic_tags( $content, $block ) {
+		if ( ! isset( $block['blockName'] ) || ! is_string( $block['blockName'] ) ) {
+			return $content;
+		}
+
 		if ( 'core/term-description' === $block['blockName'] ) {
 			return $this->escape_comment_magic_tags( $content );
 		}
@@ -97,7 +101,7 @@ class Dynamic_Content {
 				$patterns['core/legacy-widget'] = '/(<form\b)(.*?)(<\/form>)/is';
 			}
 		}
-		if ( ! is_string( $block['blockName'] ) || ! isset( $patterns[ $block['blockName'] ] ) ) {
+		if ( ! isset( $patterns[ $block['blockName'] ] ) ) {
 			return $content;
 		}
 
