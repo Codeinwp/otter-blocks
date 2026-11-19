@@ -23,6 +23,15 @@ class Atomic_Wind_Blocks {
 	const ATOMIC_WIND_CSS_VERSION = '1.0.2';
 
 	/**
+	 * Stylesheet migrations, keyed by the version they upgrade from: [ next version, method ].
+	 *
+	 * @var array<string, array{string, string}>
+	 */
+	const CSS_MIGRATIONS = array(
+		'1.0.1' => array( '1.0.2', 'remove_wrapper_typography' ),
+	);
+
+	/**
 	 * Whether we are currently inside a query loop render.
 	 *
 	 * @var bool
@@ -835,19 +844,147 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * Read cached CSS, ignoring stylesheets built by an older generator.
+	 * Read cached CSS, upgrading older stylesheets in place and ignoring those that cannot be upgraded.
 	 *
 	 * @param int $post_id Post ID.
 	 * @return string
 	 */
 	private function get_cached_css( $post_id ) {
-		if ( self::ATOMIC_WIND_CSS_VERSION !== get_post_meta( $post_id, '_atomic_wind_css_version', true ) ) {
+		$version = get_post_meta( $post_id, '_atomic_wind_css_version', true );
+		$css     = get_post_meta( $post_id, '_atomic_wind_css', true );
+
+		if ( ! is_string( $css ) || '' === $css ) {
 			return '';
 		}
 
-		$css = get_post_meta( $post_id, '_atomic_wind_css', true );
+		$migrated = false;
 
-		return is_string( $css ) ? \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css ) : '';
+		while ( self::ATOMIC_WIND_CSS_VERSION !== $version && is_string( $version ) && isset( self::CSS_MIGRATIONS[ $version ] ) ) {
+			list( $version, $method ) = self::CSS_MIGRATIONS[ $version ];
+
+			$css      = $this->$method( $css );
+			$migrated = true;
+
+			if ( ! is_string( $css ) || '' === $css ) {
+				return '';
+			}
+		}
+
+		if ( self::ATOMIC_WIND_CSS_VERSION !== $version ) {
+			return '';
+		}
+
+		if ( $migrated ) {
+			update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $css ) );
+			update_post_meta( $post_id, '_atomic_wind_css_version', $version );
+		}
+
+		return \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css );
+	}
+
+	/**
+	 * Drop the typography declarations the 1.0.1 generator put on the block wrapper rule.
+	 *
+	 * @param string $css Stylesheet.
+	 * @return string|null Null when the result cannot be vouched for.
+	 */
+	private function remove_wrapper_typography( $css ) {
+		$failed = false;
+		$result = preg_replace_callback(
+			'/(?<=^|[{};])(\s*:where\(\[class\*="wp-block-atomic-wind-"\]\)\s*)\{([^{}]*)\}/',
+			function ( $rule ) use ( &$failed ) {
+				$declarations = $this->split_declarations( $rule[2] );
+
+				if ( null === $declarations ) {
+					$failed = true;
+					return $rule[0];
+				}
+
+				$trailing = null;
+
+				if ( '' === trim( end( $declarations ) ) ) {
+					$trailing = array_pop( $declarations );
+				}
+
+				$kept = array_filter(
+					$declarations,
+					function ( $declaration ) {
+						$property = strtolower( trim( (string) strstr( $declaration, ':', true ) ) );
+
+						return ! in_array( $property, array( 'line-height', 'font-family', 'font-feature-settings', 'font-variation-settings' ), true );
+					}
+				);
+
+				if ( count( $kept ) === count( $declarations ) ) {
+					return $rule[0];
+				}
+
+				if ( '' === trim( implode( '', $kept ) ) ) {
+					return '';
+				}
+
+				return $rule[1] . '{' . implode( ';', $kept ) . ( null === $trailing ? '' : ';' . $trailing ) . '}';
+			},
+			$css
+		);
+
+		return $failed ? null : $result;
+	}
+
+	/**
+	 * Split a declaration block on its top-level semicolons.
+	 *
+	 * @param string $body Rule body.
+	 * @return string[]|null Null when the body has comments or unbalanced quotes or brackets.
+	 */
+	private function split_declarations( $body ) {
+		if ( false !== strpos( $body, '/*' ) ) {
+			return null;
+		}
+
+		$parts   = array();
+		$current = '';
+		$quote   = '';
+		$depth   = 0;
+		$length  = strlen( $body );
+
+		for ( $i = 0; $i < $length; $i++ ) {
+			$char = $body[ $i ];
+
+			if ( '\\' === $char ) {
+				$current .= $char . substr( $body, $i + 1, 1 );
+				++$i;
+				continue;
+			}
+
+			if ( '' !== $quote ) {
+				$quote = $char === $quote ? '' : $quote;
+			} elseif ( '"' === $char || "'" === $char ) {
+				$quote = $char;
+			} elseif ( '(' === $char || '[' === $char ) {
+				++$depth;
+			} elseif ( ')' === $char || ']' === $char ) {
+				--$depth;
+
+				if ( $depth < 0 ) {
+					return null;
+				}
+			} elseif ( ';' === $char && 0 === $depth ) {
+				$parts[] = $current;
+				$current = '';
+				continue;
+			}
+
+			$current .= $char;
+		}
+
+		if ( '' !== $quote || 0 !== $depth ) {
+			return null;
+		}
+
+		$parts[] = $current;
+
+		return $parts;
 	}
 
 	/**

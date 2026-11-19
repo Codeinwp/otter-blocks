@@ -239,8 +239,8 @@ function blockEnd( css, open ) {
  *
  * `transform` returns the selector list, a falsy value to drop the rule, or `[ selector, body ]` pairs to emit in its place.
  *
- * @param {string}   css       Stylesheet text.
- * @param {Function} transform Receives the selector list and the declaration block.
+ * @param {string}                                                                                                  css       Stylesheet text.
+ * @param {( selector: string, body: string ) => ( string | false | null | undefined | Array<[ string, string ]> )} transform Receives the selector list and the declaration block.
  * @return {string} Rewritten stylesheet.
  */
 export function transformCssSelectors( css, transform ) {

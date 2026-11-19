@@ -1540,18 +1540,222 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
 	}
 
-	public function test_output_singular_css_regenerates_css_stamped_by_the_previous_generator() {
+	private const WRAPPER_SELECTOR = ':where([class*="wp-block-atomic-wind-"])';
+
+	private const TYPOGRAPHY_DECLARATIONS = array(
+		'line-height:1.5',
+		'font-family:var(--default-font-family,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji")',
+		'font-feature-settings:var(--default-font-feature-settings,normal)',
+		'font-variation-settings:var(--default-font-variation-settings,normal)',
+	);
+
+	private const VARIABLES_RULE = ':where([class*="wp-block-atomic-wind-"]){--font-sans:ui-sans-serif,system-ui;--spacing:.25rem}';
+
+	private const UTILITY_RULE = '.font-serif:where([class*="wp-block-atomic-wind-"], [class*="wp-block-atomic-wind-"] *){font-family:var(--font-serif)}';
+
+	private const ELEMENT_RULE = 'h1:where([class*="wp-block-atomic-wind-"], [class*="wp-block-atomic-wind-"] *){font-size:inherit;line-height:inherit}';
+
+	/**
+	 * Helper: stamp a post's cached stylesheet and render its head output.
+	 *
+	 * @param string $css     Stylesheet to cache.
+	 * @param string $version Version stamp.
+	 * @return int Post ID.
+	 */
+	private function render_post_cached_as( $css, $version ) {
 		$this->reset_style_globals();
 
 		$singular = $this->make_atomic_wind_post( 'flex' );
-		update_post_meta( $singular, '_atomic_wind_css', '.flex{display:flex}' );
-		update_post_meta( $singular, '_atomic_wind_css_version', '1.0.1' );
+		update_post_meta( $singular, '_atomic_wind_css', wp_slash( $css ) );
+		update_post_meta( $singular, '_atomic_wind_css_version', $version );
 
 		$this->go_to( get_permalink( $singular ) );
 		$this->instance->output_singular_css();
 
+		return $singular;
+	}
+
+	/**
+	 * Helper: a minified 1.0.1 sheet, with the wrapper rule holding the given declarations.
+	 *
+	 * @param array $declarations Wrapper rule declarations.
+	 * @return string
+	 */
+	private function sheet_with_wrapper( array $declarations ) {
+		return self::VARIABLES_RULE . self::WRAPPER_SELECTOR . '{' . implode( ';', $declarations ) . '}' . self::UTILITY_RULE . self::ELEMENT_RULE;
+	}
+
+	private function legacy_wrapper_declarations() {
+		return array_merge(
+			array( self::TYPOGRAPHY_DECLARATIONS[0], '-webkit-text-size-adjust:100%', 'tab-size:4' ),
+			array_slice( self::TYPOGRAPHY_DECLARATIONS, 1 ),
+			array( '-webkit-tap-highlight-color:transparent' )
+		);
+	}
+
+	private function assert_migrated_sheet_is_served( $post_id, $expected ) {
+		$this->assertSame( $expected, $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertSame( '1.0.2', get_post_meta( $post_id, '_atomic_wind_css_version', true ) );
+		$this->assertSame( $expected, get_post_meta( $post_id, '_atomic_wind_css', true ) );
+	}
+
+	public function test_output_singular_css_migrates_css_stamped_by_the_previous_generator() {
+		$post_id = $this->render_post_cached_as( $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() ), '1.0.1' );
+
+		$expected = self::VARIABLES_RULE
+			. self::WRAPPER_SELECTOR . '{-webkit-text-size-adjust:100%;tab-size:4;-webkit-tap-highlight-color:transparent}'
+			. self::UTILITY_RULE
+			. self::ELEMENT_RULE;
+
+		$this->assert_migrated_sheet_is_served( $post_id, $expected );
+	}
+
+	public function test_output_singular_css_migrates_a_pretty_printed_sheet() {
+		$css = self::WRAPPER_SELECTOR . " {\n\t--spacing: .25rem;\n}\n\n"
+			. self::WRAPPER_SELECTOR . " {\n\tline-height: 1.5;\n\t-webkit-text-size-adjust: 100%;\n\ttab-size: 4;\n"
+			. "\tfont-family: var(--default-font-family, ui-sans-serif, \"Apple Color Emoji\");\n"
+			. "\tfont-feature-settings: var(--default-font-feature-settings, normal);\n"
+			. "\tFont-Variation-Settings: var(--default-font-variation-settings, normal);\n"
+			. "\t-webkit-tap-highlight-color: transparent;\n}\n\n" . self::ELEMENT_RULE;
+
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$expected = self::WRAPPER_SELECTOR . " {\n\t--spacing: .25rem;\n}\n\n"
+			. self::WRAPPER_SELECTOR . " {\n\t-webkit-text-size-adjust: 100%;\n\ttab-size: 4;\n"
+			. "\t-webkit-tap-highlight-color: transparent;\n}\n\n" . self::ELEMENT_RULE;
+
+		$this->assert_migrated_sheet_is_served( $post_id, $expected );
+	}
+
+	public function test_output_singular_css_migrates_a_wrapper_rule_inside_a_layer() {
+		$css      = '@layer base{' . $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() ) . '}';
+		$expected = '@layer base{' . self::VARIABLES_RULE
+			. self::WRAPPER_SELECTOR . '{-webkit-text-size-adjust:100%;tab-size:4;-webkit-tap-highlight-color:transparent}'
+			. self::UTILITY_RULE . self::ELEMENT_RULE . '}';
+
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $post_id, $expected );
+	}
+
+	public function test_output_singular_css_drops_a_wrapper_rule_left_empty_by_the_migration() {
+		$css      = '@layer base{' . $this->sheet_with_wrapper( self::TYPOGRAPHY_DECLARATIONS ) . '}';
+		$expected = '@layer base{' . self::VARIABLES_RULE . self::UTILITY_RULE . self::ELEMENT_RULE . '}';
+
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $post_id, $expected );
+	}
+
+	public function test_output_singular_css_keeps_a_current_sheet_untouched() {
+		$css     = $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() );
+		$post_id = $this->render_post_cached_as( $css, '1.0.2' );
+
+		$this->assert_migrated_sheet_is_served( $post_id, $css );
+	}
+
+	/**
+	 * @dataProvider data_unmigratable_versions
+	 */
+	public function test_output_singular_css_ignores_a_sheet_without_a_migration_path( $version ) {
+		$css     = $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() );
+		$post_id = $this->render_post_cached_as( $css, $version );
+
 		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind' ) );
 		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertSame( $version, get_post_meta( $post_id, '_atomic_wind_css_version', true ) );
+		$this->assertSame( $css, get_post_meta( $post_id, '_atomic_wind_css', true ) );
+	}
+
+	public function data_unmigratable_versions(): array {
+		return array(
+			'before the first stamp' => array( '1.0.0' ),
+			'unknown future stamp'   => array( '9.9.9' ),
+		);
+	}
+
+	public function test_output_singular_css_migration_keeps_backslashes_in_the_saved_sheet() {
+		$css      = '.w-1\/2:where([class*="wp-block-atomic-wind-"], [class*="wp-block-atomic-wind-"] *){width:50%}' . $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() );
+		$expected = '.w-1\/2:where([class*="wp-block-atomic-wind-"], [class*="wp-block-atomic-wind-"] *){width:50%}' . self::VARIABLES_RULE
+			. self::WRAPPER_SELECTOR . '{-webkit-text-size-adjust:100%;tab-size:4;-webkit-tap-highlight-color:transparent}'
+			. self::UTILITY_RULE . self::ELEMENT_RULE;
+
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assertSame( $expected, get_post_meta( $post_id, '_atomic_wind_css', true ) );
+	}
+
+	public function test_output_singular_css_leaves_a_wrapper_rule_without_typography_byte_identical() {
+		$variables = self::WRAPPER_SELECTOR . '{--a:1;--b:2;}';
+		$css       = $variables . self::WRAPPER_SELECTOR . '{' . implode( ';', $this->legacy_wrapper_declarations() ) . '}';
+		$expected  = $variables . self::WRAPPER_SELECTOR . '{-webkit-text-size-adjust:100%;tab-size:4;-webkit-tap-highlight-color:transparent}';
+
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $post_id, $expected );
+	}
+
+	public function test_output_singular_css_migrates_a_wrapper_rule_with_deeply_nested_functions() {
+		$css      = self::WRAPPER_SELECTOR . '{line-height:1.5;width:calc(1px + min(2px, max(3px, 4px)));tab-size:4}';
+		$expected = self::WRAPPER_SELECTOR . '{width:calc(1px + min(2px, max(3px, 4px)));tab-size:4}';
+
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $post_id, $expected );
+	}
+
+	/**
+	 * @dataProvider data_unverifiable_wrapper_bodies
+	 */
+	public function test_output_singular_css_does_not_migrate_a_wrapper_rule_it_cannot_parse( $body ) {
+		$css     = self::WRAPPER_SELECTOR . '{' . $body . '}';
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_sheet_not_migrated( $post_id, $css, '1.0.1' );
+	}
+
+	public function data_unverifiable_wrapper_bodies(): array {
+		return array(
+			'comment'         => array( "/* it's */line-height:1.5;tab-size:4" ),
+			'unbalanced quote' => array( "line-height:1.5;--a:it's;tab-size:4" ),
+			'unbalanced paren' => array( 'line-height:1.5;--a:foo(bar;tab-size:4' ),
+		);
+	}
+
+	public function test_output_singular_css_migrates_real_generator_output() {
+		$dir = __DIR__ . '/fixtures/atomic-wind/';
+
+		$post_id = $this->render_post_cached_as( file_get_contents( $dir . 'sheet-1.0.1.css' ), '1.0.1' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+		$this->assert_migrated_sheet_is_served( $post_id, file_get_contents( $dir . 'sheet-1.0.2.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	}
+
+	public function test_output_singular_css_ignores_a_sheet_without_a_stamp() {
+		$css     = $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() );
+		$post_id = $this->render_post_cached_as( $css, '' );
+
+		$this->assert_sheet_not_migrated( $post_id, $css, '' );
+	}
+
+	public function test_output_singular_css_ignores_a_stamped_sheet_with_empty_css() {
+		$post_id = $this->render_post_cached_as( '', '1.0.1' );
+
+		$this->assert_sheet_not_migrated( $post_id, '', '1.0.1' );
+	}
+
+	public function test_output_singular_css_ignores_a_sheet_the_migration_empties() {
+		$css     = self::WRAPPER_SELECTOR . '{' . implode( ';', self::TYPOGRAPHY_DECLARATIONS ) . '}';
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_sheet_not_migrated( $post_id, $css, '1.0.1' );
+	}
+
+	private function assert_sheet_not_migrated( $post_id, $css, $version ) {
+		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertSame( $version, get_post_meta( $post_id, '_atomic_wind_css_version', true ) );
+		$this->assertSame( $css, get_post_meta( $post_id, '_atomic_wind_css', true ) );
 	}
 
 	public function test_rest_save_style_stamps_the_generator_version() {
