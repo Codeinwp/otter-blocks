@@ -13,6 +13,8 @@ const textMarkup = ( className, content ) =>
 
 const TYPOGRAPHY_CONTENT = boxMarkup( 'typo-parent font-serif leading-10', textMarkup( 'typo-child', 'Child' ) + textMarkup( 'typo-own font-mono', 'Own' ) );
 
+const THEMES = [ 'twentytwentyfive', 'twentytwentyone', 'raft' ];
+
 const lineHeightRatio = ( locator, relativeToRoot = false ) => locator.evaluate( ( el, toRoot ) => {
 	const style = window.getComputedStyle( el );
 	const base = toRoot ? window.getComputedStyle( el.ownerDocument.documentElement ) : style;
@@ -75,6 +77,12 @@ const expectInheritedTypography = async( root ) => {
 	await expect( child ).toHaveCSS( 'line-height', parentLineHeight );
 
 	await expect( root.locator( '.typo-own' ) ).toHaveCSS( 'font-family', /^ui-monospace/ );
+
+	for ( const block of [ parent, child ] ) {
+		// Without the stylesheet `tab-size` computes to 8.
+		await expect( block ).toHaveCSS( 'tab-size', '4' );
+		await expect( block ).toHaveCSS( '-webkit-tap-highlight-color', 'rgba(0, 0, 0, 0)' );
+	}
 };
 
 /**
@@ -206,7 +214,8 @@ test.describe( 'Atomic Wind typography inheritance', () => {
 		await setAtomicWind( otterUtils, true );
 	});
 
-	test.afterAll( async({ otterUtils }) => {
+	test.afterAll( async({ otterUtils, requestUtils }) => {
+		await requestUtils.activateTheme( 'twentytwentythree' );
 		await setAtomicWind( otterUtils, false );
 	});
 
@@ -282,4 +291,118 @@ test.describe( 'Atomic Wind typography inheritance', () => {
 
 		await expectInheritedTypography( editor.canvas );
 	});
+
+	test( 'renders the shipped patterns with the theme font and the root defaults', async({ page, requestUtils }) => {
+		const patterns = await requestUtils.rest({ path: '/wp/v2/block-patterns/patterns' });
+		const shipped = patterns.filter( ( pattern ) => pattern.name.startsWith( 'otter-blocks/aw-' ) );
+
+		expect( shipped.length ).toBeGreaterThanOrEqual( 20 );
+
+		const content = shipped.map( ( pattern ) => {
+			const slug = pattern.name.replace( 'otter-blocks/', '' );
+
+			return `<!-- wp:group {"className":"awp ${ slug }"} --><div class="wp-block-group awp ${ slug }">${ pattern.content }</div><!-- /wp:group -->`;
+		}).join( '\n' );
+
+		const post = await requestUtils.createPost({
+			title: 'Atomic Wind shipped patterns',
+			status: 'publish',
+			content
+		});
+
+		// Assumes the active theme's own font stack does not start with `ui-sans-serif`.
+		const inspect = () => page.evaluate( () => {
+			const offenders = [];
+			const empty = [];
+			const blocks = document.querySelectorAll( '.awp [class*="wp-block-atomic-wind-"]' );
+
+			for ( const el of blocks ) {
+				const style = window.getComputedStyle( el );
+				const problems = [];
+
+				if ( style.fontFamily.startsWith( 'ui-sans-serif' ) && ! el.closest( '[class~="font-sans"]' ) ) {
+					problems.push( 'default font stack' );
+				}
+
+				if ( '4' !== style.tabSize ) {
+					problems.push( `tab-size ${ style.tabSize }` );
+				}
+
+				if ( 'rgba(0, 0, 0, 0)' !== style.getPropertyValue( '-webkit-tap-highlight-color' ) ) {
+					problems.push( 'tap highlight' );
+				}
+
+				if ( problems.length ) {
+					const group = el.closest( '.awp' );
+					const pattern = [ ...group.classList ].find( ( name ) => name.startsWith( 'aw-' ) );
+					const classes = ( el.getAttribute( 'class' ) || '' ).split( ' ' ).slice( 0, 3 ).join( ' ' );
+					offenders.push( `${ pattern } <${ el.tagName.toLowerCase() } class="${ classes }"> ${ problems.join( ', ' ) }` );
+				}
+			}
+
+			const groups = [ ...document.querySelectorAll( '.awp' ) ];
+
+			for ( const group of groups ) {
+				if ( ! group.querySelector( '[class*="wp-block-atomic-wind-"]' ) ) {
+					empty.push( [ ...group.classList ].find( ( name ) => name.startsWith( 'aw-' ) ) );
+				}
+			}
+
+			return {
+				count: blocks.length,
+				groups: groups.length,
+				empty,
+				total: offenders.length,
+				offenders: offenders.slice( 0, 10 )
+			};
+		});
+
+		try {
+			await page.goto( post.link );
+
+			await expect.poll( async() => {
+				const { total, offenders } = await inspect();
+				return { total, offenders };
+			}, { timeout: 30000 }).toEqual({ total: 0, offenders: [] });
+
+			const result = await inspect();
+			expect( result.empty ).toEqual([]);
+			expect( result.groups ).toBe( shipped.length );
+			expect( result.count ).toBeGreaterThan( 500 );
+		} finally {
+			await deletePosts( requestUtils, [ post ] );
+		}
+	});
+
+	for ( const theme of THEMES ) {
+		test( `matches a plain sibling's typography on ${ theme }`, async({ page, requestUtils }) => {
+			await requestUtils.activateTheme( theme );
+
+			const [ active ] = await requestUtils.rest({ path: '/wp/v2/themes', params: { status: 'active' }});
+			expect( active.stylesheet ).toBe( theme );
+
+			const post = await requestUtils.createPost({
+				title: `Atomic Wind ${ theme } typography`,
+				status: 'publish',
+				content: `<!-- wp:group {"className":"typo-ctx"} --><div class="wp-block-group typo-ctx"><!-- wp:html --><span class="typo-control">Control</span><!-- /wp:html -->${ boxMarkup( 'typo-theme-box flex', textMarkup( 'typo-theme', 'Theme text' ) ) }</div><!-- /wp:group -->`
+			});
+
+			try {
+				await page.goto( post.link );
+				await expect( page.locator( '.typo-theme-box' ) ).toHaveCSS( 'display', 'flex' );
+
+				const control = await page.locator( '.typo-control' ).evaluate( ( el ) => {
+					const style = window.getComputedStyle( el );
+
+					return { fontFamily: style.fontFamily, lineHeight: style.lineHeight };
+				});
+
+				await expect( page.locator( '.typo-theme' ) ).toHaveCSS( 'font-family', control.fontFamily );
+				await expect( page.locator( '.typo-theme' ) ).toHaveCSS( 'line-height', control.lineHeight );
+			} finally {
+				await deletePosts( requestUtils, [ post ] );
+				await requestUtils.activateTheme( 'twentytwentythree' );
+			}
+		});
+	}
 });
