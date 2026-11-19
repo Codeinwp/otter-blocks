@@ -5,6 +5,78 @@ import { test, expect } from '../fixtures';
 import { setAtomicWind } from '../helpers/design-library';
 import { publishAndViewPost } from '../helpers/editor';
 
+const boxMarkup = ( className, children ) =>
+	`<!-- wp:atomic-wind/box {"className":"${ className }"} --><div class="wp-block-atomic-wind-box ${ className }">${ children }</div><!-- /wp:atomic-wind/box -->`;
+
+const textMarkup = ( className, content ) =>
+	`<!-- wp:atomic-wind/text {"tagName":"span","className":"${ className }"} --><span data-rich-text="" class="wp-block-atomic-wind-text ${ className }">${ content }</span><!-- /wp:atomic-wind/text -->`;
+
+const TYPOGRAPHY_CONTENT = boxMarkup( 'typo-parent font-serif leading-10', textMarkup( 'typo-child', 'Child' ) + textMarkup( 'typo-own font-mono', 'Own' ) );
+
+const lineHeightRatio = ( locator, relativeToRoot = false ) => locator.evaluate( ( el, toRoot ) => {
+	const style = window.getComputedStyle( el );
+	const base = toRoot ? window.getComputedStyle( el.ownerDocument.documentElement ) : style;
+
+	return parseFloat( style.lineHeight ) / parseFloat( base.fontSize );
+}, relativeToRoot );
+
+/**
+ * Load a post as the editor so the style builder caches its compiled CSS.
+ *
+ * @param {import('@playwright/test').Page} page Page.
+ * @param {string}                          link Post URL.
+ */
+const cachePostCss = async( page, link ) => {
+	await page.addInitScript( () => {
+		document.addEventListener( 'atomic-wind:css-saved', () => {
+			window.otterE2ECssSaved = true;
+		});
+	});
+	await page.goto( link );
+	await page.waitForFunction( () => window.otterE2ECssSaved );
+};
+
+/**
+ * @param {import('@playwright/test').Browser} browser Browser.
+ * @param {string}                             url     Page to open logged out.
+ * @return {Promise<import('@playwright/test').Page>} Visitor page.
+ */
+const openAsVisitor = async( browser, url ) => {
+	const visitor = await browser.newPage({ storageState: { cookies: [], origins: [] }});
+	await visitor.goto( url );
+	await expect( visitor.locator( '#wpadminbar' ) ).toHaveCount( 0 );
+
+	return visitor;
+};
+
+/**
+ * @param {import('@wordpress/e2e-test-utils-playwright').RequestUtils} requestUtils Request utils.
+ * @param {Array<{ id: number }>}                                       posts        Posts to delete.
+ */
+const deletePosts = ( requestUtils, posts ) => Promise.all( posts.map( ( post ) => requestUtils.rest({
+	method: 'DELETE',
+	path: `/wp/v2/posts/${ post.id }`,
+	params: { force: true }
+}) ) );
+
+/**
+ * @param {import('@playwright/test').Page|import('@playwright/test').FrameLocator} root Page or editor canvas.
+ */
+const expectInheritedTypography = async( root ) => {
+	const parent = root.locator( '.typo-parent' );
+	const child = root.locator( '.typo-child' );
+
+	// The parent utilities landing proves the stylesheet reached the page.
+	await expect( parent ).toHaveCSS( 'font-family', /^ui-serif/ );
+	await expect.poll( () => lineHeightRatio( parent, true ) ).toBeCloseTo( 2.5, 1 );
+
+	await expect( child ).toHaveCSS( 'font-family', /^ui-serif/ );
+	const parentLineHeight = await parent.evaluate( ( el ) => window.getComputedStyle( el ).lineHeight );
+	await expect( child ).toHaveCSS( 'line-height', parentLineHeight );
+
+	await expect( root.locator( '.typo-own' ) ).toHaveCSS( 'font-family', /^ui-monospace/ );
+};
+
 /**
  * The generated Tailwind stylesheet carries preflight, whose rules target bare
  * HTML elements, and a theme layer defining variables such as `--spacing`. It
@@ -126,5 +198,88 @@ test.describe( 'Atomic Wind Tailwind CSS scope', () => {
 
 		await expect( page.locator( '.inside-text' ) ).toHaveCSS( 'display', 'none' );
 		await expect( page.locator( '.outside-text' ) ).toHaveCSS( 'display', 'block' );
+	});
+});
+
+test.describe( 'Atomic Wind typography inheritance', () => {
+	test.beforeEach( async({ otterUtils }) => {
+		await setAtomicWind( otterUtils, true );
+	});
+
+	test.afterAll( async({ otterUtils }) => {
+		await setAtomicWind( otterUtils, false );
+	});
+
+	test( 'inherits typography from a theme-styled ancestor on the frontend', async({ page, requestUtils }) => {
+		const post = await requestUtils.createPost({
+			title: 'Atomic Wind theme typography',
+			status: 'publish',
+			content: `<!-- wp:group {"className":"typo-theme-wrap"} --><div class="wp-block-group typo-theme-wrap">${ boxMarkup( 'typo-theme-box flex', textMarkup( 'typo-theme', 'Theme text' ) ) }</div><!-- /wp:group -->`
+		});
+
+		try {
+			await page.goto( post.link );
+			await expect( page.locator( '.typo-theme-box' ) ).toHaveCSS( 'display', 'flex' );
+
+			await page.addStyleTag({ content: '.typo-theme-wrap{font-family:"Otter Theme Font",serif;line-height:3}' });
+
+			await expect( page.locator( '.typo-theme' ) ).toHaveCSS( 'font-family', /Otter Theme Font/ );
+			await expect( page.locator( '.typo-theme-box' ) ).toHaveCSS( 'font-family', /Otter Theme Font/ );
+			await expect.poll( () => lineHeightRatio( page.locator( '.typo-theme' ) ) ).toBeCloseTo( 3, 1 );
+		} finally {
+			await deletePosts( requestUtils, [ post ] );
+		}
+	});
+
+	test( 'inherits a parent block typography on the frontend', async({ page, requestUtils }) => {
+		const post = await requestUtils.createPost({
+			title: 'Atomic Wind parent typography',
+			status: 'publish',
+			content: TYPOGRAPHY_CONTENT
+		});
+
+		try {
+			await page.goto( post.link );
+			await expectInheritedTypography( page );
+		} finally {
+			await deletePosts( requestUtils, [ post ] );
+		}
+	});
+
+	test( 'inherits a parent block typography from the cached stylesheet', async({ browser, page, requestUtils }) => {
+		const post = await requestUtils.createPost({
+			title: 'Atomic Wind cached typography',
+			status: 'publish',
+			content: TYPOGRAPHY_CONTENT
+		});
+
+		let visitor;
+
+		try {
+			await cachePostCss( page, post.link );
+			visitor = await openAsVisitor( browser, post.link );
+
+			await expect( visitor.locator( '#atomic-wind-tailwind-generator-js' ) ).toHaveCount( 0 );
+			await expect( visitor.locator( '#atomic-wind-tailwind-inline-css' ) ).toHaveCount( 1 );
+			await expectInheritedTypography( visitor );
+		} finally {
+			await visitor?.close();
+			await deletePosts( requestUtils, [ post ] );
+		}
+	});
+
+	test( 'inherits a parent block typography in the editor', async({ admin, editor }) => {
+		await admin.createNewPost();
+
+		await editor.insertBlock({
+			name: 'atomic-wind/box',
+			attributes: { className: 'typo-parent font-serif leading-10' },
+			innerBlocks: [
+				{ name: 'atomic-wind/text', attributes: { tagName: 'span', className: 'typo-child', content: 'Child' }},
+				{ name: 'atomic-wind/text', attributes: { tagName: 'span', className: 'typo-own font-mono', content: 'Own' }}
+			]
+		});
+
+		await expectInheritedTypography( editor.canvas );
 	});
 });
