@@ -15,6 +15,9 @@ const OPAQUE_AT_RULE = /^@(-[a-z]+-)?(keyframes|font-face|property|counter-style
 // Document-level subjects: they carry inherited defaults, not element resets.
 const ROOT_SELECTOR = /^(:root|:host|html|body)$/;
 
+const CUSTOM_PROPERTY_DECLARATION = /(^|;)\s*--[\w-]+\s*:/;
+const CSS_COMMENT = /\/\*[\s\S]*?\*\//g;
+
 const ROOT_PREFIX = /^(:root|:host|html|body)(?=$|[\s>+~])/;
 
 const LEGACY_PSEUDO_ELEMENT = /^:(before|after|first-line|first-letter)\b/i;
@@ -141,18 +144,28 @@ function pseudoElementStart( subject ) {
 }
 
 /**
+ * Whether a selector targets only the document root.
+ *
+ * @param {string} selector Single selector.
+ * @return {boolean} True for a bare `:root`, `:host`, `html` or `body`.
+ */
+function isRootOnly( selector ) {
+	return 0 === subjectStart( selector ) && ROOT_SELECTOR.test( selector );
+}
+
+/**
  * Confine one selector to the Atomic Wind subtree.
  *
  * @param {string} selector Single selector.
  * @return {string} Scoped selector.
  */
 function scopeSelectorToBlocks( selector ) {
-	const start = subjectStart( selector );
-	const subject = selector.slice( start );
-
-	if ( 0 === start && ROOT_SELECTOR.test( subject ) ) {
+	if ( isRootOnly( selector ) ) {
 		return ATOMIC_SELF;
 	}
+
+	const start = subjectStart( selector );
+	const subject = selector.slice( start );
 
 	const prefix = selector.slice( 0, start );
 	const pseudo = pseudoElementStart( subject );
@@ -309,7 +322,7 @@ export function transformCssSelectors( css, transform ) {
 }
 
 /**
- * Keep Tailwind's element resets and variables inside Atomic Wind blocks.
+ * Keep Tailwind's element resets and variables inside Atomic Wind blocks, dropping root-inherited defaults.
  *
  * @param {string} css Generated stylesheet.
  * @return {string} Scoped stylesheet.
@@ -319,8 +332,12 @@ export function scopeToAtomicWind( css ) {
 		return css;
 	}
 
-	return transformCssSelectors( css, ( selectorText ) => {
-		const scoped = splitSelectorList( selectorText ).map( scopeSelectorToBlocks );
+	return transformCssSelectors( css, ( selectorText, body ) => {
+		const declaresVariables = CUSTOM_PROPERTY_DECLARATION.test( body.replace( CSS_COMMENT, '' ) );
+		const scoped = splitSelectorList( selectorText )
+			// Set on the wrapper, inherited defaults would beat what the block inherits from the theme.
+			.filter( ( selector ) => declaresVariables || ! isRootOnly( selector ) )
+			.map( scopeSelectorToBlocks );
 
 		return Array.from( new Set( scoped ) ).join( ', ' );
 	} );

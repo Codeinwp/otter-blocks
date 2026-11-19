@@ -1540,6 +1540,20 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
 	}
 
+	public function test_output_singular_css_regenerates_css_stamped_by_the_previous_generator() {
+		$this->reset_style_globals();
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $singular, '_atomic_wind_css', '.flex{display:flex}' );
+		update_post_meta( $singular, '_atomic_wind_css_version', '1.0.1' );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->output_singular_css();
+
+		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
 	public function test_rest_save_style_stamps_the_generator_version() {
 		$request = new WP_REST_Request( 'POST', '/otter/v1/atomic-wind/style' );
 		$request->set_param( 'postId', $this->post_id );

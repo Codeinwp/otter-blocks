@@ -52,10 +52,8 @@ describe( 'scopeToAtomicWind', () => {
 		);
 	} );
 
-	it( 'moves document-level styling onto the block wrapper', () => {
-		expect( scopeToAtomicWind( 'html, :host{line-height:1.5;tab-size:4}' ) ).toBe(
-			`${ SELF }{line-height:1.5;tab-size:4}`
-		);
+	it( 'drops document-level inherited styling instead of moving it onto the block wrapper', () => {
+		expect( scopeToAtomicWind( 'html, :host{line-height:1.5;tab-size:4}' ) ).toBe( '' );
 	} );
 
 	it( 'moves theme variables onto the block wrapper so they cannot shadow theme ones', () => {
@@ -144,7 +142,7 @@ describe( 'scopeToAtomicWind', () => {
 
 		// Every base-layer rule is confined to the blocks.
 		expect( out ).toContain( `*${ MATCH }, *${ MATCH }::before{box-sizing:border-box;margin:0}` );
-		expect( out ).toContain( `${ SELF }{line-height:1.5}` );
+		expect( out ).not.toContain( 'line-height' );
 		expect( out ).toContain( `ul${ MATCH }, menu${ MATCH }{list-style:none}` );
 		expect( out ).toContain( `input:where([type="button"])${ MATCH }::file-selector-button{appearance:button}` );
 
@@ -155,9 +153,77 @@ describe( 'scopeToAtomicWind', () => {
 	it( 'is a no-op on empty input', () => {
 		expect( scopeToAtomicWind( '' ) ).toBe( '' );
 	} );
+
+	it( 'drops the minified preflight root rule, whose values only reference variables', () => {
+		const css = 'html, :host{line-height:1.5;-webkit-text-size-adjust:100%;tab-size:4;font-family:var(--default-font-family, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji");font-feature-settings:var(--default-font-feature-settings, normal);font-variation-settings:var(--default-font-variation-settings, normal);-webkit-tap-highlight-color:transparent}';
+
+		expect( scopeToAtomicWind( css ) ).toBe( '' );
+	} );
+
+	it( 'drops the pretty-printed preflight root rule', () => {
+		const css = 'html, :host {\n  line-height: 1.5;\n  font-family: var(--default-font-family, ui-sans-serif);\n}';
+
+		expect( scopeToAtomicWind( css ) ).toBe( '' );
+	} );
+
+	it.each( [ 'html', 'body', ':root', ':host' ] )( 'drops a %s rule that declares no custom property', ( root ) => {
+		expect( scopeToAtomicWind( `${ root }{font-family:serif}` ) ).toBe( '' );
+	} );
+
+	it( 'keeps pretty-printed theme variables on the block wrapper', () => {
+		expect( scopeToAtomicWind( ':root, :host {\n  --spacing: 0.25rem;\n  --font-serif: ui-serif, Georgia;\n}' ) ).toBe(
+			`${ SELF }{\n  --spacing: 0.25rem;\n  --font-serif: ui-serif, Georgia;\n}`
+		);
+	} );
+
+	it( 'keeps a root rule whole when it mixes variables with standard declarations', () => {
+		expect( scopeToAtomicWind( ':root{color:red;--x:1}' ) ).toBe( `${ SELF }{color:red;--x:1}` );
+	} );
+
+	it( 'drops only the root selector from a mixed selector list', () => {
+		expect( scopeToAtomicWind( 'html, h1{line-height:1.5}' ) ).toBe( `h1${ MATCH }{line-height:1.5}` );
+	} );
+
+	it( 'keeps the root selector in a mixed list that declares variables', () => {
+		expect( scopeToAtomicWind( ':root, .dark{--x:1}' ) ).toBe( `${ SELF }, .dark${ MATCH }{--x:1}` );
+	} );
+
+	it( 'drops root typography inside at-rules and keeps sibling rules', () => {
+		expect( scopeToAtomicWind( '@layer base{html, :host{line-height:1.5}h1{font-size:inherit}}' ) ).toBe(
+			`@layer base{h1${ MATCH }{font-size:inherit}}`
+		);
+		expect( scopeToAtomicWind( '@media (width >= 48rem){html{line-height:2}}' ) ).toBe( '@media (width >= 48rem){}' );
+	} );
+
+	it( 'still scopes typography rules that use a root as an ancestor', () => {
+		expect( scopeToAtomicWind( 'body p{font-family:serif}' ) ).toBe( `body p${ MATCH }{font-family:serif}` );
+	} );
+
+	it( 'keeps typography utilities set on the block itself', () => {
+		expect( scopeToAtomicWind( '.font-serif{font-family:var(--font-serif) !important}.leading-10{line-height:2.5rem !important}' ) ).toBe(
+			`.font-serif${ MATCH }{font-family:var(--font-serif) !important}.leading-10${ MATCH }{line-height:2.5rem !important}`
+		);
+	} );
+
+	it( 'detects variables declared after a comment', () => {
+		expect( scopeToAtomicWind( ':root{/* theme */--x:1}' ) ).toBe( `${ SELF }{/* theme */--x:1}` );
+		expect( scopeToAtomicWind( ':root{--a:1;/* c */--x:1}' ) ).toBe( `${ SELF }{--a:1;/* c */--x:1}` );
+	} );
+
+	it( 'does not count a variable that only appears in a comment', () => {
+		expect( scopeToAtomicWind( 'html{/* --x: 1 */line-height:1.5}' ) ).toBe( '' );
+	} );
 } );
 
 describe( 'prefixCss', () => {
+	it( 'prefixes a scoped stylesheet without reintroducing root typography', () => {
+		const scoped = scopeToAtomicWind( 'html, :host{line-height:1.5}:root, :host{--spacing:0.25rem}h1{font-size:inherit}' );
+
+		expect( prefixCss( scoped, ':where(.editor-styles-wrapper)' ) ).toBe(
+			`:where(.editor-styles-wrapper) ${ SELF }{--spacing:0.25rem}:where(.editor-styles-wrapper) h1${ MATCH }{font-size:inherit}`
+		);
+	} );
+
 	it( 'prefixes selectors and collapses document-level ones onto the scope', () => {
 		expect( prefixCss( 'h1{color:red}html{tab-size:4}', ':where(.editor-styles-wrapper)' ) ).toBe(
 			':where(.editor-styles-wrapper) h1{color:red}:where(.editor-styles-wrapper){tab-size:4}'
