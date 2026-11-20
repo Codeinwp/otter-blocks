@@ -659,4 +659,30 @@ class TestBlockConditions extends WP_UnitTestCase
 		$this->assertMatchesRegularExpression( '/id=["\']o-condition-hide-inline-css["\']/', $head_styles );
 		$this->assertStringContainsString( '.o-hide-on-mobile:is(.o-hide-on-mobile,#_){display:none!important}', $head_styles );
 	}
+
+	/**
+	 * A protected meta key cannot be used as a value oracle through a block condition (otter-internals#320).
+	 */
+	public function test_post_meta_condition_ignores_protected_key() {
+		$post_id = $this->factory()->post->create();
+		update_post_meta( $post_id, '_secret', 'leaked-value' );
+
+		$this->go_to( get_permalink( $post_id ) );
+		global $post;
+		$post = get_post( $post_id );
+		setup_postdata( $post );
+
+		$condition = array(
+			'type'         => 'postMeta',
+			'meta_key'     => '_secret',
+			'meta_compare' => 'if_contains',
+			'meta_value'   => 'leaked',
+		);
+
+		$result = $this->block_conditions->evaluate_condition( $condition );
+
+		$this->assertFalse( $result );
+
+		wp_reset_postdata();
+	}
 }

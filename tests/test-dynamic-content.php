@@ -2710,4 +2710,55 @@ class TestDynamicContent extends WP_UnitTestCase
 			$this->assertSame( '<p>Example</p>', $result, $label );
 		}
 	}
+
+	/**
+	 * The ACF dynamic tag does not read a protected meta key (otter-internals#320).
+	 */
+	public function test_get_acf_blocks_a_protected_meta_key() {
+		$GLOBALS['otter_test_acf_fields'] = array( '_secret' => array( 'value' => 'ACF Secret' ) );
+
+		$result = $this->dynamic_content_pro->get_acf( array(
+			'metaKey' => '_secret',
+			'context' => $this->post_id,
+			'default' => 'KEPT',
+		) );
+
+		$this->assertSame( 'KEPT', $result );
+		$this->assertStringNotContainsString( 'ACF Secret', $result );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * An ACF field key that resolves to a protected name is blocked too.
+	 */
+	public function test_get_acf_blocks_an_acf_field_with_a_protected_name() {
+		$GLOBALS['otter_test_acf_fields'] = array( 'field_x' => array( 'name' => '_secret', 'value' => 'ACF Secret' ) );
+
+		$result = $this->dynamic_content_pro->get_acf( array(
+			'metaKey' => 'field_x',
+			'context' => $this->post_id,
+			'default' => 'KEPT',
+		) );
+
+		$this->assertSame( 'KEPT', $result );
+		$this->assertStringNotContainsString( 'ACF Secret', $result );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * The dynamic image does not put a protected meta value into the src.
+	 */
+	public function test_media_content_blocks_protected_post_meta() {
+		update_post_meta( $this->post_id, '_img', 'https://evil.example/x.png' );
+
+		$result = $this->dynamic_content_pro->evaluate_content_media_content( 'ORIGINAL', array(
+			'type'    => 'postMeta',
+			'meta'    => '_img',
+			'context' => $this->post_id,
+		) );
+
+		$this->assertSame( 'ORIGINAL', $result );
+	}
 }

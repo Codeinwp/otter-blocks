@@ -209,6 +209,25 @@ class Dynamic_Content {
 	}
 
 	/**
+	 * Whether an ACF selector resolves to a protected meta key.
+	 *
+	 * An ACF field key (e.g. `field_abc123`) is harmless on its own, but ACF resolves it to the field's
+	 * meta name, which can be a protected `_`-prefixed key.
+	 *
+	 * @param string $selector ACF field key or name.
+	 * @return bool
+	 */
+	public static function is_protected_acf_field( $selector ) {
+		if ( ! function_exists( 'acf_get_field' ) ) {
+			return false;
+		}
+
+		$field = acf_get_field( $selector );
+
+		return is_array( $field ) && isset( $field['name'] ) && self::is_protected_meta_key( $field['name'] );
+	}
+
+	/**
 	 * Get Post Meta.
 	 *
 	 * @param array $data Dynamic Data.
@@ -246,7 +265,10 @@ class Dynamic_Content {
 		}
 
 		$field_key = sanitize_text_field( $data['metaKey'] );
-		$meta      = get_field( $field_key, $data['context'] );
+		if ( self::is_protected_meta_key( $field_key ) || self::is_protected_acf_field( $field_key ) ) {
+			return $default;
+		}
+		$meta = get_field( $field_key, $data['context'] );
 
 		// Get the ACF repeater's sub-field value.
 		if ( ( null === $meta || false === $meta || '' === $meta ) && function_exists( 'acf_get_field' ) ) {
@@ -683,7 +705,7 @@ class Dynamic_Content {
 		$id      = $request->get_param( 'id' );
 		$meta    = $request->get_param( 'meta' );
 
-		if ( 'postMeta' === $type && ! empty( $meta ) ) {
+		if ( 'postMeta' === $type && ! empty( $meta ) && ! self::is_protected_meta_key( $meta ) ) {
 			$value = get_post_meta( $context, $meta, true );
 
 			if ( ! empty( $value ) ) {
@@ -706,7 +728,7 @@ class Dynamic_Content {
 			}
 		}
 
-		if ( 'acf' === $type && ! empty( $meta ) && class_exists( 'ACF' ) ) {
+		if ( 'acf' === $type && ! empty( $meta ) && class_exists( 'ACF' ) && ! self::is_protected_meta_key( $meta ) && ! self::is_protected_acf_field( $meta ) ) {
 			$field = get_field( $meta, $context );
 
 			// Fall back to repeater sub-field traversal when the field is a
@@ -752,7 +774,7 @@ class Dynamic_Content {
 	 * @return string|string[]
 	 */
 	public function evaluate_content_media_content( $value, $data ) {
-		if ( 'postMeta' === $data['type'] && isset( $data['meta'] ) && ! empty( $data['meta'] ) ) {
+		if ( 'postMeta' === $data['type'] && isset( $data['meta'] ) && ! empty( $data['meta'] ) && ! self::is_protected_meta_key( $data['meta'] ) ) {
 			$meta = get_post_meta( $data['context'], $data['meta'], true );
 
 			if ( ! empty( $meta ) ) {
@@ -775,7 +797,7 @@ class Dynamic_Content {
 			}
 		}
 
-		if ( 'acf' === $data['type'] && ! empty( $data['meta'] ) && class_exists( 'ACF' ) ) {
+		if ( 'acf' === $data['type'] && ! empty( $data['meta'] ) && class_exists( 'ACF' ) && ! self::is_protected_meta_key( $data['meta'] ) && ! self::is_protected_acf_field( $data['meta'] ) ) {
 			$field = get_field( $data['meta'], $data['context'] );
 
 			// Fall back to repeater sub-field traversal when the field is a
