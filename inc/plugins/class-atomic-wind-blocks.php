@@ -919,53 +919,41 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * Swap a migrated sheet in for the one that was read, unless that one has changed since.
+	 * Swap a migrated sheet and its stamp in for the ones that were read, unless either has changed since.
 	 *
-	 * Compare-and-swap, so a post save or a fresh save landing meanwhile is not undone.
+	 * One byte-exact compare-and-swap statement, so a save landing meanwhile is not undone and
+	 * cannot be left carrying the new stamp.
 	 *
 	 * @param int    $post_id     Post ID.
 	 * @param string $old_css     Sheet that was read.
 	 * @param string $old_version Stamp that was read.
 	 * @param string $new_css     Migrated sheet.
 	 * @param string $new_version Stamp of the migrated sheet.
-	 * @return bool Whether the stored sheet was still the one read.
+	 * @return bool Whether the stored sheet and stamp were still the ones read.
 	 */
 	private function replace_cached_css( $post_id, $old_css, $old_version, $new_css, $new_version ) {
 		global $wpdb;
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-		// An unchanged sheet is valid under both stamps, so only the stamp is swapped.
-		if ( $new_css !== $old_css ) {
-			$swapped = $wpdb->update(
-				$wpdb->postmeta,
-				array( 'meta_value' => $new_css ),
-				array(
-					'post_id'    => $post_id,
-					'meta_key'   => '_atomic_wind_css',
-					'meta_value' => $old_css,
-				)
-			);
-
-			if ( 1 !== $swapped ) {
-				return false;
-			}
-		}
-
-		$stamped = $wpdb->update(
-			$wpdb->postmeta,
-			array( 'meta_value' => $new_version ),
-			array(
-				'post_id'    => $post_id,
-				'meta_key'   => '_atomic_wind_css_version',
-				'meta_value' => $old_version,
+		// BINARY: the column collation would also match a sheet differing only in case or trailing spaces.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$swapped = $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->postmeta} css INNER JOIN {$wpdb->postmeta} ver ON ver.post_id = css.post_id
+				SET css.meta_value = %s, ver.meta_value = %s
+				WHERE css.post_id = %d AND css.meta_key = '_atomic_wind_css' AND BINARY css.meta_value = %s
+				AND ver.meta_key = '_atomic_wind_css_version' AND BINARY ver.meta_value = %s",
+				$new_css,
+				$new_version,
+				$post_id,
+				$old_css,
+				$old_version
 			)
 		);
-
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		wp_cache_delete( $post_id, 'post_meta' );
 
-		return $new_css !== $old_css || 1 === $stamped;
+		return is_int( $swapped ) && $swapped > 0;
 	}
 
 	/**

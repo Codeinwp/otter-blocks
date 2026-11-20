@@ -1966,12 +1966,157 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		);
 	}
 
-	public function test_page_configs_do_not_carry_the_css_version() {
+	public function test_warm_page_loads_the_frontend_generator_that_stamps_the_css_version() {
 		$post_id = $this->make_atomic_wind_post( 'flex' );
 
 		$html = $this->call_private( 'render_css_warm_page_html', get_post( $post_id ) );
 
-		$this->assertStringNotContainsString( 'cssVersion', $html );
+		$this->assertMatchesRegularExpression( '#<script src="[^"]*build/atomic-wind/tailwind-generator-frontend\.js[^"]*"></script>#', $html );
+	}
+
+	/**
+	 * Helper: read a meta row straight from the database, bypassing the object cache.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $key     Meta key.
+	 * @return string|null
+	 */
+	private function stored_meta( $post_id, $key ) {
+		global $wpdb;
+
+		return $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, $key ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+	}
+
+	/**
+	 * Helper: serve the sheet that is stored now as read, and store the replacement right after.
+	 *
+	 * @param int    $post_id     Post ID.
+	 * @param string $replacement Sheet written to the database once the read has happened.
+	 * @return callable The filter, to remove.
+	 */
+	private function replace_sheet_after_read( $post_id, $replacement ) {
+		global $wpdb;
+
+		$done   = false;
+		$filter = function ( $value, $object_id, $meta_key ) use ( $post_id, $replacement, &$done, $wpdb ) {
+			if ( $done || $object_id !== $post_id || '_atomic_wind_css' !== $meta_key ) {
+				return $value;
+			}
+
+			$done = true;
+			$read = $this->stored_meta( $post_id, '_atomic_wind_css' );
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->update( $wpdb->postmeta, array( 'meta_value' => $replacement ), array( 'post_id' => $post_id, 'meta_key' => '_atomic_wind_css' ) );
+
+			return array( $read );
+		};
+
+		add_filter( 'get_post_metadata', $filter, 10, 3 );
+
+		return $filter;
+	}
+
+	/**
+	 * @dataProvider data_sheet_variants_the_column_collation_treats_as_equal
+	 */
+	public function test_migration_does_not_overwrite_a_sheet_that_differs_only_by_case_or_trailing_space( $variant ) {
+		$this->reset_style_globals();
+
+		$sheet   = $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() ) . '.bg-\[\#fff\]{background-color:#fff}';
+		$variant = $variant( $sheet );
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $sheet ) );
+		update_post_meta( $post_id, '_atomic_wind_css_version', '1.0.1' );
+
+		$filter = $this->replace_sheet_after_read( $post_id, $variant );
+
+		$this->go_to( get_permalink( $post_id ) );
+		$this->instance->output_singular_css();
+		remove_filter( 'get_post_metadata', $filter, 10 );
+
+		$this->assertSame( $variant, $this->stored_meta( $post_id, '_atomic_wind_css' ) );
+		$this->assertSame( '1.0.1', $this->stored_meta( $post_id, '_atomic_wind_css_version' ) );
+	}
+
+	public function data_sheet_variants_the_column_collation_treats_as_equal(): array {
+		return array(
+			'letter case'    => array(
+				static function ( $sheet ) {
+					return str_replace( '#fff', '#FFF', $sheet );
+				},
+			),
+			'trailing space' => array(
+				static function ( $sheet ) {
+					return $sheet . ' ';
+				},
+			),
+		);
+	}
+
+	public function test_migration_does_not_relabel_a_different_legacy_sheet_when_the_sheet_it_read_was_unchanged() {
+		$this->reset_style_globals();
+
+		$sheet   = $this->fixture_sheet( '1.0.2' );
+		$legacy  = $sheet . '.legacy{color:red}';
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $sheet ) );
+		update_post_meta( $post_id, '_atomic_wind_css_version', '1.0.1' );
+
+		$filter = $this->replace_sheet_after_read( $post_id, $legacy );
+
+		$this->go_to( get_permalink( $post_id ) );
+		$this->instance->output_singular_css();
+		remove_filter( 'get_post_metadata', $filter, 10 );
+
+		$this->assertSame( $legacy, $this->stored_meta( $post_id, '_atomic_wind_css' ) );
+		$this->assertSame( '1.0.1', $this->stored_meta( $post_id, '_atomic_wind_css_version' ) );
+	}
+
+	public function test_migration_swaps_sheet_and_stamp_in_one_statement_and_survives_a_versionless_save_before_it() {
+		$this->reset_style_globals();
+
+		$legacy  = $this->fixture_sheet( '1.0.1' ) . '.late{color:red}';
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() ) ) );
+		update_post_meta( $post_id, '_atomic_wind_css_version', '1.0.1' );
+
+		$updates   = array();
+		$saving    = false;
+		$interject = function ( $query ) use ( &$updates, &$saving, $post_id, $legacy ) {
+			if ( $saving || 0 !== strpos( ltrim( $query ), 'UPDATE' ) || false === strpos( $query, '_atomic_wind_css' ) ) {
+				return $query;
+			}
+
+			$updates[] = $query;
+
+			if ( false !== strpos( $query, '_atomic_wind_css_version' ) ) {
+				$saving = true;
+				$this->post_atomic_wind_route(
+					'style',
+					array(
+						'postId' => $post_id,
+						'css'    => $legacy,
+					)
+				);
+				$saving = false;
+			}
+
+			return $query;
+		};
+
+		add_filter( 'query', $interject );
+		$this->go_to( get_permalink( $post_id ) );
+		$this->instance->output_singular_css();
+		remove_filter( 'query', $interject );
+
+		$this->assertFalse(
+			'1.0.2' === $this->stored_meta( $post_id, '_atomic_wind_css_version' ) && $legacy === $this->stored_meta( $post_id, '_atomic_wind_css' ),
+			'A legacy sheet must not end up stamped with the current version.'
+		);
+		$this->assertSame( $legacy, $this->stored_meta( $post_id, '_atomic_wind_css' ) );
+		$this->assertSame( '1.0.1', $this->stored_meta( $post_id, '_atomic_wind_css_version' ) );
+		$this->assertCount( 1, $updates );
 	}
 
 	public function test_clear_cached_css_drops_the_version_stamp() {
