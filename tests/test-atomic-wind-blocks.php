@@ -2597,4 +2597,89 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 			$this->inline_style_for( 'atomic-wind-base' )
 		);
 	}
+
+	// -------------------------------------------------------
+	// render_query_loop — post type visibility (otter-internals#319)
+	// -------------------------------------------------------
+
+	public function test_query_loop_skips_non_viewable_post_type() {
+		register_post_type(
+			'otter_secret',
+			array(
+				'public'              => false,
+				'publicly_queryable'  => false,
+				'exclude_from_search' => true,
+			)
+		);
+		$this->factory()->post->create(
+			array(
+				'post_type'   => 'otter_secret',
+				'post_status' => 'publish',
+				'post_title'  => 'Secret Record Title',
+			)
+		);
+
+		$block   = $this->make_block( 'atomic-wind/box', array( 'queryPostType' => 'otter_secret' ) );
+		$content = '<div class="wp-block-atomic-wind-box">INNER</div>';
+
+		$result = $this->instance->render_query_loop( $content, $block );
+
+		$this->assertSame( '', $result );
+		$this->assertStringNotContainsString( 'Secret Record Title', $result );
+
+		unregister_post_type( 'otter_secret' );
+	}
+
+	public function test_query_loop_renders_a_viewable_post_type() {
+		$block   = $this->make_block( 'atomic-wind/box', array( 'queryPostType' => 'post' ) );
+		$content = '<div class="wp-block-atomic-wind-box">INNER</div>';
+
+		$result = $this->instance->render_query_loop( $content, $block );
+
+		// The post created in set_up() is a viewable match, so the wrapper is emitted.
+		$this->assertNotSame( '', $result );
+		$this->assertStringContainsString( 'wp-block-atomic-wind-box', $result );
+	}
+
+	// -------------------------------------------------------
+	// render_post_fields — protected custom field (otter-internals#319)
+	// -------------------------------------------------------
+
+	public function test_custom_field_skips_protected_meta() {
+		update_post_meta( $this->post_id, '_protected', 'Protected Meta Value' );
+
+		$this->reset_in_query( true );
+		global $post;
+		$post = get_post( $this->post_id );
+		setup_postdata( $post );
+
+		$block   = $this->make_block( 'atomic-wind/text', array( 'postField' => 'custom_field', 'customFieldKey' => '_protected' ) );
+		$content = '<p class="wp-block">Placeholder</p>';
+
+		$result = $this->instance->render_post_fields( $content, $block );
+
+		$this->assertStringNotContainsString( 'Protected Meta Value', $result );
+		$this->assertStringContainsString( 'Placeholder', $result );
+
+		wp_reset_postdata();
+	}
+
+	public function test_custom_field_renders_a_public_meta_key() {
+		update_post_meta( $this->post_id, 'otter_public_field', 'Public Meta Value' );
+
+		$this->reset_in_query( true );
+		global $post;
+		$post = get_post( $this->post_id );
+		setup_postdata( $post );
+
+		$block   = $this->make_block( 'atomic-wind/text', array( 'postField' => 'custom_field', 'customFieldKey' => 'otter_public_field' ) );
+		$content = '<p class="wp-block">Placeholder</p>';
+
+		$result = $this->instance->render_post_fields( $content, $block );
+
+		$this->assertStringContainsString( 'Public Meta Value', $result );
+		$this->assertStringNotContainsString( 'Placeholder', $result );
+
+		wp_reset_postdata();
+	}
 }

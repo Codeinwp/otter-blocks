@@ -1253,11 +1253,18 @@ class Atomic_Wind_Blocks {
 			return $block_content;
 		}
 
+		// The post type comes from the request. Only loop over a publicly viewable one, so a non-public
+		// type (e.g. a contact-form inbox) whose entries are stored as `publish` cannot be exposed.
+		$post_type = sanitize_key( $post_type );
+		if ( ! is_post_type_viewable( $post_type ) ) {
+			return '';
+		}
+
 		global $post;
 		$saved_post = $post;
 
 		$args = array(
-			'post_type'      => sanitize_key( $post_type ),
+			'post_type'      => $post_type,
 			'posts_per_page' => isset( $block['attrs']['queryCount'] ) ? min( absint( $block['attrs']['queryCount'] ), 100 ) : 3,
 			'orderby'        => isset( $block['attrs']['queryOrderBy'] ) ? sanitize_key( $block['attrs']['queryOrderBy'] ) : sanitize_key( 'date' ),
 			'order'          => isset( $block['attrs']['queryOrder'] ) && strtoupper( $block['attrs']['queryOrder'] ) === 'ASC' ? 'ASC' : 'DESC',
@@ -1391,7 +1398,8 @@ class Atomic_Wind_Blocks {
 					break;
 				case 'custom_field':
 					$meta_key = isset( $block['attrs']['customFieldKey'] ) ? sanitize_text_field( $block['attrs']['customFieldKey'] ) : '';
-					if ( $meta_key ) {
+					// Never print a protected meta key (e.g. a `_`-prefixed field holding a form submitter's data).
+					if ( $meta_key && ! is_protected_meta( $meta_key, 'post' ) ) {
 						$value = '';
 						if ( function_exists( 'get_field' ) ) {
 							$acf = get_field( $meta_key, get_the_ID() );

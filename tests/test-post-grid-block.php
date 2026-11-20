@@ -125,4 +125,73 @@ class Test_Post_Grid_Block extends WP_UnitTestCase {
 
 		$this->assertEquals( $expected, $output );
 	}
+
+	/**
+	 * Render the block for the given post types and return its HTML.
+	 *
+	 * @param string[] $post_types Post types to query.
+	 * @return string
+	 */
+	private function render_for_post_types( $post_types ) {
+		$this->post_grid_block = new Posts_Grid_Block();
+		WP_Block_Supports::init();
+		WP_Block_Supports::$block_to_render = array( 'blockName' => 'themeisle-blocks/posts-grid' );
+
+		$attributes              = unserialize( serialize( $this->attributes ) );
+		$attributes['postTypes'] = $post_types;
+
+		return $this->post_grid_block->render( $attributes );
+	}
+
+	/**
+	 * A non-public post type is never queried, so its records cannot be exposed
+	 * through the block (otter-internals#319).
+	 */
+	public function test_render_skips_non_public_post_types() {
+		register_post_type(
+			'otter_secret',
+			array(
+				'public'              => false,
+				'publicly_queryable'  => false,
+				'exclude_from_search' => true,
+			)
+		);
+		$this->factory()->post->create(
+			array(
+				'post_type'   => 'otter_secret',
+				'post_status' => 'publish',
+				'post_title'  => 'Secret Record Title',
+			)
+		);
+		$this->factory()->post->create(
+			array(
+				'post_type'   => 'post',
+				'post_status' => 'publish',
+				'post_title'  => 'Public Blog Title',
+			)
+		);
+
+		$this->assertStringNotContainsString( 'Secret Record Title', $this->render_for_post_types( array( 'otter_secret' ) ) );
+
+		$mixed = $this->render_for_post_types( array( 'otter_secret', 'post' ) );
+		$this->assertStringNotContainsString( 'Secret Record Title', $mixed );
+		$this->assertStringContainsString( 'Public Blog Title', $mixed );
+
+		unregister_post_type( 'otter_secret' );
+	}
+
+	/**
+	 * A public post type still renders, so the filter does not block normal use.
+	 */
+	public function test_render_keeps_public_post_types() {
+		$this->factory()->post->create(
+			array(
+				'post_type'   => 'post',
+				'post_status' => 'publish',
+				'post_title'  => 'Public Blog Title',
+			)
+		);
+
+		$this->assertStringContainsString( 'Public Blog Title', $this->render_for_post_types( array( 'post' ) ) );
+	}
 }
