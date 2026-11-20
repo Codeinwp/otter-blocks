@@ -108,4 +108,35 @@ class TestLiveSearch extends WP_UnitTestCase
 
         $this->assertNotEquals( array( 'otter_shop_product' ), $secondary->get( 'post_type' ) );
     }
+
+    /**
+     * A non-viewable type passed via o_post_type is dropped, so an anonymous visitor
+     * cannot query it through the main search query (otter-internals#319).
+     */
+    public function test_o_post_type_skips_non_viewable_type() {
+        $live_search = new Live_Search_Server();
+
+        $this->go_to( home_url( '/?s=test' ) );
+        global $wp_query;
+        $wp_query->set( 'o_post_type', 'otter_shop_coupon' );
+
+        $live_search->parse_query( $wp_query );
+
+        $this->assertNotEquals( array( 'otter_shop_coupon' ), $wp_query->get( 'post_type' ) );
+    }
+
+    /**
+     * A mixed list keeps the viewable types and drops the non-viewable one.
+     */
+    public function test_o_post_type_keeps_only_viewable_types() {
+        $live_search = new Live_Search_Server();
+
+        $this->go_to( home_url( '/?s=test' ) );
+        global $wp_query;
+        $wp_query->set( 'o_post_type', 'otter_shop_product,otter_shop_coupon' );
+
+        $live_search->parse_query( $wp_query );
+
+        $this->assertEquals( array( 'otter_shop_product' ), $wp_query->get( 'post_type' ) );
+    }
 }
