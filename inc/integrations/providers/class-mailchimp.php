@@ -88,7 +88,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
 			$response = vip_safe_wp_remote_get( $url, '', 3, 1, 20, $args );
 		} else {
-			$response = wp_remote_get( $url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
+			$response = wp_safe_remote_get( $url, $args );
 		}
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
@@ -143,7 +143,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 			'body'    => wp_json_encode( $payload ),
 		);
 
-		return wp_remote_post( $url, $args );
+		return wp_safe_remote_post( $url, $args );
 	}
 
 	/**
@@ -226,7 +226,9 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		}
 
 		$key_info = explode( '-', $api_key );
-		if ( 2 !== count( $key_info ) || ! isset( $key_info[1] ) ) {
+
+		// The data center becomes the request host, so it must be a bare `<letters/digits>` token (e.g. `us1`), never a host, port or path.
+		if ( 2 !== count( $key_info ) || ! isset( $key_info[1] ) || ! preg_match( '/^[a-z0-9]+$/', $key_info[1] ) ) {
 			return array(
 				'valid'  => false,
 				'reason' => __( 'Invalid API Key format!', 'otter-blocks' ),
@@ -260,7 +262,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 			),
 		);
 
-		$response = wp_remote_post( $url, $args );
+		$response = wp_safe_remote_post( $url, $args );
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
@@ -320,7 +322,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
 			$response = vip_safe_wp_remote_get( $url, '', 3, 1, 20, $args );
 		} else {
-			$response = wp_remote_get( $url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
+			$response = wp_safe_remote_get( $url, $args );
 		}
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
