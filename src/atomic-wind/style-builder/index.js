@@ -35,7 +35,7 @@ document.addEventListener( 'atomic-wind:css-ready', () => {
 	const saves = [];
 
 	if ( postId ) {
-		saves.push( save( 'style', { css, postId } ) );
+		saves.push( save( 'style', { css, postId, version: styleTag.dataset.cssVersion } ) );
 	}
 
 	if ( window.atomicWindCombinedStyle ) {

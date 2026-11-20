@@ -1540,10 +1540,246 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
 	}
 
+	private const WRAPPER_SELECTOR = ':where([class*="wp-block-atomic-wind-"])';
+
+	private const TYPOGRAPHY_DECLARATIONS = array(
+		'line-height:1.5',
+		'font-family:var(--default-font-family,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji")',
+		'font-feature-settings:var(--default-font-feature-settings,normal)',
+		'font-variation-settings:var(--default-font-variation-settings,normal)',
+	);
+
+	private const VARIABLES_RULE = ':where([class*="wp-block-atomic-wind-"]){--font-sans:ui-sans-serif,system-ui;--spacing:.25rem}';
+
+	private const UTILITY_RULE = '.font-serif:where([class*="wp-block-atomic-wind-"], [class*="wp-block-atomic-wind-"] *){font-family:var(--font-serif)}';
+
+	private const ELEMENT_RULE = 'h1:where([class*="wp-block-atomic-wind-"], [class*="wp-block-atomic-wind-"] *){font-size:inherit;line-height:inherit}';
+
+	/**
+	 * Helper: stamp a post's cached stylesheet and render its head output.
+	 *
+	 * @param string $css     Stylesheet to cache.
+	 * @param string $version Version stamp.
+	 * @return int Post ID.
+	 */
+	private function render_post_cached_as( $css, $version ) {
+		$this->reset_style_globals();
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $singular, '_atomic_wind_css', wp_slash( $css ) );
+		update_post_meta( $singular, '_atomic_wind_css_version', $version );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->output_singular_css();
+
+		return $singular;
+	}
+
+	/**
+	 * Helper: a minified 1.0.1 sheet, with the wrapper rule holding the given declarations.
+	 *
+	 * @param array $declarations Wrapper rule declarations.
+	 * @return string
+	 */
+	private function sheet_with_wrapper( array $declarations ) {
+		return self::VARIABLES_RULE . self::WRAPPER_SELECTOR . '{' . implode( ';', $declarations ) . '}' . self::UTILITY_RULE . self::ELEMENT_RULE;
+	}
+
+	private function legacy_wrapper_declarations() {
+		return array_merge(
+			array( self::TYPOGRAPHY_DECLARATIONS[0], '-webkit-text-size-adjust:100%', 'tab-size:4' ),
+			array_slice( self::TYPOGRAPHY_DECLARATIONS, 1 ),
+			array( '-webkit-tap-highlight-color:transparent' )
+		);
+	}
+
+	private function assert_migrated_sheet_is_served( $expected ) {
+		$this->assertSame( $expected, $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertFalse( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+	}
+
+	public function test_output_singular_css_migrates_css_stamped_by_the_previous_generator() {
+		$this->render_post_cached_as( $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() ), '1.0.1' );
+
+		$expected = self::VARIABLES_RULE
+			. self::WRAPPER_SELECTOR . '{-webkit-text-size-adjust:100%;tab-size:4;-webkit-tap-highlight-color:transparent}'
+			. self::UTILITY_RULE
+			. self::ELEMENT_RULE;
+
+		$this->assert_migrated_sheet_is_served( $expected );
+	}
+
+	public function test_output_singular_css_migrates_a_pretty_printed_sheet() {
+		$css = self::WRAPPER_SELECTOR . " {\n\t--spacing: .25rem;\n}\n\n"
+			. self::WRAPPER_SELECTOR . " {\n\tline-height: 1.5;\n\t-webkit-text-size-adjust: 100%;\n\ttab-size: 4;\n"
+			. "\tfont-family: var(--default-font-family, ui-sans-serif, \"Apple Color Emoji\");\n"
+			. "\tfont-feature-settings: var(--default-font-feature-settings, normal);\n"
+			. "\tFont-Variation-Settings: var(--default-font-variation-settings, normal);\n"
+			. "\t-webkit-tap-highlight-color: transparent;\n}\n\n" . self::ELEMENT_RULE;
+
+		$this->render_post_cached_as( $css, '1.0.1' );
+
+		$expected = self::WRAPPER_SELECTOR . " {\n\t--spacing: .25rem;\n}\n\n"
+			. self::WRAPPER_SELECTOR . " {\n\t-webkit-text-size-adjust: 100%;\n\ttab-size: 4;\n"
+			. "\t-webkit-tap-highlight-color: transparent;\n}\n\n" . self::ELEMENT_RULE;
+
+		$this->assert_migrated_sheet_is_served( $expected );
+	}
+
+	public function test_output_singular_css_migrates_a_wrapper_rule_inside_a_layer() {
+		$css      = '@layer base{' . $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() ) . '}';
+		$expected = '@layer base{' . self::VARIABLES_RULE
+			. self::WRAPPER_SELECTOR . '{-webkit-text-size-adjust:100%;tab-size:4;-webkit-tap-highlight-color:transparent}'
+			. self::UTILITY_RULE . self::ELEMENT_RULE . '}';
+
+		$this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $expected );
+	}
+
+	public function test_output_singular_css_drops_a_wrapper_rule_left_empty_by_the_migration() {
+		$css      = '@layer base{' . $this->sheet_with_wrapper( self::TYPOGRAPHY_DECLARATIONS ) . '}';
+		$expected = '@layer base{' . self::VARIABLES_RULE . self::UTILITY_RULE . self::ELEMENT_RULE . '}';
+
+		$this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $expected );
+	}
+
+	public function test_output_singular_css_keeps_a_current_sheet_untouched() {
+		$css     = $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() );
+		$this->render_post_cached_as( $css, '1.0.2' );
+
+		$this->assert_migrated_sheet_is_served( $css );
+	}
+
+	/**
+	 * @dataProvider data_unmigratable_versions
+	 */
+	public function test_output_singular_css_ignores_a_sheet_without_a_migration_path( $version ) {
+		$css     = $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() );
+		$post_id = $this->render_post_cached_as( $css, $version );
+
+		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertSame( $version, get_post_meta( $post_id, '_atomic_wind_css_version', true ) );
+		$this->assertSame( $css, get_post_meta( $post_id, '_atomic_wind_css', true ) );
+	}
+
+	public function data_unmigratable_versions(): array {
+		return array(
+			'before the first stamp' => array( '1.0.0' ),
+			'unknown future stamp'   => array( '9.9.9' ),
+		);
+	}
+
+	public function test_output_singular_css_migration_keeps_backslashes_in_the_served_sheet() {
+		$css      = '.w-1\/2:where([class*="wp-block-atomic-wind-"], [class*="wp-block-atomic-wind-"] *){width:50%}' . $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() );
+		$expected = '.w-1\/2:where([class*="wp-block-atomic-wind-"], [class*="wp-block-atomic-wind-"] *){width:50%}' . self::VARIABLES_RULE
+			. self::WRAPPER_SELECTOR . '{-webkit-text-size-adjust:100%;tab-size:4;-webkit-tap-highlight-color:transparent}'
+			. self::UTILITY_RULE . self::ELEMENT_RULE;
+
+		$this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $expected );
+	}
+
+	public function test_rest_save_style_migration_keeps_backslashes_in_the_stored_sheet() {
+		$css     = '.w-1\/2{width:50%}' . $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() );
+		$post_id = $this->save_style_then_render( $css, null );
+
+		$stored = $this->stored_pair( $post_id );
+
+		$this->assertStringStartsWith( '.w-1\/2{width:50%}', $stored[0] );
+		$this->assertStringNotContainsString( 'line-height:1.5', $stored[0] );
+	}
+
+	public function test_output_singular_css_leaves_a_wrapper_rule_without_typography_byte_identical() {
+		$variables = self::WRAPPER_SELECTOR . '{--a:1;--b:2;}';
+		$css       = $variables . self::WRAPPER_SELECTOR . '{' . implode( ';', $this->legacy_wrapper_declarations() ) . '}';
+		$expected  = $variables . self::WRAPPER_SELECTOR . '{-webkit-text-size-adjust:100%;tab-size:4;-webkit-tap-highlight-color:transparent}';
+
+		$this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $expected );
+	}
+
+	public function test_output_singular_css_migrates_a_wrapper_rule_with_deeply_nested_functions() {
+		$css      = self::WRAPPER_SELECTOR . '{line-height:1.5;width:calc(1px + min(2px, max(3px, 4px)));tab-size:4}';
+		$expected = self::WRAPPER_SELECTOR . '{width:calc(1px + min(2px, max(3px, 4px)));tab-size:4}';
+
+		$this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $expected );
+	}
+
+	public function test_output_singular_css_migrates_a_wrapper_rule_with_an_escaped_quote_in_a_string() {
+		$css      = self::WRAPPER_SELECTOR . '{line-height:1.5;--a:"x\";y";tab-size:4}';
+		$expected = self::WRAPPER_SELECTOR . '{--a:"x\";y";tab-size:4}';
+
+		$this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $expected );
+	}
+
+	/**
+	 * @dataProvider data_unverifiable_wrapper_bodies
+	 */
+	public function test_output_singular_css_does_not_migrate_a_wrapper_rule_it_cannot_parse( $body ) {
+		$css     = self::WRAPPER_SELECTOR . '{' . $body . '}';
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_sheet_not_migrated( $post_id, $css, '1.0.1' );
+	}
+
+	public function data_unverifiable_wrapper_bodies(): array {
+		return array(
+			'comment'         => array( "/* it's */line-height:1.5;tab-size:4" ),
+			'unbalanced quote' => array( "line-height:1.5;--a:it's;tab-size:4" ),
+			'unbalanced paren' => array( 'line-height:1.5;--a:foo(bar;tab-size:4' ),
+		);
+	}
+
+	public function test_output_singular_css_migrates_real_generator_output() {
+		$dir = __DIR__ . '/fixtures/atomic-wind/';
+
+		$this->render_post_cached_as( file_get_contents( $dir . 'sheet-1.0.1.css' ), '1.0.1' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+		$this->assert_migrated_sheet_is_served( file_get_contents( $dir . 'sheet-1.0.2.css' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	}
+
+	public function test_output_singular_css_ignores_a_sheet_without_a_stamp() {
+		$css     = $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() );
+		$post_id = $this->render_post_cached_as( $css, '' );
+
+		$this->assert_sheet_not_migrated( $post_id, $css, '' );
+	}
+
+	public function test_output_singular_css_ignores_a_stamped_sheet_with_empty_css() {
+		$post_id = $this->render_post_cached_as( '', '1.0.1' );
+
+		$this->assert_sheet_not_migrated( $post_id, '', '1.0.1' );
+	}
+
+	public function test_output_singular_css_ignores_a_sheet_the_migration_empties() {
+		$css     = self::WRAPPER_SELECTOR . '{' . implode( ';', self::TYPOGRAPHY_DECLARATIONS ) . '}';
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_sheet_not_migrated( $post_id, $css, '1.0.1' );
+	}
+
+	private function assert_sheet_not_migrated( $post_id, $css, $version ) {
+		$this->assertSame( '', $this->inline_style_for( 'atomic-wind-tailwind' ) );
+		$this->assertTrue( wp_script_is( 'atomic-wind-tailwind-generator', 'enqueued' ) );
+		$this->assertSame( $version, get_post_meta( $post_id, '_atomic_wind_css_version', true ) );
+		$this->assertSame( $css, get_post_meta( $post_id, '_atomic_wind_css', true ) );
+	}
+
 	public function test_rest_save_style_stamps_the_generator_version() {
 		$request = new WP_REST_Request( 'POST', '/otter/v1/atomic-wind/style' );
 		$request->set_param( 'postId', $this->post_id );
 		$request->set_param( 'css', '.flex{display:flex}' );
+		$request->set_param( 'version', Atomic_Wind_Blocks::ATOMIC_WIND_CSS_VERSION );
 
 		$this->instance->rest_save_style( $request );
 
@@ -1551,6 +1787,260 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 			Atomic_Wind_Blocks::ATOMIC_WIND_CSS_VERSION,
 			get_post_meta( $this->post_id, '_atomic_wind_css_version', true )
 		);
+	}
+
+	/**
+	 * Helper: save a sheet through the route, then render the post's head output.
+	 *
+	 * @param string      $css     Sheet to post.
+	 * @param string|null $version Generator version to post, null to omit it.
+	 * @return int Post ID.
+	 */
+	private function save_style_then_render( $css, $version ) {
+		$this->reset_style_globals();
+
+		$singular = $this->make_atomic_wind_post( 'flex' );
+		$params   = array(
+			'postId' => $singular,
+			'css'    => $css,
+		);
+
+		if ( null !== $version ) {
+			$params['version'] = $version;
+		}
+
+		$this->assertSame( 200, $this->post_atomic_wind_route( 'style', $params )->get_status() );
+
+		$this->go_to( get_permalink( $singular ) );
+		$this->instance->output_singular_css();
+
+		return $singular;
+	}
+
+	private function fixture_sheet( $version ) {
+		return file_get_contents( __DIR__ . '/fixtures/atomic-wind/sheet-' . $version . '.css' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	}
+
+	/**
+	 * Helper: the stored sheet and stamp of a post.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return array{string, string}
+	 */
+	private function stored_pair( $post_id ) {
+		wp_cache_delete( $post_id, 'post_meta' );
+
+		return array(
+			(string) get_post_meta( $post_id, '_atomic_wind_css', true ),
+			(string) get_post_meta( $post_id, '_atomic_wind_css_version', true ),
+		);
+	}
+
+	public function test_rest_save_style_without_a_version_stores_the_migrated_sheet_stamped_current() {
+		$post_id = $this->save_style_then_render( $this->fixture_sheet( '1.0.1' ), null );
+
+		$this->assertSame( array( $this->fixture_sheet( '1.0.2' ), '1.0.2' ), $this->stored_pair( $post_id ) );
+		$this->assert_migrated_sheet_is_served( $this->fixture_sheet( '1.0.2' ) );
+	}
+
+	public function test_rest_save_style_with_the_previous_version_stores_the_migrated_sheet_stamped_current() {
+		$post_id = $this->save_style_then_render( $this->fixture_sheet( '1.0.1' ), '1.0.1' );
+
+		$this->assertSame( array( $this->fixture_sheet( '1.0.2' ), '1.0.2' ), $this->stored_pair( $post_id ) );
+	}
+
+	public function test_rest_save_style_with_the_current_version_stores_the_sheet_byte_exact() {
+		$css     = $this->fixture_sheet( '1.0.2' );
+		$post_id = $this->save_style_then_render( $css, Atomic_Wind_Blocks::ATOMIC_WIND_CSS_VERSION );
+
+		$this->assertSame( array( $css, '1.0.2' ), $this->stored_pair( $post_id ) );
+		$this->assert_migrated_sheet_is_served( $css );
+	}
+
+	public function test_rest_save_style_without_a_version_keeps_a_current_format_sheet() {
+		$css     = $this->fixture_sheet( '1.0.2' );
+		$post_id = $this->save_style_then_render( $css, null );
+
+		$this->assertSame( array( $css, '1.0.2' ), $this->stored_pair( $post_id ) );
+	}
+
+	/**
+	 * @dataProvider data_invalid_versions
+	 */
+	public function test_rest_save_style_treats_an_invalid_version_as_legacy( $version ) {
+		$post_id = $this->save_style_then_render( $this->fixture_sheet( '1.0.1' ), $version );
+
+		$this->assertSame( array( $this->fixture_sheet( '1.0.2' ), '1.0.2' ), $this->stored_pair( $post_id ) );
+	}
+
+	public function data_invalid_versions(): array {
+		return array(
+			'word'                => array( 'abc' ),
+			'two parts'           => array( '1.0' ),
+			'empty'               => array( '' ),
+			'suffix'              => array( "1.0.2\n" ),
+			'prerelease'          => array( '1.0.2-beta' ),
+			'five digits'         => array( '1.0.10000' ),
+			'thousands of digits' => array( '1.' . str_repeat( '0', 5000 ) . '.2' ),
+		);
+	}
+
+	public function test_rest_save_style_rejects_a_version_that_is_not_text() {
+		$post_id  = $this->make_atomic_wind_post( 'flex' );
+		$response = $this->post_atomic_wind_route(
+			'style',
+			array(
+				'postId'  => $post_id,
+				'css'     => $this->fixture_sheet( '1.0.1' ),
+				'version' => array( '1.0.1' ),
+			)
+		);
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertFalse( metadata_exists( 'post', $post_id, '_atomic_wind_css' ) );
+	}
+
+	/**
+	 * @dataProvider data_unsaveable_sheets
+	 */
+	public function test_rest_save_style_stores_nothing_for_a_sheet_it_cannot_bring_to_the_current_version( $css, $version ) {
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		$this->set_cached_css( $post_id, '.cached{color:red}' );
+
+		$params = array(
+			'postId' => $post_id,
+			'css'    => $css,
+		);
+
+		if ( null !== $version ) {
+			$params['version'] = $version;
+		}
+
+		$response = $this->post_atomic_wind_route( 'style', $params );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertFalse( $response->get_data()['success'] );
+		$this->assertSame( array( '.cached{color:red}', '1.0.2' ), $this->stored_pair( $post_id ) );
+	}
+
+	public function data_unsaveable_sheets(): array {
+		$unbalanced = ':where([class*="wp-block-atomic-wind-"]){line-height:1.5;--a:it\'s;tab-size:4}';
+
+		return array(
+			'unparsable legacy wrapper rule' => array( $unbalanced, null ),
+			'unparsable, stated legacy'      => array( $unbalanced, '1.0.1' ),
+			'older unknown version'          => array( '.flex{display:flex}', '0.9.0' ),
+			'future version'                 => array( '.flex{display:flex}', '9.9.9' ),
+		);
+	}
+
+	public function test_reading_a_legacy_pair_serves_it_migrated_every_time_and_never_writes() {
+		$this->reset_style_globals();
+
+		$css     = $this->fixture_sheet( '1.0.1' );
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $css ) );
+		update_post_meta( $post_id, '_atomic_wind_css_version', '1.0.1' );
+
+		$writes = array();
+		$spy    = static function ( $query ) use ( &$writes ) {
+			if ( preg_match( '/^\s*(INSERT|UPDATE|DELETE|REPLACE)\b/i', $query ) && false !== stripos( $query, 'postmeta' ) ) {
+				$writes[] = $query;
+			}
+
+			return $query;
+		};
+
+		add_filter( 'query', $spy );
+
+		for ( $i = 0; $i < 2; $i++ ) {
+			$this->reset_style_globals();
+			$this->go_to( get_permalink( $post_id ) );
+			$this->instance->output_singular_css();
+
+			$this->assert_migrated_sheet_is_served( $this->fixture_sheet( '1.0.2' ) );
+		}
+
+		remove_filter( 'query', $spy );
+
+		$this->assertSame( array(), $writes );
+		$this->assertSame( array( $css, '1.0.1' ), $this->stored_pair( $post_id ) );
+	}
+
+	public function test_a_current_format_sheet_beside_the_previous_stamp_is_served_unchanged() {
+		$css     = $this->fixture_sheet( '1.0.2' );
+		$post_id = $this->render_post_cached_as( $css, '1.0.1' );
+
+		$this->assert_migrated_sheet_is_served( $css );
+		$this->assertSame( array( $css, '1.0.1' ), $this->stored_pair( $post_id ) );
+	}
+
+	public function test_a_versionless_save_landing_between_the_writes_of_a_versioned_save_cannot_mislabel_its_sheet() {
+		$this->reset_style_globals();
+
+		$legacy  = $this->fixture_sheet( '1.0.1' ) . '.late{color:red}';
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+		update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $this->sheet_with_wrapper( $this->legacy_wrapper_declarations() ) ) );
+		update_post_meta( $post_id, '_atomic_wind_css_version', '1.0.1' );
+
+		$injected  = false;
+		$interject = function ( $meta_id, $object_id, $meta_key ) use ( &$injected, $post_id, $legacy ) {
+			if ( $injected || $object_id !== $post_id || '_atomic_wind_css' !== $meta_key ) {
+				return;
+			}
+
+			$injected = true;
+			$this->post_atomic_wind_route(
+				'style',
+				array(
+					'postId' => $post_id,
+					'css'    => $legacy,
+				)
+			);
+		};
+
+		add_action( 'updated_post_meta', $interject, 10, 3 );
+		$this->post_atomic_wind_route(
+			'style',
+			array(
+				'postId'  => $post_id,
+				'css'     => $this->fixture_sheet( '1.0.2' ),
+				'version' => '1.0.2',
+			)
+		);
+		remove_action( 'updated_post_meta', $interject, 10 );
+
+		$this->assertTrue( $injected );
+
+		list( $stored, $stamp ) = $this->stored_pair( $post_id );
+
+		$this->assertFalse( '1.0.2' === $stamp && $legacy === $stored, 'A legacy sheet must not be stamped with the current version.' );
+
+		$this->go_to( get_permalink( $post_id ) );
+		$this->instance->output_singular_css();
+
+		$this->assert_migrated_sheet_is_served( $this->fixture_sheet( '1.0.2' ) . '.late{color:red}' );
+	}
+
+	public function test_css_version_matches_the_generator_constant() {
+		$file = dirname( __DIR__ ) . '/src/atomic-wind/tailwind/scope-css.js';
+
+		if ( ! file_exists( $file ) ) {
+			$this->markTestSkipped( 'Generator sources are not available.' );
+		}
+
+		$this->assertStringContainsString(
+			"export const CSS_VERSION = '" . Atomic_Wind_Blocks::ATOMIC_WIND_CSS_VERSION . "';",
+			file_get_contents( $file ) // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		);
+	}
+
+	public function test_warm_page_loads_the_frontend_generator_that_stamps_the_css_version() {
+		$post_id = $this->make_atomic_wind_post( 'flex' );
+
+		$html = $this->call_private( 'render_css_warm_page_html', get_post( $post_id ) );
+
+		$this->assertMatchesRegularExpression( '#<script src="[^"]*build/atomic-wind/tailwind-generator-frontend\.js[^"]*"></script>#', $html );
 	}
 
 	public function test_clear_cached_css_drops_the_version_stamp() {
