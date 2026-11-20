@@ -4,6 +4,9 @@
  * Scope Tailwind resets and utilities to Atomic Wind blocks to prevent theme conflicts.
  */
 
+// Must match Atomic_Wind_Blocks::ATOMIC_WIND_CSS_VERSION; bump both when the scoped output changes.
+export const CSS_VERSION = '1.0.2';
+
 const ATOMIC_ROOT = '[class*="wp-block-atomic-wind-"]';
 // Zero specificity, so a theme rule aimed at the block wrapper still wins.
 const ATOMIC_SELF = `:where(${ ATOMIC_ROOT })`;
@@ -14,6 +17,9 @@ const OPAQUE_AT_RULE = /^@(-[a-z]+-)?(keyframes|font-face|property|counter-style
 
 // Document-level subjects: they carry inherited defaults, not element resets.
 const ROOT_SELECTOR = /^(:root|:host|html|body)$/;
+
+// Root defaults that are safe to repeat on every block wrapper; anything else must be inherited.
+const WRAPPER_PROPERTY = /^(--.+|tab-size|(-webkit-)?text-size-adjust|-webkit-tap-highlight-color)$/;
 
 const ROOT_PREFIX = /^(:root|:host|html|body)(?=$|[\s>+~])/;
 
@@ -141,18 +147,28 @@ function pseudoElementStart( subject ) {
 }
 
 /**
+ * Whether a selector targets only the document root.
+ *
+ * @param {string} selector Single selector.
+ * @return {boolean} True for a bare `:root`, `:host`, `html` or `body`.
+ */
+function isRootOnly( selector ) {
+	return 0 === subjectStart( selector ) && ROOT_SELECTOR.test( selector );
+}
+
+/**
  * Confine one selector to the Atomic Wind subtree.
  *
  * @param {string} selector Single selector.
  * @return {string} Scoped selector.
  */
 function scopeSelectorToBlocks( selector ) {
-	const start = subjectStart( selector );
-	const subject = selector.slice( start );
-
-	if ( 0 === start && ROOT_SELECTOR.test( subject ) ) {
+	if ( isRootOnly( selector ) ) {
 		return ATOMIC_SELF;
 	}
+
+	const start = subjectStart( selector );
+	const subject = selector.slice( start );
 
 	const prefix = selector.slice( 0, start );
 	const pseudo = pseudoElementStart( subject );
@@ -224,10 +240,10 @@ function blockEnd( css, open ) {
 /**
  * Rewrite every style-rule selector in a stylesheet.
  *
- * A falsy return from `transform` drops the rule.
+ * `transform` returns the selector list, a falsy value to drop the rule, or `[ selector, body ]` pairs to emit in its place.
  *
- * @param {string}   css       Stylesheet text.
- * @param {Function} transform Receives the selector list and the declaration block.
+ * @param {string}                                                                                                  css       Stylesheet text.
+ * @param {( selector: string, body: string ) => ( string | false | null | undefined | Array<[ string, string ]> )} transform Receives the selector list and the declaration block.
  * @return {string} Rewritten stylesheet.
  */
 export function transformCssSelectors( css, transform ) {
@@ -278,9 +294,13 @@ export function transformCssSelectors( css, transform ) {
 				const inner = OPAQUE_AT_RULE.test( trimmed ) ? body : transformCssSelectors( body, transform );
 				out += `${ trimmed }{${ inner }}`;
 			} else {
-				const selector = transform( trimmed, body );
-				if ( selector ) {
-					out += `${ selector }{${ body }}`;
+				const result = transform( trimmed, body );
+				const rules = Array.isArray( result ) ? result : [[ result, body ]];
+
+				for ( const [ selector, ruleBody ] of rules ) {
+					if ( selector ) {
+						out += `${ selector }{${ ruleBody }}`;
+					}
 				}
 			}
 
@@ -309,7 +329,92 @@ export function transformCssSelectors( css, transform ) {
 }
 
 /**
- * Keep Tailwind's element resets and variables inside Atomic Wind blocks.
+ * Split a declaration block on top-level semicolons, dropping comments.
+ *
+ * @param {string} body Declaration block.
+ * @return {string[]} The declarations, without comments.
+ */
+function splitDeclarations( body ) {
+	const parts = [];
+	let part = '';
+	let depth = 0;
+	let quote = '';
+
+	for ( let i = 0; i < body.length; i++ ) {
+		const char = body[ i ];
+
+		if ( '\\' === char ) {
+			part += body.slice( i, i + 2 );
+			i++;
+			continue;
+		}
+
+		if ( quote ) {
+			if ( char === quote ) {
+				quote = '';
+			}
+			part += char;
+			continue;
+		}
+
+		if ( 0 === depth && '/' === char && '*' === body[ i + 1 ] ) {
+			const end = body.indexOf( '*/', i + 2 );
+			i = -1 === end ? body.length : end + 1;
+			continue;
+		}
+
+		if ( ';' === char && 0 === depth ) {
+			parts.push( part );
+			part = '';
+			continue;
+		}
+
+		if ( '"' === char || '\'' === char ) {
+			quote = char;
+		} else if ( '(' === char || '[' === char || '{' === char ) {
+			depth++;
+		} else if ( ')' === char || ']' === char || '}' === char ) {
+			depth = Math.max( 0, depth - 1 );
+		}
+
+		part += char;
+	}
+
+	parts.push( part );
+
+	return parts;
+}
+
+/**
+ * Reduce a declaration block to the declarations a block wrapper may carry.
+ *
+ * @param {string} body Declaration block.
+ * @return {string} The original body when nothing is removed, else the kept declarations ('' when none).
+ */
+function wrapperDeclarations( body ) {
+	const parts = splitDeclarations( body );
+
+	const kept = parts.filter( ( part ) => {
+		const declaration = part.trim();
+
+		if ( ! declaration ) {
+			return true;
+		}
+
+		const colon = declaration.indexOf( ':' );
+
+		return -1 !== colon && WRAPPER_PROPERTY.test( declaration.slice( 0, colon ).trim().toLowerCase() );
+	} );
+
+	if ( kept.length === parts.length ) {
+		return body;
+	}
+
+	return kept.some( ( part ) => part.trim() ) ? kept.join( ';' ) : '';
+}
+
+/**
+ * Keep Tailwind's element resets and variables inside Atomic Wind blocks, leaving inherited typography to the theme.
  *
  * @param {string} css Generated stylesheet.
  * @return {string} Scoped stylesheet.
@@ -319,10 +424,34 @@ export function scopeToAtomicWind( css ) {
 		return css;
 	}
 
-	return transformCssSelectors( css, ( selectorText ) => {
-		const scoped = splitSelectorList( selectorText ).map( scopeSelectorToBlocks );
+	return transformCssSelectors( css, ( selectorText, body ) => {
+		const selectors = splitSelectorList( selectorText );
+		const scope = ( list ) => Array.from( new Set( list.map( scopeSelectorToBlocks ) ) ).join( ', ' );
 
-		return Array.from( new Set( scoped ) ).join( ', ' );
+		if ( ! selectors.some( isRootOnly ) ) {
+			return scope( selectors );
+		}
+
+		// Set on the wrapper, inherited defaults would beat what the block inherits from the theme.
+		const kept = wrapperDeclarations( body );
+
+		if ( kept === body ) {
+			return scope( selectors );
+		}
+
+		const rules = [];
+
+		if ( kept ) {
+			rules.push( [ ATOMIC_SELF, kept ] );
+		}
+
+		const others = selectors.filter( ( selector ) => ! isRootOnly( selector ) );
+
+		if ( others.length ) {
+			rules.push( [ scope( others ), body ] );
+		}
+
+		return rules;
 	} );
 }
 

@@ -4,7 +4,7 @@ import indexCSS from 'tailwindcss/index.css';
 import preflightCSS from 'tailwindcss/preflight.css';
 import themeCSS from 'tailwindcss/theme.css';
 import utilitiesCSS from 'tailwindcss/utilities.css';
-import { scopeToAtomicWind } from './scope-css';
+import { CSS_VERSION, scopeToAtomicWind } from './scope-css';
 import { collectNewCandidates } from './candidates';
 
 const assets = {
@@ -32,6 +32,7 @@ const classes = new Set();
 let buildQueue = Promise.resolve();
 const sheet = document.createElement( 'style' );
 sheet.id = 'atomic-wind-tailwind';
+sheet.dataset.cssVersion = CSS_VERSION;
 
 async function loadStylesheet( id, base ) {
 	const entry = stylesheetMap[ id ];
