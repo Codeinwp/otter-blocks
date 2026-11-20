@@ -4,6 +4,9 @@
  * Scope Tailwind resets and utilities to Atomic Wind blocks to prevent theme conflicts.
  */
 
+// Must match Atomic_Wind_Blocks::ATOMIC_WIND_CSS_VERSION; bump both when the scoped output changes.
+export const CSS_VERSION = '1.0.2';
+
 const ATOMIC_ROOT = '[class*="wp-block-atomic-wind-"]';
 // Zero specificity, so a theme rule aimed at the block wrapper still wins.
 const ATOMIC_SELF = `:where(${ ATOMIC_ROOT })`;

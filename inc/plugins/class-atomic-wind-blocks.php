@@ -23,6 +23,13 @@ class Atomic_Wind_Blocks {
 	const ATOMIC_WIND_CSS_VERSION = '1.0.2';
 
 	/**
+	 * Version assumed for a saved sheet that does not state one: the last generator that did not send it.
+	 *
+	 * @var string
+	 */
+	const LEGACY_CSS_VERSION = '1.0.1';
+
+	/**
 	 * Stylesheet migrations, keyed by the version they upgrade from: [ next version, method ].
 	 *
 	 * @var array<string, array{string, string}>
@@ -707,15 +714,19 @@ class Atomic_Wind_Blocks {
 				'callback'            => array( $this, 'rest_save_style' ),
 				'permission_callback' => array( $this, 'rest_save_style_permissions' ),
 				'args'                => array(
-					'css'    => array(
+					'css'     => array(
 						'type'              => 'string',
 						'required'          => true,
 						'validate_callback' => 'rest_validate_request_arg',
 						'sanitize_callback' => array( $this, 'sanitize_css' ),
 					),
-					'postId' => array(
+					'postId'  => array(
 						'type'     => 'integer',
 						'required' => true,
+					),
+					'version' => array(
+						'type'     => 'string',
+						'required' => false,
 					),
 				),
 			) 
@@ -836,9 +847,14 @@ class Atomic_Wind_Blocks {
 	public function rest_save_style( \WP_REST_Request $request ) {
 		$post_id = absint( $request->get_param( 'postId' ) );
 		$css     = $request->get_param( 'css' );
+		$version = $request->get_param( 'version' );
+
+		if ( ! is_string( $version ) || ! preg_match( '/^\d+\.\d+\.\d+$/D', $version ) ) {
+			$version = self::LEGACY_CSS_VERSION;
+		}
 
 		$success = update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $css ) );
-		update_post_meta( $post_id, '_atomic_wind_css_version', self::ATOMIC_WIND_CSS_VERSION );
+		update_post_meta( $post_id, '_atomic_wind_css_version', $version );
 
 		return new \WP_REST_Response( array( 'success' => $success ), 200 );
 	}
@@ -857,7 +873,9 @@ class Atomic_Wind_Blocks {
 			return '';
 		}
 
-		$migrated = false;
+		$original_css     = $css;
+		$original_version = $version;
+		$migrated         = false;
 
 		while ( self::ATOMIC_WIND_CSS_VERSION !== $version && is_string( $version ) && isset( self::CSS_MIGRATIONS[ $version ] ) ) {
 			list( $version, $method ) = self::CSS_MIGRATIONS[ $version ];
@@ -874,12 +892,80 @@ class Atomic_Wind_Blocks {
 			return '';
 		}
 
-		if ( $migrated ) {
-			update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $css ) );
-			update_post_meta( $post_id, '_atomic_wind_css_version', $version );
+		if ( $migrated && ! $this->replace_cached_css( $post_id, $original_css, $original_version, $css, $version ) ) {
+			return $this->reread_current_css( $post_id );
 		}
 
 		return \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css );
+	}
+
+	/**
+	 * After a lost swap, serve the sheet another request stored, if it is current.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string
+	 */
+	private function reread_current_css( $post_id ) {
+		wp_cache_delete( $post_id, 'post_meta' );
+
+		$version = get_post_meta( $post_id, '_atomic_wind_css_version', true );
+		$css     = get_post_meta( $post_id, '_atomic_wind_css', true );
+
+		if ( self::ATOMIC_WIND_CSS_VERSION !== $version || ! is_string( $css ) || '' === $css ) {
+			return '';
+		}
+
+		return \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css );
+	}
+
+	/**
+	 * Swap a migrated sheet in for the one that was read, unless that one has changed since.
+	 *
+	 * Compare-and-swap, so a post save or a fresh save landing meanwhile is not undone.
+	 *
+	 * @param int    $post_id     Post ID.
+	 * @param string $old_css     Sheet that was read.
+	 * @param string $old_version Stamp that was read.
+	 * @param string $new_css     Migrated sheet.
+	 * @param string $new_version Stamp of the migrated sheet.
+	 * @return bool Whether the stored sheet was still the one read.
+	 */
+	private function replace_cached_css( $post_id, $old_css, $old_version, $new_css, $new_version ) {
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+		// An unchanged sheet is valid under both stamps, so only the stamp is swapped.
+		if ( $new_css !== $old_css ) {
+			$swapped = $wpdb->update(
+				$wpdb->postmeta,
+				array( 'meta_value' => $new_css ),
+				array(
+					'post_id'    => $post_id,
+					'meta_key'   => '_atomic_wind_css',
+					'meta_value' => $old_css,
+				)
+			);
+
+			if ( 1 !== $swapped ) {
+				return false;
+			}
+		}
+
+		$stamped = $wpdb->update(
+			$wpdb->postmeta,
+			array( 'meta_value' => $new_version ),
+			array(
+				'post_id'    => $post_id,
+				'meta_key'   => '_atomic_wind_css_version',
+				'meta_value' => $old_version,
+			)
+		);
+
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+
+		wp_cache_delete( $post_id, 'post_meta' );
+
+		return $new_css !== $old_css || 1 === $stamped;
 	}
 
 	/**
