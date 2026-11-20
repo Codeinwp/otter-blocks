@@ -222,9 +222,24 @@ class Dynamic_Content {
 			return false;
 		}
 
+		$seen  = array();
 		$field = acf_get_field( $selector );
 
-		return is_array( $field ) && isset( $field['name'] ) && self::is_protected_meta_key( $field['name'] );
+		// Walk the parent chain: a sub-field under a protected repeater is reachable through the repeater fallback.
+		while ( is_array( $field ) ) {
+			if ( isset( $field['name'] ) && self::is_protected_meta_key( $field['name'] ) ) {
+				return true;
+			}
+
+			$parent = isset( $field['parent'] ) ? $field['parent'] : '';
+			if ( empty( $parent ) || isset( $seen[ $parent ] ) ) {
+				break;
+			}
+			$seen[ $parent ] = true;
+			$field           = acf_get_field( $parent );
+		}
+
+		return false;
 	}
 
 	/**

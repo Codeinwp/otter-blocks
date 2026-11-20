@@ -2761,4 +2761,48 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		$this->assertSame( 'ORIGINAL', $result );
 	}
+
+	/**
+	 * A sub-field under a protected ACF repeater is blocked through the parent chain.
+	 */
+	public function test_get_acf_blocks_a_sub_field_under_a_protected_repeater() {
+		$GLOBALS['otter_test_acf_fields'] = array(
+			'field_leaf'     => array( 'key' => 'field_leaf', 'name' => 'leaf', 'parent' => 'field_repeater', 'value' => 'ACF Secret' ),
+			'field_repeater' => array( 'key' => 'field_repeater', 'name' => '_secret', 'parent' => 0 ),
+		);
+
+		$result = $this->dynamic_content_pro->get_acf( array(
+			'metaKey' => 'field_leaf',
+			'context' => $this->post_id,
+			'default' => 'KEPT',
+		) );
+
+		$this->assertSame( 'KEPT', $result );
+		$this->assertStringNotContainsString( 'ACF Secret', $result );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * The Posts Grid ACF custom field does not print a protected field (otter-internals#320).
+	 */
+	public function test_posts_acf_integration_blocks_a_protected_field() {
+		$GLOBALS['otter_test_acf_fields'] = array(
+			'field_secret' => array( 'name' => '_secret', 'value' => 'ACF Secret Value' ),
+		);
+
+		$integration = new \ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration();
+		$attributes  = array(
+			'customMetas' => array(
+				array( 'id' => 'custom_1', 'field' => 'field_secret', 'display' => true ),
+			),
+		);
+
+		$result = $integration->render_acf_fields( 'BASE', $attributes, $this->post_id, 'custom_1' );
+
+		$this->assertSame( 'BASE', $result );
+		$this->assertStringNotContainsString( 'ACF Secret Value', $result );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
 }

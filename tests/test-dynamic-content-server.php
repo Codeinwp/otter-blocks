@@ -147,4 +147,21 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 
 		return true === call_user_func( $handler['permission_callback'], $request );
 	}
+
+	/**
+	 * The dynamic image does not put a protected post meta value into the path (otter-internals#320).
+	 */
+	public function test_media_server_blocks_protected_post_meta(): void {
+		$post_id = self::factory()->post->create();
+		update_post_meta( $post_id, '_img', 'https://evil.example/x.png' );
+
+		$request = new WP_REST_Request( 'GET', '/otter/v1/dynamic' );
+		$request->set_param( 'type', 'postMeta' );
+		$request->set_param( 'meta', '_img' );
+		$request->set_param( 'context', $post_id );
+
+		$path = ( new \ThemeIsle\OtterPro\Plugins\Dynamic_Content() )->evaluate_content_media_server( 'fallback.jpg', $request );
+
+		$this->assertSame( 'fallback.jpg', $path );
+	}
 }
