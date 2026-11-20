@@ -84,9 +84,7 @@ const initTyping = ( elem ) => {
 		setTimeout( () => {
 			start( ( i ) => {
 				typingPlaceholder.innerHTML = text.slice( 0, i );
-				if ( i < len ) {
-					fillPlaceholder.innerHTML = text.slice( i );
-				}
+				fillPlaceholder.innerHTML = text.slice( i );
 				if ( len >= steps ) {
 					stop();
 				}
@@ -105,8 +103,14 @@ domReady( () => {
 		threshold: [ 0.6 ]
 	};
 
+	// The caret is positioned absolutely so it adds no width, otherwise centered text shifts while typing.
 	let styles = `
+		.o-anim-typing-caret {
+			position: relative;
+		}
+
 		.o-anim-typing-caret::after {
+			position: absolute;
 			font-weight: 100;
 			content: '|';
 			animation: 1s blink step-end infinite;
