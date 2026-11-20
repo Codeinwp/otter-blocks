@@ -19,6 +19,7 @@ describe( 'frontend generator', () => {
 		const sheet = document.getElementById( 'atomic-wind-tailwind' );
 
 		expect( sheet.textContent ).toContain( '.flex' );
+		expect( sheet.dataset.cssVersion ).toMatch( /^\d+\.\d+\.\d+$/ );
 		expect( sheet.dataset.cssVersion ).toBe( CSS_VERSION );
 	} );
 } );
