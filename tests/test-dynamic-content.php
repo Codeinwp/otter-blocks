@@ -2834,4 +2834,26 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		unset( $GLOBALS['otter_test_acf_fields'] );
 	}
+
+	/**
+	 * A key another plugin protects via the is_protected_meta filter (without a `_` prefix) is blocked too.
+	 */
+	public function test_blocks_a_filter_protected_meta_key() {
+		update_post_meta( $this->post_id, 'snap_x', 'https://evil.example/x.png' );
+
+		$filter = static function ( $protected, $meta_key ) {
+			return 'snap_x' === $meta_key ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 2 );
+
+		$result = $this->dynamic_content_pro->evaluate_content_media_content( 'ORIGINAL', array(
+			'type'    => 'postMeta',
+			'meta'    => 'snap_x',
+			'context' => $this->post_id,
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'ORIGINAL', $result );
+	}
 }

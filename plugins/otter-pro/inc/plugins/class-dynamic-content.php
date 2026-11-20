@@ -205,7 +205,12 @@ class Dynamic_Content {
 
 		$protected = array( 'user_pass', 'user_activation_key', 'session_tokens' );
 
-		return in_array( strtolower( $key ), $protected, true );
+		if ( in_array( strtolower( $key ), $protected, true ) ) {
+			return true;
+		}
+
+		// Honor the `is_protected_meta` filter, so a key another plugin protects without a `_` prefix is caught too.
+		return is_protected_meta( $key, 'post' );
 	}
 
 	/**
