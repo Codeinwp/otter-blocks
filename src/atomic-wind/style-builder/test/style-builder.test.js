@@ -1,12 +1,18 @@
 /**
  * @param {Record<string, unknown>} config     `atomicWindStyleBuilder` data.
  * @param {Record<string, unknown>} [combined] `atomicWindCombinedStyle` data.
+ * @param {string}                  [version]  `data-css-version` of the generated sheet.
  * @return {Promise<Array<[string, {body: string}]>>} Requests sent before `css-saved`.
  */
-async function buildStyles( config, combined ) {
+async function buildStyles( config, combined, version ) {
 	const sheet = document.createElement( 'style' );
 	sheet.id = 'atomic-wind-tailwind';
 	sheet.textContent = '.flex{display:flex}';
+
+	if ( version ) {
+		sheet.dataset.cssVersion = version;
+	}
+
 	document.body.append( sheet );
 
 	window.atomicWindStyleBuilder = config;
@@ -52,13 +58,20 @@ describe( 'style builder', () => {
 	it( 'saves the post and the combined stylesheet from one compile', async () => {
 		const calls = await buildStyles(
 			{ postId: '4', restUrl: '/wp-json/otter/v1/atomic-wind', nonce: 'n' },
-			{ postIds: [ 7, 9 ], tokensHash: 'hash', signature: 'signed' }
+			{ postIds: [ 7, 9 ], tokensHash: 'hash', signature: 'signed' },
+			'1.0.2'
 		);
 
 		expect( calls.map( ( [ url ] ) => url ) ).toEqual( [
 			'/wp-json/otter/v1/atomic-wind/style',
 			'/wp-json/otter/v1/atomic-wind/combined-style',
 		] );
+		expect( JSON.parse( calls[ 0 ][ 1 ].body ) ).toEqual( { css: '.flex{display:flex}', postId: 4, version: '1.0.2' } );
+	} );
+
+	it( 'omits the version when the generated sheet does not state one', async () => {
+		const calls = await buildStyles( { postId: '4', restUrl: '/wp-json/otter/v1/atomic-wind', nonce: 'n' } );
+
 		expect( JSON.parse( calls[ 0 ][ 1 ].body ) ).toEqual( { css: '.flex{display:flex}', postId: 4 } );
 	} );
 } );
