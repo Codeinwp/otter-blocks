@@ -77,8 +77,9 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
 		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists?count=1000';
 		$args = array(
-			'method'  => 'GET',
-			'headers' => array(
+			'method'      => 'GET',
+			'redirection' => 0, // Mailchimp returns data directly; never follow a redirect (defense in depth).
+			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
 		);
@@ -88,7 +89,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
 			$response = vip_safe_wp_remote_get( $url, '', 3, 1, 20, $args );
 		} else {
-			$response = wp_safe_remote_get( $url, $args );
+			$response = wp_remote_get( $url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 		}
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
@@ -136,14 +137,15 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		}
 
 		$args = array(
-			'method'  => 'PUT',
-			'headers' => array(
+			'method'      => 'PUT',
+			'redirection' => 0, // Mailchimp returns data directly; never follow a redirect (defense in depth).
+			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
-			'body'    => wp_json_encode( $payload ),
+			'body'        => wp_json_encode( $payload ),
 		);
 
-		return wp_safe_remote_post( $url, $args );
+		return wp_remote_post( $url, $args );
 	}
 
 	/**
@@ -256,13 +258,14 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	private function get_new_user_status_mailchimp( $list_id ) {
 		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $list_id;
 		$args = array(
-			'method'  => 'GET',
-			'headers' => array(
+			'method'      => 'GET',
+			'redirection' => 0, // Mailchimp returns data directly; never follow a redirect (defense in depth).
+			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
 		);
 
-		$response = wp_safe_remote_post( $url, $args );
+		$response = wp_remote_post( $url, $args );
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
@@ -313,8 +316,9 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	public function get_merge_fields() {
 		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/merge-fields';
 		$args = array(
-			'method'  => 'GET',
-			'headers' => array(
+			'method'      => 'GET',
+			'redirection' => 0, // Mailchimp returns data directly; never follow a redirect (defense in depth).
+			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
 		);
@@ -322,7 +326,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
 			$response = vip_safe_wp_remote_get( $url, '', 3, 1, 20, $args );
 		} else {
-			$response = wp_safe_remote_get( $url, $args );
+			$response = wp_remote_get( $url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 		}
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {

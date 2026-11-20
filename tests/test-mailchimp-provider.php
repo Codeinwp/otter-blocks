@@ -66,4 +66,34 @@ class Test_Mailchimp_Provider extends WP_UnitTestCase {
 		$this->assertFalse( $result['valid'] );
 		$this->assertSame( Form_Data_Response::ERROR_PROVIDER_INVALID_KEY, $result['code'] );
 	}
+
+	/**
+	 * Mailchimp requests go only to the validated data center host and do not follow
+	 * redirects, so a response cannot pivot the request to another address (otter-internals#318).
+	 */
+	public function test_request_pins_host_and_disables_redirects() {
+		$integration = new Mailchimp_Integration();
+		$integration->set_api_key( 'abc123def456-us1' );
+
+		$captured = array();
+		$filter   = static function ( $pre, $args, $url ) use ( &$captured ) {
+			$captured[] = array( 'url' => $url, 'args' => $args );
+			return array(
+				'headers'  => array(),
+				'body'     => wp_json_encode( array( 'lists' => array() ) ),
+				'response' => array( 'code' => 200, 'message' => 'OK' ),
+				'cookies'  => array(),
+			);
+		};
+
+		add_filter( 'pre_http_request', $filter, 10, 3 );
+		$integration->get_lists();
+		remove_filter( 'pre_http_request', $filter, 10 );
+
+		$this->assertNotEmpty( $captured, 'Expected get_lists() to send a request.' );
+		foreach ( $captured as $request ) {
+			$this->assertStringStartsWith( 'https://us1.api.mailchimp.com/', $request['url'] );
+			$this->assertSame( 0, $request['args']['redirection'] );
+		}
+	}
 }
