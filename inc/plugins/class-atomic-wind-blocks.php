@@ -1399,29 +1399,17 @@ class Atomic_Wind_Blocks {
 				case 'custom_field':
 					$meta_key = isset( $block['attrs']['customFieldKey'] ) ? sanitize_text_field( $block['attrs']['customFieldKey'] ) : '';
 					if ( $meta_key ) {
-						// An ACF field key (e.g. `field_abc123`) resolves to a meta name that may be protected,
-						// so check the resolved name as well, not only the selector the block stores.
-						$resolved_key = $meta_key;
-						if ( function_exists( 'get_field_object' ) ) {
-							$field_object = get_field_object( $meta_key, get_the_ID(), false );
-							if ( is_array( $field_object ) && ! empty( $field_object['name'] ) ) {
-								$resolved_key = (string) $field_object['name'];
+						$value = '';
+						if ( function_exists( 'get_field' ) ) {
+							$acf = get_field( $meta_key, get_the_ID() );
+							if ( is_string( $acf ) ) {
+								$value = $acf;
 							}
 						}
-						// Never print a protected meta key (e.g. a `_`-prefixed field holding a form submitter's data).
-						if ( ! is_protected_meta( $meta_key, 'post' ) && ! is_protected_meta( $resolved_key, 'post' ) ) {
-							$value = '';
-							if ( function_exists( 'get_field' ) ) {
-								$acf = get_field( $meta_key, get_the_ID() );
-								if ( is_string( $acf ) ) {
-									$value = $acf;
-								}
-							}
-							if ( ! $value ) {
-								$raw = get_post_meta( get_the_ID(), $meta_key, true );
-								if ( is_string( $raw ) ) {
-									$value = $raw;
-								}
+						if ( ! $value ) {
+							$raw = get_post_meta( get_the_ID(), $meta_key, true );
+							if ( is_string( $raw ) ) {
+								$value = $raw;
 							}
 						}
 					}
