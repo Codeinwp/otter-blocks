@@ -32,6 +32,8 @@ class Atomic_Wind_Blocks {
 	/**
 	 * Stylesheet migrations, keyed by the version they upgrade from: [ next version, method ].
 	 *
+	 * Each must leave a sheet already in a newer format unchanged: a reader can see a new sheet beside an old stamp between a save's two writes.
+	 *
 	 * @var array<string, array{string, string}>
 	 */
 	const CSS_MIGRATIONS = array(
@@ -838,7 +840,9 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * REST callback: save generated Tailwind CSS to post meta.
+	 * REST callback: save generated Tailwind CSS to post meta, migrated to the current version.
+	 *
+	 * A sheet that cannot be migrated is not stored and existing meta is left as it is.
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
@@ -846,21 +850,26 @@ class Atomic_Wind_Blocks {
 	 */
 	public function rest_save_style( \WP_REST_Request $request ) {
 		$post_id = absint( $request->get_param( 'postId' ) );
-		$css     = $request->get_param( 'css' );
 		$version = $request->get_param( 'version' );
 
-		if ( ! is_string( $version ) || ! preg_match( '/^\d+\.\d+\.\d+$/D', $version ) ) {
+		if ( ! is_string( $version ) || ! preg_match( '/^\d{1,4}\.\d{1,4}\.\d{1,4}$/D', $version ) ) {
 			$version = self::LEGACY_CSS_VERSION;
 		}
 
+		$css = $this->migrate_css( $request->get_param( 'css' ), $version );
+
+		if ( '' === $css ) {
+			return new \WP_REST_Response( array( 'success' => false ), 400 );
+		}
+
 		$success = update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $css ) );
-		update_post_meta( $post_id, '_atomic_wind_css_version', $version );
+		update_post_meta( $post_id, '_atomic_wind_css_version', self::ATOMIC_WIND_CSS_VERSION );
 
 		return new \WP_REST_Response( array( 'success' => $success ), 200 );
 	}
 
 	/**
-	 * Read cached CSS, upgrading older stylesheets in place and ignoring those that cannot be upgraded.
+	 * Read cached CSS, upgrading older stylesheets on the fly and ignoring those that cannot be upgraded.
 	 *
 	 * @param int $post_id Post ID.
 	 * @return string
@@ -869,91 +878,34 @@ class Atomic_Wind_Blocks {
 		$version = get_post_meta( $post_id, '_atomic_wind_css_version', true );
 		$css     = get_post_meta( $post_id, '_atomic_wind_css', true );
 
-		if ( ! is_string( $css ) || '' === $css ) {
+		if ( ! is_string( $version ) || ! is_string( $css ) ) {
 			return '';
 		}
 
-		$original_css     = $css;
-		$original_version = $version;
-		$migrated         = false;
+		$css = $this->migrate_css( $css, $version );
 
-		while ( self::ATOMIC_WIND_CSS_VERSION !== $version && is_string( $version ) && isset( self::CSS_MIGRATIONS[ $version ] ) ) {
+		return '' === $css ? '' : \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css );
+	}
+
+	/**
+	 * Bring a stylesheet to the current version.
+	 *
+	 * @param string $css     Stylesheet.
+	 * @param string $version Version it was generated for.
+	 * @return string Empty when no migration path reaches the current version or a migration fails.
+	 */
+	private function migrate_css( $css, $version ) {
+		while ( self::ATOMIC_WIND_CSS_VERSION !== $version && isset( self::CSS_MIGRATIONS[ $version ] ) ) {
 			list( $version, $method ) = self::CSS_MIGRATIONS[ $version ];
 
-			$css      = $this->$method( $css );
-			$migrated = true;
+			$css = $this->$method( $css );
 
-			if ( ! is_string( $css ) || '' === $css ) {
+			if ( ! is_string( $css ) ) {
 				return '';
 			}
 		}
 
-		if ( self::ATOMIC_WIND_CSS_VERSION !== $version ) {
-			return '';
-		}
-
-		if ( $migrated && ! $this->replace_cached_css( $post_id, $original_css, $original_version, $css, $version ) ) {
-			return $this->reread_current_css( $post_id );
-		}
-
-		return \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css );
-	}
-
-	/**
-	 * After a lost swap, serve the sheet another request stored, if it is current.
-	 *
-	 * @param int $post_id Post ID.
-	 * @return string
-	 */
-	private function reread_current_css( $post_id ) {
-		wp_cache_delete( $post_id, 'post_meta' );
-
-		$version = get_post_meta( $post_id, '_atomic_wind_css_version', true );
-		$css     = get_post_meta( $post_id, '_atomic_wind_css', true );
-
-		if ( self::ATOMIC_WIND_CSS_VERSION !== $version || ! is_string( $css ) || '' === $css ) {
-			return '';
-		}
-
-		return \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css );
-	}
-
-	/**
-	 * Swap a migrated sheet and its stamp in for the ones that were read, unless either has changed since.
-	 *
-	 * One byte-exact compare-and-swap statement, so a save landing meanwhile is not undone and
-	 * cannot be left carrying the new stamp.
-	 *
-	 * @param int    $post_id     Post ID.
-	 * @param string $old_css     Sheet that was read.
-	 * @param string $old_version Stamp that was read.
-	 * @param string $new_css     Migrated sheet.
-	 * @param string $new_version Stamp of the migrated sheet.
-	 * @return bool Whether the stored sheet and stamp were still the ones read.
-	 */
-	private function replace_cached_css( $post_id, $old_css, $old_version, $new_css, $new_version ) {
-		global $wpdb;
-
-		// BINARY: the column collation would also match a sheet differing only in case or trailing spaces.
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$swapped = $wpdb->query(
-			$wpdb->prepare(
-				"UPDATE {$wpdb->postmeta} css INNER JOIN {$wpdb->postmeta} ver ON ver.post_id = css.post_id
-				SET css.meta_value = %s, ver.meta_value = %s
-				WHERE css.post_id = %d AND css.meta_key = '_atomic_wind_css' AND BINARY css.meta_value = %s
-				AND ver.meta_key = '_atomic_wind_css_version' AND BINARY ver.meta_value = %s",
-				$new_css,
-				$new_version,
-				$post_id,
-				$old_css,
-				$old_version
-			)
-		);
-		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
-		wp_cache_delete( $post_id, 'post_meta' );
-
-		return is_int( $swapped ) && $swapped > 0;
+		return self::ATOMIC_WIND_CSS_VERSION === $version ? $css : '';
 	}
 
 	/**

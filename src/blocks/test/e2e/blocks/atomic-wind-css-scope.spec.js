@@ -23,6 +23,17 @@ const lineHeightRatio = ( locator, relativeToRoot = false ) => locator.evaluate(
 }, relativeToRoot );
 
 /**
+ * @param {import('@wordpress/e2e-test-utils-playwright').RequestUtils} requestUtils Request utils.
+ * @return {Promise<{ atomicWind: boolean, theme: string }>} Atomic Wind option and active theme.
+ */
+const captureSiteState = async( requestUtils ) => {
+	const settings = await requestUtils.rest({ path: '/wp/v2/settings' });
+	const [ active ] = await requestUtils.rest({ path: '/wp/v2/themes', params: { status: 'active' }});
+
+	return { atomicWind: !! settings.themeisle_blocks_settings_atomic_wind_blocks, theme: active.stylesheet };
+};
+
+/**
  * Load a post as the editor so the style builder caches its compiled CSS.
  *
  * @param {import('@playwright/test').Page} page Page.
@@ -93,13 +104,19 @@ const expectInheritedTypography = async( root ) => {
  * its own variables.
  */
 test.describe( 'Atomic Wind Tailwind CSS scope', () => {
+	let original;
+
+	test.beforeAll( async({ requestUtils }) => {
+		original = await captureSiteState( requestUtils );
+	});
+
 	test.beforeEach( async({ otterUtils, admin }) => {
 		await setAtomicWind( otterUtils, true );
 		await admin.createNewPost();
 	});
 
 	test.afterAll( async({ otterUtils }) => {
-		await setAtomicWind( otterUtils, false );
+		await setAtomicWind( otterUtils, original.atomicWind );
 	});
 
 	test( 'resets elements inside the block without touching theme markup', async({ editor, page }) => {
@@ -210,13 +227,19 @@ test.describe( 'Atomic Wind Tailwind CSS scope', () => {
 });
 
 test.describe( 'Atomic Wind typography inheritance', () => {
+	let original;
+
+	test.beforeAll( async({ requestUtils }) => {
+		original = await captureSiteState( requestUtils );
+	});
+
 	test.beforeEach( async({ otterUtils }) => {
 		await setAtomicWind( otterUtils, true );
 	});
 
 	test.afterAll( async({ otterUtils, requestUtils }) => {
-		await requestUtils.activateTheme( 'twentytwentythree' );
-		await setAtomicWind( otterUtils, false );
+		await requestUtils.activateTheme( original.theme );
+		await setAtomicWind( otterUtils, original.atomicWind );
 	});
 
 	test( 'inherits typography from a theme-styled ancestor on the frontend', async({ page, requestUtils }) => {
@@ -401,7 +424,7 @@ test.describe( 'Atomic Wind typography inheritance', () => {
 				await expect( page.locator( '.typo-theme' ) ).toHaveCSS( 'line-height', control.lineHeight );
 			} finally {
 				await deletePosts( requestUtils, [ post ] );
-				await requestUtils.activateTheme( 'twentytwentythree' );
+				await requestUtils.activateTheme( original.theme );
 			}
 		});
 	}
