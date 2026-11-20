@@ -171,7 +171,10 @@ class Test_Post_Grid_Block extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertStringNotContainsString( 'Secret Record Title', $this->render_for_post_types( array( 'otter_secret' ) ) );
+		$only_secret = $this->render_for_post_types( array( 'otter_secret' ) );
+		$this->assertStringNotContainsString( 'Secret Record Title', $only_secret );
+		// The early return shows nothing for an all-non-viewable list, rather than falling back to posts.
+		$this->assertStringNotContainsString( 'Public Blog Title', $only_secret );
 
 		$mixed = $this->render_for_post_types( array( 'otter_secret', 'post' ) );
 		$this->assertStringNotContainsString( 'Secret Record Title', $mixed );

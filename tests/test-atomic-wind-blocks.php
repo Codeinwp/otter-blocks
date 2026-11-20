@@ -9,6 +9,32 @@ use ThemeIsle\GutenbergBlocks\Plugins\Atomic_Wind_Blocks;
 
 require_once dirname( __FILE__ ) . '/php/migration-test-helper.php';
 
+// Minimal ACF stubs, backed by $GLOBALS['otter_test_acf_fields']. With the global unset they return
+// null/false, so they behave as if ACF is inactive and do not affect other tests.
+if ( ! function_exists( 'get_field' ) ) {
+	/**
+	 * @param string $selector Field key or name.
+	 * @param mixed  $post_id  Unused.
+	 * @param bool   $format   Unused.
+	 * @return mixed
+	 */
+	function get_field( $selector, $post_id = false, $format = true ) {
+		return isset( $GLOBALS['otter_test_acf_fields'][ $selector ]['value'] ) ? $GLOBALS['otter_test_acf_fields'][ $selector ]['value'] : null;
+	}
+}
+
+if ( ! function_exists( 'get_field_object' ) ) {
+	/**
+	 * @param string $selector Field key or name.
+	 * @param mixed  $post_id  Unused.
+	 * @param bool   $format   Unused.
+	 * @return array|false
+	 */
+	function get_field_object( $selector, $post_id = false, $format = true ) {
+		return isset( $GLOBALS['otter_test_acf_fields'][ $selector ] ) ? $GLOBALS['otter_test_acf_fields'][ $selector ] : false;
+	}
+}
+
 /**
  * Atomic Wind Blocks test case.
  */
@@ -2681,5 +2707,49 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'Placeholder', $result );
 
 		wp_reset_postdata();
+	}
+
+	public function test_custom_field_skips_acf_field_with_protected_name() {
+		// ACF resolves the field key to a `_`-prefixed meta name that holds submitter data.
+		$GLOBALS['otter_test_acf_fields'] = array(
+			'field_secret' => array( 'name' => '_acf_protected', 'value' => 'ACF Secret Value' ),
+		);
+
+		$this->reset_in_query( true );
+		global $post;
+		$post = get_post( $this->post_id );
+		setup_postdata( $post );
+
+		$block   = $this->make_block( 'atomic-wind/text', array( 'postField' => 'custom_field', 'customFieldKey' => 'field_secret' ) );
+		$content = '<p class="wp-block">Placeholder</p>';
+
+		$result = $this->instance->render_post_fields( $content, $block );
+
+		$this->assertStringNotContainsString( 'ACF Secret Value', $result );
+		$this->assertStringContainsString( 'Placeholder', $result );
+
+		wp_reset_postdata();
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	public function test_custom_field_reads_acf_field_with_public_name() {
+		$GLOBALS['otter_test_acf_fields'] = array(
+			'field_public' => array( 'name' => 'otter_public_acf', 'value' => 'ACF Public Value' ),
+		);
+
+		$this->reset_in_query( true );
+		global $post;
+		$post = get_post( $this->post_id );
+		setup_postdata( $post );
+
+		$block   = $this->make_block( 'atomic-wind/text', array( 'postField' => 'custom_field', 'customFieldKey' => 'field_public' ) );
+		$content = '<p class="wp-block">Placeholder</p>';
+
+		$result = $this->instance->render_post_fields( $content, $block );
+
+		$this->assertStringContainsString( 'ACF Public Value', $result );
+
+		wp_reset_postdata();
+		unset( $GLOBALS['otter_test_acf_fields'] );
 	}
 }
