@@ -2805,4 +2805,33 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		unset( $GLOBALS['otter_test_acf_fields'] );
 	}
+
+	/**
+	 * The dynamic image ACF branch does not surface a protected field value.
+	 */
+	public function test_media_content_blocks_protected_acf_field() {
+		$GLOBALS['otter_test_acf_fields'] = array( 'field_secret' => array( 'name' => '_secret', 'value' => 'https://evil.example/x.png' ) );
+
+		$result = $this->dynamic_content_pro->evaluate_content_media_content( 'ORIGINAL', array(
+			'type'    => 'acf',
+			'meta'    => 'field_secret',
+			'context' => $this->post_id,
+		) );
+
+		$flat = is_array( $result ) ? implode( ' ', $result ) : (string) $result;
+		$this->assertStringNotContainsString( 'evil.example', $flat );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * is_protected_acf_field() terminates on a cyclic parent chain.
+	 */
+	public function test_is_protected_acf_field_handles_a_cyclic_parent_chain() {
+		$GLOBALS['otter_test_acf_fields'] = $this->cyclic_acf_fields();
+
+		$this->assertFalse( \ThemeIsle\OtterPro\Plugins\Dynamic_Content::is_protected_acf_field( 10 ) );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
 }

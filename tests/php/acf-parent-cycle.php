@@ -43,4 +43,9 @@ if ( ! function_exists( 'get_field' ) ) {
 	}
 }
 
+// Minimal marker so `class_exists( 'ACF' )`-gated branches run under tests; no behavior of its own.
+if ( ! class_exists( 'ACF' ) ) {
+	class ACF {} // phpcs:ignore Generic.Files.OneObjectStructurePerFile.MultipleFound
+}
+
 define( 'OTTER_TEST_ACF_GET_FIELD_STUB', true );

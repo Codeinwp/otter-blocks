@@ -5,6 +5,10 @@
  * @package gutenberg-blocks
  */
 
+if ( ! function_exists( 'acf_get_field' ) ) {
+	require_once __DIR__ . '/php/acf-parent-cycle.php';
+}
+
 /**
  * Access rules of the otter/v1/dynamic routes for visitors and editors.
  */
@@ -163,5 +167,23 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 		$path = ( new \ThemeIsle\OtterPro\Plugins\Dynamic_Content() )->evaluate_content_media_server( 'fallback.jpg', $request );
 
 		$this->assertSame( 'fallback.jpg', $path );
+	}
+
+	/**
+	 * The dynamic image ACF branch does not put a protected field value into the path (otter-internals#320).
+	 */
+	public function test_media_server_blocks_protected_acf_field(): void {
+		$GLOBALS['otter_test_acf_fields'] = array( 'field_secret' => array( 'name' => '_secret', 'value' => 'https://evil.example/x.png' ) );
+
+		$request = new WP_REST_Request( 'GET', '/otter/v1/dynamic' );
+		$request->set_param( 'type', 'acf' );
+		$request->set_param( 'meta', 'field_secret' );
+		$request->set_param( 'context', self::factory()->post->create() );
+
+		$path = ( new \ThemeIsle\OtterPro\Plugins\Dynamic_Content() )->evaluate_content_media_server( 'fallback.jpg', $request );
+
+		$this->assertStringNotContainsString( 'evil.example', $path );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
 	}
 }
