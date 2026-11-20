@@ -138,7 +138,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
 		$args = array(
 			'method'      => 'PUT',
-			'redirection' => 0, // Mailchimp returns data directly; never follow a redirect (defense in depth).
+			'redirection' => 0,
 			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
@@ -259,7 +259,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $list_id;
 		$args = array(
 			'method'      => 'GET',
-			'redirection' => 0, // Mailchimp returns data directly; never follow a redirect (defense in depth).
+			'redirection' => 0,
 			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
@@ -317,7 +317,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/merge-fields';
 		$args = array(
 			'method'      => 'GET',
-			'redirection' => 0, // Mailchimp returns data directly; never follow a redirect (defense in depth).
+			'redirection' => 0,
 			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),

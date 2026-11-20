@@ -74,26 +74,40 @@ class Test_Mailchimp_Provider extends WP_UnitTestCase {
 	public function test_request_pins_host_and_disables_redirects() {
 		$integration = new Mailchimp_Integration();
 		$integration->set_api_key( 'abc123def456-us1' );
+		$integration->set_list_id( 'listid' );
+
+		// make_subscribe_request() reads the linked merge fields off form_data.
+		$form_data = new class() {
+			public function get_fields() {
+				return array();
+			}
+		};
+		$property = new ReflectionProperty( Mailchimp_Integration::class, 'form_data' );
+		$property->setAccessible( true );
+		$property->setValue( $integration, $form_data );
 
 		$captured = array();
 		$filter   = static function ( $pre, $args, $url ) use ( &$captured ) {
 			$captured[] = array( 'url' => $url, 'args' => $args );
 			return array(
 				'headers'  => array(),
-				'body'     => wp_json_encode( array( 'lists' => array() ) ),
+				'body'     => wp_json_encode( array( 'lists' => array(), 'merge_fields' => array() ) ),
 				'response' => array( 'code' => 200, 'message' => 'OK' ),
 				'cookies'  => array(),
 			);
 		};
 
 		add_filter( 'pre_http_request', $filter, 10, 3 );
-		$integration->get_lists();
+		$integration->get_lists();                             // GET /lists
+		$integration->get_merge_fields();                      // GET /lists/{id}/merge-fields
+		$integration->make_subscribe_request( 'qa@example.com' ); // status GET + members PUT
 		remove_filter( 'pre_http_request', $filter, 10 );
 
-		$this->assertNotEmpty( $captured, 'Expected get_lists() to send a request.' );
+		// get_lists, get_merge_fields, the subscribe status GET and the members PUT.
+		$this->assertGreaterThanOrEqual( 4, count( $captured ), 'Expected every Mailchimp request path to send a request.' );
 		foreach ( $captured as $request ) {
 			$this->assertStringStartsWith( 'https://us1.api.mailchimp.com/', $request['url'] );
-			$this->assertSame( 0, $request['args']['redirection'] );
+			$this->assertSame( 0, $request['args']['redirection'], 'Every Mailchimp request must disable redirects.' );
 		}
 	}
 }
