@@ -710,4 +710,29 @@ class TestBlockConditions extends WP_UnitTestCase
 
 		$this->assertFalse( $result );
 	}
+
+	/**
+	 * A user meta key named like a core alias is still checked verbatim against the filter.
+	 */
+	public function test_logged_in_user_meta_checks_an_alias_named_key_verbatim() {
+		wp_set_current_user( $this->user_id );
+		update_user_meta( $this->user_id, 'email', '1' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'email' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$condition = array(
+			'type'         => 'loggedInUserMeta',
+			'meta_key'     => 'email',
+			'meta_compare' => 'is_true',
+		);
+
+		$result = $this->block_conditions->evaluate_condition( $condition );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertFalse( $result );
+	}
 }

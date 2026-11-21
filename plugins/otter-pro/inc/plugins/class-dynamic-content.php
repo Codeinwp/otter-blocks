@@ -200,14 +200,31 @@ class Dynamic_Content {
 	public static function is_protected_meta_key( $key, $meta_type = 'post' ) {
 		$key = (string) $key;
 
-		// get_the_author_meta() maps these aliases to the user_* fields, so check the real field (e.g. pass -> user_pass).
+		if ( self::is_protected_meta_name( $key, $meta_type ) ) {
+			return true;
+		}
+
+		// get_the_author_meta() also maps these aliases to the user_* fields, so check the resolved field too
+		// (e.g. pass -> user_pass), while still checking the raw key above for get_user_meta reads.
 		if ( 'user' === $meta_type ) {
 			$aliases = array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' );
 			if ( in_array( strtolower( $key ), $aliases, true ) ) {
-				$key = 'user_' . strtolower( $key );
+				return self::is_protected_meta_name( 'user_' . strtolower( $key ), $meta_type );
 			}
 		}
 
+		return false;
+	}
+
+	/**
+	 * Whether a single meta key (checked verbatim) is protected.
+	 *
+	 * @param string $key       Meta key.
+	 * @param string $meta_type Meta type the key is read from ('post' or 'user').
+	 *
+	 * @return bool
+	 */
+	private static function is_protected_meta_name( $key, $meta_type ) {
 		if ( '' === $key || '_' === $key[0] ) {
 			return true;
 		}

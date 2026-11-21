@@ -2922,4 +2922,27 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		$this->assertSame( 'DEF', $result );
 	}
+
+	/**
+	 * A user meta key named like a core alias is still checked verbatim against the filter.
+	 */
+	public function test_loggedin_meta_checks_an_alias_named_key_verbatim() {
+		$uid = self::factory()->user->create();
+		wp_set_current_user( $uid );
+		update_user_meta( $uid, 'email', 'secret-mail' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'email' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$result = $this->dynamic_content_pro->get_loggedin_meta( array(
+			'metaKey' => 'email',
+			'default' => 'DEF',
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'DEF', $result );
+	}
 }
