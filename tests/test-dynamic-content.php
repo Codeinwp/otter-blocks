@@ -2886,8 +2886,14 @@ class TestDynamicContent extends WP_UnitTestCase
 	 * Author meta blocks the core user-field aliases, so `pass` cannot return the password hash.
 	 */
 	public function test_author_meta_blocks_core_user_aliases() {
+		global $wpdb;
+
 		$author_id = self::factory()->user->create();
 		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+
+		// Seed the reset key so the activation_key alias has a value to leak without the fix.
+		$wpdb->update( $wpdb->users, array( 'user_activation_key' => 'secret-key' ), array( 'ID' => $author_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		clean_user_cache( $author_id );
 
 		foreach ( array( 'pass', 'activation_key' ) as $alias ) {
 			$result = $this->dynamic_content_pro->get_author_meta( array(
@@ -2921,6 +2927,31 @@ class TestDynamicContent extends WP_UnitTestCase
 		remove_filter( 'is_protected_meta', $filter, 10 );
 
 		$this->assertSame( 'DEF', $result );
+	}
+
+	/**
+	 * Author meta resolves a back-compat field to its real meta key before the filter check.
+	 */
+	public function test_author_meta_blocks_a_filter_protected_back_compat_field() {
+		$author_id = self::factory()->user->create();
+		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+		update_user_meta( $author_id, 'first_name', 'secret-first' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'first_name' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$result = $this->dynamic_content_pro->get_author_meta( array(
+			'metaKey' => 'user_firstname',
+			'context' => $post_id,
+			'default' => 'DEF',
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'DEF', $result );
+		$this->assertStringNotContainsString( 'secret-first', $result );
 	}
 
 	/**

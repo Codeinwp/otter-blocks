@@ -204,12 +204,25 @@ class Dynamic_Content {
 			return true;
 		}
 
-		// get_the_author_meta() also maps these aliases to the user_* fields, so check the resolved field too
-		// (e.g. pass -> user_pass), while still checking the raw key above for get_user_meta reads.
+		// get_the_author_meta() -> WP_User::__get resolves field names to real user-meta keys, so check the
+		// resolved key too, while still checking the raw key above for get_user_meta reads.
 		if ( 'user' === $meta_type ) {
+			$lower = strtolower( $key );
+
+			// Forward aliases, e.g. pass -> user_pass.
 			$aliases = array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' );
-			if ( in_array( strtolower( $key ), $aliases, true ) ) {
-				return self::is_protected_meta_name( 'user_' . strtolower( $key ), $meta_type );
+			if ( in_array( $lower, $aliases, true ) ) {
+				return self::is_protected_meta_name( 'user_' . $lower, $meta_type );
+			}
+
+			// Back-compat fields, e.g. user_firstname -> first_name.
+			$back_compat = array(
+				'user_firstname'   => 'first_name',
+				'user_lastname'    => 'last_name',
+				'user_description' => 'description',
+			);
+			if ( isset( $back_compat[ $lower ] ) ) {
+				return self::is_protected_meta_name( $back_compat[ $lower ], $meta_type );
 			}
 		}
 
