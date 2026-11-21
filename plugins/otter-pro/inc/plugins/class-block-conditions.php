@@ -134,7 +134,7 @@ class Block_Conditions {
 		$meta = '';
 
 		// A protected key is never read, so its value cannot leak through the comparison result.
-		if ( Dynamic_Content::is_protected_meta_key( $condition['meta_key'] ) ) {
+		if ( Dynamic_Content::is_protected_meta_key( $condition['meta_key'], $type ) ) {
 			return false;
 		}
 

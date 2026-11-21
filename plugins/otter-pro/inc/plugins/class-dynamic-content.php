@@ -192,11 +192,12 @@ class Dynamic_Content {
 	 * Blocks WordPress protected (underscore-prefixed) meta and sensitive user fields,
 	 * since these getters can be reached for any published post without authentication.
 	 *
-	 * @param string $key Meta key.
+	 * @param string $key       Meta key.
+	 * @param string $meta_type Meta type the key is read from ('post' or 'user'), for the is_protected_meta filter.
 	 *
 	 * @return bool
 	 */
-	public static function is_protected_meta_key( $key ) {
+	public static function is_protected_meta_key( $key, $meta_type = 'post' ) {
 		$key = (string) $key;
 
 		if ( '' === $key || '_' === $key[0] ) {
@@ -210,7 +211,7 @@ class Dynamic_Content {
 		}
 
 		// Honor the `is_protected_meta` filter, so a key another plugin protects without a `_` prefix is caught too.
-		return is_protected_meta( $key, 'post' );
+		return is_protected_meta( $key, $meta_type );
 	}
 
 	/**
@@ -527,7 +528,7 @@ class Dynamic_Content {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		$meta    = '';
 
-		if ( isset( $data['metaKey'] ) && ! self::is_protected_meta_key( $data['metaKey'] ) ) {
+		if ( isset( $data['metaKey'] ) && ! self::is_protected_meta_key( $data['metaKey'], 'user' ) ) {
 			$meta = get_the_author_meta( esc_html( $data['metaKey'] ), intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
@@ -550,7 +551,7 @@ class Dynamic_Content {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		$meta    = '';
 
-		if ( isset( $data['metaKey'] ) && ! self::is_protected_meta_key( $data['metaKey'] ) ) {
+		if ( isset( $data['metaKey'] ) && ! self::is_protected_meta_key( $data['metaKey'], 'user' ) ) {
 			$meta = get_user_meta( $user_id, esc_html( $data['metaKey'] ), true );
 		}
 

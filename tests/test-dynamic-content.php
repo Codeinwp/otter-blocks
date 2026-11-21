@@ -2856,4 +2856,29 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		$this->assertSame( 'ORIGINAL', $result );
 	}
+
+	/**
+	 * Author meta honors a filter that protects a key only for user meta.
+	 */
+	public function test_author_meta_blocks_a_user_only_filter_protected_key() {
+		$author_id = self::factory()->user->create();
+		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+		update_user_meta( $author_id, 'nick_x', 'secret-nick' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'nick_x' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$result = $this->dynamic_content_pro->get_author_meta( array(
+			'metaKey' => 'nick_x',
+			'context' => $post_id,
+			'default' => 'DEF',
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'DEF', $result );
+		$this->assertStringNotContainsString( 'secret-nick', $result );
+	}
 }
