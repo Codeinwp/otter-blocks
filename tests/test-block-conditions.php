@@ -685,4 +685,29 @@ class TestBlockConditions extends WP_UnitTestCase
 
 		wp_reset_postdata();
 	}
+
+	/**
+	 * A logged-in-user-meta condition honors a filter that protects a key only for user meta (otter-internals#320).
+	 */
+	public function test_logged_in_user_meta_ignores_user_only_filter_protected_key() {
+		wp_set_current_user( $this->user_id );
+		update_user_meta( $this->user_id, 'nick_x', '1' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'nick_x' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$condition = array(
+			'type'         => 'loggedInUserMeta',
+			'meta_key'     => 'nick_x',
+			'meta_compare' => 'is_true',
+		);
+
+		$result = $this->block_conditions->evaluate_condition( $condition );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertFalse( $result );
+	}
 }

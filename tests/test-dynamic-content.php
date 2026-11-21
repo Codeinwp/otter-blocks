@@ -2881,4 +2881,45 @@ class TestDynamicContent extends WP_UnitTestCase
 		$this->assertSame( 'DEF', $result );
 		$this->assertStringNotContainsString( 'secret-nick', $result );
 	}
+
+	/**
+	 * Author meta blocks the core user-field aliases, so `pass` cannot return the password hash.
+	 */
+	public function test_author_meta_blocks_core_user_aliases() {
+		$author_id = self::factory()->user->create();
+		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+
+		foreach ( array( 'pass', 'activation_key' ) as $alias ) {
+			$result = $this->dynamic_content_pro->get_author_meta( array(
+				'metaKey' => $alias,
+				'context' => $post_id,
+				'default' => 'DEF',
+			) );
+
+			$this->assertSame( 'DEF', $result, "The '$alias' alias must be blocked." );
+		}
+	}
+
+	/**
+	 * Logged-in user meta honors a filter that protects a key only for user meta.
+	 */
+	public function test_loggedin_meta_blocks_a_user_only_filter_protected_key() {
+		$uid = self::factory()->user->create();
+		wp_set_current_user( $uid );
+		update_user_meta( $uid, 'nick_x', 'secret-nick' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'nick_x' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$result = $this->dynamic_content_pro->get_loggedin_meta( array(
+			'metaKey' => 'nick_x',
+			'default' => 'DEF',
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'DEF', $result );
+	}
 }

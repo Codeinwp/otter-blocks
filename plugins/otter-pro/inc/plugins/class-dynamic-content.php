@@ -200,6 +200,14 @@ class Dynamic_Content {
 	public static function is_protected_meta_key( $key, $meta_type = 'post' ) {
 		$key = (string) $key;
 
+		// get_the_author_meta() maps these aliases to the user_* fields, so check the real field (e.g. pass -> user_pass).
+		if ( 'user' === $meta_type ) {
+			$aliases = array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' );
+			if ( in_array( strtolower( $key ), $aliases, true ) ) {
+				$key = 'user_' . strtolower( $key );
+			}
+		}
+
 		if ( '' === $key || '_' === $key[0] ) {
 			return true;
 		}
