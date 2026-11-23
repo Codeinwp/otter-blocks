@@ -77,8 +77,9 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
 		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists?count=1000';
 		$args = array(
-			'method'  => 'GET',
-			'headers' => array(
+			'method'      => 'GET',
+			'redirection' => 0, // Mailchimp returns data directly; never follow a redirect (defense in depth).
+			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
 		);
@@ -136,11 +137,12 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		}
 
 		$args = array(
-			'method'  => 'PUT',
-			'headers' => array(
+			'method'      => 'PUT',
+			'redirection' => 0,
+			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
-			'body'    => wp_json_encode( $payload ),
+			'body'        => wp_json_encode( $payload ),
 		);
 
 		return wp_remote_post( $url, $args );
@@ -226,7 +228,9 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		}
 
 		$key_info = explode( '-', $api_key );
-		if ( 2 !== count( $key_info ) || ! isset( $key_info[1] ) ) {
+
+		// The data center becomes the request host, so it must be a bare `<letters/digits>` token (e.g. `us1`), never a host, port or path.
+		if ( 2 !== count( $key_info ) || ! isset( $key_info[1] ) || ! preg_match( '/^[a-z0-9]+$/', $key_info[1] ) ) {
 			return array(
 				'valid'  => false,
 				'reason' => __( 'Invalid API Key format!', 'otter-blocks' ),
@@ -254,8 +258,9 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	private function get_new_user_status_mailchimp( $list_id ) {
 		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $list_id;
 		$args = array(
-			'method'  => 'GET',
-			'headers' => array(
+			'method'      => 'GET',
+			'redirection' => 0,
+			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
 		);
@@ -311,8 +316,9 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	public function get_merge_fields() {
 		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/merge-fields';
 		$args = array(
-			'method'  => 'GET',
-			'headers' => array(
+			'method'      => 'GET',
+			'redirection' => 0,
+			'headers'     => array(
 				'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
 			),
 		);
