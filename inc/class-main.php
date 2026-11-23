@@ -631,11 +631,16 @@ class Main {
 	/**
 	 * Set Black Friday data.
 	 *
-	 * @param array $configs The configuration array for the loaded products.
+	 * @param array<string, array<string, mixed>> $configs The configuration array for the loaded products.
 	 *
-	 * @return array
+	 * @return array<string, array<string, mixed>>
 	 */
 	public function add_black_friday_data( $configs ) {
+		// An earlier filter may drop the default entry, or empty the list to opt out of the sale.
+		if ( empty( $configs['default'] ) ) {
+			return $configs;
+		}
+
 		$config = $configs['default'];
 
 		$message   = __( 'Advanced blocks, custom CSS, WooCommerce integration. Everything you need to build better pages, without code. Exclusively for existing Otter users.', 'otter-blocks' );

@@ -205,18 +205,6 @@ parameters:
 			path: inc/class-main.php
 
 		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Main::add_black_friday_data() has parameter $configs with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: inc/class-main.php
-
-		-
-			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Main::add_black_friday_data() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: inc/class-main.php
-
-		-
 			rawMessage: 'Method ThemeIsle\GutenbergBlocks\Main::add_random_orderby_param() has parameter $params with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
