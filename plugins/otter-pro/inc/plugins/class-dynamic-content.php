@@ -209,6 +209,11 @@ class Dynamic_Content {
 		if ( 'user' === $meta_type ) {
 			$lower = strtolower( $key );
 
+			// Legacy capability level; user-only, so a post field named user_level stays allowed.
+			if ( 'user_level' === $lower ) {
+				return true;
+			}
+
 			// Forward aliases, e.g. pass -> user_pass.
 			$aliases = array( 'login', 'pass', 'nicename', 'email', 'url', 'registered', 'activation_key', 'status' );
 			if ( in_array( $lower, $aliases, true ) ) {
@@ -242,7 +247,7 @@ class Dynamic_Content {
 			return true;
 		}
 
-		$protected = array( 'user_pass', 'user_activation_key', 'session_tokens', 'user_level' );
+		$protected = array( 'user_pass', 'user_activation_key', 'session_tokens' );
 
 		if ( in_array( strtolower( $key ), $protected, true ) ) {
 			return true;

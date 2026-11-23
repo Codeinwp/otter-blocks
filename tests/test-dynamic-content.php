@@ -2923,6 +2923,22 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * A post field literally named user_level is not user meta, so it stays readable.
+	 */
+	public function test_post_meta_allows_a_field_named_user_level() {
+		$post_id = self::factory()->post->create();
+		update_post_meta( $post_id, 'user_level', 'Beginner' );
+
+		$result = $this->dynamic_content_pro->get_post_meta( array(
+			'metaKey' => 'user_level',
+			'context' => $post_id,
+			'default' => 'DEF',
+		) );
+
+		$this->assertSame( 'Beginner', $result );
+	}
+
+	/**
 	 * Logged-in user meta honors a filter that protects a key only for user meta.
 	 */
 	public function test_loggedin_meta_blocks_a_user_only_filter_protected_key() {
