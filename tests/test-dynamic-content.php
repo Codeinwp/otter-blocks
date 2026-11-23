@@ -2907,6 +2907,22 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * Author meta blocks the legacy user_level key, so a visitor cannot read the author's capability level.
+	 */
+	public function test_author_meta_blocks_user_level() {
+		$author_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+
+		$result = $this->dynamic_content_pro->get_author_meta( array(
+			'metaKey' => 'user_level',
+			'context' => $post_id,
+			'default' => 'DEF',
+		) );
+
+		$this->assertSame( 'DEF', $result );
+	}
+
+	/**
 	 * Logged-in user meta honors a filter that protects a key only for user meta.
 	 */
 	public function test_loggedin_meta_blocks_a_user_only_filter_protected_key() {

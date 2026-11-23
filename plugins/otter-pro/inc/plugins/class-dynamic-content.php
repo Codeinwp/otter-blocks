@@ -242,7 +242,7 @@ class Dynamic_Content {
 			return true;
 		}
 
-		$protected = array( 'user_pass', 'user_activation_key', 'session_tokens' );
+		$protected = array( 'user_pass', 'user_activation_key', 'session_tokens', 'user_level' );
 
 		if ( in_array( strtolower( $key ), $protected, true ) ) {
 			return true;
