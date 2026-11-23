@@ -67,7 +67,7 @@ add_action(
 add_filter(
 	'themeisle_sdk_blackfriday_data',
 	function ( $configs ) {
-		if ( defined( 'OTTER_BLOCKS_PATH' ) ) {
+		if ( defined( 'OTTER_BLOCKS_PATH' ) || empty( $configs['default'] ) ) {
 			return $configs;
 		}
 

@@ -20,7 +20,25 @@ class Atomic_Wind_Blocks {
 	 *
 	 * @var string
 	 */
-	const ATOMIC_WIND_CSS_VERSION = '1.0.1';
+	const ATOMIC_WIND_CSS_VERSION = '1.0.2';
+
+	/**
+	 * Version assumed for a saved sheet that does not state one: the last generator that did not send it.
+	 *
+	 * @var string
+	 */
+	const LEGACY_CSS_VERSION = '1.0.1';
+
+	/**
+	 * Stylesheet migrations, keyed by the version they upgrade from: [ next version, method ].
+	 *
+	 * Each must leave a sheet already in a newer format unchanged: a reader can see a new sheet beside an old stamp between a save's two writes.
+	 *
+	 * @var array<string, array{string, string}>
+	 */
+	const CSS_MIGRATIONS = array(
+		'1.0.1' => array( '1.0.2', 'remove_wrapper_typography' ),
+	);
 
 	/**
 	 * Whether we are currently inside a query loop render.
@@ -698,15 +716,19 @@ class Atomic_Wind_Blocks {
 				'callback'            => array( $this, 'rest_save_style' ),
 				'permission_callback' => array( $this, 'rest_save_style_permissions' ),
 				'args'                => array(
-					'css'    => array(
+					'css'     => array(
 						'type'              => 'string',
 						'required'          => true,
 						'validate_callback' => 'rest_validate_request_arg',
 						'sanitize_callback' => array( $this, 'sanitize_css' ),
 					),
-					'postId' => array(
+					'postId'  => array(
 						'type'     => 'integer',
 						'required' => true,
+					),
+					'version' => array(
+						'type'     => 'string',
+						'required' => false,
 					),
 				),
 			) 
@@ -818,7 +840,9 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * REST callback: save generated Tailwind CSS to post meta.
+	 * REST callback: save generated Tailwind CSS to post meta, migrated to the current version.
+	 *
+	 * A sheet that cannot be migrated is not stored and existing meta is left as it is.
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 * @phpstan-param \WP_REST_Request<array<string, mixed>> $request
@@ -826,7 +850,17 @@ class Atomic_Wind_Blocks {
 	 */
 	public function rest_save_style( \WP_REST_Request $request ) {
 		$post_id = absint( $request->get_param( 'postId' ) );
-		$css     = $request->get_param( 'css' );
+		$version = $request->get_param( 'version' );
+
+		if ( ! is_string( $version ) || ! preg_match( '/^\d{1,4}\.\d{1,4}\.\d{1,4}$/D', $version ) ) {
+			$version = self::LEGACY_CSS_VERSION;
+		}
+
+		$css = $this->migrate_css( $request->get_param( 'css' ), $version );
+
+		if ( '' === $css ) {
+			return new \WP_REST_Response( array( 'success' => false ), 400 );
+		}
 
 		$success = update_post_meta( $post_id, '_atomic_wind_css', wp_slash( $css ) );
 		update_post_meta( $post_id, '_atomic_wind_css_version', self::ATOMIC_WIND_CSS_VERSION );
@@ -835,19 +869,148 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
-	 * Read cached CSS, ignoring stylesheets built by an older generator.
+	 * Read cached CSS, upgrading older stylesheets on the fly and ignoring those that cannot be upgraded.
 	 *
 	 * @param int $post_id Post ID.
 	 * @return string
 	 */
 	private function get_cached_css( $post_id ) {
-		if ( self::ATOMIC_WIND_CSS_VERSION !== get_post_meta( $post_id, '_atomic_wind_css_version', true ) ) {
+		$version = get_post_meta( $post_id, '_atomic_wind_css_version', true );
+		$css     = get_post_meta( $post_id, '_atomic_wind_css', true );
+
+		if ( ! is_string( $version ) || ! is_string( $css ) ) {
 			return '';
 		}
 
-		$css = get_post_meta( $post_id, '_atomic_wind_css', true );
+		$css = $this->migrate_css( $css, $version );
 
-		return is_string( $css ) ? \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css ) : '';
+		return '' === $css ? '' : \ThemeIsle\GutenbergBlocks\CSS\CSS_Handler::escape_style_contents( $css );
+	}
+
+	/**
+	 * Bring a stylesheet to the current version.
+	 *
+	 * @param string $css     Stylesheet.
+	 * @param string $version Version it was generated for.
+	 * @return string Empty when no migration path reaches the current version or a migration fails.
+	 */
+	private function migrate_css( $css, $version ) {
+		while ( self::ATOMIC_WIND_CSS_VERSION !== $version && isset( self::CSS_MIGRATIONS[ $version ] ) ) {
+			list( $version, $method ) = self::CSS_MIGRATIONS[ $version ];
+
+			$css = $this->$method( $css );
+
+			if ( ! is_string( $css ) ) {
+				return '';
+			}
+		}
+
+		return self::ATOMIC_WIND_CSS_VERSION === $version ? $css : '';
+	}
+
+	/**
+	 * Drop the typography declarations the 1.0.1 generator put on the block wrapper rule.
+	 *
+	 * @param string $css Stylesheet.
+	 * @return string|null Null when the result cannot be vouched for.
+	 */
+	private function remove_wrapper_typography( $css ) {
+		$failed = false;
+		$result = preg_replace_callback(
+			'/(?<=^|[{};])(\s*:where\(\[class\*="wp-block-atomic-wind-"\]\)\s*)\{([^{}]*)\}/',
+			function ( $rule ) use ( &$failed ) {
+				$declarations = $this->split_declarations( $rule[2] );
+
+				if ( null === $declarations ) {
+					$failed = true;
+					return $rule[0];
+				}
+
+				$trailing = null;
+
+				if ( '' === trim( end( $declarations ) ) ) {
+					$trailing = array_pop( $declarations );
+				}
+
+				$kept = array_filter(
+					$declarations,
+					function ( $declaration ) {
+						$property = strtolower( trim( (string) strstr( $declaration, ':', true ) ) );
+
+						return ! in_array( $property, array( 'line-height', 'font-family', 'font-feature-settings', 'font-variation-settings' ), true );
+					}
+				);
+
+				if ( count( $kept ) === count( $declarations ) ) {
+					return $rule[0];
+				}
+
+				if ( '' === trim( implode( '', $kept ) ) ) {
+					return '';
+				}
+
+				return $rule[1] . '{' . implode( ';', $kept ) . ( null === $trailing ? '' : ';' . $trailing ) . '}';
+			},
+			$css
+		);
+
+		return $failed ? null : $result;
+	}
+
+	/**
+	 * Split a declaration block on its top-level semicolons.
+	 *
+	 * @param string $body Rule body.
+	 * @return string[]|null Null when the body has comments or unbalanced quotes or brackets.
+	 */
+	private function split_declarations( $body ) {
+		if ( false !== strpos( $body, '/*' ) ) {
+			return null;
+		}
+
+		$parts   = array();
+		$current = '';
+		$quote   = '';
+		$depth   = 0;
+		$length  = strlen( $body );
+
+		for ( $i = 0; $i < $length; $i++ ) {
+			$char = $body[ $i ];
+
+			if ( '\\' === $char ) {
+				$current .= $char . substr( $body, $i + 1, 1 );
+				++$i;
+				continue;
+			}
+
+			if ( '' !== $quote ) {
+				$quote = $char === $quote ? '' : $quote;
+			} elseif ( '"' === $char || "'" === $char ) {
+				$quote = $char;
+			} elseif ( '(' === $char || '[' === $char ) {
+				++$depth;
+			} elseif ( ')' === $char || ']' === $char ) {
+				--$depth;
+
+				if ( $depth < 0 ) {
+					return null;
+				}
+			} elseif ( ';' === $char && 0 === $depth ) {
+				$parts[] = $current;
+				$current = '';
+				continue;
+			}
+
+			$current .= $char;
+		}
+
+		if ( '' !== $quote || 0 !== $depth ) {
+			return null;
+		}
+
+		$parts[] = $current;
+
+		return $parts;
 	}
 
 	/**
@@ -1090,11 +1253,18 @@ class Atomic_Wind_Blocks {
 			return $block_content;
 		}
 
+		// The post type comes from the request. Only loop over a publicly viewable one, so a non-public
+		// type (e.g. a contact-form inbox) whose entries are stored as `publish` cannot be exposed.
+		$post_type = sanitize_key( $post_type );
+		if ( ! is_post_type_viewable( $post_type ) ) {
+			return '';
+		}
+
 		global $post;
 		$saved_post = $post;
 
 		$args = array(
-			'post_type'      => sanitize_key( $post_type ),
+			'post_type'      => $post_type,
 			'posts_per_page' => isset( $block['attrs']['queryCount'] ) ? min( absint( $block['attrs']['queryCount'] ), 100 ) : 3,
 			'orderby'        => isset( $block['attrs']['queryOrderBy'] ) ? sanitize_key( $block['attrs']['queryOrderBy'] ) : sanitize_key( 'date' ),
 			'order'          => isset( $block['attrs']['queryOrder'] ) && strtoupper( $block['attrs']['queryOrder'] ) === 'ASC' ? 'ASC' : 'DESC',
@@ -1229,17 +1399,29 @@ class Atomic_Wind_Blocks {
 				case 'custom_field':
 					$meta_key = isset( $block['attrs']['customFieldKey'] ) ? sanitize_text_field( $block['attrs']['customFieldKey'] ) : '';
 					if ( $meta_key ) {
-						$value = '';
-						if ( function_exists( 'get_field' ) ) {
-							$acf = get_field( $meta_key, get_the_ID() );
-							if ( is_string( $acf ) ) {
-								$value = $acf;
+						// An ACF field key (e.g. `field_abc123`) resolves to a meta name that may be protected,
+						// so check the resolved name as well, not only the selector the block stores.
+						$resolved_key = $meta_key;
+						if ( function_exists( 'get_field_object' ) ) {
+							$field_object = get_field_object( $meta_key, get_the_ID(), false );
+							if ( is_array( $field_object ) && ! empty( $field_object['name'] ) ) {
+								$resolved_key = (string) $field_object['name'];
 							}
 						}
-						if ( ! $value ) {
-							$raw = get_post_meta( get_the_ID(), $meta_key, true );
-							if ( is_string( $raw ) ) {
-								$value = $raw;
+						// Never print a protected meta key (e.g. a `_`-prefixed field holding a form submitter's data).
+						if ( ! is_protected_meta( $meta_key, 'post' ) && ! is_protected_meta( $resolved_key, 'post' ) ) {
+							$value = '';
+							if ( function_exists( 'get_field' ) ) {
+								$acf = get_field( $meta_key, get_the_ID() );
+								if ( is_string( $acf ) ) {
+									$value = $acf;
+								}
+							}
+							if ( ! $value ) {
+								$raw = get_post_meta( get_the_ID(), $meta_key, true );
+								if ( is_string( $raw ) ) {
+									$value = $raw;
+								}
 							}
 						}
 					}

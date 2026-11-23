@@ -2684,4 +2684,328 @@ class TestDynamicContent extends WP_UnitTestCase
 
 		$this->assertSame( 2, substr_count( $result, 'Sibling body' ) );
 	}
+
+	public function test_unnamed_blocks_pass_visitor_escaping_without_notices(): void {
+		$freeform = parse_blocks( '<p>Example</p>' )[0];
+		$this->assertNull( $freeform['blockName'] );
+
+		$blocks = array(
+			'freeform'    => $freeform,
+			'missing key' => array( 'attrs' => array() ),
+			'integer'     => array( 'blockName' => 5 ),
+			'array'       => array( 'blockName' => array( 'core/search' ) ),
+		);
+		foreach ( $blocks as $label => $block ) {
+			$captured = array();
+			set_error_handler(
+				function ( int $errno, string $errstr ) use ( &$captured ): bool {
+					$captured[] = $errstr;
+					return true;
+				}
+			);
+			$result = $this->dynamic_content->escape_visitor_block_magic_tags( '<p>Example</p>', $block );
+			restore_error_handler();
+
+			$this->assertSame( array(), $captured, $label );
+			$this->assertSame( '<p>Example</p>', $result, $label );
+		}
+	}
+
+	/**
+	 * The ACF dynamic tag does not read a protected meta key (otter-internals#320).
+	 */
+	public function test_get_acf_blocks_a_protected_meta_key() {
+		$GLOBALS['otter_test_acf_fields'] = array( '_secret' => array( 'value' => 'ACF Secret' ) );
+
+		$result = $this->dynamic_content_pro->get_acf( array(
+			'metaKey' => '_secret',
+			'context' => $this->post_id,
+			'default' => 'KEPT',
+		) );
+
+		$this->assertSame( 'KEPT', $result );
+		$this->assertStringNotContainsString( 'ACF Secret', $result );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * An ACF field key that resolves to a protected name is blocked too.
+	 */
+	public function test_get_acf_blocks_an_acf_field_with_a_protected_name() {
+		$GLOBALS['otter_test_acf_fields'] = array( 'field_x' => array( 'name' => '_secret', 'value' => 'ACF Secret' ) );
+
+		$result = $this->dynamic_content_pro->get_acf( array(
+			'metaKey' => 'field_x',
+			'context' => $this->post_id,
+			'default' => 'KEPT',
+		) );
+
+		$this->assertSame( 'KEPT', $result );
+		$this->assertStringNotContainsString( 'ACF Secret', $result );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * The dynamic image does not put a protected meta value into the src.
+	 */
+	public function test_media_content_blocks_protected_post_meta() {
+		update_post_meta( $this->post_id, '_img', 'https://evil.example/x.png' );
+
+		$result = $this->dynamic_content_pro->evaluate_content_media_content( 'ORIGINAL', array(
+			'type'    => 'postMeta',
+			'meta'    => '_img',
+			'context' => $this->post_id,
+		) );
+
+		$this->assertSame( 'ORIGINAL', $result );
+	}
+
+	/**
+	 * A sub-field under a protected ACF repeater is blocked through the parent chain.
+	 */
+	public function test_get_acf_blocks_a_sub_field_under_a_protected_repeater() {
+		$GLOBALS['otter_test_acf_fields'] = array(
+			'field_leaf'     => array( 'key' => 'field_leaf', 'name' => 'leaf', 'parent' => 'field_repeater', 'value' => 'ACF Secret' ),
+			'field_repeater' => array( 'key' => 'field_repeater', 'name' => '_secret', 'parent' => 0 ),
+		);
+
+		$result = $this->dynamic_content_pro->get_acf( array(
+			'metaKey' => 'field_leaf',
+			'context' => $this->post_id,
+			'default' => 'KEPT',
+		) );
+
+		$this->assertSame( 'KEPT', $result );
+		$this->assertStringNotContainsString( 'ACF Secret', $result );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * The Posts Grid ACF custom field does not print a protected field (otter-internals#320).
+	 */
+	public function test_posts_acf_integration_blocks_a_protected_field() {
+		$GLOBALS['otter_test_acf_fields'] = array(
+			'field_secret' => array( 'name' => '_secret', 'value' => 'ACF Secret Value' ),
+		);
+
+		$integration = new \ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration();
+		$attributes  = array(
+			'customMetas' => array(
+				array( 'id' => 'custom_1', 'field' => 'field_secret', 'display' => true ),
+			),
+		);
+
+		$result = $integration->render_acf_fields( 'BASE', $attributes, $this->post_id, 'custom_1' );
+
+		$this->assertSame( 'BASE', $result );
+		$this->assertStringNotContainsString( 'ACF Secret Value', $result );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * The dynamic image ACF branch does not surface a protected field value.
+	 */
+	public function test_media_content_blocks_protected_acf_field() {
+		$GLOBALS['otter_test_acf_fields'] = array( 'field_secret' => array( 'name' => '_secret', 'value' => 'https://evil.example/x.png' ) );
+
+		$result = $this->dynamic_content_pro->evaluate_content_media_content( 'ORIGINAL', array(
+			'type'    => 'acf',
+			'meta'    => 'field_secret',
+			'context' => $this->post_id,
+		) );
+
+		$flat = is_array( $result ) ? implode( ' ', $result ) : (string) $result;
+		$this->assertStringNotContainsString( 'evil.example', $flat );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * is_protected_acf_field() terminates on a cyclic parent chain.
+	 */
+	public function test_is_protected_acf_field_handles_a_cyclic_parent_chain() {
+		$GLOBALS['otter_test_acf_fields'] = $this->cyclic_acf_fields();
+
+		$this->assertFalse( \ThemeIsle\OtterPro\Plugins\Dynamic_Content::is_protected_acf_field( 10 ) );
+
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	/**
+	 * A key another plugin protects via the is_protected_meta filter (without a `_` prefix) is blocked too.
+	 */
+	public function test_blocks_a_filter_protected_meta_key() {
+		update_post_meta( $this->post_id, 'snap_x', 'https://evil.example/x.png' );
+
+		$filter = static function ( $protected, $meta_key ) {
+			return 'snap_x' === $meta_key ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 2 );
+
+		$result = $this->dynamic_content_pro->evaluate_content_media_content( 'ORIGINAL', array(
+			'type'    => 'postMeta',
+			'meta'    => 'snap_x',
+			'context' => $this->post_id,
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'ORIGINAL', $result );
+	}
+
+	/**
+	 * Author meta honors a filter that protects a key only for user meta.
+	 */
+	public function test_author_meta_blocks_a_user_only_filter_protected_key() {
+		$author_id = self::factory()->user->create();
+		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+		update_user_meta( $author_id, 'nick_x', 'secret-nick' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'nick_x' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$result = $this->dynamic_content_pro->get_author_meta( array(
+			'metaKey' => 'nick_x',
+			'context' => $post_id,
+			'default' => 'DEF',
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'DEF', $result );
+		$this->assertStringNotContainsString( 'secret-nick', $result );
+	}
+
+	/**
+	 * Author meta blocks the core user-field aliases, so `pass` cannot return the password hash.
+	 */
+	public function test_author_meta_blocks_core_user_aliases() {
+		global $wpdb;
+
+		$author_id = self::factory()->user->create();
+		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+
+		// Seed the reset key so the activation_key alias has a value to leak without the fix.
+		$wpdb->update( $wpdb->users, array( 'user_activation_key' => 'secret-key' ), array( 'ID' => $author_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		clean_user_cache( $author_id );
+
+		foreach ( array( 'pass', 'activation_key' ) as $alias ) {
+			$result = $this->dynamic_content_pro->get_author_meta( array(
+				'metaKey' => $alias,
+				'context' => $post_id,
+				'default' => 'DEF',
+			) );
+
+			$this->assertSame( 'DEF', $result, "The '$alias' alias must be blocked." );
+		}
+	}
+
+	/**
+	 * Author meta blocks the legacy user_level key, so a visitor cannot read the author's capability level.
+	 */
+	public function test_author_meta_blocks_user_level() {
+		$author_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+
+		$result = $this->dynamic_content_pro->get_author_meta( array(
+			'metaKey' => 'user_level',
+			'context' => $post_id,
+			'default' => 'DEF',
+		) );
+
+		$this->assertSame( 'DEF', $result );
+	}
+
+	/**
+	 * A post field literally named user_level is not user meta, so it stays readable.
+	 */
+	public function test_post_meta_allows_a_field_named_user_level() {
+		$post_id = self::factory()->post->create();
+		update_post_meta( $post_id, 'user_level', 'Beginner' );
+
+		$result = $this->dynamic_content_pro->get_post_meta( array(
+			'metaKey' => 'user_level',
+			'context' => $post_id,
+			'default' => 'DEF',
+		) );
+
+		$this->assertSame( 'Beginner', $result );
+	}
+
+	/**
+	 * Logged-in user meta honors a filter that protects a key only for user meta.
+	 */
+	public function test_loggedin_meta_blocks_a_user_only_filter_protected_key() {
+		$uid = self::factory()->user->create();
+		wp_set_current_user( $uid );
+		update_user_meta( $uid, 'nick_x', 'secret-nick' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'nick_x' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$result = $this->dynamic_content_pro->get_loggedin_meta( array(
+			'metaKey' => 'nick_x',
+			'default' => 'DEF',
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'DEF', $result );
+	}
+
+	/**
+	 * Author meta resolves a back-compat field to its real meta key before the filter check.
+	 */
+	public function test_author_meta_blocks_a_filter_protected_back_compat_field() {
+		$author_id = self::factory()->user->create();
+		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+		update_user_meta( $author_id, 'first_name', 'secret-first' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'first_name' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$result = $this->dynamic_content_pro->get_author_meta( array(
+			'metaKey' => 'user_firstname',
+			'context' => $post_id,
+			'default' => 'DEF',
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'DEF', $result );
+		$this->assertStringNotContainsString( 'secret-first', $result );
+	}
+
+	/**
+	 * A user meta key named like a core alias is still checked verbatim against the filter.
+	 */
+	public function test_loggedin_meta_checks_an_alias_named_key_verbatim() {
+		$uid = self::factory()->user->create();
+		wp_set_current_user( $uid );
+		update_user_meta( $uid, 'email', 'secret-mail' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'email' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$result = $this->dynamic_content_pro->get_loggedin_meta( array(
+			'metaKey' => 'email',
+			'default' => 'DEF',
+		) );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertSame( 'DEF', $result );
+	}
 }

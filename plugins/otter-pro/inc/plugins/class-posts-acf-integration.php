@@ -55,7 +55,8 @@ class Posts_ACF_Integration {
 			}
 		}
 
-		if ( ( ! isset( $custom_meta_field['display'] ) || true === $custom_meta_field['display'] ) && isset( $custom_meta_field['field'] ) && function_exists( 'get_field_object' ) ) {
+		if ( ( ! isset( $custom_meta_field['display'] ) || true === $custom_meta_field['display'] ) && isset( $custom_meta_field['field'] ) && function_exists( 'get_field_object' )
+			&& ! Dynamic_Content::is_protected_meta_key( $custom_meta_field['field'] ) && ! Dynamic_Content::is_protected_acf_field( $custom_meta_field['field'] ) ) {
 			$field = get_field_object( $custom_meta_field['field'], $id );
 			if ( false !== $field ) {
 				$data .= '<div class="o-posts-custom-field">';
