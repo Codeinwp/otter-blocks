@@ -9,6 +9,10 @@ use ThemeIsle\GutenbergBlocks\Plugins\Atomic_Wind_Blocks;
 
 require_once dirname( __FILE__ ) . '/php/migration-test-helper.php';
 
+if ( ! function_exists( 'get_field' ) ) {
+	require_once __DIR__ . '/php/acf-parent-cycle.php';
+}
+
 /**
  * Atomic Wind Blocks test case.
  */
@@ -2596,6 +2600,69 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 			'wp-block-atomic-wind-',
 			$this->inline_style_for( 'atomic-wind-base' )
 		);
+	}
+
+	// -------------------------------------------------------
+	// render_post_fields — protected custom field (otter-internals#320)
+	// -------------------------------------------------------
+
+	public function test_custom_field_skips_protected_meta() {
+		update_post_meta( $this->post_id, '_protected', 'Protected Meta Value' );
+
+		$this->reset_in_query( true );
+		global $post;
+		$post = get_post( $this->post_id );
+		setup_postdata( $post );
+
+		$block   = $this->make_block( 'atomic-wind/text', array( 'postField' => 'custom_field', 'customFieldKey' => '_protected' ) );
+		$content = '<p class="wp-block">Placeholder</p>';
+
+		$result = $this->instance->render_post_fields( $content, $block );
+
+		$this->assertStringNotContainsString( 'Protected Meta Value', $result );
+		$this->assertStringContainsString( 'Placeholder', $result );
+
+		wp_reset_postdata();
+	}
+
+	public function test_custom_field_skips_acf_field_with_protected_name() {
+		$GLOBALS['otter_test_acf_fields'] = array(
+			'field_secret' => array( 'name' => '_acf_protected', 'value' => 'ACF Secret Value' ),
+		);
+
+		$this->reset_in_query( true );
+		global $post;
+		$post = get_post( $this->post_id );
+		setup_postdata( $post );
+
+		$block   = $this->make_block( 'atomic-wind/text', array( 'postField' => 'custom_field', 'customFieldKey' => 'field_secret' ) );
+		$content = '<p class="wp-block">Placeholder</p>';
+
+		$result = $this->instance->render_post_fields( $content, $block );
+
+		$this->assertStringNotContainsString( 'ACF Secret Value', $result );
+		$this->assertStringContainsString( 'Placeholder', $result );
+
+		wp_reset_postdata();
+		unset( $GLOBALS['otter_test_acf_fields'] );
+	}
+
+	public function test_custom_field_renders_a_public_meta_key() {
+		update_post_meta( $this->post_id, 'otter_public_field', 'Public Meta Value' );
+
+		$this->reset_in_query( true );
+		global $post;
+		$post = get_post( $this->post_id );
+		setup_postdata( $post );
+
+		$block   = $this->make_block( 'atomic-wind/text', array( 'postField' => 'custom_field', 'customFieldKey' => 'otter_public_field' ) );
+		$content = '<p class="wp-block">Placeholder</p>';
+
+		$result = $this->instance->render_post_fields( $content, $block );
+
+		$this->assertStringContainsString( 'Public Meta Value', $result );
+
+		wp_reset_postdata();
 	}
 
 	// -------------------------------------------------------
