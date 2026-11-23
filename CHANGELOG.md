@@ -1,3 +1,10 @@
+##### [Version 3.2.12](https://github.com/Codeinwp/otter-blocks/compare/v3.2.11...v3.2.12) (2026-11-23)
+
+- Fixed the PHP 8.5 deprecation warning when rendering freeform content.
+- Fixed issue with Atomic Wind where text blocks were losing the themes body font and line height.
+- Enhanced security
+- Updated dependencies
+
 ##### [Version 3.2.11](https://github.com/Codeinwp/otter-blocks/compare/v3.2.10...v3.2.11) (2026-11-13)
 
 - Added a Help panel to make it easier to contact support and find answers
