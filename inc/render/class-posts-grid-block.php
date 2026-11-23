@@ -359,8 +359,18 @@ class Posts_Grid_Block {
 			$categories = join( ', ', $cats );
 		}
 
+		// Only query publicly viewable post types; the attribute comes from the request and could name
+		// a non-public type (e.g. a contact-form inbox) whose entries are stored with the `publish` status.
+		$requested_post_types = (array) $attributes['postTypes'];
+		$post_types           = array_values( array_filter( $requested_post_types, 'is_post_type_viewable' ) );
+
+		// An explicit list of only non-viewable types returns nothing, instead of falling back to posts.
+		if ( ! empty( $requested_post_types ) && empty( $post_types ) ) {
+			return array();
+		}
+
 		$args = array(
-			'post_type'        => $attributes['postTypes'],
+			'post_type'        => $post_types,
 			'posts_per_page'   => $attributes['postsToShow'],
 			'post_status'      => 'publish',
 			'order'            => isset( $attributes['order'] ) ? $attributes['order'] : 'DESC',
@@ -378,7 +388,7 @@ class Posts_Grid_Block {
 		}
 
 		// Handle the case when the post type is a WooCommerce product.
-		if ( isset( $args['post_type'] ) && in_array( 'product', $args['post_type'] ) && function_exists( 'wc_get_products' ) ) {
+		if ( in_array( 'product', $args['post_type'], true ) && function_exists( 'wc_get_products' ) ) {
 
 			if ( isset( $attributes['categories'] ) ) {
 
