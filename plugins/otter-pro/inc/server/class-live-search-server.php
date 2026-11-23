@@ -74,7 +74,12 @@ class Live_Search_Server {
 	 */
 	public function parse_query( $query ) {
 		if ( $query->is_main_query() && $query->is_search() && $query->get( 'o_post_type' ) ) {
-			$query->set( 'post_type', explode( ',', $query->get( 'o_post_type' ) ) );
+			// Only publicly viewable types; a non-public type (e.g. a contact-form inbox) whose entries are
+			// `publish` must not be queryable by an anonymous visitor through `?o_post_type=`.
+			$post_types = array_values( array_filter( explode( ',', $query->get( 'o_post_type' ) ), 'is_post_type_viewable' ) );
+			if ( ! empty( $post_types ) ) {
+				$query->set( 'post_type', $post_types );
+			}
 		}
 
 		return $query;
