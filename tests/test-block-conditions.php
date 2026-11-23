@@ -659,4 +659,80 @@ class TestBlockConditions extends WP_UnitTestCase
 		$this->assertMatchesRegularExpression( '/id=["\']o-condition-hide-inline-css["\']/', $head_styles );
 		$this->assertStringContainsString( '.o-hide-on-mobile:is(.o-hide-on-mobile,#_){display:none!important}', $head_styles );
 	}
+
+	/**
+	 * A protected meta key cannot be used as a value oracle through a block condition (otter-internals#320).
+	 */
+	public function test_post_meta_condition_ignores_protected_key() {
+		$post_id = $this->factory()->post->create();
+		update_post_meta( $post_id, '_secret', 'leaked-value' );
+
+		$this->go_to( get_permalink( $post_id ) );
+		global $post;
+		$post = get_post( $post_id );
+		setup_postdata( $post );
+
+		$condition = array(
+			'type'         => 'postMeta',
+			'meta_key'     => '_secret',
+			'meta_compare' => 'if_contains',
+			'meta_value'   => 'leaked',
+		);
+
+		$result = $this->block_conditions->evaluate_condition( $condition );
+
+		$this->assertFalse( $result );
+
+		wp_reset_postdata();
+	}
+
+	/**
+	 * A logged-in-user-meta condition honors a filter that protects a key only for user meta (otter-internals#320).
+	 */
+	public function test_logged_in_user_meta_ignores_user_only_filter_protected_key() {
+		wp_set_current_user( $this->user_id );
+		update_user_meta( $this->user_id, 'nick_x', '1' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'nick_x' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$condition = array(
+			'type'         => 'loggedInUserMeta',
+			'meta_key'     => 'nick_x',
+			'meta_compare' => 'is_true',
+		);
+
+		$result = $this->block_conditions->evaluate_condition( $condition );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertFalse( $result );
+	}
+
+	/**
+	 * A user meta key named like a core alias is still checked verbatim against the filter.
+	 */
+	public function test_logged_in_user_meta_checks_an_alias_named_key_verbatim() {
+		wp_set_current_user( $this->user_id );
+		update_user_meta( $this->user_id, 'email', '1' );
+
+		$filter = static function ( $protected, $meta_key, $meta_type ) {
+			return ( 'email' === $meta_key && 'user' === $meta_type ) ? true : $protected;
+		};
+		add_filter( 'is_protected_meta', $filter, 10, 3 );
+
+		$condition = array(
+			'type'         => 'loggedInUserMeta',
+			'meta_key'     => 'email',
+			'meta_compare' => 'is_true',
+		);
+
+		$result = $this->block_conditions->evaluate_condition( $condition );
+
+		remove_filter( 'is_protected_meta', $filter, 10 );
+
+		$this->assertFalse( $result );
+	}
 }
