@@ -278,6 +278,57 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Add to Cart Button labels: none, so the product text shows, or the author's own.
+	 *
+	 * @return array<string, array{0: array<string, string>}>
+	 */
+	public function add_to_cart_button_labels(): array {
+		return array(
+			'product text' => array( array() ),
+			'block label'  => array( array( 'label' => 'Buy now' ) ),
+		);
+	}
+
+	/**
+	 * @dataProvider add_to_cart_button_labels
+	 *
+	 * @param array<string, string> $label Block label attribute.
+	 */
+	public function test_add_to_cart_button_product_markers_stay_literal( array $label ): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag  = '{otterDynamic?type=loggedInUserEmail}';
+		$link = 'https://example.org/buy#otterDynamicLink?type=siteURL';
+		$item = new WC_Product_External();
+		$item->set_name( 'Lamp' );
+		$item->set_button_text( $tag );
+		$item->set_product_url( $link );
+		$item->set_regular_price( '10' );
+		$product_id = $item->save();
+
+		$block = array(
+			'blockName'    => 'themeisle-blocks/add-to-cart-button',
+			'attrs'        => array( 'product' => $product_id ) + $label,
+			'innerBlocks'  => array(),
+			'innerHTML'    => '',
+			'innerContent' => array(),
+		);
+		$html  = ( new \ThemeIsle\OtterPro\Render\Add_To_Cart_Button_Block() )->render( $block['attrs'] );
+
+		// The block's own render pass, then its parent's.
+		$html   = apply_filters( 'render_block', $html, $block, new WP_Block( $block ) );
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		$processor = new WP_HTML_Tag_Processor( $output );
+		$this->assertTrue( $processor->next_tag( 'a' ), $output );
+		$this->assertSame( $tag, $processor->get_attribute( 'aria-label' ) );
+		$this->assertSame( $link, $processor->get_attribute( 'href' ) );
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+		$this->assertSame( isset( $label['label'] ) ? 'Buy now' : $tag, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ) );
+	}
+
+	/**
 	 * The plugin card must escape the author field from the wordpress.org API.
 	 */
 	public function test_plugin_card_escapes_author() {

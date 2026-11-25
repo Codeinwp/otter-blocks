@@ -76,8 +76,8 @@ class Dynamic_Content {
 	/**
 	 * Protect rendered visitor values before the generic Magic Tag filters run.
 	 *
-	 * @param string                                                                                      $content Rendered markup.
-	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string, product?: int|string}} $block Parsed block.
+	 * @param string                                                                                                      $content Rendered markup.
+	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string, product?: int|string, label?: string}} $block Parsed block.
 	 * @return string
 	 */
 	public function escape_visitor_block_magic_tags( $content, $block ) {
@@ -85,8 +85,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		// WooCommerce blocks print only product data; content nested inside them has already been resolved.
-		if ( 'core/term-description' === $block['blockName'] || 0 === strpos( $block['blockName'], 'themeisle-blocks/product-' ) ) {
+		if ( 'core/term-description' === $block['blockName'] || $this->prints_only_product_data( $block ) ) {
 			return $this->escape_comment_magic_tags( $content );
 		}
 
@@ -97,9 +96,10 @@ class Dynamic_Content {
 			'core/post-terms'  => '/(<a\b[^>]*>)([^<]*)(<\/a>)/',
 			'core/term-name'   => '/(>)([^<]*)(<)/',
 		);
-		if ( 'themeisle-blocks/review' === $block['blockName'] && isset( $block['attrs']['product'] ) ) {
-			// The product supplies the image and links, and kses has already decoded their attributes.
-			$patterns['themeisle-blocks/review'] = '/(\s(?:alt|href)=")([^"]*)(")/';
+
+		$product_pattern = $this->product_attribute_pattern( $block );
+		if ( null !== $product_pattern ) {
+			$patterns[ $block['blockName'] ] = $product_pattern;
 		}
 		if ( 'core/legacy-widget' === $block['blockName'] ) {
 			$widget = isset( $block['attrs']['idBase'] ) ? $block['attrs']['idBase'] : '';
@@ -122,6 +122,40 @@ class Dynamic_Content {
 			},
 			$content
 		);
+	}
+
+	/**
+	 * Whether a block's whole output is WooCommerce product data.
+	 *
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, product?: int|string, label?: string}} $block Parsed block.
+	 * @return bool
+	 */
+	private function prints_only_product_data( $block ) {
+		// Content nested in WooCommerce blocks has already been resolved by its own render pass.
+		if ( 0 === strpos( $block['blockName'], 'themeisle-blocks/product-' ) ) {
+			return true;
+		}
+
+		return 'themeisle-blocks/add-to-cart-button' === $block['blockName'] && ! isset( $block['attrs']['label'] );
+	}
+
+	/**
+	 * Pattern for the product-supplied attribute values of a block that also prints authored text.
+	 *
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, product?: int|string, label?: string}} $block Parsed block.
+	 * @return string|null
+	 */
+	private function product_attribute_pattern( $block ) {
+		// Runs after the Review block's kses, which decodes entities in attribute values.
+		if ( 'themeisle-blocks/review' === $block['blockName'] && isset( $block['attrs']['product'] ) ) {
+			return '/(\s(?:alt|href)=")([^"]*)(")/';
+		}
+
+		if ( 'themeisle-blocks/add-to-cart-button' === $block['blockName'] ) {
+			return '/(\s[\w-]+=")([^"]*)(")/';
+		}
+
+		return null;
 	}
 
 	/**
