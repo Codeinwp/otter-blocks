@@ -181,6 +181,103 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Otter WooCommerce outputs that print product attributes, variation options or image data.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function woo_block_outputs(): array {
+		return array(
+			'product tabs attributes'     => array( 'product-tabs' ),
+			'add to cart variation'       => array( 'product-add-to-cart' ),
+			'product images caption, alt' => array( 'product-images' ),
+			'review image alt'            => array( 'review' ),
+		);
+	}
+
+	/**
+	 * @dataProvider woo_block_outputs
+	 */
+	public function test_woo_block_output_markers_stay_literal( string $block_name ): void {
+		global $post, $product;
+
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag   = '{otterDynamic?type=loggedInUserEmail}';
+		$image = $this->factory()->attachment->create_upload_object( DIR_TESTDATA . '/images/canola.jpg' );
+		update_post_meta( $image, '_wp_attachment_image_alt', $tag );
+		wp_update_post(
+			array(
+				'ID'           => $image,
+				'post_excerpt' => $tag,
+			)
+		);
+
+		$attribute = new WC_Product_Attribute();
+		$attribute->set_name( $tag );
+		$attribute->set_options( array( $tag, 'Blue' ) );
+		$attribute->set_visible( true );
+		$attribute->set_variation( true );
+
+		$item = new WC_Product_Variable();
+		$item->set_name( 'Shirt' );
+		$item->set_image_id( $image );
+		$item->set_attributes( array( $attribute ) );
+		$product_id = $item->save();
+
+		$variation = new WC_Product_Variation();
+		$variation->set_parent_id( $product_id );
+		$variation->set_attributes( array( sanitize_title( $tag ) => 'Blue' ) );
+		$variation->set_regular_price( '10' );
+		$variation->save();
+		WC_Product_Variable::sync( $product_id );
+
+		$post    = get_post( $product_id );
+		$product = wc_get_product( $product_id );
+		setup_postdata( $post );
+
+		$block = array(
+			'blockName'    => 'themeisle-blocks/' . $block_name,
+			'attrs'        => array(),
+			'innerBlocks'  => array(),
+			'innerHTML'    => '',
+			'innerContent' => array(),
+		);
+
+		if ( 'review' === $block_name ) {
+			$block['attrs'] = array(
+				'id'       => 'wp-block-themeisle-blocks-review-marker',
+				'product'  => $product_id,
+				'features' => array(
+					array(
+						'title'  => 'Quality',
+						'rating' => 8,
+					),
+				),
+			);
+
+			// The Review block applies this filter only when the Pro plugin constant is defined.
+			$html = ( new \ThemeIsle\GutenbergBlocks\Render\Review_Block() )->render( ( new \ThemeIsle\OtterPro\Plugins\Review_Woo_Integration() )->apply_woo_data( $block['attrs'] ) );
+		} else {
+			$classes = array(
+				'product-tabs'        => \ThemeIsle\OtterPro\Render\WooCommerce\Product_Tabs_Block::class,
+				'product-add-to-cart' => \ThemeIsle\OtterPro\Render\WooCommerce\Product_Add_To_Cart_Block::class,
+				'product-images'      => \ThemeIsle\OtterPro\Render\WooCommerce\Product_Images_Block::class,
+			);
+			$html    = ( new $classes[ $block_name ]() )->render( array() );
+		}
+
+		// The block's own render pass, then its parent's.
+		$html   = apply_filters( 'render_block', $html, $block, new WP_Block( $block ) );
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		wp_reset_postdata();
+
+		$this->assertStringContainsString( $tag, html_entity_decode( $output, ENT_QUOTES ), $output );
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+	}
+
+	/**
 	 * The plugin card must escape the author field from the wordpress.org API.
 	 */
 	public function test_plugin_card_escapes_author() {

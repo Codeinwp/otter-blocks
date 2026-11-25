@@ -76,8 +76,8 @@ class Dynamic_Content {
 	/**
 	 * Protect rendered visitor values before the generic Magic Tag filters run.
 	 *
-	 * @param string                                                                $content Rendered markup.
-	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string}} $block Parsed block.
+	 * @param string                                                                                      $content Rendered markup.
+	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string, product?: int|string}} $block Parsed block.
 	 * @return string
 	 */
 	public function escape_visitor_block_magic_tags( $content, $block ) {
@@ -85,7 +85,8 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		if ( 'core/term-description' === $block['blockName'] ) {
+		// WooCommerce blocks print only product data; content nested inside them has already been resolved.
+		if ( 'core/term-description' === $block['blockName'] || 0 === strpos( $block['blockName'], 'themeisle-blocks/product-' ) ) {
 			return $this->escape_comment_magic_tags( $content );
 		}
 
@@ -96,6 +97,10 @@ class Dynamic_Content {
 			'core/post-terms'  => '/(<a\b[^>]*>)([^<]*)(<\/a>)/',
 			'core/term-name'   => '/(>)([^<]*)(<)/',
 		);
+		if ( 'themeisle-blocks/review' === $block['blockName'] && isset( $block['attrs']['product'] ) ) {
+			// The product supplies the image and links, and kses has already decoded their attributes.
+			$patterns['themeisle-blocks/review'] = '/(\s(?:alt|href)=")([^"]*)(")/';
+		}
 		if ( 'core/legacy-widget' === $block['blockName'] ) {
 			$widget = isset( $block['attrs']['idBase'] ) ? $block['attrs']['idBase'] : '';
 			if ( isset( $block['attrs']['id'] ) ) {
