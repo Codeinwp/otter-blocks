@@ -61,6 +61,59 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Product image alt text, set or empty so the comparison falls back to the product name.
+	 *
+	 * @return array<string, array{0: bool}>
+	 */
+	public function product_image_alts(): array {
+		return array(
+			'image alt'      => array( true ),
+			'title fallback' => array( false ),
+		);
+	}
+
+	/**
+	 * @dataProvider product_image_alts
+	 */
+	public function test_review_comparison_keeps_product_markers_literal( bool $has_alt ): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag   = '{otterDynamic?type=loggedInUserEmail}';
+		$link  = 'https://example.org/buy#otterDynamicLink?type=siteURL';
+		$image = $this->factory()->attachment->create_upload_object( DIR_TESTDATA . '/images/canola.jpg' );
+		if ( $has_alt ) {
+			update_post_meta( $image, '_wp_attachment_image_alt', $tag );
+		}
+
+		$product = new WC_Product_External();
+		$product->set_name( $tag );
+		$product->set_short_description( $tag );
+		$product->set_regular_price( '10' );
+		$product->set_product_url( $link );
+		$product->set_image_id( $image );
+		$product_id = $product->save();
+
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:themeisle-blocks/review {"id":"aaaaaaaabbbb1234","product":' . $product_id . '} /-->',
+				'post_status'  => 'publish',
+			)
+		);
+
+		$html = ( new Review_Comparison_Block() )->render( array( 'reviews' => array( $post_id . '-bbbb1234' ) ) );
+
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		$processor = new WP_HTML_Tag_Processor( $output );
+		$this->assertTrue( $processor->next_tag( 'img' ), $output );
+		$this->assertSame( $tag, $processor->get_attribute( 'alt' ) );
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+		$this->assertSame( 2, substr_count( html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $tag ), $output );
+		$this->assertStringContainsString( 'buy#otterDynamicLink?type=siteURL', html_entity_decode( $output, ENT_QUOTES ), $output );
+	}
+
+	/**
 	 * The plugin card must escape the author field from the wordpress.org API.
 	 */
 	public function test_plugin_card_escapes_author() {

@@ -1470,13 +1470,7 @@ class Atomic_Wind_Blocks {
 				if ( false !== strpos( $block_content, 'href="' ) ) {
 					$block_content = $this->replace_attribute( $block_content, 'href', $href );
 				} else {
-					$block_content = preg_replace_callback(
-						'/^(\s*<a\b)/',
-						function ( $m ) use ( $href ) {
-							return $m[1] . ' href="' . Dynamic_Content::instance()->escape_comment_magic_tags( $href ) . '"';
-						},
-						$block_content
-					);
+					$block_content = $this->append_to_opening_tag( $block_content, '/^(\s*<a\b)/', ' href="' . Dynamic_Content::instance()->escape_comment_magic_tags( $href ) . '"' );
 				}
 			}
 		} elseif ( 'atomic-wind/image' === $block_name ) {
@@ -1529,6 +1523,26 @@ class Atomic_Wind_Blocks {
 	}
 
 	/**
+	 * Insert attribute markup after the opening tag name the pattern's first group matches.
+	 *
+	 * @param string $html    Block markup.
+	 * @param string $pattern Pattern anchored at the start, capturing the tag name.
+	 * @param string $attrs   Escaped attribute markup, with a leading space.
+	 * @return string
+	 */
+	private function append_to_opening_tag( $html, $pattern, $attrs ) {
+		// A callback, so `$1` or `\1` in an attribute value is not read as a backreference.
+		return (string) preg_replace_callback(
+			$pattern,
+			function ( $m ) use ( $attrs ) {
+				return $m[1] . $attrs;
+			},
+			$html,
+			1
+		);
+	}
+
+	/**
 	 * Inject data-animation attributes into server-rendered blocks.
 	 *
 	 * @param string               $block_content Block content.
@@ -1561,7 +1575,7 @@ class Atomic_Wind_Blocks {
 			$attrs .= ' data-animation-delay="' . esc_attr( $delay ) . '"';
 		}
 
-		return preg_replace( '/^(<[a-zA-Z][a-zA-Z0-9]*)\b/', '$1' . $attrs, $block_content, 1 );
+		return $this->append_to_opening_tag( $block_content, '/^(<[a-zA-Z][a-zA-Z0-9]*)\b/', $attrs );
 	}
 
 	/**
@@ -1620,7 +1634,7 @@ class Atomic_Wind_Blocks {
 			return $block_content;
 		}
 
-		return preg_replace( '/^(\s*<[a-zA-Z][a-zA-Z0-9]*)\b/', '$1' . $attrs, $block_content, 1 );
+		return $this->append_to_opening_tag( $block_content, '/^(\s*<[a-zA-Z][a-zA-Z0-9]*)\b/', $attrs );
 	}
 
 	/**

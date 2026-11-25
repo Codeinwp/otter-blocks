@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\OtterPro\Render;
 
+use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
 use ThemeIsle\GutenbergBlocks\Render\Review_Block;
 
 /**
@@ -57,8 +58,10 @@ class Review_Comparison_Block {
 					continue;
 				}
 
-				$block['attrs']['title']       = $product->get_name();
-				$block['attrs']['description'] = $product->get_short_description();
+				// WooCommerce reads these without the title and excerpt filters that keep markers literal.
+				$dynamic_content               = Dynamic_Content::instance();
+				$block['attrs']['title']       = $dynamic_content->escape_comment_magic_tags( $product->get_name() );
+				$block['attrs']['description'] = $dynamic_content->escape_comment_magic_tags( $product->get_short_description() );
 				$block['attrs']['price']       = $product->get_regular_price() ? $product->get_regular_price() : $product->get_price();
 				$block['attrs']['currency']    = get_woocommerce_currency();
 
@@ -68,13 +71,13 @@ class Review_Comparison_Block {
 
 				$block['attrs']['image'] = array(
 					'url' => wp_get_attachment_image_url( intval( $product->get_image_id() ), '' ),
-					'alt' => get_post_meta( intval( $product->get_image_id() ), '_wp_attachment_image_alt', true ),
+					'alt' => $dynamic_content->escape_comment_magic_tags( get_post_meta( intval( $product->get_image_id() ), '_wp_attachment_image_alt', true ) ),
 				);
 
 				$block['attrs']['links'] = array(
 					array(
 						'label'       => __( 'Buy Now', 'otter-pro' ),
-						'href'        => method_exists( $product, 'get_product_url' ) ? $product->get_product_url() : $product->get_permalink(),
+						'href'        => $dynamic_content->escape_comment_magic_tags( method_exists( $product, 'get_product_url' ) ? $product->get_product_url() : $product->get_permalink() ),
 						'isSponsored' => method_exists( $product, 'get_product_url' ),
 					),
 				);

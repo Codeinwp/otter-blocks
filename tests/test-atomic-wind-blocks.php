@@ -645,6 +645,73 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertSame( $content, $result );
 	}
 
+	/**
+	 * State and animation names holding preg replacement backreference sequences.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function backreference_state_names(): array {
+		return array(
+			'numbered' => array( 'price$1' ),
+			'braced'   => array( 'price${0}' ),
+			'slashed'  => array( 'price' . chr( 92 ) . '1' ),
+		);
+	}
+
+	/**
+	 * @dataProvider backreference_state_names
+	 */
+	public function test_state_attributes_keep_backreference_sequences( string $name ): void {
+		$block  = $this->make_block(
+			'atomic-wind/link',
+			array(
+				'showIf'       => $name,
+				'hideIf'       => $name,
+				'stateTrigger' => $name,
+				'stateAction'  => 'set',
+				'stateValue'   => $name,
+			)
+		);
+		$result = $this->instance->render_state_attrs( '<button class="wp-block">Go</button>', $block );
+
+		$this->assert_tag_attributes(
+			$result,
+			'button',
+			array(
+				'class'              => 'wp-block',
+				'data-show-if'       => $name,
+				'data-hide-if'       => $name,
+				'data-state-trigger' => $name,
+				'data-state-action'  => 'set',
+				'data-state-value'   => $name,
+			)
+		);
+	}
+
+	/**
+	 * @dataProvider backreference_state_names
+	 */
+	public function test_animation_attributes_keep_backreference_sequences( string $name ): void {
+		$block  = $this->make_block(
+			'atomic-wind/box',
+			array(
+				'animation'      => $name,
+				'animationDelay' => $name,
+			)
+		);
+		$result = $this->instance->render_animation_attrs( '<div class="wp-block">Content</div>', $block );
+
+		$this->assert_tag_attributes(
+			$result,
+			'div',
+			array(
+				'class'                => 'wp-block',
+				'data-animation'       => $name,
+				'data-animation-delay' => $name,
+			)
+		);
+	}
+
 	// -------------------------------------------------------
 	// render_post_fields — skipping
 	// -------------------------------------------------------
