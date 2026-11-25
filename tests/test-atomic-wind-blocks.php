@@ -1073,6 +1073,70 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		wp_reset_postdata();
 	}
 
+	/**
+	 * Post fields whose rendered value comes from a Contributor-editable title or URL.
+	 *
+	 * @return array<string, array{0: string, 1: string, 2: string, 3: string}>
+	 */
+	public function magic_tag_fields(): array {
+		return array(
+			'featured image alt' => array( 'atomic-wind/image', 'featured_image', '<img src="placeholder.jpg" alt="" />', 'img' ),
+			'text title'         => array( 'atomic-wind/text', 'title', '<p class="wp-block">Placeholder</p>', 'p' ),
+			'permalink href'     => array( 'atomic-wind/link', 'permalink', '<a href="#" class="wp-block">Link</a>', 'a' ),
+			'added href'         => array( 'atomic-wind/link', 'permalink', '<a class="wp-block">Link</a>', 'a' ),
+		);
+	}
+
+	/**
+	 * @dataProvider magic_tag_fields
+	 */
+	public function test_post_fields_keep_magic_tags_literal_in_parent_render( string $block_name, string $post_field, string $markup, string $tag ): void {
+		$this->reset_in_query( true );
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$title   = '{otterDynamic?type=loggedInUserEmail}';
+		$url     = 'https://example.org/#otterDynamicLink?type=loggedInUserEmail';
+		$post_id = $this->factory()->post->create( array( 'post_title' => $title ) );
+		$thumb   = $this->factory()->attachment->create_object(
+			array(
+				'file'           => 'image.jpg',
+				'post_parent'    => $post_id,
+				'post_mime_type' => 'image/jpeg',
+			)
+		);
+		update_post_meta( $post_id, '_thumbnail_id', $thumb );
+		add_filter(
+			'post_link',
+			static function () use ( $url ): string {
+				return $url;
+			}
+		);
+
+		global $post;
+		$post = get_post( $post_id );
+		setup_postdata( $post );
+
+		$html = $this->instance->render_post_fields( $markup, $this->make_block( $block_name, array( 'postField' => $post_field ) ) );
+
+		\ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content::instance();
+		$group  = $this->make_block( 'core/group' );
+		$parent = apply_filters( 'render_block', '<div class="box">' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		$processor = new WP_HTML_Tag_Processor( $parent );
+		$this->assertTrue( $processor->next_tag( $tag ) );
+		$this->assertStringNotContainsString( 'viewer@example.org', $parent );
+
+		if ( 'img' === $tag ) {
+			$this->assertSame( $title, $processor->get_attribute( 'alt' ) );
+		} elseif ( 'a' === $tag ) {
+			$this->assertSame( $url, $processor->get_attribute( 'href' ) );
+		} else {
+			$this->assertSame( $title, html_entity_decode( wp_strip_all_tags( $parent ), ENT_QUOTES ) );
+		}
+
+		wp_reset_postdata();
+	}
+
 	// -------------------------------------------------------
 	// render_query_loop
 	// -------------------------------------------------------

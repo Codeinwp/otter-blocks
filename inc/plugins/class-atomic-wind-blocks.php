@@ -1428,7 +1428,7 @@ class Atomic_Wind_Blocks {
 					break;
 			}
 			if ( $value ) {
-				$escaped       = esc_html( $value );
+				$escaped       = Dynamic_Content::instance()->escape_comment_magic_tags( esc_html( $value ) );
 				$block_content = preg_replace_callback(
 					'/^\s*(<[^>]+>).*(<\/[a-zA-Z0-9]+>)\s*$/s',
 					function ( $m ) use ( $escaped ) {
@@ -1473,7 +1473,7 @@ class Atomic_Wind_Blocks {
 					$block_content = preg_replace_callback(
 						'/^(\s*<a\b)/',
 						function ( $m ) use ( $href ) {
-							return $m[1] . ' href="' . $href . '"';
+							return $m[1] . ' href="' . Dynamic_Content::instance()->escape_comment_magic_tags( $href ) . '"';
 						},
 						$block_content
 					);
@@ -1508,12 +1508,16 @@ class Atomic_Wind_Blocks {
 	/**
 	 * Replace the value of every `$attribute="..."` in the markup.
 	 *
+	 * Dynamic markers in the value are kept literal, so a parent block's render does not resolve them.
+	 *
 	 * @param string $html          Block markup.
 	 * @param string $attribute     Attribute name.
 	 * @param string $escaped_value Value already escaped for the attribute.
 	 * @return string
 	 */
 	private function replace_attribute( $html, $attribute, $escaped_value ) {
+		$escaped_value = Dynamic_Content::instance()->escape_comment_magic_tags( $escaped_value );
+
 		// A callback, so `$0` or `\0` in the value is not read as a backreference.
 		return (string) preg_replace_callback(
 			'/' . $attribute . '="[^"]*"/',
