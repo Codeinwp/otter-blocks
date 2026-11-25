@@ -4,7 +4,7 @@ Tags: gutenberg blocks, gutenberg, blocks, page builder, fse
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 5.6
-Stable tag: 3.2.11
+Stable tag: 3.2.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -344,9 +344,10 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 == Changelog ==
 
-##### [Version 3.2.11](https://github.com/Codeinwp/otter-blocks/compare/v3.2.10...v3.2.11) (2026-11-13)
+##### [Version 3.2.12](https://github.com/Codeinwp/otter-blocks/compare/v3.2.11...v3.2.12) (2026-11-23)
 
-- Added a Help panel to make it easier to contact support and find answers
+- Fixed the PHP 8.5 deprecation warning when rendering freeform content.
+- Fixed issue with Atomic Wind where text blocks were losing the themes body font and line height.
 - Enhanced security
 - Updated dependencies
 

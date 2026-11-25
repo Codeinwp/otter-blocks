@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b4969883688d05099f3b5104a47e6509",
+    "content-hash": "40334d9e23da480b5821676946675147",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.72",
+            "version": "3.3.73",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "66036fa0ef8168f7e5a3f7bf06dc88733e1d46db"
+                "reference": "f242bafc4d216bcb1957d800bf9bde679514d137"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/66036fa0ef8168f7e5a3f7bf06dc88733e1d46db",
-                "reference": "66036fa0ef8168f7e5a3f7bf06dc88733e1d46db",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/f242bafc4d216bcb1957d800bf9bde679514d137",
+                "reference": "f242bafc4d216bcb1957d800bf9bde679514d137",
                 "shasum": ""
             },
             "require-dev": {
@@ -43,9 +43,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.72"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.73"
             },
-            "time": "2026-11-06T13:01:52+00:00"
+            "time": "2026-11-25T13:44:47+00:00"
         },
         {
             "name": "enshrined/svg-sanitize",
