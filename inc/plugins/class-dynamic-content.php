@@ -66,7 +66,9 @@ class Dynamic_Content {
 		// After core builds a missing excerpt from the content.
 		add_filter( 'get_the_excerpt', array( $this, 'escape_comment_magic_tags' ), 20 );
 		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'escape_image_alt_magic_tags' ) );
-		foreach ( array( 'the_title', 'get_the_archive_title', 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
+		// Before WooCommerce renders blocks in the short description.
+		add_filter( 'woocommerce_short_description', array( $this, 'escape_comment_magic_tags' ), 8 );
+		foreach ( array( 'the_title', 'get_the_archive_title', 'woocommerce_product_get_name', 'woocommerce_product_variation_get_name', 'woocommerce_product_get_short_description', 'woocommerce_product_get_sku', 'woocommerce_product_variation_get_sku', 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
 			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
 		}
 	}

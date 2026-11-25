@@ -114,6 +114,73 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Otter Pro renderers that print WooCommerce product fields.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function woo_product_renderers(): array {
+		return array(
+			'review'            => array( 'review' ),
+			'short description' => array( 'short-description' ),
+			'product meta'      => array( 'meta' ),
+		);
+	}
+
+	/**
+	 * @dataProvider woo_product_renderers
+	 */
+	public function test_woo_product_field_markers_stay_literal( string $renderer ): void {
+		global $post, $product;
+
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag  = '{otterDynamic?type=loggedInUserEmail}';
+		$item = new WC_Product_Simple();
+		$item->set_name( $tag );
+		$item->set_short_description( $tag );
+		$item->set_sku( $tag );
+		$item->set_regular_price( '10' );
+		$product_id = $item->save();
+
+		$post    = get_post( $product_id );
+		$product = wc_get_product( $product_id );
+		setup_postdata( $post );
+
+		if ( 'review' === $renderer ) {
+			// The Review block applies this filter only when the Pro plugin constant is defined.
+			$attributes = ( new \ThemeIsle\OtterPro\Plugins\Review_Woo_Integration() )->apply_woo_data(
+				array(
+					'id'       => 'wp-block-themeisle-blocks-review-marker',
+					'product'  => $product_id,
+					'features' => array(
+						array(
+							'title'  => 'Quality',
+							'rating' => 8,
+						),
+					),
+				)
+			);
+
+			$html     = ( new \ThemeIsle\GutenbergBlocks\Render\Review_Block() )->render( $attributes );
+			$expected = 2;
+		} elseif ( 'short-description' === $renderer ) {
+			$html     = ( new \ThemeIsle\OtterPro\Render\WooCommerce\Product_Short_Description_Block() )->render( array() );
+			$expected = 1;
+		} else {
+			$html     = ( new \ThemeIsle\OtterPro\Render\WooCommerce\Product_Meta_Block() )->render( array() );
+			$expected = 1;
+		}
+
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		wp_reset_postdata();
+
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+		$this->assertSame( $expected, substr_count( html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $tag ), $output );
+	}
+
+	/**
 	 * The plugin card must escape the author field from the wordpress.org API.
 	 */
 	public function test_plugin_card_escapes_author() {
