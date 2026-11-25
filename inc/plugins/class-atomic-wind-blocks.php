@@ -1466,11 +1466,17 @@ class Atomic_Wind_Blocks {
 					break;
 			}
 			if ( $url ) {
-				$href = 'href="' . esc_url( $url ) . '"';
+				$href = esc_url( $url );
 				if ( false !== strpos( $block_content, 'href="' ) ) {
-					$block_content = preg_replace( '/href="[^"]*"/', $href, $block_content );
+					$block_content = $this->replace_attribute( $block_content, 'href', $href );
 				} else {
-					$block_content = preg_replace( '/^(\s*<a\b)/', '$1 ' . $href, $block_content );
+					$block_content = preg_replace_callback(
+						'/^(\s*<a\b)/',
+						function ( $m ) use ( $href ) {
+							return $m[1] . ' href="' . $href . '"';
+						},
+						$block_content
+					);
 				}
 			}
 		} elseif ( 'atomic-wind/image' === $block_name ) {
@@ -1484,19 +1490,38 @@ class Atomic_Wind_Blocks {
 				if ( ! $alt ) {
 					$alt = get_the_title();
 				}
-				$block_content = preg_replace( '/src="[^"]*"/', 'src="' . esc_url( $src ) . '"', $block_content );
-				$block_content = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $alt ) . '"', $block_content );
+				$block_content = $this->replace_attribute( $block_content, 'src', esc_url( $src ) );
+				$block_content = $this->replace_attribute( $block_content, 'alt', esc_attr( $alt ) );
 			} elseif ( 'author_avatar' === $post_field ) {
 				$avatar_url = get_avatar_url( get_the_author_meta( 'ID' ), array( 'size' => 256 ) );
 				if ( $avatar_url ) {
 					$alt           = get_the_author();
-					$block_content = preg_replace( '/src="[^"]*"/', 'src="' . esc_url( $avatar_url ) . '"', $block_content );
-					$block_content = preg_replace( '/alt="[^"]*"/', 'alt="' . esc_attr( $alt ) . '"', $block_content );
+					$block_content = $this->replace_attribute( $block_content, 'src', esc_url( $avatar_url ) );
+					$block_content = $this->replace_attribute( $block_content, 'alt', esc_attr( $alt ) );
 				}
 			}
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * Replace the value of every `$attribute="..."` in the markup.
+	 *
+	 * @param string $html          Block markup.
+	 * @param string $attribute     Attribute name.
+	 * @param string $escaped_value Value already escaped for the attribute.
+	 * @return string
+	 */
+	private function replace_attribute( $html, $attribute, $escaped_value ) {
+		// A callback, so `$0` or `\0` in the value is not read as a backreference.
+		return (string) preg_replace_callback(
+			'/' . $attribute . '="[^"]*"/',
+			function () use ( $attribute, $escaped_value ) {
+				return $attribute . '="' . $escaped_value . '"';
+			},
+			$html
+		);
 	}
 
 	/**
