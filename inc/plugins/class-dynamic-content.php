@@ -63,7 +63,10 @@ class Dynamic_Content {
 		add_filter( 'wp_generate_tag_cloud_data', array( $this, 'escape_tag_cloud_magic_tags' ) );
 		add_filter( 'wp_setup_nav_menu_item', array( $this, 'escape_taxonomy_menu_magic_tags' ) );
 		add_filter( 'list_cats', array( $this, 'escape_comment_magic_tags' ) );
-		foreach ( array( 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
+		// After core builds a missing excerpt from the content.
+		add_filter( 'get_the_excerpt', array( $this, 'escape_comment_magic_tags' ), 20 );
+		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'escape_image_alt_magic_tags' ) );
+		foreach ( array( 'the_title', 'get_the_archive_title', 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
 			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
 		}
 	}
@@ -151,6 +154,20 @@ class Dynamic_Content {
 		}
 
 		return $item;
+	}
+
+	/**
+	 * Keep an attachment image's alt text literal.
+	 *
+	 * @param array<string, string> $attr Image attributes.
+	 * @return array<string, string>
+	 */
+	public function escape_image_alt_magic_tags( $attr ) {
+		if ( isset( $attr['alt'] ) ) {
+			$attr['alt'] = $this->escape_comment_magic_tags( $attr['alt'] );
+		}
+
+		return $attr;
 	}
 
 	/**
@@ -717,7 +734,7 @@ class Dynamic_Content {
 				if ( isset( $data['default'] ) && false !== strpos( $data['default'], '<o-dynamic-link' ) ) {
 					$link = $this->apply_dynamic_link( $data['default'], $key );
 					if ( ! empty( $link ) ) {
-						$_value = preg_replace( '/(<a.*?>).*?(<\/a>)/', '$1' . $_value . '$2', $link );
+						$_value = $this->wrap_in_link( $link, $_value );
 					}
 				}
 
@@ -732,10 +749,29 @@ class Dynamic_Content {
 
 		if ( isset( $data['default'] ) && false !== strpos( $data['default'], '<o-dynamic-link' ) ) {
 			$link = $this->apply_dynamic_link( $data['default'] );
-			return preg_replace( '/(<a.*?>).*?(<\/a>)/', '$1' . $value . '$2', $link );
+			return $this->wrap_in_link( $link, $value );
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Replace the text of each link in the markup.
+	 *
+	 * @param string     $link  Link markup.
+	 * @param int|string $value Link text.
+	 *
+	 * @return string
+	 */
+	private function wrap_in_link( $link, $value ) {
+		// A callback, so `$0` or `\0` in the value is not read as a backreference.
+		return (string) preg_replace_callback(
+			'/(<a.*?>).*?(<\/a>)/',
+			function ( $m ) use ( $value ) {
+				return $m[1] . $value . $m[2];
+			},
+			$link
+		);
 	}
 
 	/**
