@@ -8,6 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks\Render;
 
 use ThemeIsle\GutenbergBlocks\Pro;
+use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
 
 /**
  * Class Review_Block
@@ -39,15 +40,16 @@ class Review_Block {
 
 		// Add a static variable to track if the schema has already been added.
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) && isset( $attributes['features'] ) && count( $attributes['features'] ) > 0 && get_option( 'themeisle_blocks_settings_disable_review_schema', true ) ) {
-			$post_id = get_the_ID();
+			$post_id           = get_the_ID();
+			$schema_attributes = Dynamic_Content::instance()->restore_authored_attributes( $attributes );
 
 			add_action(
 				'wp_footer',
-				function () use ( $attributes, $post_id ) {
+				function () use ( $schema_attributes, $post_id ) {
 					$added_schemas = &Review_Block::$added_schemas; // Reference the static property explicitly.
 
 					if ( ! isset( $added_schemas[ $post_id ] ) ) {
-						echo '<script type="application/ld+json">' . wp_json_encode( $this->get_json_ld( $attributes, $post_id ) ) . '</script>';
+						echo '<script type="application/ld+json">' . wp_json_encode( $this->get_json_ld( $schema_attributes, $post_id ) ) . '</script>';
 						$added_schemas[ $post_id ] = true; // Mark schema as added for this post ID.
 					}
 				}

@@ -327,12 +327,38 @@ class Dynamic_Content {
 			$content
 		);
 
+		return $this->restore_authored_markers( $content );
+	}
+
+	/**
+	 * Restore marked prefixes without resolving their dynamic values.
+	 *
+	 * @param string $content Marked text or markup.
+	 * @return string
+	 */
+	public function restore_authored_markers( $content ) {
+		$prefixes = self::authored_prefixes();
 		$restored = array_flip( $prefixes );
 		foreach ( $prefixes as $original => $marked ) {
 			$restored[ esc_attr( $marked ) ] = esc_attr( $original );
 		}
 
 		return strtr( $content, $restored );
+	}
+
+	/**
+	 * Restore saved attributes for consumers outside the HTML render pipeline.
+	 *
+	 * @param array<string, mixed> $attributes Marked block attributes.
+	 * @return array<string, mixed>
+	 */
+	public function restore_authored_attributes( $attributes ) {
+		return map_deep(
+			$attributes,
+			function ( $value ) {
+				return is_string( $value ) ? $this->restore_authored_markers( $value ) : $value;
+			}
+		);
 	}
 
 	/**

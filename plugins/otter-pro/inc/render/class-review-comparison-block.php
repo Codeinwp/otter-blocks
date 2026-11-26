@@ -50,6 +50,7 @@ class Review_Comparison_Block {
 			$block = array();
 
 			$block = $this->get_review_block( $post_blocks, $block, $id );
+			$block = Dynamic_Content::instance()->register_authored_block( $block );
 
 			if ( isset( $block['attrs']['product'] ) && intval( $block['attrs']['product'] ) >= 0 && class_exists( 'WooCommerce' ) ) {
 				$product = wc_get_product( $block['attrs']['product'] );

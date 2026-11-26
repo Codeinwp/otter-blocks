@@ -62,6 +62,35 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Referenced reviews retain authored markers before product data is merged.
+	 */
+	public function test_review_comparison_resolves_referenced_authored_markers(): void {
+		update_option( 'blogname', 'Comparison site' );
+		$tag        = '{otterDynamic?type=siteTitle}';
+		$attributes = array(
+			'id'          => 'aaaaaaaabbbb1234',
+			'title'       => $tag,
+			'description' => $tag,
+			'features'    => array( array( 'title' => $tag, 'rating' => 8 ) ),
+			'links'       => array( array( 'label' => $tag, 'href' => '#otterDynamicLink?type=siteURL' ) ),
+		);
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:themeisle-blocks/review ' . wp_json_encode( $attributes ) . ' /-->',
+				'post_status'  => 'publish',
+			)
+		);
+		$html   = ( new Review_Comparison_Block() )->render( array( 'reviews' => array( $post_id . '-bbbb1234' ) ) );
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', $html, $group, new WP_Block( $group ) );
+
+		$this->assertSame( 4, substr_count( wp_strip_all_tags( $output ), 'Comparison site' ), $output );
+		$this->assertStringContainsString( 'href="' . esc_url( home_url() ) . '"', $output );
+		$this->assertStringNotContainsString( 'otterauthored', $output );
+		$this->assertStringNotContainsString( 'otterDynamic', $output );
+	}
+
+	/**
 	 * Product image alt text, set or empty so the comparison falls back to the product name.
 	 *
 	 * @return array<string, array{0: bool}>
@@ -1151,6 +1180,41 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 			'deleted product'  => array( 'deleted product', false ),
 			'inactive license' => array( 'inactive license', false ),
 		);
+	}
+
+	public function test_review_footer_schema_restores_authored_markers(): void {
+		$post_id = $this->factory()->post->create( array( 'post_status' => 'publish' ) );
+		$this->go_to( get_permalink( $post_id ) );
+		delete_option( 'themeisle_blocks_settings_disable_review_schema' );
+		remove_all_actions( 'wp_footer' );
+
+		$attributes = array(
+			'title'       => '{otterDynamic?type=siteTitle}',
+			'description' => '<o-dynamic data-type="siteTitle">Site</o-dynamic>',
+			'image'       => array( 'url' => get_rest_url( null, 'otter/v1' ) . '/dynamic/?type=featuredImage' ),
+			'features'    => array( array( 'title' => 'Quality', 'rating' => 8 ) ),
+			'pros'        => array( '{otterDynamic?type=siteTitle}' ),
+			'cons'        => array( '<o-dynamic-link data-type="siteURL">Site</o-dynamic-link>' ),
+			'price'       => '15',
+			'links'       => array( array( 'label' => 'Visit', 'href' => '#otterDynamicLink?type=siteURL' ) ),
+		);
+		$expected = wp_json_encode( ( new \ThemeIsle\GutenbergBlocks\Render\Review_Block() )->get_json_ld( $attributes, $post_id ) );
+		$markup = '<!-- wp:themeisle-blocks/review ' . wp_json_encode( $attributes ) . ' /-->';
+		do_blocks( $markup );
+		ob_start();
+		do_action( 'wp_footer' );
+		$footer = ob_get_clean();
+
+		$this->assertSame( 1, preg_match( '/<script type="application\/ld\+json">(.*?)<\/script>/s', $footer, $matches ), $footer );
+		$this->assertSame( $expected, $matches[1] );
+		$this->assertStringNotContainsString( 'otterauthored', $footer );
+
+		remove_all_actions( 'wp_footer' );
+		update_option( 'themeisle_blocks_settings_disable_review_schema', false );
+		do_blocks( $markup );
+		ob_start();
+		do_action( 'wp_footer' );
+		$this->assertStringNotContainsString( 'application/ld+json', ob_get_clean() );
 	}
 
 	/**

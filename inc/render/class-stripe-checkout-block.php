@@ -8,6 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks\Render;
 
 use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
+use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
 
 use ThemeIsle\GutenbergBlocks\Render\Review_Block;
 
@@ -136,7 +137,7 @@ class Stripe_Checkout_Block {
 				if ( 'success' === $status ) {
 					$message = isset( $attributes['successMessage'] ) ? wp_kses_post( $attributes['successMessage'] ) : __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
 
-					do_action( 'otter_blocks_stripe_checkout_success', $attributes, $this->stripe_api, $session_id );
+					do_action( 'otter_blocks_stripe_checkout_success', Dynamic_Content::instance()->restore_authored_attributes( $attributes ), $this->stripe_api, $session_id );
 				} else {
 					$message = isset( $attributes['cancelMessage'] ) ? wp_kses_post( $attributes['cancelMessage'] ) : __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
 				}
