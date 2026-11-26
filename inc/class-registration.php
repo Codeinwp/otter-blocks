@@ -143,6 +143,7 @@ class Registration {
 		add_filter( 'render_block', array( $this, 'subscribe_fa' ), 10, 2 );
 		add_filter( 'dynamic_sidebar_params', array( $this, 'watch_used_widgets' ), 9999 );
 		add_filter( 'render_block', array( $this, 'load_condition_hide_on_styles' ), 10, 2 );
+		add_filter( 'render_block_themeisle-blocks/countdown', array( $this, 'sanitize_countdown_redirect_link' ) );
 
 		add_action(
 			'wp_footer',
@@ -1174,6 +1175,36 @@ class Registration {
 	 */
 	public static function sticky_style() {
 		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
+	}
+
+	/**
+	 * Keep only http(s) or relative URLs in the Countdown redirect link.
+	 *
+	 * @param string $block_content The block content.
+	 * @return string
+	 */
+	public function sanitize_countdown_redirect_link( $block_content ) {
+		if ( ! is_string( $block_content ) || false === strpos( $block_content, 'data-redirect-link' ) ) {
+			return $block_content;
+		}
+
+		$tags = new \WP_HTML_Tag_Processor( $block_content );
+
+		while ( $tags->next_tag() ) {
+			$link = $tags->get_attribute( 'data-redirect-link' );
+
+			if ( ! is_string( $link ) ) {
+				continue;
+			}
+
+			$safe_link = esc_url_raw( $link, array( 'http', 'https' ) );
+
+			if ( $safe_link !== $link ) {
+				$tags->set_attribute( 'data-redirect-link', $safe_link );
+			}
+		}
+
+		return $tags->get_updated_html();
 	}
 
 	/**

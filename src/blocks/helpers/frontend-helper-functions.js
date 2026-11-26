@@ -209,3 +209,23 @@ export const scrollIntoViewIfNeeded = ( element, options = {}) => {
 		element.scrollIntoView( options );
 	}
 };
+
+/**
+ * Return the absolute URL if it uses the http or https scheme, otherwise null.
+ * Relative URLs resolve against the current page.
+ *
+ * @param {string} url The URL to check.
+ * @return {string|null} The safe absolute URL or null.
+ */
+export const getSafeRedirectUrl = ( url ) => {
+	if ( 'string' !== typeof url || '' === url.trim() ) {
+		return null;
+	}
+
+	try {
+		const parsed = new URL( url, window.location.href );
+		return [ 'http:', 'https:' ].includes( parsed.protocol ) ? parsed.href : null;
+	} catch {
+		return null;
+	}
+};

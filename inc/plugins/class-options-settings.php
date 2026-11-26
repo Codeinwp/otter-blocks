@@ -410,7 +410,7 @@ class Options_Settings {
 								$item['email'] = sanitize_text_field( $item['email'] );
 							}
 							if ( isset( $item['redirectLink'] ) ) {
-								$item['redirectLink'] = sanitize_text_field( $item['redirectLink'] );
+								$item['redirectLink'] = esc_url_raw( $item['redirectLink'] );
 							}
 							if ( isset( $item['captchaProvider'] ) ) {
 								$item['captchaProvider'] = sanitize_text_field( $item['captchaProvider'] );

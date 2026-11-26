@@ -108,6 +108,41 @@ class Test_Registration extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Render a countdown block with the given redirect link.
+	 *
+	 * @param string $link Redirect link stored in the block markup.
+	 * @return string
+	 */
+	private function render_countdown_with_redirect( $link ) {
+		$markup = '<!-- wp:themeisle-blocks/countdown {"id":"cd1","behaviour":"redirectLink"} -->'
+			. '<div id="cd1" class="wp-block-themeisle-blocks-countdown" data-date="2000-01-01T00:00:00" data-bhv="redirectLink" data-redirect-link="' . $link . '"></div>'
+			. '<!-- /wp:themeisle-blocks/countdown -->';
+
+		$blocks = parse_blocks( $markup );
+
+		return render_block( $blocks[0] );
+	}
+
+	/**
+	 * Countdown redirect links with a non-http scheme are emptied on render.
+	 */
+	public function test_countdown_redirect_link_drops_non_http_scheme() {
+		$html = $this->render_countdown_with_redirect( 'javascript:alert(1)' );
+
+		$this->assertStringNotContainsString( 'javascript:', $html );
+		$this->assertStringContainsString( 'data-redirect-link=""', $html );
+	}
+
+	/**
+	 * Countdown redirect links with an https URL are kept on render.
+	 */
+	public function test_countdown_redirect_link_keeps_https_url() {
+		$html = $this->render_countdown_with_redirect( 'https://example.com/thanks?a=1&amp;b=2' );
+
+		$this->assertStringContainsString( 'data-redirect-link="https://example.com/thanks?a=1&amp;b=2"', $html );
+	}
+
+	/**
 	 * Ensure an option stored as an empty string localizes as an object, not null.
 	 */
 	public function test_editor_global_defaults_is_object_when_option_is_empty_string() {

@@ -89,6 +89,25 @@ class Test_Options_Settings extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the form redirect link only keeps URLs with an allowed scheme.
+	 */
+	public function test_form_emails_sanitize_callback_validates_redirect_link() {
+		$registered_settings = get_registered_settings();
+		$callback            = $registered_settings['themeisle_blocks_form_emails']['sanitize_callback'];
+
+		$sanitized = call_user_func(
+			$callback,
+			array(
+				array( 'redirectLink' => 'javascript:alert(1)' ),
+				array( 'redirectLink' => 'https://example.com/thanks' ),
+			)
+		);
+
+		$this->assertSame( '', $sanitized[0]['redirectLink'] );
+		$this->assertSame( 'https://example.com/thanks', $sanitized[1]['redirectLink'] );
+	}
+
+	/**
 	 * Every property the form editor writes must be declared in the REST schema:
 	 * the settings endpoint forces additionalProperties to false, so a missing
 	 * property rejects the whole save (see #2919).

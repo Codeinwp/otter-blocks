@@ -3,7 +3,7 @@
  */
 import { addCaptchaOnPage, getCaptchaContainer } from './captcha.js';
 import DisplayFormMessage from './message.js';
-import { domReady } from '../../helpers/frontend-helper-functions.js';
+import { domReady, getSafeRedirectUrl } from '../../helpers/frontend-helper-functions.js';
 
 let startTimeAntiBot = null;
 const METADATA_VERSION = 1;
@@ -496,9 +496,12 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 					if ( 0 < res?.redirectLink?.length ) {
 						form.setAttribute( 'data-redirect', res.redirectLink );
 
-						setTimeout( () => {
-							window.location.href = res.redirectLink;
-						}, 1000 );
+						const redirectUrl = getSafeRedirectUrl( res.redirectLink );
+						if ( redirectUrl ) {
+							setTimeout( () => {
+								window.location.href = redirectUrl;
+							}, 1000 );
+						}
 					}
 
 				},
@@ -579,9 +582,12 @@ domReady( () => {
 				if ( 0 < res?.redirectLink?.length ) {
 					form.setAttribute( 'data-redirect', res.redirectLink );
 
-					setTimeout( () => {
-						window.location.href = res.redirectLink;
-					}, 1000 );
+					const redirectUrl = getSafeRedirectUrl( res.redirectLink );
+					if ( redirectUrl ) {
+						setTimeout( () => {
+							window.location.href = redirectUrl;
+						}, 1000 );
+					}
 				}
 			}, () => {}, () => {
 				sendBtn.disabled = false;
