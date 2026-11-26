@@ -85,15 +85,15 @@ class AI_Usage {
 			return true;
 		}
 
-		$prefix = 'otter_ai_quota_' . md5( $bucket ) . '_';
-		$option = $prefix . (int) floor( time() / self::QUOTA_WINDOW );
+		$window = '_' . (int) floor( time() / self::QUOTA_WINDOW );
+		$option = 'otter_ai_quota_' . md5( $bucket ) . $window;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		$created = $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, '0', 'no')", $option ) );
 
 		if ( $created ) {
-			// A new window started: remove the counters of earlier windows for this bucket.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name <> %s", $wpdb->esc_like( $prefix ) . '%', $option ) );
+			// A new window started: remove the counters of earlier windows, for all buckets.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name NOT LIKE %s", $wpdb->esc_like( 'otter_ai_quota_' ) . '%', '%' . $wpdb->esc_like( $window ) ) );
 		}
 
 		$reserved = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->options} SET option_value = option_value + 1 WHERE option_name = %s AND option_value < %d", $option, $limit ) );

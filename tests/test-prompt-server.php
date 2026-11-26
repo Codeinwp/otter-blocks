@@ -5,6 +5,7 @@
  * @package gutenberg-blocks
  */
 
+use ThemeIsle\GutenbergBlocks\Server\Otter_OpenAI_Backend;
 use ThemeIsle\GutenbergBlocks\Server\Prompt_Server;
 
 /**
@@ -415,11 +416,17 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 		$window = (int) floor( time() / 600 );
 		add_option( $prefix . ( $window - 1 ), 120, '', false );
 
+		// Counters of other buckets: the earlier window is removed too, the current one is kept.
+		$other = 'otter_ai_quota_' . md5( 'form_other' ) . '_';
+		add_option( $other . ( $window - 1 ), 3, '', false );
+		add_option( $other . $window, 2, '', false );
+
 		$body = array( 'messages' => array( array( 'role' => 'user', 'content' => 'Hi' ) ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 
 		$this->assertSame( 200, $this->generate( $body )->get_status() );
-		$this->assertSame( 1, $this->count_quota_rows() );
+		$this->assertSame( 2, $this->count_quota_rows() );
 		$this->assertSame( '1', $this->get_quota_value( $prefix . $window ) );
+		$this->assertSame( '2', $this->get_quota_value( $other . $window ) );
 	}
 
 	/**
@@ -565,6 +572,54 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 
 		$this->assertSame( 'template-model', $sent['model'] );
 		$this->assertIsArray( get_transient( $this->prompt_server->transient_prompts ) );
+	}
+
+	/**
+	 * The templates are fetched again only for a non-default model, and a failed fetch is not repeated.
+	 */
+	public function test_forward_prompt_template_refresh_is_throttled() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		$fetches = 0;
+		add_filter(
+			'pre_http_request',
+			function ( $pre, $args, $url ) use ( &$fetches ) {
+				if ( false === strpos( $url, 'otter-prompts' ) ) {
+					return $pre;
+				}
+				++$fetches;
+				return new WP_Error( 'http_request_failed', 'Unavailable' );
+			},
+			5,
+			3
+		);
+
+		$messages = array( array( 'role' => 'user', 'content' => 'Hi' ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+
+		$this->generate( array( 'messages' => $messages ) );
+		$this->generate(
+			array(
+				'model'    => Otter_OpenAI_Backend::DEFAULT_MODEL,
+				'messages' => $messages,
+			)
+		);
+		$this->assertSame( 0, $fetches );
+
+		$this->generate(
+			array(
+				'model'    => 'other-model',
+				'messages' => $messages,
+			)
+		);
+		$this->generate(
+			array(
+				'model'    => 'other-model',
+				'messages' => $messages,
+			),
+			$sent
+		);
+
+		$this->assertSame( 1, $fetches );
+		$this->assertSame( 'gpt-5.6-terra', $sent['model'] );
 	}
 
 	/**
