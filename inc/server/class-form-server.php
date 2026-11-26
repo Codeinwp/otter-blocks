@@ -1188,7 +1188,7 @@ class Form_Server {
 	 *
 	 * @param Form_Data_Request $data The form data.
 	 *
-	 * @return mixed|string
+	 * @return string One valid email address, or an empty string.
 	 * @since 2.0.3
 	 */
 	public function get_email_from_form_input( Form_Data_Request $data ) {
@@ -1196,7 +1196,16 @@ class Form_Server {
 		if ( is_array( $inputs ) ) {
 			foreach ( $inputs as $input_field ) {
 				if ( isset( $input_field['type'] ) && 'email' == $input_field['type'] ) {
-					return $input_field['value'];
+					$value = isset( $input_field['value'] ) && is_string( $input_field['value'] ) ? trim( $input_field['value'] ) : '';
+
+					// Accept exactly one address: wp_mail() treats a comma-separated string as a list.
+					if ( '' === $value || false !== strpbrk( $value, ',;' ) ) {
+						return '';
+					}
+
+					$email = sanitize_email( $value );
+
+					return is_email( $email ) ? $email : '';
 				}
 			}
 		}

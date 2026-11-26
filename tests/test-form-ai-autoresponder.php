@@ -257,9 +257,11 @@ class Test_Form_AI_Autoresponder extends WP_UnitTestCase {
 	/**
 	 * Build a frontend submission request with a Name and an Email field.
 	 *
+	 * @param string $name  The Name field value.
+	 * @param string $email The Email field value.
 	 * @return WP_REST_Request
 	 */
-	private function get_frontend_request() {
+	private function get_frontend_request( $name = 'Ada Lovelace', $email = 'ada@example.com' ) {
 		$request = new WP_REST_Request( 'POST', '/otter/v1/form/frontend' );
 		$request->set_body(
 			wp_json_encode(
@@ -277,14 +279,14 @@ class Test_Form_AI_Autoresponder extends WP_UnitTestCase {
 								'id'       => 'wp-block-themeisle-blocks-form-input-ai00001',
 								'type'     => 'text',
 								'label'    => 'Name',
-								'value'    => 'Ada Lovelace',
+								'value'    => $name,
 								'metadata' => array( 'position' => 0 ),
 							),
 							array(
 								'id'       => 'wp-block-themeisle-blocks-form-input-ai00002',
 								'type'     => 'email',
 								'label'    => 'Email',
-								'value'    => 'ada@example.com',
+								'value'    => $email,
 								'metadata' => array( 'position' => 1 ),
 							),
 						),
@@ -329,10 +331,12 @@ class Test_Form_AI_Autoresponder extends WP_UnitTestCase {
 	/**
 	 * Run a submission and return the response data.
 	 *
+	 * @param string $name  The Name field value.
+	 * @param string $email The Email field value.
 	 * @return array
 	 */
-	private function submit() {
-		$response = $this->form_server->frontend( $this->get_frontend_request() );
+	private function submit( $name = 'Ada Lovelace', $email = 'ada@example.com' ) {
+		$response = $this->form_server->frontend( $this->get_frontend_request( $name, $email ) );
 		return $response->get_data();
 	}
 
@@ -668,5 +672,107 @@ class Test_Form_AI_Autoresponder extends WP_UnitTestCase {
 		$this->assertNotNull( $mail );
 		$this->assertStringContainsString( 'Filtered final body.', $mail['message'] );
 		$this->assertStringNotContainsString( 'Original AI body.', $mail['message'] );
+	}
+
+	/**
+	 * Store a static (non-AI) autoresponder for the form.
+	 *
+	 * @param string $body The autoresponder body.
+	 */
+	private function set_static_autoresponder( $body = '<p>Static autoresponder body.</p>' ) {
+		$this->set_form_option(
+			array(
+				'autoresponder' => array(
+					'subject' => 'Thanks for your message',
+					'body'    => $body,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Email field values that do not hold exactly one valid address.
+	 *
+	 * @return array
+	 */
+	public function invalid_recipient_provider() {
+		return array(
+			'comma list'     => array( 'ada@example.com, bob@example.com' ),
+			'semicolon list' => array( 'ada@example.com; bob@example.com' ),
+			'not an email'   => array( 'not-an-email' ),
+		);
+	}
+
+	/**
+	 * The autoresponder is not sent when the email field does not hold exactly one valid address.
+	 *
+	 * @dataProvider invalid_recipient_provider
+	 *
+	 * @param string $email The Email field value.
+	 */
+	public function test_autoresponder_not_sent_for_invalid_recipient( $email ) {
+		$this->mock_mail();
+		$this->set_static_autoresponder();
+		$this->wire_autoresponder();
+
+		$this->submit( 'Ada Lovelace', $email );
+
+		$this->assertNotEmpty( $this->mail_requests );
+		foreach ( $this->mail_requests as $atts ) {
+			$this->assertStringNotContainsString( 'ada@', $atts['to'] );
+			$this->assertStringNotContainsString( 'bob@', $atts['to'] );
+			$this->assertStringNotContainsString( 'not-an-email', $atts['to'] );
+		}
+	}
+
+	/**
+	 * The autoresponder goes to exactly the one submitted address.
+	 */
+	public function test_autoresponder_sent_to_single_valid_recipient() {
+		$this->mock_mail();
+		$this->set_static_autoresponder();
+		$this->wire_autoresponder();
+
+		$data = $this->submit( 'Ada Lovelace', ' ada@example.com ' );
+		$this->assertTrue( $data['success'] );
+
+		$recipients = wp_list_pluck( $this->mail_requests, 'to' );
+		$this->assertSame( array( 'owner@example.com', 'ada@example.com' ), $recipients );
+	}
+
+	/**
+	 * Submitted field values are HTML-escaped in the static autoresponder body.
+	 */
+	public function test_field_values_are_escaped_in_autoresponder_body() {
+		$this->mock_mail();
+		$this->set_static_autoresponder( '<p>Hi %wp-block-themeisle-blocks-form-input-ai00001%</p>' );
+		$this->wire_autoresponder();
+
+		$this->submit( 'Tom & "Jerry" <b>' );
+
+		$mail = $this->get_autoresponder_mail();
+		$this->assertNotNull( $mail );
+		$this->assertStringContainsString( '<p>Hi Tom &amp; &quot;Jerry&quot;', $mail['message'] );
+	}
+
+	/**
+	 * Magic tags escape HTML in values; the AI prompt keeps the plain text.
+	 */
+	public function test_replace_magic_tags_escapes_values() {
+		$fields = array(
+			array(
+				'id'    => 'msg',
+				'value' => '<a href="https://example.com">link</a>',
+			),
+		);
+
+		$this->assertSame(
+			'<p>&lt;a href=&quot;https://example.com&quot;&gt;link&lt;/a&gt;</p>',
+			$this->pro_features->replace_magic_tags( '<p>%msg%</p>', $fields )
+		);
+		$this->assertSame(
+			'Say: <a href="https://example.com">link</a>',
+			$this->pro_features->replace_magic_tags( 'Say: %msg%', $fields, false )
+		);
 	}
 }
