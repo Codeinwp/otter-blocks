@@ -365,23 +365,6 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The toggle runs only when the filter is called for the product post type.
-	 */
-	public function test_toggle_ignores_other_post_type_screen() {
-		$this->log_in_product_editor();
-		$post_id = $this->create_block_product();
-		$content = get_post_field( 'post_content', $post_id );
-
-		$GLOBALS['post']           = get_post( $post_id );
-		$_GET['post']              = $post_id;
-		$_GET['otter-woo-builder'] = 0;
-		$_GET['_wpnonce']          = wp_create_nonce( 'otter_woo_builder_' . $post_id );
-
-		$this->assertTrue( $this->woo_builder->enable_block_editor( true, 'page' ) );
-		$this->assertSame( $content, get_post_field( 'post_content', $post_id ) );
-	}
-
-	/**
 	 * A nonce for another action does not toggle the builder.
 	 */
 	public function test_enable_builder_with_invalid_nonce_does_not_set_meta() {

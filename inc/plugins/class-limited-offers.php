@@ -156,6 +156,10 @@ class LimitedOffers {
 			wp_die( esc_html( __( 'Invalid nonce! Refresh the page and try again.', 'otter-blocks' ) ) );
 		}
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html( __( 'You are not allowed to dismiss this notice.', 'otter-blocks' ) ) );
+		}
+
 		// We record the time and the plugin of the dismissed notification.
 		update_option( $this->wp_option_dismiss_notification_key_base . $this->active, 'otter_' . $this->active . '_' . current_time( 'Y_m_d' ) );
 		wp_die( 'success' );
@@ -168,7 +172,7 @@ class LimitedOffers {
 	 */
 	public function render_notice() {
 
-		if ( ! $this->has_priority() ) {
+		if ( ! current_user_can( 'manage_options' ) || ! $this->has_priority() ) {
 			return;
 		}
 

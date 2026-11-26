@@ -295,6 +295,9 @@ class Pro {
 	 * @access  public
 	 */
 	public function dashboard_upsell_notice() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 		?>
 		<script type="text/javascript">
 			const disableNotice = $ => {
@@ -344,7 +347,7 @@ class Pro {
 	 * @access  public
 	 */
 	public function dismiss_dashboard_notice() {
-		if ( ! isset( $_POST['nonce'] ) ) {
+		if ( ! isset( $_POST['nonce'] ) || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
