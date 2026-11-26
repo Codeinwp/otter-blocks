@@ -1135,6 +1135,16 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 	public function test_otter_openai_filters_model() {
 		$this->force_availability( false );
 		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
+		set_transient(
+			'otter_prompts',
+			array(
+				array(
+					'otter_name' => 'textTransformation',
+					'model'      => 'gpt-3.5-turbo',
+				),
+			),
+			MINUTE_IN_SECONDS
+		);
 
 		$captured_args = array();
 
@@ -1205,6 +1215,8 @@ class Test_AI_Client_Adaptor extends WP_UnitTestCase {
 		$sent_body = json_decode( $captured_args['body'], true );
 
 		$this->assertSame( 'gpt-3.5-turbo', $sent_body['model'] );
+
+		delete_transient( 'otter_prompts' );
 	}
 
 	/**

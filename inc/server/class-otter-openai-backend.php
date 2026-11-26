@@ -20,6 +20,13 @@ class Otter_OpenAI_Backend implements AI_Backend {
 	const BASE_URL = 'https://api.openai.com/v1/chat/completions';
 
 	/**
+	 * Model used when the request does not pin an allowed model.
+	 *
+	 * @var string
+	 */
+	const DEFAULT_MODEL = 'gpt-5.6-terra';
+
+	/**
 	 * Whether an Otter OpenAI API key is configured.
 	 *
 	 * @return bool
@@ -68,7 +75,7 @@ class Otter_OpenAI_Backend implements AI_Backend {
 			 * @param string               $model   Default model ID.
 			 * @param array<string, mixed> $payload The filtered OpenAI-format payload.
 			 */
-			$model = (string) apply_filters( 'otter_ai_block_generation_model', 'gpt-5.6-terra', $payload );
+			$model = (string) apply_filters( 'otter_ai_block_generation_model', self::DEFAULT_MODEL, $payload );
 		}
 
 		if ( is_string( $model ) && '' !== $model ) {
