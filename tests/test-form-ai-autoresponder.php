@@ -742,6 +742,77 @@ class Test_Form_AI_Autoresponder extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Common address formats. The Email field is the second field of the form.
+	 *
+	 * @return array
+	 */
+	public function valid_recipient_provider() {
+		return array(
+			'plus addressing'          => array( 'ada+news@example.com', 'ada+news@example.com' ),
+			'uppercase'                => array( 'Ada.Lovelace@Example.COM', 'Ada.Lovelace@Example.COM' ),
+			'internationalized domain' => array( 'ada@bücher.de', 'ada@xn--bcher-kva.de' ),
+		);
+	}
+
+	/**
+	 * The autoresponder goes to common address formats without changing the address.
+	 *
+	 * @dataProvider valid_recipient_provider
+	 *
+	 * @param string $email    The Email field value.
+	 * @param string $expected The expected recipient.
+	 */
+	public function test_autoresponder_sent_to_common_address_formats( $email, $expected ) {
+		if ( $email !== $expected && ! function_exists( 'idn_to_ascii' ) ) {
+			$this->markTestSkipped( 'The intl extension is not available.' );
+		}
+
+		$this->mock_mail();
+		$this->set_static_autoresponder();
+		$this->wire_autoresponder();
+
+		$this->submit( 'Ada Lovelace', $email );
+
+		$this->assertSame( array( 'owner@example.com', $expected ), wp_list_pluck( $this->mail_requests, 'to' ) );
+	}
+
+	/**
+	 * The AI prompt gets the plain field value; the fallback email body gets the escaped value.
+	 */
+	public function test_ai_prompt_gets_plain_values_and_fallback_body_escapes_them() {
+		$this->mock_mail();
+		$this->inject_backend(
+			array(
+				AI_Response::success( 'A reply.', 1, 'text' ),
+				AI_Response::success( wp_json_encode( array( 'valid' => false, 'reason' => 'rejected' ) ), 1, 'json' ),
+			)
+		);
+
+		$this->set_form_option(
+			array(
+				'autoresponder'   => array(
+					'subject' => 'Thanks for your message',
+					'body'    => '<p>Hi %wp-block-themeisle-blocks-form-input-ai00001%</p>',
+				),
+				'aiAutoresponder' => array(
+					'enabled' => true,
+					'prompt'  => 'Reply to %wp-block-themeisle-blocks-form-input-ai00001%.',
+				),
+			)
+		);
+
+		$this->wire_autoresponder();
+
+		$this->submit( 'Tom & Jerry' );
+
+		$this->assertSame( 'Reply to Tom & Jerry.', $this->backend->payloads[0]['messages'][1]['content'] );
+
+		$mail = $this->get_autoresponder_mail();
+		$this->assertNotNull( $mail );
+		$this->assertStringContainsString( '<p>Hi Tom &amp; Jerry</p>', $mail['message'] );
+	}
+
+	/**
 	 * Submitted field values are HTML-escaped in the static autoresponder body.
 	 */
 	public function test_field_values_are_escaped_in_autoresponder_body() {

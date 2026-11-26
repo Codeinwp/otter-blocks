@@ -1196,16 +1196,18 @@ class Form_Server {
 		if ( is_array( $inputs ) ) {
 			foreach ( $inputs as $input_field ) {
 				if ( isset( $input_field['type'] ) && 'email' == $input_field['type'] ) {
-					$value = isset( $input_field['value'] ) && is_string( $input_field['value'] ) ? trim( $input_field['value'] ) : '';
+					$value  = isset( $input_field['value'] ) && is_string( $input_field['value'] ) ? $input_field['value'] : '';
+					$at     = strrpos( $value, '@' );
+					$domain = false !== $at ? substr( $value, $at + 1 ) : '';
 
-					// Accept exactly one address: wp_mail() treats a comma-separated string as a list.
-					if ( '' === $value || false !== strpbrk( $value, ',;' ) ) {
-						return '';
+					// Convert an internationalized domain to ASCII, as wp_mail() does. sanitize_email() would remove its characters and change the address.
+					if ( function_exists( 'idn_to_ascii' ) && preg_match( '/[^\x00-\x7F]/', $domain ) ) {
+						$domain = idn_to_ascii( $domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46 );
+						$value  = false !== $domain ? substr( $value, 0, $at + 1 ) . $domain : '';
 					}
 
-					$email = sanitize_email( $value );
-
-					return is_email( $email ) ? $email : '';
+					// is_email() accepts exactly one address: it rejects the "," and ";" that wp_mail() uses to split a list.
+					return is_email( $value ) ? $value : '';
 				}
 			}
 		}
