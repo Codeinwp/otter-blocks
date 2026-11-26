@@ -728,19 +728,24 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Encodings of the Magic Tag opener that attribute decoding turns into a live one.
+	 * Magic Tag openers written with character references, which attribute decoding turns into live ones.
 	 *
 	 * @return array<string, array{0: string}>
 	 */
 	public function encoded_openers(): array {
 		return array(
-			'hex'          => array( '&#x7b;' ),
-			'upper hex'    => array( '&#X7B;' ),
-			'decimal'      => array( '&#123;' ),
-			'zero padded'  => array( '&#0123;' ),
-			'no semicolon' => array( '&#123' ),
-			'lbrace'       => array( '&lbrace;' ),
-			'lcub'         => array( '&lcub;' ),
+			'hex brace'          => array( '&#x7b;otterDynamic?' ),
+			'upper hex brace'    => array( '&#X7B;otterDynamic?' ),
+			'decimal brace'      => array( '&#123;otterDynamic?' ),
+			'zero padded brace'  => array( '&#0123;otterDynamic?' ),
+			'no semicolon brace' => array( '&#123otterDynamic?' ),
+			'lbrace'             => array( '&lbrace;otterDynamic?' ),
+			'lcub'               => array( '&lcub;otterDynamic?' ),
+			'decimal question'   => array( '{otterDynamic&#63;' ),
+			'hex question'       => array( '{otterDynamic&#x3f;' ),
+			'named question'     => array( '{otterDynamic&quest;' ),
+			'encoded letter'     => array( '{&#111;tterDynamic?' ),
+			'mixed'              => array( '&#x7b;otter&#68;ynamic?' ),
 		);
 	}
 
@@ -750,7 +755,7 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	public function test_encoded_magic_tag_openers_stay_literal_beside_authored_attribute( string $opener ): void {
 		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
 
-		$output = do_blocks( '<!-- wp:html --><img src="https://example.org/a.jpg" title="{otterDynamic?type=siteTitle}" alt="' . $opener . 'otterDynamic?type=loggedInUserEmail}" /><!-- /wp:html -->' );
+		$output = do_blocks( '<!-- wp:html --><img src="https://example.org/a.jpg" title="{otterDynamic?type=siteTitle}" alt="' . $opener . 'type=loggedInUserEmail}" /><!-- /wp:html -->' );
 
 		$processor = new WP_HTML_Tag_Processor( $output );
 		$this->assertTrue( $processor->next_tag( 'img' ), $output );
@@ -795,6 +800,65 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 		$output = do_blocks( '<!-- wp:navigation {"ref":' . $menu . '} /-->' );
 
 		$this->assertStringContainsString( '>Test Blog<', $output );
+	}
+
+	/**
+	 * Blocks bound to post meta, with or without the same marker written into the block.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function meta_bound_blocks(): array {
+		$bindings = static function ( string $attribute ): string {
+			return wp_json_encode( array( 'metadata' => array( 'bindings' => array( $attribute => array( 'source' => 'core/post-meta', 'args' => array( 'key' => 'otter_test_bound' ) ) ) ) ) );
+		};
+		$tag      = '{otterDynamic?type=loggedInUserEmail}';
+
+		return array(
+			'paragraph'                        => array( '<!-- wp:paragraph ' . $bindings( 'content' ) . ' --><p>Fallback</p><!-- /wp:paragraph -->' ),
+			'paragraph with the authored tag'  => array( '<!-- wp:paragraph ' . $bindings( 'content' ) . ' --><p>' . $tag . '</p><!-- /wp:paragraph -->' ),
+			'image alt'                        => array( '<!-- wp:image ' . $bindings( 'alt' ) . ' --><figure class="wp-block-image"><img src="https://example.org/a.jpg" alt="" title="{otterDynamic?type=siteTitle}"/></figure><!-- /wp:image -->' ),
+			'image alt with the authored tag'  => array( '<!-- wp:image ' . $bindings( 'alt' ) . ' --><figure class="wp-block-image"><img src="https://example.org/a.jpg" alt="" title="' . $tag . '"/></figure><!-- /wp:image -->' ),
+		);
+	}
+
+	/**
+	 * @dataProvider meta_bound_blocks
+	 */
+	public function test_meta_bound_markers_stay_literal( string $markup ): void {
+		global $post;
+
+		$viewer = $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) );
+		wp_set_current_user( $viewer );
+
+		$tag = '{otterDynamic?type=loggedInUserEmail}';
+		register_post_meta(
+			'post',
+			'otter_test_bound',
+			array(
+				'show_in_rest' => true,
+				'single'       => true,
+				'type'         => 'string',
+			)
+		);
+
+		try {
+			$post_id = $this->factory()->post->create();
+			update_post_meta( $post_id, 'otter_test_bound', $tag );
+			$post = get_post( $post_id );
+			setup_postdata( $post );
+			$output = do_blocks( $markup );
+			wp_reset_postdata();
+		} finally {
+			unregister_post_meta( 'post', 'otter_test_bound' );
+		}
+
+		$processor = new WP_HTML_Tag_Processor( $output );
+		if ( $processor->next_tag( 'img' ) ) {
+			$this->assertSame( $tag, $processor->get_attribute( 'alt' ), $output );
+			$this->assertNotSame( $tag, $processor->get_attribute( 'title' ), $output );
+		} else {
+			$this->assertSame( $tag, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $output );
+		}
 	}
 
 	/**

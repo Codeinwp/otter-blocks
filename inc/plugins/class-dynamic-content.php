@@ -56,11 +56,11 @@ class Dynamic_Content {
 	private static $authored_blocks = array();
 
 	/**
-	 * Whether the next Navigation inner-block list comes from a saved menu.
+	 * Saved menu the Navigation block being rendered refers to, or 0.
 	 *
-	 * @var bool
+	 * @var int
 	 */
-	private static $navigation_menu_pending = false;
+	private static $navigation_menu_ref = 0;
 
 	/**
 	 * Initialize the class
@@ -68,6 +68,7 @@ class Dynamic_Content {
 	public function init() {
 		add_filter( 'render_block_data', array( $this, 'register_authored_block' ), PHP_INT_MAX, 3 );
 		add_filter( 'block_core_navigation_render_inner_blocks', array( $this, 'register_navigation_menu_blocks' ) );
+		add_filter( 'block_bindings_source_value', array( $this, 'escape_bound_value_magic_tags' ), 10, 5 );
 		add_filter( 'render_block', array( $this, 'escape_visitor_block_magic_tags' ), 9, 3 );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_magic_tags' ) );
@@ -111,8 +112,8 @@ class Dynamic_Content {
 		if ( null === $parent_block ) {
 			$this->register_inner_blocks( $parsed_block );
 		}
-		if ( isset( $parsed_block['blockName'], $parsed_block['attrs']['ref'] ) && 'core/navigation' === $parsed_block['blockName'] ) {
-			self::$navigation_menu_pending = true;
+		if ( isset( $parsed_block['blockName'] ) && 'core/navigation' === $parsed_block['blockName'] ) {
+			self::$navigation_menu_ref = isset( $parsed_block['attrs']['ref'] ) ? (int) $parsed_block['attrs']['ref'] : 0;
 		}
 
 		return $parsed_block;
@@ -125,8 +126,10 @@ class Dynamic_Content {
 	 * @return \WP_Block_List
 	 */
 	public function register_navigation_menu_blocks( $inner_blocks ) {
-		if ( self::$navigation_menu_pending ) {
-			self::$navigation_menu_pending = false;
+		$menu                      = self::$navigation_menu_ref ? get_post( self::$navigation_menu_ref ) : null;
+		self::$navigation_menu_ref = 0;
+		// A missing or invalid menu makes Navigation fall back to pages or classic menu items, which are data.
+		if ( $menu instanceof \WP_Post && 'wp_navigation' === $menu->post_type ) {
 			foreach ( $inner_blocks as $inner_block ) {
 				self::$authored_blocks[ self::block_fingerprint( $inner_block->parsed_block ) ] = true;
 				$this->register_inner_blocks( $inner_block->parsed_block );
@@ -134,6 +137,30 @@ class Dynamic_Content {
 		}
 
 		return $inner_blocks;
+	}
+
+	/**
+	 * Keep markers literal in rich text a block binding reads from post meta or another data source.
+	 *
+	 * Core inserts rich text as HTML, so the escaped prefix displays as written. An attribute value is escaped again
+	 * when core sets it, so the gate handles those instead; see escape_bound_attribute_markers(). Pattern overrides
+	 * are the post's own content, so their markers stay authored.
+	 *
+	 * @param mixed          $value          Bound value.
+	 * @param string         $source_name    Binding source.
+	 * @param array<mixed>   $source_args    Binding arguments.
+	 * @param \WP_Block|null $block_instance Bound block.
+	 * @param string         $attribute_name Bound attribute.
+	 * @return mixed
+	 */
+	public function escape_bound_value_magic_tags( $value, $source_name, $source_args = array(), $block_instance = null, $attribute_name = '' ) {
+		if ( ! is_string( $value ) || 'core/pattern-overrides' === $source_name || ! $block_instance instanceof \WP_Block || null === $block_instance->block_type ) {
+			return $value;
+		}
+
+		$schema = isset( $block_instance->block_type->attributes[ $attribute_name ] ) ? $block_instance->block_type->attributes[ $attribute_name ] : array();
+
+		return isset( $schema['source'] ) && in_array( $schema['source'], array( 'rich-text', 'html' ), true ) ? $this->escape_comment_magic_tags( $value ) : $value;
 	}
 
 	/**
@@ -174,9 +201,9 @@ class Dynamic_Content {
 	 *
 	 * Markers the block's authors did not write are kept literal first; see escape_unauthored_markers().
 	 *
-	 * @param string                                                                                                        $content  Rendered markup.
-	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string}, innerContent?: array<int, string|null>} $block    Parsed block.
-	 * @param \WP_Block|null                                                                                                $instance Block instance; its attributes include bound values.
+	 * @param string                                                                                                                                                                            $content  Rendered markup.
+	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                    $instance Block instance; its attributes include bound values.
 	 * @return string
 	 */
 	public function escape_visitor_block_magic_tags( $content, $block, $instance = null ) {
@@ -184,6 +211,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
+		$content = $this->escape_bound_attribute_markers( $content, $block, $instance );
 		$content = $this->escape_unauthored_markers( $content, $block, $instance );
 
 		if ( 'core/term-description' === $block['blockName'] ) {
@@ -221,15 +249,70 @@ class Dynamic_Content {
 	}
 
 	/**
+	 * Keep markers literal in HTML attributes whose value a block binding read from a data source.
+	 *
+	 * Only the bound attribute is changed, so the same marker written into another attribute still resolves.
+	 *
+	 * @param string                                                                                                                                                                            $content  Rendered markup.
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                    $instance Block instance.
+	 * @return string
+	 */
+	private function escape_bound_attribute_markers( $content, $block, $instance ) {
+		if ( ! $instance instanceof \WP_Block || null === $instance->block_type ) {
+			return $content;
+		}
+
+		foreach ( array_keys( self::data_bound_attributes( $block ) ) as $name ) {
+			$schema = isset( $instance->block_type->attributes[ $name ] ) ? $instance->block_type->attributes[ $name ] : array();
+			$value  = isset( $instance->attributes[ $name ] ) ? $instance->attributes[ $name ] : null;
+			if ( is_string( $value ) && isset( $schema['source'], $schema['attribute'] ) && 'attribute' === $schema['source'] && preg_match( self::MARKER_TOKEN_REGEX, $value ) ) {
+				$content = $this->escape_markers_in_attribute( $content, $schema['attribute'], $value );
+			}
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Escape the markers in every HTML attribute of the given name that holds the given value.
+	 *
+	 * The HTML API escapes what it sets, so the value goes in with placeholders that are swapped for the escapes after.
+	 *
+	 * @param string $content   Markup.
+	 * @param string $attribute HTML attribute name.
+	 * @param string $value     Decoded attribute value.
+	 * @return string
+	 */
+	private function escape_markers_in_attribute( $content, $attribute, $value ) {
+		$placeholders = array();
+		$escapes      = array();
+		foreach ( self::$literal_marker_escapes as $prefix => $escape ) {
+			$placeholder             = self::unguessable_placeholder( 'otter-bound-' );
+			$placeholders[ $prefix ] = $placeholder;
+			$escapes[ $placeholder ] = $escape;
+		}
+
+		$processor = new \WP_HTML_Tag_Processor( $content );
+		while ( $processor->next_tag() ) {
+			if ( $value === $processor->get_attribute( $attribute ) ) {
+				$processor->set_attribute( $attribute, strtr( $value, $placeholders ) );
+			}
+		}
+
+		return strtr( $processor->get_updated_html(), $escapes );
+	}
+
+	/**
 	 * Keep literal every marker the block's authors did not write.
 	 *
 	 * Inner blocks resolve their own markers first, so only data the block printed is left: post and term fields,
 	 * comments, feeds, or product and API text. A block built at render time, such as a gallery image made from an
 	 * attachment, trusts only its attributes: its markup may hold the stored data it was built from.
 	 *
-	 * @param string                                                                                                        $content  Rendered markup.
-	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string}, innerContent?: array<int, string|null>} $block    Parsed block.
-	 * @param \WP_Block|null                                                                                                $instance Block instance.
+	 * @param string                                                                                                                                                                            $content  Rendered markup.
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                    $instance Block instance.
 	 * @return string
 	 */
 	private function escape_unauthored_markers( $content, $block, $instance ) {
@@ -251,9 +334,9 @@ class Dynamic_Content {
 	/**
 	 * Markers written into a block's attributes and, for a block rendered from saved content, its markup.
 	 *
-	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string}, innerContent?: array<int, string|null>} $block       Parsed block.
-	 * @param \WP_Block|null                                                                                                $instance    Block instance.
-	 * @param bool                                                                                                          $with_markup Whether the block's saved markup is authored.
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block       Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                    $instance    Block instance.
+	 * @param bool                                                                                                                                                                              $with_markup Whether the block's saved markup is authored.
 	 * @return array<string, true> Normalized markers.
 	 */
 	private function authored_markers( $block, $instance, $with_markup ) {
@@ -268,13 +351,30 @@ class Dynamic_Content {
 			array_walk_recursive( $block['attrs'], $collect );
 		}
 		if ( $instance instanceof \WP_Block ) {
-			$attributes = $instance->attributes;
+			$attributes = array_diff_key( $instance->attributes, self::data_bound_attributes( $block ) );
 			array_walk_recursive( $attributes, $collect );
 		}
 
 		preg_match_all( self::MARKER_TOKEN_REGEX, implode( "\n", $sources ), $matches );
 
 		return array_fill_keys( array_map( array( self::class, 'normalize_marker' ), $matches[0] ), true );
+	}
+
+	/**
+	 * Attributes whose value a binding reads from a data source rather than the post's own pattern overrides.
+	 *
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block Parsed block.
+	 * @return array<string, true>
+	 */
+	private static function data_bound_attributes( $block ) {
+		$bound = array();
+		foreach ( isset( $block['attrs']['metadata']['bindings'] ) ? $block['attrs']['metadata']['bindings'] : array() as $attribute => $binding ) {
+			if ( ! isset( $binding['source'] ) || 'core/pattern-overrides' !== $binding['source'] ) {
+				$bound[ $attribute ] = true;
+			}
+		}
+
+		return $bound;
 	}
 
 	/**
@@ -551,9 +651,10 @@ class Dynamic_Content {
 			$escaped_literals[ $prefix ]                               = $prefix;
 			$escaped_literals[ wp_kses_normalize_entities( $prefix ) ] = $prefix;
 		}
-		// Attribute values are decoded below, so every encoding of the opener becomes the escape kept literal.
-		$markup = preg_replace( '/&(?i:#0*123;?|#x0*7b;?|lbrace;|lcub;)otterDynamic\?/', self::$literal_marker_escapes['{otterDynamic?'], $matches['tag'] );
-		$markup = $this->protect_literals( (string) $markup, $escaped_literals, $literal_markers );
+		$markup = $this->protect_literals( $matches['tag'], $escaped_literals, $literal_markers );
+		// Attribute values are decoded below, so only openers written literally may resolve.
+		$opener = self::unguessable_placeholder( 'otter-opener-' );
+		$markup = str_replace( '{otterDynamic?', $opener, $markup );
 
 		$closing_tag = '</' . $tag[1] . '>';
 		$processor   = new \WP_HTML_Tag_Processor( $markup . $closing_tag );
@@ -563,9 +664,11 @@ class Dynamic_Content {
 
 		foreach ( (array) $processor->get_attribute_names_with_prefix( '' ) as $attribute ) {
 			$value = $processor->get_attribute( $attribute );
-			if ( ! is_string( $value ) || false === strpos( $value, '{otterDynamic?' ) ) {
+			if ( ! is_string( $value ) || false === strpos( $value, $opener ) ) {
 				continue;
 			}
+			$value = $this->protect_literals( $value, array( '{otterDynamic?' => self::$literal_marker_escapes['{otterDynamic?'] ), $literal_markers );
+			$value = str_replace( $opener, '{otterDynamic?', $value );
 
 			if ( 0 === strpos( $attribute, 'on' ) || 'srcdoc' === $attribute ) {
 				$processor->remove_attribute( $attribute );
@@ -603,7 +706,7 @@ class Dynamic_Content {
 		}
 
 		$markup = substr( $processor->get_updated_html(), 0, -strlen( $closing_tag ) );
-		$markup = str_replace( '{otterDynamic?', self::$literal_marker_escapes['{otterDynamic?'], $markup );
+		$markup = str_replace( array( $opener, '{otterDynamic?' ), self::$literal_marker_escapes['{otterDynamic?'], $markup );
 		return strtr( $markup, $literal_markers );
 	}
 
