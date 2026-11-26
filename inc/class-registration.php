@@ -1209,7 +1209,7 @@ class Registration {
 	 * @return mixed
 	 */
 	public function sanitize_countdown_redirect_link( $block_content ) {
-		if ( ! is_string( $block_content ) || false === strpos( $block_content, 'data-redirect-link' ) ) {
+		if ( ! is_string( $block_content ) || false === stripos( $block_content, 'data-redirect-link' ) ) {
 			return $block_content;
 		}
 

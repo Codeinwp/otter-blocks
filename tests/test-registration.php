@@ -139,6 +139,7 @@ class Test_Registration extends WP_UnitTestCase {
 			'named colon entity'   => array( 'javascript&colon;x' ),
 			'data'                 => array( 'data:text/html,x' ),
 			'vbscript'             => array( 'vbscript:x' ),
+			'file'                 => array( 'file:///etc/hosts' ),
 		);
 	}
 
@@ -189,6 +190,20 @@ class Test_Registration extends WP_UnitTestCase {
 		$html = $this->render_countdown_with_redirect( $link );
 
 		$this->assertStringContainsString( 'data-redirect-link="' . $expected . '"', $html );
+	}
+
+	/**
+	 * The attribute name is matched without regard to case, as browsers do.
+	 */
+	public function test_countdown_redirect_link_matches_attribute_name_case_insensitively() {
+		$markup = '<!-- wp:themeisle-blocks/countdown {"id":"cd1","behaviour":"redirectLink"} -->'
+			. '<div id="cd1" class="wp-block-themeisle-blocks-countdown" DATA-REDIRECT-LINK="javascript:x"></div>'
+			. '<!-- /wp:themeisle-blocks/countdown -->';
+
+		$blocks = parse_blocks( $markup );
+		$html   = render_block( $blocks[0] );
+
+		$this->assertStringNotContainsString( 'javascript', $html );
 	}
 
 	/**

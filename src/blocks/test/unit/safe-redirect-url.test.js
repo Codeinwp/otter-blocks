@@ -1,13 +1,17 @@
 import { getSafeRedirectUrl } from '../../helpers/frontend-helper-functions';
 
+const { origin } = window.location;
+
+// Same inputs as the PHP tests for Registration::sanitize_redirect_url().
 describe( 'getSafeRedirectUrl', () => {
 	it.each([
 		'javascript:alert(1)',
-		'JavaScript:alert(1)',
-		' javascript:alert(1)',
-		'\tjava\nscript:alert(1)',
-		'data:text/html,<p>hi</p>',
-		'vbscript:msgbox(1)',
+		'JavaScript:x',
+		' javascript:x',
+		'java\tscript:x',
+		'java\nscript:x',
+		'data:text/html,x',
+		'vbscript:x',
 		'file:///etc/hosts'
 	])( 'rejects %j', ( url ) => {
 		expect( getSafeRedirectUrl( url ) ).toBeNull();
@@ -18,15 +22,22 @@ describe( 'getSafeRedirectUrl', () => {
 	});
 
 	it( 'keeps encoded scheme as a same-origin path', () => {
-		expect( getSafeRedirectUrl( 'javascript%3Aalert(1)' ) ).toBe( window.location.origin + '/javascript%3Aalert(1)' );
+		expect( getSafeRedirectUrl( 'javascript%3Aalert(1)' ) ).toBe( origin + '/javascript%3Aalert(1)' );
 	});
 
-	it( 'allows https and http URLs', () => {
-		expect( getSafeRedirectUrl( 'https://example.com/thanks?a=1' ) ).toBe( 'https://example.com/thanks?a=1' );
-		expect( getSafeRedirectUrl( 'HTTP://example.com' ) ).toBe( 'http://example.com/' );
-	});
-
-	it( 'resolves relative URLs against the current page', () => {
-		expect( getSafeRedirectUrl( '/thank-you' ) ).toBe( window.location.origin + '/thank-you' );
+	it.each([
+		[ 'https://example.com/thanks?a=1&b=2', 'https://example.com/thanks?a=1&b=2' ],
+		[ 'http://example.com/', 'http://example.com/' ],
+		[ 'HTTPS://example.com/', 'https://example.com/' ],
+		[ ' https://x.com ', 'https://x.com/' ],
+		[ '../thanks', origin + '/thanks' ],
+		[ '../thanks?t=12:30', origin + '/thanks?t=12:30' ],
+		[ 'thank-you', origin + '/thank-you' ],
+		[ '/thank-you', origin + '/thank-you' ],
+		[ '?step=2', origin + '/?step=2' ],
+		[ '#done', origin + '/#done' ],
+		[ '//example.com/thanks', window.location.protocol + '//example.com/thanks' ]
+	])( 'keeps %j', ( url, expected ) => {
+		expect( getSafeRedirectUrl( url ) ).toBe( expected );
 	});
 });
