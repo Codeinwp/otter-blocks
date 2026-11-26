@@ -186,4 +186,76 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 
 		unset( $GLOBALS['otter_test_acf_fields'] );
 	}
+	/**
+	 * Post meta values that are not image attachments return the placeholder.
+	 */
+	public function test_media_server_returns_placeholder_for_non_attachment_meta(): void {
+		$outside = trailingslashit( WP_CONTENT_DIR ) . 'otter-media-outside.png';
+		copy( __DIR__ . '/assets/test-img.png', $outside );
+
+		$uploads   = wp_get_upload_dir();
+		$text_file = trailingslashit( $uploads['basedir'] ) . 'otter-media-text.txt';
+		file_put_contents( $text_file, 'not an image' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+
+		$placeholder = file_get_contents( OTTER_BLOCKS_PATH . '/assets/images/placeholder.jpg' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$values      = array(
+			$text_file,
+			$outside,
+			ABSPATH . 'wp-load.php',
+			'http://127.0.0.1/',
+			'php://filter/resource=' . $text_file,
+			'phar://' . $text_file . '/x',
+		);
+
+		try {
+			foreach ( $values as $value ) {
+				$this->assertSame( $placeholder, $this->get_post_meta_image( $value ), $value );
+			}
+		} finally {
+			unlink( $outside );
+			unlink( $text_file );
+		}
+	}
+
+	/**
+	 * An attachment URL stored in post meta returns the attachment image.
+	 */
+	public function test_media_server_returns_attachment_from_meta_url(): void {
+		$attachment = self::factory()->attachment->create_upload_object( __DIR__ . '/assets/test-img.png' );
+
+		$output = $this->get_post_meta_image( wp_get_attachment_url( $attachment ) );
+
+		$this->assertSame( file_get_contents( wp_get_original_image_path( $attachment ) ), $output ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	}
+
+	/**
+	 * Request the dynamic image for a post meta value, with the Pro media filter active.
+	 *
+	 * @param string $value Meta value.
+	 * @return string
+	 */
+	private function get_post_meta_image( string $value ): string {
+		$post_id = self::factory()->post->create();
+		update_post_meta( $post_id, 'img', $value );
+
+		$request = new WP_REST_Request( 'GET', '/otter/v1/dynamic' );
+		$request->set_param( 'type', 'postMeta' );
+		$request->set_param( 'meta', 'img' );
+		$request->set_param( 'context', $post_id );
+
+		$pro = new \ThemeIsle\OtterPro\Plugins\Dynamic_Content();
+		add_filter( 'otter_blocks_evaluate_dynamic_content_media_server', array( $pro, 'evaluate_content_media_server' ), 10, 2 );
+
+		$level = ob_get_level();
+
+		try {
+			return (string) \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::instance()->get( $request );
+		} finally {
+			// The route leaves its buffer open to deliver the image.
+			while ( ob_get_level() > $level ) {
+				ob_end_clean();
+			}
+			remove_filter( 'otter_blocks_evaluate_dynamic_content_media_server', array( $pro, 'evaluate_content_media_server' ), 10 );
+		}
+	}
 }

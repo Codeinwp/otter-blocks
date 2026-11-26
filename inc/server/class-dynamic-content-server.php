@@ -178,7 +178,7 @@ class Dynamic_Content_Server {
 	}
 
 	/**
-	 * Resolve a user-supplied fallback image path to a safe absolute path, or ''.
+	 * Resolve an image path (fallback or final media path) to a safe absolute path, or ''.
 	 *
 	 * The fallback is chosen from the media library, so a valid value always lives
 	 * inside the uploads directory. Restricting to uploads (rather than the whole
@@ -232,6 +232,7 @@ class Dynamic_Content_Server {
 		}
 
 		$default = $path;
+		$avatar  = '';
 
 		if ( 'featuredImage' === $type ) {
 			$image = get_post_thumbnail_id( $context );
@@ -243,13 +244,15 @@ class Dynamic_Content_Server {
 		if ( 'author' === $type ) {
 			$author = get_post_field( 'post_author', $context );
 			$path   = get_avatar_url( $author );
+			$avatar = $path;
 		}
 
 		if ( 'loggedInUser' === $type ) {
 			$user = get_current_user_id();
 
 			if ( true === boolval( $user ) ) {
-				$path = get_avatar_url( $user );
+				$path   = get_avatar_url( $user );
+				$avatar = $path;
 			}
 		}
 
@@ -263,22 +266,25 @@ class Dynamic_Content_Server {
 
 		$path = apply_filters( 'otter_blocks_evaluate_dynamic_content_media_server', $path, $request );
 
-		if ( $size = @getimagesize( $path ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure
-			ob_start();
-				readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
-			$output = ob_get_contents();
-
-			if ( ! empty( $size['mime'] ) ) {
-				header( 'Content-type: ' . $size['mime'] );
-			}
-			return $output;
+		// Only stream the avatar URL built above or an image inside the uploads directory.
+		if ( '' === $avatar || $avatar !== $path || ! wp_http_validate_url( $path ) ) {
+			$safe_path = self::get_safe_fallback_path( (string) $path );
+			$path      = '' !== $safe_path ? $safe_path : $default;
 		}
 
+		$size = @getimagesize( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+
+		if ( ! $size ) {
+			$path = $default;
+			$size = @getimagesize( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		}
+
+		// The open buffer delivers the image bytes, so it is not cleaned here.
 		ob_start();
 			readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
 		$output = ob_get_contents();
 
-		if ( isset( $size['mime'] ) ) {
+		if ( ! empty( $size['mime'] ) && ! headers_sent() ) {
 			header( 'Content-type: ' . $size['mime'] );
 		}
 		return $output;
