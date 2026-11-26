@@ -503,6 +503,95 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Feed renderers: the RSS block and an RSS widget in a Legacy Widget block, standalone or nested.
+	 *
+	 * @return array<string, array{0: string, 1: bool}>
+	 */
+	public function feed_renderers(): array {
+		return array(
+			'rss block'              => array( 'core/rss', false ),
+			'rss block in group'     => array( 'core/rss', true ),
+			'rss legacy widget'      => array( 'core/legacy-widget', false ),
+			'rss widget in group'    => array( 'core/legacy-widget', true ),
+		);
+	}
+
+	/**
+	 * @dataProvider feed_renderers
+	 */
+	public function test_feed_text_markers_stay_literal( string $block_name, bool $nested ): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag  = '{otterDynamic?type=loggedInUserEmail}';
+		$feed = 'https://feed.example/' . wp_generate_password( 8, false ) . '.xml';
+		$xml  = '<?xml version="1.0"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>Feed</title><link>https://feed.example/</link><description>Feed</description>'
+			. '<item><title>' . $tag . '</title><link>https://feed.example/1</link><description>' . $tag . '</description><dc:creator>' . $tag . '</dc:creator></item>'
+			. '</channel></rss>';
+		$stub = static function ( $response, array $args, string $url ) use ( $feed, $xml ) {
+			if ( $url !== $feed ) {
+				return $response;
+			}
+
+			return array(
+				'headers'  => array( 'content-type' => 'application/rss+xml' ),
+				'body'     => $xml,
+				'response' => array(
+					'code'    => 200,
+					'message' => 'OK',
+				),
+				'cookies'  => array(),
+				'filename' => null,
+			);
+		};
+		add_filter( 'pre_http_request', $stub, 10, 3 );
+
+		$instance = serialize(
+			array(
+				'title'        => 'News',
+				'url'          => $feed,
+				'items'        => 5,
+				'show_summary' => 1,
+				'show_author'  => 1,
+			)
+		);
+		$attrs    = 'core/rss' === $block_name
+			? array(
+				'feedURL'        => $feed,
+				'displayExcerpt' => true,
+				'displayAuthor'  => true,
+			)
+			: array(
+				'idBase'   => 'rss',
+				'instance' => array(
+					'encoded' => base64_encode( $instance ),
+					'hash'    => wp_hash( $instance ),
+				),
+			);
+		$block = array(
+			'blockName'    => $block_name,
+			'attrs'        => $attrs,
+			'innerBlocks'  => array(),
+			'innerHTML'    => '',
+			'innerContent' => array(),
+		);
+		if ( $nested ) {
+			$block = array(
+				'blockName'    => 'core/group',
+				'attrs'        => array(),
+				'innerBlocks'  => array( $block ),
+				'innerHTML'    => '<div class="wp-block-group"></div>',
+				'innerContent' => array( '<div class="wp-block-group">', null, '</div>' ),
+			);
+		}
+
+		$output = render_block( $block );
+
+		$this->assertStringContainsString( 'https://feed.example/1', $output );
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+		$this->assertSame( 3, substr_count( html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $tag ), $output );
+	}
+
+	/**
 	 * The Stripe field block must escape id/name/option-name block attributes.
 	 */
 	public function test_form_stripe_field_attributes_are_escaped() {

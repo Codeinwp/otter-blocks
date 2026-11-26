@@ -85,7 +85,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		if ( 'core/term-description' === $block['blockName'] || $this->prints_only_product_data( $block ) ) {
+		if ( $this->prints_only_external_text( $block ) ) {
 			return $this->escape_comment_magic_tags( $content );
 		}
 
@@ -101,15 +101,9 @@ class Dynamic_Content {
 		if ( null !== $product_pattern ) {
 			$patterns[ $block['blockName'] ] = $product_pattern;
 		}
-		if ( 'core/legacy-widget' === $block['blockName'] ) {
-			$widget = isset( $block['attrs']['idBase'] ) ? $block['attrs']['idBase'] : '';
-			if ( isset( $block['attrs']['id'] ) ) {
-				$widget = $block['attrs']['id'];
-			}
-			if ( 'search' === _get_widget_id_base( $widget ) ) {
-				// A null form filter makes core use its unfiltered fallback markup.
-				$patterns['core/legacy-widget'] = '/(<form\b)(.*?)(<\/form>)/is';
-			}
+		if ( 'search' === $this->legacy_widget_base( $block ) ) {
+			// A null form filter makes core use its unfiltered fallback markup.
+			$patterns['core/legacy-widget'] = '/(<form\b)(.*?)(<\/form>)/is';
 		}
 		if ( ! isset( $patterns[ $block['blockName'] ] ) ) {
 			return $content;
@@ -125,18 +119,41 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Whether a block's whole output is WooCommerce product data.
+	 * Whether a block's whole output is text from outside the post: terms, feeds or WooCommerce products.
 	 *
 	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, product?: int|string, label?: string}} $block Parsed block.
 	 * @return bool
 	 */
-	private function prints_only_product_data( $block ) {
+	private function prints_only_external_text( $block ) {
 		// Content nested in WooCommerce blocks has already been resolved by its own render pass.
-		if ( 0 === strpos( $block['blockName'], 'themeisle-blocks/product-' ) ) {
+		if ( in_array( $block['blockName'], array( 'core/term-description', 'core/rss' ), true ) || 0 === strpos( $block['blockName'], 'themeisle-blocks/product-' ) ) {
 			return true;
 		}
 
-		return 'themeisle-blocks/add-to-cart-button' === $block['blockName'] && ! isset( $block['attrs']['label'] );
+		if ( 'themeisle-blocks/add-to-cart-button' === $block['blockName'] ) {
+			return ! isset( $block['attrs']['label'] );
+		}
+
+		return 'rss' === $this->legacy_widget_base( $block );
+	}
+
+	/**
+	 * The widget type a Legacy Widget block renders, or an empty string for any other block.
+	 *
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, product?: int|string, label?: string}} $block Parsed block.
+	 * @return string
+	 */
+	private function legacy_widget_base( $block ) {
+		if ( 'core/legacy-widget' !== $block['blockName'] ) {
+			return '';
+		}
+
+		$widget = isset( $block['attrs']['idBase'] ) ? $block['attrs']['idBase'] : '';
+		if ( isset( $block['attrs']['id'] ) ) {
+			$widget = $block['attrs']['id'];
+		}
+
+		return _get_widget_id_base( $widget );
 	}
 
 	/**
