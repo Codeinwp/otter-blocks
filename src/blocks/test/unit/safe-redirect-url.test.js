@@ -13,7 +13,7 @@ describe( 'getSafeRedirectUrl', () => {
 		expect( getSafeRedirectUrl( url ) ).toBeNull();
 	});
 
-	it.each([ undefined, null, '', 42 ])( 'rejects non-string or empty value %j', ( url ) => {
+	it.each([ undefined, null, '', '   ', 42 ])( 'rejects non-string or empty value %j', ( url ) => {
 		expect( getSafeRedirectUrl( url ) ).toBeNull();
 	});
 

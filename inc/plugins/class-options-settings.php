@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use ThemeIsle\GutenbergBlocks\Registration;
 use ThemeIsle\GutenbergBlocks\Server\Template_Cloud_Server;
 use ThemeIsle\GutenbergBlocks\Plugins\Template_Cloud;
 
@@ -410,7 +411,7 @@ class Options_Settings {
 								$item['email'] = sanitize_text_field( $item['email'] );
 							}
 							if ( isset( $item['redirectLink'] ) ) {
-								$item['redirectLink'] = esc_url_raw( $item['redirectLink'] );
+								$item['redirectLink'] = Registration::sanitize_redirect_url( $item['redirectLink'] );
 							}
 							if ( isset( $item['captchaProvider'] ) ) {
 								$item['captchaProvider'] = sanitize_text_field( $item['captchaProvider'] );

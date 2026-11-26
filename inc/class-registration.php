@@ -1178,10 +1178,35 @@ class Registration {
 	}
 
 	/**
+	 * Return the redirect URL if it is relative or uses http(s), otherwise an empty string.
+	 *
+	 * Unlike esc_url_raw(), relative URLs such as `../thanks` or `thank-you` stay unchanged.
+	 *
+	 * @param mixed $url The URL to check.
+	 * @return string
+	 */
+	public static function sanitize_redirect_url( $url ) {
+		if ( ! is_string( $url ) ) {
+			return '';
+		}
+
+		// Browsers ignore leading and trailing C0 controls and spaces.
+		$url = trim( $url, "\x00..\x20" );
+
+		// The scheme is the text before the first colon that comes before any `/`, `?` or `#`.
+		// Any other text there (for example `java<tab>script`) is not http(s), so it is rejected too.
+		if ( preg_match( '/^([^\/?#]*):/', $url, $matches ) && ! in_array( strtolower( $matches[1] ), array( 'http', 'https' ), true ) ) {
+			return '';
+		}
+
+		return $url;
+	}
+
+	/**
 	 * Keep only http(s) or relative URLs in the Countdown redirect link.
 	 *
-	 * @param string $block_content The block content.
-	 * @return string
+	 * @param mixed $block_content The block content.
+	 * @return mixed
 	 */
 	public function sanitize_countdown_redirect_link( $block_content ) {
 		if ( ! is_string( $block_content ) || false === strpos( $block_content, 'data-redirect-link' ) ) {
@@ -1197,7 +1222,7 @@ class Registration {
 				continue;
 			}
 
-			$safe_link = esc_url_raw( $link, array( 'http', 'https' ) );
+			$safe_link = self::sanitize_redirect_url( $link );
 
 			if ( $safe_link !== $link ) {
 				$tags->set_attribute( 'data-redirect-link', $safe_link );

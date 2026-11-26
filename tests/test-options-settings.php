@@ -95,16 +95,33 @@ class Test_Options_Settings extends WP_UnitTestCase {
 		$registered_settings = get_registered_settings();
 		$callback            = $registered_settings['themeisle_blocks_form_emails']['sanitize_callback'];
 
+		$links = array(
+			'javascript:alert(1)'        => '',
+			'JavaScript:x'               => '',
+			"java\tscript:x"             => '',
+			'data:text/html,x'           => '',
+			'vbscript:x'                 => '',
+			'https://example.com/thanks' => 'https://example.com/thanks',
+			' https://x.com '            => 'https://x.com',
+			'../thanks'                  => '../thanks',
+			'../thanks?t=12:30'          => '../thanks?t=12:30',
+			'thank-you'                  => 'thank-you',
+			'?step=2'                    => '?step=2',
+			'#done'                      => '#done',
+			'//example.com/thanks'       => '//example.com/thanks',
+		);
+
 		$sanitized = call_user_func(
 			$callback,
-			array(
-				array( 'redirectLink' => 'javascript:alert(1)' ),
-				array( 'redirectLink' => 'https://example.com/thanks' ),
+			array_map(
+				function ( $link ) {
+					return array( 'redirectLink' => $link );
+				},
+				array_keys( $links )
 			)
 		);
 
-		$this->assertSame( '', $sanitized[0]['redirectLink'] );
-		$this->assertSame( 'https://example.com/thanks', $sanitized[1]['redirectLink'] );
+		$this->assertSame( array_values( $links ), array_column( $sanitized, 'redirectLink' ) );
 	}
 
 	/**
