@@ -126,6 +126,12 @@ class Stripe_API {
 					break;
 				case 'product':
 					$response = $this->stripe->products->retrieve( $args );
+					// Merchant-entered text is printed by blocks, so keep dynamic markers in it literal.
+					foreach ( array( 'name', 'description' ) as $field ) {
+						if ( is_string( $response[ $field ] ) ) {
+							$response[ $field ] = Dynamic_Content::instance()->escape_comment_magic_tags( $response[ $field ] );
+						}
+					}
 					break;
 				case 'prices':
 					$response = $this->stripe->prices->all( $args );

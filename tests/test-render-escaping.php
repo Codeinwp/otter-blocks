@@ -5,6 +5,7 @@
  * @package gutenberg-blocks
  */
 
+use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
 use ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block;
 use ThemeIsle\OtterPro\Render\Review_Comparison_Block;
 use ThemeIsle\OtterPro\Render\Form_Stripe_Block;
@@ -326,6 +327,97 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 		$this->assertSame( $link, $processor->get_attribute( 'href' ) );
 		$this->assertStringNotContainsString( 'viewer@example.org', $output );
 		$this->assertSame( isset( $label['label'] ) ? 'Buy now' : $tag, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ) );
+	}
+
+	/**
+	 * Blocks that print a Stripe product's name and description.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function stripe_product_blocks(): array {
+		return array(
+			'stripe checkout' => array( 'stripe-checkout' ),
+			'stripe field'    => array( 'form-stripe-field' ),
+		);
+	}
+
+	/**
+	 * @dataProvider stripe_product_blocks
+	 */
+	public function test_stripe_product_markers_stay_literal( string $block_name ): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		if ( ! defined( 'OTTER_PRO_BASEFILE' ) ) {
+			require_once dirname( __DIR__ ) . '/plugins/otter-pro/otter-pro.php';
+		}
+
+		$tag     = '{otterDynamic?type=loggedInUserEmail}';
+		$license = str_replace( '-', '_', strtolower( trim( basename( dirname( OTTER_PRO_BASEFILE ) ) ) ) ) . '_license_data';
+		$api_key = get_option( 'themeisle_stripe_api_key' );
+		update_option( 'themeisle_stripe_api_key', 'sk_test' );
+		update_option( $license, (object) array( 'license' => 'valid' ) );
+		\Stripe\ApiRequestor::setHttpClient(
+			new class( $tag ) extends \ThemeIsle\GutenbergBlocks\Tests\StripeHttpClientMock {
+				/**
+				 * Marker used as the product name and description.
+				 *
+				 * @var string
+				 */
+				private $tag;
+
+				public function __construct( string $tag ) {
+					$this->tag = $tag;
+				}
+
+				public function request( $method, $absUrl, $headers, $params, $hasFile ) {
+					if ( preg_match( '#^/v1/products/\w+$#', (string) wp_parse_url( $absUrl, PHP_URL_PATH ) ) ) {
+						$product = array(
+							'id'          => 'prod_1',
+							'object'      => 'product',
+							'name'        => $this->tag,
+							'description' => $this->tag,
+							'images'      => array( 'https://example.org/product.jpg' ),
+						);
+
+						return array( wp_json_encode( $product ), 200, null );
+					}
+
+					return parent::request( $method, $absUrl, $headers, $params, $hasFile );
+				}
+			}
+		);
+
+		try {
+			$block = array(
+				'blockName'    => 'themeisle-blocks/' . $block_name,
+				'attrs'        => array(
+					'id'      => 'wp-block-themeisle-blocks-stripe-marker',
+					'product' => 'prod_1',
+					'price'   => 'price_1',
+				),
+				'innerBlocks'  => array(),
+				'innerHTML'    => '',
+				'innerContent' => array(),
+			);
+			$html  = 'stripe-checkout' === $block_name
+				? ( new \ThemeIsle\GutenbergBlocks\Render\Stripe_Checkout_Block() )->render( $block['attrs'] )
+				: ( new Form_Stripe_Block() )->render( $block['attrs'] );
+
+			// The block's own render pass, then its parent's.
+			$html   = apply_filters( 'render_block', $html, $block, new WP_Block( $block ) );
+			$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+			$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+		} finally {
+			\Stripe\ApiRequestor::setHttpClient( \Stripe\HttpClient\CurlClient::instance() );
+			delete_option( $license );
+			update_option( 'themeisle_stripe_api_key', $api_key );
+		}
+
+		$processor = new WP_HTML_Tag_Processor( $output );
+		$this->assertTrue( $processor->next_tag( 'img' ), $output );
+		$this->assertSame( $tag, $processor->get_attribute( 'alt' ) );
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+		$this->assertStringContainsString( '<h3>' . esc_html( Dynamic_Content::instance()->escape_comment_magic_tags( $tag ) ) . '</h3>', $output );
 	}
 
 	/**
