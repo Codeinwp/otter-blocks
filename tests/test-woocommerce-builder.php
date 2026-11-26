@@ -80,6 +80,8 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 		 */
 		$GLOBALS['wp_scripts'] = null;
 
+		unset( $_GET['otter-woo-builder'], $_GET['_wpnonce'], $_GET['toggle-woobuilder'] );
+
 		parent::tear_down();
 	}
 
@@ -145,5 +147,113 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 
 		$this->assertSame( $clean, $this->woo_builder->restore_product_data_location( $clean ) );
 		$this->assertFalse( $this->woo_builder->restore_product_data_location( false ) );
+	}
+
+	/**
+	 * Load the edit screen of a product with the builder toggle in the query.
+	 *
+	 * @param int  $post_id    Product ID.
+	 * @param int  $value      Toggle value.
+	 * @param bool $with_nonce Whether to add a valid nonce.
+	 * @return bool The filter result.
+	 */
+	protected function toggle_builder( $post_id, $value, $with_nonce ) {
+		$GLOBALS['post']          = get_post( $post_id );
+		$_GET['otter-woo-builder'] = $value;
+
+		if ( $with_nonce ) {
+			$_GET['_wpnonce'] = wp_create_nonce( 'otter_woo_builder_' . $post_id );
+		}
+
+		return $this->woo_builder->enable_block_editor( false, 'product' );
+	}
+
+	/**
+	 * Create a product with block content and the builder enabled.
+	 *
+	 * @return int
+	 */
+	protected function create_block_product() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_type'    => 'product',
+				'post_content' => '<!-- wp:paragraph --><p>Layout</p><!-- /wp:paragraph -->',
+			)
+		);
+		update_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true );
+
+		return $post_id;
+	}
+
+	/**
+	 * Disabling the builder without a nonce keeps content and meta.
+	 */
+	public function test_disable_builder_without_nonce_keeps_data() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$post_id = $this->create_block_product();
+		$content = get_post_field( 'post_content', $post_id );
+
+		$this->assertTrue( $this->toggle_builder( $post_id, 0, false ) );
+		$this->assertSame( $content, get_post_field( 'post_content', $post_id ) );
+		$this->assertTrue( boolval( get_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true ) ) );
+	}
+
+	/**
+	 * Disabling the builder with a valid nonce and capability clears content and meta.
+	 */
+	public function test_disable_builder_with_nonce_clears_data() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$post_id = $this->create_block_product();
+
+		$this->assertFalse( $this->toggle_builder( $post_id, 0, true ) );
+		$this->assertSame( '', get_post_field( 'post_content', $post_id ) );
+		$this->assertSame( '', get_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true ) );
+	}
+
+	/**
+	 * A valid nonce is not enough without the edit capability.
+	 */
+	public function test_disable_builder_requires_edit_capability() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
+		$post_id = $this->create_block_product();
+		$content = get_post_field( 'post_content', $post_id );
+
+		$this->toggle_builder( $post_id, 0, true );
+
+		$this->assertSame( $content, get_post_field( 'post_content', $post_id ) );
+		$this->assertTrue( boolval( get_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true ) ) );
+	}
+
+	/**
+	 * Enabling the builder without a nonce does not set the meta.
+	 */
+	public function test_enable_builder_without_nonce_does_not_set_meta() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$this->assertFalse( $this->toggle_builder( $this->plain_product_id, 1, false ) );
+		$this->assertSame( '', get_post_meta( $this->plain_product_id, '_themeisle_gutenberg_woo_builder', true ) );
+	}
+
+	/**
+	 * Enabling the builder with a valid nonce sets the meta.
+	 */
+	public function test_enable_builder_with_nonce_sets_meta() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$this->assertTrue( $this->toggle_builder( $this->plain_product_id, 1, true ) );
+		$this->assertTrue( boolval( get_post_meta( $this->plain_product_id, '_themeisle_gutenberg_woo_builder', true ) ) );
+	}
+
+	/**
+	 * The metabox toggle link carries a nonce for the product.
+	 */
+	public function test_metabox_link_has_nonce() {
+		$GLOBALS['post'] = get_post( $this->builder_product_id );
+
+		ob_start();
+		$this->woo_builder->render_metabox( 'product' );
+		$html = ob_get_clean();
+
+		$this->assertMatchesRegularExpression( '/otter-woo-builder=0[^"]*_wpnonce=/', $html );
 	}
 }

@@ -133,7 +133,7 @@ class WooCommerce_Builder {
 			<div class="clear">
 				<p><?php esc_html_e( 'You can go back to the regular editor from this option.', 'otter-pro' ); ?></p>
 
-				<a href="<?php echo esc_url( add_query_arg( 'otter-woo-builder', 0 ) ); ?>" class="button button-primary" id="otter-woo-builder">
+				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'otter-woo-builder', 0 ), 'otter_woo_builder_' . get_the_ID() ) ); ?>" class="button button-primary" id="otter-woo-builder">
 					<?php esc_html_e( 'Disable WooCommerce Builder', 'otter-pro' ); ?>
 				</a>
 			</div>
@@ -143,7 +143,7 @@ class WooCommerce_Builder {
 			<div class="clear">
 				<p><?php esc_html_e( 'Use WooCommerce Builder by Otter to build a custom page for your WooCommerce products.', 'otter-pro' ); ?></p>
 
-				<a href="<?php echo esc_url( add_query_arg( 'otter-woo-builder', 1 ) ); ?>" class="button button-primary" id="otter-woo-builder">
+				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'otter-woo-builder', 1 ), 'otter_woo_builder_' . get_the_ID() ) ); ?>" class="button button-primary" id="otter-woo-builder">
 					<?php esc_html_e( 'Enable WooCommerce Builder', 'otter-pro' ); ?>
 				</a>
 			</div>
@@ -161,10 +161,17 @@ class WooCommerce_Builder {
 	 * @access  public
 	 */
 	public function enable_block_editor( $can_edit, $post_type ) {
-		if ( isset( $_GET['otter-woo-builder'] ) && 'product' === $post_type ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			if ( ! boolval( $_GET['otter-woo-builder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$_GET['toggle-woobuilder'] = 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				$post_id                   = get_the_ID();
+		$post_id = get_the_ID();
+
+		if (
+			isset( $_GET['otter-woo-builder'], $_GET['_wpnonce'] ) &&
+			'product' === $post_type &&
+			$post_id &&
+			wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_wpnonce'] ) ), 'otter_woo_builder_' . $post_id ) &&
+			current_user_can( 'edit_post', $post_id )
+		) {
+			if ( ! boolval( $_GET['otter-woo-builder'] ) ) {
+				$_GET['toggle-woobuilder'] = 0;
 
 				if ( has_blocks( $post_id ) ) {
 					$post = array(
@@ -177,13 +184,13 @@ class WooCommerce_Builder {
 
 				delete_post_meta( $post_id, '_themeisle_gutenberg_woo_builder' );
 			} else {
-				update_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', rest_sanitize_boolean( $_GET['otter-woo-builder'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				update_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', rest_sanitize_boolean( $_GET['otter-woo-builder'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			}
 
-			return rest_sanitize_boolean( $_GET['otter-woo-builder'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			return rest_sanitize_boolean( $_GET['otter-woo-builder'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
-		$woo_builder_enabled = get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true );
+		$woo_builder_enabled = get_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true );
 
 		return 'product' === $post_type ? boolval( $woo_builder_enabled ) : $can_edit;
 	}
