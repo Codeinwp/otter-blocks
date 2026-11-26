@@ -686,6 +686,23 @@ class Form_Pro_Features {
 		 */
 		$payload = apply_filters( 'otter_form_ai_autoresponder_generation_payload', $payload, $form_data );
 
+		$payload = \ThemeIsle\GutenbergBlocks\Server\AI_Usage::limit_payload( $payload );
+		if ( is_wp_error( $payload ) ) {
+			return $payload;
+		}
+
+		/**
+		 * Filters how many AI autoresponder replies a form may generate in a 10-minute window. Return 0 to disable.
+		 *
+		 * @param int               $limit     Reply limit.
+		 * @param Form_Data_Request $form_data The form data request.
+		 */
+		$limit = (int) apply_filters( 'otter_form_ai_autoresponder_rate_limit', 30, $form_data );
+		$quota = \ThemeIsle\GutenbergBlocks\Server\AI_Usage::consume_quota( 'form_' . $form_data->get_form_option_id(), $limit );
+		if ( is_wp_error( $quota ) ) {
+			return $quota;
+		}
+
 		$backend = \ThemeIsle\GutenbergBlocks\Server\AI_Backend_Resolver::resolve();
 
 		$this->log_autoresponder_debug( sprintf( 'AI backend resolved: %s (available=%s)', get_class( $backend ), $backend->is_available() ? 'yes' : 'no' ) );
@@ -787,6 +804,12 @@ class Form_Pro_Features {
 		 * @since 0.0.0
 		 */
 		$payload = apply_filters( 'otter_form_ai_autoresponder_validation_payload', $payload, $candidate, $form_data );
+
+		// The validation call belongs to the same reply, so it shares the generation quota.
+		$payload = \ThemeIsle\GutenbergBlocks\Server\AI_Usage::limit_payload( $payload );
+		if ( is_wp_error( $payload ) ) {
+			return $payload;
+		}
 
 		$result = \ThemeIsle\GutenbergBlocks\Server\AI_Backend_Resolver::resolve()->generate( $payload );
 

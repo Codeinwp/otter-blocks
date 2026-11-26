@@ -211,12 +211,22 @@ class Prompt_Server {
 			ARRAY_FILTER_USE_KEY
 		);
 
-		$rate_limited = $this->check_rate_limit();
-		if ( is_wp_error( $rate_limited ) ) {
-			return $rate_limited;
+		$body = $this->prepare_payload( $body );
+		if ( is_wp_error( $body ) ) {
+			return $body;
 		}
 
-		$body = $this->prepare_payload( $body );
+		/**
+		 * Filters how many generation requests a user may send in a 10-minute window. Return 0 to disable.
+		 *
+		 * @param int $limit   Request limit.
+		 * @param int $user_id Current user ID.
+		 */
+		$limit = (int) apply_filters( 'otter_ai_generate_rate_limit', 120, get_current_user_id() );
+		$quota = AI_Usage::consume_quota( 'user_' . get_current_user_id(), $limit );
+		if ( is_wp_error( $quota ) ) {
+			return $quota;
+		}
 
 		$backend = AI_Backend_Resolver::resolve();
 
@@ -255,10 +265,10 @@ class Prompt_Server {
 	}
 
 	/**
-	 * Keep only the request fields the editor sends, with a known model and a capped output size.
+	 * Keep only the request fields the editor sends, with a known model and capped sizes.
 	 *
 	 * @param array<string, mixed> $body The decoded request body.
-	 * @return array<string, mixed>
+	 * @return array<string, mixed>|\WP_Error
 	 */
 	private function prepare_payload( $body ) {
 		$payload = array_intersect_key(
@@ -269,6 +279,11 @@ class Prompt_Server {
 		// The editor gets its models from the prompt templates; anything else uses the backend default.
 		$allowed_models = array( Otter_OpenAI_Backend::DEFAULT_MODEL );
 		$prompts        = get_transient( $this->transient_prompts );
+		if ( false === $prompts && isset( $payload['model'] ) && Otter_OpenAI_Backend::DEFAULT_MODEL !== $payload['model'] ) {
+			// The editor keeps its templates in memory, so the cache can expire while it is open.
+			$fetched = $this->retrieve_prompts_from_server();
+			$prompts = isset( $fetched['prompts'] ) ? $fetched['prompts'] : array();
+		}
 		if ( is_array( $prompts ) ) {
 			foreach ( $prompts as $prompt ) {
 				if ( isset( $prompt['model'] ) && is_string( $prompt['model'] ) ) {
@@ -288,60 +303,7 @@ class Prompt_Server {
 			unset( $payload['model'] );
 		}
 
-		/**
-		 * Filters the maximum number of output tokens a generation request may use.
-		 *
-		 * @param int $max_tokens Token cap.
-		 */
-		$max_tokens = max( 1, (int) apply_filters( 'otter_ai_generate_max_tokens', 16384 ) );
-
-		$requested             = isset( $payload['max_tokens'] ) && is_numeric( $payload['max_tokens'] ) ? (int) $payload['max_tokens'] : $max_tokens;
-		$payload['max_tokens'] = min( max( 1, $requested ), $max_tokens );
-
-		return $payload;
-	}
-
-	/**
-	 * Count a generation request for the current user and reject it above the limit.
-	 *
-	 * @return true|\WP_Error
-	 */
-	private function check_rate_limit() {
-		/**
-		 * Filters how many generation requests a user may send in a 10-minute window. Return 0 to disable.
-		 *
-		 * @param int $limit   Request limit.
-		 * @param int $user_id Current user ID.
-		 */
-		$limit = (int) apply_filters( 'otter_ai_generate_rate_limit', 120, get_current_user_id() );
-
-		if ( $limit <= 0 ) {
-			return true;
-		}
-
-		$key    = 'otter_ai_rate_' . get_current_user_id();
-		$window = get_transient( $key );
-		$now    = time();
-
-		if ( ! is_array( $window ) || ! isset( $window['count'], $window['reset'] ) || $window['reset'] <= $now ) {
-			$window = array(
-				'count' => 0,
-				'reset' => $now + 10 * MINUTE_IN_SECONDS,
-			);
-		}
-
-		if ( $window['count'] >= $limit ) {
-			return new \WP_Error(
-				'otter_ai_rate_limited',
-				__( 'Too many AI requests. Please wait a few minutes and try again.', 'otter-blocks' ),
-				array( 'status' => 429 )
-			);
-		}
-
-		++$window['count'];
-		set_transient( $key, $window, max( 1, $window['reset'] - $now ) );
-
-		return true;
+		return AI_Usage::limit_payload( $payload );
 	}
 
 	/**

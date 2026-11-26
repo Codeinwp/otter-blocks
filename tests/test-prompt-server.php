@@ -17,6 +17,11 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 	private $prompt_server;
 
 	/**
+	 * @var callable|null
+	 */
+	private $http_mock = null;
+
+	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {
@@ -31,12 +36,13 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 		delete_transient( $this->prompt_server->transient_prompts );
 		delete_transient( $this->prompt_server->timeout_transient );
 		delete_option( 'themeisle_open_ai_api_key' );
-		delete_transient( 'otter_ai_rate_' . get_current_user_id() );
 		remove_all_filters( 'pre_http_request' );
+		remove_all_filters( 'query' );
 		remove_all_filters( 'otter_ai_backend' );
 		remove_all_filters( 'otter_ai_generate_rate_limit' );
 		remove_all_filters( 'otter_ai_generate_max_tokens' );
 		remove_all_filters( 'otter_ai_generate_allowed_models' );
+		remove_all_filters( 'otter_ai_generate_max_payload_bytes' );
 		parent::tear_down();
 	}
 
@@ -115,35 +121,39 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 	 */
 	private function generate( $body, &$sent = null ) {
 		update_option( 'themeisle_open_ai_api_key', 'sk-test' );
-		remove_all_filters( 'pre_http_request' );
+		if ( null !== $this->http_mock ) {
+			remove_filter( 'pre_http_request', $this->http_mock );
+		}
 		add_filter(
 			'otter_ai_backend',
 			function () {
 				return 'legacy';
 			}
 		);
-		add_filter(
-			'pre_http_request',
-			function ( $pre, $args ) use ( &$sent ) {
-				$sent = json_decode( $args['body'], true );
-				return array(
-					'headers'  => array(),
-					'body'     => wp_json_encode(
-						array(
-							'choices' => array( array( 'message' => array( 'content' => 'Hello' ) ) ),
-							'usage'   => array( 'total_tokens' => 5 ),
-						)
-					),
-					'response' => array(
-						'code'    => 200,
-						'message' => 'OK',
-					),
-					'cookies'  => array(),
-				);
-			},
-			10,
-			2
-		);
+		$this->http_mock = function ( $pre, $args, $url ) use ( &$sent ) {
+			if ( false !== $pre ) {
+				return $pre;
+			}
+			if ( false === strpos( $url, 'api.openai.com' ) ) {
+				return new WP_Error( 'http_request_blocked', 'Unexpected request.' );
+			}
+			$sent = json_decode( $args['body'], true );
+			return array(
+				'headers'  => array(),
+				'body'     => wp_json_encode(
+					array(
+						'choices' => array( array( 'message' => array( 'content' => 'Hello' ) ) ),
+						'usage'   => array( 'total_tokens' => 5 ),
+					)
+				),
+				'response' => array(
+					'code'    => 200,
+					'message' => 'OK',
+				),
+				'cookies'  => array(),
+			);
+		};
+		add_filter( 'pre_http_request', $this->http_mock, 10, 3 );
 
 		$request = new WP_REST_Request( 'POST', '/otter/v1/openai/generate' );
 		$request->set_body( wp_json_encode( $body ) );
@@ -376,7 +386,206 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 		// The limit is per user.
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
 		$this->assertSame( 200, $this->generate( $body )->get_status() );
-		delete_transient( 'otter_ai_rate_' . $user_id );
+	}
+
+	/**
+	 * A rate limit of 0 disables the per-user limit.
+	 */
+	public function test_forward_prompt_rate_limit_zero_disables_limit() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		add_filter( 'otter_ai_generate_rate_limit', '__return_zero' );
+
+		$body = array( 'messages' => array( array( 'role' => 'user', 'content' => 'Hi' ) ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+
+		for ( $i = 0; $i < 3; $i++ ) {
+			$this->assertSame( 200, $this->generate( $body )->get_status() );
+		}
+
+		$this->assertSame( 0, $this->count_quota_rows() );
+	}
+
+	/**
+	 * A counter from an earlier window does not block new requests and is removed.
+	 */
+	public function test_forward_prompt_rate_limit_resets_in_new_window() {
+		$user_id = self::factory()->user->create( array( 'role' => 'editor' ) );
+		wp_set_current_user( $user_id );
+
+		$prefix = 'otter_ai_quota_' . md5( 'user_' . $user_id ) . '_';
+		$window = (int) floor( time() / 600 );
+		add_option( $prefix . ( $window - 1 ), 120, '', false );
+
+		$body = array( 'messages' => array( array( 'role' => 'user', 'content' => 'Hi' ) ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+
+		$this->assertSame( 200, $this->generate( $body )->get_status() );
+		$this->assertSame( 1, $this->count_quota_rows() );
+		$this->assertSame( '1', $this->get_quota_value( $prefix . $window ) );
+	}
+
+	/**
+	 * A request that runs while another one is reserving its slot cannot pass the limit too.
+	 */
+	public function test_forward_prompt_rate_limit_holds_for_overlapping_requests() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		add_filter(
+			'otter_ai_generate_rate_limit',
+			function () {
+				return 1;
+			}
+		);
+
+		$body = array( 'messages' => array( array( 'role' => 'user', 'content' => 'Hi' ) ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+
+		// Run a second request just before the first one writes its counter.
+		$inner = null;
+		add_filter(
+			'query',
+			function ( $query ) use ( &$inner, $body ) {
+				if ( null === $inner && 0 === strpos( $query, 'UPDATE' ) && false !== strpos( $query, 'otter_ai_quota_' ) ) {
+					$inner = false;
+					$inner = $this->generate( $body );
+				}
+				return $query;
+			}
+		);
+
+		$calls = 0;
+		add_filter(
+			'pre_http_request',
+			function ( $pre ) use ( &$calls ) {
+				++$calls;
+				return $pre;
+			},
+			5
+		);
+
+		$outer = $this->generate( $body );
+
+		$statuses = array(
+			is_wp_error( $outer ) ? $outer->get_error_data()['status'] : $outer->get_status(),
+			is_wp_error( $inner ) ? $inner->get_error_data()['status'] : $inner->get_status(),
+		);
+		sort( $statuses );
+
+		$this->assertSame( array( 200, 429 ), $statuses );
+		$this->assertSame( 1, $calls );
+	}
+
+	/**
+	 * Invalid output token values fall back to the cap or the minimum.
+	 */
+	public function test_forward_prompt_normalizes_invalid_max_tokens() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+
+		$messages = array( array( 'role' => 'user', 'content' => 'Hi' ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+
+		$this->generate( array( 'messages' => $messages, 'max_tokens' => 'abc' ), $sent ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+		$this->assertSame( 16384, $sent['max_completion_tokens'] );
+
+		$this->generate( array( 'messages' => $messages, 'max_tokens' => 0 ), $sent ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+		$this->assertSame( 1, $sent['max_completion_tokens'] );
+
+		$this->generate( array( 'messages' => $messages, 'max_tokens' => -5 ), $sent ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+		$this->assertSame( 1, $sent['max_completion_tokens'] );
+	}
+
+	/**
+	 * Requests above the payload size cap are rejected before the provider call and the rate limit.
+	 */
+	public function test_forward_prompt_rejects_oversized_payload() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		add_filter(
+			'otter_ai_generate_max_payload_bytes',
+			function () {
+				return 1000;
+			}
+		);
+
+		$sent     = null;
+		$response = $this->generate(
+			array( 'messages' => array( array( 'role' => 'user', 'content' => str_repeat( 'a', 2000 ) ) ) ), // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+			$sent
+		);
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'otter_ai_payload_too_large', $response->get_error_code() );
+		$this->assertSame( 413, $response->get_error_data()['status'] );
+		$this->assertNull( $sent );
+		$this->assertSame( 0, $this->count_quota_rows() );
+
+		// The default cap accepts a normal request and rejects a very large one.
+		remove_all_filters( 'otter_ai_generate_max_payload_bytes' );
+		$this->assertSame( 200, $this->generate( array( 'messages' => array( array( 'role' => 'user', 'content' => str_repeat( 'a', 2000 ) ) ) ) )->get_status() ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+		$this->assertWPError( $this->generate( array( 'functions' => array( array( 'name' => str_repeat( 'a', 300 * KB_IN_BYTES ) ) ) ) ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+
+		// A cap of 0 disables the size check.
+		add_filter( 'otter_ai_generate_max_payload_bytes', '__return_zero' );
+		$this->assertSame( 200, $this->generate( array( 'functions' => array( array( 'name' => str_repeat( 'a', 300 * KB_IN_BYTES ) ) ) ) )->get_status() ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+	}
+
+	/**
+	 * When the template cache is empty, the templates are fetched again before a model is replaced.
+	 */
+	public function test_forward_prompt_refreshes_templates_for_model_check() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		add_filter(
+			'pre_http_request',
+			function ( $pre, $args, $url ) {
+				if ( false === strpos( $url, 'otter-prompts' ) ) {
+					return $pre;
+				}
+				return array(
+					'headers'  => array(),
+					'body'     => wp_json_encode(
+						array(
+							array(
+								'otter_name' => 'form',
+								'model'      => 'template-model',
+							),
+						)
+					),
+					'response' => array(
+						'code'    => 200,
+						'message' => 'OK',
+					),
+					'cookies'  => array(),
+				);
+			},
+			5,
+			3
+		);
+
+		$this->generate(
+			array(
+				'model'    => 'template-model',
+				'messages' => array( array( 'role' => 'user', 'content' => 'Hi' ) ), // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+			),
+			$sent
+		);
+
+		$this->assertSame( 'template-model', $sent['model'] );
+		$this->assertIsArray( get_transient( $this->prompt_server->transient_prompts ) );
+	}
+
+	/**
+	 * Count the stored request quota counters.
+	 *
+	 * @return int
+	 */
+	private function count_quota_rows() {
+		global $wpdb;
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE 'otter\\_ai\\_quota\\_%'" );
+	}
+
+	/**
+	 * Read a stored request quota counter.
+	 *
+	 * @param string $option The counter option name.
+	 * @return string|null
+	 */
+	private function get_quota_value( $option ) {
+		global $wpdb;
+		return $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $option ) );
 	}
 
 	/**
