@@ -79,6 +79,12 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 		wp_set_current_user( $contributor );
 		$this->assertTrue( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'postTitle', 'context' => $own_draft ) ) );
 		$this->assertFalse( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'postTitle', 'context' => $other_post ) ) );
+
+		// Without a `context` there is nothing to preview, even when a global post is set.
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$GLOBALS['post'] = get_post( $other_post );
+		$this->assertFalse( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'siteTitle' ) ) );
+		$this->assertFalse( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'siteTitle', 'context' => 'query' ) ) );
 	}
 
 	/**
@@ -97,8 +103,6 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 		add_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $pro, 'evaluate_content' ), 10, 2 );
 
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
-		// Tests do not define REST_REQUEST, so the context comes from the queried post.
-		$this->go_to( get_permalink( $post_id ) );
 
 		$this->assertSame( 'Public Name', $this->preview( array( 'type' => 'authorMeta', 'context' => $post_id, 'metaKey' => 'display_name', 'default' => '' ) ) );
 		$this->assertStringNotContainsString( 'author-private@example.org', $this->preview( array( 'type' => 'authorMeta', 'context' => $post_id, 'metaKey' => 'user_email', 'default' => '' ) ) );
@@ -134,36 +138,45 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 
 		$content = '';
 		foreach ( $sources as $source ) {
-			$content .= '<p><o-dynamic data-type="postExcerpt" data-context="' . $source . '">Excerpt</o-dynamic></p>';
+			$content .= '<!-- wp:paragraph --><p><o-dynamic data-type="postExcerpt" data-context="' . $source . '">Excerpt</o-dynamic></p><!-- /wp:paragraph -->';
 		}
 
-		// REST_REQUEST is a constant, so render as in a REST request through the request check.
-		$rest = new class() extends \ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content {
-			/**
-			 * Render as in a REST request.
-			 *
-			 * @return bool
-			 */
-			protected function is_rest_request() {
-				return true;
-			}
-		};
+		// Values without a context, or inside a Query Loop, use the post being rendered.
+		$content .= '<!-- wp:paragraph --><p><o-dynamic data-type="postTitle">Title</o-dynamic>|<o-dynamic data-type="postTitle" data-context="query">Title</o-dynamic>|<o-dynamic data-type="siteTitle" data-context="query">Site</o-dynamic></p><!-- /wp:paragraph -->';
 
-		$visitor = $rest->apply_dynamic_content( $content );
+		$post_id = self::factory()->post->create(
+			array(
+				'post_title'   => 'Host post',
+				'post_content' => $content,
+			)
+		);
+
+		$visitor = $this->rendered_content( $post_id );
 		$this->assertStringContainsString( 'Public excerpt', $visitor );
 		$this->assertStringNotContainsString( 'Private excerpt', $visitor );
 		$this->assertStringNotContainsString( 'Draft excerpt', $visitor );
 		$this->assertStringNotContainsString( 'Protected excerpt', $visitor );
-
-		// Markup without a context uses the post being rendered.
-		$GLOBALS['post'] = get_post( $sources[0] );
-		$this->assertSame( '<p>Public excerpt</p>', $rest->apply_dynamic_content( '<p><o-dynamic data-type="postExcerpt">Excerpt</o-dynamic></p>' ) );
+		$this->assertStringContainsString( 'Host post|Host post|' . get_bloginfo( 'name' ), $visitor );
 
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
-		$editor = $rest->apply_dynamic_content( $content );
+		$editor = $this->rendered_content( $post_id );
 		$this->assertStringContainsString( 'Private excerpt', $editor );
 		$this->assertStringContainsString( 'Draft excerpt', $editor );
 		$this->assertStringContainsString( 'Protected excerpt', $editor );
+	}
+
+	/**
+	 * Read a post through the REST API and return its rendered content.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string
+	 */
+	private function rendered_content( int $post_id ): string {
+		$response = rest_do_request( new WP_REST_Request( 'GET', '/wp/v2/posts/' . $post_id ) );
+
+		$this->assertSame( 200, $response->get_status() );
+
+		return $response->get_data()['content']['rendered'];
 	}
 
 	/**
