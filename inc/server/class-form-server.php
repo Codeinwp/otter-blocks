@@ -413,8 +413,8 @@ class Form_Server {
 	 * Get the settings of the submitted form from the server.
 	 *
 	 * The stored form options are used first. The editor stores them when the post is saved.
-	 * A form that was added without the editor (e.g. imported content) has no stored options,
-	 * so the form block in the submitted public post is used. Its Captcha block is enforced.
+	 * A form that has no stored options (e.g. imported content) is looked up in the published
+	 * content that the site can render. The Captcha block of that form is enforced.
 	 *
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return Form_Settings_Data|null The form settings, or null when the form is unknown.
@@ -434,61 +434,114 @@ class Form_Server {
 			return $settings;
 		}
 
-		$post_id = $form_data->get_data_from_payload( 'postId' );
-		$post    = is_numeric( $post_id ) ? get_post( (int) $post_id ) : null;
+		$forms = self::find_published_form_blocks( $option_name );
 
-		if ( ! ( $post instanceof \WP_Post ) || ! is_post_publicly_viewable( $post ) || ! has_block( 'themeisle-blocks/form', $post ) ) {
+		if ( empty( $forms ) ) {
 			return null;
 		}
 
-		$form = self::find_block(
-			parse_blocks( $post->post_content ),
-			function ( $block ) use ( $option_name ) {
-				return 'themeisle-blocks/form' === $block['blockName'] && isset( $block['attrs']['optionName'] ) && $option_name === $block['attrs']['optionName'];
+		// The same form can be in more than one place. A captcha in one of them is enforced.
+		foreach ( $forms as $form ) {
+			$captchas = self::find_blocks(
+				$form['innerBlocks'],
+				function ( $block ) {
+					return 'themeisle-blocks/form-captcha' === $block['blockName'];
+				}
+			);
+
+			if ( ! empty( $captchas ) ) {
+				return $settings->set_captcha( true )->set_captcha_provider( isset( $captchas[0]['attrs']['provider'] ) ? $captchas[0]['attrs']['provider'] : 'recaptcha' );
 			}
-		);
 
-		if ( null === $form ) {
-			return null;
-		}
-
-		$captcha = self::find_block(
-			$form['innerBlocks'],
-			function ( $block ) {
-				return 'themeisle-blocks/form-captcha' === $block['blockName'];
+			if ( ! empty( $form['attrs']['hasCaptcha'] ) ) {
+				return $settings->set_captcha( true )->set_captcha_provider( 'recaptcha' );
 			}
-		);
-
-		if ( null !== $captcha ) {
-			$settings->set_captcha( true )->set_captcha_provider( isset( $captcha['attrs']['provider'] ) ? $captcha['attrs']['provider'] : 'recaptcha' );
-		} elseif ( ! empty( $form['attrs']['hasCaptcha'] ) ) {
-			$settings->set_captcha( true )->set_captcha_provider( 'recaptcha' );
 		}
 
 		return $settings;
 	}
 
 	/**
-	 * Find the first block, at any depth, that matches the callback.
+	 * Find the Form blocks with the given option name in the published content.
 	 *
-	 * @param array<int, array<string, mixed>>     $blocks The parsed blocks.
-	 * @param callable(array<string, mixed>): bool $is_match The match callback.
-	 * @return array<string, mixed>|null The block, or null when no block matches.
+	 * The content is: published posts of any type (this includes synced patterns and
+	 * saved templates), the block templates and template parts of the theme, the block
+	 * widgets, and the registered patterns that this content references.
+	 *
+	 * @param string $option_name The form option name.
+	 * @return array<int, array<string, mixed>> The Form blocks.
 	 */
-	private static function find_block( $blocks, $is_match ) {
-		foreach ( $blocks as $block ) {
-			if ( $is_match( $block ) ) {
-				return $block;
-			}
+	private static function find_published_form_blocks( $option_name ) {
+		global $wpdb;
 
-			$found = empty( $block['innerBlocks'] ) ? null : self::find_block( $block['innerBlocks'], $is_match );
+		// A search in the post content. No WP API can match a block attribute in all post types.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$contents = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT post_content FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_content LIKE %s",
+				'%' . $wpdb->esc_like( '"optionName":"' . $option_name . '"' ) . '%'
+			)
+		);
 
-			if ( null !== $found ) {
-				return $found;
+		foreach ( array( 'wp_template', 'wp_template_part' ) as $template_type ) {
+			foreach ( get_block_templates( array(), $template_type ) as $template ) {
+				$contents[] = (string) $template->content;
 			}
 		}
 
-		return null;
+		foreach ( (array) get_option( 'widget_block', array() ) as $widget ) {
+			if ( is_array( $widget ) && isset( $widget['content'] ) && is_string( $widget['content'] ) ) {
+				$contents[] = $widget['content'];
+			}
+		}
+
+		$is_pattern = function ( $block ) {
+			return 'core/pattern' === $block['blockName'];
+		};
+		$is_form    = function ( $block ) use ( $option_name ) {
+			return 'themeisle-blocks/form' === $block['blockName'] && isset( $block['attrs']['optionName'] ) && $option_name === $block['attrs']['optionName'];
+		};
+
+		$forms = array();
+
+		foreach ( $contents as $content ) {
+			$blocks = parse_blocks( $content );
+
+			foreach ( self::find_blocks( $blocks, $is_pattern ) as $pattern ) {
+				$registered = isset( $pattern['attrs']['slug'] ) ? \WP_Block_Patterns_Registry::get_instance()->get_registered( $pattern['attrs']['slug'] ) : null;
+
+				if ( is_array( $registered ) && isset( $registered['content'] ) ) {
+					$blocks = array_merge( $blocks, parse_blocks( $registered['content'] ) );
+				}
+			}
+
+			$forms = array_merge( $forms, self::find_blocks( $blocks, $is_form ) );
+		}
+
+		return $forms;
+	}
+
+	/**
+	 * Find all the blocks, at any depth, that match the callback.
+	 *
+	 * @param array<int, array<string, mixed>>     $blocks The parsed blocks.
+	 * @param callable(array<string, mixed>): bool $is_match The match callback.
+	 * @return array<int, array<string, mixed>> The matching blocks.
+	 */
+	private static function find_blocks( $blocks, $is_match ) {
+		$found = array();
+
+		foreach ( $blocks as $block ) {
+			if ( $is_match( $block ) ) {
+				$found[] = $block;
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$found = array_merge( $found, self::find_blocks( $block['innerBlocks'], $is_match ) );
+			}
+		}
+
+		return $found;
 	}
 
 	/**

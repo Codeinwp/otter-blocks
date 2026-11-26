@@ -196,6 +196,11 @@ class Form_Data_Response {
 	 * @since 2.0.3
 	 */
 	public function build_response() {
+		// Only a successful response has a success message.
+		if ( empty( $this->response['success'] ) && isset( $this->response['code'] ) && ! in_array( (string) $this->response['code'], array( self::SUCCESS_EMAIL_SEND, self::SUCCESS_USER_SUBSCRIBED ), true ) ) {
+			unset( $this->response['submitMessage'] );
+		}
+
 		if ( isset( $this->rest_response ) ) {
 			$this->rest_response->set_data( $this->response );
 			return $this->rest_response;

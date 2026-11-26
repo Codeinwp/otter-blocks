@@ -43,6 +43,13 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private $mail_filter = null;
 
 	/**
+	 * The `get_block_templates` filters added by the test.
+	 *
+	 * @var callable[]
+	 */
+	private $template_filters = array();
+
+	/**
 	 * @var callable|null
 	 */
 	private $http_filter = null;
@@ -99,6 +106,11 @@ class Test_Form_Server extends WP_UnitTestCase {
 	 * Tear down test environment.
 	 */
 	public function tear_down() {
+		foreach ( $this->template_filters as $filter ) {
+			remove_filter( 'get_block_templates', $filter, 10 );
+		}
+		$this->template_filters = array();
+
 		if ( null !== $this->mail_filter ) {
 			remove_filter( 'pre_wp_mail', $this->mail_filter );
 		}
@@ -1485,12 +1497,13 @@ class Test_Form_Server extends WP_UnitTestCase {
 
 		$this->assertFalse( $data['success'] );
 		$this->assertSame( Form_Data_Response::ERROR_FORM_ID_INVALID, $data['code'] );
+		$this->assertArrayNotHasKey( 'submitMessage', $data );
 		$this->assertCount( 0, $this->get_form_records() );
 		$this->assertCount( 0, $this->mail_requests );
 	}
 
 	/**
-	 * Ensure the form option must be in the submitted post when it has no stored settings.
+	 * Ensure the form option must be in the published content when it has no stored settings.
 	 */
 	public function test_frontend_submission_rejects_unstored_form_option_not_in_post() {
 		$this->mock_mail();
@@ -1537,7 +1550,7 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure the form block in the post is not used when the post is not public.
+	 * Ensure the form block in a post is not used when the post is not published.
 	 */
 	public function test_frontend_submission_rejects_unstored_form_option_in_draft_post() {
 		$this->mock_mail();
@@ -1604,6 +1617,87 @@ class Test_Form_Server extends WP_UnitTestCase {
 
 		$this->assertFalse( $data['success'] );
 		$this->assertSame( Form_Data_Response::ERROR_MISSING_CAPTCHA, $data['code'] );
+	}
+
+	/**
+	 * Ensure a form in a synced pattern can be submitted from any page.
+	 */
+	public function test_frontend_submission_accepts_unstored_form_option_in_synced_pattern() {
+		$this->mock_mail();
+		self::factory()->post->create(
+			array(
+				'post_type'    => 'wp_block',
+				'post_status'  => 'publish',
+				'post_content' => $this->get_form_markup( 'pattern_form' ),
+			)
+		);
+
+		$this->assert_unstored_form_is_accepted( 'pattern_form' );
+	}
+
+	/**
+	 * Ensure a form in a theme template part can be submitted.
+	 */
+	public function test_frontend_submission_accepts_unstored_form_option_in_template_part() {
+		$this->mock_mail();
+		$this->add_template_part( $this->get_form_markup( 'template_part_form' ) );
+
+		$this->assert_unstored_form_is_accepted( 'template_part_form' );
+	}
+
+	/**
+	 * Ensure a form in a block widget can be submitted.
+	 */
+	public function test_frontend_submission_accepts_unstored_form_option_in_block_widget() {
+		$this->mock_mail();
+		update_option(
+			'widget_block',
+			array(
+				2              => array( 'content' => $this->get_form_markup( 'widget_form' ) ),
+				'_multiwidget' => 1,
+			)
+		);
+
+		$this->assert_unstored_form_is_accepted( 'widget_form' );
+	}
+
+	/**
+	 * Ensure a form in a registered pattern that a template part references can be submitted.
+	 */
+	public function test_frontend_submission_accepts_unstored_form_option_in_referenced_pattern() {
+		$this->mock_mail();
+		register_block_pattern(
+			'otter-tests/form',
+			array(
+				'title'   => 'Form',
+				'content' => $this->get_form_markup( 'registered_pattern_form' ),
+			)
+		);
+		$this->add_template_part( '<!-- wp:pattern {"slug":"otter-tests/form"} /-->' );
+
+		try {
+			$this->assert_unstored_form_is_accepted( 'registered_pattern_form' );
+		} finally {
+			unregister_block_pattern( 'otter-tests/form' );
+		}
+	}
+
+	/**
+	 * Ensure the captcha is required when one of the copies of the form has a Captcha block.
+	 */
+	public function test_frontend_submission_requires_captcha_from_any_copy_of_the_form() {
+		$this->mock_mail();
+		$this->create_post_with_form( 'imported_form' );
+		$this->create_post_with_form( 'imported_form', '<!-- wp:themeisle-blocks/form-captcha {"provider":"turnstile"} /-->' );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request( array( 'payload' => array( 'formOption' => 'imported_form' ) ) )
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_MISSING_CAPTCHA, $data['code'] );
+		$this->assertCount( 0, $this->get_form_records() );
 	}
 
 	/**
@@ -2780,6 +2874,23 @@ class Test_Form_Server extends WP_UnitTestCase {
 	 * @return int The post ID.
 	 */
 	private function create_post_with_form( $option_name, $inner = '', $status = 'publish', $attrs = array() ) {
+		return self::factory()->post->create(
+			array(
+				'post_status'  => $status,
+				'post_content' => $this->get_form_markup( $option_name, $inner, $attrs ),
+			)
+		);
+	}
+
+	/**
+	 * Get the markup of a Form block, nested in a group block.
+	 *
+	 * @param string $option_name The form option name of the block.
+	 * @param string $inner The inner blocks markup of the form.
+	 * @param array  $attrs Extra form block attributes.
+	 * @return string The block markup.
+	 */
+	private function get_form_markup( $option_name, $inner = '', $attrs = array() ) {
 		$attrs = wp_json_encode(
 			array_merge(
 				array(
@@ -2790,12 +2901,42 @@ class Test_Form_Server extends WP_UnitTestCase {
 			)
 		);
 
-		return self::factory()->post->create(
-			array(
-				'post_status'  => $status,
-				'post_content' => '<!-- wp:group --><div class="wp-block-group"><!-- wp:themeisle-blocks/form ' . $attrs . ' --><div class="wp-block-themeisle-blocks-form">' . $inner . '</div><!-- /wp:themeisle-blocks/form --></div><!-- /wp:group -->',
-			)
+		return '<!-- wp:group --><div class="wp-block-group"><!-- wp:themeisle-blocks/form ' . $attrs . ' --><div class="wp-block-themeisle-blocks-form">' . $inner . '</div><!-- /wp:themeisle-blocks/form --></div><!-- /wp:group -->';
+	}
+
+	/**
+	 * Add a theme template part with the given content, as if it came from a theme file.
+	 *
+	 * @param string $content The template part content.
+	 */
+	private function add_template_part( $content ) {
+		$filter = function ( $templates, $query, $template_type ) use ( $content ) {
+			if ( 'wp_template_part' === $template_type ) {
+				$template          = new WP_Block_Template();
+				$template->slug    = 'otter-tests-form';
+				$template->theme   = get_stylesheet();
+				$template->content = $content;
+				$templates[]       = $template;
+			}
+			return $templates;
+		};
+		add_filter( 'get_block_templates', $filter, 10, 3 );
+		$this->template_filters[] = $filter;
+	}
+
+	/**
+	 * Submit a form that has no stored settings and check that it is accepted.
+	 *
+	 * @param string $option_name The form option name.
+	 */
+	private function assert_unstored_form_is_accepted( $option_name ) {
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request( array( 'payload' => array( 'formOption' => $option_name ) ) )
 		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertCount( 1, $this->get_form_records() );
 	}
 
 	/**

@@ -12,6 +12,8 @@ test.describe( 'Form Block - Captcha block', () => {
 	test.beforeEach( async({ admin, otterUtils }) => {
 		await otterUtils.setOptions({
 			themeisle_cloudflare_turnstile_site_key: 'turnstile-sitekey',
+
+			// The server verifies the token with this secret. The `otter-e2e-captcha-mock` MU-plugin answers that request.
 			themeisle_cloudflare_turnstile_secret_key: 'turnstile-secret',
 
 			// Start from a clean form-options state (see form.spec.js).
