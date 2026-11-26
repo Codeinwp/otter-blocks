@@ -824,6 +824,7 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 			'image alt with the authored tag'           => array( sprintf( $image, $tag ), $tag, false ),
 			'image alt with the authored tag, no filter' => array( sprintf( $image, $tag ), $tag, true ),
 			'image alt ending in a carriage return'     => array( sprintf( $image, $tag ), $tag . "\r", false ),
+			'image alt ending in a CRLF'                => array( sprintf( $image, $tag ), $tag . "\r\n", false ),
 		);
 	}
 
@@ -863,11 +864,156 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'viewer@example.org', str_replace( 'title="viewer@example.org"', '', $output ), $output );
 		$processor = new WP_HTML_Tag_Processor( $output );
 		if ( $processor->next_tag( 'img' ) ) {
-			$this->assertSame( str_replace( "\r", "\n", $meta ), $processor->get_attribute( 'alt' ), $output );
+			$this->assertSame( str_replace( array( "\r\n", "\r" ), "\n", $meta ), $processor->get_attribute( 'alt' ), $output );
 			$this->assertNotSame( $tag, $processor->get_attribute( 'title' ), $output );
 		} else {
 			$this->assertSame( $meta, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $output );
 		}
+	}
+
+	/**
+	 * RSS feed item titles keep data markers literal even when the block's attributes hold the same marker.
+	 */
+	public function test_rss_feed_markers_stay_literal_with_authored_attribute(): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag  = '{otterDynamic?type=loggedInUserEmail}';
+		$feed = 'https://feed.example/' . wp_generate_password( 8, false ) . '.xml';
+		$xml  = '<?xml version="1.0"?><rss version="2.0"><channel><title>Feed</title><link>https://feed.example/</link><description>Feed</description>'
+			. '<item><title>' . $tag . '</title><link>https://feed.example/1</link></item>'
+			. '</channel></rss>';
+		$stub = static function ( $response, array $args, string $url ) use ( $feed, $xml ) {
+			if ( $url !== $feed ) {
+				return $response;
+			}
+
+			return array(
+				'headers'  => array( 'content-type' => 'application/rss+xml' ),
+				'body'     => $xml,
+				'response' => array(
+					'code'    => 200,
+					'message' => 'OK',
+				),
+				'cookies'  => array(),
+				'filename' => null,
+			);
+		};
+		add_filter( 'pre_http_request', $stub, 10, 3 );
+
+		try {
+			$block = array(
+				'blockName'    => 'core/rss',
+				'attrs'        => array(
+					'feedURL'   => $feed,
+					'className' => 'marker-' . $tag,
+					'metadata'  => array( 'name' => $tag ),
+				),
+				'innerBlocks'  => array(),
+				'innerHTML'    => '',
+				'innerContent' => array(),
+			);
+			$group = array(
+				'blockName'    => 'core/group',
+				'attrs'        => array(),
+				'innerBlocks'  => array( $block ),
+				'innerHTML'    => '<div class="wp-block-group"></div>',
+				'innerContent' => array( '<div class="wp-block-group">', null, '</div>' ),
+			);
+
+			$output = render_block( $group );
+		} finally {
+			remove_filter( 'pre_http_request', $stub, 10 );
+		}
+
+		$this->assertStringContainsString( 'marker-viewer@example.org', $output, $output );
+		$this->assertStringContainsString( '>' . $tag . '</a>', html_entity_decode( $output, ENT_QUOTES ), $output );
+	}
+
+	/**
+	 * Product Meta tag names keep data markers literal even when the block's attributes hold the same marker.
+	 */
+	public function test_product_meta_tag_markers_stay_literal_with_authored_attribute(): void {
+		global $post, $product;
+
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag  = '{otterDynamic?type=loggedInUserEmail}';
+		$term = wp_insert_term( $tag, 'product_tag' );
+		$this->assertNotWPError( $term );
+
+		$item = new WC_Product_Simple();
+		$item->set_name( 'Widget' );
+		$item->set_regular_price( '10' );
+		$item->set_tag_ids( array( $term['term_id'] ) );
+		$product_id = $item->save();
+
+		$post    = get_post( $product_id );
+		$product = wc_get_product( $product_id );
+		setup_postdata( $post );
+
+		$block = array(
+			'blockName'    => 'themeisle-blocks/product-meta',
+			'attrs'        => array(
+				'className' => 'marker-' . $tag,
+				'metadata'  => array( 'name' => $tag ),
+			),
+			'innerBlocks'  => array(),
+			'innerHTML'    => '',
+			'innerContent' => array(),
+		);
+		$html  = ( new \ThemeIsle\OtterPro\Render\WooCommerce\Product_Meta_Block() )->render( $block['attrs'] );
+
+		$html   = apply_filters( 'render_block', $html, $block, new WP_Block( $block ) );
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		wp_reset_postdata();
+
+		$this->assertStringNotContainsString( 'viewer@example.org', $output, $output );
+		$this->assertStringContainsString( $tag, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $output );
+	}
+
+	/**
+	 * Review external-product URLs keep data markers literal even when the block's attributes hold the same marker.
+	 */
+	public function test_review_external_product_url_stays_literal_with_authored_attribute(): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$link = 'https://example.org/buy#otterDynamicLink?type=siteURL';
+		$item = new WC_Product_External();
+		$item->set_name( 'External Widget' );
+		$item->set_product_url( $link );
+		$item->set_regular_price( '10' );
+		$product_id = $item->save();
+
+		$block = array(
+			'blockName'    => 'themeisle-blocks/review',
+			'attrs'        => array(
+				'id'       => 'wp-block-themeisle-blocks-review-external-marker',
+				'product'  => $product_id,
+				'metadata' => array( 'name' => $link ),
+				'pros'     => array( $link ),
+				'features' => array(
+					array(
+						'title'  => 'Quality',
+						'rating' => 8,
+					),
+				),
+			),
+			'innerBlocks'  => array(),
+			'innerHTML'    => '',
+			'innerContent' => array(),
+		);
+		$attrs = ( new \ThemeIsle\OtterPro\Plugins\Review_Woo_Integration() )->apply_woo_data( $block['attrs'] );
+		$html  = ( new \ThemeIsle\GutenbergBlocks\Render\Review_Block() )->render( $attrs );
+
+		$html   = apply_filters( 'render_block', $html, $block, new WP_Block( $block ) );
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		$processor = new WP_HTML_Tag_Processor( $output );
+		$this->assertTrue( $processor->next_tag( 'a' ), $output );
+		$this->assertSame( $link, $processor->get_attribute( 'href' ), $output );
 	}
 
 	/**

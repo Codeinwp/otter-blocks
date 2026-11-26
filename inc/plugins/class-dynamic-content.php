@@ -201,9 +201,9 @@ class Dynamic_Content {
 	 *
 	 * Markers the block's authors did not write are kept literal first; see escape_unauthored_markers().
 	 *
-	 * @param string                                                                                                                                                                            $content  Rendered markup.
-	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
-	 * @param \WP_Block|null                                                                                                                                                                    $instance Block instance; its attributes include bound values.
+	 * @param string                                                                                                                                                                                                  $content  Rendered markup.
+	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string, product?: int|string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                                          $instance Block instance; its attributes include bound values.
 	 * @return string
 	 */
 	public function escape_visitor_block_magic_tags( $content, $block, $instance = null ) {
@@ -214,7 +214,7 @@ class Dynamic_Content {
 		$content = $this->escape_bound_attribute_markers( $content, $block, $instance );
 		$content = $this->escape_unauthored_markers( $content, $block, $instance );
 
-		if ( 'core/term-description' === $block['blockName'] ) {
+		if ( in_array( $block['blockName'], array( 'core/term-description', 'themeisle-blocks/product-meta' ), true ) ) {
 			return $this->escape_comment_magic_tags( $content );
 		}
 
@@ -224,16 +224,23 @@ class Dynamic_Content {
 			'core/query-title' => '/(>)([^<]*)(<)/',
 			'core/post-terms'  => '/(<a\b[^>]*>)([^<]*)(<\/a>)/',
 			'core/term-name'   => '/(>)([^<]*)(<)/',
+			'core/rss'         => '/(<li\b[^>]*>)(.*?)(<\/li>)/is',
 		);
 		if ( 'core/legacy-widget' === $block['blockName'] ) {
 			$widget = isset( $block['attrs']['idBase'] ) ? $block['attrs']['idBase'] : '';
 			if ( isset( $block['attrs']['id'] ) ) {
 				$widget = $block['attrs']['id'];
 			}
-			if ( 'search' === _get_widget_id_base( $widget ) ) {
+			$id_base = _get_widget_id_base( $widget );
+			if ( 'search' === $id_base ) {
 				// A null form filter makes core use its unfiltered fallback markup.
 				$patterns['core/legacy-widget'] = '/(<form\b)(.*?)(<\/form>)/is';
+			} elseif ( 'rss' === $id_base ) {
+				$patterns['core/legacy-widget'] = '/(<li\b[^>]*>)(.*?)(<\/li>)/is';
 			}
+		}
+		if ( 'themeisle-blocks/review' === $block['blockName'] && isset( $block['attrs']['product'] ) && intval( $block['attrs']['product'] ) >= 0 && \ThemeIsle\GutenbergBlocks\Pro::is_pro_installed() && class_exists( 'WooCommerce' ) ) {
+			$patterns['themeisle-blocks/review'] = '/(<div\b[^>]*\bclass="[^"]*\bo-review__footer_buttons\b[^"]*"[^>]*>)(.*?)(<\/div>)/is';
 		}
 		if ( ! isset( $patterns[ $block['blockName'] ] ) ) {
 			return $content;
@@ -253,9 +260,9 @@ class Dynamic_Content {
 	 *
 	 * Only the bound attribute is changed, so the same marker written into another attribute still resolves.
 	 *
-	 * @param string                                                                                                                                                                            $content  Rendered markup.
-	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
-	 * @param \WP_Block|null                                                                                                                                                                    $instance Block instance.
+	 * @param string                                                                                                                                                                                                  $content  Rendered markup.
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, product?: int|string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                                          $instance Block instance.
 	 * @return string
 	 */
 	private function escape_bound_attribute_markers( $content, $block, $instance ) {
@@ -293,12 +300,13 @@ class Dynamic_Content {
 			$escapes[ $placeholder ] = $escape;
 		}
 
-		// The HTML API reads attribute values with line breaks normalized.
-		$value     = str_replace( array( "\r\n", "\r" ), "\n", $value );
-		$processor = new \WP_HTML_Tag_Processor( $content );
+		// WordPress 6.6 returns raw CR/CRLF from get_attribute(), while 6.7+ normalizes to LF.
+		$normalized_value = str_replace( array( "\r\n", "\r" ), "\n", $value );
+		$processor        = new \WP_HTML_Tag_Processor( $content );
 		while ( $processor->next_tag() ) {
-			if ( $value === $processor->get_attribute( $attribute ) ) {
-				$processor->set_attribute( $attribute, strtr( $value, $placeholders ) );
+			$current = $processor->get_attribute( $attribute );
+			if ( is_string( $current ) && str_replace( array( "\r\n", "\r" ), "\n", $current ) === $normalized_value ) {
+				$processor->set_attribute( $attribute, strtr( $normalized_value, $placeholders ) );
 			}
 		}
 
@@ -312,9 +320,9 @@ class Dynamic_Content {
 	 * comments, feeds, or product and API text. A block built at render time, such as a gallery image made from an
 	 * attachment, trusts only its attributes: its markup may hold the stored data it was built from.
 	 *
-	 * @param string                                                                                                                                                                            $content  Rendered markup.
-	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
-	 * @param \WP_Block|null                                                                                                                                                                    $instance Block instance.
+	 * @param string                                                                                                                                                                                                  $content  Rendered markup.
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, product?: int|string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                                          $instance Block instance.
 	 * @return string
 	 */
 	private function escape_unauthored_markers( $content, $block, $instance ) {
@@ -338,9 +346,9 @@ class Dynamic_Content {
 	/**
 	 * Markers written into a block's attributes and, for a block rendered from saved content, its markup.
 	 *
-	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block       Parsed block.
-	 * @param \WP_Block|null                                                                                                                                                                    $instance    Block instance.
-	 * @param bool                                                                                                                                                                              $with_markup Whether the block's saved markup is authored.
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, product?: int|string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block       Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                                          $instance    Block instance.
+	 * @param bool                                                                                                                                                                                                    $with_markup Whether the block's saved markup is authored.
 	 * @return array<string, true> Normalized markers.
 	 */
 	private function authored_markers( $block, $instance, $with_markup ) {
@@ -352,10 +360,13 @@ class Dynamic_Content {
 		};
 
 		if ( isset( $block['attrs'] ) ) {
-			array_walk_recursive( $block['attrs'], $collect );
+			$attrs = $block['attrs'];
+			unset( $attrs['metadata'] );
+			array_walk_recursive( $attrs, $collect );
 		}
 		if ( $instance instanceof \WP_Block ) {
 			$attributes = array_diff_key( $instance->attributes, self::data_bound_attributes( $block ) );
+			unset( $attributes['metadata'] );
 			array_walk_recursive( $attributes, $collect );
 		}
 
@@ -365,8 +376,8 @@ class Dynamic_Content {
 	/**
 	 * Markers in values that block bindings read from a data source into rich text, which core inserts as HTML.
 	 *
-	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
-	 * @param \WP_Block|null                                                                                                                                                                    $instance Block instance.
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, product?: int|string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                                          $instance Block instance.
 	 * @return array<string, true> Normalized markers.
 	 */
 	private function bound_text_markers( $block, $instance ) {
@@ -400,7 +411,7 @@ class Dynamic_Content {
 	/**
 	 * Attributes whose value a binding reads from a data source rather than the post's own pattern overrides.
 	 *
-	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block Parsed block.
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, product?: int|string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block Parsed block.
 	 * @return array<string, true>
 	 */
 	private static function data_bound_attributes( $block ) {
