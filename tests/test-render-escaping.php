@@ -592,6 +592,107 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Page List renders: standalone, in Navigation inner blocks, and in a saved Navigation menu.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function page_list_renders(): array {
+		return array(
+			'standalone'      => array( 'standalone' ),
+			'navigation'      => array( 'navigation' ),
+			'navigation menu' => array( 'navigation menu' ),
+		);
+	}
+
+	/**
+	 * @dataProvider page_list_renders
+	 */
+	public function test_page_list_title_markers_stay_literal( string $render ): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag    = '{otterDynamic?type=loggedInUserEmail}';
+		$parent = $this->factory()->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => $tag,
+			)
+		);
+		$this->factory()->post->create(
+			array(
+				'post_type'   => 'page',
+				'post_title'  => 'Child',
+				'post_parent' => $parent,
+			)
+		);
+
+		$page_list = '<!-- wp:page-list /-->';
+		if ( 'standalone' === $render ) {
+			$markup = $page_list;
+		} elseif ( 'navigation' === $render ) {
+			$markup = '<!-- wp:navigation -->' . $page_list . '<!-- /wp:navigation -->';
+		} else {
+			$menu   = $this->factory()->post->create(
+				array(
+					'post_type'    => 'wp_navigation',
+					'post_status'  => 'publish',
+					'post_content' => $page_list,
+				)
+			);
+			$markup = '<!-- wp:navigation {"ref":' . $menu . '} /-->';
+		}
+
+		$output = do_blocks( $markup );
+
+		$this->assertStringContainsString( 'Child', $output );
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+		$this->assertStringContainsString( $tag, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $output );
+	}
+
+	/**
+	 * A block printing data beside an authored marker: rendered from content, or directly with the same or another token.
+	 *
+	 * @return array<string, array{0: bool, 1: string, 2: string}>
+	 */
+	public function authored_and_data_markers(): array {
+		$email = '{otterDynamic?type=loggedInUserEmail}';
+
+		return array(
+			'rendered from content, same token' => array( true, $email, 'viewer@example.org' ),
+			'rendered directly, other token'    => array( false, '{otterDynamic?type=siteTitle}', 'Test Blog' ),
+		);
+	}
+
+	/**
+	 * @dataProvider authored_and_data_markers
+	 */
+	public function test_only_authored_markers_resolve_beside_printed_data( bool $from_content, string $authored, string $resolved ): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$data = '{otterDynamic?type=loggedInUserEmail}';
+		register_block_type(
+			'otter-test/marker-echo',
+			array(
+				'attributes'      => array( 'text' => array( 'type' => 'string' ) ),
+				'render_callback' => static function ( array $attributes ) use ( $data ): string {
+					return '<p data-authored="' . esc_attr( $attributes['text'] ) . '">' . esc_html( $data ) . '</p>';
+				},
+			)
+		);
+
+		try {
+			$markup = '<!-- wp:otter-test/marker-echo ' . wp_json_encode( array( 'text' => $authored ) ) . ' /-->';
+			$output = $from_content ? do_blocks( $markup ) : ( new WP_Block( parse_blocks( $markup )[0] ) )->render();
+		} finally {
+			unregister_block_type( 'otter-test/marker-echo' );
+		}
+
+		$processor = new WP_HTML_Tag_Processor( $output );
+		$this->assertTrue( $processor->next_tag( 'p' ), $output );
+		$this->assertSame( $resolved, $processor->get_attribute( 'data-authored' ) );
+		$this->assertSame( $data, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ) );
+	}
+
+	/**
 	 * The Stripe field block must escape id/name/option-name block attributes.
 	 */
 	public function test_form_stripe_field_attributes_are_escaped() {
