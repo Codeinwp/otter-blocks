@@ -104,6 +104,36 @@ class Stripe_API {
 	}
 
 	/**
+	 * Keep dynamic markers literal in the merchant-entered product fields that blocks print.
+	 *
+	 * @param \Stripe\Product $product Retrieved product.
+	 * @return \Stripe\Product
+	 */
+	private function escape_product_markers( $product ) {
+		$dynamic_content = Dynamic_Content::instance();
+		$escaped         = array();
+
+		foreach ( array( 'name', 'description' ) as $field ) {
+			if ( is_string( $product[ $field ] ) ) {
+				$escaped[ $field ] = $dynamic_content->escape_comment_magic_tags( $product[ $field ] );
+			}
+		}
+
+		if ( is_array( $product['images'] ) ) {
+			$escaped['images'] = array_map( array( $dynamic_content, 'escape_comment_magic_tags' ), $product['images'] );
+		}
+
+		// StripeObject rejects an empty string, so write back only the values the escape changed.
+		foreach ( $escaped as $field => $value ) {
+			if ( $value !== $product[ $field ] ) {
+				$product[ $field ] = $value;
+			}
+		}
+
+		return $product;
+	}
+
+	/**
 	 * Make Stripe Request
 	 *
 	 * @param string       $path Request path.
@@ -125,13 +155,7 @@ class Stripe_API {
 					$response = $this->stripe->products->all( $args );
 					break;
 				case 'product':
-					$response = $this->stripe->products->retrieve( $args );
-					// Merchant-entered text is printed by blocks, so keep dynamic markers in it literal.
-					foreach ( array( 'name', 'description' ) as $field ) {
-						if ( is_string( $response[ $field ] ) ) {
-							$response[ $field ] = Dynamic_Content::instance()->escape_comment_magic_tags( $response[ $field ] );
-						}
-					}
+					$response = $this->escape_product_markers( $this->stripe->products->retrieve( $args ) );
 					break;
 				case 'prices':
 					$response = $this->stripe->prices->all( $args );

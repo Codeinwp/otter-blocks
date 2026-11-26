@@ -330,43 +330,47 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Blocks that print a Stripe product's name and description.
+	 * Blocks that print a Stripe product, with a marker or an empty description.
 	 *
-	 * @return array<string, array{0: string}>
+	 * @return array<string, array{0: string, 1: bool}>
 	 */
 	public function stripe_product_blocks(): array {
 		return array(
-			'stripe checkout' => array( 'stripe-checkout' ),
-			'stripe field'    => array( 'form-stripe-field' ),
+			'stripe checkout'                    => array( 'stripe-checkout', true ),
+			'stripe field'                       => array( 'form-stripe-field', true ),
+			'stripe checkout, empty description' => array( 'stripe-checkout', false ),
+			'stripe field, empty description'    => array( 'form-stripe-field', false ),
 		);
 	}
 
 	/**
 	 * @dataProvider stripe_product_blocks
 	 */
-	public function test_stripe_product_markers_stay_literal( string $block_name ): void {
+	public function test_stripe_product_markers_stay_literal( string $block_name, bool $has_description ): void {
 		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
 
 		if ( ! defined( 'OTTER_PRO_BASEFILE' ) ) {
 			require_once dirname( __DIR__ ) . '/plugins/otter-pro/otter-pro.php';
 		}
 
-		$tag     = '{otterDynamic?type=loggedInUserEmail}';
-		$license = str_replace( '-', '_', strtolower( trim( basename( dirname( OTTER_PRO_BASEFILE ) ) ) ) ) . '_license_data';
+		$tag         = '{otterDynamic?type=loggedInUserEmail}';
+		$description = $has_description ? $tag : '';
+		$image       = get_rest_url( null, 'otter/v1' ) . '/dynamic/?type=loggedInUser';
+		$license     = str_replace( '-', '_', strtolower( trim( basename( dirname( OTTER_PRO_BASEFILE ) ) ) ) ) . '_license_data';
 		$api_key = get_option( 'themeisle_stripe_api_key' );
 		update_option( 'themeisle_stripe_api_key', 'sk_test' );
 		update_option( $license, (object) array( 'license' => 'valid' ) );
 		\Stripe\ApiRequestor::setHttpClient(
-			new class( $tag ) extends \ThemeIsle\GutenbergBlocks\Tests\StripeHttpClientMock {
+			new class( $tag, $description, $image ) extends \ThemeIsle\GutenbergBlocks\Tests\StripeHttpClientMock {
 				/**
-				 * Marker used as the product name and description.
+				 * Product name, description and image URL.
 				 *
-				 * @var string
+				 * @var array{0: string, 1: string, 2: string}
 				 */
-				private $tag;
+				private $product;
 
-				public function __construct( string $tag ) {
-					$this->tag = $tag;
+				public function __construct( string $name, string $description, string $image ) {
+					$this->product = array( $name, $description, $image );
 				}
 
 				public function request( $method, $absUrl, $headers, $params, $hasFile ) {
@@ -374,9 +378,9 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 						$product = array(
 							'id'          => 'prod_1',
 							'object'      => 'product',
-							'name'        => $this->tag,
-							'description' => $this->tag,
-							'images'      => array( 'https://example.org/product.jpg' ),
+							'name'        => $this->product[0],
+							'description' => $this->product[1],
+							'images'      => array( $this->product[2] ),
 						);
 
 						return array( wp_json_encode( $product ), 200, null );
@@ -415,7 +419,8 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 
 		$processor = new WP_HTML_Tag_Processor( $output );
 		$this->assertTrue( $processor->next_tag( 'img' ), $output );
-		$this->assertSame( $tag, $processor->get_attribute( 'alt' ) );
+		$this->assertSame( $image, $processor->get_attribute( 'src' ) );
+		$this->assertSame( 'stripe-checkout' === $block_name ? $tag : $description, $processor->get_attribute( 'alt' ) );
 		$this->assertStringNotContainsString( 'viewer@example.org', $output );
 		$this->assertStringContainsString( '<h3>' . esc_html( Dynamic_Content::instance()->escape_comment_magic_tags( $tag ) ) . '</h3>', $output );
 	}
@@ -447,6 +452,54 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 		delete_transient( 'otter_plugin_card_' . sanitize_key( $slug ) );
 
 		$this->assertStringNotContainsString( '<script>alert(1)</script>', $html );
+	}
+
+	/**
+	 * Plugin Card text written by the plugin's author keeps dynamic markers literal.
+	 */
+	public function test_plugin_card_keeps_api_markers_literal(): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$slug = 'otter-blocks';
+		$tag  = '{otterDynamic?type=loggedInUserEmail}';
+
+		$results                    = new stdClass();
+		$results->name              = $tag;
+		$results->author            = '<a href="https://profiles.wordpress.org/otter/">' . $tag . '</a>';
+		$results->version           = '1.0';
+		$results->rating            = 90;
+		$results->num_ratings       = 10;
+		$results->active_installs   = 1000;
+		$results->requires          = '6.0';
+		$results->tested            = '6.4';
+		$results->homepage          = 'https://example.com';
+		$results->download_link     = 'https://example.com/plugin.zip';
+		$results->short_description = $tag;
+		$results->icons             = array( 'default' => 'https://example.com/icon.png' );
+
+		set_transient( 'otter_plugin_card_' . sanitize_key( $slug ), $results, HOUR_IN_SECONDS );
+
+		$block = array(
+			'blockName'    => 'themeisle-blocks/plugin-cards',
+			'attrs'        => array( 'slug' => $slug ),
+			'innerBlocks'  => array(),
+			'innerHTML'    => '',
+			'innerContent' => array(),
+		);
+		$html  = ( new Plugin_Card_Block() )->render( $block['attrs'] );
+
+		delete_transient( 'otter_plugin_card_' . sanitize_key( $slug ) );
+
+		// The block's own render pass, then its parent's.
+		$html   = apply_filters( 'render_block', $html, $block, new WP_Block( $block ) );
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		$processor = new WP_HTML_Tag_Processor( $output );
+		$this->assertTrue( $processor->next_tag( 'img' ), $output );
+		$this->assertSame( $tag, $processor->get_attribute( 'alt' ) );
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+		$this->assertSame( 3, substr_count( html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $tag ), $output );
 	}
 
 	/**
