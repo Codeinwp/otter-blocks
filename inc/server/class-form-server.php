@@ -84,6 +84,7 @@ class Form_Server {
 		 * Register the REST API endpoints.
 		 */
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_filter( 'render_block_themeisle-blocks/form', array( $this, 'store_rendered_form' ), 10, 2 );
 
 		/**
 		 * Register email providers that can be used to send emails or subscribe to a service.
@@ -293,13 +294,11 @@ class Form_Server {
 			$form_data = self::replace_corrupted_form_data( $request, $res );
 		}
 
-		$form_options = self::get_submitted_form_settings( $form_data );
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_form_option_id() );
 
-		if ( null === $form_options ) {
-			$form_options = new Form_Settings_Data( array() );
-			if ( ! $form_data->has_error() ) {
-				$form_data->set_error( Form_Data_Response::ERROR_FORM_ID_INVALID );
-			}
+		// Only a stored form is known. The editor or the first render of the form stores it (see store_rendered_form).
+		if ( empty( $form_options->get_meta() ) && ! $form_data->has_error() ) {
+			$form_data->set_error( Form_Data_Response::ERROR_FORM_ID_INVALID );
 		}
 
 		$form_data->set_form_options( $form_options );
@@ -410,138 +409,57 @@ class Form_Server {
 	}
 
 	/**
-	 * Get the settings of the submitted form from the server.
+	 * Store the settings of a rendered Form block that the site does not know yet.
 	 *
-	 * The stored form options are used first. The editor stores them when the post is saved.
-	 * A form that has no stored options (e.g. imported content) is looked up in the published
-	 * content that the site can render. The Captcha block of that form is enforced.
+	 * The editor stores the form settings only for users who can manage options. Forms from
+	 * other sources (e.g. imported content or theme templates) are stored when they render.
+	 * A rendered captcha is always stored, so the submission check enforces it.
 	 *
-	 * @param Form_Data_Request $form_data The form request data.
-	 * @return Form_Settings_Data|null The form settings, or null when the form is unknown.
+	 * @param string               $block_content The rendered block.
+	 * @param array<string, mixed> $block The parsed block.
+	 * @return string The rendered block, unchanged.
 	 * @since 3.2.13
 	 */
-	private static function get_submitted_form_settings( $form_data ) {
-		$option_name = $form_data->get_form_option_id();
+	public function store_rendered_form( $block_content, $block ) {
+		$option_name = isset( $block['attrs']['optionName'] ) && is_string( $block['attrs']['optionName'] ) ? sanitize_text_field( $block['attrs']['optionName'] ) : '';
 
-		if ( ! is_string( $option_name ) || '' === $option_name ) {
-			return null;
+		if ( '' === $option_name ) {
+			return $block_content;
 		}
 
-		$settings = Form_Settings_Data::get_form_setting_from_wordpress_options( $option_name );
+		$has_captcha = preg_match( '/data-captcha-provider="(\w+)"/', $block_content, $captcha ) || ! empty( $block['attrs']['hasCaptcha'] );
+		$forms       = get_option( 'themeisle_blocks_form_emails' );
+		$forms       = is_array( $forms ) ? $forms : array();
+		$key         = null;
 
-		// A stored form option always has its `form` key in the meta.
-		if ( ! empty( $settings->get_meta() ) ) {
-			return $settings;
-		}
-
-		$forms = self::find_published_form_blocks( $option_name );
-
-		if ( empty( $forms ) ) {
-			return null;
-		}
-
-		// The same form can be in more than one place. A captcha in one of them is enforced.
-		foreach ( $forms as $form ) {
-			$captchas = self::find_blocks(
-				$form['innerBlocks'],
-				function ( $block ) {
-					return 'themeisle-blocks/form-captcha' === $block['blockName'];
-				}
-			);
-
-			if ( ! empty( $captchas ) ) {
-				return $settings->set_captcha( true )->set_captcha_provider( isset( $captchas[0]['attrs']['provider'] ) ? $captchas[0]['attrs']['provider'] : 'recaptcha' );
-			}
-
-			if ( ! empty( $form['attrs']['hasCaptcha'] ) ) {
-				return $settings->set_captcha( true )->set_captcha_provider( 'recaptcha' );
+		foreach ( $forms as $index => $form ) {
+			if ( isset( $form['form'] ) && $form['form'] === $option_name ) {
+				$key = $index;
+				break;
 			}
 		}
 
-		return $settings;
-	}
-
-	/**
-	 * Find the Form blocks with the given option name in the published content.
-	 *
-	 * The content is: published posts of any type (this includes synced patterns and
-	 * saved templates), the block templates and template parts of the theme, the block
-	 * widgets, and the registered patterns that this content references.
-	 *
-	 * @param string $option_name The form option name.
-	 * @return array<int, array<string, mixed>> The Form blocks.
-	 */
-	private static function find_published_form_blocks( $option_name ) {
-		global $wpdb;
-
-		// A search in the post content. No WP API can match a block attribute in all post types.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$contents = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT post_content FROM {$wpdb->posts} WHERE post_status = 'publish' AND post_content LIKE %s",
-				'%' . $wpdb->esc_like( '"optionName":"' . $option_name . '"' ) . '%'
-			)
-		);
-
-		foreach ( array( 'wp_template', 'wp_template_part' ) as $template_type ) {
-			foreach ( get_block_templates( array(), $template_type ) as $template ) {
-				$contents[] = (string) $template->content;
-			}
+		if ( null !== $key && ! $has_captcha ) {
+			return $block_content;
 		}
 
-		foreach ( (array) get_option( 'widget_block', array() ) as $widget ) {
-			if ( is_array( $widget ) && isset( $widget['content'] ) && is_string( $widget['content'] ) ) {
-				$contents[] = $widget['content'];
-			}
+		$form = null === $key ? array( 'form' => $option_name ) : $forms[ $key ];
+
+		if ( $has_captcha ) {
+			$form['hasCaptcha']      = true;
+			$form['captchaProvider'] = isset( $captcha[1] ) ? $captcha[1] : 'recaptcha';
 		}
 
-		$is_pattern = function ( $block ) {
-			return 'core/pattern' === $block['blockName'];
-		};
-		$is_form    = function ( $block ) use ( $option_name ) {
-			return 'themeisle-blocks/form' === $block['blockName'] && isset( $block['attrs']['optionName'] ) && $option_name === $block['attrs']['optionName'];
-		};
-
-		$forms = array();
-
-		foreach ( $contents as $content ) {
-			$blocks = parse_blocks( $content );
-
-			foreach ( self::find_blocks( $blocks, $is_pattern ) as $pattern ) {
-				$registered = isset( $pattern['attrs']['slug'] ) ? \WP_Block_Patterns_Registry::get_instance()->get_registered( $pattern['attrs']['slug'] ) : null;
-
-				if ( is_array( $registered ) && isset( $registered['content'] ) ) {
-					$blocks = array_merge( $blocks, parse_blocks( $registered['content'] ) );
-				}
-			}
-
-			$forms = array_merge( $forms, self::find_blocks( $blocks, $is_form ) );
+		if ( null === $key ) {
+			$forms[] = $form;
+		} else {
+			$forms[ $key ] = $form;
 		}
 
-		return $forms;
-	}
+		// No lock: if two renders race, a lost entry is stored again on the next render.
+		update_option( 'themeisle_blocks_form_emails', $forms );
 
-	/**
-	 * Find all the blocks, at any depth, that match the callback.
-	 *
-	 * @param array<int, array<string, mixed>>     $blocks The parsed blocks.
-	 * @param callable(array<string, mixed>): bool $is_match The match callback.
-	 * @return array<int, array<string, mixed>> The matching blocks.
-	 */
-	private static function find_blocks( $blocks, $is_match ) {
-		$found = array();
-
-		foreach ( $blocks as $block ) {
-			if ( $is_match( $block ) ) {
-				$found[] = $block;
-			}
-
-			if ( ! empty( $block['innerBlocks'] ) ) {
-				$found = array_merge( $found, self::find_blocks( $block['innerBlocks'], $is_match ) );
-			}
-		}
-
-		return $found;
+		return $block_content;
 	}
 
 	/**

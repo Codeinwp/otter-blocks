@@ -43,13 +43,6 @@ class Test_Form_Server extends WP_UnitTestCase {
 	private $mail_filter = null;
 
 	/**
-	 * The `get_block_templates` filters added by the test.
-	 *
-	 * @var callable[]
-	 */
-	private $template_filters = array();
-
-	/**
 	 * @var callable|null
 	 */
 	private $http_filter = null;
@@ -106,11 +99,6 @@ class Test_Form_Server extends WP_UnitTestCase {
 	 * Tear down test environment.
 	 */
 	public function tear_down() {
-		foreach ( $this->template_filters as $filter ) {
-			remove_filter( 'get_block_templates', $filter, 10 );
-		}
-		$this->template_filters = array();
-
 		if ( null !== $this->mail_filter ) {
 			remove_filter( 'pre_wp_mail', $this->mail_filter );
 		}
@@ -1503,45 +1491,14 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure the form option must be in the published content when it has no stored settings.
+	 * Ensure a rendered form that has no stored settings (e.g. imported content) can be submitted.
 	 */
-	public function test_frontend_submission_rejects_unstored_form_option_not_in_post() {
+	public function test_frontend_submission_accepts_rendered_form_without_stored_settings() {
 		$this->mock_mail();
-		$post_id = $this->create_post_with_form( 'other_form' );
+		do_blocks( $this->get_form_markup( 'imported_form' ) );
 
 		$response = $this->form_server->frontend(
-			$this->get_frontend_request(
-				array(
-					'payload' => array(
-						'formOption' => 'imported_form',
-						'postId'     => $post_id,
-					),
-				)
-			)
-		);
-		$data     = $response->get_data();
-
-		$this->assertFalse( $data['success'] );
-		$this->assertSame( Form_Data_Response::ERROR_FORM_ID_INVALID, $data['code'] );
-		$this->assertCount( 0, $this->get_form_records() );
-	}
-
-	/**
-	 * Ensure a form from content without stored settings (e.g. imported content) can still be submitted.
-	 */
-	public function test_frontend_submission_accepts_unstored_form_option_found_in_post() {
-		$this->mock_mail();
-		$post_id = $this->create_post_with_form( 'imported_form' );
-
-		$response = $this->form_server->frontend(
-			$this->get_frontend_request(
-				array(
-					'payload' => array(
-						'formOption' => 'imported_form',
-						'postId'     => $post_id,
-					),
-				)
-			)
+			$this->get_frontend_request( array( 'payload' => array( 'formOption' => 'imported_form' ) ) )
 		);
 		$data     = $response->get_data();
 
@@ -1550,154 +1507,53 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Ensure the form block in a post is not used when the post is not published.
+	 * Ensure the Captcha block of a rendered form is enforced.
 	 */
-	public function test_frontend_submission_rejects_unstored_form_option_in_draft_post() {
+	public function test_frontend_submission_requires_captcha_of_rendered_form() {
 		$this->mock_mail();
-		$post_id = $this->create_post_with_form( 'imported_form', '', 'draft' );
+		do_blocks( $this->get_form_markup( 'imported_form', '<!-- wp:themeisle-blocks/form-captcha {"provider":"turnstile"} /-->' ) );
 
-		$response = $this->form_server->frontend(
-			$this->get_frontend_request(
-				array(
-					'payload' => array(
-						'formOption' => 'imported_form',
-						'postId'     => $post_id,
-					),
-				)
-			)
-		);
-		$data     = $response->get_data();
-
-		$this->assertFalse( $data['success'] );
-		$this->assertSame( Form_Data_Response::ERROR_FORM_ID_INVALID, $data['code'] );
+		$this->assert_captcha_is_required( 'imported_form', 'turnstile' );
 	}
 
 	/**
-	 * Ensure a Captcha block in the post is enforced when the form has no stored settings.
+	 * Ensure the legacy form-level captcha attribute of a rendered form is enforced.
 	 */
-	public function test_frontend_submission_requires_captcha_from_post_form_block() {
+	public function test_frontend_submission_requires_legacy_captcha_attribute_of_rendered_form() {
 		$this->mock_mail();
-		$post_id = $this->create_post_with_form( 'imported_form', '<!-- wp:themeisle-blocks/form-captcha {"provider":"turnstile"} /-->' );
+		do_blocks( $this->get_form_markup( 'imported_form', '', array( 'hasCaptcha' => true ) ) );
 
-		$response = $this->form_server->frontend(
-			$this->get_frontend_request(
-				array(
-					'payload' => array(
-						'formOption' => 'imported_form',
-						'postId'     => $post_id,
-					),
-				)
-			)
-		);
-		$data     = $response->get_data();
-
-		$this->assertFalse( $data['success'] );
-		$this->assertSame( Form_Data_Response::ERROR_MISSING_CAPTCHA, $data['code'] );
-		$this->assertCount( 0, $this->get_form_records() );
+		$this->assert_captcha_is_required( 'imported_form', 'recaptcha' );
 	}
 
 	/**
-	 * Ensure the legacy form-level captcha attribute in the post is enforced.
+	 * Ensure a rendered Captcha block is enforced when the stored settings have no captcha.
 	 */
-	public function test_frontend_submission_requires_legacy_captcha_attribute_from_post_form_block() {
+	public function test_frontend_submission_requires_captcha_of_rendered_form_with_stored_settings() {
 		$this->mock_mail();
-		$post_id = $this->create_post_with_form( 'imported_form', '', 'publish', array( 'hasCaptcha' => true ) );
+		do_blocks( $this->get_form_markup( 'contact_form', '<!-- wp:themeisle-blocks/form-captcha {"provider":"turnstile"} /-->' ) );
 
-		$response = $this->form_server->frontend(
-			$this->get_frontend_request(
-				array(
-					'payload' => array(
-						'formOption' => 'imported_form',
-						'postId'     => $post_id,
-					),
-				)
-			)
-		);
-		$data     = $response->get_data();
-
-		$this->assertFalse( $data['success'] );
-		$this->assertSame( Form_Data_Response::ERROR_MISSING_CAPTCHA, $data['code'] );
+		$this->assert_captcha_is_required( 'contact_form', 'turnstile' );
+		$this->assertSame( 'https://example.com/thanks', Form_Settings_Data::get_form_setting_from_wordpress_options( 'contact_form' )->get_redirect_link() );
 	}
 
 	/**
-	 * Ensure a form in a synced pattern can be submitted from any page.
+	 * Ensure a rendered form without an option name stores nothing.
 	 */
-	public function test_frontend_submission_accepts_unstored_form_option_in_synced_pattern() {
-		$this->mock_mail();
-		self::factory()->post->create(
-			array(
-				'post_type'    => 'wp_block',
-				'post_status'  => 'publish',
-				'post_content' => $this->get_form_markup( 'pattern_form' ),
-			)
-		);
+	public function test_rendered_form_without_option_name_stores_nothing() {
+		do_blocks( $this->get_form_markup( '', '<!-- wp:themeisle-blocks/form-captcha /-->' ) );
 
-		$this->assert_unstored_form_is_accepted( 'pattern_form' );
+		$this->assertSame( array( $this->get_form_option() ), get_option( 'themeisle_blocks_form_emails' ) );
 	}
 
 	/**
-	 * Ensure a form in a theme template part can be submitted.
+	 * Ensure a rendered form without a captcha does not remove the stored captcha.
 	 */
-	public function test_frontend_submission_accepts_unstored_form_option_in_template_part() {
-		$this->mock_mail();
-		$this->add_template_part( $this->get_form_markup( 'template_part_form' ) );
+	public function test_rendered_form_without_captcha_keeps_stored_captcha() {
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+		do_blocks( $this->get_form_markup( 'contact_form' ) );
 
-		$this->assert_unstored_form_is_accepted( 'template_part_form' );
-	}
-
-	/**
-	 * Ensure a form in a block widget can be submitted.
-	 */
-	public function test_frontend_submission_accepts_unstored_form_option_in_block_widget() {
-		$this->mock_mail();
-		update_option(
-			'widget_block',
-			array(
-				2              => array( 'content' => $this->get_form_markup( 'widget_form' ) ),
-				'_multiwidget' => 1,
-			)
-		);
-
-		$this->assert_unstored_form_is_accepted( 'widget_form' );
-	}
-
-	/**
-	 * Ensure a form in a registered pattern that a template part references can be submitted.
-	 */
-	public function test_frontend_submission_accepts_unstored_form_option_in_referenced_pattern() {
-		$this->mock_mail();
-		register_block_pattern(
-			'otter-tests/form',
-			array(
-				'title'   => 'Form',
-				'content' => $this->get_form_markup( 'registered_pattern_form' ),
-			)
-		);
-		$this->add_template_part( '<!-- wp:pattern {"slug":"otter-tests/form"} /-->' );
-
-		try {
-			$this->assert_unstored_form_is_accepted( 'registered_pattern_form' );
-		} finally {
-			unregister_block_pattern( 'otter-tests/form' );
-		}
-	}
-
-	/**
-	 * Ensure the captcha is required when one of the copies of the form has a Captcha block.
-	 */
-	public function test_frontend_submission_requires_captcha_from_any_copy_of_the_form() {
-		$this->mock_mail();
-		$this->create_post_with_form( 'imported_form' );
-		$this->create_post_with_form( 'imported_form', '<!-- wp:themeisle-blocks/form-captcha {"provider":"turnstile"} /-->' );
-
-		$response = $this->form_server->frontend(
-			$this->get_frontend_request( array( 'payload' => array( 'formOption' => 'imported_form' ) ) )
-		);
-		$data     = $response->get_data();
-
-		$this->assertFalse( $data['success'] );
-		$this->assertSame( Form_Data_Response::ERROR_MISSING_CAPTCHA, $data['code'] );
-		$this->assertCount( 0, $this->get_form_records() );
+		$this->assertTrue( Form_Settings_Data::get_form_setting_from_wordpress_options( 'contact_form' )->form_has_captcha() );
 	}
 
 	/**
@@ -2865,24 +2721,6 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Create a post that contains a Form block, nested in a group block.
-	 *
-	 * @param string $option_name The form option name of the block.
-	 * @param string $inner The inner blocks markup of the form.
-	 * @param string $status The post status.
-	 * @param array  $attrs Extra form block attributes.
-	 * @return int The post ID.
-	 */
-	private function create_post_with_form( $option_name, $inner = '', $status = 'publish', $attrs = array() ) {
-		return self::factory()->post->create(
-			array(
-				'post_status'  => $status,
-				'post_content' => $this->get_form_markup( $option_name, $inner, $attrs ),
-			)
-		);
-	}
-
-	/**
 	 * Get the markup of a Form block, nested in a group block.
 	 *
 	 * @param string $option_name The form option name of the block.
@@ -2905,38 +2743,21 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Add a theme template part with the given content, as if it came from a theme file.
-	 *
-	 * @param string $content The template part content.
-	 */
-	private function add_template_part( $content ) {
-		$filter = function ( $templates, $query, $template_type ) use ( $content ) {
-			if ( 'wp_template_part' === $template_type ) {
-				$template          = new WP_Block_Template();
-				$template->slug    = 'otter-tests-form';
-				$template->theme   = get_stylesheet();
-				$template->content = $content;
-				$templates[]       = $template;
-			}
-			return $templates;
-		};
-		add_filter( 'get_block_templates', $filter, 10, 3 );
-		$this->template_filters[] = $filter;
-	}
-
-	/**
-	 * Submit a form that has no stored settings and check that it is accepted.
+	 * Submit a form without a captcha token and check that it is rejected.
 	 *
 	 * @param string $option_name The form option name.
+	 * @param string $provider The expected stored captcha provider.
 	 */
-	private function assert_unstored_form_is_accepted( $option_name ) {
+	private function assert_captcha_is_required( $option_name, $provider ) {
 		$response = $this->form_server->frontend(
 			$this->get_frontend_request( array( 'payload' => array( 'formOption' => $option_name ) ) )
 		);
 		$data     = $response->get_data();
 
-		$this->assertTrue( $data['success'] );
-		$this->assertCount( 1, $this->get_form_records() );
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_MISSING_CAPTCHA, $data['code'] );
+		$this->assertSame( $provider, Form_Settings_Data::get_form_setting_from_wordpress_options( $option_name )->get_captcha_provider() );
+		$this->assertCount( 0, $this->get_form_records() );
 	}
 
 	/**
