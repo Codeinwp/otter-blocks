@@ -68,6 +68,27 @@ class AI_Usage {
 	}
 
 	/**
+	 * Apply the payload caps and count the request quota before a provider call.
+	 *
+	 * Every server path that sends a generation request to a provider calls this first.
+	 *
+	 * @param array<string, mixed> $payload The OpenAI-format payload.
+	 * @param string               $bucket  The quota bucket (for example a user or a form).
+	 * @param int                  $limit   Requests allowed per window. 0 or less disables the limit.
+	 * @return array<string, mixed>|\WP_Error The capped payload, or a 413 or 429 error.
+	 */
+	public static function guard_request( array $payload, $bucket, $limit ) {
+		$payload = self::limit_payload( $payload );
+		if ( is_wp_error( $payload ) ) {
+			return $payload;
+		}
+
+		$quota = self::consume_quota( $bucket, $limit );
+
+		return is_wp_error( $quota ) ? $quota : $payload;
+	}
+
+	/**
 	 * Count one generation request against a bucket and reject it above the limit.
 	 *
 	 * The counter is one option row per bucket and window. The insert and the
@@ -85,15 +106,16 @@ class AI_Usage {
 			return true;
 		}
 
-		$window = '_' . (int) floor( time() / self::QUOTA_WINDOW );
-		$option = 'otter_ai_quota_' . md5( $bucket ) . $window;
+		$window = (int) floor( time() / self::QUOTA_WINDOW );
+		$option = 'otter_ai_quota_' . md5( $bucket ) . '_' . $window;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		$created = $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, '0', 'no')", $option ) );
 
 		if ( $created ) {
-			// A new window started: remove the counters of earlier windows, for all buckets.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name NOT LIKE %s", $wpdb->esc_like( 'otter_ai_quota_' ) . '%', '%' . $wpdb->esc_like( $window ) ) );
+			// A new window started: remove the counters older than the previous window, for all buckets.
+			// The previous and next windows stay, so requests that run across the boundary keep their counters.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND CAST( SUBSTRING_INDEX( option_name, '_', -1 ) AS UNSIGNED ) < %d", $wpdb->esc_like( 'otter_ai_quota_' ) . '%', $window - 1 ) );
 		}
 
 		$reserved = $wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->options} SET option_value = option_value + 1 WHERE option_name = %s AND option_value < %d", $option, $limit ) );

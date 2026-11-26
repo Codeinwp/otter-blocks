@@ -131,6 +131,29 @@ class Prompt_Server {
 			return new \WP_REST_Response( array( 'message' => __( 'API key saved.', 'otter-blocks' ) ), 200 );
 		}
 
+		$payload = $this->guard_user_request(
+			array(
+				'model'    => 'gpt-6-luna',
+				'messages' => array(
+					array(
+						'role'    => 'system',
+						'content' => 'You are a helpful assistant.',
+					),
+					array(
+						'role'    => 'user',
+						'content' => 'Hello!',
+					),
+				),
+			)
+		);
+		if ( is_wp_error( $payload ) ) {
+			return $payload;
+		}
+
+		// Current OpenAI models accept only `max_completion_tokens`.
+		$payload['max_completion_tokens'] = $payload['max_tokens'];
+		unset( $payload['max_tokens'] );
+
 		$response = wp_remote_post(
 			self::BASE_URL,
 			array(
@@ -139,21 +162,7 @@ class Prompt_Server {
 					'Authorization' => 'Bearer ' . $api_key,
 					'Content-Type'  => 'application/json',
 				),
-				'body'    => wp_json_encode(
-					array(
-						'model'    => 'gpt-6-luna',
-						'messages' => array(
-							array(
-								'role'    => 'system',
-								'content' => 'You are a helpful assistant.',
-							),
-							array(
-								'role'    => 'user',
-								'content' => 'Hello!',
-							),
-						),
-					)
-				),
+				'body'    => wp_json_encode( $payload ),
 				'timeout' => 2 * MINUTE_IN_SECONDS,
 			)
 		);
@@ -211,21 +220,9 @@ class Prompt_Server {
 			ARRAY_FILTER_USE_KEY
 		);
 
-		$body = $this->prepare_payload( $body );
+		$body = $this->guard_user_request( $this->prepare_payload( $body ) );
 		if ( is_wp_error( $body ) ) {
 			return $body;
-		}
-
-		/**
-		 * Filters how many generation requests a user may send in a 10-minute window. Return 0 to disable.
-		 *
-		 * @param int $limit   Request limit.
-		 * @param int $user_id Current user ID.
-		 */
-		$limit = (int) apply_filters( 'otter_ai_generate_rate_limit', 120, get_current_user_id() );
-		$quota = AI_Usage::consume_quota( 'user_' . get_current_user_id(), $limit );
-		if ( is_wp_error( $quota ) ) {
-			return $quota;
 		}
 
 		$backend = AI_Backend_Resolver::resolve();
@@ -265,10 +262,28 @@ class Prompt_Server {
 	}
 
 	/**
-	 * Keep only the request fields the editor sends, with a known model and capped sizes.
+	 * Apply the shared payload caps and the current user's request quota.
+	 *
+	 * @param array<string, mixed> $payload The OpenAI-format payload.
+	 * @return array<string, mixed>|\WP_Error
+	 */
+	private function guard_user_request( $payload ) {
+		/**
+		 * Filters how many generation requests a user may send in a 10-minute window. Return 0 to disable.
+		 *
+		 * @param int $limit   Request limit.
+		 * @param int $user_id Current user ID.
+		 */
+		$limit = (int) apply_filters( 'otter_ai_generate_rate_limit', 120, get_current_user_id() );
+
+		return AI_Usage::guard_request( $payload, 'user_' . get_current_user_id(), $limit );
+	}
+
+	/**
+	 * Keep only the request fields the editor sends, with a known model.
 	 *
 	 * @param array<string, mixed> $body The decoded request body.
-	 * @return array<string, mixed>|\WP_Error
+	 * @return array<string, mixed>
 	 */
 	private function prepare_payload( $body ) {
 		$payload = array_intersect_key(
@@ -303,7 +318,7 @@ class Prompt_Server {
 			unset( $payload['model'] );
 		}
 
-		return AI_Usage::limit_payload( $payload );
+		return $payload;
 	}
 
 	/**

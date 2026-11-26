@@ -764,4 +764,58 @@ class Test_Form_AI_Autoresponder extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Static fallback body.', $mail['message'] );
 		$this->assertSame( 'fallback', $this->get_audit()['outcome'] );
 	}
+
+	/**
+	 * A validation payload above the size cap is not sent; the static body is used.
+	 */
+	public function test_oversized_validation_payload_uses_fallback() {
+		$this->mock_mail();
+		$this->inject_backend(
+			array(
+				AI_Response::success( 'Hi Ada, thanks.', 10, 'text' ),
+				AI_Response::success( wp_json_encode( array( 'valid' => true, 'reason' => 'ok' ) ), 5, 'json' ),
+			)
+		);
+
+		$this->set_form_option(
+			array(
+				'autoresponder'   => array(
+					'subject' => 'Thanks for your message',
+					'body'    => '<p>Static fallback body.</p>',
+				),
+				'aiAutoresponder' => array(
+					'enabled' => true,
+					'prompt'  => 'Reply nicely.',
+				),
+			)
+		);
+
+		$this->add_test_hook(
+			'otter_ai_generate_max_payload_bytes',
+			function () {
+				return 4096;
+			}
+		);
+		$this->add_test_hook(
+			'otter_form_ai_autoresponder_validation_payload',
+			function ( $payload ) {
+				$payload['messages'][] = array(
+					'role'    => 'user',
+					'content' => str_repeat( 'x', 5000 ),
+				);
+				return $payload;
+			}
+		);
+
+		$this->wire_autoresponder();
+
+		$this->assertTrue( $this->submit()['success'] );
+		$this->assertCount( 1, $this->backend->payloads );
+
+		$mail = $this->get_autoresponder_mail();
+		$this->assertNotNull( $mail );
+		$this->assertStringContainsString( 'Static fallback body.', $mail['message'] );
+		$this->assertStringNotContainsString( 'Hi Ada, thanks.', $mail['message'] );
+		$this->assertSame( 'fallback', $this->get_audit()['outcome'] );
+	}
 }

@@ -686,21 +686,16 @@ class Form_Pro_Features {
 		 */
 		$payload = apply_filters( 'otter_form_ai_autoresponder_generation_payload', $payload, $form_data );
 
-		$payload = \ThemeIsle\GutenbergBlocks\Server\AI_Usage::limit_payload( $payload );
-		if ( is_wp_error( $payload ) ) {
-			return $payload;
-		}
-
 		/**
 		 * Filters how many AI autoresponder replies a form may generate in a 10-minute window. Return 0 to disable.
 		 *
 		 * @param int               $limit     Reply limit.
 		 * @param Form_Data_Request $form_data The form data request.
 		 */
-		$limit = (int) apply_filters( 'otter_form_ai_autoresponder_rate_limit', 30, $form_data );
-		$quota = \ThemeIsle\GutenbergBlocks\Server\AI_Usage::consume_quota( 'form_' . $form_data->get_form_option_id(), $limit );
-		if ( is_wp_error( $quota ) ) {
-			return $quota;
+		$limit   = (int) apply_filters( 'otter_form_ai_autoresponder_rate_limit', 30, $form_data );
+		$payload = \ThemeIsle\GutenbergBlocks\Server\AI_Usage::guard_request( $payload, 'form_' . $form_data->get_form_option_id(), $limit );
+		if ( is_wp_error( $payload ) ) {
+			return $payload;
 		}
 
 		$backend = \ThemeIsle\GutenbergBlocks\Server\AI_Backend_Resolver::resolve();

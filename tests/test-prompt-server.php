@@ -406,7 +406,8 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A counter from an earlier window does not block new requests and is removed.
+	 * A new window ignores earlier counters, removes the ones older than the
+	 * previous window and keeps the previous and next windows for all buckets.
 	 */
 	public function test_forward_prompt_rate_limit_resets_in_new_window() {
 		$user_id = self::factory()->user->create( array( 'role' => 'editor' ) );
@@ -414,19 +415,103 @@ class Test_Prompt_Server extends WP_UnitTestCase {
 
 		$prefix = 'otter_ai_quota_' . md5( 'user_' . $user_id ) . '_';
 		$window = (int) floor( time() / 600 );
+		add_option( $prefix . ( $window - 2 ), 120, '', false );
 		add_option( $prefix . ( $window - 1 ), 120, '', false );
 
-		// Counters of other buckets: the earlier window is removed too, the current one is kept.
 		$other = 'otter_ai_quota_' . md5( 'form_other' ) . '_';
+		add_option( $other . ( $window - 2 ), 4, '', false );
 		add_option( $other . ( $window - 1 ), 3, '', false );
 		add_option( $other . $window, 2, '', false );
+		add_option( $other . ( $window + 1 ), 1, '', false );
 
 		$body = array( 'messages' => array( array( 'role' => 'user', 'content' => 'Hi' ) ) ); // phpcs:ignore WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 
 		$this->assertSame( 200, $this->generate( $body )->get_status() );
-		$this->assertSame( 2, $this->count_quota_rows() );
+		$this->assertSame( 5, $this->count_quota_rows() );
 		$this->assertSame( '1', $this->get_quota_value( $prefix . $window ) );
+		$this->assertSame( '120', $this->get_quota_value( $prefix . ( $window - 1 ) ) );
+		$this->assertNull( $this->get_quota_value( $prefix . ( $window - 2 ) ) );
+		$this->assertNull( $this->get_quota_value( $other . ( $window - 2 ) ) );
+		$this->assertSame( '3', $this->get_quota_value( $other . ( $window - 1 ) ) );
 		$this->assertSame( '2', $this->get_quota_value( $other . $window ) );
+		$this->assertSame( '1', $this->get_quota_value( $other . ( $window + 1 ) ) );
+	}
+
+	/**
+	 * Save an API key against a mocked provider and capture the payload it receives.
+	 *
+	 * @param array $sent Receives the decoded payload sent to the provider.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	private function save_key( &$sent = null ) {
+		$sent = null;
+		remove_all_filters( 'pre_http_request' );
+		add_filter(
+			'pre_http_request',
+			function ( $pre, $args ) use ( &$sent ) {
+				$sent = json_decode( $args['body'], true );
+				return array(
+					'headers'  => array(),
+					'body'     => wp_json_encode( array( 'choices' => array() ) ),
+					'response' => array(
+						'code'    => 200,
+						'message' => 'OK',
+					),
+					'cookies'  => array(),
+				);
+			},
+			10,
+			2
+		);
+
+		$request = new WP_REST_Request( 'POST', '/otter/v1/openai/key' );
+		$request->set_body( wp_json_encode( array( 'api_key' => 'sk-test' ) ) );
+
+		return $this->prompt_server->save_api_key( $request );
+	}
+
+	/**
+	 * The key check request gets the output token cap.
+	 */
+	public function test_save_api_key_caps_output_tokens() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$this->assertSame( 200, $this->save_key( $sent )->get_status() );
+		$this->assertSame( 16384, $sent['max_completion_tokens'] );
+		$this->assertArrayNotHasKey( 'max_tokens', $sent );
+
+		add_filter(
+			'otter_ai_generate_max_tokens',
+			function () {
+				return 50;
+			}
+		);
+		$this->save_key( $sent );
+		$this->assertSame( 50, $sent['max_completion_tokens'] );
+	}
+
+	/**
+	 * Key checks above the per-user limit are rejected before the provider call.
+	 */
+	public function test_save_api_key_is_rate_limited_per_user() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		add_filter(
+			'otter_ai_generate_rate_limit',
+			function () {
+				return 1;
+			}
+		);
+
+		$this->assertSame( 200, $this->save_key()->get_status() );
+		delete_option( 'themeisle_open_ai_api_key' );
+
+		$response = $this->save_key( $sent );
+
+		$this->assertWPError( $response );
+		$this->assertSame( 'otter_ai_rate_limited', $response->get_error_code() );
+		$this->assertSame( 429, $response->get_error_data()['status'] );
+		$this->assertNull( $sent );
+		$this->assertFalse( get_option( 'themeisle_open_ai_api_key', false ) );
 	}
 
 	/**
