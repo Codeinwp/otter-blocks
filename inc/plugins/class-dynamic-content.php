@@ -25,11 +25,6 @@ class Dynamic_Content {
 	const MAGIC_TAG_REGEX = '{(otterDynamic\?[^"\'<>}]*)}';
 
 	/**
-	 * Parsed-block key set on blocks whose authored markers are placeholders.
-	 */
-	const AUTHORED_MARKERS_KEY = 'otterAuthoredMarkers';
-
-	/**
 	 * Any marker a resolver acts on, tokenized as the resolvers read it.
 	 */
 	const MARKER_TOKEN_REGEX = '/\{otterDynamic\?[^"\'<>}]*\}|otterDynamicLink[^"\'<>]*|otter\/v1\/dynamic[^"\'<>]*|<o-dynamic(?:-link)?\b[^>]*>/';
@@ -54,10 +49,25 @@ class Dynamic_Content {
 	private static $rendering_content = array();
 
 	/**
+	 * Fingerprints of the blocks rendered from saved content in this request.
+	 *
+	 * @var array<string, true>
+	 */
+	private static $authored_blocks = array();
+
+	/**
+	 * Whether the next Navigation inner-block list comes from a saved menu.
+	 *
+	 * @var bool
+	 */
+	private static $navigation_menu_pending = false;
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
-		add_filter( 'render_block_data', array( $this, 'mark_authored_markers' ) );
+		add_filter( 'render_block_data', array( $this, 'register_authored_block' ), PHP_INT_MAX, 3 );
+		add_filter( 'block_core_navigation_render_inner_blocks', array( $this, 'register_navigation_menu_blocks' ) );
 		add_filter( 'render_block', array( $this, 'escape_visitor_block_magic_tags' ), 9, 3 );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_magic_tags' ) );
@@ -85,72 +95,78 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Swap the markers written into a block tree for placeholders before it renders.
+	 * Record a block rendered from saved content, so its own markers count as authored.
 	 *
-	 * Every real marker left in the rendered output then came from data the blocks printed. The whole tree is marked
-	 * at once because older WordPress renders inner blocks from copies made before their own `render_block_data` call.
+	 * Blocks a renderer builds from stored data, such as gallery images from attachments, are never recorded.
 	 *
-	 * @param array<string, mixed> $parsed_block Parsed block.
+	 * @param array<string, mixed>      $parsed_block Parsed block.
+	 * @param array<string, mixed>|null $source_block Parsed block before filters.
+	 * @param \WP_Block|null            $parent_block Parent block, or null at the top level.
 	 * @return array<string, mixed>
 	 */
-	public function mark_authored_markers( $parsed_block ) {
-		if ( isset( $parsed_block[ self::AUTHORED_MARKERS_KEY ] ) ) {
-			return $parsed_block;
+	public function register_authored_block( $parsed_block, $source_block = null, $parent_block = null ) {
+		self::$authored_blocks[ self::block_fingerprint( $parsed_block ) ] = true;
+
+		// Navigation renders its inner blocks without their own `render_block_data` call.
+		if ( null === $parent_block ) {
+			$this->register_inner_blocks( $parsed_block );
+		}
+		if ( isset( $parsed_block['blockName'], $parsed_block['attrs']['ref'] ) && 'core/navigation' === $parsed_block['blockName'] ) {
+			self::$navigation_menu_pending = true;
 		}
 
-		return $this->mark_block( $parsed_block );
+		return $parsed_block;
 	}
 
 	/**
-	 * Replace marker prefixes with placeholders in a parsed block and its descendants.
+	 * Record the blocks of a saved Navigation menu, but not those built from classic menu items or pages.
+	 *
+	 * @param \WP_Block_List $inner_blocks Blocks the Navigation block renders.
+	 * @return \WP_Block_List
+	 */
+	public function register_navigation_menu_blocks( $inner_blocks ) {
+		if ( self::$navigation_menu_pending ) {
+			self::$navigation_menu_pending = false;
+			foreach ( $inner_blocks as $inner_block ) {
+				self::$authored_blocks[ self::block_fingerprint( $inner_block->parsed_block ) ] = true;
+				$this->register_inner_blocks( $inner_block->parsed_block );
+			}
+		}
+
+		return $inner_blocks;
+	}
+
+	/**
+	 * Record every descendant of a parsed block.
 	 *
 	 * @param array<string, mixed> $block Parsed block.
-	 * @return array<string, mixed>
+	 * @return void
 	 */
-	private function mark_block( $block ) {
-		$placeholders = self::authored_placeholders();
-		$replace      = function ( &$value ) use ( $placeholders ) {
-			if ( is_string( $value ) ) {
-				$value = strtr( $value, $placeholders );
-			}
-		};
-
-		foreach ( array( 'attrs', 'innerContent' ) as $key ) {
-			if ( isset( $block[ $key ] ) && is_array( $block[ $key ] ) ) {
-				array_walk_recursive( $block[ $key ], $replace );
-			}
-		}
-		if ( isset( $block['innerHTML'] ) && is_string( $block['innerHTML'] ) ) {
-			$block['innerHTML'] = strtr( $block['innerHTML'], $placeholders );
-		}
-		if ( isset( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-			$block['innerBlocks'] = array_map( array( $this, 'mark_block' ), $block['innerBlocks'] );
+	private function register_inner_blocks( $block ) {
+		if ( ! isset( $block['innerBlocks'] ) || ! is_array( $block['innerBlocks'] ) ) {
+			return;
 		}
 
-		$block[ self::AUTHORED_MARKERS_KEY ] = true;
-
-		return $block;
+		foreach ( $block['innerBlocks'] as $inner_block ) {
+			self::$authored_blocks[ self::block_fingerprint( $inner_block ) ] = true;
+			$this->register_inner_blocks( $inner_block );
+		}
 	}
 
 	/**
-	 * Per-request placeholders for each marker prefix: lowercase letters and digits, which escaping leaves intact.
+	 * Identify a parsed block by its name, attributes and saved markup.
 	 *
-	 * @return array<string, string>
+	 * @param array<string, mixed> $block Parsed block.
+	 * @return string
 	 */
-	private static function authored_placeholders() {
-		static $placeholders = null;
+	private static function block_fingerprint( $block ) {
+		$source = array(
+			isset( $block['blockName'] ) ? $block['blockName'] : null,
+			isset( $block['attrs'] ) ? $block['attrs'] : array(),
+			isset( $block['innerContent'] ) ? $block['innerContent'] : array(),
+		);
 
-		if ( null === $placeholders ) {
-			$nonce        = 'otterauthored' . strtolower( wp_generate_password( 32, false ) );
-			$placeholders = array(
-				'{otterDynamic?'   => $nonce . 'tag',
-				'otterDynamicLink' => $nonce . 'link',
-				'otter/v1/dynamic' => $nonce . 'image',
-				'<o-dynamic'       => '<' . $nonce . 'element',
-			);
-		}
-
-		return $placeholders;
+		return hash( 'sha256', (string) wp_json_encode( $source ) );
 	}
 
 	/**
@@ -158,9 +174,9 @@ class Dynamic_Content {
 	 *
 	 * Markers the block's authors did not write are kept literal first; see escape_unauthored_markers().
 	 *
-	 * @param string                                                                                                                                     $content  Rendered markup.
-	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string}, innerContent?: array<int, string|null>, otterAuthoredMarkers?: true} $block    Parsed block.
-	 * @param \WP_Block|null                                                                                                                             $instance Block instance; its attributes include bound values.
+	 * @param string                                                                                                        $content  Rendered markup.
+	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                $instance Block instance; its attributes include bound values.
 	 * @return string
 	 */
 	public function escape_visitor_block_magic_tags( $content, $block, $instance = null ) {
@@ -205,41 +221,43 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Keep literal every marker the block's authors did not write, then restore the authored ones.
+	 * Keep literal every marker the block's authors did not write.
 	 *
 	 * Inner blocks resolve their own markers first, so only data the block printed is left: post and term fields,
-	 * comments, feeds, or product and API text. A block rendered without `render_block_data`, such as a Navigation
-	 * menu item, keeps the markers that also appear in its own markup or attributes.
+	 * comments, feeds, or product and API text. A block built at render time, such as a gallery image made from an
+	 * attachment, trusts only its attributes: its markup may hold the stored data it was built from.
 	 *
-	 * @param string                                                                                                                                     $content  Rendered markup.
-	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string}, innerContent?: array<int, string|null>, otterAuthoredMarkers?: true} $block    Parsed block.
-	 * @param \WP_Block|null                                                                                                                             $instance Block instance.
+	 * @param string                                                                                                        $content  Rendered markup.
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                $instance Block instance.
 	 * @return string
 	 */
 	private function escape_unauthored_markers( $content, $block, $instance ) {
-		if ( preg_match( self::MARKER_TOKEN_REGEX, $content ) ) {
-			$authored = isset( $block[ self::AUTHORED_MARKERS_KEY ] ) ? array() : $this->authored_markers( $block, $instance );
-			$content  = (string) preg_replace_callback(
-				self::MARKER_TOKEN_REGEX,
-				function ( $matches ) use ( $authored ) {
-					return isset( $authored[ self::normalize_marker( $matches[0] ) ] ) ? $matches[0] : $this->escape_comment_magic_tags( $matches[0] );
-				},
-				$content
-			);
+		if ( ! preg_match( self::MARKER_TOKEN_REGEX, $content ) ) {
+			return $content;
 		}
 
-		return strtr( $content, array_flip( self::authored_placeholders() ) );
+		$authored = $this->authored_markers( $block, $instance, isset( self::$authored_blocks[ self::block_fingerprint( $block ) ] ) );
+
+		return (string) preg_replace_callback(
+			self::MARKER_TOKEN_REGEX,
+			function ( $matches ) use ( $authored ) {
+				return isset( $authored[ self::normalize_marker( $matches[0] ) ] ) ? $matches[0] : $this->escape_comment_magic_tags( $matches[0] );
+			},
+			$content
+		);
 	}
 
 	/**
-	 * Markers written into a block's saved markup or attributes, keyed by their normalized form.
+	 * Markers written into a block's attributes and, for a block rendered from saved content, its markup.
 	 *
-	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string}, innerContent?: array<int, string|null>, otterAuthoredMarkers?: true} $block    Parsed block.
-	 * @param \WP_Block|null                                                                                                                             $instance Block instance.
-	 * @return array<string, true>
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string}, innerContent?: array<int, string|null>} $block       Parsed block.
+	 * @param \WP_Block|null                                                                                                $instance    Block instance.
+	 * @param bool                                                                                                          $with_markup Whether the block's saved markup is authored.
+	 * @return array<string, true> Normalized markers.
 	 */
-	private function authored_markers( $block, $instance ) {
-		$sources = isset( $block['innerContent'] ) ? array_filter( $block['innerContent'], 'is_string' ) : array();
+	private function authored_markers( $block, $instance, $with_markup ) {
+		$sources = $with_markup && isset( $block['innerContent'] ) ? array_filter( $block['innerContent'], 'is_string' ) : array();
 		$collect = function ( $value ) use ( &$sources ) {
 			if ( is_string( $value ) ) {
 				$sources[] = $value;
@@ -533,7 +551,9 @@ class Dynamic_Content {
 			$escaped_literals[ $prefix ]                               = $prefix;
 			$escaped_literals[ wp_kses_normalize_entities( $prefix ) ] = $prefix;
 		}
-		$markup = $this->protect_literals( $matches['tag'], $escaped_literals, $literal_markers );
+		// Attribute values are decoded below, so every encoding of the opener becomes the escape kept literal.
+		$markup = preg_replace( '/&(?i:#0*123;?|#x0*7b;?|lbrace;|lcub;)otterDynamic\?/', self::$literal_marker_escapes['{otterDynamic?'], $matches['tag'] );
+		$markup = $this->protect_literals( (string) $markup, $escaped_literals, $literal_markers );
 
 		$closing_tag = '</' . $tag[1] . '>';
 		$processor   = new \WP_HTML_Tag_Processor( $markup . $closing_tag );

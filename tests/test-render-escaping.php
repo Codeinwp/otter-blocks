@@ -649,16 +649,14 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
-	 * A block printing data beside an authored marker: rendered from content, or directly with the same or another token.
+	 * A block printing data beside an authored marker, rendered from content or directly.
 	 *
 	 * @return array<string, array{0: bool, 1: string, 2: string}>
 	 */
 	public function authored_and_data_markers(): array {
-		$email = '{otterDynamic?type=loggedInUserEmail}';
-
 		return array(
-			'rendered from content, same token' => array( true, $email, 'viewer@example.org' ),
-			'rendered directly, other token'    => array( false, '{otterDynamic?type=siteTitle}', 'Test Blog' ),
+			'rendered from content' => array( true, '{otterDynamic?type=siteTitle}', 'Test Blog' ),
+			'rendered directly'     => array( false, '{otterDynamic?type=siteTitle}', 'Test Blog' ),
 		);
 	}
 
@@ -690,6 +688,113 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 		$this->assertTrue( $processor->next_tag( 'p' ), $output );
 		$this->assertSame( $resolved, $processor->get_attribute( 'data-authored' ) );
 		$this->assertSame( $data, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ) );
+	}
+
+	/**
+	 * Markers in classic (freeform) content: a Magic Tag and a dynamic element.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function freeform_markers(): array {
+		return array(
+			'magic tag'       => array( '<p>{otterDynamic?type=siteTitle}</p>' ),
+			'dynamic element' => array( '<p><o-dynamic data-type="siteTitle">Site</o-dynamic></p>' ),
+		);
+	}
+
+	/**
+	 * @dataProvider freeform_markers
+	 */
+	public function test_freeform_content_markers_still_resolve( string $content ): void {
+		$output = do_blocks( $content );
+
+		$this->assertSame( '<p>Test Blog</p>', $output );
+	}
+
+	public function test_dynamic_background_image_renders_as_without_the_gate(): void {
+		$url    = get_rest_url( null, 'otter/v1' ) . '/dynamic/?type=featuredImage';
+		$attrs  = array( 'style' => array( 'background' => array( 'backgroundImage' => array( 'url' => $url ) ) ) );
+		$markup = '<!-- wp:group ' . wp_json_encode( $attrs ) . ' --><div class="wp-block-group"></div><!-- /wp:group -->';
+
+		$dynamic_content = Dynamic_Content::instance();
+		remove_filter( 'render_block', array( $dynamic_content, 'escape_visitor_block_magic_tags' ), 9 );
+		$expected = do_blocks( $markup );
+		add_filter( 'render_block', array( $dynamic_content, 'escape_visitor_block_magic_tags' ), 9, 3 );
+		$output = do_blocks( $markup );
+
+		$this->assertStringContainsString( 'background-image', $output );
+		$this->assertStringNotContainsString( 'otterauthored', $output );
+		$this->assertSame( $expected, $output );
+	}
+
+	/**
+	 * Encodings of the Magic Tag opener that attribute decoding turns into a live one.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function encoded_openers(): array {
+		return array(
+			'hex'          => array( '&#x7b;' ),
+			'upper hex'    => array( '&#X7B;' ),
+			'decimal'      => array( '&#123;' ),
+			'zero padded'  => array( '&#0123;' ),
+			'no semicolon' => array( '&#123' ),
+			'lbrace'       => array( '&lbrace;' ),
+			'lcub'         => array( '&lcub;' ),
+		);
+	}
+
+	/**
+	 * @dataProvider encoded_openers
+	 */
+	public function test_encoded_magic_tag_openers_stay_literal_beside_authored_attribute( string $opener ): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$output = do_blocks( '<!-- wp:html --><img src="https://example.org/a.jpg" title="{otterDynamic?type=siteTitle}" alt="' . $opener . 'otterDynamic?type=loggedInUserEmail}" /><!-- /wp:html -->' );
+
+		$processor = new WP_HTML_Tag_Processor( $output );
+		$this->assertTrue( $processor->next_tag( 'img' ), $output );
+		$this->assertSame( 'Test Blog', $processor->get_attribute( 'title' ) );
+		$this->assertSame( '{otterDynamic?type=loggedInUserEmail}', $processor->get_attribute( 'alt' ) );
+	}
+
+	public function test_attached_media_gallery_caption_stays_literal(): void {
+		global $post;
+
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag     = '{otterDynamic?type=loggedInUserEmail}';
+		$post_id = $this->factory()->post->create();
+		$image   = $this->factory()->attachment->create_upload_object( DIR_TESTDATA . '/images/canola.jpg', $post_id );
+		wp_update_post(
+			array(
+				'ID'           => $image,
+				'post_excerpt' => $tag,
+			)
+		);
+
+		$post = get_post( $post_id );
+		setup_postdata( $post );
+		$output = do_blocks( '<!-- wp:gallery {"dynamicContent":{"source":"core/attached-media"}} /-->' );
+		wp_reset_postdata();
+
+		$this->assertStringContainsString( 'wp-element-caption', $output );
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+		$this->assertStringContainsString( $tag, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $output );
+	}
+
+	public function test_saved_navigation_menu_label_markers_still_resolve(): void {
+		$menu = $this->factory()->post->create(
+			array(
+				'post_type'    => 'wp_navigation',
+				'post_status'  => 'publish',
+				'post_content' => '<!-- wp:navigation-link {"label":"{otterDynamic?type=siteTitle}","url":"https://example.org/","kind":"custom"} /-->',
+			)
+		);
+
+		$output = do_blocks( '<!-- wp:navigation {"ref":' . $menu . '} /-->' );
+
+		$this->assertStringContainsString( '>Test Blog<', $output );
 	}
 
 	/**
