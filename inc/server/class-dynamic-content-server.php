@@ -145,7 +145,9 @@ class Dynamic_Content_Server {
 						return Dynamic_Content::instance()->apply_data( $request->get_params() );
 					},
 					'permission_callback' => function ( $request ) {
-						return $this->check_permission( $request->get_param( 'context' ) );
+						// Only the editor uses this route to preview values.
+						$context = absint( $request->get_param( 'context' ) );
+						return $context > 0 && current_user_can( 'edit_post', $context );
 					},
 				),
 			)

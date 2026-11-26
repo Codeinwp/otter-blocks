@@ -823,6 +823,40 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * Author meta returns only public author fields.
+	 */
+	public function test_author_meta_returns_fallback_for_non_public_fields() {
+		foreach ( array( 'user_email', 'email', 'user_login', 'login', 'user_registered', 'test_meta' ) as $key ) {
+			$result = $this->dynamic_content_pro->evaluate_content(
+				'fallback',
+				array(
+					'type'    => 'authorMeta',
+					'context' => $this->post_id,
+					'metaKey' => $key,
+					'default' => 'fallback',
+				)
+			);
+
+			$this->assertSame( 'fallback', $result, $key );
+		}
+	}
+
+	/**
+	 * Rendered author meta does not print the author email.
+	 */
+	public function test_author_meta_rendering_hides_email() {
+		add_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $this->dynamic_content_pro, 'evaluate_content' ), 10, 2 );
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="authorMeta" data-meta-key="user_email">Author Meta</o-dynamic></p>' );
+		$public = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="authorMeta" data-meta-key="nickname">Author Meta</o-dynamic></p>' );
+
+		remove_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $this->dynamic_content_pro, 'evaluate_content' ), 10 );
+
+		$this->assertStringNotContainsString( 'test@userrecover.com', $result );
+		$this->assertSame( '<p>test_user_deletion</p>', $public );
+	}
+
+	/**
 	 * Post meta must not expose protected (underscore-prefixed) keys.
 	 */
 	public function test_post_meta_does_not_leak_protected_key() {

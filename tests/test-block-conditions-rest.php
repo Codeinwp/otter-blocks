@@ -77,21 +77,20 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The Post Content preview passes the post ID as `context`; editing that post skips conditions, visitors stay filtered.
+	 * The Post Content preview passes the post ID as `context`; editing that post skips conditions, visitors get no preview.
 	 */
 	public function test_dynamic_preview_skips_conditions_only_for_post_editors(): void {
 		$post_id = self::factory()->post->create( array( 'post_content' => self::CONTENT ) );
 		$this->go_to( get_permalink( $post_id ) );
 
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
-		$editor = $this->preview_post_content( $post_id );
+		$editor = (string) $this->preview_post_content( $post_id )->get_data();
 
 		wp_set_current_user( 0 );
 		$visitor = $this->preview_post_content( $post_id );
 
 		$this->assertStringContainsString( 'SECRET', $editor );
-		$this->assertStringNotContainsString( 'SECRET', $visitor );
-		$this->assertStringContainsString( 'PUBLIC', $visitor );
+		$this->assertSame( 401, $visitor->get_status() );
 	}
 
 	/**
@@ -128,9 +127,9 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 	 * Preview a post's content through the dynamic content route as the current user.
 	 *
 	 * @param int $post_id Post ID.
-	 * @return string
+	 * @return WP_REST_Response
 	 */
-	private function preview_post_content( int $post_id ): string {
+	private function preview_post_content( int $post_id ): WP_REST_Response {
 		$request = new WP_REST_Request( 'GET', '/otter/v1/dynamic/preview' );
 		$request->set_query_params(
 			array(
@@ -139,7 +138,7 @@ class Test_Block_Conditions_Rest extends WP_UnitTestCase {
 			)
 		);
 
-		return (string) rest_get_server()->dispatch( $request )->get_data();
+		return rest_get_server()->dispatch( $request );
 	}
 
 	/**

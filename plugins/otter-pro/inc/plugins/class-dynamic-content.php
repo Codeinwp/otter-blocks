@@ -571,8 +571,18 @@ class Dynamic_Content {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		$meta    = '';
 
-		if ( isset( $data['metaKey'] ) && ! self::is_protected_meta_key( $data['metaKey'], 'user' ) ) {
-			$meta = get_the_author_meta( esc_html( $data['metaKey'] ), intval( get_post_field( 'post_author', $data['context'] ) ) );
+		/**
+		 * Filters the author fields that dynamic content can show.
+		 *
+		 * @param string[] $allowed_keys Author field names.
+		 */
+		$allowed_keys = apply_filters(
+			'otter_blocks_dynamic_author_meta_allowed_keys',
+			array( 'display_name', 'first_name', 'last_name', 'nickname', 'user_nicename', 'description', 'user_url' )
+		);
+
+		if ( isset( $data['metaKey'] ) && is_array( $allowed_keys ) && in_array( $data['metaKey'], $allowed_keys, true ) && ! self::is_protected_meta_key( $data['metaKey'], 'user' ) ) {
+			$meta = get_the_author_meta( $data['metaKey'], intval( get_post_field( 'post_author', $data['context'] ) ) );
 		}
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
