@@ -2839,18 +2839,6 @@ parameters:
 			path: plugins/otter-pro/inc/plugins/class-posts-acf-integration.php
 
 		-
-			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Review_Woo_Integration::apply_woo_data() has no return type specified.'
-			identifier: missingType.return
-			count: 1
-			path: plugins/otter-pro/inc/plugins/class-review-woo-integration.php
-
-		-
-			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Review_Woo_Integration::apply_woo_data() has parameter $attributes with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: plugins/otter-pro/inc/plugins/class-review-woo-integration.php
-
-		-
 			rawMessage: 'Method ThemeIsle\OtterPro\Plugins\Review_Woo_Integration::init() has no return type specified.'
 			identifier: missingType.return
 			count: 1

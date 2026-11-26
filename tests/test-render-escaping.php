@@ -655,8 +655,10 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	 */
 	public function authored_and_data_markers(): array {
 		return array(
-			'rendered from content' => array( true, '{otterDynamic?type=siteTitle}', 'Test Blog' ),
-			'rendered directly'     => array( false, '{otterDynamic?type=siteTitle}', 'Test Blog' ),
+			'rendered from content'           => array( true, '{otterDynamic?type=siteTitle}', 'Test Blog' ),
+			'rendered directly'               => array( false, '{otterDynamic?type=siteTitle}', 'Test Blog' ),
+			'equal markers from content'      => array( true, '{otterDynamic?type=loggedInUserEmail}', 'viewer@example.org' ),
+			'equal markers rendered directly' => array( false, '{otterDynamic?type=loggedInUserEmail}', 'viewer@example.org' ),
 		);
 	}
 
@@ -670,15 +672,15 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 		register_block_type(
 			'otter-test/marker-echo',
 			array(
-				'attributes'      => array( 'text' => array( 'type' => 'string' ) ),
+				'attributes'      => array( 'text' => array( 'type' => 'string' ), 'element' => array( 'type' => 'string' ) ),
 				'render_callback' => static function ( array $attributes ) use ( $data ): string {
-					return '<p data-authored="' . esc_attr( $attributes['text'] ) . '">' . esc_html( $data ) . '</p>';
+					return '<p data-authored="' . esc_attr( $attributes['text'] ) . '" data-element="' . esc_attr( $attributes['element'] ) . '">' . esc_html( $data ) . '</p>';
 				},
 			)
 		);
 
 		try {
-			$markup = '<!-- wp:otter-test/marker-echo ' . wp_json_encode( array( 'text' => $authored ) ) . ' /-->';
+			$markup = '<!-- wp:otter-test/marker-echo ' . wp_json_encode( array( 'text' => $authored, 'element' => '<o-dynamic data-type="siteTitle">Site</o-dynamic>' ) ) . ' /-->';
 			$output = $from_content ? do_blocks( $markup ) : ( new WP_Block( parse_blocks( $markup )[0] ) )->render();
 		} finally {
 			unregister_block_type( 'otter-test/marker-echo' );
@@ -687,6 +689,7 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 		$processor = new WP_HTML_Tag_Processor( $output );
 		$this->assertTrue( $processor->next_tag( 'p' ), $output );
 		$this->assertSame( $resolved, $processor->get_attribute( 'data-authored' ) );
+		$this->assertSame( '<o-dynamic data-type="siteTitle">Site</o-dynamic>', $processor->get_attribute( 'data-element' ) );
 		$this->assertSame( $data, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ) );
 	}
 
@@ -1014,6 +1017,140 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 		$processor = new WP_HTML_Tag_Processor( $output );
 		$this->assertTrue( $processor->next_tag( 'a' ), $output );
 		$this->assertSame( $link, $processor->get_attribute( 'href' ), $output );
+	}
+
+	/**
+	 * Stored site options are data even when a block attribute contains the same marker.
+	 *
+	 * @dataProvider site_option_blocks
+	 */
+	public function test_site_option_markers_stay_literal_with_authored_attribute( string $block, string $option ): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+		$tag      = '{otterDynamic?type=loggedInUserEmail}';
+		$previous = get_option( $option );
+		update_option( $option, $tag );
+		$output = do_blocks( '<!-- wp:' . $block . ' ' . wp_json_encode( array( 'className' => 'marker-' . $tag ) ) . ' /-->' );
+		update_option( $option, $previous );
+		$this->assertStringContainsString( 'marker-viewer@example.org', $output );
+		$this->assertSame( $tag, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ) );
+	}
+
+	public function site_option_blocks(): array {
+		return array(
+			'title'   => array( 'site-title', 'blogname' ),
+			'tagline' => array( 'site-tagline', 'blogdescription' ),
+		);
+	}
+
+	public function test_legacy_rss_feed_title_stays_literal_with_authored_attribute(): void {
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+		$tag      = '{otterDynamic?type=loggedInUserEmail}';
+		$feed     = 'https://feed.example/' . wp_generate_password( 8, false ) . '.xml';
+		$xml      = '<?xml version="1.0"?><rss version="2.0"><channel><title>' . $tag . '</title><link>https://feed.example/</link><description>Feed</description><item><title>Item</title><link>https://feed.example/1</link></item></channel></rss>';
+		$stub     = static function ( $response, array $args, string $url ) use ( $feed, $xml ) {
+			return $url === $feed ? array(
+				'headers'  => array( 'content-type' => 'application/rss+xml' ),
+				'body'     => $xml,
+				'response' => array(
+					'code'    => 200,
+					'message' => 'OK',
+				),
+				'cookies'  => array(),
+				'filename' => null,
+			) : $response;
+		};
+		$instance = serialize(
+			array(
+				'title' => '',
+				'url'   => $feed,
+				'items' => 1,
+			)
+		);
+		$attrs    = array(
+			'idBase'    => 'rss',
+			'className' => 'marker-' . $tag,
+			'instance'  => array(
+				'encoded' => base64_encode( $instance ),
+				'hash'    => wp_hash( $instance ),
+			),
+		);
+		add_filter( 'pre_http_request', $stub, 10, 3 );
+		try {
+			$output = do_blocks( '<!-- wp:legacy-widget ' . wp_json_encode( $attrs ) . ' /-->' );
+		} finally {
+			remove_filter( 'pre_http_request', $stub, 10 );
+		}
+		$this->assertStringContainsString( 'Item', $output );
+		$this->assertStringNotContainsString( '>viewer@example.org</a>', $output );
+		$this->assertStringContainsString( '>' . $tag . '</a>', html_entity_decode( $output, ENT_QUOTES ) );
+	}
+
+	/**
+	 * @dataProvider authored_review_media
+	 */
+	public function test_attribute_only_review_markers_resolve( string $state, bool $with_image ): void {
+		if ( ! defined( 'OTTER_PRO_BASEFILE' ) ) {
+			require_once dirname( __DIR__ ) . '/plugins/otter-pro/otter-pro.php';
+		}
+		$attrs = array(
+			'id'       => 'wp-block-themeisle-blocks-review-authored',
+			'title'    => 'Review',
+			'features' => array(
+				array(
+					'title'  => 'Quality',
+					'rating' => 8,
+				),
+			),
+			'links'    => array(
+				array(
+					'label' => 'Visit',
+					'href'  => '#otterDynamicLink?type=siteURL',
+				),
+			),
+			'image'    => array(
+				'url' => get_rest_url( null, 'otter/v1' ) . '/dynamic/?type=featuredImage',
+				'alt' => 'Preview',
+			),
+		);
+		if ( ! $with_image ) {
+			unset( $attrs['image'] );
+		}
+		$integration = new \ThemeIsle\OtterPro\Plugins\Review_Woo_Integration();
+		if ( 'deleted product' === $state ) {
+			$attrs['product'] = $this->factory()->post->create( array( 'post_type' => 'product' ) );
+			wp_delete_post( $attrs['product'], true );
+			add_filter( 'otter_blocks_review_block_woocommerce', array( $integration, 'apply_woo_data' ), 1 );
+		} elseif ( 'inactive license' === $state ) {
+			$item = new WC_Product_Simple();
+			$item->set_name( 'Product' );
+			$attrs['product'] = $item->save();
+			remove_all_filters( 'otter_blocks_review_block_woocommerce' );
+			$option = str_replace( '-', '_', basename( dirname( OTTER_PRO_BASEFILE ) ) ) . '_license_data';
+			update_option( $option, (object) array( 'license' => 'expired' ) );
+			$integration->init();
+			$this->assertFalse( has_filter( 'otter_blocks_review_block_woocommerce' ) );
+		}
+		try {
+			$output = do_blocks( '<!-- wp:themeisle-blocks/review ' . wp_json_encode( $attrs ) . ' /-->' );
+		} finally {
+			remove_filter( 'otter_blocks_review_block_woocommerce', array( $integration, 'apply_woo_data' ), 1 );
+		}
+		$processor = new WP_HTML_Tag_Processor( $output );
+		if ( $with_image ) {
+			$this->assertTrue( $processor->next_tag( 'img' ), $output );
+			$this->assertSame( OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg', $processor->get_attribute( 'src' ), $output );
+		}
+		$this->assertTrue( $processor->next_tag( 'a' ), $output );
+		$this->assertSame( get_site_url(), $processor->get_attribute( 'href' ), $output );
+	}
+
+	public function authored_review_media(): array {
+		return array(
+			'authored link'    => array( 'authored', false ),
+			'authored image'   => array( 'authored', true ),
+			'deleted product'  => array( 'deleted product', false ),
+			'inactive license' => array( 'inactive license', false ),
+		);
 	}
 
 	/**
