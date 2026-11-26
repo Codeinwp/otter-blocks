@@ -803,32 +803,37 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Blocks bound to post meta, with or without the same marker written into the block.
+	 * Blocks bound to post meta, with or without the same marker written into the block, the binding value filter
+	 * (missing before WordPress 6.7), or a carriage return the HTML API normalizes.
 	 *
-	 * @return array<string, array{0: string}>
+	 * @return array<string, array{0: string, 1: string, 2: bool}>
 	 */
 	public function meta_bound_blocks(): array {
-		$bindings = static function ( string $attribute ): string {
+		$bindings  = static function ( string $attribute ): string {
 			return wp_json_encode( array( 'metadata' => array( 'bindings' => array( $attribute => array( 'source' => 'core/post-meta', 'args' => array( 'key' => 'otter_test_bound' ) ) ) ) ) );
 		};
-		$tag      = '{otterDynamic?type=loggedInUserEmail}';
+		$tag       = '{otterDynamic?type=loggedInUserEmail}';
+		$paragraph = '<!-- wp:paragraph ' . $bindings( 'content' ) . ' --><p>%s</p><!-- /wp:paragraph -->';
+		$image     = '<!-- wp:image ' . $bindings( 'alt' ) . ' --><figure class="wp-block-image"><img src="https://example.org/a.jpg" alt="" title="%s"/></figure><!-- /wp:image -->';
 
 		return array(
-			'paragraph'                        => array( '<!-- wp:paragraph ' . $bindings( 'content' ) . ' --><p>Fallback</p><!-- /wp:paragraph -->' ),
-			'paragraph with the authored tag'  => array( '<!-- wp:paragraph ' . $bindings( 'content' ) . ' --><p>' . $tag . '</p><!-- /wp:paragraph -->' ),
-			'image alt'                        => array( '<!-- wp:image ' . $bindings( 'alt' ) . ' --><figure class="wp-block-image"><img src="https://example.org/a.jpg" alt="" title="{otterDynamic?type=siteTitle}"/></figure><!-- /wp:image -->' ),
-			'image alt with the authored tag'  => array( '<!-- wp:image ' . $bindings( 'alt' ) . ' --><figure class="wp-block-image"><img src="https://example.org/a.jpg" alt="" title="' . $tag . '"/></figure><!-- /wp:image -->' ),
+			'paragraph'                                 => array( sprintf( $paragraph, 'Fallback' ), $tag, false ),
+			'paragraph with the authored tag'           => array( sprintf( $paragraph, $tag ), $tag, false ),
+			'paragraph with the authored tag, no filter' => array( sprintf( $paragraph, $tag ), $tag, true ),
+			'image alt'                                 => array( sprintf( $image, '{otterDynamic?type=siteTitle}' ), $tag, false ),
+			'image alt with the authored tag'           => array( sprintf( $image, $tag ), $tag, false ),
+			'image alt with the authored tag, no filter' => array( sprintf( $image, $tag ), $tag, true ),
+			'image alt ending in a carriage return'     => array( sprintf( $image, $tag ), $tag . "\r", false ),
 		);
 	}
 
 	/**
 	 * @dataProvider meta_bound_blocks
 	 */
-	public function test_meta_bound_markers_stay_literal( string $markup ): void {
+	public function test_meta_bound_markers_stay_literal( string $markup, string $meta, bool $without_filter ): void {
 		global $post;
 
-		$viewer = $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) );
-		wp_set_current_user( $viewer );
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
 
 		$tag = '{otterDynamic?type=loggedInUserEmail}';
 		register_post_meta(
@@ -840,10 +845,13 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 				'type'         => 'string',
 			)
 		);
+		if ( $without_filter ) {
+			remove_all_filters( 'block_bindings_source_value' );
+		}
 
 		try {
 			$post_id = $this->factory()->post->create();
-			update_post_meta( $post_id, 'otter_test_bound', $tag );
+			update_post_meta( $post_id, 'otter_test_bound', $meta );
 			$post = get_post( $post_id );
 			setup_postdata( $post );
 			$output = do_blocks( $markup );
@@ -852,12 +860,13 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 			unregister_post_meta( 'post', 'otter_test_bound' );
 		}
 
+		$this->assertStringNotContainsString( 'viewer@example.org', str_replace( 'title="viewer@example.org"', '', $output ), $output );
 		$processor = new WP_HTML_Tag_Processor( $output );
 		if ( $processor->next_tag( 'img' ) ) {
-			$this->assertSame( $tag, $processor->get_attribute( 'alt' ), $output );
+			$this->assertSame( str_replace( "\r", "\n", $meta ), $processor->get_attribute( 'alt' ), $output );
 			$this->assertNotSame( $tag, $processor->get_attribute( 'title' ), $output );
 		} else {
-			$this->assertSame( $tag, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $output );
+			$this->assertSame( $meta, html_entity_decode( wp_strip_all_tags( $output ), ENT_QUOTES ), $output );
 		}
 	}
 

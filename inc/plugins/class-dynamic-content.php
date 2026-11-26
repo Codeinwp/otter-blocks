@@ -293,6 +293,8 @@ class Dynamic_Content {
 			$escapes[ $placeholder ] = $escape;
 		}
 
+		// The HTML API reads attribute values with line breaks normalized.
+		$value     = str_replace( array( "\r\n", "\r" ), "\n", $value );
 		$processor = new \WP_HTML_Tag_Processor( $content );
 		while ( $processor->next_tag() ) {
 			if ( $value === $processor->get_attribute( $attribute ) ) {
@@ -321,6 +323,8 @@ class Dynamic_Content {
 		}
 
 		$authored = $this->authored_markers( $block, $instance, isset( self::$authored_blocks[ self::block_fingerprint( $block ) ] ) );
+		// Bound rich text replaced the saved content it matches, so the copy in the output is the bound value.
+		$authored = array_diff_key( $authored, $this->bound_text_markers( $block, $instance ) );
 
 		return (string) preg_replace_callback(
 			self::MARKER_TOKEN_REGEX,
@@ -355,7 +359,40 @@ class Dynamic_Content {
 			array_walk_recursive( $attributes, $collect );
 		}
 
-		preg_match_all( self::MARKER_TOKEN_REGEX, implode( "\n", $sources ), $matches );
+		return self::normalized_markers( $sources );
+	}
+
+	/**
+	 * Markers in values that block bindings read from a data source into rich text, which core inserts as HTML.
+	 *
+	 * @param array{blockName: string, attrs?: array{id?: string, idBase?: string, metadata?: array{bindings?: array<string, array{source?: string}>}}, innerContent?: array<int, string|null>} $block    Parsed block.
+	 * @param \WP_Block|null                                                                                                                                                                    $instance Block instance.
+	 * @return array<string, true> Normalized markers.
+	 */
+	private function bound_text_markers( $block, $instance ) {
+		if ( ! $instance instanceof \WP_Block || null === $instance->block_type ) {
+			return array();
+		}
+
+		$values = array();
+		foreach ( array_keys( self::data_bound_attributes( $block ) ) as $name ) {
+			$schema = isset( $instance->block_type->attributes[ $name ] ) ? $instance->block_type->attributes[ $name ] : array();
+			if ( isset( $instance->attributes[ $name ] ) && is_string( $instance->attributes[ $name ] ) && ( ! isset( $schema['source'] ) || 'attribute' !== $schema['source'] ) ) {
+				$values[] = $instance->attributes[ $name ];
+			}
+		}
+
+		return self::normalized_markers( $values );
+	}
+
+	/**
+	 * The normalized markers found in a list of strings.
+	 *
+	 * @param array<int, string> $strings Strings to search.
+	 * @return array<string, true>
+	 */
+	private static function normalized_markers( $strings ) {
+		preg_match_all( self::MARKER_TOKEN_REGEX, implode( "\n", $strings ), $matches );
 
 		return array_fill_keys( array_map( array( self::class, 'normalize_marker' ), $matches[0] ), true );
 	}
