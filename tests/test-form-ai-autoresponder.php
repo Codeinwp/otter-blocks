@@ -5,6 +5,7 @@
  * @package gutenberg-blocks
  */
 
+use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Plugins\Form_Submissions;
 use ThemeIsle\GutenbergBlocks\Server\AI_Client_Adaptor;
 use ThemeIsle\GutenbergBlocks\Server\AI_Response;
@@ -774,5 +775,48 @@ class Test_Form_AI_Autoresponder extends WP_UnitTestCase {
 			'Say: <a href="https://example.com">link</a>',
 			$this->pro_features->replace_magic_tags( 'Say: %msg%', $fields, false )
 		);
+	}
+
+	/**
+	 * A non-scalar field value replaces its magic tag with an empty string.
+	 */
+	public function test_replace_magic_tags_ignores_non_scalar_value() {
+		$fields = array(
+			array(
+				'id'    => 'msg',
+				'value' => array( 'a', 'b' ),
+			),
+		);
+
+		$this->assertSame( '<p></p>', $this->pro_features->replace_magic_tags( '<p>%msg%</p>', $fields ) );
+		$this->assertSame( 'Say: ', $this->pro_features->replace_magic_tags( 'Say: %msg%', $fields, false ) );
+	}
+
+	/**
+	 * A non-string Email field value gives no recipient.
+	 */
+	public function test_get_email_from_form_input_ignores_non_string_value() {
+		$request = new WP_REST_Request( 'POST', '/otter/v1/form/frontend' );
+		$request->set_body(
+			wp_json_encode(
+				array(
+					'handler' => 'submit',
+					'payload' => array(
+						'formId'         => 'test-form',
+						'formOption'     => 'wp_block_test',
+						'formInputsData' => array(
+							array(
+								'id'    => 'wp-block-themeisle-blocks-form-input-ai00002',
+								'type'  => 'email',
+								'label' => 'Email',
+								'value' => array( 'ada@example.com' ),
+							),
+						),
+					),
+				)
+			)
+		);
+
+		$this->assertSame( '', $this->form_server->get_email_from_form_input( new Form_Data_Request( $request ) ) );
 	}
 }
