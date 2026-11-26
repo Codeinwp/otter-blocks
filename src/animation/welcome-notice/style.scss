@@ -67,6 +67,12 @@
 		margin-left: 5px;
 	}
 
+	// Core's line-height on hero button icons is tuned for inline layout.
+	// Inside our flex buttons it drops the glyph below the text.
+	.button.button-hero .dashicons {
+		line-height: 1;
+	}
+
 	p {
 		max-width: 700px;
 		font-size: 15px;
