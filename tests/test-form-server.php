@@ -1473,6 +1473,140 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure a submission for a form option that the site does not know is rejected.
+	 */
+	public function test_frontend_submission_rejects_unknown_form_option() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request( array( 'payload' => array( 'formOption' => 'unknown_form' ) ) )
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_FORM_ID_INVALID, $data['code'] );
+		$this->assertCount( 0, $this->get_form_records() );
+		$this->assertCount( 0, $this->mail_requests );
+	}
+
+	/**
+	 * Ensure the form option must be in the submitted post when it has no stored settings.
+	 */
+	public function test_frontend_submission_rejects_unstored_form_option_not_in_post() {
+		$this->mock_mail();
+		$post_id = $this->create_post_with_form( 'other_form' );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formOption' => 'imported_form',
+						'postId'     => $post_id,
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_FORM_ID_INVALID, $data['code'] );
+		$this->assertCount( 0, $this->get_form_records() );
+	}
+
+	/**
+	 * Ensure a form from content without stored settings (e.g. imported content) can still be submitted.
+	 */
+	public function test_frontend_submission_accepts_unstored_form_option_found_in_post() {
+		$this->mock_mail();
+		$post_id = $this->create_post_with_form( 'imported_form' );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formOption' => 'imported_form',
+						'postId'     => $post_id,
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertCount( 1, $this->get_form_records() );
+	}
+
+	/**
+	 * Ensure the form block in the post is not used when the post is not public.
+	 */
+	public function test_frontend_submission_rejects_unstored_form_option_in_draft_post() {
+		$this->mock_mail();
+		$post_id = $this->create_post_with_form( 'imported_form', '', 'draft' );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formOption' => 'imported_form',
+						'postId'     => $post_id,
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_FORM_ID_INVALID, $data['code'] );
+	}
+
+	/**
+	 * Ensure a Captcha block in the post is enforced when the form has no stored settings.
+	 */
+	public function test_frontend_submission_requires_captcha_from_post_form_block() {
+		$this->mock_mail();
+		$post_id = $this->create_post_with_form( 'imported_form', '<!-- wp:themeisle-blocks/form-captcha {"provider":"turnstile"} /-->' );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formOption' => 'imported_form',
+						'postId'     => $post_id,
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_MISSING_CAPTCHA, $data['code'] );
+		$this->assertCount( 0, $this->get_form_records() );
+	}
+
+	/**
+	 * Ensure the legacy form-level captcha attribute in the post is enforced.
+	 */
+	public function test_frontend_submission_requires_legacy_captcha_attribute_from_post_form_block() {
+		$this->mock_mail();
+		$post_id = $this->create_post_with_form( 'imported_form', '', 'publish', array( 'hasCaptcha' => true ) );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request(
+				array(
+					'payload' => array(
+						'formOption' => 'imported_form',
+						'postId'     => $post_id,
+					),
+				)
+			)
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_MISSING_CAPTCHA, $data['code'] );
+	}
+
+	/**
 	 * Ensure anti-spam timing and honeypot data are enforced.
 	 */
 	public function test_frontend_submission_rejects_bot_like_payload() {
@@ -2633,6 +2767,34 @@ class Test_Form_Server extends WP_UnitTestCase {
 			'editor'   => array(
 				'testEmail' => array( $this->form_server, 'send_test_email' ),
 			),
+		);
+	}
+
+	/**
+	 * Create a post that contains a Form block, nested in a group block.
+	 *
+	 * @param string $option_name The form option name of the block.
+	 * @param string $inner The inner blocks markup of the form.
+	 * @param string $status The post status.
+	 * @param array  $attrs Extra form block attributes.
+	 * @return int The post ID.
+	 */
+	private function create_post_with_form( $option_name, $inner = '', $status = 'publish', $attrs = array() ) {
+		$attrs = wp_json_encode(
+			array_merge(
+				array(
+					'id'         => 'wp-block-themeisle-blocks-form-abcd1234',
+					'optionName' => $option_name,
+				),
+				$attrs
+			)
+		);
+
+		return self::factory()->post->create(
+			array(
+				'post_status'  => $status,
+				'post_content' => '<!-- wp:group --><div class="wp-block-group"><!-- wp:themeisle-blocks/form ' . $attrs . ' --><div class="wp-block-themeisle-blocks-form">' . $inner . '</div><!-- /wp:themeisle-blocks/form --></div><!-- /wp:group -->',
+			)
 		);
 	}
 

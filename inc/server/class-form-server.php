@@ -293,7 +293,15 @@ class Form_Server {
 			$form_data = self::replace_corrupted_form_data( $request, $res );
 		}
 
-		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_data_from_payload( 'formOption' ) );
+		$form_options = self::get_submitted_form_settings( $form_data );
+
+		if ( null === $form_options ) {
+			$form_options = new Form_Settings_Data( array() );
+			if ( ! $form_data->has_error() ) {
+				$form_data->set_error( Form_Data_Response::ERROR_FORM_ID_INVALID );
+			}
+		}
+
 		$form_data->set_form_options( $form_options );
 		$form_data = self::pull_fields_options_for_form( $form_data );
 
@@ -399,6 +407,88 @@ class Form_Server {
 		$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
 
 		return $form_data;
+	}
+
+	/**
+	 * Get the settings of the submitted form from the server.
+	 *
+	 * The stored form options are used first. The editor stores them when the post is saved.
+	 * A form that was added without the editor (e.g. imported content) has no stored options,
+	 * so the form block in the submitted public post is used. Its Captcha block is enforced.
+	 *
+	 * @param Form_Data_Request $form_data The form request data.
+	 * @return Form_Settings_Data|null The form settings, or null when the form is unknown.
+	 * @since 3.2.13
+	 */
+	private static function get_submitted_form_settings( $form_data ) {
+		$option_name = $form_data->get_form_option_id();
+
+		if ( ! is_string( $option_name ) || '' === $option_name ) {
+			return null;
+		}
+
+		$settings = Form_Settings_Data::get_form_setting_from_wordpress_options( $option_name );
+
+		// A stored form option always has its `form` key in the meta.
+		if ( ! empty( $settings->get_meta() ) ) {
+			return $settings;
+		}
+
+		$post_id = $form_data->get_data_from_payload( 'postId' );
+		$post    = is_numeric( $post_id ) ? get_post( (int) $post_id ) : null;
+
+		if ( ! ( $post instanceof \WP_Post ) || ! is_post_publicly_viewable( $post ) || ! has_block( 'themeisle-blocks/form', $post ) ) {
+			return null;
+		}
+
+		$form = self::find_block(
+			parse_blocks( $post->post_content ),
+			function ( $block ) use ( $option_name ) {
+				return 'themeisle-blocks/form' === $block['blockName'] && isset( $block['attrs']['optionName'] ) && $option_name === $block['attrs']['optionName'];
+			}
+		);
+
+		if ( null === $form ) {
+			return null;
+		}
+
+		$captcha = self::find_block(
+			$form['innerBlocks'],
+			function ( $block ) {
+				return 'themeisle-blocks/form-captcha' === $block['blockName'];
+			}
+		);
+
+		if ( null !== $captcha ) {
+			$settings->set_captcha( true )->set_captcha_provider( isset( $captcha['attrs']['provider'] ) ? $captcha['attrs']['provider'] : 'recaptcha' );
+		} elseif ( ! empty( $form['attrs']['hasCaptcha'] ) ) {
+			$settings->set_captcha( true )->set_captcha_provider( 'recaptcha' );
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Find the first block, at any depth, that matches the callback.
+	 *
+	 * @param array<int, array<string, mixed>>     $blocks The parsed blocks.
+	 * @param callable(array<string, mixed>): bool $is_match The match callback.
+	 * @return array<string, mixed>|null The block, or null when no block matches.
+	 */
+	private static function find_block( $blocks, $is_match ) {
+		foreach ( $blocks as $block ) {
+			if ( $is_match( $block ) ) {
+				return $block;
+			}
+
+			$found = empty( $block['innerBlocks'] ) ? null : self::find_block( $block['innerBlocks'], $is_match );
+
+			if ( null !== $found ) {
+				return $found;
+			}
+		}
+
+		return null;
 	}
 
 	/**
