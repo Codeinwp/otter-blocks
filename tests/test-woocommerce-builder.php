@@ -80,7 +80,7 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 		 */
 		$GLOBALS['wp_scripts'] = null;
 
-		unset( $_GET['otter-woo-builder'], $_GET['_wpnonce'], $_GET['toggle-woobuilder'], $_GET['post'] );
+		$_GET = array();
 
 		parent::tear_down();
 	}
@@ -163,7 +163,7 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 		$_GET['otter-woo-builder'] = $value;
 
 		if ( $with_nonce ) {
-			$_GET['_wpnonce'] = wp_create_nonce( 'otter_woo_builder' );
+			$_GET['_wpnonce'] = wp_create_nonce( 'otter_woo_builder_' . $post_id );
 		}
 
 		return $this->woo_builder->enable_block_editor( false, 'product' );
@@ -186,21 +186,22 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Get the nonce from the toggle link of the metabox.
+	 * Get the query args of the toggle link in the metabox.
 	 *
 	 * @param int $post_id Product ID shown in the metabox.
-	 * @return string
+	 * @return array<string, string>
 	 */
-	protected function get_metabox_nonce( $post_id ) {
+	protected function get_metabox_link_args( $post_id ) {
 		$GLOBALS['post'] = get_post( $post_id );
 
 		ob_start();
 		$this->woo_builder->render_metabox( 'product' );
 		$html = ob_get_clean();
 
-		preg_match( '/_wpnonce=([a-f0-9]+)/', $html, $matches );
+		preg_match( '/href="([^"]+)"/', $html, $matches );
+		wp_parse_str( (string) wp_parse_url( html_entity_decode( $matches[1] ), PHP_URL_QUERY ), $args );
 
-		return $matches[1];
+		return $args;
 	}
 
 	/**
@@ -301,7 +302,7 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 
 		$_GET['post']              = $this->plain_product_id;
 		$_GET['otter-woo-builder'] = 1;
-		$_GET['_wpnonce']          = $this->get_metabox_nonce( $this->plain_product_id );
+		$_GET['_wpnonce']          = $this->get_metabox_link_args( $this->plain_product_id )['_wpnonce'];
 		$GLOBALS['post']           = get_post( $other_id );
 
 		$this->assertTrue( $this->woo_builder->enable_block_editor( false, 'product' ) );
@@ -310,19 +311,39 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 	}
 
 	/**
-	 * On the new product screen, the link opens a new draft without a `post` query arg.
+	 * On the new product screen, the link opens the edit screen of the same draft.
 	 */
 	public function test_enable_builder_from_new_product_screen() {
 		$this->log_in_product_editor();
-		$first_draft = self::factory()->post->create( array( 'post_type' => 'product', 'post_status' => 'auto-draft' ) );
-		$next_draft  = self::factory()->post->create( array( 'post_type' => 'product', 'post_status' => 'auto-draft' ) );
+		$draft_id = self::factory()->post->create(
+			array(
+				'post_type'   => 'product',
+				'post_status' => 'auto-draft',
+			)
+		);
 
-		$_GET['otter-woo-builder'] = 1;
-		$_GET['_wpnonce']          = $this->get_metabox_nonce( $first_draft );
-		$GLOBALS['post']           = get_post( $next_draft );
+		$_GET = $this->get_metabox_link_args( $draft_id );
 
+		$this->assertSame( (string) $draft_id, $_GET['post'] );
+		$this->assertSame( 'edit', $_GET['action'] );
 		$this->assertTrue( $this->woo_builder->enable_block_editor( false, 'product' ) );
-		$this->assertTrue( boolval( get_post_meta( $next_draft, '_themeisle_gutenberg_woo_builder', true ) ) );
+		$this->assertTrue( boolval( get_post_meta( $draft_id, '_themeisle_gutenberg_woo_builder', true ) ) );
+	}
+
+	/**
+	 * A nonce from the metabox of one product does not toggle another product.
+	 */
+	public function test_nonce_of_other_product_does_not_toggle() {
+		$this->log_in_product_editor();
+		$other_id = self::factory()->post->create( array( 'post_type' => 'product' ) );
+
+		$_GET['post']              = $this->plain_product_id;
+		$_GET['otter-woo-builder'] = 1;
+		$_GET['_wpnonce']          = $this->get_metabox_link_args( $other_id )['_wpnonce'];
+		$GLOBALS['post']           = get_post( $this->plain_product_id );
+
+		$this->assertFalse( $this->woo_builder->enable_block_editor( false, 'product' ) );
+		$this->assertSame( '', get_post_meta( $this->plain_product_id, '_themeisle_gutenberg_woo_builder', true ) );
 	}
 
 	/**
@@ -341,6 +362,23 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 		$this->toggle_builder( $page_id, 0, true );
 
 		$this->assertSame( $content, get_post_field( 'post_content', $page_id ) );
+	}
+
+	/**
+	 * The toggle runs only when the filter is called for the product post type.
+	 */
+	public function test_toggle_ignores_other_post_type_screen() {
+		$this->log_in_product_editor();
+		$post_id = $this->create_block_product();
+		$content = get_post_field( 'post_content', $post_id );
+
+		$GLOBALS['post']           = get_post( $post_id );
+		$_GET['post']              = $post_id;
+		$_GET['otter-woo-builder'] = 0;
+		$_GET['_wpnonce']          = wp_create_nonce( 'otter_woo_builder_' . $post_id );
+
+		$this->assertTrue( $this->woo_builder->enable_block_editor( true, 'page' ) );
+		$this->assertSame( $content, get_post_field( 'post_content', $post_id ) );
 	}
 
 	/**
@@ -366,7 +404,7 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 
 		$_GET['post']              = 'abc';
 		$_GET['otter-woo-builder'] = 1;
-		$_GET['_wpnonce']          = wp_create_nonce( 'otter_woo_builder' );
+		$_GET['_wpnonce']          = wp_create_nonce( 'otter_woo_builder_0' );
 		$GLOBALS['post']           = get_post( $this->plain_product_id );
 
 		$this->assertFalse( $this->woo_builder->enable_block_editor( false, 'product' ) );

@@ -126,14 +126,28 @@ class WooCommerce_Builder {
 	 * @access  public
 	 */
 	public function render_metabox( $post_type ) {
-		$woo_builder_enabled = get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true );
+		$post_id             = (int) get_the_ID();
+		$woo_builder_enabled = get_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true );
+
+		/*
+		 * Link to the edit screen of this product, also from the new product
+		 * screen, so the request names the product the nonce is for.
+		 */
+		$toggle_url = add_query_arg(
+			array(
+				'post'   => $post_id,
+				'action' => 'edit',
+			),
+			admin_url( 'post.php' )
+		);
+		$nonce      = 'otter_woo_builder_' . $post_id;
 
 		if ( boolval( $woo_builder_enabled ) ) {
 			?>
 			<div class="clear">
 				<p><?php esc_html_e( 'You can go back to the regular editor from this option.', 'otter-pro' ); ?></p>
 
-				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'otter-woo-builder', 0 ), 'otter_woo_builder' ) ); ?>" class="button button-primary" id="otter-woo-builder">
+				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'otter-woo-builder', 0, $toggle_url ), $nonce ) ); ?>" class="button button-primary" id="otter-woo-builder">
 					<?php esc_html_e( 'Disable WooCommerce Builder', 'otter-pro' ); ?>
 				</a>
 			</div>
@@ -143,7 +157,7 @@ class WooCommerce_Builder {
 			<div class="clear">
 				<p><?php esc_html_e( 'Use WooCommerce Builder by Otter to build a custom page for your WooCommerce products.', 'otter-pro' ); ?></p>
 
-				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'otter-woo-builder', 1 ), 'otter_woo_builder' ) ); ?>" class="button button-primary" id="otter-woo-builder">
+				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( 'otter-woo-builder', 1, $toggle_url ), $nonce ) ); ?>" class="button button-primary" id="otter-woo-builder">
 					<?php esc_html_e( 'Enable WooCommerce Builder', 'otter-pro' ); ?>
 				</a>
 			</div>
@@ -161,20 +175,14 @@ class WooCommerce_Builder {
 	 * @access  public
 	 */
 	public function enable_block_editor( $can_edit, $post_type ) {
-		/*
-		 * The edit screen URL names the product in `post`. The new product
-		 * screen has no `post` arg, so use the auto-draft in the global post.
-		 * The nonce is not bound to a post ID because that screen makes a new
-		 * auto-draft on each load.
-		 */
-		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : get_the_ID();
+		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
 
 		if (
 			isset( $_GET['otter-woo-builder'], $_GET['_wpnonce'] ) &&
 			'product' === $post_type &&
 			$post_id &&
 			'product' === get_post_type( $post_id ) &&
-			wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_wpnonce'] ) ), 'otter_woo_builder' ) &&
+			wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_wpnonce'] ) ), 'otter_woo_builder_' . $post_id ) &&
 			current_user_can( 'edit_post', $post_id )
 		) {
 			if ( ! boolval( $_GET['otter-woo-builder'] ) ) {
