@@ -107,6 +107,66 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * In REST responses, stored dynamic values read the `context` post only when the reader can read it.
+	 */
+	public function test_rest_rendering_reads_only_readable_context_posts(): void {
+		$sources = array(
+			self::factory()->post->create( array( 'post_excerpt' => 'Public excerpt' ) ),
+			self::factory()->post->create(
+				array(
+					'post_excerpt' => 'Private excerpt',
+					'post_status'  => 'private',
+				)
+			),
+			self::factory()->post->create(
+				array(
+					'post_excerpt' => 'Draft excerpt',
+					'post_status'  => 'draft',
+				)
+			),
+			self::factory()->post->create(
+				array(
+					'post_excerpt'  => 'Protected excerpt',
+					'post_password' => 'pass',
+				)
+			),
+		);
+
+		$content = '';
+		foreach ( $sources as $source ) {
+			$content .= '<p><o-dynamic data-type="postExcerpt" data-context="' . $source . '">Excerpt</o-dynamic></p>';
+		}
+
+		// REST_REQUEST is a constant, so render as in a REST request through the request check.
+		$rest = new class() extends \ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content {
+			/**
+			 * Render as in a REST request.
+			 *
+			 * @return bool
+			 */
+			protected function is_rest_request() {
+				return true;
+			}
+		};
+
+		$visitor = $rest->apply_dynamic_content( $content );
+		$this->assertStringContainsString( 'Public excerpt', $visitor );
+		$this->assertStringNotContainsString( 'Private excerpt', $visitor );
+		$this->assertStringNotContainsString( 'Draft excerpt', $visitor );
+		$this->assertStringNotContainsString( 'Protected excerpt', $visitor );
+
+		// Markup without a context uses the post being rendered.
+		$GLOBALS['post'] = get_post( $sources[0] );
+		$this->assertSame( '<p>Public excerpt</p>', $rest->apply_dynamic_content( '<p><o-dynamic data-type="postExcerpt">Excerpt</o-dynamic></p>' ) );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		$editor = $rest->apply_dynamic_content( $content );
+		$this->assertStringContainsString( 'Private excerpt', $editor );
+		$this->assertStringContainsString( 'Draft excerpt', $editor );
+		$this->assertStringContainsString( 'Protected excerpt', $editor );
+	}
+
+	/**
 	 * Dispatch a preview request and return its data.
 	 *
 	 * @param array<string, string|int> $params Query parameters.
