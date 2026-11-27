@@ -1213,7 +1213,7 @@ class Form_Server {
 	 *
 	 * @param Form_Data_Request $data The form data.
 	 *
-	 * @return mixed|string
+	 * @return string One valid email address, or an empty string.
 	 * @since 2.0.3
 	 */
 	public function get_email_from_form_input( Form_Data_Request $data ) {
@@ -1221,7 +1221,18 @@ class Form_Server {
 		if ( is_array( $inputs ) ) {
 			foreach ( $inputs as $input_field ) {
 				if ( isset( $input_field['type'] ) && 'email' == $input_field['type'] ) {
-					return $input_field['value'];
+					$value  = isset( $input_field['value'] ) && is_string( $input_field['value'] ) ? $input_field['value'] : '';
+					$at     = strrpos( $value, '@' );
+					$domain = false !== $at ? substr( $value, $at + 1 ) : '';
+
+					// Convert an internationalized domain to ASCII, as wp_mail() does. sanitize_email() would remove its characters and change the address.
+					if ( function_exists( 'idn_to_ascii' ) && preg_match( '/[^\x00-\x7F]/', $domain ) ) {
+						$domain = idn_to_ascii( $domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46 );
+						$value  = false !== $domain ? substr( $value, 0, $at + 1 ) . $domain : '';
+					}
+
+					// is_email() accepts exactly one address: it rejects the "," and ";" that wp_mail() uses to split a list.
+					return is_email( $value ) ? $value : '';
 				}
 			}
 		}

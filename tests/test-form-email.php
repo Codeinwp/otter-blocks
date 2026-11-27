@@ -122,4 +122,58 @@ class Test_Form_Email extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Salt &amp; pepper, Oil &amp; vinegar', $body );
 		$this->assertStringNotContainsString( 'Salt & pepper', $body );
 	}
+
+	/**
+	 * Build a test email request with the given site value.
+	 *
+	 * @param mixed $site The site value.
+	 * @return Form_Data_Request
+	 */
+	private function make_test_email_data( $site ) {
+		$request = new WP_REST_Request( 'POST', '/otter/v1/form/editor' );
+		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				array(
+					'handler' => 'testEmail',
+					'payload' => array(
+						'formOption' => 'wp_block_test',
+						'site'       => $site,
+					),
+				)
+			)
+		);
+
+		return new Form_Data_Request( $request );
+	}
+
+	/**
+	 * The site link in the test email is URL-escaped and stays inside its attribute.
+	 */
+	public function test_build_test_email_escapes_site_link() {
+		$body = Form_Email::instance()->build_test_email( $this->make_test_email_data( 'https://example.com/?a=1&b="x" style="y' ) );
+
+		$this->assertSame( 1, substr_count( $body, 'href=' ) );
+		$this->assertStringContainsString( '<a href="https://example.com/?a=1&#038;b=x%20style=y">', $body );
+		$this->assertStringNotContainsString( '" style="', $body );
+	}
+
+	/**
+	 * The test email links only to http and https URLs.
+	 */
+	public function test_build_test_email_drops_non_http_site() {
+		$body = Form_Email::instance()->build_test_email( $this->make_test_email_data( 'ftp://example.com/file' ) );
+
+		$this->assertStringContainsString( '<a href="">', $body );
+		$this->assertStringNotContainsString( 'ftp:', $body );
+	}
+
+	/**
+	 * A non-string site value gives an empty link.
+	 */
+	public function test_build_test_email_ignores_non_string_site() {
+		$body = Form_Email::instance()->build_test_email( $this->make_test_email_data( array( 'https://example.com' ) ) );
+
+		$this->assertStringContainsString( '<a href="">', $body );
+	}
 }
