@@ -26,6 +26,32 @@ test.describe( 'Form Block', () => {
 		await admin.createNewPost();
 	});
 
+	test( 'keeps a block-id settings key after saving, reopening, and duplicating', async({ editor, page }) => {
+		const formId = 'wp-block-themeisle-blocks-form-abcd1234';
+		await editor.insertBlock({
+			name: 'themeisle-blocks/form',
+			attributes: { id: formId, optionName: formId }
+		});
+		const getForms = () => page.evaluate( () => window.wp.data.select( 'core/block-editor' ).getBlocks()
+			.filter( ({ name }) => 'themeisle-blocks/form' === name )
+			.map( ({ attributes }) => ({ id: attributes.id, optionName: attributes.optionName }) ) );
+		await expect.poll( getForms ).toEqual([{ id: formId, optionName: formId }]);
+		await editor.saveDraft();
+		await page.reload();
+		await editor.canvas.getByRole( 'document', { name: 'Block: Form', exact: true }).waitFor();
+		await expect.poll( getForms ).toEqual([{ id: formId, optionName: formId }]);
+		await page.evaluate( () => {
+			const form = window.wp.data.select( 'core/block-editor' ).getBlocks()
+				.find( ({ name }) => 'themeisle-blocks/form' === name );
+			window.wp.data.dispatch( 'core/block-editor' ).duplicateBlocks([ form.clientId ]);
+		});
+		await expect.poll( async() => {
+			const forms = await getForms();
+			return 2 === forms.length && forms.every( ({ id, optionName }) => id && optionName ) &&
+				forms[0].id !== forms[1].id && forms[0].optionName !== forms[1].optionName;
+		}).toBe( true );
+	});
+
 	test( 'can be created by typing "/form"', async({ editor, page }) => {
 
 		// Create a Progress Block with the slash block shortcut.
