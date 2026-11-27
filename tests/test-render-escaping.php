@@ -91,6 +91,116 @@ class Test_Render_Escaping extends WP_UnitTestCase {
 	}
 
 	/**
+	 * KSES must retain both authored Dynamic Value element types.
+	 */
+	public function test_review_comparison_preserves_dynamic_elements(): void {
+		update_option( 'blogname', 'Rich comparison site' );
+		$attributes = array(
+			'id' => 'aaaaaaaabbbb1234',
+			'title' => 'Review',
+			'description' => '<o-dynamic data-type="siteTitle">Fallback</o-dynamic> <o-dynamic-link data-type="siteURL">Visit</o-dynamic-link>',
+		);
+		$post_id = $this->factory()->post->create( array( 'post_content' => wp_slash( '<!-- wp:themeisle-blocks/review ' . serialize_block_attributes( $attributes ) . ' /-->' ), 'post_status' => 'publish' ) );
+		$html = ( new Review_Comparison_Block() )->render( array( 'reviews' => array( $post_id . '-bbbb1234' ) ) );
+		$group = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', $html, $group, new WP_Block( $group ) );
+
+		$this->assertStringContainsString( 'Rich comparison site', $output );
+		$this->assertStringNotContainsString( 'Fallback', $output );
+		$this->assertStringNotContainsString( 'otterauthored', $output );
+		$this->assertStringNotContainsString( 'o-dynamic', $output );
+		$this->assertStringContainsString( 'href="' . esc_url( home_url() ) . '"', $output );
+	}
+
+	/**
+	 * Marking must neither bypass KSES attribute checks nor grant tags to another context.
+	 */
+	public function test_marked_dynamic_elements_follow_kses_policy(): void {
+		$dynamic = Dynamic_Content::instance();
+		$block = $dynamic->register_authored_block(
+			array( 'attrs' => array( 'description' => '<o-dynamic data-type="siteTitle" onclick="alert(1)">Value</o-dynamic><o-dynamic-link data-type="siteURL" href="javascript:alert(1)">Link</o-dynamic-link>' ) )
+		);
+		$marked = $block['attrs']['description'];
+		$restored = $dynamic->restore_authored_markers( wp_kses_post( $marked ) );
+		$this->assertStringContainsString( '<o-dynamic data-type="siteTitle">Value</o-dynamic>', $restored );
+		$this->assertStringContainsString( '<o-dynamic-link data-type="siteURL">Link</o-dynamic-link>', $restored );
+		$this->assertStringNotContainsString( 'onclick', $restored );
+		$this->assertStringNotContainsString( 'javascript:', $restored );
+		$this->assertSame( 'ValueLink', wp_kses( $marked, array() ) );
+		$deny = static function ( $tags ) {
+			unset( $tags['o-dynamic'], $tags['o-dynamic-link'] );
+			return $tags;
+		};
+		add_filter( 'wp_kses_allowed_html', $deny, 100 );
+		try {
+			$this->assertSame( 'ValueLink', wp_kses_post( $marked ) );
+		} finally {
+			remove_filter( 'wp_kses_allowed_html', $deny, 100 );
+		}
+	}
+
+	/**
+	 * Playlist artwork and metadata leave the renderer through state rather than markup.
+	 */
+	public function test_playlist_state_restores_authored_attributes(): void {
+		if ( ! WP_Block_Type_Registry::get_instance()->is_registered( 'core/playlist' ) ) {
+			$this->markTestSkipped( 'The Playlist block requires WordPress 7.1.' );
+		}
+		$image = get_rest_url( null, 'otter/v1/dynamic/' );
+		$image .= ( false === strpos( $image, '?' ) ? '?' : '&' ) . 'type=featuredImage';
+		$track = array(
+			'id' => 1,
+			'title' => '{otterDynamic?type=siteTitle}',
+			'artist' => 'Artist otterDynamicLink',
+			'album' => 'Album',
+			'image' => $image,
+			'imageAlt' => '{otterDynamic?type=siteTitle}',
+			'src' => 'https://example.org/track.mp3',
+		);
+		do_blocks( '<!-- wp:playlist --><figure class="wp-block-playlist">'
+			. '<!-- wp:playlist-track ' . wp_json_encode( $track ) . ' --><div class="wp-block-playlist-track"></div><!-- /wp:playlist-track -->'
+			. '</figure><!-- /wp:playlist -->' );
+		$state = wp_interactivity_state( 'core/playlist' );
+		$playlists = $state['playlists'];
+		$playlist = end( $playlists );
+		$saved = $playlist['tracks']['track-0'];
+
+		$this->assertSame( esc_url( $image ), $saved['image'] );
+		$this->assertSame( $track['title'], $saved['title'] );
+		$this->assertSame( $track['artist'], $saved['artist'] );
+		$this->assertSame( $track['imageAlt'], $saved['imageAlt'] );
+		$data = apply_filters( 'script_module_data_@wordpress/interactivity', array() );
+		$this->assertStringNotContainsString( 'otterauthored', wp_json_encode( $data ) );
+	}
+
+	/**
+	 * Tabs must share identifiers across state, context and markup.
+	 */
+	public function test_tabs_state_restores_authored_keys_and_values(): void {
+		if ( ! WP_Block_Type_Registry::get_instance()->is_registered( 'core/tabs' ) ) {
+			$this->markTestSkipped( 'The Tabs block requires WordPress 7.1.' );
+		}
+		$id = 'tabs-otterDynamicLink';
+		$panel = 'panel-otterDynamicLink';
+		$output = do_blocks( '<!-- wp:tabs {"anchor":"' . $id . '"} --><div class="wp-block-tabs" id="' . $id . '">'
+			. '<!-- wp:tab-panels --><div class="wp-block-tab-panels">'
+			. '<!-- wp:tab-panel {"anchor":"' . $panel . '"} --><div class="wp-block-tab-panel" id="' . $panel . '">Panel</div><!-- /wp:tab-panel -->'
+			. '</div><!-- /wp:tab-panels --></div><!-- /wp:tabs -->' );
+		$state = wp_interactivity_state( 'core/tabs' );
+		$this->assertArrayHasKey( $id, $state );
+		$this->assertSame( array( $panel ), $state[ $id ] );
+		$processor = new WP_HTML_Tag_Processor( $output );
+		$this->assertTrue( $processor->next_tag( array( 'class_name' => 'wp-block-tabs' ) ) );
+		$context = json_decode( $processor->get_attribute( 'data-wp-context' ), true );
+		$this->assertSame( $id, $context['tabsId'] );
+		$this->assertTrue( $processor->next_tag( array( 'class_name' => 'wp-block-tab-panel' ) ) );
+		$this->assertSame( $state[ $id ][0], $processor->get_attribute( 'id' ) );
+		$data = apply_filters( 'script_module_data_@wordpress/interactivity', array() );
+		$this->assertSame( array( $panel ), $data['state']['core/tabs'][ $id ] );
+		$this->assertStringNotContainsString( 'otterauthored', wp_json_encode( $data ) );
+	}
+
+	/**
 	 * Product image alt text, set or empty so the comparison falls back to the product name.
 	 *
 	 * @return array<string, array{0: bool}>

@@ -61,6 +61,7 @@ class Dynamic_Content {
 	public function init() {
 		add_filter( 'render_block_data', array( $this, 'register_authored_block' ), PHP_INT_MAX, 3 );
 		add_filter( 'register_block_type_args', array( $this, 'protect_render_attributes' ) );
+		add_filter( 'wp_kses_allowed_html', array( $this, 'allow_authored_elements' ), PHP_INT_MAX );
 		add_filter( 'block_core_navigation_render_inner_blocks', array( $this, 'register_navigation_menu_blocks' ) );
 		add_filter( 'block_bindings_source_value', array( $this, 'escape_bound_value_magic_tags' ), 10, 5 );
 		add_filter( 'render_block', array( $this, 'escape_visitor_block_magic_tags' ), 9, 3 );
@@ -93,7 +94,7 @@ class Dynamic_Content {
 	 * Mark saved inputs before renderers mix them with stored or remote data.
 	 *
 	 * @param array<string, mixed>      $parsed_block Parsed block.
-	 * @param array<string, mixed>|null $source_block Parsed block before filters.
+	 * @param array<string, mixed>|null $source_block Parsed block before filters, or null for direct HTML rendering.
 	 * @param \WP_Block|null            $parent_block Parent block.
 	 * @return array<string, mixed>
 	 */
@@ -102,7 +103,8 @@ class Dynamic_Content {
 			self::$navigation_menu_ref = isset( $parsed_block['attrs']['ref'] ) ? (int) $parsed_block['attrs']['ref'] : 0;
 		}
 
-		return $this->mark_authored_block( $parsed_block );
+		// Parsed attributes also feed context and parent renderers' state; mark them only for HTML callbacks.
+		return $this->mark_authored_block( $parsed_block, null === $source_block );
 	}
 
 	/**
@@ -158,11 +160,9 @@ class Dynamic_Content {
 	 */
 	private function mark_navigation_blocks( $blocks ) {
 		foreach ( $blocks as $block ) {
-			$block->parsed_block  = $this->mark_authored_block( $block->parsed_block );
+			$block->parsed_block  = $this->mark_authored_block( $block->parsed_block, false );
 			$block->inner_html    = $block->parsed_block['innerHTML'];
 			$block->inner_content = $block->parsed_block['innerContent'];
-			$attributes           = $this->mark_authored_block( array( 'attrs' => $block->attributes ) );
-			$block->attributes    = $attributes['attrs'];
 			$this->mark_navigation_blocks( $block->inner_blocks );
 		}
 	}
@@ -193,9 +193,10 @@ class Dynamic_Content {
 	 * Mark a whole tree because older core versions construct children before filtering them.
 	 *
 	 * @param array<string, mixed> $block Parsed block.
+	 * @param bool                 $mark_attributes Whether attributes are being consumed by an HTML renderer.
 	 * @return array<string, mixed>
 	 */
-	private function mark_authored_block( $block ) {
+	private function mark_authored_block( $block, $mark_attributes = true ) {
 		$prefixes = self::authored_prefixes();
 		// strtr uses the longest key, keeping already marked image URLs unchanged.
 		$replacements = array_combine( array_values( $prefixes ), array_values( $prefixes ) ) + $prefixes;
@@ -204,7 +205,7 @@ class Dynamic_Content {
 				$value = strtr( $value, $replacements );
 			}
 		};
-		if ( isset( $block['attrs'] ) ) {
+		if ( $mark_attributes && isset( $block['attrs'] ) ) {
 			$attributes = array_diff_key( $block['attrs'], self::data_bound_attributes( $block ), array( 'metadata' => true ) );
 			array_walk_recursive( $attributes, $replace );
 			$block['attrs'] = array_replace( $block['attrs'], $attributes );
@@ -220,7 +221,12 @@ class Dynamic_Content {
 			}
 		}
 		if ( isset( $block['innerBlocks'] ) ) {
-			$block['innerBlocks'] = array_map( array( $this, 'mark_authored_block' ), $block['innerBlocks'] );
+			$block['innerBlocks'] = array_map(
+				function ( $inner_block ) use ( $mark_attributes ) {
+					return $this->mark_authored_block( $inner_block, $mark_attributes );
+				},
+				$block['innerBlocks']
+			);
 		}
 
 		return $block;
@@ -359,6 +365,27 @@ class Dynamic_Content {
 				return is_string( $value ) ? $this->restore_authored_markers( $value ) : $value;
 			}
 		);
+	}
+
+	/**
+	 * Give marked Dynamic Value elements the same KSES policy as their saved forms.
+	 *
+	 * @param array<string, array<string, mixed>> $tags Allowed elements and attributes.
+	 * @return array<string, array<string, mixed>>
+	 */
+	public function allow_authored_elements( $tags ) {
+		$prefixes = self::authored_prefixes();
+		$marked   = substr( $prefixes['<o-dynamic'], 1 );
+		foreach ( array(
+			'o-dynamic'      => $marked,
+			'o-dynamic-link' => $marked . '-link',
+		) as $original => $element ) {
+			if ( isset( $tags[ $original ] ) ) {
+				$tags[ $element ] = $tags[ $original ];
+			}
+		}
+
+		return $tags;
 	}
 
 	/**
