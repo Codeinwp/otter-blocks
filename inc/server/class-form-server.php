@@ -79,11 +79,11 @@ class Form_Server {
 	 *
 	 * @param string               $block_content Rendered form markup.
 	 * @param array<string, mixed> $block Parsed Form block.
-	 * @phpstan-param array{attrs: array{optionName?: mixed, id?: mixed, ...}, ...} $block
+	 * @phpstan-param array{attrs?: array{optionName?: mixed, id?: mixed, ...}|null, ...} $block
 	 * @return string
 	 */
 	public function set_form_option_name( $block_content, array $block ) {
-		$attributes = $block['attrs'];
+		$attributes = array_key_exists( 'attrs', $block ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
 		$option     = Form_Settings_Data::get_form_option_name( $attributes );
 
 		if ( '' === $option ) {

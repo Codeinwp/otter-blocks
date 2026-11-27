@@ -117,25 +117,47 @@ class Test_Abilities extends WP_UnitTestCase {
 		);
 	}
 
+	public function test_form_with_invalid_attribute_json_renders_unchanged(): void {
+		$markup  = '<div class="wp-block-themeisle-blocks-form"><form></form></div>';
+		$content = '<!-- wp:themeisle-blocks/form {"id":} -->' . $markup . '<!-- /wp:themeisle-blocks/form -->';
+
+		$this->assertNull( parse_blocks( $content )[0]['attrs'] );
+		$this->assertSame( $markup, do_blocks( $content ) );
+	}
+
 	public function test_existing_form_option_name_keeps_precedence(): void {
 		$list = wp_get_ability( 'otter/list-forms' )->execute( array( 'post_id' => $this->post_id ) );
 		$this->assertSame( 'contact_form', $list['forms'][0]['form_id'] );
-		$content = '<!-- wp:themeisle-blocks/form {"id":"form-block","optionName":"contact_form"} --><div class="wp-block-themeisle-blocks-form" data-option-name="contact_form"></div><!-- /wp:themeisle-blocks/form -->';
-		$this->assertStringContainsString( 'data-option-name="contact_form"', do_blocks( $content ) );
+		$content = '<!-- wp:themeisle-blocks/form {"id":"form-block","optionName":"contact_form"} --><div class="wp-block-themeisle-blocks-form"></div><!-- /wp:themeisle-blocks/form -->';
+		$output  = do_blocks( $content );
+		$this->assertStringContainsString( 'data-option-name="contact_form"', $output );
+		$this->assertStringNotContainsString( 'data-option-name="form-block"', $output );
 	}
 
 	public function test_form_update_requires_permission_to_edit_containing_post(): void {
+		$block_id = 'wp-block-themeisle-blocks-form-auth1234';
+		wp_update_post(
+			array(
+				'ID'           => $this->post_id,
+				'post_content' => '<!-- wp:themeisle-blocks/form {"id":"' . $block_id . '"} /-->',
+			)
+		);
+		$list = wp_get_ability( 'otter/list-forms' )->execute( array( 'post_id' => $this->post_id ) );
+		$this->assertSame( $block_id, $list['forms'][0]['form_id'] );
+		$settings = get_option( Abilities::FORM_OPTION );
+
 		$user = self::factory()->user->create( array( 'role' => 'subscriber' ) );
 		get_user_by( 'id', $user )->add_cap( 'manage_options' );
 		wp_set_current_user( $user );
 		foreach ( array( 0, $this->post_id ) as $post_id ) {
-			$input = array( 'form_id' => 'contact_form', 'delivery' => array( 'subject' => 'Denied' ) );
+			$input = array( 'form_id' => $block_id, 'delivery' => array( 'subject' => 'Denied' ) );
 			if ( $post_id ) {
 				$input['post_id'] = $post_id;
 			}
 			$result = wp_get_ability( 'otter/update-form' )->execute( $input );
 			$this->assertWPError( $result );
 			$this->assertSame( 'otter_forbidden', $result->get_error_code() );
+			$this->assertSame( $settings, get_option( Abilities::FORM_OPTION ) );
 		}
 	}
 
