@@ -11,6 +11,7 @@
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
 use ThemeIsle\GutenbergBlocks\Pro;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use WP_Error;
 use WP_Query;
 
@@ -724,7 +725,7 @@ class Abilities {
 
 		foreach ( $this->find_blocks( parse_blocks( $post->post_content ), array( self::FORM_BLOCK ) ) as $block ) {
 			$attrs    = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
-			$form_id  = isset( $attrs['optionName'] ) && is_string( $attrs['optionName'] ) ? $attrs['optionName'] : '';
+			$form_id  = Form_Settings_Data::get_form_option_name( $attrs );
 			$block_id = isset( $attrs['id'] ) && is_string( $attrs['id'] ) ? $attrs['id'] : '';
 			$saved    = isset( $settings[ $form_id ] ) ? $settings[ $form_id ] : array();
 
