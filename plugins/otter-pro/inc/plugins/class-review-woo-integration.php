@@ -8,6 +8,7 @@
 namespace ThemeIsle\OtterPro\Plugins;
 
 use ThemeIsle\OtterPro\Plugins\License;
+use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
 
 /**
  * Class Review_Woo_Integration
@@ -33,7 +34,9 @@ class Review_Woo_Integration {
 	/**
 	 * Apply Woo Data
 	 * 
-	 * @param array $attributes Block Attributes.
+	 * @template T of array{product: int|string, ...<string, mixed>}
+	 * @param T $attributes Block attributes.
+	 * @return T|array{product: int|string, title: string, description: string, price: string, currency: string, discounted?: string, image: array{id: int|string, url: string|false, alt: mixed}, links: list<array{label: string, href: string, isSponsored: bool}>, ...<string, mixed>}
 	 *
 	 * @since   2.0.1
 	 * @access  public
@@ -63,7 +66,7 @@ class Review_Woo_Integration {
 		$attributes['links'] = array(
 			array(
 				'label'       => __( 'Buy Now', 'otter-pro' ),
-				'href'        => method_exists( $product, 'get_product_url' ) ? $product->get_product_url() : $product->get_permalink(),
+				'href'        => Dynamic_Content::instance()->escape_comment_magic_tags( method_exists( $product, 'get_product_url' ) ? $product->get_product_url() : $product->get_permalink() ),
 				'isSponsored' => method_exists( $product, 'get_product_url' ),
 			),
 		);

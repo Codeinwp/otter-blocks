@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
+use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
+
 /**
  * Class Plugin_Card_Block
  */
@@ -30,6 +32,7 @@ class Plugin_Card_Block {
 
 		if ( ! is_wp_error( $results['data'] ) ) {
 			$results = $results['data'];
+			$this->escape_author_text_markers( $results );
 
 			$icon = '';
 			if ( isset( $results->icons['svg'] ) ) {
@@ -90,6 +93,24 @@ class Plugin_Card_Block {
 			</div>';
 
 			return $markup;
+		}
+	}
+
+	/**
+	 * Keep dynamic markers literal in the plugin text WordPress.org returns from its author.
+	 *
+	 * @param object|string $plugin Plugin information, updated in place, or the error flag from search().
+	 * @return void
+	 */
+	private function escape_author_text_markers( $plugin ) {
+		if ( ! is_object( $plugin ) ) {
+			return;
+		}
+
+		foreach ( array( 'name', 'author', 'short_description' ) as $field ) {
+			if ( isset( $plugin->$field ) && is_string( $plugin->$field ) ) {
+				$plugin->$field = Dynamic_Content::instance()->escape_comment_magic_tags( $plugin->$field );
+			}
 		}
 	}
 

@@ -645,6 +645,73 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 		$this->assertSame( $content, $result );
 	}
 
+	/**
+	 * State and animation names holding preg replacement backreference sequences.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function backreference_state_names(): array {
+		return array(
+			'numbered' => array( 'price$1' ),
+			'braced'   => array( 'price${0}' ),
+			'slashed'  => array( 'price' . chr( 92 ) . '1' ),
+		);
+	}
+
+	/**
+	 * @dataProvider backreference_state_names
+	 */
+	public function test_state_attributes_keep_backreference_sequences( string $name ): void {
+		$block  = $this->make_block(
+			'atomic-wind/link',
+			array(
+				'showIf'       => $name,
+				'hideIf'       => $name,
+				'stateTrigger' => $name,
+				'stateAction'  => 'set',
+				'stateValue'   => $name,
+			)
+		);
+		$result = $this->instance->render_state_attrs( '<button class="wp-block">Go</button>', $block );
+
+		$this->assert_tag_attributes(
+			$result,
+			'button',
+			array(
+				'class'              => 'wp-block',
+				'data-show-if'       => $name,
+				'data-hide-if'       => $name,
+				'data-state-trigger' => $name,
+				'data-state-action'  => 'set',
+				'data-state-value'   => $name,
+			)
+		);
+	}
+
+	/**
+	 * @dataProvider backreference_state_names
+	 */
+	public function test_animation_attributes_keep_backreference_sequences( string $name ): void {
+		$block  = $this->make_block(
+			'atomic-wind/box',
+			array(
+				'animation'      => $name,
+				'animationDelay' => $name,
+			)
+		);
+		$result = $this->instance->render_animation_attrs( '<div class="wp-block">Content</div>', $block );
+
+		$this->assert_tag_attributes(
+			$result,
+			'div',
+			array(
+				'class'                => 'wp-block',
+				'data-animation'       => $name,
+				'data-animation-delay' => $name,
+			)
+		);
+	}
+
 	// -------------------------------------------------------
 	// render_post_fields — skipping
 	// -------------------------------------------------------
@@ -915,6 +982,224 @@ class TestAtomicWindBlocks extends WP_UnitTestCase {
 
 		$this->assertStringNotContainsString( 'placeholder.jpg', $result );
 		$this->assertStringContainsString( 'src="', $result );
+
+		wp_reset_postdata();
+	}
+
+	/**
+	 * Values holding preg replacement backreference sequences, plus a plain one.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function backreference_values(): array {
+		$backslash = chr( 92 );
+
+		return array(
+			'dollar'        => array( '$0 onload=alert(1) z=' ),
+			'braced dollar' => array( '${0} onload=alert(1) z=' ),
+			'backslash'     => array( $backslash . '0 onload=alert(1) z=' ),
+			'plain'         => array( 'Jane Doe' ),
+		);
+	}
+
+	/**
+	 * Helper: assert the first tag carries exactly the given attributes.
+	 *
+	 * @param string                $html     Rendered markup.
+	 * @param string                $tag      Tag name.
+	 * @param array<string, string> $expected Attribute name => decoded value.
+	 */
+	private function assert_tag_attributes( string $html, string $tag, array $expected ): void {
+		$processor = new WP_HTML_Tag_Processor( $html );
+		$this->assertTrue( $processor->next_tag( $tag ) );
+
+		$names = $processor->get_attribute_names_with_prefix( '' );
+		sort( $names );
+		$expected_names = array_keys( $expected );
+		sort( $expected_names );
+		$this->assertSame( $expected_names, $names );
+
+		foreach ( $expected as $name => $value ) {
+			$this->assertSame( $value, $processor->get_attribute( $name ) );
+		}
+	}
+
+	/**
+	 * @dataProvider backreference_values
+	 */
+	public function test_post_field_author_avatar_keeps_display_name_inside_alt( string $display_name ): void {
+		$this->reset_in_query( true );
+
+		$author_id = $this->factory()->user->create(
+			array(
+				'display_name' => wp_slash( $display_name ),
+				'role'         => 'subscriber',
+			)
+		);
+
+		global $post;
+		$post = get_post( $this->factory()->post->create( array( 'post_author' => $author_id ) ) );
+		setup_postdata( $post );
+
+		$this->assertSame( $display_name, get_the_author() );
+
+		$block  = $this->make_block( 'atomic-wind/image', array( 'postField' => 'author_avatar' ) );
+		$result = $this->instance->render_post_fields( '<img src="placeholder.jpg" alt="" />', $block );
+
+		$this->assert_tag_attributes(
+			$result,
+			'img',
+			array(
+				'src' => get_avatar_url( $author_id, array( 'size' => 256 ) ),
+				'alt' => $display_name,
+			)
+		);
+
+		wp_reset_postdata();
+	}
+
+	/**
+	 * @dataProvider backreference_values
+	 */
+	public function test_post_field_featured_image_keeps_title_inside_alt( string $title ): void {
+		$this->reset_in_query( true );
+
+		$post_id  = $this->factory()->post->create( array( 'post_title' => wp_slash( $title ) ) );
+		$thumb_id = $this->factory()->attachment->create_object(
+			array(
+				'file'           => 'image.jpg',
+				'post_parent'    => $post_id,
+				'post_mime_type' => 'image/jpeg',
+			)
+		);
+		update_post_meta( $post_id, '_thumbnail_id', $thumb_id );
+
+		global $post;
+		$post = get_post( $post_id );
+		setup_postdata( $post );
+
+		$this->assertSame( $title, get_the_title() );
+
+		$block  = $this->make_block( 'atomic-wind/image', array( 'postField' => 'featured_image' ) );
+		$result = $this->instance->render_post_fields( '<img src="placeholder.jpg" alt="" />', $block );
+
+		$this->assert_tag_attributes(
+			$result,
+			'img',
+			array(
+				'src' => wp_get_attachment_image_url( $thumb_id, 'large' ),
+				'alt' => $title,
+			)
+		);
+
+		wp_reset_postdata();
+	}
+
+	/**
+	 * Link markup with and without a saved href.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function link_markup(): array {
+		return array(
+			'replaces href' => array( '<a href="#" class="wp-block">Link</a>' ),
+			'adds href'     => array( '<a class="wp-block">Link</a>' ),
+		);
+	}
+
+	/**
+	 * @dataProvider link_markup
+	 */
+	public function test_post_field_permalink_keeps_url_inside_href( string $markup ): void {
+		$this->reset_in_query( true );
+
+		$url = 'https://example.org/$0onmouseover=alert(1)/';
+		add_filter(
+			'post_link',
+			static function () use ( $url ): string {
+				return $url;
+			}
+		);
+
+		global $post;
+		$post = get_post( $this->post_id );
+		setup_postdata( $post );
+
+		$block  = $this->make_block( 'atomic-wind/link', array( 'postField' => 'permalink' ) );
+		$result = $this->instance->render_post_fields( $markup, $block );
+
+		$this->assert_tag_attributes(
+			$result,
+			'a',
+			array(
+				'href'  => $url,
+				'class' => 'wp-block',
+			)
+		);
+
+		wp_reset_postdata();
+	}
+
+	/**
+	 * Post fields whose rendered value comes from a Contributor-editable title or URL.
+	 *
+	 * @return array<string, array{0: string, 1: string, 2: string, 3: string}>
+	 */
+	public function magic_tag_fields(): array {
+		return array(
+			'featured image alt' => array( 'atomic-wind/image', 'featured_image', '<img src="placeholder.jpg" alt="" />', 'img' ),
+			'text title'         => array( 'atomic-wind/text', 'title', '<p class="wp-block">Placeholder</p>', 'p' ),
+			'permalink href'     => array( 'atomic-wind/link', 'permalink', '<a href="#" class="wp-block">Link</a>', 'a' ),
+			'added href'         => array( 'atomic-wind/link', 'permalink', '<a class="wp-block">Link</a>', 'a' ),
+		);
+	}
+
+	/**
+	 * @dataProvider magic_tag_fields
+	 */
+	public function test_post_fields_keep_magic_tags_literal_in_parent_render( string $block_name, string $post_field, string $markup, string $tag ): void {
+		$this->reset_in_query( true );
+		wp_set_current_user( $this->factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$title   = '{otterDynamic?type=loggedInUserEmail}';
+		$url     = 'https://example.org/#otterDynamicLink?type=loggedInUserEmail';
+		$post_id = $this->factory()->post->create( array( 'post_title' => $title ) );
+		$thumb   = $this->factory()->attachment->create_object(
+			array(
+				'file'           => 'image.jpg',
+				'post_parent'    => $post_id,
+				'post_mime_type' => 'image/jpeg',
+			)
+		);
+		update_post_meta( $post_id, '_thumbnail_id', $thumb );
+		add_filter(
+			'post_link',
+			static function () use ( $url ): string {
+				return $url;
+			}
+		);
+
+		global $post;
+		$post = get_post( $post_id );
+		setup_postdata( $post );
+
+		$html = $this->instance->render_post_fields( $markup, $this->make_block( $block_name, array( 'postField' => $post_field ) ) );
+
+		\ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content::instance();
+		$group  = $this->make_block( 'core/group' );
+		$parent = apply_filters( 'render_block', '<div class="box">' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		$processor = new WP_HTML_Tag_Processor( $parent );
+		$this->assertTrue( $processor->next_tag( $tag ) );
+		$this->assertStringNotContainsString( 'viewer@example.org', $parent );
+
+		if ( 'img' === $tag ) {
+			$this->assertSame( $title, $processor->get_attribute( 'alt' ) );
+		} elseif ( 'a' === $tag ) {
+			$this->assertSame( $url, $processor->get_attribute( 'href' ) );
+		} else {
+			$this->assertSame( $title, html_entity_decode( wp_strip_all_tags( $parent ), ENT_QUOTES ) );
+		}
 
 		wp_reset_postdata();
 	}
