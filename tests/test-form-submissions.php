@@ -57,7 +57,7 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 	 * Tear down test environment.
 	 */
 	public function tear_down() {
-		unset( $_REQUEST[ Form_Submissions::FORM_RECORD_TYPE ], $_REQUEST['_wpnonce'], $_REQUEST['post'] );
+		unset( $_REQUEST[ Form_Submissions::FORM_RECORD_TYPE ], $_REQUEST['_wpnonce'], $_REQUEST['post'], $_REQUEST['otter_read_nonce'], $_REQUEST['action'] );
 		unset( $_POST['action'], $_POST['_wpnonce'], $_POST['_nonce'], $_POST['format'] );
 		unset( $_GET['post_type'], $_GET['filter_action'], $_GET['filters_nonce'], $_GET['otter_form_filter'], $_REQUEST['otter_form_filter'] );
 		unset( $_GET['otter_post_filter'], $_REQUEST['otter_post_filter'] );
@@ -398,12 +398,49 @@ class Test_Form_Submissions extends WP_UnitTestCase {
 		$_REQUEST['post'] = (string) $record_id;
 
 		wp_set_current_user( $this->editor_id );
+		$_REQUEST['otter_read_nonce'] = wp_create_nonce( 'otter_read_record_' . $record_id );
 		$this->submissions->mark_read_on_edit();
 		$this->assertSame( 'unread', get_post_status( $record_id ) );
 
 		wp_set_current_user( $this->admin_id );
+		$_REQUEST['otter_read_nonce'] = wp_create_nonce( 'otter_read_record_' . $record_id );
 		$this->submissions->mark_read_on_edit();
 		$this->assertSame( 'read', get_post_status( $record_id ) );
+	}
+
+	/**
+	 * Ensure opening a record without a valid read nonce leaves it unread.
+	 */
+	public function test_mark_read_on_edit_requires_nonce() {
+		$record_id        = $this->create_record();
+		$_REQUEST['post'] = (string) $record_id;
+		wp_set_current_user( $this->admin_id );
+
+		$this->submissions->mark_read_on_edit();
+		$this->assertSame( 'unread', get_post_status( $record_id ) );
+
+		$_REQUEST['otter_read_nonce'] = wp_create_nonce( 'otter_read_record_' . $this->create_record() );
+		$this->submissions->mark_read_on_edit();
+		$this->assertSame( 'unread', get_post_status( $record_id ) );
+	}
+
+	/**
+	 * Ensure the record edit links carry a read nonce that marks the record as read.
+	 */
+	public function test_edit_link_carries_read_nonce() {
+		$record_id = $this->create_record();
+		wp_set_current_user( $this->admin_id );
+
+		$this->assertStringContainsString( '&amp;otter_read_nonce=', get_edit_post_link( $record_id ) );
+
+		wp_parse_str( (string) wp_parse_url( get_edit_post_link( $record_id, 'raw' ), PHP_URL_QUERY ), $query );
+		$_REQUEST = array_merge( $_REQUEST, $query );
+
+		$this->submissions->mark_read_on_edit();
+		$this->assertSame( 'read', get_post_status( $record_id ) );
+
+		$post_id = self::factory()->post->create();
+		$this->assertStringNotContainsString( 'otter_read_nonce', get_edit_post_link( $post_id ) );
 	}
 
 	/**

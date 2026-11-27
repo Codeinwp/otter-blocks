@@ -355,8 +355,13 @@ test.describe( 'Form submission retention', () => {
 		expect( records.find( record => record.id === first.id ).status ).toBe( 'unread' );
 		expect( records.find( record => record.id === second.id ).status ).toBe( 'unread' );
 
-		// Viewing a record flips it to read.
-		await page.goto( `/wp-admin/post.php?post=${second.id}&action=edit` );
+		// Viewing a record from the list flips it to read.
+		await page.goto( '/wp-admin/edit.php?post_type=otter_form_record' );
+
+		const secondRow = page.locator( `#post-${second.id}` );
+		await secondRow.hover();
+		await secondRow.getByRole( 'link', { name: 'View', exact: true }).click();
+		await page.waitForURL( /post\.php/ );
 
 		records = await otterUtils.getFormRecords();
 		expect( records.find( record => record.id === second.id ).status ).toBe( 'read' );

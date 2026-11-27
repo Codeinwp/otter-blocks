@@ -33,6 +33,16 @@ class Form_Submissions {
 	const FORM_RECORD_META_KEY = 'otter_form_record_meta';
 
 	/**
+	 * Query arg of the nonce that marks a form record as read when it is opened.
+	 */
+	const READ_NONCE_ARG = 'otter_read_nonce';
+
+	/**
+	 * Nonce action prefix to mark a form record as read. The record ID completes it.
+	 */
+	const READ_NONCE_ACTION = 'otter_read_record_';
+
+	/**
 	 * Delivery status meta key. Values: 'complete' or 'failed'.
 	 */
 	const DELIVERY_STATUS_META_KEY = 'otter_form_record_delivery_status';
@@ -126,6 +136,7 @@ class Form_Submissions {
 		add_action( 'admin_action_row-read', array( $this, 'read_otter_form_record' ) );
 		add_action( 'admin_action_row-unread', array( $this, 'unread_otter_form_record' ) );
 		add_action( 'admin_action_edit', array( $this, 'mark_read_on_edit' ) );
+		add_filter( 'get_edit_post_link', array( $this, 'add_read_nonce_to_edit_link' ), 10, 3 );
 
 		( new Form_Records_Meta_Box() )->register();
 
@@ -527,7 +538,28 @@ class Form_Submissions {
 	}
 
 	/**
+	 * Add the read nonce to the edit links of form records.
+	 *
+	 * The edit screen marks a record as read only when the request has this nonce.
+	 *
+	 * @param string $link    The edit link.
+	 * @param int    $post_id The post ID.
+	 * @param string $context The link context: 'display' encodes the ampersands.
+	 *
+	 * @return string
+	 */
+	public function add_read_nonce_to_edit_link( $link, $post_id, $context ) {
+		if ( empty( $link ) || self::FORM_RECORD_TYPE !== get_post_type( $post_id ) ) {
+			return $link;
+		}
+
+		return $link . ( 'display' === $context ? '&amp;' : '&' ) . self::READ_NONCE_ARG . '=' . wp_create_nonce( self::READ_NONCE_ACTION . $post_id );
+	}
+
+	/**
 	 * Mark form record as read when it is edited.
+	 *
+	 * The request must have the read nonce from the record edit link.
 	 *
 	 * @return void
 	 */
@@ -538,6 +570,13 @@ class Form_Submissions {
 
 		$post = intval( wp_unslash( $_REQUEST['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! get_post( $post ) || self::FORM_RECORD_TYPE !== get_post_type( $post ) ) {
+			return;
+		}
+
+		if (
+			empty( $_REQUEST[ self::READ_NONCE_ARG ] ) ||
+			! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST[ self::READ_NONCE_ARG ] ) ), self::READ_NONCE_ACTION . $post )
+		) {
 			return;
 		}
 

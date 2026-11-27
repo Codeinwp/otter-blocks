@@ -80,6 +80,8 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 		 */
 		$GLOBALS['wp_scripts'] = null;
 
+		$_GET = array();
+
 		parent::tear_down();
 	}
 
@@ -145,5 +147,249 @@ class TestWooCommerceBuilder extends WP_UnitTestCase {
 
 		$this->assertSame( $clean, $this->woo_builder->restore_product_data_location( $clean ) );
 		$this->assertFalse( $this->woo_builder->restore_product_data_location( false ) );
+	}
+
+	/**
+	 * Load the edit screen of a product with the builder toggle in the query.
+	 *
+	 * @param int  $post_id    Product ID.
+	 * @param int  $value      Toggle value.
+	 * @param bool $with_nonce Whether to add a valid nonce.
+	 * @return bool The filter result.
+	 */
+	protected function toggle_builder( $post_id, $value, $with_nonce ) {
+		$GLOBALS['post']          = get_post( $post_id );
+		$_GET['post']              = $post_id;
+		$_GET['otter-woo-builder'] = $value;
+
+		if ( $with_nonce ) {
+			$_GET['_wpnonce'] = wp_create_nonce( 'otter_woo_builder_' . $post_id );
+		}
+
+		return $this->woo_builder->enable_block_editor( false, 'product' );
+	}
+
+	/**
+	 * Log in a user who can edit any product.
+	 *
+	 * WooCommerce adds the product capabilities to the administrator role on
+	 * install, which does not run on a fresh test database. Grant them here.
+	 */
+	protected function log_in_product_editor() {
+		$user = get_userdata( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		foreach ( array( 'edit_products', 'edit_others_products', 'edit_published_products', 'edit_private_products' ) as $capability ) {
+			$user->add_cap( $capability );
+		}
+
+		wp_set_current_user( $user->ID );
+	}
+
+	/**
+	 * Get the query args of the toggle link in the metabox.
+	 *
+	 * @param int $post_id Product ID shown in the metabox.
+	 * @return array<string, string>
+	 */
+	protected function get_metabox_link_args( $post_id ) {
+		$GLOBALS['post'] = get_post( $post_id );
+
+		ob_start();
+		$this->woo_builder->render_metabox( 'product' );
+		$html = ob_get_clean();
+
+		preg_match( '/href="([^"]+)"/', $html, $matches );
+		wp_parse_str( (string) wp_parse_url( html_entity_decode( $matches[1] ), PHP_URL_QUERY ), $args );
+
+		return $args;
+	}
+
+	/**
+	 * Create a product with block content and the builder enabled.
+	 *
+	 * @return int
+	 */
+	protected function create_block_product() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_type'    => 'product',
+				'post_content' => '<!-- wp:paragraph --><p>Layout</p><!-- /wp:paragraph -->',
+			)
+		);
+		update_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true );
+
+		return $post_id;
+	}
+
+	/**
+	 * Disabling the builder without a nonce keeps content and meta.
+	 */
+	public function test_disable_builder_without_nonce_keeps_data() {
+		$this->log_in_product_editor();
+		$post_id = $this->create_block_product();
+		$content = get_post_field( 'post_content', $post_id );
+
+		$this->assertTrue( $this->toggle_builder( $post_id, 0, false ) );
+		$this->assertSame( $content, get_post_field( 'post_content', $post_id ) );
+		$this->assertTrue( boolval( get_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true ) ) );
+	}
+
+	/**
+	 * Disabling the builder with a valid nonce and capability clears content and meta.
+	 */
+	public function test_disable_builder_with_nonce_clears_data() {
+		$this->log_in_product_editor();
+		$post_id = $this->create_block_product();
+
+		$this->assertFalse( $this->toggle_builder( $post_id, 0, true ) );
+		$this->assertSame( '', get_post_field( 'post_content', $post_id ) );
+		$this->assertSame( '', get_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true ) );
+	}
+
+	/**
+	 * A valid nonce is not enough without the edit capability.
+	 */
+	public function test_disable_builder_requires_edit_capability() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
+		$post_id = $this->create_block_product();
+		$content = get_post_field( 'post_content', $post_id );
+
+		$this->toggle_builder( $post_id, 0, true );
+
+		$this->assertSame( $content, get_post_field( 'post_content', $post_id ) );
+		$this->assertTrue( boolval( get_post_meta( $post_id, '_themeisle_gutenberg_woo_builder', true ) ) );
+	}
+
+	/**
+	 * Enabling the builder without a nonce does not set the meta.
+	 */
+	public function test_enable_builder_without_nonce_does_not_set_meta() {
+		$this->log_in_product_editor();
+
+		$this->assertFalse( $this->toggle_builder( $this->plain_product_id, 1, false ) );
+		$this->assertSame( '', get_post_meta( $this->plain_product_id, '_themeisle_gutenberg_woo_builder', true ) );
+	}
+
+	/**
+	 * Enabling the builder with a valid nonce sets the meta.
+	 */
+	public function test_enable_builder_with_nonce_sets_meta() {
+		$this->log_in_product_editor();
+
+		$this->assertTrue( $this->toggle_builder( $this->plain_product_id, 1, true ) );
+		$this->assertTrue( boolval( get_post_meta( $this->plain_product_id, '_themeisle_gutenberg_woo_builder', true ) ) );
+	}
+
+	/**
+	 * The metabox toggle link carries a nonce for the product.
+	 */
+	public function test_metabox_link_has_nonce() {
+		$GLOBALS['post'] = get_post( $this->builder_product_id );
+
+		ob_start();
+		$this->woo_builder->render_metabox( 'product' );
+		$html = ob_get_clean();
+
+		$this->assertMatchesRegularExpression( '/otter-woo-builder=0[^"]*_wpnonce=/', $html );
+	}
+
+	/**
+	 * The product in the edit screen URL is toggled, even if the global post differs.
+	 */
+	public function test_toggle_uses_product_from_edit_url() {
+		$this->log_in_product_editor();
+		$other_id = self::factory()->post->create( array( 'post_type' => 'product' ) );
+
+		$_GET['post']              = $this->plain_product_id;
+		$_GET['otter-woo-builder'] = 1;
+		$_GET['_wpnonce']          = $this->get_metabox_link_args( $this->plain_product_id )['_wpnonce'];
+		$GLOBALS['post']           = get_post( $other_id );
+
+		$this->assertTrue( $this->woo_builder->enable_block_editor( false, 'product' ) );
+		$this->assertTrue( boolval( get_post_meta( $this->plain_product_id, '_themeisle_gutenberg_woo_builder', true ) ) );
+		$this->assertSame( '', get_post_meta( $other_id, '_themeisle_gutenberg_woo_builder', true ) );
+	}
+
+	/**
+	 * On the new product screen, the link opens the edit screen of the same draft.
+	 */
+	public function test_enable_builder_from_new_product_screen() {
+		$this->log_in_product_editor();
+		$draft_id = self::factory()->post->create(
+			array(
+				'post_type'   => 'product',
+				'post_status' => 'auto-draft',
+			)
+		);
+
+		$_GET = $this->get_metabox_link_args( $draft_id );
+
+		$this->assertSame( (string) $draft_id, $_GET['post'] );
+		$this->assertSame( 'edit', $_GET['action'] );
+		$this->assertTrue( $this->woo_builder->enable_block_editor( false, 'product' ) );
+		$this->assertTrue( boolval( get_post_meta( $draft_id, '_themeisle_gutenberg_woo_builder', true ) ) );
+	}
+
+	/**
+	 * A nonce from the metabox of one product does not toggle another product.
+	 */
+	public function test_nonce_of_other_product_does_not_toggle() {
+		$this->log_in_product_editor();
+		$other_id = self::factory()->post->create( array( 'post_type' => 'product' ) );
+
+		$_GET['post']              = $this->plain_product_id;
+		$_GET['otter-woo-builder'] = 1;
+		$_GET['_wpnonce']          = $this->get_metabox_link_args( $other_id )['_wpnonce'];
+		$GLOBALS['post']           = get_post( $this->plain_product_id );
+
+		$this->assertFalse( $this->woo_builder->enable_block_editor( false, 'product' ) );
+		$this->assertSame( '', get_post_meta( $this->plain_product_id, '_themeisle_gutenberg_woo_builder', true ) );
+	}
+
+	/**
+	 * The toggle does not change posts that are not products.
+	 */
+	public function test_toggle_ignores_non_product_post() {
+		$this->log_in_product_editor();
+		$page_id = self::factory()->post->create(
+			array(
+				'post_type'    => 'page',
+				'post_content' => '<!-- wp:paragraph --><p>Page</p><!-- /wp:paragraph -->',
+			)
+		);
+		$content = get_post_field( 'post_content', $page_id );
+
+		$this->toggle_builder( $page_id, 0, true );
+
+		$this->assertSame( $content, get_post_field( 'post_content', $page_id ) );
+	}
+
+	/**
+	 * A nonce for another action does not toggle the builder.
+	 */
+	public function test_enable_builder_with_invalid_nonce_does_not_set_meta() {
+		$this->log_in_product_editor();
+
+		$_GET['post']              = $this->plain_product_id;
+		$_GET['otter-woo-builder'] = 1;
+		$_GET['_wpnonce']          = wp_create_nonce( 'other_action' );
+		$GLOBALS['post']           = get_post( $this->plain_product_id );
+
+		$this->assertFalse( $this->woo_builder->enable_block_editor( false, 'product' ) );
+		$this->assertSame( '', get_post_meta( $this->plain_product_id, '_themeisle_gutenberg_woo_builder', true ) );
+	}
+
+	/**
+	 * A `post` arg that is not an ID does not toggle the builder.
+	 */
+	public function test_toggle_ignores_invalid_post_arg() {
+		$this->log_in_product_editor();
+
+		$_GET['post']              = 'abc';
+		$_GET['otter-woo-builder'] = 1;
+		$_GET['_wpnonce']          = wp_create_nonce( 'otter_woo_builder_0' );
+		$GLOBALS['post']           = get_post( $this->plain_product_id );
+
+		$this->assertFalse( $this->woo_builder->enable_block_editor( false, 'product' ) );
 	}
 }
