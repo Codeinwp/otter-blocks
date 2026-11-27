@@ -131,6 +131,29 @@ class Prompt_Server {
 			return new \WP_REST_Response( array( 'message' => __( 'API key saved.', 'otter-blocks' ) ), 200 );
 		}
 
+		$payload = $this->guard_user_request(
+			array(
+				'model'    => 'gpt-6-luna',
+				'messages' => array(
+					array(
+						'role'    => 'system',
+						'content' => 'You are a helpful assistant.',
+					),
+					array(
+						'role'    => 'user',
+						'content' => 'Hello!',
+					),
+				),
+			)
+		);
+		if ( is_wp_error( $payload ) ) {
+			return $payload;
+		}
+
+		// Current OpenAI models accept only `max_completion_tokens`.
+		$payload['max_completion_tokens'] = $payload['max_tokens'];
+		unset( $payload['max_tokens'] );
+
 		$response = wp_remote_post(
 			self::BASE_URL,
 			array(
@@ -139,21 +162,7 @@ class Prompt_Server {
 					'Authorization' => 'Bearer ' . $api_key,
 					'Content-Type'  => 'application/json',
 				),
-				'body'    => wp_json_encode(
-					array(
-						'model'    => 'gpt-6-luna',
-						'messages' => array(
-							array(
-								'role'    => 'system',
-								'content' => 'You are a helpful assistant.',
-							),
-							array(
-								'role'    => 'user',
-								'content' => 'Hello!',
-							),
-						),
-					)
-				),
+				'body'    => wp_json_encode( $payload ),
 				'timeout' => 2 * MINUTE_IN_SECONDS,
 			)
 		);
@@ -211,8 +220,10 @@ class Prompt_Server {
 			ARRAY_FILTER_USE_KEY
 		);
 
-		// Remove the values which keys start with 'otter_'.
-		$body = array_diff_key( $body, $otter_data );
+		$body = $this->guard_user_request( $this->prepare_payload( $body ) );
+		if ( is_wp_error( $body ) ) {
+			return $body;
+		}
 
 		$backend = AI_Backend_Resolver::resolve();
 
@@ -248,6 +259,66 @@ class Prompt_Server {
 		$this->record_prompt_usage( $otter_data );
 
 		return new \WP_REST_Response( $result, 200 );
+	}
+
+	/**
+	 * Apply the shared payload caps and the current user's request quota.
+	 *
+	 * @param array<string, mixed> $payload The OpenAI-format payload.
+	 * @return array<string, mixed>|\WP_Error
+	 */
+	private function guard_user_request( $payload ) {
+		/**
+		 * Filters how many generation requests a user may send in a 10-minute window. Return 0 to disable.
+		 *
+		 * @param int $limit   Request limit.
+		 * @param int $user_id Current user ID.
+		 */
+		$limit = (int) apply_filters( 'otter_ai_generate_rate_limit', 120, get_current_user_id() );
+
+		return AI_Usage::guard_request( $payload, 'user_' . get_current_user_id(), $limit );
+	}
+
+	/**
+	 * Keep only the request fields the editor sends, with a known model.
+	 *
+	 * @param array<string, mixed> $body The decoded request body.
+	 * @return array<string, mixed>
+	 */
+	private function prepare_payload( $body ) {
+		$payload = array_intersect_key(
+			$body,
+			array_flip( array( 'messages', 'model', 'temperature', 'max_tokens', 'reasoning_effort', 'response_format', 'functions', 'function_call' ) )
+		);
+
+		// The editor gets its models from the prompt templates; anything else uses the backend default.
+		$allowed_models = array( Otter_OpenAI_Backend::DEFAULT_MODEL );
+		$prompts        = get_transient( $this->transient_prompts );
+		if ( false === $prompts && isset( $payload['model'] ) && Otter_OpenAI_Backend::DEFAULT_MODEL !== $payload['model'] ) {
+			// The editor keeps its templates in memory, so the cache can expire while it is open.
+			$fetched = $this->retrieve_prompts_from_server();
+			$prompts = isset( $fetched['prompts'] ) ? $fetched['prompts'] : array();
+		}
+		if ( is_array( $prompts ) ) {
+			foreach ( $prompts as $prompt ) {
+				if ( isset( $prompt['model'] ) && is_string( $prompt['model'] ) ) {
+					$allowed_models[] = $prompt['model'];
+				}
+			}
+		}
+
+		/**
+		 * Filters the models a generation request may select.
+		 *
+		 * @param string[] $allowed_models Model IDs.
+		 */
+		$allowed_models = (array) apply_filters( 'otter_ai_generate_allowed_models', $allowed_models );
+
+		if ( isset( $payload['model'] ) && ! in_array( $payload['model'], $allowed_models, true ) ) {
+			unset( $payload['model'] );
+		}
+
+		return $payload;
 	}
 
 	/**

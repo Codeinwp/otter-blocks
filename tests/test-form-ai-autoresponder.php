@@ -669,4 +669,153 @@ class Test_Form_AI_Autoresponder extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'Filtered final body.', $mail['message'] );
 		$this->assertStringNotContainsString( 'Original AI body.', $mail['message'] );
 	}
+
+	/**
+	 * Both AI calls get the output token cap, and replies above the per-form
+	 * limit use the static body without calling the backend.
+	 */
+	public function test_ai_calls_are_capped_and_rate_limited_per_form() {
+		$this->mock_mail();
+		$this->inject_backend(
+			array(
+				AI_Response::success( 'Hi Ada, thanks.', 10, 'text' ),
+				AI_Response::success( wp_json_encode( array( 'valid' => true, 'reason' => 'ok' ) ), 5, 'json' ),
+				AI_Response::success( 'Second AI body.', 10, 'text' ),
+				AI_Response::success( wp_json_encode( array( 'valid' => true, 'reason' => 'ok' ) ), 5, 'json' ),
+			)
+		);
+
+		$this->set_form_option(
+			array(
+				'autoresponder'   => array(
+					'subject' => 'Thanks for your message',
+					'body'    => '<p>Static fallback body.</p>',
+				),
+				'aiAutoresponder' => array(
+					'enabled' => true,
+					'prompt'  => 'Reply nicely.',
+				),
+			)
+		);
+
+		$this->add_test_hook(
+			'otter_form_ai_autoresponder_rate_limit',
+			function () {
+				return 1;
+			}
+		);
+
+		$this->wire_autoresponder();
+
+		$this->assertTrue( $this->submit()['success'] );
+		$this->assertCount( 2, $this->backend->payloads );
+		$this->assertSame( 16384, $this->backend->payloads[0]['max_tokens'] );
+		$this->assertSame( 16384, $this->backend->payloads[1]['max_tokens'] );
+		$this->assertStringContainsString( 'Hi Ada, thanks.', $this->get_autoresponder_mail()['message'] );
+
+		// The second reply is over the limit: no backend call, static body sent.
+		$this->mail_requests = array();
+		$this->assertTrue( $this->submit()['success'] );
+		$this->assertCount( 2, $this->backend->payloads );
+
+		$mail = $this->get_autoresponder_mail();
+		$this->assertNotNull( $mail );
+		$this->assertStringContainsString( 'Static fallback body.', $mail['message'] );
+	}
+
+	/**
+	 * A prompt above the payload size cap is not sent; the static body is used.
+	 */
+	public function test_oversized_prompt_uses_fallback_without_backend_call() {
+		$this->mock_mail();
+		$this->inject_backend(
+			array(
+				AI_Response::success( 'AI body.', 10, 'text' ),
+			)
+		);
+
+		$this->set_form_option(
+			array(
+				'autoresponder'   => array(
+					'subject' => 'Thanks for your message',
+					'body'    => '<p>Static fallback body.</p>',
+				),
+				'aiAutoresponder' => array(
+					'enabled' => true,
+					'prompt'  => str_repeat( 'Reply nicely. ', 200 ),
+				),
+			)
+		);
+
+		$this->add_test_hook(
+			'otter_ai_generate_max_payload_bytes',
+			function () {
+				return 1000;
+			}
+		);
+
+		$this->wire_autoresponder();
+
+		$this->assertTrue( $this->submit()['success'] );
+		$this->assertCount( 0, $this->backend->payloads );
+
+		$mail = $this->get_autoresponder_mail();
+		$this->assertNotNull( $mail );
+		$this->assertStringContainsString( 'Static fallback body.', $mail['message'] );
+		$this->assertSame( 'fallback', $this->get_audit()['outcome'] );
+	}
+
+	/**
+	 * A validation payload above the size cap is not sent; the static body is used.
+	 */
+	public function test_oversized_validation_payload_uses_fallback() {
+		$this->mock_mail();
+		$this->inject_backend(
+			array(
+				AI_Response::success( 'Hi Ada, thanks.', 10, 'text' ),
+				AI_Response::success( wp_json_encode( array( 'valid' => true, 'reason' => 'ok' ) ), 5, 'json' ),
+			)
+		);
+
+		$this->set_form_option(
+			array(
+				'autoresponder'   => array(
+					'subject' => 'Thanks for your message',
+					'body'    => '<p>Static fallback body.</p>',
+				),
+				'aiAutoresponder' => array(
+					'enabled' => true,
+					'prompt'  => 'Reply nicely.',
+				),
+			)
+		);
+
+		$this->add_test_hook(
+			'otter_ai_generate_max_payload_bytes',
+			function () {
+				return 4096;
+			}
+		);
+		$this->add_test_hook(
+			'otter_form_ai_autoresponder_validation_payload',
+			function ( $payload ) {
+				$payload['messages'][] = array(
+					'role'    => 'user',
+					'content' => str_repeat( 'x', 5000 ),
+				);
+				return $payload;
+			}
+		);
+
+		$this->wire_autoresponder();
+
+		$this->assertTrue( $this->submit()['success'] );
+		$this->assertCount( 1, $this->backend->payloads );
+
+		$mail = $this->get_autoresponder_mail();
+		$this->assertNotNull( $mail );
+		$this->assertStringContainsString( 'Static fallback body.', $mail['message'] );
+		$this->assertStringNotContainsString( 'Hi Ada, thanks.', $mail['message'] );
+		$this->assertSame( 'fallback', $this->get_audit()['outcome'] );
+	}
 }
