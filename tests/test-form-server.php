@@ -1473,6 +1473,90 @@ class Test_Form_Server extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure a submission for a form option that the site does not know is rejected.
+	 */
+	public function test_frontend_submission_rejects_unknown_form_option() {
+		$this->mock_mail();
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request( array( 'payload' => array( 'formOption' => 'unknown_form' ) ) )
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_FORM_ID_INVALID, $data['code'] );
+		$this->assertArrayNotHasKey( 'submitMessage', $data );
+		$this->assertCount( 0, $this->get_form_records() );
+		$this->assertCount( 0, $this->mail_requests );
+	}
+
+	/**
+	 * Ensure a rendered form that has no stored settings (e.g. imported content) can be submitted.
+	 */
+	public function test_frontend_submission_accepts_rendered_form_without_stored_settings() {
+		$this->mock_mail();
+		do_blocks( $this->get_form_markup( 'imported_form' ) );
+
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request( array( 'payload' => array( 'formOption' => 'imported_form' ) ) )
+		);
+		$data     = $response->get_data();
+
+		$this->assertTrue( $data['success'] );
+		$this->assertCount( 1, $this->get_form_records() );
+	}
+
+	/**
+	 * Ensure the Captcha block of a rendered form is enforced.
+	 */
+	public function test_frontend_submission_requires_captcha_of_rendered_form() {
+		$this->mock_mail();
+		do_blocks( $this->get_form_markup( 'imported_form', '<!-- wp:themeisle-blocks/form-captcha {"provider":"turnstile"} /-->' ) );
+
+		$this->assert_captcha_is_required( 'imported_form', 'turnstile' );
+	}
+
+	/**
+	 * Ensure the legacy form-level captcha attribute of a rendered form is enforced.
+	 */
+	public function test_frontend_submission_requires_legacy_captcha_attribute_of_rendered_form() {
+		$this->mock_mail();
+		do_blocks( $this->get_form_markup( 'imported_form', '', array( 'hasCaptcha' => true ) ) );
+
+		$this->assert_captcha_is_required( 'imported_form', 'recaptcha' );
+	}
+
+	/**
+	 * Ensure a rendered Captcha block is enforced when the stored settings have no captcha.
+	 */
+	public function test_frontend_submission_requires_captcha_of_rendered_form_with_stored_settings() {
+		$this->mock_mail();
+		do_blocks( $this->get_form_markup( 'contact_form', '<!-- wp:themeisle-blocks/form-captcha {"provider":"turnstile"} /-->' ) );
+
+		$this->assert_captcha_is_required( 'contact_form', 'turnstile' );
+		$this->assertSame( 'https://example.com/thanks', Form_Settings_Data::get_form_setting_from_wordpress_options( 'contact_form' )->get_redirect_link() );
+	}
+
+	/**
+	 * Ensure a rendered form without an option name stores nothing.
+	 */
+	public function test_rendered_form_without_option_name_stores_nothing() {
+		do_blocks( $this->get_form_markup( '', '<!-- wp:themeisle-blocks/form-captcha /-->' ) );
+
+		$this->assertSame( array( $this->get_form_option() ), get_option( 'themeisle_blocks_form_emails' ) );
+	}
+
+	/**
+	 * Ensure a rendered form without a captcha does not remove the stored captcha.
+	 */
+	public function test_rendered_form_without_captcha_keeps_stored_captcha() {
+		update_option( 'themeisle_blocks_form_emails', array( $this->get_form_option( array( 'hasCaptcha' => true ) ) ) );
+		do_blocks( $this->get_form_markup( 'contact_form' ) );
+
+		$this->assertTrue( Form_Settings_Data::get_form_setting_from_wordpress_options( 'contact_form' )->form_has_captcha() );
+	}
+
+	/**
 	 * Ensure anti-spam timing and honeypot data are enforced.
 	 */
 	public function test_frontend_submission_rejects_bot_like_payload() {
@@ -2634,6 +2718,46 @@ class Test_Form_Server extends WP_UnitTestCase {
 				'testEmail' => array( $this->form_server, 'send_test_email' ),
 			),
 		);
+	}
+
+	/**
+	 * Get the markup of a Form block, nested in a group block.
+	 *
+	 * @param string $option_name The form option name of the block.
+	 * @param string $inner The inner blocks markup of the form.
+	 * @param array  $attrs Extra form block attributes.
+	 * @return string The block markup.
+	 */
+	private function get_form_markup( $option_name, $inner = '', $attrs = array() ) {
+		$attrs = wp_json_encode(
+			array_merge(
+				array(
+					'id'         => 'wp-block-themeisle-blocks-form-abcd1234',
+					'optionName' => $option_name,
+				),
+				$attrs
+			)
+		);
+
+		return '<!-- wp:group --><div class="wp-block-group"><!-- wp:themeisle-blocks/form ' . $attrs . ' --><div class="wp-block-themeisle-blocks-form">' . $inner . '</div><!-- /wp:themeisle-blocks/form --></div><!-- /wp:group -->';
+	}
+
+	/**
+	 * Submit a form without a captcha token and check that it is rejected.
+	 *
+	 * @param string $option_name The form option name.
+	 * @param string $provider The expected stored captcha provider.
+	 */
+	private function assert_captcha_is_required( $option_name, $provider ) {
+		$response = $this->form_server->frontend(
+			$this->get_frontend_request( array( 'payload' => array( 'formOption' => $option_name ) ) )
+		);
+		$data     = $response->get_data();
+
+		$this->assertFalse( $data['success'] );
+		$this->assertSame( Form_Data_Response::ERROR_MISSING_CAPTCHA, $data['code'] );
+		$this->assertSame( $provider, Form_Settings_Data::get_form_setting_from_wordpress_options( $option_name )->get_captcha_provider() );
+		$this->assertCount( 0, $this->get_form_records() );
 	}
 
 	/**

@@ -258,7 +258,7 @@ class Form_Settings_Data {
 		$option_name = sanitize_text_field( $form_option );
 		$form_emails = get_option( 'themeisle_blocks_form_emails' );
 		$integration = new Form_Settings_Data( array() );
-		foreach ( $form_emails as $form ) {
+		foreach ( (array) $form_emails as $form ) {
 			if ( isset( $form['form'] ) && $form['form'] === $option_name ) {
 
 				if ( isset( $form['hasCaptcha'] ) ) {

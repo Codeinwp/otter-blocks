@@ -84,6 +84,7 @@ class Form_Server {
 		 * Register the REST API endpoints.
 		 */
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_filter( 'render_block_themeisle-blocks/form', array( $this, 'store_rendered_form' ), 10, 2 );
 
 		/**
 		 * Register email providers that can be used to send emails or subscribe to a service.
@@ -293,7 +294,13 @@ class Form_Server {
 			$form_data = self::replace_corrupted_form_data( $request, $res );
 		}
 
-		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_data_from_payload( 'formOption' ) );
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_form_option_id() );
+
+		// Only a stored form is known. The editor or the first render of the form stores it (see store_rendered_form).
+		if ( empty( $form_options->get_meta() ) && ! $form_data->has_error() ) {
+			$form_data->set_error( Form_Data_Response::ERROR_FORM_ID_INVALID );
+		}
+
 		$form_data->set_form_options( $form_options );
 		$form_data = self::pull_fields_options_for_form( $form_data );
 
@@ -399,6 +406,60 @@ class Form_Server {
 		$form_data->set_error( Form_Data_Response::ERROR_RUNTIME_ERROR, __( 'The form data class is not valid after performing provider actions! Some hook is corrupting the data.', 'otter-blocks' ) );
 
 		return $form_data;
+	}
+
+	/**
+	 * Store the settings of a rendered Form block that the site does not know yet.
+	 *
+	 * The editor stores the form settings only for users who can manage options. Forms from
+	 * other sources (e.g. imported content or theme templates) are stored when they render.
+	 * A rendered captcha is always stored, so the submission check enforces it.
+	 *
+	 * @param string               $block_content The rendered block.
+	 * @param array<string, mixed> $block The parsed block.
+	 * @return string The rendered block, unchanged.
+	 * @since 3.2.13
+	 */
+	public function store_rendered_form( $block_content, $block ) {
+		$option_name = isset( $block['attrs']['optionName'] ) && is_string( $block['attrs']['optionName'] ) ? sanitize_text_field( $block['attrs']['optionName'] ) : '';
+
+		if ( '' === $option_name ) {
+			return $block_content;
+		}
+
+		$has_captcha = preg_match( '/data-captcha-provider="(\w+)"/', $block_content, $captcha ) || ! empty( $block['attrs']['hasCaptcha'] );
+		$forms       = get_option( 'themeisle_blocks_form_emails' );
+		$forms       = is_array( $forms ) ? $forms : array();
+		$key         = null;
+
+		foreach ( $forms as $index => $form ) {
+			if ( isset( $form['form'] ) && $form['form'] === $option_name ) {
+				$key = $index;
+				break;
+			}
+		}
+
+		if ( null !== $key && ! $has_captcha ) {
+			return $block_content;
+		}
+
+		$form = null === $key ? array( 'form' => $option_name ) : $forms[ $key ];
+
+		if ( $has_captcha ) {
+			$form['hasCaptcha']      = true;
+			$form['captchaProvider'] = isset( $captcha[1] ) ? $captcha[1] : 'recaptcha';
+		}
+
+		if ( null === $key ) {
+			$forms[] = $form;
+		} else {
+			$forms[ $key ] = $form;
+		}
+
+		// No lock: if two renders race, a lost entry is stored again on the next render.
+		update_option( 'themeisle_blocks_form_emails', $forms );
+
+		return $block_content;
 	}
 
 	/**
