@@ -296,7 +296,13 @@ class CSS_Utility {
 								}
 
 								$value   = $value . $pattern_value['unit'];
-								$pattern = preg_replace( '/\b' . $value_key . '\b/', $value, $pattern );
+								$pattern = preg_replace_callback(
+									'/\b' . $value_key . '\b/',
+									function () use ( $value ) {
+										return $value;
+									},
+									$pattern
+								);
 							}
 						}
 

@@ -1414,6 +1414,175 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * Values holding preg replacement backreference sequences.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function backreference_values(): array {
+		$backslash = chr( 92 );
+
+		return array(
+			'dollar amount' => array( 'Headphones under $100' ),
+			'whole match'   => array( '$0 off' ),
+			'braced'        => array( '${1} deal' ),
+			'backslash'     => array( $backslash . '1 deal' ),
+		);
+	}
+
+	/**
+	 * @dataProvider backreference_values
+	 */
+	public function test_linked_dynamic_value_keeps_backreference_sequences( string $value ): void {
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_text',
+			function () use ( $value ): string {
+				return $value;
+			}
+		);
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_link',
+			function (): string {
+				return 'https://one.example';
+			}
+		);
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="otterTestText"><o-dynamic-link data-type="otterTestLink">Go</o-dynamic-link></o-dynamic></p>' );
+
+		$this->assertSame( 1, preg_match_all( '/<a\b[^>]*>(.*?)<\/a>/s', $result, $anchors ), $result );
+		$this->assertSame( $value, html_entity_decode( $anchors[1][0], ENT_QUOTES ) );
+	}
+
+	/**
+	 * @dataProvider backreference_values
+	 */
+	public function test_linked_dynamic_list_keeps_backreference_sequences( string $value ): void {
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_text',
+			function () use ( $value ): array {
+				return array( $value, 'Two' );
+			}
+		);
+		add_filter(
+			'otter_blocks_evaluate_dynamic_content_link',
+			function (): array {
+				return array( 'https://one.example', 'https://two.example' );
+			}
+		);
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="otterTestList"><o-dynamic-link data-type="otterTestLink">Go</o-dynamic-link></o-dynamic></p>' );
+
+		$this->assertSame( 2, preg_match_all( '/<a\b[^>]*>(.*?)<\/a>/s', $result, $anchors ), $result );
+		$this->assertSame( array( $value, 'Two' ), array_map( 'html_entity_decode', $anchors[1] ) );
+	}
+
+	/**
+	 * Renderers that print a post's title, excerpt or featured image alt.
+	 *
+	 * @return array<string, array{0: string}>
+	 */
+	public function post_value_renderers(): array {
+		return array(
+			'core post title'     => array( 'post-title' ),
+			'core post excerpt'   => array( 'post-excerpt' ),
+			'core featured image' => array( 'post-featured-image' ),
+			'posts grid'          => array( 'posts-grid' ),
+			'sharing icons'       => array( 'sharing-icons' ),
+		);
+	}
+
+	/**
+	 * @dataProvider post_value_renderers
+	 */
+	public function test_post_value_markers_stay_literal_when_rendered( string $renderer ): void {
+		wp_set_current_user( self::factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag     = '{otterDynamic?type=loggedInUserEmail}';
+		$link    = '#otterDynamicLink?type=siteURL';
+		$value   = $tag . ' ' . $link;
+		$post_id = self::factory()->post->create(
+			array(
+				'post_title'   => $value,
+				'post_excerpt' => $value,
+			)
+		);
+		$thumb   = self::factory()->attachment->create_upload_object( DIR_TESTDATA . '/images/canola.jpg', $post_id );
+		update_post_meta( $thumb, '_wp_attachment_image_alt', $value );
+		set_post_thumbnail( $post_id, $thumb );
+
+		global $post;
+		$post = get_post( $post_id );
+		setup_postdata( $post );
+
+		if ( 'posts-grid' === $renderer ) {
+			WP_Block_Supports::init();
+			WP_Block_Supports::$block_to_render = array( 'blockName' => 'themeisle-blocks/posts-grid' );
+
+			$html = ( new \ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block() )->render(
+				array(
+					'id'                   => 'wp-block-themeisle-blocks-posts-grid-marker',
+					'className'            => '',
+					'columns'              => 1,
+					'style'                => 'grid',
+					'postTypes'            => array( 'post' ),
+					'template'             => array( 'title', 'description' ),
+					'postsToShow'          => 5,
+					'order'                => 'desc',
+					'orderBy'              => 'date',
+					'offset'               => 0,
+					'displayReadMoreLink'  => false,
+					'hasPagination'        => false,
+					'imageSize'            => 'full',
+					'displayFeaturedImage' => true,
+					'displayTitle'         => true,
+					'titleTag'             => 'h5',
+					'displayDescription'   => true,
+					'excerptLength'        => 100,
+				)
+			);
+		} elseif ( 'sharing-icons' === $renderer ) {
+			$attributes = array_fill_keys( array_keys( \ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block::get_social_profiles( 'query' ) ), 1 );
+
+			$html = ( new \ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block() )->render( array( 'context' => 'query' ) + $attributes );
+		} else {
+			$block = parse_blocks( '<!-- wp:' . $renderer . ' /-->' )[0];
+			$html  = ( new WP_Block(
+				$block,
+				array(
+					'postId'   => $post_id,
+					'postType' => 'post',
+				)
+			) )->render();
+		}
+
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+		$text   = html_entity_decode( $output, ENT_QUOTES );
+
+		$this->assertStringNotContainsString( 'viewer@example.org', $output );
+		$this->assertStringContainsString( 'otterDynamicLink?type=siteURL', $text, $output );
+		if ( 'sharing-icons' !== $renderer ) {
+			$this->assertStringContainsString( $tag, $text, $output );
+		}
+
+		wp_reset_postdata();
+	}
+
+	public function test_archive_title_markers_stay_literal_in_sharing_icons(): void {
+		wp_set_current_user( self::factory()->user->create( array( 'user_email' => 'viewer@example.org' ) ) );
+
+		$tag_id = self::factory()->tag->create( array( 'name' => 'Deals #otterDynamicLink?type=siteURL' ) );
+		self::factory()->post->create( array( 'tags_input' => array( $tag_id ) ) );
+		$this->go_to( get_tag_link( $tag_id ) );
+
+		$html   = ( new \ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block() )->render( array_fill_keys( array_keys( \ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block::get_social_profiles() ), 1 ) );
+		$group  = parse_blocks( '<!-- wp:group /-->' )[0];
+		$output = apply_filters( 'render_block', '<div>' . $html . '</div>', $group, new WP_Block( $group ) );
+
+		$this->assertTrue( is_archive() );
+		$this->assertStringContainsString( 'otterDynamicLink?type=siteURL', html_entity_decode( $output, ENT_QUOTES ), $output );
+	}
+
+	/**
 	 * Repeater values clone the content and swap each link token in full, without leaving its attribute.
 	 */
 	public function test_dynamic_content_array_value_replaces_link_tokens(): void {

@@ -200,6 +200,42 @@ class TestCSS extends TestCase {
 	}
 
 	/**
+	 * A pattern value containing backreference sequences is inserted verbatim.
+	 */
+	public function test_css_pattern_keeps_backreference_sequences(): void {
+		$backslash = chr( 92 );
+		$url       = 'https://example.org/img$1-${0}-' . $backslash . '0.jpg';
+
+		$css = new CSS_Utility(
+			array(
+				'attrs' => array(
+					'id'    => 'wp-block',
+					'image' => $url,
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block',
+				'properties' => array(
+					array(
+						'property'       => 'background-image',
+						'pattern'        => 'url(image)',
+						'pattern_values' => array(
+							'image' => array(
+								'value' => 'image',
+							),
+						),
+					),
+				),
+			)
+		);
+
+		$this->assertSame( '#wp-block .wp-block {background-image: url(' . $url . ');}', $css->generate() );
+	}
+
+	/**
 	 * Test box_values with a string input.
 	 */
 	public function test_box_values_string_input() {
