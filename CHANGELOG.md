@@ -2,7 +2,7 @@
 
 - Fixed the PHP 8.5 deprecation warning when rendering freeform content.
 - Fixed issue with Atomic Wind where text blocks were losing the themes body font and line height.
-- Enhanced security
+- Enhanced security. Thanks to the Deus Rex research team for the responsible disclosure.
 - Updated dependencies
 
 ##### [Version 3.2.11](https://github.com/Codeinwp/otter-blocks/compare/v3.2.10...v3.2.11) (2026-11-13)
