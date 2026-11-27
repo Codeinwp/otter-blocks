@@ -1,3 +1,9 @@
+##### [Version 3.2.13](https://github.com/Codeinwp/otter-blocks/compare/v3.2.12...v3.2.13) (2026-11-27)
+
+- Enhanced security
+- Fixed configuring forms that had never been opened in the editor
+- Updated dependencies
+
 ##### [Version 3.2.12](https://github.com/Codeinwp/otter-blocks/compare/v3.2.11...v3.2.12) (2026-11-23)
 
 - Fixed the PHP 8.5 deprecation warning when rendering freeform content.
