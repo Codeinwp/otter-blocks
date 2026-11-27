@@ -248,6 +248,21 @@ class Form_Settings_Data {
 	}
 
 	/**
+	 * Resolve the settings key for a Form block, including forms not opened in the editor.
+	 *
+	 * @param array<string, mixed> $attributes Parsed block attributes.
+	 * @phpstan-param array{optionName?: mixed, id?: mixed, ...} $attributes
+	 * @return string
+	 */
+	public static function get_form_option_name( array $attributes ) {
+		if ( isset( $attributes['optionName'] ) && is_string( $attributes['optionName'] ) && '' !== $attributes['optionName'] ) {
+			return $attributes['optionName'];
+		}
+
+		return isset( $attributes['id'] ) && is_string( $attributes['id'] ) ? $attributes['id'] : '';
+	}
+
+	/**
 	 * Get the 3rd party integration settings from WP options given the form option ID.
 	 *
 	 * @param string $form_option The ID of the form.
