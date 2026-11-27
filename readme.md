@@ -4,7 +4,7 @@
 **Requires at least:** 6.6  
 **Tested up to:** 7.1  
 **Requires PHP:** 5.6  
-**Stable tag:** 3.2.12  
+**Stable tag:** 3.2.13  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -344,11 +344,10 @@ Please follow the reporting protocols outlined on our [Security Page](https://th
 
 ## Changelog ##
 
-##### [Version 3.2.12](https://github.com/Codeinwp/otter-blocks/compare/v3.2.11...v3.2.12) (2026-11-23)
+##### [Version 3.2.13](https://github.com/Codeinwp/otter-blocks/compare/v3.2.12...v3.2.13) (2026-11-27)
 
-- Fixed the PHP 8.5 deprecation warning when rendering freeform content.
-- Fixed issue with Atomic Wind where text blocks were losing the themes body font and line height.
 - Enhanced security
+- Fixed configuring forms that had never been opened in the editor
 - Updated dependencies
 
 
