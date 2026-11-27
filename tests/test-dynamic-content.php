@@ -823,6 +823,81 @@ class TestDynamicContent extends WP_UnitTestCase
 	}
 
 	/**
+	 * Author meta returns only public author fields.
+	 */
+	public function test_author_meta_returns_fallback_for_non_public_fields() {
+		foreach ( array( 'user_email', 'email', 'user_login', 'login', 'user_registered', 'test_meta' ) as $key ) {
+			$result = $this->dynamic_content_pro->evaluate_content(
+				'fallback',
+				array(
+					'type'    => 'authorMeta',
+					'context' => $this->post_id,
+					'metaKey' => $key,
+					'default' => 'fallback',
+				)
+			);
+
+			$this->assertSame( 'fallback', $result, $key );
+		}
+	}
+
+	/**
+	 * Author fields added through the allow-list filter are shown, but protected fields stay hidden.
+	 */
+	public function test_author_meta_allowed_keys_filter() {
+		update_user_meta( $this->user_id, 'favorite_color', 'teal' );
+		$this->allow_author_meta_keys( array( 'favorite_color', 'user_pass', 'pass', 'user_level' ) );
+
+		$author_meta = function ( $key ) {
+			return $this->dynamic_content_pro->get_author_meta(
+				array(
+					'metaKey' => $key,
+					'context' => $this->post_id,
+					'default' => 'DEF',
+				)
+			);
+		};
+
+		$this->assertSame( 'teal', $author_meta( 'favorite_color' ) );
+		$this->assertSame( 'DEF', $author_meta( 'user_pass' ) );
+		$this->assertSame( 'DEF', $author_meta( 'pass' ) );
+		$this->assertSame( 'DEF', $author_meta( 'user_level' ) );
+
+		// A filter that returns a non-array value allows no field.
+		add_filter( 'otter_blocks_dynamic_author_meta_allowed_keys', '__return_empty_string', 20 );
+		$this->assertSame( 'DEF', $author_meta( 'display_name' ) );
+	}
+
+	/**
+	 * Add author fields to the allow list for the current test.
+	 *
+	 * @param string[] $keys Author field names.
+	 */
+	private function allow_author_meta_keys( array $keys ) {
+		add_filter(
+			'otter_blocks_dynamic_author_meta_allowed_keys',
+			static function ( $allowed ) use ( $keys ) {
+				return array_merge( $allowed, $keys );
+			}
+		);
+	}
+
+	/**
+	 * Rendered author meta does not print the author email.
+	 */
+	public function test_author_meta_rendering_hides_email() {
+		add_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $this->dynamic_content_pro, 'evaluate_content' ), 10, 2 );
+
+		$result = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="authorMeta" data-meta-key="user_email">Author Meta</o-dynamic></p>' );
+		$public = $this->dynamic_content->apply_dynamic_content( '<p><o-dynamic data-type="authorMeta" data-meta-key="nickname">Author Meta</o-dynamic></p>' );
+
+		remove_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $this->dynamic_content_pro, 'evaluate_content' ), 10 );
+
+		$this->assertStringNotContainsString( 'test@userrecover.com', $result );
+		$this->assertSame( '<p>test_user_deletion</p>', $public );
+	}
+
+	/**
 	 * Post meta must not expose protected (underscore-prefixed) keys.
 	 */
 	public function test_post_meta_does_not_leak_protected_key() {
@@ -3063,6 +3138,7 @@ class TestDynamicContent extends WP_UnitTestCase
 		// Seed the reset key so the activation_key alias has a value to leak without the fix.
 		$wpdb->update( $wpdb->users, array( 'user_activation_key' => 'secret-key' ), array( 'ID' => $author_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		clean_user_cache( $author_id );
+		$this->allow_author_meta_keys( array( 'pass', 'activation_key' ) );
 
 		foreach ( array( 'pass', 'activation_key' ) as $alias ) {
 			$result = $this->dynamic_content_pro->get_author_meta( array(
@@ -3081,6 +3157,7 @@ class TestDynamicContent extends WP_UnitTestCase
 	public function test_author_meta_blocks_user_level() {
 		$author_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		$post_id   = self::factory()->post->create( array( 'post_author' => $author_id ) );
+		$this->allow_author_meta_keys( array( 'user_level' ) );
 
 		$result = $this->dynamic_content_pro->get_author_meta( array(
 			'metaKey' => 'user_level',
@@ -3142,6 +3219,7 @@ class TestDynamicContent extends WP_UnitTestCase
 			return ( 'first_name' === $meta_key && 'user' === $meta_type ) ? true : $protected;
 		};
 		add_filter( 'is_protected_meta', $filter, 10, 3 );
+		$this->allow_author_meta_keys( array( 'user_firstname' ) );
 
 		$result = $this->dynamic_content_pro->get_author_meta( array(
 			'metaKey' => 'user_firstname',

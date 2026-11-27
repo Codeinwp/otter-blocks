@@ -42,9 +42,9 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Visitors cannot read password-protected or non-viewable published posts.
+	 * The preview route is for the editor only, so visitors cannot use it on any post.
 	 */
-	public function test_visitor_cannot_preview_protected_or_non_viewable_posts(): void {
+	public function test_visitor_cannot_preview_any_post(): void {
 		$protected = self::factory()->post->create(
 			array(
 				'post_excerpt'  => 'Secret excerpt',
@@ -56,7 +56,143 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 
 		$this->assertFalse( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'postExcerpt', 'context' => $protected ) ) );
 		$this->assertFalse( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'postContent', 'context' => $pattern ) ) );
-		$this->assertTrue( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'postTitle', 'context' => $public ) ) );
+		$this->assertFalse( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'postTitle', 'context' => $public ) ) );
+
+		$request = new WP_REST_Request( 'GET', '/otter/v1/dynamic/preview' );
+		$request->set_query_params( array( 'type' => 'postTitle', 'context' => $public ) );
+		$this->assertSame( 401, rest_do_request( $request )->get_status() );
+	}
+
+	/**
+	 * Users who can edit the post keep the preview, a contributor included on an own draft.
+	 */
+	public function test_users_who_can_edit_the_post_can_preview(): void {
+		$contributor = self::factory()->user->create( array( 'role' => 'contributor' ) );
+		$own_draft   = self::factory()->post->create(
+			array(
+				'post_author' => $contributor,
+				'post_status' => 'draft',
+			)
+		);
+		$other_post  = self::factory()->post->create();
+
+		wp_set_current_user( $contributor );
+		$this->assertTrue( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'postTitle', 'context' => $own_draft ) ) );
+		$this->assertFalse( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'postTitle', 'context' => $other_post ) ) );
+
+		// Without a `context` there is nothing to preview, even when a global post is set.
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		$GLOBALS['post'] = get_post( $other_post );
+		$this->assertFalse( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'siteTitle' ) ) );
+		$this->assertFalse( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'siteTitle', 'context' => 'query' ) ) );
+	}
+
+	/**
+	 * The preview returns public author fields and never the author email.
+	 */
+	public function test_preview_author_meta_returns_only_public_fields(): void {
+		$author  = self::factory()->user->create(
+			array(
+				'role'         => 'author',
+				'display_name' => 'Public Name',
+				'user_email'   => 'author-private@example.org',
+			)
+		);
+		$post_id = self::factory()->post->create( array( 'post_author' => $author ) );
+		$pro     = new \ThemeIsle\OtterPro\Plugins\Dynamic_Content();
+		add_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $pro, 'evaluate_content' ), 10, 2 );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+
+		$this->assertSame( 'Public Name', $this->preview( array( 'type' => 'authorMeta', 'context' => $post_id, 'metaKey' => 'display_name', 'default' => '' ) ) );
+		$this->assertStringNotContainsString( 'author-private@example.org', $this->preview( array( 'type' => 'authorMeta', 'context' => $post_id, 'metaKey' => 'user_email', 'default' => '' ) ) );
+
+		remove_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $pro, 'evaluate_content' ), 10 );
+	}
+
+	/**
+	 * In REST responses, stored dynamic values read the `context` post only when the reader can read it.
+	 */
+	public function test_rest_rendering_reads_only_readable_context_posts(): void {
+		$sources = array(
+			self::factory()->post->create( array( 'post_excerpt' => 'Public excerpt' ) ),
+			self::factory()->post->create(
+				array(
+					'post_excerpt' => 'Private excerpt',
+					'post_status'  => 'private',
+				)
+			),
+			self::factory()->post->create(
+				array(
+					'post_excerpt' => 'Draft excerpt',
+					'post_status'  => 'draft',
+				)
+			),
+			self::factory()->post->create(
+				array(
+					'post_excerpt'  => 'Protected excerpt',
+					'post_password' => 'pass',
+				)
+			),
+		);
+
+		$content = '';
+		foreach ( $sources as $source ) {
+			$content .= '<!-- wp:paragraph --><p><o-dynamic data-type="postExcerpt" data-context="' . $source . '">Excerpt</o-dynamic></p><!-- /wp:paragraph -->';
+		}
+
+		// Values without a context, or inside a Query Loop, use the post being rendered.
+		$content .= '<!-- wp:paragraph --><p><o-dynamic data-type="postTitle">Title</o-dynamic>|<o-dynamic data-type="postTitle" data-context="query">Title</o-dynamic>|<o-dynamic data-type="siteTitle" data-context="query">Site</o-dynamic></p><!-- /wp:paragraph -->';
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_title'   => 'Host post',
+				'post_content' => $content,
+			)
+		);
+
+		$visitor = $this->rendered_content( $post_id );
+		$this->assertStringContainsString( 'Public excerpt', $visitor );
+		$this->assertStringNotContainsString( 'Private excerpt', $visitor );
+		$this->assertStringNotContainsString( 'Draft excerpt', $visitor );
+		$this->assertStringNotContainsString( 'Protected excerpt', $visitor );
+		$this->assertStringContainsString( 'Host post|Host post|' . get_bloginfo( 'name' ), $visitor );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
+		$editor = $this->rendered_content( $post_id );
+		$this->assertStringContainsString( 'Private excerpt', $editor );
+		$this->assertStringContainsString( 'Draft excerpt', $editor );
+		$this->assertStringContainsString( 'Protected excerpt', $editor );
+	}
+
+	/**
+	 * Read a post through the REST API and return its rendered content.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string
+	 */
+	private function rendered_content( int $post_id ): string {
+		$response = rest_do_request( new WP_REST_Request( 'GET', '/wp/v2/posts/' . $post_id ) );
+
+		$this->assertSame( 200, $response->get_status() );
+
+		return $response->get_data()['content']['rendered'];
+	}
+
+	/**
+	 * Dispatch a preview request and return its data.
+	 *
+	 * @param array<string, string|int> $params Query parameters.
+	 * @return string
+	 */
+	private function preview( array $params ): string {
+		$request = new WP_REST_Request( 'GET', '/otter/v1/dynamic/preview' );
+		$request->set_query_params( $params );
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+
+		return (string) $response->get_data();
 	}
 
 	/**
@@ -80,7 +216,7 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Editors still preview what they can edit, and a visitor who entered the post password passes.
+	 * Editors still preview what they can edit, and a visitor who entered the post password can load its images.
 	 */
 	public function test_editors_and_unlocked_visitors_keep_access(): void {
 		$protected = self::factory()->post->create( array( 'post_password' => 'pass' ) );
@@ -95,7 +231,7 @@ class Test_Dynamic_Content_Server extends WP_UnitTestCase {
 		require_once ABSPATH . WPINC . '/class-phpass.php';
 		$_COOKIE[ 'wp-postpass_' . COOKIEHASH ] = ( new PasswordHash( 8, true ) )->HashPassword( 'pass' );
 		try {
-			$this->assertTrue( $this->can_request( '/otter/v1/dynamic/preview', array( 'type' => 'postExcerpt', 'context' => $protected ) ) );
+			$this->assertTrue( $this->can_request( '/otter/v1/dynamic', array( 'type' => 'featuredImage', 'context' => $protected ) ) );
 		} finally {
 			unset( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] );
 		}

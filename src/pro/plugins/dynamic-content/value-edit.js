@@ -76,12 +76,7 @@ const Edit = ({
 			'first_name',
 			'last_name',
 			'nickname',
-			'user_email',
-			'user_level',
-			'user_login',
 			'user_nicename',
-			'user_registered',
-			'user_status',
 			'user_url'
 		],
 		loggedInUserMeta: [

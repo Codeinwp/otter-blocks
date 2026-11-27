@@ -1097,7 +1097,10 @@ class Dynamic_Content {
 	 * @return string|string[]
 	 */
 	public function get_data( $data, $magic_tags ) {
-		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || true === $magic_tags ) {
+		// `wp_is_rest_endpoint()` (WP 6.5+) also covers REST requests dispatched in the same PHP request.
+		$is_rest = function_exists( 'wp_is_rest_endpoint' ) ? wp_is_rest_endpoint() : ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+
+		if ( ! $is_rest || true === $magic_tags ) {
 			if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
 				$data['context'] = get_the_ID();
 			} else {
@@ -1109,6 +1112,16 @@ class Dynamic_Content {
 			}
 		} else {
 			$data['default'] = '';
+
+			// Inside a Query Loop, use the loop post.
+			if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
+				$data['context'] = get_the_ID();
+			}
+
+			// In REST requests the `context` post comes from the request or stored markup, so check that the current user can read it.
+			if ( ! empty( $data['context'] ) && ! \ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server::instance()->check_permission( $data['context'] ) ) {
+				return '';
+			}
 		}
 
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
