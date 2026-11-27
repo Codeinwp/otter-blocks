@@ -497,7 +497,7 @@ class Form_Pro_Features {
 	private function build_ai_autoresponder_body( $form_data, $autoresponder ) {
 		$ai         = $form_data->get_wp_options()->get_ai_autoresponder();
 		$raw_prompt = $ai['prompt'];
-		$prompt     = $this->replace_magic_tags( $raw_prompt, $form_data->get_fields() );
+		$prompt     = $this->replace_magic_tags( $raw_prompt, $form_data->get_fields(), false );
 
 		// Diagnostics: show whether the magic-tag tokens were actually replaced.
 		$field_ids = array();
@@ -963,14 +963,16 @@ class Form_Pro_Features {
 	 *
 	 * @param string $content The content to replace the magic tags.
 	 * @param array  $form_inputs The form inputs.
+	 * @param bool   $escape Whether to HTML-escape the values. Use false for plain-text content.
 	 * @since 2.2.5
 	 *
 	 * @return string
 	 */
-	public function replace_magic_tags( $content, $form_inputs ) {
+	public function replace_magic_tags( $content, $form_inputs, $escape = true ) {
 		foreach ( $form_inputs as $field ) {
 			if ( isset( $field['id'] ) ) {
-				$content = str_replace( '%' . $field['id'] . '%', $field['value'], $content );
+				$value   = isset( $field['value'] ) && is_scalar( $field['value'] ) ? (string) $field['value'] : '';
+				$content = str_replace( '%' . $field['id'] . '%', $escape ? esc_html( $value ) : $value, $content );
 			}
 		}
 
