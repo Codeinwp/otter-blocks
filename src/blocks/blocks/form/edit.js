@@ -284,12 +284,17 @@ const Edit = ({
 	 * Create the form identification tag for Otter Options.
 	 */
 	useEffect( () => {
-		if ( attributes.id && select( 'core/edit-widgets' ) ) {
+		if ( ! attributes.id || attributes.optionName === attributes.id ) {
+			return;
+		}
+		if ( ! attributes.optionName ) {
+			setAttributes({ optionName: attributes.id });
+		} else if ( select( 'core/edit-widgets' ) ) {
 			setAttributes({ optionName: `widget_${ attributes.id.slice( -8 ) }` });
-		} else if ( attributes.id ) {
+		} else {
 			setAttributes({ optionName: `${ hash({ url: window.location.pathname }) }_${ attributes.id.slice( -8 ) }` });
 		}
-	}, [ attributes.id ]);
+	}, [ attributes.id, attributes.optionName, setAttributes ]);
 
 	/**
 	 * Make sure that a form nonce field is always present.

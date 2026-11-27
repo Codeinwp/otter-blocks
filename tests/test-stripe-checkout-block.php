@@ -126,6 +126,58 @@ class TestStripeCheckoutBlock extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Checkout actions and outgoing mail receive saved attributes without render placeholders.
+	 */
+	public function test_success_email_keeps_saved_marker_text(): void {
+		$text       = '{otterDynamic?type=siteTitle} otterDynamicLink?type=siteURL otter/v1/dynamic <o-dynamic>saved</o-dynamic>';
+		$attributes = array(
+			'product'        => 'prod_1',
+			'price'          => 'price_1',
+			'autoresponder'  => array( 'subject' => $text, 'body' => '<p>' . $text . '</p>' ),
+			'successMessage' => '{otterDynamic?type=siteTitle}',
+		);
+		$sent     = null;
+		$received = null;
+		$capture  = static function ( $pre, $mail ) use ( &$sent ) {
+			$sent = $mail;
+			return true;
+		};
+		$inspect = static function ( $attrs ) use ( &$received ) {
+			$received = $attrs;
+		};
+		$autoresponder = new \ThemeIsle\OtterPro\Plugins\Stripe_Pro_Features();
+		add_action( 'otter_blocks_stripe_checkout_success', array( $autoresponder, 'autoresponder' ), 10, 3 );
+		add_action( 'otter_blocks_stripe_checkout_success', $inspect );
+		add_filter( 'pre_wp_mail', $capture, 10, 2 );
+		$_GET['stripe_session_id'] = 'sess_1';
+		delete_transient( 'otter_stripe_checkout_sess_1' );
+		$type            = WP_Block_Type_Registry::get_instance()->get_registered( 'themeisle-blocks/stripe-checkout' );
+		$original_render = $type->render_callback;
+		// The API key is installed after init, so use the renderer constructed in set_up().
+		$protected = \ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content::instance()->protect_render_attributes( array( 'render_callback' => array( $this->block, 'render' ) ) );
+		$type->render_callback = $protected['render_callback'];
+		try {
+			$output = do_blocks( '<!-- wp:themeisle-blocks/stripe-checkout ' . wp_json_encode( $attributes ) . ' /-->' );
+		} finally {
+			$type->render_callback = $original_render;
+			unset( $_GET['stripe_session_id'] );
+			remove_action( 'otter_blocks_stripe_checkout_success', array( $autoresponder, 'autoresponder' ) );
+			remove_action( 'otter_blocks_stripe_checkout_success', $inspect );
+			remove_filter( 'pre_wp_mail', $capture );
+			delete_transient( 'otter_stripe_checkout_sess_1' );
+		}
+
+		$this->assertIsArray( $sent );
+		$this->assertSame( $text, $sent['subject'] );
+		$this->assertSame( $attributes['autoresponder']['body'], $sent['message'] );
+		$this->assertSame( 'test@test.com', $sent['to'] );
+		$this->assertSame( $attributes['autoresponder'], $received['autoresponder'] );
+		$this->assertSame( $attributes['successMessage'], $received['successMessage'] );
+		$this->assertStringContainsString( get_bloginfo( 'name' ), $output );
+		$this->assertStringNotContainsString( 'otterauthored', $output );
+	}
+
+	/**
 	 * A pair signed by a rendered block creates a session.
 	 */
 	public function test_signed_pair_creates_session() {

@@ -275,6 +275,9 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_test_email( $form_data ) {
+		$site = $form_data->get_data_from_payload( 'site' );
+		$site = is_string( $site ) ? esc_url( $site, array( 'http', 'https' ) ) : '';
+
 		return sprintf(
 			'
 		<!doctype html>
@@ -295,14 +298,14 @@ class Form_Email {
 		',
 			sprintf(
 				// translators: %s is the admin email address.
-				__( 'Mail From: %s', 'otter-blocks' ), 
-				sanitize_email( get_option( 'admin_email' ) ) 
+				esc_html__( 'Mail From: %s', 'otter-blocks' ),
+				esc_html( sanitize_email( get_option( 'admin_email' ) ) )
 			),
 			esc_html__( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks' ),
 			sprintf( 
 				// translators: %s is the URL of the site from which the email was sent.
-				__( 'Location: %s', 'otter-blocks' ),
-				'<a href="' . $form_data->get_data_from_payload( 'site' ) . '">' . esc_html__( 'link', 'otter-blocks' ) . '</a>'
+				esc_html__( 'Location: %s', 'otter-blocks' ),
+				'<a href="' . $site . '">' . esc_html__( 'link', 'otter-blocks' ) . '</a>'
 			)
 		);
 	}

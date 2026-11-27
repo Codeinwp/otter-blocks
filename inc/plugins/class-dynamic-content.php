@@ -25,6 +25,11 @@ class Dynamic_Content {
 	const MAGIC_TAG_REGEX = '{(otterDynamic\?[^"\'<>}]*)}';
 
 	/**
+	 * Any marker a resolver acts on, tokenized as the resolvers read it.
+	 */
+	const MARKER_TOKEN_REGEX = '/\{otterDynamic\?[^"\'<>}]*\}|otterDynamicLink[^"\'<>]*|otter\/v1\/dynamic[^"\'<>]*|<o-dynamic(?:-link)?\b[^>]*>/';
+
+	/**
 	 * Literal representations of dynamic marker prefixes.
 	 *
 	 * @var array<string, string>
@@ -44,10 +49,22 @@ class Dynamic_Content {
 	private static $rendering_content = array();
 
 	/**
+	 * Saved menu the Navigation block being rendered refers to, or 0.
+	 *
+	 * @var int
+	 */
+	private static $navigation_menu_ref = 0;
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
-		add_filter( 'render_block', array( $this, 'escape_visitor_block_magic_tags' ), 9, 2 );
+		add_filter( 'render_block_data', array( $this, 'register_authored_block' ), PHP_INT_MAX, 3 );
+		add_filter( 'register_block_type_args', array( $this, 'protect_render_attributes' ) );
+		add_filter( 'wp_kses_allowed_html', array( $this, 'allow_authored_elements' ), PHP_INT_MAX );
+		add_filter( 'block_core_navigation_render_inner_blocks', array( $this, 'register_navigation_menu_blocks' ) );
+		add_filter( 'block_bindings_source_value', array( $this, 'escape_bound_value_magic_tags' ), 10, 5 );
+		add_filter( 'render_block', array( $this, 'escape_visitor_block_magic_tags' ), 9, 3 );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_magic_tags' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
@@ -63,55 +80,329 @@ class Dynamic_Content {
 		add_filter( 'wp_generate_tag_cloud_data', array( $this, 'escape_tag_cloud_magic_tags' ) );
 		add_filter( 'wp_setup_nav_menu_item', array( $this, 'escape_taxonomy_menu_magic_tags' ) );
 		add_filter( 'list_cats', array( $this, 'escape_comment_magic_tags' ) );
-		foreach ( array( 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
+		// After core builds a missing excerpt from the content.
+		add_filter( 'get_the_excerpt', array( $this, 'escape_comment_magic_tags' ), 20 );
+		add_filter( 'wp_get_attachment_image_attributes', array( $this, 'escape_image_alt_magic_tags' ) );
+		// Before WooCommerce renders blocks in the short description.
+		add_filter( 'woocommerce_short_description', array( $this, 'escape_comment_magic_tags' ), 8 );
+		foreach ( array( 'the_title', 'get_the_archive_title', 'woocommerce_product_get_name', 'woocommerce_product_variation_get_name', 'woocommerce_product_get_short_description', 'woocommerce_product_get_sku', 'woocommerce_product_variation_get_sku', 'get_avatar', 'the_author', 'get_the_author_display_name', 'get_the_author_description', 'get_the_author_user_description', 'comment_form_field_author', 'comment_form_field_email', 'comment_form_field_url', 'comment_form_logged_in' ) as $hook ) {
 			add_filter( $hook, array( $this, 'escape_comment_magic_tags' ) );
 		}
 	}
 
 	/**
-	 * Protect rendered visitor values before the generic Magic Tag filters run.
+	 * Mark saved inputs before renderers mix them with stored or remote data.
 	 *
-	 * @param string                                                                $content Rendered markup.
-	 * @param array{blockName?: mixed, attrs?: array{id?: string, idBase?: string}} $block Parsed block.
+	 * @param array<string, mixed>      $parsed_block Parsed block.
+	 * @param array<string, mixed>|null $source_block Parsed block before filters, or null for direct HTML rendering.
+	 * @param \WP_Block|null            $parent_block Parent block.
+	 * @return array<string, mixed>
+	 */
+	public function register_authored_block( $parsed_block, $source_block = null, $parent_block = null ) {
+		if ( isset( $parsed_block['blockName'] ) && 'core/navigation' === $parsed_block['blockName'] ) {
+			self::$navigation_menu_ref = isset( $parsed_block['attrs']['ref'] ) ? (int) $parsed_block['attrs']['ref'] : 0;
+		}
+
+		// Parsed attributes also feed context and parent renderers' state; mark them only for HTML callbacks.
+		return $this->mark_authored_block( $parsed_block, null === $source_block );
+	}
+
+	/**
+	 * Protect explicit attributes even when a dynamic block is rendered directly by WP_Block.
+	 *
+	 * @param array<string, mixed> $args Block registration arguments, as defined by WordPress.
+	 * @return array<string, mixed>
+	 */
+	public function protect_render_attributes( $args ) {
+		if ( ! isset( $args['render_callback'] ) || ! is_callable( $args['render_callback'] ) ) {
+			return $args;
+		}
+
+		$render                  = $args['render_callback'];
+		$args['render_callback'] = function ( $attributes, $content, $block ) use ( $render ) {
+			$original                            = $block->attributes;
+			$wrapper_block                       = \WP_Block_Supports::$block_to_render;
+			$marked                              = $this->mark_authored_block( array( 'attrs' => $attributes ) );
+			$block->attributes                   = $marked['attrs'];
+			\WP_Block_Supports::$block_to_render = array( 'attrs' => $marked['attrs'] ) + $block->parsed_block;
+			try {
+				return call_user_func( $render, $marked['attrs'], $content, $block );
+			} finally {
+				$block->attributes                   = $original;
+				\WP_Block_Supports::$block_to_render = $wrapper_block;
+			}
+		};
+
+		return $args;
+	}
+
+	/**
+	 * Mark saved Navigation menu blocks; fallback items built from pages or classic menus remain data.
+	 *
+	 * @param \WP_Block_List $inner_blocks Blocks the Navigation block renders.
+	 * @return \WP_Block_List
+	 */
+	public function register_navigation_menu_blocks( $inner_blocks ) {
+		$menu                      = self::$navigation_menu_ref ? get_post( self::$navigation_menu_ref ) : null;
+		self::$navigation_menu_ref = 0;
+		if ( $menu instanceof \WP_Post && 'wp_navigation' === $menu->post_type ) {
+			$this->mark_navigation_blocks( $inner_blocks );
+		}
+
+		return $inner_blocks;
+	}
+
+	/**
+	 * Update existing Navigation instances without losing their inherited context.
+	 *
+	 * @param \WP_Block_List $blocks Saved menu blocks.
+	 * @return void
+	 */
+	private function mark_navigation_blocks( $blocks ) {
+		foreach ( $blocks as $block ) {
+			$block->parsed_block  = $this->mark_authored_block( $block->parsed_block, false );
+			$block->inner_html    = $block->parsed_block['innerHTML'];
+			$block->inner_content = $block->parsed_block['innerContent'];
+			$this->mark_navigation_blocks( $block->inner_blocks );
+		}
+	}
+
+	/**
+	 * Carry provenance through HTML/URL escaping without granting equal data markers permission to resolve.
+	 *
+	 * The image prefix remains recognizable to CSS image resolvers that run before render_block.
+	 *
+	 * @return array<string, string>
+	 */
+	private static function authored_prefixes() {
+		static $prefixes = null;
+		if ( null === $prefixes ) {
+			$nonce    = strtolower( self::unguessable_placeholder( 'otterauthored' ) );
+			$prefixes = array(
+				'{otterDynamic?'   => '{' . $nonce . '?',
+				'otterDynamicLink' => $nonce . 'link',
+				'otter/v1/dynamic' => 'otter/v1/dynamic/' . $nonce,
+				'<o-dynamic'       => '<' . $nonce . 'element',
+			);
+		}
+
+		return $prefixes;
+	}
+
+	/**
+	 * Mark a whole tree because older core versions construct children before filtering them.
+	 *
+	 * @param array<string, mixed> $block Parsed block.
+	 * @param bool                 $mark_attributes Whether attributes are being consumed by an HTML renderer.
+	 * @return array<string, mixed>
+	 */
+	private function mark_authored_block( $block, $mark_attributes = true ) {
+		$prefixes = self::authored_prefixes();
+		// strtr uses the longest key, keeping already marked image URLs unchanged.
+		$replacements = array_combine( array_values( $prefixes ), array_values( $prefixes ) ) + $prefixes;
+		$replace      = static function ( &$value ) use ( $replacements ) {
+			if ( is_string( $value ) ) {
+				$value = strtr( $value, $replacements );
+			}
+		};
+		if ( $mark_attributes && isset( $block['attrs'] ) ) {
+			$attributes = array_diff_key( $block['attrs'], self::data_bound_attributes( $block ), array( 'metadata' => true ) );
+			array_walk_recursive( $attributes, $replace );
+			$block['attrs'] = array_replace( $block['attrs'], $attributes );
+		}
+
+		foreach ( array( 'innerContent', 'innerHTML' ) as $key ) {
+			if ( isset( $block[ $key ] ) ) {
+				if ( is_array( $block[ $key ] ) ) {
+					array_walk_recursive( $block[ $key ], $replace );
+				} else {
+					$replace( $block[ $key ] );
+				}
+			}
+		}
+		if ( isset( $block['innerBlocks'] ) ) {
+			$block['innerBlocks'] = array_map(
+				function ( $inner_block ) use ( $mark_attributes ) {
+					return $this->mark_authored_block( $inner_block, $mark_attributes );
+				},
+				$block['innerBlocks']
+			);
+		}
+
+		return $block;
+	}
+
+	/**
+	 * Keep markers literal in rich text a block binding reads from post meta or another data source.
+	 *
+	 * Core inserts rich text as HTML, so the escaped prefix displays as written. An attribute value is escaped again
+	 * when core sets it, so the render gate handles those instead. Pattern overrides
+	 * are the post's own content, so their markers stay authored.
+	 *
+	 * @param mixed          $value          Bound value.
+	 * @param string         $source_name    Binding source.
+	 * @param array<mixed>   $source_args    Binding arguments.
+	 * @param \WP_Block|null $block_instance Bound block.
+	 * @param string         $attribute_name Bound attribute.
+	 * @return mixed
+	 */
+	public function escape_bound_value_magic_tags( $value, $source_name, $source_args = array(), $block_instance = null, $attribute_name = '' ) {
+		if ( ! is_string( $value ) || 'core/pattern-overrides' === $source_name || ! $block_instance instanceof \WP_Block || null === $block_instance->block_type ) {
+			return $value;
+		}
+
+		$schema = isset( $block_instance->block_type->attributes[ $attribute_name ] ) ? $block_instance->block_type->attributes[ $attribute_name ] : array();
+
+		return isset( $schema['source'] ) && in_array( $schema['source'], array( 'rich-text', 'html' ), true ) ? $this->escape_comment_magic_tags( $value ) : $value;
+	}
+
+	/**
+	 * Keep markers literal in HTML attributes whose value a block binding read from a data source.
+	 *
+	 * Only the bound attribute is changed, so the same marker written into another attribute still resolves.
+	 *
+	 * @param string               $content  Rendered markup.
+	 * @param array<string, mixed> $block Parsed block.
+	 * @param \WP_Block|null       $instance Block instance.
 	 * @return string
 	 */
-	public function escape_visitor_block_magic_tags( $content, $block ) {
-		if ( ! isset( $block['blockName'] ) || ! is_string( $block['blockName'] ) ) {
+	private function escape_bound_attribute_markers( $content, $block, $instance ) {
+		if ( ! $instance instanceof \WP_Block || null === $instance->block_type ) {
 			return $content;
 		}
 
-		if ( 'core/term-description' === $block['blockName'] ) {
-			return $this->escape_comment_magic_tags( $content );
-		}
-
-		$patterns = array(
-			'core/avatar'      => '/(<a\b[^>]*\saria-label=")([^"]*)(")/',
-			'core/search'      => '/(<input\b(?=[^>]*\stype="(?:search|text)")(?=[^>]*\sname="s")[^>]*\svalue=")([^"]*)(")/',
-			'core/query-title' => '/(>)([^<]*)(<)/',
-			'core/post-terms'  => '/(<a\b[^>]*>)([^<]*)(<\/a>)/',
-			'core/term-name'   => '/(>)([^<]*)(<)/',
-		);
-		if ( 'core/legacy-widget' === $block['blockName'] ) {
-			$widget = isset( $block['attrs']['idBase'] ) ? $block['attrs']['idBase'] : '';
-			if ( isset( $block['attrs']['id'] ) ) {
-				$widget = $block['attrs']['id'];
-			}
-			if ( 'search' === _get_widget_id_base( $widget ) ) {
-				// A null form filter makes core use its unfiltered fallback markup.
-				$patterns['core/legacy-widget'] = '/(<form\b)(.*?)(<\/form>)/is';
+		foreach ( array_keys( self::data_bound_attributes( $block ) ) as $name ) {
+			$schema = isset( $instance->block_type->attributes[ $name ] ) ? $instance->block_type->attributes[ $name ] : array();
+			$value  = isset( $instance->attributes[ $name ] ) ? $instance->attributes[ $name ] : null;
+			if ( is_string( $value ) && isset( $schema['source'], $schema['attribute'] ) && 'attribute' === $schema['source'] && preg_match( self::MARKER_TOKEN_REGEX, $value ) ) {
+				$content = $this->escape_markers_in_attribute( $content, $schema['attribute'], $value );
 			}
 		}
-		if ( ! isset( $patterns[ $block['blockName'] ] ) ) {
-			return $content;
+
+		return $content;
+	}
+
+	/**
+	 * Escape the markers in every HTML attribute of the given name that holds the given value.
+	 *
+	 * The HTML API escapes what it sets, so the value goes in with placeholders that are swapped for the escapes after.
+	 *
+	 * @param string $content   Markup.
+	 * @param string $attribute HTML attribute name.
+	 * @param string $value     Decoded attribute value.
+	 * @return string
+	 */
+	private function escape_markers_in_attribute( $content, $attribute, $value ) {
+		$placeholders = array();
+		$escapes      = array();
+		foreach ( self::$literal_marker_escapes as $prefix => $escape ) {
+			$placeholder             = self::unguessable_placeholder( 'otter-bound-' );
+			$placeholders[ $prefix ] = $placeholder;
+			$escapes[ $placeholder ] = $escape;
 		}
 
-		return preg_replace_callback(
-			$patterns[ $block['blockName'] ],
-			function ( $matches ) {
-				return $matches[1] . $this->escape_comment_magic_tags( $matches[2] ) . $matches[3];
+		// WordPress 6.6 returns raw CR/CRLF from get_attribute(), while 6.7+ normalizes to LF.
+		$normalized_value = str_replace( array( "\r\n", "\r" ), "\n", $value );
+		$processor        = new \WP_HTML_Tag_Processor( $content );
+		while ( $processor->next_tag() ) {
+			$current = $processor->get_attribute( $attribute );
+			if ( is_string( $current ) && str_replace( array( "\r\n", "\r" ), "\n", $current ) === $normalized_value ) {
+				$processor->set_attribute( $attribute, strtr( $normalized_value, $placeholders ) );
+			}
+		}
+
+		return strtr( $processor->get_updated_html(), $escapes );
+	}
+
+	/**
+	 * Escape data markers before restoring only the prefixes marked on block inputs.
+	 *
+	 * @param string               $content  Rendered markup.
+	 * @param array<string, mixed> $block    Parsed block.
+	 * @param \WP_Block|null       $instance Block instance.
+	 * @return string
+	 */
+	public function escape_visitor_block_magic_tags( $content, $block, $instance = null ) {
+		$content  = $this->escape_bound_attribute_markers( $content, $block, $instance );
+		$prefixes = self::authored_prefixes();
+		$content  = (string) preg_replace_callback(
+			self::MARKER_TOKEN_REGEX,
+			function ( $matches ) use ( $prefixes ) {
+				return 0 === strpos( $matches[0], $prefixes['otter/v1/dynamic'] ) ? $matches[0] : $this->escape_comment_magic_tags( $matches[0] );
 			},
 			$content
 		);
+
+		return $this->restore_authored_markers( $content );
+	}
+
+	/**
+	 * Restore marked prefixes without resolving their dynamic values.
+	 *
+	 * @param string $content Marked text or markup.
+	 * @return string
+	 */
+	public function restore_authored_markers( $content ) {
+		$prefixes = self::authored_prefixes();
+		$restored = array_flip( $prefixes );
+		foreach ( $prefixes as $original => $marked ) {
+			$restored[ esc_attr( $marked ) ] = esc_attr( $original );
+		}
+
+		return strtr( $content, $restored );
+	}
+
+	/**
+	 * Restore saved attributes for consumers outside the HTML render pipeline.
+	 *
+	 * @param array<string, mixed> $attributes Marked block attributes.
+	 * @return array<string, mixed>
+	 */
+	public function restore_authored_attributes( $attributes ) {
+		return map_deep(
+			$attributes,
+			function ( $value ) {
+				return is_string( $value ) ? $this->restore_authored_markers( $value ) : $value;
+			}
+		);
+	}
+
+	/**
+	 * Give marked Dynamic Value elements the same KSES policy as their saved forms.
+	 *
+	 * @param array<string, array<string, mixed>> $tags Allowed elements and attributes.
+	 * @return array<string, array<string, mixed>>
+	 */
+	public function allow_authored_elements( $tags ) {
+		$prefixes = self::authored_prefixes();
+		$marked   = substr( $prefixes['<o-dynamic'], 1 );
+		foreach ( array(
+			'o-dynamic'      => $marked,
+			'o-dynamic-link' => $marked . '-link',
+		) as $original => $element ) {
+			if ( isset( $tags[ $original ] ) ) {
+				$tags[ $element ] = $tags[ $original ];
+			}
+		}
+
+		return $tags;
+	}
+
+	/**
+	 * Attributes whose value a binding reads from a data source rather than the post's own pattern overrides.
+	 *
+	 * @param array<string, mixed> $block Parsed block.
+	 * @return array<string, true>
+	 */
+	private static function data_bound_attributes( $block ) {
+		$bound = array();
+		foreach ( isset( $block['attrs']['metadata']['bindings'] ) ? $block['attrs']['metadata']['bindings'] : array() as $attribute => $binding ) {
+			if ( ! isset( $binding['source'] ) || 'core/pattern-overrides' !== $binding['source'] ) {
+				$bound[ $attribute ] = true;
+			}
+		}
+
+		return $bound;
 	}
 
 	/**
@@ -151,6 +442,20 @@ class Dynamic_Content {
 		}
 
 		return $item;
+	}
+
+	/**
+	 * Keep an attachment image's alt text literal.
+	 *
+	 * @param array<string, string> $attr Image attributes.
+	 * @return array<string, string>
+	 */
+	public function escape_image_alt_magic_tags( $attr ) {
+		if ( isset( $attr['alt'] ) ) {
+			$attr['alt'] = $this->escape_comment_magic_tags( $attr['alt'] );
+		}
+
+		return $attr;
 	}
 
 	/**
@@ -365,6 +670,9 @@ class Dynamic_Content {
 			$escaped_literals[ wp_kses_normalize_entities( $prefix ) ] = $prefix;
 		}
 		$markup = $this->protect_literals( $matches['tag'], $escaped_literals, $literal_markers );
+		// Attribute values are decoded below, so only openers written literally may resolve.
+		$opener = self::unguessable_placeholder( 'otter-opener-' );
+		$markup = str_replace( '{otterDynamic?', $opener, $markup );
 
 		$closing_tag = '</' . $tag[1] . '>';
 		$processor   = new \WP_HTML_Tag_Processor( $markup . $closing_tag );
@@ -374,9 +682,11 @@ class Dynamic_Content {
 
 		foreach ( (array) $processor->get_attribute_names_with_prefix( '' ) as $attribute ) {
 			$value = $processor->get_attribute( $attribute );
-			if ( ! is_string( $value ) || false === strpos( $value, '{otterDynamic?' ) ) {
+			if ( ! is_string( $value ) || false === strpos( $value, $opener ) ) {
 				continue;
 			}
+			$value = $this->protect_literals( $value, array( '{otterDynamic?' => self::$literal_marker_escapes['{otterDynamic?'] ), $literal_markers );
+			$value = str_replace( $opener, '{otterDynamic?', $value );
 
 			if ( 0 === strpos( $attribute, 'on' ) || 'srcdoc' === $attribute ) {
 				$processor->remove_attribute( $attribute );
@@ -414,7 +724,7 @@ class Dynamic_Content {
 		}
 
 		$markup = substr( $processor->get_updated_html(), 0, -strlen( $closing_tag ) );
-		$markup = str_replace( '{otterDynamic?', self::$literal_marker_escapes['{otterDynamic?'], $markup );
+		$markup = str_replace( array( $opener, '{otterDynamic?' ), self::$literal_marker_escapes['{otterDynamic?'], $markup );
 		return strtr( $markup, $literal_markers );
 	}
 
@@ -717,7 +1027,7 @@ class Dynamic_Content {
 				if ( isset( $data['default'] ) && false !== strpos( $data['default'], '<o-dynamic-link' ) ) {
 					$link = $this->apply_dynamic_link( $data['default'], $key );
 					if ( ! empty( $link ) ) {
-						$_value = preg_replace( '/(<a.*?>).*?(<\/a>)/', '$1' . $_value . '$2', $link );
+						$_value = $this->wrap_in_link( $link, $_value );
 					}
 				}
 
@@ -732,10 +1042,29 @@ class Dynamic_Content {
 
 		if ( isset( $data['default'] ) && false !== strpos( $data['default'], '<o-dynamic-link' ) ) {
 			$link = $this->apply_dynamic_link( $data['default'] );
-			return preg_replace( '/(<a.*?>).*?(<\/a>)/', '$1' . $value . '$2', $link );
+			return $this->wrap_in_link( $link, $value );
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Replace the text of each link in the markup.
+	 *
+	 * @param string     $link  Link markup.
+	 * @param int|string $value Link text.
+	 *
+	 * @return string
+	 */
+	private function wrap_in_link( $link, $value ) {
+		// A callback, so `$0` or `\0` in the value is not read as a backreference.
+		return (string) preg_replace_callback(
+			'/(<a.*?>).*?(<\/a>)/',
+			function ( $m ) use ( $value ) {
+				return $m[1] . $value . $m[2];
+			},
+			$link
+		);
 	}
 
 	/**

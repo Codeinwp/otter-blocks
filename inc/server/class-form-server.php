@@ -75,6 +75,30 @@ class Form_Server {
 	const ADMIN_ALERT_EXPIRATION_TIME = HOUR_IN_SECONDS;
 
 	/**
+	 * Keep rendered forms on the same settings key used by discovery.
+	 *
+	 * @param string               $block_content Rendered form markup.
+	 * @param array<string, mixed> $block Parsed Form block.
+	 * @phpstan-param array{attrs?: array{optionName?: mixed, id?: mixed, ...}|null, ...} $block
+	 * @return string
+	 */
+	public function set_form_option_name( $block_content, array $block ) {
+		$attributes = array_key_exists( 'attrs', $block ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+		$option     = Form_Settings_Data::get_form_option_name( $attributes );
+
+		if ( '' === $option ) {
+			return $block_content;
+		}
+
+		$html = new \WP_HTML_Tag_Processor( $block_content );
+		if ( $html->next_tag( array( 'class_name' => 'wp-block-themeisle-blocks-form' ) ) ) {
+			$html->set_attribute( 'data-option-name', $option );
+		}
+
+		return $html->get_updated_html();
+	}
+
+	/**
 	 * Initialize the class
 	 *
 	 * @since 2.0.0
@@ -84,6 +108,7 @@ class Form_Server {
 		 * Register the REST API endpoints.
 		 */
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_filter( 'render_block_themeisle-blocks/form', array( $this, 'set_form_option_name' ), 10, 2 );
 
 		/**
 		 * Register email providers that can be used to send emails or subscribe to a service.
@@ -1188,7 +1213,7 @@ class Form_Server {
 	 *
 	 * @param Form_Data_Request $data The form data.
 	 *
-	 * @return mixed|string
+	 * @return string One valid email address, or an empty string.
 	 * @since 2.0.3
 	 */
 	public function get_email_from_form_input( Form_Data_Request $data ) {
@@ -1196,7 +1221,18 @@ class Form_Server {
 		if ( is_array( $inputs ) ) {
 			foreach ( $inputs as $input_field ) {
 				if ( isset( $input_field['type'] ) && 'email' == $input_field['type'] ) {
-					return $input_field['value'];
+					$value  = isset( $input_field['value'] ) && is_string( $input_field['value'] ) ? $input_field['value'] : '';
+					$at     = strrpos( $value, '@' );
+					$domain = false !== $at ? substr( $value, $at + 1 ) : '';
+
+					// Convert an internationalized domain to ASCII, as wp_mail() does. sanitize_email() would remove its characters and change the address.
+					if ( function_exists( 'idn_to_ascii' ) && preg_match( '/[^\x00-\x7F]/', $domain ) ) {
+						$domain = idn_to_ascii( $domain, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46 );
+						$value  = false !== $domain ? substr( $value, 0, $at + 1 ) . $domain : '';
+					}
+
+					// is_email() accepts exactly one address: it rejects the "," and ";" that wp_mail() uses to split a list.
+					return is_email( $value ) ? $value : '';
 				}
 			}
 		}

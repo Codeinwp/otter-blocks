@@ -197,20 +197,13 @@ test.describe( 'Form submission retention', () => {
 		const postId = await publishPostReliable( editor, page );
 		await expectFormOptionSavedNotice( page );
 
-		/*
-		 * The form option name is derived from the editor pathname, so it re-keys from the
-		 * post-new.php name to the canonical post.php one on the next editor load. Settle on
-		 * the canonical name first, then plant the legacy entry under it.
-		 */
-		await admin.editPost( postId );
-
 		const formBlock = await expectBlockByName( editor, 'themeisle-blocks/form' );
 		const { optionName } = formBlock.attributes;
 
-		const saveBtn = page.locator( '.editor-post-publish-button__button' );
-		await expect( saveBtn ).toBeEnabled({ timeout: 10_000 });
-		await saveBtn.click();
-		await expectFormOptionSavedNotice( page );
+		await admin.editPost( postId );
+
+		const reopenedForm = await expectBlockByName( editor, 'themeisle-blocks/form' );
+		expect( reopenedForm.attributes.optionName ).toBe( optionName );
 
 		// Rewrite the stored entry into the legacy format: save-location only, no toggle.
 		await otterUtils.upsertFormOption({
@@ -238,6 +231,7 @@ test.describe( 'Form submission retention', () => {
 		await notificationToggle.click();
 		await expect( notificationToggle ).toBeChecked();
 
+		const saveBtn = page.locator( '.editor-post-publish-button__button' );
 		await expect( saveBtn ).toBeEnabled({ timeout: 10_000 });
 		await saveBtn.click();
 		await expectFormOptionSavedNotice( page );
