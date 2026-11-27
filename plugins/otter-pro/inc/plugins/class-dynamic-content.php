@@ -772,8 +772,10 @@ class Dynamic_Content {
 		if ( 'postMeta' === $type && ! empty( $meta ) && ! self::is_protected_meta_key( $meta ) ) {
 			$value = get_post_meta( $context, $meta, true );
 
-			if ( ! empty( $value ) ) {
-				$path = esc_url( $value );
+			if ( ! empty( $value ) && is_string( $value ) ) {
+				$image = $this->get_image_id_from_url( $value );
+				$image = $image ? $image : attachment_url_to_postid( $value ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.attachment_url_to_postid_attachment_url_to_postid
+				$path  = $image ? wp_get_original_image_path( intval( $image ) ) : $path;
 			}
 		}
 
@@ -814,8 +816,6 @@ class Dynamic_Content {
 
 					if ( $image ) {
 						$path = wp_get_original_image_path( $image );
-					} else {
-						$path = $field;
 					}
 				}
 
