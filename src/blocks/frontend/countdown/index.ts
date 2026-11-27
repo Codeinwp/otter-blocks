@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { domReady } from '../../helpers/frontend-helper-functions';
+import { domReady, getSafeRedirectUrl } from '../../helpers/frontend-helper-functions';
 
 /**
  * Simple base64 encoding. This is used to hash the url to prevent reusable blocks from accessing and changing the same data --> making them unique per page.
@@ -231,11 +231,13 @@ class CountdownData {
 		case 'hide':
 			this.hide();
 			break;
-		case 'redirectLink':
-			if ( this.redirectLink ) {
-				window.location.replace( this.redirectLink );
+		case 'redirectLink': {
+			const redirectUrl = getSafeRedirectUrl( this.redirectLink );
+			if ( redirectUrl ) {
+				window.location.replace( redirectUrl );
 			}
 			break;
+		}
 		}
 	}
 

@@ -143,6 +143,7 @@ class Registration {
 		add_filter( 'render_block', array( $this, 'subscribe_fa' ), 10, 2 );
 		add_filter( 'dynamic_sidebar_params', array( $this, 'watch_used_widgets' ), 9999 );
 		add_filter( 'render_block', array( $this, 'load_condition_hide_on_styles' ), 10, 2 );
+		add_filter( 'render_block_themeisle-blocks/countdown', array( $this, 'sanitize_countdown_redirect_link' ) );
 
 		add_action(
 			'wp_footer',
@@ -1174,6 +1175,61 @@ class Registration {
 	 */
 	public static function sticky_style() {
 		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
+	}
+
+	/**
+	 * Return the redirect URL if it is relative or uses http(s), otherwise an empty string.
+	 *
+	 * Unlike esc_url_raw(), relative URLs such as `../thanks` or `thank-you` stay unchanged.
+	 *
+	 * @param mixed $url The URL to check.
+	 * @return string
+	 */
+	public static function sanitize_redirect_url( $url ) {
+		if ( ! is_string( $url ) ) {
+			return '';
+		}
+
+		// Browsers ignore leading and trailing C0 controls and spaces.
+		$url = trim( $url, "\x00..\x20" );
+
+		// The scheme is the text before the first colon that comes before any `/`, `?` or `#`.
+		// Any other text there (for example `java<tab>script`) is not http(s), so it is rejected too.
+		if ( preg_match( '/^([^\/?#]*):/', $url, $matches ) && ! in_array( strtolower( $matches[1] ), array( 'http', 'https' ), true ) ) {
+			return '';
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Keep only http(s) or relative URLs in the Countdown redirect link.
+	 *
+	 * @param mixed $block_content The block content.
+	 * @return mixed
+	 */
+	public function sanitize_countdown_redirect_link( $block_content ) {
+		if ( ! is_string( $block_content ) || false === stripos( $block_content, 'data-redirect-link' ) ) {
+			return $block_content;
+		}
+
+		$tags = new \WP_HTML_Tag_Processor( $block_content );
+
+		while ( $tags->next_tag() ) {
+			$link = $tags->get_attribute( 'data-redirect-link' );
+
+			if ( ! is_string( $link ) ) {
+				continue;
+			}
+
+			$safe_link = self::sanitize_redirect_url( $link );
+
+			if ( $safe_link !== $link ) {
+				$tags->set_attribute( 'data-redirect-link', $safe_link );
+			}
+		}
+
+		return $tags->get_updated_html();
 	}
 
 	/**

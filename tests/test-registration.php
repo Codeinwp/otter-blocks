@@ -108,6 +108,113 @@ class Test_Registration extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Render a countdown block with the given redirect link.
+	 *
+	 * @param string $link Redirect link stored in the block markup.
+	 * @return string
+	 */
+	private function render_countdown_with_redirect( $link ) {
+		$markup = '<!-- wp:themeisle-blocks/countdown {"id":"cd1","behaviour":"redirectLink"} -->'
+			. '<div id="cd1" class="wp-block-themeisle-blocks-countdown" data-date="2000-01-01T00:00:00" data-bhv="redirectLink" data-redirect-link="' . $link . '"><span class="otter-countdown__value"></span></div>'
+			. '<!-- /wp:themeisle-blocks/countdown -->';
+
+		$blocks = parse_blocks( $markup );
+
+		return render_block( $blocks[0] );
+	}
+
+	/**
+	 * Redirect links with a scheme other than http or https.
+	 *
+	 * @return array<string, array<string>>
+	 */
+	public function rejected_redirect_links() {
+		return array(
+			'javascript'           => array( 'javascript:alert(1)' ),
+			'mixed case'           => array( 'JavaScript:x' ),
+			'leading whitespace'   => array( ' javascript:x' ),
+			'tab inside scheme'    => array( "java\tscript:x" ),
+			'newline inside'       => array( "java\nscript:x" ),
+			'numeric entity'       => array( '&#106;avascript:x' ),
+			'named colon entity'   => array( 'javascript&colon;x' ),
+			'data'                 => array( 'data:text/html,x' ),
+			'vbscript'             => array( 'vbscript:x' ),
+			'file'                 => array( 'file:///etc/hosts' ),
+		);
+	}
+
+	/**
+	 * Countdown redirect links with a non-http scheme are emptied on render.
+	 *
+	 * @dataProvider rejected_redirect_links
+	 *
+	 * @param string $link Stored redirect link.
+	 */
+	public function test_countdown_redirect_link_drops_non_http_scheme( $link ) {
+		$html = $this->render_countdown_with_redirect( $link );
+
+		$this->assertStringContainsString( 'data-redirect-link=""', $html );
+		$this->assertSame( 1, substr_count( $html, 'data-redirect-link' ), 'Only the countdown wrapper carries the attribute.' );
+	}
+
+	/**
+	 * Redirect links that must stay usable, with the expected attribute value.
+	 *
+	 * @return array<string, array<string>>
+	 */
+	public function kept_redirect_links() {
+		return array(
+			'https with query'     => array( 'https://example.com/thanks?a=1&amp;b=2', 'https://example.com/thanks?a=1&amp;b=2' ),
+			'http'                 => array( 'http://example.com/', 'http://example.com/' ),
+			'upper case scheme'    => array( 'HTTPS://example.com/', 'HTTPS://example.com/' ),
+			'padded https'         => array( ' https://x.com ', 'https://x.com' ),
+			'parent relative'      => array( '../thanks', '../thanks' ),
+			'relative with colon'  => array( '../thanks?t=12:30', '../thanks?t=12:30' ),
+			'bare relative'        => array( 'thank-you', 'thank-you' ),
+			'root relative'        => array( '/thank-you', '/thank-you' ),
+			'query only'           => array( '?step=2', '?step=2' ),
+			'hash only'            => array( '#done', '#done' ),
+			'protocol relative'    => array( '//example.com/thanks', '//example.com/thanks' ),
+		);
+	}
+
+	/**
+	 * Countdown redirect links with an http(s) or relative URL are kept on render.
+	 *
+	 * @dataProvider kept_redirect_links
+	 *
+	 * @param string $link     Stored redirect link.
+	 * @param string $expected Expected attribute value.
+	 */
+	public function test_countdown_redirect_link_keeps_http_and_relative_urls( $link, $expected ) {
+		$html = $this->render_countdown_with_redirect( $link );
+
+		$this->assertStringContainsString( 'data-redirect-link="' . $expected . '"', $html );
+	}
+
+	/**
+	 * The attribute name is matched without regard to case, as browsers do.
+	 */
+	public function test_countdown_redirect_link_matches_attribute_name_case_insensitively() {
+		$markup = '<!-- wp:themeisle-blocks/countdown {"id":"cd1","behaviour":"redirectLink"} -->'
+			. '<div id="cd1" class="wp-block-themeisle-blocks-countdown" DATA-REDIRECT-LINK="javascript:x"></div>'
+			. '<!-- /wp:themeisle-blocks/countdown -->';
+
+		$blocks = parse_blocks( $markup );
+		$html   = render_block( $blocks[0] );
+
+		$this->assertStringNotContainsString( 'javascript', $html );
+	}
+
+	/**
+	 * The shared sanitizer returns an empty string for non-string values.
+	 */
+	public function test_sanitize_redirect_url_rejects_non_string() {
+		$this->assertSame( '', Registration::sanitize_redirect_url( array( 'https://example.com' ) ) );
+		$this->assertSame( '', Registration::sanitize_redirect_url( null ) );
+	}
+
+	/**
 	 * Ensure an option stored as an empty string localizes as an object, not null.
 	 */
 	public function test_editor_global_defaults_is_object_when_option_is_empty_string() {
